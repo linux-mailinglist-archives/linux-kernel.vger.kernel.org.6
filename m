@@ -1,102 +1,159 @@
-Return-Path: <linux-kernel+bounces-260719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7290B93AD60
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB42293AD62
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250BA1F22C83
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187FF1C226A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B547764E;
-	Wed, 24 Jul 2024 07:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9148060D;
+	Wed, 24 Jul 2024 07:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hb4BYxFc"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WENq/h+9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8307A46B91;
-	Wed, 24 Jul 2024 07:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7322046B91
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721807163; cv=none; b=Ey5Jkhkz1DEeDqOmHb7zbaWW1LVSo1UCF/q+jD72M/afldBERbX5mgOoeevJsKc/MDB9qx8+11TmVQ1EPu0xctvHzWLPjbW3AWF0GtvDXSBHISBtTc1/8UMyr6BLwVT3+GWu+KO1sg50o4XGx9O2+Xm5OnETbuItjTnQPYd5Uxc=
+	t=1721807173; cv=none; b=BZVZTI0owqykAg2WWSSq7H+5ZFcpj/EM5nEiJPHgM/sIOcqNBrzOcknPvqgbBLtzqDFZd3ok7nPBoWn/ZTZJx9FoizzWiJooK0xx3hbGUTWRKYiM28VoBCcX1xyltVy6qoOhND47WUXMquxQS1tGYLt1dC1Y+bKntnLyRZo0F+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721807163; c=relaxed/simple;
-	bh=8KoCmA+JnWG5GHt2isUS1L2Eg0/e4RGYIyMCqa/2anU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VyMh50oUk/56AceQsIcANAEXWkqFYPNzzznb/13OpIsEkCUX13R4kF1GmtGGKkdK7wdLxWJxG3YptNrFY6MnlZtgAis71RUGe9dtPqDr5YgOzdH19mE5W6gLhXuRIxeAI6ScNbakAhpLIdBOmEkvXkyp6M4292Z4PTThP2uABU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hb4BYxFc; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-368380828d6so3545190f8f.1;
-        Wed, 24 Jul 2024 00:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721807160; x=1722411960; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8KoCmA+JnWG5GHt2isUS1L2Eg0/e4RGYIyMCqa/2anU=;
-        b=Hb4BYxFc8doCo2xmIEs8QsXR5u8CVdZ3by27QOpoqpFaxDBT3PQ2ArqIIQ/Bnh2UVI
-         W7SVpaVWY4fJ31PP9F9L1WBB6moS7+zZ9fbzm66+RsNLt3sgJrFu1Cj6vSCIdn4WikF6
-         mi7sDfyvHRmb4N2w4lTCrVQCJwnOolty8Ru6zLf4aDyaI8jMXDjXD3q6rTysIII4fYut
-         Kw/VWaUah+PaBNvFu6OukgI0tcjs+wc+lyJbM99317Xl4v7LQaPGkYwFGbdWLKqLW5Ze
-         OhejHgeV58cReEjRUTf9V2FLDiZupps6qkkZdvmMQntDRZwoY4OmsEjLA8go70YTRtEA
-         oKTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721807160; x=1722411960;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8KoCmA+JnWG5GHt2isUS1L2Eg0/e4RGYIyMCqa/2anU=;
-        b=fxbNtz25IjsBFDMWOiaWkBTnXxVaKmtTEu+P6XMiFyDPVyErafJjIAZXPhaN5zy3T3
-         cWOGrjpPLnAzuDvAIPSFhbAmhET+mp41iOlgPh3p3MRG5N9qa1lD1TOhVwim3+QSqMAv
-         KWIq7yJZsQiyEARMjmoFiGXhcEYvP44exEV7oL9P8LS1/Vbg5oOkaSGrfpCsxPosanBE
-         ZtMg5WbPgNWJP4RhiLunFVC1QfUcMwLRsn9gAF8GYz58TftbpBEEc/oNrcAea2leyHry
-         yxOv4mByZPjROBS4XIwzx5BMcv5r1WES9DfmqqRXPlA4+rkYoCqSbbUp/AgLbMwIRd8w
-         38rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZuUAJ5vcZGsX8gQ2//xzd272D7z5Ax1T42PV50UDDLyhkuR9RT8kuhx7qaInw8QONJ7c27JC+/Ghe9x1O3oGozK+YCKGAkhyGCLV7elun67ZDXwSMJJoQuFXbn0/xc/vRG2ylbf6I
-X-Gm-Message-State: AOJu0YzpyGupoUWdxe2GmqR6BLChUuDtUR1I2KbF0WBerUdZi5+kq6Rt
-	+J7ASFqxGuNl7hM5jKQ8492NE3xexZz2P0WfLEDlUZFEAsja3xZJ
-X-Google-Smtp-Source: AGHT+IHO2VhjrBItnZjQ1/CCPoY+qcfvnVMk/WY2GxYprSVed+mvtBH9RtHoJJVCcb7QgvOwoKhWQw==
-X-Received: by 2002:adf:fc0c:0:b0:368:714e:5a5e with SMTP id ffacd0b85a97d-369debf8bbbmr4277080f8f.2.1721807159640;
-        Wed, 24 Jul 2024 00:45:59 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:359b:e801:d44:32b3:6924:10d1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787eb6b0sm13535315f8f.90.2024.07.24.00.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 00:45:59 -0700 (PDT)
-Message-ID: <05203de8fde109255b6e99a08e57037525a629ea.camel@gmail.com>
-Subject: Re: [PATCH] spi: axi-spi-engine: don't emit XFER_BITS for empty xfer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 24 Jul 2024 09:45:59 +0200
-In-Reply-To: <20240723-spi-axi-spi-engine-opt-bpw-v1-1-2625ba4c4387@baylibre.com>
-References: 
-	<20240723-spi-axi-spi-engine-opt-bpw-v1-1-2625ba4c4387@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1721807173; c=relaxed/simple;
+	bh=FBMMrtHEP4jAsvlmIUxSauMRnMpG7zi4alT23X5pUEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=feWwRQiZtvgV48LpFGrJ43CqNwFU4C/SINr5i25Bo4MOJnC4igDk0m0XUDcyBXMCk4IVYQ4Q5kXK2KjpWceqZ/YYHvmPn86mYYKwq2r/n4lqGJJLKp6cX5RbLhKZsbmWMuLbzAsfyy8sA5sl2MSs65Ewd5J8d2ZjMfr9w25jtO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WENq/h+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D14CC4AF12
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721807173;
+	bh=FBMMrtHEP4jAsvlmIUxSauMRnMpG7zi4alT23X5pUEg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WENq/h+9Z063qDnGjK7VO+nxj/hVaAr2NE4CLGYRp/DnsQpAH29eVcFQsmFiY7l3r
+	 HLTH8oqy2ojqR+4GZ29dE12vGbf1akWj4/oh71XZP1CAyJ4NzCfWDFuuSqE60uUYUs
+	 EhIlUJ0WgnnKgXfrKhvmksEJOmWNsmHISKqT28jQccfycs7VpQEltwzD6K+pVB/YoV
+	 Y/1lDP9gy732k7bTukrUPyEN/5EBccP65kyvU8wZw5f9YGoHNm1KN70CUIM2cLAYDH
+	 lWxbVijQAwg3vmV9VLDRtE1ZCd7yurMBrtYjB4onVeA0wu1vcUf5KtLJbIDmkpUD7y
+	 evn/cSucZ7Www==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65faa0614dbso65833627b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:46:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmoCIP0nATehef8Z1jLB1nk1r6IQJAqX15xYzU1AYMABl98bTcZ6s4VfUd9t/B1mq0P9F7DVfoFblDN9NIHcCYQQUFNxDDH9Y+Q9N8
+X-Gm-Message-State: AOJu0YzVeGcFWJfgGDqh0lsfJE99vJBEji6vCjvwkhShLxM6ZckW/aMI
+	smG0jvMjRrzO8WTGjkOrwjU6n84VaZOTpZ5ldSnWctwf22Bx01z5fmKLtH6UZyifX6nTh3fnhGG
+	TVMV2/CyxzyCjXmbTnEIOxfGDGMIOnc3Jq8D6Aw==
+X-Google-Smtp-Source: AGHT+IGop+rJ/oNopZpk4iSvJN5Yseo4mIWhH9RSmTEcfv93mywNA5w4BXIDkdNiOh0h5D8lLV6JPPSUaqTN6NB0qiU=
+X-Received: by 2002:a05:690c:c:b0:65f:8f77:720f with SMTP id
+ 00721157ae682-671f09def59mr29089367b3.5.1721807172248; Wed, 24 Jul 2024
+ 00:46:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240724020056.65838-1-21cnbao@gmail.com>
+In-Reply-To: <20240724020056.65838-1-21cnbao@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 24 Jul 2024 00:46:01 -0700
+X-Gmail-Original-Message-ID: <CACePvbUihp+tuCaRh5LbRW+eFmeQbzp0K+BWHUHObytrkTUVyw@mail.gmail.com>
+Message-ID: <CACePvbUihp+tuCaRh5LbRW+eFmeQbzp0K+BWHUHObytrkTUVyw@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: Extend 'usage' parameter so that
+ cluster_swap_free_nr() can be reused
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, david@redhat.com, 
+	hanchuanhua@oppo.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	ryan.roberts@arm.com, v-songbaohua@oppo.com, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-07-23 at 13:36 -0500, David Lechner wrote:
-> This adds a check on xfer->len to avoid emitting an XFER_BITS
-> instruction for empty transfers in the AXI SPI Engine driver. This
-> avoids unnecessary delays caused by executing an instruction that has
-> no effect on the actual SPI transfer.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+
+Chris
+
+On Tue, Jul 23, 2024 at 7:01=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> Extend a usage parameter so that cluster_swap_free_nr() can be reused by
+> both swapcache_clear() and swap_free().
+> __swap_entry_free() is quite similar but more tricky as it requires the
+> return value of __swap_entry_free_locked() which cluster_swap_free_nr()
+> doesn't support.
+>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Chuanhua Han <hanchuanhua@oppo.com>
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
-
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-
-
+>  -v3: resend &collect Ryan's reviewed-by
+>
+>  mm/swapfile.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 38bdc439651a..5f73a8553371 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1344,7 +1344,8 @@ static void swap_entry_free(struct swap_info_struct=
+ *p, swp_entry_t entry)
+>  }
+>
+>  static void cluster_swap_free_nr(struct swap_info_struct *sis,
+> -               unsigned long offset, int nr_pages)
+> +               unsigned long offset, int nr_pages,
+> +               unsigned char usage)
+>  {
+>         struct swap_cluster_info *ci;
+>         DECLARE_BITMAP(to_free, BITS_PER_LONG) =3D { 0 };
+> @@ -1354,7 +1355,7 @@ static void cluster_swap_free_nr(struct swap_info_s=
+truct *sis,
+>         while (nr_pages) {
+>                 nr =3D min(BITS_PER_LONG, nr_pages);
+>                 for (i =3D 0; i < nr; i++) {
+> -                       if (!__swap_entry_free_locked(sis, offset + i, 1)=
+)
+> +                       if (!__swap_entry_free_locked(sis, offset + i, us=
+age))
+>                                 bitmap_set(to_free, i, 1);
+>                 }
+>                 if (!bitmap_empty(to_free, BITS_PER_LONG)) {
+> @@ -1388,7 +1389,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+>
+>         while (nr_pages) {
+>                 nr =3D min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % S=
+WAPFILE_CLUSTER);
+> -               cluster_swap_free_nr(sis, offset, nr);
+> +               cluster_swap_free_nr(sis, offset, nr, 1);
+>                 offset +=3D nr;
+>                 nr_pages -=3D nr;
+>         }
+> @@ -3472,15 +3473,9 @@ int swapcache_prepare(swp_entry_t entry)
+>
+>  void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+>  {
+> -       struct swap_cluster_info *ci;
+>         unsigned long offset =3D swp_offset(entry);
+> -       unsigned char usage;
+>
+> -       ci =3D lock_cluster_or_swap_info(si, offset);
+> -       usage =3D __swap_entry_free_locked(si, offset, SWAP_HAS_CACHE);
+> -       unlock_cluster_or_swap_info(si, ci);
+> -       if (!usage)
+> -               free_swap_slot(entry);
+> +       cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
+>  }
+>
+>  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+> --
+> 2.34.1
+>
 
