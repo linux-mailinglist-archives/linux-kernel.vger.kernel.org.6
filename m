@@ -1,113 +1,186 @@
-Return-Path: <linux-kernel+bounces-261908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5A793BDB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:07:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A26393BDB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8FCB21CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:07:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F78EB20EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715D4173336;
-	Thu, 25 Jul 2024 08:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00219173343;
+	Thu, 25 Jul 2024 08:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="VICrjWgl"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pfS8JL2Z"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B85249ED;
-	Thu, 25 Jul 2024 08:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72653172BC9
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894829; cv=none; b=knYGrcNY6r8SHxcjuJpokCZtOCkOCcTM5ochkPWxQGiWIWh4kQy/v5sL8Pk30R9unS6L73nA+ArKmjZz/BsRc3NUlp2b+U1OK5XZ3afCYPBoBpaF3NFdvp4aUGLgjTA5LLNhBvIvNo8ecDS+DZKXuPG9G0Sxa3FvJc7MIckE8Hg=
+	t=1721894859; cv=none; b=OnQHe6DE67k1jrgh8NVft4cJlrPl4mGB7FATqZfxW8t9bGI5vMiEzXOHdLnkjxd0D64fnKPY30reSn7B4GPGxVZCI9E1IiE78UXk0WZJdOXEEhC7C3UfX4+gAXgR7GttTtwxv/XbkExP0ERfBl9MWm1Da38VV0cO6X8PoUWuo68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894829; c=relaxed/simple;
-	bh=et8MeDpeM9VgJU3uJLRPA2b7BO3/WQzeSLIZTNsZP3Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5WjZqSCuQDYLscj0oh5y+o8eb8qQGnxcodPgpO/gmhLCGRF96b2ld70BmM3JA1hSnCoWjHLkxLH7CcFcaprahcO7A/ICrZnBAq/k5dRsw85njGgA8VFZfAJYXI8duD8sndmFgrJ0HfQWo0MsWKp10aI6qRnctXewF4KlbySUi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=VICrjWgl; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ONvp71022308;
-	Thu, 25 Jul 2024 01:06:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=voXGv9KufQht/hBsYwa1gfH1E
-	e9PQIKr4zcoBTbC64o=; b=VICrjWglr/C9vTUWnRar0dBTtQThFv2Za8KUDQI3k
-	MwvFvNNrET1czJ//Wd41pPOhzq6dLNe6x32+CwqN4siJ1ShA9mx5AvfV3jNX43vk
-	hNB7qjuJNXQp8vvLJuRpGsd23JwjhIgqaUgkMTjoBcOf3IOHf5fq3cNH1vV0MxAW
-	DgRRUiCtpKD38DusrtHgM34XYKNmNfzl5O6wEdQ0EWf5qikb09cbmTGJJY6/cgrY
-	5VCqqJkarTCqAdrFWRNjS68YNt+N39bTMZg7BswTwhvc0vHxkxDHnbWgmv2Tlymk
-	KOrIWpeCElUp7A8yURIf2r5QPgXPAjG3VdhAbhuPXvr0A==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40kbr9s9ca-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 01:06:47 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 25 Jul 2024 01:06:47 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 25 Jul 2024 01:06:47 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id 5F6CD3F706B;
-	Thu, 25 Jul 2024 01:06:43 -0700 (PDT)
-Date: Thu, 25 Jul 2024 13:36:42 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Shigeru Yoshida <syoshida@redhat.com>
-CC: <make24@iscas.ac.cn>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <liujunliang_ljl@163.com>,
-        <andrew@lunn.ch>, <horms@kernel.org>, <linux-usb@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH net v4] net: usb: sr9700: fix uninitialized variable use
- in sr_mdio_read
-Message-ID: <ZqIHkubX0KK8psPv@test-OptiPlex-Tower-Plus-7010>
-References: <20240725022942.1720199-1-make24@iscas.ac.cn>
- <20240725.120100.2041590414991833213.syoshida@redhat.com>
+	s=arc-20240116; t=1721894859; c=relaxed/simple;
+	bh=r+M3o6SVfTD1vC9T28BpdhS5PBq7BQ34eYtryUx0Hug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YSgU3sWsxsrhIJEJ9lChbXamY1eUSCXskTifU62ymf94PY7e5oC3wN/++0oIyTJUrzB8R3d2gYzUaV7GWxxcrFv7SddyVxqJkKBADD7gJko9ufbw8AUe7e8HDXcSLAla/Yx54RNZeJelJHsp7X9D1+j7tiEcFsAa/D3VttYXXBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pfS8JL2Z; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so7613a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721894856; x=1722499656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gIQkCLUKnLONxhUVH4Hgod3J1H1l8mUYWFUy/48yoHk=;
+        b=pfS8JL2ZPlLyJV5nglmj8azFy5FfgUOC0YyhWnMZ4zWoLT5NmivTGQvn/csnZutggF
+         laNvy8WXY6Sw2kUF0ikg+LD10EteYOO4zB69VUB1Jo8B8MZxLwFteGIly5Fbumn23bxL
+         tZ76dKHprGpKVaoRVb1YSe1odB+kMfxrGC+8+4jMBxFQdR0OQXoWyJcYrIhb3gPed2U4
+         SDSTy8NbnmyL3QjZCfqFs0w0MdHsvtmBO+zS8y96PDhM/tsv+hhOfBKEDuw9j43WX/7S
+         DwSOuwlW/WXZMnpKqFuzoEYS8CKlmdHDfum3lpFMWHT+EQ6iYMKdsGkcvhIcOTU8fo27
+         Lgyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721894856; x=1722499656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gIQkCLUKnLONxhUVH4Hgod3J1H1l8mUYWFUy/48yoHk=;
+        b=rXBXU9OobpbwHNc3OFBB+lJF+KI6L0XJuQKQeAW/Lw58PVsvaA2vevi5WRQkA6IKqS
+         qVDQXycxeySkv9g/YEEd1WnR5ggBzUaFG8cwtzBpdt1yU9q64lmI8wT1GAMrx8AoKbWg
+         aZwg8ZtAn8xasUhD8dFABzSSj1qkUpGphM4cKkQByFxXzoRa+p1QVJnnJFzlqKc76AEt
+         X9IQWcEkLs0lq8WpwD68ZL41RqU+d17ZNNCEQC3c07V2bz1REKoB+C9RQiI10siRCEBx
+         56EkS9Rc2Sx8nhT35YHZ5t8/zzVRhk90QDgGU9c3BV7YVobFMBEzqg+0ZB0PM26a1mZS
+         h0Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgX2/zAE3AVAzCKXGudJdCtWAI1P5bNm0AhSQQpxZJHTZCf8820FNMDxAfC/hqJznkbwdrVZpEfhDXNCegxAjRV24PNKdg07yfMYs
+X-Gm-Message-State: AOJu0YzHzktMmDd6XG0dtN4WXvGsF5OPXFsRPFAcISrRauc/T7YwEWPF
+	RxX1tU5GQNyfG0tK59b2EVyoZsncqreRORneTE/wuk69k3wfhJ+wgUBCnaSxQ/voSWkQejS7u5q
+	MYsyKJmEgdumTH93GxQurqpCl/60RRcbaCHuTQ2ZdnB45H0qTJA==
+X-Google-Smtp-Source: AGHT+IHl0LhuIwDpRoXa6gfrudcKM9vX8uhEq/AZ3MBhrUx8F2WnDsHvrrDN5URTN7HjWmm6RbPaMKgp4O++3+UyhG0=
+X-Received: by 2002:a05:6402:2709:b0:5ac:4ce3:8f6a with SMTP id
+ 4fb4d7f45d1cf-5ac4ce391edmr123068a12.6.1721894855222; Thu, 25 Jul 2024
+ 01:07:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240725.120100.2041590414991833213.syoshida@redhat.com>
-X-Proofpoint-ORIG-GUID: Cy5fQBZvMOQ1GOPt0UXNsc6IkZ_aefOF
-X-Proofpoint-GUID: Cy5fQBZvMOQ1GOPt0UXNsc6IkZ_aefOF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_08,2024-07-25_02,2024-05-17_01
+References: <202407251053.618edf56-oliver.sang@intel.com>
+In-Reply-To: <202407251053.618edf56-oliver.sang@intel.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Jul 2024 10:07:21 +0200
+Message-ID: <CANn89i+Bia9PdGhAVfRbbubYo37+g+ej68qp32JmU88tsLLuRQ@mail.gmail.com>
+Subject: Re: [linus:master] [tcp] 23e89e8ee7: packetdrill.packetdrill/gtests/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-25 at 08:31:00, Shigeru Yoshida (syoshida@redhat.com) wrote:
-> On Thu, 25 Jul 2024 10:29:42 +0800, Ma Ke wrote:
-> > It could lead to error happen because the variable res is not updated if
-> > the call to sr_share_read_word returns an error. In this particular case
-> > error code was returned and res stayed uninitialized. Same issue also
-> > applies to sr_read_reg.
-> > 
-> > This can be avoided by checking the return value of sr_share_read_word
-> > and sr_read_reg, and propagating the error if the read operation failed.
-> > 
-> > Found by code review.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> 
-> I did a quick check for sr9700.c and there seems to be other
-> suspicious usage of sr_read_reg().  But, for sr_mdio_read(), I think
-> the patch is sufficient.
-> 
-> Reviewed-by: Shigeru Yoshida <syoshida@redhat.com>
-> 
->  Agree with Shigeru, may be you can submit another patch addressing
->  "suspicious usage of sr_read_reg" this patch looks good
+On Thu, Jul 25, 2024 at 6:55=E2=80=AFAM kernel test robot <oliver.sang@inte=
+l.com> wrote:
+>
+>
+>
+> Hello,
+>
+> kernel test robot noticed "packetdrill.packetdrill/gtests/net/tcp/fastope=
+n/client/simultaneous-fast-open_ipv4-mapped-v6.fail" on:
+>
+> commit: 23e89e8ee7be73e21200947885a6d3a109a2c58d ("tcp: Don't drop SYN+AC=
+K for simultaneous connect().")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> [test failed on linus/master      68b59730459e5d1fe4e0bbeb04ceb9df0f00227=
+0]
+> [test failed on linux-next/master 73399b58e5e5a1b28a04baf42e321cfcfc663c2=
+f]
+>
+> in testcase: packetdrill
+> version: packetdrill-x86_64-31fbbb7-1_20240226
+> with following parameters:
+>
+>
+> compiler: gcc-13
+> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz=
+ (Coffee Lake) with 32G memory
+>
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>
+>
+> we also noticed other failed cases that can pass on parent.
+>
+>
+> 42ffe242860c401c 23e89e8ee7be73e21200947885a
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv4.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4-mapped-v6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/basic-zero-payload_ipv4-mapped-v6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/basic-zero-payload_ipv4.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4-mapped-v6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4-mapped-v6.fail
+>            :9           67%           6:6     packetdrill.packetdrill/gte=
+sts/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4.fail
+>
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202407251053.618edf56-oliver.san=
+g@intel.com
+>
+>
+>
+> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
+eous-fast-open.pkt (ipv6)]
+>
+> ...
+>
+> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
+eous-fast-open.pkt (ipv4)]
+>
+> ...
+>
+> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
+eous-fast-open.pkt (ipv4-mapped-v6)]
+>
+> ...
+>
+>
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240725/202407251053.618edf56-ol=
+iver.sang@intel.com
+>
+>
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
-Reviewed-by: Hariprasad Kelam <hkelam@marvell.com>
+This has been discussed recently in netdev mailing list, one ACK will
+get more precise information.
 
