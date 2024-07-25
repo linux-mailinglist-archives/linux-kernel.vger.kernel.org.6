@@ -1,182 +1,433 @@
-Return-Path: <linux-kernel+bounces-261986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C51193BEFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:22:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D69493BF03
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BDF281AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141E51F21F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685F16C690;
-	Thu, 25 Jul 2024 09:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA0617623F;
+	Thu, 25 Jul 2024 09:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fiwxPXij"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGpIqwcD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61748176233
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C2E81E;
+	Thu, 25 Jul 2024 09:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721899348; cv=none; b=r4rFQ7ixlAh54jlxzo6z6nXsZn0HG8M9XkRhroCMcsQKP5sxXfv3kIeaTZbfcb+8Smu2xqJOntpVI9SMabX1LmcbjUNepk/pQb2mrYl46InW9xlyzT1pRmyqmkUF+mj1gWNswjn0aWtVcd5L7c9PgPBN/VWOpf0P5cnm0gm+1mY=
+	t=1721899509; cv=none; b=Sq/RbuFTP/kSfBj6j15naH3OEp8XjyUC0snud9o914/EFKY2zOXZCsXu8cFp+jv7Ic4OxJ5cNXxJv3ZX3SS9Ig2XctcOQohWg1O6olBbGrVWYGMXECVIPik5BixfWDgnrjOZ1fyaRAAE78S9C70nnsT9wXbPpPeLilzKgGXaIBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721899348; c=relaxed/simple;
-	bh=bLdP/yluvMBuIJt5YOH7LjpEzuVagCOShgdj7rj20iM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ePQa8MTfAloYgqHPhWmmiLT4MYFekE9CD8Yjc+4HcCJVg8/gnR2rgrZlNEJC6YN9wDKwhJgNp9RSgUz7UfbrSE0UBz8F4hltYwqx+Y2pC+T3XDDJcdyYu6VZXOszryX4pNQJ6ICTrm5NKBEc846nbR4GyAfAad61IberLiv3TSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fiwxPXij; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so681648276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721899345; x=1722504145; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bLdP/yluvMBuIJt5YOH7LjpEzuVagCOShgdj7rj20iM=;
-        b=fiwxPXijBCu7+N8DoCx2O94TElHx8cHfp4nWrtKajcuoxmzPN+AiKgoRA6jhzu4Dpt
-         I6iak6KREbCsIUW8+DUNCkhN1i+pVECnrttjkE53J6/dqI7OlR1SpIMehHQGBaGyV2zN
-         HbYz8TeOWnaFUNc/XimaUNNbPS+3gVfKkp9x4PwkHHwHedH/yPXGN3E2oVgp/PrbBUYD
-         97qNNzFMP+GindQeEqJmk94tFit0d7/zk4UvMQP7br8DxIGdoby8CNMfIWYukbvlDT+W
-         qSJfkBPe+Un0EMc6rqDkwNBxRIztcZMnCFB0s7gp/AoxTmsGdazuy+FLN+HSq2cPHI9c
-         mojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721899345; x=1722504145;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bLdP/yluvMBuIJt5YOH7LjpEzuVagCOShgdj7rj20iM=;
-        b=fhJgPbOXyJyGWaGqCssQ7cB6GMkON0xPPtKz4YcKdn4BWFrq/sdjudakxVTqtZ2E+p
-         SHDeBh9vkJLArH8w7OlhMIrG/0yqaElWexO/TtRMqQP8bdAvYpFYgc89wBIGEcGJTfsa
-         pvzNukgdxvTC/MXJiTHvwaJzbe6Pxabw2/2MtX9cj8MK31MHjMHVrv6MZgU5ipM1o6+8
-         PcuX2RWRVMrXcK2AZaCulmpW7feDIMSaV7zrBrykpYDEnp8QxW/77Yk3IepFuBUjUodf
-         0zbDpEkJqwoPNYxyIUyquoJ8WtxozdaqLcgtep/ENAEaAh9N8XDFK4JVhYdJPNHwl5gK
-         MrjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZu5oUNTgHZgSrK9rImsYdHpvIMETwNmQF6GvL31Olq1SaXR40wrf+gE1ZeHdW7O4aUXef9QHT4N633wGZ7H661rrxtHL/u2F+kjnR
-X-Gm-Message-State: AOJu0YzeH+61KRhtFfg9FPL5KUvEOE7+a0JdQwAqUC0kYhyw0d14de+u
-	X0etvSVSu7Hp8fjKM0XMUEIEAjdN3vCLTKjyN73kVU4I/Iwkx11GP/AjsifoChTTJPxM70XZ5+8
-	2413hIJR006hNiX1XR8fy4Ykl1njUACkAGCfWcQ==
-X-Google-Smtp-Source: AGHT+IHv32q/Dww8pcfbsHuuIT4hJr8/2ZHQ97ux3ZX4BwITDamJ4v4NkMFXVPjNU54b72O6TOTXdehGNiVfv1jQFf8=
-X-Received: by 2002:a05:6902:70d:b0:e02:b51f:830f with SMTP id
- 3f1490d57ef6-e0b2cd8ec12mr1229263276.41.1721899345252; Thu, 25 Jul 2024
- 02:22:25 -0700 (PDT)
+	s=arc-20240116; t=1721899509; c=relaxed/simple;
+	bh=orwFQpGIZkb3iyMLn0U6jfHJHT7fY4Z3DAltwfRdKbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHXl4rzgKlMPBE1e17s6LWwjRpHAbggtBNN/uoblCJp778k+AI9mVBLSGJPScTD+/G+WM9OcALAoVBxxwqknETBTo6O4Zi8mqT1LFJktUKGi7wb7N05MAqnDbQhlB8wtUpxA7VZ20TtEM5AmaVtUrmRHxzKk5X+c/PKDgCUM118=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGpIqwcD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98FB6C116B1;
+	Thu, 25 Jul 2024 09:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721899509;
+	bh=orwFQpGIZkb3iyMLn0U6jfHJHT7fY4Z3DAltwfRdKbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LGpIqwcDxO1bqicM2+zIfvtpAoTn9xNpVP2ckuCop4fve0xOoXWjs+PIVEU7t8W3F
+	 XU8zW0K8niQg/RPYCTeeOr1VWgRvgSe5MzoQzmoutdRzlGVDn6SrFLwV1OgtCfAXyX
+	 sgAaazGYrDujzm1k17DOo5L9cWDqbpkIqloTp4W+8kSWEt1YruA/cxJ6VaOdrLw30k
+	 ccV5yv480+1AZd7DDAh2bPG9vut7mTYLHsF4dQH6cW2WRmcQIKHc31OHgneC3p3Daf
+	 pUpbU4XrZb9doubE2ufGgI4YM4EqiHkMfjgqnZ5XowT0bWHJh/8ONRjRYEMq5RIimI
+	 BBERal56OP9ig==
+Date: Thu, 25 Jul 2024 11:25:06 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH RFC 3/5] drm/connector: implement generic HDMI codec
+ helpers
+Message-ID: <20240725-rainbow-nuthatch-of-brotherhood-bbcedc@houat>
+References: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
+ <20240615-drm-bridge-hdmi-connector-v1-3-d59fc7865ab2@linaro.org>
+ <20240621-glorious-oryx-of-expression-1ad75f@houat>
+ <CAA8EJpr=ervT-KD+tYphPeTfrFGDfSaxNaYC5hfzmtVch5v10g@mail.gmail.com>
+ <20240626-spiked-heavenly-kakapo-1dafce@houat>
+ <pkfbp4xyg5za3vnlpryhbflb6nvp7s3bs3542wk3y5zsonoy7l@y5qcua6kfi4h>
+ <20240627-meaty-bullfrog-of-refinement-cc9d85@houat>
+ <cwxmu5a37qaqerpaolohxw57nzerkvlumx4dsqwmqwx5t7xhxo@kq6j63hfydra>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
-In-Reply-To: <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 25 Jul 2024 11:21:48 +0200
-Message-ID: <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="b6qlvgiljxtj67ge"
+Content-Disposition: inline
+In-Reply-To: <cwxmu5a37qaqerpaolohxw57nzerkvlumx4dsqwmqwx5t7xhxo@kq6j63hfydra>
 
-On Thu, 25 Jul 2024 at 08:02, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 18-07-24, 12:38, Ulf Hansson wrote:
-> > I understand your point, but we don't need to call
-> > dev_pm_opp_set_opp() from _set_required_opps() to accomplish this.
->
-> I _strongly_ feel that the OPP core should be doing what other frameworks, like
-> clk, regulator, genpd, are doing in this case. Call recursively.
->
-> > In fact, I have realized that calling dev_pm_opp_set_opp() from there
-> > doesn't work the way we expected.
-> >
-> > More precisely, at each recursive call to dev_pm_opp_set_opp() we are
-> > changing the OPP for a genpd's OPP table for a device that has been
-> > attached to it. The problem with this, is that we may have several
-> > devices being attached to the same genpd, thus sharing the same
-> > OPP-table that is being used for their required OPPs. So, we may have
-> > several active requests for different OPPs for a genpd's OPP table
-> > simultaneously. It seems wrong from the OPP library point of view. To
-> > me, it's would be better to leave any kind of aggregation to be
-> > managed by genpd itself.
->
-> Right. I see this problem too and that's why I said earlier that OPP core was
-> designed for a different use case and genpd doesn't fit perfectly. Though I
-> don't see how several calls the dev_pm_opp_set_opp() simultaneously is a
-> problem. This can happen without recursive calling too, where simultaneous calls
-> for genpds occur.
 
-Right.
+--b6qlvgiljxtj67ge
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The main issue in regards to the above, is that we may end up trying
-to vote for different devices, which votes correspond to the same
-OPP/OPP-table. The one that comes first will request the OPP, the
-other ones will be ignored as the OPP core thinks there is no reason
-to already set the current OPP.
+On Thu, Jun 27, 2024 at 04:29:49PM GMT, Dmitry Baryshkov wrote:
+> On Thu, Jun 27, 2024 at 11:49:37AM GMT, Maxime Ripard wrote:
+> > On Wed, Jun 26, 2024 at 07:09:34PM GMT, Dmitry Baryshkov wrote:
+> > > On Wed, Jun 26, 2024 at 04:05:01PM GMT, Maxime Ripard wrote:
+> > > > On Fri, Jun 21, 2024 at 02:09:04PM GMT, Dmitry Baryshkov wrote:
+> > > > > On Fri, 21 Jun 2024 at 12:27, Maxime Ripard <mripard@kernel.org> =
+wrote:
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > Sorry for taking some time to review this series.
+> > > > >=20
+> > > > > No problem, that's not long.
+> > > > >=20
+> > > > > >
+> > > > > > On Sat, Jun 15, 2024 at 08:53:32PM GMT, Dmitry Baryshkov wrote:
+> > > > > > > Several DRM drivers implement HDMI codec support (despite its=
+ name it
+> > > > > > > applies to both HDMI and DisplayPort drivers). Implement gene=
+ric
+> > > > > > > framework to be used by these drivers. This removes a require=
+ment to
+> > > > > > > implement get_eld() callback and provides default implementat=
+ion for
+> > > > > > > codec's plug handling.
+> > > > > > >
+> > > > > > > The framework is integrated with the DRM HDMI Connector frame=
+work, but
+> > > > > > > can be used by DisplayPort drivers.
+> > > > > > >
+> > > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/Makefile                   |   1 +
+> > > > > > >  drivers/gpu/drm/drm_connector.c            |   8 ++
+> > > > > > >  drivers/gpu/drm/drm_connector_hdmi_codec.c | 157 +++++++++++=
+++++++++++++++++++
+> > > > > > >  include/drm/drm_connector.h                |  33 ++++++
+> > > > > > >  4 files changed, 199 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makef=
+ile
+> > > > > > > index 68cc9258ffc4..e113a6eade23 100644
+> > > > > > > --- a/drivers/gpu/drm/Makefile
+> > > > > > > +++ b/drivers/gpu/drm/Makefile
+> > > > > > > @@ -45,6 +45,7 @@ drm-y :=3D \
+> > > > > > >       drm_client_modeset.o \
+> > > > > > >       drm_color_mgmt.o \
+> > > > > > >       drm_connector.o \
+> > > > > > > +     drm_connector_hdmi_codec.o \
+> > > > > > >       drm_crtc.o \
+> > > > > > >       drm_displayid.o \
+> > > > > > >       drm_drv.o \
+> > > > > > > diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/dr=
+m/drm_connector.c
+> > > > > > > index 3d73a981004c..66d6e9487339 100644
+> > > > > > > --- a/drivers/gpu/drm/drm_connector.c
+> > > > > > > +++ b/drivers/gpu/drm/drm_connector.c
+> > > > > > > @@ -279,6 +279,7 @@ static int __drm_connector_init(struct dr=
+m_device *dev,
+> > > > > > >       mutex_init(&connector->mutex);
+> > > > > > >       mutex_init(&connector->edid_override_mutex);
+> > > > > > >       mutex_init(&connector->hdmi.infoframes.lock);
+> > > > > > > +     mutex_init(&connector->hdmi_codec.lock);
+> > > > > > >       connector->edid_blob_ptr =3D NULL;
+> > > > > > >       connector->epoch_counter =3D 0;
+> > > > > > >       connector->tile_blob_ptr =3D NULL;
+> > > > > > > @@ -529,6 +530,12 @@ int drmm_connector_hdmi_init(struct drm_=
+device *dev,
+> > > > > > >
+> > > > > > >       connector->hdmi.funcs =3D hdmi_funcs;
+> > > > > > >
+> > > > > > > +     if (connector->hdmi_codec.i2s || connector->hdmi_codec.=
+spdif) {
+> > > > > > > +             ret =3D drmm_connector_hdmi_codec_alloc(dev, co=
+nnector, hdmi_funcs->codec_ops);
+> > > > > > > +             if (ret)
+> > > > > > > +                     return ret;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > >       return 0;
+> > > > > > >  }
+> > > > > > >  EXPORT_SYMBOL(drmm_connector_hdmi_init);
+> > > > > > > @@ -665,6 +672,7 @@ void drm_connector_cleanup(struct drm_con=
+nector *connector)
+> > > > > > >               connector->funcs->atomic_destroy_state(connecto=
+r,
+> > > > > > >                                                      connecto=
+r->state);
+> > > > > > >
+> > > > > > > +     mutex_destroy(&connector->hdmi_codec.lock);
+> > > > > > >       mutex_destroy(&connector->hdmi.infoframes.lock);
+> > > > > > >       mutex_destroy(&connector->mutex);
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/drm_connector_hdmi_codec.c b/dri=
+vers/gpu/drm/drm_connector_hdmi_codec.c
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..a3a7ad117f6f
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/drivers/gpu/drm/drm_connector_hdmi_codec.c
+> > > > > > > @@ -0,0 +1,157 @@
+> > > > > > > +/*
+> > > > > > > + * Copyright (c) 2024 Linaro Ltd
+> > > > > > > + *
+> > > > > > > + * Permission to use, copy, modify, distribute, and sell thi=
+s software and its
+> > > > > > > + * documentation for any purpose is hereby granted without f=
+ee, provided that
+> > > > > > > + * the above copyright notice appear in all copies and that =
+both that copyright
+> > > > > > > + * notice and this permission notice appear in supporting do=
+cumentation, and
+> > > > > > > + * that the name of the copyright holders not be used in adv=
+ertising or
+> > > > > > > + * publicity pertaining to distribution of the software with=
+out specific,
+> > > > > > > + * written prior permission.  The copyright holders make no =
+representations
+> > > > > > > + * about the suitability of this software for any purpose.  =
+It is provided "as
+> > > > > > > + * is" without express or implied warranty.
+> > > > > > > + *
+> > > > > > > + * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD=
+ TO THIS SOFTWARE,
+> > > > > > > + * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND F=
+ITNESS, IN NO
+> > > > > > > + * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECI=
+AL, INDIRECT OR
+> > > > > > > + * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING=
+ FROM LOSS OF USE,
+> > > > > > > + * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIG=
+ENCE OR OTHER
+> > > > > > > + * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE=
+ USE OR PERFORMANCE
+> > > > > > > + * OF THIS SOFTWARE.
+> > > > > > > + */
+> > > > > > > +
+> > > > > > > +#include <linux/mutex.h>
+> > > > > > > +#include <linux/platform_device.h>
+> > > > > > > +
+> > > > > > > +#include <drm/drm_connector.h>
+> > > > > > > +#include <drm/drm_managed.h>
+> > > > > > > +
+> > > > > > > +#include <sound/hdmi-codec.h>
+> > > > > > > +
+> > > > > > > +static int drm_connector_hdmi_codec_get_eld(struct device *d=
+ev, void *data,
+> > > > > > > +                                         uint8_t *buf, size_=
+t len)
+> > > > > > > +{
+> > > > > > > +     struct drm_connector *connector =3D data;
+> > > > > > > +
+> > > > > > > +     //  FIXME: locking against drm_edid_to_eld ?
+> > > > > > > +     memcpy(buf, connector->eld, min(sizeof(connector->eld),=
+ len));
+> > > > > > > +
+> > > > > > > +     return 0;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static int drm_connector_hdmi_codec_hook_plugged_cb(struct d=
+evice *dev,
+> > > > > > > +                                                 void *data,
+> > > > > > > +                                                 hdmi_codec_=
+plugged_cb fn,
+> > > > > > > +                                                 struct devi=
+ce *codec_dev)
+> > > > > > > +{
+> > > > > > > +     struct drm_connector *connector =3D data;
+> > > > > > > +
+> > > > > > > +     mutex_lock(&connector->hdmi_codec.lock);
+> > > > > > > +
+> > > > > > > +     connector->hdmi_codec.plugged_cb =3D fn;
+> > > > > > > +     connector->hdmi_codec.plugged_cb_dev =3D codec_dev;
+> > > > > > > +
+> > > > > > > +     fn(codec_dev, connector->hdmi_codec.last_state);
+> > > > > > > +
+> > > > > > > +     mutex_unlock(&connector->hdmi_codec.lock);
+> > > > > > > +
+> > > > > > > +     return 0;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +void drm_connector_hdmi_codec_plugged_notify(struct drm_conn=
+ector *connector,
+> > > > > > > +                                          bool plugged)
+> > > > > > > +{
+> > > > > > > +     mutex_lock(&connector->hdmi_codec.lock);
+> > > > > > > +
+> > > > > > > +     connector->hdmi_codec.last_state =3D plugged;
+> > > > > > > +
+> > > > > > > +     if (connector->hdmi_codec.plugged_cb &&
+> > > > > > > +         connector->hdmi_codec.plugged_cb_dev)
+> > > > > > > +             connector->hdmi_codec.plugged_cb(connector->hdm=
+i_codec.plugged_cb_dev,
+> > > > > > > +                                              connector->hdm=
+i_codec.last_state);
+> > > > > > > +
+> > > > > > > +     mutex_unlock(&connector->hdmi_codec.lock);
+> > > > > > > +}
+> > > > > > > +EXPORT_SYMBOL(drm_connector_hdmi_codec_plugged_notify);
+> > > > > >
+> > > > > > I think we should do this the other way around, or rather, like=
+ we do
+> > > > > > for drm_connector_hdmi_init. We'll need a hotplug handler for m=
+ultiple
+> > > > > > things (CEC, HDMI 2.0, audio), so it would be best to have a si=
+ngle
+> > > > > > function to call from drivers, that will perform whatever is ne=
+eded
+> > > > > > depending on the driver's capabilities.
+> > > > >=20
+> > > > > I see, this API is probably misnamed. The hdmi_codec_ops use the
+> > > > > 'plugged' term,
+> > > >=20
+> > > > Is it misnamed?
+> > > >=20
+> > > > It's documented as:
+> > > >=20
+> > > >   Hook callback function to handle connector plug event. Optional.
+> > > >=20
+> > > > > but most of the drivers notify the ASoC / codec during atomic_ena=
+ble /
+> > > > > atomic_disable path, because usually the audio path can not work =
+with
+> > > > > the video path being disabled.
+> > > >=20
+> > > > That's not clear to me either:
+> > > >=20
+> > > >   - rockchip/cdn-dp, msm/dp/dp-audio, dw-hdmi, seem to call it at
+> > > >     enable/disable
+> > > >=20
+> > > >   - anx7625, mtk_hdmi and mtk_dp calls it in detect
+> > > >=20
+> > > >   - adv7511, ite-it66121, lontium-lt9611, lontium-lt9611uxc, sii902=
+x,
+> > > >     exynos, tda998x, msm_hdmi, sti, tegra, vc4 don't call it at all.
+> > > >=20
+> > > > So it doesn't look like there's a majority we can align with, and
+> > > > neither should we: we need to figure out what we *need* to do and w=
+hen,
+> > > > and do that.
+> > > >=20
+> > > > From the documentation and quickly through the code though, handlin=
+g it
+> > > > in detect looks like the right call.
+> > >=20
+> > > It is tempting to have it in the hotplug call. However:
+> > >=20
+> > > - It is used to send events to the ASoC Jack, marking the output as
+> > >   plugged or unplugged. Once the output is plugged, userspace might
+> > >   consider using it for the audio output. Please correct me if I'm
+> > >   wrong, but I don't think one can output audio to the HDMI plug unle=
+ss
+> > >   there is a video stream.
+> >=20
+> > That's something to check in the HDMI spec and with the ALSA
+> > maintainers.
+>=20
+> Mark and Liam are on CC list. I've also pinged Mark on the IRC (on
+> #alsa, if the channel logs are preserved somewhere)
+>=20
+> <lumag> I'm trying to implement a somewhat generic implementation that th=
+e drivers can hook in. The main discussion is at [link to this discussion]
+> <lumag> So in theory that affects all ASoC platforms having HDMI or DP au=
+dio output
+> <broonie> In that case I'd be conservative and try to follow the state of=
+ the physical connection as closely as possible.
+>=20
+> So it is really 'plugged'.
 
->
-> I think the main problem here, on how genpd doesn't fit with OPP core, is that
-> the OPP core is trying to do some sort of aggregation generally at its level,
-> like avoiding a change of OPP if the OPP is same. I think the right way to fix
-> this is by not doing any aggregation at OPP core level and genpd handle it all.
-> Which you are also aligned with I guess. This would also mean that OPP core
-> shouldn't try configuring, clk, regulator, bandwidth, etc for a genpd. The Genpd
-> core should handle that, else we may end up incorrectly configuring things.
->
-> I guess this is what you were trying to say as well, when you were trying to
-> replace the recursive call with set-level only.
+Ack.
 
-Right, I think we are in agreement. Aggregation of the
-*performance-state* (opp-level) needs to be managed by genpd, solely.
+> > > - Having it in the hotplug notification chain is also troublesome. As
+> > >   Dave pointed out in the quoted piece of code, it should come after
+> > >   reading the EDID on the connect event. On the disconnect event it
+> > >   should probably come before calling the notification chain, to let
+> > >   audio code interract correctly with the fully enabled display devic=
+es.
+> >=20
+> > EDIDs are fetched when hotplug is detected anyway, and we need it for
+> > other things anyway (like CEC).
+>=20
+> I see that:
+>=20
+> - VC4 reads EDID and sets CEC address directly in hotplug notifier and
+>   then again in get_modes callback. (why is it necessary in the hotplug
+>   notifier, if it's done anyway in get_modes?)
 
->
-> I think, we don't need that change but rather avoid all these extra settings
-> from dev_pm_opp_set_opp() itself.
->
-> Also consider that genpd configuration doesn't only happen with recursive call,
-> but can happen with a call to dev_pm_opp_set_opp() directly too for the genpd.
+vc4 is probably somewhat correct, but also a bit redundant here: the CEC
+physical address is supposed to be set when we detect a sink.
 
-Right.
+When that sink is removed, we don't have a physical address anymore and
+we thus need to call cec_phys_addr_invalidate.
 
->
-> > The API as such isn't the problem, but rather that we are recursivly
-> > calling dev_pm_opp_set_opp() for the required-devs.
->
-> I think that design is rather correct, just like other frameworks. Just that we
-> need to do only set-level for genpds and nothing else. That will have exactly
-> the same behavior that you want.
+When a sink is plugged again, we need to call cec_s_phys_addr() with the
+sink address.
 
-I don't quite understand what you are proposing. Do you want to add a
-separate path for opp-levels?
+So what vc4_hdmi_handle_hotplug is doing is fine, but the one in the
+get_modes might be redundant.
 
-The problem with that would be that platforms (Tegra at least) are
-already using a combination of opp-level and clocks.
+> - sun4i sets CEC address from get_modes
 
->
-> > In the single PM domain case, this would simply not work, as there is
-> > not a separate virtual device we can assign to the required-dev to.
->
-> We can assign the real device in that case, why is that a problem ?
+Yeah, that doesn't work.=20
 
-To be able to call dev_pm_opp_set_opp() on the required-dev (which
-would be the real device in this case), we need to add it to genpd's
-OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
+If the display is switched to another one and if the userspace doesn't
+react to the hotplug event by calling get_modes, the physical address
+will be the old one.
 
-The problem with this, is that the real device already has its own OPP
-table (with the required-OPPs pointing to genpd's OPP table), which
-means that we would end up adding the device to two different OPP
-tables.
+But since it's a polled hotplug, it's a situation that generally sucks.
 
-Kind regards
-Uffe
+> - ADV7511 does a trick and sets CEC address from edid_read() callback
+>   (with the FIXME from Jani that basically tells us to move this to
+>   get_modes)
+
+Same situation than sun4i here, except for the fact that it can handle
+hotplug through an interrupt.
+
+> - omapdrm clears CEC address from hpd_notify, but sets it from the
+>   edid_read() callback with the same FIXME.
+
+I think it's still broken there. It properly clears the physical address
+when the sink is disconnected, but relies on someone calling get_modes
+to set it again, which isn't guaranteed.
+
+> - i915 sets CEC address from .detect_ctx callback
+
+That one is vc4 minus the get_modes redundancy.
+
+> So there is no uniformity too. Handling it from drm_bridge_connector() /
+> get_modes might help, but that requires clearing one of TODO items.
+
+There's no uniformity, but I guess both vc4 and i915 are much more
+battle-tested than sun4i, omapdrm, or adv7511 might be, and they both
+behave pretty much the same.
+
+Generally speaking (and it might be sad), but i915 is what userspace
+expects, so it's usually what we want to follow.
+
+Maxime
+
+--b6qlvgiljxtj67ge
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZqIZ7gAKCRAnX84Zoj2+
+dmCZAX4lgvUboI+YH0rV/NbXD4Z3iTPhdgXyvG3Uma1JXtxpABkJA50aYctkf2q7
+Ug28AW8BfRdMmFiFtKkRuvFXPxGR+abCeAtqk1DlYxO9xOOLiYF/4jfAoDpnSk2j
+xPJ8Huz4+g==
+=LCTB
+-----END PGP SIGNATURE-----
+
+--b6qlvgiljxtj67ge--
 
