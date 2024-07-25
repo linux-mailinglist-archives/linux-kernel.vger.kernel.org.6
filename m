@@ -1,138 +1,112 @@
-Return-Path: <linux-kernel+bounces-262037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988B493BFD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:22:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9287A93BFD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3E01F21EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:22:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CECDEB219F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD12198E77;
-	Thu, 25 Jul 2024 10:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E427198E63;
+	Thu, 25 Jul 2024 10:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm7hW8QZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="mM4OIwkj"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81CD1741F0;
-	Thu, 25 Jul 2024 10:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71E19750B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721902965; cv=none; b=OGoYRps1jl/w20rvul56i/GZ6PRF7cHpYYFSfUHrQgukCc1OI6jz+WmIdOkHFvTeb4t8sI/HCVIoy33sDMkqzz7So0n9SQLfwSzDaXHZGe3nLfuy9M2H6WJTAmHubo76hoZXna2vEmZtDBLh8UgJQ7SYAVwrOON8Zd5IJl2J29A=
+	t=1721903009; cv=none; b=rrSfd+hCMPLQTOqQCvWV/dSoIpcIfWD8W951y/TMjJpzXnBLCvEE3WTmio7L1dT3mj3vUaTjCRqCYAdj4q2rmQqnhycBRVIuAhGmz7pZ3rYCXyq9atxXhTLNdkLaNtWDyUbx0SICj86V+x8VE8tT0WTM/0cp0eDGGEPMqAbN5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721902965; c=relaxed/simple;
-	bh=3qFhU+Y9MXc9OmpxW465huXr5oqytMjuCzZaj34RsJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Swk7YycxBpGLRptbH1iwjYhNRAHnuVtOViG0/fE/B748nR07y5g45LKG/CWpgWNVgtGLSmQORWUWm4GZERtV1B0MkyzbCOqOEEzv1qC/jD7oEI9nfQJ8c7l7IKl62ayIXDeyqQ2oynaUDO9OfprczBDEhy8uihp8IAwT/TB+ZMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm7hW8QZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9436C116B1;
-	Thu, 25 Jul 2024 10:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721902964;
-	bh=3qFhU+Y9MXc9OmpxW465huXr5oqytMjuCzZaj34RsJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dm7hW8QZInpGLQ+lLuiBtOJHE9i9CGYD58Dweu2MaEcaG6m4p4I1LjAR++L5hSV1K
-	 QM/eedUv549InZvVk2u7NWWPvXvm0jtdoC28d1qrzHoQQKBQgfgs60prHqJAfymtjT
-	 0vUMDOdBpOuAuCAig/W8mw4EXKgEB2walVDb6XavsEKx1lxwK0/Oat30R8mt4LXtGX
-	 Vgw+nXSCsZIZjznHn38DxYwWEYCCHN2JggpuoV9AIPBFKwC4dl5omk4229RPjnT/Im
-	 HQWceD61rc6+23vrXIZEW1jYL2jf2bI9NQ4lj8Mm2NWYB7Y1PzvK8+yQE6JVoAAf8X
-	 II9Smq5nMe7MQ==
-Date: Thu, 25 Jul 2024 11:22:40 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Kees Cook <kees@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] leds: gpio: Set num_leds after allocation
-Message-ID: <20240725102240.GE501857@google.com>
-References: <20240716212455.work.809-kees@kernel.org>
- <c16715ff-1e47-4a73-8fcb-87462069b5ca@embeddedor.com>
+	s=arc-20240116; t=1721903009; c=relaxed/simple;
+	bh=tgODPTkneW+SFL2pkw05xYiUxk1/X5QtAM314JqFaQk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PFdr4HXeZGm+hlEWSuXPKXklIwBU3cr3iUBeGo8yysGyelnUzcm9l/ClyLA1m8oXgmcruwjcXUHaCDhkHjJ4ndlgH97E5oL77yucYNVJNtAxi91baEt8U8NgPDz7k7vg4lUCc+MTFODocB8kP0oVs64Pt2djM9RenBw/VDdS0Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=mM4OIwkj; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721903004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t4B5CpogFr/6szGnySiBlRSQMQJUsoQdHfG8O0D6Vd0=;
+	b=mM4OIwkj418FvPDuuERKrHUMX3ct9zYl0HmYydENQB+MSGBP++IZpMbJ9vp06N+BlRRsi5
+	OC/Gn0WwdodBtUHjD6xRhsxDob9PgsQRAWvh1Vm+wP4B7MeuYBd/mSWCzME0jT0EZSrYVI
+	GCCKn5qp7bBb4i2Gh0cnYvMVklrfoRSDAGdwux7CudFRR42tN5SUQVQBQ9SexPwHBSNlsG
+	3rESJ1dxGpSHqhTDEv5R68cigBOFa0iRFt0AYWwEjEQbBkFWy4zQnrvOj+MDbkXw5cnm3E
+	Fa6SzwUQAj0lry//NyNzXxJxFlJX7BgVnt23OW0n/60TfXNF9dH8UgGUZyqjTA==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Dragan Simic <dsimic@manjaro.org>, Steven Price <steven.price@arm.com>
+Cc: dri-devel@lists.freedesktop.org, boris.brezillon@collabora.com,
+ robh@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ linux-kernel@vger.kernel.org, Furkan Kardame <f.kardame@manjaro.org>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
+Date: Thu, 25 Jul 2024 12:23:13 +0200
+Message-ID: <3863847.7OiSWjA07a@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <ae62139f-3655-44d0-aeb7-15c6b67eb97c@arm.com>
+References:
+ <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
+ <d20667e76aa56fb69c91ef327d467d4a@manjaro.org>
+ <ae62139f-3655-44d0-aeb7-15c6b67eb97c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c16715ff-1e47-4a73-8fcb-87462069b5ca@embeddedor.com>
+Content-Type: multipart/signed; boundary="nextPart3174170.kLLAvsri18";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 16 Jul 2024, Gustavo A. R. Silva wrote:
+--nextPart3174170.kLLAvsri18
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Thu, 25 Jul 2024 12:23:13 +0200
+Message-ID: <3863847.7OiSWjA07a@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <ae62139f-3655-44d0-aeb7-15c6b67eb97c@arm.com>
+MIME-Version: 1.0
 
-> 
-> 
-> On 16/07/24 15:24, Kees Cook wrote:
-> > With the new __counted_by annotation, the "num_leds" variable needs to
-> > valid for accesses to the "leds" array. This requirement is not met in
-> > gpio_leds_create(), since "num_leds" starts at "0", so "leds" index "0"
-> > will not be considered valid (num_leds would need to be "1" to access
-> > index "0").
-> > 
-> > Fix this by setting the allocation size after allocation, and then update
-> > the final count based on how many were actually added to the array.
-> > 
-> > Fixes: 52cd75108a42 ("leds: gpio: Annotate struct gpio_leds_priv with __counted_by")
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> 
-> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> 
-> Thanks
-> -- 
+On Thursday, 25 July 2024 11:20:22 CEST Steven Price wrote:
+> [1] Although from my understanding it's firmware which is the real cause
+> of bloat in initramfs size. I guess I need to start paying attention to
+> this for panthor which adds GPU firmware - although currently tiny in
+> comparison to others.
 
-Using the signature tag in the middle of an email turns the remainder of
-the body into a signature block, which is odd to say the least.  By all
-means sign-off in the middle of a mail, but please refrain from
-converting the rest of the mail.
+Can confirm that's the case.
+When using (f.e.?) plymouth, the gpu drivers and corresponding firmware
+gets added to initramfs. If you then have much more and much larger firmware 
+files (nvidia f.e. added 2 fw files of 23 and 38 MB respectively ...) then you 
+get a corresponding much larger initramfs.
+If you add a (fixed) bug in initramfs-tools where symlinks to directories 
+weren't preserved, but full copies were made, you could end up with a single 
+initramfs of 240MB ...
+--nextPart3174170.kLLAvsri18
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-> Gustavo
-> 
-> > ---
-> > Cc: Lee Jones <lee@kernel.org>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: linux-leds@vger.kernel.org
-> > ---
-> >   drivers/leds/leds-gpio.c | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> > index 83fcd7b6afff..4d1612d557c8 100644
-> > --- a/drivers/leds/leds-gpio.c
-> > +++ b/drivers/leds/leds-gpio.c
-> > @@ -150,7 +150,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct device *dev)
-> >   {
-> >   	struct fwnode_handle *child;
-> >   	struct gpio_leds_priv *priv;
-> > -	int count, ret;
-> > +	int count, used, ret;
-> >   	count = device_get_child_node_count(dev);
-> >   	if (!count)
-> > @@ -159,9 +159,11 @@ static struct gpio_leds_priv *gpio_leds_create(struct device *dev)
-> >   	priv = devm_kzalloc(dev, struct_size(priv, leds, count), GFP_KERNEL);
-> >   	if (!priv)
-> >   		return ERR_PTR(-ENOMEM);
-> > +	priv->num_leds = count;
-> > +	used = 0;
-> >   	device_for_each_child_node(dev, child) {
-> > -		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
-> > +		struct gpio_led_data *led_dat = &priv->leds[used];
-> >   		struct gpio_led led = {};
-> >   		/*
-> > @@ -197,8 +199,9 @@ static struct gpio_leds_priv *gpio_leds_create(struct device *dev)
-> >   		/* Set gpiod label to match the corresponding LED name. */
-> >   		gpiod_set_consumer_name(led_dat->gpiod,
-> >   					led_dat->cdev.dev->kobj.name);
-> > -		priv->num_leds++;
-> > +		used++;
-> >   	}
-> > +	priv->num_leds = used;
-> >   	return priv;
-> >   }
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Lee Jones [李琼斯]
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZqInkQAKCRDXblvOeH7b
+bqhlAP9pNuQEjWf+eKX8vuBpB+yxlxQNwxFBHAmPe/eBLu3cjwD8D9QJdQx86PUn
+WiKv4UAe5v7jglsoI4Tu2tWe41m83A4=
+=Dv1b
+-----END PGP SIGNATURE-----
+
+--nextPart3174170.kLLAvsri18--
+
+
+
 
