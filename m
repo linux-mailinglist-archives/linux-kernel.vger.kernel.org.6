@@ -1,197 +1,150 @@
-Return-Path: <linux-kernel+bounces-262526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4504F93C837
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:17:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E92E93C83D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724F51C2140C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F261C213F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CAB2B9C7;
-	Thu, 25 Jul 2024 18:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FB42E64B;
+	Thu, 25 Jul 2024 18:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0O+hwPJq"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4jz3CDYg"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD7D2376A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3FB210FB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931469; cv=none; b=gb1lhYaXZnOyxLMrz9JCGJgfTLhXZw7mr0PXDUMPjYMVs25k8wJtSbgpQa9fQlcpUpNIIfHAgKuq82Eo1ELujq9ApSV0gbOVkrjrGbvcRDcR4IXZvcisxYR67SezrcH3GGth5kxzMIcoSLw/mL5jtIRn9kZ6hMQd4/z90x8S4mQ=
+	t=1721931571; cv=none; b=mZD3MBFB/zP5PfECk2f+nuN2RpgfJXb5hmYzRaO2O8L3jWuEdskZjPA5ZhNsvfyQDBxuUdcIj+/LLr2fqhfs0Jwx8+Ws6KqBIWN16RyA0II/vMTfO7axcHzBlKqdSjUuFaAgbHOcFvo7kMv8kpDrVB/5241+sLPjxhbr9V3w1C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931469; c=relaxed/simple;
-	bh=7TGdImb3lenZ6if5s4D0hbXhdDde95DNNoZfafPu3I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W7WFEzGLbdHRB8lDymtOkBAuW4aAVqDQA9eqqzKZ/qEHgIweRYHrBRe4IABQWAnI/dcSXbCkCgIYnWPPZmy9JUwy35dPFhBNO1z3Ytb2n+W7Fmv/DfRchnWJZ6+JAS0hvTXnrng2zDgWRYzdzcN+22Wu4KhzF+Hnr/QvXqX0baQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0O+hwPJq; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1721931571; c=relaxed/simple;
+	bh=Ue5vF5Ixtm0O1c2YnWtk0OGg5UItE1cxouPFbqUWkBs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Uoazs2bkkADJpJMput8ChKKk8FuZ0yHE2lIUj8RtIpdZPwN0SaU1fQco9lPFjbpeqkcVvFEBe4cRFKbl9pQ5l/XGZJ6vV+Omb7lsOt8C8pcQwbAdjlavBRejGg97/VKXZe45Ee5n4tUDKVnDK1pTXUtAbHc0tdz67BG5FpPcqXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4jz3CDYg; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d333d57cdso134519b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:17:48 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fc5acc1b96so12218695ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721931468; x=1722536268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCU/39n/MEh1qJPI6jK5LfqbsxyFwdIdQzHQHHv611A=;
-        b=0O+hwPJqirc88Dd0P+wWSlKQSkkrmqATFfdchfD7NapXyvBCRzpqVHbYYKmKT6pwVC
-         xgPQZXCWKhl/DsAJoL72NBeh/YljM+k7gln/rHbqCh6wCQvzKshXxHPFH6ZtH4QagctC
-         IhApB9eOLZ55PDNxtmEQtSThiFGhli4UQIlDYAjsOFNzJwnrabnSWOon2tDOXnCPXhEv
-         NkygSz7RMD+TzdiRsNA9PzNyVNdns52gpcyczWJg7IL0aDbmfjH+63G5SCFfo8UWRzoJ
-         ADtDpUyoULPqJNPoogNoU8aG3xYyGkloRfFbawX4YBzMWUNhF/fEQ/VzQAm94pbWEq+1
-         sdkA==
+        d=google.com; s=20230601; t=1721931569; x=1722536369; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+cWinSd71QUFpeng6pkfteDp9R+YDOSFKPyk/5CKIQ=;
+        b=4jz3CDYgnbX66UdDS5vj6bDN9m1+8C6pvFDrGymgpok0XBtnjzpBxKJ1p5706qSGI9
+         ZiGnksugtzi5psMDaKn3yQEX4tsMe/c3ganC401oIcJjoMvXvt0LWakHkd9puCGRtI/r
+         Mrw4l5fh9BYfW/NopviizdjgFGS2GkG/MbAoRgSUJ7xV/G7mnxsOKWmSEFsaWUm8I+Ao
+         A7Y+txGrX4pCdqjXO4JjBXRdDKql786IIH9GZ8eMgxpnA/kkBuCSCj4PhLqUxh7SzxXh
+         3HAT3DkjPd3o/pLocircC1SpjoLDTjqCp3juBOEJyq0yV4LnJ4QFqxxc/TdJcUSwm0Gq
+         NVvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721931468; x=1722536268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCU/39n/MEh1qJPI6jK5LfqbsxyFwdIdQzHQHHv611A=;
-        b=f+gfB1MxvH/0bGcNlT6TrPD3TYIWkDqRbOQsNNDwKmwoXpPxu4m8cjb59gYzjydBZA
-         04nPzeLTj2XYTt9ev173EM0Qsjz0Td1ElC/1e3BwzfzXIzZeH/OFd0rFNrpVY8AYkpMl
-         302qvJLwrJ6vtUPdHX/r7zon9fjfNA90y+gzfbNnojSAVQQiIO+Ih6oYYrUNFB+SEZ2Q
-         ZqTJSNQ3dSk+hkR59mT6qHx9CaPLGEFCLoJ5WeLVpltCjiQY19GYLrA/86+Pw/lhCxL4
-         kRP7926QUXRUx6hAjZiugZjjmuC3ZNdeBkTyd19kHxQVSAbDjN67K69PDCY00U4HEitN
-         z+aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/N64r/eLdpcOjfw90ADHyChzOnHSsyu71Qbr3PvB6z3195ZEdnWi2BbdcC4B54HwgdT8ej/BZ6eOrILkpgkbkzUgnNRRoPo5ePl7t
-X-Gm-Message-State: AOJu0YwdVjpQiCQIqtbvizPGRXjdFaPocVAlBHVcdtGURV0ZnMHEm4we
-	zZ3cIjS5OOmSJjgFu6kH/T54nVffs+7xHlzqco560hff7vq4n4+e91omBSXCCw==
-X-Google-Smtp-Source: AGHT+IGgJJ2MHUDyfdNf8nuLsnVaCfQ9A96+ttKTHUsGKEKorXbwZR90OZ/UEb7mApStThubbs9AYw==
-X-Received: by 2002:a05:6a00:2d8c:b0:70e:8070:f9d0 with SMTP id d2e1a72fcca58-70eae8d5c8amr3531836b3a.9.1721931466986;
-        Thu, 25 Jul 2024 11:17:46 -0700 (PDT)
-Received: from google.com (61.139.125.34.bc.googleusercontent.com. [34.125.139.61])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f884c245sm1490390a12.50.2024.07.25.11.17.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 11:17:46 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:17:41 -0700
-From: David Matlack <dmatlack@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 08/11] KVM: x86: Optimize kvm_{test_,}age_gfn a little
- bit
-Message-ID: <ZqKWxfqRoJzUWroG@google.com>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-9-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1721931569; x=1722536369;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+cWinSd71QUFpeng6pkfteDp9R+YDOSFKPyk/5CKIQ=;
+        b=fSw8a2/bqA3D/JYyYE7RQj0MiZyuhYmzu1mRMdeiS4d+ox13CFNQj9RPwPBU53wyz1
+         9xhXR4fkDUxnqlOXONunOjyqRamq7wa/kE0mRyBnDTwEzA83Mj+Xl5aKKo5p6V+7wJDU
+         VhAQhMew8QhxfNuh//leCOLm8mIj0s4PImGBr0KYkIS2gyi63oBFvjYxS5N85rmZWgGB
+         Topv9etu6rUImREQA/56wfNvrlUb8Ag8Ey2S82xyHo2k9xksNYPhdjESm9uawYWrU4Ng
+         uXxDL46NJm8n8mWuj0yKMX2nEprYFvfNk9fxsk8TtVF6rgBTA6HQqJG40ttdsYdrwmaO
+         0Wuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkuduabya80DKmxSKZtUaJnf7mwpbeogvXQq4Dgznetv4W/64nY50RW2LMniIRloy1aMlmaoBD13ttbKF9eVWuaG/PGmelB80WJWqC
+X-Gm-Message-State: AOJu0YzdiFi5WfiDe2mPTazHyYgNaeisNkOnSbXFxHWCX3u3reSSPkV9
+	5e9TMVLZpaNlH4ybG22gnhw5Df7UXZWCqIStrC4FjK+BO5hE60fbVG6+htmdGY2ZVOGYrHP0QYW
+	ZbA4PesCEunOAN6COs2n3Xg==
+X-Google-Smtp-Source: AGHT+IEq0/Qf2aH7olYk0jZU1lYwwK43xAQuSUsE/EQnG/wMgzk9gQAK1/L4A02IBfsH1aseVKWvPS3Vq/ZyFeT5Zw==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a17:903:1ce:b0:1fa:acf0:72d6 with SMTP
+ id d9443c01a7336-1fed909f356mr1844455ad.3.1721931568714; Thu, 25 Jul 2024
+ 11:19:28 -0700 (PDT)
+Date: Thu, 25 Jul 2024 18:19:27 +0000
+In-Reply-To: <diqzo76myc5x.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724011037.3671523-9-jthoughton@google.com>
+Mime-Version: 1.0
+References: <diqzo76myc5x.fsf@ackerleytng-ctop.c.googlers.com>
+Message-ID: <diqzzfq55o7k.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v5 07/29] KVM: selftests: TDX: Update
+ load_td_memory_region for VM memory backed by guest memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: sagis@google.com, linux-kselftest@vger.kernel.org, afranji@google.com, 
+	erdemaktas@google.com, isaku.yamahata@intel.com, seanjc@google.com, 
+	pbonzini@redhat.com, shuah@kernel.org, pgonda@google.com, haibo1.xu@intel.com, 
+	chao.p.peng@linux.intel.com, vannapurve@google.com, runanwang@google.com, 
+	vipinsh@google.com, jmattson@google.com, dmatlack@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-07-24 01:10 AM, James Houghton wrote:
-> Optimize both kvm_age_gfn and kvm_test_age_gfn's interaction with the
+Ackerley Tng <ackerleytng@google.com> writes:
 
-nit: Use () when referring to functions.
 
-> shadow MMU by, rather than checking if our memslot has rmaps, check if
-> there are any indirect_shadow_pages at all.
+> Yan Zhao <yan.y.zhao@intel.com> writes:
+>
+>> On Tue, Dec 12, 2023 at 12:46:22PM -0800, Sagi Shahar wrote:
+>>> From: Ackerley Tng <ackerleytng@google.com>
+>>> 
+>>> If guest memory is backed by restricted memfd
+>>> 
+>>> + UPM is being used, hence encrypted memory region has to be
+>>>   registered
+>>> + Can avoid making a copy of guest memory before getting TDX to
+>>>   initialize the memory region
+>>> 
+>>> <snip>
+>>
+>> For memslot 0, 1, 2, when guest_memfd != -1,
+>> is it possible to also munmap(mmap_start, mmap_size) after finish loading?
+>>
+>
+> Thank you for your review!
+>
+> Did you mean "possible" as in whether it is "correct" to do munmap() for
+> the rest of the earlier memslots containing non-test-code?
+>
+> It is correct because the munmap() just deallocates memory that was
+> recently allocated in mmap() in this same change. The memory set up for
+> the VM is not affected.
+>
+> <snip>
+>
+> If we are not using guest_memfd (region->region.guest_memfd == -1), then
+> we need to make the source and destination address different by copying
+> the contents at the source address somewhere else for the call to
+> tdx_init_mem_region(). That is what the mmap() is doing. This temporary
+> buffer then needs to be freed, hence the munmap(). Without this copying,
+> the destination address for the ioctl's copy would be the same as the
+> source address, since those very same pages are provided in the memslot
+> for this memory region.
+>
 
-What is optimized by checking indirect_shadow_pages instead of
-have_rmaps and what's the benefit? Smells like a premature optimization.
+Update on this:
 
-> 
-> Also, for kvm_test_age_gfn, reorder the TDP MMU check to be first. If we
-> find that the range is young, we do not need to check the shadow MMU.
+Since TDX requires the use of guest_memfd, this patch will be simplified
+in the next revision.
 
-This should be a separate commit since it's a logically distinct change
-and no dependency on the other change in this commit (other than both
-touch the same function).
+The checks for region->region.guest_memfd != -1 will be removed, and
+there will be no need to do any mmap() or munmap(), so those will be
+removed as well.
 
-Splitting the commits up will also make it easier to write more specific
-short logs (instead of "optimize a little bit" :)
+> If we are using guest_memfd, then the destination address for the
+> ioctl's copy will be taken from the guest_memfd, which is already
+> different from the source address, hence we can skip the copying.
+>
 
-Also, the commit re-orders kvm_age_gfn() as well but the commit message
-only mentions kvm_test_age_gfn(). No objection to keeping the two
-functions consistent but it should be called out in the commit message.
-
-> 
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 7b93ce8f0680..919d59385f89 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -1629,19 +1629,24 @@ static void rmap_add(struct kvm_vcpu *vcpu, const struct kvm_memory_slot *slot,
->  	__rmap_add(vcpu->kvm, cache, slot, spte, gfn, access);
->  }
->  
-> +static bool kvm_has_shadow_mmu_sptes(struct kvm *kvm)
-> +{
-> +	return !tdp_mmu_enabled || READ_ONCE(kvm->arch.indirect_shadow_pages);
-> +}
-> +
->  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	bool young = false;
->  
-> -	if (kvm_memslots_have_rmaps(kvm)) {
-> +	if (tdp_mmu_enabled)
-> +		young |= kvm_tdp_mmu_age_gfn_range(kvm, range);
-> +
-> +	if (kvm_has_shadow_mmu_sptes(kvm)) {
->  		write_lock(&kvm->mmu_lock);
->  		young = kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
->  		write_unlock(&kvm->mmu_lock);
->  	}
->  
-> -	if (tdp_mmu_enabled)
-> -		young |= kvm_tdp_mmu_age_gfn_range(kvm, range);
-> -
->  	return young;
->  }
->  
-> @@ -1649,15 +1654,15 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	bool young = false;
->  
-> -	if (kvm_memslots_have_rmaps(kvm)) {
-> +	if (tdp_mmu_enabled)
-> +		young |= kvm_tdp_mmu_test_age_gfn(kvm, range);
-> +
-> +	if (!young && kvm_has_shadow_mmu_sptes(kvm)) {
-
-nit: A short comment here might be helpful to explain why young is
-checked.
-
->  		write_lock(&kvm->mmu_lock);
->  		young = kvm_handle_gfn_range(kvm, range, kvm_test_age_rmap);
->  		write_unlock(&kvm->mmu_lock);
->  	}
->  
-> -	if (tdp_mmu_enabled)
-> -		young |= kvm_tdp_mmu_test_age_gfn(kvm, range);
-> -
->  	return young;
->  }
->  
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
+>>>  }
+>>>  
+>>> -- 
+>>> 2.43.0.472.g3155946c3a-goog
+>>> 
+>>> 
 
