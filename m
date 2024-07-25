@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-262011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5820893BF54
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25E093BF55
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4891F21857
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDBC284E37
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E70198E7D;
-	Thu, 25 Jul 2024 09:46:56 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC89197A65;
+	Thu, 25 Jul 2024 09:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pj0zkRrI"
+Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0F6198A2A;
-	Thu, 25 Jul 2024 09:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FA116F8E8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900816; cv=none; b=FGosMPS/+3U6AUX7HLAphd6OJIXJV3qd5yjP0pVb0qktI5/kogsquwb3RKfOp5sPCQFPDpnQGORPz/byoKC1PYLrJ0QDynMSv4wFtyLBvcOkD2R+ytFwH6axhdi18Fu50KesNx6ujLQ5+r1te5tRwcEPuOmoSddAhi66PuP4U8g=
+	t=1721900859; cv=none; b=uWUdVYOBZathNhQKTiTGZSJU/Lt0pZroT/1cCcY7alu5udg4Jo0EvNc2hfmLNVeh56ox9/uvWjtNHLn5dBdyZuwbdKAG9NbUTOt87yQnB3La3b7MWdI6BiCUmo1ypQbDiyqZtYCEuIbjUFUZTp2ulUQ1CbCg6vbBDK97M4OwK4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900816; c=relaxed/simple;
-	bh=Zl6WxDvgI6EdQ86iGmiE7ATIMtA9F82mrPyf5FE1DF8=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=PAd54vqabUapv34rM/FoxpZ80D7d0uWiLMRt1vnRpBWHMEmxgAwXsuuFUvWsfas8ugFKf4xFx1OmjTUWdJ1YFSg+NMrK8qG9N9mQZFYf2cHX95WBZUitUCysQOiTULvAKATkdDXywKU3g5RdHpJbJb1SgHfb3IPlCfJTFeBR89A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id AE7C137811F4;
-	Thu, 25 Jul 2024 09:46:51 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <172142702137.153951.8294803513682327237.robh@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240719124032.26852-1-shreeya.patel@collabora.com>
- <20240719124032.26852-3-shreeya.patel@collabora.com> <172142702137.153951.8294803513682327237.robh@kernel.org>
-Date: Thu, 25 Jul 2024 10:46:51 +0100
-Cc: kernel@collabora.com, mchehab@kernel.org, conor+dt@kernel.org, linux-media@vger.kernel.org, nelson.costa@synopsys.com, linux-arm-kernel@lists.infradead.org, heiko@sntech.de, mturquette@baylibre.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, linux-rockchip@lists.infradead.org, shawn.wen@rock-chips.com, sboyd@kernel.org, "Dmitry Osipenko" <dmitry.osipenko@collabora.com>, p.zabel@pengutronix.de, jose.abreu@synopsys.com, linux-kernel@vger.kernel.org, krzk+dt@kernel.org, devicetree@vger.kernel.org, nicolas.dufresne@collabora.com
-To: "Rob Herring (Arm)" <robh@kernel.org>
+	s=arc-20240116; t=1721900859; c=relaxed/simple;
+	bh=VHnrK8mfrqp92FvzKcOHlbhtPGYu+/a5YFmfje6sRzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ae6+q24n/hr+UL/xm+flZ5jn9hILbqUK+3I8TeDmxTjqzZ1l4xkB3kD6IJ8T68JeeWGqLyEaT88Azua2NyAyMBOHUYM1QDb3d7EtHd6oTLgFS2AcUGxoHZAHe159lY5qNtYulNSK+cRpn8uWGqwdqxBMvKyB673+vwfUCIIk86E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pj0zkRrI; arc=none smtp.client-ip=209.85.208.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so10485021fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721900855; x=1722505655; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vh6BnYvxX7cOZnOXp4A2FChUwK4hyixoaOdLFscobUI=;
+        b=Pj0zkRrIcRXnVjaHjf7qkpAi1meQtJt1pGhtvGgnjdIle4u4WKIGHz61m7IqzIGfbo
+         bm9EOZR1CXg8bJmhUc7+bTgR0Ad4kZv5tvYCHhfu8FnOlt94NxBnvnNzlzglcTU2Sc08
+         CI7Wl+kzCX8a47PeFse3g5ElKfAFzHzJT+S3RIxSnZH1N+8tj6nCacnxyhESlYyc5nx6
+         YJoxcOBf6lvXWg0JtKGC/9/9K4t0Uvnah3/8nmRi8PohpbwZVPZYDEMXzMVDaEOQXCs1
+         IcnGzonSX8aKHTUpOobeAacRsRpq/9sWjysBZGlreSMf4I91AwgLBAG9gBSe9tkJUVv+
+         eUBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721900855; x=1722505655;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vh6BnYvxX7cOZnOXp4A2FChUwK4hyixoaOdLFscobUI=;
+        b=DgaSYaQ0AAKsXXDR1J2+N3Y9AFQdAqZd3gMzkV1OUMXVOn9Pf7cQOeaqPEoGYl/pZQ
+         GCb2+lmRm0z5/PYKkHbSfi+6sa3FmqzNbDkTGvozpKSUUSv2OeNN8oVJcTQSqB629C2G
+         bv8WwyCHYxQLYPmdhzgxI+sZ9qQ/5B1oVUmt5xtBvG6mkZo0127nrPjMHBbzUioakTAM
+         uRI3dRR3klOYODbw77GQt856rt9WW02SQYwPlR4sie3WvSRn9MQq3yVAsFl3kK2lisdU
+         c0Ah91DRf65yDckkQHjmhNdi+TdGcrO8hA0fxCg8V775xRLlTKpdqmnVLzpfVRHL203P
+         kfWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0S3h7Wpy4iK/69NMCqGtcARy8CqClMZqNAvfgXRiJ7kZmmPdmkZWDjOYVFkmsLt5p/tbz4OWu5Z5SElll52vn1WM4fKmhYmc2Zz/t
+X-Gm-Message-State: AOJu0YxSac/KnWWT1poHAu6tSUg+yRfA4dvquWd9CVEEw7wxd+D0X4SV
+	iJUHvPjB6iY9wQR6eQfA3RGrhHtq+ZvCKRRE88deEuT98jhVP1T1HFjM42BOTrs=
+X-Google-Smtp-Source: AGHT+IGNgwufr3Cr3jQ74vQshSOAsTk3pUl7POv3vHPQp5dPk860e9tKtodMAbWBLlzlQ9SH/Or4ow==
+X-Received: by 2002:a2e:9497:0:b0:2ef:2f17:9edd with SMTP id 38308e7fff4ca-2f03dbf2e63mr8456341fa.44.1721900855508;
+        Thu, 25 Jul 2024 02:47:35 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36863aa7sm1550832f8f.109.2024.07.25.02.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 02:47:35 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:47:33 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Zheng Zengkai <zhengzengkai@huawei.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [GIT PULL] kgdb changes for v6.11
+Message-ID: <20240725094733.GA2524052@aspen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <ae465-66a21f00-1-25170f80@209442668>
-Subject: =?utf-8?q?Re=3A?= [PATCH v4 2/4] =?utf-8?q?dt-bindings=3A?=
- =?utf-8?q?_media=3A?= Document bindings for HDMI RX Controller
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Saturday, July 20, 2024 03:40 IST, "Rob Herring (Arm)" <robh@kernel.=
-org> wrote:
+Hi Linus
 
->=20
-> On Fri, 19 Jul 2024 18:10:30 +0530, Shreeya Patel wrote:
-> > Document bindings for the Synopsys DesignWare HDMI RX Controller.
-> >=20
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> > ---
-> >=20
-> > Changes in v4 :-
-> >   - No change
-> >=20
-> > Changes in v3 :-
-> >   - Rename hdmirx=5Fcma to hdmi=5Freceiver=5Fcma
-> >   - Add a Reviewed-by tag
-> >=20
-> > Changes in v2 :-
-> >   - Add a description for the hardware
-> >   - Rename resets, vo1 grf and HPD properties
-> >   - Add a proper description for grf and vo1-grf phandles
-> >   - Rename the HDMI Input node name to hdmi-receiver
-> >   - Improve the subject line
-> >   - Include gpio header file in example to fix dt=5Fbinding=5Fcheck=
- failure
-> >=20
-> >  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++=
-++++
-> >  1 file changed, 132 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw=
--hdmi-rx.yaml
-> >=20
->=20
-> My bot found errors running 'make dt=5Fbinding=5Fcheck' on your patch=
-:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> Error: Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.exampl=
-e.dts:53.38-39 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bind=
-ings/media/snps,dw-hdmi-rx.example.dtb] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt=
-=5Fbinding=5Fcheck] Error 2
-> make: *** [Makefile:240: =5F=5Fsub-make] Error 2
->=20
-> doc reference errors (make refcheckdocs):
->=20
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20=
-240719124032.26852-3-shreeya.patel@collabora.com
->=20
-> The base for the series is generally the latest rc1. A different depe=
-ndency
-> should be noted in *this* patch.
->=20
+Sorry this is so late in the window. It's not even a good reason... I
+just lost track of which week it was. Happily this is only three small
+changes and all have been soaking in linux-next for a month or so.
 
-My HDMI RX patches are based on the linux-next/master branch.
-Since the bot tested the patches on top of rc1, it resulted in some err=
-ors
-due to missing reset ID patches.
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-I think the above statement means I should explicitly mention in this
-patch that it is based on linux-next/master (something to keep in mind
-for future :)
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
+are available in the Git repository at:
 
-> If you already ran 'make dt=5Fbinding=5Fcheck' and didn't see the abo=
-ve
-> error(s), then make sure 'yamllint' is installed and dt-schema is up =
-to
-> date:
->=20
-> pip3 install dtschema --upgrade
->=20
-> Please check and re-submit after running the above command yourself. =
-Note
-> that DT=5FSCHEMA=5FFILES can be set to your schema file to speed up c=
-hecking
-> your schema. However, it must be unset to test all examples with your=
- schema.
->=20
-> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
-=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
-> Kernel mailing list -- kernel@mailman.collabora.com
-> To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> This list is managed by https://mailman.collabora.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-6.11-rc1
 
+for you to fetch changes up to 9bccbe7b20876a34c70b13430ea1b308fc8d5a7e:
+
+  kdb: Get rid of redundant kdb_curr_task() (2024-06-21 15:49:29 +0100)
+
+----------------------------------------------------------------
+kgdb patches for 6.11
+
+Three small changes this cycle:
+
+1. Cleaning up an architecture abstraction that is no longer needed
+   because all the architectures have converged.
+2. Actually use the prompt argument to kdb_position_cursor() instead of
+   ignoring it (functionally this fix is a nop but that was due to luck
+   rather than good judgement)
+3. Fix a -Wformat-security warning.
+
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      kdb: address -Wformat-security warnings
+
+Douglas Anderson (1):
+      kdb: Use the passed prompt in kdb_position_cursor()
+
+Zheng Zengkai (1):
+      kdb: Get rid of redundant kdb_curr_task()
+
+ kernel/debug/kdb/kdb_bt.c      |  2 +-
+ kernel/debug/kdb/kdb_io.c      |  6 +++---
+ kernel/debug/kdb/kdb_main.c    | 18 ++++--------------
+ kernel/debug/kdb/kdb_private.h |  2 --
+ 4 files changed, 8 insertions(+), 20 deletions(-)
 
