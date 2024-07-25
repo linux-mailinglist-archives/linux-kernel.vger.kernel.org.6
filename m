@@ -1,133 +1,205 @@
-Return-Path: <linux-kernel+bounces-261796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ED693BC3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:54:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F2093BC40
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE8EB21CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:54:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449941C234A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D411A1411E6;
-	Thu, 25 Jul 2024 05:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC27113E40F;
+	Thu, 25 Jul 2024 05:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sg/oqDl3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jxrq+YPM"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB22C13DDBD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6A41CD35
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721886867; cv=none; b=cgvh1QafoX57r4JKbD6+zyLJnQ/mTT2Iy/sxkRDskwiRfOx+9ifmLhlU/rYT7SY8mG6Jfhh4s3s+yzes86EqYer+yG5fwvv1NOXiFNmw38ofMy/+UJsPzjzZS+t3llFNm0JKidijYwN7MfYU4AFoeQ4OD96afZ3Dl+2heBnzpUw=
+	t=1721886915; cv=none; b=AotpYwUP7Ep49TMN/IWy99dBtP46dg4gcNi0xGC2Zphud8I8aPtLBHgJgXI9P638l1jwSCl6SoMBVikrMK4J0INszw0crSNjXdqWFDbo7vIqqUxDV4m4wU8TnbweLyC4YgXLngg98IHvpRy7YD6N1YFqSyjKfphNZk/33a4TPz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721886867; c=relaxed/simple;
-	bh=gAZvwL67v0vt6xsxrH6XS/itsYUgy+inKlxURoSIcdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UyCE9/p9BH3AbfiOEPSyAd0DZgD4HovvaHndPPiz+hYS4fSoiGjV87BJQC5u7CO58Ud/w1Fx7Zn632xYlSCyjLYnMIfj3/Q+U83LE8Mj8Ofkylk6y/XHLg59O2VD2VgBusUW6qbv8SSpkuL3WpWe4Lu3+D7bH0aH8DRQKtQGTsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sg/oqDl3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721886864;
+	s=arc-20240116; t=1721886915; c=relaxed/simple;
+	bh=xuzbDE52Bn6g9Euv+PJQJSS0ckZ6+0Rbj8cvnQofx9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBYikuoGq0nNHWItABSve8UOfsII/rUdIPmyKhtqsIuv6BCYrqcV1x2QzufTqRLP+sNeQmI/udVLYjUI3iJFwUVK20++f9yswVMlkFz6TGW6NLk2knKO0fZXmK9+Gr6NkcyxqxHiaalOEo/rqx9cWKC2S6jvOfFFnCjzmDBkFPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jxrq+YPM; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721886910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Dh3yyuBj9HXf2A5cEfYqf0NaFgetwfgWSnefr6wKli8=;
-	b=Sg/oqDl3/zMVoIHGHP/9dA9o42bLVI+uErD2W0FnHd5ht+/ozbOH1kk/KqA3weiw0r/QCZ
-	Od2bx09pFEGgeEtbU1d6dIsOCp+DW3DmB8qZ9O18JPcbJ8TGLi565oG7HHWD3VbiL3bKv8
-	IwAsX6opCb1rXSkEfI1XuzfQyxyk9kE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-W1rqLgZNNKiuBM1B1NHVFw-1; Thu, 25 Jul 2024 01:54:21 -0400
-X-MC-Unique: W1rqLgZNNKiuBM1B1NHVFw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36835f6ebdcso420286f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:54:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721886860; x=1722491660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dh3yyuBj9HXf2A5cEfYqf0NaFgetwfgWSnefr6wKli8=;
-        b=W/6GW5xfM/N2Xx0eA+n1mHBppNL/ass25Obz6GhuyoRFiKSSHUiq7SgK46k5BlMOBa
-         HY8kGWH5gN/V0/Hs0G2JMqLRNKezjYBQefzbrVjKn+RUyeIwz3/tFkAmIVoTSgt+7gUL
-         7CxgxQ4YT+NPFvO7JMzcP7RA6y06ow7c0iz5FgB7dM8dvQxBhygOTvyRULAoodjM76lx
-         fhrZ7QxO6g+yEqPPARSCXGeELyN4Mlqv1elQ0hUaOJrJrYq4NCiw4RflVXJzqByw6kLB
-         OnX7N+/D1eEryYuy5OzJ0vNufz2DqqX4zYo7Sct6pYjV9OQGZHdzYi6ZatgQmIaiAGs3
-         RdUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+LhWv6gKN4E/XYsOmAJtVsLPDogYl9OqEh4q+PPlgOUUKKpP+h5dYIKdP/6KSp3H7nwpwTVKUmdkVNEBrwK6LLhhd4VIX0a29acn9
-X-Gm-Message-State: AOJu0YysCf8M99zXmc8oN1QgZf1s+Ehj5uVF2I2cCFPUzM2UwwKtTv6T
-	vp5UxLkfgTDCg/yJfwO973ZMlQuOXa6jf0cfyzn3A7jZJS4PgmDk+fNYcfM0ptFEXN0XeY5veVw
-	JbgUKXteZ8Mbq/0zCCiGgy7mpoVQJ9PtaBWxRXDYrMOJAIhCGxgbyTVhE04Hd7g==
-X-Received: by 2002:a05:6000:1942:b0:368:3038:8290 with SMTP id ffacd0b85a97d-36b36421ac8mr707583f8f.39.1721886860524;
-        Wed, 24 Jul 2024 22:54:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHI3Abal444WmsilGMojUOB9llheQDVQUaMgG30HCOZkmwXntXo9Fy/JkeXGpR8m6xgr9AF9A==
-X-Received: by 2002:a05:6000:1942:b0:368:3038:8290 with SMTP id ffacd0b85a97d-36b36421ac8mr707561f8f.39.1721886859582;
-        Wed, 24 Jul 2024 22:54:19 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1ed:8427:35e3:731c:3106:ee46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857dcesm900105f8f.85.2024.07.24.22.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 22:54:18 -0700 (PDT)
-Date: Thu, 25 Jul 2024 01:54:10 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240725015120-mutt-send-email-mst@kernel.org>
-References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
+	bh=OzZHqkug/79QkjvohWjTIiykDjrWCF7qe3jwRF2k0Zc=;
+	b=jxrq+YPMUDN/EtNcSM8Vr6FrUYeofEuJoGyd1CjZ7tXTeUt6kNrNjdfaJD4eEmtkdCxdk/
+	EjwjCQri7eAAqPAGFXmt+5ao20q5FEcrCaaBVHPs/J2/j0JABoos8SC91XnUTGzvVqqqXb
+	euIV3+jiqz+VCU+FRKpQnnCDwLaWfLg=
+Date: Wed, 24 Jul 2024 22:54:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
+Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
+ method to output failure logs to kernel
+Content-Language: en-GB
+To: Zheao Li <me@manjusaka.me>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: Leon Hwang <hffilwlqm@gmail.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240725051511.57112-1-me@manjusaka.me>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20240725051511.57112-1-me@manjusaka.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 24, 2024 at 06:16:37PM +0100, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> The vmclock "device" provides a shared memory region with precision clock
-> information. By using shared memory, it is safe across Live Migration.
-> 
-> Like the KVM PTP clock, this can convert TSC-based cross timestamps into
-> KVM clock values. Unlike the KVM PTP clock, it does so only when such is
-> actually helpful.
-> 
-> The memory region of the device is also exposed to userspace so it can be
-> read or memory mapped by application which need reliable notification of
-> clock disruptions.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-one other thing worth mentioning is that this design can't work
-with confidential computing setups. By comparison, mapping e.g. a
-range in a PCI BAR would work for these setups.
-Is there a reason this functionality is not interesting for
-confidential VMs?
+On 7/24/24 10:15 PM, Zheao Li wrote:
+> This is a v2 patch, previous Link: https://lore.kernel.org/bpf/20240724152521.20546-1-me@manjusaka.me/T/#u
+>
+> Compare with v1:
+>
+> 1. Format the code style and signed-off field
+> 2. Use a shorter name bpf_check_attach_target_with_klog instead of
+> original name bpf_check_attach_target_with_kernel_log
+>
+> When attaching a freplace hook, failures can occur,
+> but currently, no output is provided to help developers diagnose the root cause.
+>
+> This commit adds a new method, bpf_check_attach_target_with_klog,
+> which outputs the verifier log to the kernel.
+> Developers can then use dmesg to obtain more detailed information about the failure.
+>
+> For an example of eBPF code,
+> Link: https://github.com/Asphaltt/learn-by-example/blob/main/ebpf/freplace/main.go
+>
+> Co-developed-by: Leon Hwang <hffilwlqm@gmail.com>
+> Signed-off-by: Leon Hwang <hffilwlqm@gmail.com>
+> Signed-off-by: Zheao Li <me@manjusaka.me>
+> ---
+>   include/linux/bpf_verifier.h |  5 +++++
+>   kernel/bpf/syscall.c         |  5 +++--
+>   kernel/bpf/trampoline.c      |  6 +++---
+>   kernel/bpf/verifier.c        | 19 +++++++++++++++++++
+>   4 files changed, 30 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+> index 5cea15c81b8a..8eddba62c194 100644
+> --- a/include/linux/bpf_verifier.h
+> +++ b/include/linux/bpf_verifier.h
+> @@ -848,6 +848,11 @@ static inline void bpf_trampoline_unpack_key(u64 key, u32 *obj_id, u32 *btf_id)
+>   		*btf_id = key & 0x7FFFFFFF;
+>   }
+>   
+> +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
+> +					    const struct bpf_prog *tgt_prog,
+> +					    u32 btf_id,
+> +					    struct bpf_attach_target_info *tgt_info);
 
--- 
-MST
+format issue in the above. Same code alignment is needed for arguments in different lines.
+
+> +
+>   int bpf_check_attach_target(struct bpf_verifier_log *log,
+>   			    const struct bpf_prog *prog,
+>   			    const struct bpf_prog *tgt_prog,
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 869265852d51..bf826fcc8cf4 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -3464,8 +3464,9 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
+>   		 */
+>   		struct bpf_attach_target_info tgt_info = {};
+>   
+> -		err = bpf_check_attach_target(NULL, prog, tgt_prog, btf_id,
+> -					      &tgt_info);
+> +		err = bpf_check_attach_target_with_klog(prog, NULL,
+> +							      prog->aux->attach_btf_id,
+> +							      &tgt_info);
+
+code alignment issue here as well.
+Also, the argument should be 'prog, tgt_prog, btf_id, &tgt_info', right?
+
+>   		if (err)
+>   			goto out_unlock;
+>   
+> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+> index f8302a5ca400..8862adaa7302 100644
+> --- a/kernel/bpf/trampoline.c
+> +++ b/kernel/bpf/trampoline.c
+> @@ -699,9 +699,9 @@ int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+>   	u64 key;
+>   	int err;
+>   
+> -	err = bpf_check_attach_target(NULL, prog, NULL,
+> -				      prog->aux->attach_btf_id,
+> -				      &tgt_info);
+> +	err = bpf_check_attach_target_with_klog(prog, NULL,
+> +						      prog->aux->attach_btf_id,
+> +						      &tgt_info);
+
+code alignment issue here
+
+>   	if (err)
+>   		return err;
+>   
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 1f5302fb0957..4873b72f5a9a 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -21643,6 +21643,25 @@ static int check_non_sleepable_error_inject(u32 btf_id)
+>   	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
+>   }
+>   
+> +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
+> +					    const struct bpf_prog *tgt_prog,
+> +					    u32 btf_id,
+> +					    struct bpf_attach_target_info *tgt_info);
+
+code alignment issue here.
+
+> +{
+> +	struct bpf_verifier_log *log;
+> +	int err;
+> +
+> +	log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
+
+__GFP_NOWARN is unnecessary here.
+
+> +	if (!log) {
+> +		err = -ENOMEM;
+> +		return err;
+> +	}
+> +	log->level = BPF_LOG_KERNEL;
+> +	err = bpf_check_attach_target(log, prog, tgt_prog, btf_id, tgt_info);
+> +	kfree(log);
+> +	return err;
+> +}
+> +
+>   int bpf_check_attach_target(struct bpf_verifier_log *log,
+>   			    const struct bpf_prog *prog,
+>   			    const struct bpf_prog *tgt_prog,
+
+More importantly, Andrii has implemented retsnoop, which intends to locate
+precise location in the kernel where err happens. The link is
+   https://github.com/anakryiko/retsnoop
+
+Maybe you want to take a look and see whether it can resolve your issue.
+We should really avoid putting more stuff in dmesg whenever possible.
 
 
