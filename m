@@ -1,253 +1,150 @@
-Return-Path: <linux-kernel+bounces-262388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB37893C667
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC6193C66B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68507283D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C7828135C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F8419DF63;
-	Thu, 25 Jul 2024 15:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6B119D8AF;
+	Thu, 25 Jul 2024 15:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQfU5y3e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AsoACoRh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u59KnImr"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544BA1993AE;
-	Thu, 25 Jul 2024 15:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E51993AE;
+	Thu, 25 Jul 2024 15:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921437; cv=none; b=J7hzfeq0szxtwJN8FpvtgO4AkuMIHDkVxEOIhUfSMbRjeWSCGf/frcrbQVlE8i2mm5roO5YktNzXXUfsEbSILDXQiXD5s55IDTr5CJULMfm2g3cH4p5Nhz1nvUOP2WtUIvGmbvZpYIEikrU8O+ha16RyK0heIIRQ+kpjbvt57Fw=
+	t=1721921486; cv=none; b=COKjgp513xrY11/lAWfZfDjmRc2IBPUCXbvQc7WK/SiRu8kgFQTpNV7g0uTKhTBjshX08gM3oTuNGJSiLH7nl/h9mFUb+834uVvPMDGGhpbITU/3Y8yK6yCA2iBPQ+2H1MzjPqHfEcvHxtqvnI06mXPi0G+eSdtHh15aQC+Ae3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921437; c=relaxed/simple;
-	bh=WyvMe12wEO2/XINU91Z4ZoowICExNXoxIN9iR471PA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rynOvkQCpcrEvlI2OaNxXMPW9vRVDn8lsShTJreQwufCa5lGXfXZSSII+mip7xv8iHrkrJdh8YhghBGBpKKFcuaCNDfjmMNS1bvgo4I1xceBGMsmab7pramPfIG5YFVYegLS3YDjxiKUSZkK7TMLI15O7Km8oT3JqxdA12ldTTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQfU5y3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2A1C116B1;
-	Thu, 25 Jul 2024 15:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721921436;
-	bh=WyvMe12wEO2/XINU91Z4ZoowICExNXoxIN9iR471PA4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TQfU5y3exqn6+IyLhz2L2y6YC1sR8BiuPEs5wLulaGoMpbJXOwSz+WVOo13p4ZU+Q
-	 RX2ZXkSgCbJ+gE8wtZWGVnK3DZbFM/Ig9RJ8HNePuJ2Exxqt2yWA0K+K1FzM2xw4G2
-	 j7gBDF5WpyjXnqUIIvlKxke4Re5I5FvCuMe3zt5dhRIA2qd4j4SgiKzRr84UY3TScq
-	 eeLEqWDJ76hfMgB69Jo+EOoXath4q0lcDHB09DOhXX9sTZuj4+vkdO0l3QY66vQgZV
-	 mBKZKsFqJwinJlB1uabm618msUTpoaqdIrgZxnw7jMgE6XN1LeTZp8Kjx61VmXDCyQ
-	 9+stBwHUl3ZDg==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com,
-	bpf@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.11-rc1
-Date: Thu, 25 Jul 2024 08:30:35 -0700
-Message-ID: <20240725153035.808889-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1721921486; c=relaxed/simple;
+	bh=omFdD5+Pochc28zrvzQtrIQ/9Ek+FUKt1cKCBjxqXfI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ZDM2WiyHclGgcd2hyzzrfEEXHdCUe4TwpFolPHGdY+LEHXzjoDRIufXu+6lb6/u403F2LSlhA00S57JZ5RsAT0EsGU40MtLALwiqYNabPt3mx94r/p9MaFOnS7wDFCm89vQi4GnCaGrfiziKKPtD4VkmsXY8M68gqo9H/70FVKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AsoACoRh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u59KnImr; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9A68811401F9;
+	Thu, 25 Jul 2024 11:31:21 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Thu, 25 Jul 2024 11:31:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1721921481;
+	 x=1722007881; bh=SH2QsIwdxGEwvXnuqvyw/+HD9jOx3EvErodiIHyLnIE=; b=
+	AsoACoRhcJpNk1G2Ie/w5Db0mrpEH7bVkMaqvotJq6aNTS72PDERWycZ6/9oxdUF
+	T78xaWaFifaFbhnWKLDkBrwaCuuouLBY1ZMAI4sr4sGquAemJyGvIyoxkwIMzwB8
+	IJADDWMULQ2e+Zf7v9pOCio3I7qGUMOdm6BL4cs8TI98qX5RhlWHR400ut+2HKL/
+	ysxEijoHjVqcBBdsuNmGjvACmAsGvgZf2ePB1vvW5lXx73l9hmmTx0J4sWbF9nq5
+	LYMp5S5GmSMOfgRrptXB8nxX/Kd8SFXol9skC8EQAjWi/egT5Cs6giZXIM+XRhbH
+	VkDGOwEtG/FA4IHW8FcrTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721921481; x=
+	1722007881; bh=SH2QsIwdxGEwvXnuqvyw/+HD9jOx3EvErodiIHyLnIE=; b=u
+	59KnImr5u7plQjCm5IdkuXjwp7Yg5w5qU1lAeJC9rRpyBmQYvOnpyWptgl5C/BQI
+	4fs7rQLpJ4lnlznMxXIqsaNCSw5khKJnxuuDIyPUELSlipT7N1wcAJX/8IG0SkFN
+	5hCDrkxVBeoTJHoUTIbWVLqC1Vk5zbmy2auDAYrx74nEgdFOHhDSm1POUPg2onyi
+	yaJ+/pGtiLieoFksCTekqnXlUGGgd6i00ZCqdUjJrB0XyQFecqG7DXLyeClrON9f
+	cam0xe25g+Vq++2Nt0Xh2V99St2Td8aoNrEfsDIAeLFfwtnLt3YuZVPytZzMQDhf
+	F9kg196C2Zk2/S4VS/EVg==
+X-ME-Sender: <xms:yG-iZphKtVbvGeOra7bx7_P00WK7AJ1N69H7OkBzwxPLQkutlAqBAw>
+    <xme:yG-iZuBuS6hA-oRNqknuvPN0fwDH2yAjvromFeTmHmqO3BzwylC7kDy80tLoKIaN8
+    NcYDDeJe1sabbxUVxA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieefgdeklecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:yG-iZpHNm9tchrmE9bJF1DcsnXEzL6Amsc7aFYo53az5BN5AVn_YXg>
+    <xmx:yG-iZuQ4lgBYBlNmGyNXtRPCgk6MPlrAMIg8jNUEPRHm7yZH-VS-Kw>
+    <xmx:yG-iZmzVhp2U5gM4RXhKAMfji2rXp3FRTVHsghjm4KoDHm2DuSEASA>
+    <xmx:yG-iZk6Dnh53-LHldUTZ5cpmQKq7GFuUL5bLrHFFiHiIzPQjSszb3Q>
+    <xmx:yW-iZrh4M8MuFBJArq-ve0DQb30ZD5adlHyKr7qa1nrEfOYdYv2J8WhV>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 89CFFB60098; Thu, 25 Jul 2024 11:31:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+In-Reply-To: <ZqJjsg3s7H5cTWlT@infradead.org>
+References: <20240723083239.41533-1-youling.tang@linux.dev>
+ <20240723083239.41533-2-youling.tang@linux.dev>
+ <Zp-_RDk5n5431yyh@infradead.org>
+ <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
+ <ZqEhMCjdFwC3wF4u@infradead.org>
+ <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+ <ZqJjsg3s7H5cTWlT@infradead.org>
+Date: Thu, 25 Jul 2024 17:30:58 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christoph Hellwig" <hch@infradead.org>,
+ "Youling Tang" <youling.tang@linux.dev>
+Cc: "Luis Chamberlain" <mcgrof@kernel.org>, "Chris Mason" <clm@fb.com>,
+ "Josef Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>,
+ "Theodore Ts'o" <tytso@mit.edu>, "Andreas Dilger" <adilger.kernel@dilger.ca>,
+ "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ "Youling Tang" <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and module_subeixt helper
+ macros
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus!
+On Thu, Jul 25, 2024, at 16:39, Christoph Hellwig wrote:
+> On Thu, Jul 25, 2024 at 11:01:33AM +0800, Youling Tang wrote:
+>> - It doesn't feel good to have only one subinit/exit in a file.
+>> =C2=A0 Assuming that there is only one file in each file, how do we
+>> =C2=A0 ensure that the files are linked in order?(Is it sorted by *.o
+>> =C2=A0 in the Makefile?)
+>
+> Yes, link order already matterns for initialization order for built-in
+> code, so this is a well known concept.
 
-The following changes since commit d7e78951a8b8b53e4d52c689d927a6887e6cfadf:
+Note: I removed the old way of entering a module a few
+years ago, which allowed simply defining a function called
+init_module(). The last one of these was a07d8ecf6b39
+("ethernet: isa: convert to module_init/module_exit").
 
-  Merge tag 'net-6.11-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-07-19 14:58:12 -0700)
+Now I think we could just make the module_init() macro
+do the same thing as a built-in initcall() and put
+an entry in a special section, to let you have multiple
+entry points in a loadable module.
 
-are available in the Git repository at:
+There are still at least two problems though:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc1
+- while link order is defined between files in a module,
+  I don't think there is any guarantee for the order between
+  two initcalls of the same level within a single file.
 
-for you to fetch changes up to af65ea42bd1d28d818b74b9b3b4f8da7ada9f88b:
+- For built-in code we don't have to worry about matching
+  the order of the exit calls since they don't exist there.
+  As I understand, the interesting part of this patch
+  series is about making sure the order matches between
+  init and exit, so there still needs to be a way to
+  express a pair of such calls.
 
-  Merge branch 'tap-tun-harden-by-dropping-short-frame' (2024-07-25 08:07:07 -0700)
-
-----------------------------------------------------------------
-A lot of networking people were at a conference last week, busy
-catching COVID, so relatively short PR. Including fixes from bpf
-and netfilter.
-
-Current release - regressions:
-
- - tcp: process the 3rd ACK with sk_socket for TFO and MPTCP
-
-Current release - new code bugs:
-
- - l2tp: protect session IDR and tunnel session list with one lock,
-   make sure the state is coherent to avoid a warning
-
- - eth: bnxt_en: update xdp_rxq_info in queue restart logic
-
- - eth: airoha: fix location of the MBI_RX_AGE_SEL_MASK field
-
-Previous releases - regressions:
-
- - xsk: require XDP_UMEM_TX_METADATA_LEN to actuate tx_metadata_len,
-   the field reuses previously un-validated pad
-
-Previous releases - always broken:
-
- - tap/tun: drop short frames to prevent crashes later in the stack
-
- - eth: ice: add a per-VF limit on number of FDIR filters
-
- - af_unix: disable MSG_OOB handling for sockets in sockmap/sockhash
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Ahmed Zaki (1):
-      ice: Add a per-VF limit on number of FDIR filters
-
-Andrii Nakryiko (1):
-      libbpf: Fix no-args func prototype BTF dumping syntax
-
-Bailey Forrest (1):
-      gve: Fix an edge case for TSO skb validity check
-
-Breno Leitao (1):
-      net: mediatek: Fix potential NULL pointer dereference in dummy net_device handling
-
-Dan Carpenter (1):
-      mISDN: Fix a use after free in hfcmulti_tx()
-
-Donald Hunter (1):
-      bpftool: Fix typo in usage help
-
-Dongli Zhang (1):
-      tun: add missing verification for short frame
-
-Florian Westphal (1):
-      netfilter: nft_set_pipapo_avx2: disable softinterrupts
-
-Fred Li (1):
-      bpf: Fix a segment issue when downgrading gso_size
-
-Hangbin Liu (1):
-      selftests: forwarding: skip if kernel not support setting bridge fdb learning limit
-
-Hou Tao (1):
-      bpf, events: Use prog to emit ksymbol event for main program
-
-Ido Schimmel (1):
-      ipv4: Fix incorrect source address in Record Route option
-
-Jakub Kicinski (3):
-      MAINTAINERS: make Breno the netconsole maintainer
-      Merge tag 'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf
-      Merge branch 'tap-tun-harden-by-dropping-short-frame'
-
-James Chapman (1):
-      l2tp: make session IDR and tunnel session list coherent
-
-Jay Vosburgh (1):
-      MAINTAINERS: Update bonding entry
-
-Johannes Berg (1):
-      net: bonding: correctly annotate RCU in bond_should_notify_peers()
-
-Liwei Song (1):
-      tools/resolve_btfids: Fix comparison of distinct pointer types warning in resolve_btfids
-
-Lorenzo Bianconi (1):
-      net: airoha: Fix MBI_RX_AGE_SEL_MASK definition
-
-Matthieu Baerts (NGI0) (1):
-      tcp: process the 3rd ACK with sk_socket for TFO/MPTCP
-
-Michal Luczaj (4):
-      af_unix: Disable MSG_OOB handling for sockets in sockmap/sockhash
-      selftests/bpf: Support SOCK_STREAM in unix_inet_redir_to_connected()
-      selftests/bpf: Parametrize AF_UNIX redir functions to accept send() flags
-      selftests/bpf: Test sockmap redirect for AF_UNIX MSG_OOB
-
-Naveen N Rao (2):
-      MAINTAINERS: Update email address of Naveen
-      MAINTAINERS: Update powerpc BPF JIT maintainers
-
-Paolo Abeni (2):
-      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge tag 'nf-24-07-24' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-
-Petr Machata (1):
-      net: nexthop: Initialize all fields in dumped nexthops
-
-Puranjay Mohan (1):
-      selftests/bpf: fexit_sleep: Fix stack allocation for arm64
-
-Shigeru Yoshida (1):
-      tipc: Return non-zero value from tipc_udp_addr2str() on error
-
-Si-Wei Liu (1):
-      tap: add missing verification for short frame
-
-Simon Horman (1):
-      net: stmmac: Correct byte order of perfect_match
-
-Stanislav Fomichev (2):
-      xsk: Require XDP_UMEM_TX_METADATA_LEN to actuate tx_metadata_len
-      selftests/bpf: Add XDP_UMEM_TX_METADATA_LEN to XSK TX metadata test
-
-Taehee Yoo (1):
-      bnxt_en: update xdp_rxq_info in queue restart logic
-
-Wojciech Drewek (1):
-      ice: Fix recipe read procedure
-
- .mailmap                                           |  2 +
- Documentation/networking/xsk-tx-metadata.rst       | 16 ++--
- MAINTAINERS                                        | 19 +++--
- drivers/isdn/hardware/mISDN/hfcmulti.c             |  7 +-
- drivers/net/bonding/bond_main.c                    |  7 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 17 +++++
- drivers/net/ethernet/google/gve/gve_tx_dqo.c       | 22 +++++-
- drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c  |  2 +-
- drivers/net/ethernet/intel/ice/ice_fdir.h          |  3 +
- drivers/net/ethernet/intel/ice/ice_switch.c        |  8 +-
- drivers/net/ethernet/intel/ice/ice_virtchnl_fdir.c | 16 ++++
- drivers/net/ethernet/intel/ice/ice_virtchnl_fdir.h |  1 +
- drivers/net/ethernet/mediatek/airoha_eth.c         |  2 +-
- drivers/net/ethernet/mediatek/mtk_eth_soc.c        |  3 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  2 +-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  2 +-
- drivers/net/ethernet/stmicro/stmmac/hwif.h         |  2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  4 +-
- drivers/net/tap.c                                  |  5 ++
- drivers/net/tun.c                                  |  3 +
- include/uapi/linux/if_xdp.h                        |  4 +
- kernel/events/core.c                               | 26 +++----
- net/core/filter.c                                  | 15 +++-
- net/ipv4/nexthop.c                                 |  7 +-
- net/ipv4/route.c                                   |  2 +-
- net/ipv4/tcp_input.c                               |  3 -
- net/l2tp/l2tp_core.c                               | 32 ++++----
- net/netfilter/nft_set_pipapo_avx2.c                | 12 ++-
- net/tipc/udp_media.c                               |  5 +-
- net/unix/af_unix.c                                 | 41 ++++++++++-
- net/unix/unix_bpf.c                                |  3 +
- net/xdp/xdp_umem.c                                 |  9 ++-
- tools/bpf/bpftool/prog.c                           |  2 +-
- tools/bpf/resolve_btfids/main.c                    |  2 +-
- tools/include/uapi/linux/if_xdp.h                  |  4 +
- tools/lib/bpf/btf_dump.c                           |  8 +-
- tools/testing/selftests/bpf/DENYLIST.aarch64       |  1 -
- .../testing/selftests/bpf/prog_tests/fexit_sleep.c |  8 +-
- .../selftests/bpf/prog_tests/sockmap_listen.c      | 85 +++++++++++++++-------
- .../selftests/bpf/prog_tests/xdp_metadata.c        |  3 +-
- .../bpf/progs/btf_dump_test_case_multidim.c        |  4 +-
- .../bpf/progs/btf_dump_test_case_syntax.c          |  4 +-
- .../net/forwarding/bridge_fdb_learning_limit.sh    | 18 +++++
- 43 files changed, 319 insertions(+), 122 deletions(-)
+     Arnd
 
