@@ -1,122 +1,316 @@
-Return-Path: <linux-kernel+bounces-261767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BC293BBE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:57:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C29293BBE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A65371C208B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C91C20F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CE61CA9E;
-	Thu, 25 Jul 2024 04:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF61C6B7;
+	Thu, 25 Jul 2024 04:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="iwDNzkFS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P+POIIER"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NmsV83T6"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1A218C3B;
-	Thu, 25 Jul 2024 04:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B191318C22
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721883452; cv=none; b=Dlb0QrnP/bb3SEml22P5kuO9XYyHJig089WVTsjgq0aB4j3BpnfyiXv5J9iSVVkyFwAASGqk3x2EfbBtACwPSfjyk8tfIb/Df73tZY6g94DYVOjUHrTyjJ9k/jGMX6xcDn4anliX1K/k/D0h0edbNlhMS2QyrISZDayOiJ7cS0Q=
+	t=1721883500; cv=none; b=XWPsk6A8xA6nB3X6PQOh6Jsbxm9P5kg3+XgDdF4WYH2jlV7DY0n78sVdgJzXux3dmS4aA2vG1CTnQ8vTuJBWCPHvwwp+Bm9yzp9V7rTtot3kq5nTL12dJkrx3ZQi8yTl5M35z41QX48TUgi9aFPeBWkKYctV7pJFlKd3tiNuYJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721883452; c=relaxed/simple;
-	bh=xszbH4goRWt0jsIYgEVr6nI8BiA9BMuNpDGdYj7KD3k=;
+	s=arc-20240116; t=1721883500; c=relaxed/simple;
+	bh=GHF2Tqg8a3gXo6ehVVkGkJrM8YfpGJNDSASFEUYnw8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGu1x5kOZ4hNLp2GoICV1RRphYHKy7uLp8l7GdB1DAFz+Ns0zYHpgoHVbytMGfyUWhSITSgCToSvq/VjXW25LyKV9hvAQ1CSRlWK061Cllpmw37moHr7N/ohN7VtXUIdQW539YgzWqoLid/C131+gsKJJHcKCPAUOvXcSH3gAj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=iwDNzkFS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P+POIIER; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BD2881140233;
-	Thu, 25 Jul 2024 00:57:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 25 Jul 2024 00:57:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1721883448; x=1721969848; bh=ae2g/tIS5v
-	FUeEA0eBPcpC3xiZh+tD43rM1GfoFOZ5A=; b=iwDNzkFS78DR5gXbT+GXUpBXT5
-	rnubgiO365GLlfPaQnkUYn2F8MThsyIwnjsLIORY2JZ07OyEmbBRatDw1pQeRzSq
-	nlytT8mf48QcKBweBfrr/H/VKbZDC39pJyxDbRn3/f4mWdqTnds+6Zg92C+l5T1y
-	hHR0m41FjUQYYr88ktsHoEGFkqfudv+mzx5bW/ZWK41HYyBdnMyuzNJk/2bchC5y
-	ZJ5ElQD/bkle5L6wJGDb2hdgQvWzTGpZ9VHkGgo04TQuiGHFtcV9ndhccfYbK2jE
-	HtcZRJifK94ifvgyowFmWZCXIK8IRVQgGhU/6YtHnILksAi2AKJTt11v40WA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721883448; x=1721969848; bh=ae2g/tIS5vFUeEA0eBPcpC3xiZh+
-	tD43rM1GfoFOZ5A=; b=P+POIIER7sxpl+rseT8YRBmJU0KPMuqeka2m4fck6fXv
-	Gdg7F1Waac1LoI3PBerXgADxX6eNdb03C2XqBQjMOtCkyBqMpBC0sSDp9OhRfQ5y
-	GDETq0dlvJfyvw4WLTUEziU4pBTIfpnu/tpA3GVkpBHgg0xGIQ1Jg69+MMKyyGUN
-	Mz6qKDFNY0I/fUeRV6hevyc+ANK3D6fxHpVPkvvji1Uzghu2trUhEKCcGjNEwN4n
-	z3EiGvJ+S3tGNXNPcG2eVd2/6NMoGMQaVHh0nTo/dSq0gCrEzMW4wOLjdv0NH0bD
-	dUzO2jSJ1/xFmCtZqbiHQ8Uag2wYWWnkzwtX5+WKlQ==
-X-ME-Sender: <xms:ONuhZoW5UmMiW2sG-P8a8yq3fxL2oUGxtTVMq1LD-KgKRXvR5m49HQ>
-    <xme:ONuhZsmXeEFre-99sNVzKiGQZc9a4QeXpZCFZdy_HY-SVb-pvWzdinXanPsEhJ0iA
-    ZzmT069lcio_g>
-X-ME-Received: <xmr:ONuhZsaOY2sI-Mj_cyMC4Gp6Vdy-aDBbu06ag8IbnLZshcTI6P7NAXaVDBRUIKd26n8TuZf-Ju9tp3zlqyvQ-9hjwtjMcDxX25vEdw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedvgdeludcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
-    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomhdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:ONuhZnUaFcM5At6qe-Tcx9aCFOQjhQ56MoFCuoMMq8mP8NFjuiZwFQ>
-    <xmx:ONuhZikm4RuI4ACwZMGKwy-yTof4vy_6cFy_2QZ1Ervl5ffhzm8v0A>
-    <xmx:ONuhZsex2GNuk6PUbDOhtIhn5L8wAymgfdc2igTUnjTn0ZodBbKeQA>
-    <xmx:ONuhZkENDhvl2jA4omr-AbF7W38PP_472A5QhKZM7R9XmG5JxN0Ahg>
-    <xmx:ONuhZl7S0-IAPBxLIQB_Jt4nkfFHE4NQ2wVsW7yEZAhQYoIdbfU_TqeZ>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Jul 2024 00:57:27 -0400 (EDT)
-Date: Thu, 25 Jul 2024 06:57:25 +0200
-From: Greg KH <greg@kroah.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
-Message-ID: <2024072520-yogurt-zoology-3c5f@gregkh>
-References: <20240717221133.459589-1-benno.lossin@proton.me>
- <20240717221133.459589-2-benno.lossin@proton.me>
- <2024071845-neuron-figure-2e26@gregkh>
- <59ebc5f2-7d58-49f5-83f1-c954705f3953@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=php6RzUglUPepL0xp/G//L9LXanpWvUgaUlQV12vDEPVuSzmPq//FowxxIjVTtnb64LFmOQpO2K1UK4j1LNOX3mC8YK/JHiWrYzvZeOzbRgOmh0h2MzKoeYp/H9R3MEtc15SPedNxxAWW7xkRKGOkwdEDUoE+/GWE+pPPrRuRf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NmsV83T6; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d150e8153so367599b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721883497; x=1722488297; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WHJ+bXZgbj37wVLktHgPMsj4okXfb1wUE1MffwGWsEY=;
+        b=NmsV83T6XeQVTkE7ER3iWOrcHaD+z5UK00TLHgv+pP6IJoKhBO1ujKDH1/z3lR9Ktc
+         lTGdP2ZgUV9sae1NhLEGYkP4QZf4JyWGjGMTxqEXpmZhcPqNC99U3ec4DAfLlB1XIHWL
+         0+WcK51ah1jHih/dupByTXynu2doqR2cuqxgoq3TJLn/pZfEMK++iOu8btCcWsp6P1aW
+         Bb8w6HEg4HgC6i7o9+5rXfLECJYY85b9D57WeFJS/kVuwoR63ArY2fElyWMBVaBwDB3m
+         GkdvIQMQFnKy56Jw/kmU9RCKYZ4mvvzx78VMgz5BPWO23GNUQ7tfEbqxDzxTjHyAzFPd
+         yBQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721883497; x=1722488297;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WHJ+bXZgbj37wVLktHgPMsj4okXfb1wUE1MffwGWsEY=;
+        b=lsPr1T868sR4B9LWguH4l9/LfAJUcGw0waRliDkdj67/MoXsxlsH5MOLbvn+r2LO3N
+         1pfNosWfPsJ6E1wFbfBYIEZEsZG5yAd7sCf6I28hTPTGVZKNrHpkjIvjOi+ZpsKIxCMZ
+         kZN+WeNxE1FynqDZt7PDHceBeCSLxgU2lGC/A3CLVYGyceA2Wdtn3NL9KoTZCkOUqZpM
+         XBjVB13XBZpI1XRWM08NXWzVSBhObukOpOrpviIpUK+R2eVxIPQP1zRcDuSMO6W8I1dM
+         BXMZF4LPsDYuf5NDI9b0lqBPQd06Y/d+TeX+JhWuUxadVZH6//CUpJqTvm/Jh0cTisj6
+         6NLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXM9G/83tYr1N0GbO1Ne4NJizA6H85I7dp8Q51OmX+gX6T60LTsSRzm6aKVw5TJDOSwiYEchVOM1PQLLflMc2FDzH4Zr3BXdVx7mzBv
+X-Gm-Message-State: AOJu0Yxbo1jpysrJxyR5mxG/M40mr5FbrcfUA/7EXDT+Amn1oGBb0cwj
+	pYi3o+p14t6SAoIMff4/5ccSwxUtzcxhRaT1jv3cC9mNKmbrbsb7kBkl5fH1DA==
+X-Google-Smtp-Source: AGHT+IGERFSKOQsg47XBdDbVBiuDeQyNQcDZbrb8qoee9949yCfDn4IW3b1n3MSW1JYc8N574h2NMA==
+X-Received: by 2002:a05:6a00:9193:b0:70d:2b95:e3c4 with SMTP id d2e1a72fcca58-70e9ee291ddmr6265342b3a.5.1721883496792;
+        Wed, 24 Jul 2024 21:58:16 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead874c62sm374101b3a.157.2024.07.24.21.58.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 21:58:16 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:28:10 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 11/12] PCI: brcmstb: Change field name from 'type' to
+ 'model'
+Message-ID: <20240725045810.GK2317@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-12-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <59ebc5f2-7d58-49f5-83f1-c954705f3953@proton.me>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716213131.6036-12-james.quinlan@broadcom.com>
 
-On Wed, Jul 24, 2024 at 07:13:08PM +0000, Benno Lossin wrote:
-> On 18.07.24 06:45, Greg KH wrote:
-> > On Wed, Jul 17, 2024 at 10:12:29PM +0000, Benno Lossin wrote:
-> >> +Because unsoundness issues have the potential for allowing safe code to experience UB, they are
-> >> +treated similarly to actual bugs with UB. Their fixes should also be included in the  stable tree.
-> > 
-> > Odd extra space before "stable".
-> > 
-> > Also, link to the stable kernel rules here when you reference "stable
-> > tree"?  That will explain what you mean here.
+On Tue, Jul 16, 2024 at 05:31:26PM -0400, Jim Quinlan wrote:
+> The 'type' field used in the driver to discern SoC differences is confusing
+> so change it to the more apt 'model'.  We considered using 'family' but
+> this conflicts with Broadcom's conception of a family; for example, 7216a0
+> and 7216b0 chips are both considered separate families as each has multiple
+> derivative product chips based on the original design.
 > 
-> Sure will add it, do you mean Documentation/process/stable-kernel-rules.rst?
 
-Yes please.
+TBH, 'model' is also confusing :) Why can't you just use 'soc' as you are
+referrring to the SoC name.
+
+- Mani
+
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 42 +++++++++++++--------------
+>  1 file changed, 21 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 2fe1f2a26697..fa5616a56383 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -211,7 +211,7 @@ enum {
+>  	PCIE_INTR2_CPU_BASE,
+>  };
+>  
+> -enum pcie_type {
+> +enum pcie_model {
+>  	GENERIC,
+>  	BCM7425,
+>  	BCM7435,
+> @@ -229,7 +229,7 @@ struct rc_bar {
+>  
+>  struct pcie_cfg_data {
+>  	const int *offsets;
+> -	const enum pcie_type type;
+> +	const enum pcie_model model;
+>  	const bool has_phy;
+>  	unsigned int num_inbound;
+>  	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+> @@ -270,7 +270,7 @@ struct brcm_pcie {
+>  	u64			msi_target_addr;
+>  	struct brcm_msi		*msi;
+>  	const int		*reg_offsets;
+> -	enum pcie_type		type;
+> +	enum pcie_model		model;
+>  	struct reset_control	*rescal;
+>  	struct reset_control	*perst_reset;
+>  	struct reset_control	*bridge;
+> @@ -288,7 +288,7 @@ struct brcm_pcie {
+>  
+>  static inline bool is_bmips(const struct brcm_pcie *pcie)
+>  {
+> -	return pcie->type == BCM7435 || pcie->type == BCM7425;
+> +	return pcie->model == BCM7435 || pcie->model == BCM7425;
+>  }
+>  
+>  /*
+> @@ -852,7 +852,7 @@ static int brcm_pcie_get_inbound_wins(struct brcm_pcie *pcie,
+>  	 * security considerations, and is not implemented in our modern
+>  	 * SoCs.
+>  	 */
+> -	if (pcie->type != BCM7712)
+> +	if (pcie->model != BCM7712)
+>  		set_bar(b++, &n, 0, 0, 0);
+>  
+>  	resource_list_for_each_entry(entry, &bridge->dma_ranges) {
+> @@ -869,7 +869,7 @@ static int brcm_pcie_get_inbound_wins(struct brcm_pcie *pcie,
+>  		 * That being said, each BARs size must still be a power of
+>  		 * two.
+>  		 */
+> -		if (pcie->type == BCM7712)
+> +		if (pcie->model == BCM7712)
+>  			set_bar(b++, &n, size, cpu_beg, pcie_beg);
+>  
+>  		if (n > pcie->num_inbound)
+> @@ -886,7 +886,7 @@ static int brcm_pcie_get_inbound_wins(struct brcm_pcie *pcie,
+>  	 * that enables multiple memory controllers.  As such, it can return
+>  	 * now w/o doing special configuration.
+>  	 */
+> -	if (pcie->type == BCM7712)
+> +	if (pcie->model == BCM7712)
+>  		return n;
+>  
+>  	ret = of_property_read_variable_u64_array(pcie->np, "brcm,scb-sizes", pcie->memc_size, 1,
+> @@ -1008,7 +1008,7 @@ static void set_inbound_win_registers(struct brcm_pcie *pcie, const struct rc_ba
+>  		 * 7712:
+>  		 *     All of their BARs need to be set.
+>  		 */
+> -		if (pcie->type == BCM7712) {
+> +		if (pcie->model == BCM7712) {
+>  			/* BUS remap register settings */
+>  			reg_offset = brcm_ubus_reg_offset(i);
+>  			tmp = lower_32_bits(cpu_addr) & ~0xfff;
+> @@ -1036,7 +1036,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  		return ret;
+>  
+>  	/* Ensure that PERST# is asserted; some bootloaders may deassert it. */
+> -	if (pcie->type == BCM2711) {
+> +	if (pcie->model == BCM2711) {
+>  		ret = pcie->perst_set(pcie, 1);
+>  		if (ret) {
+>  			pcie->bridge_sw_init_set(pcie, 0);
+> @@ -1067,9 +1067,9 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	 */
+>  	if (is_bmips(pcie))
+>  		burst = 0x1; /* 256 bytes */
+> -	else if (pcie->type == BCM2711)
+> +	else if (pcie->model == BCM2711)
+>  		burst = 0x0; /* 128 bytes */
+> -	else if (pcie->type == BCM7278)
+> +	else if (pcie->model == BCM7278)
+>  		burst = 0x3; /* 512 bytes */
+>  	else
+>  		burst = 0x2; /* 512 bytes */
+> @@ -1666,7 +1666,7 @@ static const int pcie_offsets_bmips_7425[] = {
+>  
+>  static const struct pcie_cfg_data generic_cfg = {
+>  	.offsets	= pcie_offsets,
+> -	.type		= GENERIC,
+> +	.model		= GENERIC,
+>  	.perst_set	= brcm_pcie_perst_set_generic,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+>  	.num_inbound	= 3,
+> @@ -1674,7 +1674,7 @@ static const struct pcie_cfg_data generic_cfg = {
+>  
+>  static const struct pcie_cfg_data bcm7425_cfg = {
+>  	.offsets	= pcie_offsets_bmips_7425,
+> -	.type		= BCM7425,
+> +	.model		= BCM7425,
+>  	.perst_set	= brcm_pcie_perst_set_generic,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+>  	.num_inbound	= 3,
+> @@ -1682,7 +1682,7 @@ static const struct pcie_cfg_data bcm7425_cfg = {
+>  
+>  static const struct pcie_cfg_data bcm7435_cfg = {
+>  	.offsets	= pcie_offsets,
+> -	.type		= BCM7435,
+> +	.model		= BCM7435,
+>  	.perst_set	= brcm_pcie_perst_set_generic,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+>  	.num_inbound	= 3,
+> @@ -1690,7 +1690,7 @@ static const struct pcie_cfg_data bcm7435_cfg = {
+>  
+>  static const struct pcie_cfg_data bcm4908_cfg = {
+>  	.offsets	= pcie_offsets,
+> -	.type		= BCM4908,
+> +	.model		= BCM4908,
+>  	.perst_set	= brcm_pcie_perst_set_4908,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+>  	.num_inbound	= 3,
+> @@ -1706,7 +1706,7 @@ static const int pcie_offset_bcm7278[] = {
+>  
+>  static const struct pcie_cfg_data bcm7278_cfg = {
+>  	.offsets	= pcie_offset_bcm7278,
+> -	.type		= BCM7278,
+> +	.model		= BCM7278,
+>  	.perst_set	= brcm_pcie_perst_set_7278,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
+>  	.num_inbound	= 3,
+> @@ -1714,7 +1714,7 @@ static const struct pcie_cfg_data bcm7278_cfg = {
+>  
+>  static const struct pcie_cfg_data bcm2711_cfg = {
+>  	.offsets	= pcie_offsets,
+> -	.type		= BCM2711,
+> +	.model		= BCM2711,
+>  	.perst_set	= brcm_pcie_perst_set_generic,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+>  	.num_inbound	= 3,
+> @@ -1722,7 +1722,7 @@ static const struct pcie_cfg_data bcm2711_cfg = {
+>  
+>  static const struct pcie_cfg_data bcm7216_cfg = {
+>  	.offsets	= pcie_offset_bcm7278,
+> -	.type		= BCM7278,
+> +	.model		= BCM7278,
+>  	.perst_set	= brcm_pcie_perst_set_7278,
+>  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
+>  	.has_phy	= true,
+> @@ -1779,7 +1779,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	pcie->dev = &pdev->dev;
+>  	pcie->np = np;
+>  	pcie->reg_offsets = data->offsets;
+> -	pcie->type = data->type;
+> +	pcie->model = data->model;
+>  	pcie->perst_set = data->perst_set;
+>  	pcie->bridge_sw_init_set = data->bridge_sw_init_set;
+>  	pcie->has_phy = data->has_phy;
+> @@ -1848,7 +1848,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  		goto fail;
+>  
+>  	pcie->hw_rev = readl(pcie->base + PCIE_MISC_REVISION);
+> -	if (pcie->type == BCM4908 && pcie->hw_rev >= BRCM_PCIE_HW_REV_3_20) {
+> +	if (pcie->model == BCM4908 && pcie->hw_rev >= BRCM_PCIE_HW_REV_3_20) {
+>  		dev_err(pcie->dev, "hardware revision with unsupported PERST# setup\n");
+>  		ret = -ENODEV;
+>  		goto fail;
+> @@ -1863,7 +1863,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	bridge->ops = pcie->type == BCM7425 ? &brcm7425_pcie_ops : &brcm_pcie_ops;
+> +	bridge->ops = pcie->model == BCM7425 ? &brcm7425_pcie_ops : &brcm_pcie_ops;
+>  	bridge->sysdata = pcie;
+>  
+>  	platform_set_drvdata(pdev, pcie);
+> -- 
+> 2.17.1
+> 
+
+
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
