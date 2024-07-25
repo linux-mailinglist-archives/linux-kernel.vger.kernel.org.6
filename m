@@ -1,150 +1,234 @@
-Return-Path: <linux-kernel+bounces-262389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC6193C66B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D42A793C670
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C7828135C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F412817DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6B119D8AF;
-	Thu, 25 Jul 2024 15:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993D619D064;
+	Thu, 25 Jul 2024 15:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AsoACoRh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u59KnImr"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YGVWWUD3"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E51993AE;
-	Thu, 25 Jul 2024 15:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41491D545
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921486; cv=none; b=COKjgp513xrY11/lAWfZfDjmRc2IBPUCXbvQc7WK/SiRu8kgFQTpNV7g0uTKhTBjshX08gM3oTuNGJSiLH7nl/h9mFUb+834uVvPMDGGhpbITU/3Y8yK6yCA2iBPQ+2H1MzjPqHfEcvHxtqvnI06mXPi0G+eSdtHh15aQC+Ae3s=
+	t=1721921531; cv=none; b=kGr9po0/AIHmRHiselCgoMUf+odoQ3/d2rmH3pWSFz4Irl61vb094J/5D0rc9qDG5y4v+h39Ms2lvzv2CoJbST16MhrxJCBqc4JZ5YbHtLMK22pyZokElgs+lIFekDCtUWR4GTXADYAZeWMRFuxTGD2MKaINnXKRHxBLXv5I9zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921486; c=relaxed/simple;
-	bh=omFdD5+Pochc28zrvzQtrIQ/9Ek+FUKt1cKCBjxqXfI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ZDM2WiyHclGgcd2hyzzrfEEXHdCUe4TwpFolPHGdY+LEHXzjoDRIufXu+6lb6/u403F2LSlhA00S57JZ5RsAT0EsGU40MtLALwiqYNabPt3mx94r/p9MaFOnS7wDFCm89vQi4GnCaGrfiziKKPtD4VkmsXY8M68gqo9H/70FVKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AsoACoRh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u59KnImr; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9A68811401F9;
-	Thu, 25 Jul 2024 11:31:21 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Thu, 25 Jul 2024 11:31:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1721921481;
-	 x=1722007881; bh=SH2QsIwdxGEwvXnuqvyw/+HD9jOx3EvErodiIHyLnIE=; b=
-	AsoACoRhcJpNk1G2Ie/w5Db0mrpEH7bVkMaqvotJq6aNTS72PDERWycZ6/9oxdUF
-	T78xaWaFifaFbhnWKLDkBrwaCuuouLBY1ZMAI4sr4sGquAemJyGvIyoxkwIMzwB8
-	IJADDWMULQ2e+Zf7v9pOCio3I7qGUMOdm6BL4cs8TI98qX5RhlWHR400ut+2HKL/
-	ysxEijoHjVqcBBdsuNmGjvACmAsGvgZf2ePB1vvW5lXx73l9hmmTx0J4sWbF9nq5
-	LYMp5S5GmSMOfgRrptXB8nxX/Kd8SFXol9skC8EQAjWi/egT5Cs6giZXIM+XRhbH
-	VkDGOwEtG/FA4IHW8FcrTA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721921481; x=
-	1722007881; bh=SH2QsIwdxGEwvXnuqvyw/+HD9jOx3EvErodiIHyLnIE=; b=u
-	59KnImr5u7plQjCm5IdkuXjwp7Yg5w5qU1lAeJC9rRpyBmQYvOnpyWptgl5C/BQI
-	4fs7rQLpJ4lnlznMxXIqsaNCSw5khKJnxuuDIyPUELSlipT7N1wcAJX/8IG0SkFN
-	5hCDrkxVBeoTJHoUTIbWVLqC1Vk5zbmy2auDAYrx74nEgdFOHhDSm1POUPg2onyi
-	yaJ+/pGtiLieoFksCTekqnXlUGGgd6i00ZCqdUjJrB0XyQFecqG7DXLyeClrON9f
-	cam0xe25g+Vq++2Nt0Xh2V99St2Td8aoNrEfsDIAeLFfwtnLt3YuZVPytZzMQDhf
-	F9kg196C2Zk2/S4VS/EVg==
-X-ME-Sender: <xms:yG-iZphKtVbvGeOra7bx7_P00WK7AJ1N69H7OkBzwxPLQkutlAqBAw>
-    <xme:yG-iZuBuS6hA-oRNqknuvPN0fwDH2yAjvromFeTmHmqO3BzwylC7kDy80tLoKIaN8
-    NcYDDeJe1sabbxUVxA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieefgdeklecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:yG-iZpHNm9tchrmE9bJF1DcsnXEzL6Amsc7aFYo53az5BN5AVn_YXg>
-    <xmx:yG-iZuQ4lgBYBlNmGyNXtRPCgk6MPlrAMIg8jNUEPRHm7yZH-VS-Kw>
-    <xmx:yG-iZmzVhp2U5gM4RXhKAMfji2rXp3FRTVHsghjm4KoDHm2DuSEASA>
-    <xmx:yG-iZk6Dnh53-LHldUTZ5cpmQKq7GFuUL5bLrHFFiHiIzPQjSszb3Q>
-    <xmx:yW-iZrh4M8MuFBJArq-ve0DQb30ZD5adlHyKr7qa1nrEfOYdYv2J8WhV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 89CFFB60098; Thu, 25 Jul 2024 11:31:20 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721921531; c=relaxed/simple;
+	bh=REKYk/VhpurPGwxf6gFJoHbOcpJy3+0DhIRpGswIEUE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pHfZgLbZRMHbU7O3EA+7bhDcPLekFpPdJTsjhsrNwIAtkAKSh+K+cOreS2ZSxIOdAMr2n6gK1Iq5YuXE0VlAsStX8Zz8PVY9f+FxnpaQ6yG8eO5Gxo0J65RDnsV5WTSS2d6Tij727EdhOjtkwjEKYJQVOvnXKt6aG+Dol9VEy1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YGVWWUD3; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428078ebeb9so33885e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721921528; x=1722526328; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=abZrxQokkz2pYLFW8Emrfi2Wptsc7Kc1VGz7XRPEMEU=;
+        b=YGVWWUD3VJOoWvr/8iLjeGV5iQyhqlEqPEsAzERZi+9ISPQ6lNOsBhmUd+6oukeJpo
+         LlCtT9X3JQvymLRVnhGuG38BT3QsqOSi1SYgmGJMvuuk4sovNGIQ5tp2Hzl+dciTDcHY
+         CUGBgUR3vYOntYQsYxqMAvUwAGuRdznqGXrKr4GATn4VpUrXRvzQVq4W5vQ8ZPKvkKAK
+         HYXpl5h/wQZNpSaIW1LT+Yv1lIvjoVQvsm8oyALYciJRm9vyQ4LduBwtSEQqvvi6Wdok
+         QkzRLWayGWCUhog4fVIe1YR8zghLtKKq8V2V4gDmA4Z8dzjhYVgTHfFF9bs/Zpom7Ddv
+         EErw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721921528; x=1722526328;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=abZrxQokkz2pYLFW8Emrfi2Wptsc7Kc1VGz7XRPEMEU=;
+        b=Zu+h8tfWorS5r7ljRmSRv61xZY/6LAORhlpQ9e+v+nJO+EUR06pi88ofnnbqwVrTyM
+         lQfgvoEOH6ZC4CHgTEIyCqf5QXbOU0iadDayj+COGmK1LFJ+oPwKVhQAQRXZVVz1h19u
+         8heIJB8Ry3jx0YlpKYvm+92QVvuPozEim9Qr3fB24IYttcwe0eOQlRBzH80NZldNCUvk
+         hjkssC87HmvV/ZswzkLARHhbnNiKVYZDyeM9d1TDAK5WsUQxLwqMAAPOWC6qeo+P7NH3
+         w9nQFK8OXJRW8gjztyVoCT4XYUeYiw+7rMIGYNqhaxLQoPBECsAJ9Y6Kmq+jPMlRs5di
+         2/IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWeAOSK6sn6nAcsATkywc5Lwxqwwm88/mwH6BPaQ2DUgozMoyQQwENxqBkzV3YG9JnjrjnXLQ1VGBAKvVkhxsirD1DQnLyKd/l+xzX
+X-Gm-Message-State: AOJu0Yz3+WO6KhxGPibkAhpAjtf8DcQjRfrvtVH3n2LmzOREWbLkeBQb
+	6QkX9MjB1qtmCZB4CL1FMHyoL2vEYZFyTBBvwwlqoY9TgAThLXgaA1S1p9mZM+bJAXKiBiNVVZR
+	7zTjwAdU=
+X-Google-Smtp-Source: AGHT+IE/H9XDkG2Q5ACqFGfvWQBys4MMpCedRzQf9hCedIC5QW1I2hJ7DWfcARrlioaiNHX+6R+w7A==
+X-Received: by 2002:a05:600c:3b05:b0:426:5ef2:cd97 with SMTP id 5b1f17b1804b1-42803ffa18amr1547735e9.2.1721921526693;
+        Thu, 25 Jul 2024 08:32:06 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:8b71:b285:2625:c911])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428079448d0sm30274615e9.21.2024.07.25.08.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 08:32:06 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH v3 0/2] allow KASAN to detect UAF in SLAB_TYPESAFE_BY_RCU
+ slabs
+Date: Thu, 25 Jul 2024 17:31:33 +0200
+Message-Id: <20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
-In-Reply-To: <ZqJjsg3s7H5cTWlT@infradead.org>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <Zp-_RDk5n5431yyh@infradead.org>
- <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
- <ZqEhMCjdFwC3wF4u@infradead.org>
- <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
- <ZqJjsg3s7H5cTWlT@infradead.org>
-Date: Thu, 25 Jul 2024 17:30:58 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christoph Hellwig" <hch@infradead.org>,
- "Youling Tang" <youling.tang@linux.dev>
-Cc: "Luis Chamberlain" <mcgrof@kernel.org>, "Chris Mason" <clm@fb.com>,
- "Josef Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>,
- "Theodore Ts'o" <tytso@mit.edu>, "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- "Youling Tang" <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and module_subeixt helper
- macros
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANVvomYC/1XMQQ7CIBRF0a00fyyGUgq0I/dhOqAIlKhgoBJNw
+ 97FJg4c3pe8s0HS0ekEY7NB1NklF3yN7tCAWqS3GrlLbSCYUMxJh64ySY/WNEf1RDNvezng1nD
+ OoF4eURv32rnzVHtxaQ3xveuZfNcfRP+hTBBGtDdiEJhRysTJhmBv+qjCHaZSyge6iIx9qQAAA
+ A==
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
 
-On Thu, Jul 25, 2024, at 16:39, Christoph Hellwig wrote:
-> On Thu, Jul 25, 2024 at 11:01:33AM +0800, Youling Tang wrote:
->> - It doesn't feel good to have only one subinit/exit in a file.
->> =C2=A0 Assuming that there is only one file in each file, how do we
->> =C2=A0 ensure that the files are linked in order?(Is it sorted by *.o
->> =C2=A0 in the Makefile?)
->
-> Yes, link order already matterns for initialization order for built-in
-> code, so this is a well known concept.
+Hi!
 
-Note: I removed the old way of entering a module a few
-years ago, which allowed simply defining a function called
-init_module(). The last one of these was a07d8ecf6b39
-("ethernet: isa: convert to module_init/module_exit").
+The purpose of the series is to allow KASAN to detect use-after-free
+access in SLAB_TYPESAFE_BY_RCU slab caches, by essentially making them
+behave as if the cache was not SLAB_TYPESAFE_BY_RCU but instead every
+kfree() in the cache was a kfree_rcu().
+This is gated behind a config flag that is supposed to only be enabled
+in fuzzing/testing builds where the performance impact doesn't matter.
 
-Now I think we could just make the module_init() macro
-do the same thing as a built-in initcall() and put
-an entry in a special section, to let you have multiple
-entry points in a loadable module.
+Output of the new kunit testcase I added to the KASAN test suite:
+==================================================================
+BUG: KASAN: slab-use-after-free in kmem_cache_rcu_uaf+0x3ae/0x4d0
+Read of size 1 at addr ffff888106224000 by task kunit_try_catch/224
 
-There are still at least two problems though:
+CPU: 7 PID: 224 Comm: kunit_try_catch Tainted: G    B            N 6.10.0-00003-g065427d4b87f #430
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x53/0x70
+ print_report+0xce/0x670
+[...]
+ kasan_report+0xa5/0xe0
+[...]
+ kmem_cache_rcu_uaf+0x3ae/0x4d0
+[...]
+ kunit_try_run_case+0x1b3/0x490
+[...]
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+[...]
+ ret_from_fork+0x34/0x70
+[...]
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
-- while link order is defined between files in a module,
-  I don't think there is any guarantee for the order between
-  two initcalls of the same level within a single file.
+Allocated by task 224:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ __kasan_slab_alloc+0x6e/0x70
+ kmem_cache_alloc_noprof+0xef/0x2b0
+ kmem_cache_rcu_uaf+0x10d/0x4d0
+ kunit_try_run_case+0x1b3/0x490
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+ ret_from_fork+0x34/0x70
+ ret_from_fork_asm+0x1a/0x30
 
-- For built-in code we don't have to worry about matching
-  the order of the exit calls since they don't exist there.
-  As I understand, the interesting part of this patch
-  series is about making sure the order matches between
-  init and exit, so there still needs to be a way to
-  express a pair of such calls.
+Freed by task 0:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x57/0x80
+ slab_free_after_rcu_debug+0xe3/0x220
+ rcu_core+0x676/0x15b0
+ handle_softirqs+0x22f/0x690
+ irq_exit_rcu+0x84/0xb0
+ sysvec_apic_timer_interrupt+0x6a/0x80
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20
 
-     Arnd
+Last potentially related work creation:
+ kasan_save_stack+0x33/0x60
+ __kasan_record_aux_stack+0x8e/0xa0
+ kmem_cache_free+0x10c/0x420
+ kmem_cache_rcu_uaf+0x16e/0x4d0
+ kunit_try_run_case+0x1b3/0x490
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+ ret_from_fork+0x34/0x70
+ ret_from_fork_asm+0x1a/0x30
+
+The buggy address belongs to the object at ffff888106224000
+ which belongs to the cache test_cache of size 200
+The buggy address is located 0 bytes inside of
+ freed 200-byte region [ffff888106224000, ffff8881062240c8)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x106224
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: 0xffffefff(slab)
+raw: 0200000000000040 ffff88810621c140 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
+head: 0200000000000040 ffff88810621c140 dead000000000122 0000000000000000
+head: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
+head: 0200000000000001 ffffea0004188901 ffffffffffffffff 0000000000000000
+head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888106223f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888106223f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888106224000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888106224080: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
+ ffff888106224100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+    ok 38 kmem_cache_rcu_uaf
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v2:
+Patch 1/2 is new; it's some necessary prep work for the main patch to
+work, though the KASAN integration maybe is a bit ugly.
+Patch 2/2 is a rebased version of the old patch, with some changes to
+how the config is wired up, with poison/unpoison logic added as
+suggested by dvyukov@ back then, with cache destruction fixed using
+rcu_barrier() as pointed out by dvyukov@ and the test robot, and a test
+added as suggested by elver@.
+
+Changes in v3:
+- in patch 1/2, integrate akpm's fix for !CONFIG_KASAN build failure
+- in patch 2/2, as suggested by vbabka, use dynamically allocated
+  rcu_head to avoid having to add slab metadata
+- in patch 2/2, add a warning in the kconfig help text that objects can
+  be recycled immediately under memory pressure
+- Link to v2: https://lore.kernel.org/r/20240724-kasan-tsbrcu-v2-0-45f898064468@google.com
+
+---
+Jann Horn (2):
+      kasan: catch invalid free before SLUB reinitializes the object
+      slub: Introduce CONFIG_SLUB_RCU_DEBUG
+
+ include/linux/kasan.h | 30 +++++++++++++++----
+ mm/Kconfig.debug      | 29 ++++++++++++++++++
+ mm/kasan/common.c     | 60 +++++++++++++++++++++++++++----------
+ mm/kasan/kasan_test.c | 44 +++++++++++++++++++++++++++
+ mm/slab_common.c      | 12 ++++++++
+ mm/slub.c             | 83 ++++++++++++++++++++++++++++++++++++++++++++++-----
+ 6 files changed, 230 insertions(+), 28 deletions(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240723-kasan-tsbrcu-b715a901f776
+-- 
+Jann Horn <jannh@google.com>
+
 
