@@ -1,208 +1,84 @@
-Return-Path: <linux-kernel+bounces-262241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C0B93C2E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:25:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19AB93C2E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489151F21F4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:25:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1D31C218FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FD719ADBF;
-	Thu, 25 Jul 2024 13:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KeKiWINR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0218719ADB6;
+	Thu, 25 Jul 2024 13:25:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D097016DEA8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AACC8DF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721913913; cv=none; b=CF2lVRsgiyx5UujuuwDNRgZxIHd9Uxo6xxbpWgjNJBE0RAWTr4zX8P8epRonJ/S3cY5b8xZh8+tfTnWtIKpTvGVB76fzI4uapZhzMhiX4hALOcQ9AtE4wGBSPLGdMCM5nrZW56CGcAAU2dI4b9PgteNq0N8zrmxXYQcgBf2EclA=
+	t=1721913950; cv=none; b=O8xwS9htm6sENbY5QMjSL8R8sUKCbez+TpHkkqeMNbiiE9OhSp7B3WVlONeJQ4B8cHezdmcdEy3Dk91xrbKYY7S3uEaCn8VBNRn/qL5dsghIg1LzgRwnCC6bubfXJiFrDiSOotCSP3eYAp3w+2BusVAOtc6ChxqTX2s2S5BmNNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721913913; c=relaxed/simple;
-	bh=FquZqCdRSkWOmjxMsAuK0N+4yE04yJ/Bz7POqAHeIdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewzIYd+soimBoOtvvcLLueC+U+7KOAInrDahfZ0eqCyTjy9NG8zSxYxUzDBl0Rv1zioNGcWPzjLjgxeWcUgOSwFDenVt30B95/bbVQGk644cPWR+1jgPaEqWW14kMXQ9igSyWm2s7g38zdQ8zI/HIGT4iJS0lgOwyw9KEcB58NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KeKiWINR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721913912; x=1753449912;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FquZqCdRSkWOmjxMsAuK0N+4yE04yJ/Bz7POqAHeIdc=;
-  b=KeKiWINRhA5Zv12OJ73HvfLR4ubvYAgE3oS75sB+5fWmy6dST8Gem6WZ
-   skcszOzMtaNY7+Rdb189NYzbFlxSsrTY4C8+wnqvF/FdeZOYE9biwjHvj
-   0gGYQ3vHm1xN2P5LieQueVF+WP4YcwjS3ecUCftNWCuAK6BmJd0fJv+Iz
-   jFQyKVVW6Ng2juR3iVs/msi9OjKo//Vm0R5kGt2fbTduhDs0ujxaHKik0
-   XocevByl/3TXWNo/lIyOcG2+GYZUk/0u6ivM3KrIXRBfhooBJDggPRCKS
-   YGS8wr0wU3E0Gr2dqxnvQ6fVI46HUouOkAwLfJ+91YmuaXeyoxpyXEzc/
-   w==;
-X-CSE-ConnectionGUID: +SwLOJzTQZOhOVVxCql/lw==
-X-CSE-MsgGUID: QHa/MjTuSjmCmgmh5zVnsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="23457016"
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="23457016"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 06:25:11 -0700
-X-CSE-ConnectionGUID: ciqpoQn/Q5qKsjHNf/Em5A==
-X-CSE-MsgGUID: PXLIW9fZRlyg1CN4SKi1mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="53692564"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 25 Jul 2024 06:25:07 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sWySu-000o8m-39;
-	Thu, 25 Jul 2024 13:25:04 +0000
-Date: Thu, 25 Jul 2024 21:24:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Laight <David.Laight@aculab.com>,
-	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-	'Linus Torvalds' <torvalds@linuxfoundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"'Matthew Wilcox (Oracle)'" <willy@infradead.org>,
-	'Christoph Hellwig' <hch@infradead.org>,
-	'Andrew Morton' <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>,
-	'Dan Carpenter' <dan.carpenter@linaro.org>,
-	'Arnd Bergmann' <arnd@kernel.org>,
-	"'Jason@zx2c4.com'" <Jason@zx2c4.com>,
-	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
-	'Mateusz Guzik' <mjguzik@gmail.com>
-Subject: Re: [PATCH 4/7] minmax: Simplify signedness check
-Message-ID: <202407252100.fDFchC5O-lkp@intel.com>
-References: <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
+	s=arc-20240116; t=1721913950; c=relaxed/simple;
+	bh=WAotzDsgjQFcLY3DeTzUEEWq1HTCsuplBH2nJEzD90M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f/3lMLDOU7HfQOsYmdCo1NYM4uuwEf32b3ankmjBAfm4P4Psrp/PAv0lq8LDyQt+jauNYGjc7aSMwqR304had37bLB8dOvcYjOajh/P7DI37Jj0TJKe89z9rFmB5pfKQ0abNvOsqDpCjUGMzr8CS492LVhna4tM3cVY59Vgk4kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF3FC116B1;
+	Thu, 25 Jul 2024 13:25:49 +0000 (UTC)
+Date: Thu, 25 Jul 2024 09:26:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] tracing: remove tracing_is_on export
+Message-ID: <20240725092609.1441788d@gandalf.local.home>
+In-Reply-To: <2024072506-aghast-appointee-7f83@gregkh>
+References: <2024072508-freefall-headstand-7d47@gregkh>
+	<20240725083102.38950c1c@gandalf.local.home>
+	<2024072506-aghast-appointee-7f83@gregkh>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On Thu, 25 Jul 2024 14:52:24 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-kernel test robot noticed the following build errors:
+> On Thu, Jul 25, 2024 at 08:31:02AM -0400, Steven Rostedt wrote:
+> > On Thu, 25 Jul 2024 11:36:08 +0200
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >   
+> > > The function tracing_is_on() is only called by in-kernel code, not by
+> > > any modules, so no need to export it as a symbol at all.  
+> > 
+> > Hmm, this is part of the debugging code along with:
+> > 
+> >  tracing_on();  tracing_off();
+> > 
+> > I had it exported in case a module needed to use it in debugging.  
+> 
+> What module?  There is no in-kernel user of it as a module that I could
+> find, what am I missing?
+>
 
-[auto build test ERROR on linux/master]
-[also build test ERROR on linus/master v6.10 next-20240725]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Any module ;-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Laight/minmax-Put-all-the-clamp-definitions-together/20240724-224832
-base:   linux/master
-patch link:    https://lore.kernel.org/r/03601661326c4efba4e618ead15fa0e2%40AcuMS.aculab.com
-patch subject: [PATCH 4/7] minmax: Simplify signedness check
-config: mips-loongson1b_defconfig (https://download.01.org/0day-ci/archive/20240725/202407252100.fDFchC5O-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407252100.fDFchC5O-lkp@intel.com/reproduce)
+It's for debugging. Just like trace_printk(). Something you would add to
+debug a module and then delete it before submitting. It's why I put the
+prototype into kernel.h. It's one of functions that can be handy during
+development. It's not supposed to be submitted into the kernel.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407252100.fDFchC5O-lkp@intel.com/
+Granted, tracing_is_on() is probably the least likely one to be used, but I
+added it with the package, and I have actually used it for debugging a few
+times.
 
-All errors (new ones prefixed by >>):
-
->> crypto/skcipher.c:83:9: error: static assertion expression is not an integral constant expression
-           return max(start, end_page);
-                  ^~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:70:19: note: expanded from macro 'max'
-   #define max(x, y)       __careful_cmp(max, x, y)
-                           ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:56:3: note: expanded from macro '__careful_cmp'
-                   __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:49:17: note: expanded from macro '__cmp_once'
-           _Static_assert(__types_ok(x, y),                        \
-                          ^~~~~~~~~~~~~~~~
-   include/linux/minmax.h:38:2: note: expanded from macro '__types_ok'
-           ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   crypto/skcipher.c:83:9: note: cast that performs the conversions of a reinterpret_cast is not allowed in a constant expression
-   include/linux/minmax.h:70:19: note: expanded from macro 'max'
-   #define max(x, y)       __careful_cmp(max, x, y)
-                           ^
-   include/linux/minmax.h:56:3: note: expanded from macro '__careful_cmp'
-                   __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-                   ^
-   include/linux/minmax.h:49:17: note: expanded from macro '__cmp_once'
-           _Static_assert(__types_ok(x, y),                        \
-                          ^
-   include/linux/minmax.h:38:4: note: expanded from macro '__types_ok'
-           ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
-             ^
-   include/linux/minmax.h:34:27: note: expanded from macro '__is_ok_signed'
-   #define __is_ok_signed(x) is_signed_type(typeof((x) + 0))
-                             ^
-   include/linux/compiler.h:273:32: note: expanded from macro 'is_signed_type'
-   #define is_signed_type(type) (((type)(-1)) < (__force type)1)
-                                  ^
-   1 error generated.
---
->> lib/lzo/lzo1x_compress.c:53:33: error: static assertion expression is not an integral constant expression
-                           const unsigned char *limit = min(ip_end, ip + MAX_ZERO_RUN_LENGTH + 1);
-                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:63:19: note: expanded from macro 'min'
-   #define min(x, y)       __careful_cmp(min, x, y)
-                           ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:56:3: note: expanded from macro '__careful_cmp'
-                   __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:49:17: note: expanded from macro '__cmp_once'
-           _Static_assert(__types_ok(x, y),                        \
-                          ^~~~~~~~~~~~~~~~
-   include/linux/minmax.h:38:2: note: expanded from macro '__types_ok'
-           ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   lib/lzo/lzo1x_compress.c:53:33: note: cast that performs the conversions of a reinterpret_cast is not allowed in a constant expression
-   include/linux/minmax.h:63:19: note: expanded from macro 'min'
-   #define min(x, y)       __careful_cmp(min, x, y)
-                           ^
-   include/linux/minmax.h:56:3: note: expanded from macro '__careful_cmp'
-                   __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-                   ^
-   include/linux/minmax.h:49:17: note: expanded from macro '__cmp_once'
-           _Static_assert(__types_ok(x, y),                        \
-                          ^
-   include/linux/minmax.h:38:4: note: expanded from macro '__types_ok'
-           ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
-             ^
-   include/linux/minmax.h:34:27: note: expanded from macro '__is_ok_signed'
-   #define __is_ok_signed(x) is_signed_type(typeof((x) + 0))
-                             ^
-   include/linux/compiler.h:273:32: note: expanded from macro 'is_signed_type'
-   #define is_signed_type(type) (((type)(-1)) < (__force type)1)
-                                  ^
-   1 error generated.
-
-
-vim +83 crypto/skcipher.c
-
-b286d8b1a690667 Herbert Xu 2016-11-22  75  
-b286d8b1a690667 Herbert Xu 2016-11-22  76  /* Get a spot of the specified length that does not straddle a page.
-b286d8b1a690667 Herbert Xu 2016-11-22  77   * The caller needs to ensure that there is enough space for this operation.
-b286d8b1a690667 Herbert Xu 2016-11-22  78   */
-b286d8b1a690667 Herbert Xu 2016-11-22  79  static inline u8 *skcipher_get_spot(u8 *start, unsigned int len)
-b286d8b1a690667 Herbert Xu 2016-11-22  80  {
-b286d8b1a690667 Herbert Xu 2016-11-22  81  	u8 *end_page = (u8 *)(((unsigned long)(start + len - 1)) & PAGE_MASK);
-b286d8b1a690667 Herbert Xu 2016-11-22  82  
-b286d8b1a690667 Herbert Xu 2016-11-22 @83  	return max(start, end_page);
-b286d8b1a690667 Herbert Xu 2016-11-22  84  }
-b286d8b1a690667 Herbert Xu 2016-11-22  85  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- Steve
 
