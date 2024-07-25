@@ -1,217 +1,131 @@
-Return-Path: <linux-kernel+bounces-262258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA1193C322
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998CD93C321
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A236F1C2139E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5781F22532
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBC819B3E3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3102719B3DD;
 	Thu, 25 Jul 2024 13:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c3XvqavC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUjrGYu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC6D1990BD;
-	Thu, 25 Jul 2024 13:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675BBC8DF;
+	Thu, 25 Jul 2024 13:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721914672; cv=none; b=R40jaz7yFVI4wz8sOqqxDxndVJiqWCk4B/2iVa/FX37QZVxS1qbEg39xzoskPSr9pTkevtsIJ/8hxfSD7MSOqE4d0qLMUqSxyexi0n9lK4Gf8NJzVphs0jp/EIxPjx9Kv3jbCf+yIJPsP9yKOy3sPDpaUmde0oPfGT0q6rAO+B4=
+	t=1721914672; cv=none; b=W+2y0NxTVUh9eWFwIpFiUuuFwzpDARfo+YfrTS0Gr4bWHliHTtcYTXRs9jQrPFRCuDjR2y4pIWT2n4Pz5tDS0hd8uWR9zKMzSBPTRS/P0u56T9pRz1YeHjX8eD+UIZYC/84j+A+aSDWiwgmrLQnSCaN/75m4flok4Fz41f02UJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721914672; c=relaxed/simple;
-	bh=AQDx2WxeMwX7hj1IiTrpYJEr1zM3iBN7u57aWHySSpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fTRMeyZR172hW2vzX7uqDuR7JwHNKb+rr5ux+64hU+IARSrrsewCPlReRyALD/Nejsq5rKZactxEQ+OcMr7SMQS0zd3nu3ZtYBaQ7M27tNFcQBJCKc72HtCb4jWdIAo6bWnFORIcCjD73YxK+nga9oUOmUYq/+Y8XF381D/j8KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c3XvqavC; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721914671; x=1753450671;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=AQDx2WxeMwX7hj1IiTrpYJEr1zM3iBN7u57aWHySSpw=;
-  b=c3XvqavCCBhgZNf69pWO6RXljG+x2oLmO4XOqnExrCwfh3Cm1+MwTb/S
-   8ZTTZQm/EKKga/9Xf9Xf+v0XKthZjqVcbIM2a80HsafeBp9ETmndqm5EL
-   6eYXmhSwgEQQ+6itGLYO0lMRMQDlRn5Jji8Y/2l3pKznKQiDMFOleYiCY
-   g4xvx4f/lo5HegPxf7Wcgp8Wm9TixFWOGyw1k1DCqci45zYC8m0J7Hjl5
-   bFsnnXgTxBq9iDZTeLXOBz/MugX794RRa20aVStQL9fIVrbh/o6PDjJyn
-   R0pxIVSefQA66deW1l99DO0enIgFc7Xmp8L8Y6A2EEhNfRafRE2KbbKRY
-   Q==;
-X-CSE-ConnectionGUID: kJxIGWvRTbCIEIeYxFSskQ==
-X-CSE-MsgGUID: mOe3CvwmTx+6KxhhSLRfBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="31039001"
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="31039001"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 06:37:51 -0700
-X-CSE-ConnectionGUID: 8ojz+UyJSgiR2x/NcnzXAQ==
-X-CSE-MsgGUID: G6ttf1CTRiOjCsyJS9F5Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="57726812"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 06:37:51 -0700
-Received: from [10.212.31.239] (kliang2-mobl1.ccr.corp.intel.com [10.212.31.239])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 172A720CFEE1;
-	Thu, 25 Jul 2024 06:37:48 -0700 (PDT)
-Message-ID: <26fb7054-f877-496f-b23a-9b6a3d752595@linux.intel.com>
-Date: Thu, 25 Jul 2024 09:37:47 -0400
+	bh=uQ/kUueeeni8nylLapPehWnOoiFUDkwvC3TYLWPtfZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kq557uItp+OjYPmIIoBeLJnfxXxfMBNP8XmkeAXvGoMsDtjsaZQPIA9MnlxcaKB06dirGAyR27ev4s2ytE8QPY6aQS+SM46J8z0n1N0P3Wp5Fxd+z1O0yNXOSPP9r+7fRnyAzPUvJ7LOXYY7KRgxFSGPOnRRUHNAdRV/OsQZoKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUjrGYu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9B9C4AF0A;
+	Thu, 25 Jul 2024 13:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721914672;
+	bh=uQ/kUueeeni8nylLapPehWnOoiFUDkwvC3TYLWPtfZQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oUjrGYu8pxZX0KjizUZN5Z/M2rfAKgJAH53eNqOzwlUO7vBrSeU4KFcPPCvG9w0mV
+	 A2DMxmEpG/2GeZcdI5QoXTzD5tuHFlK0ZL7BBBqz4IuaN1emFJxuxVgg5Id6H2hcJw
+	 e+8wcIHCdCipwvWM9vdTqY2hYOZ8PszWbCT8aecN0c7UEwLB5x+tjLau2xY5Z7ypQ8
+	 3uiPMC5aoqPWY5Bs9QU0nXVCAarD8L/k+48tXEcgPKgpTeaCXP+ogOzKJ4z2zgNXjf
+	 HZkpW6weq5/z7v+CCt+IBVjp6t0wUR3SKTqqKSVt1Dr8wtV1yOLNwwPVqA1FNOyBMg
+	 ddEimL/R5O1Cg==
+Date: Thu, 25 Jul 2024 08:37:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: fabrice.gasnier@foss.st.com, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/9] dt-bindings: iio: add backend support to sd
+ modulator
+Message-ID: <20240725133750.GA1726974-robh@kernel.org>
+References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
+ <20240724153639.803263-6-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-To: Song Liu <song@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org,
- open list <linux-kernel@vger.kernel.org>, Ian Rogers <irogers@google.com>,
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- jonesz@meta.com
-References: <CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724153639.803263-6-olivier.moysan@foss.st.com>
 
-
-
-On 2024-07-24 6:39 p.m., Song Liu wrote:
-> Hi folks,
+On Wed, Jul 24, 2024 at 05:36:33PM +0200, Olivier Moysan wrote:
+> The legacy sd modulator driver registers the sigma delta modulator as
+> an IIO channel provider. This implementation is not convenient when the
+> SD modulator has to be cascaded with another IIO device. The scaling
+> information is distributed across devices, which makes it difficult to
+> report consistent scaling data on IIO devices.
 > 
-> We noticed that some unc_cha_tor_occupancy and unc_cha_tor_inserts events
-> appear to be "not supported" and always counting zero (see an example below).
-> Is this a known issue? We are testing with 6.10 kernel and perf.
+> The solution is to expose these cascaded IIO devices as an aggregate
+> device, which report global scaling information.
+> Add IIO backend support to SD modulator to allow scaling information
+> management.
 > 
-> Thanks,
-> Song
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>  .../bindings/iio/adc/sigma-delta-modulator.yaml | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
 > 
-> 
-> [root@kerneltest008.05.atn6 ~]# ./perf list | grep
-> unc_cha_tor_occupancy.ia_hit_llcprefdrd
->   unc_cha_tor_occupancy.ia_hit_llcprefdrd
-> [root@kerneltest008.05.atn6 ~]# ./perf stat -e
-> unc_cha_tor_occupancy.ia_hit_llcprefdrd -a -- sleep 1
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
+> diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+> index cab0d425eaa4..b245971fecb0 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+> @@ -18,18 +18,31 @@ properties:
+>        - sd-modulator
+>        - ads1201
+>  
+> +  '#io-backend-cells':
+> +    const: 0
+> +
+>    '#io-channel-cells':
+>      const: 0
+>  
+>  required:
+>    - compatible
+> -  - '#io-channel-cells'
+> +
+> +anyOf:
+> +  - required: ['#io-backend-cells']
+> +  - required: ['#io-channel-cells']
+>  
+>  additionalProperties: false
+>  
+>  examples:
+>    - |
+> -    ads1202: adc {
+> +    // Backend binding example. SD modulator configured as an IIO backend device
+> +    ads1201_0 {
+> +      compatible = "sd-modulator";
+> +      #io-backend-cells = <0>;
+> +    };
+> +
+> +    // Legacy binding example. SD modulator configured as an IIO channel provider
+> +    ads1201_1 {
 
+Why the node name change? 'adc' is generic and was correct.
 
-The value '4b433' is for the 'Filter1', according to the original event
-list.
+This should be a separate example. (Add '- |').
 
-https://github.com/intel/perfmon/blob/main/SKX/events/skylakex_uncore.json#L4634
-
-      "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "BriefDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "PublicDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "Counter": "0",
-      "MSRValue": "0x00",
-      "ELLC": "0",
-      "Filter": "Filter1",
-      "ExtSel": "0",
-      "Deprecated": "0",
-      "FILTER_VALUE": "0x4b433"
-
-There are two filters for CHA on SKX. Each filter is 32 bits wide.
-So the Linux kernel driver uses config1 (64 bits wide) to represent both
-of them. The low 32 bits are for filter0 and high 32 bits are for filter1.
-
-It should be an issue of the convert script, which set the filter1 value
-to the low 32 bits.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/pmu-events/arch/x86/skylakex/uncore-cache.json#n4489
-
-Can you please try the below event?
-uncore_cha/event=0x35,umask=0x11,config1=0x4b43300000000/
-
-Thanks,
-Kan
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b433'
-> not supported by kernel)!
-> 
->  Performance counter stats for 'system wide':
-> 
->                  0      unc_cha_tor_occupancy.ia_hit_llcprefdrd
-> 
->        1.001680312 seconds time elapsed
-> 
-> [root@kerneltest008.05.atn6 ~]# grep "model name" -m 1 /proc/cpuinfo
-> model name      : Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz
-> [root@kerneltest008.05.atn6 ~]# uname -r
-> 6.10.0
-> [root@kerneltest008.05.atn6 ~]# ./perf -vv
-> perf version 6.10.g0c3836482481
->                  dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
->     dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
->          syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
->                 libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
->             debuginfod: [ OFF ]  # HAVE_DEBUGINFOD_SUPPORT
->                 libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
->                libnuma: [ OFF ]  # HAVE_LIBNUMA_SUPPORT
-> numa_num_possible_cpus: [ OFF ]  # HAVE_LIBNUMA_SUPPORT
->                libperl: [ OFF ]  # HAVE_LIBPERL_SUPPORT
->              libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
->               libslang: [ OFF ]  # HAVE_SLANG_SUPPORT
->              libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
->              libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
->     libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
->            libcapstone: [ OFF ]  # HAVE_LIBCAPSTONE_SUPPORT
->                   zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
->                   lzma: [ on  ]  # HAVE_LZMA_SUPPORT
->              get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
->                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
->                    aio: [ on  ]  # HAVE_AIO_SUPPORT
->                   zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
->                libpfm4: [ OFF ]  # HAVE_LIBPFM
->          libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
->          bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
->   dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
->             libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
+>        compatible = "sd-modulator";
+>        #io-channel-cells = <0>;
+>      };
+> -- 
+> 2.25.1
 > 
 
