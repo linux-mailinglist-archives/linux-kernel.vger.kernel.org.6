@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-262551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C304893C881
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7082793C884
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10091C216A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C731F21FAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B576B48CE0;
-	Thu, 25 Jul 2024 18:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E59B4D8B9;
+	Thu, 25 Jul 2024 18:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="J12IDo0r"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t8trRPBj"
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F026208A5;
-	Thu, 25 Jul 2024 18:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2339376E0
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721933527; cv=none; b=Np/zrtBv1tZXgQTqFRaXqMohqqzSn1ScBM9nAJ9wcH80rRRdhz8EOzPmZoe0gfzSXRIwnXNskxU+D8F9xsAm6GHYgQWZZcWAmx7VXFdyKvgLgCBcqC4fGts1gKkEqSn6zLZHxRqlhy0rKHJgHc0gl6eFDKXUH/Vo8aQF59DcMOg=
+	t=1721933616; cv=none; b=iYr/OkEF+ZTgRKu3l3z6Gdt1cCTa4VNaTu/RI0pDhpCg0tdyIPrxZo1gvEIH0Jxa3wdwFbd6oJtuJ8Vm+cizwof94tidFySKN123kmNqEiS+4Ap0N/G6CKowvTb55aKuBxeATZUjYbvW5MaPSX+8A+wNY5loFEEQe+LqJb3DImI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721933527; c=relaxed/simple;
-	bh=x5Q/vqQivDUshKWSSQsKeEPW9Hi9EddcG25YvAeNxWg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e6/APwBiuqtOR+pd96DZpJrEbL9XXaXbQBj6iojrWInOf6rqDhnA4aenBO0Z6T0BMR5S6VUXQi0PYLwR8f41vVl4DmoUvP5W4mGpivZ8Wb70HD13V7dztzApTpGFBbGxiz170cNCpyK8fhinQHsiaqzbMe6i5PloNgmLDoRVEFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=J12IDo0r; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1721933522; x=1722192722;
-	bh=2/iHL9RDUaFm8LFQlEZRxYfxCLwC3hkGSlCmcbv2QwU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=J12IDo0rtDuUOnv+9qJKuDBNGs0XZ1SA2KwTPCozDTVfsPG20Abj61JqRRQb85mio
-	 JzsFBbSe7WRQBZDVaNhU1wkEDfKRvufu6C2RtLIuzfGgktaeTNNSjGS4DfGm21FATP
-	 /kXsrgDEkenaYQAGHs3d4gvX97w0DCSFGsY1JGvW0BWRTomiWqq7yEiOSuRFkx8a1Z
-	 foIFhyABGGmrdXDhmOf+MZeU4s5QHYFdUsWYvsJrXEx/NfUaQtaV8vMvN+4Hgx3LD5
-	 OVek2zOriXvfn4T8+RgQ8OA1qaElZ7alAedc4pV+gRgb1PBDX5JLO1zwo54zhYfSNq
-	 VhwP5rEo+uB5g==
-Date: Thu, 25 Jul 2024 18:51:56 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Jonathan Corbet <corbet@lwn.net>, Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
-Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
-Message-ID: <ef9c98ea-b8ce-4017-9db8-177731996513@proton.me>
-In-Reply-To: <20240710032447.2161189-1-boqun.feng@gmail.com>
-References: <20240710032447.2161189-1-boqun.feng@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 60bbb0953f2d803181d5422728035a11970ee060
+	s=arc-20240116; t=1721933616; c=relaxed/simple;
+	bh=2n3NvdW7ZZ5CBR3JsXIU8wAn+XVAnDi35Jo8wH4sgAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6SV++Go+qT52MMBNsANqo4vhOD4Z+juKpzOZ20ekkKiCVSYA0H7df7/HiQi/D+4etRJTu2WaV/qIw3lfVIYVbUacwCiZwjmjPCTAUE/oAHSfn8EmGclzquvvkL2uc6OKoeqBPmBqvR1/n1UaIg7WyWb/cXp5oXUSH7rcqve3NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t8trRPBj; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVKll11K4zplT;
+	Thu, 25 Jul 2024 20:53:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721933603;
+	bh=1NTO2YHsR6j9yghcJaFm/X3h4wCtvkpFPVHqyckGJxA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8trRPBjfUYxtF9dcB/8Dq+SrwY6mlwkEwX6LvHoX/fKPmfAeqT0uH9QwhefmYdW/
+	 0dwNLYNitUeeH+ryNLiGT8zONMVX7YqxkSD9RB5hiE1y7/D9wEqLD8BoTTZs9XWYlE
+	 TpHKP7s/uX0XuEu964VTljy25SVowmNX4+0K7NYI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVKlj4yxxzTPV;
+	Thu, 25 Jul 2024 20:53:21 +0200 (CEST)
+Date: Thu, 25 Jul 2024 20:53:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] selftests/landlock: Abstract unix socket
+ restriction tests
+Message-ID: <20240725.uagai2jeiN4i@digikod.net>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,280 +61,398 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 10.07.24 05:24, Boqun Feng wrote:
-> As the usage of `ARef` and `AlwaysRefCounted` is growing, it makes sense
-> to add explanation of the "ARef pattern" to cover the most "DO" and "DO
-> NOT" cases when wrapping a self-refcounted C type.
->=20
-> Hence an "ARef pattern" section is added in the documentation of `ARef`.
->=20
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+On Wed, Jul 17, 2024 at 10:15:20PM -0600, Tahera Fahimi wrote:
+> The patch has three types of tests:
+>   1) unix_socket: base tests the scoping mechanism for a landlocked process,
+>      same as the ptrace test.
+>   2) optional_scoping: generates three processes with different domains and
+>      tests if a process with a non-scoped domain can connect to other processes.
+>   3) unix_sock_special_cases: since the socket's creator credentials are used
+>      for scoping datagram sockets, this test examines the cases where the
+>      socket's credentials are different from the process using it.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+
+You need to add "---" here.  You can test the result by applying this
+patch with `git am`: the comments after these three dashes will not be
+inlcuded in the commit message.
+
+> 
+> Changes in versions:
+> V7:
+>  - Introducing landlock ABI version 6.
+>  - Adding some edge test cases to optional_scoping test.
+>  - Using `enum` for different domains in optional_scoping tests.
+>  - Extend unix_sock_special_cases test cases for connected(SOCK_STREAM) sockets.
+>  - Modifying inline comments.
+> V6:
+>  - Introducing optional_scoping test which ensures a sandboxed process with a
+>    non-scoped domain can still connect to another abstract unix socket(either
+>    sandboxed or non-sandboxed).
+>  - Introducing unix_sock_special_cases test which tests examines scenarios where
+>    the connecting sockets have different domain than the process using them.
+> V4:
+>  - Introducing unix_socket to evaluate the basic scoping mechanism for abstract
+>    unix sockets.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
 > ---
-> This is motivated by:
->=20
-> =09https://lore.kernel.org/rust-for-linux/20240705110228.qqhhynbwwuwpcdeo=
-@vireshk-i7/
->=20
->  rust/kernel/types.rs | 156 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 156 insertions(+)
->=20
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index bd189d646adb..70fdc780882e 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -329,6 +329,162 @@ pub unsafe trait AlwaysRefCounted {
->  ///
->  /// The pointer stored in `ptr` is non-null and valid for the lifetime o=
-f the [`ARef`] instance. In
->  /// particular, the [`ARef`] instance owns an increment on the underlyin=
-g object's reference count.
-> +///
-> +/// # [`ARef`] pattern
-> +///
-> +/// "[`ARef`] pattern" is preferred when wrapping a C struct which has i=
-ts own refcounting
+>  tools/testing/selftests/landlock/base_test.c  |   2 +-
+>  .../testing/selftests/landlock/ptrace_test.c  | 867 ++++++++++++++++++
+>  2 files changed, 868 insertions(+), 1 deletion(-)
 
-I would have written "[...] struct which is reference-counted, because
-[...]", is there a specific reason you wrote "its own"?
+Even if these tests are similar to the ptrace's ones, they don't share
+code.  For maintainance reasons and test flexibility, we should have
+these new tests in a "scoped_abstract_unix_test.c" file.
 
-> +/// mechanism, because it decouples the operations on the object itself =
-(usually via a `&Foo`) vs the
-> +/// operations on a pointer to the object (usually via an `ARef<Foo>`). =
-For example, given a `struct
+> 
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 3c1e9f35b531..52b00472a487 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -75,7 +75,7 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
+> +	ASSERT_EQ(6, landlock_create_ruleset(NULL, 0,
+>  					     LANDLOCK_CREATE_RULESET_VERSION));
+>  
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+> index a19db4d0b3bd..e7dcefda8ce0 100644
+> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> +++ b/tools/testing/selftests/landlock/ptrace_test.c
 
-Not exactly sure I understand your point here, what exactly is the
-advantage of decoupling the operations?
-In my mind the following points are the advantages of using `ARef`:
-(1) prevents having to implement multiple abstractions for a single C
-    object: say there is a `struct foo` that is both used via reference
-    counting and by-value on the stack. Without `ARef`, we would have to
-    write two abstractions, one for each use-case. With `ARef`, we can
-    have one `Foo` that can be wrapped with `ARef` to represent a
-    reference-counted object.
-(2) `ARef<T>` always represents a reference counted object, so it helps
-    with understanding the code. If you read `Foo`, you cannot be sure
-    if it is heap or stack allocated.
-(3) generalizes common code of reference-counted objects (ie avoiding
-    code duplication) and concentration of `unsafe` code.
 
-In my opinion (1) is the most important, then (2). And (3) is a nice
-bonus. If you agree with the list above (maybe you also have additional
-advantages of `ARef`?) then it would be great if you could also add them
-somewhere here.
+> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent, child
+> + * and grand child processes when they can have scoped or non-scoped
+> + * domains.
+> + **/
+> +TEST_F(optional_scoping, unix_scoping)
+> +{
+> +	pid_t child;
+> +	socklen_t addrlen;
+> +	int sock_len = 5;
+> +	int status;
+> +	struct sockaddr_un addr = {
+> +		.sun_family = AF_UNIX,
+> +	};
+> +	const char sun_path[8] = "\0test";
+> +	bool can_connect_to_parent, can_connect_to_child;
+> +	int pipe_parent[2];
+> +
+> +	if (variant->domain_grand_child == SCOPE_SANDBOX)
+> +		can_connect_to_child = false;
+> +	else
+> +		can_connect_to_child = true;
+> +
+> +	if (!can_connect_to_child || variant->domain_children == SCOPE_SANDBOX)
+> +		can_connect_to_parent = false;
+> +	else
+> +		can_connect_to_parent = true;
+> +
+> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
+> +	memcpy(&addr.sun_path, sun_path, sock_len);
+> +
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +
+> +	if (variant->domain_all == OTHER_SANDBOX)
+> +		create_domain(_metadata);
+> +	else if (variant->domain_all == SCOPE_SANDBOX)
+> +		create_unix_domain(_metadata);
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		int pipe_child[2];
+> +		ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +		pid_t grand_child;
+> +		struct sockaddr_un child_addr = {
+> +			.sun_family = AF_UNIX,
+> +		};
+> +		const char child_sun_path[8] = "\0tsst";
 
-> +/// foo` defined in C, which has its own refcounting operations `get_foo=
-()` and `put_foo()`. Without
-> +/// "[`ARef`] pattern", i.e. **bad case**:
+To avoid potential issues with conflicting names, we should use the same
+sun_path as in net_test.c:set_service().  Same for all use of sun_path.
 
-Instead of "bad case" I would have written "i.e. you want to avoid this:".
-
-> +///
-> +/// ```ignore
-> +/// pub struct Foo(NonNull<foo>);
-> +///
-> +/// impl Foo {
-> +///     // An operation on the pointer.
-> +///     pub unsafe fn from_ptr(ptr: *mut foo) -> Self {
-> +///         // Note that whether `get_foo()` is needed here depends on t=
-he exact semantics of
-> +///         // `from_ptr()`: is it creating a new reference, or it conti=
-nues using the caller's
-> +///         // reference?
-> +///         unsafe { get_foo(ptr); }
-> +///
-> +///         unsafe { Foo(NonNull::new_unchecked(foo)) }
-> +///     }
-> +///
-> +///     // An operation on the object.
-> +///     pub fn get_bar(&self) -> Bar {
-> +///         unsafe { (*foo.0.as_ptr()).bar }
-> +///     }
-> +/// }
-> +///
-> +/// // Plus `impl Clone` and `impl Drop` are also needed to implement ma=
-nually.
-> +/// impl Clone for Foo {
-> +///     fn clone(&self) -> Self {
-> +///         unsafe { get_foo(self.0.as_ptr()); }
-> +///
-> +///         Foo(self.0)
-> +///     }
-> +/// }
-> +///
-> +/// impl Drop for Foo {
-> +///     fn drop(&mut self) {
-> +///         unsafe { put_foo(self.0.as_ptr()); }
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// In this case, it's hard to tell whether `Foo` represent an object of=
- `foo` or a pointer to
-> +/// `foo`.
-> +///
-> +/// However, if using [`ARef`] pattern, `foo` can be wrapped as follow:
-> +///
-> +/// ```ignore
-> +/// /// Note: `Opaque` is needed in most cases since there usually exist=
- C operations on
-
-I would disagree for the reason that `Opaque` is needed. You need it if
-the `foo` eg contains a bool, since C might just write a nonsense
-integer which would then result in immediate UB in Rust.
-Other reasons might be that certain bytes of `foo` are written to by
-other threads, even though on the Rust side we have `&mut Foo` (eg a
-`mutex`).
-
-> +/// /// `struct foo *`, and `#[repr(transparent)]` is needed for the saf=
-ety of converting a `*mut
-> +/// /// foo` to a `*mut Foo`
-> +/// #[repr(transparent)]
-> +/// pub struct Foo(Opaque<foo>);
-> +///
-> +/// impl Foo {
-> +///     pub fn get_bar(&self) -> Bar {
-> +///         // SAFETY: `self.0.get()` is a valid pointer.
-> +///         //
-> +///         // Note: Usually extra safety comments are needed here to ex=
-plain why accessing `.bar`
-> +///         // doesn't race with C side. Most cases are either calling a=
- C function, which has its
-> +///         // own concurrent access protection, or holding a lock.
-> +///         unsafe { (*self.0.get()).bar }
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// ## Avoid `impl AlwaysRefCounted` if unnecesarry
-
-I would move this section below the next one.
-
-> +///
-> +/// If Rust code doesn't touch the part where the object lifetimes of `f=
-oo` are maintained, `impl
-> +/// AlwaysRefCounted` can be temporarily avoided: it can always be added=
- later as an extension of
-> +/// the functionality of the Rust code. This is usually the case for cal=
-lbacks where the object
-> +/// lifetimes are already maintained by a framework. In such a case, an =
-`unsafe` `fn(*mut foo) ->
-> +/// &Foo` function usually suffices:
-> +///
-> +/// ```ignore
-> +/// impl Foo {
-> +///     /// # Safety
-> +///     ///
-> +///     /// `ptr` has to be a valid pointer to `foo` for the entire life=
-time `'a'.
-> +///     pub unsafe fn as_ref<'a>(ptr: *mut foo) -> &'a Self {
-> +///         // SAFETY: Per function safety requirement, reborrow is vali=
-d.
-> +///         unsafe { &*ptr.cast() }
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// ## Type invariants of `impl AlwaysRefCounted`
-
-I think you should first show how the example looks like with `ARef` and
-then talk about type invariants.
-
-> +///
-> +/// Types that `impl AlwaysRefCounted` usually needs an invariant to des=
-cribe why the type can meet
-> +/// the safety requirement of `AlwaysRefCounted`, e.g.
-> +///
-> +/// ```ignore
-> +/// /// # Invariants:
-> +/// ///
-> +/// /// Instances of this type are always refcounted, that is, a call to=
- `get_foo` ensures that the
-> +/// /// allocation remains valid at least until the matching call to `pu=
-t_foo`.
-> +/// #[repr(transparent)]
-> +/// pub struct Foo(Opaque<foo>);
-> +///
-> +/// // SAFETY: `Foo` is always ref-counted per type invariants.
-> +/// unsafe impl AlwaysRefCounted for Foo {
-> +///     fn inc_ref(&self) {
-> +///         // SAFETY: `self.0.get()` is a valid pointer and per type in=
-variants, the existence of
-> +///         // `&self` means it has a non-zero reference count.
-> +///         unsafe { get_foo(self.0.get()); }
-> +///     }
-> +///
-> +///     unsafe dec_ref(obj: NonNull<Self>) {
-> +///         // SAFETY: The refcount of `obj` is non-zero per function sa=
-fety requirement, and the
-> +///         // cast is OK since `foo` is transparent to `Foo`.
-> +///         unsafe { put_foo(obj.cast()); }
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// After `impl AlwaysRefCounted for foo`, `clone()` (`get_foo()`) and `=
-drop()` (`put_foo()`)  are
-
-Typo: it should be `impl AlwaysRefCounted for Foo`.
-
----
-Cheers,
-Benno
-
-> +/// available to `ARef<Foo>` thanks to the generic implementation.
-> +///
-> +/// ## `ARef<Self>` vs `&Self`
-> +///
-> +/// For an `impl AlwaysRefCounted` type, `ARef<Self>` represents an owne=
-r of one reference count,
-> +/// e.g.
-> +///
-> +/// ```ignore
-> +/// impl Foo {
-> +///     /// Gets a ref-counted reference of [`Self`].
-> +///     ///
-> +///     /// # Safety
-> +///     ///
-> +///     /// - `ptr` must be a valid pointer to `foo` with at least one r=
-eference count.
-> +///     pub unsafe fn from_ptr(ptr: *mut foo) -> ARef<Self> {
-> +///         // SAFETY: `ptr` is a valid pointer per function safety requ=
-irement. The cast is OK
-> +///         // since `foo` is transparent to `Foo`.
-> +///         //
-> +///         // Note: `.into()` here increases the reference count, so th=
-e returned value has its own
-> +///         // reference count.
-> +///         unsafe { &*(ptr.cast::<Foo>()) }.into()
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// Another function that returns an `ARef<Self>` but with a different s=
-emantics is
-> +/// [`ARef::from_raw`]: it takes away the refcount of the input pointer,=
- i.e. no refcount
-> +/// incrementation inside the function.
-> +///
-> +/// However `&Self` represents a reference to the object, and the lifeti=
-me of the **reference** is
-> +/// known at compile-time. E.g. the `Foo::as_ref()` above.
-> +///
-> +/// ## `impl Drop` of an `impl AlwaysRefCounted` should not touch the re=
-fcount
-> +///
-> +/// [`ARef`] descreases the refcount automatically (in [`ARef::drop`]) w=
-hen it goes out of the
-> +/// scope, therefore there's no need to `impl Drop` for the type of obje=
-cts (e.g. `Foo`) to decrease
-> +/// the refcount.
->  pub struct ARef<T: AlwaysRefCounted> {
->      ptr: NonNull<T>,
->      _p: PhantomData<T>,
-> --
-> 2.45.2
->=20
-
+> +
+> +		memcpy(&child_addr.sun_path, child_sun_path, sock_len);
+> +
+> +		if (variant->domain_children == OTHER_SANDBOX)
+> +			create_domain(_metadata);
+> +		else if (variant->domain_children == SCOPE_SANDBOX)
+> +			create_unix_domain(_metadata);
+> +
+> +		grand_child = fork();
+> +		ASSERT_LE(0, grand_child);
+> +		if (grand_child == 0) {
+> +			ASSERT_EQ(0, close(pipe_parent[1]));
+> +			ASSERT_EQ(0, close(pipe_child[1]));
+> +
+> +			char buf1, buf2;
+> +			int err;
+> +
+> +			if (variant->domain_grand_child == OTHER_SANDBOX)
+> +				create_domain(_metadata);
+> +			else if (variant->domain_grand_child == SCOPE_SANDBOX)
+> +				create_unix_domain(_metadata);
+> +
+> +			self->client = socket(AF_UNIX, variant->type, 0);
+> +			ASSERT_NE(-1, self->client);
+> +
+> +			ASSERT_EQ(1, read(pipe_child[0], &buf2, 1));
+> +			err = connect(self->client,
+> +				      (struct sockaddr *)&child_addr, addrlen);
+> +			if (can_connect_to_child) {
+> +				EXPECT_EQ(0, err);
+> +			} else {
+> +				EXPECT_EQ(-1, err);
+> +				EXPECT_EQ(EPERM, errno);
+> +			}
+> +
+> +			if (variant->type == SOCK_STREAM) {
+> +				EXPECT_EQ(0, close(self->client));
+> +				self->client =
+> +					socket(AF_UNIX, variant->type, 0);
+> +				ASSERT_NE(-1, self->client);
+> +			}
+> +
+> +			ASSERT_EQ(1, read(pipe_parent[0], &buf1, 1));
+> +			err = connect(self->client, (struct sockaddr *)&addr,
+> +				      addrlen);
+> +			if (can_connect_to_parent) {
+> +				EXPECT_EQ(0, err);
+> +			} else {
+> +				EXPECT_EQ(-1, err);
+> +				EXPECT_EQ(EPERM, errno);
+> +			}
+> +			EXPECT_EQ(0, close(self->client));
+> +
+> +			_exit(_metadata->exit_code);
+> +			return;
+> +		}
+> +
+> +		ASSERT_EQ(0, close(pipe_child[0]));
+> +		if (variant->domain_child == OTHER_SANDBOX)
+> +			create_domain(_metadata);
+> +		else if (variant->domain_child == SCOPE_SANDBOX)
+> +			create_unix_domain(_metadata);
+> +
+> +		self->child_server = socket(AF_UNIX, variant->type, 0);
+> +		ASSERT_NE(-1, self->child_server);
+> +		ASSERT_EQ(0, bind(self->child_server,
+> +				  (struct sockaddr *)&child_addr, addrlen));
+> +		if (variant->type == SOCK_STREAM)
+> +			ASSERT_EQ(0, listen(self->child_server, 32));
+> +
+> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> +		ASSERT_EQ(grand_child, waitpid(grand_child, &status, 0));
+> +		return;
+> +	}
+> +	ASSERT_EQ(0, close(pipe_parent[0]));
+> +
+> +	if (variant->domain_parent == OTHER_SANDBOX)
+> +		create_domain(_metadata);
+> +	else if (variant->domain_parent == SCOPE_SANDBOX)
+> +		create_unix_domain(_metadata);
+> +
+> +	self->parent_server = socket(AF_UNIX, variant->type, 0);
+> +	ASSERT_NE(-1, self->parent_server);
+> +	ASSERT_EQ(0,
+> +		  bind(self->parent_server, (struct sockaddr *)&addr, addrlen));
+> +
+> +	if (variant->type == SOCK_STREAM)
+> +		ASSERT_EQ(0, listen(self->parent_server, 32));
+> +
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
+> +		_metadata->exit_code = KSFT_FAIL;
+> +}
+> +
+> +/*
+> + * Since the special case of scoping only happens when the connecting socket
+> + * is scoped, the client's domain is true for all the following test cases.
+> + */
+> +/* clang-format off */
+> +FIXTURE(unix_sock_special_cases) {
+> +	int server_socket, client;
+> +	int stream_server, stream_client;
+> +};
+> +
+> +/* clang-format on */
+> +FIXTURE_VARIANT(unix_sock_special_cases)
+> +{
+> +	const bool domain_server;
+> +	const bool domain_server_socket;
+> +	const int type;
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_dgram_server_sock_domain) {
+> +	/* clang-format on */
+> +	.domain_server = false,
+> +	.domain_server_socket = true,
+> +	.type = SOCK_DGRAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_dgram_server_domain) {
+> +	/* clang-format off */
+> +	.domain_server = true,
+> +	.domain_server_socket = false,
+> +	.type = SOCK_DGRAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_stream_server_sock_domain) {
+> +	/* clang-format on */
+> +	.domain_server = false,
+> +	.domain_server_socket = true,
+> +	.type = SOCK_STREAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_stream_server_domain) {
+> +        /* clang-format off */
+> +        .domain_server = true,
+> +        .domain_server_socket = false,
+> +        .type = SOCK_STREAM,
+> +};
+> +
+> +FIXTURE_SETUP(unix_sock_special_cases)
+> +{
+> +}
+> +
+> +FIXTURE_TEARDOWN(unix_sock_special_cases)
+> +{
+> +	close(self->client);
+> +	close(self->server_socket);
+> +	close(self->stream_server);
+> +	close(self->stream_client);
+> +}
+> +
+> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent and
+> + * child processes when connecting socket has different domain
+> + * than the process using it.
+> + **/
+> +TEST_F(unix_sock_special_cases, dgram_cases)
+> +{
+> +	pid_t child;
+> +	socklen_t addrlen;
+> +	int sock_len = 5;
+> +	struct sockaddr_un addr, addr_stream = {
+> +		.sun_family = AF_UNIX,
+> +	};
+> +	const char sun_path[8] = "\0test";
+> +	const char sun_path_stream[8] = "\0strm";
+> +	int err, status;
+> +	int pipe_child[2], pipe_parent[2];
+> +	char buf_parent;
+> +
+> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +
+> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
+> +	memcpy(&addr.sun_path, sun_path, sock_len);
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		char buf_child;
+> +
+> +		ASSERT_EQ(0, close(pipe_parent[1]));
+> +		ASSERT_EQ(0, close(pipe_child[0]));
+> +
+> +		/* client always has domain */
+> +		create_unix_domain(_metadata);
+> +
+> +		if (variant->domain_server_socket) {
+> +			int data_socket;
+> +			int fd_sock = socket(AF_UNIX, variant->type, 0);
+> +
+> +			ASSERT_NE(-1, fd_sock);
+> +
+> +			self->stream_server = socket(AF_UNIX, SOCK_STREAM, 0);
+> +
+> +			ASSERT_NE(-1, self->stream_server);
+> +			memcpy(&addr_stream.sun_path, sun_path_stream,
+> +			       sock_len);
+> +			ASSERT_EQ(0, bind(self->stream_server,
+> +					  (struct sockaddr *)&addr_stream,
+> +					  addrlen));
+> +			ASSERT_EQ(0, listen(self->stream_server, 32));
+> +
+> +			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> +
+> +			data_socket = accept(self->stream_server, NULL, NULL);
+> +
+> +			ASSERT_EQ(0, send_fd(data_socket, fd_sock));
+> +			ASSERT_EQ(0, close(fd_sock));
+> +			TH_LOG("sending completed\n");
+> +		}
+> +
+> +		self->client = socket(AF_UNIX, variant->type, 0);
+> +		ASSERT_NE(-1, self->client);
+> +		/* wait for parent signal for connection */
+> +		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
+> +
+> +		err = connect(self->client, (struct sockaddr *)&addr, addrlen);
+> +		if (!variant->domain_server_socket) {
+> +			EXPECT_EQ(-1, err);
+> +			EXPECT_EQ(EPERM, errno);
+> +		} else {
+> +			EXPECT_EQ(0, err);
+> +		}
+> +		_exit(_metadata->exit_code);
+> +		return;
+> +	}
+> +
+> +	ASSERT_EQ(0, close(pipe_child[1]));
+> +	ASSERT_EQ(0, close(pipe_parent[0]));
+> +
+> +	if (!variant->domain_server_socket) {
+> +		self->server_socket = socket(AF_UNIX, variant->type, 0);
+> +	} else {
+> +		int cli = socket(AF_UNIX, SOCK_STREAM, 0);
+> +
+> +		ASSERT_NE(-1, cli);
+> +		memcpy(&addr_stream.sun_path, sun_path_stream, sock_len);
+> +		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
+> +		ASSERT_EQ(0, connect(cli, (struct sockaddr *)&addr_stream,
+> +				     addrlen));
+> +
+> +		self->server_socket = recv_fd(cli);
+> +		ASSERT_LE(0, self->server_socket);
+> +	}
+> +
+> +	ASSERT_NE(-1, self->server_socket);
+> +
+> +	if (variant->domain_server)
+> +		create_unix_domain(_metadata);
+> +
+> +	ASSERT_EQ(0,
+> +		  bind(self->server_socket, (struct sockaddr *)&addr, addrlen));
+> +	if (variant->type == SOCK_STREAM)
+> +		ASSERT_EQ(0, listen(self->server_socket, 32));
+> +	/* signal to child that parent is listening */
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +
+> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
+> +		_metadata->exit_code = KSFT_FAIL;
+> +}
+>  TEST_HARNESS_MAIN
+> -- 
+> 2.34.1
+> 
+> 
 
