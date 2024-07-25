@@ -1,266 +1,203 @@
-Return-Path: <linux-kernel+bounces-262445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB5E93C734
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:33:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D236393C73A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A35B1C2208C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:33:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 398D4B20FA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF35819DF41;
-	Thu, 25 Jul 2024 16:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1C819DF64;
+	Thu, 25 Jul 2024 16:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hu91//dl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hRg3ZDxD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479FB1D68F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C9B19D09A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721925198; cv=none; b=W55di/IEASnCBJS1jexV1Lo+u+pgnl2hvKCDvMFdaKaO+t/TUagGEInWlZhNzcc/shSk2jfCL+Q/VH8sOKhDN+6N1E4fFE4k8aGeYXy35WwXKTEUY12qzrjXV47Fd4ewNYgJNezMqsFZwp6G7L1KzXYmgi+ejDBDuzC4Hs7h0oE=
+	t=1721925421; cv=none; b=ZKrEq6EQRTXIRr0kVfGXjBNJuRLZPz4AIBMDyAa9Erou1kQPzAg5TyOePF4r+ud7fgV2d0tPPE6ozGId4CbI3o+LvgdAtYfpjNl410Ah6axJYBsgfGfAv1rVVwhwlfylj6Kjq6BoMYkZBKRW01r/ec/nx1rRpyJPqMETlWeNzko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721925198; c=relaxed/simple;
-	bh=YhMeQKtI4fdRJzymCqk4WemjTuqWXinoOJd0rboLbzs=;
+	s=arc-20240116; t=1721925421; c=relaxed/simple;
+	bh=GwE5e5fOHu8b8BxszgA/TUe7/xBsKYj3T4zN+si4+NU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fb80l0A+iJOhScwch52mnkSHn3SiFcW87bZrYPaMWtL7RewBcG6CiohiGgNcrgZ956gM0xzK5sGWWHHYs6oiviBfkUS4WkhuPeO6dg0GXhVAFQWYYfSsnR5uST+rlMDL/tLa/pyeosHqOlrhphM5jo2dNmQbFOx1WTcfXvLS6r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hu91//dl; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721925196; x=1753461196;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YhMeQKtI4fdRJzymCqk4WemjTuqWXinoOJd0rboLbzs=;
-  b=hu91//dlx6pXl6JHJMEtwuxkCBL2HhYcGrnBU0EVvZrVUya3WyzP3nzz
-   0m4ozIZeNAZbk0x4m00yRfiXjccRrvd8o5AMhnRamlHVLCFh31bRjRdf2
-   adEC6Y04TeKuDwtV5ru3Xnb1bzLlMrWBgzHLdkbOkD53DKirmiLcDxUDR
-   1RCN3HBKdqW8yLnwPkPZGar7OTaQtochiPhepqb/hpFx8Pmcr97++WNce
-   iD7cOgbx3JdFvtvl/sx+t7zEZAL5PDDOqBynK0BS+vqlotaAGpYxhhKqE
-   ogQXUUtx5K8kfW85CJnj7uNoIDWxkpvuWRdO2ar3yn+XRnp8LFshuhTia
-   w==;
-X-CSE-ConnectionGUID: Yx7z1AU2TTqfVnIYh4AZMg==
-X-CSE-MsgGUID: Us/+QmA6SXuqd8PxwDWNRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="12712878"
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="12712878"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 09:33:15 -0700
-X-CSE-ConnectionGUID: SZH6upjTT3aAZB/FqqgIuw==
-X-CSE-MsgGUID: KyVL0BCjT6Ox5BffK9Axsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,236,1716274800"; 
-   d="scan'208";a="52907637"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 25 Jul 2024 09:33:13 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sX1Ox-000oGq-04;
-	Thu, 25 Jul 2024 16:33:11 +0000
-Date: Fri, 26 Jul 2024 00:33:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kinsey Ho <kinseyho@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Kinsey Ho <kinseyho@google.com>
-Subject: Re: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during
- traversal
-Message-ID: <202407260047.sIuRFLJE-lkp@intel.com>
-References: <20240724190214.1108049-2-kinseyho@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bM+QLg4F6VL1u1Alz8lVxd5dQprwIO1GgD+PkMJpAF8r6uIYb6UBMtnh9refXSU7oOhBCeGrojnJo1WSR+ylaRxzvSrLhHzU9K4bNEUkyDmStSeFvBNYgdfK1aY2888KYN1GWbP5vZMXc5J44Jvq4Fg9IKWK/kP2HU5yuQyg0vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hRg3ZDxD; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2b921c48so57573b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721925420; x=1722530220; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HJ+XTGjLJRBa3KHQGyhh/jsjpm3Poa2VfnAbLwWAvEA=;
+        b=hRg3ZDxD9JahA8M1dJuUZSAWVodkOnx7qeFQ5Vh8+pNnWAOc0xasHJuNdUGZcrKW09
+         I9vxcGnFTq507dpOFgVh7PAP6vwbwtZRVbd4qaSAJ3IwPEdBWdNTua1xHbeGej0Mryjm
+         1FTGvieHO+qIqw94XrH4sD962/bGhZlxSRIMPFeYnJ2Ot9C6jcdUaNMpIbhoL7Y9e4Dw
+         kDcGEZP0ZbvcI+BeddxLv2EfbHKARLYM2zI0mKoSv7T0XjU46LW1BzJX4wio9byQBJHM
+         QMLpefukPRe4xkEYIdqIyVMzXMQ+XnhWZ0/gV5ay2oDaZBZMbNh8fpLCgfVOSJFvZIIp
+         2tRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721925420; x=1722530220;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJ+XTGjLJRBa3KHQGyhh/jsjpm3Poa2VfnAbLwWAvEA=;
+        b=ZWl4K/oU/Sav09cGI5MUTsRLprVEKOHsI8xGbalOoeiosC4/qtxAAYPDqvI+wvMwsz
+         vOwcTLBMaSka/90uMl8aKGey+/AnrZyiKWLkWs/yjfezO7GBbzutRub7UgV0rARm4dbr
+         Cn9i20ylMf906svOSisK3gDcVeypchYKzNqB6B70sARSoeVvYDXnUZZ8XLPNlPEg1eGY
+         PbOX8rdProV0YSWd6I4TO4Lf1Vlt80J1611rolaoEPecaGJ7iUPr3aKa2z/Px+L7wSbZ
+         4hmHcbWjIBR6dFInISUzOPKtIu2KfNn+Xfqi7wrbEX3gTm7Zia9NVaiQo0+YHp0I8YIx
+         DO8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8f0SVwIVSiZ35AIQWEJzLjMfsQM4MzgwgHQE7bBPF2KVGiJTafQOZhpQnViMucgBUjTlc9GFkQRPs5e3BLcadgmBMu2siNsnMY6df
+X-Gm-Message-State: AOJu0YzbOQ0yfxsashfHKEbw6Yx6NInV8iy0GJ5QmW/cR60FPJ5oRkjz
+	pjSp2ahjrL3RUDdJs2QbXQlS6++nJ4Hh+1gYMds7XU/0kDT4j5Nip4kkOgGDQw==
+X-Google-Smtp-Source: AGHT+IHnDHZ4FE5BwkV+FrBiD204vw243eE4aD3TRokyDFJD6nu0i1kqJ4i2CTDDIzN12n7a7PZLzw==
+X-Received: by 2002:a05:6a21:3396:b0:1c0:f26e:2296 with SMTP id adf61e73a8af0-1c472c55c7emr4474790637.48.1721925419633;
+        Thu, 25 Jul 2024 09:36:59 -0700 (PDT)
+Received: from thinkpad ([220.158.156.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73eb887sm3787926a91.27.2024.07.25.09.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 09:36:59 -0700 (PDT)
+Date: Thu, 25 Jul 2024 22:06:52 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Rick Wertenbroek <rick.wertenbroek@gmail.com>,
+	rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
+ address BARs in EPC
+Message-ID: <20240725163652.GD2274@thinkpad>
+References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
+ <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
+ <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
+ <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
+ <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
+ <20240725053348.GN2317@thinkpad>
+ <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
+ <ZqJeX9D0ra2g9ifP@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240724190214.1108049-2-kinseyho@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqJeX9D0ra2g9ifP@ryzen.lan>
 
-Hi Kinsey,
+On Thu, Jul 25, 2024 at 04:17:03PM +0200, Niklas Cassel wrote:
+> On Thu, Jul 25, 2024 at 10:06:38AM +0200, Rick Wertenbroek wrote:
+> > 
+> > I don't know if the EPF node in the DT is the right place for the
+> > following reasons. First, it describes the requirements of the EPF and
+> > not the restrictions imposed by the EPC (so for example one function
+> > requires the BAR to use a given physical address and this is described
+> > in the DT EPF node, but the controller could use any address, it just
+> > configures the controller to use the address the EPF wants, but in the
+> > other case (e.g., on FPGA), the EPC can only handle a BAR at a given
+> > physical address and no other address so this should be in the EPC
+> > node). Second, it is very static, so the EPC relation EPF would be
+> > bound in the DT, I prefer being able to bind-unbind from configfs so
+> > that I can make changes without reboot (e.g., alternate between two or
+> > more endpoint functions, which may have different BAR requirements and
+> > configurations).
+> 
+> I agree that the MHI case (EPF requires a specific host address for the BAR)
+> and the FPGA case (EPC requires a specific host address for the BAR),
+> is different.
+> 
+> Right now, for EPC requirements, we have epc_features in the driver that
+> describes hardware for this EPC (e.g. fixed size BARs). Right now, I don't
+> see a reason to move this to DT (or let a DT alternative co-exist).
+> 
+> 
+> For EPF requirements, the MHI EPF driver exposes several different
+> versions (pci_epf_mhi_sa8775p, pci_epf_mhi_sdx55, pci_epf_mhi_sm8450)
+> in configfs, and each have their own specific driver data.
+> 
+> The only negative I can see with this is that it might clutter the
+> /sys/kernel/config/pci_ep/functions/ directory. Perhaps it is possible
+> to create a /sys/kernel/config/pci_ep/functions/pci_epf_mhi/ directory
+> where all the different versions reside?
+> 
+> Keeping this per-platform data in the MHI EPF driver is fine IMO.
+> 
+> If you would prefer to create a "pci_epf_mhi" generic version, that instead
+> takes this information from configfs, that would be fine too. I would also
+> be fine if you created a "pci_epf_mhi" generic version that tries to take
+> this information from device tree (as long as it is also possible to supply
+> the same information via configfs).
+> 
+> Good luck getting it accepted by the DT maintainers though. The configfs
+> interface was chosen because some developers (including Arnd Bergmann, IIRC)
+> didn't like the idea of having EPF specific information in DT.
+> 
 
-kernel test robot noticed the following build warnings:
+I know the story and they were right (Arnd/Rob) as the initial version tried to
+use DT for everything. But MHI is different as it is a hardware entity, which
+not only uses a fixed address, it uses a fixed region that has MHI registers in
+hw.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.10 next-20240725]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Anyway, I don't have a *strong* motivation to upstream the DT support for it as
+the current approach is serving good for now, unless new usecases show up.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kinsey-Ho/mm-don-t-hold-css-refcnt-during-traversal/20240725-030750
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240724190214.1108049-2-kinseyho%40google.com
-patch subject: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during traversal
-config: x86_64-randconfig-121-20240725 (https://download.01.org/0day-ci/archive/20240726/202407260047.sIuRFLJE-lkp@intel.com/config)
-compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240726/202407260047.sIuRFLJE-lkp@intel.com/reproduce)
+> 
+> > For combining pci_epf_alloc_space and pci_epc_set_bar into a single
+> > function, everyone seems to agree on this one.
+> 
+> Indeed, but as usual, good naming is one of the hardest problems :)
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407260047.sIuRFLJE-lkp@intel.com/
+Respectively agree with you :)
 
-sparse warnings: (new ones prefixed by >>)
->> mm/memcontrol.c:1063:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct mem_cgroup [noderef] __rcu *__old @@     got struct mem_cgroup *[assigned] pos @@
-   mm/memcontrol.c:1063:23: sparse:     expected struct mem_cgroup [noderef] __rcu *__old
-   mm/memcontrol.c:1063:23: sparse:     got struct mem_cgroup *[assigned] pos
-   mm/memcontrol.c:1063:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct mem_cgroup [noderef] __rcu *__new @@     got struct mem_cgroup *[assigned] memcg @@
-   mm/memcontrol.c:1063:23: sparse:     expected struct mem_cgroup [noderef] __rcu *__new
-   mm/memcontrol.c:1063:23: sparse:     got struct mem_cgroup *[assigned] memcg
->> mm/memcontrol.c:1101:17: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct mem_cgroup [noderef] __rcu *__old @@     got struct mem_cgroup *dead_memcg @@
-   mm/memcontrol.c:1101:17: sparse:     expected struct mem_cgroup [noderef] __rcu *__old
-   mm/memcontrol.c:1101:17: sparse:     got struct mem_cgroup *dead_memcg
-   mm/memcontrol.c: note: in included file (through include/linux/cgroup-defs.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   mm/memcontrol.c: note: in included file:
-   include/linux/memcontrol.h:747:9: sparse: sparse: context imbalance in 'folio_lruvec_lock' - wrong count at exit
-   include/linux/memcontrol.h:747:9: sparse: sparse: context imbalance in 'folio_lruvec_lock_irq' - wrong count at exit
-   include/linux/memcontrol.h:747:9: sparse: sparse: context imbalance in 'folio_lruvec_lock_irqsave' - wrong count at exit
-   mm/memcontrol.c: note: in included file (through include/linux/cgroup-defs.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+> Instead of pci_epf_alloc_set_bar(), perhaps pci_epf_setup_bar() ?
+> If the EPC has a fixed address requirement, it will use that instead of
+> allocating memory.
+> 
+> If the EPF has a fixed address requirement, the API call will only succeed
+> if EPC does not have a fixed address requirement.
+> 
+> Perhaps EPF drivers that have a fixed address requirement could supply
+> that as a parameter to the API (and the EPC driver will fail the request
+> if it itself has fixed address requirement).
+> 
 
-vim +1063 mm/memcontrol.c
+I vary with you here. IMO EPF drivers have no business in knowing the BAR
+location as they are independent of controller (mostly except drivers like MHI).
+So an EPF driver should call a single API that just allocates/configures the
+BAR. For fixed address BAR, EPC core should be able to figure it out using the
+EPC features.
 
-4b569387c0d566 Nhat Pham         2023-10-06   974  
-5660048ccac873 Johannes Weiner   2012-01-12   975  /**
-5660048ccac873 Johannes Weiner   2012-01-12   976   * mem_cgroup_iter - iterate over memory cgroup hierarchy
-5660048ccac873 Johannes Weiner   2012-01-12   977   * @root: hierarchy root
-5660048ccac873 Johannes Weiner   2012-01-12   978   * @prev: previously returned memcg, NULL on first invocation
-5660048ccac873 Johannes Weiner   2012-01-12   979   * @reclaim: cookie for shared reclaim walks, NULL for full walks
-5660048ccac873 Johannes Weiner   2012-01-12   980   *
-5660048ccac873 Johannes Weiner   2012-01-12   981   * Returns references to children of the hierarchy below @root, or
-5660048ccac873 Johannes Weiner   2012-01-12   982   * @root itself, or %NULL after a full round-trip.
-5660048ccac873 Johannes Weiner   2012-01-12   983   *
-5660048ccac873 Johannes Weiner   2012-01-12   984   * Caller must pass the return value in @prev on subsequent
-5660048ccac873 Johannes Weiner   2012-01-12   985   * invocations for reference counting, or use mem_cgroup_iter_break()
-5660048ccac873 Johannes Weiner   2012-01-12   986   * to cancel a hierarchy walk before the round-trip is complete.
-5660048ccac873 Johannes Weiner   2012-01-12   987   *
-05bdc520b3ad39 Miaohe Lin        2020-10-13   988   * Reclaimers can specify a node in @reclaim to divide up the memcgs
-05bdc520b3ad39 Miaohe Lin        2020-10-13   989   * in the hierarchy among all concurrent reclaimers operating on the
-05bdc520b3ad39 Miaohe Lin        2020-10-13   990   * same node.
-5660048ccac873 Johannes Weiner   2012-01-12   991   */
-694fbc0fe78518 Andrew Morton     2013-09-24   992  struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
-9f3a0d0933de07 Johannes Weiner   2012-01-12   993  				   struct mem_cgroup *prev,
-694fbc0fe78518 Andrew Morton     2013-09-24   994  				   struct mem_cgroup_reclaim_cookie *reclaim)
-7d74b06f240f1b KAMEZAWA Hiroyuki 2010-10-27   995  {
-3f649ab728cda8 Kees Cook         2020-06-03   996  	struct mem_cgroup_reclaim_iter *iter;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10   997  	struct cgroup_subsys_state *css = NULL;
-9f3a0d0933de07 Johannes Weiner   2012-01-12   998  	struct mem_cgroup *memcg = NULL;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10   999  	struct mem_cgroup *pos = NULL;
-711d3d2c9bc3fb KAMEZAWA Hiroyuki 2010-10-27  1000  
-694fbc0fe78518 Andrew Morton     2013-09-24  1001  	if (mem_cgroup_disabled())
-694fbc0fe78518 Andrew Morton     2013-09-24  1002  		return NULL;
-5660048ccac873 Johannes Weiner   2012-01-12  1003  
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1004  	if (!root)
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1005  		root = root_mem_cgroup;
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1006  
-542f85f9ae4acd Michal Hocko      2013-04-29  1007  	rcu_read_lock();
-14067bb3e24b96 KAMEZAWA Hiroyuki 2009-04-02  1008  
-527a5ec9a53471 Johannes Weiner   2012-01-12  1009  	if (reclaim) {
-ef8f2327996b5c Mel Gorman        2016-07-28  1010  		struct mem_cgroup_per_node *mz;
-527a5ec9a53471 Johannes Weiner   2012-01-12  1011  
-a3747b53b1771a Johannes Weiner   2021-04-29  1012  		mz = root->nodeinfo[reclaim->pgdat->node_id];
-9da83f3fc74b80 Yafang Shao       2019-11-30  1013  		iter = &mz->iter;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1014  
-a9320aae68a1cd Wei Yang          2022-04-28  1015  		/*
-a9320aae68a1cd Wei Yang          2022-04-28  1016  		 * On start, join the current reclaim iteration cycle.
-a9320aae68a1cd Wei Yang          2022-04-28  1017  		 * Exit when a concurrent walker completes it.
-a9320aae68a1cd Wei Yang          2022-04-28  1018  		 */
-a9320aae68a1cd Wei Yang          2022-04-28  1019  		if (!prev)
-a9320aae68a1cd Wei Yang          2022-04-28  1020  			reclaim->generation = iter->generation;
-a9320aae68a1cd Wei Yang          2022-04-28  1021  		else if (reclaim->generation != iter->generation)
-542f85f9ae4acd Michal Hocko      2013-04-29  1022  			goto out_unlock;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1023  
-fe6faac115aa89 Kinsey Ho         2024-07-24  1024  		pos = rcu_dereference(iter->position);
-89d8330ccf2ad4 Wei Yang          2022-04-28  1025  	} else if (prev) {
-89d8330ccf2ad4 Wei Yang          2022-04-28  1026  		pos = prev;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1027  	}
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1028  
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1029  	if (pos)
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1030  		css = &pos->css;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1031  
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1032  	for (;;) {
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1033  		css = css_next_descendant_pre(css, &root->css);
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1034  		if (!css) {
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1035  			/*
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1036  			 * Reclaimers share the hierarchy walk, and a
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1037  			 * new one might jump in right at the end of
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1038  			 * the hierarchy - make sure they see at least
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1039  			 * one group and restart from the beginning.
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1040  			 */
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1041  			if (!prev)
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1042  				continue;
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1043  			break;
-542f85f9ae4acd Michal Hocko      2013-04-29  1044  		}
-5f578161971863 Michal Hocko      2013-04-29  1045  
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1046  		/*
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1047  		 * Verify the css and acquire a reference.  The root
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1048  		 * is provided by the caller, so we know it's alive
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1049  		 * and kicking, and don't take an extra reference.
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1050  		 */
-41555dadbff8d2 Wei Yang          2022-04-28  1051  		if (css == &root->css || css_tryget(css)) {
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1052  			memcg = mem_cgroup_from_css(css);
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1053  			break;
-41555dadbff8d2 Wei Yang          2022-04-28  1054  		}
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1055  	}
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1056  
-527a5ec9a53471 Johannes Weiner   2012-01-12  1057  	if (reclaim) {
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1058  		/*
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1059  		 * The position could have already been updated by a competing
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1060  		 * thread, so check that the value hasn't changed since we read
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1061  		 * it to avoid reclaiming from the same cgroup twice.
-5ac8fb31ad2ebd Johannes Weiner   2014-12-10  1062  		 */
-6df38689e0e9a0 Vladimir Davydov  2015-12-29 @1063  		(void)cmpxchg(&iter->position, pos, memcg);
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1064  
-19f39402864ea3 Michal Hocko      2013-04-29  1065  		if (!memcg)
-527a5ec9a53471 Johannes Weiner   2012-01-12  1066  			iter->generation++;
-527a5ec9a53471 Johannes Weiner   2012-01-12  1067  	}
-14067bb3e24b96 KAMEZAWA Hiroyuki 2009-04-02  1068  
-542f85f9ae4acd Michal Hocko      2013-04-29  1069  out_unlock:
-542f85f9ae4acd Michal Hocko      2013-04-29  1070  	rcu_read_unlock();
-c40046f3ad5e87 Michal Hocko      2013-04-29  1071  	if (prev && prev != root)
-c40046f3ad5e87 Michal Hocko      2013-04-29  1072  		css_put(&prev->css);
-c40046f3ad5e87 Michal Hocko      2013-04-29  1073  
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1074  	return memcg;
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1075  }
-14067bb3e24b96 KAMEZAWA Hiroyuki 2009-04-02  1076  
-5660048ccac873 Johannes Weiner   2012-01-12  1077  /**
-5660048ccac873 Johannes Weiner   2012-01-12  1078   * mem_cgroup_iter_break - abort a hierarchy walk prematurely
-5660048ccac873 Johannes Weiner   2012-01-12  1079   * @root: hierarchy root
-5660048ccac873 Johannes Weiner   2012-01-12  1080   * @prev: last visited hierarchy member as returned by mem_cgroup_iter()
-5660048ccac873 Johannes Weiner   2012-01-12  1081   */
-5660048ccac873 Johannes Weiner   2012-01-12  1082  void mem_cgroup_iter_break(struct mem_cgroup *root,
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1083  			   struct mem_cgroup *prev)
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1084  {
-711d3d2c9bc3fb KAMEZAWA Hiroyuki 2010-10-27  1085  	if (!root)
-711d3d2c9bc3fb KAMEZAWA Hiroyuki 2010-10-27  1086  		root = root_mem_cgroup;
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1087  	if (prev && prev != root)
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1088  		css_put(&prev->css);
-14067bb3e24b96 KAMEZAWA Hiroyuki 2009-04-02  1089  }
-9f3a0d0933de07 Johannes Weiner   2012-01-12  1090  
-54a83d6bcbf8f4 Miles Chen        2019-08-13  1091  static void __invalidate_reclaim_iterators(struct mem_cgroup *from,
-54a83d6bcbf8f4 Miles Chen        2019-08-13  1092  					struct mem_cgroup *dead_memcg)
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1093  {
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1094  	struct mem_cgroup_reclaim_iter *iter;
-ef8f2327996b5c Mel Gorman        2016-07-28  1095  	struct mem_cgroup_per_node *mz;
-ef8f2327996b5c Mel Gorman        2016-07-28  1096  	int nid;
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1097  
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1098  	for_each_node(nid) {
-a3747b53b1771a Johannes Weiner   2021-04-29  1099  		mz = from->nodeinfo[nid];
-9da83f3fc74b80 Yafang Shao       2019-11-30  1100  		iter = &mz->iter;
-9da83f3fc74b80 Yafang Shao       2019-11-30 @1101  		cmpxchg(&iter->position, dead_memcg, NULL);
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1102  	}
-6df38689e0e9a0 Vladimir Davydov  2015-12-29  1103  }
-54a83d6bcbf8f4 Miles Chen        2019-08-13  1104  
+For naming, we have 3 proposals as of now:
+
+1. pci_epf_setup_bar() - This looks good, but somewhat collides with the
+existing pci_epc_set_bar() API.
+
+2. pci_epc_alloc_set_bar() - Looks ugly, but aligns with the existing APIs.
+
+3. pci_epc_get_bar() - Also looks good, but the usage of 'get' gives the
+impression that the BAR is fetched from somewhere, which is true for fixed
+address BAR, but not for dynamic BAR.
+
+After looking at these APIs multiple times (confusing at its best), I tend to
+feel that pci_epc_get_bar() is the better of the 3.
+
+- Mani
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+மணிவண்ணன் சதாசிவம்
 
