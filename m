@@ -1,148 +1,107 @@
-Return-Path: <linux-kernel+bounces-261922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FC093BDD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:17:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD093BE0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FCAD1F20F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC39A2841D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F14172BAD;
-	Thu, 25 Jul 2024 08:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSb7ZlZ1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DE0182A4A;
+	Thu, 25 Jul 2024 08:35:29 +0000 (UTC)
+Received: from queue02c.mail.zen.net.uk (queue02c.mail.zen.net.uk [212.23.3.242])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E675B1CD11;
-	Thu, 25 Jul 2024 08:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5989B17838C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.23.3.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721895450; cv=none; b=t2mmWt6QTofdrXCdaNwOfJ2XhDHRaGQFUp9FxyOj1QUnuvKjl0az+75k3fiwJ5fJqRTlI2/cz5A10m2TBthBjZdnwZDdOqCm76OV7m/s0TYlCGyqt8WAt2A3+2lyOTuywAT2UCkgq4qVIOdw4paYDjpXKGGfH0jF21xfteB0HHw=
+	t=1721896529; cv=none; b=odDFeCXMJ/fubmHR5wukaZ5m2eYnPXwddQfcZ+Rfpe/lDr2WUKN9Des+PCobYsfUZ/ZXavluIYW9pY1PqMAWVhQgb/mdGAcF3YxX14dy3k77yIDW6FK/F6y7Lzbi0RPSZW8C1s2M3gwjsAsi9xKjndLKPqPmHG9TpKxOdamBcG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721895450; c=relaxed/simple;
-	bh=XlFLf44zMCEWWpHYzsOrImUWBiACkIazF5lyyDSgeR4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RAO4phOJQ/XrEgDddIy0/CdUhdurFuxrvdn8EIo6Qj3YFAV4lMIL1G1JlXDO2fAE134fhgmy5L9HvPXQjCmpW/xi97gso5WEMdtHjjKSjk9Cv3SoSrra84o6uFLaz866f2lo7DZNlEnJN+Blx3H78zJX9mlCA4jAdceocq6Y6qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSb7ZlZ1; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721895448; x=1753431448;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=XlFLf44zMCEWWpHYzsOrImUWBiACkIazF5lyyDSgeR4=;
-  b=NSb7ZlZ1nrJgMFp1RIeSe5gE0a0WsHK6SSa1H2jP8FGdcUfTgi790+r2
-   bl6ZTgTgLThdaDT9Pw0vYANXeWjXD0IQnMGppsVdJftumY6MZ0eOzyPNa
-   XB0jalB+FI3SBYTsm2TUiPCtiiHcKG/PgylL3dlFAgXABltntHvX7L+PB
-   wGDLVPUEtMDA9rwKPzPkV7mF2RCq4yXsE/pqiGDGj5jhBz3IktpdW/e8H
-   HW30Nu0pOt3pBbtwTetP3eoffC0BWsrsOIZRWZ6UheHgqicbVJABxMJKb
-   Xq1TVAqDwH8u1J6AJi3y+A9vA8/hBcpLAWMj+ZgDX6heNdalzmgj/c6Zp
-   w==;
-X-CSE-ConnectionGUID: HahnwPIQQCKKG8iX6EoyRQ==
-X-CSE-MsgGUID: 532oOGxLRPWo9EiNzCEcDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="45039862"
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="45039862"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 01:17:27 -0700
-X-CSE-ConnectionGUID: usovP4+WT8GJg3SZ6+7GvQ==
-X-CSE-MsgGUID: 6WMOp1bIS9mZihOgavNtkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="57149891"
-Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.243])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 01:17:22 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>
-Cc: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Ville =?utf-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: Fix possible int overflow in
- skl_ddi_calculate_wrpll()
-In-Reply-To: <20240724184911.12250-1-n.zhandarovich@fintech.ru>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240724184911.12250-1-n.zhandarovich@fintech.ru>
-Date: Thu, 25 Jul 2024 11:17:17 +0300
-Message-ID: <87sevxzy0i.fsf@intel.com>
+	s=arc-20240116; t=1721896529; c=relaxed/simple;
+	bh=gqDo4P9dLW18uyVec7usjdXq0RUm77HCp5pDOwOKQA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djIh/jutmeac68WaC8A6Q8rcJhnrZCREsKkSQnjSsr0dYzV6dcyd0ogfim9dBExpjrTHe4RwZaLU4pdj56zSRYCBfszLDGbZuf2DirwxwgEy4nLWptcnDSURHeSMEh5pSvZWbro0g7VKUKmnNrb7R7/XmJV7pVlpmiMT4PlLq0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dingwall.me.uk; spf=pass smtp.mailfrom=dingwall.me.uk; arc=none smtp.client-ip=212.23.3.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dingwall.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dingwall.me.uk
+Received: from [212.23.1.21] (helo=smarthost01b.ixn.mail.zen.net.uk)
+	by queue02c.mail.zen.net.uk with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <james@dingwall.me.uk>)
+	id 1sWthX-000y2w-Ig
+	for linux-kernel@vger.kernel.org;
+	Thu, 25 Jul 2024 08:19:51 +0000
+Received: from [217.155.64.189] (helo=mail0.xen.dingwall.me.uk)
+	by smarthost01b.ixn.mail.zen.net.uk with esmtpsa  (TLS1.0) tls TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+	(Exim 4.95)
+	(envelope-from <james@dingwall.me.uk>)
+	id 1sWthP-002WFj-LT;
+	Thu, 25 Jul 2024 08:19:44 +0000
+Received: from localhost (localhost [IPv6:::1])
+	by mail0.xen.dingwall.me.uk (Postfix) with ESMTP id 265C0A63B15;
+	Thu, 25 Jul 2024 09:19:44 +0100 (BST)
+X-Virus-Scanned: Debian amavisd-new at dingwall.me.uk
+Received: from mail0.xen.dingwall.me.uk ([IPv6:::1])
+	by localhost (mail0.xen.dingwall.me.uk [IPv6:::1]) (amavisd-new, port 10024)
+	with ESMTP id hW1WW-2RckBx; Thu, 25 Jul 2024 09:19:44 +0100 (BST)
+Received: from behemoth.dingwall.me.uk (behemoth.dingwall.me.uk [IPv6:2a02:8010:698e:302::c0a8:105])
+	by dingwall.me.uk (Postfix) with ESMTP id EE0C5A63B12;
+	Thu, 25 Jul 2024 09:19:43 +0100 (BST)
+Received: by behemoth.dingwall.me.uk (Postfix, from userid 1000)
+	id C6646D7BA63; Thu, 25 Jul 2024 09:19:43 +0100 (BST)
+Date: Thu, 25 Jul 2024 09:19:43 +0100
+From: James Dingwall <james@dingwall.me.uk>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: xen/evtchn.c: Interrupt for port 32, but apparently not enabled;
+ per-user 0000000012b765d1
+Message-ID: <ZqIKnydM6hjt/CEG@dingwall.me.uk>
+References: <ZqEA5BnhTYsxMq/f@dingwall.me.uk>
+ <bf1f5bfa-446c-4aea-a092-8cd9e7a786c3@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf1f5bfa-446c-4aea-a092-8cd9e7a786c3@suse.com>
+X-Originating-smarthost01b-IP: [217.155.64.189]
+Feedback-ID: 217.155.64.189
 
-On Wed, 24 Jul 2024, Nikita Zhandarovich <n.zhandarovich@fintech.ru> wrote:
-> On the off chance that clock value ends up being too high (by means
-> of skl_ddi_calculate_wrpll() having benn called with big enough
-> value of crtc_state->port_clock * 1000), one possible consequence
-> may be that the result will not be able to fit into signed int.
->
-> Fix this, albeit unlikely, issue by first casting one of the operands
-> to u32, then to u64, and thus avoid causing an integer overflow.
+On Wed, Jul 24, 2024 at 03:55:40PM +0200, Juergen Gross wrote:
+> On 24.07.24 15:25, James Dingwall wrote:
+> > I have built a kernel derived from Ubuntu's Ubuntu-hwe-6.8-6.8.0-40.40_22.04.1
+> > tag.  The logs are quiet until I start the first guest which has two network
+> > cards passed through.  At this point the kernel log gets flooded with the
+> > warning below.  This appears to the same warning which this commit was
+> > supposed to suppress:
+> > 
+> > 51c23bd691c0f1fb95b29731c356c6fd69925d17: xen/evtchn: avoid WARN() when unbinding an event channel
+> > 
+> > The tag already includes that commit and in my config:
+> > 
+> > $ grep CONFIG_DEBUG_SHIRQ /boot/config-6.8.0-40-generic
+> > # CONFIG_DEBUG_SHIRQ is not set
+> > 
+> > Could there be a related change which also needs to be picked or is there
+> > the possibility that there is another trigger?
+> 
+> As the original reporter of the issue tested the patch to fix it,
+> there seems to be another trigger. :-(
 
-Okay, thanks for the patch, but please let's not do this.
+I've done some more testing, if I don't pass through a pci device then the
+warning does not get emitted.  It looks like the existing patch works for
+actions via the xen/evtchn device.  Does xen-pciback perform operations which
+bypass the functions where either `evtchn->unbinding = true` or
+`evtchn->enabled = true` get set?  Perhaps when xen-pcifront is being
+initialised in the guest?
 
-Currently the highest possible port clock is 2000000 kHz, and 1000 times
-that fits into 31 bits. When we need to support higher clocks, we'll
-need to handle this. But not like this.
-
-That (u64)(u32) is just too unintuitive, and assumes the caller has
-already passed in something that has overflown. People are just going to
-pause there, and wonder what's going on.
-
-If we want to appease the static analyzer, I think a better approach
-would be to change the parameter to u64 clock_hz, and have the caller
-do:
-
-	ret = skl_ddi_calculate_wrpll((u64)crtc_state->port_clock * 1000,
-				      i915->display.dpll.ref_clks.nssc, &wrpll_params);
-
-BR,
-Jani.
-
-
-
->
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
->
-> Fixes: fe70b262e781 ("drm/i915: Move a bunch of stuff into rodata from the stack")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
-> Fixes: tag is not entirely correct, as I can't properly identify the
-> origin with all the code movement. I opted out for using the most
-> recent topical commit instead.
->
->  drivers/gpu/drm/i915/display/intel_dpll_mgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dpll_mgr.c b/drivers/gpu/drm/i915/display/intel_dpll_mgr.c
-> index 90998b037349..46d4dac6c491 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dpll_mgr.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dpll_mgr.c
-> @@ -1683,7 +1683,7 @@ skl_ddi_calculate_wrpll(int clock /* in Hz */,
->  	};
->  	unsigned int dco, d, i;
->  	unsigned int p0, p1, p2;
-> -	u64 afe_clock = clock * 5; /* AFE Clock is 5x Pixel clock */
-> +	u64 afe_clock = (u64)(u32)clock * 5; /* AFE Clock is 5x Pixel clock */
->  
->  	for (d = 0; d < ARRAY_SIZE(dividers); d++) {
->  		for (dco = 0; dco < ARRAY_SIZE(dco_central_freq); dco++) {
-
--- 
-Jani Nikula, Intel
+Thanks,
+James
 
