@@ -1,172 +1,110 @@
-Return-Path: <linux-kernel+bounces-262708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5072993CB23
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 068B293CB26
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06AF62821D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47082828B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B9E149001;
-	Thu, 25 Jul 2024 23:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2933149001;
+	Thu, 25 Jul 2024 23:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2RmqE2i"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KN3fePdw"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F556143738
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D6EDF6C;
+	Thu, 25 Jul 2024 23:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721949147; cv=none; b=bTTsu93/uywmgFnyT5nFeb4ddHq2v66UgWhmwWYUtuImuwsDIU8TKLFwp0BK8zwV4H45KxVP66YKzj0wbuIt1BDLtqirjSJZfUHhDAw+cFqDyCHWvh8p9IFPJumJSQT8QYsuA0EF4jT2sEAhPXexvtFPrGFZEyCgH2k1BPPN0ZE=
+	t=1721949509; cv=none; b=sxY4/z/kie7TOrNSSQlCS6SuWAscIqpAzIbbBuukbxNfQIa/3Z5x0neopKMwvZWGx2nIoceoGg7uuZKn9k8dZli6oW2WsdJ+jSjIu2kUxf1wTRTXa7Wv+AVKFpACCI7fGkWvQisGb/+Nv5r/T27R54NAsI4uyd7phTXtXNxf+1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721949147; c=relaxed/simple;
-	bh=FArKmzRC0yJOVkaBqWwuTpFKKJvGBvsHSZKLPxb7Kzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mt1gE/E4p93J/hz/oaNDvTfWn2EUxQrt1btTZx4TKA08scMnR6UpVJRTxrbiIM5RP4nRO74ewvPpAwnaL4VIiOh8dfviiLvrL554FhwqwDG7sYl1TWEOncBlqBQfSldXTIH1E060GEvDAKMPDOpFqbvLczO62LkxZoFq4T63bnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2RmqE2i; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfdb6122992so1373623276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:12:25 -0700 (PDT)
+	s=arc-20240116; t=1721949509; c=relaxed/simple;
+	bh=qTguyKQ7f6AzBwJUv00P+vfNkDjNLY7d8gYXe3e3xfc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W1X2WWOFsjg/0ndVU1HM5R/qHDTClQekvsDq3c0QplsjJhGLzAy/ROikeRjY4nx6qfcmSGcJAAmn4hdKbT/fClPSRC7wAtAaR1Dq/8kT5sRVxySI6sz8ULEux0Q6T/PdjHFdYjvZ0ClHj2jlIIlc8o5WkeA5TMzD8GmbnFUK13k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KN3fePdw; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso141308166b.2;
+        Thu, 25 Jul 2024 16:18:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721949144; x=1722553944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V3d1zGC521b6j6WMF79KL4j8jgavX6XjnXIm0tZCyjk=;
-        b=z2RmqE2i39luTA6Y1PXwcviL/LsRYylpgc+/qxB4G83d1tMXGTdCZjKvEKJ1GCXAGL
-         GZUD7BCUMKEMbQtnPq153lcpjYKjy7TuMJ/SLV4Tg63XPn0sDb3kSWJGL89GGEvDsr3s
-         G9cq9zTYWU1XezCa71jQHqQ+AHYfmzxR8davbRStKKE5mombnckSZUh2NsP8u9USomxE
-         Azm/VS5F7k72bq+Q6T3y4IqP7Vse1Wp0W/VuE9f1RlCLugd2/WSwC9f4Cf/ImzODW3Wc
-         qToeVKuKqMIwzqF424hfAVft/ml0UUMNHSIwkYY2ONGr+1UD2UBvCdfovR5DZzvBRfLe
-         RpgA==
+        d=gmail.com; s=20230601; t=1721949506; x=1722554306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWLnOh5ytsf26SCztBMinzCuGggaU98ctSJzSIv1s94=;
+        b=KN3fePdwVSjlIePl/R6h6+O2eIQpjSjasDzuK0pN6XFN1MB3hH4F/2mPPcvVZCvyV1
+         EiiVZTFyD203Jd1yoJDpcjcs/N4OdEF/4gJ30vyRbnKjBMZnfTdYXzPUcLVvC7c0ayhh
+         dhplU8nsa/BJFh/0sY/XS1Rfm7cDh1Uww9We12vaDMpB0iWPhVEJ4MbBEKjTU5iN9zkt
+         m/aPX9niCR5jXfjtsO/umkaV0SM3jrcuiTD1QltNMvdb2U2tDVWGreE+yIMibkDxywII
+         SIxJMZSDwc16pBW+R6L+PDJ9VcNK7C6noQZfHkci1GQUHgO7XNcpmIpXmSI3bb/DYQ3n
+         V4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721949144; x=1722553944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V3d1zGC521b6j6WMF79KL4j8jgavX6XjnXIm0tZCyjk=;
-        b=tJeS+Jud6Xcv9ZL73s8VkKEVyB+pvHXkJxg+BaKx9SJ/UzS5dZW10GPDeTPjnb82KI
-         H68By3EGwEMWmkvaQzwxOjPxo+T7Vsol+z6BH1t05LO5d5DYIbeBzfm3WcDEepl913Eg
-         0BSYQ2+qV/pn8MFT88oVeU97d5uML+lySlWAu2HMtych0lRPA98iLqyryDU5HZzwtMB2
-         Cbuc9Tp+5GH20dkUqiiREyIAkCQbGChmOiOPNV2I/f2+ppFSPjQDzt8Addmf6cPJ02lX
-         te+Y/Ovjj4Dr7omM5W0xN37/5b3QN3VYTkC80PRY6M+2Ay2I9stMfNQdJUOvpAJiwweu
-         llvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOnybC3BR79hmNMBXETVtc58h6wl03J+xxQsZQaLix6P9n31C0i0kuHfAnhpiXaEnAkMNHoWq0Q1NlFKXK5+jRpxxxOLDbiIAwfVnk
-X-Gm-Message-State: AOJu0YwQlJZSKoutyOt6EBd77vblGcobKM2COGOYPS3niGFRTSVcV+al
-	eaPBaVQ+0/nanW6RIDhlfpQ/fCWmIrgXjAtu56LYZDH7OHFP1CSLsV96hXjhu2/0ERGaUzymjg+
-	4XGp6upS+E4eb0v8m0oKgoA2nNjnkkwrI6DBy
-X-Google-Smtp-Source: AGHT+IETY78vyhD6DEhT9etUSc8N43LepRmktceChLoKqRE+NzzWbiEyqOzvL9PRN7JfjPX50EG5OzRZoObQNo3ZoU8=
-X-Received: by 2002:a05:6902:1ac9:b0:e03:4501:6102 with SMTP id
- 3f1490d57ef6-e0b231f402cmr5256018276.46.1721949144110; Thu, 25 Jul 2024
- 16:12:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721949506; x=1722554306;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nWLnOh5ytsf26SCztBMinzCuGggaU98ctSJzSIv1s94=;
+        b=W6WBbuzkffyn9Zoh4DLJOPq6Lc7W2p+6zXc5lnv1t476IfIovbfcSs1yyJXUhV9WZ+
+         HVpKv5iHa9mB20ZCb/MQUji5/HA2ObmJErGzGPoPrgWwaZCWyzRi59R2zRmuOlIyIAk2
+         6rU5VM5M9Tdc3jZ3KnfoRdzg1U5dRiwdqOD14lq6gV6tvOJuLznODxqAQm7MLAso2b75
+         qLKqpUPpSgAkUBwg4S43ZFRyQ01kAIwSKN3lRB2m9K6Ury4ddV3Je9F4DbkCXxeuN9q3
+         bTpyF/erxfv6biWzaWAiri0YrvpFgqlqzdKzeFGEz4FJGRx/DQ6UnJYZiBbYoHwKNIaq
+         kVww==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNGVCl/2BxQYXtQnqqIMwadG0JmAOTZUOKHytVh8amaAfXLYsYJTKsH8BvOBEfBd0yBPMGMpPXVF9Nm9PwXmPKlHL6wm7HZB5LYXIrdVjYaXn0ujj77ZLOv5o2NhCw1vsMjFwz19H
+X-Gm-Message-State: AOJu0YyewgjAjFCVEh+P8ZP/Th3Qrkj7m9LRqKc89hcTsHUSNwNJgQCL
+	k/m+YZGJ+brevX7SaAiZWkI4t9vgvCSsgQXW54iSMKcT6bJH0wPO
+X-Google-Smtp-Source: AGHT+IEdW5yrxCYUUf6/iWY6GpgcOqj5BZxN7p8BUBgiBsQlxJaTwZGi46iBJJR2SzQVOPk2WcycsA==
+X-Received: by 2002:a17:907:7e85:b0:a7a:ce2b:d7c7 with SMTP id a640c23a62f3a-a7ace2bdcb3mr234139266b.53.1721949505674;
+        Thu, 25 Jul 2024 16:18:25 -0700 (PDT)
+Received: from localhost.localdomain ([2a04:ee41:82:7577:4b59:cba2:6db8:9f30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acac61218sm115725466b.94.2024.07.25.16.18.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 16:18:25 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de
+Cc: himanshujha199640@gmail.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vasileios Amoiridis <vassilisamir@gmail.com>
+Subject: [PATCH] chemical: bme680: Convert to static the const lookup table
+Date: Fri, 26 Jul 2024 01:18:18 +0200
+Message-Id: <20240725231818.615530-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
-In-Reply-To: <20240722225306.1494878-1-shakeel.butt@linux.dev>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Thu, 25 Jul 2024 16:12:12 -0700
-Message-ID: <CABdmKX2Hsd7i_Erc2_n8FQqY90mMgX24hkVe+z=y9tCk7sUL6g@mail.gmail.com>
-Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Greg Thelen <gthelen@google.com>, 
-	Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 22, 2024 at 3:53=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> Linux kernel does not expose memory.current on the root memcg and there
-> are applications which have to traverse all the top level memcgs to
-> calculate the total memory charged in the system. This is more expensive
-> (directory traversal and multiple open and reads) and is racy on a busy
-> machine. As the kernel already have the needed information i.e. root's
-> memory.current, why not expose that?
->
-> However root's memory.current will have a different semantics than the
-> non-root's memory.current as the kernel skips the charging for root, so
-> maybe it is better to have a different named interface for the root.
-> Something like memory.children_usage only for root memcg.
->
-> Now there is still a question that why the kernel does not expose
-> memory.current for the root. The historical reason was that the memcg
-> charging was expensice and to provide the users to bypass the memcg
-> charging by letting them run in the root. However do we still want to
-> have this exception today? What is stopping us to start charging the
-> root memcg as well. Of course the root will not have limits but the
-> allocations will go through memcg charging and then the memory.current
-> of root and non-root will have the same semantics.
->
-> This is an RFC to start a discussion on memcg charging for root.
+By converting it to static, we ensure that this will be placed by the
+compiler in the read-only area.
 
-Hi Shakeel,
+Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+---
+ drivers/iio/chemical/bme680_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since the root already has a page_counter I'm not opposed to this new
-file as it doesn't increase the page_counter depth for children.
-However I don't currently have any use-cases for it that wouldn't be
-met by memory.stat in the root.
+diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+index 74ac887d8d8e..5d2e750ca2b9 100644
+--- a/drivers/iio/chemical/bme680_core.c
++++ b/drivers/iio/chemical/bme680_core.c
+@@ -438,7 +438,7 @@ static u32 bme680_compensate_gas(struct bme680_data *data, u16 gas_res_adc,
+ 	u32 calc_gas_res;
+ 
+ 	/* Look up table for the possible gas range values */
+-	const u32 lookupTable[16] = {2147483647u, 2147483647u,
++	static const u32 lookupTable[16] = {2147483647u, 2147483647u,
+ 				2147483647u, 2147483647u, 2147483647u,
+ 				2126008810u, 2147483647u, 2130303777u,
+ 				2147483647u, 2147483647u, 2143188679u,
+-- 
+2.25.1
 
-As far as charging, I've only ever seen kthreads and init in the root.
-You have workloads that run there?
-
-Best,
-T.J.
-
-
-
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  Documentation/admin-guide/cgroup-v2.rst | 6 ++++++
->  mm/memcontrol.c                         | 5 +++++
->  2 files changed, 11 insertions(+)
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admi=
-n-guide/cgroup-v2.rst
-> index 6c6075ed4aa5..e4afc05fd8ea 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1220,6 +1220,12 @@ PAGE_SIZE multiple when read back.
->         The total amount of memory currently being used by the cgroup
->         and its descendants.
->
-> +  memory.children_usage
-> +       A read-only single value file which exists only on root cgroup.
-> +
-> +       The total amount of memory currently being used by the
-> +        descendants of the root cgroup.
-> +
->    memory.min
->         A read-write single value file which exists on non-root
->         cgroups.  The default is "0".
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 960371788687..eba8cf76d3d3 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4304,6 +4304,11 @@ static struct cftype memory_files[] =3D {
->                 .flags =3D CFTYPE_NOT_ON_ROOT,
->                 .read_u64 =3D memory_current_read,
->         },
-> +       {
-> +               .name =3D "children_usage",
-> +               .flags =3D CFTYPE_ONLY_ON_ROOT,
-> +               .read_u64 =3D memory_current_read,
-> +       },
->         {
->                 .name =3D "peak",
->                 .flags =3D CFTYPE_NOT_ON_ROOT,
-> --
-> 2.43.0
->
->
 
