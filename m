@@ -1,543 +1,260 @@
-Return-Path: <linux-kernel+bounces-262580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3FB93C8E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:46:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBF293C916
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9C51F22FAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2BD1F23958
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141297581D;
-	Thu, 25 Jul 2024 19:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B174063;
+	Thu, 25 Jul 2024 19:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YTtGc/sn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVzcVsY4"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8681CD32;
-	Thu, 25 Jul 2024 19:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0736014E2CC;
+	Thu, 25 Jul 2024 19:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721936771; cv=none; b=DKCynqa+PwBcLHoERYq8Hh4Nvuot0Yhj+s2wD8rq41Ng2jo+AXMw36zwx95V3DkG1oET3wJGvnKimgB77OqzakyG1AeuOJD26oXPjiLa/mqLKai0RS7UZmzmRoKYK8Yg0yH/CQauS0JDojT1VrmW8SZcrLHeOiRFTx80VsUUlaE=
+	t=1721936797; cv=none; b=QGFg1/FRkvHw4OpBApJbhsK2SPz6XZF98XGd4VItwgSJoBW/4Vxg2YtqdnlwljNiqv6wG21GO9Cl6iodgQyS49ZtJPmAp+3zg+9NncpylaFBdsGfg2j+qgoUngVsvyHi09LIJMxKDGea2QlAFVvvSBmZ3Bl2M2wyZ1KOdz9SUiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721936771; c=relaxed/simple;
-	bh=RxtzXHCdJuqj+kfp4VYAvawNop4h3VSDTodfGsqm0g8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvKLmo3hm9NqMzqpxK7JYgOMFtt25ASB8scGjmphE4hN6WluVOEywIcUsYchJ3uZD/bM2MV0G8nf9zZcYD/PmvImx87P+hoUZP5+oJ8RxMRI4MBAC4GMjRslxjCJK2P9jpJli2mVl91FKAUSuSRU0i6FaXS+TDAle3xTK6vwavU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YTtGc/sn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jqDmxIN9XYfEoJ1lJw2lmDAQGcP2I8XR4yUoBfPTYpA=; b=YTtGc/snbQA/eb08BAnY9gMJ8t
-	1HsVXNoj6nI+t2+fIC5Hoa8Cz+j+1pkYT7eU9t8a19SIA+8Rckfxa5GT8D2uTsqiZXULUiKkLyntw
-	ir3uKsZH3TtnriPlCYcI54AWmrxBcUtmidqkerOuzg+SmIQZ6E8t4yIS73TXqSveqXwdHLcH3qrkn
-	7qhTjjsi34+nS59fiMpswCr1CTjlHI8gjmqPpeih6Z3+VgGfmdIOOcjgkEQD6ixX8yqBim/PeOoLC
-	G+jtW7Zkm8IUX5vmMdnUVr4rEvJSGgod5kuJGtWpGO1iVEWordeOLdj8o4Y6NlgVSIcbrl9m+wTwR
-	P4gQUIhA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sX4PZ-00000001w8c-1MJP;
-	Thu, 25 Jul 2024 19:46:01 +0000
-Date: Thu, 25 Jul 2024 12:46:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: kreijack@inwind.it
-Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Youling Tang <youling.tang@linux.dev>,
-	Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <ZqKreStOD-eRkKZU@infradead.org>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <Zp-_RDk5n5431yyh@infradead.org>
- <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
- <ZqEhMCjdFwC3wF4u@infradead.org>
- <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
- <ZqJjsg3s7H5cTWlT@infradead.org>
- <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
- <ZqJwa2-SsIf0aA_l@infradead.org>
- <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+	s=arc-20240116; t=1721936797; c=relaxed/simple;
+	bh=rPAsZ7Or8Kt8DxD45QEXqWuot90hcLSkTjkd/6gYmfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nGYsSM7kSqgSYsyO1u/N2Y2iRiGR4Fl/88GG1Hfp9n5j4R4T/eGpJwMOL/n5pQE1Wy7mD5mfmbIzYCLIIc4H7fPQTFaURKbCI5D+F91IY60Yz6GC8lALGn40/tBgBCuZydF1XRg+VFoDv943IHF0VkpZO26ZgMc5lXLEhyIJzRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVzcVsY4; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9a369055so102648566b.3;
+        Thu, 25 Jul 2024 12:46:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721936794; x=1722541594; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrmoflEai5L5Cs3bgyD3uw+UGfvG5jev2a2GOllSYIk=;
+        b=fVzcVsY4QSS9qDN9e+hAXmDDIrk4rypNZiuS/dtpzEPqdW09Y+whUS8NQXNMHvZ/8a
+         Uujx6m9sW5kueNA/+ip0yLXqVnYXbRX8O8CmX35fQkR/dC1SJYox7JQLeAwoMY4sOf7I
+         toRGODF9jdT/GULOIWh3ycW6PhRL8Y8Oiu2uspyxczNqgpDDJjSgKXay1h5Tl9FAk+3y
+         O10lujJbZd3p8hUsJ1IlR7spGNosYkm6wC7/aTuCPc7ARkdVxAsOmD9WowBGLhhSD77f
+         YW3Xk5Mb2XqB58QZmJ8bJCJePmkXtad87lcu94IVkCTPb7+1H5+YRqfQlLr3vTNWAWz8
+         yTxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721936794; x=1722541594;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zrmoflEai5L5Cs3bgyD3uw+UGfvG5jev2a2GOllSYIk=;
+        b=MV+Z2HxBo1YlrRePicVrsYqZUxYNw+uHd1Gzrsk4VEFxojtzFmexlRz2oO9cLoknvM
+         j/WuP9XtrpCezwSaZ/YXHxG2ul/ckVYf2ZNvkuTkWj5ryrEqjnGDuc4Ifv29kvWfB9Yd
+         vDb+KwGb9zcnVY1nPgDsqymj4jaQuVuefr6XT2CTya2Ote55S/Gn0VZ6foz9POTrIZ+K
+         7sIMVIXCFtgNPWsj6COIo9INs+cfFZwx+DACZklmz9lVZsbcB84wD7pIbZZZp5Jmz9dQ
+         ZYpKJ6Ze11PoqHKQfaF1WjAsBJZGoOZavidv9MFgMu5V86YdUDhb/hPMALjJcQpWRnrB
+         2b1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnG3rsqILn8ohGgDrjVUtdWSyi3VB4x5DKdVZjKPhTL9gR4+57hxcqdXgXu7KcagxSl/i5ZKNXpS02uV+HaswKxFAjKN2JiMiRPFwsU1BAp5H04cRqvdJ9DnxiflGkUvWdvO78X4uufr36F8NHXfEa5Bk3x4PL4oct9yR33YT8
+X-Gm-Message-State: AOJu0Yywn23tbk5ltwHe2puC1SG5rHfm8yTUFBxKkQFIQRuGPRh6LA1r
+	h5oEBbmUpKbIixOby0OmrcmCXrDX9MK7vhdpUiLsGpDnz53CVWLo
+X-Google-Smtp-Source: AGHT+IEhf7d0t9YZyU2cXcZlfEY84kZ3eTBaQh7vfkyhSSPNnJXUlSG8i5gceqy9liFP8S9VuxlurA==
+X-Received: by 2002:a17:907:1b21:b0:a7a:aa35:4099 with SMTP id a640c23a62f3a-a7ac4ef1175mr255146266b.26.1721936793992;
+        Thu, 25 Jul 2024 12:46:33 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c54e:e500:2050:c301:6d45:521d? (dynamic-2a01-0c23-c54e-e500-2050-c301-6d45-521d.c23.pool.telefonica.de. [2a01:c23:c54e:e500:2050:c301:6d45:521d])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7acab23704sm103333466b.3.2024.07.25.12.46.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 12:46:33 -0700 (PDT)
+Message-ID: <39b40ef8-b036-427e-9deb-b25bda61cb37@gmail.com>
+Date: Thu, 25 Jul 2024 21:46:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+To: George-Daniel Matei <danielgeorgem@chromium.org>,
+ Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, nic_swsd@realtek.com, netdev@vger.kernel.org
+References: <CACfW=qpNmSeQVG_qSeYpEdk9pf_RTAEEKp+OiBYrRFd3d6HOXg@mail.gmail.com>
+ <20240710213837.GA257340@bhelgaas>
+ <CACfW=qqPmiV6ez8Gf6GT6jyN5JEvF=mVeAqckWYVycsRuD746w@mail.gmail.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <CACfW=qqPmiV6ez8Gf6GT6jyN5JEvF=mVeAqckWYVycsRuD746w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 07:14:14PM +0200, Goffredo Baroncelli wrote:
-> Instead of relying to the "expected" order of the compiler/linker,
-> why doesn't manage the chain explicitly ? Something like:
+On 25.07.2024 14:56, George-Daniel Matei wrote:
+> On Wed, Jul 10, 2024 at 11:38 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>>
+>> On Wed, Jul 10, 2024 at 05:09:08PM +0200, George-Daniel Matei wrote:
+>>>>> Added aspm suspend/resume hooks that run
+>>>>> before and after suspend and resume to change
+>>>>> the ASPM states of the PCI bus in order to allow
+>>>>> the system suspend while trying to prevent card hangs
+>>>>
+>>>> Why is this needed?  Is there a r8169 defect we're working around?
+>>>> A BIOS defect?  Is there a problem report you can reference here?
+>>>
+>>> We encountered this issue while upgrading from kernel v6.1 to v6.6.
+>>> The system would not suspend with 6.6. We tracked down the problem to
+>>> the NIC of the device, mainly that the following code was removed in
+>>> 6.6:
+>>>
+>>>> else if (tp->mac_version >= RTL_GIGA_MAC_VER_46)
+>>>>         rc = pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);
+>>>
+>>> For the listed devices, ASPM L1 is disabled entirely in 6.6. As for
+>>> the reason, L1 was observed to cause some problems
+>>> (https://bugzilla.kernel.org/show_bug.cgi?id=217814). We use a Raptor
+>>> Lake soc and it won't change residency if the NIC doesn't have L1
+>>> enabled. I saw in 6.1 the following comment:
+>>
+>> Can you verify that the problem still exists in a current kernel,
+>> e.g., v6.9?
+>>
+> I tested it with v6.9, still the same problem.
+> 
+>> If this is a regression that's still present in v6.9, we need to
+>> identify the commit that broke it.  Maybe it's 90ca51e8c654 ("r8169:
+>> fix ASPM-related issues on a number of systems with NIC version from
+>> RTL8168h")?
+>>
+> I also tried v6.9 with 90ca51e8c654 reverted and it works ok.
+> 
+>>>> Chips from RTL8168h partially have issues with L1.2, but seem
+>>>> to work fine with L1 and L1.1.
+>>>
+>>> I was thinking that disabling/enabling L1.1 on the fly before/after
+>>> suspend could help mitigate the risk associated with L1/L1.1 . I know
+>>> that ASPM settings are exposed in sysfs and that this could be done
+>>> from outside the kernel, that was my first approach, but it was
+>>> suggested to me that this kind of workaround would be better suited
+>>> for quirks. I did around 1000 suspend/resume cycles of 16-30 seconds
+>>> each (correcting the resume dev->bus->self being configured twice
+>>> mistake) and did not notice any problems. What do you think, is this a
+>>> good approach ... ?
+>>
+>> Whatever the problem is, it definitely should be fixed in the kernel,
+>> and Ilpo is right that it *should* be done in the PCI core ASPM
+>> support (aspm.c) or at least with interfaces it supplies.
+>>
+> The problem is actually the system not being able to reach
+> depper power saving states without certain ASPM states enabled.
+> It was mentioned in the other thread replies that this kind of problem
+> has been reported several times in the past.
+> 
+This is a known side effect of disabling ASPM L1 per default.
+There isn't really something broken, the system just consumes some more
+power. If this is an issue for you and ASPM L1 causes no issues on your
+system, you can use sysfs to enable ASPM L1.
 
-Because that doesn't actually solve anything over simple direct calls
-as you still need the symbols to be global?
+The general issue is that there are at least hundreds of combinations of
+RTL8168 NICs, host chipsets, and BIOS versions. Several of these combinations
+cause serious issues if ASPM L1 is enabled. It's just unknown which ones,
+and why. Therefore ASPM L1 is disabled per default.
 
-As an example here is a very hacky patch that just compiles with unused
-variable warnings and doesn't work at all to show how the distributed
-module_subinit would improve ext4, the file system with the least
-subinit calls of the three converted in the series, and without any
-extra cleanups like removing now unneded includes or moving more stuff
-into subinits if they can remain entirely static that way:
 
- 11 files changed, 61 insertions(+), 114 deletions(-)
+>> Generally speaking, drivers should not need to touch ASPM at all
+>> except to work around hardware defects in their device, but r8169 has
+>> a long history of weird ASPM stuff.  I dunno if that stuff is related
+>> to hardware defects in the r8169 devices or if it is workarounds for
+>> past or current defects in aspm.c.
+>>
+> What would be a good approach to move forward with this issue to
+> get a fix approved?
+> 
+Propose a patch which fixes your power consumption issue and is guaranteed
+not to have negative impact on any other user.
 
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 87ee3a17bd29c9..87f0ccd06fc069 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -29,7 +29,7 @@ struct ext4_system_zone {
- 
- static struct kmem_cache *ext4_system_zone_cachep;
- 
--int __init ext4_init_system_zone(void)
-+static int __init ext4_init_system_zone(void)
- {
- 	ext4_system_zone_cachep = KMEM_CACHE(ext4_system_zone, 0);
- 	if (ext4_system_zone_cachep == NULL)
-@@ -37,11 +37,12 @@ int __init ext4_init_system_zone(void)
- 	return 0;
- }
- 
--void ext4_exit_system_zone(void)
-+static void ext4_exit_system_zone(void)
- {
- 	rcu_barrier();
- 	kmem_cache_destroy(ext4_system_zone_cachep);
- }
-+module_subinit(ext4_init_system_zone, ext4_exit_system_zone);
- 
- static inline int can_merge(struct ext4_system_zone *entry1,
- 		     struct ext4_system_zone *entry2)
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 08acd152261ed8..db81f18cdc3266 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2915,8 +2915,6 @@ void ext4_fc_del(struct inode *inode);
- bool ext4_fc_replay_check_excluded(struct super_block *sb, ext4_fsblk_t block);
- void ext4_fc_replay_cleanup(struct super_block *sb);
- int ext4_fc_commit(journal_t *journal, tid_t commit_tid);
--int __init ext4_fc_init_dentry_cache(void);
--void ext4_fc_destroy_dentry_cache(void);
- int ext4_fc_record_regions(struct super_block *sb, int ino,
- 			   ext4_lblk_t lblk, ext4_fsblk_t pblk,
- 			   int len, int replay);
-@@ -2930,8 +2928,6 @@ extern void ext4_mb_release(struct super_block *);
- extern ext4_fsblk_t ext4_mb_new_blocks(handle_t *,
- 				struct ext4_allocation_request *, int *);
- extern void ext4_discard_preallocations(struct inode *);
--extern int __init ext4_init_mballoc(void);
--extern void ext4_exit_mballoc(void);
- extern ext4_group_t ext4_mb_prefetch(struct super_block *sb,
- 				     ext4_group_t group,
- 				     unsigned int nr, int *cnt);
-@@ -3651,8 +3647,6 @@ static inline void ext4_set_de_type(struct super_block *sb,
- /* readpages.c */
- extern int ext4_mpage_readpages(struct inode *inode,
- 		struct readahead_control *rac, struct folio *folio);
--extern int __init ext4_init_post_read_processing(void);
--extern void ext4_exit_post_read_processing(void);
- 
- /* symlink.c */
- extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
-@@ -3663,14 +3657,10 @@ extern const struct inode_operations ext4_fast_symlink_inode_operations;
- extern void ext4_notify_error_sysfs(struct ext4_sb_info *sbi);
- extern int ext4_register_sysfs(struct super_block *sb);
- extern void ext4_unregister_sysfs(struct super_block *sb);
--extern int __init ext4_init_sysfs(void);
--extern void ext4_exit_sysfs(void);
- 
- /* block_validity */
- extern void ext4_release_system_zone(struct super_block *sb);
- extern int ext4_setup_system_zone(struct super_block *sb);
--extern int __init ext4_init_system_zone(void);
--extern void ext4_exit_system_zone(void);
- extern int ext4_inode_block_valid(struct inode *inode,
- 				  ext4_fsblk_t start_blk,
- 				  unsigned int count);
-@@ -3750,8 +3740,6 @@ extern int ext4_move_extents(struct file *o_filp, struct file *d_filp,
- 			     __u64 len, __u64 *moved_len);
- 
- /* page-io.c */
--extern int __init ext4_init_pageio(void);
--extern void ext4_exit_pageio(void);
- extern ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags);
- extern ext4_io_end_t *ext4_get_io_end(ext4_io_end_t *io_end);
- extern int ext4_put_io_end(ext4_io_end_t *io_end);
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 17dcf13adde275..d381ec88441ffd 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -156,19 +156,6 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
- 			    ext4_lblk_t len,
- 			    struct pending_reservation **prealloc);
- 
--int __init ext4_init_es(void)
--{
--	ext4_es_cachep = KMEM_CACHE(extent_status, SLAB_RECLAIM_ACCOUNT);
--	if (ext4_es_cachep == NULL)
--		return -ENOMEM;
--	return 0;
--}
--
--void ext4_exit_es(void)
--{
--	kmem_cache_destroy(ext4_es_cachep);
--}
--
- void ext4_es_init_tree(struct ext4_es_tree *tree)
- {
- 	tree->root = RB_ROOT;
-@@ -1883,18 +1870,25 @@ static void ext4_print_pending_tree(struct inode *inode)
- #define ext4_print_pending_tree(inode)
- #endif
- 
--int __init ext4_init_pending(void)
-+static int __init ext4_init_es(void)
- {
- 	ext4_pending_cachep = KMEM_CACHE(pending_reservation, SLAB_RECLAIM_ACCOUNT);
- 	if (ext4_pending_cachep == NULL)
- 		return -ENOMEM;
-+	ext4_es_cachep = KMEM_CACHE(extent_status, SLAB_RECLAIM_ACCOUNT);
-+	if (ext4_es_cachep == NULL) {
-+		kmem_cache_destroy(ext4_pending_cachep);
-+		return -ENOMEM;
-+	}
- 	return 0;
- }
- 
--void ext4_exit_pending(void)
-+static void ext4_exit_es(void)
- {
-+	kmem_cache_destroy(ext4_es_cachep);
- 	kmem_cache_destroy(ext4_pending_cachep);
- }
-+module_subinit(ext4_init_es, ext4_exit_es);
- 
- void ext4_init_pending_tree(struct ext4_pending_tree *tree)
- {
-diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-index 3c8e2edee5d5d1..1cdb25c3d2dae5 100644
---- a/fs/ext4/extents_status.h
-+++ b/fs/ext4/extents_status.h
-@@ -123,8 +123,6 @@ struct ext4_pending_tree {
- 	struct rb_root root;
- };
- 
--extern int __init ext4_init_es(void);
--extern void ext4_exit_es(void);
- extern void ext4_es_init_tree(struct ext4_es_tree *tree);
- 
- extern void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
-@@ -244,8 +242,6 @@ extern void ext4_es_unregister_shrinker(struct ext4_sb_info *sbi);
- 
- extern int ext4_seq_es_shrinker_info_show(struct seq_file *seq, void *v);
- 
--extern int __init ext4_init_pending(void);
--extern void ext4_exit_pending(void);
- extern void ext4_init_pending_tree(struct ext4_pending_tree *tree);
- extern void ext4_remove_pending(struct inode *inode, ext4_lblk_t lblk);
- extern bool ext4_is_pending(struct inode *inode, ext4_lblk_t lblk);
-diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-index 3926a05eceeed1..b28930c4175cca 100644
---- a/fs/ext4/fast_commit.c
-+++ b/fs/ext4/fast_commit.c
-@@ -2293,7 +2293,7 @@ int ext4_fc_info_show(struct seq_file *seq, void *v)
- 	return 0;
- }
- 
--int __init ext4_fc_init_dentry_cache(void)
-+static int __init ext4_fc_init_dentry_cache(void)
- {
- 	ext4_fc_dentry_cachep = KMEM_CACHE(ext4_fc_dentry_update,
- 					   SLAB_RECLAIM_ACCOUNT);
-@@ -2304,7 +2304,8 @@ int __init ext4_fc_init_dentry_cache(void)
- 	return 0;
- }
- 
--void ext4_fc_destroy_dentry_cache(void)
-+static void ext4_fc_destroy_dentry_cache(void)
- {
- 	kmem_cache_destroy(ext4_fc_dentry_cachep);
- }
-+module_subinit(ext4_fc_init_dentry_cache, ext4_fc_destroy_dentry_cache);
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 9dda9cd68ab2f5..a564882432b8ff 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -3936,7 +3936,7 @@ void ext4_process_freed_data(struct super_block *sb, tid_t commit_tid)
- 	}
- }
- 
--int __init ext4_init_mballoc(void)
-+static int __init ext4_init_mballoc(void)
- {
- 	ext4_pspace_cachep = KMEM_CACHE(ext4_prealloc_space,
- 					SLAB_RECLAIM_ACCOUNT);
-@@ -3963,7 +3963,7 @@ int __init ext4_init_mballoc(void)
- 	return -ENOMEM;
- }
- 
--void ext4_exit_mballoc(void)
-+static void ext4_exit_mballoc(void)
- {
- 	/*
- 	 * Wait for completion of call_rcu()'s on ext4_pspace_cachep
-@@ -3975,6 +3975,7 @@ void ext4_exit_mballoc(void)
- 	kmem_cache_destroy(ext4_free_data_cachep);
- 	ext4_groupinfo_destroy_slabs();
- }
-+module_subinit(ext4_init_mballoc, ext4_exit_mballoc);
- 
- #define EXT4_MB_BITMAP_MARKED_CHECK 0x0001
- #define EXT4_MB_SYNC_UPDATE 0x0002
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index ad5543866d2152..68639d5553080a 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -33,7 +33,7 @@
- static struct kmem_cache *io_end_cachep;
- static struct kmem_cache *io_end_vec_cachep;
- 
--int __init ext4_init_pageio(void)
-+static int __init ext4_init_pageio(void)
- {
- 	io_end_cachep = KMEM_CACHE(ext4_io_end, SLAB_RECLAIM_ACCOUNT);
- 	if (io_end_cachep == NULL)
-@@ -47,11 +47,12 @@ int __init ext4_init_pageio(void)
- 	return 0;
- }
- 
--void ext4_exit_pageio(void)
-+static void ext4_exit_pageio(void)
- {
- 	kmem_cache_destroy(io_end_cachep);
- 	kmem_cache_destroy(io_end_vec_cachep);
- }
-+module_subinit(ext4_init_pageio, ext4_exit_pageio);
- 
- struct ext4_io_end_vec *ext4_alloc_io_end_vec(ext4_io_end_t *io_end)
- {
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 8494492582abea..5fa7329c571b42 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -390,7 +390,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 	return 0;
- }
- 
--int __init ext4_init_post_read_processing(void)
-+static int __init ext4_init_post_read_processing(void)
- {
- 	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, SLAB_RECLAIM_ACCOUNT);
- 
-@@ -409,8 +409,9 @@ int __init ext4_init_post_read_processing(void)
- 	return -ENOMEM;
- }
- 
--void ext4_exit_post_read_processing(void)
-+static void ext4_exit_post_read_processing(void)
- {
- 	mempool_destroy(bio_post_read_ctx_pool);
- 	kmem_cache_destroy(bio_post_read_ctx_cache);
- }
-+module_subinit(ext4_init_post_read_processing, ext4_exit_post_read_processing);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 207076e7e7f055..bb6a87da00ea8c 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1484,29 +1484,6 @@ static void init_once(void *foo)
- 	ext4_fc_init_inode(&ei->vfs_inode);
- }
- 
--static int __init init_inodecache(void)
--{
--	ext4_inode_cachep = kmem_cache_create_usercopy("ext4_inode_cache",
--				sizeof(struct ext4_inode_info), 0,
--				SLAB_RECLAIM_ACCOUNT | SLAB_ACCOUNT,
--				offsetof(struct ext4_inode_info, i_data),
--				sizeof_field(struct ext4_inode_info, i_data),
--				init_once);
--	if (ext4_inode_cachep == NULL)
--		return -ENOMEM;
--	return 0;
--}
--
--static void destroy_inodecache(void)
--{
--	/*
--	 * Make sure all delayed rcu free inodes are flushed before we
--	 * destroy cache.
--	 */
--	rcu_barrier();
--	kmem_cache_destroy(ext4_inode_cachep);
--}
--
- void ext4_clear_inode(struct inode *inode)
- {
- 	ext4_fc_del(inode);
-@@ -7302,33 +7279,13 @@ static struct file_system_type ext4_fs_type = {
- };
- MODULE_ALIAS_FS("ext4");
- 
--static int register_ext(void)
--{
--	register_as_ext3();
--	register_as_ext2();
--	return register_filesystem(&ext4_fs_type);
--}
--
--static void unregister_ext(void)
--{
--	unregister_as_ext2();
--	unregister_as_ext3();
--	unregister_filesystem(&ext4_fs_type);
--}
--
--static struct subexitcall_rollback rollback;
--
--static void __exit ext4_exit_fs(void)
--{
--	ext4_destroy_lazyinit_thread();
--	module_subexit(&rollback);
--}
--
- /* Shared across all ext4 file systems */
- wait_queue_head_t ext4__ioend_wq[EXT4_WQ_HASH_SZ];
- 
- static int __init ext4_init_fs(void)
- {
-+	int error;
-+
- 	ratelimit_state_init(&ext4_mount_msg_ratelimit, 30 * HZ, 64);
- 	ext4_li_info = NULL;
- 
-@@ -7338,23 +7295,40 @@ static int __init ext4_init_fs(void)
- 	for (int i = 0; i < EXT4_WQ_HASH_SZ; i++)
- 		init_waitqueue_head(&ext4__ioend_wq[i]);
- 
--	module_subinit(ext4_init_es, ext4_exit_es, &rollback);
--	module_subinit(ext4_init_pending, ext4_exit_pending, &rollback);
--	module_subinit(ext4_init_post_read_processing, ext4_exit_post_read_processing, &rollback);
--	module_subinit(ext4_init_pageio, ext4_exit_pageio, &rollback);
--	module_subinit(ext4_init_system_zone, ext4_exit_system_zone, &rollback);
--	module_subinit(ext4_init_sysfs, ext4_exit_sysfs, &rollback);
--	module_subinit(ext4_init_mballoc, ext4_exit_mballoc, &rollback);
--	module_subinit(init_inodecache, destroy_inodecache, &rollback);
--	module_subinit(ext4_fc_init_dentry_cache, ext4_fc_destroy_dentry_cache, &rollback);
--	module_subinit(register_ext, unregister_ext, &rollback);
-+	ext4_inode_cachep = kmem_cache_create_usercopy("ext4_inode_cache",
-+				sizeof(struct ext4_inode_info), 0,
-+				SLAB_RECLAIM_ACCOUNT | SLAB_ACCOUNT,
-+				offsetof(struct ext4_inode_info, i_data),
-+				sizeof_field(struct ext4_inode_info, i_data),
-+				init_once);
-+	if (ext4_inode_cachep == NULL)
-+		return -ENOMEM;
- 
--	return 0;
-+	register_as_ext3();
-+	register_as_ext2();
-+	error = register_filesystem(&ext4_fs_type);
-+	if (error)
-+		kmem_cache_destroy(ext4_inode_cachep);
-+	return error;
-+}
-+
-+static void __exit ext4_exit_fs(void)
-+{
-+	ext4_destroy_lazyinit_thread();
-+	unregister_as_ext2();
-+	unregister_as_ext3();
-+	unregister_filesystem(&ext4_fs_type);
-+
-+	/*
-+	 * Make sure all delayed rcu free inodes are flushed before we
-+	 * destroy cache.
-+	 */
-+	rcu_barrier();
-+	kmem_cache_destroy(ext4_inode_cachep);
- }
-+module_subinit(ext4_init_fs, ext4_exit_fs);
- 
- MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
- MODULE_DESCRIPTION("Fourth Extended Filesystem");
- MODULE_LICENSE("GPL");
- MODULE_SOFTDEP("pre: crc32c");
--module_init(ext4_init_fs)
--module_exit(ext4_exit_fs)
-diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-index ddb54608ca2ef6..df3096a9e6e39a 100644
---- a/fs/ext4/sysfs.c
-+++ b/fs/ext4/sysfs.c
-@@ -601,7 +601,7 @@ void ext4_unregister_sysfs(struct super_block *sb)
- 	kobject_del(&sbi->s_kobj);
- }
- 
--int __init ext4_init_sysfs(void)
-+static int __init ext4_init_sysfs(void)
- {
- 	int ret;
- 
-@@ -632,7 +632,7 @@ int __init ext4_init_sysfs(void)
- 	return ret;
- }
- 
--void ext4_exit_sysfs(void)
-+static void ext4_exit_sysfs(void)
- {
- 	kobject_put(ext4_feat);
- 	ext4_feat = NULL;
-@@ -641,4 +641,4 @@ void ext4_exit_sysfs(void)
- 	remove_proc_entry(proc_dirname, NULL);
- 	ext4_proc_root = NULL;
- }
--
-+module_subinit(ext4_init_sysfs, ext4_exit_sysfs);
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 95f7c60dede9a4..3099fb2c3d813b 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -80,23 +80,13 @@ extern void cleanup_module(void);
-  * module_subinit() - Called when the driver is subinitialized
-  * @initfn: The subinitialization function that is called
-  * @exitfn: Corresponding exit function
-- * @rollback: Record information when the subinitialization failed
-- *            or the driver was removed
-  *
-  * Use module_subinit_noexit() when there is only an subinitialization
-  * function but no corresponding exit function.
-  */
--#define module_subinit(initfn, exitfn, rollback)	\
--	__subinitcall(initfn, exitfn, rollback);
-+#define module_subinit(initfn, exitfn)
- 
--#define module_subinit_noexit(initfn, rollback)		\
--	__subinitcall_noexit(initfn, rollback);
--
--/*
-- * module_subexit() - Called when the driver exits
-- */
--#define module_subexit(rollback)			\
--	__subexitcall_rollback(rollback);
-+#define module_subinit_noexit(initfn)
- 
- #ifndef MODULE
- /**
+> Make a general version of this toggle workaround in the aspm core
+> that would be controllable & configurable for each pci device individually?
+> Keep the quirks and fix the aforementioned comments?
+> 
+>>>> This doesn't restore the state as it existed before suspend.  Does
+>>>> this rely on other parts of restore to do that?
+>>>
+>>> It operates on the assumption that after driver initialization
+>>> PCI_EXP_LNKCTL_ASPMC is 0 and that there are no states enabled in
+>>> CTL1. I did a lspci -vvv dump on the affected devices before and after
+>>> the quirks ran and saw no difference. This could be improved.
+>>
+>> Yep, we can't assume any of that because the PCI core owns ASPM
+>> config, not the driver itself.
+>>
+>>>> What's the root cause of the issue?
+>>>> A silicon bug on the host side?
+>>>
+>>> I think it's the ASPM implementation of the soc.
+>>
+>> As Heiner pointed out, if it's a SoC defect, it would potentially
+>> affect all devices and a workaround would have to cover them all.
+>>
+>> Side note: oops, quoting error below, see note about top-posting here:
+>> https://people.kernel.org/tglx/notes-about-netiquette
+>>
+>>> On Tue, Jul 9, 2024 at 12:15 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>
+>>>> On 08.07.2024 19:23, Bjorn Helgaas wrote:
+>>>>> [+cc r8169 folks]
+>>>>>
+>>>>> On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote:
+>>>>>> Added aspm suspend/resume hooks that run
+>>>>>> before and after suspend and resume to change
+>>>>>> the ASPM states of the PCI bus in order to allow
+>>>>>> the system suspend while trying to prevent card hangs
+>>>>>
+>>>>> Why is this needed?  Is there a r8169 defect we're working around?
+>>>>> A BIOS defect?  Is there a problem report you can reference here?
+>>> ...
+
 
