@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-261749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6330293BBAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:20:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0152B93BBB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F071C23A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3736A281CD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBE629414;
-	Thu, 25 Jul 2024 04:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="eoMYAL0/"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3741B1CD29
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABC91CA8A;
+	Thu, 25 Jul 2024 04:19:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB231CAA2;
+	Thu, 25 Jul 2024 04:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721881042; cv=none; b=KhLkofJ4M5KlZTyA+5OS7D+H+i+zFn28RCTQa88ZQALIPpuXdk77huF4rTUKkqnCtzbtL1C0f01emEd8ytHs+8rg3NHJ/DYWyvajgQHuDXf3S/S+TZXjZ/5U1YBdOi7yJoVavjiHoA0IfG5EjFMdXOi3vDpXlHB9Avn0/xrAdhk=
+	t=1721881184; cv=none; b=XZtZjkK+KhR314aMcwi4wG5eL6fbrKO31roRPI/aRgYDel3SE9Sf64zPn1Vsyq/V/6HttAVZ9d6+s355lF8hiykTfDEN0TKDR/kBLZxABdaH0vFO18P1RsXDg8bx+zgusXCt0yKh279EM86V7TtCuc9pFUGHwmDP5GMRSMTFQW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721881042; c=relaxed/simple;
-	bh=Kj0U9MTC5AyxWQYTo+VsBcBXCC89clLXpFMQ9HWKWsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEGpkk669WnQPD8lXXtw4uFdX5ICaZUkkGDBUdcclDnIYlfP2/QeMdOA4e1ZomHONxQZ5nviE84l6evJI/nj018ND9eXbRF7LWTKvQUnttrqHXVkDHn5H0D7KmLls8MBMlh+JGJQGLzMyICcf621ojJ3CHzIFgCiq5wn4kAZCWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=eoMYAL0/; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d18112b60so372376b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721881041; x=1722485841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+VMdQmHWFgj58kNWJtoryibFDwz3t5+vVkcIVzkHLE=;
-        b=eoMYAL0/Xr4/cduuK9twqtlGo7/Et7XYVIFE69mshHwfheHhrAM63vcFtaIzLv0l9+
-         E9mMHrtbLyHYEHQ7WI6kx5Neg+RkgVSp6vdV8OU86NaIGCCeTvDqkBR9akwLFtTM/n0J
-         i2C/mOx2xgK6LdCVXoXeP+7yydy3G5MxeQg4TnnKUHAgKAL03Z8+bniA9+7cQ2GDS8vf
-         4j0Qkezgnyx8LBO9NZtqyBkMVAM0SwBE6XrlILiTBsRDEd+gv0JnYW8/f+VlRAqCAOl0
-         9f6XYHQH3TUnVJvQDFsGOzyHpiRhvw3XWnXCNqJo5aMG6YFjVdc2BGmthVO0sf+RFEdK
-         hNEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721881041; x=1722485841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h+VMdQmHWFgj58kNWJtoryibFDwz3t5+vVkcIVzkHLE=;
-        b=dc6Xm+xFgKov71wFgVpSa3axwGZ8+zFmj/PjMUhNrrYsiksuy7lLXBy3vItUUIAeT6
-         EOnBFt+vAEnnW6WhWOZ/A6YXU6E2ji8vJUIMhs+7QbghkZY4XUgQcRAw564zknQjQ7Bp
-         16iGeD57OcM724OVjCsdLGo9RSs28nsgnLTkrb67pkyj0Vi+BXOnkjLGMQ0iUnZhwvPv
-         z9HB8WPLtwsjg4Zwk9HZ+q7YnYXT4IaCf1YaWA7WlBuqY1VrHCR7OzvQW87bMusietbf
-         m5CHs/2V+7rEsd7/0KAKCJ+QrsL46F1BuapCFhzsoTE3LgcoUdrYrslChafWLekEQtuA
-         I/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCW39KfNF/QG+fk2I/J2W9CtF3OPy4y4nR7Q8ginM3gZAcASnw5iWm63fEpTo5GVODI7tqZd6NME6RTK/jCDIEj9SBKeZ/Ud7hdGR/K+
-X-Gm-Message-State: AOJu0YxyhiWha/Ma2w/RllwWViftHizPyg0LBiUDIyxBwhG34xlCHfUK
-	jJ8eYkYqzY6Laan4z+WvX1DHYlyB6W9keUv8mKwIXbZJZFcZgZzSUsskjbUyIGg=
-X-Google-Smtp-Source: AGHT+IG8/lGGFfeqD0yKL6Ukrgul7u0XCxEnqHsWKKVCOGqLNIttHBNHSYlpgXB/YPJd1O/zSdOyZQ==
-X-Received: by 2002:a05:6a00:66cd:b0:704:151d:dcce with SMTP id d2e1a72fcca58-70eaa1e2e1emr2589164b3a.5.1721881040621;
-        Wed, 24 Jul 2024 21:17:20 -0700 (PDT)
-Received: from ghost ([2601:647:6700:2d90:4e8c:b287:20dc:e447])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead874b35sm322537b3a.167.2024.07.24.21.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 21:17:20 -0700 (PDT)
-Date: Wed, 24 Jul 2024 21:17:16 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Conor Dooley <conor@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-	jszhang@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, samuel.holland@sifive.com, corbet@lwn.net,
-	shuah@kernel.org, guoren@kernel.org, Evan Green <evan@rivosinc.com>,
-	andy.chiu@sifive.com, jrtc27@jrtc27.com, ajones@ventanamicro.com,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 09/13] riscv: vector: Support xtheadvector save/restore
-Message-ID: <ZqHRzAI0O+zsZd3A@ghost>
-References: <20240724-xtheadvector-v7-9-b741910ada3e@rivosinc.com>
- <mhng-28424e23-c9b4-407e-97d8-9dbb09101781@palmer-ri-x1c9>
+	s=arc-20240116; t=1721881184; c=relaxed/simple;
+	bh=S0cRj+oMwg12+CCQ+W84mXsrDS/1Vyw1BM28Fjx6tlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VOqpqsWSxoCLZA42U6/S/cL0uKjS8tHJz0oB6hiH/D4PhHo6H+QkRbUCOYGIecFlL02v4fJqiENbnjRimcE8qMxCti24qPY8hYg68w43plmwNA7TIDiKWGGVikAbadmWGt1glaXTIqWZ3pCLXTJpKku2e9vIirLzPJvHBQBWP7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F14FD1007;
+	Wed, 24 Jul 2024 21:20:00 -0700 (PDT)
+Received: from [10.162.40.19] (a077893.blr.arm.com [10.162.40.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 248C23F73F;
+	Wed, 24 Jul 2024 21:19:31 -0700 (PDT)
+Message-ID: <e394cf97-df7e-4eec-8ef5-3aba2075f89f@arm.com>
+Date: Thu, 25 Jul 2024 09:49:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-28424e23-c9b4-407e-97d8-9dbb09101781@palmer-ri-x1c9>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] lib/test_bits.c: Add tests for GENMASK_U128()
+To: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+References: <20240724103142.165693-3-anshuman.khandual@arm.com>
+ <202407250853.f3pSzob6-lkp@intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <202407250853.f3pSzob6-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 08:23:27PM -0700, Palmer Dabbelt wrote:
-> On Wed, 24 Jul 2024 12:14:00 PDT (-0700), Charlie Jenkins wrote:
-> > Use alternatives to add support for xtheadvector vector save/restore
-> > routines.
-> > 
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> b4 isn't applying this, either on top of your last patch set or rc1 -- the
-> base commit in the header isn't a hash I have, so I'm not sure where it's
-> mean to apply to.
-> 
-> Also...
-> 
-> > ---
-> >  arch/riscv/include/asm/csr.h           |   6 +
-> >  arch/riscv/include/asm/switch_to.h     |   2 +-
-> >  arch/riscv/include/asm/vector.h        | 225 +++++++++++++++++++++++++--------
-> >  arch/riscv/kernel/cpufeature.c         |   5 +-
-> >  arch/riscv/kernel/kernel_mode_vector.c |   8 +-
-> >  arch/riscv/kernel/process.c            |   4 +-
-> >  arch/riscv/kernel/signal.c             |   6 +-
-> >  arch/riscv/kernel/vector.c             |  12 +-
-> >  8 files changed, 198 insertions(+), 70 deletions(-)
-> 
-> [...]
-> 
-> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> > index bf25215bad24..cb48092fdc5d 100644
-> > --- a/arch/riscv/kernel/cpufeature.c
-> > +++ b/arch/riscv/kernel/cpufeature.c
-> > @@ -845,10 +845,7 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
-> >  			riscv_isa_set_ext(ext, source_isa);
-> >  		}
-> > 
-> > -<<<<<<< HEAD
-> >  		riscv_resolve_isa(source_isa, isainfo->isa, &this_hwcap, isa2hwcap);
-> > -=======
-> > ->>>>>>> 0f260ac829ca (riscv: Extend cpufeature.c to detect vendor extensions)
-> >  		riscv_fill_cpu_vendor_ext(cpu_node, cpu);
-> > 
-> >  		of_node_put(cpu_node);
-> 
-> This chunk isn't applying, and it's got a conflict marker in there.  So I
-> think that means something's gone off the rails?
 
-I really messed that up... Okay I sent a new version that is based off
-of your for-next that should work?
 
-- Charlie
+On 7/25/24 06:34, kernel test robot wrote:
+> Hi Anshuman,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on arnd-asm-generic/master]
+> [also build test ERROR on akpm-mm/mm-nonmm-unstable akpm-mm/mm-everything linus/master v6.10 next-20240724]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/uapi-Define-GENMASK_U128/20240724-184809
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+> patch link:    https://lore.kernel.org/r/20240724103142.165693-3-anshuman.khandual%40arm.com
+> patch subject: [PATCH 2/2] lib/test_bits.c: Add tests for GENMASK_U128()
+> config: m68k-sun3x_defconfig (https://download.01.org/0day-ci/archive/20240725/202407250853.f3pSzob6-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407250853.f3pSzob6-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407250853.f3pSzob6-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from lib/test_bits.c:6:
+>    lib/test_bits.c: In function 'genmask_u128_test':
+>>> include/uapi/linux/const.h:24:36: error: '__int128' is not supported on this target
+>       24 | #define _AC128(X)       ((unsigned __int128)(X))
+>          |                                    ^~~~~~~~
+>    include/kunit/test.h:708:22: note: in definition of macro 'KUNIT_BASE_BINARY_ASSERTION'
+>      708 |         const typeof(right) __right = (right);                                 \
+>          |                      ^~~~~
+>    include/kunit/test.h:903:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+>      903 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/kunit/test.h:900:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+>      900 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+>          |         ^~~~~~~~~~~~~~~~~~~
+>    lib/test_bits.c:45:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+>       45 |         KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
+>          |         ^~~~~~~~~~~~~~~
+>    include/uapi/linux/const.h:29:26: note: in expansion of macro '_AC128'
+>       29 | #define _U128(x)        (_AC128(x))
+>          |                          ^~~~~~
+>    include/uapi/linux/bits.h:16:13: note: in expansion of macro '_U128'
+>       16 |         (((~_U128(0)) - (_U128(1) << (l)) + 1) & \
+>          |             ^~~~~
+>    include/linux/bits.h:39:38: note: in expansion of macro '__GENMASK_U128'
+>       39 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+>          |                                      ^~~~~~~~~~~~~~
+>    lib/test_bits.c:45:54: note: in expansion of macro 'GENMASK_U128'
+>       45 |         KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
 
+This is probably triggered with GENMASK_U128() usage which is not protected
+with ARCH_SUPPORTS_INT128. Will respin the series with required fixes.
 
