@@ -1,94 +1,138 @@
-Return-Path: <linux-kernel+bounces-261962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59BB93BE57
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:05:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FD893BEAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3A11F2296B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A509CB21C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CA2197552;
-	Thu, 25 Jul 2024 09:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6tTcWq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F92B19750B;
+	Thu, 25 Jul 2024 09:08:19 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9555617557C;
-	Thu, 25 Jul 2024 09:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC081741EF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721898306; cv=none; b=ZUaomTeBrw70Zq1F4KCNTjH6bUDxOVg2UkqeU/ffCPaNyCPGi3m6sEs6a46OINzcsFRqMxxSTUnKvrmDVNwaaB1iB9O7GUDoVNSBcjenVz6RZJDtU+usbdx2gqtjGX02LhFZ+xGwVtG3dSYK2TModKDsdaG8sm0nhXAiIGbsRZE=
+	t=1721898499; cv=none; b=FyPStqziFWnaCAqWLGsErS4Gr+YskduiTfC+ulveCu6kwxtxoZVNnNkET1jK+IKAWb19uQxXheOHELSJuqiNJ5+EwfMnKGtbCG0LQ+y4ik1xI7xgVR8+TkZNbloTkACR9WTabKX5vFVMiq2m42aNdCz44D9vSfZuDsbBL0gpWlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721898306; c=relaxed/simple;
-	bh=cQaxoH7sCpjY/+aRe/0buZnD8GJyvEDG+9PJ+3j6TCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHBX++0ajOzZ5R7hZhk/7IAQIrhmJ4lSkv3F7erGEoSyUNxkORWpIlYPsczvLvDUMgaqCPXzRpZev8a0d/G03SZdSh3yTNVsq+qLHCw5AFjdHkDprusIPI5NcRcn4epzWgYN2/bGP4RpPH2aNltU/OlcrcJowSY7ZYXsCXvExJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6tTcWq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8B2C116B1;
-	Thu, 25 Jul 2024 09:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721898306;
-	bh=cQaxoH7sCpjY/+aRe/0buZnD8GJyvEDG+9PJ+3j6TCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b6tTcWq6kMciOcuhC3Vtu2WMy22VGBaCW6+by1GF9ZX3NubedOHeQtVYZvJMPLD0U
-	 6Rr3GdoSEC1watzUwzRuOnAQyYvpMOq7xqJuTu4JS8rhWb8r9FuiBpOouqblGhYcVn
-	 F+55LBv2UYuQUskAqhi1OxMs7Mlif0w/vWH1VvjVllTbx+JmaGlRTC3Cn29cNYoetQ
-	 n0ZgoNXiBAOXntwPlhiEHt23ed0Z0tvn6qq76LDOdfJauFi+l1XLcjQUJjYTOjeAVZ
-	 ZSZcKFQeoyzp+xugNJBbcg3YjTLV0A1XrAiOfpVdt80QMrR5NAQrP2rqltv65J2j4U
-	 bW0aLpiZLrbTw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sWuPL-000000006Xd-3Nyx;
-	Thu, 25 Jul 2024 11:05:07 +0200
-Date: Thu, 25 Jul 2024 11:05:07 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Message-ID: <ZqIVQzQA5kHpwFgN@hovoldconsulting.com>
-References: <20240723151328.684-1-johan+linaro@kernel.org>
- <nanfhmds3yha3g52kcou2flgn3sltjkzhr4aop75iudhvg2rui@fsp3ecz4vgkb>
- <ZqHuE2MqfGuLDGDr@hovoldconsulting.com>
- <CAA8EJppZ5V8dFC5z1ZG0u0ed9HwGgJRzGTYL-7k2oGO9FB+Weg@mail.gmail.com>
- <ZqIJE5MSFFQ4iv-R@hovoldconsulting.com>
- <y6ctin3zp55gzbvzamj2dxm4rdk2h5odmyprlnt4m4j44pnkvu@bfhmhu6djvz2>
+	s=arc-20240116; t=1721898499; c=relaxed/simple;
+	bh=Wf6Q6+UK6kq2SdUDKqU+u8hs9pVzV/RnjBZfD0Rpdag=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=cf7F8sjuq6AxT9ru8t9EI222aT/XIUfW54kCAaUC+agPoSu+k6679gCzyrsLeeJITwPBg84QPv4EHoZyNCi3ZS/2CkyFV4NYd+GgQixtZulmdrE16fdqHJ/0D8gLBPcgBDJ37OgtUhNKbJF8TQN3l4qMxXvZ3Deyxh9KJ+LeM3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-80-0tSVirVbNtCQfmxDPT3JXw-1; Thu, 25 Jul 2024 10:08:12 +0100
+X-MC-Unique: 0tSVirVbNtCQfmxDPT3JXw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 25 Jul
+ 2024 10:07:33 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 25 Jul 2024 10:07:32 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linuxfoundation.org>
+CC: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig
+	<hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>, Mateusz Guzik
+	<mjguzik@gmail.com>, "'linux-mm@kvack.org'" <linux-mm@kvack.org>
+Subject: RE: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise
+ defines with 3 arguments
+Thread-Topic: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise
+ defines with 3 arguments
+Thread-Index: Adrd1nwhwSRYGwj9RxiIgqAQhw9FiAADIsiAACObMsA=
+Date: Thu, 25 Jul 2024 09:07:32 +0000
+Message-ID: <f093cc1b170b45839f06b3fbe7df5d2f@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
+ <1bb3d09c-3b34-4348-8d6f-bd867704625c@app.fastmail.com>
+In-Reply-To: <1bb3d09c-3b34-4348-8d6f-bd867704625c@app.fastmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <y6ctin3zp55gzbvzamj2dxm4rdk2h5odmyprlnt4m4j44pnkvu@bfhmhu6djvz2>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 11:57:39AM +0300, Dmitry Baryshkov wrote:
-> On Thu, Jul 25, 2024 at 10:13:07AM GMT, Johan Hovold wrote:
+From: Arnd Bergmann
+> Sent: 24 July 2024 18:04
+>=20
+> On Wed, Jul 24, 2024, at 16:33, David Laight wrote:
+> > min3() and max3() were added to optimise nested min(x, min(y, z))
+> > sequences, bit only moved where the expansion was requiested.
+> >
+> > Add a separate implementation for 3 argument calls.
+> > These are never required to generate constant expressiions to
+> > remove that logic.
+> >
+> > Signed-off-by: David Laight <david.laight@aculab.com>
+>=20
+> This brings another 3x improvement in the size of the expansion
+> and build speed.
+>=20
+> > +#define __cmp_once3(op, x, y, z, uniq) ({=09\
+> > +=09typeof(x) __x_##uniq =3D (x);=09=09\
+> > +=09typeof(x) __y_##uniq =3D (y);=09=09\
+> > +=09typeof(x) __z_##uniq =3D (z);=09=09\
+> > +=09__cmp(op, __cmp(op, __x_##uniq, __y_##uniq), __z_##uniq); })
+>=20
+> This still has a nested call to __cmp(), which makes the
+> resulting expression bigger than necessary.
+>=20
+> The three typeof(x) should be x/y/z, right?
 
-> > It is already part of the bindings for all platforms.
-> 
-> It is not, it is enabled only for sc7280 and sc8280xp. 
+Ooops...
 
-No, that's both incorrect and irrelevant. It is used by msm8996 and
-older platforms by in-kernel DTs as well. But the point is that is has
-been part of the bindings an cannot simply be removed as there can be
-out-of-tree DTs that are correctly using this property for any of these
-platforms.
+> Using __auto_type
+> would avoid the bug and also remove one more variable expansion.
 
-Johan
+I'd thought that as well.
+But hadn't looked up the syntax.
+
+> Using another temporary variable, plus the use of __auto_type
+> brings the example line from xen/setup.c down 750KB to 530KB,
+> and the compile speed from 0.5s to 0.34s.
+>=20
+>  #define __cmp_once3(op, x, y, z, uniq) ({      \
+>        __auto_type __x_##uniq =3D (x);           \
+>        __auto_type __y_##uniq =3D (y);           \
+>        __auto_type __z_##uniq =3D (z);           \
+>        __auto_type __xy##uniq =3D __cmp(op, __x_##uniq, __y_##uniq); \
+>        __cmp(op, __xy_##uniq, __z_##uniq); })
+>=20
+> The __auto_type change can also be applied to the other typeof()
+> in this file.
+
+True.
+
+=09David
+
+>=20
+>       Arnd
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
