@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-262386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E6A93C661
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:29:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D10C93C663
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F5C9B23E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2EA283490
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB8719D8BB;
-	Thu, 25 Jul 2024 15:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C3819D89D;
+	Thu, 25 Jul 2024 15:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lR/m4czg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SxOn2vRG"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E5B18786E;
-	Thu, 25 Jul 2024 15:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F281CF8B;
+	Thu, 25 Jul 2024 15:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921345; cv=none; b=Q2IaGDjHL1XqAAJPmjFxZ4DrrRh/npyQQfYUXNkHX5Azery5XXZFRJUBmGgAlOmjhSITgBsALJr5fveq362560PajYxW1/hx1TSA0HrWwpx8v98quqGO8eauUfVU/CIitW4fcIlUjzNOfyJq4GmFjLZ/zXV0orrqsKZHzFmU138=
+	t=1721921433; cv=none; b=OR7OtUDPYsqHLSmsJLD7iQQa8pA17X/3gS38Wkczxf4g5LotyF8yz21YpPUH987rdGHxs50SNhCVh6qJD/ykUoKwiYo8jULd7kBIwfrvEH8h2PDUuil4OprdOTlbndeayDXbYufjoF4fX+khOZF+QRw4JzNZgGF3GDuSXOCqum8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921345; c=relaxed/simple;
-	bh=j7iwCZlrH1K6hWVcAl0gOibuq8HOPwjMGUDQAnfnwB0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eU0G7rGTLghQDRt/bfx4oFJsciM89uum1JAcDsxd12T26JaZhyifvET67QMPd/NiCI//WL9o+sD/GajMQvexI3hf1MCiiRtgpPQcN1SOAQjOZ9pxQuSFTCW89Un5SMxNEy7lHJTuo1CWDhdZvQe6p48prGEq+2csezbLkgouThE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lR/m4czg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E4E6C32782;
-	Thu, 25 Jul 2024 15:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721921345;
-	bh=j7iwCZlrH1K6hWVcAl0gOibuq8HOPwjMGUDQAnfnwB0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=lR/m4czgzV9FQAOdUD1gHdPchL+pC8gqnKdtyCEAiOM0chh30Bsj1djpJDjk7aCip
-	 XNvi3GOaZnLbb+g9aayLEWdaPbUSEOplIGv4Nkm431OsWt96/8dSZTIS+vMXOUBUam
-	 wimr0bI5kzx3i2ikbq7gtjy+4FVHX6S3bUl5ONqUE9nTJOdn8FOvQV/hJN+7k0NDu4
-	 wlGDIkRNOPrvMv7+lVxQs2r1wablYCbOfRc6FJf6juOGoV87+FX9VB+f8zbJh7dBtJ
-	 8dOjp8cijeoW7A59UBRXsLzIGzLG7MLdDWJUkJlvsvsb88j/zqg9pjj57PWRzE+z/g
-	 rNQb5a/0NtRyQ==
-Date: Thu, 25 Jul 2024 17:29:02 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Benjamin Tissoires <bentiss@kernel.org>
-cc: Shuah Khan <shuah@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    bpf@vger.kernel.org
-Subject: Re: [PATCH HID 0/4] HID: selftest fixes after merge into 6.11-rc0
- tree
-In-Reply-To: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
-Message-ID: <nycvar.YFH.7.76.2407251728080.11380@cbobk.fhfr.pm>
-References: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1721921433; c=relaxed/simple;
+	bh=hCz/JmAspQs7HjFsCGaNWcLwJVHQpD5EZRBb2AFqQEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3PSIcmZA4av9CJ0tAZVJn5e1gLd9awdAwAvWmn0JbOE7356FA43wEOuYdNr+HBAH97Z0ge7HQDEWhXtFlXVHfdaXJRqiwg2tRkvX+6iX2/yOwuUupJENMpk2I502lhd3ELYlptO/430TqjSc+F/wibG8MoLeo5ZLEKBofeY6+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SxOn2vRG; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2xXlOzOwfMRXBcLrEM7+MPSHfSjca4OWRUltG0XdEGw=; b=SxOn2vRGuoPadXoky66Dr7kkVu
+	Nvku9YWseR1Dt675Ei7FUdaGv5L7mfrYNCrLG1skkiROc4B64rMgL0ihWLrafv012W5UkceuaLEoC
+	gvg3AdxgcRKn6oIC7W8ASvjJ3ZCZ+3NGzSQ7NZ0vEJ16MfVW9ycdvjXu39C7sfnWwSDjAiA/CSlZO
+	wJufyXePQsqGEuDn29H9A+3QpfuB59UN8yZUHe+rTDEGnaXQ0IttSehjQwTQT8pxhkRipaDv5iD7x
+	5rTTogCWSyNQwxDNCmnRJIxgo7iJUeNNWNTZ/cT/ZdW2bZty+lVJNTCV56XXilZWN3l1PmmgG0sXv
+	FgDF2oBQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sX0Px-00000004358-3kLI;
+	Thu, 25 Jul 2024 15:30:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E3E5730037B; Thu, 25 Jul 2024 17:30:08 +0200 (CEST)
+Date: Thu, 25 Jul 2024 17:30:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v8 1/8] rust: types: add `NotThreadSafe`
+Message-ID: <20240725153008.GK13387@noisy.programming.kicks-ass.net>
+References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
+ <20240725-alice-file-v8-1-55a2e80deaa8@google.com>
+ <20240725143714.GI13387@noisy.programming.kicks-ass.net>
+ <CAH5fLggOo-TErSktC6qmyZpMGVu-M8rFXgvfi3N0Z_u63C3EyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH5fLggOo-TErSktC6qmyZpMGVu-M8rFXgvfi3N0Z_u63C3EyA@mail.gmail.com>
 
-On Tue, 23 Jul 2024, Benjamin Tissoires wrote:
+On Thu, Jul 25, 2024 at 05:09:14PM +0200, Alice Ryhl wrote:
 
-> After HID-BPF struct_ops was merged into 6.11-rc0, there are a few
-> mishaps:
-> - the bpf_wq API changed and needs to be updated here
-> - libbpf now auto-attach all the struct_ops it sees in the bpf object,
->   leading to attempting at attaching them multiple times
+> > As per always for not being able to read rust; how does this extend to
+> > get_task_struct()? Once you've taken a reference on current, you should
+> > be free to pass it along to whomever.
 > 
-> Fix the selftests but also prevent the same struct_ops to be attached
-> more than once as this enters various locks, confusions, and kernel
-> oopses.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
-> Benjamin Tissoires (4):
->       selftests/hid: fix bpf_wq new API
->       selftests/hid: disable struct_ops auto-attach
->       HID: bpf: prevent the same struct_ops to be attached more than once
->       selftests/hid: add test for attaching multiple time the same struct_ops
+> Once you take a reference on current, it becomes thread-safe. This is
+> because taking a reference creates a value of type ARef<Task> rather
+> than TaskRef, and ARef<Task> is considered thread-safe.
 
-Benjamin,
-
-for the series
-
-	Acked-by: Jiri Kosina <jkosina@suse.com>
-
-Let's get this fixed ASAP. Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Ignoring comments, there isn't a single mention of ARef there. Where
+does it come from?
 
