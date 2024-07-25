@@ -1,106 +1,145 @@
-Return-Path: <linux-kernel+bounces-262502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1689593C7D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4534F93C7D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5815B2281F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33A92828F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8333619DF70;
-	Thu, 25 Jul 2024 17:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E7219E7DB;
+	Thu, 25 Jul 2024 17:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tnk3fHc+"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L+/HRP/I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311D2DF6C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4C419DF7A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721929690; cv=none; b=E4HWPY/rlaHO9BDic/a74/4/dRaOelGQ0mX2Rr62NsOgleZWDbuBswctg7tBW2VJDUCk5UigM7xxtKCWN6w3Oy/Ba2RFJXWVf1ikXW4X91vf4MdejYGRLaY1fRlxBvFYTuT2CZVRRIHrgFYTQ9RZszL87IwDLDQ+CL6HBcYecUo=
+	t=1721929962; cv=none; b=oKa2K0CFPEIXPUszLLHbXg7USmsQEHa/2aptJ/TeH87ouIlGvLAZav9lvxS2J2BAai+x6HK7L+xMWbgmJFj/LqLAiq2qAVwsXO0qWxOwOhOQxVXH5vASzcZ87nkqIy9f5sRq1C28/dXK0fIis//Fj7/exKOba7OjeeFg+6GYZ5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721929690; c=relaxed/simple;
-	bh=ylJUHDQVLMCtIOGlV4v9JiMLen6bUSpvudW6kJ6gWcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkRc5DD+J47ZYdcuLJ8LqD+T/GXWLB9lQ6PjJf6sE9bL4os7LGKjVNhDwMFb9CWg2SxJAuK4pO+d35xkWeNHUPkJHnu9Hkh2PBC1op5nlyZUSnKrlGcYcq+nVfJcaXE84kfBOZQE9XZfsX7QBYQdtBWo6hhUOUtFJardLTS7L3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tnk3fHc+; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-260f863108fso224482fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721929688; x=1722534488; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=totiZmnc2/27l/qRsmSwJoAADxPrKT4IKHrFXmH7sCc=;
-        b=tnk3fHc+R0WJERGuKZy2km1H2Q49PGh5oS5moZVWlRczOAxkDjU8vTd6Je/W7zoOIp
-         Qlruh0XjOqnWZTKS90hl+znrY+Ulufh8ZZPTza9cmZXuVQK/4cs49SrQxUTTlbqD6clw
-         DVXE6wC1jpv1Ke0KvPDny3R+RBpMojGtAzMoLAlZVh54/fD7RJKMolBlN15ALso3Iyax
-         xZANyDIqFgCiseUDBIb8mV//a+ECldVt5Smi5T28ZBr1GVdwLCYA4Sg+qGo+ikZ5iLxi
-         m7l80dFBwCvob+dk1MVBTjH8Voirxr6l3cZmj5OzoGSk5u4LnACp8WMUHwjgtRrjXbUT
-         yMGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721929688; x=1722534488;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=totiZmnc2/27l/qRsmSwJoAADxPrKT4IKHrFXmH7sCc=;
-        b=XOa0JaEUXefMPQzPvzgxaEAlY0QK+/zrScn//EafQBE9dNJH57CVTfBphQZQPn9WSL
-         qA2NXnLg/2JcbcjuDgsD+WRbe94KaC8qlhXSwXh61POehuvEN1v8P5k4eciFzTmwv0ww
-         XMNIkl9Au8jkCRQF2w2ek+V5svI2j31l2HEfXaNFAfOi9hTxSjl6xx7eKjcJPJyf9sZH
-         o8NCCzF4Cv8ofvDa9XDTG46sidRMRGjpEqmG1zy9IJFWEE6AFaPx+wAVWxssHGZtgtMI
-         BCpjTVChB3v/Xg9Xzu1MStVGkYA1t0VO4cb66zKCQ3xX+qW+egpYbxBvNvj5RJTkP6G1
-         5SFg==
-X-Forwarded-Encrypted: i=1; AJvYcCW73erlWky8OstUOpa6I8qg2m78kNjs38mgXifV8UmtgxC3Lzrya36td9wD1iGCGVwq4HdzzmUIEf+TyW1DlurYrLJjuF9bBHI6dZpF
-X-Gm-Message-State: AOJu0YyKsRpKNPq2UHuxuwMjUW+Mws5lQwsayvvvwuzkfr1MusnOq0BA
-	6/plBTvKGtTYfByHyxeaTjxq+Ku1J2sHRwBb6FqIRfjglw1PIVBgGnvAhyzmRHU=
-X-Google-Smtp-Source: AGHT+IEX/kCSRxywmObQDI6MQ4+hW7tcaW8VoM4BAXUAqED2n9Rupayfm09laEbHhUk2rsVzTqZCKw==
-X-Received: by 2002:a05:6871:1ce:b0:25e:24d5:4d6b with SMTP id 586e51a60fabf-264a0fe70bbmr3437026fac.50.1721929688167;
-        Thu, 25 Jul 2024 10:48:08 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:6751:f2ec:fdb9:323e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-265771e484esm356209fac.42.2024.07.25.10.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 10:48:07 -0700 (PDT)
-Date: Thu, 25 Jul 2024 12:48:06 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joy Chakraborty <joychakr@google.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmem: core: WARN_ONCE on nvmem reg_read/write()
- returning positive values
-Message-ID: <775f8dd7-75cf-4772-967e-3757c2375ee0@suswa.mountain>
-References: <20240725112126.415071-1-joychakr@google.com>
+	s=arc-20240116; t=1721929962; c=relaxed/simple;
+	bh=Mrq3pVcI6peUqPoMSdpibg7CDGmyuyeGF+0cPsFEeKw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=olNhO+RdHCkfUSv34E6Mi8NQsHI96jnhygkw3MFWCC+I6tLs47JNYOQvSmH9cUZUCREBQI2Y/I33ReEOdu3rDNB7WZIKWi/cAnjn5vMIJnSHGfMlBPrvWmlgI5arsYThjs10irGyfOIBHdw6BCxMnK/l7S6ctCyY6COXfkhYhgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L+/HRP/I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721929960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HhAbBAJ6gL1oMeI4keNegD7Rzp4r1zzadgT6Nf42wKk=;
+	b=L+/HRP/IjuPXW5G1SeQPVUvIi4N9djYVYYdvjlMk1hWWe1FdppzIFpQDY8DwO0TdciFXik
+	JYGRk+BrvizNPldxUewtT1guYDw2+SnnD+Iynnvxrph7SKBKuHVY8SC39T9vsEdU+v1W5V
+	dJ0ptNA0b9MLSYOasK0GeI6L5qt2FVc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-A_5hwBBROOCeTCw7g6ibrA-1; Thu,
+ 25 Jul 2024 13:52:37 -0400
+X-MC-Unique: A_5hwBBROOCeTCw7g6ibrA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A48519560AD;
+	Thu, 25 Jul 2024 17:52:35 +0000 (UTC)
+Received: from starship.lan (unknown [10.22.8.132])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0F999300019B;
+	Thu, 25 Jul 2024 17:52:32 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	x86@kernel.org,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v3 0/2] Fix for a very old KVM bug in the segment cache
+Date: Thu, 25 Jul 2024 13:52:30 -0400
+Message-Id: <20240725175232.337266-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725112126.415071-1-joychakr@google.com>
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Jul 25, 2024 at 11:21:26AM +0000, Joy Chakraborty wrote:
-> Nvmem core currently expects 0 to be returned on successful read/write
-> and negative for failure from nvmem producers.
-> Warn incase any nvmem producer returns positive values which might
-> happen if any producer ends up returning the number of bytes read or
-> written.
-> 
-> Signed-off-by: Joy Chakraborty <joychakr@google.com>
-
-Thanks for fixing all these.  I've double checked and I believe you did
-catch them all.  Plus if this patch triggers any warnings, then it will
-be annoying but it's better to know about the bugs instead of running
-into subtle issues down the road which is what the previous code did.
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+Hi,=0D
+=0D
+Recently, while trying to understand why the pmu_counters_test=0D
+selftest sometimes fails when run nested I stumbled=0D
+upon a very interesting and old bug:=0D
+=0D
+It turns out that KVM caches guest segment state,=0D
+but this cache doesn't have any protection against concurrent use.=0D
+=0D
+This usually works because the cache is per vcpu, and should=0D
+only be accessed by vCPU thread, however there is an exception:=0D
+=0D
+If the full preemption is enabled in the host kernel,=0D
+it is possible that vCPU thread will be preempted, for=0D
+example during the vmx_vcpu_reset.=0D
+=0D
+vmx_vcpu_reset resets the segment cache bitmask and then initializes=0D
+the segments in the vmcs, however if the vcpus is preempted in the=0D
+middle of this code, the kvm_arch_vcpu_put is called which=0D
+reads SS's AR bytes to determine if the vCPU is in the kernel mode,=0D
+which caches the old value.=0D
+=0D
+Later vmx_vcpu_reset will set the SS's AR field to the correct value=0D
+in vmcs but the cache still contains an invalid value which=0D
+can later for example leak via KVM_GET_SREGS and such.=0D
+=0D
+In particular, kvm selftests will do KVM_GET_SREGS,=0D
+and then KVM_SET_SREGS, with a broken SS's AR field passed as is,=0D
+which will lead to vm entry failure.=0D
+=0D
+This issue is not a nested issue, and actually I was able=0D
+to reproduce it on bare metal, but due to timing it happens=0D
+much more often nested. The only requirement for this to happen=0D
+is to have full preemption enabled in the kernel which runs the selftest.=0D
+=0D
+pmu_counters_test reproduces this issue well, because it creates=0D
+lots of short lived VMs, but the issue as was noted=0D
+about is not related to pmu.=0D
+=0D
+To paritally fix this issue, call vmx_segment_cache_clear=0D
+after we done with segment register setup in vmx_vcpu_reset.=0D
+=0D
+V2: incorporated Paolo's suggestion of having=0D
+    vmx_write_segment_cache_start/end functions  (thanks!)=0D
+=0D
+V3: reverted to a partial fix.=0D
+=0D
+Best regards,=0D
+	Maxim Levitsky=0D
+=0D
+Maxim Levitsky (2):=0D
+  KVM: nVMX: use vmx_segment_cache_clear=0D
+  VMX: reset the segment cache after segment initialization in=0D
+    vmx_vcpu_reset=0D
+=0D
+ arch/x86/kvm/vmx/nested.c |  3 ++-=0D
+ arch/x86/kvm/vmx/vmx.c    | 10 +++-------=0D
+ arch/x86/kvm/vmx/vmx.h    |  5 +++++=0D
+ 3 files changed, 10 insertions(+), 8 deletions(-)=0D
+=0D
+-- =0D
+2.26.3=0D
+=0D
 
 
