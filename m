@@ -1,184 +1,199 @@
-Return-Path: <linux-kernel+bounces-262494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C693C7B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0374893C7B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DCF1F22A1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE952813C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2154E19DFA5;
-	Thu, 25 Jul 2024 17:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4362A19DF9B;
+	Thu, 25 Jul 2024 17:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrfZwzaX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mv6L+T6t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77E198E6D;
-	Thu, 25 Jul 2024 17:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A161C286
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721928987; cv=none; b=Xpm5xOlao8LfSAy52m4RfZB3yBUc7v/PHTUvQs6NIW088XwdLGEAuMwVj8Ai5mrx1Mz6lPONK/cQMNx3YPGGP7/NLVgNoqBnnILJNgtncmJOqZLXXqtxfJbj4sWiJdJxT0XMl1qdsgwS4n9R+437faHMmNK9HRyJYccnW/W/XAQ=
+	t=1721929066; cv=none; b=KrNbLbym1S01ROpYkgyjfYoW+iZ7o0MbMz5IVM6ksrFubRw4grX8yjRm8uqNb4D8uDmb0t119/J7XY7IWWcnf7/pQviU/RQt5GLRrAUZWlSjCz2l8zyHWhlfbpRd0oAQjsLsBD5vs7SMMrm8S2Mh+I3Jgs9Yd630JQF4wVh1bV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721928987; c=relaxed/simple;
-	bh=wqWzraA34GyeuVscn1uWSNPbaFib2B/T/GEJV4L8vWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=R+z2crkH0XLEO1h4YOYfIpYP5QjfBLHOYyj7c0byYCL2bKwTE3r6lw7qT0XGWljJEDg8bBgA7KufJAWG/J9kl86nBHseO+SLtxKn1sSKQMdsaMjpncIaKAcfCywXkeZ0PCPMJh76TmV3rm9uwcyJrmIPgPCAprdWpOFHBSbAE8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrfZwzaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4BCC116B1;
-	Thu, 25 Jul 2024 17:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721928987;
-	bh=wqWzraA34GyeuVscn1uWSNPbaFib2B/T/GEJV4L8vWI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=PrfZwzaXqL/UyPDYMz0fGULFnXJZaclnVw9A6ViPzQTuFr6NpHFYDoFNf2ild9kva
-	 7Eo3ssD2FBOge1u7jSdgqWcUWPkXtbfjOBrUj2GZuQpmO3NuLvBZNMula+Og8Sfs+5
-	 CyZbBm7Q/liHVt6VWkr018FwmFuTVMRNECvBfWNgZanx9jQxCa5OJLWDDHF+qtfdpp
-	 95BTAnn+JgzZtJnj0DxuUggqS1IJzg2zB30+WkwRuGRBqI4MQhMdGHP5TMUx9Mjl/n
-	 VqZKQLLEx5FADN7I+YvaXQAlmDtEUDIlikYIDD6gfbN23SSM0OWaLgcmHSeWM2+LwE
-	 IgQ4UFiSwmKJg==
-Date: Thu, 25 Jul 2024 12:36:24 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Keith Busch <keith.busch@intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jim Harris <james.r.harris@intel.com>,
-	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
-	Blazej Kucman <blazej.kucman@intel.com>
-Subject: Re: [PATCHv3 2/2] x86/vmd: Add PCI domain specific LED option
-Message-ID: <20240725173624.GA849156@bhelgaas>
+	s=arc-20240116; t=1721929066; c=relaxed/simple;
+	bh=vdALvz3a8w2em1aYeLslMZpPgz3ROZ6wXDMrm7mVZBY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D7ENleUulIMn/9oZJnS0uNcmNBThg3FJ/yW45QkHbHfowK2OoQ+JP8TIjxaLDQBixF94NXivVDTjSO47/YVUjNdaAGXJesNyUt+xyv2Nr31Yg2XDoHemQQ8aJsGkJECd/tNERruhtJ4FJNuLJyVVKMjfOIKXieLmU0wZTHe2tRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mv6L+T6t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721929063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6vtQ8ERzCxeHTyQEKEvDyf0dGBFdbqzEzRI9LXLcuWw=;
+	b=Mv6L+T6tpxuNQshUzjEZZ3bOk9rw5GJtAFFBBKcQsUHtFXLJlJoDhoxd2tL+rIrbyMJUAT
+	tEYJN3/v/i57tByWHMvG9qf5+J0hD1qxmK2cKE/m0/2hR/1eZeK2/KzscOoqVwlWYtiLV9
+	HGfqZYf5QEGY3FMlFuffCooqFXKSKcY=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-6kSgTx4sP3auVkEVUUCHKA-1; Thu, 25 Jul 2024 13:37:41 -0400
+X-MC-Unique: 6kSgTx4sP3auVkEVUUCHKA-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b7a8a35146so16215386d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:37:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721929061; x=1722533861;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6vtQ8ERzCxeHTyQEKEvDyf0dGBFdbqzEzRI9LXLcuWw=;
+        b=EK1n92znYpxmnWXUyD7NLELSPStAOAQaSlPwo7sBE6u3XRY/ZAba16S2rNtN/9D1mI
+         5fipf6mlsKZZXRMMPVOERHuWi4aQUBpZRyMiGLV2nsmn1aZmvXdkLG3LN93ZM/nvXpr2
+         TgRcBNviwzVYT3jh+tIwaZZNyQKfhQnwZi23GRQtyyt50dsDmsYwqlNtqyCuysD/sogb
+         s++RbVW47cCuWEqfahph8NFuynXhRHYzxKvPBKKRZh0ToXfCpNR+u2fEKJ22UUInFt/U
+         ayMSJuQA9YjktYdjwroaw3Yx09yJFCBmHB1OaF8Qw1aUBym1aREll8Rnb/CB0mx/V23t
+         zzaA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/4zh8pgris8d9TCWP+lJLR+zflsBhnFJdD2PD5msJFJYjr1ugLpHWubzohMUesIt2lCQSybCvmU0MV6vo8I3BpGACQDP69BjOGqjm
+X-Gm-Message-State: AOJu0YxA60vpKcBEOV8F8ZZVc712kcwCIA9Nsv/Tb85Ze1Hw8yB3oZUp
+	z72HHlKv3EgPkqjpuaKursn3MoN7l9VTfQVNW/Oxkf5YuSaHRRxNtglj1vjgEnnc2ppKk3O4QlF
+	udI8AD+0sSf4U51HqXlIwCc3q7Jyt0U3N2H6hXknzfM8AJIFeS34r12UFDGlF1A==
+X-Received: by 2002:a05:6214:4017:b0:6b7:a485:9dd0 with SMTP id 6a1803df08f44-6bb407068c5mr24084776d6.21.1721929061317;
+        Thu, 25 Jul 2024 10:37:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+GM1ErI+F5Scx2xanlXL2A4m0NqINsVmg6FWUPW3i7x0UTJByUNwJfsx51otU+vykh2jW7g==
+X-Received: by 2002:a05:6214:4017:b0:6b7:a485:9dd0 with SMTP id 6a1803df08f44-6bb407068c5mr24084476d6.21.1721929060862;
+        Thu, 25 Jul 2024 10:37:40 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fae79d9sm9217046d6.125.2024.07.25.10.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 10:37:40 -0700 (PDT)
+Message-ID: <9b4d5563d8ad04f30ee24d4aaa495f787bdef71d.camel@redhat.com>
+Subject: Re: [PATCH v2 2/2] KVM: VMX: disable preemption when touching
+ segment fields
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar
+ <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, Dave Hansen
+ <dave.hansen@linux.intel.com>,  Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 25 Jul 2024 13:37:39 -0400
+In-Reply-To: <f183d215c903d4d1e85bf89e9d8b57dd6ce5c175.camel@redhat.com>
+References: <20240716022014.240960-1-mlevitsk@redhat.com>
+	 <20240716022014.240960-3-mlevitsk@redhat.com> <Zpb127FsRoLdlaBb@google.com>
+	 <f183d215c903d4d1e85bf89e9d8b57dd6ce5c175.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1473779140-4016-2-git-send-email-keith.busch@intel.com>
+Content-Transfer-Encoding: 7bit
 
-[+cc Nirmal, Jim, Paul, Blazej]
-
-On Tue, Sep 13, 2016 at 09:05:40AM -0600, Keith Busch wrote:
-> This patch adds a new function to set PCI domain specific options as
-> devices are added. The usage included in this patch is for LED indicator
-> control in VMD domains, but may be extended in the future as new domain
-> specific options are required.
+On Thu, 2024-07-25 at 08:59 -0400, Maxim Levitsky wrote:
+> On Tue, 2024-07-16 at 15:36 -0700, Sean Christopherson wrote:
+> > On Mon, Jul 15, 2024, Maxim Levitsky wrote:
+> > > VMX code uses segment cache to avoid reading guest segment fields.
+> > > 
+> > > The cache is reset each time a segment's field (e.g base/access rights/etc)
+> > > is written, and then a new value of this field is written.
+> > > 
+> > > However if the vCPU is preempted between these two events, and this
+> > > segment field is read (e.g kvm reads SS's access rights to check
+> > > if the vCPU is in kernel mode), then old field value will get
+> > > cached and never updated.
+> > 
+> > It'be super helpful to include the gory details about how kvm_arch_vcpu_put()
+> > reads stale data.  Without that information, it's very hard to figure out how
+> > getting preempted is problematic.
 > 
-> PCIe LED Slot Control in a VMD domain is repurposed to a non-standard
-> implementation. As such, all devices in a VMD domain will be flagged so
-> pciehp does not attempt to use LED indicators. This user_led flag
-> has pciehp provide a different sysfs entry for user exclusive control
-> over the domain's slot indicators.
+> I will do this in next version of this patch.
 > 
-> In order to determine if a bus is within a PCI domain, the patch appends
-> a bool to the pci_sysdata structure that the VMD driver sets during
-> initialization.
-
-This eventually turned into https://git.kernel.org/linus/3161832d58c7
-("x86/PCI: VMD: Request userspace control of PCIe hotplug indicators")
-
-More questions about this, prompted by Blazej's recent regression
-report:
-https://lore.kernel.org/r/20240722141440.7210-1-blazej.kucman@intel.com
-
-I assume this patch was prompted by NVMe devices behind a VMD?  And
-the non-standard slot indicator usage is specifically related to VMD
-Root Ports?  Isn't it possible to add non-NVMe devices behind VMD,
-e.g., a switch in an external enclosure where pciehp manages a switch
-Downstream Port with standard slot indicators?
-
-I'm wondering if pdev->hotplug_user_indicators should be more narrowly
-targeted to just VMD Root Ports.
-
-If there's any possibility of a Downstream Port behind VMD with
-standard indicators, users are going to be very confused when the
-sysfs "attention" file is basically backwards from normal.  IIUC
-writing 0 to "attention" when hotplug_user_indicators is set writes 0
-("reserved") to AIC, when it would otherwise write 11b ("off").
-
-I'm also wondering whether there's a way to do this in the vmd driver
-instead of in arch/x86/pci/common.c, but that's a secondary question.
-
->  arch/x86/include/asm/pci.h | 14 ++++++++++++++
->  arch/x86/pci/common.c      |  7 +++++++
->  arch/x86/pci/vmd.c         |  1 +
->  3 files changed, 22 insertions(+)
+> >   vmx_vcpu_reset resets the segment cache bitmask and then initializes
+> >   the segments in the vmcs, however if the vcpus is preempted in the
+> >   middle of this code, the kvm_arch_vcpu_put is called which
+> >   reads SS's AR bytes to determine if the vCPU is in the kernel mode,
+> >   which caches the old value.
+> > 
+> > > Usually a lock is required to avoid such race but since vCPU segments
+> > > are only accessed by its vCPU thread, we can avoid a lock and
+> > > only disable preemption, in places where the segment cache
+> > > is invalidated and segment fields are updated.
+> > 
+> > This doesn't fully fix the problem.  It's not just kvm_sched_out() => kvm_arch_vcpu_put()
+> > that's problematic, it's any path that executes KVM code in interrupt context.
+> > And it's not just limited to segment registers, any register that is conditionally
+> > cached via arch.regs_avail is susceptible to races.
+> > 
+> > Specifically, kvm_guest_state() and kvm_guest_get_ip() will read SS.AR_bytes and
+> > RIP in NMI and/or IRQ context when handling a PMI.
+> > A few possible ideas.
+> > 
+> >  1. Force reads from IRQ/NMI context to skip the cache and go to the VMCS.
 > 
-> diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
-> index 9ab7507..1411dbe 100644
-> --- a/arch/x86/include/asm/pci.h
-> +++ b/arch/x86/include/asm/pci.h
-> @@ -23,6 +23,9 @@ struct pci_sysdata {
->  #ifdef CONFIG_PCI_MSI_IRQ_DOMAIN
->  	void		*fwnode;	/* IRQ domain for MSI assignment */
->  #endif
-> +#if IS_ENABLED(CONFIG_VMD)
-> +	bool vmd_domain;		/* True if in Intel VMD domain */
-> +#endif
->  };
->  
->  extern int pci_routeirq;
-> @@ -56,6 +59,17 @@ static inline void *_pci_root_bus_fwnode(struct pci_bus *bus)
->  #define pci_root_bus_fwnode	_pci_root_bus_fwnode
->  #endif
->  
-> +static inline bool is_vmd(struct pci_bus *bus)
-> +{
-> +#if IS_ENABLED(CONFIG_VMD)
-> +	struct pci_sysdata *sd = bus->sysdata;
-> +
-> +	return sd->vmd_domain;
-> +#else
-> +	return false;
-> +#endif
-> +}
-> +
->  /* Can be used to override the logic in pci_scan_bus for skipping
->     already-configured bus numbers - to be used for buggy BIOSes
->     or architectures with incomplete PCI setup by the loader */
-> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
-> index 7b6a9d1..ccf696c 100644
-> --- a/arch/x86/pci/common.c
-> +++ b/arch/x86/pci/common.c
-> @@ -677,6 +677,12 @@ static void set_dma_domain_ops(struct pci_dev *pdev)
->  static void set_dma_domain_ops(struct pci_dev *pdev) {}
->  #endif
->  
-> +static void set_dev_domain_options(struct pci_dev *pdev)
-> +{
-> +	if (is_vmd(pdev->bus))
-> +		pdev->user_leds = 1;
-> +}
-> +
->  int pcibios_add_device(struct pci_dev *dev)
->  {
->  	struct setup_data *data;
-> @@ -707,6 +713,7 @@ int pcibios_add_device(struct pci_dev *dev)
->  		iounmap(data);
->  	}
->  	set_dma_domain_ops(dev);
-> +	set_dev_domain_options(dev);
->  	return 0;
->  }
->  
-> diff --git a/arch/x86/pci/vmd.c b/arch/x86/pci/vmd.c
-> index b814ca6..a021b7b 100644
-> --- a/arch/x86/pci/vmd.c
-> +++ b/arch/x86/pci/vmd.c
-> @@ -596,6 +596,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd)
->  		.parent = res,
->  	};
->  
-> +	sd->vmd_domain = true;
->  	sd->domain = vmd_find_free_domain();
->  	if (sd->domain < 0)
->  		return sd->domain;
-> -- 
-> 2.7.2
+> This IMHO is the best solution. For segment cache its easy to do, the code
+> will be contained in vmx_read_guest_seg_* functions.
+> 
+> For other VMX registers, this can be lot of work due to the way the code is scattered
+> around. Still probably double.
+> 
+> 
+> >  2. Same thing as #1, but focus it specifically on kvm_arch_vcpu_in_kernel()
+> >     and kvm_arch_vcpu_get_ip(), and WARN if kvm_register_is_available() or
+> >     vmx_segment_cache_test_set() is invoked from IRQ or NMI context.
+> 
+> I agree on this, this is actually one of the suggestions I had originally.
+> ( I didn't notice the kvm_arch_vcpu_get_ip though )
+> 
+> I think I will implement this suggestion.
+> 
+> >  3. Force caching of SS.AR_bytes, CS.AR_bytes, and RIP prior to kvm_after_interrupt(),
+> >     rename preempted_in_kernel to something like "exited_in_kernel" and snapshot
+> >     it before kvm_after_interrupt(), and add the same hardening as #2.
+> > 
+> >     This is doable because kvm_guest_state() should never read guest state for
+> >     PMIs that occur between VM-Exit and kvm_after_interrupt(), nor should KVM
+> >     write guest state in that window.  And the intent of the "preempted in kernel"
+> >     check is to query vCPU state at the time of exit.
+> > 
+> >  5. Do a combination of #3 and patch 02 (#3 fixes PMIs, patch 02 fixes preemption).
+> > My vote is probably for #2 or #4.
+> #4 causes a NULL pointer deference here :) 
+> 
+> >   I definitely think we need WARNs in the caching
+> > code, and in general kvm_arch_vcpu_put() shouldn't be reading cacheable state, i.e.
+> > I am fairly confident we can restrict it to checking CPL.
+> > 
+> > I don't hate this patch by any means, but I don't love disabling preemption in a
+> > bunch of flows just so that the preempted_in_kernel logic works.
+> > 
+> 
+> Thanks for the suggestions!
+
+Hi,
+
+I decided to keep it simple. I'll send a patch which moves call to the vmx_segment_cache_clear
+to be after we done with the segment initialization in vmx_vcpu_reset, and later I
+write a refactoring/hardening to make sure that we don't read the cache
+from the interrupt context.
+
+Best regards,
+	Maxim Levitsky
+
+
+
+> 
+> Best regards,	
+> 	Maxim Levitsky
+> 
+> 
+> 
+
+
 
