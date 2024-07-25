@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-261995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05CB93BF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:31:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E048293BF24
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFD61F25656
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CFAB210A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1407197A90;
-	Thu, 25 Jul 2024 09:31:39 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 675E618754E;
-	Thu, 25 Jul 2024 09:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5D3197A87;
+	Thu, 25 Jul 2024 09:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="OEqmsNzu"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6E9196DA4
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721899899; cv=none; b=l3OXUVXIbaDAxBOKc/rdsHMWKTG8IK5ccI1diqccSB03gqLq5qAFvH/+rqjLv9+fnKjAYw4YCeLDDz9kIGRf89x0wvEGloMJDam0zjh+VRXpPOkaNVZbT7FUBoIMI9/grPBJUz1Lsm2aJBJc3qgkg9aw8I5Srjsr2oIoNwj0qqc=
+	t=1721900042; cv=none; b=WsdUnS5CevkJReFHw0sy3k12gtnhb+X8Jc/DDQzyz6pHCkvIlSjGZxdcKMHdcdxVC7R3iJ+G56pCDEzvXGq1RRXJRbqSCCyPZIwVCjRLXe9jRCHcjbE+zW2tFFLho/i+ANVKK19PUslh6jMsIHBD6KesjWeVKZntX3w/eAgrEps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721899899; c=relaxed/simple;
-	bh=4wZBE8Tmet51vxvCwqvFUlkmyBj1OYEmEVnRE0+8MDo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZ/Xe3NHYmNYUvGYh2PXT2iPJ+tjq42HKhIxx5nVEbDoueSipAxkG3dlSU5JmzMW43sKBIHdUKP+2m6foEJUCDQh8W+W6DMsnVPFnMeHqbhHWEUm1Un49Id0GdOzi/SdAmGshHVTKjy1xFPYFMOm2CmRDc+CIyFQjrn1oFHBydY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 2C4906123B6B3;
-	Thu, 25 Jul 2024 17:31:20 +0800 (CST)
-X-MD-Sfrom: deshan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Deshan Zhang <deshan@nfschina.com>
-To: akpm@linux-foundation.org,
-	philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com
-Cc: linux-kernel@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	kernel-janitors@vger.kernel.org,
-	Deshan Zhang <deshan@nfschina.com>
-Subject: [PATCH] lib/lru_cache: fix spelling mistake "colision"->"collision"
-Date: Thu, 25 Jul 2024 17:30:45 +0800
-Message-Id: <20240725093044.1742842-1-deshan@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1721900042; c=relaxed/simple;
+	bh=GFq5xiMElGG8EsnSRRsj0rTx2aMgsasbt3MZQHLQUHY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=KPLcaI9uS8HmbIFKBk6qA61Td7jvnbzaAUAiRM/mvbOMLjnscMrpTau1MkCQ8nboqj1QVnHQsKgI0zqfYhSRMNc6ULanj85N3m8+dcjkST04LZIl+N1K14KWziigyOApYWKtlyP+IJrwq2eoEi+3wfD7D1r7+3WjlSMcoKupytE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=OEqmsNzu; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721900036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ftboGbAMunxAO4+cPMRch4E/ukDKcT8aii0ePtJNgZM=;
+	b=OEqmsNzuwGqFduFXmrMacdbTUo+E6LIynswzDXCif4+33hqVHg3eB7zB7PznRuRWSOAlOL
+	gn6ojfZuue2msva48byR7iF+GgPh3Og7go0k1YUZvShhZlmK0mT44kCD5Up61AK0D/ph7D
+	FBO5zCg7O4M7SzaL5Uvb7FBKOHsCJ0XLhY/oYofBFhG49YXQPKA4qEXqpJ6zbLlzt7ssc8
+	EvA13CE1/qyKoOC9j/rUribYJxM9Of9qC2b/XNnDDdXIdIKFri3mQ0ZnAnaKcMo/zW+SnP
+	imsl4EkSdJnUhj19AWo5iwqMf2cEe4IdolUFKZwYIYuTC9JcWi9P7PXmgQrE/Q==
+Date: Thu, 25 Jul 2024 11:33:55 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: cdn-dp: Clean up a few logged messages
+In-Reply-To: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
+References: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
+Message-ID: <62c163be6ba3eeb9af82672d41e93b78@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-There is a spelling mistake in a literal string. Fix it.
+Hello all,
 
-Signed-off-by: Deshan Zhang <deshan@nfschina.com>
----
- include/linux/lru_cache.h |  4 ++--
- lib/lru_cache.c           | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+Just checking, is this patch good enough to be accepted?  If not, is 
+there
+some other preferred way for cleaning up the produced messages?
 
-diff --git a/include/linux/lru_cache.h b/include/linux/lru_cache.h
-index c9afcdd9324c..ff82ef85a084 100644
---- a/include/linux/lru_cache.h
-+++ b/include/linux/lru_cache.h
-@@ -119,7 +119,7 @@ write intent log information, three of which are mentioned here.
- */
- 
- /* this defines an element in a tracked set
-- * .colision is for hash table lookup.
-+ * .collision is for hash table lookup.
-  * When we process a new IO request, we know its sector, thus can deduce the
-  * region number (label) easily.  To do the label -> object lookup without a
-  * full list walk, we use a simple hash table.
-@@ -145,7 +145,7 @@ write intent log information, three of which are mentioned here.
-  * But it avoids high order page allocations in kmalloc.
-  */
- struct lc_element {
--	struct hlist_node colision;
-+	struct hlist_node collision;
- 	struct list_head list;		 /* LRU list or free list */
- 	unsigned refcnt;
- 	/* back "pointer" into lc_cache->element[index],
-diff --git a/lib/lru_cache.c b/lib/lru_cache.c
-index b3d9187611de..9e0d469c7658 100644
---- a/lib/lru_cache.c
-+++ b/lib/lru_cache.c
-@@ -243,7 +243,7 @@ static struct lc_element *__lc_find(struct lru_cache *lc, unsigned int enr,
- 
- 	BUG_ON(!lc);
- 	BUG_ON(!lc->nr_elements);
--	hlist_for_each_entry(e, lc_hash_slot(lc, enr), colision) {
-+	hlist_for_each_entry(e, lc_hash_slot(lc, enr), collision) {
- 		/* "about to be changed" elements, pending transaction commit,
- 		 * are hashed by their "new number". "Normal" elements have
- 		 * lc_number == lc_new_number. */
-@@ -303,7 +303,7 @@ void lc_del(struct lru_cache *lc, struct lc_element *e)
- 	BUG_ON(e->refcnt);
- 
- 	e->lc_number = e->lc_new_number = LC_FREE;
--	hlist_del_init(&e->colision);
-+	hlist_del_init(&e->collision);
- 	list_move(&e->list, &lc->free);
- 	RETURN();
- }
-@@ -324,9 +324,9 @@ static struct lc_element *lc_prepare_for_change(struct lru_cache *lc, unsigned n
- 	PARANOIA_LC_ELEMENT(lc, e);
- 
- 	e->lc_new_number = new_number;
--	if (!hlist_unhashed(&e->colision))
--		__hlist_del(&e->colision);
--	hlist_add_head(&e->colision, lc_hash_slot(lc, new_number));
-+	if (!hlist_unhashed(&e->collision))
-+		__hlist_del(&e->collision);
-+	hlist_add_head(&e->collision, lc_hash_slot(lc, new_number));
- 	list_move(&e->list, &lc->to_be_changed);
- 
- 	return e;
--- 
-2.30.2
-
+On 2024-07-04 01:32, Dragan Simic wrote:
+> Clean up a few logged messages, which were previously worded as rather
+> incomplete sentences separated by periods.  This was both a bit 
+> unreadable
+> and grammatically incorrect, so convert them into partial sentences 
+> separated
+> (or connected) by semicolons, together with some wording improvements.
+> 
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> index bd7aa891b839..ee9def197095 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> @@ -969,46 +969,44 @@ static void cdn_dp_pd_event_work(struct 
+> work_struct *work)
+> 
+>  	/* Not connected, notify userspace to disable the block */
+>  	if (!cdn_dp_connected_port(dp)) {
+> -		DRM_DEV_INFO(dp->dev, "Not connected. Disabling cdn\n");
+> +		DRM_DEV_INFO(dp->dev, "Not connected; disabling cdn\n");
+>  		dp->connected = false;
+> 
+>  	/* Connected but not enabled, enable the block */
+>  	} else if (!dp->active) {
+> -		DRM_DEV_INFO(dp->dev, "Connected, not enabled. Enabling cdn\n");
+> +		DRM_DEV_INFO(dp->dev, "Connected, not enabled; enabling cdn\n");
+>  		ret = cdn_dp_enable(dp);
+>  		if (ret) {
+> -			DRM_DEV_ERROR(dp->dev, "Enable dp failed %d\n", ret);
+> +			DRM_DEV_ERROR(dp->dev, "Enabling dp failed: %d\n", ret);
+>  			dp->connected = false;
+>  		}
+> 
+>  	/* Enabled and connected to a dongle without a sink, notify userspace 
+> */
+>  	} else if (!cdn_dp_check_sink_connection(dp)) {
+> -		DRM_DEV_INFO(dp->dev, "Connected without sink. Assert hpd\n");
+> +		DRM_DEV_INFO(dp->dev, "Connected without sink; assert hpd\n");
+>  		dp->connected = false;
+> 
+>  	/* Enabled and connected with a sink, re-train if requested */
+>  	} else if (!cdn_dp_check_link_status(dp)) {
+>  		unsigned int rate = dp->max_rate;
+>  		unsigned int lanes = dp->max_lanes;
+>  		struct drm_display_mode *mode = &dp->mode;
+> 
+> -		DRM_DEV_INFO(dp->dev, "Connected with sink. Re-train link\n");
+> +		DRM_DEV_INFO(dp->dev, "Connected with sink; re-train link\n");
+>  		ret = cdn_dp_train_link(dp);
+>  		if (ret) {
+>  			dp->connected = false;
+> -			DRM_DEV_ERROR(dp->dev, "Train link failed %d\n", ret);
+> +			DRM_DEV_ERROR(dp->dev, "Training link failed: %d\n", ret);
+>  			goto out;
+>  		}
+> 
+>  		/* If training result is changed, update the video config */
+>  		if (mode->clock &&
+>  		    (rate != dp->max_rate || lanes != dp->max_lanes)) {
+>  			ret = cdn_dp_config_video(dp);
+>  			if (ret) {
+>  				dp->connected = false;
+> -				DRM_DEV_ERROR(dp->dev,
+> -					      "Failed to config video %d\n",
+> -					      ret);
+> +				DRM_DEV_ERROR(dp->dev, "Failed to configure video: %d\n", ret);
+>  			}
+>  		}
+>  	}
 
