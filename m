@@ -1,74 +1,72 @@
-Return-Path: <linux-kernel+bounces-262152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1013D93C1A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A99493C1A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF033282C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EBD283844
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C79B19AD41;
-	Thu, 25 Jul 2024 12:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5447C19AD70;
+	Thu, 25 Jul 2024 12:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Dh+5JKe7"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WTc3tuKg"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D766F1991A9;
-	Thu, 25 Jul 2024 12:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5EB19AA56;
+	Thu, 25 Jul 2024 12:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721909808; cv=none; b=oHbamvL8DK0ebghXuKHG3CCdVUnT95cFMntQFifsogQi4C88Fe/Jm+wkJbbhALWmSGAZ+hIFxoBDtk+i9CfJUouu4f6azCWT4ry7qGHo2OJR5wK1jvpuWJEZSNg9JAheCVxW9L6uMC6t7w70RMXPFDzXM4+i6SHN0pnGNyWBLR4=
+	t=1721909809; cv=none; b=pHW+NJ7fjsIxb50N1thSl3mKnBeaMvO8GZ8vToNUiHCXthdhULCgMz17IOcycuQhfqZutLiNwCdhgOrzjyHkb2YffsZyuzaA/XhyKMV+fWzEWiucpRJ5Sjz8jJtMKIpzXgsWpuZvgBsthE2frzA4ozjDNaFG//P0SUhOBJ8/MX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721909808; c=relaxed/simple;
-	bh=nLkCuTBPfpbqNBH1j3e2/aPI6MfTBWdislcAckUBGL0=;
+	s=arc-20240116; t=1721909809; c=relaxed/simple;
+	bh=15hyDjA6CZyVRgtJnFulDkwlNePq5xuT1A/C4/KCaN0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LD8r1sETSUjekMCVCKLwrX9QHnHPd0n8ilEI5TND8OB6KG9koKlKrOvXJhP41a8xSocqrPC2CGOX24UIIVB6m4rTTbgL30KzSJZmwvQA5mOWOgaZHe+t6FVJsceKd2iB1T79X9Kw0CRYp/gCbE6A7mM+uVz14SRuje0kvXgzFSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Dh+5JKe7; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=cwFAaXlKhATMLn9YbOm9N9QPr4T38kxtekMutJJ1dv3ZGb3PAMmh7rxlgaPzpP7ADDfWjRQsmjE32wlZoKP03oOkHQ4NHS1Z2TiEMpGtTQe1Jzr2Y9crMkJiWZFFR40xmIN9ii8P0qNtBCLiEljSrFPK3yaDMyQIgnJ9pMiPJNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WTc3tuKg; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721909806; x=1753445806;
+  t=1721909808; x=1753445808;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nLkCuTBPfpbqNBH1j3e2/aPI6MfTBWdislcAckUBGL0=;
-  b=Dh+5JKe7PE7LLfur69kF39G67TG6xTCuyoEBcDMlhRTWKSC1i/991BbS
-   /CajmRaZ94ydKqy1FKSrLCuKR56VzYoUX7FTOxNxY+dDslYqhOZW93Vce
-   gXlAhUmrBapcV/I2ra043j6JRw7pP5425bHLoSIjwJ48+ruyB9Iw5npo7
-   iEujgTInuq7WXKz/XXzfG+2HDQOEAte/MGsSMP/hSnqvfVSMEI/dJ1yaq
-   bnKNdftGRveIfTQw7R9CdLRmeAuhmolPl/4dvLCQZbJWnFhqQGhIcp/+G
-   zaUT4QbAoZX7R3dlIKSNvBdElzQ+h61KzS2adNDBH0ndd0eW4O8yV7Nf1
+  bh=15hyDjA6CZyVRgtJnFulDkwlNePq5xuT1A/C4/KCaN0=;
+  b=WTc3tuKgMlDRG52aUutmu0NHdu9LjuvrqfxMBT8rmEsov7DmyLiF9G9Y
+   a67oTaygzLMdwAW4vYUpa6/JJYlPq244HjsKKgw9DLAZ9Nc9RP9cR52st
+   q/CDkAineU1O4QwLKjBgzaELe0eWZVn6EZTnVZXWW1po4lqVwTD3w0NQB
+   w/hs7kFLyMwmzTbDlTCiCyxum/63iWJj7Ja5Vuo+j78fmLdQ17gR5gxH5
+   a6bAWeDjAfq2ryCRIVpwA6QXrf+eDNQL6mbk29s2+PAVeyOue+ZNvGgzr
+   FNbf1UBDLGqHWZPeba6amhq7aKHyxyZObqoFnYS688qwoI+BCHtLgDAEx
    A==;
 X-CSE-ConnectionGUID: 7H0adE5mRmid6ymnvkB3VA==
-X-CSE-MsgGUID: QB6OQBHnTN+Wj2m9Fj8muA==
+X-CSE-MsgGUID: NS1Uot/LRn+ZUzEjPoqsLQ==
 X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="197092682"
+   d="scan'208";a="197092683"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 05:16:43 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 25 Jul 2024 05:16:40 -0700
+ 15.1.2507.35; Thu, 25 Jul 2024 05:16:43 -0700
 Received: from ph-emdalo.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:37 -0700
+ 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:41 -0700
 From: <pierre-henry.moussay@microchip.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Paul
- Walmsley" <paul.walmsley@sifive.com>, Samuel Holland
-	<samuel.holland@sifive.com>, Green Wan <green.wan@sifive.com>, Palmer Debbelt
-	<palmer@sifive.com>
+To: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
+	<daire.mcnamara@microchip.com>, Andi Shyti <andi.shyti@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
 CC: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
-	<dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 09/17] dt-bindings: dma: sifive pdma: Add PIC64GX to compatibles
-Date: Thu, 25 Jul 2024 13:16:01 +0100
-Message-ID: <20240725121609.13101-10-pierre-henry.moussay@microchip.com>
+	<linux-riscv@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 10/17] dt-bindings: i2c: microchip: corei2c: Add PIC64GX as compatible with driver
+Date: Thu, 25 Jul 2024 13:16:02 +0100
+Message-ID: <20240725121609.13101-11-pierre-henry.moussay@microchip.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
 References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
@@ -83,40 +81,28 @@ Content-Type: text/plain
 
 From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-PIC64GX is compatible as out of order DMA capable, just like the MPFS
-version, therefore we add it with microchip,mpfs-pdma as a fallback
+PIC64GX i2c is compatible with the MPFS driver
 
 Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 ---
- .../bindings/dma/sifive,fu540-c000-pdma.yaml      | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-index 3b22183a1a37..609e38901434 100644
---- a/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-+++ b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-@@ -27,11 +27,16 @@ allOf:
+diff --git a/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+index afa3db726229..4ba8a27eb8e5 100644
+--- a/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+@@ -18,6 +18,10 @@ properties:
+       - items:
+           - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatible SoCs
+           - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
++      - items:
++          - const: microchip,pic64gx-i2c
++          - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatible SoCs
++          - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
+       - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP core
  
- properties:
-   compatible:
--    items:
--      - enum:
--          - microchip,mpfs-pdma
--          - sifive,fu540-c000-pdma
--      - const: sifive,pdma0
-+    oneOf:
-+      - items:
-+          - const: microchip,pic64gx-pdma
-+          - const: microchip,mpfs-pdma
-+          - const: sifive,pdma0
-+      - items:
-+          - enum:
-+              - microchip,mpfs-pdma
-+              - sifive,fu540-c000-pdma
-+          - const: sifive,pdma0
-     description:
-       Should be "sifive,<chip>-pdma" and "sifive,pdma<version>".
-       Supported compatible strings are -
+   reg:
 -- 
 2.30.2
 
