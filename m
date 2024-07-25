@@ -1,241 +1,162 @@
-Return-Path: <linux-kernel+bounces-262047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC0393BFF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:32:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFCF93BFF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C44F2836FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCA11F22357
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8A1990A5;
-	Thu, 25 Jul 2024 10:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CC7198E91;
+	Thu, 25 Jul 2024 10:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2k6rnkyL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zvDsF8Ab";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pob+kq6U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t/vHgwDl"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i6QCIw8K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF78198E89;
-	Thu, 25 Jul 2024 10:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36E187866;
+	Thu, 25 Jul 2024 10:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721903522; cv=none; b=SzOOGDtwSCv/xVoewEkU+ivRlM76HToBKko4+teHm9I+xGXDKp2FTFir1fVz9E+hSmGbt7TUObSH3ZmoUnc/TGqWUp3MbeE3fYAQFRIlUsIzTekCpEKKUoJ9aQuiuqSCuybtL0fg7HOUORI+wWLgqxU71CMaS4jDqfci7B+Jufk=
+	t=1721903585; cv=none; b=MCjAY5AV8xPBwtJ3dp8eREF/M9TQ7ZsL9jmTHOMr52y2OtMg3idejINNrmYaETcBSK7mISwyjt6mx7Po63abXvJqpZXP2VfF/rzC4XCBIvbB6wX6S/zR6xnXIJlTci4/CIXhPlUHHrRejqlb2ceCCMjYYZEce2oDQBOzSASRFWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721903522; c=relaxed/simple;
-	bh=cofU9la5SYvTj7YozW63nX2MFyceKW1t5Jcc+sK0XCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuJUgcYXBR1m8qdKp8/74XbWIlA/HylUx4SmSXrUAJKuixIiMAthSAtrswH8LFZmdrCMH9snzs1BaH9ASeSN8n3il0nVOsSMfm+4Oo0IqAD0/p49vuOP4NUXTKVYNw2de3ZkP0AjHlSO41EoaL2AQ+pkA99yF1QT0gFcW8quJlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2k6rnkyL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zvDsF8Ab; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pob+kq6U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t/vHgwDl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C5B9021A9C;
-	Thu, 25 Jul 2024 10:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721903518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
-	b=2k6rnkyLQEkSF/OMmKXsfQBatlbuqrWVLUbCVTWYxD2uDEQIZV+s5YCl5f5j/mQT8I+J8c
-	4X6UJyWzf9GadYlUfmSubf4bw/vqXxTA/WqhbDZ2Ad6pfqRiSYVC8bS5cRPty4Oot67xBf
-	I7Ybjfvt4fsZZcm9d/tPU0jHoDdQLZ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721903518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
-	b=zvDsF8AbfW+VUymzrjkc+NAh+gkDHJNnz/O2WOP8qHW+fcO5OCssWfVdWrph7HgxLGItOF
-	QiEaJLdBJ1xEjCBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pob+kq6U;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="t/vHgwDl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721903517; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
-	b=pob+kq6UX+alqac4MGl1uhT98CBmFBrZLTomrLGVVbW5FI5g3O9KdRGUtTfiKFOPS8YI6G
-	fhQi/+JmmyeWFOFOEpiOKGw1eLphIMaCKIFmD4RH/sOUZcwRqhVDnU0uHevo0Odbz2Zlxi
-	0ZSjrLztm4pSZ19XPKNsL+j+G/0Pzwo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721903517;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
-	b=t/vHgwDlfcCBT7tb/RkXF/0yC2yErBUaPi8ZViAY9JGzH4HXD9Xxs3G4ydpa1448J+NEjW
-	7TVG3joP/PDy7kCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B556B13874;
-	Thu, 25 Jul 2024 10:31:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h7RALJ0pomYfSwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 10:31:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 73016A0996; Thu, 25 Jul 2024 12:31:57 +0200 (CEST)
-Date: Thu, 25 Jul 2024 12:31:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>, stable@kernel.org
-Subject: Re: [PATCH 07/20] ext4: drop ppath from ext4_ext_replay_update_ex()
- to avoid double-free
-Message-ID: <20240725103157.3dts4pcgqxnpougd@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-8-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1721903585; c=relaxed/simple;
+	bh=q2R6qmejY7wV1ZJErertHQrkFkbltq5MaLaLlTFbgaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bwMaD4wqEGFJwQSvOZVzd40aEZf/PbYwZsJjlVpGSrPVFK2j/BlFJSUfwBH+O4xyDtMkXzBSg+/4s3RoqrFjIJtBcPq7fBy8fNHr3GgsHxGWVLAVQ52xeH5izBMFPEznT041+/I2RsmfBDzQIy2sH6mYmYl3mfABmIhD8MVVfr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i6QCIw8K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P0WoOL004323;
+	Thu, 25 Jul 2024 10:32:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+NJkvVtrWzA8I3lBftm4GOVxGmthl5QFf23tJV31+GE=; b=i6QCIw8K44lbkhEU
+	g2pM0tqBDRj4Ig/8B3Z3r5XTCqoO+5My8qJaqfOk42Vc6xPmg+WiFe2zDpau3BHE
+	aHX2HmwrWAflN4C0Sl1Pcc+dcfU8HrBXN1LdYyfwl3s7Jm6TcXWeKJd6P33L/sSw
+	pnF+iUzHWsyQ6KyQw2gYthQuZJwNEtZTDertR4wNdEFV5s39t4l8w20YcWGI4FsM
+	K7oobPJQDp2NsCHtsBJvSAU9oTGL89liY7ubLznA3x8GjBqH3yC3g81pVLDqWaaL
+	/bw6BxYccFj3RgTRj4/jRwv/JKJHnwDaOUvD7kimHNYWQgIVt4qhZhRzOXRh2StR
+	17Ih3g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5auvw2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 10:32:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46PAWqEO022665
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 10:32:53 GMT
+Received: from [10.218.28.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 25 Jul
+ 2024 03:32:48 -0700
+Message-ID: <a577f1d1-ceba-4d46-b874-38aa40cc8354@quicinc.com>
+Date: Thu, 25 Jul 2024 16:02:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-8-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.31
-X-Rspamd-Queue-Id: C5B9021A9C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] pmdomain/cpuidle-psci: Support s2idle/s2ram on
+ PREEMPT_RT
+Content-Language: en-US
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki"
+	<rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, <linux-pm@vger.kernel.org>
+CC: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Nikunj Kela
+	<nkela@quicinc.com>,
+        Prasad Sodagudi <psodagud@quicinc.com>,
+        Maulik Shah
+	<quic_mkshah@quicinc.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-rt-users@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240527142557.321610-1-ulf.hansson@linaro.org>
+From: Raghavendra Kakarla <quic_rkakarla@quicinc.com>
+In-Reply-To: <20240527142557.321610-1-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lu8PEDbsZsbZ0qNEfjGSyLX9uJyP-aMW
+X-Proofpoint-GUID: lu8PEDbsZsbZ0qNEfjGSyLX9uJyP-aMW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-25_10,2024-07-25_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=821
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407250071
 
-On Wed 10-07-24 12:06:41, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> When calling ext4_force_split_extent_at() in ext4_ext_replay_update_ex(),
-> the 'ppath' is updated but it is the 'path' that is freed, thus potentially
-> triggering a double-free in the following process:
-> 
-> ext4_ext_replay_update_ex
->   ppath = path
->   ext4_force_split_extent_at(&ppath)
->     ext4_split_extent_at
->       ext4_ext_insert_extent
->         ext4_ext_create_new_leaf
->           ext4_ext_grow_indepth
->             ext4_find_extent
->               if (depth > path[0].p_maxdepth)
->                 kfree(path)                 ---> path First freed
->                 *orig_path = path = NULL    ---> null ppath
->   kfree(path)                               ---> path double-free !!!
-> 
-> So drop the unnecessary ppath and use path directly to avoid this problem.
-> And use ext4_find_extent() directly to update path, avoiding unnecessary
-> memory allocation and freeing. Also, propagate the error returned by
-> ext4_find_extent() instead of using strange error codes.
-> 
-> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Nice! Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
+On 5/27/2024 7:55 PM, Ulf Hansson wrote:
+> Updates in v2:
+> 	- Rebased and fixed a small issue in genpd, see patch3.
+> 	- Re-tested on v6.9-rt5 (PREEMPT_RT enabled)
+> 	- Re-tested on v6.10-rc1 (for regressions, PREEMPT_RT disabled)
 > 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 1660434fbfc7..b1cfce5b57d2 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5920,7 +5920,7 @@ int ext4_clu_mapped(struct inode *inode, ext4_lblk_t lclu)
->  int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
->  			      int len, int unwritten, ext4_fsblk_t pblk)
->  {
-> -	struct ext4_ext_path *path = NULL, *ppath;
-> +	struct ext4_ext_path *path;
->  	struct ext4_extent *ex;
->  	int ret;
->  
-> @@ -5936,30 +5936,29 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
->  	if (le32_to_cpu(ex->ee_block) != start ||
->  		ext4_ext_get_actual_len(ex) != len) {
->  		/* We need to split this extent to match our extent first */
-> -		ppath = path;
->  		down_write(&EXT4_I(inode)->i_data_sem);
-> -		ret = ext4_force_split_extent_at(NULL, inode, &ppath, start, 1);
-> +		ret = ext4_force_split_extent_at(NULL, inode, &path, start, 1);
->  		up_write(&EXT4_I(inode)->i_data_sem);
->  		if (ret)
->  			goto out;
-> -		kfree(path);
-> -		path = ext4_find_extent(inode, start, NULL, 0);
-> +
-> +		path = ext4_find_extent(inode, start, &path, 0);
->  		if (IS_ERR(path))
-> -			return -1;
-> -		ppath = path;
-> +			return PTR_ERR(path);
->  		ex = path[path->p_depth].p_ext;
->  		WARN_ON(le32_to_cpu(ex->ee_block) != start);
-> +
->  		if (ext4_ext_get_actual_len(ex) != len) {
->  			down_write(&EXT4_I(inode)->i_data_sem);
-> -			ret = ext4_force_split_extent_at(NULL, inode, &ppath,
-> +			ret = ext4_force_split_extent_at(NULL, inode, &path,
->  							 start + len, 1);
->  			up_write(&EXT4_I(inode)->i_data_sem);
->  			if (ret)
->  				goto out;
-> -			kfree(path);
-> -			path = ext4_find_extent(inode, start, NULL, 0);
-> +
-> +			path = ext4_find_extent(inode, start, &path, 0);
->  			if (IS_ERR(path))
-> -				return -EINVAL;
-> +				return PTR_ERR(path);
->  			ex = path[path->p_depth].p_ext;
->  		}
->  	}
-> -- 
-> 2.39.2
+> The hierarchical PM domain topology and the corresponding domain-idle-states
+> are currently disabled on a PREEMPT_RT based configuration. The main reason is
+> because spinlocks are turned into sleepable locks on PREEMPT_RT, which means
+> genpd and runtime PM can't be use in the atomic idle-path when
+> selecting/entering an idle-state.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> For s2idle/s2ram this is an unnecessary limitation that this series intends to
+> address. Note that, the support for cpuhotplug is left to future improvements.
+> More information about this are available in the commit messages.
+> 
+> I have tested this on a Dragonboard 410c.
+This series is tested on qcm6490 with PREEMPT_RT enabled. For the series,
+
+Tested-by: Raghavendra Kakarla <quic_rkakarla@quicinc.com>  # qcm6490 
+with PREEMPT_RT enabled
+
+Tested APSS suspend and then SoC power collapse through s2idle and s2ram 
+paths.
+APSS and soc power collapse stats are incremented.
+/sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+/sys/kernel/debug/qcom_stats/cxsd
+
+Without this series, they are not incremented.
+
+Thanks,
+Raghavendra K.
+> 
+> Kind regards
+> Ulf Hansson
+> 
+> 
+> Ulf Hansson (7):
+>    pmdomain: core: Enable s2idle for CPU PM domains on PREEMPT_RT
+>    pmdomain: core: Don't hold the genpd-lock when calling
+>      dev_pm_domain_set()
+>    pmdomain: core: Use dev_name() instead of kobject_get_path() in
+>      debugfs
+>    cpuidle: psci-domain: Enable system-wide suspend on PREEMPT_RT
+>    cpuidle: psci: Drop redundant assignment of CPUIDLE_FLAG_RCU_IDLE
+>    cpuidle: psci: Enable the hierarchical topology for s2ram on
+>      PREEMPT_RT
+>    cpuidle: psci: Enable the hierarchical topology for s2idle on
+>      PREEMPT_RT
+> 
+>   drivers/cpuidle/cpuidle-psci-domain.c | 10 ++--
+>   drivers/cpuidle/cpuidle-psci.c        | 26 ++++++----
+>   drivers/pmdomain/core.c               | 75 +++++++++++++++++++--------
+>   include/linux/pm_domain.h             |  5 +-
+>   4 files changed, 80 insertions(+), 36 deletions(-)
+> 
 
