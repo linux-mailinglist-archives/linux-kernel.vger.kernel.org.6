@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-262556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFFA93C893
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636BA93C896
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEADD1C2225A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE35BB22036
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682C95588F;
-	Thu, 25 Jul 2024 19:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Ka/P4w4K"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0295A3B1A1;
+	Thu, 25 Jul 2024 19:05:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E22436AFE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0564C7B;
+	Thu, 25 Jul 2024 19:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721934031; cv=none; b=a2zaTSuX2rILzQQqyq4snzVgdrXo4ISFhUadvG4tiFQ41BqbuLUHUc7SCC/f+0UyCOXQqI2WpjcegbDiIXAzT+QJFz41Rz7M4DRrlIP68J0muTueoTwyfKwQUB2v7xLM8yr3/4Kvqk/gYDZDwsdP64ZmC7XB7n1/rCd4iMh3goc=
+	t=1721934299; cv=none; b=tPKTA+C4zIjbX/fsI5D8/8O0UgTFa4ZAusApdUdXRrsdPKYPIsJJmig77iTWcwf7awIRNBWG/UAYArwdajwV3vX/t7I1Z/8CFyi71Nn/gVn4FxxKcNm+5WwGmxv5fUfU9xdPLEYXksS29zekMk0RnB+gvC33z7BLf6g9gmzNFN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721934031; c=relaxed/simple;
-	bh=AjVlzTF2LGrnSzM8/4XkZMhAnv6fs+uvqifqYuqWfq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yro8dFWd9VVWzA+JYZr1gP/DZZFvCINYkw5KBiahE/jW9da3+1HIwqmiQ5n6QkLeW2AXF7MR7y3rbcUZ/aKrzgNp4KtqR2HjgfiqAqU7gu6l2movP927OQJJe8nNGvCltD0qj8TOegHdEd3d74CqW5xp59dgF+YB2c8mfIj3pSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Ka/P4w4K; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so110762666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721934028; x=1722538828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AjVlzTF2LGrnSzM8/4XkZMhAnv6fs+uvqifqYuqWfq4=;
-        b=Ka/P4w4K/wB4nIi1Nv3SFTKisBqS+Ltg5pHVVx/IvGkX6Y/duVkZzSTC+FJW3ATV+8
-         x8HOI0KgbAKKtOTNl7DBs2JPsEfjWPgDpBC3l8tisDffWq5YSf5hVpFiubZMNPQiD/90
-         AjwmLFZNcgXHizO4JIOMYYhgMiIKxO5U7DwY4Kbu06Bo2ipVxSPmZxlumGaJLA7k6iP6
-         Cs07LBXZLEsWA96dIEYW1gfI5dzUBF7tw8D9szZFbdouZrJ3bTilC+16ojOMFEolsrV2
-         i16Ss+KrNanDKUAqBUocivqYw7X0T9tMWvoST9peiKUNpJ5Yn0m72VF5jC93gQqPyTBW
-         zcUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721934028; x=1722538828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AjVlzTF2LGrnSzM8/4XkZMhAnv6fs+uvqifqYuqWfq4=;
-        b=tb43CTjnCA+bWhFehbNAghaoxQKDAlGwG/nGJHgcjJYGG/y7hFVAS8eESl3hrwKjX/
-         okfSqvwx45Cg3ors90kevon7NbPPv6oDvG3qEyBajX1BI1zJMGijxxHw7Xsd0NdMs6Mx
-         21304Q1phz301OGLXH0vCJD54oAfjecKyBVSl81FS+rueDT2mZ1HBuUNA3k5PQbdLQvY
-         +p6oQyoXDaxKBGnLppFdvs2G4zaB8MqzXJ/zDEifgKat8Um5ZsuALvkeLpvsy7TtGTdg
-         qYUsXCfUBTnWfqlMAm3nJ6fgxJsdDUfYISkARE1Ez/lGIoIXrpmGYLtdjs8CsDLQfaWD
-         ZSow==
-X-Forwarded-Encrypted: i=1; AJvYcCVcqgtrJkUz9fRwVEYKxGUIDxkZsFepkHg9lSW4nbwYG/jE3EHHuA3BQ1AXuemV59MnyQCjGLFerfciRnyGXY25+mcMieHuBifudDq7
-X-Gm-Message-State: AOJu0Yy9KaViITvpug6ZEZIjBomQe1Jw6Y8RStsoNSv9eUHeN071c10t
-	rhAb6jB4rQlYT13FyYumS7AwPfSjxNsD1rN7D7dGfZP6/05TxvbBSzc7PjDtT+CjzU9uJC1H00T
-	Y5sx5Czp53abc/bo/PtymNXkgAlPT76J2CtY34Q==
-X-Google-Smtp-Source: AGHT+IGWrT6AGOjft7fPxfyGvYvCXJfttPv/nEZHz0d3KcIR2jl3mOL7uB8g8yrYQBh2WMamTXYhqpV0NrzQOqbsGCE=
-X-Received: by 2002:a17:907:9483:b0:a7a:af5d:f30b with SMTP id
- a640c23a62f3a-a7ac508ab79mr312568066b.66.1721934028544; Thu, 25 Jul 2024
- 12:00:28 -0700 (PDT)
+	s=arc-20240116; t=1721934299; c=relaxed/simple;
+	bh=WwVKnek0llCOtmCYpz2ahA/Ex6X9WFQ6XqJ4xkXrFOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QeFUAAwQEbw0nK5txT5j4IXCaSkeSgAGYEKghFISfpq6+ncgMaFxkX+eAxIM7miBHVIY8z74mv7i5smPsgr96/aDeJHrIhc7cKNdbtv3Vt1XBpCcaWyRg+B0vMRnWlmtHzCYInU5Q3HH7/KeU8MX1figF0suxZfw1aJjM0Habfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7558FC116B1;
+	Thu, 25 Jul 2024 19:04:57 +0000 (UTC)
+Date: Thu, 25 Jul 2024 15:05:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Ajay Kaher <ajay.kaher@broadcom.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Vasavi Sirnapalli
+ <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Beau Belgrave <beaub@linux.microsoft.com>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240725150517.3184e078@gandalf.local.home>
+In-Reply-To: <cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+	<20240725131021.788374d0@gandalf.local.home>
+	<20240725131632.64cab267@gandalf.local.home>
+	<cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724183605.4038597-1-jesse@rivosinc.com> <20240724183605.4038597-5-jesse@rivosinc.com>
-In-Reply-To: <20240724183605.4038597-5-jesse@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Thu, 25 Jul 2024 11:59:52 -0700
-Message-ID: <CALs-Hss0UpyR-NriR1egtBchssqRnhER=ND+4H1TbOk0PerS+Q@mail.gmail.com>
-Subject: Re: [PATCH v6 4/8] RISC-V: Scalar unaligned access emulated on
- hotplug CPUs
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
-	Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 11:36=E2=80=AFAM Jesse Taube <jesse@rivosinc.com> w=
-rote:
->
-> The check_unaligned_access_emulated() function should have been called
-> during CPU hotplug to ensure that if all CPUs had emulated unaligned
-> accesses, the new CPU also does.
->
-> This patch adds the call to check_unaligned_access_emulated() in
-> the hotplug path.
->
-> Fixes: 55e0bf49a0d0 ("RISC-V: Probe misaligned access speed in parallel")
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+On Thu, 25 Jul 2024 20:12:33 +0200
+Mathias Krause <minipli@grsecurity.net> wrote:
 
-Reviewed-by: Evan Green <evan@rivosinc.com>
+> 
+> >   
+> >> +
+> >>  	if (WARN_ON_ONCE(!schedule_work(&user->put_work))) {
+> >>  		/*
+> >>  		 * If we fail we must wait for an admin to attempt delete or
+> >> @@ -973,6 +975,11 @@ size_t copy_nofault(void *addr, size_t bytes, struct iov_iter *i)
+> >>  static struct list_head *user_event_get_fields(struct trace_event_call *call)
+> >>  {
+> >>  	struct user_event *user = (struct user_event *)call->data;  
+> 
+> Dereferencing a potentially free'd object, so 'user' is now "random" data.
+
+This is the callback function of user->call.get_fields.
+
+That is, we have:
+
+	user->call.get_fields = user_event_get_fields;
+
+And the f_start() code eventually calls trace_get_fields() that has (from a
+previous email in this thread).
+
+    trace_get_fields(struct trace_event_call *event_call)
+    {
+	if (!event_call->class->get_fields)
+        	return &event_call->class->fields;
+        return event_call->class->get_fields(event_call);
+    }
+
+Where it calls the ->class->get_fields(event_call);
+
+that calls this function. By setting:
+
+	user->call.get_fields = NULL;
+
+this will never get called and no random data will be accessed.
+
+That said, I was talking with Beau, we concluded that this shouldn't be the
+responsibility of the user of event call, and should be cleaned up by the
+event system.
+
+> 
+> >> +	static LIST_HEAD(head);
+> >> +
+> >> +	/* If the user event is about to be deleted, return no fields */
+> >> +	if (!user)
+> >> +		return &head;
+> >>  
+> >>  	return &user->fields;
+> >>  }  
+
+Here's the proper fix:
+
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 6ef29eba90ce..3a2d2ff1625b 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -3140,8 +3140,10 @@ EXPORT_SYMBOL_GPL(trace_add_event_call);
+  */
+ static void __trace_remove_event_call(struct trace_event_call *call)
+ {
++	lockdep_assert_held(&event_mutex);
+ 	event_remove(call);
+ 	trace_destroy_fields(call);
++	call->get_fields = NULL;
+ 	free_event_filter(call->filter);
+ 	call->filter = NULL;
+ }
+
+Can you try it out?
+
+-- Steve
 
