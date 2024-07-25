@@ -1,234 +1,195 @@
-Return-Path: <linux-kernel+bounces-262209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDC793C283
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:55:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398E093C287
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BD81C2170C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD731C20DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBB719AD8E;
-	Thu, 25 Jul 2024 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E882E19AD91;
+	Thu, 25 Jul 2024 12:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="JAbaAVt8"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2079.outbound.protection.outlook.com [40.92.102.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PSpSx33N"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7179F19AD56;
-	Thu, 25 Jul 2024 12:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912113; cv=fail; b=i8NVM7nxxN4+y5UYMnWkrTfZ1MPascamdlRBOEj04XCyzi6RKmB70ee2pJqNrMFhpjT3i5/wAhJVaE1TTqvWBBariZsRWwsbF8Sv6lxVy99MAXFEjvvu439HwC+f8IMKOi9Jx8+o6tuvBQmBdHNM7f/2laDT/W87o06zx+OsSC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912113; c=relaxed/simple;
-	bh=xnTqySvwZzQXPTjhCcWvMhxV6BwKe9qSQKd1rVH8Kkw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b0jiGvXfMWhctno0hERjjQNgdWZ/mhdzDW9wrcgPEvgrLMI8fxQL8KIhxHTG9vNwcIyLhiWXT9rKmuDU4GyjWVpGFgg9SAE+o0jf9PtNtPa876Ncw8Kihms8UJy4FRwxUa6nQBhcMjcSPonQ2pkxnDwkecdCIxx6jDwhXHq1IJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=JAbaAVt8; arc=fail smtp.client-ip=40.92.102.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XRE/A5DTN0boT+dtz7qnGeDhqNW+T551V/s/s1pZlyAQ7684eHIsEYQmIlgSFziQF989M1y3PYwh2/+rBnsgQL+Dw3KPI9UMjlGLiSz1wMdss3GSHtdQkiUALVB2lBU7Yrn/OdfyZbWgh5vPAHAImyHjpTsHu9+eyjE2bayptGeIqLkpxdno+qj+UvE6Q7kXKWVbZzj7UnsDm/zH37y5qQmkBRrH5mdlSopy5ufSiFTAQufX5CQ6gALmKj9o8EG0qyKVP8WKXiy+5dXGrR61/Zpzh7JqeVaadDH56fPIefJaaieJ0ttc1oKcUi8y9oVnxkT+W3Ojr6ffgjL7ZCT+wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xnTqySvwZzQXPTjhCcWvMhxV6BwKe9qSQKd1rVH8Kkw=;
- b=B915JIXR8hYXocKdQrKcfRy1h0PJuZ2hU3LgYyzs8Cn2j/YO/ZbI4mGl929poI78dueKU+GsLX9+m99X0LEIK+aTCREAxK/ukN+Y4eQhoSLouxgDXH8miQT+iTb+ri4nGvkO2Wqhth/d7HuqxIau2ncgZGJy5vW2n3LqLMDA1W31LNI2m62B1FZfRAD9gr37m4N9AW1STVIHf2qp5458dP/Q/4dZatMPW6HUIsqguG0fonZuvR8q8NifhHKVDVQRBauyf4fd0IqL1DYUMpPJI+r45kSfu6l3BPzaL4IpKZ/Ljty7LnuuJepdcPfq0cAH5G5YH2kA2JnnyINTUyHmyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xnTqySvwZzQXPTjhCcWvMhxV6BwKe9qSQKd1rVH8Kkw=;
- b=JAbaAVt8RVWH7ytA7g4SEmWN9ayx/npa2Whv0eLCDipGa/5v9d9zzlZsBjCfwX41l6D47iWyY2D/1EuXz4hCPG12dZANTKEITPTltzQISmBH9H9IcfW9aMXQKJNAvJ4jY/WUIsNADLAzkPL9cwiCkOlHgUx+LQMCD3537aJv1ljToM0+oiuvkVtGhVznFvHh1yVKOwiOKQCVzObxD07Y8QKthnwfXrYP03TxSBk9J4CQ94xASdRjldHHz1jaCGSHV3oZJMZlUaJZ/ghuMrJxD4d406tzPX2cpI0XLqxX8np8dIne8BVx/CVhVzBMNS2zFqm1hOMd59X6Ha9Fr3br8A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1573.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:f3::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.28; Thu, 25 Jul 2024 12:55:05 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7784.017; Thu, 25 Jul 2024
- 12:55:04 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Lukas Wunner <lukas@wunner.de>, "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Kerem
- Karabay <kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Index:
- AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0gBjw9fOAACgFAIAJQwrwgAGLugCAAAc4MYABUs+AgAAEUso=
-Date: Thu, 25 Jul 2024 12:55:04 +0000
-Message-ID:
- <MA0P287MB02171F5A778A16D6D3181AE6B8AB2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: <20240701140940.2340297-4-ardb+git@google.com>
- <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZpgUVjjj3naBGtfO@wunner.de>
- <MA0P287MB02178F503AA69E1F570E9753B8A92@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZqElRH38f_XV3fKK@wunner.de>
- <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <CAMj1kXFjQKCBd78y=n9MA+gzitotskye4uYz+dAaUBT=_r8ZsQ@mail.gmail.com>
-In-Reply-To:
- <CAMj1kXFjQKCBd78y=n9MA+gzitotskye4uYz+dAaUBT=_r8ZsQ@mail.gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [MdnCRjAKwtjmmKd2ie+QUwM47ziFa+6JWyCBsO+7ibDugz+u7WAJJuqHuga1gB4p]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1573:EE_
-x-ms-office365-filtering-correlation-id: a5ecdf18-9bfb-493c-4904-08dcaca90118
-x-ms-exchange-slblob-mailprops:
- WaIXnCbdHrORrPiYp+O3K2PHowtbVet0Yo6ACtfBMzqym/55cD4S/glMV9ENbPFpyWPMca8PCuQm8LsBQQUM2ZKs8awWsFmDKNmIS+U8SPvYIvZER5NKwX8gVtyye8Gww2CC1xcncii0NZhL2zW9QQ9Ndea/RUn9e8Qyogl9sT7d/7qYudUM6Jrqt4N42f4XUCACzieyhlMwE4vqBNN8w9T+vJF1y+9Zz/3wQfkPS7GY40u+eMG+enLMMB2JVzpHVH85wvOLHtdIv4X9wt8jWS96nMQp8dR7n++Z/T7+8TRL4ZJIrNwrzZg0U+lAk/6V3DoLJh1qRM+lg0M9xTAFCyDgdQAZtqRZw90Zy5NjofEoTZjaGLWBYtvekroZMO5zEsVo9WvGzXoF5fh30yMaeerebOu3ltxOrWbsQk5uF0pyRNDrOT10+SBVvxN/iMBgaTyWFGWaPz+gbB6CmDKkTUGygSkYOBSohy69WHUysYHu0xev7Urorq1eih2O0zmZkeH4ILFSSrUTcyXhnfBCVTn23RYUjALgC5z0KjZnxVzvUJdnJjkB3bHPUy+QiEcPKEqvnRZRbFe2pApDLaZV4HGfevqBPgDUdHEJ30L+7tLgAZxJGnTka3bcvbtqQtY9Bx4PdqfXNKIT/B8674YufgUs/NuOhFG2/0xFY7aIEiGa+OG/5YlZqPtx26o1IMGe2gpORt5srueMitsjyVl4nFwHkAqZcKflqV26H38Wr75yVb5lJ6JaV7Fftdc5Nzniwu5JXFZaATA=
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|8060799006|461199028|1602099012|440099028|3412199025|4302099013|102099032;
-x-microsoft-antispam-message-info:
- Kt5aqnn7x+vWe52NiHmnw2xXmStKvr0Z8c65jXiodVK6pU9Lvzq673HcZp3RJBFeRU+vOg1bW2B3/2noyLsmBiX0nZCm4MW34rjjgO85exY2dcS9Imgtb2f95ZMptWr2CbaQA+ljXzPgP8gqMEYlYd4Ul/2af7sZ1dKnCyO/o52xVZ+SEHae8LqXsxh1A4QUIPIF4z6KvDVyP3ccU2/I5Qh89+DotQQ58YK9ui4QMN05sfFhn/Y+jqsyQvHU4xDhIEQvkccE1m5mcgU9xyDVS0HuK4XMXOsyNR2L08tTrU7CK8Q9c0X1cjO1Ij0hiZIDElvLsxsO1SBtEw+6h92R8Tb+UEq3GWtoMQ8Ilo3M4yErXYeAuHRjT5fGgmFf6ENpRIYnegMlT+Zsv0v0AoBjUtIjxuEz5RTCeiuBNA22JsOLl+zyyKm2XCZGADyn1lk9pWyMWscy657Mim0UCHXuH4n+KB6rxyPaBkqfvqzi/X8Tr3c6lFhlnqEmMSI6z6eM6lUVEt16VoaVKjyeq2CyE7w7wx6mlKwITRn4zZNENZNu0Muw6buC6kQ3az6fYQbHztlSfonFOMKzfzv7Xgg7PHWpxchOxSgrmXtSPwmddhQx7Ff4gixbJ9rkXzonfbJZFKSnbx9mkeOmWJMl7lAnsPkMdl9hgJyg1IvAQj0tK30Jat2LKAa/EL46ygtrDa3VannrC5dkn5aqJNLp0+fJzDTvnIVS6mt74fGvarTr91HZOnAJhM34ZuQioIoevhGV
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NVpBODFUWVpVNTBWS1VtNC96MENZcHVTZUpKVGczTW5GOTlaWFJLcjhWQ3hn?=
- =?utf-8?B?M2RzQkoza05TNGNhSkxDVmxTdW9yYzdZZDJxU1o3WWlweXE4cjQxcTJaTVo1?=
- =?utf-8?B?SFRCOHJNV3NLWG9KYm9ScWRSK2RlNTNBRWxrZUJuTXRYYktHNEJ6TUhOUVYz?=
- =?utf-8?B?ZDUwcTZTZVFEM1lYUlhZVFRLZzJSYXRYMWx1TTRvT2ZRYlhCTmNJcldWV2pz?=
- =?utf-8?B?WjhaRXd2Sm4vR1NtVVZOZCtMeTd2TkRuTW5yekMyV045bEtZNFVlNjVTSjJq?=
- =?utf-8?B?RzJ0aVd6RmptVFFyOGUxY1BnSW5lU3NWdllPZ3BjVHREUksra0pCUTdCUzFP?=
- =?utf-8?B?RnNQR2E1OHFkT1pZdkdXdDFYTjNHTjFNZHB2ZlNVN2FBZVBxYmtSRHlwZ2RP?=
- =?utf-8?B?YWtxSFNEM2JwSmJSV3o1UHkrNnVQdnNNZURpc0Fha2RNYzdMU2Zhd3dkc3N6?=
- =?utf-8?B?WFJqc1I3cWEydS8wSmh6TzBFdVJNRGN1SlF1QVFxZXRNajNZbHFtWUhORzdz?=
- =?utf-8?B?elVLNXd5TUozb2l1ZXlhZCtZbXNvN1lxKzJkTFRraU5XWjVMUS80TXJhTmpT?=
- =?utf-8?B?OWRvUTM1U09nTkMyenVhM0xnZldDMkY0QmhhZzl6U3I5R0lxYTF0eW9WY1N0?=
- =?utf-8?B?T2FYNi9KbWxnQVRxTUF3OUpBN0VrYm41QkFkTTQ4WFpYOWwyb2NIb1YycUdU?=
- =?utf-8?B?ZytlT2xUM21JTVkzTDBpTTBpbHR6VGlVVXBwM0JucGxTQVhLYW1FbHpUd1Jr?=
- =?utf-8?B?dXlTUHcxTm1mbEQrOVZSTmwwNEp3b2djUUQxbDVkbnJtekU2VnpUQ1BKaHF5?=
- =?utf-8?B?bDNXZW9FQjhxcndzY0I1UlhZR1NUZ2lyVllWY3Y5RVo3b3BqTytyMkdldTJL?=
- =?utf-8?B?WjJLNFl1MXVYTmttcGJENVhBT3JWVzVXSFpyQjE5dlpVYU83L0lRMW82ajJH?=
- =?utf-8?B?RHVvclEydTdHdHJtYlJrRXF2dTRVdUNMMkc1cjlkbnp1dmo2TS83UWdSTUY5?=
- =?utf-8?B?NW1nUXp4cjI4Q1YwTFlnSXBnZDV3aU1kVS9qMXZRU3Z5dTNNSVRnMHNLbmhU?=
- =?utf-8?B?aXUwVFl5K0Q4SFJnc0xvcnZJVDRTb2QraFJaZGdSaThMVEdDYlZGamNQeXQ4?=
- =?utf-8?B?Q1IzU1Zucjg2KzdPbWNQY2tXRHJxdnJZZEdKZmxaYlkyZ05vT3IrV3F6ankv?=
- =?utf-8?B?ODhXb0F0SkxRWElRaWNRL0tRemJ1WE50S1k1WWxVY3VFM2ozSlNsRTlsamNa?=
- =?utf-8?B?TW14ZEhMZ0hoTTRpdnF6MGF1RG9scDdRQ2kzakxLOU5ONUR3djNHZmVCSmFI?=
- =?utf-8?B?bEc4Nzl1MGwzTEtlU0FjM083L1k3Tnl3V3JSRVJSUUVQcUF2WXF3MGNtdnhk?=
- =?utf-8?B?Qjl5NVZhTzRJcDB1cUZHUFFqMHg3NkYwSTdLU1R5VWlENG9renNCQVhFQ0Qw?=
- =?utf-8?B?SlV6Yk5TUHpFWFNYd1A1ZmxlZmFQNyttQzlqZDZGdmVyTHdjVEN4YW0wYm5B?=
- =?utf-8?B?YzI1Y1NmQjZ4QmZhOTNja2JzdXNEaTR2ZnF5MnFsQ1I3NmtrS1ZPMmVhY0tu?=
- =?utf-8?B?dHgzMHhQM2UwZDVDVlJxN20ydFhUZkt5YWl2V016cDFZT0lyTnZKOFZTOTZk?=
- =?utf-8?B?Mjhiem1BYkhWRm5xMEhRVlZIdnZmSmN5Qm9yMlJMaE1yalFHVTgzWEwvcWFW?=
- =?utf-8?B?YmIzQ2ZGTmlwampkZGNkb3JBQnNQVk9PN3FVOEpxNHZCVTJ3ektoVmhqbTZz?=
- =?utf-8?Q?7Umd6rauQheIL9bx+k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E9C19AD56
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721912193; cv=none; b=H7ivPL9960CBqCkKElW57ExGVe5DfjSMdW83cL7fc0JUJ+LXcWjaaJYPryU6E/+E7aAPznfPsdlrmpFHHM5dWcFFhUHgRWmAlsycUhLreyqBFyssxSkucAQXHvduj93Q7IltHFWOIJY8SGP3WRUUa5Jwv16xoRIxHBmjju0ksaA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721912193; c=relaxed/simple;
+	bh=W+wn0GlOw0Gf8eTKdYVnQsoy5a7TOWTISZPM87pGBkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rpu90oIkR5IdBLpkrlgpTrPdMmByBR7ZTYSDoE8gpcZSnx80OUraeW7fPZ1elux83B/KrzBoLU9JxCX37MHD7/7sm7S9UZwNTSxombh1HZQqfWG7rJMLV8EswAH/8KFpnf6mzEEhKjckuV8NHKrDfSjA89dCxTvVjjXncToTvTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PSpSx33N; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04150796so185435e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721912189; x=1722516989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J36xabAj2bKInLJhB2Kp1HMkLRnJXufSHyFnP7004CA=;
+        b=PSpSx33NJKP/ArKf2Klir+NRPUFjRcJ+81zpng344POaanyiZGoOf7fARnvuuHf+Qa
+         aBUlAboixii+dR90vvYLVKasQMpI6mzo6Zr4EE8kYxZyIMGEiu04ovDRQEOVl/vQxQsU
+         1uyOJD+vsTnWHV7E9UzoXYDpS21SyA7zO87kw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721912189; x=1722516989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J36xabAj2bKInLJhB2Kp1HMkLRnJXufSHyFnP7004CA=;
+        b=HQ9m1+t5ZQTkWy9CIpt2QQV9dCUDJeuZv2eNRHakvJG94JR3aGx1eshp1Z++bSWtOb
+         18aO31HFZ5+ut6Je/GnwV3buNHf1tBRbDLSFV6teicGQX7Ker2oqCfO7fY/c6KYeJn24
+         KiTUlFNxsp1cnlBe5S2cnyTdIAoSHgIaJskvHAAxFlf+vRvenj1ER73z1pyXmeQ/TqFO
+         62h8e0jGTu0kwIa21AGEVC/l1iaDV8sPTFf/BWVsnOYbN3Ix3bOgWh7Tx3N09gA+a++B
+         XEyn9Xkq/tfuNdl4eI9FjapTvek0+7FBO4tpwv6QpbQAH4MzxlVpaCBsdSVhfSG9Py4w
+         cKCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDVUuZiA0Y9kKYv84HE5Ijil4PYdxPTgJjCNlUbPfT4mgAbz9sLtKWQmLx0iJKVadxTtmD5pGpwEHIpvNJODPny5GmbWmSTDyWyx06
+X-Gm-Message-State: AOJu0Yy2nl+yaootv0n6E1vfIo4rW0zBPgxzGtkPgR5b2RHpPuBefv5E
+	a4hUxCvw2XNkrZ340ekEcVBYpMmJfDbTEG0Cirg7/GGtuFKjRTg8Ecw3FnwadgMbH/R/J16hud2
+	beTH9oEBfKTY+UruejaPH0P+jLYMMcqwNV4qM
+X-Google-Smtp-Source: AGHT+IHqe58dpuQj44+fi+BabiviB+bKNn8yQfGDBzJey5WA1EPHom3t+V10YXvWL2j00LON9G2edsy2X6K/lIjK1NY=
+X-Received: by 2002:a05:6512:3092:b0:52c:e312:2082 with SMTP id
+ 2adb3069b0e04-52fd3f9e81dmr2126031e87.54.1721912189402; Thu, 25 Jul 2024
+ 05:56:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5ecdf18-9bfb-493c-4904-08dcaca90118
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2024 12:55:04.7218
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1573
+References: <CACfW=qpNmSeQVG_qSeYpEdk9pf_RTAEEKp+OiBYrRFd3d6HOXg@mail.gmail.com>
+ <20240710213837.GA257340@bhelgaas>
+In-Reply-To: <20240710213837.GA257340@bhelgaas>
+From: George-Daniel Matei <danielgeorgem@chromium.org>
+Date: Thu, 25 Jul 2024 14:56:18 +0200
+Message-ID: <CACfW=qqPmiV6ez8Gf6GT6jyN5JEvF=mVeAqckWYVycsRuD746w@mail.gmail.com>
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, nic_swsd@realtek.com, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gMjUgSnVsIDIwMjQsIGF0IDY6MDnigK9QTSwgQXJkIEJpZXNoZXV2ZWwgPGFyZGJA
-a2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiDvu79PbiBXZWQsIDI0IEp1bCAyMDI0IGF0IDE4OjI3
-LCBBZGl0eWEgR2FyZyA8Z2FyZ2FkaXR5YTA4QGxpdmUuY29tPiB3cm90ZToNCj4+IA0KPj4gDQo+
-PiANCj4+Pj4gT24gMjQgSnVsIDIwMjQsIGF0IDk6MzHigK9QTSwgTHVrYXMgV3VubmVyIDxsdWth
-c0B3dW5uZXIuZGU+IHdyb3RlOg0KPj4+IA0KPj4+IO+7v09uIFR1ZSwgSnVsIDIzLCAyMDI0IGF0
-IDA0OjI1OjE5UE0gKzAwMDAsIEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4+Pj4gT24gV2VkLCBKdWwg
-MTcsIDIwMjQgYXQgMDQ6MzU6MTVQTSArMDAwMCwgQWRpdHlhIEdhcmcgd3JvdGU6DQo+Pj4+PiBG
-b3IgdGhlIE1hY3MgaGF2aW5nIGEgc2luZ2xlIEdQVSwgaW4gY2FzZSBhIHBlcnNvbiB1c2VzIGFu
-IGVHUFUsDQo+Pj4+PiB0aGV5IHN0aWxsIG5lZWQgdGhpcyBhcHBsZS1zZXQtb3MgcXVpcmsgZm9y
-IGh5YnJpZCBncmFwaGljcy4NCj4+Pj4gDQo+Pj4+IFNlbmRpbmcgdGhpcyBtZXNzYWdlIGFnYWlu
-IGFzIGZvciBzb21lIHJlYXNvbiBpdCBnb3Qgc2VudCBvbmx5IHRvIEx1a2FzOg0KPj4+PiANCj4+
-Pj4gRnVsbCBtb2RlbCBuYW1lOiBNYWMgbWluaSAoMjAxOCkgKE1hY21pbmk4LDEpDQo+Pj4+IA0K
-Pj4+PiBUaGUgZHJpdmUgbGluayBiZWxvdyBoYXMgdGhlIGxvZ3M6DQo+Pj4+IA0KPj4+PiBodHRw
-czovL2RyaXZlLmdvb2dsZS5jb20vZmlsZS9kLzFQMy1HbGtzVTZXcHB2enZXQzBBLW5Bb1RaaDdv
-UFB4ay92aWV3P3VzcD1kcml2ZV9saW5rDQo+Pj4gDQo+Pj4gU29tZSBvYnNlcnZhdGlvbnM6DQo+
-Pj4gDQo+Pj4gKiBkbWVzZy13aXRoLWVncHUudHh0OiAgSXQgc2VlbXMgdGhlIHN5c3RlbSB3YXMg
-YWN0dWFsbHkgYm9vdGVkICp3aXRob3V0Kg0KPj4+IGFuIGVHUFUsIHNvIHRoZSBmaWxlbmFtZSBh
-cHBlYXJzIHRvIGJlIGEgbWlzbm9tZXIuDQo+Pj4gDQo+Pj4gKiBUaGUgdHdvIGZpbGVzIGluIHRo
-ZSB3aXRoX2FwcGxlX3NldF9vc19lZmkgZGlyZWN0b3J5IG9ubHkgY29udGFpbg0KPj4+IGluY29t
-cGxldGUgZG1lc2cgb3V0cHV0LiAgQm9vdCB3aXRoIGxvZ19idWZfbGVuPTE2TSB0byBzb2x2ZSB0
-aGlzLg0KPj4+IEZvcnR1bmF0ZWx5IHRoZSB0cnVuY2F0ZWQgbG9nIGlzIHN1ZmZpY2llbnQgdG8g
-c2VlIHdoYXQncyBnb2luZyBvbi4NCj4+PiANCj4+PiAqIElmIHRoZSBhcHBsZV9zZXRfb3MgcHJv
-dG9jb2wgaXMgbm90IHVzZWQsIHRoZSBhdHRhY2hlZCBlR1BVIGlzIG5vdA0KPj4+IGVudW1lcmF0
-ZWQgYnkgdGhlIGtlcm5lbCBvbiBib290IGFuZCBhIHJlc2NhbiBpcyByZXF1aXJlZC4NCj4+PiBT
-byBuZWl0aGVyIHRoZSBpR1BVIG5vciB0aGUgZUdQVSBhcmUgd29ya2luZy4gIFRoZSByZWFzb24g
-aXMgQklPUw0KPj4+IHNldHMgdXAgaW5jb3JyZWN0IGJyaWRnZSB3aW5kb3dzIGZvciB0aGUgVGh1
-bmRlcmJvbHQgaG9zdCBjb250cm9sbGVyOg0KPj4+IEl0cyB0d28gZG93bnN0cmVhbSBwb3J0cycg
-NjQtYml0IHdpbmRvd3Mgb3ZlcmxhcC4gIFRoZSAzMi1iaXQgd2luZG93cw0KPj4+IGRvIG5vdCBv
-dmVybGFwLiAgSWYgYXBwbGVfc2V0X29zIGlzIHVzZWQsIHRoZSBlR1BVIGlzIHVzaW5nIHRoZQ0K
-Pj4+IChub24tb3ZlcmxhcHBpbmcpIDMyLWJpdCB3aW5kb3cuICBJZiBhcHBsZV9zZXRfb3MgaXMg
-bm90IHVzZWQsDQo+Pj4gdGhlIGF0dGFjaGVkIGVHUFUgaXMgdXNpbmcgdGhlIChvdmVybGFwcGlu
-ZywgaGVuY2UgYnJva2VuKSA2NC1iaXQgd2luZG93Lg0KPj4+IA0KPj4+IFNvIG5vdCBvbmx5IGlz
-IGFwcGxlX3NldF9vcyBuZWVkZWQgdG8ga2VlcCB0aGUgaUdQVSBlbmFibGVkLA0KPj4+IGJ1dCBh
-bHNvIHRvIGVuc3VyZSBCSU9TIHNldHMgdXAgYnJpZGdlIHdpbmRvd3MgaW4gYSBtYW5uZXIgdGhh
-dCBpcw0KPj4+IG9ubHkgaGFsZndheSBicm9rZW4gYW5kIG5vdCB0b3RhbGx5IGJyb2tlbi4NCj4+
-PiANCj4+PiBCZWxvdywgMDAwMDowNjowMS4wIGFuZCAwMDAwOjA2OjA0LjAgYXJlIHRoZSBkb3du
-c3RyZWFtIHBvcnRzIG9uIHRoZQ0KPj4+IFRodW5kZXJib2x0IGhvc3QgY29udHJvbGxlciBhbmQg
-MDAwMDowOTowMC4wIGlzIHRoZSB1cHN0cmVhbSBwb3J0IG9mDQo+Pj4gdGhlIGF0dGFjaGVkIGVH
-UFUuDQo+Pj4gDQo+Pj4gaUdQVSBlbmFibGVkLCBubyBlR1BVIGF0dGFjaGVkIChkbWVzZy50eHQp
-Og0KPj4+IHBjaSAwMDAwOjA2OjAxLjA6ICAgYnJpZGdlIHdpbmRvdyBbbWVtIDB4ODE5MDAwMDAt
-MHg4ODhmZmZmZl0NCj4+PiBwY2kgMDAwMDowNjowMS4wOiAgIGJyaWRnZSB3aW5kb3cgW21lbSAw
-eGIxNDAwMDAwLTB4YjgzZmZmZmYgNjRiaXQgcHJlZl0NCj4+PiBwY2kgMDAwMDowNjowNC4wOiAg
-IGJyaWRnZSB3aW5kb3cgW21lbSAweDg4OTAwMDAwLTB4OGY4ZmZmZmZdDQo+Pj4gcGNpIDAwMDA6
-MDY6MDQuMDogICBicmlkZ2Ugd2luZG93IFttZW0gMHhiODQwMDAwMC0weGJmM2ZmZmZmIDY0Yml0
-IHByZWZdDQo+Pj4gDQo+Pj4gaUdQVSBkaXNhYmxlZCwgZUdQVSBhdHRhY2hlZCwgYXBwbGVfc2V0
-X29zIG5vdCB1c2VkIChqb3VybmFsY3RsLnR4dCk6DQo+Pj4gcGNpIDAwMDA6MDY6MDEuMDogICBi
-cmlkZ2Ugd2luZG93IFttZW0gMHg4MTkwMDAwMC0weDg4OGZmZmZmXQ0KPj4+IHBjaSAwMDAwOjA2
-OjAxLjA6ICAgYnJpZGdlIHdpbmRvdyBbbWVtIDB4YjE0MDAwMDAtMHhjNmZmZmZmZiA2NGJpdCBw
-cmVmXQ0KPj4+IHBjaSAwMDAwOjA2OjA0LjA6ICAgYnJpZGdlIHdpbmRvdyBbbWVtIDB4ODg5MDAw
-MDAtMHg4ZjhmZmZmZl0NCj4+PiBwY2kgMDAwMDowNjowNC4wOiAgIGJyaWRnZSB3aW5kb3cgW21l
-bSAweGI4NDAwMDAwLTB4YmYzZmZmZmYgNjRiaXQgcHJlZl0NCj4+PiBwY2kgMDAwMDowNjowNC4w
-OiBicmlkZ2Ugd2luZG93IFttZW0gMHhiODQwMDAwMC0weGJmM2ZmZmZmIDY0Yml0IHByZWZdOiBj
-YW4ndCBjbGFpbTsgYWRkcmVzcyBjb25mbGljdCB3aXRoIFBDSSBCdXMgMDAwMDowOSBbbWVtIDB4
-YjE0MDAwMDAtMHhiZjNmZmZmZiA2NGJpdCBwcmVmXQ0KPj4+IA0KPj4+IGlHUFUgZW5hYmxlZCwg
-ZUdQVSBhdHRhY2hlZCwgYXBwbGVfc2V0X29zIHVzZWQgKHdvcmtpbmctam91cm5hbGN0bC50eHQp
-Og0KPj4+IHBjaSAwMDAwOjA2OjAxLjA6ICAgYnJpZGdlIHdpbmRvdyBbbWVtIDB4ODE5MDAwMDAt
-MHg4ODhmZmZmZl0NCj4+PiBwY2kgMDAwMDowNjowMS4wOiAgIGJyaWRnZSB3aW5kb3cgW21lbSAw
-eGIxNDAwMDAwLTB4YzZmZmZmZmYgNjRiaXQgcHJlZl0NCj4+PiBwY2kgMDAwMDowNjowNC4wOiAg
-IGJyaWRnZSB3aW5kb3cgW21lbSAweDg4OTAwMDAwLTB4OGY4ZmZmZmZdDQo+Pj4gcGNpIDAwMDA6
-MDY6MDQuMDogICBicmlkZ2Ugd2luZG93IFttZW0gMHhiODQwMDAwMC0weGJmM2ZmZmZmIDY0Yml0
-IHByZWZdDQo+Pj4gcGNpIDAwMDA6MDk6MDAuMDogICBicmlkZ2Ugd2luZG93IFttZW0gMHg4MTkw
-MDAwMC0weDgxY2ZmZmZmXQ0KPj4+IA0KPj4+ICogQXMgdG8gaG93IHdlIGNhbiBzb2x2ZSB0aGlz
-IGFuZCBrZWVwIHVzaW5nIGFwcGxlX3NldF9vcyBvbmx5IHdoZW4NCj4+PiBuZWNlc3Nhcnk6DQo+
-Pj4gDQo+Pj4gSSBub3RlIHRoYXQgb24geDg2LCB0aGUgZWZpc3R1YiB3YWxrcyBvdmVyIGFsbCBQ
-Q0kgZGV2aWNlcyBpbiB0aGUgc3lzdGVtDQo+Pj4gKHNlZSBzZXR1cF9lZmlfcGNpKCkgaW4gZHJp
-dmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jKSBhbmQNCj4+PiByZXRyaWV2ZXMg
-dGhlIERldmljZSBJRCBhbmQgVmVuZG9yIElELiAgV2UgY291bGQgYWRkaXRpb25hbGx5IHJldHJp
-ZXZlDQo+Pj4gdGhlIENsYXNzIENvZGUgYW5kIGNvdW50IHRoZSBudW1iZXIgb2YgR1BVcyBpbiB0
-aGUgc3lzdGVtIGJ5IGNoZWNraW5nDQo+Pj4gd2hldGhlciB0aGUgQ2xhc3MgQ29kZSBtYXRjaGVz
-IFBDSV9CQVNFX0NMQVNTX0RJU1BMQVkuICBJZiB0aGVyZSdzDQo+Pj4gYXQgbGVhc3QgMiBHUFVz
-IGluIHRoZSBzeXN0ZW0sIGludm9rZSBhcHBsZV9zZXRfb3MuDQo+PiANCj4+IFRoaXMgYWxzbyBs
-b29rcyBsaWtlIGEgZ29vZCBpZGVhLCBidXQgSSdtIG5vdCB3ZWxsIGF3YXJlIG9mIHRoZSBwY2kg
-cXVpcmtzIGluIHRoZSBMaW51eCBrZXJuZWwuIFNvLCB3b3VsZCBjb25zaWRlciBpdCBhIGJ1ZyBy
-ZXBvcnQgZm9yIHRoZSBtYWludGFpbmVycyB0byBmaXguDQo+IA0KPiBUaGF0IGlzIG5vdCBob3cg
-aXQgd29ya3MuDQo+IA0KPiBUaGlzIGlzIG5vdCBhIHJlZ3Jlc3Npb24gaW4gTGludXgsIGFuZCBl
-dmVuIGlmIGl0IHdhcywgaXQgaXMgbm90IHRoZQ0KPiBtYWludGFpbmVycycgam9iIHRvIGZpeCBi
-dWdzLg0KPiANCj4gSWYgTGludXggaXMgbGFja2luZyBmdW5jdGlvbmFsaXR5IHRoYXQgeW91IGZp
-bmQgaW1wb3J0YW50LCBwbGVhc2UNCj4gcHJvcG9zZSBhIHBhdGNoIHRoZSBpbXBsZW1lbnRzIGl0
-LCBhbmQgYXJndWUgd2h5IGl0IHNob3VsZCBiZSBtZXJnZWQuDQoNCkhpIEFyZA0KDQpJIGJlbGll
-dmUgTGludXggbmVlZHMgdGhlIGZ1bmN0aW9uYWxpdHkgdG8gYmUgYWJsZSB0byBwcm9wZXJseSB1
-c2UgZUdQVXMgb24gTWFjcy4gU2luY2UgdGhlIGRhdGEgYXZhaWxhYmlsaXR5IG9uIHRoZXNlIE1h
-Y3MgaXMgdG9vIGxvdyBhbmQgbm90IGNsZWFyLCBJIGJlbGlldmUgd2Ugc2hvdWxkIGJlIGF0bGVh
-c3QgYmUgYWJsZSB0byBlbmFibGUgdGhpcyBmcm9tIHVzZXJzcGFjZSBhcyB3ZWxsLiBNYXliZSB3
-ZSBjYW4gZG8gc29tZXRoaW5nIGxpa2U6DQoNCjEuIEFkZCAnZWZpPWVuYWJsZV9hcHBsZV9zZXRf
-b3MnIGFuZCAnZWZpPWRpc2FibGVfYXBwbGVfc2V0X29zJyB0byBlZmktc3R1Yi1oZWxwZXIuYyAo
-SSBjYW4gbWFrZSBhIHBhdGNoIGZvciB0aGUgc2FtZSkuDQoyLiBVc2UgYW4gTlZSQU0gdmFyaWFi
-bGUgYXMgc3VnZ2VzdGVkIGJ5IHlvdSAoV291bGQgbmVlZCBoZWxwIGZvciB0aGlzKS4NCg0KSWYg
-eW91IGZpbmQgYW55IG9mIHRoZSBvcHRpb24gb3V0IG9mIHRoZXNlIGFjY2VwdGFibGUsIEknbGwg
-c3RhcnQgd29ya2luZyBvbiB0aGVtLg==
+On Wed, Jul 10, 2024 at 11:38=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
+>
+> On Wed, Jul 10, 2024 at 05:09:08PM +0200, George-Daniel Matei wrote:
+> > >> Added aspm suspend/resume hooks that run
+> > >> before and after suspend and resume to change
+> > >> the ASPM states of the PCI bus in order to allow
+> > >> the system suspend while trying to prevent card hangs
+> > >
+> > > Why is this needed?  Is there a r8169 defect we're working around?
+> > > A BIOS defect?  Is there a problem report you can reference here?
+> >
+> > We encountered this issue while upgrading from kernel v6.1 to v6.6.
+> > The system would not suspend with 6.6. We tracked down the problem to
+> > the NIC of the device, mainly that the following code was removed in
+> > 6.6:
+> >
+> > > else if (tp->mac_version >=3D RTL_GIGA_MAC_VER_46)
+> > >         rc =3D pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);
+> >
+> > For the listed devices, ASPM L1 is disabled entirely in 6.6. As for
+> > the reason, L1 was observed to cause some problems
+> > (https://bugzilla.kernel.org/show_bug.cgi?id=3D217814). We use a Raptor
+> > Lake soc and it won't change residency if the NIC doesn't have L1
+> > enabled. I saw in 6.1 the following comment:
+>
+> Can you verify that the problem still exists in a current kernel,
+> e.g., v6.9?
+>
+I tested it with v6.9, still the same problem.
+
+> If this is a regression that's still present in v6.9, we need to
+> identify the commit that broke it.  Maybe it's 90ca51e8c654 ("r8169:
+> fix ASPM-related issues on a number of systems with NIC version from
+> RTL8168h")?
+>
+I also tried v6.9 with 90ca51e8c654 reverted and it works ok.
+
+> > > Chips from RTL8168h partially have issues with L1.2, but seem
+> > > to work fine with L1 and L1.1.
+> >
+> > I was thinking that disabling/enabling L1.1 on the fly before/after
+> > suspend could help mitigate the risk associated with L1/L1.1 . I know
+> > that ASPM settings are exposed in sysfs and that this could be done
+> > from outside the kernel, that was my first approach, but it was
+> > suggested to me that this kind of workaround would be better suited
+> > for quirks. I did around 1000 suspend/resume cycles of 16-30 seconds
+> > each (correcting the resume dev->bus->self being configured twice
+> > mistake) and did not notice any problems. What do you think, is this a
+> > good approach ... ?
+>
+> Whatever the problem is, it definitely should be fixed in the kernel,
+> and Ilpo is right that it *should* be done in the PCI core ASPM
+> support (aspm.c) or at least with interfaces it supplies.
+>
+The problem is actually the system not being able to reach
+depper power saving states without certain ASPM states enabled.
+It was mentioned in the other thread replies that this kind of problem
+has been reported several times in the past.
+
+> Generally speaking, drivers should not need to touch ASPM at all
+> except to work around hardware defects in their device, but r8169 has
+> a long history of weird ASPM stuff.  I dunno if that stuff is related
+> to hardware defects in the r8169 devices or if it is workarounds for
+> past or current defects in aspm.c.
+>
+What would be a good approach to move forward with this issue to
+get a fix approved?
+
+Make a general version of this toggle workaround in the aspm core
+that would be controllable & configurable for each pci device individually?
+Keep the quirks and fix the aforementioned comments?
+
+> > > This doesn't restore the state as it existed before suspend.  Does
+> > > this rely on other parts of restore to do that?
+> >
+> > It operates on the assumption that after driver initialization
+> > PCI_EXP_LNKCTL_ASPMC is 0 and that there are no states enabled in
+> > CTL1. I did a lspci -vvv dump on the affected devices before and after
+> > the quirks ran and saw no difference. This could be improved.
+>
+> Yep, we can't assume any of that because the PCI core owns ASPM
+> config, not the driver itself.
+>
+> > > What's the root cause of the issue?
+> > > A silicon bug on the host side?
+> >
+> > I think it's the ASPM implementation of the soc.
+>
+> As Heiner pointed out, if it's a SoC defect, it would potentially
+> affect all devices and a workaround would have to cover them all.
+>
+> Side note: oops, quoting error below, see note about top-posting here:
+> https://people.kernel.org/tglx/notes-about-netiquette
+>
+> > On Tue, Jul 9, 2024 at 12:15=E2=80=AFAM Heiner Kallweit <hkallweit1@gma=
+il.com> wrote:
+> > >
+> > > On 08.07.2024 19:23, Bjorn Helgaas wrote:
+> > > > [+cc r8169 folks]
+> > > >
+> > > > On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote=
+:
+> > > >> Added aspm suspend/resume hooks that run
+> > > >> before and after suspend and resume to change
+> > > >> the ASPM states of the PCI bus in order to allow
+> > > >> the system suspend while trying to prevent card hangs
+> > > >
+> > > > Why is this needed?  Is there a r8169 defect we're working around?
+> > > > A BIOS defect?  Is there a problem report you can reference here?
+> > ...
 
