@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-262512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F5893C7E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE7793C7EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6965928333E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98801F2248C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9DB19E7DF;
-	Thu, 25 Jul 2024 17:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606A919D8A6;
+	Thu, 25 Jul 2024 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrMMkasY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jtn4yVW3"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D54326286
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DEA23D0;
+	Thu, 25 Jul 2024 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721930339; cv=none; b=Z3+nKrM/t5z/1alersZIgQyc8eg/iYDbqw21tJGfqMwGu1EjXsIKSOc9Lm3yAeEJvMsCIrWhblgJQyBh4l+sHTaXpfttIVkdyWdvmIsMR+nJJ//DWazKuTtdPHgvWW0KeJQ5TboDY/tvhtmObZPQjIzHv/QQCI5aM7mdl5cOn+Y=
+	t=1721930475; cv=none; b=NV6LLrWDSdcQtuZboN2tONqHrDMG+qWEbTAG3Zksa/k+DogtkD3yie/MP/uChaYqtfgokW0Plw32m4UsDyloYeVFUn6GiA/zD9S9KSz7UDRGa1TMwjSmQU3UrgzMAHGOosXxDUDBItmaosm7hBx7aXX6npMnv41CgzmptuLYwC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721930339; c=relaxed/simple;
-	bh=3AqFXQBjFKaMlFLKB1DBURvVyDe6fiNMx+td2GS2yxI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=PQYsD2qv35BeAef/qapS0uEXZ7ylgoXP1aH6eNI+tsRwuj7lf8uVLXmNwfW4OFgUF0ESB7YpNrTJDCNVuQaRWp57mjj9UmZ2cRVvzzp2feODLSim38PfRgAdyzbthnDpqnq2WYvh1MHO/K7kfDhP0KKx3BYSXQkJsXBVVrp11e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrMMkasY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3EEB2C32786;
-	Thu, 25 Jul 2024 17:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721930339;
-	bh=3AqFXQBjFKaMlFLKB1DBURvVyDe6fiNMx+td2GS2yxI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=NrMMkasYcHR8Ag9NK1/h+0ToO2s9eoIo1hFAttSjuTQdxPfv/zfqr0lOr5MHN6IN+
-	 jOo2CQCcFHs4aCtsqxHhbW1JMP3IdG+W0PrDFKYS3ClLxbmOhw7vNX1x5Pp1P6qU2P
-	 Y2FoeqifGotc5ufBLT79wpyrupNvweft+s5vGusLxyH+8Ouiqlu3/WAPcaYGzab3sr
-	 T17EpG49UwR4qs+v9k6TO9ComrFlL5rZCj1vzrfKzjwrTRd5upiGbr8NT7navg6Url
-	 TEEhKEmGWkHM23F8SEG7HYJloTf02INKTw1rzP9Cy/h4ktkKllDxUegeFiOb6iU932
-	 fLjhJxNEc00eg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 356DEC43445;
-	Thu, 25 Jul 2024 17:58:59 +0000 (UTC)
-Subject: Re: [GIT PULL] Driver core changes for 6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZqIAf1uDky0nvwiC@kroah.com>
-References: <ZqIAf1uDky0nvwiC@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZqIAf1uDky0nvwiC@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-6.11-rc1-merge-resolution
-X-PR-Tracked-Commit-Id: b57d5ffc3ab507d0e19fc8b90b19c76af43fb790
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c2a96b7f187fb6a455836d4a6e113947ff11de97
-Message-Id: <172193033921.22070.16494399458225968027.pr-tracker-bot@kernel.org>
-Date: Thu, 25 Jul 2024 17:58:59 +0000
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Saravana Kannan <saravanak@google.com>
+	s=arc-20240116; t=1721930475; c=relaxed/simple;
+	bh=CQWswAaKiUd/1H9VPf7BR5G0SCIN5b4m3hSctlgX3fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cB7keWDJuO/CmBpTmX+v0S99Ywy9hsoUrAMqCw01RnpiFiBTJzjVT7zMmsOhNUD9fj/0TMNC0I9Ut/PSuB6fq+XEukUIpLWqwyWxr/6QRTqxEt6WIv1l5htvNo1X5pgC0yKnR/uqXf1iBBnCdD6XaZgNsUKuaT9D5OkzUv3Nc7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jtn4yVW3; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=0OL4xG2f7OPGglRnI+nOrrSi0qdVFdIQOVDEO5YpO0A=; b=jtn4yVW3DhhxhBUw
+	qWdikRA9VIGamBDT/1bZMXNEe+zxvdblkEIP4vBig9E6dlhZT6/ZTliT8yRtJS6baX7haqRqYD67U
+	P3pN8xt1+iS4AIyAYHug0BHfifSi1uEPspFxE2CVdmxUsAW9OMX0il9KsugZj3S5Jk8cXhyg9iFCO
+	6SBmZz7w4rRMmj4IgogJ4lSB512X+89uHdSY5+6HbqMRAGAVcuYze9fdUeBNHekhSqACllXo9vo3T
+	j+wywhpB2uu2pvEcwiSsSJ4iFpYBqnMsBCvGChWF/hDGaI5+/HimFBi77xpxmT/mwwChzExsrybtE
+	arI+pdQeUrZIctMk9A==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sX2lt-00DEap-06;
+	Thu, 25 Jul 2024 18:00:57 +0000
+From: linux@treblig.org
+To: ericvh@kernel.org,
+	lucho@ionkov.net,
+	rdunlap@infradead.org
+Cc: v9fs@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] Documentation/fs/9p: Expand goo.gl link
+Date: Thu, 25 Jul 2024 19:00:41 +0100
+Message-ID: <20240725180041.80862-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 25 Jul 2024 09:36:31 +0200:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-6.11-rc1-merge-resolution
+The goo.gl URL shortener is deprecated and is due to stop
+expanding existing links in 2025.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c2a96b7f187fb6a455836d4a6e113947ff11de97
+The old goo.gl link in the 9p docs doesn't work anyway,
+replace it by a kernel.org link suggested by Randy instead.
 
-Thank you!
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ Documentation/filesystems/9p.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
+index 1e0e0bb6fdf9..d270a0aa8d55 100644
+--- a/Documentation/filesystems/9p.rst
++++ b/Documentation/filesystems/9p.rst
+@@ -31,7 +31,7 @@ Other applications are described in the following papers:
+ 	* PROSE I/O: Using 9p to enable Application Partitions
+ 	  http://plan9.escet.urjc.es/iwp9/cready/PROSE_iwp9_2006.pdf
+ 	* VirtFS: A Virtualization Aware File System pass-through
+-	  http://goo.gl/3WPDg
++	  https://kernel.org/doc/ols/2010/ols2010-pages-109-120.pdf
+ 
+ Usage
+ =====
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.2
+
 
