@@ -1,277 +1,259 @@
-Return-Path: <linux-kernel+bounces-262403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BB293C6A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:39:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB9793C6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06FE28270F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23CA1C222C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2845519D8B2;
-	Thu, 25 Jul 2024 15:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C342319D8BF;
+	Thu, 25 Jul 2024 15:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlOI1Y+X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mSsR1/UL"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEFE19CCEB;
-	Thu, 25 Jul 2024 15:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE019D8A7;
+	Thu, 25 Jul 2024 15:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921943; cv=none; b=kWbzlX+rxnVKQ9ZVMfgaG3Rl2V5uO4O8bvxIH6DCglYklo34gyUS3NXaWj1ANV/nxiyVrRuVMFkQSGNxSsbwMNqXZqR2QI9fiCjW4Ljluo4x6l2mgIEgmD6jMCX0po9dh9qMVHey18WZUBDeUV+m/Y1AWqhwZFxw2CrEXBvlrco=
+	t=1721921983; cv=none; b=sue/FQbZ1mxBAbeZ2gwWNRH17WgZpAqIvlCAvO+JBxSWDJpXdPSYV34Y7hKYGZs+4e9CeKJZgVkArss5bIq4qZ4iBC30Lme3+qdVI+5jmBVKOImd9uGDXG9JRhERIgo+FgfzQ978BS/siOSozagx9kypRbVTQbsv9+i0eQgcfec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921943; c=relaxed/simple;
-	bh=ukqdJDYHs+lhevV2NPb6J9PdNC83BV+yVXkKRp1WVmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+baP5kNTRgYR51Mtrf5Rqjuyd6Kiy/qtSH6QMQe2l9eB4eAKM9uJEQGZFT6lHbr1+3VxuOOmRj2/KPxJs9RzQI+UKVRAlmDNED3Wdlr/OA6mxjOxWTUV5Ji4xQjzA3msjgr/EHPdTnAtEtWEYQKMN23YVfAWugCVcH/3qaMucc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlOI1Y+X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD32C116B1;
-	Thu, 25 Jul 2024 15:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721921942;
-	bh=ukqdJDYHs+lhevV2NPb6J9PdNC83BV+yVXkKRp1WVmc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LlOI1Y+XWS/tHgYIuzARRnvk2G6NqDAIBb7u7K1xl4Wy6PhQ3ABoAe9qsQfG8FIN0
-	 yaSGVJwMxfCKlJJ7J+Llx8hhzNtGteeN5QWQksirYozKj6Vl8EAuUzxrYxoDgyNMTw
-	 nhsDvnbtxE+4gt+fR/gZ1TbvkSz6TZ/0PG0GAAEuuy45cB21wc/q/Hm2MzGx2kFeXj
-	 9uOiUAUqAtcEEuXeUcLiAvTM8U7Ag/LkxWzb2+xhKXd2BJm1Dppv8NwnFJRDDGqcEL
-	 WEVSQy6R8uKySfD5Y389XDg5Xl7yvv5PdhOx7g3nYQSjRhfNS5LQJbISG2EbKNGwvv
-	 /IW1M0UW85PVQ==
-Date: Thu, 25 Jul 2024 16:38:56 +0100
-From: Lee Jones <lee@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Henrik Grimler <henrik@grimler.se>,
-	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
-	Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-Subject: Re: [PATCH v2 7/9] power: supply: max77693: Add support for
- detecting and enabling OTG
-Message-ID: <20240725153856.GH501857@google.com>
-References: <20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com>
- <20240715-max77693-charger-extcon-v2-7-0838ffbb18c3@gmail.com>
+	s=arc-20240116; t=1721921983; c=relaxed/simple;
+	bh=/Q6LIwSXhl9w92fZ1x0zh6nl/6FRDk+HvHN6mbe9gvY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=sd06qnhjmgYrZT7iMJVL+Z59C92ww5lEycczkcIec5wnnFj6Xa9D04U7MIygCH+Nof7nFRIXMCjHPU3yh7HpghO850WSKFDYwLvLL3mI644bmloyq6X48UU/HRMPAantDHR52mG5TFOV6NEbOyluvZl+D03gYf1Pi5CCEfi3nSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mSsR1/UL; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715-max77693-charger-extcon-v2-7-0838ffbb18c3@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721921977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lm30dDQVqW/J+G07pqjob65g5GHevsNWLvfXIuMQvmU=;
+	b=mSsR1/ULP6oqUL6WuFDMYE47yoVC4k7Py62pGy+1IylC3URFAtnAdc00/Zv9GqsaZJ7KAA
+	6FPvinYd1RN/15d5fVJoTtzmgnFoece4FFCaFfpQ5P404OGGyTW0B7Hd5lRrYdtQxjEGuN
+	CqM9XJpOmYIn2vqtbX2Xn9fWUf7c+o+VucuDgYzLvfC5g+b9rbvD55Lfs0tPp9BS3ccNCL
+	c8bSU/eMMmqCdxN1If6HEqfiXcpbzK/XUns7W+8ZQ0q4+09ViySzk/v3V6R1Zzb+xUmoHr
+	WrlV7dH9TvCBN/LU3LNn0mdkeyX3RG6vuL459f4MerUnQg7ap+8aGQdU+kA9Og==
+Date: Thu, 25 Jul 2024 17:39:37 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-modules@vger.kernel.org, mcgrof@kernel.org,
+ linux-kernel@vger.kernel.org, didi.debian@cknow.org, Steven Price
+ <steven.price@arm.com>, Boris Brezillon <boris.brezillon@collabora.com>,
+ Qiang Yu <yuq825@gmail.com>
+Subject: Re: [PATCH] module: Add hard dependencies as syntactic sugar
+In-Reply-To: <gcykzencr7rmeiy3rmclxrbbvuryo2uyb6plqqovee3bsme42b@g6pwzbgitgka>
+References: <04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org>
+ <gcykzencr7rmeiy3rmclxrbbvuryo2uyb6plqqovee3bsme42b@g6pwzbgitgka>
+Message-ID: <0720a516416a92a8f683053d37ee9481@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, 15 Jul 2024, Artur Weber wrote:
+Hello Lucas,
 
-> Building upon the newly added extcon detection support, add detection
-> for USB OTG cables (EXTCON_USB_HOST type), and enable/disable the OTG
-> bits as needed.
+On 2024-07-25 16:29, Lucas De Marchi wrote:
+> On Thu, Jul 25, 2024 at 01:37:46PM GMT, Dragan Simic wrote:
+>> Panfrost and Lima DRM drivers use devfreq to perform DVFS, which is 
+>> supported
+>> on the associated platforms, while using simple_ondemand devfreq 
+>> governor by
+>> default.  This makes the simple_ondemand module a hard dependency for 
+>> both
+>> Panfrost and Lima, because the presence of the simple_ondemand module 
+>> in an
+>> initial ramdisk allows the initialization of Panfrost or Lima to 
+>> succeed.
+>> This is currently expressed using MODULE_SOFTDEP. [1][2]  Please see 
+>> commits
+>> 80f4e62730a9 ("drm/panfrost: Mark simple_ondemand governor as 
+>> softdep") and
+>> 0c94f58cef31 ("drm/lima: Mark simple_ondemand governor as softdep") 
+>> for
+>> additional background information.
+>> 
+>> With the addition of MODULE_WEAKDEP in commit 61842868de13 ("module: 
+>> create
+>> weak dependecies"), the dependency between Panfrost/Lima and 
+>> simple_ondemand
+>> can be expressed in a much better way as a weakdep, because that 
+>> provides
+>> the required dependency information to the utilities that generate 
+>> initial
+>> ramdisks, but leaves the actual loading of the required kernel 
+>> module(s) to
+>> the kernel.  However, being able to actually express this as a hard 
+>> module
+>> dependency would still be beneficial.
+>> 
+>> With all this in mind, let's add MODULE_HARDDEP as some kind of 
+>> syntactic
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v2:
-> - Added CHGIN OTG current limit value
-> - Squashed MFD header register changes into this commit
-> ---
->  drivers/power/supply/max77693_charger.c | 103 +++++++++++++++++++++++++++-----
-
->  include/linux/mfd/max77693-private.h    |   5 ++
-
-Acked-by: Lee Jones <lee@kernel.org>
-
->  2 files changed, 94 insertions(+), 14 deletions(-)
+> Sorry, but NACK from me. This only adds to the confusion.
 > 
-> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
-> index 2dc273dd96ee..34d68b1050d4 100644
-> --- a/drivers/power/supply/max77693_charger.c
-> +++ b/drivers/power/supply/max77693_charger.c
-> @@ -669,6 +669,16 @@ static int max77693_reg_init(struct max77693_charger *chg)
->  	if (ret)
->  		return ret;
->  
-> +	/* Set OTG current limit to 900 mA */
-> +	data = (0x1 << CHG_CNFG_02_OTG_ILIM_SHIFT);
-> +	ret = regmap_update_bits(chg->max77693->regmap,
-> +				MAX77693_CHG_REG_CHG_CNFG_02,
-> +				CHG_CNFG_02_OTG_ILIM_MASK, data);
-> +	if (ret) {
-> +		dev_err(chg->dev, "Error setting OTG current limit: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	return max77693_set_charge_input_threshold_volt(chg,
->  			chg->charge_input_threshold_volt);
->  }
-> @@ -690,11 +700,42 @@ static int max77693_set_charging(struct max77693_charger *chg, bool enable)
->  	return ret;
->  }
->  
-> +static int max77693_set_otg(struct max77693_charger *chg, bool enable)
-> +{
-> +	struct regmap *regmap = chg->max77693->regmap;
-> +	unsigned int data;
-> +	bool is_enabled;
-> +	int ret;
-> +
-> +	ret = regmap_read(regmap, MAX77693_CHG_REG_CHG_CNFG_00, &data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	is_enabled = !!(data & CHG_CNFG_00_OTG_MASK);
-> +
-> +	if (enable && !is_enabled) {
-> +		/* OTG on, boost on, DIS_MUIC_CTRL on */
-> +		data |= CHG_CNFG_00_OTG_MASK | CHG_CNFG_00_BOOST_MASK \
-> +				| CHG_CNFG_00_DIS_MUIC_CTRL_MASK;
-> +
-> +	} else if (!enable && is_enabled) {
-> +		/* OTG off, boost off, DIS_MUIC_CTRL off */
-> +		data &= ~(CHG_CNFG_00_OTG_MASK | CHG_CNFG_00_BOOST_MASK \
-> +				| CHG_CNFG_00_DIS_MUIC_CTRL_MASK);
-> +	}
-> +
-> +	return regmap_write(chg->max77693->regmap,
-> +			MAX77693_CHG_REG_CHG_CNFG_00,
-> +			data);
-> +}
-> +
->  static void max77693_charger_extcon_work(struct work_struct *work)
->  {
->  	struct max77693_charger *chg = container_of(work, struct max77693_charger,
->  						  cable.work);
->  	struct extcon_dev *edev = chg->cable.edev;
-> +	bool set_charging, set_otg;
-> +	unsigned int current_limit;
->  	int connector, state;
->  	int ret;
->  
-> @@ -707,31 +748,61 @@ static void max77693_charger_extcon_work(struct work_struct *work)
->  
->  	switch (connector) {
->  	case EXTCON_CHG_USB_SDP:
-> -	case EXTCON_CHG_USB_DCP:
->  	case EXTCON_CHG_USB_CDP:
-> +	case EXTCON_CHG_USB_SLOW:
-> +		current_limit = 500000; /* 500 mA */
-> +		set_charging = true;
-> +		set_otg = false;
-> +
-> +		dev_info(chg->dev, "slow charging. connector type: %d\n",
-> +			 connector);
-> +		break;
-> +	case EXTCON_CHG_USB_DCP:
->  	case EXTCON_CHG_USB_ACA:
->  	case EXTCON_CHG_USB_FAST:
-> -	case EXTCON_CHG_USB_SLOW:
->  	case EXTCON_CHG_USB_PD:
-> -		ret = max77693_set_charging(chg, true);
-> -		if (ret) {
-> -			dev_err(chg->dev, "failed to enable charging\n");
-> -			break;
-> -		}
-> -		dev_info(chg->dev, "charging. connector type: %d\n",
-> +		current_limit = chg->fast_charge_current;
-> +		set_charging = true;
-> +		set_otg = false;
-> +
-> +		dev_info(chg->dev, "fast charging. connector type: %d\n",
-> +			 connector);
-> +		break;
-> +	case EXTCON_USB_HOST:
-> +		current_limit = 500000; /* 500 mA */
-> +		set_charging = false;
-> +		set_otg = true;
-> +
-> +		dev_info(chg->dev, "USB host. connector type: %d\n",
->  			 connector);
->  		break;
->  	default:
-> -		ret = max77693_set_charging(chg, false);
-> -		if (ret) {
-> -			dev_err(chg->dev, "failed to disable charging\n");
-> -			break;
-> -		}
-> -		dev_info(chg->dev, "charging. connector type: %d\n",
-> +		current_limit = 500000; /* 500 mA */
-> +		set_charging = false;
-> +		set_otg = false;
-> +
-> +		dev_info(chg->dev, "disconnected. connector type: %d\n",
->  			 connector);
->  		break;
->  	}
->  
-> +	ret = max77693_set_current_limit(chg, current_limit);
-> +	if (ret) {
-> +		dev_err(chg->dev, "failed to set current limit (%d)\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	ret = max77693_set_charging(chg, set_charging);
-> +	if (ret) {
-> +		dev_err(chg->dev, "failed to set charging (%d)\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	ret = max77693_set_otg(chg, set_otg);
-> +	if (ret)
-> +		dev_err(chg->dev, "failed to set OTG (%d)\n", ret);
-> +
-> +out:
->  	power_supply_changed(chg->charger);
->  }
->  
-> @@ -793,6 +864,10 @@ static int max77693_dt_init(struct device *dev, struct max77693_charger *chg)
->  			&chg->batttery_overcurrent))
->  		chg->batttery_overcurrent = DEFAULT_BATTERY_OVERCURRENT;
->  
-> +	if (of_property_read_u32(np, "maxim,fast-charge-current-microamp",
-> +			&chg->fast_charge_current))
-> +		chg->fast_charge_current = DEFAULT_FAST_CHARGE_CURRENT;
-> +
->  	if (of_property_read_u32(np, "maxim,charge-input-threshold-microvolt",
->  			&chg->charge_input_threshold_volt))
->  		chg->charge_input_threshold_volt =
-> diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd/max77693-private.h
-> index 4570646e2f33..313fcc3173f9 100644
-> --- a/include/linux/mfd/max77693-private.h
-> +++ b/include/linux/mfd/max77693-private.h
-> @@ -209,7 +209,10 @@ enum max77693_charger_battery_state {
->  
->  /* MAX77693 CHG_CNFG_00 register */
->  #define CHG_CNFG_00_CHG_MASK		0x1
-> +#define CHG_CNFG_00_OTG_MASK		0x2
->  #define CHG_CNFG_00_BUCK_MASK		0x4
-> +#define CHG_CNFG_00_BOOST_MASK		0x8
-> +#define CHG_CNFG_00_DIS_MUIC_CTRL_MASK	0x20
->  
->  /* MAX77693_CHG_REG_CHG_CNFG_01 register */
->  #define CHG_CNFG_01_FCHGTIME_SHIFT	0
-> @@ -222,6 +225,8 @@ enum max77693_charger_battery_state {
->  /* MAX77693_CHG_REG_CHG_CNFG_02 register */
->  #define CHG_CNFG_02_CC_SHIFT		0
->  #define CHG_CNFG_02_CC_MASK		0x3F
-> +#define CHG_CNFG_02_OTG_ILIM_SHIFT	7
-> +#define CHG_CNFG_02_OTG_ILIM_MASK	0x80
->  
->  /* MAX77693_CHG_REG_CHG_CNFG_03 register */
->  #define CHG_CNFG_03_TOITH_SHIFT		0
+> hard/normal dependency:
+> 	It's a symbol dependency. If you want it in your module, you
+> 	have to use a symbol. Example:
 > 
-> -- 
-> 2.45.2
+> 	$ modinfo ksmbd | grep depends
+> 	depends:        ib_core,rdma_cm,nls_ucs2_utils,cifs_arc4
 > 
+> 
+> soft dependency:
+> 	A dependency you declare in configuration or in the module
+> 	info added by the kernel. A "pre" softdep means libkmod/modprobe
+> 	will try to load that dep before the actual module. Example:
+> 
+> 	$ modinfo ksmbd | grep softdep
+> 	softdep:        pre: crc32
+> 	softdep:        pre: gcm
+> 	softdep:        pre: ccm
+> 	softdep:        pre: aead2
+> 	softdep:        pre: sha512
+> 	softdep:        pre: sha256
+> 	softdep:        pre: cmac
+> 	softdep:        pre: aes
+> 	softdep:        pre: nls
+> 	softdep:        pre: md5
+> 	softdep:        pre: hmac
+> 	softdep:        pre: ecb
+> 
+> weak dependency:
+> 	A dependency you declare in configuration or in the module
+> 	info added by the kernel. libkmod/modprobe will not change the
+> 	way it loads the module and it will only used by tools that need
+> 	to make sure the module is there when the kernel does a
+> 	request_module() or somehow tries to load that module.
 
--- 
-Lee Jones [李琼斯]
+Thanks for a very nicely written and detailed summary.  Alas, I knew
+all that already.
+
+> So if you want a hard dependency, just use a symbol from the module. If
+> you want to emulate a hard dependency without calling a symbol, you use
+> a pre softdep, not a weakdep.  You use a weakdep if the kernel itself,
+> somehow may load module in runtime.
+> 
+> The problem described in 80f4e62730a9 ("drm/panfrost: Mark
+> simple_ondemand governor as softdep")
+> could indeed be solved with a weakdep, so I'm not sure why you'd want 
+> to
+> alias it as a "hard dep".
+
+It's obviously true that the described problem with Panfrost and Lima
+can be solved using weakdeps.  However, solving a problem and going
+the extra mile to future-proof the solution are two rather different
+things.  The proposed introduction of harddeps tries to go the extra
+mile, and to future-proof any possible changes to weakdeps, as already
+described in the patch description.
+
+To sum it up, harddeps would be something like "pinned down" weakdeps,
+that must not be removed by any future size-related optimizations of
+the initial ramdisk contents.  While it costs us nearly nothing to add
+support for that now, it may provide reasonable returns in the future.
+And can be easily reverted at any point, if the later conclusion is
+that the expected returns didn't pan out.
+
+As an example of the differences between just solving a problem and
+going the extra mile, let's have a look at the commit d5178578bcd4
+(btrfs: directly call into crypto framework for checksumming) and the
+lines containing MODULE_SOFTDEP at the very end of fs/btrfs/super.c. [3]
+Are all those softdeps candidates for straight conversion into weakdeps,
+i.e. can the kernel load all those modules by itself?  Perhaps, but
+also maybe not, meaning that all those softdeps need to be investigated
+and tested before the conversion, incurring additional cost.  OTOH, if
+Btrfs went the extra mile and used some "syntactic sugar" instead, we'd
+probably have the conversion ready to go now, at zero cost.
+
+That's what the proposed "syntactic sugar" harddeps try to do, to save
+us some time and effort later down the road.
+
+[3] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/btrfs/super.c#n2610
+
+>> sugar, currently implemented as an alias for MODULE_WEAKDEP, so the 
+>> actual
+>> hard module dependencies can be expressed properly, and possibly 
+>> handled
+>> differently in the future, avoiding the need to go back, track and 
+>> churn
+>> all such instances of hard module dependencies.  The first consumers 
+>> of
+>> MODULE_HARDDEP will be the Panfrost and Lima DRM drivers, but the list 
+>> of
+>> consumers may also grow a bit in the future.
+>> 
+>> For example, allowing reduction of the initial ramdisk size is a 
+>> possible
+>> future difference between handling the MODULE_WEAKDEP and 
+>> MODULE_HARDDEP
+>> dependencies.  When the size of the initial ramdisk is limited, the 
+>> utilities
+>> that generate initial ramdisks can use the distinction between the 
+>> weakdeps
+>> and the harddeps to safely omit some of the weakdep modules from the 
+>> created
+>> initial ramdisks, and to keep all harddep modules.
+>> 
+>> Due to the nature of MODULE_WEAKDEP, the above-described example will 
+>> also
+>> require some additional device-specific information to be made 
+>> available to
+>> the utilities that create initial ramdisks, so they can actually know 
+>> which
+>> weakdep modules can be safely pruned for a particular device, but the
+>> distinction between the harddeps and the weakdeps opens up a path 
+>> towards
+>> using such additional "pruning information" in a more robust way, by 
+>> ensuring
+>> that the absolutely required harddep modules aren't pruned away.
+>> 
+>> [1] 
+>> https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org/T/#u
+>> [2] 
+>> https://lore.kernel.org/dri-devel/fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org/T/#u
+>> 
+>> Cc: Steven Price <steven.price@arm.com>
+>> Cc: Boris Brezillon <boris.brezillon@collabora.com>
+>> Cc: Qiang Yu <yuq825@gmail.com>
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>> include/linux/module.h | 8 ++++++++
+>> 1 file changed, 8 insertions(+)
+>> 
+>> diff --git a/include/linux/module.h b/include/linux/module.h
+>> index 88ecc5e9f523..40e5762847a9 100644
+>> --- a/include/linux/module.h
+>> +++ b/include/linux/module.h
+>> @@ -179,6 +179,14 @@ extern void cleanup_module(void);
+>>  */
+>> #define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
+>> 
+>> +/*
+>> + * Hard module dependencies. Currently handled the same as weak
+>> + * module dependencies, but intended to mark hard dependencies
+>> + * as such for possible different handling in the future.
+>> + * Example: MODULE_HARDDEP("module-foo")
+>> + */
+>> +#define MODULE_HARDDEP(_harddep) MODULE_WEAKDEP(_harddep)
+>> +
+>> /*
+>>  * MODULE_FILE is used for generating modules.builtin
+>>  * So, make it no-op when this is being built as a module
 
