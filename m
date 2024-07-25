@@ -1,160 +1,127 @@
-Return-Path: <linux-kernel+bounces-261714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0648A93BB3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0022C93BB40
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0627A1C218C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2465285A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABC518029;
-	Thu, 25 Jul 2024 03:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="arYavAvZ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6854533C5
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE59179AE;
+	Thu, 25 Jul 2024 03:34:18 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7796A1C683;
+	Thu, 25 Jul 2024 03:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721878269; cv=none; b=g9httnV1g4h99wwfgtasEpcW66L80kmV71rNos+T1aLR1aHrVODZi6De1MolZeL/nZsxBe/bjIWkjOONhO640dyALe12YcH9hUL/lmNDrJP59TfBryWICMctI1FUVamlIdGxWSMT5fmsl8aPxUeja+HwcOHV6dfc00K5dML6MMU=
+	t=1721878458; cv=none; b=aCR0G0NUru5HLWAecl8ZiSs7jQlOWBrE3l9uZ1ssi2bvVSCJmlKxSUx/TXVNS7nI6rAcNQ+RDXF7DiRAuoBKPZseQ87ORLlylVsYUVgQQ8tUhwwTd1yKx+VS2fC6+CkgFnE2zocVAH8boEqYb3Jw0rcj+6rAE3Dp1u6rnPaGR4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721878269; c=relaxed/simple;
-	bh=d4Md/pmd9aAH6BP2SJNyitKaq4lM6GrSPXh+qAunH6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xf4Lw37/h2XE1We2kaEFPzFgIqZRLKoc0g7GvBT2wazBSfztTweMTvZUvw2GQ+QbuK+bBjVTPP/Pw3PtpHR1kCOvqZiYPddJ6/ONJ3V1jOhbFvUUx9shBlXCVwSbNWWbksCENawkB0NhvusIYZ/xehruhJWxeuMFL+t3f7hvcMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=arYavAvZ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so521691e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721878262; x=1722483062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yhbT1eQ9YPVhIQslZbZZbHdi4UGZ5NhIA5kAWua5Lkg=;
-        b=arYavAvZnL/vVCTWS9TvqTL7SyHo2HJYo6xsUwOy57I7cahOBK9sH0XNh3ugN74ufY
-         ucz3wjoaOlUEnAlmcA6ykMKwzBoIVG/YKHCAz6hNmIG4qMrnQp4Eu8W5gyCDOVVlCbd9
-         CH55OYeC/2A05N8akgPn/PvANCrx4O1aT7q1YiZT/l/2CsO/tWeVYoEe3FLC3d7Gpupb
-         obW4Z+USMDXZT6SLnWf9Qhtq/YSWpaHZHuhBBewJovTwZv5arHA5JUwzx19BA7gvMA/G
-         4I9qj12ekLW+8nbf2CY028lAzMyaTJt0+ebt6Fqt8MZ5Br90WZxEs/z+TjSfzi2LgV+p
-         +kIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721878262; x=1722483062;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yhbT1eQ9YPVhIQslZbZZbHdi4UGZ5NhIA5kAWua5Lkg=;
-        b=fPuroyVMXTXHH39RK39mHmj5vOqzDUpEpodx+iXWjxU8h15rjR6Kr6TJc6QO1REtN5
-         AD5KLU0gEcv2AhI3kvlZh4ys2o2ZPQhrgiwSwsqp0dGnqHLfrcYYyWEWYGPZJnWmGR/7
-         QTW1SVR1s3d7f685cFUpFizCE1HI8PRtd9/bcU3JtzeOnAq9ycRJFKtSuq9mTF7o3EwY
-         1/YZdw9vZdmYz4gHyq93Zahgka/BayvR/9QZ+s2lN6Lu2GuoFt6Fx1Rhy3WUITlzrHPz
-         ma0CQqmKjHAa7R0Dm0us1gzNKxG9KYHz2EGfIuMsrCHZRl7roFKI2xmAum4Frt39MFYR
-         9nOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeW+zR3Y2BIs0X+NnurYQgr7WIJ5ngq6NA9CI1nNw5dMGNYCKbDqWTw5Ipii6+kQ8yZKtRaLeR0aFK2F+4qeqyYaijgv8Ka1A1M2lP
-X-Gm-Message-State: AOJu0YyILcck5l3PEY5bmFadqSbraegIEHw7/yE01C8jlxAp3BYS8pnU
-	WlCADYXVAVtgDWpsApKlktGrm3rngmf3Pc4xD3XlfTKYHifeScf6sZtezae8Z/k=
-X-Google-Smtp-Source: AGHT+IFjMhfs1uKv8o8eDUmQrRbd/e1o4QszP3+4qeKeaqccHoFSZFfQnx4HsVLlt3eN+89oHv6Bbg==
-X-Received: by 2002:a19:f70d:0:b0:52c:e0fb:92c0 with SMTP id 2adb3069b0e04-52fd60439a8mr261657e87.34.1721878262339;
-        Wed, 24 Jul 2024 20:31:02 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c08248sm63127e87.125.2024.07.24.20.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 20:31:01 -0700 (PDT)
-Date: Thu, 25 Jul 2024 06:31:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jameson Thies <jthies@google.com>, Sebastian Reichel <sre@kernel.org>
-Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
-	bleung@google.com, abhishekpandit@chromium.org, andersson@kernel.org, 
-	fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, hdegoede@redhat.com, 
-	neil.armstrong@linaro.org, rajaram.regupathy@intel.com, saranya.gopal@intel.com, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] usb: typec: ucsi: Add status to UCSI power supply
- driver
-Message-ID: <tzljywuym6jsh5q5iuc7rrtq564d3ffl3e4ltuii7xzkd6cf7d@2nmj5qkusbkt>
-References: <20240724201116.2094059-1-jthies@google.com>
- <20240724201116.2094059-2-jthies@google.com>
+	s=arc-20240116; t=1721878458; c=relaxed/simple;
+	bh=/N706srqYtuJMkT+BpYGzLjZvdeXYv1h11HRHGRQDu8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rvakj91OIZeBKLlPQKqVYLLMzCa2j++XCbdLyEh5VTBa+GdwWxXo5XSytzQc1n2WjDaOnf+c+D30KLNJ9x36Z+enevEEnN72pxl4F5B6c8z0pBQgzx1hwES6E40hn7/TSbRkxTkm4nYHk5IrxbhWRjxFvWkIDs4WFmB6nhk/roI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8Cxd+mux6Fm5FUBAA--.3577S3;
+	Thu, 25 Jul 2024 11:34:06 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMBxicWsx6FmppEAAA--.37S2;
+	Thu, 25 Jul 2024 11:34:04 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v5 0/3] LoongArch: KVM: Add Binary Translation extension support
+Date: Thu, 25 Jul 2024 11:34:01 +0800
+Message-Id: <20240725033404.2675204-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724201116.2094059-2-jthies@google.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxicWsx6FmppEAAA--.37S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxJr45trWUXrW7Xry8AryrGrX_yoW8urWxpa
+	43Crn5GF18Kr43AwsIq34q9r1YgFWxCrW8WF9xJ3yYyF4DGry8Xr40kFyDWF1UCw4rXry0
+	vF1vy3y8uFs8AwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 
-On Wed, Jul 24, 2024 at 08:11:13PM GMT, Jameson Thies wrote:
-> Add status to UCSI power supply driver properties based on the port's
-> connection and power direction states.
-> 
-> Signed-off-by: Jameson Thies <jthies@google.com>
+Loongson Binary Translation (LBT) is used to accelerate binary
+translation, which contains 4 scratch registers (scr0 to scr3), x86/ARM
+eflags (eflags) and x87 fpu stack pointer (ftop).
 
-Please CC Power Supply maintainers for this patchset (added to cc).
+Like FPU extension, here lately enabling method is used for LBT. LBT
+context is saved/restored during vcpu context switch path.
 
-At least per the Documentation/ABI/testing/sysfs-class-power, the status
-property applies to batteries, while UCSI psy device is a charger. This
-is logical, as there might be multiple reasons why the battery is not
-being charging even when the supply is online.
+Also this patch set LBT capability detection, and LBT register get/set
+interface for userspace vmm, so that vm supports migration with BT
+extension.
 
-> ---
-> Changes in V2:
-> - None.
-> 
->  drivers/usb/typec/ucsi/psy.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
-> index e623d80e177c..d0b52cee41d2 100644
-> --- a/drivers/usb/typec/ucsi/psy.c
-> +++ b/drivers/usb/typec/ucsi/psy.c
-> @@ -29,6 +29,7 @@ static enum power_supply_property ucsi_psy_props[] = {
->  	POWER_SUPPLY_PROP_CURRENT_MAX,
->  	POWER_SUPPLY_PROP_CURRENT_NOW,
->  	POWER_SUPPLY_PROP_SCOPE,
-> +	POWER_SUPPLY_PROP_STATUS,
->  };
->  
->  static int ucsi_psy_get_scope(struct ucsi_connector *con,
-> @@ -51,6 +52,20 @@ static int ucsi_psy_get_scope(struct ucsi_connector *con,
->  	return 0;
->  }
->  
-> +static int ucsi_psy_get_status(struct ucsi_connector *con,
-> +			       union power_supply_propval *val)
-> +{
-> +	val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-> +	if (con->status.flags & UCSI_CONSTAT_CONNECTED) {
-> +		if ((con->status.flags & UCSI_CONSTAT_PWR_DIR) == TYPEC_SINK)
-> +			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-> +		else
-> +			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ucsi_psy_get_online(struct ucsi_connector *con,
->  			       union power_supply_propval *val)
->  {
-> @@ -249,6 +264,8 @@ static int ucsi_psy_get_prop(struct power_supply *psy,
->  		return ucsi_psy_get_current_now(con, val);
->  	case POWER_SUPPLY_PROP_SCOPE:
->  		return ucsi_psy_get_scope(con, val);
-> +	case POWER_SUPPLY_PROP_STATUS:
-> +		return ucsi_psy_get_status(con, val);
->  	default:
->  		return -EINVAL;
->  	}
-> -- 
-> 2.45.2.1089.g2a221341d9-goog
-> 
+---
+v4 ... v5:
+  1. Add feature detection for LSX/LASX from vm side, previously
+LSX/LASX feature is detected from vcpu ioctl command, now both methods
+are supported.
 
+v3 ... v4:
+  1. Merge LBT feature detection for VM and VCPU into one patch.
+  2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr()/
+kvm_enable_lbt_fpu() from header file to c file, since it is only
+used in one c file.
+
+v2 ... v3:
+  1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
+sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_ARMBT
+and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host supports
+the sub-feature.
+
+v1 ... v2:
+  1. With LBT register read or write interface to userpace, replace
+device attr method with KVM_GET_ONE_REG method, since lbt register is
+vcpu register and can be added in kvm_reg_list in future.
+  2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
+used to get supported LBT feature before vm or vcpu is created.
+---
+
+Bibo Mao (3):
+  LoongArch: KVM: Add HW Binary Translation extension support
+  LoongArch: KVM: Add LBT feature detection function
+  LoongArch: KVM: Add vm migration support for LBT registers
+
+ arch/loongarch/include/asm/kvm_host.h |   8 ++
+ arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
+ arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
+ arch/loongarch/kvm/exit.c             |   9 ++
+ arch/loongarch/kvm/vcpu.c             | 126 +++++++++++++++++++++++++-
+ arch/loongarch/kvm/vm.c               |  52 ++++++++++-
+ 6 files changed, 216 insertions(+), 2 deletions(-)
+
+
+base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
 -- 
-With best wishes
-Dmitry
+2.39.3
+
 
