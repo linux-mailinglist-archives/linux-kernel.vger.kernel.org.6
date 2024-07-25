@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-262366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B175193C5D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:00:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477D093C5F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EA12821F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D76CCB242CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A20A19D886;
-	Thu, 25 Jul 2024 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B17119D880;
+	Thu, 25 Jul 2024 15:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lj+Dk2V7"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hKRdm/as"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092A919D062
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5507482
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721919611; cv=none; b=rVjXoUZS2GFX7EODZXmw77ZreD0vVoB23W8g/1Vw32OSi3/64Abp3od5E+EL173KwTvSVjZiAr1rOYETI+HgJ+uNNuUTp0g5YZjJldZoZKT1Jlef2ds/RphZeaTNAl/YPPD/mV+PEuV/mabKHi4wx8cyX04BgL5UlPnxlVado9U=
+	t=1721919682; cv=none; b=rrJmJXdIyX7dGXXA6NPc7GhGB9JbbafqO5+9S8y4lAbR8YlPRm/SyQg9MsIHfw26wzOSDSfcQZtuJic/+C8hXNZramN1rhhJBP11Jx+KXkniNaUY9jORTLKnz6Tn4eqWa6w5xpehp2IdQx+oqbliYN6UggXkm8go2kBRPdEawJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721919611; c=relaxed/simple;
-	bh=4+7G3tspcvIA18RcZDSVjgfkOmhgNLYcPE/E3LoZGzk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tvf2UJ/JK4lye3ZWOa5Y+03bXIjB7puHXY99ImtQjR7rVnU69CeZOYAD1PqCOsFOW00EPfj7Z/dXvHGTVPHLVg5Y+7ye7fgC8q0qwUzbVW6A5qoIq7xvH4tRXrl/uVkfsS35tqqTeNZ/XVLxCMCdda23hEb2V1KajgJsR+22uro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lj+Dk2V7; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-367963ea053so744110f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721919608; x=1722524408; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9Z4931Osuxi1qIHEscDRPOvBVDoh/CRmYBymvn/ZBA=;
-        b=Lj+Dk2V74Wwihkgel25WTeByaZzcBfd7/exXLFPDy9RVw5K7bodOelPktM4CjKcFzI
-         yg95I24FvlOGNENZXhuWijGB7AgvWRFeJmYmrb8Wmpye1EbHwLtZaMKyfPP98QdJDmBi
-         sDZv5GrJQj8ekYD3AjE1J6Q/HE3e5tZHKi+CTaHtCCGHTRE6nvRGIzgdQL38mCcto8z6
-         147F8pwhEcpjg4KBfFm6S2sk5Omq+awn6ZC5xSiey8U3dfyXvf/SJVJdHR3MrWIh/Mei
-         XOv64lTI1uHWULn/BUKtBRLqyyK0R2eACuiEn/RpSrQnuTvKiqfGQfRn2Jh5wuIpE53k
-         OqLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721919608; x=1722524408;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9Z4931Osuxi1qIHEscDRPOvBVDoh/CRmYBymvn/ZBA=;
-        b=BjIZzJRmrb5uGLUq6UZ8RmJc0TnadwF2JTm+xWh6z5fdg92RFdq8YdZlv0ksw1wVde
-         Z7JqSYQlTZOxzY8pzgHGRZBTWh1HqZPHSCES3k6+Uf/lrG62KPw56QW5jEWvPDkb59vI
-         I3LByy9l0UVB1XmzNtB4Nwc3xJy/P8osjEiAGm/bF0Wh0H4U+NbRlhqB8ixC9MAca94F
-         iDpA3W2USoeN05OBDuPUkqGhN5+8iiwZRuWA8tWnG8gIWxyvH3MO56sUCvuuM799qOLk
-         bw1xzdRzDNooYy8bB7mGvKmnGWYIg79W/tWyI1lSm5zjOun1lBkejfoxideouCKKyyf2
-         QOcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsNFa+b5Rv/XVvbR5khi2CXRVD4yUgXsc3+V0UDJPh9ELPDoV4VeJ4SwiuvsbEIrqsR8mucoCYRKxxiQIYkvwoOFDNX/wJ2QA+W+ac
-X-Gm-Message-State: AOJu0YyoXtJN2w1GGWVmUMFdjCRR21DyY3Ebgj+b04IjMkDPfdYgEVQG
-	9p4maliW+IRakqvu3CheLqkZHVO6Ps392JgQuEDsqBVxGT3XlkGgdqm1Erukgn/9CF7HEDLvNEA
-	X
-X-Google-Smtp-Source: AGHT+IHRCPqWVQXC2M7YIeZJcXzY2G3V2diN5IaoIFfqBHPCQ6aIbCtS+NN5DGnwuwi/xs+tmtNdgQ==
-X-Received: by 2002:a05:6000:b87:b0:368:7943:8b1f with SMTP id ffacd0b85a97d-36b3643c8cemr1971438f8f.43.1721919608012;
-        Thu, 25 Jul 2024 08:00:08 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36858148sm2507984f8f.72.2024.07.25.08.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 08:00:07 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: quic_jesszhan@quicinc.com, mwalle@kernel.org, dianders@chromium.org, 
- linus.walleij@linaro.org, airlied@gmail.com, dmitry.baryshkov@linaro.org, 
- Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
-References: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
-Subject: Re: (subset) [PATCH v1 0/4] Break some CMDS into helper functions
-Message-Id: <172191960720.1560006.12723976790415124452.b4-ty@linaro.org>
-Date: Thu, 25 Jul 2024 17:00:07 +0200
+	s=arc-20240116; t=1721919682; c=relaxed/simple;
+	bh=7+X1J3vQqd5avlgzFBJ8tkKRivOM0F+9Jkhc/kwhmP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FlCOhh2tKvEsDolNQZnF9PgjNnAhLIMESgYv3QfPR09V1JWIG7qUez/bcIsgml2qITTp1gs2h/rw61yez6Ggw7fsuYfoL0BcvHRmu5pD+IaHAFQnR7LWTxsnb/h235GVn/UThHvOZxMTHQqqd1KuIA903stQwm7M1J+/R14aop8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hKRdm/as; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721919679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JbyFR4Lriebf4UKLcRlttmZkowS2A+OOfQfuAAW2wDo=;
+	b=hKRdm/ase4z4W/zeNIG5vSZt5bqCzFwp+zS5DD7XB5OssT+tYwzsJOtSSqHybvqfd05xcu
+	OzIh8Rmw5TiA2f7bAsVgErBPCXuvMcjWcheuqIkeQwssYNBUcVXE+YlkfYC+dOd6inMShr
+	0ms7En8rqDTmgZEaJ7p1DGWEm2c1pdc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-159-XkAnUC1uMPCQod-ItxuDOg-1; Thu,
+ 25 Jul 2024 11:01:16 -0400
+X-MC-Unique: XkAnUC1uMPCQod-ItxuDOg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CEB0C1944B31;
+	Thu, 25 Jul 2024 15:01:13 +0000 (UTC)
+Received: from starship.lan (unknown [10.22.8.132])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 311541955F40;
+	Thu, 25 Jul 2024 15:01:11 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH 0/2] Relax canonical checks on some arch msrs
+Date: Thu, 25 Jul 2024 11:01:08 -0400
+Message-Id: <20240725150110.327601-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi,
-
-On Wed, 10 Jul 2024 16:47:11 +0800, Cong Yang wrote:
-> This series main purpose is to break some common CMDS into helper
-> functions (select page and reload CMDS), refer to the discussion
-> between Linus and Doug [1]. It is expected that there will be no
-> impact on the functionality, but I don’t have an actual board to
-> verify it.
-> 
-> [1] https://lore.kernel.org/dri-devel/CAD=FV=VssfZBxwh6i4e_mHhT8vZ_CnXCrUhoeTUeo5xN-FmASg@mail.gmail.com/
-> 
-> [...]
-
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/4] drm/panel: boe-tv101wum-nl6: Break some CMDS into helper functions
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/93183c9959d456530ae502865586522acf21adf7
-[2/4] drm/panel: nt35521: Break some CMDS into helper functions
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/3c8d2d5da3e29f73fec6e04a424e789422f697db
-[3/4] drm/panel: nt36672e: Break some CMDS into helper functions
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d969b31afa439f71f810076a5612596dae38fd86
-
--- 
-Neil
+Recently we came up upon a failure where likely the guest writes=0D
+0xff4547ceb1600000 to MSR_KERNEL_GS_BASE and later on, qemu=0D
+sets this value via KVM_PUT_MSRS, and is rejected by the=0D
+kernel, likely due to not being canonical in 4 level paging.=0D
+=0D
+I did some reverse engineering and to my surprise I found out=0D
+that both Intel and AMD have very loose checks in regard to=0D
+non canonical addresses written to this and several other msrs,=0D
+when the CPU supports 5 level paging.=0D
+=0D
+Patch #1 addresses this, making KVM tolerate this.=0D
+=0D
+Patch #2 is just a fix for a semi theoretical bug, found=0D
+while trying to debug the issue.=0D
+=0D
+Best regards,=0D
+	Maxim Levitsky=0D
+=0D
+Maxim Levitsky (2):=0D
+  KVM: x86: relax canonical checks for some x86 architectural msrs=0D
+  KVM: SVM: fix emulation of msr reads/writes of MSR_FS_BASE and=0D
+    MSR_GS_BASE=0D
+=0D
+ arch/x86/kvm/svm/svm.c | 12 ++++++++++++=0D
+ arch/x86/kvm/x86.c     | 31 ++++++++++++++++++++++++++++++-=0D
+ 2 files changed, 42 insertions(+), 1 deletion(-)=0D
+=0D
+-- =0D
+2.26.3=0D
+=0D
 
 
