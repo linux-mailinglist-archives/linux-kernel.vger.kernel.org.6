@@ -1,120 +1,172 @@
-Return-Path: <linux-kernel+bounces-262657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1E093CA1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:14:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9D193CA21
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917EE1F2164F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139921F21A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A3C13CFAA;
-	Thu, 25 Jul 2024 21:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2D213D8B3;
+	Thu, 25 Jul 2024 21:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d34bvc7r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7ED225D9;
-	Thu, 25 Jul 2024 21:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275D81C6BE;
+	Thu, 25 Jul 2024 21:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721942080; cv=none; b=MNdE90aZsexfUjE67wcI1XEY59gk9DxexQh/sNH/GBCUc7aGzJysLbDFaWHQ56cAeKo3IkvjfR+QBF0BRYyPfcTaN4pL/qbSKp6yfPNWU8qpJQmmqR+MbQvZetucUc1b7yqAJoqbZqlj8S+fpFl/W/KF7PwuB1+Ljo/MH8WyDFY=
+	t=1721942324; cv=none; b=a7X6M0U4V/rd4Gb1OidPMvnxodomLfU6va2F+ksyR+oKn6W9luVJ1TtDW2YxB6PyhnyVbE+au/ctgGM2QGW5JEsc7o6LBuxW7VLTNqaWY81WwH0Vb5mulSV55zwtffTrZ7FSTr0JfXx5FmClo0Q7BtF/wGvOYZbQHCCRSN72juw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721942080; c=relaxed/simple;
-	bh=NuLRowIVm+Fl0x9TYugEgL9W/RUQUOnDqgYa0XpoF0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SO8+WJfQPyD8ZD19EJqfTtEK+Hl3ozM9N0qPRcf0+fy7wDsBleNd6vzds9/bjJ7o8Sz9lH8L7zssq5Ymq00cZ31qvT8I16LCGt5pkMFBlFCskRtjFPeDWJje4WhcEJyHnkLMy3kmXxv8uwaDkzFJGT9SMuZFUDGOMiBjf6lTkQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE92C116B1;
-	Thu, 25 Jul 2024 21:14:38 +0000 (UTC)
-Date: Thu, 25 Jul 2024 17:14:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathias Krause <minipli@grsecurity.net>
-Cc: Ajay Kaher <ajay.kaher@broadcom.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
- <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
- Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
- <dan.carpenter@linaro.org>, Vasavi Sirnapalli
- <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
- <alexey.makhalov@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Beau Belgrave <beaub@linux.microsoft.com>
-Subject: Re: tracing: user events UAF crash report
-Message-ID: <20240725171459.598d9500@gandalf.local.home>
-In-Reply-To: <1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
-References: <20240719204701.1605950-1-minipli@grsecurity.net>
-	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
-	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
-	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
-	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
-	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
-	<20240725131021.788374d0@gandalf.local.home>
-	<20240725131632.64cab267@gandalf.local.home>
-	<cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
-	<20240725150517.3184e078@gandalf.local.home>
-	<0d1a8c46-43a7-42d6-bcbf-647a5a68c3c5@grsecurity.net>
-	<20240725161519.35fd3bd6@gandalf.local.home>
-	<1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721942324; c=relaxed/simple;
+	bh=/AAXREcOI32vQxwZurvxUKNxXBgKObFukzNWPPKPbQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fLVHA1tbNnxa7sHESwLMW50j2if+X7UG5ozu5kC4tnct0JC8innpfj8ZRCk/BZcSApGS12T7ZEZ968yz9DsoyaC5E4kF8xj7jfhayMq63fXbto57Fdu0/Mvf8S0qwk57AC8h7/34wzB6uKnW8pJ4Fz6pzq7knQkUS0NTDAkrTV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d34bvc7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90536C116B1;
+	Thu, 25 Jul 2024 21:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721942323;
+	bh=/AAXREcOI32vQxwZurvxUKNxXBgKObFukzNWPPKPbQ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=d34bvc7r+wjZ8jdKwdacrvuz2jNHK9IOxnKkWsYdF3d7Kb1QRX/i09je4/70KecOu
+	 sq4c3XMfDYrrM6gRkarGgDjwd9B8L/IhQcFUOWkFlWnCk6m+7PVgQtSjs1xDrpxszF
+	 0pNPN3nN9fBkverGNrd65UvRMQJrAbBzFYQS/9Z1OHWG+NXxbsCzZxh7Xr45KU8feR
+	 vjWWNmIqcZ+G+uhBvxyNd/aaJxeGTkcEGNqK+7mVXTDPi+G5zaR2TjaVXvjxGEPi5F
+	 Ov9azfqw5jbEmI8Gnz+QJX1688MISdTSleTRc+jPmFbxIlOZfqVj85dB0HYdIksD2l
+	 jlTy9vFQK92cw==
+Date: Thu, 25 Jul 2024 16:18:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lpieralisi@kernel.org, kw@linux.com,
+	bhelgaas@google.com, vigneshr@ti.com, kishon@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH 3/3] PCI: j721e: Add support for enabling ACSPCIE PAD IO
+ Buffer output
+Message-ID: <20240725211841.GA859405@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715120936.1150314-4-s-vadapalli@ti.com>
 
-On Thu, 25 Jul 2024 22:41:23 +0200
-Mathias Krause <minipli@grsecurity.net> wrote:
+On Mon, Jul 15, 2024 at 05:39:36PM +0530, Siddharth Vadapalli wrote:
+> The ACSPCIE module is capable of driving the reference clock required by
+> the PCIe Endpoint device. It is an alternative to on-board and external
+> reference clock generators. Enabling the output from the ACSPCIE module's
+> PAD IO Buffers requires clearing the "PAD IO disable" bits of the
+> ACSPCIE_PROXY_CTRL register in the CTRL_MMR register space.
 
-> > diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> > index 6ef29eba90ce..5fbfa1c885de 100644
-> > --- a/kernel/trace/trace_events.c
-> > +++ b/kernel/trace/trace_events.c
-> > @@ -1627,12 +1627,14 @@ static int f_show(struct seq_file *m, void *v)
-> >  
-> >  static void *f_start(struct seq_file *m, loff_t *pos)
-> >  {
-> > +	struct trace_event_file *file;
-> >  	void *p = (void *)FORMAT_HEADER;
-> >  	loff_t l = 0;
-> >  
-> >  	/* ->stop() is called even if ->start() fails */
-> >  	mutex_lock(&event_mutex);
-> > -	if (!event_file_data(m->private))
-> > +	file = event_file_data(m->private);
-> > +	if (!file || (file->flags & EVENT_FILE_FL_FREED))
-> >  		return ERR_PTR(-ENODEV);
-> >  
-> >  	while (l < *pos && p)
-> > 
-> >   
+And I guess this patch actually *does* enable the ACSPCIE PAD IO
+Buffer output?
+
+This commit log tells me what is *required* to enable the output, but
+it doesn't actually say whether the patch *does* enable the output.
+
+Similarly, if this patch enables ACSPCIE PAD IO Buffer output, I would
+make the subject be:
+
+  PCI: j721e: Enable ACSPCIE Refclk output when DT property is present
+
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>  drivers/pci/controller/cadence/pci-j721e.c | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 > 
-> Nope, still the same splats.
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 85718246016b..2fa0eff68a8a 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -44,6 +44,7 @@ enum link_status {
+>  #define J721E_MODE_RC			BIT(7)
+>  #define LANE_COUNT(n)			((n) << 8)
+>  
+> +#define ACSPCIE_PAD_ENABLE_MASK		GENMASK(1, 0)
+>  #define GENERATION_SEL_MASK		GENMASK(1, 0)
+>  
+>  struct j721e_pcie {
+> @@ -220,6 +221,30 @@ static int j721e_pcie_set_lane_count(struct j721e_pcie *pcie,
+>  	return ret;
+>  }
+>  
+> +static int j721e_acspcie_pad_enable(struct j721e_pcie *pcie, struct regmap *syscon)
+> +{
+> +	struct device *dev = pcie->cdns_pcie->dev;
+> +	struct device_node *node = dev->of_node;
+> +	u32 mask = ACSPCIE_PAD_ENABLE_MASK;
+> +	struct of_phandle_args args;
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = of_parse_phandle_with_fixed_args(node, "ti,syscon-acspcie-proxy-ctrl",
+> +					       1, 0, &args);
+> +	if (!ret) {
+> +		/* PAD Enable Bits have to be cleared to in order to enable output */
 
-Can you reshow the splats. Because I'm now confused.
+Most of this file fits in 80 columns (printf strings are an exception
+so they're easier to find with grep).  It'd be nice if your new code
+and comments fit in 80 columns as well.
 
-destroy_user_event() which is under event_mutex calls
-user_event_set_call_visible() with false, that will then call:
+An easy fix for the comment would be:
 
-trace_remove_event_call() -> probe_remove_event_call() ->
- __trace_remove_event_call() -> event_remove() ->
- remove_event_from_tracers()
+  /* Clear PAD Enable bits to enable output */
 
-Where remove_event_from_tracers() loops over all the instances and will set
-each of the file pointers flags associated to the event: EVENT_FILE_FL_FREED
+Although it sounds non-sensical to *clear* enable bits to enable
+something, and the commit log talks about clearing PAD IO *disable*
+bits, so maybe you meant this instead?
 
-Then it returns back to destroy_user_event() that would free the event.
+  /* Clear PAD IO disable bits to enable output */
 
-The f_start() that was in your crash, with the new patch, should take the
-event_mutex before referencing the event that was freed. And with that flag
-being set, it should exit out.
+If the logical operation here is to enable driving Refclk, I think the
+function name and error messages might be more informative if they
+mentioned "refclk" instead of "PAD".
 
-Did you remove all the other patches before applying this one?
+> +		val = ~(args.args[0]);
+> +		ret = regmap_update_bits(syscon, 0, mask, val);
+> +		if (ret)
+> +			dev_err(dev, "Enabling ACSPCIE PAD output failed: %d\n", ret);
+> +	} else {
+> +		dev_err(dev, "ti,syscon-acspcie-proxy-ctrl has invalid parameters\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->cdns_pcie->dev;
+> @@ -259,6 +284,14 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> +	/* Enable ACSPCIe PAD IO Buffers if the optional property exists */
 
--- Steve
+Is the canonical name "ACSPCIE" or "ACSPCIe"?  You used "ACSPCIE"
+above?
 
-
+> +	syscon = syscon_regmap_lookup_by_phandle_optional(node, "ti,syscon-acspcie-proxy-ctrl");
+> +	if (syscon) {
+> +		ret = j721e_acspcie_pad_enable(pcie, syscon);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.40.1
+> 
 
