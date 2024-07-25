@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-262238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5706893C2DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D0793C2D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168132830A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6234A281A9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A864F19DF4B;
-	Thu, 25 Jul 2024 13:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847F919CCE2;
+	Thu, 25 Jul 2024 13:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oY9sJyJ7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHQI4lMq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498B19B3D3;
-	Thu, 25 Jul 2024 13:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A586119B3C8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721913639; cv=none; b=Wx2APlDHQM7WQIj4n81xbg4L1DynNwFTEPu6d/juciD/nX4Ei/0vmUjTejDxGiC9cSflOGLWTuqGvzFoMPW7Cz5txz+N/F535y/7YIou0JWWKp43Vl/knTDu4VRNR2iPpD1oUyGJfvf9B5kVYIQsaQcElyLuwRxN9VHoM7L5ugk=
+	t=1721913639; cv=none; b=uYmbPBb3O+wCs0LWd/aRdLzed86Jgn9y2SnYMs5aqp+GRjvRbKbXobuevNHaMUhMnjYJ0aDyBh9N8azfA85aHvXHF6I2+5Dbd3zlGFqcuVde1Z6x7fMxqwsR4WmG/97MOYTIbZPfSlXaCkaeMvopoH2FFT/KoL7Er5PTnQOk1qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721913639; c=relaxed/simple;
-	bh=+MlYyIuitgeiygKFo7/UYoHi1EF6YVBX3jSOd6GjwYc=;
+	bh=uLoleUQwNiKBJ39xNzNzucuRi48WbYIMOUXXJTn3Jgs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JZL6k4Dt6tUauKIVF/ZkpgkKqUCCYzJ4JvW5EGG52ZqTs8Aijd8eVw0U4A1lPy/moiO7CEqvWMXqCnvUEOYqS2ZszQSPxqCKPEAYLhcsBOcRjV13BzX5MiyAzqIl29GSAvXB7SHYGhIYsj7PHfc+J8aKFYyvM24ZtwYMIGsOAWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oY9sJyJ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 65B0FC4AF0B;
+	 In-Reply-To:To:Cc; b=cK4XFct9+8w1SelZaKLUT6pbj+QyoKLzr6/3ud7feglnPMTHtY55kCqq2wUrsGPUVPHp3rXbTERBZHQUgGaYdIaSXXktJ9jg5wb2dxbk5o9BL18xuW1fJ7od81u40Eoy4CKYIQUxEwxqHjdG3ER20giXDql7fQc85BXP8Lq+KAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHQI4lMq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 510C1C4AF11;
 	Thu, 25 Jul 2024 13:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721913639;
-	bh=+MlYyIuitgeiygKFo7/UYoHi1EF6YVBX3jSOd6GjwYc=;
+	bh=uLoleUQwNiKBJ39xNzNzucuRi48WbYIMOUXXJTn3Jgs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=oY9sJyJ7O7kRwfcrK726mdmcOgkTQLZWs2uP/x6CY6ycSd61tGCxrSNCpBFNPck3r
-	 FgOaIr9kf2pNPtSEbN12Sd7h8pup4pzRGy33Mh+WWlF95D5VjaWJkxqh8dbkxKXUkI
-	 mGI/xpqJaBvyu8/0ACMnHEc9XSLnd6bNY9csCfJcTGmbPL8gS0+mkNVP3W+5KC5Cll
-	 JODgEUoEN2qzoG7KjEqmKbjfw7kAMXGrLm7ND0VAHk/4ukmpAIYNUVkRI0SRLnCgXe
-	 jdICAuXs46yvp5CaVuf7o5ROg5iXVvrB4s0vkp829KNHXfTYYbtZKmORZG6S7xxfVC
-	 kd6nNyZGV8myw==
+	b=lHQI4lMqLlyl/3Zl7ur5lOeFPS9fyezqHl6fE1eOvnwtJf5VYh52JcXkuBraQhlqu
+	 tjBwMjcMAORgVRTSry8JxBmyB6e5bKjXBDb2uiX0TxD/6e4K+Tq/wb/EaIvEp+xc0y
+	 SRb0rDwecTl86ne7s6z2hEfL7whG3SOnIJD+Gmmbs9abRMO4iCzsSOnnHX6uCYtRcj
+	 tvDr7NUrbKg9upYjXXm3tFJXEgbDwvIuhsqat/yEVPBWHV6SquGoOkF3CbZ+Dbl+A9
+	 ZpOxIsHkXLpVqHiE+dkxPoK8gJm/fN3ibFPxFpaw9rCTmDN3zU5i2xODOU8oSDMlZQ
+	 2TK74GgxakObg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5B13EC4332C;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 489C8C4333D;
 	Thu, 25 Jul 2024 13:20:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,48 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] riscv: enable HAVE_ARCH_STACKLEAK
+Subject: Re: [PATCH v2 0/1] Enable SPCR table for console output on RISC-V
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172191363937.6240.7475127253705380898.git-patchwork-notify@kernel.org>
+ <172191363929.6240.827816040310708972.git-patchwork-notify@kernel.org>
 Date: Thu, 25 Jul 2024 13:20:39 +0000
-References: <20240623235316.2010-1-jszhang@kernel.org>
-In-Reply-To: <20240623235316.2010-1-jszhang@kernel.org>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, ardb@kernel.org,
- charlie@rivosinc.com, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+References: <20240502073751.102093-1-jeeheng.sia@starfivetech.com>
+In-Reply-To: <20240502073751.102093-1-jeeheng.sia@starfivetech.com>
+To: JeeHeng Sia <jeeheng.sia@starfivetech.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ aou@eecs.berkeley.edu, rafael.j.wysocki@intel.com,
+ conor.dooley@microchip.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ ajones@ventanamicro.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Mon, 24 Jun 2024 07:53:16 +0800 you wrote:
-> Add support for the stackleak feature. Whenever the kernel returns to user
-> space the kernel stack is filled with a poison value.
+On Thu,  2 May 2024 00:37:50 -0700 you wrote:
+> The ACPI SPCR code has been used to enable console output for ARM64 and
+> X86. The same code can be reused for RISC-V. Furthermore, SPCR table is
+> mandated for headless system as outlined in the RISC-V BRS
+> Specification, chapter 6.
 > 
-> At the same time, disables the plugin in EFI stub code because EFI stub
-> is out of scope for the protection.
-> 
-> Tested on qemu and milkv duo:
-> / # echo STACKLEAK_ERASING > /sys/kernel/debug/provoke-crash/DIRECT
-> [   38.675575] lkdtm: Performing direct entry STACKLEAK_ERASING
-> [   38.678448] lkdtm: stackleak stack usage:
-> [   38.678448]   high offset: 288 bytes
-> [   38.678448]   current:     496 bytes
-> [   38.678448]   lowest:      1328 bytes
-> [   38.678448]   tracked:     1328 bytes
-> [   38.678448]   untracked:   448 bytes
-> [   38.678448]   poisoned:    14312 bytes
-> [   38.678448]   low offset:  8 bytes
-> [   38.689887] lkdtm: OK: the rest of the thread stack is properly erased
+> Changes in v2:
+> - Added code to handle early_init_dt_scan_chosen_stdout().
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2] riscv: enable HAVE_ARCH_STACKLEAK
-    https://git.kernel.org/riscv/c/0059748ce289
+  - [v2,1/1] RISC-V: ACPI: Enable SPCR table for console output on RISC-V
+    https://git.kernel.org/riscv/c/38738947db38
 
 You are awesome, thank you!
 -- 
