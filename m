@@ -1,210 +1,157 @@
-Return-Path: <linux-kernel+bounces-262458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E4593C75E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:48:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDF193C76A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DD541C20FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5222C1F22E6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47EE19D070;
-	Thu, 25 Jul 2024 16:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643D819D89E;
+	Thu, 25 Jul 2024 16:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWmjPj1b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F24611711;
-	Thu, 25 Jul 2024 16:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44CE11711;
+	Thu, 25 Jul 2024 16:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926113; cv=none; b=F/0ryGtXsLL+zLBzGBjMyDG79ONevJK0WY4hp9tN7lElfCfsR7JPHgaril6xhdh7CBwzNgke6oWvnB1HeAnAZzfb6JmREaOPfh0w8a3cRZbS4TVPADltj1h56KSfqA7rR5G75deMXFtUt29o7TEyn/ikTsIIhy4DIvQG56R6e6E=
+	t=1721926219; cv=none; b=OxA7s8LgVWhcJ5w0ZPleKmZck4JWud7l8PCftf1WV+GyuMcsLHHlKOJ2+24rLNrETERz69/ojKmK0fCUJc2JlLgMe72wl2audEK2xt6Hr1cL47C+tVeJTaLdU7i3vlZdY7wC0Udy70eBLOtLTBnP8a3GOYr0LO0ga8FOY/lQOic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926113; c=relaxed/simple;
-	bh=r259sq61Z4l77qCTYaT0H8XdbOSWShHwDGzQp27SP7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AWwC2dOhHa8lzIH+cFbtzJrIJdQPPHf5xXxP/haqRlKP8wHFXu0bRdOrz7gA924AUSbfJF2EerewWgTKwAw8nTE9UShDzgb6pZ2oF82LY5McLGMn+0ql7i3yyB+BJs6xOTi051DOW2fDaeIZ9jCSiU/IHg6fKcxxMCVUz0YGQgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6299CC116B1;
-	Thu, 25 Jul 2024 16:48:31 +0000 (UTC)
-Date: Thu, 25 Jul 2024 12:48:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ajay Kaher <ajay.kaher@broadcom.com>
-Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
- <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
- <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
- Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
- <dan.carpenter@linaro.org>, Vasavi Sirnapalli
- <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
- <alexey.makhalov@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>
-Subject: Re: tracing: user events UAF crash report
-Message-ID: <20240725124851.645981d3@gandalf.local.home>
-In-Reply-To: <CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
-References: <20240719204701.1605950-1-minipli@grsecurity.net>
-	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
-	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
-	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
-	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721926219; c=relaxed/simple;
+	bh=2ha36h8m+D322Fa0m27vV6yqapptIuzDjOd6G6ZUwAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFYatjOsgGCMxFJS3piMe4jzlxaOVka+nuMUKrU3Yh9D6oLUEOCoE4DYmeo0pGPBS520Wk7I5j56t8XuOoUmBoSbkUSIDA22fJmxsXrMhUH4vOUVjOR2/csIKatqefFeBnPwtGVA5F5Nayww74vF5aGj+h9F0zZAKh8qYD2TodY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWmjPj1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86576C116B1;
+	Thu, 25 Jul 2024 16:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721926219;
+	bh=2ha36h8m+D322Fa0m27vV6yqapptIuzDjOd6G6ZUwAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hWmjPj1bU56coZ6f4THwe7R1JmS/QB61d/mbLZt3vTYfWyzu+1dbXABMlQlmzgb2g
+	 F1b87mEVBXsXpsvvd4LAO0ibiLPcePD2ToSk0PIAi7B6tOpEdGAv0tP2bcXvzKfq8f
+	 vsY203RSVUaEu8As/m91+wwnborOrDMH12ya7UiuQJyI4YGIfZaNVVQXpn2tP5UMDT
+	 zfgAekVw2kzo2QbRIHhIucdumOK5dPax+KgEg3P55T7nxhhv1DRYfokEfDAONonmrs
+	 PCY2c9fsWL9QrwCSm82EMhZabAbzd64XdMmFXN8MNL42+fpCsgBO5eJZGVsH46XB5b
+	 WPAaMlV6Moi0A==
+Date: Thu, 25 Jul 2024 17:50:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Bc-bocun Chen <bc-bocun.chen@mediatek.com>,
+	Sam Shih <Sam.Shih@mediatek.com>,
+	Weijie Gao <Weijie.Gao@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: pcs: add helper module for standalone
+ drivers
+Message-ID: <20240725165012.GL97837@kernel.org>
+References: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
 
-On Thu, 25 Jul 2024 21:45:03 +0530
-Ajay Kaher <ajay.kaher@broadcom.com> wrote:
+On Thu, Jul 25, 2024 at 01:44:49PM +0100, Daniel Golle wrote:
+> Implement helper module for standalone PCS drivers which allows
+> standaline PCS drivers to register and users to get instances of
+> 'struct phylink_pcs' using device tree nodes.
+> 
+> At this point only a single instance for each device tree node is
+> supported, once we got devices providing more than one PCS we can
+> extend it and introduce an xlate function as well as '#pcs-cells',
+> similar to how this is done by the PHY framework.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> This is meant to provide the infrastructure suggested by
+> Russell King in an earlier review. It just took me a long while to
+> find the time to implement this.
+> Users are going to be the standalone PCS drivers for 8/10 LynxI as
+> well as 64/66 USXGMII PCS found on MediaTek MT7988 SoC.
+> See also https://patchwork.kernel.org/comment/25636726/
+> 
+> The full tree where this is being used can be found at
+> 
+> https://github.com/dangowrt/linux/commits/mt7988-for-next/
 
-> On Mon, Jul 22, 2024 at 5:38=E2=80=AFPM Mathias Krause <minipli@grsecurit=
-y.net> wrote:
-> >
-> > On 22.07.24 13:13, Ajay Kaher wrote: =20
-> > > On Sat, Jul 20, 2024 at 2:17=E2=80=AFAM Mathias Krause <minipli@grsec=
-urity.net> wrote: =20
-> > >>
-> > >> I noticed, the user events ftrace selftest is crashing every now and
-> > >> then in our automated tests. Digging into, I found that the following
-> > >> is triggering the issue very reliable:
-> > >>
-> > >> - in one shell, as root:
-> > >>   # while true; do ./kselftest/user_events/ftrace_test; done
-> > >>
-> > >> - in a second shell, again as root:
-> > >>   # cd /sys/kernel/tracing
-> > >>   # while true; do cat events/user_events/__test_event/format; done =
-2>/dev/null
-> > >> =20
-> > >
-> > > Tried to reproduced on 6.10.0-rc7-100.ph5+, only getting repeated out=
-put as: =20
->=20
-> < sending again after correcting alignments >
->=20
-> Mathias, thanks for reporting. I am able to reproduce the 'KASAN:
-> slab-use-after-free'.
->=20
-> Steve, let me know if anything wrong in my investigation:
+Hi Daniel,
 
-Hi Ajay,
+I realise this is an RFC, but I'm guessing a user will need to be submitted
+for this to progress into net-next.
 
-Thanks for analyzing this.
+...
 
->=20
-> [ 6264.339882] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [ 6264.339970] BUG: KASAN: slab-use-after-free in f_start+0x2b5/0x370
->=20
-> This belongs to  f_start() ->  f_next() -> trace_get_fields():
->=20
->     trace_get_fields(struct trace_event_call *event_call)
->     {
->         if (!event_call->class->get_fields)
->         return &event_call->class->fields;
->         return event_call->class->get_fields(event_call);
->     }
->=20
-> This happens while reading 'events/user_events/__test_event/format'.
->=20
->=20
-> Allocation:
-> [ 6264.347212] Allocated by task 3287:
-> [ 6264.348247]  kasan_save_stack+0x26/0x50
-> [ 6264.348256]  kasan_save_track+0x14/0x40
-> [ 6264.348260]  kasan_save_alloc_info+0x37/0x50
-> [ 6264.348265]  __kasan_kmalloc+0xb3/0xc0
-> [ 6264.348268]  kmalloc_trace_noprof+0x168/0x330
-> [ 6264.348280]  user_event_parse_cmd+0x57b/0x26c0
-> [ 6264.348286]  user_events_ioctl+0xa92/0x1850
-> [ 6264.348290]  __x64_sys_ioctl+0x138/0x1b0
-> [ 6264.348295]  x64_sys_call+0x9a4/0x1f20
-> [ 6264.348299]  do_syscall_64+0x4b/0x110
->=20
-> user_event_parse_cmd() -> user_event_parse() {
->     .
->     user =3D kzalloc(sizeof(*user), GFP_KERNEL_ACCOUNT);
->=20
-> Link: https://elixir.bootlin.com/linux/v6.10/source/kernel/trace/trace_ev=
-ents_user.c#L2118
->=20
->=20
-> Freed:
-> [ 6264.350333]  kfree+0xd1/0x2b0
-> [ 6264.350337]  destroy_user_event.part.0+0x313/0x450
-> [ 6264.350341]  destroy_user_event+0x129/0x1a0
-> [ 6264.350344]  delayed_destroy_user_event+0x62/0xd0
-> [ 6264.350347]  process_one_work+0x621/0xf60
-> [ 6264.350359]  worker_thread+0x760/0x14f0
->=20
-> static int destroy_user_event(struct user_event *user) {
->     .
->     kfree(user->call.print_fmt);
->     kfree(EVENT_NAME(user));
->     kfree(user);  <--
->=20
-> Link: https://elixir.bootlin.com/linux/v6.10/source/kernel/trace/trace_ev=
-ents_user.c#L1510
->=20
->=20
-> Race condition:
->=20
-> Thread A i.e. event reader able to reach the f_start() as the path is
-> valid. Thread A waiting for lock. At the sametime, Thread B has
-> acquired lock and removing events entry followed by free the
-> user_event object. Later once Thread A got the lock it tried to read
-> address which belongs to struct trace_event_call (struct
-> trace_event_call is member of struct user_event)
->=20
-> Thread A (read event)                      Thread B (remove event)
->=20
-> .                                                        worker_thread()
-> .
-> delayed_destroy_user_event()
-> .                                                               ->
-> acquire event_mutex
-> .                                                        destroy_user_eve=
-nt()
-> vfs_read()                                         .
-> seq_read()                                        .
-> f_start() -> acquire event_mutex      eventfs_remove_dir()
-> . (waiting)                                          kfree(user)
-> . (waiting)                                          -> released event_mu=
-tex
-> acquired event_mutex
-> f_next()
-> trace_get_fields():
+> +++ b/drivers/net/pcs/pcs-standalone.c
 
-What really bothers me is that refcnt logic. I'm not sure if this is an
-issue, but the fact that you can inc the refcnt without holding the
-event_mutex looks wrong to me. I would guess it would WARN if that refcnt
-was incremented when zero, but there is a window where it gets set to 1
-again. Too bad there's not a way to do a refcnt_set_if_zero() or something
-to atomically set the value but warn if it's not zero. But then again, if
-it did get incremented when zero, there should have been a warning then too.
+...
 
-But I don't think that's causing this.
+> +static struct pcs_standalone *of_pcs_locate(const struct device_node *_np, u32 index)
 
-Will look further.
+nit: This could trivially be line wrapped to 80 columns wide
 
--- Steve
+> +{
+> +	struct device_node *np;
+> +	struct pcs_standalone *iter, *pcssa = NULL;
 
+nit: Reverse xmas tree
 
->=20
-> I think you have added the following check in f_start() to prevent
-> this race condition, but somehow with eventfs still some gap to race cond=
-ition.
->=20
-> static void *f_start(struct seq_file *m, loff_t *pos) {
->     mutex_lock(&event_mutex);
->     if (!event_file_data(m->private))   <--
->         return ERR_PTR(-ENODEV);
->=20
-> -Ajay
+...
 
+> +struct phylink_pcs *devm_of_pcs_get(struct device *dev,
+> +				    const struct device_node *np,
+> +				    unsigned int index)
+> +{
+> +	struct pcs_standalone *pcssa;
+> +
+> +	pcssa = of_pcs_locate(np ?: dev->of_node, index);
+> +	if (IS_ERR_OR_NULL(pcssa))
+> +		return ERR_PTR(PTR_ERR(pcssa));
+
+nit: Perhaps ERR_CAST() ?
+
+> +
+> +	device_link_add(dev, pcssa->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> +
+> +	return pcssa->pcs;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_of_pcs_get);
+> +
+> +MODULE_DESCRIPTION("Helper for standalone PCS drivers");
+> +MODULE_AUTHOR("Daniel Golle <daniel@makrotopia.org>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/pcs/pcs-standalone.h b/include/linux/pcs/pcs-standalone.h
+
+Please consider adding this file to MAINTAINERS.
+
+...
+
+> +static inline int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs);
+> +	return -EOPNOTSUPP;
+> +}
+
+The above does not compile.
+
+...
 
