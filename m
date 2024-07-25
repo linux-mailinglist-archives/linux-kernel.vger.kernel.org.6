@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-261699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E03F93BB07
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:01:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2743993BB0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1DB2840CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D017A1F2292B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642F41799D;
-	Thu, 25 Jul 2024 03:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C920D17C6D;
+	Thu, 25 Jul 2024 03:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BjPO/vGd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t0bnRmik"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E376E556
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F0612B72
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721876472; cv=none; b=NM2o91V0vxIMbsmpPg08j3xk1uuqOcRZgLimPjWnEdloHbxsiJtfoXEd0zsHKXOEOxIPmlQZilmpItEcOyM7ho056qDegrGpnQI009R4yiD5myLvvJkhjSIlB1eoVybgEOCe6ImEsT5XNzLrKuXzYU4fDrnpsbPstUT6m1f3FHo=
+	t=1721876514; cv=none; b=Jrf3Th6vfL+m8XFxolwm0Ru5ZDEPIds0mMnBVMCP1VY15+UsWVPMAnNkp85Nvap0UOpMxu53/tGy9II2Z24c+GTcWYSHfQbSxPUtD0eGi8NSK2ox4vq9eUCJfliej4vGA79dge5T9VqUl3/N67mtTRzCgvvgpCeoPZrsHNaiolI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721876472; c=relaxed/simple;
-	bh=VF+PXS0cN4+7WGdSUdvB33v2NKJjsMSSiNKGb+niVEI=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LTccKnrcoSbEh8fYyJLN18kVk82FMmVboixzeWJXd2ho8y42UFM5PNaDANo3uGCWPB4PdDbgpSuEjrJcLsO33zwxOoY542FIJXIZ+bL4gUvD20lts13LtQhBHjyGVpKVViSmQlb13B6pNlc/8DNQqOTyKLCka4yVKjCbKJ/3Wu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BjPO/vGd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721876469;
+	s=arc-20240116; t=1721876514; c=relaxed/simple;
+	bh=49jcBefj5FcT3M9x20xUQPUdsQZFD9U6hguK29l+JiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYvtY33wxtv6EVNOvoBGshF8mujfQQyLr1If5mm9Q79qVczpKmNBVyhqXKBouP5k49JTXDQhsUhmNhtr4r7njv2keb036ZUp5f+mRZ9Lu+rslO3Bsyb/zCBVoVfekD4BLDKElG8JUZ+8m7E8NSN91lxbavWYrulxbOhtQcN2F/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t0bnRmik; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721876510;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WR4C1klarxsCcuevMDPpmoXX3IapIZL76EvSWY9IHig=;
-	b=BjPO/vGdd+GioqsnbOiyu6uwcYgzRXO7ZKjke1botAm1+MCVAx0W1ZM2HOW9lJGwPeESEb
-	L24tTe3aju+Q4W4AFKfZeRbIQu8JMwMTaOA3tQkFR61UysvV6Gba44hl/9Oi7+dfzn0GZc
-	aJlQ5mLQkgl2/Xnq9xpAIy+TUQ6s9m8=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-MAYU9MCYOciRmRam8aHmPg-1; Wed, 24 Jul 2024 23:01:07 -0400
-X-MC-Unique: MAYU9MCYOciRmRam8aHmPg-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fd6d695662so4516695ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:01:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721876466; x=1722481266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WR4C1klarxsCcuevMDPpmoXX3IapIZL76EvSWY9IHig=;
-        b=F53JVbWLZZgtkeT5pZYESWke3Jqt3T8rb+KJo6EUd1iMxetN91ifb/6WgRC3EMQjrZ
-         iUXchAgvdKIlU+cXY9xOuLRdPyLzpRuW/JCcrIM2I55B/Penet36xQ26nzTKaXrWh0Fy
-         KHeaK8CyB45Rhv7yc+aaeohJJsQ3K1yXXiBPak+4gWzk4RbwySZsaXhzBTIm8zJadeAA
-         FKmUW2Hz4qPdG3WXctdyhr7ictGWmc1hil4MmxbtdNKYH0ZjUd7yRdnnQbbojNBsQG9+
-         NOqUGAofdgfMtZFurJtMYINIwMKA85RnS4dnP6uUdCCpDlcFmNV6YznBUUOzeDDYd3HD
-         siCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyARrsqNZxniDPyVO0OR8M9xxUoJyPQf4ldJkvVEcpW8lYGELYBxXFpu0kFwZuVWOvN50tccrxwqRCCXcxowzcezLq8IRB1zqwjwJQ
-X-Gm-Message-State: AOJu0YwvGIXVpEkuA5clOJueuYawEi4mhSbzbj/xovFnDMNXuPDvR/O6
-	MOSK29bHYnXrCrSoNrypGL+R0dd979tkICp6/+qUmk4210xpH9ZMbGAloeS4nzQBTraiTS0LJRn
-	5a0LHmw740rxS0EHQ2/HsRFxcgxdp6qrasR1gXtmBUnTvh9IVq4FwqY0caopIIQ==
-X-Received: by 2002:a17:902:ea02:b0:1fb:4fa4:d24 with SMTP id d9443c01a7336-1fed3aed403mr18867315ad.50.1721876466420;
-        Wed, 24 Jul 2024 20:01:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdSwWHgKDpLoPuClxTWTLGgSR81gaWdx9VM+Y30/dTNbwfcdNrSvXE5T5oFpUbysdfWQq5Iw==
-X-Received: by 2002:a17:902:ea02:b0:1fb:4fa4:d24 with SMTP id d9443c01a7336-1fed3aed403mr18867035ad.50.1721876466045;
-        Wed, 24 Jul 2024 20:01:06 -0700 (PDT)
-Received: from localhost ([126.143.164.49])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fb1accsm2912335ad.261.2024.07.24.20.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 20:01:05 -0700 (PDT)
-Date: Thu, 25 Jul 2024 12:01:00 +0900 (JST)
-Message-Id: <20240725.120100.2041590414991833213.syoshida@redhat.com>
-To: make24@iscas.ac.cn
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, liujunliang_ljl@163.com, andrew@lunn.ch,
- horms@kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net v4] net: usb: sr9700: fix uninitialized variable
- use in sr_mdio_read
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <20240725022942.1720199-1-make24@iscas.ac.cn>
-References: <20240725022942.1720199-1-make24@iscas.ac.cn>
-X-Mailer: Mew version 6.9 on Emacs 29.4
+	bh=dinahWWNWKVgxUr2QQ8r5vtDMN47K5jpbrU4x04fZmQ=;
+	b=t0bnRmiksgMcuV2n4/X74UTpJITvS5MrnJV4M93S6NWIOs2XsMr+6Kz8W7etk9BqNLgiLm
+	WyW+SnXPb9G/KKg4743QNI4cw/8+OwX72AkIF3GAqZwoNi6QNrEMZbnhD9k/VEF+m8nY7q
+	VR/2e2/7phjKq6pM1GTTV0CvBfSEfNI=
+Date: Thu, 25 Jul 2024 11:01:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, tytso@mit.edu,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Youling Tang <tangyouling@kylinos.cn>
+References: <20240723083239.41533-1-youling.tang@linux.dev>
+ <20240723083239.41533-2-youling.tang@linux.dev>
+ <Zp-_RDk5n5431yyh@infradead.org>
+ <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
+ <ZqEhMCjdFwC3wF4u@infradead.org>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <ZqEhMCjdFwC3wF4u@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 25 Jul 2024 10:29:42 +0800, Ma Ke wrote:
-> It could lead to error happen because the variable res is not updated if
-> the call to sr_share_read_word returns an error. In this particular case
-> error code was returned and res stayed uninitialized. Same issue also
-> applies to sr_read_reg.
-> 
-> This can be avoided by checking the return value of sr_share_read_word
-> and sr_read_reg, and propagating the error if the read operation failed.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On 24/07/2024 23:43, Christoph Hellwig wrote:
+> On Wed, Jul 24, 2024 at 09:57:05AM +0800, Youling Tang wrote:
+>> module_init(initfn)/module_exit(exitfn) has two definitions (via MODULE):
+>> - buindin: uses do_initcalls() to iterate over the contents of the specified
+>>    section and executes all initfn functions in the section in the order in
+>>    which they are stored (exitfn is not required).
+>>
+>> - ko: run do_init_module(mod)->do_one_initcall(mod->init) to execute initfn
+>>    of the specified module.
+>>
+>> If we change module_subinit to something like this, not called in
+>> module_init,
+>> Not only do we want to ensure that exit is executed in reverse order of
+>> init, but we also want to ensure the order of init.
+> Yes.
+>
+>> This does not guarantee the order in which init will be executed (although
+>> the init/exit order will remain the same)
+> Hmm, so the normal built-in initcalls depend on the link order, but when
+> they are in the same file, the compiler can reorder them before we even
+> get to the linker.
+>
+> I wonder what a good syntax would be to still avoid the boilerplate
+> code.  We'd probably need one macro to actually define the init/exit
+> table in a single statement so that it can't be reordered, but that
+> would lose the ability to actually declare the module subinit/exit
+> handlers in multiple files, which really is the biggest win of this
+> scheme as it allows to keep the functions static instead of exposing
+> them to other compilation units.
+>
+> And in fact even in your three converted file systems, most
+> subinit/exit handler are in separate files, so maybe instead
+> enforcing that there is just one per file and slightly refactoring
+> the code so that this is the case might be the best option?
+- It doesn't feel good to have only one subinit/exit in a file.
+   Assuming that there is only one file in each file, how do we
+   ensure that the files are linked in order?(Is it sorted by *.o
+   in the Makefile?)
 
-I did a quick check for sr9700.c and there seems to be other
-suspicious usage of sr_read_reg().  But, for sr_mdio_read(), I think
-the patch is sufficient.
+- Even if the order of each init is linked correctly, then the
+   runtime will be iterated through the .subinitcall.init section,
+   which executes each initfn in sequence (similar to do_initcalls),
+   which means that no other code can be inserted between each subinit.
 
-Reviewed-by: Shigeru Yoshida <syoshida@redhat.com>
 
-> ---
-> Changes in v4:
-> - added a check for sr_read_reg() as suggestions.
-> Changes in v3:
-> - added Cc stable line as suggestions.
-> Changes in v2:
-> - modified the subject as suggestions.
-> ---
->  drivers/net/usb/sr9700.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
-> index 0a662e42ed96..cb7d2f798fb4 100644
-> --- a/drivers/net/usb/sr9700.c
-> +++ b/drivers/net/usb/sr9700.c
-> @@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
->  	struct usbnet *dev = netdev_priv(netdev);
->  	__le16 res;
->  	int rc = 0;
-> +	int err;
->  
->  	if (phy_id) {
->  		netdev_dbg(netdev, "Only internal phy supported\n");
-> @@ -189,11 +190,17 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
->  	if (loc == MII_BMSR) {
->  		u8 value;
->  
-> -		sr_read_reg(dev, SR_NSR, &value);
-> +		err = sr_read_reg(dev, SR_NSR, &value);
-> +		if (err < 0)
-> +			return err;
-> +
->  		if (value & NSR_LINKST)
->  			rc = 1;
->  	}
-> -	sr_share_read_word(dev, 1, loc, &res);
-> +	err = sr_share_read_word(dev, 1, loc, &res);
-> +	if (err < 0)
-> +		return err;
-> +
->  	if (rc == 1)
->  		res = le16_to_cpu(res) | BMSR_LSTATUS;
->  	else
-> -- 
-> 2.25.1
-> 
+If module_subinit is called in module_init, other code can be inserted
+between subinit, similar to the following:
 
+```
+static int __init init_example(void)
+{
+     module_subinit(inita, exita);
+
+     otherthing...
+
+     module_subinit(initb, exitb);
+
+     return 0;
+}
+
+module_init(init_example);
+```
+
+IMHO, module_subinit() might be better called in module_init().
+
+Thanks,
+Youling.
 
