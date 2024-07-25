@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-262203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4028F93C264
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FFF93C26D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF392B22CC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1AA283B29
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ABE19AA6E;
-	Thu, 25 Jul 2024 12:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AB919AD6B;
+	Thu, 25 Jul 2024 12:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cd5z6w/2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S4Fy/XHm"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283AB19AA4F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37F19AA66
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721911842; cv=none; b=Mnjyb+31dMg1zUDa/tUavz0Azb+H5TxmCzhO5//qRYi8hIssZX8K6jxlBwxmFJ7/eQROO/3n5PAIdTndu+dvhG90kvrOiLk3w1hj5izYd+QZeg5z3eq0GPxBMYCisZ7NUR+8QpNZc1CZW62K9mYxnqxqhi4+oINcyFs6Jyf0Xy0=
+	t=1721911857; cv=none; b=jNFPaHeQC09uQFbNdwVc7shMr0xe8Bf40iKo90ZvdDg5d+2Y8Q8emd736WQrD/LzqBRZzhWDockLWW5U2CwC76WTad8SAlGYwIP1FOr7P9XXg7XkDTDaRCFNODaHJU5DVFp+Nc+ZjWDMhWruUqJirfsKvMVSCHezgkqgZej789E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721911842; c=relaxed/simple;
-	bh=u/n8FIBqeUNFl3zfbTvcsodu4bW5c400cD9afKq/9uA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PnjrH1SyZIGdUYSXS3nWZya11Y4tzUhSh2DW2qqYriphNe0F9a4YBJI3+SrsKWZLKFcusxn9GmI4+wfb9HYaUM6mtSYkQQ8TwsP3I6QzIEx+vAV8w5kEijGFDSE/1CP/5sXsQkyOImnEcrCiufEdiyZPwueoRx4Pe3raTEjAvls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cd5z6w/2; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1721911857; c=relaxed/simple;
+	bh=4XUqPxSx6vk33Fs5v1/69vqGU9Qu4OJRWDV/cVUixi8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QRVSpk0A81KoxNp362JTPq56zH9IrRXOX0uYhrTBHW60TgR3X+NL6/GDEkKm7o8E7Uc/BLOcqQKOM3EJmVjOlJ46U02JOtY0//EQ1CRt6Q5Nm4cExR+eyR58PUtPPaMubHQBcoYCLc/EiYtjvbH1tzf/MZZconLJrNgovkJiJ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S4Fy/XHm; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721911839;
+	s=mimecast20190719; t=1721911845;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aiC+tGdGBJ14JK0EM+dRzM1914+RfFNFtqMWibxNajs=;
-	b=Cd5z6w/2aesYuR4WUSk5d7F5Aan1QEjh59wEYBtLc7HyFj/zkjOW8oxbGdUtbYgH6Tkpgs
-	WFgq84EbamY2Vo/XxBTbwfSrW4FFa5pkE6LsqCky9cbBd1kiq5kgaMnsy0bjKrPMj0rga8
-	ErUzmtXy6MX0wxFhAekWIFT7siAg4bo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6VNin/3nB4iUE5Zgy3fIduRtJbFimcejG9hH+gh4os=;
+	b=S4Fy/XHmKCm3g4TSh4T8pqv2YpyCn/OZlko68waVOpD/fbcJ6ptRd5dfB5UlbYiRI9Y8rj
+	tsTTzp1UAQ3cRFIzEs68KUql5VuvNNBIOQ7uvKy7IDaZx+vX3awzSrFI2JVEUXueoj4tec
+	A6sfwKo/9cAmKrIy33Bw2Ev/mr7sJs8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-370-Vq2WhVMOOfOwprPWSW2E0g-1; Thu, 25 Jul 2024 08:50:38 -0400
-X-MC-Unique: Vq2WhVMOOfOwprPWSW2E0g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36873a449dfso1017148f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:50:38 -0700 (PDT)
+ us-mta-660-1pH-RePbO4uxEcKuPDnuSw-1; Thu, 25 Jul 2024 08:50:44 -0400
+X-MC-Unique: 1pH-RePbO4uxEcKuPDnuSw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4266945770eso6261215e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:50:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721911837; x=1722516637;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aiC+tGdGBJ14JK0EM+dRzM1914+RfFNFtqMWibxNajs=;
-        b=ebypHshyG2512gxxNmg6P0pYf9O+t6OzIJC1OPYh6TryqC0fT0Y8Amom1+eeD92QTN
-         pdIq77MeRUQHHuS8e2fblfay/RofdLsYz5YIwwfS0VRIubeLFZznxwgi1jyAFk4/Nc7d
-         O0TvlUPoLP8uHdbFEsiF3pTPwUAQRMQKRCX6kF38INPKmL8+WBKqp5Ty2busrMzP4KmO
-         a8qxCdvXFsh2H7nZs/uspYDoMPb9UKlKAIcAyCNv2TquiSN0Voq9ESZofaz4Ipv4YxKR
-         sjLJ1hDZStU8Md1lvAhRVBASl1OwLkVZM6527MVmBV4MEN80u3vEa2kXBJ6RugL4skDh
-         cQNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8uAlmV4kt9kxeqDAZ0EwDKgj8deuGkgJ5AjR23ZXvxbma2gic74uVkzTcKyCJL5Z7c5Ebfw8R1P06hyoDyF9EpX8CTrmrd62x1pTf
-X-Gm-Message-State: AOJu0YxHYXjEWyMRu/UIfPKKjs/rRvB4F8eTOWbrglpDSzw0cH0kFr0T
-	TTbXFUx1tr/XE0GGzTNggGN+AgyPlZIl2uqN7oaQqp0+LPKnzDb0W9CHT9oaw9NQOzGiDZbLH4r
-	/OwIqyjpU0kBADo/A76a0EIO9rzc+g452sHRrSJLqnPDlpnCW1nYmdr4Jdzw6qmXkLUs1
-X-Received: by 2002:a5d:6847:0:b0:360:866f:5083 with SMTP id ffacd0b85a97d-36b31baa861mr1863124f8f.32.1721911837190;
-        Thu, 25 Jul 2024 05:50:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvNOfiyZLdndMxewqoDL+v5f5t2gA5QKku5uTpws/6FD57ncMwj1yC6F4sK8Meatae3pXBHQ==
-X-Received: by 2002:a5d:6847:0:b0:360:866f:5083 with SMTP id ffacd0b85a97d-36b31baa861mr1863099f8f.32.1721911836736;
-        Thu, 25 Jul 2024 05:50:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721911843; x=1722516643;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a6VNin/3nB4iUE5Zgy3fIduRtJbFimcejG9hH+gh4os=;
+        b=GSJB3RODEHEZ9YXISLtWsKmeYL0k+6Nizctowp0UHuqcws9ZwJVIykagZvnGwVB4SD
+         R1FThT/C4iLd0Vb+ig2SV5XXeHMQCh8BwKTnGny0qt00pc7KdhcUcfHpnpcRZsaaYkv8
+         l6RogrHPfquzQZSumjh3PcdEdVGO/OTEIj/aauyMeO4aF2CB+zZ/Q2WGqYGbQqolvd+j
+         5muWcS09OdZhZXtQfabaZYXgeCBwQBpJlY56aPLDKVH16BnvAeTGz0zIzaCfhLAWpqEx
+         2t+Fwau54U2YMVTzbFtJ0RQ6jOt6OWtc9E7UOAXwvr5ydaJj3//Qm3yvCfspt5J6t9dk
+         3XSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWt6S2czEQLpwGvSaep1lnsmJsSHRJdfEWOE61oulfTtx8WzWtfeiVV2GZO8u8wYYZwYrcxVepp1e9Gi+bXNl0Nv7cAh/EMNNAN0Q+5
+X-Gm-Message-State: AOJu0YztwvJPNiHcMA3lZ5n2/iQId1EKZ0wIiSyJpdHZ69SlmG5QJz0i
+	hXjPXcevHE8/IIpNnP7vyNVe5sYTxS3Az6H8HvZ/Bl3usD1Rdhj+1z08fvx/7b0/eWYnF9tMmjv
+	OTS/7Qkj31mKfURnvey4rz2JDGD8HU+qc6Zj0ZGKYyeZgUrr40pKJfiZOeMcP
+X-Received: by 2002:a5d:530a:0:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-36b319d0671mr1996495f8f.4.1721911843404;
+        Thu, 25 Jul 2024 05:50:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFnQtljov7mTyBnm12EsdGYTBFRa0d3qWO13EEzKuHlha1cnD0ekvmxjpnTJcwuAzA/gfxuQ==
+X-Received: by 2002:a5d:530a:0:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-36b319d0671mr1996480f8f.4.1721911843083;
+        Thu, 25 Jul 2024 05:50:43 -0700 (PDT)
 Received: from klayman.redhat.com (host-82-62-247-97.business.telecomitalia.it. [82.62.247.97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9393sm2092301f8f.26.2024.07.25.05.50.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9393sm2092301f8f.26.2024.07.25.05.50.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 05:50:36 -0700 (PDT)
+        Thu, 25 Jul 2024 05:50:42 -0700 (PDT)
 From: Marco Pagani <marpagan@redhat.com>
 To: Moritz Fischer <mdf@kernel.org>,
 	Wu Hao <hao.wu@intel.com>,
@@ -78,10 +80,12 @@ To: Moritz Fischer <mdf@kernel.org>,
 Cc: Marco Pagani <marpagan@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	linux-fpga@vger.kernel.org
-Subject: [PATCH 0/3] Simplify and improve fpga test suites using deferred actions
-Date: Thu, 25 Jul 2024 14:50:28 +0200
-Message-ID: <20240725125031.308195-1-marpagan@redhat.com>
+Subject: [PATCH 1/3] Simplify and improve the fpga manager test suite using deferred actions
+Date: Thu, 25 Jul 2024 14:50:29 +0200
+Message-ID: <20240725125031.308195-2-marpagan@redhat.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240725125031.308195-1-marpagan@redhat.com>
+References: <20240725125031.308195-1-marpagan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,24 +94,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use deferred actions to simplify fpga test suites and avoid potential
-memory leaks when test cases fail. Deferred actions are executed when a
-test is completed either successfully or unsuccessfully (e.g., due to a
-failed assertion).
+Use deferred actions to simplify the test suite and avoid potential memory
+leaks when test cases fail. Remove unnecessary calls to
+kunit_device_unregister() since kunit devices are tied to the test context
+and released by a deferred action when the test is completed.
 
-Marco Pagani (3):
-  Simplify and improve the fpga manager test suite using deferred
-    actions
-  Simplify and improve the fpga bridge test suite using deferred actions
-  Simplify and improve the fpga region test suite using deferred actions
+Signed-off-by: Marco Pagani <marpagan@redhat.com>
+---
+ drivers/fpga/tests/fpga-mgr-test.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
- drivers/fpga/tests/fpga-bridge-test.c | 25 +++++++---------
- drivers/fpga/tests/fpga-mgr-test.c    | 28 +++++++++++-------
- drivers/fpga/tests/fpga-region-test.c | 41 ++++++++++++++++-----------
- 3 files changed, 52 insertions(+), 42 deletions(-)
-
-
-base-commit: 3a0fa8e97d3024de199634667900b6a90bbe43d0
+diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+index 125b3a4d43c6..9cb37aefbac4 100644
+--- a/drivers/fpga/tests/fpga-mgr-test.c
++++ b/drivers/fpga/tests/fpga-mgr-test.c
+@@ -44,6 +44,16 @@ struct mgr_ctx {
+ 	struct mgr_stats stats;
+ };
+ 
++/*
++ * Wrappers to avoid cast warnings when passing action functions directly
++ * to kunit_add_action().
++ */
++KUNIT_DEFINE_ACTION_WRAPPER(sg_free_table_wrapper, sg_free_table,
++			    struct sg_table *);
++
++KUNIT_DEFINE_ACTION_WRAPPER(fpga_image_info_free_wrapper, fpga_image_info_free,
++			    struct fpga_image_info *);
++
+ /**
+  * init_test_buffer() - Allocate and initialize a test image in a buffer.
+  * @test: KUnit test context object.
+@@ -257,6 +267,9 @@ static void fpga_mgr_test_img_load_sgt(struct kunit *test)
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 	sg_init_one(sgt->sgl, img_buf, IMAGE_SIZE);
+ 
++	ret = kunit_add_action_or_reset(test, sg_free_table_wrapper, sgt);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
+ 	ctx->img_info->sgt = sgt;
+ 
+ 	ret = fpga_mgr_load(ctx->mgr, ctx->img_info);
+@@ -273,13 +286,12 @@ static void fpga_mgr_test_img_load_sgt(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, ctx->stats.op_write_init_seq, ctx->stats.op_parse_header_seq + 1);
+ 	KUNIT_EXPECT_EQ(test, ctx->stats.op_write_sg_seq, ctx->stats.op_parse_header_seq + 2);
+ 	KUNIT_EXPECT_EQ(test, ctx->stats.op_write_complete_seq, ctx->stats.op_parse_header_seq + 3);
+-
+-	sg_free_table(ctx->img_info->sgt);
+ }
+ 
+ static int fpga_mgr_test_init(struct kunit *test)
+ {
+ 	struct mgr_ctx *ctx;
++	int ret;
+ 
+ 	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+@@ -294,19 +306,14 @@ static int fpga_mgr_test_init(struct kunit *test)
+ 	ctx->img_info = fpga_image_info_alloc(ctx->dev);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->img_info);
+ 
++	ret = kunit_add_action_or_reset(test, fpga_image_info_free_wrapper, ctx->img_info);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
+ 	test->priv = ctx;
+ 
+ 	return 0;
+ }
+ 
+-static void fpga_mgr_test_exit(struct kunit *test)
+-{
+-	struct mgr_ctx *ctx = test->priv;
+-
+-	fpga_image_info_free(ctx->img_info);
+-	kunit_device_unregister(test, ctx->dev);
+-}
+-
+ static struct kunit_case fpga_mgr_test_cases[] = {
+ 	KUNIT_CASE(fpga_mgr_test_get),
+ 	KUNIT_CASE(fpga_mgr_test_lock),
+@@ -318,7 +325,6 @@ static struct kunit_case fpga_mgr_test_cases[] = {
+ static struct kunit_suite fpga_mgr_suite = {
+ 	.name = "fpga_mgr",
+ 	.init = fpga_mgr_test_init,
+-	.exit = fpga_mgr_test_exit,
+ 	.test_cases = fpga_mgr_test_cases,
+ };
+ 
 -- 
 2.45.2
 
