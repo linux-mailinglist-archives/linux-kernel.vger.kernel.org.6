@@ -1,565 +1,505 @@
-Return-Path: <linux-kernel+bounces-261832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5233893BCB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:46:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD40093BCB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167CC2856D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E52F01C215E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5B616D9B7;
-	Thu, 25 Jul 2024 06:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDC316D9B7;
+	Thu, 25 Jul 2024 06:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDBsPjha"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiCzSknb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9811F15FA96
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0E263C7;
+	Thu, 25 Jul 2024 06:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721890008; cv=none; b=JCtfTPBbFjojw9IfpLG2fOPCq/cCQ1VD2KVNpKpqhuKKXtaeb3miGJeegMtfkA4TPywCtpZtGj3SlswmxicocMSAjvRvxY+eqb70/BU55pxJMPO7fKU5b/RDb4YhzoCtBrFjfnsGMStg7AyYWX2CButjx2GX8fDrfm+wN6XIVNc=
+	t=1721889836; cv=none; b=EnJzCPwHKB/MSrRplYIyfG8yPLwdt83OmsuScQsRhpFFNnV4KB1IGF90ulqVW4a8quFPxexs08p5ojpIfK3636KH6I5r0WZex+D/mohhtT5ix0us4UWuh6ZDZt91UcFRhvWSKjxczmtpHAziF+e28D71mLd0jIUUbGG7B/W2WgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721890008; c=relaxed/simple;
-	bh=NUMLKRX6NViwl6axdyNznKeK1TtgPZrNlCDLGVcMlA8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jDQewE/IGt9z5KOctnxSiVGih/6kr5U9lWnDoEjam84fCgX1VeO6Mlq/Iwsz1rVSNmuGPMt69G765bU3x684GZnuEKUabO2kDKLIq6yNu5GD3DdxiDysn3nsipFtJigDyz8iKgjBsSDH6NG8GDMyd3YHH/7W8c+wC+FcZhFqk0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hDBsPjha; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721890007; x=1753426007;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=NUMLKRX6NViwl6axdyNznKeK1TtgPZrNlCDLGVcMlA8=;
-  b=hDBsPjhaLs6V8eG0muF6WG0eUQVyVedUwRHQPoLsENNNtRX7xyfyXQxp
-   S3exbqbbPe3TdpqgcJBQLIY47/U9B+gpJmOa9yKAg886Obh6aTgnypF8F
-   /BGMKTFnxLVx47IsuOsQBDXGp4D+23ExGjpzvI1MPe4xBDPDYdRy2sj+L
-   HpS9oJV3NWD7EskEQt+vht0DcpsNSAYMnfEEj4IHFVGWWswGj6QSkrw5h
-   iwUejxJoTsv806z0sxD7KrSLmXBupbFXmA6NCnLcsoAgv3ptSU1t9eQg9
-   s+9KcqkLbBHCGone7fPFTZ0MjA/8+41bJqi4zkJjISuq2cEofEVf7+GvV
-   w==;
-X-CSE-ConnectionGUID: LYgKn7JcTa205altbI7Shg==
-X-CSE-MsgGUID: 607B9IUKQaaOKsgywUZP6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="22516458"
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="22516458"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 23:46:45 -0700
-X-CSE-ConnectionGUID: PUXGKoNnSL2BBn3WdO8ZHw==
-X-CSE-MsgGUID: kNlhaVFAR1iwdoE4AgWh4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="56971583"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 23:46:42 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Hugh
- Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <CACePvbV9cx6Le1cYgYo2D922E4Com45+XXquMZugog2+w5K_yg@mail.gmail.com>
-	(Chris Li's message of "Wed, 24 Jul 2024 15:41:00 -0700")
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
-	<20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
-	<ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
-	<CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
-	<b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
-	<CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-	<874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
-	<87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
-	<87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
-	<87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
-	<CACePvbV9cx6Le1cYgYo2D922E4Com45+XXquMZugog2+w5K_yg@mail.gmail.com>
-Date: Thu, 25 Jul 2024 14:43:09 +0800
-Message-ID: <87plr26kg2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721889836; c=relaxed/simple;
+	bh=j5u2RpXt7FLWK3p3uA35Pa2GPE4jCj0dwoVonDkPdqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nqn7HqyPBW9TteHI8VLYkCWySMlHRWBFLmTQ30pQB+URHpnKEe4Emoydrude+wK2UvQHO4yT+uWD7heEOMoL2wVn3/qv9QgKYpT9xB7gZf0583TlfgDpn7OX5/IPum0rhik+t/Cq4w5Ti56UpwHXe6ZssZPRrTmXK5CF9BUR6Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiCzSknb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A107C116B1;
+	Thu, 25 Jul 2024 06:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721889836;
+	bh=j5u2RpXt7FLWK3p3uA35Pa2GPE4jCj0dwoVonDkPdqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZiCzSknbY+OksEDov3gvjl3Jf5xG355EhKITaXvqrA9kRiJPRUJ4Lio/j4risjF5w
+	 qKzetqLt619vnvQUctynXWqPDdMPXu9MRG0r3L3VfzuCrr5Uqsn2jwWpkdqgsxdzLh
+	 g8C5n4gYcf4YIk1RuoCqYwBS7q06RUjo3CY8ArrO4GbwWzJmwTwoAf7bVetTylRd4u
+	 ccNxoReArFA921fSVLMQNlbznN1BNgSb0o83574kpKvt33yXP7S/Zey+fnAyzTdKit
+	 HJfhmqXsbyoMI9VFuNSw8OaMIvKoKzHxa3khZh2osODFUulB33cHi2+dPZAb8jRNtG
+	 r4rCtQxoViCdQ==
+Date: Thu, 25 Jul 2024 12:13:52 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Konstantin Porotchkin <kostap@marvell.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC v3 5/6] phy: mvebu-cp110-utmi: add support for
+ armada-380 utmi phys
+Message-ID: <ZqH0KDVjCILr3A6r@matsya>
+References: <20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com>
+ <20240720-a38x-utmi-phy-v3-5-4c16f9abdbdc@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240720-a38x-utmi-phy-v3-5-4c16f9abdbdc@solid-run.com>
 
-Chris Li <chrisl@kernel.org> writes:
+On 20-07-24, 16:19, Josua Mayer wrote:
+> Armada 380 has similar USB-2.0 PHYs as CP-110. The differences are:
+> - register base addresses
+> - gap between port registers
+> - number of ports: 388 has three, cp110 two
+> - device-mode mux bit refers to different ports
+> - syscon register's base address (offsets identical)
+> - armada-8k uses syscon for various drivers, a38x not
+> 
+> Differentiation uses of_match_data with distinct compatible strings.
+> 
+> Add support for Armada 380 PHYs by partially restructuting the driver:
+> - Port register pointers are moved to the per-port private data.
+> - Add armada-38x-specific compatible string and store enum value in
+>   of_match_data for differentiation.
+> - Add support for optional regs usb-cfg and utmi-cfg, to be used instead
+>   of syscon.
+> 
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> ---
+>  drivers/phy/marvell/phy-mvebu-cp110-utmi.c | 209 +++++++++++++++++++++++------
+>  1 file changed, 166 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/phy/marvell/phy-mvebu-cp110-utmi.c b/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
+> index 4922a5f3327d..4341923e85bc 100644
+> --- a/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
+> +++ b/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
+> @@ -19,7 +19,7 @@
+>  #include <linux/usb/of.h>
+>  #include <linux/usb/otg.h>
+>  
+> -#define UTMI_PHY_PORTS				2
+> +#define UTMI_PHY_PORTS				3
+>  
+>  /* CP110 UTMI register macro definetions */
+>  #define SYSCON_USB_CFG_REG			0x420
+> @@ -76,32 +76,44 @@
+>  #define PLL_LOCK_DELAY_US			10000
+>  #define PLL_LOCK_TIMEOUT_US			1000000
+>  
+> -#define PORT_REGS(p)				((p)->priv->regs + (p)->id * 0x1000)
+> +enum mvebu_cp110_utmi_type {
+> +	/* 0 is reserved to avoid clashing with NULL */
+> +	A380_UTMI = 1,
+> +	CP110_UTMI = 2,
+> +};
+> +
+> +struct mvebu_cp110_utmi_port;
 
-> Hi Ryan and Ying,
->
-> Sorry I was busy. I am catching up on the email now.
->
-> On Wed, Jul 24, 2024 at 1:33=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.co=
-m> wrote:
->>
->> On 23/07/2024 07:27, Huang, Ying wrote:
->> > Ryan Roberts <ryan.roberts@arm.com> writes:
->> >
->> >> On 22/07/2024 09:49, Huang, Ying wrote:
->> >>> Ryan Roberts <ryan.roberts@arm.com> writes:
->> >>>
->> >>>> On 22/07/2024 03:14, Huang, Ying wrote:
->> >>>>> Ryan Roberts <ryan.roberts@arm.com> writes:
->> >>>>>
->> >>>>>> On 18/07/2024 08:53, Huang, Ying wrote:
->> >>>>>>> Chris Li <chrisl@kernel.org> writes:
->> >>>>>>>
->> >>>>>>>> On Wed, Jul 17, 2024 at 3:14=E2=80=AFAM Ryan Roberts <ryan.robe=
-rts@arm.com> wrote:
->> >>>>>>>>>
->> >>>>>>>>> On 16/07/2024 23:46, Chris Li wrote:
->> >>>>>>>>>> On Mon, Jul 15, 2024 at 8:40=E2=80=AFAM Ryan Roberts <ryan.ro=
-berts@arm.com> wrote:
->> >>>>>>>>>>>
->> >>>>>>>>>>> On 11/07/2024 08:29, Chris Li wrote:
->> >>>>>
->> >>>>> [snip]
->> >>>>>
->> >>>>>>>>>>>> +
->> >>>>>>>>>>>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
->> >>>>>>>>>>>> +             list_add_tail(&ci->list, &p->nonfull_clusters=
-[ci->order]);
->> >>>>>>>>>>>
->> >>>>>>>>>>> I find the transitions when you add and remove a cluster fro=
-m the
->> >>>>>>>>>>> nonfull_clusters list a bit strange (if I've understood corr=
-ectly): It is added
->> >>>>>>>>>>> to the list whenever there is at least one free swap entry i=
-f not already on the
->> >>>>>>>>>>> list. But you take it off the list when assigning it as the =
-current cluster for
->> >>>>>>>>>>> a cpu in scan_swap_map_try_ssd_cluster().
->> >>>>>>>>>>>
->> >>>>>>>>>>> So you could have this situation:
->> >>>>>>>>>>>
->> >>>>>>>>>>>   - cpuA allocs cluster from free list (exclusive to that cp=
-u)
->> >>>>>>>>>>>   - cpuA allocs 1 swap entry from current cluster
->> >>>>>>>>>>>   - swap entry is freed; cluster added to nonfull_clusters
->> >>>>>>>>>>>   - cpuB "allocs" cluster from nonfull_clusters
->> >>>>>>>>>>>
->> >>>>>>>>>>> At this point both cpuA and cpuB share the same cluster as t=
-heir current
->> >>>>>>>>>>> cluster. So why not just put the cluster on the nonfull_clus=
-ters list at
->> >>>>>>>>>>> allocation time (when removed from free_list) and only remov=
-e it from the
->> >>>>>>>>>>
->> >>>>>>>>>> The big rewrite on patch 3 does that, taking it off the free =
-list and
->> >>>>>>>>>> moving it into nonfull.
->> >>>>>>>>>
->> >>>>>>>>> Oh, from the title, "RFC: mm: swap: seperate SSD allocation fr=
-om
->> >>>>>>>>> scan_swap_map_slots()" I assumed that was just a refactoring o=
-f the code to
->> >>>>>>>>> separate the SSD and HDD code paths. Personally I'd prefer to =
-see the
->> >>>>>>>>> refactoring separated from behavioural changes.
->> >>>>>>>>
->> >>>>>>>> It is not a refactoring. It is a big rewrite of the swap alloca=
-tor
->> >>>>>>>> using the cluster. Behavior change is expected. The goal is com=
-pletely
->> >>>>>>>> removing the brute force scanning of swap_map[] array for clust=
-er swap
->> >>>>>>>> allocation.
->> >>>>>>>>
->> >>>>>>>>>
->> >>>>>>>>> Since the patch was titled RFC and I thought it was just refac=
-toring, I was
->> >>>>>>>>> deferring review. But sounds like it is actually required to r=
-ealize the test
->> >>>>>>>>> results quoted on the cover letter?
->> >>>>>>>>
->> >>>>>>>> Yes, required because it handles the previous fall out case try=
-_ssd()
->> >>>>>>>> failed. This big rewrite has gone through a lot of testing and =
-bug
->> >>>>>>>> fix. It is pretty stable now. The only reason I keep it as RFC =
-is
->> >>>>>>>> because it is not feature complete. Currently it does not do sw=
-ap
->> >>>>>>>> cache reclaim. The next version will have swap cache reclaim and
->> >>>>>>>> remove the RFC.
->> >>>>>>>>
->> >>>>>>>>>
->> >>>>>>>>>> I am only making the minimal change in this step so the big r=
-ewrite can land.
->> >>>>>>>>>>
->> >>>>>>>>>>> nonfull_clusters list when it is completely full (or at leas=
-t definitely doesn't
->> >>>>>>>>>>> have room for an `order` allocation)? Then you allow "steali=
-ng" always instead
->> >>>>>>>>>>> of just sometimes. You would likely want to move the cluster=
- to the end of the
->> >>>>>>>>>>> nonfull list when selecting it in scan_swap_map_try_ssd_clus=
-ter() to reduce the
->> >>>>>>>>>>> chances of multiple CPUs using the same cluster.
->> >>>>>>>>>>
->> >>>>>>>>>> For nonfull clusters it is less important to avoid multiple C=
-PU
->> >>>>>>>>>> sharing the cluster. Because the cluster already has previous=
- swap
->> >>>>>>>>>> entries allocated from the previous CPU.
->> >>>>>>>>>
->> >>>>>>>>> But if 2 CPUs have the same cluster, isn't there a pathalogica=
-l case where cpuA
->> >>>>>>>>> could be slightly ahead of cpuB so that cpuA allocates all the=
- free pages and
->> >>>>>>>>
->> >>>>>>>> That happens to exist per cpu next pointer already. When the ot=
-her CPU
->> >>>>>>>> advances to the next cluster pointer, it can cross with the oth=
-er
->> >>>>>>>> CPU's next cluster pointer.
->> >>>>>>>
->> >>>>>>> No.  si->percpu_cluster[cpu].next will keep in the current per c=
-pu
->> >>>>>>> cluster only.  If it doesn't do that, we should fix it.
->> >>>>>>>
->> >>>>>>> I agree with Ryan that we should make per cpu cluster correct.  A
->> >>>>>>> cluster in per cpu cluster shouldn't be put in nonfull list.  Wh=
-en we
->> >>>>>>> scan to the end of a per cpu cluster, we can put the cluster in =
-nonfull
->> >>>>>>> list if necessary.  And, we should make it correct in this patch=
- instead
->> >>>>>>> of later in series.  I understand that you want to make the patc=
-h itself
->> >>>>>>> simple, but it's important to make code simple to be understood =
-too.
->> >>>>>>> Consistent design choice will do that.
->> >>>>>>
->> >>>>>> I think I'm actually arguing for the opposite of what you suggest=
- here.
->> >>>>>
->> >>>>> Sorry, I misunderstood your words.
->> >>>>>
->> >>>>>> As I see it, there are 2 possible approaches; either a cluster is=
- always
->> >>>>>> considered exclusive to a single cpu when its set as a per-cpu cl=
-uster, so it
->> >>>>>> does not appear on the nonfull list. Or a cluster is considered s=
-harable in this
->> >>>>>> case, in which case it should be added to the nonfull list.
->> >>>>>>
->> >>>>>> The code at the moment sort of does both; when a cpu decides to u=
-se a cluster in
->> >>>>>> the nonfull list, it removes it from that list to make it exclusi=
-ve. But as soon
->> >>>>>> as a single swap entry is freed from that cluster it is put back =
-on the list.
->> >>>>>> This neither-one-policy-nor-the-other seems odd to me.
->> >>>>>>
->> >>>>>> I think Huang, Ying is arguing to keep it always exclusive while =
-installed as a
->> >>>>>> per-cpu cluster.
->> >>>>>
->> >>>>> Yes.
->> >>>>>
->> >>>>>> I was arguing to make it always shared. Perhaps the best
->> >>>>>> approach is to implement the exclusive policy in this patch (you'=
-d need a flag
->> >>>>>> to note if any pages were freed while in exclusive use, then when=
- exclusive use
->> >>>>>> completes, put it back on the nonfull list if the flag was set). =
-Then migrate to
->> >>>>>> the shared approach as part of the "big rewrite"?
->> >>>>>>>
->> >>>>>>>>> cpuB just ends up scanning and finding nothing to allocate. I =
-think do want to
->> >>>>>>>>> share the cluster when you really need to, but try to avoid it=
- if there are
->> >>>>>>>>> other options, and I think moving the cluster to the end of th=
-e list might be a
->> >>>>>>>>> way to help that?
->> >>>>>>>>
->> >>>>>>>> Simply moving to the end of the list can create a possible dead=
-loop
->> >>>>>>>> when all clusters have been scanned and not available swap range
->> >>>>>>>> found.
->> >>>>>
->> >>>>> I also think that the shared approach has dead loop issue.
->> >>>>
->> >>>> What exactly do you mean by dead loop issue? Perhaps you are sugges=
-ting the code
->> >>>> won't know when to stop dequeing/requeuing clusters on the nonfull =
-list and will
->> >>>> go forever? That's surely just an implementation issue to solve? It=
-'s not a
->> >>>> reason to avoid the design principle; if we agree that maintaining =
-sharability
->> >>>> of the cluster is preferred then the code must be written to guard =
-against the
->> >>>> dead loop problem. It could be done by remembering the first cluste=
-r you
->> >>>> dequeued/requeued in scan_swap_map_try_ssd_cluster() and stop when =
-you get back
->> >>>> to it. (I think holding the si lock will protect against concurrent=
-ly freeing
->> >>>> the cluster so it should definitely remain in the list?).
->> >>>
->> >>> I believe that you can find some way to avoid the dead loop issue,
->> >>> although your suggestion may kill the performance via looping a long=
- list
->> >>> of nonfull clusters.
->> >>
->> >> I don't agree; If the clusters are considered exclusive (i.e. removed=
- from the
->> >> list when made current for a cpu), that only reduces the size of the =
-list by a
->> >> maximum of the number of CPUs in the system, which I suspect is prett=
-y small
->> >> compared to the number of nonfull clusters.
->> >
->> > Anyway, this depends on details.  If we cannot allocate a order-N swap
->> > entry from the cluster, we should remove it from the nonfull list for
->> > order-N (This is the behavior of this patch too).
->
-> Yes, Kairui implements something like that in the reclaim part of the
-> patch series. It is after patch 3. We are heavily testing the
-> performance and the stability of the reclaim patches. May I post the
-> reclaim together with patch 3 for discussion. If you want we can
-> discuss the re-order the patch in a later iteration.
->
->>
->> Yes that's a good point, and I conceed it is more difficult to detect th=
-at
->> condition if the cluster is shared. I suspect that with a bit of thinkin=
-g, we
->> could find a way though.
->
-> Kaiui has  the patch series show a good performance number that beats
-> the current swap cache reclaim.
->
-> I want to make a point regarding the patch ordering before vs after
-> patch 3 (aka the big rewrite).
-> Previously, the "san_swap_map_try_ssd_cluster" only did partial
-> allocation. It does not sucessfully allocate a swap entry 100% the
-> time.  The patch 3 makes the cluster allocation function return the
-> swap entry 100% of the time. There are no more fallback retry loops
-> outside of the cluster allocation function. Also the try_ssd function
-> does not do swap cache reclaims while the cluster allocation function
-> will need to. These two have very different constraints.
->
-> There for, adding different cluster header into
-> san_swap_map_try_ssd_cluste will be a lot of waste investment of
-> development time in the sense that, that function will need to be
-> rewrite any way, the end result is very different.
+why forward declare and not move the structs instead?
 
-I am not a big fan of implementing the final solution directly.
-Personally, I prefer to improve step by step.
+>  
+>  /**
+>   * struct mvebu_cp110_utmi - PHY driver data
+>   *
+> - * @regs: PHY registers
+> + * @regs_usb: USB configuration register
+>   * @syscon: Regmap with system controller registers
+>   * @dev: device driver handle
+>   * @ops: phy ops
+> + * @ports: phy object for each port
+>   */
+>  struct mvebu_cp110_utmi {
+> -	void __iomem *regs;
+> +	void __iomem *regs_usb;
+>  	struct regmap *syscon;
+>  	struct device *dev;
+>  	const struct phy_ops *ops;
+> +	struct mvebu_cp110_utmi_port *ports[UTMI_PHY_PORTS];
+>  };
+>  
+>  /**
+>   * struct mvebu_cp110_utmi_port - PHY port data
+>   *
+> + * @regs: PHY registers
+> + * @regs_cfg: PHY config register
+>   * @priv: PHY driver data
+>   * @id: PHY port ID
+>   * @dr_mode: PHY connection: USB_DR_MODE_HOST or USB_DR_MODE_PERIPHERAL
+>   */
+>  struct mvebu_cp110_utmi_port {
+>  	struct mvebu_cp110_utmi *priv;
+> +	void __iomem *regs;
+> +	void __iomem *regs_cfg;
+>  	u32 id;
+>  	enum usb_dr_mode dr_mode;
+>  };
+> @@ -118,47 +130,47 @@ static void mvebu_cp110_utmi_port_setup(struct mvebu_cp110_utmi_port *port)
+>  	 * The crystal used for all platform boards is now 25MHz.
+>  	 * See the functional specification for details.
+>  	 */
+> -	reg = readl(PORT_REGS(port) + UTMI_PLL_CTRL_REG);
+> +	reg = readl(port->regs + UTMI_PLL_CTRL_REG);
 
-> That is why I want to make this change patch after patch 3. There is
-> also the long test cycle after the modification to make sure the swap
-> code path is stable. I am not resisting a change of patch orders, it
-> is that patch can't directly be removed before patch 3 before the big
-> rewrite.
->
->
->>
->> > Your original
->> > suggestion appears like that you want to keep all cluster with order-N
->> > on the nonfull list for order-N always unless the number of free swap
->> > entry is less than 1<<N.
->>
->> Well I think that's certainly one of the conditions for removing it. But=
- agree
->> that if a full scan of the cluster has been performed and no swap entrie=
-s have
->> been freed since the scan started then it should also be removed from th=
-e list.
->
-> Yes, in the later patch of patch, beyond patch 3, we have the almost
-> full cluster that for the cluster has been scan and not able to
-> allocate order N entry.
->
->>
->> >
->> >>> And, I understand that in some situations it may
->> >>> be better to share clusters among CPUs.  So my suggestion is,
->> >>>
->> >>> - Make swap_cluster_info->order more accurate, don't pretend that we
->> >>>   have free swap entries with that order even after we are sure that=
- we
->> >>>   haven't.
->> >>
->> >> Is this patch pretending that today? I don't think so?
->> >
->> > IIUC, in this patch swap_cluster_info->order is still "N" even if we a=
-re
->> > sure that there are no order-N free swap entry in the cluster.
->>
->> Oh I see what you mean. I think you and Chris already discussed this? II=
-RC
->> Chris's point was that if you move that cluster to N-1, eventually all c=
-lusters
->> are for order-0 and you have no means of allocating high orders until a =
-whole
->> cluster becomes free. That logic certainly makes sense to me, so think i=
-ts
->> better for swap_cluster_info->order to remain static while the cluster is
->> allocated. (I only skimmed that conversation so appologies if I got the
->> conclusion wrong!).
->
-> Yes, that is the original intent, keep the cluster order as much as possi=
-ble.
->
->>
->> >
->> >> But I agree that a
->> >> cluster should only be on the per-order nonfull list if we know there=
- are at
->> >> least enough free swap entries in that cluster to cover the order. Of=
- course
->> >> that doesn't tell us for sure because they may not be contiguous.
->> >
->> > We can check that when free swap entry via checking adjacent swap
->> > entries.  IMHO, the performance should be acceptable.
->>
->> Would you then use the result of that scanning to "promote" a cluster's =
-order?
->> e.g. swap_cluster_info->order =3D N+1? That would be neat. But this all =
-feels like
->> a separate change on top of what Chris is doing here. For high orders th=
-ere
->> could be quite a bit of scanning required in the worst case for every pa=
-ge that
->> gets freed.
->
-> Right, I feel that is a different set of patches. Even this series is
-> hard enough for review. Those order promotion and demotion is heading
-> towards a buddy system design. I want to point out that even the buddy
-> system is not able to handle the case that swapfile is almost full and
-> the recently freed swap entries are not contiguous.
->
-> We can invest in the buddy system, which doesn't handle all the
-> fragmentation issues. Or I prefer to go directly to the discontiguous
-> swap entry. We pay a price for the indirect mapping of swap entries.
-> But it will solve the fragmentation issue 100%.
+why not handle this as a preparatory patch for this? Helps in review
 
-It's good if we can solve the fragmentation issue 100%.  Just need to
-pay attention to the cost.
+>  	reg &= ~(PLL_REFDIV_MASK | PLL_FBDIV_MASK | PLL_SEL_LPFR_MASK);
+>  	reg |= (PLL_REFDIV_VAL << PLL_REFDIV_OFFSET) |
+>  	       (PLL_FBDIV_VAL << PLL_FBDIV_OFFSET);
+> -	writel(reg, PORT_REGS(port) + UTMI_PLL_CTRL_REG);
+> +	writel(reg, port->regs + UTMI_PLL_CTRL_REG);
+>  
+>  	/* Impedance Calibration Threshold Setting */
+> -	reg = readl(PORT_REGS(port) + UTMI_CAL_CTRL_REG);
+> +	reg = readl(port->regs + UTMI_CAL_CTRL_REG);
+>  	reg &= ~IMPCAL_VTH_MASK;
+>  	reg |= IMPCAL_VTH_VAL << IMPCAL_VTH_OFFSET;
+> -	writel(reg, PORT_REGS(port) + UTMI_CAL_CTRL_REG);
+> +	writel(reg, port->regs + UTMI_CAL_CTRL_REG);
+>  
+>  	/* Set LS TX driver strength coarse control */
+> -	reg = readl(PORT_REGS(port) + UTMI_TX_CH_CTRL_REG);
+> +	reg = readl(port->regs + UTMI_TX_CH_CTRL_REG);
+>  	reg &= ~TX_AMP_MASK;
+>  	reg |= TX_AMP_VAL << TX_AMP_OFFSET;
+> -	writel(reg, PORT_REGS(port) + UTMI_TX_CH_CTRL_REG);
+> +	writel(reg, port->regs + UTMI_TX_CH_CTRL_REG);
+>  
+>  	/* Disable SQ and enable analog squelch detect */
+> -	reg = readl(PORT_REGS(port) + UTMI_RX_CH_CTRL0_REG);
+> +	reg = readl(port->regs + UTMI_RX_CH_CTRL0_REG);
+>  	reg &= ~SQ_DET_EN;
+>  	reg |= SQ_ANA_DTC_SEL;
+> -	writel(reg, PORT_REGS(port) + UTMI_RX_CH_CTRL0_REG);
+> +	writel(reg, port->regs + UTMI_RX_CH_CTRL0_REG);
+>  
+>  	/*
+>  	 * Set External squelch calibration number and
+>  	 * enable the External squelch calibration
+>  	 */
+> -	reg = readl(PORT_REGS(port) + UTMI_RX_CH_CTRL1_REG);
+> +	reg = readl(port->regs + UTMI_RX_CH_CTRL1_REG);
+>  	reg &= ~SQ_AMP_CAL_MASK;
+>  	reg |= (SQ_AMP_CAL_VAL << SQ_AMP_CAL_OFFSET) | SQ_AMP_CAL_EN;
+> -	writel(reg, PORT_REGS(port) + UTMI_RX_CH_CTRL1_REG);
+> +	writel(reg, port->regs + UTMI_RX_CH_CTRL1_REG);
+>  
+>  	/*
+>  	 * Set Control VDAT Reference Voltage - 0.325V and
+>  	 * Control VSRC Reference Voltage - 0.6V
+>  	 */
+> -	reg = readl(PORT_REGS(port) + UTMI_CHGDTC_CTRL_REG);
+> +	reg = readl(port->regs + UTMI_CHGDTC_CTRL_REG);
+>  	reg &= ~(VDAT_MASK | VSRC_MASK);
+>  	reg |= (VDAT_VAL << VDAT_OFFSET) | (VSRC_VAL << VSRC_OFFSET);
+> -	writel(reg, PORT_REGS(port) + UTMI_CHGDTC_CTRL_REG);
+> +	writel(reg, port->regs + UTMI_CHGDTC_CTRL_REG);
+>  }
+>  
+>  static int mvebu_cp110_utmi_phy_power_off(struct phy *phy)
+> @@ -166,22 +178,38 @@ static int mvebu_cp110_utmi_phy_power_off(struct phy *phy)
+>  	struct mvebu_cp110_utmi_port *port = phy_get_drvdata(phy);
+>  	struct mvebu_cp110_utmi *utmi = port->priv;
+>  	int i;
+> +	int reg;
+>  
+>  	/* Power down UTMI PHY port */
+> -	regmap_clear_bits(utmi->syscon, SYSCON_UTMI_CFG_REG(port->id),
+> -			  UTMI_PHY_CFG_PU_MASK);
+> +	if (!IS_ERR(port->regs_cfg)) {
+> +		reg = readl(port->regs_cfg);
+> +		reg &= ~(UTMI_PHY_CFG_PU_MASK);
+> +		writel(reg, port->regs_cfg);
+> +	} else
+> +		regmap_clear_bits(utmi->syscon, SYSCON_UTMI_CFG_REG(port->id),
+> +				  UTMI_PHY_CFG_PU_MASK);
 
->>
->> >
->> >>>
->> >>> My question is whether it's so important to share the per-cpu cluster
->> >>> among CPUs?
->> >>
->> >> My rationale for sharing is that the preference previously has been t=
-o favour
->> >> efficient use of swap space; we don't want to fail a request for allo=
-cation of a
->> >> given order if there are actually slots available just because they h=
-ave been
->> >> reserved by another CPU. And I'm still asserting that it should be ~z=
-ero cost to
->> >> do this. If I'm wrong about the zero cost, or in practice the sharing=
- doesn't
->> >> actually help improve allocation success, then I'm happy to take the =
-exclusive
->> >> approach.
->> >>
->> >>> I suggest to start with simple design, that is, per-CPU
->> >>> cluster will not be shared among CPUs in most cases.
->> >>
->> >> I'm all for starting simple; I think that's what I already proposed (=
-exclusive
->> >> in this patch, then shared in the "big rewrite"). I'm just objecting =
-to the
->> >> current half-and-half policy in this patch.
->> >
->> > Sounds good to me.  We can start with exclusive solution and evaluate
->> > whether shared solution is good.
->>
->> Yep. And also evaluate the dynamic order inc/dec idea too...
->
-> It is not able to avoid fragementation 100% of the time. I prefer the
-> discontinued swap entry as the next step, which guarantees forward
-> progress, we will not be stuck in a situation where we are not able to
-> allocate swap entries due to fragmentation.
+why are we doing both raw register read/write and regmap ops... that
+does not sound correct to me
 
-If my understanding were correct, the implementation complexity of the
-order promotion/demotion isn't at the same level of that of discontinued
-swap entry.
+>  
+>  	for (i = 0; i < UTMI_PHY_PORTS; i++) {
+> -		int test = regmap_test_bits(utmi->syscon,
+> -					    SYSCON_UTMI_CFG_REG(i),
+> -					    UTMI_PHY_CFG_PU_MASK);
+> +		if (!utmi->ports[i])
+> +			continue;
+> +
+> +		if (!IS_ERR(utmi->ports[i]->regs_cfg))
+> +			reg = readl(utmi->ports[i]->regs_cfg);
+> +		else
+> +			regmap_read(utmi->syscon, SYSCON_UTMI_CFG_REG(i), &reg);
+> +		int test = reg & UTMI_PHY_CFG_PU_MASK;
+>  		/* skip PLL shutdown if there are active UTMI PHY ports */
+>  		if (test != 0)
+>  			return 0;
+>  	}
+>  
+>  	/* PLL Power down if all UTMI PHYs are down */
+> -	regmap_clear_bits(utmi->syscon, SYSCON_USB_CFG_REG, USB_CFG_PLL_MASK);
+> +	if (!IS_ERR(utmi->regs_usb)) {
+> +		reg = readl(utmi->regs_usb);
+> +		reg &= ~(USB_CFG_PLL_MASK);
+> +		writel(reg, utmi->regs_usb);
+> +	} else
+> +		regmap_clear_bits(utmi->syscon, SYSCON_USB_CFG_REG, USB_CFG_PLL_MASK);
+>  
+>  	return 0;
+>  }
+> @@ -191,8 +219,15 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	struct mvebu_cp110_utmi_port *port = phy_get_drvdata(phy);
+>  	struct mvebu_cp110_utmi *utmi = port->priv;
+>  	struct device *dev = &phy->dev;
+> +	const void *match;
+> +	enum mvebu_cp110_utmi_type type;
+>  	int ret;
+>  	u32 reg;
+> +	u32 sel;
+> +
+> +	match = device_get_match_data(utmi->dev);
+> +	if (match)
+> +		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
+>  
+>  	/* It is necessary to power off UTMI before configuration */
+>  	ret = mvebu_cp110_utmi_phy_power_off(phy);
+> @@ -208,16 +243,45 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	 * to UTMI0 or to UTMI1 PHY port, but not to both.
+>  	 */
+>  	if (port->dr_mode == USB_DR_MODE_PERIPHERAL) {
+> -		regmap_update_bits(utmi->syscon, SYSCON_USB_CFG_REG,
+> -				   USB_CFG_DEVICE_EN_MASK | USB_CFG_DEVICE_MUX_MASK,
+> -				   USB_CFG_DEVICE_EN_MASK |
+> -				   (port->id << USB_CFG_DEVICE_MUX_OFFSET));
+> +		switch (type) {
+> +		case A380_UTMI:
+> +			/*
+> +			 * A380 muxes between ports 0/2:
+> +			 * - 0: Device mode on Port 2
+> +			 * - 1: Device mode on Port 0
+> +			 */
+> +			if (port->id == 1)
+> +				return -EINVAL;
+> +			sel = !!(port->id == 0);
+> +			break;
+> +		case CP110_UTMI:
+> +			/*
+> +			 * CP110 muxes between ports 0/1:
+> +			 * - 0: Device mode on Port 0
+> +			 * - 1: Device mode on Port 1
+> +			 */
+> +			sel = port->id;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +		if (!IS_ERR(utmi->regs_usb)) {
+> +			reg = readl(utmi->regs_usb);
+> +			reg &= ~(USB_CFG_DEVICE_EN_MASK | USB_CFG_DEVICE_MUX_MASK);
+> +			reg |= USB_CFG_DEVICE_EN_MASK;
+> +			reg |= (sel << USB_CFG_DEVICE_MUX_OFFSET);
+> +			writel(reg, utmi->regs_usb);
+> +		} else
+> +			regmap_update_bits(utmi->syscon, SYSCON_USB_CFG_REG,
+> +					   USB_CFG_DEVICE_EN_MASK | USB_CFG_DEVICE_MUX_MASK,
+> +					   USB_CFG_DEVICE_EN_MASK |
+> +					   (sel << USB_CFG_DEVICE_MUX_OFFSET));
+>  	}
+>  
+>  	/* Set Test suspendm mode and enable Test UTMI select */
+> -	reg = readl(PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
+> +	reg = readl(port->regs + UTMI_CTRL_STATUS0_REG);
+>  	reg |= SUSPENDM | TEST_SEL;
+> -	writel(reg, PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
+> +	writel(reg, port->regs + UTMI_CTRL_STATUS0_REG);
+>  
+>  	/* Wait for UTMI power down */
+>  	mdelay(1);
+> @@ -226,16 +290,21 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	mvebu_cp110_utmi_port_setup(port);
+>  
+>  	/* Power UP UTMI PHY */
+> -	regmap_set_bits(utmi->syscon, SYSCON_UTMI_CFG_REG(port->id),
+> -			UTMI_PHY_CFG_PU_MASK);
+> +	if (!IS_ERR(port->regs_cfg)) {
+> +		reg = readl(port->regs_cfg);
+> +		reg |= UTMI_PHY_CFG_PU_MASK;
+> +		writel(reg, port->regs_cfg);
+> +	} else
+> +		regmap_set_bits(utmi->syscon, SYSCON_UTMI_CFG_REG(port->id),
+> +				UTMI_PHY_CFG_PU_MASK);
+>  
+>  	/* Disable Test UTMI select */
+> -	reg = readl(PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
+> +	reg = readl(port->regs + UTMI_CTRL_STATUS0_REG);
+>  	reg &= ~TEST_SEL;
+> -	writel(reg, PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
+> +	writel(reg, port->regs + UTMI_CTRL_STATUS0_REG);
+>  
+>  	/* Wait for impedance calibration */
+> -	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_CAL_CTRL_REG, reg,
+> +	ret = readl_poll_timeout(port->regs + UTMI_CAL_CTRL_REG, reg,
+>  				 reg & IMPCAL_DONE,
+>  				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+>  	if (ret) {
+> @@ -244,7 +313,7 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	}
+>  
+>  	/* Wait for PLL calibration */
+> -	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_CAL_CTRL_REG, reg,
+> +	ret = readl_poll_timeout(port->regs + UTMI_CAL_CTRL_REG, reg,
+>  				 reg & PLLCAL_DONE,
+>  				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+>  	if (ret) {
+> @@ -253,7 +322,7 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	}
+>  
+>  	/* Wait for PLL ready */
+> -	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_PLL_CTRL_REG, reg,
+> +	ret = readl_poll_timeout(port->regs + UTMI_PLL_CTRL_REG, reg,
+>  				 reg & PLL_RDY,
+>  				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+>  	if (ret) {
+> @@ -262,7 +331,12 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+>  	}
+>  
+>  	/* PLL Power up */
+> -	regmap_set_bits(utmi->syscon, SYSCON_USB_CFG_REG, USB_CFG_PLL_MASK);
+> +	if (!IS_ERR(utmi->regs_usb)) {
+> +		reg = readl(utmi->regs_usb);
+> +		reg |= USB_CFG_PLL_MASK;
+> +		writel(reg, utmi->regs_usb);
+> +	} else
+> +		regmap_set_bits(utmi->syscon, SYSCON_USB_CFG_REG, USB_CFG_PLL_MASK);
+>  
+>  	return 0;
+>  }
+> @@ -274,7 +348,8 @@ static const struct phy_ops mvebu_cp110_utmi_phy_ops = {
+>  };
+>  
+>  static const struct of_device_id mvebu_cp110_utmi_of_match[] = {
+> -	{ .compatible = "marvell,cp110-utmi-phy" },
+> +	{ .compatible = "marvell,a38x-utmi-phy", .data = (void *)A380_UTMI },
+> +	{ .compatible = "marvell,cp110-utmi-phy", .data = (void *)CP110_UTMI },
 
---
-Best Regards,
-Huang, Ying
+Cast to void * are not required to be done
 
->
->>
->> >
->> >>>
->> >>> Another choice for sharing is when we run short of free swap space, =
-we
->> >>> disable per-CPU cluster and allocate from the shared non-full cluster
->> >>> list directly.
->> >>>
->> >>>> Which actually makes me wonder; what is the mechanism that prevents=
- the current
->> >>>> per-cpu cluster from being freed? Is that just handled by the confl=
-ict detection
->> >>>> thingy? Perhaps that would be better handled with a flag to mark it=
- in use, or
->> >>>> raise count when its current. (If Chris has implemented that in the=
- "big
->> >>>> rewrite" patch, sorry, I still haven't gotten around to looking at =
-it :-| )
->> >>>
->> >>> Yes.  We may need a flag for that.
->> >>>
->> >>>>>
->> >>>>>>> This is another reason that we should put the cluster in
->> >>>>>>> nonfull_clusters[order--] if there are no free swap entry with "=
-order"
->> >>>>>>> in the cluster.  It makes design complex to keep it in
->> >>>>>>> nonfull_clusters[order].
->> >>>>>>>
->> >>>>>>>> We have tried many different approaches including moving to the=
- end of
->> >>>>>>>> the list. It can cause more fragmentation because each CPU allo=
-cates
->> >>>>>>>> their swap slot cache (64 entries) from a different cluster.
->> >>>>>>>>
->> >>>>>>>>>> Those behaviors will be fine
->> >>>>>>>>>> tuned after the patch 3 big rewrite. Try to make this patch s=
-imple.
->> >>>>>>>>
->> >>>>>>>> Again, I want to keep it simple here so patch 3 can land.
->> >>>>>>>>
->> >>>>>>>>>>> Another potential optimization (which was in my hacked versi=
-on IIRC) is to only
->> >>>>>>>>>>> add/remove from nonfull list when `total - count` crosses th=
-e (1 << order)
->> >>>>>>>>>>> boundary rather than when becoming completely full. You defi=
-nitely won't be able
->> >>>>>>>>>>> to allocate order-2 if there are only 3 pages available, for=
- example.
->> >>>>>>>>>>
->> >>>>>>>>>> That is in patch 3 as well. This patch is just doing the bare=
- minimum
->> >>>>>>>>>> to introduce the nonfull list.
->> >>>>>>>>>>
->> >>>>>
->> >>>>> [snip]
->> >
->> > --
->> > Best Regards,
->> > Huang, Ying
->>
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, mvebu_cp110_utmi_of_match);
+> @@ -285,6 +360,10 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+>  	struct mvebu_cp110_utmi *utmi;
+>  	struct phy_provider *provider;
+>  	struct device_node *child;
+> +	void __iomem *regs_utmi;
+> +	void __iomem *regs_utmi_cfg;
+> +	const void *match;
+> +	enum mvebu_cp110_utmi_type type;
+>  	u32 usb_devices = 0;
+>  
+>  	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
+> @@ -293,18 +372,44 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+>  
+>  	utmi->dev = dev;
+>  
+> +	match = device_get_match_data(dev);
+> +	if (match)
+> +		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
+> +
+> +	/* Get UTMI memory region */
+> +	regs_utmi = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(regs_utmi)) {
+> +		dev_err(dev, "Failed to map utmi regs\n");
+> +		return PTR_ERR(regs_utmi);
+> +	}
+> +
+> +	/* Get usb config region */
+> +	utmi->regs_usb = devm_platform_ioremap_resource_byname(pdev, "usb-cfg");
+> +	if (IS_ERR(utmi->regs_usb) && PTR_ERR(utmi->regs_usb) != -EINVAL) {
+> +		dev_err(dev, "Failed to map usb config regs\n");
+> +		return PTR_ERR(utmi->regs_usb);
+> +	}
+> +
+> +	/* Get utmi config region */
+> +	regs_utmi_cfg = devm_platform_ioremap_resource_byname(pdev, "utmi-cfg");
+> +	if (IS_ERR(regs_utmi_cfg) && PTR_ERR(regs_utmi_cfg) != -EINVAL) {
+> +		dev_err(dev, "Failed to map usb config regs\n");
+> +		return PTR_ERR(regs_utmi_cfg);
+> +	}
+> +
+>  	/* Get system controller region */
+>  	utmi->syscon = syscon_regmap_lookup_by_phandle(dev->of_node,
+>  						       "marvell,system-controller");
+> -	if (IS_ERR(utmi->syscon)) {
+> -		dev_err(dev, "Missing UTMI system controller\n");
+> +	if (IS_ERR(utmi->syscon) && PTR_ERR(utmi->syscon) != -ENODEV) {
+> +		dev_err(dev, "Failed to get system controller\n");
+>  		return PTR_ERR(utmi->syscon);
+>  	}
+>  
+> -	/* Get UTMI memory region */
+> -	utmi->regs = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(utmi->regs))
+> -		return PTR_ERR(utmi->regs);
+> +	if (IS_ERR(utmi->syscon) &&
+> +	    (IS_ERR(utmi->regs_usb) || IS_ERR(regs_utmi_cfg))) {
+> +		dev_err(dev, "Missing utmi system controller or config regs");
+> +		return -EINVAL;
+> +	}
+>  
+>  	for_each_available_child_of_node(dev->of_node, child) {
+>  		struct mvebu_cp110_utmi_port *port;
+> @@ -326,6 +431,24 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+>  			return -ENOMEM;
+>  		}
+>  
+> +		utmi->ports[port_id] = port;
+> +
+> +		/* Get port memory region */
+> +		switch (type) {
+> +		case A380_UTMI:
+> +			port->regs = regs_utmi + port_id * 0x1000;
+> +			break;
+> +		case CP110_UTMI:
+> +			port->regs = regs_utmi + port_id * 0x2000;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* assign utmi cfg reg */
+> +		if (!IS_ERR(regs_utmi_cfg))
+> +			port->regs_cfg = regs_utmi_cfg + port_id * 4;
+> +
+>  		port->dr_mode = of_usb_get_dr_mode_by_phy(child, -1);
+>  		if ((port->dr_mode != USB_DR_MODE_HOST) &&
+>  		    (port->dr_mode != USB_DR_MODE_PERIPHERAL)) {
+> 
+> -- 
+> 2.43.0
+
+-- 
+~Vinod
 
