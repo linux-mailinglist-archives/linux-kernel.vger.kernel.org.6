@@ -1,171 +1,161 @@
-Return-Path: <linux-kernel+bounces-262519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819EE93C825
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:08:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0356993C828
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BC392833D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1AA1F228F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AF319E7FB;
-	Thu, 25 Jul 2024 18:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FTjMrEPq"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393D919DF94;
+	Thu, 25 Jul 2024 18:10:08 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5898E19E7F2
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F3C339A0;
+	Thu, 25 Jul 2024 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721930881; cv=none; b=lKdpQWRobl7P4goBXmrz6OlZnJqlCTVp5EA7zweLbyvR7pZ4NMXs59u3FqEHjulHBWDTVmTu8yEYYSNeAvJxXdxDLFTLj3k3NYrQyA9i9PkwwyuunbJwRDy/6/7s2Qj7IIdNT3qA2E0hOR9yoGogw9/V1ajeUS/jyXiKDs70+3k=
+	t=1721931007; cv=none; b=SJSICll4BDphhUpilL6LTsMfryFRe4tO0q1wtI98rIIgSoGSjT2n+TaV9GVmOpcQoZm3Fwr8BeWL2k0KhvkQfkS/n/VQzxjHpzb26pq1SxXB3Y/9dDbNIT0+9cMciPWydvqKPfBtgxORtfQJ7SbiTiefhQtJD1FfRgi8QCVbWec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721930881; c=relaxed/simple;
-	bh=Hqc5azVRbGUwAYmN2fQHG0YmRuwfvqYpwYq9g9X88dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AkdRlguDAvwSx9BBPRN//ueEePd2/nHHf9F1/ur4DfvMXGEiM02hdDIEben76Ec7w+4lkFNiiSs0Smn236oqc8GXV4fyl6uo8oMCJmvgJXeqUpxdBKKHSkyFXKaOUcwyuU5serzZyKpCIUPld8180ZS7MwHok4b3bUvoMEKjVoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FTjMrEPq; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fda7fa60a9so11166265ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721930879; x=1722535679; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UUGaRPCQ3N3wWtHO14ZqED92UBSd1h87iBGfjwpcBN0=;
-        b=FTjMrEPqVBzeDD6E4eR/N6vtbJ4X14DZ4q5z5caJdXwcUa5ey71VDOLdo4mGp9NGNe
-         zh549dbw78yHHRvB2pTVQk4pjHIvP7jrbpHH832Sdu5OVpHytBfjHk7MnPuUEl41rWBX
-         2VlGPLpXrIQV1cd/VvpQ0lW0QQSLOcpNkFhh6rSAMYFZGCpwQQBBmX/+Z5ejwFRv28Wk
-         1PG4o/0Uoy8wLI15DHy2a2KIh+mmxZd+YxupjeUXIq0xJyJ4w5svR6RcS1ND5LdVSTmY
-         tPZLN5PvWcY8IXMtJ9AtIk9WHusZ8I6zZNpIKmH6F9Qf4YK43UYqOvAh9QWzGKCKXlGb
-         g+1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721930879; x=1722535679;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UUGaRPCQ3N3wWtHO14ZqED92UBSd1h87iBGfjwpcBN0=;
-        b=gvkwWhBtc5gKti8lJuooTDpHmEo5ps7flgOVw1mDBh/nUf3+MzVm/5Dxlr0CRo8kWQ
-         kD8ukqZA3sGoLBVVQsAFpRifrCvWlw31cZM4vr5FIMocq1X9KpkOhNPRMqX0KtsG3LO8
-         +L9WJJrFkElWkWy/DC0IHVZAmM+vr5ZRIYFqZFL1P364iXQV3HwSQzT9olXvIh4rNFL+
-         Lo+OUY1IYm2THftvo5Z7y33Qi3viUsAmPB1iX9Si7m9ecS7XsRCPnDHjnsUsNJ51vO9I
-         oLlzkdlMDhNjgEpUn5yXBnEZ+Y/lI1sRcq8Q0nkwoPA7nqqABDmQT8q4jCF6NgP13GSv
-         YTKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFCZy2exZnvOAgbyAcslorhpjhRsjYIK3xoywts7aOKOqRoJJJ/D1RIRXdJ4JkMTCgLMZlktDmkx/+WFVuoYEaTeqlMZNyIbpfng1W
-X-Gm-Message-State: AOJu0Yz0K4/leKgARhlX+jxyF9AjxgVfhqgtKKklp9icQNBa31n206uS
-	DpqhDRP8WD93vGuvfOdl8DdKIkLC4gZ6s9nxL/JDm8qJcdT2JcnEgg584SAvng==
-X-Google-Smtp-Source: AGHT+IHI1A1tvfnC1v1eHXLnRKjVzRp5f2FjOQ5bxe8jqwJy1SWM+jZHo5hxZrA2PYuH6SKb8vBZaw==
-X-Received: by 2002:a17:903:1c4:b0:1fc:2ee3:d46f with SMTP id d9443c01a7336-1fed90b6bd7mr34131415ad.11.1721930878977;
-        Thu, 25 Jul 2024 11:07:58 -0700 (PDT)
-Received: from google.com (61.139.125.34.bc.googleusercontent.com. [34.125.139.61])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f9ec7acdsm1454827a12.66.2024.07.25.11.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 11:07:58 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:07:53 -0700
-From: David Matlack <dmatlack@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-Message-ID: <ZqKUefN3HgBQQkuA@google.com>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-3-jthoughton@google.com>
+	s=arc-20240116; t=1721931007; c=relaxed/simple;
+	bh=3d1lkerYjEzQAmgzNkELGoKubu7y/tjQ0HLQAN0wUas=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EyFX9cFRqj8jr5PXHHXB2Clrp1lFD7D2wIEes8D1Q1yDvCPyVTBce4sjxx6mUkvLdrCM1z3C5N/uUeii0yo2dzUEV5ZMjNB7JfAcjwv9oyJvT415ZKBDkAVhfHllTmyqLN7iV6bmFjGJbGiYO7Wt7ofbrT3cuvzXnMlq2s4TKZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 25 Jul
+ 2024 21:09:54 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 25 Jul
+ 2024 21:09:54 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
+	<Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Jerome Glisse
+	<jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs track offsets
+Date: Thu, 25 Jul 2024 11:09:50 -0700
+Message-ID: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724011037.3671523-3-jthoughton@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On 2024-07-24 01:10 AM, James Houghton wrote:
-> Walk the TDP MMU in an RCU read-side critical section. This requires a
-> way to do RCU-safe walking of the tdp_mmu_roots; do this with a new
-> macro. The PTE modifications are now done atomically, and
-> kvm_tdp_mmu_spte_need_atomic_write() has been updated to account for the
-> fact that kvm_age_gfn can now lockless update the accessed bit and the
-> R/X bits).
-> 
-> If the cmpxchg for marking the spte for access tracking fails, we simply
-> retry if the spte is still a leaf PTE. If it isn't, we return false
-> to continue the walk.
-> 
-> Harvesting age information from the shadow MMU is still done while
-> holding the MMU write lock.
-> 
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
+Several cs track offsets (such as 'track->db_s_read_offset')
+either are initialized with or plainly take big enough values that,
+once shifted 8 bits left, may be hit with integer overflow if the
+resulting values end up going over u32 limit.
 
-Aside from the comment fixes below,
+Some debug prints take this into account (see according dev_warn() in
+evergreen_cs_track_validate_stencil()), even if the actual
+calculated value assigned to local 'offset' variable is missing
+similar proper expansion.
 
-Reviewed-by: David Matlack <dmatlack@google.com>
+Mitigate the problem by casting the type of right operands to the
+wider type of corresponding left ones in all such cases.
 
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/Kconfig            |  1 +
->  arch/x86/kvm/mmu/mmu.c          | 10 ++++-
->  arch/x86/kvm/mmu/tdp_iter.h     | 27 +++++++------
->  arch/x86/kvm/mmu/tdp_mmu.c      | 67 +++++++++++++++++++++++++--------
->  5 files changed, 77 insertions(+), 29 deletions(-)
-> 
-[...]
-> --- a/arch/x86/kvm/mmu/tdp_iter.h
-> +++ b/arch/x86/kvm/mmu/tdp_iter.h
-> @@ -25,6 +25,13 @@ static inline u64 kvm_tdp_mmu_write_spte_atomic(tdp_ptep_t sptep, u64 new_spte)
->  	return xchg(rcu_dereference(sptep), new_spte);
->  }
->  
-> +static inline u64 tdp_mmu_clear_spte_bits_atomic(tdp_ptep_t sptep, u64 mask)
-> +{
-> +	atomic64_t *sptep_atomic = (atomic64_t *)rcu_dereference(sptep);
-> +
-> +	return (u64)atomic64_fetch_and(~mask, sptep_atomic);
-> +}
-> +
->  static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
->  {
->  	KVM_MMU_WARN_ON(is_ept_ve_possible(new_spte));
-> @@ -32,10 +39,11 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
->  }
->  
->  /*
-> - * SPTEs must be modified atomically if they are shadow-present, leaf
-> - * SPTEs, and have volatile bits, i.e. has bits that can be set outside
-> - * of mmu_lock.  The Writable bit can be set by KVM's fast page fault
-> - * handler, and Accessed and Dirty bits can be set by the CPU.
-> + * SPTEs must be modified atomically if they have bits that can be set outside
-> + * of the mmu_lock. This can happen for any shadow-present leaf SPTEs, as the
-> + * Writable bit can be set by KVM's fast page fault handler, the Accessed and
-> + * Dirty bits can be set by the CPU, and the Accessed and R/X bits can be
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
 
-"R/X bits" should be "W/R/X bits".
+Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni tiling informations v11")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+P.S. While I am not certain that track->cb_color_bo_offset[id]
+actually ends up taking values high enough to cause an overflow,
+nonetheless I thought it prudent to cast it to ulong as well.
 
-> + * cleared by age_gfn_range.
+ drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-nit: "age_gfn_range()"
-
+diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
+index 1fe6e0d883c7..d734d221e2da 100644
+--- a/drivers/gpu/drm/radeon/evergreen_cs.c
++++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+@@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
+ 		return r;
+ 	}
+ 
+-	offset = track->cb_color_bo_offset[id] << 8;
++	offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
+ 	if (offset & (surf.base_align - 1)) {
+ 		dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not aligned with %ld\n",
+ 			 __func__, __LINE__, id, offset, surf.base_align);
+@@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
+ 				min = surf.nby - 8;
+ 			}
+ 			bsize = radeon_bo_size(track->cb_color_bo[id]);
+-			tmp = track->cb_color_bo_offset[id] << 8;
++			tmp = (unsigned long)track->cb_color_bo_offset[id] << 8;
+ 			for (nby = surf.nby; nby > min; nby--) {
+ 				size = nby * surf.nbx * surf.bpe * surf.nsamples;
+ 				if ((tmp + size * mslice) <= bsize) {
+@@ -476,10 +476,10 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
+ 			}
+ 		}
+ 		dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer size %d, "
+-			 "offset %d, max layer %d, bo size %ld, slice %d)\n",
++			 "offset %ld, max layer %d, bo size %ld, slice %d)\n",
+ 			 __func__, __LINE__, id, surf.layer_size,
+-			track->cb_color_bo_offset[id] << 8, mslice,
+-			radeon_bo_size(track->cb_color_bo[id]), slice);
++			(unsigned long)track->cb_color_bo_offset[id] << 8,
++			mslice,	radeon_bo_size(track->cb_color_bo[id]), slice);
+ 		dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d %d %d %d %d %d %d)\n",
+ 			 __func__, __LINE__, surf.nbx, surf.nby,
+ 			surf.mode, surf.bpe, surf.nsamples,
+@@ -608,7 +608,7 @@ static int evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+ 		return r;
+ 	}
+ 
+-	offset = track->db_s_read_offset << 8;
++	offset = (unsigned long)track->db_s_read_offset << 8;
+ 	if (offset & (surf.base_align - 1)) {
+ 		dev_warn(p->dev, "%s:%d stencil read bo base %ld not aligned with %ld\n",
+ 			 __func__, __LINE__, offset, surf.base_align);
+@@ -627,7 +627,7 @@ static int evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+ 		return -EINVAL;
+ 	}
+ 
+-	offset = track->db_s_write_offset << 8;
++	offset = (unsigned long)track->db_s_write_offset << 8;
+ 	if (offset & (surf.base_align - 1)) {
+ 		dev_warn(p->dev, "%s:%d stencil write bo base %ld not aligned with %ld\n",
+ 			 __func__, __LINE__, offset, surf.base_align);
+@@ -706,7 +706,7 @@ static int evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+ 		return r;
+ 	}
+ 
+-	offset = track->db_z_read_offset << 8;
++	offset = (unsigned long)track->db_z_read_offset << 8;
+ 	if (offset & (surf.base_align - 1)) {
+ 		dev_warn(p->dev, "%s:%d stencil read bo base %ld not aligned with %ld\n",
+ 			 __func__, __LINE__, offset, surf.base_align);
+@@ -722,7 +722,7 @@ static int evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+ 		return -EINVAL;
+ 	}
+ 
+-	offset = track->db_z_write_offset << 8;
++	offset = (unsigned long)track->db_z_write_offset << 8;
+ 	if (offset & (surf.base_align - 1)) {
+ 		dev_warn(p->dev, "%s:%d stencil write bo base %ld not aligned with %ld\n",
+ 			 __func__, __LINE__, offset, surf.base_align);
 
