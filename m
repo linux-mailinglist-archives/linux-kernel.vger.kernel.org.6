@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-262467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC34993C775
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1947993C776
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECF861C217D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A42E1C21AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539CB19D892;
-	Thu, 25 Jul 2024 16:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5A119DF43;
+	Thu, 25 Jul 2024 16:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JKNNq7gu"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNovAvLK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A661990CD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6819D091
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926535; cv=none; b=ZiBQ1wBw6WPkHk1qdfh+rqg88n54kwm6i3Ps4MYOnW0VZ9c67TwxbPe3YXCK2Mf8Hhxle3k4mC6sRR4HWCP8951DJAE4KkAzjGi6FKzdUAljw/JSEot5c2iHxZpxd2ImUDGsTvTGU8laHZvMKXQZAe+IFb1Rms+8n49MwLAcnVc=
+	t=1721926560; cv=none; b=nwJurREkMrqv3SzlGcuVOxg5opcoyABDKlu+AOldl5clXGaQIu5kRS2WtVD/5ZLlELq+q1Oq5EywI3Igni6lnQORBVrMD5A/VMjD88J50ZP0uFKhPK1DPjnlskXeeY6S/kFtKwebJrCpNsOkUdYuvAQYx0xeRaYbF84IJ18Ok3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926535; c=relaxed/simple;
-	bh=Vs2jCGfatgskfZrrtostsFVwX9PhXho+J0SPl4hN8uY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CiaQWu4ttL5OLA0krytzZvwM8ooK7u/tELFid343Fdt7Qf+EaWFHEITl7Oa+xJ136KSWQwo8KPqDYXaj3/B6Qw/CVY9p52BQxfx5VkgFxBp4s4NsbeYkVYf3vFDKam5fm0t+MGj0eoQxx08NYNnbDWhZb7sAK2cn0NOUHxX22Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JKNNq7gu; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52efa9500e0so537424e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721926530; x=1722531330; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/0Kl5sw++soHUU+LQGAu88XFfYB95M5wIm7NPuOBaZ4=;
-        b=JKNNq7guZ5Iw6q2zTl/vZpBdDIDT/DD6W2fiY0Z7AVKYFjL7QO+t/Kc3VQfVnIJThp
-         KDZDNhpmYFAfgPwIFYVUPjGfrOJ6UAVyq1NJjuxSwCNngVHQm9JrE7FgKF/dMLCJoeij
-         j4Y2qy+0GgFqcGd18X4ni2yR5WRTzQ4n7tXQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721926530; x=1722531330;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/0Kl5sw++soHUU+LQGAu88XFfYB95M5wIm7NPuOBaZ4=;
-        b=TXhc6Gc8D+LMEOAsN9VhH6t8MP+Zqpm4tWxa68YtoDEeUb7s15xxa9kMFMRekmupdD
-         w8098r7HHr/J5ulicxZGCpgMMn42NtvVnpkavmBSCEXN+NKNZInS2vgzdANAkSuZDper
-         GCNR029O2+EAPRWUElcsHawgY0+Mwkwi5fBf4Q/55cpp5/kU9zLT/WgD+QP9Fnhy/tat
-         dI3rvVI30LSuSo5dViBj9oHwf7YkDE/2aRERp8MgypYlsu8CKOKeCYGVK4bLckxuFxCT
-         9dDjlMFOjR8t6jaGa8kvUeCr2O9iKCn4H66qqNGSnx3edscTgzO5D8udLn5IN/TokSu5
-         KDwQ==
-X-Gm-Message-State: AOJu0YzLtwYh/8S6VT7cOhZh+sgK85+sQ2hy7DDs2VAO6eScs/MrmB7L
-	5SP4mZErnewyE3xc8GSFG9bx3RqWJInh0a0t9cnXCpsIjmHJIZOEaoxcgxLaH9lU0y4HPm6sL4h
-	slFc=
-X-Google-Smtp-Source: AGHT+IGHkJoDMkjce8yzXRVbNyXjvs3p1GxqsdKy7Wbzk6cldF9zm0UaoJ2/tOUBlgBkheNumNUc3Q==
-X-Received: by 2002:a05:6512:2c0a:b0:52c:e1cd:39be with SMTP id 2adb3069b0e04-52fd601885emr1468835e87.8.1721926530043;
-        Thu, 25 Jul 2024 09:55:30 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2d8bcsm274383e87.283.2024.07.25.09.55.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 09:55:29 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2d582e31so4275441fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:55:29 -0700 (PDT)
-X-Received: by 2002:a2e:9ed3:0:b0:2ec:42db:96a2 with SMTP id
- 38308e7fff4ca-2f03dba65a6mr19727201fa.29.1721926528798; Thu, 25 Jul 2024
- 09:55:28 -0700 (PDT)
+	s=arc-20240116; t=1721926560; c=relaxed/simple;
+	bh=drnhCfnqjtD+uKAYvYSo4Q1c4Rbt5tbKQljMuGKzJ6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JO7y8XE+UATcEsEqvNU3QmfxyNX707lj6wnFQO4eJnGrnbTuXERoU5vLgforgjVOHn8+XyiJxEnCNIJlN5LG4/Gv52aUA9ATArIQYUgZu026ySbpr+3c3WR/4zFLdO4O1b3NnarmeVjAjB6NLZkXPRdv412tIbqeuTPrECjA+vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNovAvLK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19451C116B1;
+	Thu, 25 Jul 2024 16:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721926560;
+	bh=drnhCfnqjtD+uKAYvYSo4Q1c4Rbt5tbKQljMuGKzJ6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNovAvLKrIJ5tPWI659ETbgg8B0whNU1i57au3u9kQZUJlhEWJBTPYzCajMWxYAyj
+	 mlRttOQuTGF9bDYXZsW3y0wUAz+Kz/42X3Al19j0ewzERKICj+hHVnF1OWamLfwi/x
+	 smKEQMqac+d5A+DRIL+9IPuHnb9KvtMMjHkgaSzoHGO94mK5s9zQaW5vXDRnne9wky
+	 BxzgtRN8dSI5Rfu4FKbFyMILra+r8UBhM1VrSPQdkW4JiJtGCntqBqkw8Rqr5TCXaK
+	 ZS08m1vPfWa1vBAWsDVHmAxzjhv/iqx6UUX1CP0YcencfCRRXhBY36OwbPT9pD3pq6
+	 CMnS7GiqljFxw==
+Date: Thu, 25 Jul 2024 16:55:58 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: don't traverse directory blocks after EOF
+Message-ID: <ZqKDnpzwX85RyGaa@google.com>
+References: <20240712073415.227226-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <63149ac0-73a4-49c0-975b-75dc3bd32f7a@I-love.SAKURA.ne.jp>
- <CAHk-=whAfNJKeP1WhdP9y0itF_AkgQJMyz8B9TCfAWWQRhDRPw@mail.gmail.com>
- <5ad7dffa-204e-4d37-acf6-0206d7a87f37@I-love.SAKURA.ne.jp>
- <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com> <28a0f793-b0d6-4abb-b83c-f54e5a588994@I-love.SAKURA.ne.jp>
-In-Reply-To: <28a0f793-b0d6-4abb-b83c-f54e5a588994@I-love.SAKURA.ne.jp>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 25 Jul 2024 09:55:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg74E_1NXafYaemRT7R9dqU3DSOf+YGftD832BJqXBwoQ@mail.gmail.com>
-Message-ID: <CAHk-=wg74E_1NXafYaemRT7R9dqU3DSOf+YGftD832BJqXBwoQ@mail.gmail.com>
-Subject: Re: [GIT PULL] orphaned patches for 6.11
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712073415.227226-1-chao@kernel.org>
 
-On Thu, 25 Jul 2024 at 04:06, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
->
-> Do you mean
->
->  void profile_tick(int type)
+On 07/12, Chao Yu wrote:
+> All directory blocks are within the scope of i_size, so let's limit
+> the end_block to just check valid dirent blocks.
+
+Do we really need this?
+
+> 
+> Meanwhile, it uses dir_blocks() instead of variable for cleanup in
+> __f2fs_find_entry().
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/dir.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 02c9355176d3..d4591c215f07 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+>  	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
+>  	unsigned int nbucket, nblock;
+>  	unsigned int bidx, end_block;
+> +	unsigned long last_block;
+>  	struct page *dentry_page;
+>  	struct f2fs_dir_entry *de = NULL;
+>  	pgoff_t next_pgofs;
+>  	bool room = false;
+>  	int max_slots;
+>  
+> +	last_block = dir_blocks(dir);
+>  	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
+>  	nblock = bucket_blocks(level);
+>  
+>  	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
+>  			       le32_to_cpu(fname->hash) % nbucket);
+>  	end_block = bidx + nblock;
+> +	end_block = min_t(unsigned int, end_block, last_block);
+>  
+>  	while (bidx < end_block) {
+>  		/* no need to allocate new dentry pages to all the indices */
+> @@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+>  					 const struct f2fs_filename *fname,
+>  					 struct page **res_page)
 >  {
->         struct pt_regs *regs = get_irq_regs();
->
-> -       if (!user_mode(regs) && cpumask_available(prof_cpu_mask) &&
-> +       if (!user_mode(regs) && prof_buffer &&
->             cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
->                 profile_hit(type, (void *)profile_pc(regs));
->  }
->
-> because prof_cpu_mask != NULL is guaranteed if prof_buffer != NULL
-> because prof_cpu_mask is assigned before prof_buffer is assigned and
-> prof_buffer is never reassigned?
-
-Yeah, I think that would be much clearer.
-
-What would make things even clearer is to not have that horrible
-complex conditional there in the first place.
-
-The code could do something like
-
-        struct pt_regs *regs;
-
-        /* Are we supposed to profile at all? */
-        if (!prof_buffer)
-                return;
-        /* Are we profiling this CPU? */
-        if (cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
-                return;
-        /* This is the old kernel-only legacy profiling */
-        regs = get_irq_regs();
-        if (user_mode(regs))
-                return;
-        profile_hit(type, (void *)profile_pc(regs));
-
-and each line would be much simpler.
-
-I think this code has grown all these historical barnacles, because
-this really is the really old kernel-only profiling that nobody should
-even use any more, but is the only thing we have for the early boot
-situation.
-
-                Linus
+> -	unsigned long npages = dir_blocks(dir);
+>  	struct f2fs_dir_entry *de = NULL;
+>  	unsigned int max_depth;
+>  	unsigned int level;
+> @@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+>  		goto out;
+>  	}
+>  
+> -	if (npages == 0)
+> +	if (dir_blocks(dir) == 0)
+>  		goto out;
+>  
+>  	max_depth = F2FS_I(dir)->i_current_depth;
+> -- 
+> 2.40.1
 
