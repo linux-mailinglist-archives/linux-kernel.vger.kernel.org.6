@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-262382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C7193C648
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C65D93C64A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0A61C217B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1F71C215BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828B519D89C;
-	Thu, 25 Jul 2024 15:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24D419D89E;
+	Thu, 25 Jul 2024 15:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBYPV6WV"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MKHfxdxQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8101993AE;
-	Thu, 25 Jul 2024 15:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD021993AE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721920874; cv=none; b=vDCwZaEKXpsl1PTalxuL2N6lF02hrJ8ApgaJk2hnjr0PYX24YaL6dFG26fZXmN7eRnhRLVFMhAB6XveFHPTdNiMj+3K8a/A6xU+gekUvDESbl8GOPmgcsYtJyszqrJ+IJlEIES6yUi1T1tL8zekdMRfdAwiVyuzgVIBzkMwC+vc=
+	t=1721920906; cv=none; b=rNyPIx7UoTBD3gn6PITKWt4egEWJk6ztSrchk6pnzknznCtoy4wsW9NROVa1ixVg51slfAAosf60XCZlG+CNmQISQ2V9SLkixV7zo+AeDJSmc3OPO95bxIjzihnVFDM8/sENcr4kGf4qb4tJH6K9jpHNZPiFoNR3iHlXFr4juzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721920874; c=relaxed/simple;
-	bh=BACA7lc/U3kuyTopB/C6+lFqL+M0+mPuPcll+QYABvU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pyjXERXFwxx9dNNq196RTSnUXcm70GWb/s559G7lRhvQIN2h0vhd2izq14Pok5IRmSpka13zYKgaHzdfqUUzZcdp6+HHRMbZAhA4BkCEMmb4iSzjYUNojc8AkWldBdaOqAs1WgmN7xN9WBO2g/fjsirIz6jI+HGOoMU82XMGGfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBYPV6WV; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso8174515e9.2;
-        Thu, 25 Jul 2024 08:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721920871; x=1722525671; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2eq6cgeg4tjNK/UJ0dS0DsHH+PJFVARgjid38ZB1fJQ=;
-        b=LBYPV6WVoAzbOQvaLtNnSvlmf71qGPJw+peL8bZZQ6n2eMTfDJSYnshzE5vaEoYXY7
-         Zqu/wfL7oTtNRkYp6FVuPyXg5xVRud3T0TfUPiT+lmDSEYPmITzXp+8Pq8CjC1zi2uF7
-         DZ6ZLZSdekTDY7CX0Bses2Z15zBiv0Ad54WYpXo5lhagwz5g4oA1gEnFBrj5vPIkWv0G
-         wcG6EvLDkRh+o60RbBvsmsEEYBDmpiJ0Kzei1troAOREjWbFceqqorX/xk4q6QhbWeEf
-         SF+A9GixvONOqJSkJJuTae4fvwZEt5UEDW+rjlj4c3cvQrYuj4eDpvOXAz59I1yQQHFk
-         8qIw==
+	s=arc-20240116; t=1721920906; c=relaxed/simple;
+	bh=RkNVsX0GJWP39VhHnsRew4x+r/mYmpi8tLHm7VuNQnI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HOxuNSMT1/JKDlj+qes/hR+N2LQRfjrWScBRYYLQ4TISkBbt0PimOLtugUS6JpSGWOZRQeQ6uZ+NYD1N9Gomo/xWU08DFBsA9Tw+IN/SEVcTs7r9f+uay0k/4XhbQ4sE7kpnlYU78SXdtoL6tIguDrZBApnxCzpRwzTC9uYTIBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MKHfxdxQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721920903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z8Tjgy4dHalmku2MigGV36hJgcomQ9zlrQHbeuGTVtQ=;
+	b=MKHfxdxQDLeDjoRt155tJ66XTkJWcNhC3MIoXZHa6Sm14/R6uSUrvGloGWND7ShEkb5F2C
+	Z9AlqSyerw5ZaURvkm9j9Vw8loYfdvgeEmtxp2bXh9mdF8ZLaLW7nwvIbAkS2U70OzZ8Is
+	LITaf/5iRewgeCFu+AOf69M7gAGxDCk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-113-BNqzsN9MMnmhOY1MCCGDwg-1; Thu, 25 Jul 2024 11:21:42 -0400
+X-MC-Unique: BNqzsN9MMnmhOY1MCCGDwg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42809bbece7so238705e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:21:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721920871; x=1722525671;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2eq6cgeg4tjNK/UJ0dS0DsHH+PJFVARgjid38ZB1fJQ=;
-        b=HV/gsk7nznYXHvrWQe1HzXekD4rSRxovOyed8woryw9nLFkG42HqVv4ELykIooq2S5
-         6YAnaWItPdLd+SXka3JBwFzYVmDTYR2lqKYFr7jh40WIUdkSetrCWl+YOAalsljNAOtp
-         R94aTd3JX7A7fm6Uxgppe5T24Wy7YYs1OXyrLZxAlmI6Jxd981Jka5AA9FrEv4YsQc9C
-         hceWZPY8iMvN6867F7u+ug75YFOcEH89RoD5oUVgz66Q2kPT8AFq1WiuPfUmn2iUWLnC
-         p5UY18TV4hFgt5cG5JdcCj1z6B5HQ5V3iku4MTeP82T6+F+1ulmRhHzr5Y7Is7wtanZg
-         ILAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtnE51zpcW0kqaNDQsUk0SlB2ENqOxzZidYgSv8Tmo5YekxNKFpgmNEzLi2VTpMkfL0ba/iAipefgV1+KwWkvfU5TbrJZ4oNqEvhoQ
-X-Gm-Message-State: AOJu0YxASNAe1O2sOibkxiIACiuw+peSyhz0D0WfloM2vMhTVy/u7asG
-	0Ln4hjDlKLU7yFs61tV0CGdvEMrQEX1YgrQTuXmxHGKKoubhZ1Yc
-X-Google-Smtp-Source: AGHT+IFRSWnlAYYHtp7B9TX/pm1tmW2wA1dlSwpQdMVtFjf9eyzO/iDYb0W5WyvQviIngjgeTfAO0g==
-X-Received: by 2002:a05:600c:1f8c:b0:426:5ee5:3130 with SMTP id 5b1f17b1804b1-4280550879dmr16655795e9.3.1721920870644;
-        Thu, 25 Jul 2024 08:21:10 -0700 (PDT)
-Received: from localhost (a109-49-32-45.cpe.netcabo.pt. [109.49.32.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f935933csm81735615e9.7.2024.07.25.08.21.10
+        d=1e100.net; s=20230601; t=1721920901; x=1722525701;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8Tjgy4dHalmku2MigGV36hJgcomQ9zlrQHbeuGTVtQ=;
+        b=SieO/RJ3at6IWO5WoB1fwAV47Z0owie2jvM3tn3wUwgc3A6F6rmAUYrFW5i0HbLBCk
+         +thEa14lV+jgL/HjCshwTGSI9J+SgDLdpsUKNrCI/p9mGTQWtxUumSgABUQEgLNXLl07
+         v9ABk4qK20TMfz3Ou12HpGVUhj30CiEjfYmf5X/1YMu5Mh/+wFTewe7Wq5UtWRwY7Nha
+         PQiBxscq1GTmzZUQ9e8G0FFuhqIr08iPNTmtt05VLE2yf+wxn0nVg3gIPfnU1AnFgxwL
+         os8z+3HG8RLzEYdf/6EkxiYwHbCCJUEsWA/MU5yK22kqZ9kb3hb3s1i2zraqdrtiaFf7
+         Ldvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW784XPtX7pc42VUsVb8Gx4COVn/9MI5G5b1LsMNKJ9qb/ZcpsaTReDkoPNBe7GxAv5NxRkcG4qLIaFGviGMjIDKg1ZeVeenNFLMdMS
+X-Gm-Message-State: AOJu0Yzvcn6QC8aydQ6ZwcJkeELZnHQk61aqJ8dqIafJzPYaiJ/F5SNM
+	fFQID6opLRZUI6Nlx/pfDD7GqWw7epc67H1kzikkuH04vfhDgCtG8AVR547Rwt8U0o0k800/kah
+	hdWG2pRrN7cNWrTY+s/LMskUdfGISghZDJlFxp64KqUM7gMlNlr80OkG49pQDVQ==
+X-Received: by 2002:a05:600c:19c7:b0:427:9f6f:4913 with SMTP id 5b1f17b1804b1-4280576b7famr12152515e9.5.1721920901107;
+        Thu, 25 Jul 2024 08:21:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUoq9MyYvXOU4HItbU3COs+rrthKOGlBJJ1A0/BR1JqKct+++msddOJXUIccyRZvEURjAPIw==
+X-Received: by 2002:a05:600c:19c7:b0:427:9f6f:4913 with SMTP id 5b1f17b1804b1-4280576b7famr12152425e9.5.1721920900677;
+        Thu, 25 Jul 2024 08:21:40 -0700 (PDT)
+Received: from pstanner-thinkpadp1gen5.fritz.box (200116b82d135a0064271627c11682d8.dip.versatel-1u1.de. [2001:16b8:2d13:5a00:6427:1627:c116:82d8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36416e2esm2558518f8f.0.2024.07.25.08.21.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 08:21:10 -0700 (PDT)
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-To: Matthias Fend <matthias.fend@emfend.at>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Martin Kepplinger
- <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: imx-mipi-csis: avoid logging while holding spinlock
-In-Reply-To: <20240723060909.534584-1-matthias.fend@emfend.at>
-References: <20240723060909.534584-1-matthias.fend@emfend.at>
-Date: Thu, 25 Jul 2024 16:21:09 +0100
-Message-ID: <m3wml9mra2.fsf@gmail.com>
+        Thu, 25 Jul 2024 08:21:40 -0700 (PDT)
+Message-ID: <9529b8012b1a1573316d65727f231f5cf54d0315.camel@redhat.com>
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?=
+	 <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
+Date: Thu, 25 Jul 2024 17:21:39 +0200
+In-Reply-To: <ZqJgkLxJjJS7xpp1@infradead.org>
+References: <20240725120729.59788-2-pstanner@redhat.com>
+	 <ZqJgkLxJjJS7xpp1@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-Hey Matthias,
-Many thanks for the patch.
+On Thu, 2024-07-25 at 07:26 -0700, Christoph Hellwig wrote:
+> Can we please fix this to never silently redirect to a manager
+> version
 
-Matthias Fend <matthias.fend@emfend.at> writes:
+It is not the fix or the recent changes (which the fix is for) to PCI
+devres that is doing that. pci_intx() has been "silently redirect[ing]
+to a managed version" since 15 years.
 
-> Refactor mipi_csis_log_counters() to prevent calling dev_info() while
-> IRQs are disabled. This reduces crucial IRQs off time to a bare minimum.
->
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+The changes merged into v6.11 attempted to keep this behavior exactly
+identical as a preparation for later cleanups. The fix here only
+corrects the position of the redirection to where the "crazy devres
+voodoo" had always been:
 
-LGTM
+void pci_intx(struct pci_dev *pdev, int enable)
+{
+	u16 pci_command, new;
 
-Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
+	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
 
-Cheers,
-   Rui
+	if (enable)
+		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
+	else
+		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
 
+	if (new !=3D pci_command) {
+		struct pci_devres *dr;
 
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index f49b06978f14..0c34d316ed29 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -857,18 +857,21 @@ static void mipi_csis_log_counters(struct mipi_csis_device *csis, bool non_error
->  {
->  	unsigned int num_events = non_errors ? MIPI_CSIS_NUM_EVENTS
->  				: MIPI_CSIS_NUM_EVENTS - 8;
-> +	unsigned int counters[MIPI_CSIS_NUM_EVENTS];
->  	unsigned long flags;
->  	unsigned int i;
->  
->  	spin_lock_irqsave(&csis->slock, flags);
-> +	for (i = 0; i < num_events; ++i)
-> +		counters[i] =  csis->events[i].counter;
-> +	spin_unlock_irqrestore(&csis->slock, flags);
->  
->  	for (i = 0; i < num_events; ++i) {
-> -		if (csis->events[i].counter > 0 || csis->debug.enable)
-> +		if (counters[i] > 0 || csis->debug.enable)
->  			dev_info(csis->dev, "%s events: %d\n",
->  				 csis->events[i].name,
-> -				 csis->events[i].counter);
-> +				 counters[i]);
->  	}
-> -	spin_unlock_irqrestore(&csis->slock, flags);
->  }
->  
->  static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
-> -- 
-> 2.25.1
+		pci_write_config_word(pdev, PCI_COMMAND, new);
+
+		/* voodoo_begin */
+		dr =3D find_pci_dr(pdev);
+		if (dr && !dr->restore_intx) {
+			dr->restore_intx =3D 1;
+			dr->orig_intx =3D !enable;
+		}
+		/* voodoo_end */
+	}
+}
+EXPORT_SYMBOL_GPL(pci_intx);
+
+> and add a proper pcim_intx instead=C2=A0
+
+That has already been done. pcim_intx() sits in drivers/pci/devres.c
+
+> and use that where people actually
+> want to use the crazy devres voodoo instead?=C2=A0 Doing this silently
+> underneath will always create problems.
+
+That's precisely what all my work is all about. The hybrid nature of
+pci_intx(), pci_set_mwi() and all pci*request*() functions needs to be
+removed.
+
+However, that will take us some while, because the APIs are partly
+ossificated and every user that relies on implicit crazy devres voodoo
+has to be identified and then ported to *explicit* half-crazy devres
+voodoo.
+
+More details here:
+https://lore.kernel.org/all/20240613115032.29098-1-pstanner@redhat.com/
+
+P.
+
+>=20
+>=20
+
 
