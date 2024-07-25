@@ -1,62 +1,71 @@
-Return-Path: <linux-kernel+bounces-262253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C757C93C30F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334DB93C316
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7791F21ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654B41C21642
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77C419B5A5;
-	Thu, 25 Jul 2024 13:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136EB1993B4;
+	Thu, 25 Jul 2024 13:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYEWS4jC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NHlJ3PUD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C48E19B3ED;
-	Thu, 25 Jul 2024 13:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE2219AD8A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721914141; cv=none; b=qeY4XCVUGRhPSU+LodpEkutArtZnqBERgxUXSZP/RxzUzgiH+PGlnLMZO1YkdAtilCW32LkHbeZaxSgcwVXRZFXQycID53u2yO9rpfprRsvxmWV0QLnLm6KzQtEvxDBVJ8Bh6SMHb6ZURBVZUhyOQRgUZSHaqpIPWkJQc0wwSzI=
+	t=1721914293; cv=none; b=a03ZnREcLmR8o/BrH8aUCDoBQ8LogOscIFICO+KMM0E17IdTaEa0rOwmfMaN+lLriR2ApLPRMDn20pBs7ZgWE1XMTVPQnXBwnD3RWroZZ7WyIAGo5nWmYyPRzUUyXG0jyWQMnZFx8s6sYx2NkHDMzY6FUxrib9RI1rHgf9T4SDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721914141; c=relaxed/simple;
-	bh=B9CiMqUY4/aqnqxuh+fJHJ1eA4Qr3qFcO8FOzPa8F0w=;
+	s=arc-20240116; t=1721914293; c=relaxed/simple;
+	bh=JWhWEtEvT80oFXyMfRnA4TZ5LOLZsHV2XaD8HK7VlI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rnySQDPmcxrx/OPheu7VvJgW7KS80vHnR+UJXaFYMFIRRoK+I3uiW2LPj0BmxLeZG+kVaR6+g3QCBiO2fXypRjQDd1T7JBe+QQORmRRgyIMsh2QhAcDbLorKNpJBD3li+X4R0zAy4pTeDA57Y56v52qlHhf4BIlk/zVKObIClmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYEWS4jC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FD7C4AF0A;
-	Thu, 25 Jul 2024 13:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721914140;
-	bh=B9CiMqUY4/aqnqxuh+fJHJ1eA4Qr3qFcO8FOzPa8F0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYEWS4jC/34HR83DdGSg+UAaCUDk46SmkvrRgJTTV1Mf3U64UsYTYAwu1Mz1OYYQn
-	 QzDO35f6AB30X8SWtppSBGfE0s8kH2J78Wi7Bk58pUUEKw7shL3YbCG23TnPqFeayS
-	 sequePISzFnA7zZY1YsOLHaymRHNrVwRTZ7RjxwgJu3Y5NtWpGah4XciimF+Kfidpd
-	 UX1YWfTkcOdFyIKQKv36fzgmnB28LdHoauT0Yh0mv/PDrwDr2KCIyx/VDwUswHBXbj
-	 65d7/bE7PiqiKn+qa70vmaxg+4sDdNZt1cMM6WzSMSIurPjGbKJoqkdt2fuTYtCypC
-	 /5Mr9RRKobLeQ==
-Date: Thu, 25 Jul 2024 08:28:58 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	devicetree@vger.kernel.org,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: renesas: Document RZ/V2H GP-EVK
- board
-Message-ID: <172191413781.1725520.9808711878710206779.robh@kernel.org>
-References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ikSf+PVkC4bvLS0jBMdjsPvhMwB0vhFR9wI4Dpe2RfWwjKCxg1//5rZN27RMMSJggISBNa1/UjAgoJMpMTXCIBhzwKNf7bg7u0WV7NFIcnRoygepsX4otUBIMMN+lTBl2Jj8yCF+QKkddWH+mUnJ3wdoOId6vAOhAB8CEAEaNGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NHlJ3PUD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721914290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k4s9mKj9STWyCGXDNhdbpDBMnK5esXa24tNVCjpHN98=;
+	b=NHlJ3PUD3kTqfFvhTKomWvCnBLo9sTiEghKGVn6I4kwpdPmKN+XO4muvBY+HQzPhPYSUqJ
+	lqeBgzf9Gfk93u8+XjbWPgrmM3Gb91b2EHfxClH2LGXd+v4qi9dUAvQx2nkVEVDlZCCd7z
+	WdgxZTRFlUjpwjKJTlozaUDT2V+EO+c=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-436-oDfnua1QPuur8lU8d8U0yQ-1; Thu,
+ 25 Jul 2024 09:31:24 -0400
+X-MC-Unique: oDfnua1QPuur8lU8d8U0yQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 520701955BF4;
+	Thu, 25 Jul 2024 13:31:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.93])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9BDE2195605A;
+	Thu, 25 Jul 2024 13:31:16 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 25 Jul 2024 15:29:40 +0200 (CEST)
+Date: Thu, 25 Jul 2024 15:29:35 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, brauner@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, clm@fb.com,
+	riel@surriel.com, ffledgling@meta.com
+Subject: Re: [PATCH RFC exit] Sleep at TASK_IDLE when waiting for application
+ core dump
+Message-ID: <20240725132849.GA6602@redhat.com>
+References: <1936bd18-775b-43e3-bfd5-2cd343565f06@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,21 +74,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1936bd18-775b-43e3-bfd5-2cd343565f06@paulmck-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+On 07/24, Paul E. McKenney wrote:
+>
+> Currently, the coredump_task_exit() function sets the task state to
+> TASK_UNINTERRUPTIBLE|TASK_FREEZABLE, which usually works well.  But a
+> combination of large memory and slow (and/or highly contended) mass
+> storage can cause application core dumps to take more than two minutes,
+> which can triggers "task blocked" splats.
 
-On Wed, 24 Jul 2024 10:47:06 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add "renesas,gp-evk" which targets the Renesas RZ/V2H ("R9A09G057")
-> GP-EVK board.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Do you mean check_hung_uninterruptible_tasks() ?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+In any case,
+
+> Therefore, change that TASK_UNINTERRUPTIBLE to TASK_IDLE.
+...
+> @@ -429,7 +429,7 @@ static void coredump_task_exit(struct task_struct *tsk)
+>  			complete(&core_state->startup);
+>
+>  		for (;;) {
+> -			set_current_state(TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
+> +			set_current_state(TASK_IDLE|TASK_FREEZABLE);
+
+To me this change makes sense regardless...
+
+To some degree TASK_UNINTERRUPTIBLE is misleading, in that the task which
+sleeps in coredump_task_exit() is _KILLABLE, although not "directly".
+
+A SIGKILL sent to the coredumping process will interrupt the coredumping thread
+(see the signal->core_state check in prepare_signal() and fatal_signal_pending()
+check in dump_interrupted()) and then this thread will wakeup the threads sleeping
+in coredump_task_exit(), see coredump_finish().
+
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
 
