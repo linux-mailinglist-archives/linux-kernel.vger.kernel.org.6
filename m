@@ -1,94 +1,210 @@
-Return-Path: <linux-kernel+bounces-262655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBBF93CA18
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:09:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1125C93CA17
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F761F22C30
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:09:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 758D6B22703
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0C13B5A0;
-	Thu, 25 Jul 2024 21:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4894F13A40F;
+	Thu, 25 Jul 2024 21:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aPmXhEtw"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="asg1cy7j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C42AD299
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D20013E40F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721941779; cv=none; b=B6f4Op5e/82rBkDaiNh+ZSYEFss7TqI4zOoG3baa7FIR3BIIOR9ALdHhzjKHSpqsDYq/zsDoBn86m/s1kcUVa3xpXmkg7dGY+64Vbv4XJnG2AsD1M6224uhAtvwg582OnPo2tLK+zHXwvcm1gzS5xb97DHvjSBj/AyRCVNOyqpQ=
+	t=1721941550; cv=none; b=YPxtV5xhBMJ105TE6qOM0menwSvqgS66b+wlwpK7jBbgNdHTnJ8J/ynG6N0s3Wf/C5yeBlH58b4sdcWlIgbEmcugZS7poOBq5ymez5zmUiCB7cLWRP6nK5F9WByycFkKDlujsFGjLFuMe9z7oKkUR3DWWfRt9RhPKZDpZFTaCRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721941779; c=relaxed/simple;
-	bh=hpoK2O+1nbhmelUyB2+WwH8R4HEgvO04+ap6yEfnN5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AlC0uvMjBIpTiHKOT7vPh5mMqOLhRIrDnDRRogycEuY7TTIg1Rmo+jWNFhi/azPqi3/WN9BKZCyu824tSzYncbqVlExBya5yL0LlL8p9u5yOsBU/9VY6M8dbmewi2VxKB/hGUOZ8cedt9wq5vwaKpLJqiqYXcCHB/NtG9UddI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aPmXhEtw; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 25 Jul 2024 21:09:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721941773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pCPuEvOfteQD+7e1yz6EqoVenBGR0CrTD60+z0NUItc=;
-	b=aPmXhEtwggljIX6OydnpC1U4iR61AvfVSPKPA4B/QtqT7wdT604LQFifUImkBLXy2sDYsk
-	UFmidENcu2kPjny2RAYkiXO9vqlcg850YlJGQadzTmlfGysfnFi7ovCCAf+IF+DuLyQdw+
-	LTOtOqgClu6rXizs8HijFwta96N8xVI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kinsey Ho <kinseyho@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
-Subject: Re: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during
- traversal
-Message-ID: <ZqK_CG9AtBy9mVVH@google.com>
-References: <20240724190214.1108049-1-kinseyho@google.com>
- <20240724190214.1108049-2-kinseyho@google.com>
- <20240725204346.GA1702603@cmpxchg.org>
+	s=arc-20240116; t=1721941550; c=relaxed/simple;
+	bh=hd0Q+jdLPbwm8zx67+UgjyJB+DectwEmFT4CQrLKJqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CQHcTWOzdtRPcjcPf5hBO0Ki4dPOwSEssTLfKfYqkSBa/FEpst+7/lDL8G6hD7rITFl59e3CG/TfWwWNeMtT822mtXbaoUns+yZ3Ynpzf4GjnpqmKHHnxw3fRFJrwspqStaroMLxQcdVzGLnxFZ22AgE1Wum3UYqq2lagtzHxnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=asg1cy7j; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721941548; x=1753477548;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hd0Q+jdLPbwm8zx67+UgjyJB+DectwEmFT4CQrLKJqs=;
+  b=asg1cy7jcSaUeAEZnTJ6PfKyTWiVeGk0JfRNMrynADqawc9QcCMqYqoB
+   XoNBGYmqSfaPuvFmIy2FbPkAWBOPImnVIkgHuMHo2RtZYhvwM9P0w7RXZ
+   u0MWlFGrLuy7xgvHo9MGxIoGOJOwTUNY2HCOpc3ce4fVjjWoakxhbclbv
+   QCZuxcPH3uBm4fiRpdME/CpFoO7AgLOCJhef+a8RRIfEgBp5pYtyIaNGa
+   bIGMs4R0VzgWsvlMXBxM7I8S8K5uBzN6Yxqoc5+BIbYGMz5Bg+lhTRvuI
+   N2OmJQxTa/7PnKFART+kht/SJkP8gzFvjq0YhH/2tSy+/1DrtveZnXyAZ
+   A==;
+X-CSE-ConnectionGUID: imuBzL5HRjWmWtVhWt67tQ==
+X-CSE-MsgGUID: U9PQ3xZHT2aulTh+Xfavkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="12720264"
+X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
+   d="scan'208";a="12720264"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 14:05:47 -0700
+X-CSE-ConnectionGUID: 5bdJfwZFS4mTVub3fhxl2g==
+X-CSE-MsgGUID: uOjeZl8BQ8+kZpL+mKWb2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
+   d="scan'208";a="90528961"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 14:05:47 -0700
+Date: Thu, 25 Jul 2024 14:11:11 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML
+ <linux-kernel@vger.kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Liu,
+ Yi L" <yi.l.liu@intel.com>, "Zhang, Tina" <tina.zhang@intel.com>, "Kumar,
+ Sanjay K" <sanjay.k.kumar@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
+Message-ID: <20240725141111.6889dd62@jacob-builder>
+In-Reply-To: <BL1PR11MB5271D3D84F93BA16852233F98CAB2@BL1PR11MB5271.namprd11.prod.outlook.com>
+References: <20240719181725.1446021-1-jacob.jun.pan@linux.intel.com>
+	<BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	<20240724092540.6ef4d28a@jacob-builder>
+	<BL1PR11MB5271D3D84F93BA16852233F98CAB2@BL1PR11MB5271.namprd11.prod.outlook.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725204346.GA1702603@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 04:43:46PM -0400, Johannes Weiner wrote:
-> On Wed, Jul 24, 2024 at 07:02:11PM +0000, Kinsey Ho wrote:
-> > To obtain the pointer to the saved memcg position, mem_cgroup_iter()
-> > currently holds css->refcnt during memcg traversal only to put
-> > css->refcnt at the end of the routine. This isn't necessary as an
-> > rcu_read_lock is already held throughout the function.
+
+On Thu, 25 Jul 2024 00:44:05 +0000, "Tian, Kevin" <kevin.tian@intel.com>
+wrote:
+
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Thursday, July 25, 2024 12:26 AM
 > > 
-> > Remove css->refcnt usage during traversal by leveraging RCU.
+> > On Wed, 24 Jul 2024 07:40:25 +0000, "Tian, Kevin" <kevin.tian@intel.com>
+> > wrote:
+> >   
+> > > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > > Sent: Saturday, July 20, 2024 2:17 AM
+> > > >
+> > > > Currently, there is no impact by this bug on the existing users
+> > > > because no callers are submitting invalidations with 0 descriptors.
+> > > >  
+> > >
+> > > bug fix is for existing users. Please revise the subject line and
+> > > this msg to make it clear that it's for preparation of a new usage.  
+> > The bug is in the qi_submit_sync function itself since it permits
+> > callers to give 0 as count. It is a bug regardless of users.
+> > 
+> > I put "potential" in the subject line to indicate, perhaps it is too
+> > vague. How about just stating what it is fixing:
+> > "Fix potential lockup if qi_submit_sync called with 0 count"
+> > 
+> > Also change this paragraph to:
+> > "Currently, there is no impact by this bug on the existing users because
+> >  no callers are submitting invalidations with 0 descriptors. This fix
+> > will enable future users (such as DMA drain) calling qi_submit_sync()
+> > with 0 count."  
 > 
-> Eh, I don't know about this.
+> Then please move it to the start.
 > 
-> RCU ensures that the css memory isn't freed.
+> > > > @@ -1463,8 +1462,14 @@ int qi_submit_sync(struct intel_iommu  
+> > *iommu,  
+> > > > struct qi_desc *desc,
+> > > >  		raw_spin_lock(&qi->q_lock);
+> > > >  	}
+> > > >
+> > > > -	for (i = 0; i < count; i++)
+> > > > -		qi->desc_status[(index + i) % QI_LENGTH] = QI_DONE;
+> > > > +	/*
+> > > > +	 * The reclaim code can free descriptors from multiple
+> > > > submissions
+> > > > +	 * starting from the tail of the queue. When count == 0,
+> > > > the
+> > > > +	 * status of the standalone wait descriptor at the tail of
+> > > > the queue
+> > > > +	 * must be set to QI_TO_BE_FREED to allow the reclaim code
+> > > > to proceed.
+> > > > +	 */
+> > > > +	for (i = 0; i <= count; i++)
+> > > > +		qi->desc_status[(index + i) % QI_LENGTH] =
+> > > > QI_TO_BE_FREED;  
+> > >
+> > > We don't really need a new flag. Just set them to QI_FREE and then
+> > > reclaim QI_FREE slots until hitting qi->head in reclaim_free_desc().  
+> > We do need to have a separate state for descriptors pending to be freed.
+> > Otherwise, reclaim code will advance pass the intended range.
+> >   
 > 
-> The tryget ensures that the css is still alive and valid.
+> The commit msg said that QI_DONE is currently used for conflicting
+> purpose.
 > 
-> In this case, it just so happens that the sibling linkage is also rcu
-> protected. But accessing random css members when the refcount is 0 is
-> kind of sketchy. On the other hand, the refcount is guaranteed to be
-> valid, and rcu + tryget is a common pattern.
+> Using QI_FREE keeps it only for signaling that a wait desc is completed.
+> 
+> The key is that reclaim() should not change a desc's state before it's
+> consumed by the owner. Instead we always let the owner to change the
+> state and reclaim() only does scan and adjust the tracking fields then
+> such race condition disappears.
+> 
+> In this example T2's slots are changed to QI_FREE by T2 after it completes
+> all the checks. Only at this point those slots can be reclaimed.
 
-I also spent quite some time thinking about potential bad consequences,
-but _it seems_ to be safe (but I agree it feels dangerous).
+The problem is that without the TO_BE_FREED state, the reclaim code would
+have no way of knowing which ones are to be reclaimed and which ones are
+currently free. Therefore, it cannot track free_cnt.
 
-> 
-> What does this buy us? The tryget is cheap.
+The current reclaim code is not aware of owners nor how many to reclaim.
 
-To be fair, tryget is not always cheap. Offline/dying cgroups have an atomic
-operation there.
+If I make the following changes and run, free_cnt will keep going up and
+system cannot boot. Perhaps you meant another way?
+
+--- a/drivers/iommu/intel/dmar.c
++++ b/drivers/iommu/intel/dmar.c
+@@ -1204,8 +1204,7 @@ static void free_iommu(struct intel_iommu *iommu)
+  */
+ static inline void reclaim_free_desc(struct q_inval *qi)
+ {
+-       while (qi->desc_status[qi->free_tail] == QI_TO_BE_FREED) {
+-               qi->desc_status[qi->free_tail] = QI_FREE;
++       while (qi->desc_status[qi->free_tail] == QI_FREE) {
+                qi->free_tail = (qi->free_tail + 1) % QI_LENGTH;
+                qi->free_cnt++;
+        }
+@@ -1466,10 +1465,10 @@ int qi_submit_sync(struct intel_iommu *iommu, struct qi_desc *desc,
+         * The reclaim code can free descriptors from multiple submissions
+         * starting from the tail of the queue. When count == 0, the
+         * status of the standalone wait descriptor at the tail of the queue
+-        * must be set to QI_TO_BE_FREED to allow the reclaim code to proceed.
++        * must be set to QI_FREE to allow the reclaim code to proceed.
+         */
+        for (i = 0; i <= count; i++)
+-               qi->desc_status[(index + i) % QI_LENGTH] = QI_TO_BE_FREED;
++               qi->desc_status[(index + i) % QI_LENGTH] = QI_FREE;
+
+        reclaim_free_desc(qi);
+        raw_spin_unlock_irqrestore(&qi->q_lock, flags);
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 1ab39f9145f2..eaf015b4353b 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -382,8 +382,7 @@ enum {
+        QI_FREE,
+        QI_IN_USE,
+        QI_DONE,
+-       QI_ABORT,
+-       QI_TO_BE_FREED
++       QI_ABORT
+ };
+
+Thanks,
+
+Jacob
 
