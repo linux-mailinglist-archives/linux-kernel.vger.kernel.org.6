@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-262042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886E393BFE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB14D93BFEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99C61C21861
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7231D283983
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B5C198E6C;
-	Thu, 25 Jul 2024 10:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5449198E80;
+	Thu, 25 Jul 2024 10:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="Xvk95EJ/"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihfQW398"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C97212B95
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ED513A3E6;
+	Thu, 25 Jul 2024 10:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721903353; cv=none; b=MGD28099HnJprI/rD8+CTMvcMZg9PmBb5g8TG30iA/kz1ga8Webd2IF06UxQXSH+I2PV/dkiSwEZjojXB1VJpysymbnY8SBIWGFrpsKiGsRLFckfZfgPdHQdXagQ0wvf9uUCzOnzo6DjnXShDoJ9u90fuMAsgGxyOz2Zkc7Kvxo=
+	t=1721903505; cv=none; b=Er2ZJJP4lQIVDZkwVXR2CsuTUPMUWfkApWetdYSKy2QBhfEoSfed2lUgh6M/ye5AdoRB65IUPrtCSkYRsbDTjb/FbEE7kWERR6u8NErEkSFHWIyWA8hlgdyqUlWYR9ZN8QcpjWUDCa1a/SLNdrIOLsrkY18GjOSXEBgtp3cuOX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721903353; c=relaxed/simple;
-	bh=WUvxAzvvRSp5BS4Q5MdLqhcVXiemgVMV06daqZpMWwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jKfTBYLqP3FwWqdrIPHsZl3wvRY+BtgE5Fug0Orygdu9zcVo2D+ptgIz9cW7DjTMxH/syd86LsrOlUUQAhyEGIeXHFq3nWGQbkUbz7YLlDjmyApnweYbKH2u6a2p83TH8jfXlVizk5DQBR306FmiLe1nYQamp37Z9voO2R7e2GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=Xvk95EJ/; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b798e07246so5276796d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:29:11 -0700 (PDT)
+	s=arc-20240116; t=1721903505; c=relaxed/simple;
+	bh=htIX0gNZEQ2pwJvqGxD+l3IATOPpwVwt2PCD5KSSKn4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NdCgfpHKlsf/UWn1aKbxnMCKRHt21JWueA0AZu+eH2Da6UioVJOnT7KhpjP6b/EorLKghbNqiTXmlUQjDK/2tjkx8D81pQ5vkdXFDvQEaapRr9HJaN0VT8RfSl2fZS6PSSTHWrGb+VmrznCEochPQRMjXmKS9ZkYpp0aLUALcSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihfQW398; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34677so972145a12.2;
+        Thu, 25 Jul 2024 03:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721903350; x=1722508150; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqNON2XzzicgPcrb/MJYjLlf4KFN0gRBiFSG0lWMClg=;
-        b=Xvk95EJ/Tmtdr6POjblk+zbyq107ZInUSWMIpvPIeY8QN6RBOL9lUDaOhFSFs9/GLt
-         BKzsToLmyYHTUoSx2wmj1nSVDBrsmTV88hihC6NGwVWf5UFjTEarCg3ylpqCWu2iqcPM
-         PUMdV/CwmlSFR5D2eIqAf1hd6tmDFLzrQGTdQH7m6TcYsvjQC9eP5xZGbh/yXMMuV80d
-         +cA/SpsucBvY7DXvjeJkUZ9UkDD1aLf9e4zCtjw43OSj4QBrBf4sHYi2jIHTJa4j0Ndj
-         Z9vGOWezKccdTjWqE48sbUklvptVRv8wBCWodJxTa9QlzSe25sWVpwHRmyJMQ1igd5G8
-         9uBA==
+        d=gmail.com; s=20230601; t=1721903502; x=1722508302; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W+agGw5RSx4JruLXCZ7PbUeM/c19vYS06rQLvWj4eOM=;
+        b=ihfQW398BG+dr5OH3F29rzyx+Hp5E07DSu9TtZ/8Q0simVwalmC+saJdcNwZBzl1NW
+         bWuWw6nx15me2GkrZGSXeGW05wZs00NVIt7eUrhIYP+h1BfxIh+0jMKyqh8x8ULiQlce
+         75ru41p60lyVpontnTrEbK5LqHIRDu/H0URu4VzNecAE++NyFNUh1N4q229+p0+hWopD
+         NPW2QDLNVXgAxj4M3VejViqoz7yWyvhzPoQRbMeX91Xy8m4bIE6lfdupWK/3QT0t7vNs
+         FlSUdRiyW/2d2my8hpk/VamhEPLxtl+aJ5BmLHeOAhEXgQA1whKPTKAn9Bk30R0EEXlU
+         T/+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721903350; x=1722508150;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721903502; x=1722508302;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lqNON2XzzicgPcrb/MJYjLlf4KFN0gRBiFSG0lWMClg=;
-        b=il6t8FFD8iT9ZwaE/pSu5a+2RfNvtSy2eBcvjwTn0C+QsynOFa+zrujSJbQFDPDnE7
-         i0uB3BZPTWT9jViWLlh9JTreO0jiY24xDUrbFl43skXOvBUpjNU4cF1bWod5JUNP9E+o
-         lYynFuRfM+aIVyq311DzAaYPNwlaLv3fbgsnWzm2Wpg/n0sLV3zzrD8Nol2/Kcy0/gfe
-         gFepQypMhcTfQwvzlF4jpJcGswZ9RNCJGwYjD11u64ftXiioyuDlPZxKQVa2HXfOn2e+
-         umR3SWqUT0OicZuws02FNZTx3r0e/Am6qY+FRgnGYn8p3JH6uLmBiS27z/oCtxOMx1B1
-         y2Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVW0OyJkR9BfpZ4Q2MSnFpj1E90fD9LIKtyQ//6Ze8cC7d5qpBg4Q6MJMSJMBe5YnsIIhKsk/seknpJQ+D6EW7PPdUOdfgRPFfiHhwB
-X-Gm-Message-State: AOJu0YwDO10KYz45sWqok6hZo6r3LGEF9yH0NC+GhvGu/tYGHudDTwn4
-	Or53YAAt0mZTZmHRExF+W8ShbVL9Q/MpC1/uhpUz9XsiNc9n5yQrsRsFB8BXwiDDJIAjTq3aJKA
-	ymzfoyIk+bxhJ4F0CBdyIAvSg+ktFrcDBvWM/s+T5r0H4E5323Z8=
-X-Google-Smtp-Source: AGHT+IH58fYzPz2za1A4wbM/RxniQBXqyWW1aq5VxWvoCjFUwdMxzQTEFxAC6/D8edl0M5w58o3zWa9AamOI0NUg0xw=
-X-Received: by 2002:a05:6214:230c:b0:6b5:a4f6:daa2 with SMTP id
- 6a1803df08f44-6bb406fcd47mr14595366d6.17.1721903350287; Thu, 25 Jul 2024
- 03:29:10 -0700 (PDT)
+        bh=W+agGw5RSx4JruLXCZ7PbUeM/c19vYS06rQLvWj4eOM=;
+        b=jzAa+6+SlkyCjYRa7hpOBKZ+Z7WCyOEj5y7MHQSQcxWxcwQbERaxyE7tSgxxY+GkFg
+         CmuTabo4E19AsCA990lBMknMPi1soJ7Ah9knUbSv8bApPt2MXy49GYGhWvpkE90pZIgG
+         BCky3m2QfE1PnYZoygb5Xf7h4cOzZOEcuV5AZZU3zeGRwhbe0eOGnYV375VvLFv+kY8w
+         PghlYpA2ZXTY9QBZcnjYlgVw6y0Oi8Hh6PrzA5yMnOOH2h3R/BVQjUOAdd1d43Hb7blc
+         rY3f24C+qJfif5bqXDU/E1mPajgSw3tYe/2f3tpZZHdSVGUjzdHraLf8IdKZWGMW13Z8
+         xwhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXze995gvqLVzNN7uBnmcYMewGkWPWkKYCv9ijTtbHJLjIKsBftLpO6QL94bngX7gTuHEOAUUGpqB9s2BTlyqSoSD6kP3MdC6cxkOKRbDN5jtj2uDJs1wNgvOr49E/ybYudade6OfU1Meo=
+X-Gm-Message-State: AOJu0YweBSu2VSHWnePg7j22k54QexcutZ6q6b2w38DMloivh39dHcyq
+	+dp5tRP6T+dgW+ToQgqSI/sFdmxPevEDHtee6eu7oqkUk0emLnUK
+X-Google-Smtp-Source: AGHT+IGAu3zvUQHfsTC/UTH4WJiceuCvU2xMUjNKMn2kBRL9RuFZai32Qp0okX0mkrFdHSC/S11Q/A==
+X-Received: by 2002:a17:907:97d0:b0:a7a:ab1a:2d64 with SMTP id a640c23a62f3a-a7ac506f3a4mr176339666b.58.1721903501593;
+        Thu, 25 Jul 2024 03:31:41 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad903f1sm57280766b.152.2024.07.25.03.31.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 03:31:41 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] {ASoC,media}: constify snd_soc_component_driver struct
+Date: Thu, 25 Jul 2024 12:31:38 +0200
+Message-Id: <20240725-const_snd_soc_component_driver-v1-0-3d7ee08e129b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TkgKVivuaLFLILPY-n3iZo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=@proton.me>
-In-Reply-To: <TkgKVivuaLFLILPY-n3iZo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=@proton.me>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Thu, 25 Jul 2024 11:28:58 +0100
-Message-ID: <CAPj87rPwJ-vRTsjM1rWRj1gyjbJM_ryrkTiPRBF3ZF1D7TVDYw@mail.gmail.com>
-Subject: Re: [PATCH v3] rockchip/drm: vop2: add support for gamma LUT
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, 
-	"hjc@rock-chips.com" <hjc@rock-chips.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIopomYC/x3NwQqDMAyA4VeRnC24os7uVUSKttmWg4kkIgPx3
+ Vc8fpf/P8FQCQ1e1QmKBxkJFzzqCtJ35g86ysXgG982T9+5JGx7NM7RJMUk6yaMvMesdKC6JfQ
+ +zKFbQjtAiWyKb/rdg3G6rj8V+brQcAAAAA==
+To: Tim Harvey <tharvey@gateworks.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721903500; l=1490;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=htIX0gNZEQ2pwJvqGxD+l3IATOPpwVwt2PCD5KSSKn4=;
+ b=vBDKmvKNwCIRMMTYycPXUCa0VMk1znrRDaTVxp1ewj0Yo659ha2gfmiErmmqJzC2lEeS99wV6
+ S0Y8WTWXCEJB+QZG9JPwzy0tFzzO75Pecq8vABwhbjWvw6sKrkIMHfw
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Piotr,
+The `snd_soc_component_driver` struct is never modified after its
+declaration, and its only direct user
+`devm_snd_soc_register_component()` expects a constant value anyway.
 
-On Wed, 24 Jul 2024 at 23:06, Piotr Zalewski <pZ010001011111@proton.me> wrote:
-> Add support for gamma LUT in VOP2 driver. The implementation is based on
-> the one found in VOP driver and modified to be compatible with VOP2. Blue
-> and red channels in gamma LUT register write were swapped with respect to
-> how gamma LUT values are written in VOP. Write of the current video port id
-> to VOP2_SYS_LUT_PORT_SEL register was added before the write of DSP_LUT_EN
-> bit. Gamma size is set and drm color management is enabled for each video
-> port's CRTC except ones which have no associated device. Tested on RK3566
-> (Pinetab2).
+Declare `snd_soc_component_driver` as const to move their declarations
+to read-only sections.
 
-Thanks a lot for doing this!
+Apart from a single case under media/, the affected drivers are members
+of the ASoC subsystem.
 
-> +static void vop2_crtc_gamma_set(struct vop2 *vop2, struct drm_crtc *crtc,
-> +                               struct drm_crtc_state *old_state)
-> +{
-> +       [...]
-> +
-> +       vop2_lock(vop2);
-> +       vop2_crtc_write_gamma_lut(vop2, crtc);
-> +       vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
-> +
-> +       vop2_vp_dsp_lut_enable(vp);
-> +
-> +       vop2_cfg_done(vp);
-> +       vop2_unlock(vop2);
-> +}
->
-> @@ -2060,6 +2159,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
->         drm_crtc_vblank_on(crtc);
->
->         vop2_unlock(vop2);
-> +
-> +       if (crtc->state->gamma_lut)
-> +               vop2_crtc_gamma_set(vop2, crtc, old_state);
->  }
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      media: i2c: tda1997x: constify snd_soc_component_driver struct
+      ASoC: constify snd_soc_component_driver struct
 
-In the atomic_enable callback, we are already holding the VOP lock,
-and waiting to set cfg_done etc - we then do it all over again here.
-This should all be atomic, so that we configure the LUT whilst doing
-the setup, and then only call cfg_done once, to avoid showing the user
-intermediate states which only later converge on the desired final
-state.
+ drivers/media/i2c/tda1997x.c         | 2 +-
+ sound/soc/au1x/dbdma2.c              | 2 +-
+ sound/soc/au1x/dma.c                 | 2 +-
+ sound/soc/bcm/cygnus-pcm.c           | 2 +-
+ sound/soc/codecs/cpcap.c             | 2 +-
+ sound/soc/codecs/cs43130.c           | 2 +-
+ sound/soc/codecs/pcm186x.c           | 4 ++--
+ sound/soc/codecs/pcm5102a.c          | 2 +-
+ sound/soc/codecs/spdif_receiver.c    | 2 +-
+ sound/soc/codecs/spdif_transmitter.c | 2 +-
+ sound/soc/codecs/sti-sas.c           | 2 +-
+ sound/soc/codecs/tas6424.c           | 2 +-
+ sound/soc/stm/stm32_adfsdm.c         | 2 +-
+ sound/soc/uniphier/evea.c            | 2 +-
+ 14 files changed, 15 insertions(+), 15 deletions(-)
+---
+base-commit: 864b1099d16fc7e332c3ad7823058c65f890486c
+change-id: 20240725-const_snd_soc_component_driver-b9629a95b948
 
-Cheers,
-Daniel
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
