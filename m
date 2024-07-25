@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-262222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E957B93C2B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:09:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A46593C2B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74324B21CCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C060EB221AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CA519AD7D;
-	Thu, 25 Jul 2024 13:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="agEgf15+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gNKq+b1Q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="agEgf15+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gNKq+b1Q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97571132492;
-	Thu, 25 Jul 2024 13:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B3419AD81;
+	Thu, 25 Jul 2024 13:14:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE21C132492;
+	Thu, 25 Jul 2024 13:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912985; cv=none; b=s9jpuTFfT9KXO8lvg8+6zDpxfy8KYdJ54S77ykfDV52nb7Eipf4uyped960FogG0AvJYlxn6PzMRWvFZpWKRCM7iQbfWNi5t3mrP/nrJP7c9UwviOnt+U1xJT/c/9zq0p4njTTx6xrMt+TQLPrCaBSpZl2OH60dbu7XuuaV/zlA=
+	t=1721913257; cv=none; b=MIQpQsaWmWKbW5lUVnn8CIfTQos769PQwAwIxuPJFs4VtwqKElSq733DIjvAmthKzPUGg2nemTh0ALIhMlrQ/a37VzCkyry2mrMSjO56OP+YCInQO/KsMR68RxhgCWUksPUmt8Yw1vw9S5244SL0BeOdBoyfV6zgE+Ca4v0G3PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912985; c=relaxed/simple;
-	bh=n1gUr2c4GQu5jNGebTPfPhLof3eEJ04vnF3m/uM8RPg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mkX9uDoUKJ1HpYUylJUZvlnlZ0aqPeE3+o3UsSCiAF+oxfr9LlpPilnxzl4hL4E9Nm8W9QaMPpTJKNCpJVPF8qTl1jjr/xKwYzQec+ZLpjCR8KHeCxdAb0f3iUTc4ZIaqJPK05cYv92JGEAPFgowWp48kvmsWAW6QqnvRGgxax4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=agEgf15+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gNKq+b1Q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=agEgf15+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gNKq+b1Q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B61F81F45A;
-	Thu, 25 Jul 2024 13:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721912981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QKjiNMrsBhBaZ0D8OVqE+BfZnp5dRRJ+v/JWkSJHC9c=;
-	b=agEgf15+fX52b43Kz9PD/y77GRLe3F7aQ0VbOd7anvpMOoubM2Hk92S+CrDGR0Wlf7HYw/
-	6bRSHfq5Pewm6vE497jxSJ+oEXTmm0dNhCBLvQ2c06SJRB74b1UIb9h0DWqFEdG4kf84fY
-	LOkx8B2kohdpMkBV7LjDxl+Jwsv0H1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721912981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QKjiNMrsBhBaZ0D8OVqE+BfZnp5dRRJ+v/JWkSJHC9c=;
-	b=gNKq+b1QMPu1QCFADYdDmBWO76i31LVeCWbIl2ry1r3W1y7kBCuqOf0YlKuWKWOj21sZOc
-	qXYfOJfmJtjj8gAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721912981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QKjiNMrsBhBaZ0D8OVqE+BfZnp5dRRJ+v/JWkSJHC9c=;
-	b=agEgf15+fX52b43Kz9PD/y77GRLe3F7aQ0VbOd7anvpMOoubM2Hk92S+CrDGR0Wlf7HYw/
-	6bRSHfq5Pewm6vE497jxSJ+oEXTmm0dNhCBLvQ2c06SJRB74b1UIb9h0DWqFEdG4kf84fY
-	LOkx8B2kohdpMkBV7LjDxl+Jwsv0H1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721912981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QKjiNMrsBhBaZ0D8OVqE+BfZnp5dRRJ+v/JWkSJHC9c=;
-	b=gNKq+b1QMPu1QCFADYdDmBWO76i31LVeCWbIl2ry1r3W1y7kBCuqOf0YlKuWKWOj21sZOc
-	qXYfOJfmJtjj8gAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C38213874;
-	Thu, 25 Jul 2024 13:09:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SnbxHJVOomZRewAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 25 Jul 2024 13:09:41 +0000
-Date: Thu, 25 Jul 2024 15:10:16 +0200
-Message-ID: <87plr1ipmv.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: soxiebing <soxiebing@163.com>
-Cc: tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	songxiebing <songxiebing@kylinos.cn>,
-	bo liu <bo.liu@senarytech.com>
-Subject: Re: [PATCH] ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
-In-Reply-To: <20240725082610.45504-1-soxiebing@163.com>
-References: <20240725082610.45504-1-soxiebing@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721913257; c=relaxed/simple;
+	bh=wEVHxiu3Gg6fXP3+WspO2QY7d4BxcqzBopV5kKhQhqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X8ILxIvKX1gdYyekHj+prK5WpG80wYu8NgLV/56rjz8fKFKDthJGMQ7OR9nWMUa/O/6R4XyaK4w6ddLZIfRWt94Ft/lb52LsuzyiqnuQ08rKM/qVHA0QHA4XGdBipwCoj8ZSYaBrpawCl6frgZp+tGYC4pKmHFNYNUsSXp1dPpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A0C31007;
+	Thu, 25 Jul 2024 06:14:39 -0700 (PDT)
+Received: from [10.1.29.30] (e122027.cambridge.arm.com [10.1.29.30])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 672373F5A1;
+	Thu, 25 Jul 2024 06:14:12 -0700 (PDT)
+Message-ID: <28d1989a-106d-4cae-81a9-a7bcc8a474f5@arm.com>
+Date: Thu, 25 Jul 2024 14:14:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.10 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[163.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -0.10
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] module: Add hard dependencies as syntactic sugar
+To: Dragan Simic <dsimic@manjaro.org>, linux-modules@vger.kernel.org
+Cc: mcgrof@kernel.org, linux-kernel@vger.kernel.org, didi.debian@cknow.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, Qiang Yu <yuq825@gmail.com>
+References: <04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 25 Jul 2024 10:26:10 +0200,
-soxiebing wrote:
+On 25/07/2024 12:37, Dragan Simic wrote:
+> Panfrost and Lima DRM drivers use devfreq to perform DVFS, which is supported
+> on the associated platforms, while using simple_ondemand devfreq governor by
+> default.  This makes the simple_ondemand module a hard dependency for both
+> Panfrost and Lima, because the presence of the simple_ondemand module in an
+> initial ramdisk allows the initialization of Panfrost or Lima to succeed.
+> This is currently expressed using MODULE_SOFTDEP. [1][2]  Please see commits
+> 80f4e62730a9 ("drm/panfrost: Mark simple_ondemand governor as softdep") and
+> 0c94f58cef31 ("drm/lima: Mark simple_ondemand governor as softdep") for
+> additional background information.
 > 
-> From: songxiebing <songxiebing@kylinos.cn>
+> With the addition of MODULE_WEAKDEP in commit 61842868de13 ("module: create
+> weak dependecies"), the dependency between Panfrost/Lima and simple_ondemand
+> can be expressed in a much better way as a weakdep, because that provides
+> the required dependency information to the utilities that generate initial
+> ramdisks, but leaves the actual loading of the required kernel module(s) to
+> the kernel.  However, being able to actually express this as a hard module
+> dependency would still be beneficial.
 > 
-> 'Fixes: 7aeb25908648 ("Fix headset auto detect fail in cx8070 and SN6140")'
+> With all this in mind, let's add MODULE_HARDDEP as some kind of syntactic
+> sugar, currently implemented as an alias for MODULE_WEAKDEP, so the actual
+> hard module dependencies can be expressed properly, and possibly handled
+> differently in the future, avoiding the need to go back, track and churn
+> all such instances of hard module dependencies.  The first consumers of
+> MODULE_HARDDEP will be the Panfrost and Lima DRM drivers, but the list of
+> consumers may also grow a bit in the future.
+> 
+> For example, allowing reduction of the initial ramdisk size is a possible
+> future difference between handling the MODULE_WEAKDEP and MODULE_HARDDEP
+> dependencies.  When the size of the initial ramdisk is limited, the utilities
+> that generate initial ramdisks can use the distinction between the weakdeps
+> and the harddeps to safely omit some of the weakdep modules from the created
+> initial ramdisks, and to keep all harddep modules.
+> 
+> Due to the nature of MODULE_WEAKDEP, the above-described example will also
+> require some additional device-specific information to be made available to
+> the utilities that create initial ramdisks, so they can actually know which
+> weakdep modules can be safely pruned for a particular device, but the
+> distinction between the harddeps and the weakdeps opens up a path towards
+> using such additional "pruning information" in a more robust way, by ensuring
+> that the absolutely required harddep modules aren't pruned away.
+> 
+> [1] https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org/T/#u
+> [2] https://lore.kernel.org/dri-devel/fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org/T/#u
+> 
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Boris Brezillon <boris.brezillon@collabora.com>
+> Cc: Qiang Yu <yuq825@gmail.com>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
 
-The Fixes tag should be put around Signed-off-by.
-Also drop the quote ''.
+Thanks Dragan, while there's obviously a bunch more work to hook this up
+appropriately, this at least lets drivers signal the actual requirement.
 
-> This patch only handles the unsol_event reporting during interrupts
-> and does not include the polling mode used to set jackroll_ms, so
-> it's changed to use snd_hda_jack_detect-enable_callback function.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-If you mean about the commit above as "this patch", better to
-rephrase to be clearer.
+Steve
 
-The code change itself looks good, through a quick glance.
+> ---
+>  include/linux/module.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 88ecc5e9f523..40e5762847a9 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -179,6 +179,14 @@ extern void cleanup_module(void);
+>   */
+>  #define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
+>  
+> +/*
+> + * Hard module dependencies. Currently handled the same as weak
+> + * module dependencies, but intended to mark hard dependencies
+> + * as such for possible different handling in the future.
+> + * Example: MODULE_HARDDEP("module-foo")
+> + */
+> +#define MODULE_HARDDEP(_harddep) MODULE_WEAKDEP(_harddep)
+> +
+>  /*
+>   * MODULE_FILE is used for generating modules.builtin
+>   * So, make it no-op when this is being built as a module
 
-Could you try to improve the patch description and resubmit?
-
-
-thanks,
-
-Takashi
 
