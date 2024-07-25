@@ -1,123 +1,92 @@
-Return-Path: <linux-kernel+bounces-262396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35F293C689
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECEF93C68C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51A11C22276
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB211F239AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A619D8AB;
-	Thu, 25 Jul 2024 15:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7D119D890;
+	Thu, 25 Jul 2024 15:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaM3lN+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DA71993AE;
-	Thu, 25 Jul 2024 15:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PZiGj4bk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8054E1D545;
+	Thu, 25 Jul 2024 15:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921689; cv=none; b=DFJ0iPJPL0fkLyJ8aX79u3RaxWAOlDWk0Sz6+3JrOPAWB7CKKpg8pNjBu/CY5MrpQzvqDPaif6DZspb74jzV6T9Dugx287CFtUy/7SrO8+CXqHb+5LpXV77nu8KhpmAUJx0nZTvgZ0oJhS/elI/y2g1Jya1yv0exy2sOd2Su3s4=
+	t=1721921720; cv=none; b=Ep+sdDAYq+jKrHUUR/Zy+npcMkhQ6CuGLgN4jr0/y58WrGSY1tmlwV8R0V3kHOhCre37dwe2VRtjWRDu0lV5ZyTxKBoOQWYOW4fzMHQTw6oEAkecHLIv/SAi4UixVMaRIbfV776t3FVYS9GNULkI0+zq7pOiK9JUUazZuQyDzYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921689; c=relaxed/simple;
-	bh=XwYVVIPGvDLM+Mi4lkud9Ay/FNg2RmftzXEjlRISXXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SpWl0ujHBxD8uJ+gJXwnzBxPnbGusgxH+AufoLe2dbuio3b3rb/NYS9oyRmfcFSI+qU8ThnMg4jVNdKsMJ8BXOVSQ/eAmLEOlipscHCigDBcLd227Se5V6QhE67ewANiWEfE+tGkhFAlSZ/JsX1+qDsu8GE4IxpeNlkfkj2xYns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaM3lN+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736C4C116B1;
-	Thu, 25 Jul 2024 15:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721921688;
-	bh=XwYVVIPGvDLM+Mi4lkud9Ay/FNg2RmftzXEjlRISXXo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eaM3lN+iLVyBPPl+yEcq6t0yIUHQzrNxG0e56HJ4cYuskPpcE2Myp72XAU77I8f9Q
-	 56nrZ1j5Sps8BYWLpkdNaMvGQzPDo4DBKAYGsq/GRnc/HHmBXUhfXdVa4i0bxv5QOa
-	 vrgr8lGA5k/wR74+3OIqOX+BJ5SLAckQqdTbThWIsf7AXRUQzXuVLrxoM2nM+1kVnu
-	 k2+Yih1sZFgYaA3Tcc+xRWvSR/VdwocYU0hBKmnqTRvkNWKlUc/72f9QZyNu9xGUVQ
-	 FmQp0sLXS9i6XS4DNIX2Ukur2ZMhgNyaJw4ZQLcFx6ZHaa114gdgESkylHcL0BvS8Z
-	 nih0jxLIPhIaQ==
-Date: Thu, 25 Jul 2024 10:34:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: George-Daniel Matei <danielgeorgem@chromium.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nic_swsd@realtek.com,
-	netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
-Message-ID: <20240725153446.GA841157@bhelgaas>
+	s=arc-20240116; t=1721921720; c=relaxed/simple;
+	bh=Av13jV9WXAR2oP+oHIDPBK5vyTkEu7d2MaZAlZ8XFuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/W9fx/nk8gFJLipJB6goikIayGaDNkbHkYNlBHhQb+w+4sg6mb7zQUtB1DOugU1IqqXa2ujL1Rq6L1fPh+K4nc38GqIBhZkJCHvQ0Tdg+unQx0IjkdSMXy3s49fnZHFr81Nn3T0pN7OXWITpAkS0JQlEGwfyfjPRY7C3oTE0tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PZiGj4bk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 35DC320B7165; Thu, 25 Jul 2024 08:35:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35DC320B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721921719;
+	bh=s8siOKYtL6p+6N0ViUiM0Lj1P9rlJj2iJn8RkO8aNns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PZiGj4bkPmMFqlVmwznYlEjKxjVSuteatPh/LGjnjZlRj1kBXzk90/G3euIlaRWWe
+	 A7uE9eze6jA7agUd9hgZ0iak1M1pGvcE3UES6JYnScm4f/wSr2CAQb6pi6erNyO0c1
+	 ic41spFGFNhytOhhU4sDE3glTJJutoVU8XmOZOCk=
+Date: Thu, 25 Jul 2024 08:35:19 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
+	srivatsa@csail.mit.edu
+Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Message-ID: <20240725153519.GA21016@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
+ <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e0e1ceb-9da8-4227-8964-04e891c1d9e3@gmail.com>
+In-Reply-To: <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-[+cc Rafael in case you have suspend debug help]
-
-On Tue, Jul 16, 2024 at 09:25:40PM +0200, Heiner Kallweit wrote:
-> On 16.07.2024 14:13, George-Daniel Matei wrote:
-> > On Thu, Jul 11, 2024 at 7:45 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> >> On 10.07.2024 17:09, George-Daniel Matei wrote:
-> >>>>> Added aspm suspend/resume hooks that run
-> >>>>> before and after suspend and resume to change
-> >>>>> the ASPM states of the PCI bus in order to allow
-> >>>>> the system suspend while trying to prevent card hangs
-> >>>>
-> >>>> Why is this needed?  Is there a r8169 defect we're working around?
-> >>>> A BIOS defect?  Is there a problem report you can reference here?
-> >>>
-> >>> We encountered this issue while upgrading from kernel v6.1 to v6.6.
-> >>> The system would not suspend with 6.6. We tracked down the problem to
-> >>> the NIC of the device, mainly that the following code was removed in
-> >>> 6.6:
-> >>>> else if (tp->mac_version >= RTL_GIGA_MAC_VER_46)
-> >>>>         rc = pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);1
-> >>
-> >> With this (older) 6.1 version everything is ok?
-> >> Would mean that L1.1 is active and the system suspends (STR?) properly
-> >> also with L1.1 being active.
-> >>
-> > Yes, with 6.1 everything was ok. L1 was active and just the L1.1 substate
-> > was enabled, L1.2 was disabled.
+On Thu, Jul 25, 2024 at 08:23:21AM -0700, Nuno Das Neves wrote:
+> On 7/24/2024 10:26 PM, Saurabh Sengar wrote:
+> > Currently on a very large system with 1780 CPUs, hv_acpi_init takes
+> > around 3 seconds to complete for all the CPUs. This is because of
+> > sequential synic initialization for each CPU.
 > > 
-> >> Under 6.6 per default L1 (incl. sub-states) is disabled.
-> >> Then you manually enable L1 (incl. L1.1, but not L1.2?) via sysfs,
-> >> and now the system hangs on suspend?
-> >>
-> > Yes, in 6.6 L1 (+substates) is disabled. Like Bjorn mentioned, I
-> > think that is because of 90ca51e8c654 ("r8169:
-> > fix ASPM-related issues on a number of systems with NIC version from
-> > RTL8168h". With L1 disabled the system would not suspend so I enabled
-> > back L1 along with just L1.1 substate through sysfs, just to test, and
-> > saw that the system could
+> > Defer these tasks so that each CPU executes hv_acpi_init in parallel
+> > to take full advantage of multiple CPUs.
 > 
-> It still sounds very weird that a system does not suspend to ram
-> just because ASPM L1 is disabled for a single device.
-> What if a PCI device is used which doesn't support ASPM?
+> I think you mean hv_synic_init() here, not hv_acpi_init()?
+
+Thanks, will send v2 correcting this.
+
+- Saurabh
+
 > 
-> Which subsystem fails to suspend? Can you provide a log showing
-> the suspend error?
-
-Can we push on this a little bit?  The fact that suspend fails is
-super interesting to me.  I'd like to know exactly how this fails and
-whether it's in the kernel or in firmware.  If we're violating some
-assumption firmware is making, maybe there would be a more generic
-fix.
-
-How exactly do you suspend?  Is there any debugging output you can
-collect while doing that?  Maybe [1] has hints.  I see a bunch of
-trace_suspend_resume() calls, and I think they're connected to [2],
-which looks like it might generate console/dmesg output, but I don't
-know how to enable that.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/power/basic-pm-debugging.rst?id=v6.10
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/trace/events/power.h?id=v6.10#n247
+> > 
+> > This solution saves around 2 seconds of boot time on a 1780 CPU system,
+> > that around 66% improvement in the existing logic.
+> > 
+> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > ---
+> >  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
+> >  1 file changed, 30 insertions(+), 3 deletions(-)
+> > 
+> 
+> LGTM otherwise.
+> 
+> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
