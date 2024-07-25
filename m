@@ -1,149 +1,133 @@
-Return-Path: <linux-kernel+bounces-261996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E048293BF24
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:34:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2B993BF2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CFAB210A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:34:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672AC281854
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5D3197A87;
-	Thu, 25 Jul 2024 09:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7EE198830;
+	Thu, 25 Jul 2024 09:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="OEqmsNzu"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fG32LBEB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6E9196DA4
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1AC197A95;
+	Thu, 25 Jul 2024 09:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900042; cv=none; b=WsdUnS5CevkJReFHw0sy3k12gtnhb+X8Jc/DDQzyz6pHCkvIlSjGZxdcKMHdcdxVC7R3iJ+G56pCDEzvXGq1RRXJRbqSCCyPZIwVCjRLXe9jRCHcjbE+zW2tFFLho/i+ANVKK19PUslh6jMsIHBD6KesjWeVKZntX3w/eAgrEps=
+	t=1721900283; cv=none; b=mkPbFLWU/Kd/eV6mhwYJEkaGGR2NrpDMhcK8jP7Z6cDvYmkbg7xCsFuiKR7a/2zga6Js6alXL5qT291xBzusOolHIkbsxycs4MDXbCQlsSUnzh4+EoHcJCcOzV4cQMRKI6gZYGD7AYu4iUdIjsCbcIMHw7TY4F1BUoFh+pAYcB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900042; c=relaxed/simple;
-	bh=GFq5xiMElGG8EsnSRRsj0rTx2aMgsasbt3MZQHLQUHY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=KPLcaI9uS8HmbIFKBk6qA61Td7jvnbzaAUAiRM/mvbOMLjnscMrpTau1MkCQ8nboqj1QVnHQsKgI0zqfYhSRMNc6ULanj85N3m8+dcjkST04LZIl+N1K14KWziigyOApYWKtlyP+IJrwq2eoEi+3wfD7D1r7+3WjlSMcoKupytE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=OEqmsNzu; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721900283; c=relaxed/simple;
+	bh=VkQQmC+cDGpTHqGfwkH4J5cRWYSBvrFqnFYBf3GcYYE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zv/cjgRG0J/TT4rqKaASDEJ+oxiu8Na7O1lgQs/MWpAfWV+tUnukizpotsl8FTRfEP2nx09kj4GYMo0qQ9DKDKOJJHMPf0clLFR8w8uKsXhJQAl+G4Qw2eZJ6QNBPTvpg56MU2b4iiu8N0LYyPc8MS0KBQ5BFBI2m4a+PKmd07o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fG32LBEB; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721900282; x=1753436282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VkQQmC+cDGpTHqGfwkH4J5cRWYSBvrFqnFYBf3GcYYE=;
+  b=fG32LBEBZo5nAGVdplztkP682p36F7druScbqgNdQUxd8blOQTvQwe6Z
+   mvpeJs9VWbZVGHP16aMYmDz9f2I7ZxV6GkbMaAs+/qjfgdEvMvwyVbBqW
+   MPtweBZYnbBgmUOSIaFogI0VLCmw56PUzI0h1rZmhPa0+vL4nXhDrnP73
+   qYbwgbEKALS9k3F3gtzm3reUOMysTGeICyhNC+QxSgqrSRZqr5rgVtZ2k
+   yjXSso/tsrR/6A8Lm+cjZGYctZtT6Qvz0EaS2YkgS/3gPs0UFG/fIOUXz
+   rTf662jA78v3kQeiA5yF5NV3Wg3y4K2auoGVPAiQdMxcGG4D5uR0NAhkt
+   A==;
+X-CSE-ConnectionGUID: hEn5OPxASvWCQ96luVzNJg==
+X-CSE-MsgGUID: b0zKuWM8S2qIBfEsrbIeYg==
+X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
+   d="scan'208";a="29674287"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 02:37:55 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 25 Jul 2024 02:37:28 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 25 Jul 2024 02:37:27 -0700
+Date: Thu, 25 Jul 2024 15:04:17 +0530
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <horms@kernel.org>,
+	<hkallweit1@gmail.com>, <richardcochran@gmail.com>, <rdunlap@infradead.org>,
+	<linux@armlinux.org.uk>, <bryan.whitehead@microchip.com>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net-next V2 3/4] net: lan743x: Migrate phylib to phylink
+Message-ID: <ZqIcGbGktHjsILeu@HYD-DK-UNGSW21.microchip.com>
+References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+ <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
+ <cdf2e1e8-39ff-48b3-84b6-73c673ab1eb1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721900036;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ftboGbAMunxAO4+cPMRch4E/ukDKcT8aii0ePtJNgZM=;
-	b=OEqmsNzuwGqFduFXmrMacdbTUo+E6LIynswzDXCif4+33hqVHg3eB7zB7PznRuRWSOAlOL
-	gn6ojfZuue2msva48byR7iF+GgPh3Og7go0k1YUZvShhZlmK0mT44kCD5Up61AK0D/ph7D
-	FBO5zCg7O4M7SzaL5Uvb7FBKOHsCJ0XLhY/oYofBFhG49YXQPKA4qEXqpJ6zbLlzt7ssc8
-	EvA13CE1/qyKoOC9j/rUribYJxM9Of9qC2b/XNnDDdXIdIKFri3mQ0ZnAnaKcMo/zW+SnP
-	imsl4EkSdJnUhj19AWo5iwqMf2cEe4IdolUFKZwYIYuTC9JcWi9P7PXmgQrE/Q==
-Date: Thu, 25 Jul 2024 11:33:55 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Clean up a few logged messages
-In-Reply-To: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
-References: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
-Message-ID: <62c163be6ba3eeb9af82672d41e93b78@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <cdf2e1e8-39ff-48b3-84b6-73c673ab1eb1@lunn.ch>
 
-Hello all,
+Hi Andrew,
 
-Just checking, is this patch good enough to be accepted?  If not, is 
-there
-some other preferred way for cleaning up the produced messages?
+Thank you for review the patches.
 
-On 2024-07-04 01:32, Dragan Simic wrote:
-> Clean up a few logged messages, which were previously worded as rather
-> incomplete sentences separated by periods.  This was both a bit 
-> unreadable
-> and grammatically incorrect, so convert them into partial sentences 
-> separated
-> (or connected) by semicolons, together with some wording improvements.
+The 07/18/2024 05:43, Andrew Lunn wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  drivers/gpu/drm/rockchip/cdn-dp-core.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
+> On Tue, Jul 16, 2024 at 05:03:48PM +0530, Raju Lakkaraju wrote:
+> > Migrate phy support from phylib to phylink.
+> > Fixed phy support is still used together with phylink since we need to support
+> > dynamic fallback when a phy is not found over mdio. While phylink's FIXED mode
+> > supports fixed phys that, it's dynamic and requires device tree entries which
+> > are most of the time not present for LAN743x devices
 > 
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> index bd7aa891b839..ee9def197095 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> @@ -969,46 +969,44 @@ static void cdn_dp_pd_event_work(struct 
-> work_struct *work)
+> > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
+> > +{
+> > +     struct device_node *dn = adapter->pdev->dev.of_node;
+> > +     struct net_device *dev = adapter->netdev;
+> > +     struct fixed_phy_status fphy_status = {
+> > +             .link = 1,
+> > +             .speed = SPEED_1000,
+> > +             .duplex = DUPLEX_FULL,
+> > +     };
 > 
->  	/* Not connected, notify userspace to disable the block */
->  	if (!cdn_dp_connected_port(dp)) {
-> -		DRM_DEV_INFO(dp->dev, "Not connected. Disabling cdn\n");
-> +		DRM_DEV_INFO(dp->dev, "Not connected; disabling cdn\n");
->  		dp->connected = false;
 > 
->  	/* Connected but not enabled, enable the block */
->  	} else if (!dp->active) {
-> -		DRM_DEV_INFO(dp->dev, "Connected, not enabled. Enabling cdn\n");
-> +		DRM_DEV_INFO(dp->dev, "Connected, not enabled; enabling cdn\n");
->  		ret = cdn_dp_enable(dp);
->  		if (ret) {
-> -			DRM_DEV_ERROR(dp->dev, "Enable dp failed %d\n", ret);
-> +			DRM_DEV_ERROR(dp->dev, "Enabling dp failed: %d\n", ret);
->  			dp->connected = false;
->  		}
+> So you are happy to limit it to 1G, even thought it can do more? That
+> is the problem with fixed PHY done this way. If you were to use
+> PHYLINK fixed PHY you can use the full bandwidth of the hardware.
 > 
->  	/* Enabled and connected to a dongle without a sink, notify userspace 
-> */
->  	} else if (!cdn_dp_check_sink_connection(dp)) {
-> -		DRM_DEV_INFO(dp->dev, "Connected without sink. Assert hpd\n");
-> +		DRM_DEV_INFO(dp->dev, "Connected without sink; assert hpd\n");
->  		dp->connected = false;
+
+I accept your comments. Fixed PHY hard coded to 1Gpbs.
+
+Currenly, LAN743x chip don't have Device Tree implemented. 
+As part of SFP support, I would like to add software nodes.
+After SFP support development, I will add "fixed-link" option in software nodes.
+
+> You might want to look at what the wangxun drivers do for some ideas
+> how you can make use of PHYLINK fixed link without having DT.
+
+I refer the wangxun drivers for "fixed-link". currently wangxun driver did not
+implement "fixed-link" in software node.
+ 
 > 
->  	/* Enabled and connected with a sink, re-train if requested */
->  	} else if (!cdn_dp_check_link_status(dp)) {
->  		unsigned int rate = dp->max_rate;
->  		unsigned int lanes = dp->max_lanes;
->  		struct drm_display_mode *mode = &dp->mode;
+>     Andrew
 > 
-> -		DRM_DEV_INFO(dp->dev, "Connected with sink. Re-train link\n");
-> +		DRM_DEV_INFO(dp->dev, "Connected with sink; re-train link\n");
->  		ret = cdn_dp_train_link(dp);
->  		if (ret) {
->  			dp->connected = false;
-> -			DRM_DEV_ERROR(dp->dev, "Train link failed %d\n", ret);
-> +			DRM_DEV_ERROR(dp->dev, "Training link failed: %d\n", ret);
->  			goto out;
->  		}
-> 
->  		/* If training result is changed, update the video config */
->  		if (mode->clock &&
->  		    (rate != dp->max_rate || lanes != dp->max_lanes)) {
->  			ret = cdn_dp_config_video(dp);
->  			if (ret) {
->  				dp->connected = false;
-> -				DRM_DEV_ERROR(dp->dev,
-> -					      "Failed to config video %d\n",
-> -					      ret);
-> +				DRM_DEV_ERROR(dp->dev, "Failed to configure video: %d\n", ret);
->  			}
->  		}
->  	}
+
+-- 
+Thanks,                                                                         
+Raju
 
