@@ -1,195 +1,185 @@
-Return-Path: <linux-kernel+bounces-262211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398E093C287
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD3293C28B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD731C20DFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:56:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5821C20EDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E882E19AD91;
-	Thu, 25 Jul 2024 12:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A907519AD7E;
+	Thu, 25 Jul 2024 12:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PSpSx33N"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kKGxnarw"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E9C19AD56
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28F5199246
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912193; cv=none; b=H7ivPL9960CBqCkKElW57ExGVe5DfjSMdW83cL7fc0JUJ+LXcWjaaJYPryU6E/+E7aAPznfPsdlrmpFHHM5dWcFFhUHgRWmAlsycUhLreyqBFyssxSkucAQXHvduj93Q7IltHFWOIJY8SGP3WRUUa5Jwv16xoRIxHBmjju0ksaA=
+	t=1721912330; cv=none; b=GbDpY9FrmStkJnJQfU4kU/8dg0Oola76diUTb0tA9kp9Kb3BrRYTqv8Nhzt+V1YzKjJ31WxRfzNoLt4LTM2m01jJhDTbYBs3RUVRSf+vz11Pyc2XOAmA71JR4A81i6Hw5ahdcOr1iL7XJxB5/tNlUg3uftcErCKT8A+6x2yrlI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912193; c=relaxed/simple;
-	bh=W+wn0GlOw0Gf8eTKdYVnQsoy5a7TOWTISZPM87pGBkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rpu90oIkR5IdBLpkrlgpTrPdMmByBR7ZTYSDoE8gpcZSnx80OUraeW7fPZ1elux83B/KrzBoLU9JxCX37MHD7/7sm7S9UZwNTSxombh1HZQqfWG7rJMLV8EswAH/8KFpnf6mzEEhKjckuV8NHKrDfSjA89dCxTvVjjXncToTvTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PSpSx33N; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04150796so185435e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:56:31 -0700 (PDT)
+	s=arc-20240116; t=1721912330; c=relaxed/simple;
+	bh=ol9QeSXj3jLXnW607BTnItEsLO3rwJkVUILiSBWncic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lF8YE59P0xbj14CuLHTmRHAGBZga97ipBvNYPFjP8vG71V8PiC9LZVnSZVSYsJblDo3cMk5R522CBaTVdqr21CnH5SZNPkhCdeOALpZNuIYY7puk4aYo7nkJlmeorUx+nRnNvBe4PCuqggELax04m4XiH50x+07IbrRec/LNUmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kKGxnarw; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d6f4714bso54066285a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:58:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721912189; x=1722516989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J36xabAj2bKInLJhB2Kp1HMkLRnJXufSHyFnP7004CA=;
-        b=PSpSx33NJKP/ArKf2Klir+NRPUFjRcJ+81zpng344POaanyiZGoOf7fARnvuuHf+Qa
-         aBUlAboixii+dR90vvYLVKasQMpI6mzo6Zr4EE8kYxZyIMGEiu04ovDRQEOVl/vQxQsU
-         1uyOJD+vsTnWHV7E9UzoXYDpS21SyA7zO87kw=
+        d=ziepe.ca; s=google; t=1721912327; x=1722517127; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XTnt44Tc3tOs5dIbjDK1ckNp4sIhauYdQ2vBo3NA//A=;
+        b=kKGxnarwUMpBrhs6aIesz/pp4+tN4k8ZQu8H/prFEs+Yeu0kCk5MgnuRzVPtu8zK2B
+         EPc5Nb8djcKfJN/UVe1E9kJ7cwC+Xaisv5gy6aEBa/UqyX165XZ9JBLnakTtwYmXfB0w
+         zgK2jcfwuvS3K6Ohvqrh/7WWaX2L3nWwHVVpgSUQl01aFlCjDo0nv3ea60jd97zBxYou
+         QqM+azz8Iieb1PHdCnBqqpm8PME/c72yJlqSYomQPnAzIIe2mGl9XEviD3LD2L+Xzlzm
+         hzBh9kzwnARtZsLs/XHluBl+B4TyOh5yloi1P1wUZwGuG5wtbWeGw6RWTzrZdyo0mvpW
+         65Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721912189; x=1722516989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J36xabAj2bKInLJhB2Kp1HMkLRnJXufSHyFnP7004CA=;
-        b=HQ9m1+t5ZQTkWy9CIpt2QQV9dCUDJeuZv2eNRHakvJG94JR3aGx1eshp1Z++bSWtOb
-         18aO31HFZ5+ut6Je/GnwV3buNHf1tBRbDLSFV6teicGQX7Ker2oqCfO7fY/c6KYeJn24
-         KiTUlFNxsp1cnlBe5S2cnyTdIAoSHgIaJskvHAAxFlf+vRvenj1ER73z1pyXmeQ/TqFO
-         62h8e0jGTu0kwIa21AGEVC/l1iaDV8sPTFf/BWVsnOYbN3Ix3bOgWh7Tx3N09gA+a++B
-         XEyn9Xkq/tfuNdl4eI9FjapTvek0+7FBO4tpwv6QpbQAH4MzxlVpaCBsdSVhfSG9Py4w
-         cKCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDVUuZiA0Y9kKYv84HE5Ijil4PYdxPTgJjCNlUbPfT4mgAbz9sLtKWQmLx0iJKVadxTtmD5pGpwEHIpvNJODPny5GmbWmSTDyWyx06
-X-Gm-Message-State: AOJu0Yy2nl+yaootv0n6E1vfIo4rW0zBPgxzGtkPgR5b2RHpPuBefv5E
-	a4hUxCvw2XNkrZ340ekEcVBYpMmJfDbTEG0Cirg7/GGtuFKjRTg8Ecw3FnwadgMbH/R/J16hud2
-	beTH9oEBfKTY+UruejaPH0P+jLYMMcqwNV4qM
-X-Google-Smtp-Source: AGHT+IHqe58dpuQj44+fi+BabiviB+bKNn8yQfGDBzJey5WA1EPHom3t+V10YXvWL2j00LON9G2edsy2X6K/lIjK1NY=
-X-Received: by 2002:a05:6512:3092:b0:52c:e312:2082 with SMTP id
- 2adb3069b0e04-52fd3f9e81dmr2126031e87.54.1721912189402; Thu, 25 Jul 2024
- 05:56:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721912327; x=1722517127;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XTnt44Tc3tOs5dIbjDK1ckNp4sIhauYdQ2vBo3NA//A=;
+        b=GzRJzIHO76x7UuDSN7W1C7g48BE78+TiKXIn7G0jbvvBCSIZeJDv02PXoEhVuq3nJD
+         EHQDJyhzREg8m/6Zs5fIHIP9Ap7h/0PeznIhH9WoN/MwibFH5/bm0oAiUQBl3wl6u48i
+         gY6urYTo15739zb7svj43MHrQApnc84ol2tPVJ1Xs0ZpbWeRf/p+QuR0Dya5rBEXkXFX
+         YTazLHi4zvx2MP3oifX9zV0onjAF32DDfFfrLx/LKzrG+qr8F4DwpQX43i3sQjYI+rDO
+         5ZyXdvq13IDZStWnNS0U9Tb6pH2/boKW9kYcseu8ENc2Tw8UiIeQ/oZG8LBAQRYFjnQB
+         UkHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7kbQIAhFZ6mEVNpgwce8mjObmR5Qp2dhCaekY5MhGbjN+KKODYgPv1zXu1HcQ2huuu1+rLvxybaPm3Jccei4QXjTlA+9sYR7rTOSk
+X-Gm-Message-State: AOJu0YxI2fZ5QZnz7G8yH5E32S7mmkX6UyN49Kps8P/Nkj8dc3i5tr6w
+	tNWo3MOLqk+WRuQkd59q4ABeuS9sk4EmJ29HzQTansIrqD5Iquu4j+3JklBs06g=
+X-Google-Smtp-Source: AGHT+IHx9rnGlQN50s/n7MK8EdztTlSHMdKXKuhSXvi0+wTmEqSX5ZDNnlHTYeBtpQqod+69XKwLNw==
+X-Received: by 2002:a05:620a:28cd:b0:79b:b571:4c06 with SMTP id af79cd13be357-7a1d45bb73emr455622385a.6.1721912327510;
+        Thu, 25 Jul 2024 05:58:47 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b6030sm79668485a.52.2024.07.25.05.58.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 05:58:47 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sWy3R-00Haxy-Ku;
+	Thu, 25 Jul 2024 09:58:45 -0300
+Date: Thu, 25 Jul 2024 09:58:45 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Will Deacon <will@kernel.org>, Kunkun Jiang <jiangkunkun@huawei.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"tangnianyao@huawei.com" <tangnianyao@huawei.com>
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Message-ID: <20240725125845.GA3030761@ziepe.ca>
+References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
+ <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+ <20240724102417.GA27376@willie-the-truck>
+ <20240724130320.GO14050@ziepe.ca>
+ <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACfW=qpNmSeQVG_qSeYpEdk9pf_RTAEEKp+OiBYrRFd3d6HOXg@mail.gmail.com>
- <20240710213837.GA257340@bhelgaas>
-In-Reply-To: <20240710213837.GA257340@bhelgaas>
-From: George-Daniel Matei <danielgeorgem@chromium.org>
-Date: Thu, 25 Jul 2024 14:56:18 +0200
-Message-ID: <CACfW=qqPmiV6ez8Gf6GT6jyN5JEvF=mVeAqckWYVycsRuD746w@mail.gmail.com>
-Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, nic_swsd@realtek.com, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-On Wed, Jul 10, 2024 at 11:38=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
- wrote:
->
-> On Wed, Jul 10, 2024 at 05:09:08PM +0200, George-Daniel Matei wrote:
-> > >> Added aspm suspend/resume hooks that run
-> > >> before and after suspend and resume to change
-> > >> the ASPM states of the PCI bus in order to allow
-> > >> the system suspend while trying to prevent card hangs
-> > >
-> > > Why is this needed?  Is there a r8169 defect we're working around?
-> > > A BIOS defect?  Is there a problem report you can reference here?
-> >
-> > We encountered this issue while upgrading from kernel v6.1 to v6.6.
-> > The system would not suspend with 6.6. We tracked down the problem to
-> > the NIC of the device, mainly that the following code was removed in
-> > 6.6:
-> >
-> > > else if (tp->mac_version >=3D RTL_GIGA_MAC_VER_46)
-> > >         rc =3D pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);
-> >
-> > For the listed devices, ASPM L1 is disabled entirely in 6.6. As for
-> > the reason, L1 was observed to cause some problems
-> > (https://bugzilla.kernel.org/show_bug.cgi?id=3D217814). We use a Raptor
-> > Lake soc and it won't change residency if the NIC doesn't have L1
-> > enabled. I saw in 6.1 the following comment:
->
-> Can you verify that the problem still exists in a current kernel,
-> e.g., v6.9?
->
-I tested it with v6.9, still the same problem.
-
-> If this is a regression that's still present in v6.9, we need to
-> identify the commit that broke it.  Maybe it's 90ca51e8c654 ("r8169:
-> fix ASPM-related issues on a number of systems with NIC version from
-> RTL8168h")?
->
-I also tried v6.9 with 90ca51e8c654 reverted and it works ok.
-
-> > > Chips from RTL8168h partially have issues with L1.2, but seem
-> > > to work fine with L1 and L1.1.
-> >
-> > I was thinking that disabling/enabling L1.1 on the fly before/after
-> > suspend could help mitigate the risk associated with L1/L1.1 . I know
-> > that ASPM settings are exposed in sysfs and that this could be done
-> > from outside the kernel, that was my first approach, but it was
-> > suggested to me that this kind of workaround would be better suited
-> > for quirks. I did around 1000 suspend/resume cycles of 16-30 seconds
-> > each (correcting the resume dev->bus->self being configured twice
-> > mistake) and did not notice any problems. What do you think, is this a
-> > good approach ... ?
->
-> Whatever the problem is, it definitely should be fixed in the kernel,
-> and Ilpo is right that it *should* be done in the PCI core ASPM
-> support (aspm.c) or at least with interfaces it supplies.
->
-The problem is actually the system not being able to reach
-depper power saving states without certain ASPM states enabled.
-It was mentioned in the other thread replies that this kind of problem
-has been reported several times in the past.
-
-> Generally speaking, drivers should not need to touch ASPM at all
-> except to work around hardware defects in their device, but r8169 has
-> a long history of weird ASPM stuff.  I dunno if that stuff is related
-> to hardware defects in the r8169 devices or if it is workarounds for
-> past or current defects in aspm.c.
->
-What would be a good approach to move forward with this issue to
-get a fix approved?
-
-Make a general version of this toggle workaround in the aspm core
-that would be controllable & configurable for each pci device individually?
-Keep the quirks and fix the aforementioned comments?
-
-> > > This doesn't restore the state as it existed before suspend.  Does
-> > > this rely on other parts of restore to do that?
-> >
-> > It operates on the assumption that after driver initialization
-> > PCI_EXP_LNKCTL_ASPMC is 0 and that there are no states enabled in
-> > CTL1. I did a lspci -vvv dump on the affected devices before and after
-> > the quirks ran and saw no difference. This could be improved.
->
-> Yep, we can't assume any of that because the PCI core owns ASPM
-> config, not the driver itself.
->
-> > > What's the root cause of the issue?
-> > > A silicon bug on the host side?
-> >
-> > I think it's the ASPM implementation of the soc.
->
-> As Heiner pointed out, if it's a SoC defect, it would potentially
-> affect all devices and a workaround would have to cover them all.
->
-> Side note: oops, quoting error below, see note about top-posting here:
-> https://people.kernel.org/tglx/notes-about-netiquette
->
-> > On Tue, Jul 9, 2024 at 12:15=E2=80=AFAM Heiner Kallweit <hkallweit1@gma=
-il.com> wrote:
-> > >
-> > > On 08.07.2024 19:23, Bjorn Helgaas wrote:
-> > > > [+cc r8169 folks]
+On Thu, Jul 25, 2024 at 07:35:00AM +0000, Tian, Kevin wrote:
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > Sent: Wednesday, July 24, 2024 9:03 PM
+> > 
+> > On Wed, Jul 24, 2024 at 11:24:17AM +0100, Will Deacon wrote:
+> > > > This event handling process is as follows:
+> > > > arm_smmu_evtq_thread
+> > > >     ret = arm_smmu_handle_evt
+> > > >         iommu_report_device_fault
+> > > >             iopf_param = iopf_get_dev_fault_param(dev);
+> > > >             // iopf is not enabled.
+> > > > // No RESUME will be sent!
+> > > >             if (WARN_ON(!iopf_param))
+> > > >                 return;
+> > > >     if (!ret || !__ratelimit(&rs))
+> > > >         continue;
 > > > >
-> > > > On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote=
-:
-> > > >> Added aspm suspend/resume hooks that run
-> > > >> before and after suspend and resume to change
-> > > >> the ASPM states of the PCI bus in order to allow
-> > > >> the system suspend while trying to prevent card hangs
-> > > >
-> > > > Why is this needed?  Is there a r8169 defect we're working around?
-> > > > A BIOS defect?  Is there a problem report you can reference here?
-> > ...
+> > > > In this scenario, the io page-fault capability is not enabled.
+> > > > There are two problems here:
+> > > > 1. The event information is not printed.
+> > > > 2. The entire device(PF level) is stalled,not just the current
+> > > > VF. This affects other normal VFs.
+> 
+> Out of curiosity. From your code example the difference before
+> and after this change is on the prints. Why would it lead to the
+> stall problem?
+
+Because of this:
+
+  	iopf_param = iopf_get_dev_fault_param(dev);
+  	if (WARN_ON(!iopf_param))
+ -		return;
+
+If you hit the WARN_ON then we don't do anything with the fault and it
+remains uncompleted.
+
+> > + * and the fault remains owned by the caller. The caller should log the DMA
+> > + * protection failure and resolve the fault. Otherwise on success the fault is
+> > + * always completed eventually.
+> 
+> About "resolve the fault", I didn't find such logic from smmu side in
+> arm_smmu_evtq_thread(). It just logs the event. Is it asking for new
+> change in smmu driver or reflecting the current fact which if missing
+> leads to the said stall problem?
+
+It was removed in b554e396e51c ("iommu: Make iopf_group_response() return void")
+
+        ret = iommu_report_device_fault(master->dev, &fault_evt);
+-       if (ret && flt->type == IOMMU_FAULT_PAGE_REQ) {
+-               /* Nobody cared, abort the access */
+-               struct iommu_page_response resp = {
+-                       .pasid          = flt->prm.pasid,
+-                       .grpid          = flt->prm.grpid,
+-                       .code           = IOMMU_PAGE_RESP_FAILURE,
+-               };
+-               arm_smmu_page_response(master->dev, &fault_evt, &resp);
+-       }
+-
+
+Part of the observation going into b554e396e51c was that all drivers
+have something like the above, and we can pull it into the core code.
+
+So perhaps we should still always abort the request from
+iommu_report_device_fault() instead of requiring boilerplate like
+above in drivers. That does some better.
+
+The return code only indicates if the event should be logged.
+
+> >  	/*
+> >  	 * On success iopf_handler must call iopf_group_response() and
+> > 
+> 
+> Now given a return value is required we should also return '0'
+> in the following path with a valid iopf_handler.
+
+Yes, that was my intention
+
+Jason 
 
