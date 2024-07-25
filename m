@@ -1,236 +1,137 @@
-Return-Path: <linux-kernel+bounces-262558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A7893C897
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC41993C899
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA011F23D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657C0282612
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583383B1A1;
-	Thu, 25 Jul 2024 19:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9A3BBC2;
+	Thu, 25 Jul 2024 19:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ku5ajV0Y"
-Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJgrHf50"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B238A23741
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8284C7B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721934400; cv=none; b=f/n4GDb+eB/VBp9WDGImHaCcjRTSRi1RTS6VMHStk7hNV7LnEe+cFk6IGPsT0ZTk104z0MDoaXaE9gMf9vk58W7Rq0NvNf1R/DzxZzxFAkF8O3OWhdYjX3eE8pMC2Cxo3CONsGGT6m8w+v5h1GgPnK/7KdOAebVSktBboHERMP0=
+	t=1721934492; cv=none; b=IevqC8XooB5stcMk0S3HGTvATuUusi1KrbL0cEYBSqujX52yCyl46OZrQ1Pc1Oo+ftYVVCnz9y9m39cTg4RJ/bPCEr328sTNQJzHzReRSKkXL7XDwWMZM51aV3jjFsHjr7xpNi2M97ogOyukFkOy8Wu83eGBto7dk+W4uVpBoH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721934400; c=relaxed/simple;
-	bh=AYkqqw4TcVD4pQ4Ik+PZHVWdulU2rF2byPVBiW4nn5M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6aOr60FZjqM0CcnmLh9IYJUJGGWwUrUD1Hje5Lgyexbh2cicvHIjJPqhvvl8oUfUDfKg8P//GqT1Cv8vjoYd5Ulz9jK6y4o/zmyM2QtpTQdeqEhvAAHXlgLho1labv5iDN+epQWKDcivwmlbfaioybvzLp3mR2c7KhKZUPqtTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ku5ajV0Y; arc=none smtp.client-ip=185.70.43.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1721934389; x=1722193589;
-	bh=x81TfLwbeRD7LO1ywJlnBHjBlqnbvQnAgiDB8r7qObQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=ku5ajV0Y0RHq30r7SirfHs6StZZSZ7OkbzbAwEYhmNyH0GvHypT0q6andmEXTILg+
-	 jS2eVKbTle2HUONQfPGqzEDFLsTUaBbirmGCPhUjZiReINPATEuoXFyGcNydOvog8K
-	 GQqrPYQ3vCMmGPAlE7H7Rn1As0CA0+UYB6mvKDwrCbpRBoapteifXJViyhvT9wMaQS
-	 1qc8bIZ+M7xcH3XsaN5kIbUpHJsB+mvnlwIQLxFv61vaHHI0DUHRmk/7qKngg4q4cl
-	 jSnlp1Zd6yUZQ6IMCJfpLqel6H5eOgsEK1Mhdmz9g7krz7LoBGrF65EcN/7g9oKQnX
-	 KQ3PErfuhs+lg==
-Date: Thu, 25 Jul 2024 19:06:23 +0000
-To: Daniel Stone <daniel@fooishbar.org>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, "hjc@rock-chips.com" <hjc@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
-Subject: Re: [PATCH v3] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <PGDz1uKmBh2U_yB-ut5xcahPHdmxgrIRAwALnJzsEHFuYssmMhQUz8jbHpEyUDBMjVbmQCjlP3K4gbzw3zZ53HhXUsXufBb5YzptnC58aeQ=@proton.me>
-In-Reply-To: <CAPj87rPwJ-vRTsjM1rWRj1gyjbJM_ryrkTiPRBF3ZF1D7TVDYw@mail.gmail.com>
-References: <TkgKVivuaLFLILPY-n3iZo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=@proton.me> <CAPj87rPwJ-vRTsjM1rWRj1gyjbJM_ryrkTiPRBF3ZF1D7TVDYw@mail.gmail.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: e0ffaa85b1c367437802927356ee731dc03456bd
+	s=arc-20240116; t=1721934492; c=relaxed/simple;
+	bh=kSttdvFfGUyyYoHoZCW5LJkXQf4weGf5yS33OSA1WYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rOIaBnm6RYmQsSjIet/zZj1BzMTgvBpWvBD3qEAV4ltg8dEsFfEfAUdWJ2pqvQyxtn9LTZ3UU+Fah6mntMNoQvX8lhoYvsL6pY0iqDTla2x3RZvVLrEnVWlN2Fyx8T4yi0FZre8X7oDJZlOU4beq4mIr8hKP5zVW9ZmKpnNGaRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJgrHf50; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721934489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AofTLwe2CDTumu2oM3peD/cu5gWmuIeEi3JZIBTIQxM=;
+	b=CJgrHf501OnnkH7l2614HN/tM1wav/FkugDbh7rHE0QkyBbd8DrLwPv5iFIlPu67cVH9DQ
+	vZ6kzC3pG4UrQ1s3WT2vgmky06lrOvHiGEmlSvdyf9qdFrgCcOpeoPPje3S0iwPgKWux9I
+	8FHqxHstfwAjD/4C1eLJ3gnT5XIhGyY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-saHPERMgOu2UC_-lq3-56w-1; Thu,
+ 25 Jul 2024 15:08:03 -0400
+X-MC-Unique: saHPERMgOu2UC_-lq3-56w-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7AAFA1955F42;
+	Thu, 25 Jul 2024 19:08:01 +0000 (UTC)
+Received: from [10.2.16.78] (unknown [10.2.16.78])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 52CD11955F40;
+	Thu, 25 Jul 2024 19:07:57 +0000 (UTC)
+Message-ID: <b45c24d2-98ee-4ecc-8d7d-6ac5dfa65c17@redhat.com>
+Date: Thu, 25 Jul 2024 15:07:56 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup/cpuset: add dec_attach_in_progress helper
+To: chenridong <chenridong@huawei.com>,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
+ sergeh@kernel.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240725015551.2221867-1-chenridong@huawei.com>
+ <e5c92f54-d767-4e71-9f57-9352923bd3e7@oracle.com>
+ <de6958aa-27f8-4baa-b76d-88266d009f81@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <de6958aa-27f8-4baa-b76d-88266d009f81@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
 
+On 7/25/24 07:40, chenridong wrote:
+>
+>
+> On 2024/7/25 19:01, Kamalesh Babulal wrote:
+>>
+>>
+>> On 7/25/24 7:25 AM, Chen Ridong wrote:
+>>> There are several functions to decrease attach_in_progress, and they
+>>> will wake up cpuset_attach_wq when attach_in_progress is zero. So,
+>>> add a helper to make it concise.
+>>>
+>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>> ---
+>>>   kernel/cgroup/cpuset.c | 28 +++++++++++++++-------------
+>>>   1 file changed, 15 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>> index d4322619e59a..c241845694ac 100644
+>>> --- a/kernel/cgroup/cpuset.c
+>>> +++ b/kernel/cgroup/cpuset.c
+>>> @@ -490,6 +490,17 @@ static inline void 
+>>> check_insane_mems_config(nodemask_t *nodes)
+>>>       }
+>>>   }
+>>>   +/*
+>>> + * decrease cs->attach_in_progress.
+>>> + * wake_up cpuset_attach_wq if cs->attach_in_progress==0.
+>>
+>> In the description, adding locking constraint of cpuset_mutex would 
+>> be helpful.
+>> Something like "cpuset_mutex must be held by the caller."
+>>
+> Thank you, I will to that.
+>>> + */
+>>> +static inline void dec_attach_in_progress(struct cpuset *cs)
+>>> +{
+>>> +    cs->attach_in_progress--;
+>>> +    if (!cs->attach_in_progress)
+>>> +        wake_up(&cpuset_attach_wq);
+>>> +}
+>>> +
 
-On Thursday, July 25th, 2024 at 12:28 PM, Daniel Stone <daniel@fooishbar.or=
-g> wrote:
+I would suggested a dec_attach_in_progress_locked() and a 
+dec_attach_in_progress() helpers. The dec_attach_in_progress() helper 
+acquires the cpuset_mutex and call dec_attach_in_progress_locked(). 
+Inside the dec_attach_in_progress_locked(), you can either add a comment 
+about requiring cpuset_mutex held or add a 
+lockdep_assert_held(&cpuset_mutex).
 
-> Hi Piotr,
-
-Hi, Daniel!
-
-Thank you for the review.
-
->=20
-> In the atomic_enable callback, we are already holding the VOP lock,
-> and waiting to set cfg_done etc - we then do it all over again here.
-> This should all be atomic, so that we configure the LUT whilst doing
-> the setup, and then only call cfg_done once, to avoid showing the user
-> intermediate states which only later converge on the desired final
-> state.
->=20
-
-I based my patch on how gamma LUT is handled in VOP. There, in atomic=20
-enable, gamma LUT write takes places at the end too, after the mutex was=20
-already first-time unlocked. I understand the concept of DRM atomic state=
-=20
-updates and what you wrote makes sense.
-
-Below is what I came up with to make it fulfill atomicity requirement.=20
-Frankly, the code ended up simpler. I tested it on RK3566 (Pinetab2).
-Let me know what do you think.
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.c
-index 37fcf544a5fd..cba92239dcbc 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1497,22 +1497,6 @@ static bool vop2_vp_dsp_lut_is_enabled(struct vop2_v=
-ideo_port *vp)
- =09    0;
- }
-=20
--static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
--{
--=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
--
--=09dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
--=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
--}
--
--static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
--{
--=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
--
--=09dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
--=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
--}
--
- static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc *=
-crtc)
- {
- =09const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-@@ -1532,11 +1516,12 @@ static void vop2_crtc_write_gamma_lut(struct vop2 *=
-vop2, struct drm_crtc *crtc)
- }
-=20
- static void vop2_crtc_gamma_set(struct vop2 *vop2, struct drm_crtc *crtc,
--=09=09=09=09struct drm_crtc_state *old_state)
-+=09=09=09=09struct drm_crtc_state *old_state,
-+=09=09=09=09u32* dsp_ctrl)
- {
- =09struct drm_crtc_state *state =3D crtc->state;
- =09struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
--=09u32 dsp_ctrl;
-+=09u32 _dsp_ctrl;
- =09int ret;
-=20
- =09if (!vop2->lut_regs)
-@@ -1547,37 +1532,27 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, =
-struct drm_crtc *crtc,
- =09=09 * To disable gamma (gamma_lut is null) or to write
- =09=09 * an update to the LUT, clear dsp_lut_en.
- =09=09 */
--=09=09vop2_lock(vop2);
--
--=09=09vop2_vp_dsp_lut_disable(vp);
--
--=09=09vop2_cfg_done(vp);
--=09=09vop2_unlock(vop2);
--=09=09/*
--=09=09 * In order to write the LUT to the internal memory,
--=09=09 * we need to first make sure the dsp_lut_en bit is cleared.
--=09=09 */
--=09=09ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
--=09=09=09=09!dsp_ctrl, 5, 30 * 1000);
--
--=09=09if (ret) {
--=09=09=09DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
--=09=09=09return;
--=09=09}
-+=09=09*dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-=20
- =09=09if (!state->gamma_lut)
- =09=09=09return;
- =09}
-=20
-+=09/*
-+=09 * In order to write the LUT to the internal memory,
-+=09 * we need to first make sure the dsp_lut_en bit is cleared.
-+=09 */
-+=09ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, _dsp_ctrl,
-+=09=09=09!_dsp_ctrl, 5, 30 * 1000);
-+=09if (ret) {
-+=09=09DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
-+=09=09return;
-+=09}
-=20
--=09vop2_lock(vop2);
- =09vop2_crtc_write_gamma_lut(vop2, crtc);
- =09vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
-=20
--=09vop2_vp_dsp_lut_enable(vp);
--
--=09vop2_cfg_done(vp);
--=09vop2_unlock(vop2);
-+=09*dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
- }
-=20
- static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
-@@ -2152,6 +2127,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *=
-crtc,
-=20
- =09vop2_post_config(crtc);
-=20
-+=09if (crtc->state->gamma_lut)
-+=09=09vop2_crtc_gamma_set(vop2, crtc, old_state, &dsp_ctrl);
-+
- =09vop2_cfg_done(vp);
-=20
- =09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-@@ -2160,8 +2138,6 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *=
-crtc,
-=20
- =09vop2_unlock(vop2);
-=20
--=09if (crtc->state->gamma_lut)
--=09=09vop2_crtc_gamma_set(vop2, crtc, old_state);
- }
-=20
- static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
-@@ -2599,8 +2575,17 @@ static void vop2_crtc_atomic_begin(struct drm_crtc *=
-crtc,
- =09vop2_setup_alpha(vp);
- =09vop2_setup_dly_for_windows(vop2);
-=20
--=09if (crtc_state->color_mgmt_changed && !crtc_state->active_changed)
--=09=09vop2_crtc_gamma_set(vop2, crtc, old_crtc_state);
-+=09if (crtc_state->color_mgmt_changed && !crtc_state->active_changed) {
-+=09=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);;
-+
-+=09=09vop2_lock(vop2);
-+
-+=09=09vop2_crtc_gamma_set(vop2, crtc, old_crtc_state, &dsp_ctrl);
-+
-+=09=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+=09=09vop2_cfg_done(vp);
-+=09=09vop2_unlock(vop2);
-+=09}
- }
-=20
- static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
+Cheers,
+Longman
 
 
-Best regards, Piotr Zalewski
 
