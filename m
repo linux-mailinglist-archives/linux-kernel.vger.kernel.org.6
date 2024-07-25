@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-262395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344AD93C685
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:34:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35F293C689
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB270281F3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51A11C22276
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A5019DF4B;
-	Thu, 25 Jul 2024 15:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A619D8AB;
+	Thu, 25 Jul 2024 15:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LIOpP/z0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaM3lN+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F71993AE;
-	Thu, 25 Jul 2024 15:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DA71993AE;
+	Thu, 25 Jul 2024 15:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921650; cv=none; b=E3to6Jy9eNbbjZbVmXAAyVjrECMQyAxKdqYU6ROoyqvW0m872YdP+8d2fkAvIV3cVhUdcv4I2Rb+QHQdxzhs6AmFAHnRddr+L6Lz2Ck1L4/VFHzPljgfjSVEThcGElWA+D0IRpogkErqk9/ZMraTeEu6bwb7VSlns9I/OtVsYWE=
+	t=1721921689; cv=none; b=DFJ0iPJPL0fkLyJ8aX79u3RaxWAOlDWk0Sz6+3JrOPAWB7CKKpg8pNjBu/CY5MrpQzvqDPaif6DZspb74jzV6T9Dugx287CFtUy/7SrO8+CXqHb+5LpXV77nu8KhpmAUJx0nZTvgZ0oJhS/elI/y2g1Jya1yv0exy2sOd2Su3s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921650; c=relaxed/simple;
-	bh=mosRgo+TNXHCMViMqQ63lOJKcR81W989gSomumQQF28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AdpEZh96s+4+d1sd65vGeNpCHuz+mv6brr0yxXYwhxkNwb+o9nUtTs1zP6gZEF7F22beQUZKCo4ecKkgEecTuf6OpYWYsEU9Cr5HrMjqLM8wLJfUdu5Frb5qMZeQeDih26DG42z6n5Rv21D2bpY034nT541WYB47xzIDw9uLHWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LIOpP/z0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Jf02KJptUmzqNSH7cWf1ELLoEYpwrFBHCIF0xHDo8l0=; b=LIOpP/z0HDXBvgis90fj8E5C4a
-	mKo04fF6xe5Kfd7gqhDDo/Ltpr6NVq86cDZZflinaEq8T3lDMs7VaQyEvc+UdG7DdZgLDnNTB64qF
-	OzbeX9Jfb1r6PqIxfPAO4MeQrtJ6ObM7nkMmX4RV7s5Sodywr272B2RBteD0PacNJBgYNiVqurMZU
-	psJmvT3z99KULg2rvesB8JAhCoLgJTSa8xGEpp+LMV2A9xYxYM/4lyJ4VFLC5IQuiFyLccQ6eu+MS
-	oTzVGMoZDIhsp629Bhp3yThgyrqDwXxfqCe0wNzbqthfraFbl+zYMWSNZ1TW7fLBiWf4YGDBWFkRl
-	EkrFh6Mw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sX0Tj-00000001QbE-0QCv;
-	Thu, 25 Jul 2024 15:34:03 +0000
-Date: Thu, 25 Jul 2024 08:34:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Youling Tang <youling.tang@linux.dev>,
-	Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <ZqJwa2-SsIf0aA_l@infradead.org>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <Zp-_RDk5n5431yyh@infradead.org>
- <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
- <ZqEhMCjdFwC3wF4u@infradead.org>
- <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
- <ZqJjsg3s7H5cTWlT@infradead.org>
- <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+	s=arc-20240116; t=1721921689; c=relaxed/simple;
+	bh=XwYVVIPGvDLM+Mi4lkud9Ay/FNg2RmftzXEjlRISXXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=SpWl0ujHBxD8uJ+gJXwnzBxPnbGusgxH+AufoLe2dbuio3b3rb/NYS9oyRmfcFSI+qU8ThnMg4jVNdKsMJ8BXOVSQ/eAmLEOlipscHCigDBcLd227Se5V6QhE67ewANiWEfE+tGkhFAlSZ/JsX1+qDsu8GE4IxpeNlkfkj2xYns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaM3lN+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736C4C116B1;
+	Thu, 25 Jul 2024 15:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721921688;
+	bh=XwYVVIPGvDLM+Mi4lkud9Ay/FNg2RmftzXEjlRISXXo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eaM3lN+iLVyBPPl+yEcq6t0yIUHQzrNxG0e56HJ4cYuskPpcE2Myp72XAU77I8f9Q
+	 56nrZ1j5Sps8BYWLpkdNaMvGQzPDo4DBKAYGsq/GRnc/HHmBXUhfXdVa4i0bxv5QOa
+	 vrgr8lGA5k/wR74+3OIqOX+BJ5SLAckQqdTbThWIsf7AXRUQzXuVLrxoM2nM+1kVnu
+	 k2+Yih1sZFgYaA3Tcc+xRWvSR/VdwocYU0hBKmnqTRvkNWKlUc/72f9QZyNu9xGUVQ
+	 FmQp0sLXS9i6XS4DNIX2Ukur2ZMhgNyaJw4ZQLcFx6ZHaa114gdgESkylHcL0BvS8Z
+	 nih0jxLIPhIaQ==
+Date: Thu, 25 Jul 2024 10:34:46 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: George-Daniel Matei <danielgeorgem@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nic_swsd@realtek.com,
+	netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+Message-ID: <20240725153446.GA841157@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3e0e1ceb-9da8-4227-8964-04e891c1d9e3@gmail.com>
 
-On Thu, Jul 25, 2024 at 05:30:58PM +0200, Arnd Bergmann wrote:
-> Now I think we could just make the module_init() macro
-> do the same thing as a built-in initcall() and put
-> an entry in a special section, to let you have multiple
-> entry points in a loadable module.
+[+cc Rafael in case you have suspend debug help]
+
+On Tue, Jul 16, 2024 at 09:25:40PM +0200, Heiner Kallweit wrote:
+> On 16.07.2024 14:13, George-Daniel Matei wrote:
+> > On Thu, Jul 11, 2024 at 7:45 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >> On 10.07.2024 17:09, George-Daniel Matei wrote:
+> >>>>> Added aspm suspend/resume hooks that run
+> >>>>> before and after suspend and resume to change
+> >>>>> the ASPM states of the PCI bus in order to allow
+> >>>>> the system suspend while trying to prevent card hangs
+> >>>>
+> >>>> Why is this needed?  Is there a r8169 defect we're working around?
+> >>>> A BIOS defect?  Is there a problem report you can reference here?
+> >>>
+> >>> We encountered this issue while upgrading from kernel v6.1 to v6.6.
+> >>> The system would not suspend with 6.6. We tracked down the problem to
+> >>> the NIC of the device, mainly that the following code was removed in
+> >>> 6.6:
+> >>>> else if (tp->mac_version >= RTL_GIGA_MAC_VER_46)
+> >>>>         rc = pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);1
+> >>
+> >> With this (older) 6.1 version everything is ok?
+> >> Would mean that L1.1 is active and the system suspends (STR?) properly
+> >> also with L1.1 being active.
+> >>
+> > Yes, with 6.1 everything was ok. L1 was active and just the L1.1 substate
+> > was enabled, L1.2 was disabled.
+> > 
+> >> Under 6.6 per default L1 (incl. sub-states) is disabled.
+> >> Then you manually enable L1 (incl. L1.1, but not L1.2?) via sysfs,
+> >> and now the system hangs on suspend?
+> >>
+> > Yes, in 6.6 L1 (+substates) is disabled. Like Bjorn mentioned, I
+> > think that is because of 90ca51e8c654 ("r8169:
+> > fix ASPM-related issues on a number of systems with NIC version from
+> > RTL8168h". With L1 disabled the system would not suspend so I enabled
+> > back L1 along with just L1.1 substate through sysfs, just to test, and
+> > saw that the system could
 > 
-> There are still at least two problems though:
+> It still sounds very weird that a system does not suspend to ram
+> just because ASPM L1 is disabled for a single device.
+> What if a PCI device is used which doesn't support ASPM?
 > 
-> - while link order is defined between files in a module,
->   I don't think there is any guarantee for the order between
->   two initcalls of the same level within a single file.
+> Which subsystem fails to suspend? Can you provide a log showing
+> the suspend error?
 
-I think the sanest answer is to only allow one per file.  If you
-are in the same file anyway calling one function from the other
-is not a big burden.  It really is when they are spread over files
-when it is annoying, and the three examples show that pretty
-clearly.
+Can we push on this a little bit?  The fact that suspend fails is
+super interesting to me.  I'd like to know exactly how this fails and
+whether it's in the kernel or in firmware.  If we're violating some
+assumption firmware is making, maybe there would be a more generic
+fix.
 
-> - For built-in code we don't have to worry about matching
->   the order of the exit calls since they don't exist there.
->   As I understand, the interesting part of this patch
->   series is about making sure the order matches between
->   init and exit, so there still needs to be a way to
->   express a pair of such calls.
+How exactly do you suspend?  Is there any debugging output you can
+collect while doing that?  Maybe [1] has hints.  I see a bunch of
+trace_suspend_resume() calls, and I think they're connected to [2],
+which looks like it might generate console/dmesg output, but I don't
+know how to enable that.
 
-That's why you want a single macro to define the init and exit
-callbacks, so that the order can be matched up and so that
-error unwinding can use the relative position easily.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/power/basic-pm-debugging.rst?id=v6.10
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/trace/events/power.h?id=v6.10#n247
 
