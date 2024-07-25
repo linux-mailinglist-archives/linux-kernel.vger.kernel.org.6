@@ -1,54 +1,95 @@
-Return-Path: <linux-kernel+bounces-262424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED17393C6EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B5693C6F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE491C2201D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C70B1C21DA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DD919DF52;
-	Thu, 25 Jul 2024 16:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEC719D886;
+	Thu, 25 Jul 2024 16:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=zerobeat@gmx.de header.b="gvChuMHc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="26F7tr18";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zoYAmGN2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="26F7tr18";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zoYAmGN2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A59E12B7F;
-	Thu, 25 Jul 2024 16:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205512B7F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721923222; cv=none; b=kcoSrvewQm313RMk9SlAwieVoA8r8fDHenUKMKhNSIpBze9JJRChPiSVH/1+k/j3HNU4EEMBBBAKtbNBPoQBT2wCIxV6u+839/S6z06/DNA6RxhY32f4pigRQhe+CIJo+uVGqnuXa3iam5Bgpz0jLjVFca1smdV0NH2YRLpY5EQ=
+	t=1721923580; cv=none; b=OZqXqz65wZLo3eoAusmMDKqkPiNf0cNfFjIvG6C5kB8g4N8y2H/yvW/KHtZ0DcZaX+V2XI5r51mYQKdJh9Xj/gPXdJjSG/YILcbLbt+wBVUEpxXjioFsjfrhKI1yMRdvZ04Aqrk5w4EO52fUBb700FYLcTMe6mQOC1vBhXAEJ18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721923222; c=relaxed/simple;
-	bh=RNh3KEmRYU1W924T6+TJklHxaoR0AIcBRcFDWEQRhrs=;
+	s=arc-20240116; t=1721923580; c=relaxed/simple;
+	bh=VDnLL2p0wTt5eg8rfnWy8xduWBsjAm8iUr9ci3O6oHk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e93OosTBPDYo9B2p85hfQRVPuzhhl74TCYb0oaajQdTy8MNj7UIhxzTpzhrqnqBAp9oVWYRETAl03BBroHqzbICxxO2Etw1sBTYv9OcpvI693J3O2gooJds/UqclohEKPoom8sQW/tVKHfniNroBNZy5rnIXrmXfYRV7W1dmHBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=zerobeat@gmx.de header.b=gvChuMHc; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1721923207; x=1722528007; i=zerobeat@gmx.de;
-	bh=RNh3KEmRYU1W924T6+TJklHxaoR0AIcBRcFDWEQRhrs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=gvChuMHcgcbjubk55sdJo8SinNo6+C5jhl/t2xKIHLRTmLQXvhM+/JvVtcs0z0y6
-	 thV/mBKLoLJ+KASz6OFx/CgakVeiOGHIDeKZdsPEcTrDvN+Br1ystjUpj1e44VRmd
-	 h0nZyxukZZ7k/PtWgkaRk2Za1OGSheTS6hxDdTFaQFdjLJeHX7DuYzFBHHgqo8tvX
-	 bIIAXf+0oeT2r5kwJ1rORzl9AKFK6o8+gmeCdDf9WplyfrBKsWkjyj2CeLVMwBbZk
-	 VAE0isJGRI7EXHb1/FY1U8K4ypY/i++zak29uKGJY68iNWAexlC3spomA52EUDRv4
-	 /utfB/YuQdK0nPBJuw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.2] ([79.194.93.171]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3DJl-1saar40hI5-00CnHX; Thu, 25
- Jul 2024 18:00:07 +0200
-Message-ID: <852b737f-c158-4bb4-b5de-7b7d3d1d5331@gmx.de>
-Date: Thu, 25 Jul 2024 18:00:06 +0200
+	 In-Reply-To:Content-Type; b=AlpSTJgLUTMs8+IT5y6BFNslNCQg/+X/iFR5cq2jDKRTecUmK31qndpq5ovD2fm1WAJ5vRTkITpfyzJSPo4MpL4y+FCa2/Y/8dZWB4wJKZC/6c9XPE39k9zN8cYVWq0B1wO6txFrokKL6iGEvsaLVSxDMt1PTPVrS69Zo4420b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=26F7tr18; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zoYAmGN2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=26F7tr18; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zoYAmGN2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 42B0521ABA;
+	Thu, 25 Jul 2024 16:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721923576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=atCrfLpqCItwLbU6RYWL9jaXMO3SoRG/K7yz6Y4y8VE=;
+	b=26F7tr18QNiAZoCCdQQ1WpRUFWdyd+/utc8HaaQ7h7d2XYRMCsXzJXEeR3mOJBQOJWacQD
+	rBoZ9prQ1pkdCpqKKFqBE3VBIL5oB/C5ZecqpSF4tav4WC+fzTUB/Km2QDPu+DZHmVVSGc
+	TEacZUEcBXAFt7d6O5Q8/ar7owmbK50=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721923576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=atCrfLpqCItwLbU6RYWL9jaXMO3SoRG/K7yz6Y4y8VE=;
+	b=zoYAmGN2ToE3UiMPmNGGeFAJy7YXPQNt+8wABQnvPxDsGGK8Kq6+Ql45HzKq021/H/W/6J
+	sIyzjepm++GL5xAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=26F7tr18;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zoYAmGN2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721923576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=atCrfLpqCItwLbU6RYWL9jaXMO3SoRG/K7yz6Y4y8VE=;
+	b=26F7tr18QNiAZoCCdQQ1WpRUFWdyd+/utc8HaaQ7h7d2XYRMCsXzJXEeR3mOJBQOJWacQD
+	rBoZ9prQ1pkdCpqKKFqBE3VBIL5oB/C5ZecqpSF4tav4WC+fzTUB/Km2QDPu+DZHmVVSGc
+	TEacZUEcBXAFt7d6O5Q8/ar7owmbK50=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721923576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=atCrfLpqCItwLbU6RYWL9jaXMO3SoRG/K7yz6Y4y8VE=;
+	b=zoYAmGN2ToE3UiMPmNGGeFAJy7YXPQNt+8wABQnvPxDsGGK8Kq6+Ql45HzKq021/H/W/6J
+	sIyzjepm++GL5xAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1177D1368A;
+	Thu, 25 Jul 2024 16:06:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SVDPA/h3omYFNAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 25 Jul 2024 16:06:16 +0000
+Message-ID: <45d91310-1c0c-4e14-b705-eb35260be04a@suse.cz>
+Date: Thu, 25 Jul 2024 18:06:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,189 +97,498 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] mt76x2u: NULL pointer dereference since recent
- change to fix chanctx emulation for monitor mode
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>
-References: <8c91352f-a404-4ba6-aa27-1253468c830d@leemhuis.info>
- <c4a67a0418e7068fc534f39f3c1dce21d082dd8f.camel@sipsolutions.net>
- <231c6ea5-b8a3-4500-b994-46a45b6ab515@gmx.de> <ZqJ10ZKHPGM6LbsM@lore-desk>
-Content-Language: de-DE, en-US
-From: ZeroBeat <ZeroBeat@gmx.de>
-In-Reply-To: <ZqJ10ZKHPGM6LbsM@lore-desk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------sdDa8lv0SjGvO9cTXSM0UNI4"
-X-Provags-ID: V03:K1:6ce4CIob128aIhfAWyaIT24RQC2XVRY6GM78R5YHNqwkGAUk9i4
- 7wZOZBijBcrLknYcZopasmWaKXr4vRFn+xb7iPmezH+QYXQxv56YGU0KnsGgLtutTdVwyA+
- l6CqJKamjixLjhaK72c3eSCHMs4mf4GNcNYkn14q1zF6UvYXQpKa5Cexr/urKUBIg6NVBSL
- 7Fu0EFtpnvg0quUsQvXfg==
+Subject: Re: [PATCH v3 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
+Content-Language: en-US
+To: Jann Horn <jannh@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com>
+ <20240725-kasan-tsbrcu-v3-2-51c92f8f1101@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240725-kasan-tsbrcu-v3-2-51c92f8f1101@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FREEMAIL_TO(0.00)[google.com,gmail.com,arm.com,linux-foundation.org,linux.com,kernel.org,lge.com,linux.dev];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Q8SqSk5IkqU=;rGAi5a2GFprytAS2XQcHz+OyxOP
- 9l+UjNSxGjzXqK325tDpSdL/aKFTNoLejqDCXRyfBWTdEsHEA1xnpw4YanBZluK/yP+0ehpr5
- xBv6OxuEC+SFxIvvaI0ZGBmQh4duCzZEqFXQ8Huv0gBUBf6ZgH9Rk5oePVAkn++VVSGy1Uu/0
- gbtRkfNv/czizu8IQ9+UKSigu2MqbyFrtQBSN9I4TgtcKy0cFP4d520fZZwE7fM6uTTOZuYbc
- Z2mKO2dQW14zlF9o5+h3Kpa/uY8U2EqPkNGJxTAdI3KRzYqNXLtUUsukVwFsHJoFNC1y1AQma
- S8oy2WChSY5WiySKMFwdfIP2CTJNUCtEm7Hltqild1uL/T9CfHTN2HHerfVuzjsovbFuZPhQm
- OYdJDY4QOCStJ1r2BIrwR4q2x19QZTBVzO+JOh6bW9Px0Z3u//qmbG1qU++NzOIrF+Q/XfVCY
- qZyEJ96sa9O/yOC8VZVVkmGX3qRjM0VGQToc+n1zVHFJGNzWeSDUb4i02UxW/KGc6ORMCDtYw
- aQhFVdQm8rftbf+eMmURGSSqrQbl9Xz5F/NkB4IWIC87CWzz6mGFHynWal15GpjI3if4yE88D
- Usg4fwJElJ+Ii163C0fhvrLj1wdlxiFQTHUZjn6U+7OBl+3c6IcKbmvF9jz00LOlj6qif416y
- W0Fu+auXaf0a2HxWUqOw+y0NFtwkm44PIGvej9Vfz/GRXU1MPCd7ldGQGwfysaj/ddayCJ1Jv
- 1IxbBOiShMrvM/Vij4CMUZGgNWTiy8nhRp0Uc7eDUXuTnGjnT62B34/I5aFkxxZKMcpM/4KVO
- IDRs31jHUT22qJQv1O4Dxbng==
+X-Spam-Score: -2.80
+X-Rspamd-Queue-Id: 42B0521ABA
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------sdDa8lv0SjGvO9cTXSM0UNI4
-Content-Type: multipart/mixed; boundary="------------sQfvmcqOu9sq3F56lYtANScV";
- protected-headers="v1"
-From: ZeroBeat <ZeroBeat@gmx.de>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>
-Message-ID: <852b737f-c158-4bb4-b5de-7b7d3d1d5331@gmx.de>
-Subject: Re: [regression] mt76x2u: NULL pointer dereference since recent
- change to fix chanctx emulation for monitor mode
-References: <8c91352f-a404-4ba6-aa27-1253468c830d@leemhuis.info>
- <c4a67a0418e7068fc534f39f3c1dce21d082dd8f.camel@sipsolutions.net>
- <231c6ea5-b8a3-4500-b994-46a45b6ab515@gmx.de> <ZqJ10ZKHPGM6LbsM@lore-desk>
-In-Reply-To: <ZqJ10ZKHPGM6LbsM@lore-desk>
+On 7/25/24 5:31 PM, Jann Horn wrote:
+> Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_RCU
+> slabs because use-after-free is allowed within the RCU grace period by
+> design.
+> 
+> Add a SLUB debugging feature which RCU-delays every individual
+> kmem_cache_free() before either actually freeing the object or handing it
+> off to KASAN, and change KASAN to poison freed objects as normal when this
+> option is enabled.
+> 
+> For now I've configured Kconfig.debug to default-enable this feature in the
+> KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_TAGS
+> mode because I'm not sure if it might have unwanted performance degradation
+> effects there.
+> 
+> Note that this is mostly useful with KASAN in the quarantine-based GENERIC
+> mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
+> ->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
+> those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
+> (A possible future extension of this work would be to also let SLUB call
+> the ->ctor() on every allocation instead of only when the slab page is
+> allocated; then tag-based modes would be able to assign new tags on every
+> reallocation.)
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
 
---------------sQfvmcqOu9sq3F56lYtANScV
-Content-Type: multipart/mixed; boundary="------------73i5QSksggjoR90W2Pu6mhGv"
+Yeah this "we try but might fail" looks to be a suitable tradeoff for this
+debuggin feature in that it keeps the complexity lower. Thanks.
 
---------------73i5QSksggjoR90W2Pu6mhGv
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Acked-by: Vlastimil Babka <vbabka@suse.cz> #slab
 
-SSd2ZSBhZGRlZCBzZXZlcmFsIGRlYnVnIHByaW50ayAtIG5vIGx1Y2ssIHlldC4NCg0KUmVn
-YXJkcw0KTWlrZQ0KDQoNCkFtIDI1LjA3LjI0IHVtIDE3OjU3IHNjaHJpZWIgTG9yZW56byBC
-aWFuY29uaToNCj4+IEp1c3QgdG8gbWVudGlvbiBpdCBoZXJlLiBUaGUgcmVncmVzc2lvbiBo
-YXMgbm93IHJlYWNoZWQgdGhlIGxvbmd0ZXJtIGtlcm5lbDoNCj4+IGFmZmVjdGVkIGRldmlj
-ZXM6IG10NzYgc2VyaWVzIChub3QgYWZmZWN0ZWQgbXQ3NjAxdSkNCj4+DQo+Pg0KPj4gYmVm
-b3JlIHVwZGF0ZToNCj4+ICQgdW5hbWUgLXINCj4+IDYuNi40MC0yLWx0cw0KPj4NCj4+ICQg
-c3VkbyBoY3hkdW1wdG9vbCAtaSB3bHA1czBmNHUyIC0tcmNhc2Nhbj1hY3RpdmUNCj4+IF5D
-DQo+PiAzOCBQYWNrZXQocykgY2FwdHVyZWQgYnkga2VybmVsDQo+PiAwIFBhY2tldChzKSBk
-cm9wcGVkIGJ5IGtlcm5lbA0KPj4gMTQgUFJPQkVSRVNQT05TRShzKSBjYXB0dXJlZA0KPj4N
-Cj4+IGV4aXQgb24gc2lndGVybQ0KPj4NCj4+DQo+Pg0KPj4gYWZ0ZXIgdXBkYXRlOg0KPj4g
-JCB1bmFtZSAtcg0KPj4gNi42LjQxLTEtbHRzDQo+Pg0KPj4gJCBzdWRvIGhjeGR1bXB0b29s
-IC1pIHdscDQ4czBmNHUydTEgLS1yY2FzY2FuPWFjdGl2ZQ0KPj4gXkMNCj4+IDAgUGFja2V0
-KHMpIGNhcHR1cmVkIGJ5IGtlcm5lbA0KPj4gMCBQYWNrZXQocykgZHJvcHBlZCBieSBrZXJu
-ZWwNCj4+IFdhcm5pbmc6IHRvbyBsZXNzIHBhY2tldHMgcmVjZWl2ZWQgKG1vbml0b3IgbW9k
-ZSBtYXkgbm90IHdvcmsgYXMgZXhwZWN0ZWQpDQo+PiBQb3NzaWJsZSByZWFzb25zOg0KPj4g
-ICBubyB0cmFuc21pdHRlciBpbiByYW5nZQ0KPj4gICBmcmFtZXMgYXJlIGZpbHRlcmVkIG91
-dCBieSBCUEYNCj4+ICAgZHJpdmVyIGlzIGJyb2tlbg0KPj4gV2FybmluZzogbm8gUFJPQkVS
-RVNQT05TRVMgcmVjZWl2ZWQgKGZyYW1lIGluamVjdGlvbiBtYXkgbm90IHdvcmsgYXMgZXhw
-ZWN0ZWQpDQo+PiBQb3NzaWJsZSByZWFzb25zOg0KPj4gICBubyBBUCBpbiByYW5nZQ0KPj4g
-ICBmcmFtZXMgYXJlIGZpbHRlcmVkIG91dCBieSBCUEYNCj4+ICAgZHJpdmVyIGlzIGJyb2tl
-bg0KPj4gICBkcml2ZXIgZG9lcyBub3Qgc3VwcG9ydCBmcmFtZSBpbmplY3Rpb24NCj4+DQo+
-PiBleGl0IG9uIHNpZ3Rlcm0NCj4+DQo+Pg0KPj4gQmVzdCByZWdhcmRzDQo+PiBNaWtlDQo+
-IA0KPiBIaSwNCj4gDQo+IEkgYW0gbG9va2luZyBpbnRvIGl0LiBJIHdpbGwgZ2V0IGJhY2sg
-dG8geW91Lg0KPiANCj4gUmVnYXJkcywNCj4gTG9yZW56bw0KPiANCj4+DQo+Pg0KPj4NCj4+
-DQo+Pg0KPj4NCj4+IEFtIDI0LjA3LjI0IHVtIDEwOjQ3IHNjaHJpZWIgSm9oYW5uZXMgQmVy
-ZzoNCj4+PiBPbiBXZWQsIDIwMjQtMDctMjQgYXQgMDk6NTggKzAyMDAsIExpbnV4IHJlZ3Jl
-c3Npb24gdHJhY2tpbmcgKFRob3JzdGVuDQo+Pj4gTGVlbWh1aXMpIHdyb3RlOg0KPj4+PiBI
-aSwgVGhvcnN0ZW4gaGVyZSwgdGhlIExpbnV4IGtlcm5lbCdzIHJlZ3Jlc3Npb24gdHJhY2tl
-ci4NCj4+Pj4NCj4+Pj4gSm9oYW5uZXMsIEZlbGl4LCBMb3JlbnpvLCBSeWRlciwgSSBub3Rp
-Y2VkIGEgcmVwb3J0IGFib3V0IGEgcmVncmVzc2lvbg0KPj4+PiBpbiBidWd6aWxsYS5rZXJu
-ZWwub3JnIHRoYXQgKGZvciBteSB1bnRyYWluZWQgZXllcykgYXBwZWFycyB0byBiZSBhIGJ1
-Zw0KPj4+PiBpbiBzb21lIGNvZGUgcGF0aHMgb2YgbXQ3NngydSB0aGF0IHdhcyBleHBvc2Vk
-IGJ5IDBkOWMyYmVlZDExNmU2ICgid2lmaToNCj4+Pj4gbWFjODAyMTE6IGZpeCBtb25pdG9y
-IGNoYW5uZWwgd2l0aCBjaGFuY3R4IGVtdWxhdGlvbiIpIFt2Ni4xMC1yYzUsDQo+Pj4+IHY2
-LjkuN10gZnJvbSBKb2hhbm5lcy4NCj4+Pj4NCj4+Pj4gQXMgbWFueSAobW9zdD8pIGtlcm5l
-bCBkZXZlbG9wZXJzIGRvbid0IGtlZXAgYW4gZXllIG9uIHRoZSBidWcgdHJhY2tlciwNCj4+
-Pj4gSSBkZWNpZGVkIHRvIHdyaXRlIHRoaXMgbWFpbC4gVG8gcXVvdGUgZnJvbQ0KPj4+PiBo
-dHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIxOTA4NiA6DQo+
-Pj4+DQo+Pj4+PiAgICBNaWNoYWVsIDIwMjQtMDctMjMgMTU6Mzg6NDMgVVRDDQo+Pj4+Pg0K
-Pj4+Pj4gQWZ0ZXIgYSB1c2VyIG9wZW5lZCB0aGlzIGRpc2N1c3Npb246DQo+Pj4+PiBodHRw
-czovL2dpdGh1Yi5jb20vWmVyQmVhL2hjeGR1bXB0b29sL2Rpc2N1c3Npb25zLzQ2NQ0KPj4+
-Pj4NCj4+Pj4+IEp1bCAyMSAwNTo0MDozOSBycGk0Yi1hYXJjaCBrZXJuZWw6IG10NzZ4MnUg
-Mi0yOjEuMCB3bGFuMTogZW50ZXJlZCBwcm9taXNjdW91cyBtb2RlDQo+Pj4+PiBKdWwgMjEg
-MDU6NDA6NDUgcnBpNGItYWFyY2gga2VybmVsOiBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBO
-VUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzIDAwMDAwMDAwMDAw
-MDAwMDANCj4+Pj4+IEp1bCAyMSAwNTo0MDo0NSBycGk0Yi1hYXJjaCBrZXJuZWw6IE1lbSBh
-Ym9ydCBpbmZvOg0KPj4+Pj4gSnVsIDIxIDA1OjQwOjQ1IHJwaTRiLWFhcmNoIGtlcm5lbDog
-ICBFU1IgPSAweDAwMDAwMDAwOTYwMDAwNDQNCj4+Pj4+IEp1bCAyMSAwNTo0MDo0NSBycGk0
-Yi1hYXJjaCBrZXJuZWw6ICAgRUMgPSAweDI1OiBEQUJUIChjdXJyZW50IEVMKSwgSUwgPSAz
-MiBiaXRzDQo+Pj4+PiBKdWwgMjEgMDU6NDA6NDUgcnBpNGItYWFyY2gga2VybmVsOiAgIFNF
-VCA9IDAsIEZuViA9IDANCj4+Pj4+IEp1bCAyMSAwNTo0MDo0NSBycGk0Yi1hYXJjaCBrZXJu
-ZWw6ICAgRUEgPSAwLCBTMVBUVyA9IDANCj4+Pj4+IEp1bCAyMSAwNTo0MDo0NSBycGk0Yi1h
-YXJjaCBrZXJuZWw6ICAgRlNDID0gMHgwNDogbGV2ZWwgMCB0cmFuc2xhdGlvbiBmYXVsdA0K
-Pj4+Pj4gSnVsIDIxIDA1OjQwOjQ1IHJwaTRiLWFhcmNoIGtlcm5lbDogRGF0YSBhYm9ydCBp
-bmZvOg0KPj4+Pj4gSnVsIDIxIDA1OjQwOjQ1IHJwaTRiLWFhcmNoIGtlcm5lbDogICBJU1Yg
-PSAwLCBJU1MgPSAweDAwMDAwMDQ0LCBJU1MyID0gMHgwMDAwMDAwMA0KPj4+Pj4gSnVsIDIx
-IDA1OjQwOjQ1IHJwaTRiLWFhcmNoIGtlcm5lbDogICBDTSA9IDAsIFduUiA9IDEsIFRuRCA9
-IDAsIFRhZ0FjY2VzcyA9IDANCj4+Pj4+IEp1bCAyMSAwNTo0MDo0NSBycGk0Yi1hYXJjaCBr
-ZXJuZWw6ICAgR0NTID0gMCwgT3ZlcmxheSA9IDAsIERpcnR5Qml0ID0gMCwgWHMgPSAwDQo+
-Pj4+PiBKdWwgMjEgMDU6NDA6NDUgcnBpNGItYWFyY2gga2VybmVsOiB1c2VyIHBndGFibGU6
-IDRrIHBhZ2VzLCA0OC1iaXQgVkFzLCBwZ2RwPTAwMDAwMDAwNDEzMDAwMDANCj4+Pj4+DQo+
-Pj4NCj4+PiBOb3QgdG9vIHdlbGwtdmVyc2VkIHdpdGggQVJNLCBkb2VzIHRoYXQgdGVsIG1l
-IGFueXRoaW5nIGFib3V0IHdoZXJlIGluDQo+Pj4gdGhlIGNvZGUgdGhlIGNyYXNoIHdhcz8g
-V2l0aG91dCBhbnkgZnVydGhlciBpbmZvcm1hdGlvbiBJIGRvbid0IHRoaW5rIEkNCj4+PiBj
-YW4gc2VlIGFueXRoaW5nIGhlcmUsIGFuZCBJIGRvbid0IGhhdmUgYW4gYWZmZWN0ZWQgZGV2
-aWNlLg0KPj4+DQo+Pj4gam9oYW5uZXMNCj4gDQo+IA0KPiANCj4gDQo+IA0K
---------------73i5QSksggjoR90W2Pu6mhGv
-Content-Type: application/pgp-keys; name="OpenPGP_0x375516A45DB88630.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x375516A45DB88630.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> ---
+>  include/linux/kasan.h | 14 ++++++----
+>  mm/Kconfig.debug      | 29 ++++++++++++++++++++
+>  mm/kasan/common.c     | 13 +++++----
+>  mm/kasan/kasan_test.c | 44 +++++++++++++++++++++++++++++
+>  mm/slab_common.c      | 12 ++++++++
+>  mm/slub.c             | 76 +++++++++++++++++++++++++++++++++++++++++++++------
+>  6 files changed, 170 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index ebd93c843e78..c64483d3e2bd 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -186,12 +186,15 @@ static __always_inline bool kasan_slab_pre_free(struct kmem_cache *s,
+>  }
+>  
+>  bool __kasan_slab_free(struct kmem_cache *s, void *object,
+> -			unsigned long ip, bool init);
+> +			unsigned long ip, bool init, bool after_rcu_delay);
+>  static __always_inline bool kasan_slab_free(struct kmem_cache *s,
+> -						void *object, bool init)
+> +						void *object, bool init,
+> +						bool after_rcu_delay)
+>  {
+> -	if (kasan_enabled())
+> -		return __kasan_slab_free(s, object, _RET_IP_, init);
+> +	if (kasan_enabled()) {
+> +		return __kasan_slab_free(s, object, _RET_IP_, init,
+> +				after_rcu_delay);
+> +	}
+>  	return false;
+>  }
+>  
+> @@ -387,7 +390,8 @@ static inline bool kasan_slab_pre_free(struct kmem_cache *s, void *object)
+>  	return false;
+>  }
+>  
+> -static inline bool kasan_slab_free(struct kmem_cache *s, void *object, bool init)
+> +static inline bool kasan_slab_free(struct kmem_cache *s, void *object,
+> +				   bool init, bool after_rcu_delay)
+>  {
+>  	return false;
+>  }
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index afc72fde0f03..0c088532f5a7 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -70,6 +70,35 @@ config SLUB_DEBUG_ON
+>  	  off in a kernel built with CONFIG_SLUB_DEBUG_ON by specifying
+>  	  "slab_debug=-".
+>  
+> +config SLUB_RCU_DEBUG
+> +	bool "Make use-after-free detection possible in TYPESAFE_BY_RCU caches"
+> +	depends on SLUB_DEBUG
+> +	default KASAN_GENERIC || KASAN_SW_TAGS
+> +	help
+> +	  Make SLAB_TYPESAFE_BY_RCU caches behave approximately as if the cache
+> +	  was not marked as SLAB_TYPESAFE_BY_RCU and every caller used
+> +	  kfree_rcu() instead.
+> +
+> +	  This is intended for use in combination with KASAN, to enable KASAN to
+> +	  detect use-after-free accesses in such caches.
+> +	  (KFENCE is able to do that independent of this flag.)
+> +
+> +	  This might degrade performance.
+> +	  Unfortunately this also prevents a very specific bug pattern from
+> +	  triggering (insufficient checks against an object being recycled
+> +	  within the RCU grace period); so this option can be turned off even on
+> +	  KASAN builds, in case you want to test for such a bug.
+> +
+> +	  If you're using this for testing bugs / fuzzing and care about
+> +	  catching all the bugs WAY more than performance, you might want to
+> +	  also turn on CONFIG_RCU_STRICT_GRACE_PERIOD.
+> +
+> +	  WARNING:
+> +	  This is designed as a debugging feature, not a security feature.
+> +	  Objects are sometimes recycled without RCU delay under memory pressure.
+> +
+> +	  If unsure, say N.
+> +
+>  config PAGE_OWNER
+>  	bool "Track page owner"
+>  	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 7c7fc6ce7eb7..d92cb2e9189d 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -238,7 +238,8 @@ static enum free_validation_result check_slab_free(struct kmem_cache *cache,
+>  }
+>  
+>  static inline bool poison_slab_object(struct kmem_cache *cache, void *object,
+> -				      unsigned long ip, bool init)
+> +				      unsigned long ip, bool init,
+> +				      bool after_rcu_delay)
+>  {
+>  	void *tagged_object = object;
+>  	enum free_validation_result valid = check_slab_free(cache, object, ip);
+> @@ -251,7 +252,8 @@ static inline bool poison_slab_object(struct kmem_cache *cache, void *object,
+>  	object = kasan_reset_tag(object);
+>  
+>  	/* RCU slabs could be legally used after free within the RCU period. */
+> -	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
+> +	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU) &&
+> +	    !after_rcu_delay)
+>  		return false;
+>  
+>  	kasan_poison(object, round_up(cache->object_size, KASAN_GRANULE_SIZE),
+> @@ -270,7 +272,8 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>  }
+>  
+>  bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+> -				unsigned long ip, bool init)
+> +				unsigned long ip, bool init,
+> +				bool after_rcu_delay)
+>  {
+>  	if (is_kfence_address(object))
+>  		return false;
+> @@ -280,7 +283,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+>  	 * freelist. The object will thus never be allocated again and its
+>  	 * metadata will never get released.
+>  	 */
+> -	if (poison_slab_object(cache, object, ip, init))
+> +	if (poison_slab_object(cache, object, ip, init, after_rcu_delay))
+>  		return true;
+>  
+>  	/*
+> @@ -535,7 +538,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+>  		return false;
+>  
+>  	slab = folio_slab(folio);
+> -	return !poison_slab_object(slab->slab_cache, ptr, ip, false);
+> +	return !poison_slab_object(slab->slab_cache, ptr, ip, false, false);
+>  }
+>  
+>  void __kasan_mempool_unpoison_object(void *ptr, size_t size, unsigned long ip)
+> diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+> index 7b32be2a3cf0..cba782a4b072 100644
+> --- a/mm/kasan/kasan_test.c
+> +++ b/mm/kasan/kasan_test.c
+> @@ -996,6 +996,49 @@ static void kmem_cache_invalid_free(struct kunit *test)
+>  	kmem_cache_destroy(cache);
+>  }
+>  
+> +static void kmem_cache_rcu_uaf(struct kunit *test)
+> +{
+> +	char *p;
+> +	size_t size = 200;
+> +	struct kmem_cache *cache;
+> +
+> +	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_SLUB_RCU_DEBUG);
+> +
+> +	cache = kmem_cache_create("test_cache", size, 0, SLAB_TYPESAFE_BY_RCU,
+> +				  NULL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
+> +
+> +	p = kmem_cache_alloc(cache, GFP_KERNEL);
+> +	if (!p) {
+> +		kunit_err(test, "Allocation failed: %s\n", __func__);
+> +		kmem_cache_destroy(cache);
+> +		return;
+> +	}
+> +	*p = 1;
+> +
+> +	rcu_read_lock();
+> +
+> +	/* Free the object - this will internally schedule an RCU callback. */
+> +	kmem_cache_free(cache, p);
+> +
+> +	/* We should still be allowed to access the object at this point because
+> +	 * the cache is SLAB_TYPESAFE_BY_RCU and we've been in an RCU read-side
+> +	 * critical section since before the kmem_cache_free().
+> +	 */
+> +	READ_ONCE(*p);
+> +
+> +	rcu_read_unlock();
+> +
+> +	/* Wait for the RCU callback to execute; after this, the object should
+> +	 * have actually been freed from KASAN's perspective.
+> +	 */
+> +	rcu_barrier();
+> +
+> +	KUNIT_EXPECT_KASAN_FAIL(test, READ_ONCE(*p));
+> +
+> +	kmem_cache_destroy(cache);
+> +}
+> +
+>  static void empty_cache_ctor(void *object) { }
+>  
+>  static void kmem_cache_double_destroy(struct kunit *test)
+> @@ -1937,6 +1980,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+>  	KUNIT_CASE(kmem_cache_oob),
+>  	KUNIT_CASE(kmem_cache_double_free),
+>  	KUNIT_CASE(kmem_cache_invalid_free),
+> +	KUNIT_CASE(kmem_cache_rcu_uaf),
+>  	KUNIT_CASE(kmem_cache_double_destroy),
+>  	KUNIT_CASE(kmem_cache_accounted),
+>  	KUNIT_CASE(kmem_cache_bulk),
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 1560a1546bb1..19511e34017b 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -450,6 +450,18 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
+>  
+>  static int shutdown_cache(struct kmem_cache *s)
+>  {
+> +	if (IS_ENABLED(CONFIG_SLUB_RCU_DEBUG) &&
+> +	    (s->flags & SLAB_TYPESAFE_BY_RCU)) {
+> +		/*
+> +		 * Under CONFIG_SLUB_RCU_DEBUG, when objects in a
+> +		 * SLAB_TYPESAFE_BY_RCU slab are freed, SLUB will internally
+> +		 * defer their freeing with call_rcu().
+> +		 * Wait for such call_rcu() invocations here before actually
+> +		 * destroying the cache.
+> +		 */
+> +		rcu_barrier();
+> +	}
+> +
+>  	/* free asan quarantined objects */
+>  	kasan_cache_shutdown(s);
+>  
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 34724704c52d..f44eec209e3e 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2144,15 +2144,26 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+>  }
+>  #endif /* CONFIG_MEMCG_KMEM */
+>  
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head);
+> +
+> +struct rcu_delayed_free {
+> +	struct rcu_head head;
+> +	void *object;
+> +};
+> +#endif
+> +
+>  /*
+>   * Hooks for other subsystems that check memory allocations. In a typical
+>   * production configuration these hooks all should produce no code at all.
+>   *
+>   * Returns true if freeing of the object can proceed, false if its reuse
+> - * was delayed by KASAN quarantine, or it was returned to KFENCE.
+> + * was delayed by CONFIG_SLUB_RCU_DEBUG or KASAN quarantine, or it was returned
+> + * to KFENCE.
+>   */
+>  static __always_inline
+> -bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+> +bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
+> +		    bool after_rcu_delay)
+>  {
+>  	kmemleak_free_recursive(x, s->flags);
+>  	kmsan_slab_free(s, x);
+> @@ -2163,7 +2174,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+>  		debug_check_no_obj_freed(x, s->object_size);
+>  
+>  	/* Use KCSAN to help debug racy use-after-free. */
+> -	if (!(s->flags & SLAB_TYPESAFE_BY_RCU))
+> +	if (!(s->flags & SLAB_TYPESAFE_BY_RCU) || after_rcu_delay)
+>  		__kcsan_check_access(x, s->object_size,
+>  				     KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT);
+>  
+> @@ -2177,6 +2188,28 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+>  	if (kasan_slab_pre_free(s, x))
+>  		return false;
+>  
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +	if ((s->flags & SLAB_TYPESAFE_BY_RCU) && !after_rcu_delay) {
+> +		struct rcu_delayed_free *delayed_free;
+> +
+> +		delayed_free = kmalloc(sizeof(*delayed_free), GFP_NOWAIT);
+> +		if (delayed_free) {
+> +			/*
+> +			 * Let KASAN track our call stack as a "related work
+> +			 * creation", just like if the object had been freed
+> +			 * normally via kfree_rcu().
+> +			 * We have to do this manually because the rcu_head is
+> +			 * not located inside the object.
+> +			 */
+> +			kasan_record_aux_stack_noalloc(x);
+> +
+> +			delayed_free->object = x;
+> +			call_rcu(&delayed_free->head, slab_free_after_rcu_debug);
+> +			return false;
+> +		}
+> +	}
+> +#endif /* CONFIG_SLUB_RCU_DEBUG */
+> +
+>  	/*
+>  	 * As memory initialization might be integrated into KASAN,
+>  	 * kasan_slab_free and initialization memset's must be
+> @@ -2200,7 +2233,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+>  		       s->size - inuse - rsize);
+>  	}
+>  	/* KASAN might put x into memory quarantine, delaying its reuse. */
+> -	return !kasan_slab_free(s, x, init);
+> +	return !kasan_slab_free(s, x, init, after_rcu_delay);
+>  }
+>  
+>  static __fastpath_inline
+> @@ -2214,7 +2247,7 @@ bool slab_free_freelist_hook(struct kmem_cache *s, void **head, void **tail,
+>  	bool init;
+>  
+>  	if (is_kfence_address(next)) {
+> -		slab_free_hook(s, next, false);
+> +		slab_free_hook(s, next, false, false);
+>  		return false;
+>  	}
+>  
+> @@ -2229,7 +2262,7 @@ bool slab_free_freelist_hook(struct kmem_cache *s, void **head, void **tail,
+>  		next = get_freepointer(s, object);
+>  
+>  		/* If object's reuse doesn't have to be delayed */
+> -		if (likely(slab_free_hook(s, object, init))) {
+> +		if (likely(slab_free_hook(s, object, init, false))) {
+>  			/* Move object to the new freelist */
+>  			set_freepointer(s, object, *head);
+>  			*head = object;
+> @@ -4442,7 +4475,7 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+>  	memcg_slab_free_hook(s, slab, &object, 1);
+>  	alloc_tagging_slab_free_hook(s, slab, &object, 1);
+>  
+> -	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
+> +	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), false)))
+>  		do_slab_free(s, slab, object, object, 1, addr);
+>  }
+>  
+> @@ -4451,7 +4484,7 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+>  static noinline
+>  void memcg_alloc_abort_single(struct kmem_cache *s, void *object)
+>  {
+> -	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
+> +	if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), false)))
+>  		do_slab_free(s, virt_to_slab(object), object, object, 1, _RET_IP_);
+>  }
+>  #endif
+> @@ -4470,6 +4503,33 @@ void slab_free_bulk(struct kmem_cache *s, struct slab *slab, void *head,
+>  		do_slab_free(s, slab, head, tail, cnt, addr);
+>  }
+>  
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head)
+> +{
+> +	struct rcu_delayed_free *delayed_free =
+> +			container_of(rcu_head, struct rcu_delayed_free, head);
+> +	void *object = delayed_free->object;
+> +	struct slab *slab = virt_to_slab(object);
+> +	struct kmem_cache *s;
+> +
+> +	if (WARN_ON(is_kfence_address(rcu_head)))
+> +		return;
+> +
+> +	/* find the object and the cache again */
+> +	if (WARN_ON(!slab))
+> +		return;
+> +	s = slab->slab_cache;
+> +	if (WARN_ON(!(s->flags & SLAB_TYPESAFE_BY_RCU)))
+> +		return;
+> +
+> +	/* resume freeing */
+> +	if (!slab_free_hook(s, object, slab_want_init_on_free(s), true))
+> +		return;
+> +	do_slab_free(s, slab, object, NULL, 1, _THIS_IP_);
+> +	kfree(delayed_free);
+> +}
+> +#endif /* CONFIG_SLUB_RCU_DEBUG */
+> +
+>  #ifdef CONFIG_KASAN_GENERIC
+>  void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr)
+>  {
+> 
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xsBNBE5aUQ0BCADlsVJE1z92lgySX+Nro7RSqTCAd6y41EljlISd8fGCoFbu0UBO
-OPHFVQ1RYvjdRf29IUqfrtGjzucMBFs0Z061rna+omw4LqwMeMlMk1GLMWttCAnm
-PQIYqj5BcqtIp5jh1vRggdg3Am6DTHhjqAAnGO+94sW2XnBLESRayGdBrQtUH2UL
-Qe1XvTtG066HB3RtzPNO7irB/UDBs7PfJgXmvF1sQB7UyqEMaMr1Oi5DzYGn8AVa
-zWTjuN7nQ5D8w3hnGbXmtPwm8dhKUO/UQjtOty8K95/0dP4Py/roBUTbNxzrC+Iz
-FAiU5t4l83T1cg8fERl9a3kBB++A0y3OFmi7ABEBAAHNGlplcm9CZWF0IDxaZXJv
-QmVhdEBnbXguZGU+wsB4BBMBAgAiBQJOWlENAhsjBgsJCAcDAgYVCAIJCgsEFgID
-AQIeAQIXgAAKCRA3VRakXbiGMJLfB/4uTRxIRDrMrKXoy5IshxbyPpcKPt2fFsyJ
-7lwozr8bZbYJfbrdXpYH2Arzegqy+gStJ94UNw3e2heihS0x+x8ukOHJ4XmzocDT
-TgQDiciLF/y/T9GwvEeHiaws024hZ729w5eA/Gaa046lkYt6eqfW9+VIkzWMAl0V
-/pNa63QVfHhZWBuj8EYIyCVhysxBa0tDyRPK1Ulih42lDXWCd1yN/ddaKE+m/+Nu
-yWSybV2w/yaboWLQWZNVRRLcdFnognXUo2P3+MM8XNP6EePtQgJaKQ7vfm7RmM8F
-3R8gX6lOiDIPZCoatsbSyPdlQ/rVkIDZ6FT0VW9yfdkV1RRLoCd5zsBNBE5aUQ0B
-CADV1OCkQeXFo+C76N4QMxGf72FGrbbdTMQcyTtVAEgMh5Kkzuuf5OfP5FCGxOtw
-YVXFe8mZeO3C6RrYid2GR0HFkx/wV4w/W68bRa85Hb6hxVddgmPhwvsJQpXItTaX
-AjKH5soPHBmPZcl+3KUfqfL/nA4x4JrUJeMaM/X8Gek+uVbTKhwTvObSxPG6DvOd
-mfHyUM0bhFV48ooC6IIc+VaHwyY1cgCLliErHrpKhIqP/N+UZpwDtZ+r0fFYIkuw
-eJvU+qJmgEgyKrSHY06GspHOMSk5OclLQ8vxvyPbTeemz7fnnYlDc+yBLUfi5/wf
-hW0vBI/pAhFVIvTCOtuLbgVhABEBAAHCwF8EGAECAAkFAk5aUQ0CGwwACgkQN1UW
-pF24hjC74gf/V9YDe9ZnOUobCghW5qMK0wT2EGcl85rAQ878Awt0/ZMiHaCyAvXp
-gsXVKeBFwfGzLdp5RGZJGYnEv3SltrF8uPslcCVmiFe+sZzR8RP61b6fdtRj8x+u
-UMKMojonhQWNbkGcFtjbFZcbL91kjTwXJP8QV/KRaw6w2BtZf8he4LiCU3Mj1VVw
-DIu16iodSb84NyvRRJtoW9qRakS78aDCHhJuPV0o8dDhZie1OqJDFODrlRsfPSCK
-59xYsi6FMxT1fTp9mnh52Qre1YEvOtYgaps8mvtLI0wuJ4QwLgbGPk5WJvooGkKS
-9e9rzZBHTO1QuH+ZvMR4+BDER+Pj9nXw4Q=3D=3D
-=3D5ikK
------END PGP PUBLIC KEY BLOCK-----
-
---------------73i5QSksggjoR90W2Pu6mhGv--
-
---------------sQfvmcqOu9sq3F56lYtANScV--
-
---------------sdDa8lv0SjGvO9cTXSM0UNI4
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEWSDOHFZ5SK/SwKm3N1UWpF24hjAFAmaidoYFAwAAAAAACgkQN1UWpF24hjCN
-AQgApUURpWG91CkBn6flRbLraJJGIJ+R+Bl3sQ6UaXwA4FwM7Z6V38yv16DelCIr/B3JJ+DYcdjz
-kPDfVWXMkCDVFaSWqk/mqUx4ZWxYRx8IRR9fhqHgQRG/RsuGzRXusurMl6Kxx/64yaWHUGH9pXpN
-AoqcK6yoxwnJGD0tbOV35f51zbhoh7u6Hww7tWSmZbcKSFBmfC+SVhnNpGMLJtctT+IOqUhZ+FdI
-jM48UxZOLhQhVYmYfkhcYpNagwEn5s/AuWzeINoZmqZ9DuMYWlmjvQDxCBkGqE1Y9GvrmCTBWEMf
-+IYBTUPWIwYTAjL0O+23Wpw0XJdhFXjKL+dd2URORQ==
-=GLNm
------END PGP SIGNATURE-----
-
---------------sdDa8lv0SjGvO9cTXSM0UNI4--
 
