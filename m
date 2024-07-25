@@ -1,122 +1,96 @@
-Return-Path: <linux-kernel+bounces-262123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A5F93C111
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E462793C10D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6841F221B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219CF1C214D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1C4199249;
-	Thu, 25 Jul 2024 11:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a9E3v+Xn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129A573440
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BF6199259;
+	Thu, 25 Jul 2024 11:42:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15751198A2E;
+	Thu, 25 Jul 2024 11:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721907895; cv=none; b=DNFKXLGi7qxrosTokjcntd6wDqLHGOpiDLckR7u4UF4zd2ZMk5qAdKaDCJpKFydnkZOs/InJiZH4I6FkJAsKd523YzU8xihoqvACRi8u0KPf8yuyO5bskyKgYKmDKd+suvyWdYTxNMfH/pFOeps9Y7yLH9huYmTc/6jfKaGijOQ=
+	t=1721907771; cv=none; b=MgfgyJgwMjXBr6YqWTmSGJy4DSH6gt3dFuRoFIlHbtBg8kJja9WjGGxj148h2Ou54XjOSQjIyUbSDskmlur/FGwA19KrcyGdB15lR8c8uOYpjq8LtbSS67ih8PPiaXFYwqZgimJTYw5uAlViCHx1WZDv4dwEBrBqcSq0KQdPdbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721907895; c=relaxed/simple;
-	bh=tTsn5Xrue7/wTYH4LTNBkBEx5HY2C2OIAknl1zukJDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c1cSATLIW7IY7U0P6X9n6Hc/zxZSZ4Alf1Gco9rk8WxgnA494X/vJPup+WsO2fyl33JZVDlu85q5my7FTbV1MU+2sjV2YcCQr7QKyVbXN1x7zKi0x5m1qp3dw6DoHn88U22Khg71iICZlAIPgd33EfPjjltsGcvQhYZiDmvQKkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a9E3v+Xn; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721907894; x=1753443894;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tTsn5Xrue7/wTYH4LTNBkBEx5HY2C2OIAknl1zukJDk=;
-  b=a9E3v+Xn0My1HDlMlGw0eUqEKV5E4aU3Zr3pT8EtAw1MBpCxgoPeVts2
-   jSHWwEZ6Imi5tDAci4/TO4hc1ZvwWEQIAAVOoSDL6fpWbi8XRJoSYsvkC
-   3yWHUTKLvIcGfL+bUpbOq7JoEKSi/SY0+7w/3/rE0pommW+YJ2iBeQz/q
-   Rspaf3biT2D6PJ8L1U0SiiTMPWBNAd1Ot972HQwzB11bp/BU3c2FKE1Mt
-   LPYaTPxZllSi3G7vL14WiciAkgcNp5js2IkoHxfnwB0rM9YwNn+c6IcjB
-   uIgd6659dhzD0nFepgIIRGPLezBtzvjN35eSDj+8jYWvEb6iqqWoJmihr
-   A==;
-X-CSE-ConnectionGUID: AnS/mCZiSPSEXvwVkmRX6Q==
-X-CSE-MsgGUID: u3XLsDRkQcGsQrLKfktvSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19332718"
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="19332718"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 04:44:53 -0700
-X-CSE-ConnectionGUID: f81p71tERLm2hi1Is+STxg==
-X-CSE-MsgGUID: J6EPIztHQPuGZsv5xXqQPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="57044113"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.164])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Jul 2024 04:44:51 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Juri Lelli <juri.lelli@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] sched/pelt: Use rq_clock_task() for hw_pressure
-Date: Thu, 25 Jul 2024 19:42:00 +0800
-Message-Id: <20240725114200.375611-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721907771; c=relaxed/simple;
+	bh=3xZ/hS9kV76RHBlISvMxIh19+LpfwBY/WqoQTCTyoAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPNRwFl6UUpocLSNMv/+Nha7ae7HUojEjwKrTvpzXBcD1imwEb58KWn4p4hKSN33kytu7h1h4NVY54hnMmc/lEOPstyl2B7qlmJKBqcwp7wUr9RMb5K1n9iG+4QP3DYkw4Ut4efyR8mfMOefWh3ai1fDz9KfZ+GAY5yTnss9ZN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9BFB1007;
+	Thu, 25 Jul 2024 04:43:13 -0700 (PDT)
+Received: from [10.1.196.44] (unknown [10.1.196.44])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D16E3F5A1;
+	Thu, 25 Jul 2024 04:42:46 -0700 (PDT)
+Message-ID: <68f0fdfc-8bc2-462d-9d0d-4d0ad41c6811@foss.arm.com>
+Date: Thu, 25 Jul 2024 12:42:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
+To: Steven Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org,
+ Danilo Krummrich <dakr@redhat.com>, lyude@redhat.com, lina@asahilina.net,
+ mcanal@igalia.com, airlied@gmail.com, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240710225011.275153-1-daniel.almeida@collabora.com>
+ <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
+ <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
+ <edda856e-3102-495a-8cc6-b79f5f114833@arm.com>
+ <20240723180642.73502856@collabora.com>
+ <6ce8fd12-b175-4a8f-8ea9-6221a555b69c@arm.com>
+ <CAL_Jsq+Dr5zO5MKEGq0dW9SuTuawaJMhHziFd73Ef_S1zbOkXw@mail.gmail.com>
+ <6b60a83d-8416-4cf8-b373-dc3c697c788a@arm.com>
+Content-Language: en-US
+From: Carsten Haitzler <carsten.haitzler@foss.arm.com>
+Organization: Arm Ltd.
+In-Reply-To: <6b60a83d-8416-4cf8-b373-dc3c697c788a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
-removed the decay_shift for hw_pressure. While looking at a related
-bug report, it is found that this commit uses the sched_clock_task()
-in sched_tick() while replaces the sched_clock_task() with rq_clock_pelt()
-in __update_blocked_others(). This could bring inconsistence. One possible
-scenario I can think of is in ___update_load_sum():
 
-u64 delta = now - sa->last_update_time
+>> We did discuss this, but I've come to the conclusion that's the wrong
+>> approach. Converting is going to need to track kernel closely as there
+>> are lots of dependencies with the various rust abstractions needed. If
+>> we just copy over the C driver, that's an invitation to diverge and
+>> accumulate technical debt. The advice to upstreaming things is never
+>> go work on a fork for a couple of years and come back with a huge pile
+>> of code to upstream. I don't think this situation is any different. If
+>> there's a path to do it in small pieces, we should take it.
+> 
+> I'd be quite keen for the "fork" to live in the upstream kernel. My
+> preference is for the two drivers to sit side-by-side. I'm not sure
+> whether that's a common view though.
 
-'now' could be calculated by rq_clock_pelt() from
-__update_blocked_others(), and last_update_time was calculated by
-rq_clock_task() previously from sched_tick(). Usually the former chases
-after the latter, it cause a very large 'delta' and brings unexpected
-behavior. Although this should not impact x86 platform in the bug report,
-it should be fixed for other platforms.
+I agree that a panthor.rs should to exist side by side with the C for 
+some time. I guess it's going to be in the order of a year or so (or 
+maybe more) and not a few weeks, so keeping the C and Rust in sync will 
+be important.
 
-Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407091527.bb0be229-lkp@intel.com
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My take is that such drivers probably belong in non-mainline dev trees 
+until they settle a bit, are at least fully functional and we're down to 
+arguing finer details. Especially since the other Rust infra they depend 
+on not mainline yet either.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9057584ec06d..cfd4755954fd 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9362,7 +9362,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
- 
- 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
- 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
--		  update_hw_load_avg(now, rq, hw_pressure) |
-+		  update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
- 		  update_irq_load_avg(rq, 0);
- 
- 	if (others_have_blocked(rq))
--- 
-2.25.1
-
+Given that, my opinion is this patch probably needs to be originally in 
+C then with a rust idiomatic port in the in-progress rust rewrite, or 
+there needs to be a lot more effort to building the right panthor layers 
+such as better register abstractions for example as part of this which 
+certainly will raise the workload to get this in.
 
