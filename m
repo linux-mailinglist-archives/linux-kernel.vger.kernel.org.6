@@ -1,132 +1,170 @@
-Return-Path: <linux-kernel+bounces-261708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD8993BB2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559E993BB53
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211E21F2277A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A1C285297
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1615179AE;
-	Thu, 25 Jul 2024 03:22:21 +0000 (UTC)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CF317C8B;
+	Thu, 25 Jul 2024 03:48:42 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9800414A84;
-	Thu, 25 Jul 2024 03:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F34233CA;
+	Thu, 25 Jul 2024 03:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721877741; cv=none; b=bJ6KmesbTCfy+nq8QegeZoxPzf0R6h6NPxCzh4+pmb59PAd9ErTUCZdeXMdtsKa3UFXuS/OebFAK2pXCWGuQxPIcissOjapoyz26K0J6QYO4M5jShidwXhfzRBKYyyTZ7uOmtR3wNYItvvf2s1gb+dVk5Z8coo8CMMzva0CTRok=
+	t=1721879322; cv=none; b=bhLF1HA+NjQj6P9bCfBysR7dGETxxw530WsRUsHH2PoMfLQTrvk2fuI+JW//h87oxBnh9Q9SGFhQzIijCbQTbBepFc/8jbNmieWL5zBpOW6qQYKweIaC+P4WMQJUXBkClRtpZk0u1OpmM5rIw0v2JK+58UwccszBThircvr7ZfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721877741; c=relaxed/simple;
-	bh=FufYzk/kh5jvAWxnZ+ZomZYTNa8qa1JUc+Myw1osqyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UW+Od/NFc+adTzTKNnm/P5qzWiWSq1ZVNK5ZDZ0/WkDy4dFHqKmn8MuGPNn8As5L5Y8/R9j8KyflZ0RJBlVIrM7vA0hYjRowgaAie7NO0Z9In8ECdFkNQgMX5I5XvvVdo7tbFGp1U1Y8UQ28C3h7s/A+Kd3vUjM2yVxBF18R2YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-807007b8dd1so18408539f.2;
-        Wed, 24 Jul 2024 20:22:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721877738; x=1722482538;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9UNZQIakbqcX1AcTbuUziW8quMf/irCIuvBquh9X+9Q=;
-        b=HCwNCcZZWxMCchy4GS4kf92Qn4C4y21wwZYAzohLt+XAsy8MAnVANN5EJKCPqqNGNr
-         tu+Wl9c7yptAIwPfdCCsvXzCpbKU0AUxvR9lQn1l8EyGLJ8GPusdicl2GkyU9Zbg+OlJ
-         WmUF3XKwpLE4Fo5l+sg0W+UETDcL6EgZ7YUhZX2ZNsIXHtlNFY8EPfnMzMcH7EkW0qXR
-         e6q/7sUVMoXSEefII2y9TL5331w0U+GxE+Jtvi17bBgPkNeriRfjrShOBLED7hkjw/JY
-         NraTnHljii9i/IjEABhWD+rAgArRpiz3c3UryrSTs46LnxjvDu1MRYEVRmsh/otHKhN5
-         /FlA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5JCpiZtsbvvVM0WqW+F1nLKv56uCkkaY3JU0GJd5GEe4QOHcsYjwKFHRCOcpqXC5VKzuYodniSjhMU7hh/kWfVEq0XLkNiEDYBYFJ
-X-Gm-Message-State: AOJu0YxSJB+DTeV5mE/0T3m0dxX4P0hLaaauP9ALXeNQ7oFDBGYdE9qQ
-	xfENLs3sgx0g7VFa+UPx0FkYnO9lQ/zPrQxtt8GjwXaY69dB/mepV/Wnzzd4
-X-Google-Smtp-Source: AGHT+IEZSo6IiOfEFmDGUaMKgic38X+teHZqMjp0KriEv60vzWDzDvixKog8qj4QX8TlmzkgEndvHw==
-X-Received: by 2002:a05:6e02:20c2:b0:383:290e:6937 with SMTP id e9e14a558f8ab-39a23fa340fmr7634635ab.11.1721877738009;
-        Wed, 24 Jul 2024 20:22:18 -0700 (PDT)
-Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a22e97b10sm2681885ab.27.2024.07.24.20.22.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 20:22:17 -0700 (PDT)
-From: David Vernet <void@manifault.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH bpf-next] selftests/bpf: Load struct_ops map in global_maps_resize test
-Date: Wed, 24 Jul 2024 22:22:14 -0500
-Message-ID: <20240725032214.50676-1-void@manifault.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721879322; c=relaxed/simple;
+	bh=EyDmCsB+rlaknj5yPLW/sti7muC19st9eo8Ju/3pAy4=;
+	h=From:To:Subject:Date:Message-Id; b=AhF3dt3mpV7mcN2uMsuF6wE78lIYlECZn1M0IjySqcTfC8eTw7AALlRNuGW5/y6/4esfYraTtW6Hh3R6QghIMBvvyXPUcD642eYCQQwhBp7hvSJgUJgKRHtm61Wd6c7tLTBLeJNBnjk0yIjaVu5fNRCTI+kRrcOMPO1M1PIhAOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BFD061A038B;
+	Thu, 25 Jul 2024 05:48:31 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 68D8F1A05AA;
+	Thu, 25 Jul 2024 05:48:31 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 19DC7183AD09;
+	Thu, 25 Jul 2024 11:48:30 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	elinor.montmasson@savoirfairelinux.com,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: fsl-asoc-card: Dynamically allocate memory for snd_soc_dai_link_components
+Date: Thu, 25 Jul 2024 11:22:53 +0800
+Message-Id: <1721877773-5229-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-In prog_tests/test_global_maps_resize.c, we test various use cases for
-resizing global maps. Commit 7244100e0389 ("libbpf: Don't take direct
-pointers into BTF data from st_ops") updated libbpf to not store pointers
-to volatile BTF data, which for some users, was causing a UAF when resizing
-a datasec array.
+The static snd_soc_dai_link_components cause conflict for multiple
+instances of this generic driver. For example, when there is
+wm8962 and SPDIF case enabled together, the contaminated
+snd_soc_dai_link_components will cause another device probe fail.
 
-Let's ensure we have coverage for resizing datasec arrays with struct_ops
-progs by also including a struct_ops map and struct_ops prog in the
-test_global_map_resize skeleton. The map is automatically loaded, so we
-don't need to do anything other than add it to the BPF prog being tested
-to get the coverage.
-
-Signed-off-by: David Vernet <void@manifault.com>
+Fixes: 6d174cc4f224 ("ASoC: fsl-asoc-card: merge spdif support from imx-spdif.c")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- .../selftests/bpf/progs/test_global_map_resize.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/soc/fsl/fsl-asoc-card.c | 46 ++++++++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/progs/test_global_map_resize.c b/tools/testing/selftests/bpf/progs/test_global_map_resize.c
-index 1fbb73d3e5d5..714b29c7f8b2 100644
---- a/tools/testing/selftests/bpf/progs/test_global_map_resize.c
-+++ b/tools/testing/selftests/bpf/progs/test_global_map_resize.c
-@@ -3,6 +3,7 @@
- 
- #include "vmlinux.h"
- #include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
- 
- char _license[] SEC("license") = "GPL";
- 
-@@ -60,3 +61,18 @@ int data_array_sum(void *ctx)
- 
+diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
+index 82df887b3af5..f6c3aeff0d8e 100644
+--- a/sound/soc/fsl/fsl-asoc-card.c
++++ b/sound/soc/fsl/fsl-asoc-card.c
+@@ -306,27 +306,12 @@ static int be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
  	return 0;
  }
+ 
+-SND_SOC_DAILINK_DEFS(hifi,
+-	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_EMPTY(), COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+-
+-SND_SOC_DAILINK_DEFS(hifi_fe,
+-	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_DUMMY()),
+-	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+-
+-SND_SOC_DAILINK_DEFS(hifi_be,
+-	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_EMPTY(), COMP_EMPTY()));
+-
+ static const struct snd_soc_dai_link fsl_asoc_card_dai[] = {
+ 	/* Default ASoC DAI Link*/
+ 	{
+ 		.name = "HiFi",
+ 		.stream_name = "HiFi",
+ 		.ops = &fsl_asoc_card_ops,
+-		SND_SOC_DAILINK_REG(hifi),
+ 	},
+ 	/* DPCM Link between Front-End and Back-End (Optional) */
+ 	{
+@@ -335,7 +320,6 @@ static const struct snd_soc_dai_link fsl_asoc_card_dai[] = {
+ 		.dpcm_playback = 1,
+ 		.dpcm_capture = 1,
+ 		.dynamic = 1,
+-		SND_SOC_DAILINK_REG(hifi_fe),
+ 	},
+ 	{
+ 		.name = "HiFi-ASRC-BE",
+@@ -345,7 +329,6 @@ static const struct snd_soc_dai_link fsl_asoc_card_dai[] = {
+ 		.dpcm_playback = 1,
+ 		.dpcm_capture = 1,
+ 		.no_pcm = 1,
+-		SND_SOC_DAILINK_REG(hifi_be),
+ 	},
+ };
+ 
+@@ -637,6 +620,7 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
+ 	struct platform_device *cpu_pdev;
+ 	struct fsl_asoc_card_priv *priv;
+ 	struct device *codec_dev[2] = { NULL, NULL };
++	struct snd_soc_dai_link_component *dlc;
+ 	const char *codec_dai_name[2];
+ 	const char *codec_dev_name[2];
+ 	u32 asrc_fmt = 0;
+@@ -717,7 +701,35 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
+ 
+ 	memcpy(priv->dai_link, fsl_asoc_card_dai,
+ 	       sizeof(struct snd_soc_dai_link) * ARRAY_SIZE(priv->dai_link));
++	/*
++	 * "Default ASoC DAI Link": 1 cpus, 2 codecs, 1 platforms
++	 * "DPCM Link Front-End":  1 cpus, 1 codecs (dummy), 1 platforms
++	 * "DPCM Link Back-End": 1 cpus, 2 codecs
++	 * totally 10 components
++	 */
++	dlc = devm_kcalloc(&pdev->dev, 10, sizeof(*dlc), GFP_KERNEL);
++	if (!dlc) {
++		ret = -ENOMEM;
++		goto asrc_fail;
++	}
 +
-+SEC("struct_ops/test_1")
-+int BPF_PROG(test_1)
-+{
-+	return 0;
-+}
++	priv->dai_link[0].cpus = &dlc[0];
++	priv->dai_link[0].num_cpus = 1;
++	priv->dai_link[0].codecs = &dlc[1];
+ 	priv->dai_link[0].num_codecs = 1;
++	priv->dai_link[0].platforms = &dlc[3];
++	priv->dai_link[0].num_platforms = 1;
 +
-+struct bpf_testmod_ops {
-+	int (*test_1)(void);
-+};
++	priv->dai_link[1].cpus = &dlc[4];
++	priv->dai_link[1].num_cpus = 1;
++	priv->dai_link[1].codecs = &dlc[5];
++	priv->dai_link[1].num_codecs = 0; /* dummy */
++	priv->dai_link[1].platforms = &dlc[6];
++	priv->dai_link[1].num_platforms = 1;
 +
-+SEC(".struct_ops.link")
-+struct bpf_testmod_ops st_ops_resize = {
-+	.test_1 = (void *)test_1
-+};
++	priv->dai_link[2].cpus = &dlc[7];
++	priv->dai_link[2].num_cpus = 1;
++	priv->dai_link[2].codecs = &dlc[8];
+ 	priv->dai_link[2].num_codecs = 1;
+ 
+ 	priv->card.dapm_routes = audio_map;
 -- 
-2.45.2
+2.34.1
 
 
