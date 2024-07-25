@@ -1,86 +1,165 @@
-Return-Path: <linux-kernel+bounces-261998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB13C93BF27
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F35D93BF2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2869B1C20BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:36:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F1B2819E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F34198821;
-	Thu, 25 Jul 2024 09:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1D1198825;
+	Thu, 25 Jul 2024 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="faaRbZzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NkpYvZVZ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF5F197A95
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C49119882E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900178; cv=none; b=Q5nv3JWB1p5HmgEIKJTo4mjeWCCiGLHW1eqj9JOkre2cchGnE1elmvsjC7vcdrhaWqbtNT0MhozDSXHbeX90uIVfjJA16QSiGZ5MNRGOUGkUpNYxZQlD1KqlPX79xcxojMUTZwenw3JsQu5LVuyRtlhcA/VVzZ7E3ewSbKPe8/U=
+	t=1721900317; cv=none; b=SUpJQ4C+sc6PMq51M5Uf7CpEYEhHVcLBPWkG8jcyZePy9yci9K43rVP9YQh1O2D0wAyRTDo/8d2Q11gEiLQpHAdb4k7MJ0Mgq1G/YNib2pMt2NNGs+mn+AQ6m08vyn3rMoXmb4UKm4DGyiFDTngCiNR0KC8oldmIfZNv+QX6vw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900178; c=relaxed/simple;
-	bh=pL+740c5ddHbpygGZKTjCo2GuF/VcCh3grabNKr8t64=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZerzBqaIZneTfyaLl3y6d8kcXpmwrhdIox8RfvFifxTWI6JvLcOqutauZh5E5mNT0CwlVvPnIFWDVEGRzGfaEHZVle+bNzhXr06iNdA4YjG/vskC0+zMIvYE7iLk4cVVhq3sgiWZrlDeYwZIDvCuYUHEv3YnoXk6+FmI4CmxYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=faaRbZzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8BCC116B1;
-	Thu, 25 Jul 2024 09:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721900177;
-	bh=pL+740c5ddHbpygGZKTjCo2GuF/VcCh3grabNKr8t64=;
-	h=From:To:Cc:Subject:Date:From;
-	b=faaRbZztMiSBkiiRKz/aa+BNacUunZkoitf/3qVom44DuzOXre+ElibANi1HabFde
-	 ctsX+o//ZVtIi6nOzNjpV/jtXeHPJPHJJ0xWwMXNC4/RvsiowEwN3yHpQoa9yU9YoG
-	 UB2j9y7Mh2OIjsqXM7eZ/hmjg+BlabadW4enqZ7o=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] tracing: remove tracing_is_on export
-Date: Thu, 25 Jul 2024 11:36:08 +0200
-Message-ID: <2024072508-freefall-headstand-7d47@gregkh>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721900317; c=relaxed/simple;
+	bh=hb9nkF2epFQFHjaDtYLTuSh5dWNP8eOlbA6nvUSQKwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oARJwL72bl8LHiqHrpSQm0OQYbjUC3qDY3qi2adJwdsGuXdtfigztgSnzqMcO4N9bQpZvYwZX/iqfzuFfiddaiqJcdskfY77IceeLgqOwddVIGuCvwOB8xODVTE7np25t/uWZm2qjMrcKRQRPAaK0VgzoXSna8ErO/WvxwjTr1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NkpYvZVZ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6fd513f18bso31378566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721900314; x=1722505114; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oW2kUzY/zrUY3o3SxhYU0xffCdGPSOZ86O2BpsusKg0=;
+        b=NkpYvZVZTTYiHJOVSvVF/DH4wjuyXWXv6Mnx/Yok6FIHhNwwfcFVwv5ZEo5rJm+g6o
+         xZzfJtUYPLHhcP4EPPo7mQ+6CpH3cdNnZMXdTUF6+pnJD3YZGpBXlYWXaxCS4ZEi/Gtp
+         b3900cN/QnDISXI6Z/gQ8eSyBaJcVnXfS+xRspN17BM3nwQEcJZ3+gpm0c7aFp92K7pe
+         8HfdHMG7G0PRzFPmTDofvLbFGRqWVfXP0aPXxXUJ5KAiAiHStqkTx1cdM7/8Bgze45eV
+         PMBp4/LD1ixPP8K6TWaQqwoKiCFcknamATCLDm/QgCkLlAui/0hs9UZxJzkDCLlamRAI
+         73Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721900314; x=1722505114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oW2kUzY/zrUY3o3SxhYU0xffCdGPSOZ86O2BpsusKg0=;
+        b=HYIGf4KcNbqWQbYB1jkokJt+Vx4Ye0kPHLjQfuuLZQNvY8FaSWJmZwS6OaLywaxR1W
+         MZOtyi/uQ+6IDrPTgqHY96qmHK7lF5JB32oFDrhISlTfaazvoNMySNnZm4KtJIEGpmCE
+         cNXQObPMimT18+0qd0yuVRQlucnUlgmRnIWWHzU3mleYWhTtoZXW2XGhX/cDm21EUQ4y
+         972FWeuavpbGrblcABWiCnH72xsnsmuMaqQw44nRWfGxDc4qlsQdB+WOuWYtgeEMBWq3
+         3tz8L5DoiaFfOSiSDmQWm2Ar5qNi5pH/prYPpinglaiUP6QnXhbIR9umBZEVDzfMD++x
+         +6yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQTnrLV1wkGWT0O/KS6ObeELJN2YTCPvBTjdypLdbdBJnaJ/EGKN+Kx3ao3Qza24VF5HCGkhg3tnokvXM8iIARAfddwKu0aS2fJmaN
+X-Gm-Message-State: AOJu0YzG5e3JzYuLFX0sDU8hNIHFkiAnPMtXYmMKDeep89J9zmyK82mp
+	0bdiYn5Yl5KrBSxSlQL+mkYWE8ZRHnasIoB44XqJFeNom4sG0jwLft3uOexYca9OSJHNjSi0gFI
+	mRh8=
+X-Google-Smtp-Source: AGHT+IECWpI5VnoSqnkn5P0EW43K3U3vSJvnZ8eWqaDqIzUWXmrhMeFaRkO1vIkoocBUmFGFlXDnzw==
+X-Received: by 2002:a17:906:c145:b0:a7a:a138:dbc1 with SMTP id a640c23a62f3a-a7acb3f02e1mr107001066b.20.1721900313753;
+        Thu, 25 Jul 2024 02:38:33 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4116fsm52574866b.103.2024.07.25.02.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 02:38:33 -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:38:31 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: Re: [PATCH v5 2/5] cgroup/pids: Make event counters hierarchical
+Message-ID: <hs3oag7blyg5kkdu6ikbw7f6hefkdfk2qgqqnpothq7yx4qsts@gv2v4dbpfmv6>
+References: <20240521092130.7883-1-mkoutny@suse.com>
+ <20240521092130.7883-3-mkoutny@suse.com>
+ <f124ce60-196e-2392-c4a9-11cdcacf9927@huawei.com>
+ <cb0efc16-6df2-72b7-47ea-ce524d428cc1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 25
-X-Developer-Signature: v=1; a=openpgp-sha256; l=762; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=pL+740c5ddHbpygGZKTjCo2GuF/VcCh3grabNKr8t64=; b=owGbwMvMwCRo6H6F97bub03G02pJDGmLZDqbf/OE+nLeMuItmubWsV3nlPGdWcsfP34XYJsio 3yzbNHljlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZjI/nUM86zzGEvXRup+W6Wf t2a7burSUo3wXQzz4x5PmOVvwVceXmXtc2ixkaHjsY02AA==
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q37u4k236h4pzrv7"
+Content-Disposition: inline
+In-Reply-To: <cb0efc16-6df2-72b7-47ea-ce524d428cc1@huawei.com>
 
-The function tracing_is_on() is only called by in-kernel code, not by
-any modules, so no need to export it as a symbol at all.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/trace/trace.c | 1 -
- 1 file changed, 1 deletion(-)
+--q37u4k236h4pzrv7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 578a49ff5c32..d09f2effa7a9 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1612,7 +1612,6 @@ int tracing_is_on(void)
- {
- 	return tracer_tracing_is_on(&global_trace);
- }
--EXPORT_SYMBOL_GPL(tracing_is_on);
- 
- static int __init set_buf_size(char *str)
- {
--- 
-2.45.2
+Hello Jianfeng.
 
+On Tue, Jul 16, 2024 at 11:27:39AM GMT, xiujianfeng <xiujianfeng@huawei.com=
+> wrote:
+> On 2024/7/3 14:59, xiujianfeng wrote:
+=2E..
+> >         for (; parent_pids(p); p =3D parent_pids(p)) {
+> >                 if (p =3D=3D pids_over_limit) {
+> >                         limit =3D true;
+> >                         atomic64_inc(&p->events_local[PIDCG_MAX]);
+> >                         cgroup_file_notify(&p->events_local_file);
+> >                 }
+> >                 if (limit)
+> >                         atomic64_inc(&p->events[PIDCG_MAX]);
+> >=20
+> >                 cgroup_file_notify(&p->events_file);
+> >         }
+> > }
+> >=20
+> > Consider this scenario: there are 4 groups A, B, C,and D. The
+> > relationships are as follows, the latter is the child of the former:
+> >=20
+> > root->A->B->C->D
+> >=20
+> > Then the user is polling on C.pids.events. When a process in D forks and
+> > fails due to B.max restrictions(pids_forking is D, and pids_over_limit
+> > is B), the user is awakened. However, when the user reads C.pids.events,
+> > he will find that the content has not changed. because the 'limit' is
+> > set to true started from B, and C.pids.events shows as below:
+> >=20
+> > seq_printf(sf, "max %lld\n", (s64)atomic64_read(&events[PIDCG_MAX]));
+> >=20
+> > Wouldn't this behavior confuse the user? Should the code to be changed
+> > to this?
+
+Two generic notes:
+- event notifications can be rate limited, so users won't necessarily
+  see every change,
+- upon notification it's better to read the event counter/status anyway
+  to base a response on it.
+
+But your remark is justified, there is no reason in this case for
+"spurious" event notification. It's an omission from v3 version of the
+patch when there had been also pids.events:max.imposed (that'd trigger
+events from D up to the root, it's only internal PIDCG_FORKFAIL now).
+
+The upwards traversal loop can be simplified and fixed with only
+PIDCG_MAX exposed. Can you send it as a separate patch please?
+
+(Apologies for late response, somehow I didn't see your e-mails.)
+
+Michal
+
+--q37u4k236h4pzrv7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZqIdEAAKCRAt3Wney77B
+SdzDAQDFHxjJt2JJhI0O9L5Frx7c6tdltnSjJD5lGd6xbuWuKAD/bywRNtDNhUNw
+boPmBSmMastkeBVP03nYhqm1kBlneQY=
+=o/0c
+-----END PGP SIGNATURE-----
+
+--q37u4k236h4pzrv7--
 
