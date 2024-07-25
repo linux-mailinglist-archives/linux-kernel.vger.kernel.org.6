@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-261999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2B993BF2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:38:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A9C93BF25
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672AC281854
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:38:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE6F281636
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7EE198830;
-	Thu, 25 Jul 2024 09:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD0B197A86;
+	Thu, 25 Jul 2024 09:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fG32LBEB"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMIcY9cQ"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1AC197A95;
-	Thu, 25 Jul 2024 09:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC66197559
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900283; cv=none; b=mkPbFLWU/Kd/eV6mhwYJEkaGGR2NrpDMhcK8jP7Z6cDvYmkbg7xCsFuiKR7a/2zga6Js6alXL5qT291xBzusOolHIkbsxycs4MDXbCQlsSUnzh4+EoHcJCcOzV4cQMRKI6gZYGD7AYu4iUdIjsCbcIMHw7TY4F1BUoFh+pAYcB0=
+	t=1721900111; cv=none; b=F+OW8tdcZq/ZbqkNgZJa4bGJy/4SWtLfeiSM2xvlOmLvNF/FAugqh9U0Nk0SLHLqfoKVT0zJ3FTKxTAmpCf0keET+oJET1k62hrvIp2O2f9JudZXWe1wFI1NkXsEpAEh9z89IzVj5JHkDj4iYzBarP2UxDBeVuRsc7VmezweUJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900283; c=relaxed/simple;
-	bh=VkQQmC+cDGpTHqGfwkH4J5cRWYSBvrFqnFYBf3GcYYE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zv/cjgRG0J/TT4rqKaASDEJ+oxiu8Na7O1lgQs/MWpAfWV+tUnukizpotsl8FTRfEP2nx09kj4GYMo0qQ9DKDKOJJHMPf0clLFR8w8uKsXhJQAl+G4Qw2eZJ6QNBPTvpg56MU2b4iiu8N0LYyPc8MS0KBQ5BFBI2m4a+PKmd07o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fG32LBEB; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721900282; x=1753436282;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VkQQmC+cDGpTHqGfwkH4J5cRWYSBvrFqnFYBf3GcYYE=;
-  b=fG32LBEBZo5nAGVdplztkP682p36F7druScbqgNdQUxd8blOQTvQwe6Z
-   mvpeJs9VWbZVGHP16aMYmDz9f2I7ZxV6GkbMaAs+/qjfgdEvMvwyVbBqW
-   MPtweBZYnbBgmUOSIaFogI0VLCmw56PUzI0h1rZmhPa0+vL4nXhDrnP73
-   qYbwgbEKALS9k3F3gtzm3reUOMysTGeICyhNC+QxSgqrSRZqr5rgVtZ2k
-   yjXSso/tsrR/6A8Lm+cjZGYctZtT6Qvz0EaS2YkgS/3gPs0UFG/fIOUXz
-   rTf662jA78v3kQeiA5yF5NV3Wg3y4K2auoGVPAiQdMxcGG4D5uR0NAhkt
-   A==;
-X-CSE-ConnectionGUID: hEn5OPxASvWCQ96luVzNJg==
-X-CSE-MsgGUID: b0zKuWM8S2qIBfEsrbIeYg==
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="29674287"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 02:37:55 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 25 Jul 2024 02:37:28 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 25 Jul 2024 02:37:27 -0700
-Date: Thu, 25 Jul 2024 15:04:17 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <horms@kernel.org>,
-	<hkallweit1@gmail.com>, <richardcochran@gmail.com>, <rdunlap@infradead.org>,
-	<linux@armlinux.org.uk>, <bryan.whitehead@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net-next V2 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <ZqIcGbGktHjsILeu@HYD-DK-UNGSW21.microchip.com>
-References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
- <20240716113349.25527-4-Raju.Lakkaraju@microchip.com>
- <cdf2e1e8-39ff-48b3-84b6-73c673ab1eb1@lunn.ch>
+	s=arc-20240116; t=1721900111; c=relaxed/simple;
+	bh=jP6eOQEUEARtt9nz1eIpoHjNnq05FjhkjZZmqwgrfBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xh33QtD5J0jfuzwc1BcaYk79yKXWxBps2xNK4G5CLvXw/LX8tNSGnCb/qXKvKA3h2fFsNqvn/T5mXQDduJ4BCI4JGIHUPkBajVSCU3zIPolr3VVOJAoBIwZkZ+L5U0zTZMjyOcKaMMs0zcTNCE9JYDPvvK0YiaCLA2Gl06oQA+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMIcY9cQ; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f6c9e8e0f2so164829e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721900105; x=1722504905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C9yOUnzDlzPd3C7+qAj+S0EJyMFKc+8zKUmimt6IWTY=;
+        b=QMIcY9cQ/IJsW7OKMWwXXFP+2nuJr/8vuYO59L49mSqBQ0lvHzkcQU2IuWhDEw1RZP
+         eiY48Uo1D+nYizVcRJtPIBgk6DmbqEmNC09AQ9dNJGTT+JQjNANl0YGkQl4mg505B71t
+         DSaH1NexYc12S4kCrwJ7Te0lUJWvwIcBw6LwVMNSo2BBvtlfhaFtLoVeJ453jCRkTUuJ
+         cx0z76NG64pAP4YgnLKQY/KCooV84loBNrKHuQGaBA8mvCXRv9+7w8bH+9ySLDz0YdQj
+         nkAv2CIxnqE7UM39WNyagpLUrnKqM5KF5UYqrx8TknPYMH66ULnEa0gqgBJ3xRqY2s2o
+         yPAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721900105; x=1722504905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C9yOUnzDlzPd3C7+qAj+S0EJyMFKc+8zKUmimt6IWTY=;
+        b=OLU1ODKfxOifCzaT4tyveiWmidkb8f6Z5wlNGgXSa2k9mJCClYPllMhUWn2LHcTyrY
+         DVnTWwTzWGA/cuD8EpX0ebuwZQgsw0hYykPClUyqMfETJAxoz4IWSkxkL0YyLolRzZWo
+         IMz0fci3F9CnQzdQdITKVwIbnksTIpqmFn05uL8x7T/CpqECbpL/k554zeIgQu2CKyLg
+         QHv38pgKywfGQxJxt5PWoR4hXzUJk0SRG4SF2WZBFyj3WyY5vF0P1EWsJfzRkNJqxsJ+
+         0In1IVIA8Nik9PRu9+CfDuUUO+OeL4o2N2n0dctZXES6ubsgxmiYVBogQeEo98e/aVD8
+         faHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeHGYm4yT9+nZiKGVKIljw014DhqXOjkUybfd03tT70VGCSL/1Ng9Br9HxYBrd5cLrUR9n8bYPX7t/UFnnUDMvxCgv27dCNpTT+SHU
+X-Gm-Message-State: AOJu0YyyVusN9gJ13SFZ1NZNNDDcXKGpF5FTm8oHMi67tZ9Kz9Vm8hH4
+	vLld1JZSCrIf70R3vpS7EXCSWIwIoKYBh0eNerB6hL8Bc8/QIaO4m02F1ytdD2sVkF7OrX7DVJC
+	EFFkntpINmsyzJGRGlh6JOftpIYs=
+X-Google-Smtp-Source: AGHT+IGFSkmHvph99nWdKLrDFzDlpZHGJpTz2ErGoL9sqk+PNUJlRz4I6GWG0kJGTUG6ZfxcTuDdzEe+k+Jc9faNN7c=
+X-Received: by 2002:a05:6122:2094:b0:4f5:d98:5ef2 with SMTP id
+ 71dfb90a1353d-4f6ca2c36f7mr1240963e0c.4.1721900105141; Thu, 25 Jul 2024
+ 02:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <cdf2e1e8-39ff-48b3-84b6-73c673ab1eb1@lunn.ch>
+References: <20240725035318.471-1-hailong.liu@oppo.com> <CAGsJ_4zWsh50Pzp0ntskT=eyfStALxD5BMNdWFrYJewrrx7V5Q@mail.gmail.com>
+ <20240725091703.tsjpgltwgu3jwy5e@oppo.com>
+In-Reply-To: <20240725091703.tsjpgltwgu3jwy5e@oppo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 25 Jul 2024 21:34:52 +1200
+Message-ID: <CAGsJ_4xF2J=xxG1rVvFARJtVrvfrGAr7ZLtMCgp8obL6Q0TcMw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] mm/vmalloc: fix incorrect __vmap_pages_range_noflush()
+ if vm_area_alloc_pages() from high order fallback to order0
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Michal Hocko <mhocko@suse.com>, Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	"Tangquan . Zheng" <zhengtangquan@oppo.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Thu, Jul 25, 2024 at 9:17=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com> =
+wrote:
+>
+> On Thu, 25. Jul 18:21, Barry Song wrote:
+> > On Thu, Jul 25, 2024 at 3:53=E2=80=AFPM <hailong.liu@oppo.com> wrote:
+> [snip]
+> >
+> > This is still incorrect because it undoes Michal's work. We also need t=
+o break
+> > the loop if (!nofail), which you're currently omitting.
+>
+> IIUC, the origin issue is to fix kvcalloc with __GFP_NOFAIL return NULL.
+> https://lore.kernel.org/all/ZAXynvdNqcI0f6Us@dhcp22.suse.cz/T/#u
+> if we disable huge flag in kmalloc_node, the issue will be fixed.
 
-Thank you for review the patches.
+No, this just bypasses kvmalloc and doesn't solve the underlying issue. Pro=
+blems
+can still be triggered by vmalloc_huge() even after the bypass. Once we
+reorganize vmap_huge to support the combination of PMD and PTE
+mapping, we should re-enable HUGE_VMAP for kvmalloc.
 
-The 07/18/2024 05:43, Andrew Lunn wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> On Tue, Jul 16, 2024 at 05:03:48PM +0530, Raju Lakkaraju wrote:
-> > Migrate phy support from phylib to phylink.
-> > Fixed phy support is still used together with phylink since we need to support
-> > dynamic fallback when a phy is not found over mdio. While phylink's FIXED mode
-> > supports fixed phys that, it's dynamic and requires device tree entries which
-> > are most of the time not present for LAN743x devices
-> 
-> > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
-> > +{
-> > +     struct device_node *dn = adapter->pdev->dev.of_node;
-> > +     struct net_device *dev = adapter->netdev;
-> > +     struct fixed_phy_status fphy_status = {
-> > +             .link = 1,
-> > +             .speed = SPEED_1000,
-> > +             .duplex = DUPLEX_FULL,
-> > +     };
-> 
-> 
-> So you are happy to limit it to 1G, even thought it can do more? That
-> is the problem with fixed PHY done this way. If you were to use
-> PHYLINK fixed PHY you can use the full bandwidth of the hardware.
-> 
+I would consider dropping VM_ALLOW_HUGE_VMAP() for kvmalloc as
+an short-term "optimization" to save memory rather than a long-term fix. Th=
+is
+'optimization' is only valid until we reorganize HUGE_VMAP in a way
+similar to THP. I mean, for a 2.1MB kvmalloc, we can map 2MB as PMD
+and 0.1 as PTE.
 
-I accept your comments. Fixed PHY hard coded to 1Gpbs.
-
-Currenly, LAN743x chip don't have Device Tree implemented. 
-As part of SFP support, I would like to add software nodes.
-After SFP support development, I will add "fixed-link" option in software nodes.
-
-> You might want to look at what the wangxun drivers do for some ideas
-> how you can make use of PHYLINK fixed link without having DT.
-
-I refer the wangxun drivers for "fixed-link". currently wangxun driver did not
-implement "fixed-link" in software node.
- 
-> 
->     Andrew
-> 
-
--- 
-Thanks,                                                                         
-Raju
+> >
+> > To avoid reverting Michal's work, the simplest "fix" would be,
+> >
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index caf032f0bd69..0011ca30df1c 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -3775,7 +3775,7 @@ void *__vmalloc_node_range_noprof(unsigned long
+> > size, unsigned long align,
+> >                 return NULL;
+> >         }
+> >
+> > -       if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
+> > +       if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP) &
+> > !(gfp_mask & __GFP_NOFAIL)) {
+> >                 unsigned long size_per_node;
+> >
+> >                 /*
+> > >
+> > > [1] https://lore.kernel.org/lkml/20240724182827.nlgdckimtg2gwns5@oppo=
+.com/
+> > > 2.34.1
+> >
+> > Thanks
+> > Barry
+>
+> --
+> help you, help me,
+> Hailong.
 
