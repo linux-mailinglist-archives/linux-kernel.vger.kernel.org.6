@@ -1,169 +1,222 @@
-Return-Path: <linux-kernel+bounces-261771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF1293BBED
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC78F93BBF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0FD1C20E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5039D1F218A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4B31CA9E;
-	Thu, 25 Jul 2024 05:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075171CA9E;
+	Thu, 25 Jul 2024 05:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghzVUJ59"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpaxANy/"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EDE4C9F;
-	Thu, 25 Jul 2024 05:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610A17BAA
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721883614; cv=none; b=stRuDqJ8exBsJDfHMIB+X+Q2zrCn0Spl9b0kASShbmR4Ed1lKhaZVudNsyYyHtybqzl+6574EPlTVWdvxvXp7WNF5fzSqhpNM5RFFphmhV9JKWhV9VxAVtXBJ3bvfcDtzil7/ywjlt1+2qTpunomSyGAYGHJOSnZrhQJMc1sMDI=
+	t=1721883808; cv=none; b=JJV7m9gsnGEb7EH+TDbUrJkKIRzfw5hb72IeVqw6MbVcxyGP/AGusZAyKVOejY99IkyLmUjKJP3iJdSrtixjMk8shf9orb1iN6G2uR+CUsRvpUtjBEMTT+CZIjhH2+hd9aHlyne+d+9vyWxL9WhBb6x3GKsVIGeoHIwtb3AR/cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721883614; c=relaxed/simple;
-	bh=a6nXzcOH/sqL5vgm70Jqbu3ApyPGZZS4T1IWUSXxbuY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OjduzLLc0djc7C0EoTsWl5GLso8imBrPwjf9S0FsIzubT4XZt5MbhzBIsb04EuwPUXWKK45t2esttYqXZ1ZvxCQmWplGM9hdEJCbboV3v2lla5vfAmbN5MlP+zf/C4GOF/ifpo/R0twKsPw300yEtnq61dY/sF83XSBmCYE+y94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghzVUJ59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 70B46C116B1;
-	Thu, 25 Jul 2024 05:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721883613;
-	bh=a6nXzcOH/sqL5vgm70Jqbu3ApyPGZZS4T1IWUSXxbuY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ghzVUJ59SdeUVq9zMhveEn2ZclyersY4QKGxmoukWZja+GA/FhnuKhLVejSo4GkqO
-	 HMyNpGgDFJAePRfIT5jfE7yl/n4ZBrwBxV2naEPhs1UYaW68p1s2LHJnw8RbYVAIP7
-	 EB42lt2aGu6d1R7KZ/l/trgJXKN9kndnWzCaMPcLOLWvXC+VLdbNeDsbLTMgNHs9sd
-	 mH7K22TWoQu8boy2oEIpCGQe8i5b9EYn6OhYWGvy+01EjZ43l+XEtX2XAflHsEECZY
-	 NlnswD6PxZqyyFbozYmUsn1V4I/476aU91/Akkyy4abhfV2xkdxn6JSfTmQ3YRaDfC
-	 7gVTD2rw8hZ5Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB6BC3DA49;
-	Thu, 25 Jul 2024 05:00:13 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Date: Thu, 25 Jul 2024 06:00:02 +0100
-Subject: [PATCH net] net/tcp: Disable TCP-AO static key after RCU grace
- period
+	s=arc-20240116; t=1721883808; c=relaxed/simple;
+	bh=4jOWZRFpC9T03DeHefAHMwQwPmdX/qSrpARBw4vv4qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0NNba33iNzmYJ/19c+YE2i42fMSde5EAMvA4cyKuzleKv0oVfEpvlrbs9AYAdYSc+b6hM9FCg2+2eUuDke6gfLsfoUgyxrf6iTJOrgurQ2qxzndyjRn8u4WCOdq1AmxjqKg6v4aYHa8R+fh6PuQ2RJ+lG+puu/7m0SeErYzpZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RpaxANy/; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a0c6ab3354so442467a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721883805; x=1722488605; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WSFwKnfVczR16WD5Y3nfX2f2/Inf3FOYKXgV2SNCco4=;
+        b=RpaxANy/VKVKF2jDYfpWTid7exw1wSpKCCrMUcnHP2OEOfaK9QGSqfj5rXkQSZz/DR
+         qTnlMG5QM3y6ZUzhTINpA4MOzpvE9mRvKy+1VgNYxTYArROCDRqfCe8k7H19oNyRiR2H
+         dG7V8qZMg0h0ZOZA+nwTD589nzmv2DDe1cH0An/7ha8C316tkuD3zDUQsZ4jQ7o0CUYF
+         tsIdJIV661ZfY4vMwNtPbvvsVzeNAGRlxPrwbsgSm8w78D7/JtXdX2C9eZcR8k93dLuV
+         8FwqPnJWLP+0w2bySmJHUR32QhirheKqZRTgAZHThEm/fbG+4ZIwiqdpUPGebps0nWjT
+         NbIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721883805; x=1722488605;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSFwKnfVczR16WD5Y3nfX2f2/Inf3FOYKXgV2SNCco4=;
+        b=KN4w8+ydD4WEl0e0ohKb1wwhOSNIdzpdEuonMC6h9GKedXVv2KDc4V6wB6UTu5UwOB
+         sGylMaHuFJGCjLJiNltzGClvPghFNNbrLpkVulmTzZkBzHwbhKN86MYjz0/yCuVISuYK
+         Y4rI+txvnF+szHUyu+F8k5aj78mOqCL83OwiMY64WDb5Mu3STsnV2LTgJKBmJmFOAgyJ
+         l3MgI8x1YwkwrV0ECDt7ziqNB0xpvV3xJy8fbc9eugPzzUc5GQGlI6Q3mduoqmUDb7mU
+         GYNB5ynVXPMjHncYkbL6y1n5Q8OrXWvJ5tbV5YLt6Ne1uctWp9X8A9HsHFb/7RtlBXjm
+         jorw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyV9HUzN65GJ9x8DDnig4iuUuLUknyRw2q/gxvLCCdEKOdUrrR41YMmY5j3DyplBwAA3xCC0bxeejJfjFs8cAmlufPxYlUOA02g5Cc
+X-Gm-Message-State: AOJu0Yyt9I6e+Cy76b+Eswhr/LaPJkYlMJj3LC7e1nGEMHSqKHwOW3eF
+	oWZTRLM39CzKSQVMS8zBM15fNmDrZwoalaiJPW3mWvNLCkfV9imye0SBV2fouw==
+X-Google-Smtp-Source: AGHT+IHUkqheWrPFgpUPoQDkhuPNo5ceh34Gz+2v4tjh+WIsehsAtjMWtZX+TlgSdAsBTKwMuQC1JQ==
+X-Received: by 2002:a05:6a20:b292:b0:1c0:e69f:f237 with SMTP id adf61e73a8af0-1c47b25a048mr559272637.21.1721883804913;
+        Wed, 24 Jul 2024 22:03:24 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c7fe33sm551503a91.13.2024.07.24.22.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 22:03:24 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:33:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 00/12] PCI: brcnstb: Enable STB 7712 SOC
+Message-ID: <20240725050319.GM2317@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANHboWYC/y2MQQrCQAwAv1JyNtCuXSp+RTxkt9Hm4LYkqQilf
- 3crHmdgZgNjFTa4Nhsov8VkLhW6UwN5ovJklLEyhDb07RAiel6QZjQnl4xJqeQJNa94iTzykM7
- UUYSaL8oP+fzWNyjscK8ykfE/Oq4vMmeFff8CTXt6QIgAAAA=
-To: Eric Dumazet <edumazet@google.com>, 
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org, 
- Dmitry Safonov <0x7f454c46@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721883612; l=3165;
- i=0x7f454c46@gmail.com; s=20240410; h=from:subject:message-id;
- bh=2VxC9EwCda1UYyzjKL3hCQeLFDKGZqGsvoyebrKwuJg=;
- b=bRV/3thrTrwofrcdBVEl5EV6EzzBMzOKZsDjmC2skvB/XdH8yqyWETm4f8tlFYrEu2IZS6cri
- L1GgotweV6wAzubtbYLK4XbrVDgzHQ8GQRwgSy8nWnCIimTjZgb5cS7
-X-Developer-Key: i=0x7f454c46@gmail.com; a=ed25519;
- pk=cFSWovqtkx0HrT5O9jFCEC/Cef4DY8a2FPeqP4THeZQ=
-X-Endpoint-Received: by B4 Relay for 0x7f454c46@gmail.com/20240410 with
- auth_id=152
-X-Original-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Reply-To: 0x7f454c46@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716213131.6036-1-james.quinlan@broadcom.com>
 
-From: Dmitry Safonov <0x7f454c46@gmail.com>
+On Tue, Jul 16, 2024 at 05:31:15PM -0400, Jim Quinlan wrote:
+> V4 Changes:
+>   o Commit "Check return value of all reset_control_xxx calls"
+>     -- Blank line before "return" (Stan)
+>   o Commit "Use common error handling code in brcmstb_probe()"
+>     -- Drop the "Fixes" tag (Stan)
+>   o Commit "dt-bindings: PCI ..."
+>     -- Separate the main commit into two: cleanup and adding the
+>        7712 SoC (Krzysztof)
+>     -- Fold maintainer change commit into cleanup change (Krzysztof)
+>     -- Use minItems/maxItems where appropriate (Krzysztof)
+>     -- Consistent order of resets/reset-names in decl and usage
+>        (Krzysztof)
+> 
 
-The lifetime of TCP-AO static_key is the same as the last
-tcp_ao_info. On the socket destruction tcp_ao_info ceases to be
-with RCU grace period, while tcp-ao static branch is currently deferred
-destructed. The static key definition is
-: DEFINE_STATIC_KEY_DEFERRED_FALSE(tcp_ao_needed, HZ);
+Rpi mailing list owners: Could you please make the list 'unmoderated'? I haven't
+subscribe to this list, so I just keep getting the 'Your message to
+linux-rpi-kernel awaits moderator approval' for every review comment I post,
+which is a spam to me.
 
-which means that if RCU grace period is delayed by more than a second
-and tcp_ao_needed is in the process of disablement, other CPUs may
-yet see tcp_ao_info which atent dead, but soon-to-be.
-And that breaks the assumption of static_key_fast_inc_not_disabled().
+Also I won't subscribe to this list unless I work on Rpi. So using moderated
+list in LKML is just spamming the reviewers.
 
-Happened on netdev test-bot[1], so not a theoretical issue:
+- Mani
 
-[] jump_label: Fatal kernel bug, unexpected op at tcp_inbound_hash+0x1a7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 != 66 90 0f 1f 00)) size:2 type:1
-[] ------------[ cut here ]------------
-[] kernel BUG at arch/x86/kernel/jump_label.c:73!
-[] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-[] CPU: 3 PID: 243 Comm: kworker/3:3 Not tainted 6.10.0-virtme #1
-[] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[] Workqueue: events jump_label_update_timeout
-[] RIP: 0010:__jump_label_patch+0x2f6/0x350
-...
-[] Call Trace:
-[]  <TASK>
-[]  arch_jump_label_transform_queue+0x6c/0x110
-[]  __jump_label_update+0xef/0x350
-[]  __static_key_slow_dec_cpuslocked.part.0+0x3c/0x60
-[]  jump_label_update_timeout+0x2c/0x40
-[]  process_one_work+0xe3b/0x1670
-[]  worker_thread+0x587/0xce0
-[]  kthread+0x28a/0x350
-[]  ret_from_fork+0x31/0x70
-[]  ret_from_fork_asm+0x1a/0x30
-[]  </TASK>
-[] Modules linked in: veth
-[] ---[ end trace 0000000000000000 ]---
-[] RIP: 0010:__jump_label_patch+0x2f6/0x350
+> V3 Changes:
+>   o Commit "Enable 7712 SOCs"
+>     -- Move "model" check from outside to inside func (Stan)
+>   o Commit "Check return value of all reset_control_xxx calls"
+>     -- Propagate errors up the chain instead of ignoring them (Stan)
+>   o Commit "Refactor for chips with many regular inbound BARs"
+>     -- Nine suggestions given, nine implemented (Stan)
+>   o Commit "Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
+>     -- Drop tab, add parens around macro params in expression (Stan)
+>   o Commit "Use swinit reset if available"
+>     -- Treat swinit the same as other reset controllers (Stan)
+>        Stan suggested to use dev_err_probe() for getting resources
+>        but I will defer that to future series (if that's okay).
+>   o Commit "Get resource before we start asserting resets"
+>     -- Squash this with previous commit (Stan)
+>   o Commit "Use "clk_out" error path label"
+>     -- Move clk_prepare_enable() after getting resouurces (Stan)
+>     -- Change subject to "Use more common error handling code in
+>        brcm_pcie_probe()" (Markus)
+>     -- Use imperative commit description (Markus)
+>     -- "Fixes:" tag added for missing error return. (Markus)
+>   o Commit "dt-bindings: PCI ..."
+>     -- Split off maintainer change in separate commit.
+>     -- Tried to accomodate Krzysztof's requests, I'm not sure I
+>        have succeeded.  Krzysztof, please see [1] below.
+>   
+>   [1] Wrt the YAML of brcmstb PCIe resets, here is what I am trying
+>       to describe:
+> 
+>       CHIP       NUM_RESETS    NAMES
+>       ====       ==========    =====
+>       4908       1             perst
+>       7216       1             rescal
+>       7712       3             rescal, bridge, swinit
+>       Others     0             -
+> 
+> 
+> V2 Changes (note: four new commits):
+>   o Commit "dt-bindings: PCI ..."
+>     -- s/Adds/Add/, fix spelling error (Bjorn)
+>     -- Order compatible strings alphabetically (Krzysztof)
+>     -- Give definitions first then rules (Krzysztof)
+>     -- Add reason for change in maintainer (Krzysztof)
+>   o Commit "Use swinit reset if available"
+>     -- no need for "else" clause (Philipp)
+>     -- fix improper use of dev_err_probe() (Philipp) 
+>   o Commit "Use "clk_out" error path label"
+>     -- Improve commit message (Bjorn)
+>   o Commit "PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
+>     -- Improve commit subject line (Bjorn)
+>   o Commit (NEW) -- Change field name from 'type' to 'model'
+>     -- Added as requested (Stanimir)
+>   o Commit (NEW) -- Check return value of all reset_control_xxx calls
+>     -- Added as requested (Stanimir)
+>   o Commit (NEW) "Get resource before we start asserting reset controllers"
+>     -- Added as requested (Stanimir)
+>   o Commit (NEW) -- "Remove two unused constants from driver"
+> 
+> 
+> V1:
+>   This submission is for the Broadcom STB 7712, sibling SOC of the RPi5 chip.
+>   Stanimir has already submitted a patch "Add PCIe support for bcm2712" for
+>   the RPi version of the SOC.  It is hoped that Stanimir will allow us to
+>   submit this series first and subsequently rebase his patch(es).
+> 
+>   The largest commit, "Refactor for chips with many regular inbound BARs"
+>   affects both the STB and RPi SOCs.  It allows for multiple inbound ranges
+>   where previously only one was effectively used.  This feature will also
+>   be present in future STB chips, as well as Broadcom's Cable Modem group.
+> 
+> Jim Quinlan (12):
+>   dt-bindings: PCI: Cleanup of brcmstb YAML and add 7712 SoC
+>   dt-bindings: PCI: brcmstb: Add 7712 SoC description
+>   PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+>   PCI: brcmstb: Use bridge reset if available
+>   PCI: brcmstb: Use swinit reset if available
+>   PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets
+>     SoC-specific
+>   PCI: brcmstb: Remove two unused constants from driver
+>   PCI: brcmstb: Don't conflate the reset rescal with phy ctrl
+>   PCI: brcmstb: Refactor for chips with many regular inbound BARs
+>   PCI: brcmstb: Check return value of all reset_control_xxx calls
+>   PCI: brcmstb: Change field name from 'type' to 'model'
+>   PCI: brcmstb: Enable 7712 SOCs
+> 
+>  .../bindings/pci/brcm,stb-pcie.yaml           |  50 +-
+>  drivers/pci/controller/pcie-brcmstb.c         | 485 +++++++++++++-----
+>  2 files changed, 400 insertions(+), 135 deletions(-)
+> 
+> 
+> base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
+> -- 
+> 2.17.1
+> 
 
-[1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/696681/5-connect-deny-ipv6/stderr
 
-Cc: stable@kernel.org
-Fixes: 67fa83f7c86a ("net/tcp: Add static_key for TCP-AO")
-Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
----
----
- net/ipv4/tcp_ao.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
-index 85531437890c..5ce914d3e3db 100644
---- a/net/ipv4/tcp_ao.c
-+++ b/net/ipv4/tcp_ao.c
-@@ -267,6 +267,14 @@ static void tcp_ao_key_free_rcu(struct rcu_head *head)
- 	kfree_sensitive(key);
- }
- 
-+static void tcp_ao_info_free_rcu(struct rcu_head *head)
-+{
-+	struct tcp_ao_info *ao = container_of(head, struct tcp_ao_info, rcu);
-+
-+	kfree(ao);
-+	static_branch_slow_dec_deferred(&tcp_ao_needed);
-+}
-+
- void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
- {
- 	struct tcp_ao_info *ao;
-@@ -290,9 +298,7 @@ void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
- 			atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem_alloc);
- 		call_rcu(&key->rcu, tcp_ao_key_free_rcu);
- 	}
--
--	kfree_rcu(ao, rcu);
--	static_branch_slow_dec_deferred(&tcp_ao_needed);
-+	call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
- }
- 
- void tcp_ao_time_wait(struct tcp_timewait_sock *tcptw, struct tcp_sock *tp)
-
----
-base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
-change-id: 20240725-tcp-ao-static-branch-rcu-85ede7b3a1a5
-
-Best regards,
 -- 
-Dmitry Safonov <0x7f454c46@gmail.com>
-
-
+மணிவண்ணன் சதாசிவம்
 
