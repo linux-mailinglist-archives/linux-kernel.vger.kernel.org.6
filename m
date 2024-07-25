@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-262452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB91393C754
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:45:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B0893C760
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3296C28354F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F97281AB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA0E19DF62;
-	Thu, 25 Jul 2024 16:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A42719DF8D;
+	Thu, 25 Jul 2024 16:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGHa5k/Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=grep.be header.i=@grep.be header.b="RxgMcDiW"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8913917588;
-	Thu, 25 Jul 2024 16:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CA619D091;
+	Thu, 25 Jul 2024 16:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721925899; cv=none; b=MlYWJZm54k6Fl4gm+Qdlx/aysMO0r1+fmc4NV2mXCeGeuVQjnbTIi/M+v62Gq+YIGt8BRELHCbW+QSLaqi8ElB5r4/2Kwbq5Vo/U2GSL/B7khL9HccdikjAxCmmwLtkP+PUvGXx2ueI5Wbu/GP9h4RutL3w45HcM3BSmm+kFFRc=
+	t=1721926119; cv=none; b=KIqPfOiMvfR/VdwlIyPtGtBLlE2aEXSbZxiAazt4eZVdOS9aR3OUhUak5rHN0DtS90efrtYMIQBEO0C1jBKpkjzMvE5LNxvo+qraGKSz004IVfEqhTBV5cp0lJ9lhzSYnEz5tvQT1FglBdScF0kNporjb0emBWDyH5rdO0Buwek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721925899; c=relaxed/simple;
-	bh=KxRx72ateMaI4xu7M+ZExqKdzDNiRMXyhKZ1ha9nx6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecp786mtY0PxUXBvl1xpM0ClOJanWDFdAgHlPRUA9FZlKahFUXmhCRZy1rakMVxcKgbuIeFcvjH4aZRGgCGwCV5lY9UcGuA41tnMmyKGoUUSNTh6cBSUiTyc1wYgW7alZ9mDHpE9p2FyFhMLskxCR20UOJHnUIDT980iemeWFuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGHa5k/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB06C116B1;
-	Thu, 25 Jul 2024 16:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721925899;
-	bh=KxRx72ateMaI4xu7M+ZExqKdzDNiRMXyhKZ1ha9nx6M=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=NGHa5k/YUFPEiGX/7TFbP/z4zUlqTF3qDaQpP0nNg0sBHZ2K9+9Gk2Cp5+Ax10O4n
-	 NaZhR1YepYdlbeTXqqNR5iDVgdbg1aaGuR733E6Ca2PhFyXKFBrgXzg2UcL/9ZDT+u
-	 SyLEksxD7zLunYAgh5o/sooo81t1GDEa4XWr0QAIm4uoSGJ2dHpuhI93v+S1lAoJnD
-	 oNDDFvFKzv6/rg5omZAL3TjxO36QxJwTz8xf+Leap+EBpiCxU3MURD/FaiC6iNvbxm
-	 jSWWR8HLCWbMaTO9uijTRVjnNCVK6wjQo70ex9ZKDCE6iIQKKF9HzgQ90e0DLOC/DP
-	 +4GDcgKRUqxCg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E9127CE0ECD; Thu, 25 Jul 2024 09:44:58 -0700 (PDT)
-Date: Thu, 25 Jul 2024 09:44:58 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v3 00/25] context_tracking, rcu: Spring cleaning of
- dynticks references
-Message-ID: <969ccb24-e022-4e8c-805b-cf47c8b15f33@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240725152212.GA927726@neeraj.linux>
- <xhsmh7cd9zc8a.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1721926119; c=relaxed/simple;
+	bh=i2Yya81zygY1AcEXqh9Bj0E8EDuI8ZXvjEkFEOBH8Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3S+vCifmYYnKCrvsN2yIALAAW85Fiy3UHtqmtDUeX73vHJGbsr8BD0rMkz/IvQ1Ol1zgNQcTVBAQVJ5Ddb0IrWvSx5xmKTmjXbKpxw6VYqKghnlOwgHiSKgUfeeQM6vUpg/L2tN0BGiYRDhv6MLZuHhfQxCpCJepIi1o7pf7DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=grep.be; dkim=fail (0-bit key) header.d=grep.be header.i=@grep.be header.b=RxgMcDiW reason="key not found in DNS"; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grep.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grep.be;
+	s=2017.latin; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bYMsa0EfB+GNYJVPoJ4Xm4fN7+npU33jjsrAMpuBdNE=; b=RxgMcDiWstD5hscgD2SgTjjIjc
+	rQnufE60L4dbwjTveCNvx0DAaA5HLu13n+xNYlsUulQxsewCzqygo6YJ/lr3EWEluphNSIP5IW9Fo
+	L9CeDUh4ZgUoC9oOqy4Mm5DLdi9qHfLRQhLtYnVQ8uhZOv2ghqcR4G3I+WsUqpT1NDXH1N62Ttylx
+	YQqQFxEFuPgibseD8j0cHwjFwcbKqKwuN8WZBl2FeMcx+Re8hiaG/SwTKUI+fEVWkRZdvfVF8VyxU
+	qFhtA465YqNkoez7d7nT0tUae4JYQOaX4cEuUhfhCg/54L9tHwYJWT4EdJaiac0e6UZNse4GaJSbV
+	iRZfXhFg==;
+Received: from [102.39.153.168] (helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <wouter@grep.be>)
+	id 1sX1dm-004ZKR-2B;
+	Thu, 25 Jul 2024 18:48:30 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <wouter@grep.be>)
+	id 1sX1bT-00000005MAZ-1rhp;
+	Thu, 25 Jul 2024 18:46:07 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Josef Bacik <josef@toxicpanda.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Wouter Verhelst <w@uter.be>,
+	linux-block@vger.kernel.org,
+	nbd@other.debian.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nbd: add support for rotational devices
+Date: Thu, 25 Jul 2024 18:45:36 +0200
+Message-ID: <20240725164536.1275851-1-w@uter.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmh7cd9zc8a.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 06:07:49PM +0200, Valentin Schneider wrote:
-> On 25/07/24 20:52, Neeraj Upadhyay wrote:
-> > On Wed, Jul 24, 2024 at 04:43:00PM +0200, Valentin Schneider wrote:
-> >> Git info
-> >> ========
-> >>
-> >> The series is based on rcu/next at:
-> >> f395ae346be5 ("Merge branches 'doc.2024.06.06a', 'fixes.2024.06.06a', 'mb.2024.06.03a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a' and 'rcutorture.2024.06.06a' into HEAD")
-> >>
-> >
-> > Hi Valentin,
-> >
-> > I see that this series is based on paulmck/linux-rcu.git next branch,
-> > whereas the RCU tree has moved to shared tree now [1] and the next
-> > branch there is pulled for v6.11 (tag: rcu.2024.07.12a). I get merge
-> > conflicts while applying it. Can you please rebase?
-> 
-> My bad, thanks for pointing this out!
+The NBD protocol defines the flag NBD_FLAG_ROTATIONAL to flag that the
+export in use should be treated as a rotational device.
 
-Actually my bad, as I haven't done much of anything to inform people of
-this change.  Huh.  I do have this LWN RCU API article in preparation,
-and that sounds like as good a place to announce this as any.  ;-)
+Add support for that flag to the kernel driver.
 
-							Thanx, Paul
+Signed-off-by: Wouter Verhelst <w@uter.be>
+---
+ drivers/block/nbd.c      | 3 +++
+ include/uapi/linux/nbd.h | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 41a90150b501..5b1811b1ba5f 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -350,6 +350,9 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+ 		lim.features |= BLK_FEAT_WRITE_CACHE;
+ 		lim.features &= ~BLK_FEAT_FUA;
+ 	}
++	if (nbd->config->flags & NBD_FLAG_ROTATIONAL)
++		lim.features |= BLK_FEAT_ROTATIONAL;
++
+ 	lim.logical_block_size = blksize;
+ 	lim.physical_block_size = blksize;
+ 	error = queue_limits_commit_update(nbd->disk->queue, &lim);
+diff --git a/include/uapi/linux/nbd.h b/include/uapi/linux/nbd.h
+index 80ce0ef43afd..d75215f2c675 100644
+--- a/include/uapi/linux/nbd.h
++++ b/include/uapi/linux/nbd.h
+@@ -51,8 +51,9 @@ enum {
+ #define NBD_FLAG_READ_ONLY	(1 << 1) /* device is read-only */
+ #define NBD_FLAG_SEND_FLUSH	(1 << 2) /* can flush writeback cache */
+ #define NBD_FLAG_SEND_FUA	(1 << 3) /* send FUA (forced unit access) */
+-/* there is a gap here to match userspace */
++#define NBD_FLAG_ROTATIONAL	(1 << 4) /* device is rotational */
+ #define NBD_FLAG_SEND_TRIM	(1 << 5) /* send trim/discard */
++/* there is a gap here to match userspace */
+ #define NBD_FLAG_CAN_MULTI_CONN	(1 << 8)	/* Server supports multiple connections per export. */
+ 
+ /* values for cmd flags in the upper 16 bits of request type */
+-- 
+2.43.0
+
 
