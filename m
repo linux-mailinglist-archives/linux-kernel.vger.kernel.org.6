@@ -1,130 +1,189 @@
-Return-Path: <linux-kernel+bounces-261777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C2393BBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:19:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1762893BBFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161101F24004
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31F228641A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138631CA92;
-	Thu, 25 Jul 2024 05:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A858F210F8;
+	Thu, 25 Jul 2024 05:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="TMCTFQUd"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsG5Oj4y"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB32125B9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779071CFBE;
+	Thu, 25 Jul 2024 05:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721884781; cv=none; b=HJQ1f3ZbJXme+bEAchTv/d5fMkzsahyo6+KKwOQgMVaoXzuZ7eBGonlH6EtwWhjAy0NC4pgvmWjS2H1ckX7pRM/FqHEgr6CF2qfd8nmyxIw8dVXPXYIJB/JsXIHAdlt06VpG+e/eXlZ9M1OTuLt8IaPBAxPXuKnmia8PKDw9efM=
+	t=1721884784; cv=none; b=hHfXDlNf8R5KZpw2Gk9pGjsMqatWwltYFbnUc+52OHnSJy4L6pX0KwIbklBlQL8LDDCykotL8D4OvLwVMIR/o1dgKapT8hVqzBFws3/SBdp/Lo8hUiTzKmFserbmDrLdANO7J94RAv6sFj2NwPQRPBuiR3jW/VPm6Q0/gqV4OM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721884781; c=relaxed/simple;
-	bh=ZHjpwkTDyz7BEoQAQ6I+4a+ZAdQUlWW45v7hAWCnCNs=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=UTa6vGobRxXSWkaGO+9sR2j3JZheUfOTC1eTGa4QWKklyDnFzxtZiiSjiiMauCkuQFlNJqigAHnwYFc90j9emRcvLmcDU17SxjZUiD0wMJf2+mX/3tmGioNupoOUbSMeuZwW9Jzv38pPdwz1tYdyFfY0aDa2H+v82iIUBLRS11I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=TMCTFQUd; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
-	by cmsmtp with ESMTPS
-	id Wir9sqs2TjnP5WqrasYU9B; Thu, 25 Jul 2024 05:18:02 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id WqrZsoH6S0vWTWqrZsziZp; Thu, 25 Jul 2024 05:18:02 +0000
-X-Authority-Analysis: v=2.4 cv=ffZmyFQF c=1 sm=1 tr=0 ts=66a1e00a
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8
- a=TJP467otscr4N1wxSb4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+7+8NFJBZn07NjChmXzieuGlhr6iVn598euCshwhFA8=; b=TMCTFQUdzAtzSAkiaNhJp9j1jU
-	Gskh2/JkafUIWgCCbilD41hm2z0LZnib246GW2Q1VESJVc+3i9xNLMYwgJRu0MxKsbmqwq1dkieaP
-	opO4pHhaKWStLBGEkjpp5oAQ0s7zjVz10Q1nUIk5ZazLsLkwCWBaSbFsIWUjXVMqy6mtQL6aTwyQt
-	GZAWKEVZ1cF+9EkVMmtxNPn+ycUaLvBTwRWcmdbxrZ8mbkMAInyXws1Z2aRJYe02O5ZqpGg//duy8
-	RydY2sW+5msk0tJW/+1ViJiAzgJpht4zoufOgtpSJKMatF7rDe8Lzjt/5+urEhM32ybnCzoDYOQeL
-	ErL25aKg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59058 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sWqrU-002vxC-1s;
-	Wed, 24 Jul 2024 23:17:56 -0600
-Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240723180143.461739294@linuxfoundation.org>
-In-Reply-To: <20240723180143.461739294@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <81d445ce-9881-414b-010e-3d2d34f75274@w6rz.net>
-Date: Wed, 24 Jul 2024 22:17:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1721884784; c=relaxed/simple;
+	bh=NncW4L6PdVvfrj3ZRta644u1QAjSKzmizPmBl7z9ANg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mvYDaAM1a1OTCL9nrXJgX2EhGL1tSXNUZbjmxoSgMQUc4i3pXzjnLfsB2/gO6uktsdmSd4k4r6ui5XltI32ufBgioe4sz0HH4GpSXlr4SsNMgdPb/3XmH+xc5debV4MLgW2MKdwykpACJTf8yE28MZXKJ/n0Y0s/un8hz0exMw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IsG5Oj4y; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd640a6454so4871295ad.3;
+        Wed, 24 Jul 2024 22:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721884783; x=1722489583; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VvZ7IruRoTugnhRcn5PUZFoQfC1d2Q5HsO81JSTscSc=;
+        b=IsG5Oj4ylqBhlrQkQEXci0C2UTcF5iH0xdQ+e2KZEPnjztwwIE2KkTFcGkTCSOAmeR
+         NZntZpi7QDRDcIe0PQRhPcXYP4abw1aOt54QrKXTwLGTdVI+SqbJGHXvqHmOcoyyY4GK
+         G+YGrf/yUuovk/akdf3VwNuqLhuf1hDV/XeqLFc5VVFyaq9djIA/Yc45T9TMd3m9bSM7
+         X3Vec7Gmpj/1IDeLXhbopCiFdq5DYwvzCpakRFWabGDGItUoxsnCRGMIsED8XRNjdUcS
+         xv1PZt6enBf3/dDGpN6LSa7Hm3Bv5qs1Qf1hpGsm/I1IseAJHJynnhenjbfQo5aPYdUP
+         J/rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721884783; x=1722489583;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VvZ7IruRoTugnhRcn5PUZFoQfC1d2Q5HsO81JSTscSc=;
+        b=TE+ftSXEKB/nXIlOL78CoUf7Rfi2WzGHKmyUYrmv8VeVtF/4zKVCIgUsVuu4NaNq7Q
+         nGtL6Lu9gvJi67D77TrzDY4Z2S3NhGS0Jn5kaVkKJCV8d0lxL3W9/A015uXW3a2rB9b9
+         lTMrjWOUsmfjA0sFyXZvrAoSJn5q+IDE/abP+6XHct930qLv986TVlPIGcQi2BsbGdyn
+         S5oOo60FUVyXvqHXmEDKAqGYWmHjcTlp2jnjw6ixuU6FnMcpqkBbr2L0v8RfQJylFllC
+         /MgznCd9Nzo+n27cjoGXrrmWzIjqCXHWiSkRtBoC+Mn0+32Sd3Jjh/H3woESTv1RkAP6
+         XLlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1hkTsR1WcHf8DG2bqf1AjqZQPJLnLMHqvsk5vkqya5eX+ushFd3w55xgt9CYnFQZsOluVRZSMDgGwvfN5/KKBVjyla2LklUlWnyn
+X-Gm-Message-State: AOJu0Yy5bznQciDRL05iOoZF+ECnT/6fGaF8rrdp93m5MtCHSz4Vz2Pn
+	Y5RnjcSUFu5dyCZZuBVTTA/eFV8z8KO5FG1luqAkhs7hqTJ7rK7T
+X-Google-Smtp-Source: AGHT+IH7op9jGbqgu3P5dAykUiyOnDA14qmQdGG2a27kC3SiANwUfE6+Qp+drcev42LFgEiMUK/zcQ==
+X-Received: by 2002:a17:90a:c48:b0:2c7:e46e:f8b7 with SMTP id 98e67ed59e1d1-2cf23772d29mr2034531a91.4.1721884782573;
+        Wed, 24 Jul 2024 22:19:42 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73b32a5sm2621448a91.15.2024.07.24.22.19.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 22:19:41 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+89cc4f2324ed37988b60@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] nilfs2: handle inconsistent state in nilfs_btnode_create_block()
+Date: Thu, 25 Jul 2024 14:20:07 +0900
+Message-Id: <20240725052007.4562-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000cb6fca061af0462e@google.com>
+References: <000000000000cb6fca061af0462e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sWqrU-002vxC-1s
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:59058
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfEDdKXDki2kVO5Xg6bh+v2cbZDrvZCpiNUu6IA2dgGPghCogl1xYxDBYetscQgFj3EgvD1uawv1BTZ2INz6JjE5vLSHK9+V5a8/M2aUewMXIH9ay/ZHa
- 4LFEqs3N8hNwAUeBQIDqSfdLlUXfG4hAgM+iZvtQHzKUY9+zZ/d86a1wTLlxsH9yLrrvL315swG3ieDxU8XbeDnBhxfLBqNmz54=
+Content-Transfer-Encoding: 8bit
 
-On 7/23/24 11:22 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.11 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 25 Jul 2024 18:01:03 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Syzbot reported that a buffer state inconsistency was detected in
+nilfs_btnode_create_block(), triggering a kernel bug.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+It is not appropriate to treat this inconsistency as a bug; it can
+occur if the argument block address (the buffer index of the newly
+created block) is a virtual block number and has been reallocated due
+to corruption of the bitmap used to manage its allocation state.
 
-Tested-by: Ron Economos <re@w6rz.net>
+So, modify nilfs_btnode_create_block() and its callers to treat it as
+a possible filesystem error, rather than triggering a kernel bug.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+89cc4f2324ed37988b60@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=89cc4f2324ed37988b60
+Fixes: a60be987d45d ("nilfs2: B-tree node cache")
+Cc: stable@vger.kernel.org
+---
+Andrew, please apply this as a bug fix.
+
+This fixes one syzbot-reported issue where a kernel bug could be
+triggered on corrupted file system images.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/btnode.c | 25 ++++++++++++++++++++-----
+ fs/nilfs2/btree.c  |  4 ++--
+ 2 files changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index 0131d83b912d..c034080c334b 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -51,12 +51,21 @@ nilfs_btnode_create_block(struct address_space *btnc, __u64 blocknr)
+ 
+ 	bh = nilfs_grab_buffer(inode, btnc, blocknr, BIT(BH_NILFS_Node));
+ 	if (unlikely(!bh))
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	if (unlikely(buffer_mapped(bh) || buffer_uptodate(bh) ||
+ 		     buffer_dirty(bh))) {
+-		brelse(bh);
+-		BUG();
++		/*
++		 * The block buffer at the specified new address was already
++		 * in use.  This can happen if it is a virtual block number
++		 * and has been reallocated due to corruption of the bitmap
++		 * used to manage its allocation state (if not, the buffer
++		 * clearing of an abandoned b-tree node is missing somewhere).
++		 */
++		nilfs_error(inode->i_sb,
++			    "state inconsistency probably due to duplicate use of b-tree node block address %llu (ino=%lu)",
++			    (unsigned long long)blocknr, inode->i_ino);
++		goto failed;
+ 	}
+ 	memset(bh->b_data, 0, i_blocksize(inode));
+ 	bh->b_bdev = inode->i_sb->s_bdev;
+@@ -67,6 +76,12 @@ nilfs_btnode_create_block(struct address_space *btnc, __u64 blocknr)
+ 	folio_unlock(bh->b_folio);
+ 	folio_put(bh->b_folio);
+ 	return bh;
++
++failed:
++	folio_unlock(bh->b_folio);
++	folio_put(bh->b_folio);
++	brelse(bh);
++	return ERR_PTR(-EIO);
+ }
+ 
+ int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
+@@ -217,8 +232,8 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 	}
+ 
+ 	nbh = nilfs_btnode_create_block(btnc, newkey);
+-	if (!nbh)
+-		return -ENOMEM;
++	if (IS_ERR(nbh))
++		return PTR_ERR(nbh);
+ 
+ 	BUG_ON(nbh == obh);
+ 	ctxt->newbh = nbh;
+diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
+index a139970e4804..862bdf23120e 100644
+--- a/fs/nilfs2/btree.c
++++ b/fs/nilfs2/btree.c
+@@ -63,8 +63,8 @@ static int nilfs_btree_get_new_block(const struct nilfs_bmap *btree,
+ 	struct buffer_head *bh;
+ 
+ 	bh = nilfs_btnode_create_block(btnc, ptr);
+-	if (!bh)
+-		return -ENOMEM;
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	set_buffer_nilfs_volatile(bh);
+ 	*bhp = bh;
+-- 
+2.34.1
 
 
