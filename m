@@ -1,144 +1,72 @@
-Return-Path: <linux-kernel+bounces-262319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5244E93C410
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEDB93C413
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF102821B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F031F21CD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2119D084;
-	Thu, 25 Jul 2024 14:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A4719D083;
+	Thu, 25 Jul 2024 14:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5+KiGD7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IMzIrHn7"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DEE1E4A1;
-	Thu, 25 Jul 2024 14:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BB21993A3;
+	Thu, 25 Jul 2024 14:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917538; cv=none; b=cHem840hI6saV1MdgpIiC1t2Jlc+VdIUe1AHkWH6BQMz/hLVCUaSiWqOekXsNy1nPkSVSKXJaLiN7h1XDm/jnvFYKgOgFoXZNaqGHzrvKsQmoiwlsR4InBRPh3zvWek0Gpwr3EMWLMqiRGtjzHmAK2KLmjbIvng60iy7GfgT38k=
+	t=1721917588; cv=none; b=bWLXPoZadLyGY63hz9hNLFbTVP0EKkNVUKn/N0K82LjdOxO7so6fGYoQZGzG9oxnv1/J9Q5vA9ZBm7vKHbBOQQ4pclKZ5J9fgVjCkSomQ5hV+SuGjV8tO2vr4lHQ96/gSwfcy/WHSFY6escDIlj6ri4kJH8qewZje9MQSzaD+pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917538; c=relaxed/simple;
-	bh=xTZKezumyZvFewXix8LuYU8I83b2VIsGQU7HHPsFcPY=;
+	s=arc-20240116; t=1721917588; c=relaxed/simple;
+	bh=wJNe1r0ees+R3uFBTUmhrQpWGLekdD/gHRWmwZ0KnKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUNVjprbsWbi7FGJ6iYijmz7fQSnXGY6NwHCVxepaVKvdHPv3rkWSQT22wlWKbQyIUtwOlbtb/tidGb/fd+p7QoVxBDV/JX4ON1Y3acDy5iEP1lAYaP2qb6CCUT/pU3tYpC8ZOYDnK/VWssCgAvWzRJGtpEytED8XWVLfMp8Qzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5+KiGD7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DFBC116B1;
-	Thu, 25 Jul 2024 14:25:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721917537;
-	bh=xTZKezumyZvFewXix8LuYU8I83b2VIsGQU7HHPsFcPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c5+KiGD71alioIQpKvL+KMTnKQmsNAerGTGT5NUCU/DXyopGx4yvDwtSfqcyIRBYL
-	 Ld/Wo62UA7Ij4R+LfALaf4koDIExxNbYXK13eaAUWlmNTLbco91L5T4pPyKBl/qmHC
-	 POOp2Nf3HkE4QSugTH0vmPcHmTSmRx8DwbTb+g5MXPnm9By1g0OUuX+wGUudKwgJOn
-	 aQYrpVWL6bc1rEitEVznbMh8v7e8Kh/QmtGWnyL1iBrfhGKNFn04JqYTW/Ukk23++J
-	 0YpeoNws7y862wzVOxOYOQUgSUuPA9589Q4p8SeHq+p3xgknB9jTVF5opQznjjy2/+
-	 Pm+AGBHPNrBNQ==
-Date: Thu, 25 Jul 2024 15:25:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/17] dt-bindings: gpio: mpfs-gpio: Add PIC64GX GPIO
- compatibility
-Message-ID: <20240725-prevalent-marry-66670630061f@spud>
-References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
- <20240725121609.13101-6-pierre-henry.moussay@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/L/1ugIoYAsR4x+2qlHStZ7jrGwUZzmBhYHH6KlyLwI1v7pqFenc7+BudSfKVccEawhA0ROahKcJRS+JJxJn4rSZ/FCgS1bkGsh0y6rGpWt7lhGkqoYkmIhMMnyYQQ0+yAAnWV6CRHF5LMRYkqYXNivmRDIYzjoSX7hAZxvYik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IMzIrHn7; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jRL6tU3zpV7/caq8r71fqaGYcFN6r6n0uIOJF1NOOlA=; b=IMzIrHn7B5R1lzEr66dpZmJA+I
+	n633TM2kMmTRWH67Ys6SsXs3MOo+Hw6DnU7QyNMLF2Zx+76L+87vuLKI7UxhxJDfX1HYsn3anqgYg
+	lWm6nBXmZZVczMDli05+hFdI6UVsgk9PtPENUxacv5XOifqH5PifqZRU0mLtf3JYqh+QVEkmRX8aX
+	UNB0vHPPUEloMuhgLER1+WwzHVc18Ml9HZJPaxXN7WlBmfdqiq6PXrOJz2BbA5pMvfioQ5dROxXx/
+	IbmjHyObJFwn4tPTZ36TOFDAMtE6yyQCPn3AVGJo5kxUFohdX8sxMZby3fuq0grXp7e9AEJLM4Lm/
+	P9PEXHjA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWzQG-00000001FfK-1mBc;
+	Thu, 25 Jul 2024 14:26:24 +0000
+Date: Thu, 25 Jul 2024 07:26:24 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+Message-ID: <ZqJgkLxJjJS7xpp1@infradead.org>
+References: <20240725120729.59788-2-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DQensbp2dRAb/Tqi"
-Content-Disposition: inline
-In-Reply-To: <20240725121609.13101-6-pierre-henry.moussay@microchip.com>
-
-
---DQensbp2dRAb/Tqi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240725120729.59788-2-pstanner@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jul 25, 2024 at 01:15:57PM +0100, pierre-henry.moussay@microchip.co=
-m wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX GPIO is compatible with mpfs-gpio driver
->=20
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> ---
->  .../bindings/gpio/microchip,mpfs-gpio.yaml       | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.y=
-aml b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> index d61569b3f15b..fdce88374a91 100644
-> --- a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> @@ -11,10 +11,14 @@ maintainers:
-> =20
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - microchip,mpfs-gpio
-> -          - microchip,coregpio-rtl-v3
-> +    oneOf:
-> +      - items:
-> +          - const: microchip,pic64gx-gpio
-> +          - const: microchip,mpfs-gpio
-> +      - items:
-> +          - enum:
-> +              - microchip,mpfs-gpio
-> +              - microchip,coregpio-rtl-v3
-> =20
->    reg:
->      maxItems: 1
-> @@ -69,7 +73,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: microchip,mpfs-gpio
-> +            enum:
-> +              - microchip,mpfs-gpio
-> +              - microchip,pic64gx-gpio
+Can we please fix this to never silently redirect to a manager version
+and add a proper pcim_intx instead and use that where people actually
+want to use the crazy devres voodoo instead?  Doing this silently
+underneath will always create problems.
 
-This hunk should not be needed, given you have an mpfs-gpio fallback.
-
-Thanks,
-Conor.
-
->      then:
->        required:
->          - interrupts
-> --=20
-> 2.30.2
->=20
->=20
-
---DQensbp2dRAb/Tqi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJgXQAKCRB4tDGHoIJi
-0re3AQD8QgYHuw3hyM5i+5EXK7rRvYGwlptD0eHB13uRHP7xQgEAoGmqq8CNrCbJ
-4ipvOJ1zROMaN3JH0GIB7jvy80CLFg4=
-=18I5
------END PGP SIGNATURE-----
-
---DQensbp2dRAb/Tqi--
 
