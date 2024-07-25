@@ -1,158 +1,178 @@
-Return-Path: <linux-kernel+bounces-262697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4250D93CB02
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:05:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AE493CB03
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACD77B2128C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:05:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 198702821F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F31149C59;
-	Thu, 25 Jul 2024 23:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ND/mhkBB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313881448E3;
+	Thu, 25 Jul 2024 23:06:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDC0131E38;
-	Thu, 25 Jul 2024 23:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AF9131E38;
+	Thu, 25 Jul 2024 23:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721948722; cv=none; b=QTCEOi0Hzi+3sTXNrxdCCp/6piVHC5VdMDBKXt63T4Ox//jy8GTfTjO4eFfBSdt+wyX/BePzTvQ9kaVkLnKgsGZIY+zxf17b55x4kzQBxfN0Kks1BKTMbwOPvT/eK+genE4bvcty3yqweT/JPeuBeBLj9IzLihNfHQ4c7a6cbn0=
+	t=1721948773; cv=none; b=FvbJd+b9Wq/ZgERYAwNNJwBibggn/Km/CAe0ULB3tSKa0aReWx5rDInD7i6rxZN2TqIuSCGEjov3WhZtn6LBwP/i7Mq2/hra8jbWb7AYlNESpc1P3sJScC6vbtwslq7AxOlEq5R+uegfQExJabAT/yQogxPWP91wgJkD5/V3cfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721948722; c=relaxed/simple;
-	bh=z8KhoeN1VYushmocpVACXGYz6Cr+ixLtwZCt40TBAZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LTbQ/vLNTOFhnvGcjAsDzmWY08S/aqk0Db/AEPz8hEhW5t88cDdgi1KE8AIj1I4Q9A+RFkPF3r4HPRQEnZlkcTpP+ldAuS1QPkoOaTGIHB1hKkN8wR+dPc6/Lcbk8ytoyjwYxHrrDl+W1TajG3aH5R3F5H5+bm4YqhkxabEJPAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ND/mhkBB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P9iIDC032004;
-	Thu, 25 Jul 2024 23:05:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uSEffCNKEvdxx9qjDCSITni5dI4QFMAd0s2TcQ1TgpQ=; b=ND/mhkBBXTLOCOw3
-	DPYAMY0PgJEH1xsEyoagH33KLOrnsV3Nrj/K/Q37Qqv9G05CCIAky/JJpIJ0QNxW
-	Q8p61Xj6Ger9xF4nvSpcd5Thv0lE+Ht8wNypa5RbCL9iVscUg1eUeEv0vHFGoO+X
-	KP8a2Hdz4yLb4TTUwSdxm5jWVdZ+IisIUt4f6My5Vs9no9fGR3M1oU7K0FawMLl8
-	57B8hoeRpFhbxf3qzEG8H4/WwgWBwie/txEKZi1PcAjgS4dx9bBWvMXlNd6Rl0ZM
-	EyshiVPwsjNsgxBlN7rcg8x5bvmNgciHNUuuDwbYg2ARVqEX/p7CwaclQJcOLd9V
-	VxYvCw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40gurtw25n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 23:05:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46PN5Csn030879
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 23:05:12 GMT
-Received: from [10.46.163.151] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 25 Jul
- 2024 16:05:11 -0700
-Message-ID: <fa72b87d-2630-40c2-9996-bdf9e16cf11b@quicinc.com>
-Date: Thu, 25 Jul 2024 16:05:11 -0700
+	s=arc-20240116; t=1721948773; c=relaxed/simple;
+	bh=GQ44ueZPDL1u8vh1JS5SlJF8AZnKpW0TAjJWT8PZGhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=etPIgjam3BtAHKk+ahq5knD1Abh1g1NnzD3fpBkYg03pMs+cziW5oZ93OUQHyCZaqQKqFOMcKEhPSinY0n9WLdJNH4ioONebdLw3CZUaJG5U45f2euFzg3Iznk9vaZJqZlESPix6fsnXHs9dj5gOFQwsWYOhf/aGp5L0PhSekRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF851C116B1;
+	Thu, 25 Jul 2024 23:06:11 +0000 (UTC)
+Date: Thu, 25 Jul 2024 19:06:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Ajay Kaher <ajay.kaher@broadcom.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Vasavi Sirnapalli
+ <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Beau Belgrave <beaub@linux.microsoft.com>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240725190632.2755cb70@gandalf.local.home>
+In-Reply-To: <a7d66736-80d3-4f3d-9cca-ec46e019b4cb@grsecurity.net>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+	<20240725131021.788374d0@gandalf.local.home>
+	<20240725131632.64cab267@gandalf.local.home>
+	<cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+	<20240725150517.3184e078@gandalf.local.home>
+	<0d1a8c46-43a7-42d6-bcbf-647a5a68c3c5@grsecurity.net>
+	<20240725161519.35fd3bd6@gandalf.local.home>
+	<1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
+	<20240725171459.598d9500@gandalf.local.home>
+	<a7d66736-80d3-4f3d-9cca-ec46e019b4cb@grsecurity.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <jingoohan1@gmail.com>, <manivannan.sadhasivam@linaro.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mrana@quicinc.com>
-References: <20240724183918.GA806896@bhelgaas>
-Content-Language: en-US
-From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-In-Reply-To: <20240724183918.GA806896@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -Tn0u5nXAQdPbC4dW5kZci_2gYOh92Vb
-X-Proofpoint-ORIG-GUID: -Tn0u5nXAQdPbC4dW5kZci_2gYOh92Vb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_24,2024-07-25_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0 mlxlogscore=937
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250158
 
-Hi Bjorn,
+On Thu, 25 Jul 2024 23:32:30 +0200
+Mathias Krause <minipli@grsecurity.net> wrote:
 
-Thanks for the review comments.
-
-On 7/24/2024 11:39 AM, Bjorn Helgaas wrote:
-> On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
->> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
->> driver to program the location of DBI and ATU blocks in Qualcomm
->> PCIe Controller specific PARF hardware block.
->>
->> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
->> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
->> ---
->>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
->>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
->>  2 files changed, 4 insertions(+)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 1b5aba1f0c92..bc3a5d6b0177 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
->>  		if (IS_ERR(pci->dbi_base))
->>  			return PTR_ERR(pci->dbi_base);
->> +		pci->dbi_phys_addr = res->start;
->>  	}
->>  
->>  	/* DBI2 is mainly useful for the endpoint controller */
->> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
->>  			if (IS_ERR(pci->atu_base))
->>  				return PTR_ERR(pci->atu_base);
->> +			pci->atu_phys_addr = res->start;
->>  		} else {
->>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
->>  		}
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index 53c4c8f399c8..efc72989330c 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
->>  struct dw_pcie {
->>  	struct device		*dev;
->>  	void __iomem		*dbi_base;
->> +	phys_addr_t		dbi_phys_addr;
->>  	void __iomem		*dbi_base2;
->>  	void __iomem		*atu_base;
->> +	phys_addr_t		atu_phys_addr;
->>  	size_t			atu_size;
->>  	u32			num_ib_windows;
->>  	u32			num_ob_windows;
+> That was for a single run of
+> tools/testing/selftests/user_events/ftrace_test with the read loop of
+> /sys/kernel/tracing/events/user_events/__test_event/format in a
+> different shell.
 > 
-> This patch is pretty trivial and it doesn't show anything to justify
-> the need to keep these addresses.  I think this should be squashed
-> with the next patch that actually *uses* them.
+> > 
+> > destroy_user_event() which is under event_mutex calls
+> > user_event_set_call_visible() with false, that will then call:
+> > 
+> > trace_remove_event_call() -> probe_remove_event_call() ->
+> >  __trace_remove_event_call() -> event_remove() ->
+> >  remove_event_from_tracers()
+> > 
+> > Where remove_event_from_tracers() loops over all the instances and will set
+> > each of the file pointers flags associated to the event: EVENT_FILE_FL_FREED
+> > 
+> > Then it returns back to destroy_user_event() that would free the event.
+> > 
+> > The f_start() that was in your crash, with the new patch, should take the
+> > event_mutex before referencing the event that was freed. And with that flag
+> > being set, it should exit out.  
 > 
+> Looking at the very first report:
+> 
+> [   76.306946] BUG: KASAN: slab-use-after-free in f_start+0x36e/0x3d0
+> 
+> That's what faddr2line gives me:
+> 
+> f_start+0x36e/0x3d0:
+> f_start at kernel/trace/trace_events.c:1637 (discriminator 1)
+> 
+> Which is:
+> 1635     mutex_lock(&event_mutex);
+> 1636     file = event_file_data(m->private);
+> 1637     if (!file || (file->flags & EVENT_FILE_FL_FREED))
+> 1638         return ERR_PTR(-ENODEV);
 
-ACK. I will update it in the next patch.
+BAH! I finally figured it out.
 
-Thanks,
-Prudhvi
+I was able to reproduce it and this does stop the UAF from happening.
+
+The issue was, as a short cut, I had the "format" file's i_private point to
+the "call" entry directly, and not go via the "file". This is because the
+all format files are the same for the same "call", so no reason to
+differentiate them.  The other files maintain state (like the "enable",
+"trigger", etc). But this means if the file were to disappear, the "format"
+file would be unaware of it.
+
+This should fix it for you. It fixed it for me.
+
+-- Steve
+
+
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 6ef29eba90ce..852643d957de 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1540,7 +1540,8 @@ enum {
+ 
+ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+-	struct trace_event_call *call = event_file_data(m->private);
++	struct trace_event_file *file = event_file_data(m->private);
++	struct trace_event_call *call = file->event_call;
+ 	struct list_head *common_head = &ftrace_common_fields;
+ 	struct list_head *head = trace_get_fields(call);
+ 	struct list_head *node = v;
+@@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+ 
+ static int f_show(struct seq_file *m, void *v)
+ {
+-	struct trace_event_call *call = event_file_data(m->private);
++	struct trace_event_file *file = event_file_data(m->private);
++	struct trace_event_call *call = file->event_call;
+ 	struct ftrace_event_field *field;
+ 	const char *array_descriptor;
+ 
+@@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
+ 
+ static void *f_start(struct seq_file *m, loff_t *pos)
+ {
++	struct trace_event_file *file;
+ 	void *p = (void *)FORMAT_HEADER;
+ 	loff_t l = 0;
+ 
+ 	/* ->stop() is called even if ->start() fails */
+ 	mutex_lock(&event_mutex);
+-	if (!event_file_data(m->private))
++	file = event_file_data(m->private);
++	if (!file || (file->flags & EVENT_FILE_FL_FREED))
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	while (l < *pos && p)
+@@ -2485,7 +2489,6 @@ static int event_callback(const char *name, umode_t *mode, void **data,
+ 	if (strcmp(name, "format") == 0) {
+ 		*mode = TRACE_MODE_READ;
+ 		*fops = &ftrace_event_format_fops;
+-		*data = call;
+ 		return 1;
+ 	}
+ 
+-- 
+2.43.0
+
 
