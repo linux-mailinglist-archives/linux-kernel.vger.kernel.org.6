@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-261865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAAC393BD20
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F33F93BD24
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71416283EBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200AF1F225EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5876E172791;
-	Thu, 25 Jul 2024 07:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F9C172BDF;
+	Thu, 25 Jul 2024 07:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="gQ4hkxUL"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="EpxaULCZ"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C55B16F85A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF5817279E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892720; cv=none; b=kk3jhhbcJCKJzoKyju63doCd7NeeOL1yEFs7zuh2v+EHuDf2kAJI2K2QtNBXXOZzOuhb6IofVIi5gapBv979ReTUL3fQE0JGsKwwjvjmDXJuJl35i7aR5eq6a0ODB3nyoevNqTcLNVcdBvPYK5cONcA4nHdpclnKSOnNGtKJlDE=
+	t=1721892723; cv=none; b=LkXOkcZYJl5GbdcYKMUXKo+/WAsiWMfDZXZm/DFLuHVM1fFsz3Ak5OLZdnnskYYmnMrq4XFFvPeNL9K0nE4P52pr9XpHSnstgb9Yxkp4DjPsGE/2/BYJ+IWwFaLsOwJwYaShRIMJbGX9V223jijM/NBbkDoKGBnQ/TAPL/mW94E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892720; c=relaxed/simple;
-	bh=o8NUO49pyls0LZ2Byzt8r39bjxdRCntAoRgx4xOCnJE=;
+	s=arc-20240116; t=1721892723; c=relaxed/simple;
+	bh=fyrhbCXnlByRYnhG528ptI2X/mfEToljyaGXElZ8V0Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OIpBo/QuB73Rg9OFXDgdXDHau5SE1cDtOj3O+rcL9YVhYNYdS6GzpSfbQAgAAbd9ldKQt+M5GesR44T+MC0HK/ZBB1xl3n8t/c1wjlutxRpRNpVUhH4pSn0fzPX0p3YQbTQfI4x164yF2wpGoFB9z9s0nfO5AURMZBkr0z+OLrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=gQ4hkxUL; arc=none smtp.client-ip=209.85.161.52
+	 MIME-Version:Content-Type; b=J4HW6kNtxIWka9tx0KAlLZ+yzJycpcMmsSVjs6p50dT8KDPyzQw3m4naddMS2ruPnXlYi8uK+4Sxy9/U439pBznhzg9igAneRfjTqW+rDg4hb5BEogXr/GnxF3fFrCa1e1oqIlMK4KLFrW/FQlMEZ0JPhM6uxjQrhMC3kDMuPHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=EpxaULCZ; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c791729c36so381091eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:31:58 -0700 (PDT)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b7a0ef0e75so3700036d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1721892718; x=1722497518; darn=vger.kernel.org;
+        d=citrix.com; s=google; t=1721892720; x=1722497520; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NRJmNl7Bb9/OZ0AorI+0NK/6Qn825Rg5jazvccIBXIg=;
-        b=gQ4hkxUL8iH8fvzCCOX3gkis3y5egyQ2IexB2KgKVFslG2QtQoe7fmgu+GryT/ULWE
-         vUE6evuEZC18+8W3ajGoQV9KHEtn54v7gn6lAvT/6QD3Ps73DrtqbqzyCVGABxNbV5+z
-         RYZyS42VLsHpuOjT0B0ycZcSG3sN1aayaCI7E=
+        bh=2GVlNStJvrT8ORCcRB8+CmsmV0FyqBN6Hy+p1P9rZbw=;
+        b=EpxaULCZ7JOiGQLmE1TnbjDGmWohdaOPbAlwX5Hn274vCo2ZbPaMPahJ7P804uKHR/
+         n4u7ETXPohG0PBU5QNad2IduOmc62RMIukCbhKhOh0RldmWyC9GvZJjxzAf2J32ITy8I
+         /4kLE47kwNJ6Z9YXXQGJg5dN/rAowHXBIGiZc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721892718; x=1722497518;
+        d=1e100.net; s=20230601; t=1721892720; x=1722497520;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NRJmNl7Bb9/OZ0AorI+0NK/6Qn825Rg5jazvccIBXIg=;
-        b=oMbQDOsP6WQCgZ7u9uF0gcQR95Sj5Dh/wAlfGBH+H3tUcXZqwI7S0LiPZ6QtsiCSRy
-         +dpW6tt0KMNYAffL0g2rluBQq0Nydx3nx7gfAf3S3XseKv/Cijld/5f+3wPDUXZy+mpy
-         QOiG49zddksirbYIrJ4fJIlHOhZgvOAz17Zys3rLIA+aqWS9K5uPic4P1vaoJ8xD4LYS
-         EvII6xnekoYcTCQSR5gA04pf2VaE01+d4Nmg2bl9mD+zutMr8z5njnF+FdGD1byrYy7Y
-         Q/sXjY/NAgebowx16Sxi6AJ5sU1vv6IM08yBrqwP91mADqJH6RHWcdGE3Yi8YIWKxAyv
-         M5qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTG2cSOcydAwUShNikBka4pT4mLc8DeU4E/00/mMOQByJ2LcKpRZ1dZX4dJdv9ciPJCLldCmdBOtPciN+SMeW4R80flKVA9t8o68I7
-X-Gm-Message-State: AOJu0YxI6QaZZwyxsvdYeRIlJ/1SuQ6+Zagi+rHqgQjtgTRZIy6G4NVm
-	tXKjWFTscCXsDcM8Jip7MUzDJ6iLYR4WIbPh9asMIZnwqeOMCuMqF9uwdyg4klU=
-X-Google-Smtp-Source: AGHT+IFCNLG+ST0ZSsb5RJ0EWHwiIT/DnYl4e0Leyodh0YVdE/18MhaBFG2YoCxWCCHPvCxSvB4InQ==
-X-Received: by 2002:a05:6358:2829:b0:1ac:ed54:224d with SMTP id e5c5f4694b2df-1acf8878d6fmr282666955d.11.1721892717619;
-        Thu, 25 Jul 2024 00:31:57 -0700 (PDT)
+        bh=2GVlNStJvrT8ORCcRB8+CmsmV0FyqBN6Hy+p1P9rZbw=;
+        b=r6kl4yjOLuVL1Kyt1nUUXA4Oi/L3J3iT1bYFvBzLNYADJKiRspF4QlateArACO/3FF
+         fdV19JDykrgmS0nuLjRhQonFNsJgOfmtrV3wS0HX6f+NdvChkpDwuobGIXMBVBPebwBv
+         dIY1hgjEJlv0sGeJWb3nzRfkedM0dS9cjKsyQ3jxa5tC+j/Krk6W//fPeBG61DolUdES
+         4Qidow/Z6NQDxGP2M9ukNK8FcVkDmQWP+t0zXk3N3Jjs9rDOAwlLanXjXKDA6OfPqpFp
+         6BwUNEYde6OoA12WGVzn32yLDxr2RCxAkiB+DoPtYLP1hF28eeqAL7UP/peieSSpqpWC
+         F5jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjmQUCJrOrsiR0RNTt1hPaJFbqdv7nBonwxbwxeLGKnspxihmSHv5udTmUxY2naEfZcJQdCQBe8nhqMLcmlOuQOBX5HSBgtlwCVe0s
+X-Gm-Message-State: AOJu0Yx7Ot16d4io/soFkPOE+pJRMNmUWBgY9+uJpw4fXcz9iwyfY92/
+	LSfT5L5/aqH5jgRVA1xpCcgxIrWEt3zmHo5tIQZpfe7w6Ip+dbOSktvtDcesDF8=
+X-Google-Smtp-Source: AGHT+IHfDJbquxK4yoeiAtgbU0j7N/IGyrHV9CdR7h6snx/JBoTzCuXUsX3oxBVqaoEeHvgUuwnjCQ==
+X-Received: by 2002:a05:6214:202f:b0:6b0:6dba:c947 with SMTP id 6a1803df08f44-6bb40700306mr13763466d6.18.1721892720336;
+        Thu, 25 Jul 2024 00:32:00 -0700 (PDT)
 Received: from localhost ([213.195.124.163])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8416381sm3660701cf.93.2024.07.25.00.31.56
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f9143e1sm4321446d6.61.2024.07.25.00.31.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 00:31:57 -0700 (PDT)
+        Thu, 25 Jul 2024 00:31:59 -0700 (PDT)
 From: Roger Pau Monne <roger.pau@citrix.com>
 To: xen-devel@lists.xenproject.org,
 	linux-kernel@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	x86@kernel.org,
 	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 1/2] x86/xen: move xen_reserve_extra_memory()
-Date: Thu, 25 Jul 2024 09:31:14 +0200
-Message-ID: <20240725073116.14626-2-roger.pau@citrix.com>
+Subject: [PATCH 2/2] x86/xen: fix memblock_reserve() usage on PVH
+Date: Thu, 25 Jul 2024 09:31:15 +0200
+Message-ID: <20240725073116.14626-3-roger.pau@citrix.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240725073116.14626-1-roger.pau@citrix.com>
 References: <20240725073116.14626-1-roger.pau@citrix.com>
@@ -90,130 +90,107 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-In preparation for making the function static.
+The current usage of memblock_reserve() in init_pvh_bootparams() is done before
+the .bss is zeroed, and that used to be fine when
+memblock_reserved_init_regions implicitly ended up in the .meminit.data
+section.  However after commit 73db3abdca58c memblock_reserved_init_regions
+ends up in the .bss section, thus breaking it's usage before the .bss is
+cleared.
 
-No functional change.
+Move and rename the call to xen_reserve_extra_memory() so it's done in the
+x86_init.oem.arch_setup hook, which gets executed after the .bss has been
+zeroed, but before calling e820__memory_setup().
 
 Fixes: 38620fc4e893 ('x86/xen: attempt to inflate the memory balloon on PVH')
 Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 ---
-Since this is a pre-requisite for a bugfix, I've tagged it with "Fixes:", not
-sure if that's appropriate or there's some better tag to use.
+While the commit that introduced the user-noticeable regression is
+73db3abdca58c, I think 38620fc4e893 should have been more careful to not
+initialize the memblock ranges ahead of the .bss zeroing.
 ---
- arch/x86/xen/enlighten_pvh.c | 96 ++++++++++++++++++------------------
- 1 file changed, 48 insertions(+), 48 deletions(-)
+ arch/x86/include/asm/xen/hypervisor.h |  5 -----
+ arch/x86/platform/pvh/enlighten.c     |  3 ---
+ arch/x86/xen/enlighten_pvh.c          | 15 ++++++++++++---
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
+diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
+index 64fbd2dbc5b7..a9088250770f 100644
+--- a/arch/x86/include/asm/xen/hypervisor.h
++++ b/arch/x86/include/asm/xen/hypervisor.h
+@@ -62,11 +62,6 @@ void xen_arch_unregister_cpu(int num);
+ #ifdef CONFIG_PVH
+ void __init xen_pvh_init(struct boot_params *boot_params);
+ void __init mem_map_via_hcall(struct boot_params *boot_params_p);
+-#ifdef CONFIG_XEN_PVH
+-void __init xen_reserve_extra_memory(struct boot_params *bootp);
+-#else
+-static inline void xen_reserve_extra_memory(struct boot_params *bootp) { }
+-#endif
+ #endif
+ 
+ /* Lazy mode for batching updates / context switch */
+diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
+index 8c2d4b8de25d..944e0290f2c0 100644
+--- a/arch/x86/platform/pvh/enlighten.c
++++ b/arch/x86/platform/pvh/enlighten.c
+@@ -75,9 +75,6 @@ static void __init init_pvh_bootparams(bool xen_guest)
+ 	} else
+ 		xen_raw_printk("Warning: Can fit ISA range into e820\n");
+ 
+-	if (xen_guest)
+-		xen_reserve_extra_memory(&pvh_bootparams);
+-
+ 	pvh_bootparams.hdr.cmd_line_ptr =
+ 		pvh_start_info.cmdline_paddr;
+ 
 diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index 27a2a02ef8fb..91c6db4ec054 100644
+index 91c6db4ec054..728a4366ca85 100644
 --- a/arch/x86/xen/enlighten_pvh.c
 +++ b/arch/x86/xen/enlighten_pvh.c
-@@ -27,54 +27,6 @@
- bool __ro_after_init xen_pvh;
- EXPORT_SYMBOL_GPL(xen_pvh);
+@@ -9,6 +9,7 @@
+ #include <asm/io_apic.h>
+ #include <asm/hypervisor.h>
+ #include <asm/e820/api.h>
++#include <asm/setup.h>
  
--void __init xen_pvh_init(struct boot_params *boot_params)
--{
--	u32 msr;
--	u64 pfn;
--
--	xen_pvh = 1;
--	xen_domain_type = XEN_HVM_DOMAIN;
--	xen_start_flags = pvh_start_info.flags;
--
--	msr = cpuid_ebx(xen_cpuid_base() + 2);
--	pfn = __pa(hypercall_page);
--	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
--
--	if (xen_initial_domain())
--		x86_init.oem.arch_setup = xen_add_preferred_consoles;
--	x86_init.oem.banner = xen_banner;
--
--	xen_efi_init(boot_params);
--
--	if (xen_initial_domain()) {
--		struct xen_platform_op op = {
--			.cmd = XENPF_get_dom0_console,
--		};
--		int ret = HYPERVISOR_platform_op(&op);
--
--		if (ret > 0)
--			xen_init_vga(&op.u.dom0_console,
--				     min(ret * sizeof(char),
--					 sizeof(op.u.dom0_console)),
--				     &boot_params->screen_info);
--	}
--}
--
--void __init mem_map_via_hcall(struct boot_params *boot_params_p)
--{
--	struct xen_memory_map memmap;
--	int rc;
--
--	memmap.nr_entries = ARRAY_SIZE(boot_params_p->e820_table);
--	set_xen_guest_handle(memmap.buffer, boot_params_p->e820_table);
--	rc = HYPERVISOR_memory_op(XENMEM_memory_map, &memmap);
--	if (rc) {
--		xen_raw_printk("XENMEM_memory_map failed (%d)\n", rc);
--		BUG();
--	}
--	boot_params_p->e820_entries = memmap.nr_entries;
--}
--
- /*
-  * Reserve e820 UNUSABLE regions to inflate the memory balloon.
-  *
-@@ -141,3 +93,51 @@ void __init xen_reserve_extra_memory(struct boot_params *bootp)
- 		xen_add_extra_mem(PFN_UP(e->addr), pages);
+ #include <xen/xen.h>
+ #include <asm/xen/interface.h>
+@@ -41,8 +42,9 @@ EXPORT_SYMBOL_GPL(xen_pvh);
+  * hypervisor should notify us which memory ranges are suitable for creating
+  * foreign mappings, but that's not yet implemented.
+  */
+-void __init xen_reserve_extra_memory(struct boot_params *bootp)
++static void __init pvh_reserve_extra_memory(void)
+ {
++	struct boot_params *bootp = &boot_params;
+ 	unsigned int i, ram_pages = 0, extra_pages;
+ 
+ 	for (i = 0; i < bootp->e820_entries; i++) {
+@@ -94,6 +96,14 @@ void __init xen_reserve_extra_memory(struct boot_params *bootp)
  	}
  }
-+
-+void __init xen_pvh_init(struct boot_params *boot_params)
+ 
++static void __init pvh_arch_setup(void)
 +{
-+	u32 msr;
-+	u64 pfn;
-+
-+	xen_pvh = 1;
-+	xen_domain_type = XEN_HVM_DOMAIN;
-+	xen_start_flags = pvh_start_info.flags;
-+
-+	msr = cpuid_ebx(xen_cpuid_base() + 2);
-+	pfn = __pa(hypercall_page);
-+	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
++	pvh_reserve_extra_memory();
 +
 +	if (xen_initial_domain())
-+		x86_init.oem.arch_setup = xen_add_preferred_consoles;
-+	x86_init.oem.banner = xen_banner;
-+
-+	xen_efi_init(boot_params);
-+
-+	if (xen_initial_domain()) {
-+		struct xen_platform_op op = {
-+			.cmd = XENPF_get_dom0_console,
-+		};
-+		int ret = HYPERVISOR_platform_op(&op);
-+
-+		if (ret > 0)
-+			xen_init_vga(&op.u.dom0_console,
-+				     min(ret * sizeof(char),
-+					 sizeof(op.u.dom0_console)),
-+				     &boot_params->screen_info);
-+	}
++		xen_add_preferred_consoles();
 +}
 +
-+void __init mem_map_via_hcall(struct boot_params *boot_params_p)
-+{
-+	struct xen_memory_map memmap;
-+	int rc;
-+
-+	memmap.nr_entries = ARRAY_SIZE(boot_params_p->e820_table);
-+	set_xen_guest_handle(memmap.buffer, boot_params_p->e820_table);
-+	rc = HYPERVISOR_memory_op(XENMEM_memory_map, &memmap);
-+	if (rc) {
-+		xen_raw_printk("XENMEM_memory_map failed (%d)\n", rc);
-+		BUG();
-+	}
-+	boot_params_p->e820_entries = memmap.nr_entries;
-+}
+ void __init xen_pvh_init(struct boot_params *boot_params)
+ {
+ 	u32 msr;
+@@ -107,8 +117,7 @@ void __init xen_pvh_init(struct boot_params *boot_params)
+ 	pfn = __pa(hypercall_page);
+ 	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
+ 
+-	if (xen_initial_domain())
+-		x86_init.oem.arch_setup = xen_add_preferred_consoles;
++	x86_init.oem.arch_setup = pvh_arch_setup;
+ 	x86_init.oem.banner = xen_banner;
+ 
+ 	xen_efi_init(boot_params);
 -- 
 2.45.2
 
