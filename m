@@ -1,81 +1,50 @@
-Return-Path: <linux-kernel+bounces-261692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF43093BAE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F24993BAE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDD41F221EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D87282C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42B11CA9;
-	Thu, 25 Jul 2024 02:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="Ucj5nsdj"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116F011723;
+	Thu, 25 Jul 2024 02:41:19 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E78C8F6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C3B101F2;
+	Thu, 25 Jul 2024 02:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721875234; cv=none; b=LhE3DRuABslWHZROeuXi+AQgvbujeIIXe30HC7LJYk+hiwYNILeEFQScXqjUMYNNCI3llPkPwEWFiZmCVhbhbR42yDdpVloFUAcrDbCgjPI012ksTPnUYJLOOO40ohZ7bg2Z7hppqnyPMjY7tG1ZAjJ5saWjJz57FjuSsdPt9F0=
+	t=1721875278; cv=none; b=lzU/apXcdXXa3FMv/85xhpgYLN2ffE36MvOQMfHtaNpD1MjNZjYck7ZUBZvX4KrWX3Q1wEJpABCGZNWSRhU/dEY/QTeTbZQSW2YataX8MzP1Np/WIIQpAc3717j6ZHcjT7IrdUKXMnHlZ3IrDZ2XDo/Hgrpb0ZUO+vr3uc0Ji+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721875234; c=relaxed/simple;
-	bh=+Q3gEmDizWp+wVM9J7repNjFwCf88tvXmIhUEt02z3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tnOZqANivFST6MQZdlHqlAH1gdPh2RIAiIwYaU3aoZ0HIZt1YNe650Yw5ahs69qCJS06s2g56xDSOuA5Bnjqz12WK+LEuX/fNFqP7Xqc/blJ3VRkRwA1OoB9mBh1Ah387GA0gmMuKfvNj02MQuEEr3I9ANbjHZZ68v0zisJbaDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=Ucj5nsdj; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc4fcbb131so3756745ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1721875232; x=1722480032; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6qGDo/UGEvSr10Mbjrm7JlnAMdeNemkg4xjMy1whgo=;
-        b=Ucj5nsdj/Uhls5WQA73mxy2+GNsBls5GF2CiLS++Ort4R/m9Tzf44U/O2FRP0WAiHc
-         KYWof9/jy4cG0TSySHCgoPvKpFp7F48COnV60NOSrFcqBeLZQLQztZ6zg1XgukOa0OVm
-         wGnl8A3+lVDEfxoIA6aTlNDXNf8AF54ZfO327tMKvEF0tnoKt74lgXbKTRAPY+oOCzpe
-         QC/mH0sBPqFUZlk0IGgdIE3xt0kWUtwqQ4KTIlC+Foqt5FkHOTXTEhBtFkjXmmFFB+AI
-         PK6tlbwtu2mfs56MoqwmWm13d43mNU5A5GFty8nILu4MpbAyBAdHcNwZOJkgMSaeE+RJ
-         XPgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721875232; x=1722480032;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q6qGDo/UGEvSr10Mbjrm7JlnAMdeNemkg4xjMy1whgo=;
-        b=KhoE07U+A+Hk1I4phbqmR076x/oeCQxbkB1iBrgPq9IMJjg3330Tf5YpXgxWKaXCft
-         69w7sSZmQvsvVNhutGzFf+QF0I7RH4VXzFhslTp9DSqS595qlFPdUdVQVnduSraQL7Yx
-         vuCvgAVK2KULxMY3qzRkfqLDZd5IYZhkyMJ0fpBGVzgvn40wno9KPt0CDySBrn2SsUsn
-         wyI3Nto0wctch2e/4VqV6s+DdscEcuBiJwqpSiGsSbsY3dLIkiPUhRY+TO7Xrlndbsm6
-         LRntRxEzyAsF/t9fzq8ts/JG3n0gzJBHbtWGOY/ns6G2t2vekMfyH5Rj6rt2cNa8jMSr
-         UvWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWss67r9t0aW3RQudR/533kQoK9OEg+4xh3/+JeMebHvtqQmIxYnUmbGlbNwMZ2InO/C+Nba3ns9c1IRSUKzf3ToN78IuFnPGgLfNsi
-X-Gm-Message-State: AOJu0Yx/HKYUaPoxidcVR5y44zO0GIR68ezabVNK580eRYhbR/QSzf51
-	xo7BG3s5Z22UqbnYUXO5cOdx0fCAdjM7JQbOXmLF0I5zKgDzaArnvJbg9giW2/s=
-X-Google-Smtp-Source: AGHT+IFptWv1W0aKCBfAlsb4iJ8o/+2ZgqQljyVLnF95YGVYKfrsg+wXBhNV7DYReRptmCteiaPr5w==
-X-Received: by 2002:a17:902:fb0e:b0:1f7:1b08:dda9 with SMTP id d9443c01a7336-1fed924ff52mr4939955ad.8.1721875231899;
-        Wed, 24 Jul 2024 19:40:31 -0700 (PDT)
-Received: from localhost.localdomain ([143.92.64.18])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8c6f4sm2814165ad.24.2024.07.24.19.40.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 19:40:31 -0700 (PDT)
-From: Haifeng Xu <haifeng.xu@shopee.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	tj@kernel.org
-Cc: axboe@kernel.dk,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1721875278; c=relaxed/simple;
+	bh=tR5qH+CDKQnhLl3ghv2WT12nhh4dsdsYHHcR3zXyqh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I5UYzmjt7eZdtHkqSIc3+iVvK56ugbcAi/If52bpARxdkLuQVK5+5/s4rDdVtnrXaVqlfOeZpEF97HlI7FcWGUQoey6UJonyJAkCNs/JdjJxc3w81cXPikcRoURPNOrEA1u0AadcFVGF43uzoFBfwqAlK+87HUff2zDbPIGbQcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADHrjk2u6FmaVvdAA--.20694S2;
+	Thu, 25 Jul 2024 10:41:00 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: kristo@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	avadnaik@amd.com
+Cc: linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haifeng Xu <haifeng.xu@shopee.com>
-Subject: [PATCH] fs: don't flush in-flight wb switches for superblocks without cgroup writeback
-Date: Thu, 25 Jul 2024 10:39:58 +0800
-Message-Id: <20240725023958.370787-1-haifeng.xu@shopee.com>
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] EDAC/ti: Fix possible null pointer dereference in _emif_get_id()
+Date: Thu, 25 Jul 2024 10:40:52 +0800
+Message-Id: <20240725024052.1722866-1-make24@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,35 +53,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADHrjk2u6FmaVvdAA--.20694S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZr1DZrWDtrWDAFW5Zw13Jwb_yoW8JrW8pw
+	47WFW5AryUtry29r4vv34kZFy5C3WkJayDK340k39Y9w15XF97Jry09ry7tFyYyrW8Gay3
+	Xw4rtFs8XFWUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	WxJr0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-When deactivating any type of superblock, it had to wait for the in-flight
-wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
-which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
-If there are too much dirty data in the superblock, the waiting time may increase
-significantly.
+In _emif_get_id(), of_get_address() may return NULL which is later
+dereferenced. Fix this bug by adding NULL check.
 
-For superblocks without cgroup writeback such as tmpfs, they have nothing to
-do with the wb swithes, so the flushing can be avoided.
+Found by code review.
 
-Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+Cc: stable@vger.kernel.org
+Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- fs/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in v3:
+- added the patch operations omitted in PATCH v2 RESEND compared to PATCH 
+v2. Sorry for my oversight.
+Changes in v2:
+- added Cc stable line.
+---
+ drivers/edac/ti_edac.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/super.c b/fs/super.c
-index 095ba793e10c..f846f853e957 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -621,7 +621,8 @@ void generic_shutdown_super(struct super_block *sb)
- 		sync_filesystem(sb);
- 		sb->s_flags &= ~SB_ACTIVE;
+diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+index 29723c9592f7..6f3da8d99eab 100644
+--- a/drivers/edac/ti_edac.c
++++ b/drivers/edac/ti_edac.c
+@@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
+ 	int my_id = 0;
  
--		cgroup_writeback_umount();
-+		if (sb->s_bdi != &noop_backing_dev_info)
-+			cgroup_writeback_umount();
+ 	addrp = of_get_address(node, 0, NULL, NULL);
++	if (!addrp)
++		return -EINVAL;
++
+ 	my_addr = (u32)of_translate_address(node, addrp);
  
- 		/* Evict all inodes with zero refcount. */
- 		evict_inodes(sb);
+ 	for_each_matching_node(np, ti_edac_of_match) {
+@@ -214,6 +217,9 @@ static int _emif_get_id(struct device_node *node)
+ 			continue;
+ 
+ 		addrp = of_get_address(np, 0, NULL, NULL);
++		if (!addrp)
++			return -EINVAL;
++
+ 		addr = (u32)of_translate_address(np, addrp);
+ 
+ 		edac_printk(KERN_INFO, EDAC_MOD_NAME,
 -- 
 2.25.1
 
