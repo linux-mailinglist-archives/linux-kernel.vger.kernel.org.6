@@ -1,92 +1,113 @@
-Return-Path: <linux-kernel+bounces-261606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079BE93B9C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:25:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBFE93B9C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D57C1F21E34
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DF0F1C21373
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B62187F;
-	Thu, 25 Jul 2024 00:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41F53C3C;
+	Thu, 25 Jul 2024 00:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wo4xR7ko"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMCh7kER"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B41F17C2
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF397380;
+	Thu, 25 Jul 2024 00:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721867125; cv=none; b=CDtT7Dqxr2JoADLnL3H1UoZL1x8jVLx7e2clgZlpQj8EJuTeVRDPemlia7Iwa/bK+4U2pt1cbvf0sPs1CCoUQIpD6hHyBA0NQM/JxjM5bAbphQulVWtyvswp60JekSH8skzt2PWCr7cQS0qtzOTOjH2f+TwpazS12/u9mt8q2Qw=
+	t=1721867242; cv=none; b=Fntf9YyWRkK99AhsHDC15dUrmU6gQKIHXif9wJVeUSgwWYQoTwz9H8VFYtB6h9IeIrNUkCKDGWBCawPvyaulLOBLU6DoCQ9xgFTBskIIL3j6Jd7XQzDWYWN5GTYhxfuPsQ68XdC8hlIR0AIvy2/v5E9S2ObIOdkPK/XF4nuf+eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721867125; c=relaxed/simple;
-	bh=OVgAT4kFVK5nQL4LJ4RzeoqCSvbwsqoNvxZg/8f2Cpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzNIDfa/227Qdg6Mhc+IyqOlr3uq27jhoPUt2KErrEv2lCR/t6UArDn9K5qFmRuXNiqB7B1wMPfjKS7Wab9q32+moaL9MQ/KrpGjSBLZCScpPwAqmPC9h46cU+rtRYSkCCBc9rsuJbS+qQs+ltcjKhe0vmHgX+KYdi3r9NQNj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wo4xR7ko; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 25 Jul 2024 00:25:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721867120;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9i8xCty+wlBhuD77WYEniSm6emEYVnVvP2uoezmkh64=;
-	b=wo4xR7koN+IE2YAJNgdj54jBKUwwPmzby5nMtbcIECvDux16LD3XnjhPUq7e/LM+1+UKM5
-	nicWcrdd6vSe1CaGTuAkb+MOi0vLvJZruaVrzXL6ZL6Ph+q0Jz2bc0/Qc47fC+wqY8JdoB
-	3JNu6c1DvsPNgU6zJxUkZwq49EmOjhA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH mm-unstable v1 0/4] Improve mem_cgroup_iter()
-Message-ID: <ZqGbbN2Ue8HLlVmL@google.com>
-References: <20240724190214.1108049-1-kinseyho@google.com>
+	s=arc-20240116; t=1721867242; c=relaxed/simple;
+	bh=X0FCPVZtCuFs4HYv/jjstlWhs9UzJeTvpu8p1eCSiuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k8+BY3E5/xQVZFmCsv/s6siuYwVvmLIccwvH+bm34VXr/m/xOTfLQ5NgiUurj3Smj1Bj+c7sci0tZhm9eD8eM3ojtIuEKouBzhpZCjI9JUxfnzkjS0dEQUlopjvFXw9LncrCQ96vM0Vt9+JLks0fex1CoWoiZ9B2Kv0UOgcyF1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMCh7kER; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3686b554cfcso129337f8f.1;
+        Wed, 24 Jul 2024 17:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721867239; x=1722472039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GHOOlqghC4jISaVlTlYiD3C9Z0SxPztgr6a6M+wMqbo=;
+        b=SMCh7kERHo3s/S27BZid6wfHP6jcyriI/qtEUtHipAFscqlVSoICNGP7VJ4RrjO4zw
+         R1tXCasZw1cFeCmSy0f1/zlgDlD+r08QUaiIEFZq/obiZlDd5t8MR0d/BF9QRsljcfD+
+         r7fZYV2YQ54QaBW805agnIjP+lwugWx9NR93qWyobqQpnOln+ONKeG31GZQQA1Cqnkbw
+         VVv83bOnIpn/BAzTiQVH+Zcx0vEt0jEc9ZhV2uor+3Gq1vLiGuI1QKusvGEyOrbBSJva
+         5wBNamgvve/ZLHbPpzesAsWJ9f2ueChDBpcjLU0JsLoqpPhGlo8njIhhlwSQ6cuCcFtM
+         dLtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721867239; x=1722472039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GHOOlqghC4jISaVlTlYiD3C9Z0SxPztgr6a6M+wMqbo=;
+        b=XvLfGDhCxnS90i27Lt9rYGOUesqrPuwMAiOmyaPy1NsDhgHy+G+YsFUKvE7e0oopXN
+         3dX0krJTLVfZTwsukXCrAXpOPpgtEUT5+kPFvU62gSg6AMc03Ynf8PSgEVTLaz9H42lq
+         HMxJChwyqVtEWS4mg184UfvA73bAN7MVLGoxDXmswkHYUcb5skHFH9jwCOxOEXEn4uo/
+         OFw00VCnqQ1A4SwqGx4auUAxQucHRq5h4iaXkg8OwKcOse+kXXTkquYYu9Ugu83Q0Bxx
+         SPtf9U2lWwbebQhT0cCKe3AGpnUJMuC5RY8GYfybpEn2uTtnqBq67Xly8fUvc6Djlzt5
+         FZgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2NkgEX0FanVxC4sCaCRvxQbpLgjEmHYa3Q0de5rKzSLloN/dOAzlTSxSHpv+UdV44xh/oqCtbwe7VvojEaSkD/MTZraC0d47XT6GKF7avfPYbWZlGZDw48iTvvsWAzCZGIXdT2mUk
+X-Gm-Message-State: AOJu0YzpUE6sVGuM8zrAh5tIZYdFKE6Isri69COhJJ0nheOqmUlbqlDw
+	0y05yWhoWSsSiJxAU2AQtyGdUYOKlmvAbjUjaVC1Q5YqHSMUjvLM
+X-Google-Smtp-Source: AGHT+IE/9WHCEwC25kBIwN6ZiQK6z1ZmEUfh25/F8CdLoY0KtA2guCBHHmr+XrVKcTv4xSBx6QfHKg==
+X-Received: by 2002:adf:e30b:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36b319f99d4mr752576f8f.29.1721867238844;
+        Wed, 24 Jul 2024 17:27:18 -0700 (PDT)
+Received: from localhost.localdomain ([151.49.92.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280574b0e8sm8233605e9.26.2024.07.24.17.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 17:27:18 -0700 (PDT)
+From: Denis Benato <benato.denis96@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Jagath Jog J <jagathjog1996@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Denis Benato <benato.denis96@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Jonathan LoBue <jlobue10@gmail.com>
+Subject: [PATCH 0/2] iio: fix bug with triggers not resuming after sleep
+Date: Thu, 25 Jul 2024 02:26:39 +0200
+Message-ID: <20240725002641.191509-1-benato.denis96@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724190214.1108049-1-kinseyho@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-cc memcg maintainers
+When a device enters an idle state (for example ASUS RC71L with s2idle)
+and an iio driver has a trigger attached such as iio-trig-hrtimer,
+after resuming the device the trigger is not triggering data acquisition.
 
-On Wed, Jul 24, 2024 at 07:02:10PM +0000, Kinsey Ho wrote:
-> Incremental cgroup iteration is being used again [1], but incremental
-> cgroup iteration was introduced for cgroup v1. It hasn't been fully
-> maintained for many years.
+This patch series solves the problem reliably and is well tested after
+many cycles and many reboots.
 
-This is a bold statement :)
+Closes: https://lore.kernel.org/all/31d7f7aa-e834-4fd0-a66a-e0ff528425dc@gmail.com/
 
-> This patchset improves the reliability of
-> mem_cgroup_iter(), along with improving simplicity and code readability.
-> 
-> [1] https://lore.kernel.org/20240514202641.2821494-1-hannes@cmpxchg.org/
-> 
-> Kinsey Ho (4):
->   mm: don't hold css->refcnt during traversal
->   mm: increment gen # before restarting traversal
->   mm: restart if multiple traversals raced
->   mm: clean up mem_cgroup_iter()
+Denis Benato (2):
+  iio: trigger: allow devices to suspend/resume theirs associated
+    trigger
+  iio: bmi323: suspend and resume triggering on relevant pm operations
 
-But the series looks great to me!
+ drivers/iio/imu/bmi323/bmi323.h      |  1 +
+ drivers/iio/imu/bmi323/bmi323_core.c | 32 ++++++++++++++++++++++++++++
+ drivers/iio/imu/bmi323/bmi323_i2c.c  |  1 +
+ drivers/iio/imu/bmi323/bmi323_spi.c  |  1 +
+ drivers/iio/industrialio-trigger.c   | 24 +++++++++++++++++++++
+ include/linux/iio/iio.h              | 16 ++++++++++++++
+ 6 files changed, 75 insertions(+)
 
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
-for the series.
+-- 
+2.45.2
 
-Thanks!
 
