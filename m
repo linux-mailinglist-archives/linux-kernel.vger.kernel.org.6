@@ -1,203 +1,343 @@
-Return-Path: <linux-kernel+bounces-262217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249BF93C298
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E13593C2AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5521B1C21B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A0F1C20E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879E419AD8B;
-	Thu, 25 Jul 2024 13:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7DF19AD72;
+	Thu, 25 Jul 2024 13:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="RZi9Z04A"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYq6JMcu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCB619ADBE;
-	Thu, 25 Jul 2024 13:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793C213C9CA;
+	Thu, 25 Jul 2024 13:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912413; cv=none; b=jhCa7cCvoryBFBzrE5L33RTEQfoQ+TibAF7k1WirSWjlo3ben4iql6EVZhyhzDsRJYjlF4D9bTne1HCtVa43cUEnaho+gK849V1rUFDpBuOUJrqYuDfQBuxT7Q6wmr3cgJIUX2TskJeXTgYxZpxWL/2U4V6WI0gbWlnYt7MXdWk=
+	t=1721912647; cv=none; b=RJWWcBsHcnJs46bclmRALsOFaOCFmMFGE9sM83eC2nA7s3T9aFrf6Gou6vDg0AfRFkzgX8mmLLrSY2f3zjG8OZ6hOb1B28OOIxarJjSyDXBpvzeC1BSwtAFqDlKJBQIJCduN6NVdbCUUXsfmwlfL5JaKkcoju6sGo4MHDpuEVHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912413; c=relaxed/simple;
-	bh=pR52xDUurWPyK/7A/DEfCS7HBpLihe1f7oaa6YE+HmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qeTnTn4MA1xOX2wQApMKfaR1Zt0E8tZkHH32NhmaNzr/268xlOo79qqLoLXwUKoz9eSq4AXEWCSaMLKFEkmqIR+eqw34D0NNRZECHyc/Ab2HS+M8j30gEdJSTQDKZpxlqooupjIXye5aF+8pJPIFui6kn2QsCiT+XBGKvqhqbjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=RZi9Z04A; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ca1209684a8511ef87684b57767b52b1-20240725
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=uD3XGrqNc/LkHS1p+rIDmcZc8WV2188cZAdzBOYaQ10=;
-	b=RZi9Z04AA9NbVXJivsE5xOBxXcCGJKwaJN8XDke6OlBypKP/ol4X4DOfq8K5W8HbzObKZ4yY7UW8vst1tR5rSYTR8FpT1e0i832odj2aWdpitItjiSquE3LwWs9WiFdUhlmRBrQkpnn6FXMwA05Vt5biTGZ2+kb7NuG8wgGCqdQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:ea2fd3a3-dd34-482f-8e14-5665fd447ceb,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:25eee3d1-436f-4604-ad9d-558fa44a3bbe,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: ca1209684a8511ef87684b57767b52b1-20240725
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 19011528; Thu, 25 Jul 2024 20:59:55 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 25 Jul 2024 20:59:56 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Thu, 25 Jul 2024 20:59:55 +0800
-Message-ID: <7603f704-caf2-a5b9-e84e-bfec210273b8@mediatek.com>
-Date: Thu, 25 Jul 2024 20:59:54 +0800
+	s=arc-20240116; t=1721912647; c=relaxed/simple;
+	bh=0ux3gSZ0RwVHtg81k8EMXGBBrFxDRxwiJkb/a8kIDro=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hGVzfpmTxiz2f9Mf9ugtrRbeTarRA+vxENhTiI42OYzU/PPCJbyWR1Xtt2rUjawir3Lo+lL2cKxbQ2wLSWR1KDXUv8XWPa7xo5EJXrcGd//GdYwiHjlLJPp7mtfDT8fE/GQr4NNMLkXykASAWpYgKdeWWEUSUPn/r0CvApdWXBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYq6JMcu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc569440e1so8287985ad.3;
+        Thu, 25 Jul 2024 06:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721912644; x=1722517444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=htR/TjEega3Xdoyd2U7cTKVJo8sifGC+rB79lc342S0=;
+        b=cYq6JMcu2tCwmdZv4Vw4CApXcfomRibmCvquZRRaHrHh2qslsroL0LMRG9/vaBQ3NK
+         jYIQPuv4vnD25n8kdfJi3pbuE4ZheLoJXJDez1HCan6Nj2Pphm8MTxX5f2nxNGz6ID3s
+         W/KsYnutTqW/YMym0W/OhuRhCCa+G4vk5Uu3rbU8WNyg260b8ffMEeGPUfx/9KmkRO0h
+         NFM0wYFnbQSRI77o7Bl1OZUu8L4hBEVXZUWlTxXH575eoeb+VWoiG50WkxF2u5ingart
+         oDTgmKFzSDj8TU+oh16tkMzsSurEXU4ocF7oCxWIUGoKX+s4t3sBzdxUNEfMxgE2b/Rj
+         HUiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721912644; x=1722517444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=htR/TjEega3Xdoyd2U7cTKVJo8sifGC+rB79lc342S0=;
+        b=H6UKWtkQFCrCBIblbZi91AEDxNvQCXeJtR/etDksJ6hKOieLGmoojBmqz7tdGsYa+M
+         fa5aah5t5jmgOKdYOAwcyDLdUyFzyOo0A5JsxL+qCGQ/ayPpsOZEPA1gqg37MzMUVnhN
+         dmI3NfTAsu+f7ohYUxMFQKmHH95Wihb4wCJqg7BVLULfj+idR1PMjwekIJSveEpKRRaX
+         GsmsW0GP6/oLMVVMKpUqLSVJEgzzqBi8/o3WiGHAfcKC3td62dRbtVmTYzC6TWqwKLjs
+         pOM6mxfZQCb3v1ZgI6PZtpBme8WGZL9RbHnCd7QWSJXyPEe+mzgrpG8Oqzk8D2YEUbqB
+         iwhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZAmzsaV5/vpSx6iFJEaXWGx7E8nLEciOZG6pZTO0SNFC2mhXc8J6qxiMBE5oUeFUTMD4c9cVjqp+zkJh8I6XZWI/3cAYF3pWD06clUBc9U1GxdHX39hIT+cdF94rpOHJlluitXtA4XEc=
+X-Gm-Message-State: AOJu0Yxh+oyAvBUHkQCOl4V/CqfNo39gcwwUmccnLO9hYUYDx2HtesmS
+	Rp57wTPAowzbgnLZdgDrrrD3LqviZfKAMLme5czJHWHU7pFQgnoX
+X-Google-Smtp-Source: AGHT+IFMmE+nocadv/NdjT7aJFWB1HBf8V3DC7AItFnPS0nDWB5PQLmaOSzRiNHRpf4bWxkkes37fw==
+X-Received: by 2002:a17:902:ea11:b0:1fb:6663:b647 with SMTP id d9443c01a7336-1fed3870ecbmr33764625ad.3.1721912643414;
+        Thu, 25 Jul 2024 06:04:03 -0700 (PDT)
+Received: from Riyan.inspiron ([122.176.205.255])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fcc493sm13516995ad.282.2024.07.25.06.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 06:04:02 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] staging: fbtft: Remove ftrace-like logging
+Date: Thu, 25 Jul 2024 18:33:51 +0530
+Message-Id: <20240725130351.14877-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
- controller
-Content-Language: en-US
-To: Chen-Yu Tsai <wenst@chromium.org>,
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>, Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, <chris-qj.chen@mediatek.com>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	<kernel@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
- <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--19.987100-8.000000
-X-TMASE-MatchedRID: fE0JoqABJp1jbyiFvYNuKLhzZI/dfrdOjLOy13Cgb4/n0eNPmPPe5KWz
-	WoIRiV9DM/Se/q/gEyf5MiS7M8c1eGmXMi7Ntyo23tJaKJZJX/V7rr6ndct5SEmVes1pwna5Q74
-	mZ61P8ptCXD2S19glPTl4fr3J7Ttwxgua8617TyWzI1v7J4hECvioIsi7Sa0gYdn5x3tXIpdSIS
-	RzTzrHdrK/yup2qeEYIMLBH+nQWgW2YiHNOjOnAwPZZctd3P4Bf2g6KJZtxl0NmPMcsvd5FpMfT
-	P6axk0NSGz7tVxwx8H2HBjYROMcHPWUZFWpEkltMKPrF7dK57M6XfbB1aMjXnzXuTu6yhVMtGMo
-	giL4BSQI0JEpLdHmfJPgDLTDkZJsS2vb/Rh+9IXAJnGRMfFxyb7VXHusOfivClyrX4tOmxSjxYy
-	RBa/qJaEwgORH8p/AjaPj0W1qn0SQZS2ujCtcuA==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--19.987100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 6A074A2B9F64AA60FDDFB2D755D15C379843814E42F72FF3BAA9532B519A11902000:8
 
+Adhere to Linux kernel coding style
 
+Reported by checkpatch:
 
-On 7/25/24 18:34, Chen-Yu Tsai wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> Hi,
-> 
-> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
->>
->> Currently if the xhci1 controller happens to probe before the pcie1
->> controller then it fails with the following errors:
->>
->> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
->> xhci-mtk 11290000.usb: can't setup: -110
->> xhci-mtk: probe of 11290000.usb failed with error -110
->>
->> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
->> clock, although exactly why this pcie clock is needed for the usb
->> controller is still unknown. Add the clock to the xhci1 controller so it
->> always probes successfully and use a placeholder clock name for it.
->>
->> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
->> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
->> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> So I asked MediaTek about this, and it seems the correct thing to do is
-> disable USB 3 on this host controller using the following snippet. The
-> snippet is copy-pasted from our issue tracker and won't apply directly.
-> 
-> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
-> is used only for USB 2.0 on an M.2 slot.
-> 
-> 
-> ChenYu
-> 
-> index 8b7307cdefc6..2dac9f706a58
-> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> @@ -1447,6 +1447,7 @@
->                                        "xhci_ck";
->                          mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->                          wakeup-source;
-> +                       mediatek,u3p-dis-msk = <0x1>;
->                          status = "disabled";
->                  };
+WARNING: Unnecessary ftrace-like logging - prefer using ftrace
 
-If this is the other final solution, please help to add it per-board 
-basis dts.
-mt8395-genio-1200-evk indeed uses USB3 XHCI function for this port.
-https://mediatek.gitlab.io/atio/doc/aiot-dev-guide/master_images/hw_evk_g1200-evk_ports.png.
-You can see a USB3 port at the left bottom in this picture.
-Otherwise, we need to check if it is possible to override
-mediatek,u3p-dis-msk = <0x1> with <0x0>;
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/staging/fbtft/fb_ili9320.c  | 2 --
+ drivers/staging/fbtft/fb_ra8875.c   | 7 -------
+ drivers/staging/fbtft/fb_sh1106.c   | 3 ---
+ drivers/staging/fbtft/fb_ssd1289.c  | 3 ---
+ drivers/staging/fbtft/fb_ssd1306.c  | 3 ---
+ drivers/staging/fbtft/fb_ssd1325.c  | 9 ---------
+ drivers/staging/fbtft/fb_ssd1331.c  | 2 --
+ drivers/staging/fbtft/fb_ssd1351.c  | 3 ---
+ drivers/staging/fbtft/fb_uc1611.c   | 3 ---
+ drivers/staging/fbtft/fbtft-bus.c   | 9 ---------
+ drivers/staging/fbtft/fbtft-core.c  | 7 -------
+ drivers/staging/fbtft/fbtft-sysfs.c | 4 ----
+ 12 files changed, 55 deletions(-)
 
+diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
+index 0be7c2d51548..050fc2367c12 100644
+--- a/drivers/staging/fbtft/fb_ili9320.c
++++ b/drivers/staging/fbtft/fb_ili9320.c
+@@ -35,8 +35,6 @@ static int init_display(struct fbtft_par *par)
+ 	par->fbtftops.reset(par);
+ 
+ 	devcode = read_devicecode(par);
+-	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "Device code: 0x%04X\n",
+-		      devcode);
+ 	if ((devcode != 0x0000) && (devcode != 0x9320))
+ 		dev_warn(par->info->device,
+ 			 "Unrecognized Device code: 0x%04X (expected 0x9320)\n",
+diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
+index 398bdbf53c9a..0ab1de6647d0 100644
+--- a/drivers/staging/fbtft/fb_ra8875.c
++++ b/drivers/staging/fbtft/fb_ra8875.c
+@@ -41,13 +41,6 @@ static int init_display(struct fbtft_par *par)
+ {
+ 	gpiod_set_value(par->gpio.dc, 1);
+ 
+-	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+-		      "%s()\n", __func__);
+-	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+-		      "display size %dx%d\n",
+-		par->info->var.xres,
+-		par->info->var.yres);
+-
+ 	par->fbtftops.reset(par);
+ 
+ 	if ((par->info->var.xres == 320) && (par->info->var.yres == 240)) {
+diff --git a/drivers/staging/fbtft/fb_sh1106.c b/drivers/staging/fbtft/fb_sh1106.c
+index 9685ca516a0e..e4c50c1ffed0 100644
+--- a/drivers/staging/fbtft/fb_sh1106.c
++++ b/drivers/staging/fbtft/fb_sh1106.c
+@@ -88,9 +88,6 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ 
+ static int blank(struct fbtft_par *par, bool on)
+ {
+-	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
+-		      __func__, on ? "true" : "false");
+-
+ 	write_reg(par, on ? 0xAE : 0xAF);
+ 
+ 	return 0;
+diff --git a/drivers/staging/fbtft/fb_ssd1289.c b/drivers/staging/fbtft/fb_ssd1289.c
+index f27bab38b3ec..255a6d21ca8e 100644
+--- a/drivers/staging/fbtft/fb_ssd1289.c
++++ b/drivers/staging/fbtft/fb_ssd1289.c
+@@ -93,9 +93,6 @@ static int set_var(struct fbtft_par *par)
+ {
+ 	if (par->fbtftops.init_display != init_display) {
+ 		/* don't risk messing up register 11h */
+-		fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+-			      "%s: skipping since custom init_display() is used\n",
+-			      __func__);
+ 		return 0;
+ 	}
+ 
+diff --git a/drivers/staging/fbtft/fb_ssd1306.c b/drivers/staging/fbtft/fb_ssd1306.c
+index 6cf9df579e88..478d710469b9 100644
+--- a/drivers/staging/fbtft/fb_ssd1306.c
++++ b/drivers/staging/fbtft/fb_ssd1306.c
+@@ -148,9 +148,6 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ 
+ static int blank(struct fbtft_par *par, bool on)
+ {
+-	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
+-		      __func__, on ? "true" : "false");
+-
+ 	if (on)
+ 		write_reg(par, 0xAE);
+ 	else
+diff --git a/drivers/staging/fbtft/fb_ssd1325.c b/drivers/staging/fbtft/fb_ssd1325.c
+index 796a2ac3e194..256b0b87a930 100644
+--- a/drivers/staging/fbtft/fb_ssd1325.c
++++ b/drivers/staging/fbtft/fb_ssd1325.c
+@@ -72,10 +72,6 @@ static uint8_t rgb565_to_g16(u16 pixel)
+ 
+ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ {
+-	fbtft_par_dbg(DEBUG_SET_ADDR_WIN, par,
+-		      "%s(xs=%d, ys=%d, xe=%d, ye=%d)\n", __func__, xs, ys, xe,
+-		      ye);
+-
+ 	write_reg(par, 0x75);
+ 	write_reg(par, 0x00);
+ 	write_reg(par, 0x3f);
+@@ -86,9 +82,6 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ 
+ static int blank(struct fbtft_par *par, bool on)
+ {
+-	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
+-		      __func__, on ? "true" : "false");
+-
+ 	if (on)
+ 		write_reg(par, 0xAE);
+ 	else
+@@ -109,8 +102,6 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+ 	int i;
+ 
+-	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "%s()\n", __func__);
+-
+ 	for (i = 0; i < GAMMA_LEN; i++) {
+ 		if (i > 0 && curves[i] < 1) {
+ 			dev_err(par->info->device,
+diff --git a/drivers/staging/fbtft/fb_ssd1331.c b/drivers/staging/fbtft/fb_ssd1331.c
+index ec5eced7f8cb..06b7056d6c71 100644
+--- a/drivers/staging/fbtft/fb_ssd1331.c
++++ b/drivers/staging/fbtft/fb_ssd1331.c
+@@ -167,8 +167,6 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ 
+ static int blank(struct fbtft_par *par, bool on)
+ {
+-	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
+-		      __func__, on ? "true" : "false");
+ 	if (on)
+ 		write_reg(par, 0xAE);
+ 	else
+diff --git a/drivers/staging/fbtft/fb_ssd1351.c b/drivers/staging/fbtft/fb_ssd1351.c
+index ca2cba2185ae..aa8c1ff2a13c 100644
+--- a/drivers/staging/fbtft/fb_ssd1351.c
++++ b/drivers/staging/fbtft/fb_ssd1351.c
+@@ -72,9 +72,6 @@ static int set_var(struct fbtft_par *par)
+ 
+ 	if (par->fbtftops.init_display != init_display) {
+ 		/* don't risk messing up register A0h */
+-		fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+-			      "%s: skipping since custom init_display() is used\n",
+-			       __func__);
+ 		return 0;
+ 	}
+ 
+diff --git a/drivers/staging/fbtft/fb_uc1611.c b/drivers/staging/fbtft/fb_uc1611.c
+index f61e373c75e9..ca35b386a12d 100644
+--- a/drivers/staging/fbtft/fb_uc1611.c
++++ b/drivers/staging/fbtft/fb_uc1611.c
+@@ -135,9 +135,6 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ 
+ static int blank(struct fbtft_par *par, bool on)
+ {
+-	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
+-		      __func__, on ? "true" : "false");
+-
+ 	if (on)
+ 		write_reg(par, 0xA8 | 0x00);
+ 	else
+diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
+index 3d422bc11641..30e436ff19e4 100644
+--- a/drivers/staging/fbtft/fbtft-bus.c
++++ b/drivers/staging/fbtft/fbtft-bus.c
+@@ -129,9 +129,6 @@ int fbtft_write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
+ 	int ret = 0;
+ 	size_t startbyte_size = 0;
+ 
+-	fbtft_par_dbg(DEBUG_WRITE_VMEM, par, "%s(offset=%zu, len=%zu)\n",
+-		      __func__, offset, len);
+-
+ 	remain = len / 2;
+ 	vmem16 = (u16 *)(par->info->screen_buffer + offset);
+ 
+@@ -182,9 +179,6 @@ int fbtft_write_vmem16_bus9(struct fbtft_par *par, size_t offset, size_t len)
+ 	int i;
+ 	int ret = 0;
+ 
+-	fbtft_par_dbg(DEBUG_WRITE_VMEM, par, "%s(offset=%zu, len=%zu)\n",
+-		      __func__, offset, len);
+-
+ 	if (!par->txbuf.buf) {
+ 		dev_err(par->info->device, "%s: txbuf.buf is NULL\n", __func__);
+ 		return -1;
+@@ -232,9 +226,6 @@ int fbtft_write_vmem16_bus16(struct fbtft_par *par, size_t offset, size_t len)
+ {
+ 	u16 *vmem16;
+ 
+-	fbtft_par_dbg(DEBUG_WRITE_VMEM, par, "%s(offset=%zu, len=%zu)\n",
+-		      __func__, offset, len);
+-
+ 	vmem16 = (u16 *)(par->info->screen_buffer + offset);
+ 
+ 	/* no need for buffered write with 16-bit bus */
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index 8e2fd0c0fee2..ffa524dc945e 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -215,8 +215,6 @@ static void fbtft_reset(struct fbtft_par *par)
+ 	if (!par->gpio.reset)
+ 		return;
+ 
+-	fbtft_par_dbg(DEBUG_RESET, par, "%s()\n", __func__);
+-
+ 	gpiod_set_value_cansleep(par->gpio.reset, 1);
+ 	usleep_range(20, 40);
+ 	gpiod_set_value_cansleep(par->gpio.reset, 0);
+@@ -1052,8 +1050,6 @@ static int fbtft_verify_gpios(struct fbtft_par *par)
+ 	struct fbtft_platform_data *pdata = par->pdata;
+ 	int i;
+ 
+-	fbtft_par_dbg(DEBUG_VERIFY_GPIOS, par, "%s()\n", __func__);
+-
+ 	if (pdata->display.buswidth != 9 &&  par->startbyte == 0 &&
+ 	    !par->gpio.dc) {
+ 		dev_err(par->info->device,
+@@ -1157,9 +1153,6 @@ int fbtft_probe_common(struct fbtft_display *display,
+ 	else
+ 		dev = &pdev->dev;
+ 
+-	if (unlikely(display->debug & DEBUG_DRIVER_INIT_FUNCTIONS))
+-		dev_info(dev, "%s()\n", __func__);
+-
+ 	pdata = dev->platform_data;
+ 	if (!pdata) {
+ 		pdata = fbtft_properties_read(dev);
+diff --git a/drivers/staging/fbtft/fbtft-sysfs.c b/drivers/staging/fbtft/fbtft-sysfs.c
+index 39e8d28066cb..e45c90a03a90 100644
+--- a/drivers/staging/fbtft/fbtft-sysfs.c
++++ b/drivers/staging/fbtft/fbtft-sysfs.c
+@@ -27,13 +27,9 @@ int fbtft_gamma_parse_str(struct fbtft_par *par, u32 *curves,
+ 	int curve_counter, value_counter;
+ 	int _count;
+ 
+-	fbtft_par_dbg(DEBUG_SYSFS, par, "%s() str=\n", __func__);
+-
+ 	if (!str || !curves)
+ 		return -EINVAL;
+ 
+-	fbtft_par_dbg(DEBUG_SYSFS, par, "%s\n", str);
+-
+ 	tmp = kmemdup(str, size + 1, GFP_KERNEL);
+ 	if (!tmp)
+ 		return -ENOMEM;
+-- 
+2.39.2
 
->> ---
->>  arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> index 2ee45752583c..cc5169871f1c 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
->>                                  <&topckgen CLK_TOP_SSUSB_P1_REF>,
->>                                  <&apmixedsys CLK_APMIXED_USB1PLL>,
->>                                  <&clk26m>,
->> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
->> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
->> +                                /*
->> +                                 * This clock is required due to a hardware
->> +                                 * bug. The 'frmcnt_ck' clock name is used as a
->> +                                 * placeholder.
->> +                                 */
->> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
->>                         clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
->> -                                     "xhci_ck";
->> +                                     "xhci_ck", "frmcnt_ck";
->>                         mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->>                         wakeup-source;
->>                         status = "disabled";
->>
->> ---
->> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
->> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
->>
->> Best regards,
->> --
->> Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>
->>
-> 
-
-Thanks
-Macpaul Lin
 
