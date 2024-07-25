@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-262153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB82E93C1A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:18:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DA093C1AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 438B2B22A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E95EB21BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE3A19AD52;
-	Thu, 25 Jul 2024 12:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CD119B3CA;
+	Thu, 25 Jul 2024 12:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YTBV4SFE"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sDAixSBV"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A182199E90;
-	Thu, 25 Jul 2024 12:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2001719AA7B;
+	Thu, 25 Jul 2024 12:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721909809; cv=none; b=gEXLfWjegeDPPOPQ82/DxS9pAwnwnXMTCd1HpIfiIMAhmGVXLO2ZM2yWQ9k48dL6aBdJNrF8eFiDtKwiMd9L/YKL51bUaNKcU/hz3maTgOE1RRqLyJG8SeDozl1QeYDgnhY38Nmse+3Q15vVXRK51wMORQSaFJFGpZ6w5IYvPjo=
+	t=1721909810; cv=none; b=MLFOurMLoRuwRDCJKz9CueMx+cI++JcC8u4Myy+2oZyu1YmzgtK/q2thpgJUQEBbBrkl5txJXmXNzsDTXRRhW5miHHMF9K/qSLVXyfJA78zka4IlTdZUIlyW0Z56pwD9cgG3XIaExCmjagJmT3EZA8IfVTWCrXLcgVy0w9qCJaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721909809; c=relaxed/simple;
-	bh=6HsXb7M+wbgz7I/sJCXA/59Pc0L4VBtPFzakf38tsso=;
+	s=arc-20240116; t=1721909810; c=relaxed/simple;
+	bh=/iFlJVgVNMjAyvZbdlWZH31ro/rYnKrZRjv+0TbNhEY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CDJgYKKI08K3yFalo6uzkeCsFTqjhhTDyK1fM9P9101KmHc2NIhKzYBbYBYbtoPyWfRHtjl5Ae+U7ivfohb9NwjWv7Q0/UKn6jJeyzby+Y2YzbmtxKuEcwqXIV9X8fho/NhP29kvXtf00BxlcJIiGw4Ibp1IlpTDRSR2Iw76Dxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YTBV4SFE; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=upZ+euUH4JGvtUvWEJYyyUSO2/mIldIV7sGcGoCHXqZBijCbsyFtIKFigKkE8WlRXmgu+f3HXfl+6oXpx0etQa9jxx53fRIM83u5ncsbbH/KquydoE5uoOPXMbT9+nRjXBGcIBb20hD7yYTgaD5NxQIAfyHZUoVXbEuQpw+olPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sDAixSBV; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721909807; x=1753445807;
+  t=1721909809; x=1753445809;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=6HsXb7M+wbgz7I/sJCXA/59Pc0L4VBtPFzakf38tsso=;
-  b=YTBV4SFE2Cp6K/hTOzJg3ImZDDcN98rfBLEwHg8opRzCjWzoTCc5SQR2
-   Lx+d1fwqvdnRjMicWihDnig5+bM8suiLaqr4+kauLhf2X4Y651CIVa1E6
-   fNqr3/tWkQarPiKd3+nzbhSWDqnDcRDuRXt+Xk4IZddnBFTQHSCeGahKJ
-   EFmLMkdq+JcrU7YV7J626GkmaE/gRS99jVdrARoSqTuEz6wY7Al7/48WE
-   GrAxhvYxdmyAIF2FWyLaYbvNf9+2JwxrAUjJsJo9vfRNsuOKSX5vph9Ln
-   8dgH/Qyu6u7ZyM7QC8mPLDnPPvavT/O621w5ZAh5hdJI9z1KrMvioeYqE
-   w==;
+  bh=/iFlJVgVNMjAyvZbdlWZH31ro/rYnKrZRjv+0TbNhEY=;
+  b=sDAixSBV2qDnC+1ttQdxI9DGNcEzklIk1z1HJ/A5zL9TQTSobJCCWRud
+   MolYGZOFuI7Yf8mVHSlb7bVJYQvblM04uAUUXrRmLzs+VbxgaXmQ8mWkG
+   BiCgzJnvannXjCHXVnxcegJmd6D9maxu3DoiXGMj1Zpum5BwhmR/aszmZ
+   i8st8oce+ia6hTqKmFiIPXLo97Xo+IaU11EwA3VaiR9kFEPz2WnNYDIkQ
+   sgy6HRAO5T7yPJX2wsB2yzAWjaCL+uanjAj1eGnBBb321WFot0ZdBbewl
+   adI5TJsJDxPbVG+e5RsEt7ysG0ybgD49JlkiB3S3YiwIVEDTJ5iZDLRhJ
+   g==;
 X-CSE-ConnectionGUID: 73d5wsqqRUGsXcUpyIWy1Q==
-X-CSE-MsgGUID: AXpXTgm9Q0S7uDZD5lGWEg==
+X-CSE-MsgGUID: 6l13QotSQ0m9lhZr3PAqtA==
 X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="260575366"
+   d="scan'208";a="260575367"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 05:16:46 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 25 Jul 2024 05:16:25 -0700
+ 15.1.2507.35; Thu, 25 Jul 2024 05:16:28 -0700
 Received: from ph-emdalo.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:23 -0700
+ 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:26 -0700
 From: <pierre-henry.moussay@microchip.com>
 To: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
-	<daire.mcnamara@microchip.com>, Mark Brown <broonie@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+	<daire.mcnamara@microchip.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>
 CC: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
-	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 04/17] dt-bindings: spi: add PIC64GX SPI/QSPI compatibility to MPFS SPI/QSPI bindings
-Date: Thu, 25 Jul 2024 13:15:56 +0100
-Message-ID: <20240725121609.13101-5-pierre-henry.moussay@microchip.com>
+Subject: [PATCH 05/17] dt-bindings: gpio: mpfs-gpio: Add PIC64GX GPIO compatibility
+Date: Thu, 25 Jul 2024 13:15:57 +0100
+Message-ID: <20240725121609.13101-6-pierre-henry.moussay@microchip.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
 References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
@@ -81,34 +82,47 @@ Content-Type: text/plain
 
 From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-PIC64GX SPI/QSPI are compatible with MPFS SPI/QSPI driver, we just use
-fallback mechanism
+PIC64GX GPIO is compatible with mpfs-gpio driver
 
 Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 ---
- .../devicetree/bindings/spi/microchip,mpfs-spi.yaml        | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../bindings/gpio/microchip,mpfs-gpio.yaml       | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-index 74a817cc7d94..4c9a7f1ade50 100644
---- a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-@@ -20,9 +20,14 @@ properties:
+diff --git a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
+index d61569b3f15b..fdce88374a91 100644
+--- a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
+@@ -11,10 +11,14 @@ maintainers:
+ 
+ properties:
    compatible:
-     oneOf:
-       - items:
--          - const: microchip,mpfs-qspi
-+          - enum:
-+              - microchip,mpfs-qspi
-+              - microchip,pic64gx-qspi
-           - const: microchip,coreqspi-rtl-v2
-       - const: microchip,coreqspi-rtl-v2 # FPGA QSPI
+-    items:
+-      - enum:
+-          - microchip,mpfs-gpio
+-          - microchip,coregpio-rtl-v3
++    oneOf:
 +      - items:
-+          - const: microchip,pic64gx-spi
-+          - const: microchip,mpfs-spi
-       - const: microchip,mpfs-spi
++          - const: microchip,pic64gx-gpio
++          - const: microchip,mpfs-gpio
++      - items:
++          - enum:
++              - microchip,mpfs-gpio
++              - microchip,coregpio-rtl-v3
  
    reg:
+     maxItems: 1
+@@ -69,7 +73,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: microchip,mpfs-gpio
++            enum:
++              - microchip,mpfs-gpio
++              - microchip,pic64gx-gpio
+     then:
+       required:
+         - interrupts
 -- 
 2.30.2
 
