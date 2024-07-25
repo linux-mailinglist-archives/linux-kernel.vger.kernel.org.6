@@ -1,93 +1,110 @@
-Return-Path: <linux-kernel+bounces-262446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D236393C73A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 875B293C73F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 398D4B20FA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:37:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95BBB23508
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1C819DF64;
-	Thu, 25 Jul 2024 16:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E23C19DF7D;
+	Thu, 25 Jul 2024 16:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hRg3ZDxD"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YPnlixS3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C9B19D09A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183E919D082
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721925421; cv=none; b=ZKrEq6EQRTXIRr0kVfGXjBNJuRLZPz4AIBMDyAa9Erou1kQPzAg5TyOePF4r+ud7fgV2d0tPPE6ozGId4CbI3o+LvgdAtYfpjNl410Ah6axJYBsgfGfAv1rVVwhwlfylj6Kjq6BoMYkZBKRW01r/ec/nx1rRpyJPqMETlWeNzko=
+	t=1721925514; cv=none; b=TVeSlvf9oD8O6ow1eWePM8VTaQxA+cNo2T3PKE0BdxZsWYeePvO4lNSg9JSlDLkZ0zE2fmTdFIvgy4UEyvVR7wfELv5/aMBrE2B4otKWxInjlVDq+iHoJi3VG1+RHZzNQFbcJxeidrtr4/O1W088IxDCiPri8h+2OY5R+LHeb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721925421; c=relaxed/simple;
-	bh=GwE5e5fOHu8b8BxszgA/TUe7/xBsKYj3T4zN+si4+NU=;
+	s=arc-20240116; t=1721925514; c=relaxed/simple;
+	bh=DFJqdzFltqvFCb7O3HVaF7UJ9yWxMML3AVCrY79j1ew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bM+QLg4F6VL1u1Alz8lVxd5dQprwIO1GgD+PkMJpAF8r6uIYb6UBMtnh9refXSU7oOhBCeGrojnJo1WSR+ylaRxzvSrLhHzU9K4bNEUkyDmStSeFvBNYgdfK1aY2888KYN1GWbP5vZMXc5J44Jvq4Fg9IKWK/kP2HU5yuQyg0vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hRg3ZDxD; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2b921c48so57573b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721925420; x=1722530220; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HJ+XTGjLJRBa3KHQGyhh/jsjpm3Poa2VfnAbLwWAvEA=;
-        b=hRg3ZDxD9JahA8M1dJuUZSAWVodkOnx7qeFQ5Vh8+pNnWAOc0xasHJuNdUGZcrKW09
-         I9vxcGnFTq507dpOFgVh7PAP6vwbwtZRVbd4qaSAJ3IwPEdBWdNTua1xHbeGej0Mryjm
-         1FTGvieHO+qIqw94XrH4sD962/bGhZlxSRIMPFeYnJ2Ot9C6jcdUaNMpIbhoL7Y9e4Dw
-         kDcGEZP0ZbvcI+BeddxLv2EfbHKARLYM2zI0mKoSv7T0XjU46LW1BzJX4wio9byQBJHM
-         QMLpefukPRe4xkEYIdqIyVMzXMQ+XnhWZ0/gV5ay2oDaZBZMbNh8fpLCgfVOSJFvZIIp
-         2tRw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhyRG8HhJpts9XP/kpae72Lv+c8l8BFsZhUI7AmeBm5/IVJv9F6/VLym3Rmgp663FQCALyYXOqGqXgAxmvwgYmPL/3tLql/B0/sf6cbt8yduvcY15FbXhu+G5tZM0ROr45iwSVjFeRmb629/2Xf0ID0WwdlzbzaoSoj1fzAkIzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YPnlixS3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721925512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fmhpMaKw4X5CZZDMzXoNDtyzrmJbLZhDy7YR6GMuBto=;
+	b=YPnlixS3yb0Ytg/Pj+J02qAjhMR93ouMfbmllveLSQegeYZ+4OBIK21GVHcG2eoIY0Qd6c
+	YbdyD6cv01ZYf5e50vQnGx0rQK2yclkvdzL3R32FZ9KLdbUwk16RMLcTnN8yMy0oxM5yAK
+	e8D+chMOwuFUTcnNhPsfv06pAfzCAjA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-496-_d4QCmvNPSOVldzQjzeOAg-1; Thu, 25 Jul 2024 12:38:30 -0400
+X-MC-Unique: _d4QCmvNPSOVldzQjzeOAg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4279837c024so8268185e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:38:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721925420; x=1722530220;
+        d=1e100.net; s=20230601; t=1721925509; x=1722530309;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJ+XTGjLJRBa3KHQGyhh/jsjpm3Poa2VfnAbLwWAvEA=;
-        b=ZWl4K/oU/Sav09cGI5MUTsRLprVEKOHsI8xGbalOoeiosC4/qtxAAYPDqvI+wvMwsz
-         vOwcTLBMaSka/90uMl8aKGey+/AnrZyiKWLkWs/yjfezO7GBbzutRub7UgV0rARm4dbr
-         Cn9i20ylMf906svOSisK3gDcVeypchYKzNqB6B70sARSoeVvYDXnUZZ8XLPNlPEg1eGY
-         PbOX8rdProV0YSWd6I4TO4Lf1Vlt80J1611rolaoEPecaGJ7iUPr3aKa2z/Px+L7wSbZ
-         4hmHcbWjIBR6dFInISUzOPKtIu2KfNn+Xfqi7wrbEX3gTm7Zia9NVaiQo0+YHp0I8YIx
-         DO8A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8f0SVwIVSiZ35AIQWEJzLjMfsQM4MzgwgHQE7bBPF2KVGiJTafQOZhpQnViMucgBUjTlc9GFkQRPs5e3BLcadgmBMu2siNsnMY6df
-X-Gm-Message-State: AOJu0YzbOQ0yfxsashfHKEbw6Yx6NInV8iy0GJ5QmW/cR60FPJ5oRkjz
-	pjSp2ahjrL3RUDdJs2QbXQlS6++nJ4Hh+1gYMds7XU/0kDT4j5Nip4kkOgGDQw==
-X-Google-Smtp-Source: AGHT+IHnDHZ4FE5BwkV+FrBiD204vw243eE4aD3TRokyDFJD6nu0i1kqJ4i2CTDDIzN12n7a7PZLzw==
-X-Received: by 2002:a05:6a21:3396:b0:1c0:f26e:2296 with SMTP id adf61e73a8af0-1c472c55c7emr4474790637.48.1721925419633;
-        Thu, 25 Jul 2024 09:36:59 -0700 (PDT)
-Received: from thinkpad ([220.158.156.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73eb887sm3787926a91.27.2024.07.25.09.36.55
+        bh=fmhpMaKw4X5CZZDMzXoNDtyzrmJbLZhDy7YR6GMuBto=;
+        b=Wr8qjRDflFSSznAxtIwZ8LvPQ9kHECgg8MqI/6ALEfvI7slceiI4bNgwcZiypXgMTX
+         YAvn9Ezv4jhII2zjUC/svCZDV8ushftfxaRybncdDVVYeonWyjqcDx1srnluuSem0mq/
+         U0SxjQBelhTJjNIprL8eDdDOSDwursydjtwShgOwsxbJOXIu/pzdDURTgtdtLrvUkmuU
+         0RD/CQUrbjnedBSOIjEAlJGZoC+w77cDrQ0BgUQaxYNz3BE8Y8HKuWZZdjYRwXXW4yls
+         lC6+5Ly2YQuLg4l1pKAdycaIZ9Pw/btqnJSbMyIbTjfrRER2BukUAAtzU9T3wvb1btbE
+         lguA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVdy3OTkXCD3KQGEQNZqFugjIT7DGnb1Sp0PFs8JX5aGycG+6UpwwSwHtVNJDXyXSxQt+TkaWB0ClmZchLn/Uc4Lh+Q2K5pSKR1KW1
+X-Gm-Message-State: AOJu0Yw9c5GZaLvAcyhysvVkv4luO7U9KAI4Wwvv7gJsmpcb1ghO250G
+	PVHbwmKluEyYW8/JNygWPAcv8GTnMZcYXltBi8QMjnfVBEfZIYHV4MK/8QM26l0glY5ZALbzHbb
+	JhuS0ikw7iZ/5PQEjoYWYMXbZWgvbYVtqTeaXkn//OLziOgl++zs1P5b8dl/ZaA==
+X-Received: by 2002:adf:ed47:0:b0:368:7f8f:ca72 with SMTP id ffacd0b85a97d-36b364443d0mr1823939f8f.29.1721925509558;
+        Thu, 25 Jul 2024 09:38:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVkxqW5ZWpJzphEm72RP12t9yKD8nLEmAUKvkzy8Xw/le9MV4rpuQJkrCb/1ZIHocRHb/ATg==
+X-Received: by 2002:adf:ed47:0:b0:368:7f8f:ca72 with SMTP id ffacd0b85a97d-36b364443d0mr1823895f8f.29.1721925508498;
+        Thu, 25 Jul 2024 09:38:28 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1ec:81aa:776c:8849:e578:516a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857fdesm2828283f8f.75.2024.07.25.09.38.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 09:36:59 -0700 (PDT)
-Date: Thu, 25 Jul 2024 22:06:52 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Rick Wertenbroek <rick.wertenbroek@gmail.com>,
-	rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
- address BARs in EPC
-Message-ID: <20240725163652.GD2274@thinkpad>
-References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
- <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
- <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
- <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
- <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
- <20240725053348.GN2317@thinkpad>
- <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
- <ZqJeX9D0ra2g9ifP@ryzen.lan>
+        Thu, 25 Jul 2024 09:38:27 -0700 (PDT)
+Date: Thu, 25 Jul 2024 12:38:23 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <20240725122603-mutt-send-email-mst@kernel.org>
+References: <20240725012730-mutt-send-email-mst@kernel.org>
+ <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
+ <20240725081502-mutt-send-email-mst@kernel.org>
+ <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
+ <20240725082828-mutt-send-email-mst@kernel.org>
+ <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
+ <20240725083215-mutt-send-email-mst@kernel.org>
+ <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
+ <20240725100351-mutt-send-email-mst@kernel.org>
+ <2a27205bfc61e19355d360f428a98e2338ff68c3.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,107 +114,99 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqJeX9D0ra2g9ifP@ryzen.lan>
+In-Reply-To: <2a27205bfc61e19355d360f428a98e2338ff68c3.camel@infradead.org>
 
-On Thu, Jul 25, 2024 at 04:17:03PM +0200, Niklas Cassel wrote:
-> On Thu, Jul 25, 2024 at 10:06:38AM +0200, Rick Wertenbroek wrote:
+On Thu, Jul 25, 2024 at 04:18:43PM +0100, David Woodhouse wrote:
+> On Thu, 2024-07-25 at 10:11 -0400, Michael S. Tsirkin wrote:
+> > On Thu, Jul 25, 2024 at 02:50:50PM +0100, David Woodhouse wrote:
+> > > Even if the virtio-rtc specification were official today, and I was
+> > > able to expose it via PCI, I probably wouldn't do it that way. There's
+> > > just far more in virtio-rtc than we need; the simple shared memory
+> > > region is perfectly sufficient for most needs, and especially ours.
 > > 
-> > I don't know if the EPF node in the DT is the right place for the
-> > following reasons. First, it describes the requirements of the EPF and
-> > not the restrictions imposed by the EPC (so for example one function
-> > requires the BAR to use a given physical address and this is described
-> > in the DT EPF node, but the controller could use any address, it just
-> > configures the controller to use the address the EPF wants, but in the
-> > other case (e.g., on FPGA), the EPC can only handle a BAR at a given
-> > physical address and no other address so this should be in the EPC
-> > node). Second, it is very static, so the EPC relation EPF would be
-> > bound in the DT, I prefer being able to bind-unbind from configfs so
-> > that I can make changes without reboot (e.g., alternate between two or
-> > more endpoint functions, which may have different BAR requirements and
-> > configurations).
+> > I can't stop amazon from shipping whatever in its hypervisor,
+> > I'd just like to understand this better, if there is a use-case
+> > not addressed here then we can change virtio to address it.
+> > 
+> > The rtc driver patch posted is 900 lines, yours is 700 lines, does not
+> > look like a big difference.  As for using a memory region, this is
+> > valid, but maybe rtc should be changed to do exactly that?
 > 
-> I agree that the MHI case (EPF requires a specific host address for the BAR)
-> and the FPGA case (EPC requires a specific host address for the BAR),
-> is different.
+> I'm certainly aiming for virtio-rtc to include that as an *option*,
+> because I think I don't think it makes sense for an RTC specification
+> aimed at virtual machines *not* to deal with the live migration
+> problem.
 > 
-> Right now, for EPC requirements, we have epc_features in the driver that
-> describes hardware for this EPC (e.g. fixed size BARs). Right now, I don't
-> see a reason to move this to DT (or let a DT alternative co-exist).
-> 
-> 
-> For EPF requirements, the MHI EPF driver exposes several different
-> versions (pci_epf_mhi_sa8775p, pci_epf_mhi_sdx55, pci_epf_mhi_sm8450)
-> in configfs, and each have their own specific driver data.
-> 
-> The only negative I can see with this is that it might clutter the
-> /sys/kernel/config/pci_ep/functions/ directory. Perhaps it is possible
-> to create a /sys/kernel/config/pci_ep/functions/pci_epf_mhi/ directory
-> where all the different versions reside?
-> 
-> Keeping this per-platform data in the MHI EPF driver is fine IMO.
-> 
-> If you would prefer to create a "pci_epf_mhi" generic version, that instead
-> takes this information from configfs, that would be fine too. I would also
-> be fine if you created a "pci_epf_mhi" generic version that tries to take
-> this information from device tree (as long as it is also possible to supply
-> the same information via configfs).
-> 
-> Good luck getting it accepted by the DT maintainers though. The configfs
-> interface was chosen because some developers (including Arnd Bergmann, IIRC)
-> didn't like the idea of having EPF specific information in DT.
-> 
+> AFAICT the only ways to deal with the LM problem are either to make a
+> hypercall/virtio transaction for *every* clock read which needs to be
+> accurate, or expose a memory region for the guest to do it "vDSO-
+> style".
 
-I know the story and they were right (Arnd/Rob) as the initial version tried to
-use DT for everything. But MHI is different as it is a hardware entity, which
-not only uses a fixed address, it uses a fixed region that has MHI registers in
-hw.
+virtio can support the second option, we already have
+VIRTIO_PCI_CAP_SHARED_MEMORY_CFG, I'd just use it.
 
-Anyway, I don't have a *strong* motivation to upstream the DT support for it as
-the current approach is serving good for now, unless new usecases show up.
 
+> And similarly, unless we want guest userspace to have to make a
+> *system* call every time, that memory region needs to be mappable all
+> the way to userspace.
+
+This part is classic for pci, mapping pci bar has been well
+studied.
+
+
+> The use case isn't necessarily for all users of gettimeofday(), of
+> course; this is for those applications which *need* precision time.
+> Like distributed databases which rely on timestamps for coherency, and
+> users who get fined millions of dollars when LM messes up their clocks
+> and they put wrong timestamps on financial transactions.
+
+I would however worry that with all this pass through,
+applications have to be coded to each hypervisor or even
+version of the hypervisor.
+
+I don't really know the use-case well enough - is sending
+an interrupt to linux and having linux create a device
+independent structure not workable?
+
+
+> > E.g. we can easily add a capability describing such a region.
+> > or put it in device config space.
 > 
-> > For combining pci_epf_alloc_space and pci_epc_set_bar into a single
-> > function, everyone seems to agree on this one.
+> I think it has to be memory, not config space. But yes.
+
+virtio config space, which is just a region in a BAR.
+But yes, maybe VIRTIO_PCI_CAP_SHARED_MEMORY_CFG is cleaner.
+
+> The intent is that my driver would be usable with the shared memory
+> region from a virtio-rtc device too. It'd need a tiny amount of
+> refactoring of the discovery code in vmclock_probe(), which I haven't
+> done yet as it would be premature optimisation. 
 > 
-> Indeed, but as usual, good naming is one of the hardest problems :)
+> > I mean yes, we can build a new transport for each specific need but in
+> > the end we'll get a ton of interfaces with unclear compatibility
+> > requirements.  If effort is instead spent improving common interfaces,
+> > we get consistency and everyone benefits. That's why I'm trying to
+> > understand the need here.
 > 
-
-Respectively agree with you :)
-
-> Instead of pci_epf_alloc_set_bar(), perhaps pci_epf_setup_bar() ?
-> If the EPC has a fixed address requirement, it will use that instead of
-> allocating memory.
+> It's simplicity. Because this isn't even a "transport". It's just a
+> simple breadcrumb given to the guest to tell it where the information
+> is.
+> In the fullness of time assuming this becomes part of virtio-rtc too,
+> the fact that it can *also* be discovered by ACPI is just a tiny
+> detail. And it allows hypervisors to implement it a *whole* lot more
+> simply.
 > 
-> If the EPF has a fixed address requirement, the API call will only succeed
-> if EPC does not have a fixed address requirement.
-> 
-> Perhaps EPF drivers that have a fixed address requirement could supply
-> that as a parameter to the API (and the EPC driver will fail the request
-> if it itself has fixed address requirement).
-> 
+> The addition of an ACPI method to enable the timekeeping does make it a
+> tiny bit more than a 'breadcrump', I concede — but that's still
+> basically trivial to implement. A whole lot simpler than a full virtio
+> device.
 
-I vary with you here. IMO EPF drivers have no business in knowing the BAR
-location as they are independent of controller (mostly except drivers like MHI).
-So an EPF driver should call a single API that just allocates/configures the
-BAR. For fixed address BAR, EPC core should be able to figure it out using the
-EPC features.
-
-For naming, we have 3 proposals as of now:
-
-1. pci_epf_setup_bar() - This looks good, but somewhat collides with the
-existing pci_epc_set_bar() API.
-
-2. pci_epc_alloc_set_bar() - Looks ugly, but aligns with the existing APIs.
-
-3. pci_epc_get_bar() - Also looks good, but the usage of 'get' gives the
-impression that the BAR is fetched from somewhere, which is true for fixed
-address BAR, but not for dynamic BAR.
-
-After looking at these APIs multiple times (confusing at its best), I tend to
-feel that pci_epc_get_bar() is the better of the 3.
-
-- Mani
+virtio has been developed with the painful experience that we keep
+making mistakes, or coming up with new needed features,
+and that maintaining forward and backward compatibility
+becomes a whole lot harder than it seems in the beginning.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+MST
+
 
