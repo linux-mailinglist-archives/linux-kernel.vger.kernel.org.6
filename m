@@ -1,186 +1,108 @@
-Return-Path: <linux-kernel+bounces-261910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A26393BDB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:07:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5141093BDB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F78EB20EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:07:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3051F22667
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00219173343;
-	Thu, 25 Jul 2024 08:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pfS8JL2Z"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7ED9172BD9;
+	Thu, 25 Jul 2024 08:08:36 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72653172BC9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FA249ED
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894859; cv=none; b=OnQHe6DE67k1jrgh8NVft4cJlrPl4mGB7FATqZfxW8t9bGI5vMiEzXOHdLnkjxd0D64fnKPY30reSn7B4GPGxVZCI9E1IiE78UXk0WZJdOXEEhC7C3UfX4+gAXgR7GttTtwxv/XbkExP0ERfBl9MWm1Da38VV0cO6X8PoUWuo68=
+	t=1721894916; cv=none; b=Ch7wJFB1lU/VEmXowBgbg3u/hhBDJ4WrODsuLf2rNz2AjD3jAg4aEzs1EuIPzwtnJ8gec1ie9UMg7WSDnM3V9jTAbT4eEdwq33lfYIgLNWv3CAbmw1/dg0Pok/aZlDHU/z0eJMsMrOvks0ECrnHezUgN1ffS47zutAn8K72qQDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894859; c=relaxed/simple;
-	bh=r+M3o6SVfTD1vC9T28BpdhS5PBq7BQ34eYtryUx0Hug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSgU3sWsxsrhIJEJ9lChbXamY1eUSCXskTifU62ymf94PY7e5oC3wN/++0oIyTJUrzB8R3d2gYzUaV7GWxxcrFv7SddyVxqJkKBADD7gJko9ufbw8AUe7e8HDXcSLAla/Yx54RNZeJelJHsp7X9D1+j7tiEcFsAa/D3VttYXXBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pfS8JL2Z; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so7613a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721894856; x=1722499656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gIQkCLUKnLONxhUVH4Hgod3J1H1l8mUYWFUy/48yoHk=;
-        b=pfS8JL2ZPlLyJV5nglmj8azFy5FfgUOC0YyhWnMZ4zWoLT5NmivTGQvn/csnZutggF
-         laNvy8WXY6Sw2kUF0ikg+LD10EteYOO4zB69VUB1Jo8B8MZxLwFteGIly5Fbumn23bxL
-         tZ76dKHprGpKVaoRVb1YSe1odB+kMfxrGC+8+4jMBxFQdR0OQXoWyJcYrIhb3gPed2U4
-         SDSTy8NbnmyL3QjZCfqFs0w0MdHsvtmBO+zS8y96PDhM/tsv+hhOfBKEDuw9j43WX/7S
-         DwSOuwlW/WXZMnpKqFuzoEYS8CKlmdHDfum3lpFMWHT+EQ6iYMKdsGkcvhIcOTU8fo27
-         Lgyw==
+	s=arc-20240116; t=1721894916; c=relaxed/simple;
+	bh=XeiUxrwhAvAusskCNoQclL4KC913p10E6GDjwUOn694=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SpGFcsF5gAJFV/e9l+CGQn+52s43/3CffrRs0wHYfK/J2QZJWaMpSyM3P024Zln7YneDoksGiJBLVSUd6eVbTkjSgfWzqe+UtkknoiQjZ1XqruqnlwE693sm5cQ/uyiayU9XDNPeCiBEfTLXep52iu86mteXDlPKzxVHTIhaXAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39835205d20so5560915ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721894856; x=1722499656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gIQkCLUKnLONxhUVH4Hgod3J1H1l8mUYWFUy/48yoHk=;
-        b=rXBXU9OobpbwHNc3OFBB+lJF+KI6L0XJuQKQeAW/Lw58PVsvaA2vevi5WRQkA6IKqS
-         qVDQXycxeySkv9g/YEEd1WnR5ggBzUaFG8cwtzBpdt1yU9q64lmI8wT1GAMrx8AoKbWg
-         aZwg8ZtAn8xasUhD8dFABzSSj1qkUpGphM4cKkQByFxXzoRa+p1QVJnnJFzlqKc76AEt
-         X9IQWcEkLs0lq8WpwD68ZL41RqU+d17ZNNCEQC3c07V2bz1REKoB+C9RQiI10siRCEBx
-         56EkS9Rc2Sx8nhT35YHZ5t8/zzVRhk90QDgGU9c3BV7YVobFMBEzqg+0ZB0PM26a1mZS
-         h0Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHgX2/zAE3AVAzCKXGudJdCtWAI1P5bNm0AhSQQpxZJHTZCf8820FNMDxAfC/hqJznkbwdrVZpEfhDXNCegxAjRV24PNKdg07yfMYs
-X-Gm-Message-State: AOJu0YzHzktMmDd6XG0dtN4WXvGsF5OPXFsRPFAcISrRauc/T7YwEWPF
-	RxX1tU5GQNyfG0tK59b2EVyoZsncqreRORneTE/wuk69k3wfhJ+wgUBCnaSxQ/voSWkQejS7u5q
-	MYsyKJmEgdumTH93GxQurqpCl/60RRcbaCHuTQ2ZdnB45H0qTJA==
-X-Google-Smtp-Source: AGHT+IHl0LhuIwDpRoXa6gfrudcKM9vX8uhEq/AZ3MBhrUx8F2WnDsHvrrDN5URTN7HjWmm6RbPaMKgp4O++3+UyhG0=
-X-Received: by 2002:a05:6402:2709:b0:5ac:4ce3:8f6a with SMTP id
- 4fb4d7f45d1cf-5ac4ce391edmr123068a12.6.1721894855222; Thu, 25 Jul 2024
- 01:07:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721894914; x=1722499714;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=itgpCFpt5Q9ovIgvk7WE03fAJaHAFu1VC7zt5Xy8+5A=;
+        b=tm6jkLtDl8xA1r6D/Y+JrLxEHGA4L66mWqbdC0twn62qfDC76CGhzQQdW8xlMJ1WDv
+         fRQCueCCe8j6tvqZvBjmRZ/GfPk18C0TM3tu4UhXO6/+97u4F7IPJ5r0VMoMxWShWnk1
+         nccp8xrE7IjxFmPrktnzK9n61seVwWG/hswudAdo/70K9tp53yuWfGWQjeRYJgdZU2mK
+         yocRCZoLirGYpKhzENBdemWhxv/5/5QnD+kTOd9RCO3ZE2zu5972sAF/Sj3MVXzcX810
+         54o7mPLoT/jK0VnjM7Z+ZOdaoaNEDp8lO1aWk7EzrPp2XMYyylvivYNM/cx4mHCiRReI
+         BS5A==
+X-Gm-Message-State: AOJu0YzXRjYAvs6ig09D88fFFRKDGMcCl1FOpzsNfP5XnvMbefeFvkR0
+	fhhk78SfEbP94qxY43HYTynxFzzefFPtulhPKcq/2k4Sw1nA4Eea96bOh96QdGOLSLcdMRN6upw
+	hnU+WKPGfmWhefPRzXVaTGXPCEEjTHqb6nQgahy9TzCfjgza9pC4pTrs=
+X-Google-Smtp-Source: AGHT+IFfw1x/2nBbbZukZF63h1Sg2+kpreGE8Hd/Zp0WrqWSwBFBeVXM+2RoSmc5PAmkTxWjKWKLdEXloaeoN4rpD1WV/FIZ4jtq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202407251053.618edf56-oliver.sang@intel.com>
-In-Reply-To: <202407251053.618edf56-oliver.sang@intel.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 25 Jul 2024 10:07:21 +0200
-Message-ID: <CANn89i+Bia9PdGhAVfRbbubYo37+g+ej68qp32JmU88tsLLuRQ@mail.gmail.com>
-Subject: Re: [linus:master] [tcp] 23e89e8ee7: packetdrill.packetdrill/gtests/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+X-Received: by 2002:a05:6e02:2196:b0:397:7dd7:bea5 with SMTP id
+ e9e14a558f8ab-39a23d159femr1161785ab.0.1721894914045; Thu, 25 Jul 2024
+ 01:08:34 -0700 (PDT)
+Date: Thu, 25 Jul 2024 01:08:34 -0700
+In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b14c3e061e0de63d@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 6:55=E2=80=AFAM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed "packetdrill.packetdrill/gtests/net/tcp/fastope=
-n/client/simultaneous-fast-open_ipv4-mapped-v6.fail" on:
->
-> commit: 23e89e8ee7be73e21200947885a6d3a109a2c58d ("tcp: Don't drop SYN+AC=
-K for simultaneous connect().")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      68b59730459e5d1fe4e0bbeb04ceb9df0f00227=
-0]
-> [test failed on linux-next/master 73399b58e5e5a1b28a04baf42e321cfcfc663c2=
-f]
->
-> in testcase: packetdrill
-> version: packetdrill-x86_64-31fbbb7-1_20240226
-> with following parameters:
->
->
-> compiler: gcc-13
-> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz=
- (Coffee Lake) with 32G memory
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
-> we also noticed other failed cases that can pass on parent.
->
->
-> 42ffe242860c401c 23e89e8ee7be73e21200947885a
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv4.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/client/simultaneous-fast-open_ipv6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4-mapped-v6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/basic-zero-payload_ipv4-mapped-v6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/basic-zero-payload_ipv4.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4-mapped-v6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4-mapped-v6.fail
->            :9           67%           6:6     packetdrill.packetdrill/gte=
-sts/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4.fail
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202407251053.618edf56-oliver.san=
-g@intel.com
->
->
->
-> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
-eous-fast-open.pkt (ipv6)]
->
-> ...
->
-> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
-eous-fast-open.pkt (ipv4)]
->
-> ...
->
-> FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simultan=
-eous-fast-open.pkt (ipv4-mapped-v6)]
->
-> ...
->
->
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240725/202407251053.618edf56-ol=
-iver.sang@intel.com
->
->
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-This has been discussed recently in netdev mailing list, one ACK will
-get more precise information.
+***
+
+Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+Author: lizhi.xu@windriver.com
+
+before thread stop and free gc_thread, set sbi->gc_thread to NULL, 
+and add lock for reentry f2fs_stop_gc_thread.
+
+#syz test: upstream 2c9b3512402e
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6066c6eecf41..228cad05b32b 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -203,14 +203,20 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 
+ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
++	struct f2fs_gc_kthread *gc_th;
++	static DEFINE_MUTEX(gct_mutex);
+ 
++	mutex_lock(&gct_mutex);
++	gc_th = sbi->gc_thread;
+ 	if (!gc_th)
+-		return;
++		goto unlock;
++
+ 	kthread_stop(gc_th->f2fs_gc_task);
+ 	wake_up_all(&gc_th->fggc_wq);
+-	kfree(gc_th);
+ 	sbi->gc_thread = NULL;
++	kfree(gc_th);
++unlock:
++	mutex_unlock(&gct_mutex);
+ }
+ 
+ static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
 
