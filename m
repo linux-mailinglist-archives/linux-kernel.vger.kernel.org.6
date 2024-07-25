@@ -1,85 +1,57 @@
-Return-Path: <linux-kernel+bounces-261878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA99D93BD4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A2193BD4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B722283BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94307283B5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C124B171E4B;
-	Thu, 25 Jul 2024 07:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0363F16FF4B;
+	Thu, 25 Jul 2024 07:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9J8A8X/"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dGSchshJ"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EDE3DBB7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276F93224
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721893638; cv=none; b=lPDZnGzqpu6fw/Yj2CkA/DwcSeSeiKu/0K44ZzgVAAHLZI/YLKOe2+AR20t6dE/dTX/XkCP/EgA6fY0qhFrVOIJs06HairOJXXy6yPp9SRBNbMDYEIj7Vgou0k7/+DQqbaChCEGYaTVHyuFWiGhc269OmXYjVOjuLwx+ni6lxkI=
+	t=1721893648; cv=none; b=K418ZrEeLrVnNEV49tfc3bl1YIVaHQdC0kBdCdkeGhUDzUUXw2DonjHGoFU5/vGCtRLqnaWIZOr13GXzbdHRHBHQUCQXtqzg2EfNjWanurVfoLzCDXna92Of4b2ygiqvAahTGsVWtdr+vdO+yZ+sWywnomFsnYYmCXhuG2CC2lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721893638; c=relaxed/simple;
-	bh=xbNwwU319rkoRLiF5J4L5ECjiSneLZ1X5F5cu9hErGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiqP5WgRrzQ1gpA5mf4btLxdxjxX92wMVOiu+O3Ka8A6sgEDYaGlHsFOarlNMshxtzVPHDH/Cntp6xy5+J2lYq3WUdUPV6Esv1rbezdQHOVwXVpy4/MmpIJRNJ2PhosUFhZ1Fasz/biBm65xA6Xjnq57kzqvllEkDUUQB8V7sQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9J8A8X/; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc658b6b2eso5487885ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721893636; x=1722498436; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KpBq3z07GcYsJy4O1z5Daz2Py/Pecj57NPa35Ml6XIM=;
-        b=H9J8A8X/cnLnuixq52Qq8MknbtNeTUkz7WJb0jWO3YxDu4VObkFZOEjXfrJLAwNJQH
-         CPVT2nbR4qwmUmbaUKSyGW+U/Do74/TCuLgGI9Ms67UDKS9TeWirqRFSsPcbeZpL0WjA
-         vYmNXc8JWjRibQG5Ouc8TrnSSAVTIFxb8URC3ywUP6QZGsETemQcC/XnbCvWVBgezNIE
-         zEooNUOS4v0p6gMPoYBRgPaIpeF+9oI6saRMRzf+vcrxKKiJ3qjRzw1rAzD0szAlO8sQ
-         dJjU3V0z4F4ODuplWhCFLJh9kqTNW6sBhjFEK962VLkaoHTMHWM405inUYVdcbeefNcW
-         qVxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721893636; x=1722498436;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KpBq3z07GcYsJy4O1z5Daz2Py/Pecj57NPa35Ml6XIM=;
-        b=cv3Rdyj+CsaCPsWmflvDd1xYY6joon1pFwLsp/II2UkfAXn3iKgIsI0aFUHZ7WHaLL
-         hA9XhfafG5ty0ZHhK3kPcVecFdHOMT//HbjTLVPtqx/QdpmNhBAr53XDyKjCk0KIOTbQ
-         pUHco5Sr82JzCMfNBsH8DrxNzQqY5aLlCPORUC2jfJfynvSCgU8NT1q0zp3SQt6X4iZA
-         g7O+qNEBrlEefBXO9orWdKiAQ63JjkycdYgZ2auyeBLWDcGwBz08mvQDB5LP6EomRft2
-         Fvt88xsM7jwC2M/KQZyGT5ezNj3mAhBT0KZA9brhgzGSqGN0VcEy0cDWFGdm/AsJSjV9
-         4Kig==
-X-Forwarded-Encrypted: i=1; AJvYcCXp0GnpEDNqSgHE1ekTV0Rb1e2nwYRz3n2s4lZYxlkywkUWHYyiC4tL0pn/bPDSs/966Fe5ECiNCltCTLrlxzNpV60BOQ0/gMx0ereY
-X-Gm-Message-State: AOJu0Yykv/NjqGYtsB0EV2Gxz9DqLKeXMFlEE3WabMHwUljpsOMN+dyA
-	fi3DVmtqLuZ6eLun7KhX6wZ41jX7NrbB7M9q4ydDYxqGfTitBS5MHiG15m6KVISxNgy+tktELJQ
-	=
-X-Google-Smtp-Source: AGHT+IEvPiQ4tXStL2sFA0d8J9F5uD2IHeouCkAncAwEO9kDbAu69BWI3aENx7hEAk7hZ0kx2c3RbA==
-X-Received: by 2002:a17:903:2343:b0:1fd:5e91:2b13 with SMTP id d9443c01a7336-1fed3870cdbmr20396675ad.1.1721893635894;
-        Thu, 25 Jul 2024 00:47:15 -0700 (PDT)
-Received: from thinkpad ([2409:40f4:1015:1102:1950:b07b:3704:5364])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f6dc27sm7688855ad.237.2024.07.25.00.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 00:47:15 -0700 (PDT)
-Date: Thu, 25 Jul 2024 13:17:08 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	ahalaney@redhat.com, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <20240725074708.GB2770@thinkpad>
-References: <20240724065048.285838-1-s-vadapalli@ti.com>
- <20240724161916.GG3349@thinkpad>
- <69f8c45c-29b4-4090-8034-8c5a19efa4f8@ti.com>
+	s=arc-20240116; t=1721893648; c=relaxed/simple;
+	bh=90friIihxzKBTsqDhvI/fTTRt+OmJpdawPIgELGbaME=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G+5ox1/c7N3rM0rP+iD4GpKzH0DQ7bJ1OMFUbAgAdJriioPAIPNbUq+Cd/MDsRxFJ1xNG1Zd0R4VduAHThJ5a1r4mzhevb0Pu/mr85BOXeAPZucAf6s6m+MkKqOPE7lbgluQfmuSXlsEFJPqcimlK79YdgahdaubCNNp2WRsFJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dGSchshJ; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721893643; x=1722152843;
+	bh=miXt3IUXrmvbifOm8Nduijv7QdZ3CVgFQEo0EfymG6k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=dGSchshJcFstBX2rDHy97as7r5bAMsyTwON7GxqFLBC9StlIWCYx5pn0B4enu40mb
+	 mKrb8tA/kuyS42vZjJvjMkUIMR4Cc3eTvpOmdJEer45Sx02wV9MefzXUZNmROwGB7U
+	 OnE/lo8xuLpoXt6Z4Q1ZLqa9ja84NJvIW+CpMPFS9TDDeE3SmReVqugIf8NQxW6yHp
+	 XSFd4xYOHlZcnWBaQ2+TitySvvMgFBQCahtTEwZk5XfQ74GF4tgIURrW4rqwyCStV6
+	 femjnLIOmnRFNUMeSZIepysP4dKJaqIJsBsiKFM1/8JD83ht+UpoZw/29Sk0mIh8iK
+	 NirgaJ3W9/A/g==
+Date: Thu, 25 Jul 2024 07:47:17 +0000
+To: Daniel Almeida <daniel.almeida@collabora.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 2/5] doc: rust: safety standard: add examples
+Message-ID: <37d7b08d-f37a-45ff-9993-08fa7ed87443@proton.me>
+In-Reply-To: <B0E3D539-2D29-4BB4-9CB7-98672F590A57@collabora.com>
+References: <20240717221133.459589-1-benno.lossin@proton.me> <20240717221133.459589-3-benno.lossin@proton.me> <B0E3D539-2D29-4BB4-9CB7-98672F590A57@collabora.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3da799b47d578a798619681f8a39d94fbb8240bb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,43 +59,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <69f8c45c-29b4-4090-8034-8c5a19efa4f8@ti.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 10:50:13AM +0530, Siddharth Vadapalli wrote:
-> On Wed, Jul 24, 2024 at 09:49:16PM +0530, Manivannan Sadhasivam wrote:
-> > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
-> > > Since the configuration of Legacy Interrupts (INTx) is not supported, set
-> > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
-> > >   of_irq_parse_pci: failed with rc=-22
-> > > due to the absence of Legacy Interrupts in the device-tree.
-> > > 
-> > 
-> > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq() will bail out
-> > if 'map_irq' is set to NULL.
-> 
-> While 'swizzle_irq' won't be invoked if 'map_irq' is NULL, having a
-> non-NULL 'swizzle_irq' (pci_common_swizzle in this case) with a NULL
-> 'map_irq' seems inconsistent to me though the code-path may never invoke
-> it. Wouldn't a non-NULL 'swizzle_irq' imply that Legacy Interrupts are
-> supported, while a NULL 'map_irq' indicates that they aren't? Since they
-> are always described in pairs, whether it is in the initial commit that
-> added support for the Cadence PCIe Host controller (used by pci-j721e.c):
-> https://github.com/torvalds/linux/commit/1b79c5284439
-> OR the commit which moved the shared 'map_irq' and 'swizzle_irq' defaults
-> from all the host drivers into the common 'devm_of_pci_bridge_init()'
-> function:
-> https://github.com/torvalds/linux/commit/b64aa11eb2dd
-> I have set both of them to NULL for the sake of consistency.
-> 
+On 19.07.24 18:36, Daniel Almeida wrote:
+>> On 17 Jul 2024, at 19:12, Benno Lossin <benno.lossin@proton.me> wrote:
+>> +Sound ``unsafe`` Code
+>> +---------------------
+>> +
+>> +The Importance of the API Boundary
+>> +**********************************
+>> +
+>> +Is the following API sound?::
+>> +
+>> +    fn foo(r: &mut u32) {
+>> +        let ptr: *mut u32 =3D r;
+>> +        let val;
+>> +        unsafe {
+>> +            val =3D *ptr;
+>> +            *ptr =3D 0;
+>> +        }
+>> +    }
+>> +
+>> +It better be sound, but one could argue that it is unsound, since one c=
+ould replace the ptr
+>> +initialization by ``ptr =3D core::ptr::null_mut()``::
+>> +
+>> +    fn foo(r: &mut u32) {
+>> +        let ptr: *mut u32 =3D core::ptr::null_mut();
+>> +        let val;
+>> +        unsafe {
+>> +            val =3D *ptr;
+>> +            *ptr =3D 0;
+>> +        }
+>> +    }
+>> +
+>> +But this modification is not allowed, since it goes beyond the API boun=
+dary of ``foo``. This way
+>> +any ``unsafe`` code that relies on surrounding safe code could be shown=
+ to be unsound. Instead one
+>> +should only consider safe code using the API, in this case, there is no=
+ way to make the code
+>> +incorrect, since a reference is always valid to dereference during its =
+lifetime.
+>=20
+> I find this paragraph a bit confusing. Maybe this can be clarified a bit =
+further?
 
-Since both callbacks are populated in the pci/of driver, this consistency won't
-be visible in the controller drivers. From the functionality pov, setting both
-callbacks to NULL is *not* required to disable INTx, right?
+I will try to rephrase this, tell me if it helps. When checking if an
+API is sound, you are not allowed to change the code behind the API.
+That is because `unsafe` code often relies on the surrounding safe code
+to work properly. In the example above, safe code ensures that the raw
+pointer `ptr` is valid. This is OK (and also very necessary), since we
+expect people to be *aware* of the `unsafe` block and thus more
+carefully review the changes in surrounding safe code. If you have safe
+code that only interfaces with other safe code you don't need to be this
+careful.
 
-- Mani
+Note that this heavily depends on where you put the API boundary. In our
+case, we generally have this boundary: driver code <-> `kernel` crate.
+But if your driver requires very specific helper code that does not fit
+into the `kernel` crate, then you might also have an API boundary there.
 
--- 
-மணிவண்ணன் சதாசிவம்
+If it doesn't help, then it would great to get some more detailed
+questions which part(s) you need help with.
+
+---
+Cheers,
+Benno
+
 
