@@ -1,104 +1,262 @@
-Return-Path: <linux-kernel+bounces-262613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94ED93C991
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:31:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF79393C993
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCED2824C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0F11C21F01
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FB744375;
-	Thu, 25 Jul 2024 20:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526947172F;
+	Thu, 25 Jul 2024 20:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mwh0ZV4p"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="V8brqegr"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B204405;
-	Thu, 25 Jul 2024 20:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4332623741;
+	Thu, 25 Jul 2024 20:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721939477; cv=none; b=PEvIeTAcERhY6r9hX5ZpcLeZeXPHO5c0EcK2Q6j0tW8oX+3AAr0mhV4R69JZc4QwX2AutyyEAr9d3BYCUanBBHvRcvJWM33RJbeJ/HDezk2SbCRPgIW6NBnj1NYdkq3H5JxJC2QrswsbRPA6NbCjHn7JLCKWZ85c/XyjGmDQoY0=
+	t=1721939548; cv=none; b=Zvql3kTyMZz2GkrQsdM2qSM+IFLtAdnIGaae+UT5z6lfp4JNgWJIwAMCkyGum4HwK2frHl1w0UDIzfBGu6biUz8F1vxG+V9kDEW/dBKUCNb2DEnQtKQxIPaY3ajF6k+vYd5FPCGSHxK12CG5gaK2QGve1fXkqjthYxDxfLmJzl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721939477; c=relaxed/simple;
-	bh=lfgzxkQJwbqFQ0S52vTyI2lNmUFIUL88s4fsxW/RFSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RHF6t6SIIC2r33cyeTM9GFg0HGI7gCq4Z6RCr2rTPW+4tskXzct5nycUEIPqrZn284p4J3N8d63/x3av1JFK/zPRnAC+b5yp8sf/MObOM/JIvsk5dTBtRmsJIwVFquaEmnBfqVeoYtToPgi19v+419x+c6Y0xfA07HxoC5SCxHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mwh0ZV4p; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=NVbUcWjZLcESkt7nEQzUppDtjf4hflsbCAK+Disbdno=; b=mwh0ZV4pXVPQoaP7ucclB8fLl5
-	IzmCAKSPiUbz6r9+SNgnxbGJT4xBn4HVZ9jZwb83uPlKEiiDIi47S6UCMujyOF4olhf3DQuWR1Vqo
-	9WHiA7JriavcXKWeYEZFu1/9cEsJ3IGg42tbZdvGQIyjq6T+2A/rNHPfVGvUCnHy9FNNGe5Cd6jgK
-	oElNWq+K66uazDRlw9A2ZYYRNFuEPxK8aMgpmh8DLA4PpIALqlDjQNIkPs4k47/leUygGyzgEO7vl
-	gUPmpZLHjs0FjI8toCImFxfQrG5NnKqiI22yX2Lm0P2d8iQY8YZJpOiE0hbugIxIS8ui+qSOYLEsS
-	/knIrBlw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sX57L-000000022kC-2TEm;
-	Thu, 25 Jul 2024 20:31:15 +0000
-Message-ID: <55d1afd3-8ac5-4674-a8f6-e5bfc8a72f93@infradead.org>
-Date: Thu, 25 Jul 2024 13:31:15 -0700
+	s=arc-20240116; t=1721939548; c=relaxed/simple;
+	bh=sIObVfwo78nXmq5CgmvLuWxkp1dZMcbvcPF1Fc5edAI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lykd6jqyq9YntHTx40znGzoY5ZO+RVMC7G6xygQd4YSHb/LBzT3lKR+bgZcUSq4KcjhUf0R/ElvzMJZSGOi8xFyoYCie6p9SnlT1f26iK60/ZxatFzV+r8EJK+ut+qk73RvTa87l0OjsPIlSWtQEKNfMTmdlt1ZP3FLnOlZfuRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=V8brqegr; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721939538; x=1722198738;
+	bh=m8zYI59YSqvAJZYI6Q+xN9mUEDVfcCsuZdcvq0LILCk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=V8brqegr1YJtrnJG4e0s7oXNS2iitU8A4HqgEaC1Po/z3e9fmv0EctnTw7MyLmCcY
+	 VdyzK9M6S0E704wUV/hWZFfEuOV+80hUZCO5c9yc6UwnGqYY1B4JU52g5OQv4jHwJi
+	 Vb9O5CCtrUMi2DOCwi5zceNHdMZJM1BjqR3cHgfg/8p6XH46hFyETETYCad6+FDB5Z
+	 Fi1reB59T0jQ/OrMP1O6KHYRSilaEKdwH+wBDamXjDebRETVApya7/B67DGcz0zu2v
+	 1uGnYYDyWfMkBXaE4RBL0m0ZlnNo6oP2EcRvxGfntoflU2LBcIFybLk878mV3OwHkB
+	 ddYsNgnMvnfXA==
+Date: Thu, 25 Jul 2024 20:32:10 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Jonathan Corbet <corbet@lwn.net>, Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
+Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
+Message-ID: <ba35b142-a5ad-454f-8ed8-216bc6cf4d9c@proton.me>
+In-Reply-To: <ZqKwQ4krNB1WjSu5@boqun-archlinux>
+References: <20240710032447.2161189-1-boqun.feng@gmail.com> <ef9c98ea-b8ce-4017-9db8-177731996513@proton.me> <ZqKwQ4krNB1WjSu5@boqun-archlinux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3e09d934b99928e7759e1b4259e570b07c6f8c42
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/fs/9p: Expand goo.gl link
-To: linux@treblig.org, ericvh@kernel.org, lucho@ionkov.net
-Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240725180041.80862-1-linux@treblig.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240725180041.80862-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 25.07.24 22:06, Boqun Feng wrote:
+> Hi Benno,
+>=20
+> Thanks for taking a look.
+>=20
+> On Thu, Jul 25, 2024 at 06:51:56PM +0000, Benno Lossin wrote:
+>> On 10.07.24 05:24, Boqun Feng wrote:
+>>> As the usage of `ARef` and `AlwaysRefCounted` is growing, it makes sens=
+e
+>>> to add explanation of the "ARef pattern" to cover the most "DO" and "DO
+>>> NOT" cases when wrapping a self-refcounted C type.
+>>>
+>>> Hence an "ARef pattern" section is added in the documentation of `ARef`=
+.
+>>>
+>>> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+>>> ---
+>>> This is motivated by:
+>>>
+>>> =09https://lore.kernel.org/rust-for-linux/20240705110228.qqhhynbwwuwpcd=
+eo@vireshk-i7/
+>>>
+>>>  rust/kernel/types.rs | 156 +++++++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 156 insertions(+)
+>>>
+>>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>>> index bd189d646adb..70fdc780882e 100644
+>>> --- a/rust/kernel/types.rs
+>>> +++ b/rust/kernel/types.rs
+>>> @@ -329,6 +329,162 @@ pub unsafe trait AlwaysRefCounted {
+>>>  ///
+>>>  /// The pointer stored in `ptr` is non-null and valid for the lifetime=
+ of the [`ARef`] instance. In
+>>>  /// particular, the [`ARef`] instance owns an increment on the underly=
+ing object's reference count.
+>>> +///
+>>> +/// # [`ARef`] pattern
+>>> +///
+>>> +/// "[`ARef`] pattern" is preferred when wrapping a C struct which has=
+ its own refcounting
+>>
+>> I would have written "[...] struct which is reference-counted, because
+>> [...]", is there a specific reason you wrote "its own"?
+>>
+>=20
+> "its own" indicates the reference counters are inside the object (i.e.
+> self refcounted), it's different than `Arc<T>` where the reference
+> counters are "attached" to `T`. Your version looks good to me as well.
 
+I thought about that as well, but the paragraph above talks about a C
+struct, so what is meant with "its own" there?
 
-On 7/25/24 11:00 AM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> The goo.gl URL shortener is deprecated and is due to stop
-> expanding existing links in 2025.
-> 
-> The old goo.gl link in the 9p docs doesn't work anyway,
-> replace it by a kernel.org link suggested by Randy instead.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>>> +/// mechanism, because it decouples the operations on the object itsel=
+f (usually via a `&Foo`) vs the
+>>> +/// operations on a pointer to the object (usually via an `ARef<Foo>`)=
+. For example, given a `struct
+>>
+>> Not exactly sure I understand your point here, what exactly is the
+>> advantage of decoupling the operations?
+>> In my mind the following points are the advantages of using `ARef`:
+>> (1) prevents having to implement multiple abstractions for a single C
+>>     object: say there is a `struct foo` that is both used via reference
+>>     counting and by-value on the stack. Without `ARef`, we would have to
+>>     write two abstractions, one for each use-case. With `ARef`, we can
+>>     have one `Foo` that can be wrapped with `ARef` to represent a
+>>     reference-counted object.
+>> (2) `ARef<T>` always represents a reference counted object, so it helps
+>>     with understanding the code. If you read `Foo`, you cannot be sure
+>>     if it is heap or stack allocated.
+>> (3) generalizes common code of reference-counted objects (ie avoiding
+>>     code duplication) and concentration of `unsafe` code.
+>>
+>> In my opinion (1) is the most important, then (2). And (3) is a nice
+>> bonus. If you agree with the list above (maybe you also have additional
+>> advantages of `ARef`?) then it would be great if you could also add them
+>> somewhere here.
+>>
+>=20
+> Basically to me, the advantages are mostly (1) and (2) in your list,
+> thank you for the list. And I did try to use an example (below) to
+> explain these, because I felt an example of the bad cases is
+> straightforward.
+>=20
+> I will add your list here, because although an example may be
+> straightforward of reading, a list of advantages are better for
+> references. Again, thanks a lot!
+>=20
+>>> +/// foo` defined in C, which has its own refcounting operations `get_f=
+oo()` and `put_foo()`. Without
+>>> +/// "[`ARef`] pattern", i.e. **bad case**:
+>>
+>> Instead of "bad case" I would have written "i.e. you want to avoid this:=
+".
+>>
+>=20
+> I'm OK with your version, but for my personal interest, why? ;-)
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+I felt like "bad case" did not "flow" right when reading and I also
+think that "you want to avoid this" sounds more polite :)
 
-Thanks.
+>>> +///
+>>> +/// ```ignore
+>>> +/// pub struct Foo(NonNull<foo>);
+>>> +///
+>>> +/// impl Foo {
+>>> +///     // An operation on the pointer.
+>>> +///     pub unsafe fn from_ptr(ptr: *mut foo) -> Self {
+>>> +///         // Note that whether `get_foo()` is needed here depends on=
+ the exact semantics of
+>>> +///         // `from_ptr()`: is it creating a new reference, or it con=
+tinues using the caller's
+>>> +///         // reference?
+>>> +///         unsafe { get_foo(ptr); }
+>>> +///
+>>> +///         unsafe { Foo(NonNull::new_unchecked(foo)) }
+>>> +///     }
+>>> +///
+>>> +///     // An operation on the object.
+>>> +///     pub fn get_bar(&self) -> Bar {
+>>> +///         unsafe { (*foo.0.as_ptr()).bar }
+>>> +///     }
+>>> +/// }
+>>> +///
+>>> +/// // Plus `impl Clone` and `impl Drop` are also needed to implement =
+manually.
+>>> +/// impl Clone for Foo {
+>>> +///     fn clone(&self) -> Self {
+>>> +///         unsafe { get_foo(self.0.as_ptr()); }
+>>> +///
+>>> +///         Foo(self.0)
+>>> +///     }
+>>> +/// }
+>>> +///
+>>> +/// impl Drop for Foo {
+>>> +///     fn drop(&mut self) {
+>>> +///         unsafe { put_foo(self.0.as_ptr()); }
+>>> +///     }
+>>> +/// }
+>>> +/// ```
+>>> +///
+>>> +/// In this case, it's hard to tell whether `Foo` represent an object =
+of `foo` or a pointer to
+>>> +/// `foo`.
+>>> +///
+>>> +/// However, if using [`ARef`] pattern, `foo` can be wrapped as follow=
+:
+>>> +///
+>>> +/// ```ignore
+>>> +/// /// Note: `Opaque` is needed in most cases since there usually exi=
+st C operations on
+>>
+>> I would disagree for the reason that `Opaque` is needed. You need it if
+>> the `foo` eg contains a bool, since C might just write a nonsense
+>> integer which would then result in immediate UB in Rust.
+>> Other reasons might be that certain bytes of `foo` are written to by
+>> other threads, even though on the Rust side we have `&mut Foo` (eg a
+>> `mutex`).
+>>
+>=20
+> hmm.. "since there usually exist C operations on ..." include these two
+> cases you mentioned, no? Plus, the reference counters themselves are not
+> marked as atomic at the moment, so without `Opaque`, we also have UB
+> because of the reference counters. I was trying to summarize all these
+> as "C operations on ...", maybe I should say "concurrent C operations on
+> ..."? I am trying to be concise here since it's a comment inside a
+> comment ;-)
 
-> ---
->  Documentation/filesystems/9p.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-> index 1e0e0bb6fdf9..d270a0aa8d55 100644
-> --- a/Documentation/filesystems/9p.rst
-> +++ b/Documentation/filesystems/9p.rst
-> @@ -31,7 +31,7 @@ Other applications are described in the following papers:
->  	* PROSE I/O: Using 9p to enable Application Partitions
->  	  http://plan9.escet.urjc.es/iwp9/cready/PROSE_iwp9_2006.pdf
->  	* VirtFS: A Virtualization Aware File System pass-through
-> -	  http://goo.gl/3WPDg
-> +	  https://kernel.org/doc/ols/2010/ols2010-pages-109-120.pdf
->  
->  Usage
->  =====
+Ah that is your definition of "C operations", I interpreted it as "there
+are functions that take `struct foo *`". So maybe it would be good to
+spell out exactly why `Opaque` might be needed.
+I think its fine to be verbose here.
 
--- 
-~Randy
+---
+Cheers,
+Benno
+
+>>> +/// /// `struct foo *`, and `#[repr(transparent)]` is needed for the s=
+afety of converting a `*mut
+>>> +/// /// foo` to a `*mut Foo`
+>>> +/// #[repr(transparent)]
+>>> +/// pub struct Foo(Opaque<foo>);
+>>> +///
+>>> +/// impl Foo {
+>>> +///     pub fn get_bar(&self) -> Bar {
+>>> +///         // SAFETY: `self.0.get()` is a valid pointer.
+>>> +///         //
+>>> +///         // Note: Usually extra safety comments are needed here to =
+explain why accessing `.bar`
+>>> +///         // doesn't race with C side. Most cases are either calling=
+ a C function, which has its
+>>> +///         // own concurrent access protection, or holding a lock.
+>>> +///         unsafe { (*self.0.get()).bar }
+>>> +///     }
+>>> +/// }
+>>> +/// ```
+>>> +///
+>>> +/// ## Avoid `impl AlwaysRefCounted` if unnecesarry
+
 
