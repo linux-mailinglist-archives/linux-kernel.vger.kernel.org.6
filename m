@@ -1,185 +1,175 @@
-Return-Path: <linux-kernel+bounces-262212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD3293C28B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179B893C28D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5821C20EDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647D7B2206A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A907519AD7E;
-	Thu, 25 Jul 2024 12:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BC519AD8C;
+	Thu, 25 Jul 2024 12:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kKGxnarw"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="t7Vctf4t"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2026.outbound.protection.outlook.com [40.92.102.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28F5199246
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912330; cv=none; b=GbDpY9FrmStkJnJQfU4kU/8dg0Oola76diUTb0tA9kp9Kb3BrRYTqv8Nhzt+V1YzKjJ31WxRfzNoLt4LTM2m01jJhDTbYBs3RUVRSf+vz11Pyc2XOAmA71JR4A81i6Hw5ahdcOr1iL7XJxB5/tNlUg3uftcErCKT8A+6x2yrlI4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912330; c=relaxed/simple;
-	bh=ol9QeSXj3jLXnW607BTnItEsLO3rwJkVUILiSBWncic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lF8YE59P0xbj14CuLHTmRHAGBZga97ipBvNYPFjP8vG71V8PiC9LZVnSZVSYsJblDo3cMk5R522CBaTVdqr21CnH5SZNPkhCdeOALpZNuIYY7puk4aYo7nkJlmeorUx+nRnNvBe4PCuqggELax04m4XiH50x+07IbrRec/LNUmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kKGxnarw; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d6f4714bso54066285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1721912327; x=1722517127; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XTnt44Tc3tOs5dIbjDK1ckNp4sIhauYdQ2vBo3NA//A=;
-        b=kKGxnarwUMpBrhs6aIesz/pp4+tN4k8ZQu8H/prFEs+Yeu0kCk5MgnuRzVPtu8zK2B
-         EPc5Nb8djcKfJN/UVe1E9kJ7cwC+Xaisv5gy6aEBa/UqyX165XZ9JBLnakTtwYmXfB0w
-         zgK2jcfwuvS3K6Ohvqrh/7WWaX2L3nWwHVVpgSUQl01aFlCjDo0nv3ea60jd97zBxYou
-         QqM+azz8Iieb1PHdCnBqqpm8PME/c72yJlqSYomQPnAzIIe2mGl9XEviD3LD2L+Xzlzm
-         hzBh9kzwnARtZsLs/XHluBl+B4TyOh5yloi1P1wUZwGuG5wtbWeGw6RWTzrZdyo0mvpW
-         65Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721912327; x=1722517127;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XTnt44Tc3tOs5dIbjDK1ckNp4sIhauYdQ2vBo3NA//A=;
-        b=GzRJzIHO76x7UuDSN7W1C7g48BE78+TiKXIn7G0jbvvBCSIZeJDv02PXoEhVuq3nJD
-         EHQDJyhzREg8m/6Zs5fIHIP9Ap7h/0PeznIhH9WoN/MwibFH5/bm0oAiUQBl3wl6u48i
-         gY6urYTo15739zb7svj43MHrQApnc84ol2tPVJ1Xs0ZpbWeRf/p+QuR0Dya5rBEXkXFX
-         YTazLHi4zvx2MP3oifX9zV0onjAF32DDfFfrLx/LKzrG+qr8F4DwpQX43i3sQjYI+rDO
-         5ZyXdvq13IDZStWnNS0U9Tb6pH2/boKW9kYcseu8ENc2Tw8UiIeQ/oZG8LBAQRYFjnQB
-         UkHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7kbQIAhFZ6mEVNpgwce8mjObmR5Qp2dhCaekY5MhGbjN+KKODYgPv1zXu1HcQ2huuu1+rLvxybaPm3Jccei4QXjTlA+9sYR7rTOSk
-X-Gm-Message-State: AOJu0YxI2fZ5QZnz7G8yH5E32S7mmkX6UyN49Kps8P/Nkj8dc3i5tr6w
-	tNWo3MOLqk+WRuQkd59q4ABeuS9sk4EmJ29HzQTansIrqD5Iquu4j+3JklBs06g=
-X-Google-Smtp-Source: AGHT+IHx9rnGlQN50s/n7MK8EdztTlSHMdKXKuhSXvi0+wTmEqSX5ZDNnlHTYeBtpQqod+69XKwLNw==
-X-Received: by 2002:a05:620a:28cd:b0:79b:b571:4c06 with SMTP id af79cd13be357-7a1d45bb73emr455622385a.6.1721912327510;
-        Thu, 25 Jul 2024 05:58:47 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b6030sm79668485a.52.2024.07.25.05.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 05:58:47 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sWy3R-00Haxy-Ku;
-	Thu, 25 Jul 2024 09:58:45 -0300
-Date: Thu, 25 Jul 2024 09:58:45 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Will Deacon <will@kernel.org>, Kunkun Jiang <jiangkunkun@huawei.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"tangnianyao@huawei.com" <tangnianyao@huawei.com>
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Message-ID: <20240725125845.GA3030761@ziepe.ca>
-References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
- <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
- <20240724102417.GA27376@willie-the-truck>
- <20240724130320.GO14050@ziepe.ca>
- <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3989D19AD56;
+	Thu, 25 Jul 2024 12:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721912349; cv=fail; b=lY/RvZkYdeVAef6v4Q3P0fj2m0/XsgaOnDPk1eoz/5uy9bz9AB7z9DM8cjwcmDYiHaH/tQdwHKNrS4RzNvDAxCySWjg7rQPXJYpzwQ93bkcBIcZJ4Bv2upj505y5WFNz1lhZJF/2AAhp6MttvB7EP6TunumHZ1hSQFKp6IJ2EDQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721912349; c=relaxed/simple;
+	bh=6KyepsanqFUstc++bUcPHtBs4Ebw3PlVVJeduZxIS6Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Aq6d54kGpmdyDQJYfC9nP0kdRKpiyR99XwNFl32Cmv2KtLcYu6rZLipgZyRl5FoPCvza9puHKleg9+uHNh2UZXgyn8QRDpLPsx6DD3ffc2+p7Gih7XaRU8e+19oll+RFb8PCZ6m1rc5vhEiMkLE9cSIKceh1p94XZWKWcAOM5kE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=t7Vctf4t; arc=fail smtp.client-ip=40.92.102.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UbTFxzXS8J5XX0w91f+w2GOG1id2B6bfZAkjRpsDUDqGkjcZLfitx5PZJ0evYgEORPJHebVk7dElTKBZ5unXGng338kK+10zHgS1wmURD+2sAJMGtqmnpaPZOtXSE55oaTVwmT9A75U1Ax9+OMpqr0g4jNFECAPv5k6J9m03YmDbpxGyjckoFwYddMHOJKjFZ+tbR6f4AALU+D/h+OU+7nfZc2FRGOUInXkYGXFeHN6wffCbvCmnBDdS/Hffrl177IURwRsCczvxxTKDXE2QSexLmEe39AdupCQeoQ06MS382kDwmHHqvuotnDgL/kgLrJGoBb7r6u524QI8A9clXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6KyepsanqFUstc++bUcPHtBs4Ebw3PlVVJeduZxIS6Q=;
+ b=YaSK75nhtJdmB9leTqZtOLpmj3ofbBfOogcx44O+VdmlogcBvJd0HgdF6XNz69ZTbqqv8GQSA5v65GOUp51SxHJma5QZd4ZArGfEvM4hzvOL3ZbUZIQKVCg8ixorvk1O1AHkCXv0rSS7UiIaqfhnHIN9OpXwguWH2wgFYo0Pszq3vBku833e2bQ2ipiyfdgvelLI99C7ubBoK8AcMWjleOkegZF9gQZjMmv9ksWi2RnfoNwzy9idz8uox8qcuDd7FNWBM0pr0uXaYeG5xmTi/n58Hstzcmwf1ZDx7ieuiU7ea4dTzXvExqvmcTOeQKgg3mOT0gEmdhYfBG6fDitqZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6KyepsanqFUstc++bUcPHtBs4Ebw3PlVVJeduZxIS6Q=;
+ b=t7Vctf4t2aFOSV7oYDukOQajv1UVdeQq62ivoyspJ9Sdxy2vUUC9MoqsQZCFdGvvXdfqBHrrBMnpqcU2qdMqAJx7slQnmqwpLT1acPruKA9XuIskAG4+mwMf/oxNmV+beAOmSx74PU0TDXg2uWw2YBYHhRrYGov0CjoztCVj2kK9cA7WvHxFQfYi5QDmLitob4uSxNhAujCzqHwj9VkHf5gF+HVpmm6xtB05DCAIa2722Sjx04v9WU04vDfUbordZLSfzktb3PW2hXSTjpnd8xxMiif6k0h2XZYxbcp2uNJMezb9OyOZE0tqtJw+FQ/TfCX1QbSRP25QrUFwpp0U8w==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN2P287MB0982.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:133::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.28; Thu, 25 Jul 2024 12:59:03 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7784.017; Thu, 25 Jul 2024
+ 12:59:03 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Lukas Wunner <lukas@wunner.de>, "linux-efi@vger.kernel.org"
+	<linux-efi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Kerem
+ Karabay <kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Index:
+ AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0gBjw9fOAACgFAIAJQwrwgAGLugCAAAc4MYAAAVwAgAFSOACAAASelA==
+Date: Thu, 25 Jul 2024 12:58:57 +0000
+Message-ID:
+ <MA0P287MB0217EBE3FCC38F26736A82BFB8AB2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <20240701140940.2340297-4-ardb+git@google.com>
+ <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <ZpgUVjjj3naBGtfO@wunner.de>
+ <MA0P287MB02178F503AA69E1F570E9753B8A92@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <ZqElRH38f_XV3fKK@wunner.de>
+ <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <ZqEsdkVvwsq-CgeB@wunner.de>
+ <CAMj1kXFRbncyRRxMKAbZDzZDFNSzm3Xq0CU918iXiPEZfkTmYA@mail.gmail.com>
+In-Reply-To:
+ <CAMj1kXFRbncyRRxMKAbZDzZDFNSzm3Xq0CU918iXiPEZfkTmYA@mail.gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [AwE2QAZYsRnn3tlwvZVPZjdfsiFntyy8HG66Mshh/w9ZYqj9chLa3Zkr4sDLEwpLOuYfnQpNlsE=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0982:EE_
+x-ms-office365-filtering-correlation-id: b36ffb85-8cd9-44e4-eb25-08dcaca98be6
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|461199028|8060799006|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ 6BokFQ2YmCON86aL3JvTLNmKmFUfL5EmACZC8VfqSfLVBNZZZPENUxjIrzC1uth0s3GD7e6aiJaahQNKEDGqTFLXeNFAhmZ+rRBh9IAx03AA+ivWuKo15w2Pn1+g3C3d4S8UkWHl7f84xEcKqOCxLR+EcY99QbfyOAPel7NACdA+Xkfdv2tQ6sxDLBrJbgxgs3TQPlWZqSAtndrp2duF4ev1hZKZVoHF14XQOUXhLqTXI+sXvyJEfAP2ivJeAyPCy7KdCUEYy9MbknABibu+EnS1QOktn96ZHjsJhkNOy27DRV4oTWQ4uvON14WJcjZrR4QvvURGdjYP6JTvx67OhBGmKe+09RblzQ/WUYYOEnZQLCxdpd+pRRfwNL6cgCgDiwPmLb9hQ9jMr5Q+rmfYjUZAXsimU736X0NPCGAdjNAmUAjHWlCaXsV2cKOcKF7v7TdkWJ1kkbxdSTDaMLRglti7bxo+eacnd+SnFTdN/rUvVg5DyEfC5nSbkxAPmo7ILdDmQUHYe4idrf419wVmMNpNOBWHIQLGAJ+7pneBJNQzofpf+Cbb9nxYqFqZYVO2y80r14DesNjZ6ZX1bK+/uIpBCsHP0B9NnuUQ8AhFLI2NW7+7gidxegA7F4ZSjigKZTO67ChW+HzO0WYDmnaWNA==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VVB3SHBmLzBVWDV0dVZaRW5HNmdsMm1SdGlCOTBha2xTajdTMVN5VVhnSnJR?=
+ =?utf-8?B?aTFRZVpxejRreWVGV3BFSmRvdlpzSEcxVm9SVTNKRHQ5U2xzREVHT3BUcjNK?=
+ =?utf-8?B?V0NqSDVWWElRNXJyWWVEOVd3OVFicERJQkRkNTczOGd1ejczMk44cnkxMldl?=
+ =?utf-8?B?VmwwYWdLZjZaY01SbitZaHlRU0lyZ0VTZFhlVjlONU1xVUNwWU5TSkdZbzRL?=
+ =?utf-8?B?dVV4UnYxUG9UMGNBN1IyZjNnRU9Gc0pFRXpsZGpkNHlqb0FwazVpejBtMHpJ?=
+ =?utf-8?B?UnozdDBDM1NxeUJTSmQyVUczbjk1ZzRmaGE1b1plcFo5Ly80ZUxkbmxab3Rv?=
+ =?utf-8?B?MWhEbjRFWndiOFE2MnBhVzgwa2hOMlNIZjRjcGlzb2MwUzBwWDhzTy8yYzRX?=
+ =?utf-8?B?cXRsQUhrcUdUditjN1g4T284aElXdk52NjJqMmRZNHlQb1ZLa2VpQ2xkaU13?=
+ =?utf-8?B?c3BnVzNnSHFNc0puZmZ3b1RIN0xVcGQ4VmlFSHpMdHY4SVIzQm9HWm5jcVdK?=
+ =?utf-8?B?ZEpGU051UUgyd3ZFWmtCTGpqclR0cVQwbHJ5V3lOR3I4YVZQV2Jha2ZKb2I0?=
+ =?utf-8?B?UnNoSkQ4TFM3TndCVEs1U2dLcEhWQlFzcHBPNkxYU3llZTUrbnVNdW95Q25G?=
+ =?utf-8?B?UUdoQ0lOMHJ2d2VuNFZDcmxONzhPZjdlK1podnQ4VGlqckcwRlRCRUJXUzJB?=
+ =?utf-8?B?MHYzQkVvdDRScFVHTSt6dkx6QzJJekV4ci9tbTVMbU5mQk5VeWpxS2lpRTFt?=
+ =?utf-8?B?aDRSNDRaU0l2V3dlUmVjdUVOQzIxM00wMlg3cVMwZUhBbmxEdXQ5V2FzaVE0?=
+ =?utf-8?B?SklEbFZXSUlxd1QvbTcwTzJyQmVxNXZQU2lER0R3UmdKc1RJZVFVR0Vqa1E0?=
+ =?utf-8?B?dUJ1am9KSysvQlFjZEIrcWRNUEFOaHc2MVpuMGMyQnFYZlFKMWhGVGhSQkhu?=
+ =?utf-8?B?Z25hT0pFZzRvQmxLc01ZdG5maVA0dTNmRWYyMlZsbWlqNHJLTWdvZmVCTjZI?=
+ =?utf-8?B?dks2aVZhWDFwNmNQeXVLUnJiMkFPb3pyV1MrRHdxREFEQ0ZNWnhKZ2gzaWFB?=
+ =?utf-8?B?Zlg1QkRpRUhYb2tWdi9jbUc4TTMrZ052ZmhvUzU3ZGhBRUVtOENkeXNVK2l6?=
+ =?utf-8?B?RHVkay9LRWpqVlBkQ3dVWVMwbytvNFZra3Rsb2ZzdlU4a1dGUTk0K2tteDNt?=
+ =?utf-8?B?WENlVnp2WUZ3K3p4QktsRXNZeTByaGhUQmdCTW1aT2xYaHJFWUI1YjRiL0d6?=
+ =?utf-8?B?enI0emVuR1RKTy9hWlNCanNTU05DNjJLLytwc1dYdlBJdE1qaS9MZy9RakIx?=
+ =?utf-8?B?Sk42Nk5XVUJVYzFhM3hFMUpYL0pkZ0lHUFNMLzgxQ3kvU21icDlWSG0wTjUw?=
+ =?utf-8?B?ZXBiODdHZjlnK0ZYbTRvTTRkQnB6LzI0T3JmK3M0RElqUjlpRU01RmcyWkFl?=
+ =?utf-8?B?UTV1TkhreWlEd1VJcitHUVpFS1owQWNWZ1J1RlJzeGUyTytlM3MxY1VmMnhO?=
+ =?utf-8?B?RWtwVlMyQWNvOXJiSHRsTjRQVi9YY21Ta3ovV1V0KzRLczdCOE1iOThhUkxm?=
+ =?utf-8?B?WTZJTGs5blRZdVZTVFFUUERrYkZDdGFpUE1TelFyV2hJTUhEN1luUGhhWlBR?=
+ =?utf-8?B?WFFMTnhUUTJaSkdvWTBHYVhGNTVESytkRjQ3dXQrQmJvbldMM3U1eUVvd3E3?=
+ =?utf-8?B?L2VZaGpnSG00cGE1Z0ViOE11VGpWOU54eWVuS3NrMEJISG5vK3gycHlXdUpG?=
+ =?utf-8?Q?GOaPfXyTGNw+Bt6UTc=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b36ffb85-8cd9-44e4-eb25-08dcaca98be6
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2024 12:58:57.6134
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0982
 
-On Thu, Jul 25, 2024 at 07:35:00AM +0000, Tian, Kevin wrote:
-> > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > Sent: Wednesday, July 24, 2024 9:03 PM
-> > 
-> > On Wed, Jul 24, 2024 at 11:24:17AM +0100, Will Deacon wrote:
-> > > > This event handling process is as follows:
-> > > > arm_smmu_evtq_thread
-> > > >     ret = arm_smmu_handle_evt
-> > > >         iommu_report_device_fault
-> > > >             iopf_param = iopf_get_dev_fault_param(dev);
-> > > >             // iopf is not enabled.
-> > > > // No RESUME will be sent!
-> > > >             if (WARN_ON(!iopf_param))
-> > > >                 return;
-> > > >     if (!ret || !__ratelimit(&rs))
-> > > >         continue;
-> > > >
-> > > > In this scenario, the io page-fault capability is not enabled.
-> > > > There are two problems here:
-> > > > 1. The event information is not printed.
-> > > > 2. The entire device(PF level) is stalled,not just the current
-> > > > VF. This affects other normal VFs.
-> 
-> Out of curiosity. From your code example the difference before
-> and after this change is on the prints. Why would it lead to the
-> stall problem?
-
-Because of this:
-
-  	iopf_param = iopf_get_dev_fault_param(dev);
-  	if (WARN_ON(!iopf_param))
- -		return;
-
-If you hit the WARN_ON then we don't do anything with the fault and it
-remains uncompleted.
-
-> > + * and the fault remains owned by the caller. The caller should log the DMA
-> > + * protection failure and resolve the fault. Otherwise on success the fault is
-> > + * always completed eventually.
-> 
-> About "resolve the fault", I didn't find such logic from smmu side in
-> arm_smmu_evtq_thread(). It just logs the event. Is it asking for new
-> change in smmu driver or reflecting the current fact which if missing
-> leads to the said stall problem?
-
-It was removed in b554e396e51c ("iommu: Make iopf_group_response() return void")
-
-        ret = iommu_report_device_fault(master->dev, &fault_evt);
--       if (ret && flt->type == IOMMU_FAULT_PAGE_REQ) {
--               /* Nobody cared, abort the access */
--               struct iommu_page_response resp = {
--                       .pasid          = flt->prm.pasid,
--                       .grpid          = flt->prm.grpid,
--                       .code           = IOMMU_PAGE_RESP_FAILURE,
--               };
--               arm_smmu_page_response(master->dev, &fault_evt, &resp);
--       }
--
-
-Part of the observation going into b554e396e51c was that all drivers
-have something like the above, and we can pull it into the core code.
-
-So perhaps we should still always abort the request from
-iommu_report_device_fault() instead of requiring boilerplate like
-above in drivers. That does some better.
-
-The return code only indicates if the event should be logged.
-
-> >  	/*
-> >  	 * On success iopf_handler must call iopf_group_response() and
-> > 
-> 
-> Now given a return value is required we should also return '0'
-> in the following path with a valid iopf_handler.
-
-Yes, that was my intention
-
-Jason 
+DQoNCj4gT24gMjUgSnVsIDIwMjQsIGF0IDY6MTLigK9QTSwgQXJkIEJpZXNoZXV2ZWwgPGFyZGJA
+a2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiDvu79PbiBXZWQsIDI0IEp1bCAyMDI0IGF0IDE4OjMx
+LCBMdWthcyBXdW5uZXIgPGx1a2FzQHd1bm5lci5kZT4gd3JvdGU6DQo+PiANCj4+IE9uIFdlZCwg
+SnVsIDI0LCAyMDI0IGF0IDA0OjI2OjU4UE0gKzAwMDAsIEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4+
+Pj4gT24gMjQgSnVsIDIwMjQsIGF0IDk6MzEgUE0sIEx1a2FzIFd1bm5lciA8bHVrYXNAd3VubmVy
+LmRlPiB3cm90ZToNCj4+Pj4+IEkgbm90ZSB0aGF0IG9uIHg4NiwgdGhlIGVmaXN0dWIgd2Fsa3Mg
+b3ZlciBhbGwgUENJIGRldmljZXMgaW4gdGhlIHN5c3RlbQ0KPj4+Pj4gKHNlZSBzZXR1cF9lZmlf
+cGNpKCkgaW4gZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jKSBhbmQNCj4+
+Pj4+IHJldHJpZXZlcyB0aGUgRGV2aWNlIElEIGFuZCBWZW5kb3IgSUQuICBXZSBjb3VsZCBhZGRp
+dGlvbmFsbHkgcmV0cmlldmUNCj4+Pj4+IHRoZSBDbGFzcyBDb2RlIGFuZCBjb3VudCB0aGUgbnVt
+YmVyIG9mIEdQVXMgaW4gdGhlIHN5c3RlbSBieSBjaGVja2luZw0KPj4+Pj4gd2hldGhlciB0aGUg
+Q2xhc3MgQ29kZSBtYXRjaGVzIFBDSV9CQVNFX0NMQVNTX0RJU1BMQVkuICBJZiB0aGVyZSdzDQo+
+Pj4+PiBhdCBsZWFzdCAyIEdQVXMgaW4gdGhlIHN5c3RlbSwgaW52b2tlIGFwcGxlX3NldF9vcy4N
+Cj4+PiANCj4+PiBUaGlzIGFsc28gbG9va3MgbGlrZSBhIGdvb2QgaWRlYSwgYnV0IEknbSBub3Qg
+d2VsbCBhd2FyZSBvZiB0aGUgcGNpDQo+Pj4gcXVpcmtzIGluIHRoZSBMaW51eCBrZXJuZWwuIFNv
+LCB3b3VsZCBjb25zaWRlciBpdCBhIGJ1ZyByZXBvcnQgZm9yDQo+Pj4gdGhlIG1haW50YWluZXJz
+IHRvIGZpeC4NCj4+IA0KPj4gVGhpcyBpcyBub3QgYSBQQ0kgcXVpcmsgaW4gdGhlIGtlcm5lbC4g
+IFRoZSBlZmlzdHViIGlzIGEgc2VwYXJhdGUNCj4+IHByb2dyYW0uICBJJ20gc2F5aW5nIHRoYXQg
+dGhlIGVmaXN0dWIgYWxyZWFkeSB3YWxrcyBvdmVyIGFsbCBQQ0kgZGV2aWNlcywNCj4+IGl0IHdv
+dWxkIGJlIHRyaXZpYWwgdG8gaG9vayBpbnRvIHRoaXMgdG8gY291bnQgR1BVcywgcmVjb2duaXpl
+IHRoZSBUMg0KPj4gZGV2aWNlIG9yIGRvIHNvbWV0aGluZyBlbHNlIGVudGlyZWx5Lg0KPj4gDQo+
+IA0KPiBUaGFua3MgZm9yIHRoZSBhbmFseXNpcywgYW5kIGZvciB0aGUgc3VnZ2VzdGlvbnMuDQo+
+IA0KPiBJIHdvdWxkbid0IG9iamVjdCB0byBjaGFuZ2VzIHRvIHRoZSBFRkkgc3R1YiB0aGF0IGlt
+cGxlbWVudCBzb21ldGhpbmcNCj4gYWxvbmcgdGhlc2UgbGluZXMsIGFsdGhvdWdoIEknZCBsaWtl
+IHRvIHVuZGVyc3RhbmQgYSBiaXQgYmV0dGVyIHdoYXQNCj4gdGhlIGFjdHVhbCBpc3N1ZSBpcy4N
+Cj4gDQo+IElmIFBDSSByZXNvdXJjZSBhbGxvY2F0aW9uIGlzIHRoZSBjdWxwcml0IGhlcmUsIHdv
+dWxkbid0IGl0IGJlIGJldHRlcg0KPiB0byBmb3JjZSBMaW51eCB0byByZWFsbG9jYXRlIHRob3Nl
+IGZyb20gc2NyYXRjaD8gSUlSQyB0aGVyZSBpcyBhbHJlYWR5DQo+IGEgY29tbWFuZCBsaW5lIG9w
+dGlvbiBmb3IgdGhpcy4NCg0KSSBndWVzcyB5b3UgYXJlIHRhbGtpbmcgYWJvdXQgJ3BjaT1yZWFs
+bG9jJy4gQWRkaW5nIHRoaXMgZG9lc24ndCBmaXggdGhlIGlzc3VlLg==
 
