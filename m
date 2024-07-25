@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-261839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6237F93BCC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:55:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D94693BCCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C63F28115F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2721F21E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1228616DC0F;
-	Thu, 25 Jul 2024 06:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA1316EBEE;
+	Thu, 25 Jul 2024 07:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6rwL/Gk"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JEgKRmpx"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C256A16D9B7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F816B74C;
+	Thu, 25 Jul 2024 07:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721890506; cv=none; b=ETLU4k6fB4ciVWD7EmpqP2GF5EVpEwcg/Gq3KBiChOnTHFWjg/FXTyYGY7rF23xWrhxLEbbTkRIjKdQMc/iV74LOBgdAm7UZnzWXJi8hD+lQuOtAtfAFLSXxrdBeqPgXbAIySNBSAROAsMgeQbDOZmpp2HVbJl8W9RqCaWxYwTs=
+	t=1721890982; cv=none; b=XruEzY/eZh4uK2vEKEmvWjXgAGeMb7LtQQ5cQjXRnO9Sz6hfm+zu8J5pU2rp6SFeyfmO6NTYna274DhhSpHI8O4DMYK2HDp4jmQtHwPcPDSebSa4yYisdNb33HH/GARQnB8FoDsR13Cylm5dGu3SP3Wh+GcU7ch3ORp9AA4LXHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721890506; c=relaxed/simple;
-	bh=iZkJssa1HPux1cfO7DzXuQvvHYerkUKMKDTMblmlv0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qcr0suS1nKrv2VmDT+bBO2SrrcM0zd/PL6zVSyGztD8LzrwcYEg/zuRgYzh7V0RIqGnXZVm8Qj8w8Z7pXhrd9eplPsAGOV3GrwY/lPGDL0WPDb1m2JuZm/4t2GyCNk2raBNnMpBtxPPMqd1BjpuUGlgnv72j1PxaaDfpVLR+J0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6rwL/Gk; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so2972555e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721890503; x=1722495303; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DuTN+kDGENu6xXBj1NgEgyRLozzKhv55rcnYOX8KmhY=;
-        b=E6rwL/Gkqudc+r4hZEYi4xu3khnNhMpNJRfJHCocFaZ5h1DYa8PSTd3V/r4WiSKk9X
-         mIPfPdYadttoO8CKjbkxSPZtEQZ5zrFHpEsWEMdW9zBfrcjUBUGU7Bxnms6C4N7Uw1Wk
-         ydFLzH9M2p2ilHsYnkxFryoRV9/ARnOHfiOdoLAtX+J5b5WRhph2xae9/FA4ZaSlf/Zh
-         q4BAWk9G9kNfMJxhs8TPMuk3pb4LL9meDvGRNV8fAh2bJWHxOJivCgzNN/2AB+XiALG4
-         vHTsw5fhZSc3lTwpk6Q98mmL9eGlSNl7hODPXSWwowXLnT/OUdhrhmFMiD6qF75HFhDW
-         /3Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721890503; x=1722495303;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DuTN+kDGENu6xXBj1NgEgyRLozzKhv55rcnYOX8KmhY=;
-        b=vAvhlztfAi5YCRr4PiLuxa6QS4J2qKOWmljos/TQocQillyCPfVl2WaX0KtVs4oAgZ
-         bgOzRMyu6JPjNTvHFs7BGusLzJTo+10IzRyqQ3m3fgr4o2vXJA54ujl2Az3MN2rVf+ju
-         WdasKPx0GTYNMMSFF6E+5LmA8YdeEUY46MhOH5DxT6aOxP/aTjlS2b05bJBjHejRwbAC
-         FqZnf6JJ0Ahoep3neApsesFIF57dmhiUYGtKEuuygKfeyGB6Xdj1EyUBDK7QfooPlgp7
-         Oa3MY3e8nrLkMwkTl6QmiOmihN3PINEQJEaQgJwzcKbOiauG2S4yfalzFpyuWG05rvAd
-         +8+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWH/g6hwE2HGfKon9EvDafj7HjyuXX9yKqjhbHucP+KQiUFFDUEvOszuEJCybm5YvFZnri8jToBRcFhIK44Se2bNul50sUNl7+kF8h2
-X-Gm-Message-State: AOJu0Yx3we7PX4BrNdgMReMZPGKU61vtRah8Nt4A8XxIrktn3jgmEzdg
-	LxAQ8icbaaqiKeZ7ndAueLGGAFZj/dg+LgEezywSyai1nDe/2/yF
-X-Google-Smtp-Source: AGHT+IFDb4sD3pOsedkk0/LWcAY+LieYVY8mqTFh3+iKOmjF2aCcPCDJSzJfeDUWQWKsLRFm3/Y0fw==
-X-Received: by 2002:a05:600c:3147:b0:426:64c1:8388 with SMTP id 5b1f17b1804b1-42803b5b18fmr10801735e9.17.1721890502686;
-        Wed, 24 Jul 2024 23:55:02 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f92c7cb3sm61764035e9.0.2024.07.24.23.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 23:55:02 -0700 (PDT)
-Message-ID: <d384eb76-502c-4a46-9aa9-44671440b417@gmail.com>
-Date: Thu, 25 Jul 2024 08:55:00 +0200
+	s=arc-20240116; t=1721890982; c=relaxed/simple;
+	bh=J2il+KZYZrgQ7JcqCSftW22j0fsz8iUuTnrisaZaEhc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4KIcG1sdbOVLTdqOW/zw1CqliYgaTRw3k8k8DQ/SS/VTFFzN5ax3idD85B1R6EDE4Y/1Uo6CWnO86Vps4OKGkK4LbiEmFI/NQ1d3C8RYsfSKevYOQNUZ5ZkSU7YJ64DzLo71ru9XKUSInHfiMtSPoNwpyHOOdVTiix+yniwPzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JEgKRmpx; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721890980; x=1753426980;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J2il+KZYZrgQ7JcqCSftW22j0fsz8iUuTnrisaZaEhc=;
+  b=JEgKRmpxjns6jGJD+K04fGso6w4RCJGMs9Mf+xLJoxjbZ/kfw/VEUbFW
+   uPEn89M4p2rT9KflEsE+G0kk36E//oHbYCqq9cjtGOn5MdiSntWYes6Oc
+   SNn5869ZugUPsIbzLy1zYtLDPhXjvO1cXeya+oprrnO9qEMOorUto2sMF
+   7pbJxFZRJyNgbBqqDQMwE/gqBdlph5abUZBO7CUhx+QH5xrz2RCfKKZIL
+   E/MnahPEvUncrZXfoBdN7UcfFIX5vBOiJkhgDKaA0b6w06GiLNPagVukQ
+   UKmm4fY8iMK8V+N6Gcah8T85EwvkZ/T2QrTe9ks03KDHGG/AVk86IGRet
+   w==;
+X-CSE-ConnectionGUID: qIuKJO/KRQ2cP2DSiCFpbg==
+X-CSE-MsgGUID: bjjZey3YTJWpPOYTRmJExA==
+X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
+   d="scan'208";a="29639286"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 00:02:53 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 25 Jul 2024 00:02:16 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 25 Jul 2024 00:02:15 -0700
+Date: Thu, 25 Jul 2024 12:29:05 +0530
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<horatiu.vultur@microchip.com>, <linux-kernel@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net] net: phy: micrel: Fix the KSZ9131 MDI-X status issue
+Message-ID: <ZqH3uTvOrytNHp+9@HYD-DK-UNGSW21.microchip.com>
+References: <20240712111648.282897-1-Raju.Lakkaraju@microchip.com>
+ <fe873fde-7a41-4a4a-ba9f-41c2ba0ddc02@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] drm/amd/display: use swap() in sort()
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, harry.wentland@amd.com
-Cc: sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
- christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
- daniel@ffwll.ch, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Abaci Robot <abaci@linux.alibaba.com>
-References: <20240724073749.14338-1-jiapeng.chong@linux.alibaba.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <20240724073749.14338-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <fe873fde-7a41-4a4a-ba9f-41c2ba0ddc02@lunn.ch>
 
-Am 24.07.24 um 09:37 schrieb Jiapeng Chong:
-> Use existing swap() function rather than duplicating its implementation.
->
-> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c:17:29-30: WARNING opportunity for swap().
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9573
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->   .../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c    | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> index 717536d7bb30..8e68a8094658 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-> @@ -7,16 +7,12 @@
->   
->   static void sort(double *list_a, int list_a_size)
->   {
-> -	double temp;
->   	// For all elements b[i] in list_b[]
->   	for (int i = 0; i < list_a_size - 1; i++) {
->   		// Find the first element of list_a that's larger than b[i]
+Hi Andrew,
 
-While at it please also replace all // comments by using /* */.
+Thank you for review the patch.
 
-Apart from that looks good to me.
+The 07/18/2024 17:04, Andrew Lunn wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> On Fri, Jul 12, 2024 at 04:46:48PM +0530, Raju Lakkaraju wrote:
+> > Access information about Auto mdix completion and pair selection from the
+> > KSZ9131's Auto/MDI/MDI-X status register
+> 
+> Please explain what the broken behaviour is. How would i know i need
+> this patch?
+> 
 
-Regards,
-Christian.
+Ok. I will add broken behaviour details.
 
->   		for (int j = i; j < list_a_size - 1; j++) {
-> -			if (list_a[j] > list_a[j + 1]) {
-> -				temp = list_a[j];
-> -				list_a[j] = list_a[j + 1];
-> -				list_a[j + 1] = temp;
-> -			}
-> +			if (list_a[j] > list_a[j + 1])
-> +				swap(list_a[j], list_a[j + 1]);
->   		}
->   	}
->   }
+> You have not included a Cc: stable tag. Does that mean this does not
+> bother anybody and so does not need backporting?
+> 
 
+Ok. I will add "Cc: stable tag"
+
+> > Fixes: b64e6a8794d9 ("net: phy: micrel: Add PHY Auto/MDI/MDI-X set driver for KSZ9131")
+> > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+> > ---
+> >  drivers/net/phy/micrel.c | 23 ++++++++++++++++++-----
+> >  1 file changed, 18 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+> > index ebafedde0ab7..fddc1b91ba7f 100644
+> > --- a/drivers/net/phy/micrel.c
+> > +++ b/drivers/net/phy/micrel.c
+> > @@ -1438,6 +1438,9 @@ static int ksz9131_config_init(struct phy_device *phydev)
+> >  #define MII_KSZ9131_AUTO_MDIX                0x1C
+> >  #define MII_KSZ9131_AUTO_MDI_SET     BIT(7)
+> >  #define MII_KSZ9131_AUTO_MDIX_SWAP_OFF       BIT(6)
+> > +#define MII_KSZ9131_DIG_AXAN_STS     0x14
+> > +#define MII_KSZ9131_DIG_AXAN_STS_LINK_DET    BIT(14)
+> > +#define MII_KSZ9131_DIG_AXAN_STS_A_SELECT    BIT(12)
+> >
+> >  static int ksz9131_mdix_update(struct phy_device *phydev)
+> >  {
+> > @@ -1452,14 +1455,24 @@ static int ksz9131_mdix_update(struct phy_device *phydev)
+> >                       phydev->mdix_ctrl = ETH_TP_MDI;
+> >               else
+> >                       phydev->mdix_ctrl = ETH_TP_MDI_X;
+> > +
+> > +             phydev->mdix = phydev->mdix_ctrl;
+> 
+> This seems a bit odd. phydev->mdix_ctrl is what the user wants to
+> happen. This is generally ETH_TP_MDI_AUTO, meaning the PHY should
+> figure it out. It can be ETH_TP_MDI_X, or ETH_TP_MDI which forces the
+> configuration. phydev->mdix is what it has ended up using.
+> 
+
+I agree. I will fix it.
+
+> So the code above first seems to change what the user asked for. This
+> is likely to replace ETH_TP_MDI_AUTO with one of the fixed modes,
+> which will then break when the user replaces a crossed cable with a
+> straight cable, and the forced mode is then wrong.
+> 
+> Setting mdix to mdix_ctrl then seems wrong. In most cases, you are
+> going to get ETH_TP_MDI_AUTO, when in fact you should be returning
+> what the PHY has decided on, ETH_TP_MDI_X, ETH_TP_MDI, or
+> ETH_TP_MDI_INVALID because the link is down.
+
+Yes. I agree with you.
+I will fix it in next version of patch.
+
+> 
+> Maybe genphy_c45_read_mdix() will help you. It simply reads a PHY
+> status register, sets phydev->mdix and it is done.
+> 
+Ok
+
+>        Andrew
+
+-- 
+Thanks,                                                                         
+Raju
 
