@@ -1,143 +1,213 @@
-Return-Path: <linux-kernel+bounces-262124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E0E93C113
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 114A493C118
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11574283121
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCABB281A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7EE199251;
-	Thu, 25 Jul 2024 11:45:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174453C3C;
-	Thu, 25 Jul 2024 11:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76AC1991BA;
+	Thu, 25 Jul 2024 11:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yYqWx616";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xZ80trt9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yYqWx616";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xZ80trt9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A663C3C;
+	Thu, 25 Jul 2024 11:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721907914; cv=none; b=MHegGEbNTWEhfSKZI26WXKLnpBolk6EnkNutyABFlHFp59qpnE5E60x9tXgIuml2bbyXyfF7GMjzvjzCF9oZLOFfdSbMKeuK+VhcGQdrkDiPlHZPJdLsOhKPc8CoIV9g9js87ZwMFgw7O22T3+/So1rTtsWPhWLoyA/tVkvdLNo=
+	t=1721908090; cv=none; b=N5IwMT9R0dWg8kPtSADoO52Vvf1U5IBHAtGnJ+ZEwsG3IXLHYncr+/9BVd+TCfF6jE+vp47QqHXGZbK/agTBr2DCfO8OqLMaYd7wz/pYy8rDCxS6MS9sZQqLlK5Kz+bbFJ+L5i1WUZjJBuhLxMpwQaXhUhB+c2esKzHGeXCOH60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721907914; c=relaxed/simple;
-	bh=82HUmzeqarD4KrIPXNsJ7gdikxRUHGCc9rvH7hg483g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VTo7Bmenl1LJg8Q/MDCzxYNcsX6u8WFMq43QzhhluMhmPuHhTjjDRCaLUy4FjAQWBQRafMdqVeO8WrmSKoK6h3VQ4aaSWppTIzKkVDdqRTuOpFlmbDt6sX1O3HBHNAokegHJg4SI2vvZ2koN9W5mXhHDOYCTr206S1asyhgoU2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4DA21476;
-	Thu, 25 Jul 2024 04:45:37 -0700 (PDT)
-Received: from [10.1.196.44] (unknown [10.1.196.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D22093F5A1;
-	Thu, 25 Jul 2024 04:45:08 -0700 (PDT)
-Message-ID: <3db15f74-2f48-4a43-9a2f-27b54c22dbf1@foss.arm.com>
-Date: Thu, 25 Jul 2024 12:45:07 +0100
+	s=arc-20240116; t=1721908090; c=relaxed/simple;
+	bh=nyIjY4X5z1L2cUdrekGLwLmsrH3VfuGKT0bCdAEQ6WQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i/PXuglF+IBMN/oCz8eTFSSGK+FU6T79pYkS6H+nUJ8OHbjC3ADa4lhPJXHZGCbN4zFQpvxx31zBGTnb7cQLVLu6sNWaxBBuhCrcYXI/ZFLL9bvncY4OzkAAmDv9zz1y7KdNbFO5lXi5n7cwBoDuxDzem7ccSHwF1WbDVpEzuxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yYqWx616; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xZ80trt9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yYqWx616; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xZ80trt9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8830921A6B;
+	Thu, 25 Jul 2024 11:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721908086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vuuMe5Zm1tzm/2ZG+q3EQEgd0rTxyVL637vBA1fA7D4=;
+	b=yYqWx616q57VwLmC3BpsOs32nVnR4ARypukfSQRVjrwSGCyClXNijtMvToyVCqeLS3HvnI
+	o+f2vVuDjV++tnWqmYlt2U5+u21hTfzMAP2+Dc6++gG0YPo/vtNJxZe1cZyELP/YhCgX1x
+	gpzW3dPH7X/xYVREj/8e3QYgoYML4lk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721908086;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vuuMe5Zm1tzm/2ZG+q3EQEgd0rTxyVL637vBA1fA7D4=;
+	b=xZ80trt9DAwb/07DmUZFcqYsPHvCyTtPntbo33WaHz6cTmRTNOFuLZm/Gle5Kl1iBTMCE/
+	pHDXM2TyBYCEVXAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721908086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vuuMe5Zm1tzm/2ZG+q3EQEgd0rTxyVL637vBA1fA7D4=;
+	b=yYqWx616q57VwLmC3BpsOs32nVnR4ARypukfSQRVjrwSGCyClXNijtMvToyVCqeLS3HvnI
+	o+f2vVuDjV++tnWqmYlt2U5+u21hTfzMAP2+Dc6++gG0YPo/vtNJxZe1cZyELP/YhCgX1x
+	gpzW3dPH7X/xYVREj/8e3QYgoYML4lk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721908086;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vuuMe5Zm1tzm/2ZG+q3EQEgd0rTxyVL637vBA1fA7D4=;
+	b=xZ80trt9DAwb/07DmUZFcqYsPHvCyTtPntbo33WaHz6cTmRTNOFuLZm/Gle5Kl1iBTMCE/
+	pHDXM2TyBYCEVXAg==
+Date: Thu, 25 Jul 2024 13:48:06 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
+    Joe Lawrence <joe.lawrence@redhat.com>, Nicolai Stange <nstange@suse.de>, 
+    live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [POC 3/7] livepatch: Use per-state callbacks in state API
+ tests
+In-Reply-To: <20231110170428.6664-4-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.2407251343160.21729@pobox.suse.cz>
+References: <20231110170428.6664-1-pmladek@suse.com> <20231110170428.6664-4-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org,
- Danilo Krummrich <dakr@redhat.com>, lyude@redhat.com, robh@kernel.org,
- lina@asahilina.net, mcanal@igalia.com, airlied@gmail.com,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
- <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
- <edda856e-3102-495a-8cc6-b79f5f114833@arm.com>
- <20240723180642.73502856@collabora.com>
-Content-Language: en-US
-From: Carsten Haitzler <carsten.haitzler@foss.arm.com>
-Organization: Arm Ltd.
-In-Reply-To: <20240723180642.73502856@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.10
 
+Hi,
 
+On Fri, 10 Nov 2023, Petr Mladek wrote:
 
-On 7/23/24 5:06 PM, Boris Brezillon wrote:
-> Hi Steve,
+> Recent changes in the livepatch core have allowed to connect states,
+> shadow variables, and callbacks. Use these new features in
+> the state tests.
 > 
-> On Mon, 15 Jul 2024 10:12:16 +0100
-> Steven Price <steven.price@arm.com> wrote:
+> Use the shadow variable API to store the original loglevel. It is
+> better suited for this purpose than directly accessing the .data
+> pointer in state klp_state.
 > 
->> I note it also shows that the "panthor_regs.rs" would ideally be shared.
->> For arm64 we have been moving to generating system register descriptions
->> from a text source (see arch/arm64/tools/sysreg) - I'm wondering whether
->> something similar is needed for Panthor to generate both C and Rust
->> headers? Although perhaps that's overkill, sysregs are certainly
->> somewhat more complex.
+> Another big advantage is that the shadow variable is preserved
+> when the current patch is replaced by a new version. As a result,
+> there is not need to copy the pointer.
 > 
-> Just had a long discussion with Daniel regarding this panthor_regs.rs
-> auto-generation, and, while I agree this is something we'd rather do if
-> we intend to maintain the C and rust code base forever, I'm not
-> entirely convinced this is super useful here because:
+> Finally, the lifetime of the shadow variable is connected with
+> the lifetime of the state. It is freed automatically when
+> it is not longer supported.
 > 
-> 1. the C code base is meant to be entirely replaced by a rust driver.
-> Of course, that's not going to happen overnight, so maybe it'd be worth
-> having this autogen script but...
+> This results into the following changes in the code:
 > 
-> 2. the set of register and register fields seems to be pretty stable.
-> We might have a few things to update to support v11, v12, etc, but it
-> doesn't look like the layout will suddenly become completely different.
+>   + Rename CONSOLE_LOGLEVEL_STATE -> CONSOLE_LOGLEVEL_FIX_ID
+>     because it will be used also the for shadow variable
 > 
-> 3. the number of registers and fields is somewhat reasonable, which
-> means we should be able to catch mistakes during review. And in case
-> one slip through, it's not the end of the world either because this
-> stays internal to the kernel driver. We'll either figure it out when
-> rust-ifying panthor components, or that simply means the register is
-> not used and the mistake is harmless until the register starts being
-> used
+>   + Remove the extra code for module coming and going states
+>     because the new callback are per-state.
 > 
-> 4. we're still unclear on how GPU registers should be exposed in rust,
-> so any script we develop is likely to require heavy changes every time
-> we change our mind
+>   + Remove callbacks needed to transfer the pointer between
+>     states.
+> 
+>   + Keep the versioning of the state to prevent downgrade.
+>     The problem is artificial because no callbacks are
+>     needed to transfer or free the shadow variable anymore.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-You have a good point. A script sounds nice, but given the restricted 
-domain size, it maybe better to be manually maintained. Given that I 
-also think the right way to access registers is to do it as safely as 
-possible.
+it is much cleaner now.
 
-So a gpu_write() or gpu_read() are "unsafe" in that you can write 
-invalid values to a just about anything in C. If we're trying to harden 
-drivers like panthor and make it "impossible" to do the wrong thing, 
-then IMHO for example MCU_CONTROL should be abstracted so I can ONLY 
-write MCU_CONTROL_* values that are for that register and nothing else 
-in Rust. This should fail at compile time if I ever write something 
-invalid to a register, and I can't write to anything but a known/exposed 
-register.
+[...]
 
-Interestingly the C code could also abstract the same way and at least 
-produce warnings too and become safer. It may be useful to mimic the 
-design pattern there to keep panthor.rs and panthor.c in sync more easily?
+>  static int allocate_loglevel_state(void)
+>  {
+> -	struct klp_state *loglevel_state;
+> +	int *shadow_console_loglevel;
+>  
+> -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
+> -	if (!loglevel_state)
+> -		return -EINVAL;
+> +	/* Make sure that the shadow variable does not exist yet. */
+> +	shadow_console_loglevel =
+> +		klp_shadow_alloc(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID,
+> +				 sizeof(*shadow_console_loglevel), GFP_KERNEL,
+> +				 NULL, NULL);
+>  
+> -	loglevel_state->data = kzalloc(sizeof(console_loglevel), GFP_KERNEL);
+> -	if (!loglevel_state->data)
+> +	if (!shadow_console_loglevel) {
+> +		pr_err("%s: failed to allocated shadow variable for storing original loglevel\n",
+> +		       __func__);
+>  		return -ENOMEM;
+> +	}
+>  
+>  	pr_info("%s: allocating space to store console_loglevel\n",
+>  		__func__);
+> +
+>  	return 0;
+>  }
 
-So my opinion would be to try get the maximum value from Rust and have 
-things like proper register abstractions that are definitely safe.
+Would it make sense to set is_shadow to 1 here? I mean you would pass 
+klp_state down to allocate_loglevel_state() from setup callback and set 
+its is_shadow member here. Because then...
+  
+>  static void free_loglevel_state(void)
+>  {
+> -	struct klp_state *loglevel_state;
+> +	int *shadow_console_loglevel;
+>  
+> -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
+> -	if (!loglevel_state)
+> +	shadow_console_loglevel =
+> +		(int *)klp_shadow_get(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID);
+> +	if (!shadow_console_loglevel)
+>  		return;
+>  
+>  	pr_info("%s: freeing space for the stored console_loglevel\n",
+>  		__func__);
+> -	kfree(loglevel_state->data);
+> +	klp_shadow_free(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID, NULL);
+>  }
 
-> For all these reasons, I think I'd prefer to have Daniel focus on a
-> proper rust abstraction to expose GPU registers and fields the rust-way,
-> rather than have him spend days/weeks on a script that is likely to be
-> used a couple times (if not less) before the driver is entirely
-> rewritten in rust. I guess the only interesting aspect remaining after
-> the conversion is done is conciseness of register definitions if we
-> were using some sort of descriptive format that gets converted to rust
-> code, but it comes at the cost of maintaining this script. I'd probably
-> have a completely different opinion if the Mali register layout was a
-> moving target, but it doesn't seem to be the case.
-> 
-> FYI, Daniel has a python script parsing panthor_regs.h and generating
-> panthor_regs.rs out of it which he can share if you're interested.
-> 
-> Regards,
-> 
-> Boris
+would not be needed. And release callback neither.
+
+Or am I wrong?
+
+We can even have both ways implemented to demonstrate different 
+approaches...
+
+Miroslav
 
