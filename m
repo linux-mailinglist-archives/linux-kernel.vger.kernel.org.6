@@ -1,119 +1,150 @@
-Return-Path: <linux-kernel+bounces-261721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C3793BB51
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:40:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA05293BB4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8CFB1C2192C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4461C236DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2258318028;
-	Thu, 25 Jul 2024 03:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c46Nkvyw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E341862C;
+	Thu, 25 Jul 2024 03:40:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5AB17722;
-	Thu, 25 Jul 2024 03:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E83A1429B;
+	Thu, 25 Jul 2024 03:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721878853; cv=none; b=u7Q1hQp/jrDRJdgCxLCyUf1hhJ45V2K8YxhuKqP04Fqj+4sWvbPyJrzFWZxDO4TO2A99xJ2L6+2mtqruMiLAeYSBVOJ0hOw/7gkLHCMExzG5fXnla5bZtaJpeMmNPobM7+aui2PuC/BD9tJTTkEfqWe+b7kzAekefST+cyvPiVs=
+	t=1721878831; cv=none; b=Q5s60Hrz3SukCz4NquQZs0P3Mc0No6UDKMClzM1H6zWHzVFbW9wzEENMZAcTOlMNzBthemU5ROloOQvv4+tD4HaMNCmymkXZoKLbQnV5ZKMbf2CkW7gS/Vs3FIu2+Lbupd3we2IjHl5UmzBedG56BrkX6Jr/o5+5mO0aLnb2UAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721878853; c=relaxed/simple;
-	bh=+/SfHcWvZuzX5BpxFTHb0SOKVhDlmAD0pvwxtii3/9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1/9PKCm/7gLqnsIj+KczO9nmnnh80m3iBGHbqvn51NrQ7PDajJaknhkYs571OBJHU8FxHYgbf5PrCD8wAnUxncbSD/C3MZYKrO8YFL4q6F1His2n612frLXCgKy+3C/1X81TDQA10XRMJQCICzHcKgR8PSH68x2CpMeBE4vH4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c46Nkvyw; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721878851; x=1753414851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+/SfHcWvZuzX5BpxFTHb0SOKVhDlmAD0pvwxtii3/9s=;
-  b=c46NkvywEzrrW3OzAG6kl1linE543u1D/A8CK5aasu7+fHdd0SL41TBe
-   yC/EFC/IfcVGJJBGgxA3mVFKNLSY7co4/ozCvZSwK/I3UatjTqFZx/8TK
-   4BgYzLTxKHEHJvav/jAYsfh6oaWiCsZwrT4BbRNhIKBH6HQrU1VJAf+oL
-   unP+u9/4A+rurWG6befxKON7mGGpHP2B31q0evoOTjFQlotmx7Rt0/ygi
-   ttCGjLOsXucDk3TChRFAxStDdxHTsLmD1fEir+PV9AlZacw6oqFikKmlI
-   UM127QPL3/XpyQgFEqucP/MFe05eduvytiPYArHP56kFJ1rRznTlWXZ4w
-   Q==;
-X-CSE-ConnectionGUID: gIRzvfBfSvq9MMbWSQTdOQ==
-X-CSE-MsgGUID: HaKJdgM5SqWskyPFP5eDBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="31011505"
-X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
-   d="scan'208";a="31011505"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 20:40:51 -0700
-X-CSE-ConnectionGUID: OPYShQlcTvOHVabSwQwkdw==
-X-CSE-MsgGUID: D07xcoM9SzSpX0iEQmX2Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
-   d="scan'208";a="52817584"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 24 Jul 2024 20:40:48 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sWpLR-000nii-1V;
-	Thu, 25 Jul 2024 03:40:45 +0000
-Date: Thu, 25 Jul 2024 11:40:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>,
-	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, mustafa.eskieksi@gmail.com,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
-Subject: Re: [PATCH v4 1/2] HP: wmi: added support for 4 zone keyboard rgb
-Message-ID: <202407251136.aymIqEw3-lkp@intel.com>
-References: <20240719100011.16656-2-carlosmiguelferreira.2003@gmail.com>
+	s=arc-20240116; t=1721878831; c=relaxed/simple;
+	bh=kJbT8KCYoWxqA6gfroVgrglJwJ6fwcbcmRrH3HHizIY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JlYgoaZbObsUy/1TZ3b2ss2/QcXe16+fsNQQeKnJLmkC+FIIG/y0sPKEKTI0LEu+ZumpQVUHX70kk3QTMSgC0TYN86MiST00B7ka4l/8jIiKRDwdJkNnmHNXtGUaSxZD0tYkAEmK6vVIur/ywlVCNhm/L5cSseho29oM/f5SymQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 5AFF01C1911;
+	Thu, 25 Jul 2024 03:40:28 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf18.hostedemail.com (Postfix) with ESMTPA id F22A62F;
+	Thu, 25 Jul 2024 03:40:24 +0000 (UTC)
+Message-ID: <778f1ccf1945f79c317dd0a4d2a90d3855770713.camel@perches.com>
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+From: Joe Perches <joe@perches.com>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	n.schier@avm.de, ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
+Date: Wed, 24 Jul 2024 20:40:23 -0700
+In-Reply-To: <CAHB1NaijJ16haCsH3uHy_zVZFXJ7_-qFOk8mFx7QSeqD+X6Z3g@mail.gmail.com>
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+	 <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
+	 <CAHB1NaijJ16haCsH3uHy_zVZFXJ7_-qFOk8mFx7QSeqD+X6Z3g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719100011.16656-2-carlosmiguelferreira.2003@gmail.com>
+X-Rspamd-Queue-Id: F22A62F
+X-Rspamd-Server: rspamout03
+X-Stat-Signature: yinzfwq4jaoadypbkc6ti5igxoggrznt
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX18qSFkmYW5eJfxlaISbbW3zRe0lZKf/5tU=
+X-HE-Tag: 1721878824-479549
+X-HE-Meta: U2FsdGVkX19G+4F8RoQBavyX6/XNgNral746x0owj110I2rlFdAT6u1sj6Ku7mBgwUdRnembhetu/E2gQkzZJ4Y31zy6IlS0zSjkdyy1Qt+6JJ0i07HFjwgYNNmje6N31P9doFss33sue8wMw19P+U2RUy8KmXprpLXYhg+h2ePjal1/Idl9H9qemdpeM3QTgt5imcZnH+T5oVc8UtcyrFULxU8I/PmjXd6zw/TRn0Wdpj+K7iFsMjrwp6y2miLlIadVciflbfpVFOupVt1y43oPbrW3dY5iIVLk6A69ruS4EHDsNf8FR2GVcivJnPivegGTnmLXnXbY6sScvTJ4mdf+gS1zIONhl5DDDSNIHqbT1Go2JhGwe+R+HHS39gxDOldw06vs434rbhUkJHhQiO5sm76RA2q//FxPvXFlJkf2cOvTG3Mczj3BkJAjtth0ocJph7CR2y7bzBgMGyg3GoGnpqaV8Vw9spnjPwN/SBA=
 
-Hi Carlos,
+On Wed, 2024-07-24 at 22:09 -0400, Julian Sun wrote:
+> Joe Perches <joe@perches.com> =E4=BA=8E2024=E5=B9=B47=E6=9C=8824=E6=97=A5=
+=E5=91=A8=E4=B8=89 09:30=E5=86=99=E9=81=93=EF=BC=9A
+> >=20
+> > On Tue, 2024-07-23 at 05:11 -0400, Julian Sun wrote:
+> > > Hi,
+> > >=20
+> > > Recently, I saw a patch[1] on the ext4 mailing list regarding
+> > > the correction of a macro definition error. Jan mentioned
+> > > that "The bug in the macro is a really nasty trap...".
+> > > Because existing compilers are unable to detect
+> > > unused parameters in macro definitions. This inspired me
+> > > to write a script to check for unused parameters in
+> > > macro definitions and to run it.
+> > >=20
+> >=20
+> > checkpatch has a similar test:
+> >=20
+> > https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
+> >=20
+> > $ git log --format=3Demail -1 b1be5844c1a0124a49a30a20a189d0a53aa10578
+> > From b1be5844c1a0124a49a30a20a189d0a53aa10578 Mon Sep 17 00:00:00 2001
+> > From: Xining Xu <mac.xxn@outlook.com>
+> > Date: Tue, 7 May 2024 15:27:57 +1200
+> > Subject: [PATCH] scripts: checkpatch: check unused parameters for
+> >  function-like macro
+> >=20
+> > If function-like macros do not utilize a parameter, it might result in =
+a
+> > build warning.  In our coding style guidelines, we advocate for utilizi=
+ng
+> > static inline functions to replace such macros.  This patch verifies
+> > compliance with the new rule.
+> >=20
+> > For a macro such as the one below,
+> >=20
+> >  #define test(a) do { } while (0)
+> >=20
+> > The test result is as follows.
+> >=20
+> >  WARNING: Argument 'a' is not used in function-like macro
+> >  #21: FILE: mm/init-mm.c:20:
+> >  +#define test(a) do { } while (0)
+> >=20
+> >  total: 0 errors, 1 warnings, 8 lines checked
+> >=20
+> >=20
+> > > Link: https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail=
+.com
+> Yeah, I noticted the test. The difference between checkpatch and
+> macro_checker is that checkpatch only checks the patch files, instead
+> of the entire source files, which results in the inability to check
+> all macros in source files.
 
-kernel test robot noticed the following build warnings:
+Another possibility:
 
-[auto build test WARNING on lee-leds/for-leds-next]
-[also build test WARNING on v6.10]
-[cannot apply to linus/master next-20240724]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+$ git ls-files -- '*.[ch]' | \
+  xargs ./scripts/checkpatch -f --terse --no-summary --types=3DMACRO_ARG_UN=
+USED
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Carlos-Ferreira/HP-wmi-added-support-for-4-zone-keyboard-rgb/20240719-180603
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20240719100011.16656-2-carlosmiguelferreira.2003%40gmail.com
-patch subject: [PATCH v4 1/2] HP: wmi: added support for 4 zone keyboard rgb
-config: i386-kismet-CONFIG_LEDS_CLASS_MULTICOLOR-CONFIG_HP_WMI-0-0 (https://download.01.org/0day-ci/archive/20240725/202407251136.aymIqEw3-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240725/202407251136.aymIqEw3-lkp@intel.com/reproduce)
+Though I agree the addition of a test for "do {} while (0)" and
+no content would be also be useful for unused macro args tests.
+---
+ scripts/checkpatch.pl | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407251136.aymIqEw3-lkp@intel.com/
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 39032224d504f..285d29b3e9010 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6060,7 +6060,9 @@ sub process {
+ 				}
+=20
+ # check if this is an unused argument
+-				if ($define_stmt !~ /\b$arg\b/) {
++				if ($define_stmt !~ /\b$arg\b/ &&
++				    $define_stmt !~ /^$/ &&
++				    $define_stmt !~ /^do\s*\{\s*\}\s*while\s*\(\s*0\s*\)$/) {
+ 					WARN("MACRO_ARG_UNUSED",
+ 					     "Argument '$arg' is not used in function-like macro\n" . "$herec=
+tx");
+ 				}
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for LEDS_CLASS_MULTICOLOR when selected by HP_WMI
-   WARNING: unmet direct dependencies detected for LEDS_CLASS_MULTICOLOR
-     Depends on [n]: NEW_LEDS [=n] && LEDS_CLASS [=n]
-     Selected by [y]:
-     - HP_WMI [=y] && X86_PLATFORM_DEVICES [=y] && X86_PLATFORM_DRIVERS_HP [=y] && ACPI_WMI [=y] && INPUT [=y] && (RFKILL [=y] || RFKILL [=y]=n)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
