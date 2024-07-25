@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-262397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECEF93C68C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF69A93C68D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB211F239AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49CEE1F23D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7D119D890;
-	Thu, 25 Jul 2024 15:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC6F19D08C;
+	Thu, 25 Jul 2024 15:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PZiGj4bk"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8054E1D545;
-	Thu, 25 Jul 2024 15:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILNYZzTT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB1C26281;
+	Thu, 25 Jul 2024 15:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921720; cv=none; b=Ep+sdDAYq+jKrHUUR/Zy+npcMkhQ6CuGLgN4jr0/y58WrGSY1tmlwV8R0V3kHOhCre37dwe2VRtjWRDu0lV5ZyTxKBoOQWYOW4fzMHQTw6oEAkecHLIv/SAi4UixVMaRIbfV776t3FVYS9GNULkI0+zq7pOiK9JUUazZuQyDzYU=
+	t=1721921761; cv=none; b=dIv9VWcCZ38msYavyuLVuApdPqNiDZrnsM4rUVY2YkUfYaxbO2AiqILVX15FlNIgmeYwl1Tl5oL7zDbXwjLjH+YvbcKdoCHMqi/XpKKMYVW7eGR+4nD9bgz9jsn9hq8Om/I+z/OACSQ1XwpNLiaIOjEBNjoTZU4MlHnS9wbG7Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921720; c=relaxed/simple;
-	bh=Av13jV9WXAR2oP+oHIDPBK5vyTkEu7d2MaZAlZ8XFuo=;
+	s=arc-20240116; t=1721921761; c=relaxed/simple;
+	bh=lujvGOT+ObFJ8y/vYqyRaP9TJ3/Pnk2Llj5nbE8JiSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/W9fx/nk8gFJLipJB6goikIayGaDNkbHkYNlBHhQb+w+4sg6mb7zQUtB1DOugU1IqqXa2ujL1Rq6L1fPh+K4nc38GqIBhZkJCHvQ0Tdg+unQx0IjkdSMXy3s49fnZHFr81Nn3T0pN7OXWITpAkS0JQlEGwfyfjPRY7C3oTE0tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PZiGj4bk; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 35DC320B7165; Thu, 25 Jul 2024 08:35:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35DC320B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721921719;
-	bh=s8siOKYtL6p+6N0ViUiM0Lj1P9rlJj2iJn8RkO8aNns=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LI2IgNqZc4ClYv/3Ipd7TN3QlKrMuGtGGfyluHVrgFigHbDoKHhiv2Z52FAyEJ9DsZMKHYPOl5eWCZJUIhGp5qtyy5wBz8bAgijzE5CCqVjxD4wnk8wCAcSvm0IPGxqDsccW4oyC0RN8shlN8VmW2BiH1Z0y/zMO9cdQx/kFuVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILNYZzTT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD820C116B1;
+	Thu, 25 Jul 2024 15:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721921760;
+	bh=lujvGOT+ObFJ8y/vYqyRaP9TJ3/Pnk2Llj5nbE8JiSk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PZiGj4bkPmMFqlVmwznYlEjKxjVSuteatPh/LGjnjZlRj1kBXzk90/G3euIlaRWWe
-	 A7uE9eze6jA7agUd9hgZ0iak1M1pGvcE3UES6JYnScm4f/wSr2CAQb6pi6erNyO0c1
-	 ic41spFGFNhytOhhU4sDE3glTJJutoVU8XmOZOCk=
-Date: Thu, 25 Jul 2024 08:35:19 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	srivatsa@csail.mit.edu
-Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-Message-ID: <20240725153519.GA21016@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
- <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
+	b=ILNYZzTTE9EiXX/H6+iXaheodgCDbQjcAxOvHeefSPYH6fMkrwCDdOHpcAqitR9+K
+	 TKc88Nntfj4XbhDVVr+NScfw7FUFabdCBM0G5cT6oxKlDzpuoS0e6GKB1MbJheO4Db
+	 X2KV9cFTjrhFn7HvXIe7gu8rwq0CIerggtQA/Bl8wOTnVconVYSYLU2YThjDARKuY8
+	 M/MpcNlIkhNWIek1s3JTNDOetOLMkfHIagLkGqTpfQ0hvUi4LzKXW1MQuM77YVRNlB
+	 Z5aXNBS/621PfSBHfDWmliF9gFzTH2pikPlYXYKhKWGanbkpYKDTfVUK+h6pR7CokW
+	 UplNNZng6DLCA==
+Date: Thu, 25 Jul 2024 21:05:52 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Vratislav Bendel <vbendel@redhat.com>
+Subject: Re: [PATCH] rcu: Use system_unbound_wq to avoid disturbing isolated
+ CPUs
+Message-ID: <20240725153552.GA927762@neeraj.linux>
+References: <20240723181025.187413-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,36 +67,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20240723181025.187413-1-longman@redhat.com>
 
-On Thu, Jul 25, 2024 at 08:23:21AM -0700, Nuno Das Neves wrote:
-> On 7/24/2024 10:26 PM, Saurabh Sengar wrote:
-> > Currently on a very large system with 1780 CPUs, hv_acpi_init takes
-> > around 3 seconds to complete for all the CPUs. This is because of
-> > sequential synic initialization for each CPU.
-> > 
-> > Defer these tasks so that each CPU executes hv_acpi_init in parallel
-> > to take full advantage of multiple CPUs.
+On Tue, Jul 23, 2024 at 02:10:25PM -0400, Waiman Long wrote:
+> It was discovered that isolated CPUs could sometimes be disturbed by
+> kworkers processing kfree_rcu() works causing higher than expected
+> latency. It is because the RCU core uses "system_wq" which doesn't have
+> the WQ_UNBOUND flag to handle all its work items. Fix this violation of
+> latency limits by using "system_unbound_wq" in the RCU core instead.
+> This will ensure that those work items will not be run on CPUs marked
+> as isolated.
 > 
-> I think you mean hv_synic_init() here, not hv_acpi_init()?
 
-Thanks, will send v2 correcting this.
+Alternative approach here could be, in case we want to keep per CPU worker
+pools, define a wq with WQ_CPU_INTENSIVE flag. Are there cases where
+WQ_CPU_INTENSIVE wq won't be sufficient for the problem this patch
+is fixing?
 
-- Saurabh
 
+- Neeraj
+
+> Beside the WQ_UNBOUND flag, the other major difference between system_wq
+> and system_unbound_wq is their max_active count. The system_unbound_wq
+> has a max_active of WQ_MAX_ACTIVE (512) while system_wq's max_active
+> is WQ_DFL_ACTIVE (256) which is half of WQ_MAX_ACTIVE.
 > 
-> > 
-> > This solution saves around 2 seconds of boot time on a 1780 CPU system,
-> > that around 66% improvement in the existing logic.
-> > 
-> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > ---
-> >  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
-> >  1 file changed, 30 insertions(+), 3 deletions(-)
-> > 
+> Reported-by: Vratislav Bendel <vbendel@redhat.com>
+> Closes: https://issues.redhat.com/browse/RHEL-50220
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/rcu/tasks.h | 4 ++--
+>  kernel/rcu/tree.c  | 8 ++++----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
 > 
-> LGTM otherwise.
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index e641cc681901..494aa9513d0b 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3539,10 +3539,10 @@ schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
+>  	if (delayed_work_pending(&krcp->monitor_work)) {
+>  		delay_left = krcp->monitor_work.timer.expires - jiffies;
+>  		if (delay < delay_left)
+> -			mod_delayed_work(system_wq, &krcp->monitor_work, delay);
+> +			mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+>  		return;
+>  	}
+> -	queue_delayed_work(system_wq, &krcp->monitor_work, delay);
+> +	queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+>  }
+>  
+>  static void
+> @@ -3634,7 +3634,7 @@ static void kfree_rcu_monitor(struct work_struct *work)
+>  			// be that the work is in the pending state when
+>  			// channels have been detached following by each
+>  			// other.
+> -			queue_rcu_work(system_wq, &krwp->rcu_work);
+> +			queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
+>  		}
+>  	}
+>  
+> @@ -3704,7 +3704,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
+>  	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
+>  			!atomic_xchg(&krcp->work_in_progress, 1)) {
+>  		if (atomic_read(&krcp->backoff_page_cache_fill)) {
+> -			queue_delayed_work(system_wq,
+> +			queue_delayed_work(system_unbound_wq,
+>  				&krcp->page_cache_work,
+>  					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
+>  		} else {
+> -- 
+> 2.43.5
 > 
-> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
