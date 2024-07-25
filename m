@@ -1,155 +1,105 @@
-Return-Path: <linux-kernel+bounces-261640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B4193BA3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:39:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F92693BA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45F61C218C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8879A283206
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC636AD7;
-	Thu, 25 Jul 2024 01:39:19 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEA96AB9;
+	Thu, 25 Jul 2024 01:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnUt9yEV"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175BE5C89;
-	Thu, 25 Jul 2024 01:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A14428
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721871559; cv=none; b=Wsh9wgjtVhGwUTkwof0icsAzzxVqSZSfUM1KLKBqv87GIdt2KinRaXgUIDfYilS8Vlu9H+GrUmmtE1ggOndt43iGpv0TNCdqmGb06IP3MgYvFm7ueNdQIvqPx5sPoKXFuMJAipmk8QI0b8/6Vfaa168ybC7jy9V3DvPwZapv8DE=
+	t=1721871725; cv=none; b=KTZMIciTRknhuts2sP6YoqashCMJOuSiB3YjspogqgdNA+HmIavnNXoL9SVyCgQOJWy+f6rYdOup1Rn2ap3mS7zifEINWiiJk7R7HPl8I/i2PA/OGv0Q8olelBfkDiQYBPCGEPDMH85/AN4JqXU1WF0YciZXsPEz5ggG9jlo+kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721871559; c=relaxed/simple;
-	bh=wM1qLzdgmg5DE5946Iqo4Egw8+dMNehGugv/fenT9S8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=igoHd1y6kvxQ7aMrOM+9RbllXZYg8VGx9uw+Pd+DIPCF1kadmLEdEr1eqtrQIrgiP7RC5SsHCoXWZHWu12BQSyUM87yuP+JDCEBZq20S8FbYWEoHeu7pxo0/y+BZ5hegGx/aGTTEsTMOOBp0EyNuUczPX8WB5xuO9702AbArGJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAD3oECcrKFmBQ_bAA--.49981S2;
-	Thu, 25 Jul 2024 09:38:50 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jani.nikula@linux.intel.com
-Cc: airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	make24@iscas.ac.cn,
-	mripard@kernel.org,
-	noralf@tronnes.org,
-	sam@ravnborg.org,
-	stable@vger.kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in drm_client_modeset_probe
-Date: Thu, 25 Jul 2024 09:38:36 +0800
-Message-Id: <20240725013836.1708509-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <87jzhakfn7.fsf@intel.com>
-References: <87jzhakfn7.fsf@intel.com>
+	s=arc-20240116; t=1721871725; c=relaxed/simple;
+	bh=/F8SqBtjqh1bFRoCVnVK3wrRf/QS65Bw6/zDPMXMJMU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=OLSyuS3N518jrlaG2mQDhq9XXKkFDANMHMPQ2QDDuupC5ika5JhP7WzynWWGdLM+u9ZrjXiy3N7CsTLhJkabyg4HLbZA+JqfDIDGinVMg+Gxtvs7gRkX3jHAGt+k/29n9aYMUWqGjJD4UDjq4uzPmCnDw8h4oHwmCPIfemGB7lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnUt9yEV; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so2754668a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721871722; x=1722476522; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NFpkKmmT3youOgcmlSfL4KcOPVXS0ZnF2VstHXtU494=;
+        b=AnUt9yEVaP+rZgbZE+yXdI/2nmlL55C1DNOMfKaON7StSCgtNSht99UZuu/SPgwsEl
+         6u6aTcUGJZ93ZK3jJjjUnTKYEtr13GPQGZayjCbKMm6pUprIQByqJR4AASsKiY3eazjJ
+         ZBUdfy557LGFBYjz5CQNffRXit8cWGYk3wYFsaFcvZ2SMeOP4DpzqCN0hBmn42jWAB/2
+         R8AGVUSbz+3H7c1xcE/ZJHivxMmtZNceKJv9fZjp3aE535eEMu+FUMQkRluVyDNSLlG0
+         tbEykyaW08azULPUFnkpf4SB1sDjE2N5djRR7L6OkhMsWZanx390Ul0/o7AttglHj02/
+         TMvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721871722; x=1722476522;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NFpkKmmT3youOgcmlSfL4KcOPVXS0ZnF2VstHXtU494=;
+        b=okfDPDt+Q20YGrLWGyM8UiA2KOex6LiQm5pbQsD3ViPg+6CLmhEu7AjN0UQE5Gk39N
+         5vpTVnCzrAiTA9DC8xcNxtX0HYBNQTOK4QcKytcM99v4+OKoXLN2VLDDNV+H3RwApwvG
+         xbOhJOweDliMeR+JHJuRt4b/uOj+DnvcVcKcK3JjSXQa65VtaU0NHRz7dVjl5VeIXjSz
+         3pxih4lr4vEGWYwwGFhZLIipvEIIMxgi2FPK89rnY4n2extNaOiruYaV70sIzIJcsyK2
+         b8e3rY3jXWW/ZNvbF0ojUjidU1Q2ceaIJm3qQTi3ijoSkxKaPWGpHMeldCiqYgWXXVko
+         Pd6g==
+X-Gm-Message-State: AOJu0YyA3ut6xp1szcIaa3uVx361kqNw3NJncZ9L5RO1xAAgv/2EPFUH
+	u0xhPjDhcQAjyF5xjdH/DQ1QLAsweZEAhTdWq/+AZhW4Hv1jfV1m
+X-Google-Smtp-Source: AGHT+IGoI+YQCe7Aw7rC7D+UViXAni2IQOz76J6pHhJWn2CLyBJkJKv38LUss6T7pyAx/2pjSOHYUQ==
+X-Received: by 2002:a05:6402:2546:b0:57c:614c:56e7 with SMTP id 4fb4d7f45d1cf-5ac148aa3b2mr1227907a12.18.1721871722021;
+        Wed, 24 Jul 2024 18:42:02 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59c86sm246231a12.42.2024.07.24.18.42.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Jul 2024 18:42:01 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: rppt@kernel.org,
+	richard.weiyang@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 1/5] memblock test: fix implicit declaration of function 'virt_to_phys'
+Date: Thu, 25 Jul 2024 01:41:53 +0000
+Message-Id: <20240725014157.17707-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowAD3oECcrKFmBQ_bAA--.49981S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFykWFykAr18ZFy8Gw43trb_yoW5Jr4kp3
-	y5K3Z0yF4kXFnrCFZ2qw18Z3WS9wn5tr43Jas8Ja9rCas0grn3AryUKr4YgFWDCr12kw10
-	qF4UKFWSgw1qvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:=0D
-> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:=0D
-> > On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:=0D
-> >> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:=0D
-> >> > In drm_client_modeset_probe(), the return value of drm_mode_duplicat=
-e() is=0D
-> >> > assigned to modeset->mode, which will lead to a possible NULL pointe=
-r=0D
-> >> > dereference on failure of drm_mode_duplicate(). Add a check to avoid=
- npd.=0D
-> >> >=0D
-> >> > Cc: stable@vger.kernel.org=0D
-> >> > Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")=
-=0D
-> >> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
-> >> > ---=0D
-> >> > Changes in v3:=0D
-> >> > - modified patch as suggestions, returned error directly when failin=
-g to =0D
-> >> > get modeset->mode.=0D
-> >> =0D
-> >> This is not what I suggested, and you can't just return here either.=0D
-> >> =0D
-> >> BR,=0D
-> >> Jani.=0D
-> >> =0D
-> >=0D
-> > I have carefully read through your comments. Based on your comments on =
-the =0D
-> > patchs I submitted, I am uncertain about the appropriate course of acti=
-on =0D
-> > following the return value check(whether to continue or to return direc=
-tly,=0D
-> > as both are common approaches in dealing with function drm_mode_duplica=
-te()=0D
-> > in Linux kernel, and such handling has received 'acked-by' in similar =
-=0D
-> > vulnerabilities). Could you provide some advice on this matter? Certain=
-ly, =0D
-> > adding a return value check is essential, the reasons for which have be=
-en =0D
-> > detailed in the vulnerability description. I am looking forward to your=
- =0D
-> > guidance and response. Thank you!=0D
-> =0D
-> Everything depends on the context. You can't just go ahead and do the=0D
-> same thing everywhere. If you handle errors, even the highly unlikely=0D
-> ones such as this one, you better do it properly.=0D
-> =0D
-> If you continue here, you'll still leave modeset->mode NULL. And you=0D
-> don't propagate the error. Something else is going to hit the issue=0D
-> soon.=0D
-> =0D
-> If you return directly, you'll leave holding a few locks, and leaking=0D
-> memory.=0D
-> =0D
-> There's already some error handling in the function, in the same loop=0D
-> even. Set ret =3D -ENOMEM and break.=0D
-> =0D
-> (However, you could still argue there's an existing problem in the error=
-=0D
-> handling in that all modeset->connectors aren't put and cleaned up.)=0D
-> =0D
-> =0D
-> BR,=0D
-> Jani.=0D
-=0D
-Indeed, it was my negligence. Thank you very much for your guidance. I will=
-=0D
-carefully analyze according to your instructions and resubmit a new patch.=
-=0D
-=0D
-Best regards,=0D
-=0D
-Ma Ke=0D
+Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
+alloc") introduce the usage of virt_to_phys(), which is not defined in
+memblock tests.
+
+Define it in kernel.h to fix the build error.
+
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+---
+ tools/testing/memblock/linux/kernel.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/testing/memblock/linux/kernel.h b/tools/testing/memblock/linux/kernel.h
+index d2f148bd8902..ca56f36ef296 100644
+--- a/tools/testing/memblock/linux/kernel.h
++++ b/tools/testing/memblock/linux/kernel.h
+@@ -9,4 +9,6 @@
+ #include <linux/linkage.h>
+ #include <linux/kconfig.h>
+ 
++#define virt_to_phys(p) ((unsigned long)p)
++
+ #endif
+-- 
+2.34.1
 
 
