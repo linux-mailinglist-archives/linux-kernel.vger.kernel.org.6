@@ -1,102 +1,82 @@
-Return-Path: <linux-kernel+bounces-262170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC23B93C1D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C8693C1D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BEEC288758
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17670288D17
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77F319AD99;
-	Thu, 25 Jul 2024 12:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5842199EAA;
+	Thu, 25 Jul 2024 12:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLRgXOtI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHSi5PmD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263FE19A2BE;
-	Thu, 25 Jul 2024 12:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CF2199E9F;
+	Thu, 25 Jul 2024 12:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721910032; cv=none; b=trYVbUv7qSzkOyYVqme/z56dxWmkYhYU/bMvozSpYQl3idjbwjhJHOMNfUaQcB4KP6ZxmNO81HgdnCHyM/f7DGOHSx5TCZSHYYmcaOmYVhhHPIDCEHLTD/SVnzeI6MnPnViLEbjaYIvWPYsbeDuwz18E1cEEQBDj3C1zRRbBMa4=
+	t=1721910084; cv=none; b=ef5c1PyexV8TQTV8UehYHejp/+Vqx3sJ1G5lcT/xl/DJAy3G4P/97cR5Xbo2qDnhbjiWYuABgkeQUb2e7eprJQYAbF8Hv6+AueKW5tSJ9fHaQIKfxypLnpM8aBKXd54lyVQdpkmTg1Enb8ul58YKQNtiTA+Hvpp+bAk0EPpIyRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721910032; c=relaxed/simple;
-	bh=DRX7Kwd+cvQXT4FVV15ImnwpeEa2tQ6zJz5/kGZD7V0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eI/8JTujNsKvUemktcUyysmBnwHgljSaFzJq3k+fy0IqS9tXB7AgoxxgHVxiLSUOdxjOoAtzXJBqT+FlCcLwi/FVdlA+IlBSjnRyUEcOtlt39HXl57Q6USdbtJUx9CpAZHQdmUk+Z1hvDxCPTLzJyQbvfot3/mjcDZeZo8wr7L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLRgXOtI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B5D8AC4AF0B;
-	Thu, 25 Jul 2024 12:20:31 +0000 (UTC)
+	s=arc-20240116; t=1721910084; c=relaxed/simple;
+	bh=vps1tIL5BK0lsVg6W/h0YW5iaRO5lqGUTLBhdTls6oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMrCwAUxJlzO/M456y4IkkIntso7JPOgoAmLvokuCs/QwjysESqZrLa21bG86hxQ+Xgmp7htMewhFpyCBLd0oIXUu3dSgcT0cIsaNyfGJfKrgPCwzD6ZRtB7LaISyhzUEXUc7k7f0OyRY9/VSTLNvRwbdYNaOKjYePOSSKwJyUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHSi5PmD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F44C116B1;
+	Thu, 25 Jul 2024 12:21:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721910031;
-	bh=DRX7Kwd+cvQXT4FVV15ImnwpeEa2tQ6zJz5/kGZD7V0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TLRgXOtIhJXJwz6sd/78Z1rQmCpciQl478R9PGWPbp785acXaEZHN1BI274+WZIHd
-	 QUMVF/oj9jDv7QAtH3CkSFkIWXEoLpuXWziR4SPrdeZdl2mHHGmsSgya32Hq5Kdz/V
-	 BLRkH/GfD1FF6erErtqVr5r7ucFHG/NrvIPSShhM4QcyQd+YU5Bnpe9EzcEOA9nuG0
-	 CfCQOELh+RiHeVW/Fpj+51S98BD5mxo8yw8OXxsB7DeS23vxzbpg4z8yKUznfsB4c4
-	 Q0yngGC7dvjsXGoL7XpPP8sygPXUyQhFQRXL59dPnhLXyikXBbJj+FiQHC4XXPqMZ3
-	 jRIttnY4z5VGw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E12CC4332D;
-	Thu, 25 Jul 2024 12:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721910083;
+	bh=vps1tIL5BK0lsVg6W/h0YW5iaRO5lqGUTLBhdTls6oM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sHSi5PmDTNF2I6GvPdEwvPiIZJ0CL6MC3K5L/Gd9bj9Hq/tZCq4CcL6zMu1ksVTOn
+	 IADEdJ+9WKJd3fAAwqe4w6lYg9jfy33x53EUTdrTEkS1XhBY4umSGBI+a7Xt9eyoLo
+	 nm52owUyZBeUksQG2zSdXARUvY+iZb2MacAtUXLR7cyMDSXcNBK7G9MOhzeyNWZ74W
+	 rY43o+338Uh094fAma4fBOGu4Sej5mlhBCDWmRjSvvO50eISvF5s6k5REjvXViP4aa
+	 WPydBE4Ymos+f4hRNTCqX5bKM55DIhmu6CqOnFR8+6C8CVtBtaHlZAAIIJGl8wMwF7
+	 we+hDL6CPL3iw==
+Date: Thu, 25 Jul 2024 14:21:20 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 19/25] rcu: Rename struct rcu_data .dynticks_snap into
+ .watching_snap
+Message-ID: <ZqJDQEDeU6_qUIDL@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-20-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 0/2] selftests/bpf: convert test_xdp_veth to test_progs
- framework
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172191003164.2907.17086053402517059544.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Jul 2024 12:20:31 +0000
-References: <20240721-convert_test_xdp_veth-v4-0-23bdba21b2f9@bootlin.com>
-In-Reply-To: <20240721-convert_test_xdp_veth-v4-0-23bdba21b2f9@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
-	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- horms@kernel.org, ebpf@linuxfoundation.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+In-Reply-To: <20240724144325.3307148-20-vschneid@redhat.com>
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Sun, 21 Jul 2024 21:33:02 +0200 you wrote:
-> Hello everyone,
+Le Wed, Jul 24, 2024 at 04:43:19PM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the snapshot helpers are now prefix by
+> "rcu_watching". Reflect that change into the storage variables for these
+> snapshots.
 > 
-> this small series is a first step in a larger effort aiming to help improve
-> eBPF selftests and the testing coverage in CI. It focuses for now on
-> test_xdp_veth.sh, a small test which is not integrated yet in test_progs.
-> The series is mostly about a rewrite of test_xdp_veth.sh to make it able to
-> run under test_progs, relying on libbpf to manipulate bpf programs involved
-> in the test.
-> 
-> [...]
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Here is the summary with links:
-  - [v4,1/2] selftests/bpf: update xdp_redirect_map prog sections for libbpf
-    https://git.kernel.org/bpf/bpf-next/c/e33e15b62d44
-  - [v4,2/2] selftests/bpf: integrate test_xdp_veth into test_progs
-    https://git.kernel.org/bpf/bpf-next/c/6189fa6faa09
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
