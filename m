@@ -1,162 +1,170 @@
-Return-Path: <linux-kernel+bounces-262048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFCF93BFF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A1C93BFFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCA11F22357
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68B528389F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CC7198E91;
-	Thu, 25 Jul 2024 10:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45025198E80;
+	Thu, 25 Jul 2024 10:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i6QCIw8K"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mk5Em2UD"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36E187866;
-	Thu, 25 Jul 2024 10:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD17197A7E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721903585; cv=none; b=MCjAY5AV8xPBwtJ3dp8eREF/M9TQ7ZsL9jmTHOMr52y2OtMg3idejINNrmYaETcBSK7mISwyjt6mx7Po63abXvJqpZXP2VfF/rzC4XCBIvbB6wX6S/zR6xnXIJlTci4/CIXhPlUHHrRejqlb2ceCCMjYYZEce2oDQBOzSASRFWE=
+	t=1721903703; cv=none; b=ZdF7HYt/jxozhzqZhmELWZQeFLoz9FquK/dWkVhGe/f5OuE/qPfuBrY0zkfedPaGOUuKTdhkoKntO+wf2hpWxXqizuhBvaA4Bju3mMoM27CHUvuEC0vNd5oKay+ZzqsiFK9ItDScOCq2gx4f0kIiFzNagVGBGH0TsEKqsczTikQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721903585; c=relaxed/simple;
-	bh=q2R6qmejY7wV1ZJErertHQrkFkbltq5MaLaLlTFbgaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bwMaD4wqEGFJwQSvOZVzd40aEZf/PbYwZsJjlVpGSrPVFK2j/BlFJSUfwBH+O4xyDtMkXzBSg+/4s3RoqrFjIJtBcPq7fBy8fNHr3GgsHxGWVLAVQ52xeH5izBMFPEznT041+/I2RsmfBDzQIy2sH6mYmYl3mfABmIhD8MVVfr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i6QCIw8K; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P0WoOL004323;
-	Thu, 25 Jul 2024 10:32:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+NJkvVtrWzA8I3lBftm4GOVxGmthl5QFf23tJV31+GE=; b=i6QCIw8K44lbkhEU
-	g2pM0tqBDRj4Ig/8B3Z3r5XTCqoO+5My8qJaqfOk42Vc6xPmg+WiFe2zDpau3BHE
-	aHX2HmwrWAflN4C0Sl1Pcc+dcfU8HrBXN1LdYyfwl3s7Jm6TcXWeKJd6P33L/sSw
-	pnF+iUzHWsyQ6KyQw2gYthQuZJwNEtZTDertR4wNdEFV5s39t4l8w20YcWGI4FsM
-	K7oobPJQDp2NsCHtsBJvSAU9oTGL89liY7ubLznA3x8GjBqH3yC3g81pVLDqWaaL
-	/bw6BxYccFj3RgTRj4/jRwv/JKJHnwDaOUvD7kimHNYWQgIVt4qhZhRzOXRh2StR
-	17Ih3g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5auvw2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 10:32:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46PAWqEO022665
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 10:32:53 GMT
-Received: from [10.218.28.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 25 Jul
- 2024 03:32:48 -0700
-Message-ID: <a577f1d1-ceba-4d46-b874-38aa40cc8354@quicinc.com>
-Date: Thu, 25 Jul 2024 16:02:36 +0530
+	s=arc-20240116; t=1721903703; c=relaxed/simple;
+	bh=W/Lg3Vl1pypqyGMJ/rAGZU1DOjSt7qzAj1AORn7I2y0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iLGMeJQUkus9RU9WyCvXobDNsK655c2I2Q5PfIjJ5c0PXa+y6saEEZSJsWlUCogSWP0fzn5QNSoVhH5bSCOdbNhr6LXu0yhPWxATfh/6JyQFUog21UT2e6vavBVLPbijrsbCzCvgAzYp3bd3yJw3ohS283UAOya0L3PQb/CBs7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Mk5Em2UD; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so1020092e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721903700; x=1722508500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGl5c3HNmBBbaK/O1r5iTiZ1Nkq9wz0Q4rHARmEMwjs=;
+        b=Mk5Em2UD5iWB0AFYlbX55FVgaDlyjiYCQrrxDOKjyYUrQPy/wjqpM2+A2JBDI0bf5f
+         k/9vo5FsI7Kh7y5qs9Kxi/vFkiuZTSMcfZb+dUpez9HLlyX1o33lvMvfj37SvpGtd9MQ
+         Vzdo5x4uV/aUrvdNbDOV1jcuhWYRYNxK2ECyg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721903700; x=1722508500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oGl5c3HNmBBbaK/O1r5iTiZ1Nkq9wz0Q4rHARmEMwjs=;
+        b=XxAFZ9D9c7PvF+iwSoIC9UnwXeCE76FSbgjRiLv9OSRYWYHcHVNZQKQsURIu1HS3k4
+         gjWr8f9Tf4IGMtUHvwap23gHB5i8XO9I4/X+nSf1nWqYRoPoQTryttr5znKXM4opYjhf
+         azcZFS3qum5aFew0qsX1h4izTHZid6g9MmzaqBknhndzHbdvrjpFa1Dpys422eMFNc9a
+         QBCA/NZWw+XVFzck/e1Z8YkKdFqF/RrO9NgDZAIIDh0qJdBtLlAKX2e9SIgFypbl62P8
+         cdaG34i6gE8/m7Sl5eBTkpkuljdjpNf/binIfXxGWZDjemGFLV47OC7yB1AXYdD4IsAK
+         uQDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4+duJL/u0sYIJ3LN7G6/VCWpXqCyJCrlU910W5dQMdg4Y+Mre7qNUkb2+s2ERJnKLlE/uvtYpXHJfYwkxpf8MzGZ+XPvy66IYz7fs
+X-Gm-Message-State: AOJu0YwAAw1LPEO5SarJWQqmU8rIsW5AnepAA8oHfOGr8GbAmCtt3IeT
+	6ELCZkPi27ewgFShFmQyuI2sro+uD/FHv0gEoYOLrzSZzqPyGxIKXpAkNnKKWC6YiJspNKX6MNG
+	R06ROmatBnxCVzzZKfu6256L8A2t0INJTysmu
+X-Google-Smtp-Source: AGHT+IHkE66wc/ZgxWkQgDaikOYMpwK+iI3oiC+hn7N1tRYSraZ86sG3P9nD/p1ufKpAexRHxLjoxCDlxy5nnXtmG6M=
+X-Received: by 2002:a05:6512:2035:b0:52e:9ab9:da14 with SMTP id
+ 2adb3069b0e04-52fd60b6b10mr855792e87.31.1721903699732; Thu, 25 Jul 2024
+ 03:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] pmdomain/cpuidle-psci: Support s2idle/s2ram on
- PREEMPT_RT
-Content-Language: en-US
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki"
-	<rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>, <linux-pm@vger.kernel.org>
-CC: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Nikunj Kela
-	<nkela@quicinc.com>,
-        Prasad Sodagudi <psodagud@quicinc.com>,
-        Maulik Shah
-	<quic_mkshah@quicinc.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-rt-users@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240527142557.321610-1-ulf.hansson@linaro.org>
-From: Raghavendra Kakarla <quic_rkakarla@quicinc.com>
-In-Reply-To: <20240527142557.321610-1-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lu8PEDbsZsbZ0qNEfjGSyLX9uJyP-aMW
-X-Proofpoint-GUID: lu8PEDbsZsbZ0qNEfjGSyLX9uJyP-aMW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_10,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- clxscore=1011 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=821
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250071
+References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+In-Reply-To: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 25 Jul 2024 18:34:48 +0800
+Message-ID: <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1 controller
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, Jul 22, 2024 at 11:27=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+>
+> Currently if the xhci1 controller happens to probe before the pcie1
+> controller then it fails with the following errors:
+>
+> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+> xhci-mtk 11290000.usb: can't setup: -110
+> xhci-mtk: probe of 11290000.usb failed with error -110
+>
+> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
+> clock, although exactly why this pcie clock is needed for the usb
+> controller is still unknown. Add the clock to the xhci1 controller so it
+> always probes successfully and use a placeholder clock name for it.
+>
+> Reported-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com> #Kerne=
+lCI
+> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@=
+notapiano/
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+
+So I asked MediaTek about this, and it seems the correct thing to do is
+disable USB 3 on this host controller using the following snippet. The
+snippet is copy-pasted from our issue tracker and won't apply directly.
+
+This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
+is used only for USB 2.0 on an M.2 slot.
 
 
+ChenYu
 
-On 5/27/2024 7:55 PM, Ulf Hansson wrote:
-> Updates in v2:
-> 	- Rebased and fixed a small issue in genpd, see patch3.
-> 	- Re-tested on v6.9-rt5 (PREEMPT_RT enabled)
-> 	- Re-tested on v6.10-rc1 (for regressions, PREEMPT_RT disabled)
-> 
-> The hierarchical PM domain topology and the corresponding domain-idle-states
-> are currently disabled on a PREEMPT_RT based configuration. The main reason is
-> because spinlocks are turned into sleepable locks on PREEMPT_RT, which means
-> genpd and runtime PM can't be use in the atomic idle-path when
-> selecting/entering an idle-state.
-> 
-> For s2idle/s2ram this is an unnecessary limitation that this series intends to
-> address. Note that, the support for cpuhotplug is left to future improvements.
-> More information about this are available in the commit messages.
-> 
-> I have tested this on a Dragonboard 410c.
-This series is tested on qcm6490 with PREEMPT_RT enabled. For the series,
+index 8b7307cdefc6..2dac9f706a58
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -1447,6 +1447,7 @@
+                                      "xhci_ck";
+                        mediatek,syscon-wakeup =3D <&pericfg 0x400 104>;
+                        wakeup-source;
++                       mediatek,u3p-dis-msk =3D <0x1>;
+                        status =3D "disabled";
+                };
 
-Tested-by: Raghavendra Kakarla <quic_rkakarla@quicinc.com>  # qcm6490 
-with PREEMPT_RT enabled
-
-Tested APSS suspend and then SoC power collapse through s2idle and s2ram 
-paths.
-APSS and soc power collapse stats are incremented.
-/sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-/sys/kernel/debug/qcom_stats/cxsd
-
-Without this series, they are not incremented.
-
-Thanks,
-Raghavendra K.
-> 
-> Kind regards
-> Ulf Hansson
-> 
-> 
-> Ulf Hansson (7):
->    pmdomain: core: Enable s2idle for CPU PM domains on PREEMPT_RT
->    pmdomain: core: Don't hold the genpd-lock when calling
->      dev_pm_domain_set()
->    pmdomain: core: Use dev_name() instead of kobject_get_path() in
->      debugfs
->    cpuidle: psci-domain: Enable system-wide suspend on PREEMPT_RT
->    cpuidle: psci: Drop redundant assignment of CPUIDLE_FLAG_RCU_IDLE
->    cpuidle: psci: Enable the hierarchical topology for s2ram on
->      PREEMPT_RT
->    cpuidle: psci: Enable the hierarchical topology for s2idle on
->      PREEMPT_RT
-> 
->   drivers/cpuidle/cpuidle-psci-domain.c | 10 ++--
->   drivers/cpuidle/cpuidle-psci.c        | 26 ++++++----
->   drivers/pmdomain/core.c               | 75 +++++++++++++++++++--------
->   include/linux/pm_domain.h             |  5 +-
->   4 files changed, 80 insertions(+), 36 deletions(-)
-> 
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/d=
+ts/mediatek/mt8195.dtsi
+> index 2ee45752583c..cc5169871f1c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
+>                                  <&topckgen CLK_TOP_SSUSB_P1_REF>,
+>                                  <&apmixedsys CLK_APMIXED_USB1PLL>,
+>                                  <&clk26m>,
+> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
+> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
+> +                                /*
+> +                                 * This clock is required due to a hardw=
+are
+> +                                 * bug. The 'frmcnt_ck' clock name is us=
+ed as a
+> +                                 * placeholder.
+> +                                 */
+> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96=
+M>;
+>                         clock-names =3D "sys_ck", "ref_ck", "mcu_ck", "dm=
+a_ck",
+> -                                     "xhci_ck";
+> +                                     "xhci_ck", "frmcnt_ck";
+>                         mediatek,syscon-wakeup =3D <&pericfg 0x400 104>;
+>                         wakeup-source;
+>                         status =3D "disabled";
+>
+> ---
+> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
+>
+> Best regards,
+> --
+> N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+>
+>
 
