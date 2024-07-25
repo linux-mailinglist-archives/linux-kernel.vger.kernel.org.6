@@ -1,174 +1,133 @@
-Return-Path: <linux-kernel+bounces-261795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A462A93BC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:54:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4ED693BC3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8721F235A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE8EB21CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995CA13E40F;
-	Thu, 25 Jul 2024 05:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D411A1411E6;
+	Thu, 25 Jul 2024 05:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uDUDqTEF"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sg/oqDl3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B798C13D8B3;
-	Thu, 25 Jul 2024 05:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB22C13DDBD
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721886846; cv=none; b=S4T9tcjzkWxy73z/i/771g59l/6fgXl4y8DfVVHEqp1gqn2idV8W6XyHR1/vzKGam50s9gdnQL9r2BaJHOeuKZS18zjrVRFo5FEym1bP8czzHat+w5NFmPepznicNGcz1oN0ikfkAOr4nq0T3CZAigQXTbIdtVsACrjzieqQApI=
+	t=1721886867; cv=none; b=cgvh1QafoX57r4JKbD6+zyLJnQ/mTT2Iy/sxkRDskwiRfOx+9ifmLhlU/rYT7SY8mG6Jfhh4s3s+yzes86EqYer+yG5fwvv1NOXiFNmw38ofMy/+UJsPzjzZS+t3llFNm0JKidijYwN7MfYU4AFoeQ4OD96afZ3Dl+2heBnzpUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721886846; c=relaxed/simple;
-	bh=iAhpckX3WLrcRDqsdq49YABDpgjH8cOYW51iK4Yi9U8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ClZPmCRcAAvzOj6zPiWjiwNkHAXyad7OYP2g1fMsv1AlUNPFe+qm0UFtEzv6WPqpZdPnG7ygkFfp4fx451EI1wRxZkOdLSQX94Y/ft9dfj6hN5PPt58c43uZKivzEjZGF54ipi0gLIiNUW3T4cNPc3f7BKPvLhnUX0Ry1iErEs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uDUDqTEF; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46P5rjpS103866;
-	Thu, 25 Jul 2024 00:53:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721886825;
-	bh=mXvRUEWdVcaZN+h7WS/2ZfLarQXHOiOFcVf6Y4xsMmk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=uDUDqTEFebvRL+mGuS7XzdeAdDfZjK7FyzbbotNDJOjJSFJ/9UHI/GUUQFG3wEEzE
-	 oRf2Nk/luJL73FkeBw1SKjiI7CwR4B07idkRCJHhz8alcQo5eSI6pF1QlTRlurO4K0
-	 DQXFiuVx1MXjC4EZENZl+d70b4ym52gTNTHEzIhk=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46P5rjaO044137
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 25 Jul 2024 00:53:45 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 25
- Jul 2024 00:53:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 25 Jul 2024 00:53:45 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46P5rihr080277;
-	Thu, 25 Jul 2024 00:53:44 -0500
-Date: Thu, 25 Jul 2024 11:23:43 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <bhelgaas@google.com>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <vigneshr@ti.com>, <kishon@kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>, <ahalaney@redhat.com>, <srk@ti.com>
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <be3e3c5f-0d48-41b0-87f4-2210f13b9460@ti.com>
-References: <20240724065048.285838-1-s-vadapalli@ti.com>
- <20240724162304.GA802428@bhelgaas>
+	s=arc-20240116; t=1721886867; c=relaxed/simple;
+	bh=gAZvwL67v0vt6xsxrH6XS/itsYUgy+inKlxURoSIcdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UyCE9/p9BH3AbfiOEPSyAd0DZgD4HovvaHndPPiz+hYS4fSoiGjV87BJQC5u7CO58Ud/w1Fx7Zn632xYlSCyjLYnMIfj3/Q+U83LE8Mj8Ofkylk6y/XHLg59O2VD2VgBusUW6qbv8SSpkuL3WpWe4Lu3+D7bH0aH8DRQKtQGTsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sg/oqDl3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721886864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dh3yyuBj9HXf2A5cEfYqf0NaFgetwfgWSnefr6wKli8=;
+	b=Sg/oqDl3/zMVoIHGHP/9dA9o42bLVI+uErD2W0FnHd5ht+/ozbOH1kk/KqA3weiw0r/QCZ
+	Od2bx09pFEGgeEtbU1d6dIsOCp+DW3DmB8qZ9O18JPcbJ8TGLi565oG7HHWD3VbiL3bKv8
+	IwAsX6opCb1rXSkEfI1XuzfQyxyk9kE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-W1rqLgZNNKiuBM1B1NHVFw-1; Thu, 25 Jul 2024 01:54:21 -0400
+X-MC-Unique: W1rqLgZNNKiuBM1B1NHVFw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36835f6ebdcso420286f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:54:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721886860; x=1722491660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dh3yyuBj9HXf2A5cEfYqf0NaFgetwfgWSnefr6wKli8=;
+        b=W/6GW5xfM/N2Xx0eA+n1mHBppNL/ass25Obz6GhuyoRFiKSSHUiq7SgK46k5BlMOBa
+         HY8kGWH5gN/V0/Hs0G2JMqLRNKezjYBQefzbrVjKn+RUyeIwz3/tFkAmIVoTSgt+7gUL
+         7CxgxQ4YT+NPFvO7JMzcP7RA6y06ow7c0iz5FgB7dM8dvQxBhygOTvyRULAoodjM76lx
+         fhrZ7QxO6g+yEqPPARSCXGeELyN4Mlqv1elQ0hUaOJrJrYq4NCiw4RflVXJzqByw6kLB
+         OnX7N+/D1eEryYuy5OzJ0vNufz2DqqX4zYo7Sct6pYjV9OQGZHdzYi6ZatgQmIaiAGs3
+         RdUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+LhWv6gKN4E/XYsOmAJtVsLPDogYl9OqEh4q+PPlgOUUKKpP+h5dYIKdP/6KSp3H7nwpwTVKUmdkVNEBrwK6LLhhd4VIX0a29acn9
+X-Gm-Message-State: AOJu0YysCf8M99zXmc8oN1QgZf1s+Ehj5uVF2I2cCFPUzM2UwwKtTv6T
+	vp5UxLkfgTDCg/yJfwO973ZMlQuOXa6jf0cfyzn3A7jZJS4PgmDk+fNYcfM0ptFEXN0XeY5veVw
+	JbgUKXteZ8Mbq/0zCCiGgy7mpoVQJ9PtaBWxRXDYrMOJAIhCGxgbyTVhE04Hd7g==
+X-Received: by 2002:a05:6000:1942:b0:368:3038:8290 with SMTP id ffacd0b85a97d-36b36421ac8mr707583f8f.39.1721886860524;
+        Wed, 24 Jul 2024 22:54:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHI3Abal444WmsilGMojUOB9llheQDVQUaMgG30HCOZkmwXntXo9Fy/JkeXGpR8m6xgr9AF9A==
+X-Received: by 2002:a05:6000:1942:b0:368:3038:8290 with SMTP id ffacd0b85a97d-36b36421ac8mr707561f8f.39.1721886859582;
+        Wed, 24 Jul 2024 22:54:19 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1ed:8427:35e3:731c:3106:ee46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857dcesm900105f8f.85.2024.07.24.22.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 22:54:18 -0700 (PDT)
+Date: Thu, 25 Jul 2024 01:54:10 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <20240725015120-mutt-send-email-mst@kernel.org>
+References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724162304.GA802428@bhelgaas>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
 
-On Wed, Jul 24, 2024 at 11:23:04AM -0500, Bjorn Helgaas wrote:
-> Subject should say something about why this change is needed, not just
-> translate the C code to English.
-
-My intent was to summarize the change to make it easy for anyone to find
-out what's being done. The commit message below explains in detail as to
-why they are set to NULL. As an alternative, I could change the $subject
-to:
-PCI: j721e: Disable INTx mapping and swizzling
-where the "Disable" is equivalent to NULL. Kindly let me know if this is
-acceptable or needs to be improved further.
-
+On Wed, Jul 24, 2024 at 06:16:37PM +0100, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
-> > Since the configuration of Legacy Interrupts (INTx) is not supported, set
+> The vmclock "device" provides a shared memory region with precision clock
+> information. By using shared memory, it is safe across Live Migration.
 > 
-> I assume you mean J721E doesn't support INTx?
-
-Yes, the driver support doesn't exist and the device-tree also doesn't
-have the required nodes. Kishon had posted a series to enable it for
-J721E, J7200 and AM64 on the 4th of August 2021:
-https://lore.kernel.org/r/20210804132912.30685-1-kishon@ti.com/
-and based on the discussion on the series, an Errata was discovered for
-J721E:
-https://www.ti.com/lit/er/sprz455d/sprz455d.pdf
-i2094: PCIe: End of Interrupt (EOI) Not Enabled for PCIe Legacy Interrupts
-
-Thus, there is no support for Legacy Interrupts (INTx) in the pci-j721e.c
-driver and as a consequence, no device-tree nodes either.
-
+> Like the KVM PTP clock, this can convert TSC-based cross timestamps into
+> KVM clock values. Unlike the KVM PTP clock, it does so only when such is
+> actually helpful.
 > 
-> > the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
-> >   of_irq_parse_pci: failed with rc=-22
+> The memory region of the device is also exposed to userspace so it can be
+> read or memory mapped by application which need reliable notification of
+> clock disruptions.
 > 
-> I guess this happens because devm_of_pci_bridge_init() initializes
-> .map_irq and .swizzle_irq unconditionally?
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-Yes. The PCIe Controller on J721E and other SoCs is the Cadence PCIe
-Controller. In the commit which added driver support for the Cadence
-PCIe Controller's Host functionality:
-https://github.com/torvalds/linux/commit/1b79c5284439
-'map_irq' and 'swizzle_irq' were set to the same functions:
-'of_irq_parse_and_map_pci()' and 'pci_common_swizzle()'
-respectively. Commit:
-https://github.com/torvalds/linux/commit/b64aa11eb2dd
-extracted out the shared defaults from multiple Host Controller drivers
-and moved them into the common 'devm_of_pci_bridge_init()' function.
+one other thing worth mentioning is that this design can't work
+with confidential computing setups. By comparison, mapping e.g. a
+range in a PCI BAR would work for these setups.
+Is there a reason this functionality is not interesting for
+confidential VMs?
 
-While 'map_irq' and 'swizzle_irq' are unconditionally set to the
-defaults in 'devm_of_pci_bridge_init()', those Host Controller driver
-which haven't been using the shared defaults do have the choice of
-overriding them in the driver (which is already being done).
+-- 
+MST
 
-Similarly, for pci-j721e.c, since the shared defaults inherited from the
-Cadence PCIe Controller are not applicable (due to the Errata), the
-pci-j721e.c driver should override them to NULL as done in this patch.
-
-> 
-> I'm not sure the default assumption should be that a host bridge
-> supports INTx.
-> 
-> Maybe .map_irq and .swizzle_irq should only be set when we discover
-> some information about INTx routing, e.g., an ACPI _PRT or the
-> corresponding DT properties.
-
-I believe that the defaults were set since most of the Host drivers were
-using them in their respective drivers as indicated in the commit:
-https://github.com/torvalds/linux/commit/b64aa11eb2dd
-
-[...]
-
-> > 
-> >  drivers/pci/controller/cadence/pci-j721e.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> > index 85718246016b..5372218849a8 100644
-> > --- a/drivers/pci/controller/cadence/pci-j721e.c
-> > +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> > @@ -417,6 +417,10 @@ static int j721e_pcie_probe(struct platform_device *pdev)
-> >  		if (!bridge)
-> >  			return -ENOMEM;
-> >  
-> > +		/* Legacy interrupts are not supported */
-> 
-> Say "INTx" explicitly here instead of assuming "legacy" == "INTx".
-
-Sure. I will update it in the v2 patch.
-
-Thank you for reviewing this patch and sharing your feedback.
-
-Regards,
-Siddharth.
 
