@@ -1,286 +1,320 @@
-Return-Path: <linux-kernel+bounces-262725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6ED393CB5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:48:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B17F93CB6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7C8282D1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1301C20D6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D95714A4FB;
-	Thu, 25 Jul 2024 23:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C811494D5;
+	Thu, 25 Jul 2024 23:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqXj1E3D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gQIpSpcF"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6E1448EF;
-	Thu, 25 Jul 2024 23:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681083BBC2;
+	Thu, 25 Jul 2024 23:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721951253; cv=none; b=PFvTwNU+v22C4ZQd6GaYxZ+zdZSa/tJwfCSiusU5YlHllUmr7x6JyW/HyOISKcKb+GZkKgoiR4OZSeWqNwNM2PZKwK22DIKdrBEaflyZmVDSvwTxerydvRo1x0KhUWCnC0LUDEwIcnLWuFrvut8G5IS8FuIpmiGC3aCHeqWcPe8=
+	t=1721951381; cv=none; b=CrlbRmWfyOZly2wGmAQ1GsYlEIAZhr58SiP5+IYOMsN4geYwtCe/iG9I00+RWAtuS/vNcaMQ6STCZbmUKOAhZ9gi24paHQsLVpaGgeUxk+ZbO9K1PEXhGCv7F7XSMewU0FZKH5fMrMTfG3rO8vQ3ze5g1jl2jic8hCUgwMnGMbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721951253; c=relaxed/simple;
-	bh=PUgjQxlKWaIMqyGx3fXaZXi8AHfHJ5blsyfSLofmLmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hBIAVrlXkNHXifm/HF2FHNqOHDghDdUX5wkPyDFzBPaErxWbAKtE6wSJ4RsQbTDO2GRIWHFyjFqWxz5Z1jD2iNCkBqkNZl//AsLEtJrqOAQtsa0GoI1waMNrJNYI7q0CV1T5prImWTWCjdnGqK1PGGSqRQYBKdSTmzqoLbz/yxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqXj1E3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D644CC116B1;
-	Thu, 25 Jul 2024 23:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721951253;
-	bh=PUgjQxlKWaIMqyGx3fXaZXi8AHfHJ5blsyfSLofmLmI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mqXj1E3D1YE5rgAvYstkrGs85MXZah8kIjgzJRDRuQS5jDD/i4oV4b7Swsotj9jxR
-	 CX/3I7rIpjUWIubBmAw4Oe+kGZjA3eHyr19dd6IYtkVF61LBDsmldFtqWzuEqmD+fT
-	 nMjvgeOh1UiHpX3hvQfint350c+53R4L8TbD+V5zSnudbQwicwKommxhPYkPu2iyMc
-	 7Vr9aGlx03SRjS2EXP/M4zcCKrJtIviJZVgfX/+Htwe9d6KbSKRJ8bYLg+MxAwrona
-	 dbbx/t/STEShG3UkYy3ZNBc/pW0vGcDdP1WNt+hW9NzD+INDPhiCvxIUyAoS1vMkHv
-	 C2HHtPxQq+EyA==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
-Date: Thu, 25 Jul 2024 16:47:06 -0700
-Message-ID: <20240725234706.655613-3-song@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240725234706.655613-1-song@kernel.org>
-References: <20240725234706.655613-1-song@kernel.org>
+	s=arc-20240116; t=1721951381; c=relaxed/simple;
+	bh=hPgjUKJrcuD0qiu4AZ3NwEYTPJh9Vb8Ll3yoa99MnHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nGX3ZIi7mB6E6OW+WVB0KweERUY5PjT1avbtVeokgBp4bH3849/4GP/5xpsgr+ou6OM35YNwE2ezL1yijMekyDhVYrM77iZ4Dy1KS/kyWFv8aO7+ABJR1tWmR46MCGlGtEtwg2hJMy8TTnb5sFjs0B81KMAjBes9oxoCXMQkeWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gQIpSpcF; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1721951334; x=1722556134; i=w_armin@gmx.de;
+	bh=b9qIv0PFChQf3DNf9sbFYVFtXE/WFhkfHoNrEo/ANos=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=gQIpSpcFqC3z/KivRPLbsDAj0aWhr+MU+AF6qo/VRGpnSw1404Ghu7TTNI2xpHZ1
+	 aZATV09jDQ6zTPhYWKdfZGPmbyA+GlGXzIu6L3QVIYFWTc6zjNuxYedTuOQLHCJIY
+	 VrTpHWpujdd1hjEOiDbFO8DQnDtICg4nN1Ein0WkKltV4rULl3OvgGO7tyyBuaDHu
+	 GN8gn3ZdzPGm588YboBb1sJpO0MyLwh+IAyaAYAB4vJX43UOuJg4qcoX11h+oLTS2
+	 3+cK4L7yf9ST5Swqw0vEdCmn8TTqs3G9yojPSIBHZkO9Mvf/effJD9IMchOyEuTSf
+	 nz6/45YC9i2J6yX5jQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MXXyJ-1snHCr2Iwx-00LPn1; Fri, 26
+ Jul 2024 01:48:54 +0200
+Message-ID: <45c7c4c3-2f99-4ca0-9c85-a96a03ccfae8@gmx.de>
+Date: Fri, 26 Jul 2024 01:48:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] platform/x86:dell-laptop: Add knobs to change
+ battery charge settings
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ Andres Salomon <dilinger@queued.net>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+References: <20240723220502.77cb0401@5400>
+ <20240724203403.zcrx2lshbla3o2gp@pali> <20240724204523.xb6rp7ba6yqi5klt@pali>
+ <20240724182318.66578a48@5400> <20240724230158.nsmxdgagfpanjtzi@pali>
+ <20240725162457.34b480e1@5400> <20240725221511.mqb4tlam2r7yheoi@pali>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20240725221511.mqb4tlam2r7yheoi@pali>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nbNNcZF5yxIfHJ1Da3+B5aP4Nx7lg9eaqd47KNKUaIRWTTmsa5U
+ lwODPylCNuu64weaJTWK8ETsNAy9p2gCSo23sYWvM4FiURw1T8MwXHJJhMeG1OnPgCYM2Nz
+ zCFr7vexGxANq49tFZG4hOYwqT95DAMdxTeT6RuSkT5/N21ZLT92gw4Dv6tSJt/3NqilAeN
+ Lw5vq/jQJ7J9yHbw4cdsw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LpNCppc8lWg=;4LMANo8d2wuYqdpbnSaOZ7EUgui
+ VSjCpuJR/Egnbx0FesxdJjMisieeP7z85CC+l1lO6hGYdqHlQFqOi1eZSo0WhKv/PlBmR+M2s
+ DcKNkTjYiHuqjDVtohpo3ry0ht/uH80V+Ip9Z0ADjwMF386VX1E2ueyVtrOP3SOJplRDmO5v8
+ PNf36lr9A2XFxSJ7JoLQ1iy1K3Zfp9x25GmN2qsQqz5fjXVNarA9G0JSz7E5rWUANtLVz/KAE
+ wOZhNROkGbcnjCp6mqStYwfnAWRnykZbnk8+yBokP8JhugtC5Dj0+a9Kd2KsIv9uyWDQd1Pfg
+ zW3rKpCCPfAmE8e0BklbuyLB1fIVwHUDFCFBJ4V7RshZnUlgEKri3AqX7zR+v98AmdP0Buqjp
+ VffMiW62x8Udv9wQ7FeEF4xL33rScZIupL3zAVdvly71EHofMSsOI3rXQFrQNLetAOZ56CB0u
+ M7dGUm0As2eiUttSKAMPGii/XLmSeu04tkh0y5WmbOQVmw61O48Oqu31sJz2qM0k/HRSsRKn9
+ hD6qLnNu6E56S33YQfv/3qSpmcowwYQgEN4Raeaxl3MhIQGjom1uZs+SE+hWd7XuzI+xCaRMq
+ k43NwH18gKdh8La/pqs0+mA8HR4TCadPxJ1TpnT1P1MksnIX57NgMU5RmBWa/MAjylTQ8fIv0
+ LsYFp8eDHglJwxxEPPUJR6qE3AkuA8haIQM91Witc/GZejLMTg3sNJa+kCwDK3rnCGZP1RiuH
+ oii38Y5+tjs5hp2Mr7F+QPx1/xMI1kEZrZ8pkDtfnbgUhaBl0uoTJZMczBfRW3QtmoJfcZkr8
+ ncJZmp3e3/P8hin/hhJee7lw==
 
-1. Rename fs_kfuncs/xattr to fs_kfuncs/file_xattr and add a call of
-   bpf_get_dentry_xattr() to the test.
-2. Add a new sub test fs_kfuncs/dentry_xattr, which checks 3 levels of
-   parent directories for xattr. This demonstrate the use case that
-   a xattr on a directory is used to tag all files in the directory and
-   sub directories.
+Am 26.07.24 um 00:15 schrieb Pali Roh=C3=A1r:
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 61 +++++++++++++++++--
- .../selftests/bpf/progs/test_dentry_xattr.c   | 46 ++++++++++++++
- .../selftests/bpf/progs/test_get_xattr.c      | 16 ++++-
- 3 files changed, 117 insertions(+), 6 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+> On Thursday 25 July 2024 16:24:57 Andres Salomon wrote:
+>> On Thu, 25 Jul 2024 01:01:58 +0200
+>> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>>
+>>> On Wednesday 24 July 2024 18:23:18 Andres Salomon wrote:
+>>>> On Wed, 24 Jul 2024 22:45:23 +0200
+>>>> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>>>>
+>>>>> On Wednesday 24 July 2024 22:34:03 Pali Roh=C3=A1r wrote:
+>>>>>> Hello, the driver change looks good. I have just few minor comments=
+ for
+>>>>>> this change below.
+>>>>>>
+>>>>>> Anyway, if there is somebody on the list with Dell laptop with 2 or=
+ 3
+>>>>>> batteries, see below, it would be nice to check how such laptop wou=
+ld
+>>>>>> behave with this patch. It does not seem that patch should cause
+>>>>>> regression but always it is better to do testing if it is possible.
+>>>>>>
+>>>>>> On Tuesday 23 July 2024 22:05:02 Andres Salomon wrote:
+>>>> [...]
+>>>>> And because CLASS_TOKEN_WRITE is being repeated, what about defining
+>>>>> something like this?
+>>>>>
+>>>>>      static inline int dell_set_token_value(struct calling_interface=
+_buffer *buffer, u16 class, u16 tokenid, u32 value)
+>>>>>      {
+>>>>>          dell_send_request_for_tokenid(buffer, class, CLASS_TOKEN_WR=
+ITE, tokenid, value);
+>>>>>      }
+>>>>>
+>>>>> Just an idea. Do you think that it could be useful in second patch?
+>>>>>
+>>>> Let me implement the other changes first and then take a look.
+>>> Ok.
+>>>
+>> For the helper function, I noticed that all of the CLASS_TOKEN_WRITEs
+>> also have SELECT_TOKEN_STD except for one (dell_send_intensity). So I
+>> think it makes sense to have the helper function also do that as well.
+>> Eg,
+>>
+>> static inline int dell_set_std_token_value(struct calling_interface_buf=
+fer *buffer, u16 tokenid, u32 value)
+>> {
+>> 	dell_send_request_for_tokenid(buffer, SELECT_TOKEN_STD, CLASS_TOKEN_WR=
+ITE, tokenid, value);
+>> }
+>>
+>> I agree with your renaming to dell_send_request_for_tokenid, btw.
+>>
+>>
+>>>>>>> +static int dell_battery_read(const int type)
+>>>>>>> +{
+>>>>>>> +	struct calling_interface_buffer buffer;
+>>>>>>> +	int err;
+>>>>>>> +
+>>>>>>> +	err =3D dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_READ=
+,
+>>>>>>> +			SELECT_TOKEN_STD, type, 0);
+>>>>>>> +	if (err)
+>>>>>>> +		return err;
+>>>>>>> +
+>>>>>>> +	return buffer.output[1];
+>>>>>> buffer.output[1] is of type u32. So theoretically it can contain va=
+lue
+>>>>>> above 2^31. For safety it would be better to check if the output[1]
+>>>>>> value fits into INT_MAX and if not then return something like -ERAN=
+GE
+>>>>>> (or some other better errno code).
+>>
+>> I ended up returning -EIO here, with the logic that if we're getting
+>> some nonsense value from SMBIOS, it could either be junk in the stored
+>> values or communication corruption.
+>>
+>> Likewise, I used -EIO for the checks in charge_control_start_threshold_=
+show
+>> and charge_control_end_threshold_show when SMBIOS returns values > 100%=
+.
+>>
+>>
+>>
+>>>>
+>>>>>>
+>>>>>>> +	if (end < 0)
+>>>>>>> +		end =3D CHARGE_END_MAX;
+>>>>>>> +	if ((end - start) < CHARGE_MIN_DIFF)
+>>>>>> nit: I'm not sure what is the correct coding style for kernel drive=
+rs
+>>>>>> but I thought that parenthesis around (end - start) are not being
+>>>>>> written.
+>>>>>>
+>> I think it makes the comparison much easier to read. I'd prefer to
+>> keep it, unless the coding style specifically forbids it.
+> As I said I'm really not sure. So if nobody would complain then you can
+> let it as is.
+>
+> You can use ./scripts/checkpatch.pl application which is in git tree,
+> which does basic checks for code style. It cannot prove if something is
+> really correct but it can prove if something is incorrect.
+>
+>>
+>>
+>>>>>>> +
+>>>>>>> +static u32 __init battery_get_supported_modes(void)
+>>>>>>> +{
+>>>>>>> +	u32 modes =3D 0;
+>>>>>>> +	int i;
+>>>>>>> +
+>>>>>>> +	for (i =3D 0; i < ARRAY_SIZE(battery_modes); i++) {
+>>>>>>> +		if (dell_smbios_find_token(battery_modes[i].token))
+>>>>>>> +			modes |=3D BIT(i);
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	return modes;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void __init dell_battery_init(struct device *dev)
+>>>>>>> +{
+>>>>>>> +	battery_supported_modes =3D battery_get_supported_modes();
+>>>>>>> +
+>>>>>>> +	if (battery_supported_modes !=3D 0)
+>>>>>>> +		battery_hook_register(&dell_battery_hook);
+>>>>>> Anyway, how is this battery_hook_register() suppose to work on syst=
+ems
+>>>>>> with multiple batteries? The provided API is only for the primary
+>>>>>> battery, but on older Dell laptop it was possible to connect up to
+>>>>>> 3 batteries. Would not this case some issues?
+>>>> This interface is _only_ for controlling charging of the primary batt=
+ery.
+>>>> In theory, it should hopefully ignore any other batteries, which woul=
+d
+>>>> need to have their settings changed in the BIOS or with a special too=
+l or
+>>>> whatever.
+>>> That is OK. But where it is specified that the hook is being registere=
+d
+>>> only for the primary battery? Because from the usage it looks like tha=
+t
+>>> the hook is applied either for all batteries present in the system or
+>>> for some one arbitrary chosen battery.
+>>>
+>>>> However, I'm basing that assumption on the SMBIOS interface. These to=
+kens
+>>>> are marked "Primary Battery". There are separate tokens marked "Batte=
+ry
+>>>> Slice", which from my understanding was an older type of battery that
+>>>  From SMBIOS perspective it is clear, each battery seems to have its o=
+wn
+>>> tokens.
+>>>
+>>> The issue here is: how to tell kernel that the particular
+>>> dell_battery_hook has to be bound with the primary battery?
+>>>
+>> So from userspace, we've got the expectation that multiple batteries
+>> would show up as /sys/class/power_supply/BAT0, /sys/class/power_supply/=
+BAT1,
+>> and so on.
+> Yes, I hope so.
+>
+>> The current BAT0 entry shows things like 'capacity' even without this
+>> patch, and we're just piggybacking off of that to add charge_type and
+>> other entries. So there shouldn't be any confusion there, agreed?
+> I have not looked at the battery_hook_register() code yet (seems that I
+> would have to properly read it and understand it). But does it mean that
+> battery_hook_register() is adding hook just for "BAT0"?
+>
+> What I mean: cannot that hook be registered to "BAT1" too? Because if
+> yes then we should prevent it. Otherwise this hook which is for "Dell
+> Primary Battery" could be registered also for secondary battery "BAT1".
+> (I hope that now it is more clear what I mean).
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 37056ba73847..a960cfbe8907 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -2,17 +2,19 @@
- /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
- 
- #include <stdlib.h>
-+#include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/xattr.h>
- #include <linux/fsverity.h>
- #include <unistd.h>
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
-+#include "test_dentry_xattr.skel.h"
- #include "test_fsverity.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
- 
--static void test_xattr(void)
-+static void test_file_xattr(void)
- {
- 	struct test_get_xattr *skel = NULL;
- 	int fd = -1, err;
-@@ -50,7 +52,8 @@ static void test_xattr(void)
- 	if (!ASSERT_GE(fd, 0, "open_file"))
- 		goto out;
- 
--	ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
-+	ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_file");
-+	ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_from_dentry");
- 
- out:
- 	close(fd);
-@@ -58,6 +61,53 @@ static void test_xattr(void)
- 	remove(testfile);
- }
- 
-+static void test_directory_xattr(void)
-+{
-+	struct test_dentry_xattr *skel = NULL;
-+	static const char * const paths[] = {
-+		"/tmp/a",
-+		"/tmp/a/b",
-+		"/tmp/a/b/c",
-+	};
-+	const char *file = "/tmp/a/b/c/d";
-+	int i, j, err, fd;
-+
-+	for (i = 0; i < sizeof(paths) / sizeof(char *); i++) {
-+		err = mkdir(paths[i], 0755);
-+		if (!ASSERT_OK(err, "mkdir"))
-+			goto out;
-+		err = setxattr(paths[i], "user.kfunc", "hello", sizeof("hello"), 0);
-+		if (!ASSERT_OK(err, "setxattr")) {
-+			i++;
-+			goto out;
-+		}
-+	}
-+
-+	skel = test_dentry_xattr__open_and_load();
-+
-+	if (!ASSERT_OK_PTR(skel, "test_dentry_xattr__open_and_load"))
-+		goto out;
-+
-+	skel->bss->monitored_pid = getpid();
-+	err = test_dentry_xattr__attach(skel);
-+
-+	if (!ASSERT_OK(err, "test_dentry__xattr__attach"))
-+		goto out;
-+
-+	fd = open(file, O_CREAT | O_RDONLY, 0644);
-+	if (!ASSERT_GE(fd, 0, "open_file"))
-+		goto out;
-+
-+	ASSERT_EQ(skel->bss->number_of_xattr_found, 3, "number_of_xattr_found");
-+	close(fd);
-+out:
-+	test_dentry_xattr__destroy(skel);
-+	remove(file);
-+	for (j = i - 1; j >= 0; j--)
-+		rmdir(paths[j]);
-+}
-+
-+
- #ifndef SHA256_DIGEST_SIZE
- #define SHA256_DIGEST_SIZE      32
- #endif
-@@ -134,8 +184,11 @@ static void test_fsverity(void)
- 
- void test_fs_kfuncs(void)
- {
--	if (test__start_subtest("xattr"))
--		test_xattr();
-+	if (test__start_subtest("file_xattr"))
-+		test_file_xattr();
-+
-+	if (test__start_subtest("dentry_xattr"))
-+		test_directory_xattr();
- 
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
-diff --git a/tools/testing/selftests/bpf/progs/test_dentry_xattr.c b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
-new file mode 100644
-index 000000000000..d2e378b2e2d5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+__u32 number_of_xattr_found;
-+
-+static const char expected_value[] = "hello";
-+char value[32];
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_file_open, struct file *f)
-+{
-+	struct bpf_dynptr value_ptr;
-+	struct dentry *dentry, *prev_dentry;
-+	__u32 pid, matches = 0;
-+	int i, ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-+
-+	dentry = bpf_file_dentry(f);
-+
-+	for (i = 0; i < 10; i++) {
-+		ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
-+		if (ret == sizeof(expected_value) &&
-+		    !bpf_strncmp(value, ret, expected_value))
-+			matches++;
-+
-+		prev_dentry = dentry;
-+		dentry = bpf_dget_parent(prev_dentry);
-+		bpf_dput(prev_dentry);
-+	}
-+
-+	bpf_dput(dentry);
-+	number_of_xattr_found = matches;
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/testing/selftests/bpf/progs/test_get_xattr.c
-index 7eb2a4e5a3e5..3b0dc6106ca5 100644
---- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
-+++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
-@@ -9,7 +9,8 @@
- char _license[] SEC("license") = "GPL";
- 
- __u32 monitored_pid;
--__u32 found_xattr;
-+__u32 found_xattr_from_file;
-+__u32 found_xattr_from_dentry;
- 
- static const char expected_value[] = "hello";
- char value[32];
-@@ -18,6 +19,7 @@ SEC("lsm.s/file_open")
- int BPF_PROG(test_file_open, struct file *f)
- {
- 	struct bpf_dynptr value_ptr;
-+	struct dentry *dentry;
- 	__u32 pid;
- 	int ret;
- 
-@@ -32,6 +34,16 @@ int BPF_PROG(test_file_open, struct file *f)
- 		return 0;
- 	if (bpf_strncmp(value, ret, expected_value))
- 		return 0;
--	found_xattr = 1;
-+	found_xattr_from_file = 1;
-+
-+	dentry = bpf_file_dentry(f);
-+	ret = bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
-+	bpf_dput(dentry);
-+	if (ret != sizeof(expected_value))
-+		return 0;
-+	if (bpf_strncmp(value, ret, expected_value))
-+		return 0;
-+	found_xattr_from_dentry = 1;
-+
- 	return 0;
- }
--- 
-2.43.0
+Hi,
 
+the battery hook is being registered to all ACPI batteries present on a gi=
+ven system,
+so you need to do some manual filtering when .add_battery() is called.
+
+As a side note: i suspect that "newer" Dell machines use a different inter=
+face for controlling
+battery charging, since the Dell Power Manager software on my machine seem=
+s to provide some
+additional features not found in this token-based interface.
+
+Unfortunately i am not sure if reverse-engineering the Dell software is le=
+gal, does the kernel
+community have some helping guides in this area? If it is legal, then i wo=
+uld happily volunteer
+to do the reverse-engineering.
+
+Otherwise maybe someone at Dell can provide some clarifications if a diffe=
+rent interface for controlling
+battery charging exists and how to use it?
+
+Thanks,
+Armin Wolf
+
+>> In the kernel, we're registering the acpi_battery_hook as "Dell Primary
+>> Battery Extension". The functions set up by that acpi_battery_hook are
+>> the only ones using battery_support_modes. We could make it more explic=
+it
+>> by:
+>> 1) renaming it to primary_battery_modes, along with
+>> dell_primary_battery_{init,exit} and/or
+>> 2) allocating the mode mask and strings dynamically, and storing that
+>> inside of the dev kobject.
+>>
+>> However, #2 seems overly complicated for what we're doing. In the
+>> circumstances that we want to add support for secondary batteries,
+>> we're going to need to query separate tokens, add another
+>> acpi_battery_hook, and also add a second mask. Whether that's a global
+>> variable or kept inside pdev seems like more of a style issue than
+>> anything else.
+>>
+>> #1 is easy enough to change, if you think that's necessary.
+> I think that "Dell Primary Battery Extension" is OK. All SMBIOS code is
+> currently primary-battery only.
+>
+> The only my point is to prevent this &dell_battery_hook to be registered
+> for non-primary battery.
+>
 
