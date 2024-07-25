@@ -1,87 +1,184 @@
-Return-Path: <linux-kernel+bounces-262492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2185893C7AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:32:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C693C7B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B72E31F2181F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DCF1F22A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B87D19D893;
-	Thu, 25 Jul 2024 17:32:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2154E19DFA5;
+	Thu, 25 Jul 2024 17:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrfZwzaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B912B72
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77E198E6D;
+	Thu, 25 Jul 2024 17:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721928725; cv=none; b=eS/9E4BzlJpOW4Jjrhjk815gJwspAnBkz7OdBDv3NO0qFaP+RGLS4gasJrErmuOiNWdexJb39UtiEzKOBFo2Qje6VZuBb+LNKuAdxktIAsYSoz+DT19lQM34z+W6z8obHpLwDiMTRIDho0E2+BpvBKgL3J/oOoFxCMMGupRJ+gs=
+	t=1721928987; cv=none; b=Xpm5xOlao8LfSAy52m4RfZB3yBUc7v/PHTUvQs6NIW088XwdLGEAuMwVj8Ai5mrx1Mz6lPONK/cQMNx3YPGGP7/NLVgNoqBnnILJNgtncmJOqZLXXqtxfJbj4sWiJdJxT0XMl1qdsgwS4n9R+437faHMmNK9HRyJYccnW/W/XAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721928725; c=relaxed/simple;
-	bh=onjRvS+axWe8Q4FDhAZ0mLsXnu4JnCZDDvya23Fdmfo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V76z3N2x5L9QoP/kAKTU/oCoic3VY7nKtnPoRqjUyeTeitOhi/elHhSmXfLay0xqqvx/w1R2jVuUPLNlTSZGI+P6SB7EmBjvk8kOFhBmqqIxJMUL5AkOPg1J+T565euzTsZesZNE5iTDO4Vz1KNMMgAEPUNeB+4u6bfI3PKkz1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f87561de0so54339839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721928723; x=1722533523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yInUmJZ2N1yq4ZyQvECJY6v59tbe4OHDKEmU4VskWGc=;
-        b=DEENCWXyqgM5oacb5h5r2X9AInqVj5yPr3eJ6DTHdDLsP3N8WD9NnYbTviFuJ7HXWh
-         0sNtLHjfGGAt6piAbegr8Z4WuD4rViV1bQ1HwJ1yr9SC75DOa3lzemH86YBtWbZAa0qO
-         9dxmYkhiDbppmWarZnZ2xksG7qNy+cuwfXphW2J3wqD5yCiy4R0YudvxdaWSCu+rzgTx
-         SSbEUK7lPTTL1bYSkqrRnFjUzB3DI3vNMH37DfZ+Y4JZMERxESJQbjFSXW9pSFfYY1jV
-         HiiSP5ye+sjhT70tONqvRGvNhVavvcnZBJMw6t6XGdjL3zteIHFZNfyTmLlzjpsOD3Gm
-         1GbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUBJl83XSQ2dOMYAI7KRZ0xZxnaRyYW1SjCXNoYpdhlJjeRMuf2SCV2pYS+IsN/xJdQgIctmSjFZshFAg52qdZX4CSrKOALaUJSmpa
-X-Gm-Message-State: AOJu0YwCBmMVdDu3sBXvyinAR/x/4l1sGhc2tZypCQnwv+y1JT4jq/r6
-	urrg0hK6FMb/js7zRc4JFSPmzhdqbdMEhYDKDVo/JFZtJ+sdGelOMo3GRK9unAJl3zJlup6jybb
-	sukQWk64Bp3UH+lNgIt74xR/F5OYTrUtjHwST+VMeNHbj0cvuiP6J7UE=
-X-Google-Smtp-Source: AGHT+IEZMQleCE7wlx5bJHfXzkZuvMlL5wDNUObSSqLZA3kjVvIMzHAlAX10J/+9pI1+SFC0nMzEqu5S71REENSCp1jQ5+9CdMS6
+	s=arc-20240116; t=1721928987; c=relaxed/simple;
+	bh=wqWzraA34GyeuVscn1uWSNPbaFib2B/T/GEJV4L8vWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=R+z2crkH0XLEO1h4YOYfIpYP5QjfBLHOYyj7c0byYCL2bKwTE3r6lw7qT0XGWljJEDg8bBgA7KufJAWG/J9kl86nBHseO+SLtxKn1sSKQMdsaMjpncIaKAcfCywXkeZ0PCPMJh76TmV3rm9uwcyJrmIPgPCAprdWpOFHBSbAE8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrfZwzaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4BCC116B1;
+	Thu, 25 Jul 2024 17:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721928987;
+	bh=wqWzraA34GyeuVscn1uWSNPbaFib2B/T/GEJV4L8vWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PrfZwzaXqL/UyPDYMz0fGULFnXJZaclnVw9A6ViPzQTuFr6NpHFYDoFNf2ild9kva
+	 7Eo3ssD2FBOge1u7jSdgqWcUWPkXtbfjOBrUj2GZuQpmO3NuLvBZNMula+Og8Sfs+5
+	 CyZbBm7Q/liHVt6VWkr018FwmFuTVMRNECvBfWNgZanx9jQxCa5OJLWDDHF+qtfdpp
+	 95BTAnn+JgzZtJnj0DxuUggqS1IJzg2zB30+WkwRuGRBqI4MQhMdGHP5TMUx9Mjl/n
+	 VqZKQLLEx5FADN7I+YvaXQAlmDtEUDIlikYIDD6gfbN23SSM0OWaLgcmHSeWM2+LwE
+	 IgQ4UFiSwmKJg==
+Date: Thu, 25 Jul 2024 12:36:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Keith Busch <keith.busch@intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jim Harris <james.r.harris@intel.com>,
+	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
+	Blazej Kucman <blazej.kucman@intel.com>
+Subject: Re: [PATCHv3 2/2] x86/vmd: Add PCI domain specific LED option
+Message-ID: <20240725173624.GA849156@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4120:b0:4c0:9a3e:c24d with SMTP id
- 8926c6da1cb9f-4c29b6da7acmr195043173.0.1721928723594; Thu, 25 Jul 2024
- 10:32:03 -0700 (PDT)
-Date: Thu, 25 Jul 2024 10:32:03 -0700
-In-Reply-To: <b8783e34-1011-4eae-86cc-9ba2b310863d@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e60a6b061e15c55b@google.com>
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
-From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1473779140-4016-2-git-send-email-keith.busch@intel.com>
 
-Hello,
+[+cc Nirmal, Jim, Paul, Blazej]
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Tue, Sep 13, 2016 at 09:05:40AM -0600, Keith Busch wrote:
+> This patch adds a new function to set PCI domain specific options as
+> devices are added. The usage included in this patch is for LED indicator
+> control in VMD domains, but may be extended in the future as new domain
+> specific options are required.
+> 
+> PCIe LED Slot Control in a VMD domain is repurposed to a non-standard
+> implementation. As such, all devices in a VMD domain will be flagged so
+> pciehp does not attempt to use LED indicators. This user_led flag
+> has pciehp provide a different sysfs entry for user exclusive control
+> over the domain's slot indicators.
+> 
+> In order to determine if a bus is within a PCI domain, the patch appends
+> a bool to the pci_sysdata structure that the VMD driver sets during
+> initialization.
 
-Reported-by: syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com
-Tested-by: syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com
+This eventually turned into https://git.kernel.org/linus/3161832d58c7
+("x86/PCI: VMD: Request userspace control of PCIe hotplug indicators")
 
-Tested on:
+More questions about this, prompted by Blazej's recent regression
+report:
+https://lore.kernel.org/r/20240722141440.7210-1-blazej.kucman@intel.com
 
-commit:         0db4618e io_uring/msg_ring: fix uninitialized use of t..
-git tree:       git://git.kernel.dk/linux io_uring-6.11
-console output: https://syzkaller.appspot.com/x/log.txt?x=11879ae3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f80e9475fcd20eb6
-dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I assume this patch was prompted by NVMe devices behind a VMD?  And
+the non-standard slot indicator usage is specifically related to VMD
+Root Ports?  Isn't it possible to add non-NVMe devices behind VMD,
+e.g., a switch in an external enclosure where pciehp manages a switch
+Downstream Port with standard slot indicators?
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+I'm wondering if pdev->hotplug_user_indicators should be more narrowly
+targeted to just VMD Root Ports.
+
+If there's any possibility of a Downstream Port behind VMD with
+standard indicators, users are going to be very confused when the
+sysfs "attention" file is basically backwards from normal.  IIUC
+writing 0 to "attention" when hotplug_user_indicators is set writes 0
+("reserved") to AIC, when it would otherwise write 11b ("off").
+
+I'm also wondering whether there's a way to do this in the vmd driver
+instead of in arch/x86/pci/common.c, but that's a secondary question.
+
+>  arch/x86/include/asm/pci.h | 14 ++++++++++++++
+>  arch/x86/pci/common.c      |  7 +++++++
+>  arch/x86/pci/vmd.c         |  1 +
+>  3 files changed, 22 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
+> index 9ab7507..1411dbe 100644
+> --- a/arch/x86/include/asm/pci.h
+> +++ b/arch/x86/include/asm/pci.h
+> @@ -23,6 +23,9 @@ struct pci_sysdata {
+>  #ifdef CONFIG_PCI_MSI_IRQ_DOMAIN
+>  	void		*fwnode;	/* IRQ domain for MSI assignment */
+>  #endif
+> +#if IS_ENABLED(CONFIG_VMD)
+> +	bool vmd_domain;		/* True if in Intel VMD domain */
+> +#endif
+>  };
+>  
+>  extern int pci_routeirq;
+> @@ -56,6 +59,17 @@ static inline void *_pci_root_bus_fwnode(struct pci_bus *bus)
+>  #define pci_root_bus_fwnode	_pci_root_bus_fwnode
+>  #endif
+>  
+> +static inline bool is_vmd(struct pci_bus *bus)
+> +{
+> +#if IS_ENABLED(CONFIG_VMD)
+> +	struct pci_sysdata *sd = bus->sysdata;
+> +
+> +	return sd->vmd_domain;
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  /* Can be used to override the logic in pci_scan_bus for skipping
+>     already-configured bus numbers - to be used for buggy BIOSes
+>     or architectures with incomplete PCI setup by the loader */
+> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
+> index 7b6a9d1..ccf696c 100644
+> --- a/arch/x86/pci/common.c
+> +++ b/arch/x86/pci/common.c
+> @@ -677,6 +677,12 @@ static void set_dma_domain_ops(struct pci_dev *pdev)
+>  static void set_dma_domain_ops(struct pci_dev *pdev) {}
+>  #endif
+>  
+> +static void set_dev_domain_options(struct pci_dev *pdev)
+> +{
+> +	if (is_vmd(pdev->bus))
+> +		pdev->user_leds = 1;
+> +}
+> +
+>  int pcibios_add_device(struct pci_dev *dev)
+>  {
+>  	struct setup_data *data;
+> @@ -707,6 +713,7 @@ int pcibios_add_device(struct pci_dev *dev)
+>  		iounmap(data);
+>  	}
+>  	set_dma_domain_ops(dev);
+> +	set_dev_domain_options(dev);
+>  	return 0;
+>  }
+>  
+> diff --git a/arch/x86/pci/vmd.c b/arch/x86/pci/vmd.c
+> index b814ca6..a021b7b 100644
+> --- a/arch/x86/pci/vmd.c
+> +++ b/arch/x86/pci/vmd.c
+> @@ -596,6 +596,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd)
+>  		.parent = res,
+>  	};
+>  
+> +	sd->vmd_domain = true;
+>  	sd->domain = vmd_find_free_domain();
+>  	if (sd->domain < 0)
+>  		return sd->domain;
+> -- 
+> 2.7.2
 
