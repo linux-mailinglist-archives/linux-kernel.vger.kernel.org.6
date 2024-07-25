@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-262603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DAF93C94B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:04:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0385293C950
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A283B20CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B16F0283805
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68A176048;
-	Thu, 25 Jul 2024 20:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524D4770F5;
+	Thu, 25 Jul 2024 20:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RK3tr9QL"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cifg8lrC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2EF5381E;
-	Thu, 25 Jul 2024 20:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FF66F2F8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721937888; cv=none; b=nXLTam3Bl/tN96l9H3O4PC+y+0irXY7GuYQfLLjdYmtgiE7Mqbn+nGy4MhfBmeFzye7bE0eQUL7agRnFqMkq8meLFX6p+l+gGYWegdoHinP2Z6qUjTuHZLSD9/oPmPszaZuWFHmHCH+FY5hNE31FyAIPpWY0gHx69Smmm331WE0=
+	t=1721937957; cv=none; b=Dhi6AO0y317LmBJMAkL022Z2AVU+GAUiQvFe+0yr1h4v81Poyhrt61XWhsvkXpNGuTXZTMWUUiyww3a3rK/nAqqwVR5u5FTCMYalHpNr/96WK8oAHiwQgHjXGX2hlpxHL9wGh3uOcm4Q5yNaS77OOw/EcBUC1sd+SnOP0z7+I9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721937888; c=relaxed/simple;
-	bh=0zB5it7uK49pQC3YTBqbw/wBLjvQ626Ng1xUR2KMEEA=;
+	s=arc-20240116; t=1721937957; c=relaxed/simple;
+	bh=UW91kuFO41axvxJ8V7sJ0z+GizMtuU+3srRDDSY3mvA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Stsx4nraceqWMN7een23LxOz1swbuUdoREQGccUEjYQXYElKdDypfRitLEPI0AFSNhvybQWqyfr/o8FpGCSt3vrWp5wJiewQbGXzvcYwopzHrqW9kqtTkZCYMM9wWVCiDjfaZqqvs5bRDSNxFH2beSdX4wb4qpJ93lfPST2UwjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=RK3tr9QL; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7b237so1908881a12.0;
-        Thu, 25 Jul 2024 13:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1721937885; x=1722542685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BJIispQ3EhnPiKSUP/X4tjbEqf9+Q8SqMXAI+5oyRU4=;
-        b=RK3tr9QLoY0zOxbRVBfbk0oKIrpCTJKqCJBqZXUW322hDzRd1XNHkzQGmJLtjRmNKB
-         nkJVnENgEUBGrq956P2WRWjW/IBqi5Moew0jgwkM14I+J6clJkeNWDBlKts/Sy7OSKWD
-         Ui74GmN81RwLo7i53fh+NabZmqB2XbBkBy/vDfH4XgGlcnoH15PridAhyrPzLpo97s5N
-         TXZy1XlqUacxzAp+LI6nXB2GcyGKThR3tuW2/gWtAhbHrx2pYiFKtbrs2Ohm1kF6neIh
-         Xo5XGcmJ+Zt/114km4D9smLTUHkCI3RUNydjkO3go7/SkgIq8o74tuEQVTujd7a+e1Fg
-         JEkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721937885; x=1722542685;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJIispQ3EhnPiKSUP/X4tjbEqf9+Q8SqMXAI+5oyRU4=;
-        b=cOCprceNlKsnCYFNFb9a007l0REsWp5HisKP3D0GnV2SRNPf1PqMYQrGr1N9BVjFda
-         g44fIBfAsAOP6nZclui8kisijDW7TqhE5DzlQ2O59UQONVz+GstJaNM/l3tJ0wRI25NQ
-         /YQrqfeiQC2gi/Wlg955FyVtXUqufkk48thL7I05oOxPtHZTQI9cES44uWXbKFYsQeCC
-         UPvQSNNl1XcmpctJQRgZImqLfa4b1YT/UMAQKpBF+6IqQEQ5MCACjM/WGh6z5OIo3LOM
-         IOUs7IJpi53igpU4VJxMd5gvLWFEHV34/LHUALxI8ettER+2I2pBKo800GwyXo0j8dlh
-         FG1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFjse6CErP0OPt03JhBpJbfAFwKr6MBGJYvc5zOYcmL+P8VaOdr+o3v6pXveg2Gd9DZDloyFGd977schxDP6Mjka4B8EP/FMbQcAA28hZwlhRPGBZzrikdrmlPGf/7fM8tWb62
-X-Gm-Message-State: AOJu0Yxsbxqq8fpXZLxhzHzh8EiaHNk4GIDp+pkGODnkSKBkqgxPdYKt
-	b424pS/+9oL92/Q3tDTEvBieWR74gX1D4go/GZsE/ifBoleFUII=
-X-Google-Smtp-Source: AGHT+IHv+JcRw52C81YjbNlPDk230BPZ6wrLJ+DFbuw6XvAOhzZdLdGqm8xx+I9UbYb+HxaG+LizZw==
-X-Received: by 2002:a17:907:7296:b0:a7a:952b:95ae with SMTP id a640c23a62f3a-a7ac5075296mr326877666b.47.1721937884882;
-        Thu, 25 Jul 2024 13:04:44 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac836.dip0.t-ipconnect.de. [91.42.200.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab50cbfsm103131366b.47.2024.07.25.13.04.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 13:04:44 -0700 (PDT)
-Message-ID: <af0ac6f4-8c6d-4a02-b771-d47347a15a1d@googlemail.com>
-Date: Thu, 25 Jul 2024 22:04:43 +0200
+	 In-Reply-To:Content-Type; b=A/uoYeIbL0QbXtZz4JVbraxwGCueQPkuBz0ykExnoXSBr4Gol6PVhTRuGc+ZDcm0of6jsZ9JnVPVUY0fk4Ci6OinXCW1frn+7/OlhGRjVejmd4Ut0UrmyxJWtloEcvmauAcQn+Ic8FxeJZc8GBMicfb6WI7fRy4UcvrPO/65yXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cifg8lrC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721937955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aUymR9o4DYjzOTl7c3KR4Ou4Nok+LgIjjvkA2tKEErA=;
+	b=cifg8lrCnxqLF2V0tvdgBg2xlzTATfBuNOLU0rN19MkSKVZAmVh2b92st3bHkNJVJfEl5H
+	hCigwzyXI+gSMCtdLsak6LleNn0vZHweVER/6uWUswneCQHeUpheMfrXxZ1aNgh+DBTQdY
+	RlIlCeLMGMvmxOJmNwJMKN2eM6jGmfw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-bUV5E0sZMqOn9tJ-IY5nEw-1; Thu,
+ 25 Jul 2024 16:05:49 -0400
+X-MC-Unique: bUV5E0sZMqOn9tJ-IY5nEw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77FF61955BF8;
+	Thu, 25 Jul 2024 20:05:47 +0000 (UTC)
+Received: from [10.2.16.78] (unknown [10.2.16.78])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4151C300019A;
+	Thu, 25 Jul 2024 20:05:43 +0000 (UTC)
+Message-ID: <0efbedff-3456-4e6a-8d2d-79b89a18864d@redhat.com>
+Date: Thu, 25 Jul 2024 16:05:42 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 00/16] 6.6.43-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240725142728.905379352@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240725142728.905379352@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup v4] cgroup: Show # of subsystem CSSes in
+ cgroup.stat
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kamalesh Babulal
+ <kamalesh.babulal@oracle.com>, Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240711025153.2356213-1-longman@redhat.com>
+ <23hhazcy34yercbmsogrljvxatfmy6b7avtqrurcze3354defk@zpekfjpgyp6h>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <23hhazcy34yercbmsogrljvxatfmy6b7avtqrurcze3354defk@zpekfjpgyp6h>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-
-Am 25.07.2024 um 16:37 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.43 release.
-> There are 16 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
 
-Beste Grüße,
-Peter Schneider
+On 7/25/24 09:15, Michal Koutný wrote:
+> Hello.
+>
+> On Wed, Jul 10, 2024 at 10:51:53PM GMT, Waiman Long <longman@redhat.com> wrote:
+>> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
+>> cgroup.stat file is now being extended to show the number of live and
+>> dying CSSes associated with all the non-inhibited cgroup subsystems
+>> that have been bound to cgroup v2 as long as it is not zero.  The number
+>> includes CSSes in the current cgroup as well as in all the descendants
+>> underneath it.  This will help us pinpoint which subsystems are
+>> responsible for the increasing number of dying (nr_dying_descendants)
+>> cgroups.
+> This implementation means every onlining/offlining (only additionally)
+> contends in root's css updates (even when stats aren't ever read).
+>
+> There's also 'debug' subsys. Have you looked at (extending) that wrt
+> dying csses troubleshooting?
+> It'd be good to document here why you decided against it.
+The config that I used for testing doesn't include CONFIG_CGROUP_DEBUG. 
+That is why "debug" doesn't show up in the sample outputs. The CSS # for 
+the debug subsystem should show up if it is enabled.
+>
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -3669,12 +3669,36 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+>>   static int cgroup_stat_show(struct seq_file *seq, void *v)
+>>   {
+>>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
+>> +	struct cgroup_subsys_state *css;
+>> +	int ssid;
+>>   
+>>   	seq_printf(seq, "nr_descendants %d\n",
+>>   		   cgroup->nr_descendants);
+>>   	seq_printf(seq, "nr_dying_descendants %d\n",
+>>   		   cgroup->nr_dying_descendants);
+>>   
+>> +	/*
+>> +	 * Show the number of live and dying csses associated with each of
+>> +	 * non-inhibited cgroup subsystems bound to cgroup v2 if non-zero.
+>> +	 *
+>> +	 * Without proper lock protection, racing is possible. So the
+>> +	 * numbers may not be consistent when that happens.
+>> +	 */
+>> +	rcu_read_lock();
+>> +	for_each_css(css, ssid, cgroup) {
+>> +		if ((BIT(ssid) & cgrp_dfl_inhibit_ss_mask) ||
+>> +		    (cgroup_subsys[ssid]->root !=  &cgrp_dfl_root))
+>> +			continue;
+> Is this taken? (Given cgroup.stat is only on the default hierarchy.)
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+I am not sure what you are asking here. Since cgroup.stat is a cgroup v2 
+only control file, it won't show subsystems that are bound to cgroup v1.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Cheers,
+Longman
+
 
