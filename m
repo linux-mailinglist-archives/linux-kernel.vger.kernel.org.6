@@ -1,222 +1,92 @@
-Return-Path: <linux-kernel+bounces-261772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC78F93BBF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFBA93BBF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5039D1F218A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16E31C2031D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075171CA9E;
-	Thu, 25 Jul 2024 05:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA0A1C6B7;
+	Thu, 25 Jul 2024 05:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpaxANy/"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fkDvBVWQ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610A17BAA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D011B1BF31;
+	Thu, 25 Jul 2024 05:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721883808; cv=none; b=JJV7m9gsnGEb7EH+TDbUrJkKIRzfw5hb72IeVqw6MbVcxyGP/AGusZAyKVOejY99IkyLmUjKJP3iJdSrtixjMk8shf9orb1iN6G2uR+CUsRvpUtjBEMTT+CZIjhH2+hd9aHlyne+d+9vyWxL9WhBb6x3GKsVIGeoHIwtb3AR/cE=
+	t=1721883977; cv=none; b=uIgkhfCYMIypaV5YxYWWyrN3SFt85V2Fl6RoaiMkrlOPDzLStasJXelWkneLDrbL6Uy/3ze90T4DcQ+LWQhGSMcB9XprlvdcC1scvUIY5yZA7qF38NGt+DHmQsbfHIsIw+i7msSaYTax2mHYcKK9T1uCv4UYHXIIsBZC34w12YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721883808; c=relaxed/simple;
-	bh=4jOWZRFpC9T03DeHefAHMwQwPmdX/qSrpARBw4vv4qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0NNba33iNzmYJ/19c+YE2i42fMSde5EAMvA4cyKuzleKv0oVfEpvlrbs9AYAdYSc+b6hM9FCg2+2eUuDke6gfLsfoUgyxrf6iTJOrgurQ2qxzndyjRn8u4WCOdq1AmxjqKg6v4aYHa8R+fh6PuQ2RJ+lG+puu/7m0SeErYzpZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RpaxANy/; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a0c6ab3354so442467a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721883805; x=1722488605; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WSFwKnfVczR16WD5Y3nfX2f2/Inf3FOYKXgV2SNCco4=;
-        b=RpaxANy/VKVKF2jDYfpWTid7exw1wSpKCCrMUcnHP2OEOfaK9QGSqfj5rXkQSZz/DR
-         qTnlMG5QM3y6ZUzhTINpA4MOzpvE9mRvKy+1VgNYxTYArROCDRqfCe8k7H19oNyRiR2H
-         dG7V8qZMg0h0ZOZA+nwTD589nzmv2DDe1cH0An/7ha8C316tkuD3zDUQsZ4jQ7o0CUYF
-         tsIdJIV661ZfY4vMwNtPbvvsVzeNAGRlxPrwbsgSm8w78D7/JtXdX2C9eZcR8k93dLuV
-         8FwqPnJWLP+0w2bySmJHUR32QhirheKqZRTgAZHThEm/fbG+4ZIwiqdpUPGebps0nWjT
-         NbIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721883805; x=1722488605;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSFwKnfVczR16WD5Y3nfX2f2/Inf3FOYKXgV2SNCco4=;
-        b=KN4w8+ydD4WEl0e0ohKb1wwhOSNIdzpdEuonMC6h9GKedXVv2KDc4V6wB6UTu5UwOB
-         sGylMaHuFJGCjLJiNltzGClvPghFNNbrLpkVulmTzZkBzHwbhKN86MYjz0/yCuVISuYK
-         Y4rI+txvnF+szHUyu+F8k5aj78mOqCL83OwiMY64WDb5Mu3STsnV2LTgJKBmJmFOAgyJ
-         l3MgI8x1YwkwrV0ECDt7ziqNB0xpvV3xJy8fbc9eugPzzUc5GQGlI6Q3mduoqmUDb7mU
-         GYNB5ynVXPMjHncYkbL6y1n5Q8OrXWvJ5tbV5YLt6Ne1uctWp9X8A9HsHFb/7RtlBXjm
-         jorw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyV9HUzN65GJ9x8DDnig4iuUuLUknyRw2q/gxvLCCdEKOdUrrR41YMmY5j3DyplBwAA3xCC0bxeejJfjFs8cAmlufPxYlUOA02g5Cc
-X-Gm-Message-State: AOJu0Yyt9I6e+Cy76b+Eswhr/LaPJkYlMJj3LC7e1nGEMHSqKHwOW3eF
-	oWZTRLM39CzKSQVMS8zBM15fNmDrZwoalaiJPW3mWvNLCkfV9imye0SBV2fouw==
-X-Google-Smtp-Source: AGHT+IHUkqheWrPFgpUPoQDkhuPNo5ceh34Gz+2v4tjh+WIsehsAtjMWtZX+TlgSdAsBTKwMuQC1JQ==
-X-Received: by 2002:a05:6a20:b292:b0:1c0:e69f:f237 with SMTP id adf61e73a8af0-1c47b25a048mr559272637.21.1721883804913;
-        Wed, 24 Jul 2024 22:03:24 -0700 (PDT)
-Received: from thinkpad ([103.244.168.26])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c7fe33sm551503a91.13.2024.07.24.22.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 22:03:24 -0700 (PDT)
-Date: Thu, 25 Jul 2024 10:33:19 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 00/12] PCI: brcnstb: Enable STB 7712 SOC
-Message-ID: <20240725050319.GM2317@thinkpad>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1721883977; c=relaxed/simple;
+	bh=PlITPw0r+Wd1Bf6wMLsgTRpboomujwKay/y8VQCh4gY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uvl3vxo0O+1+hJlFL3pF0tNeAbMrgVEzQwYxMffl6jY9rHKOxT55YU9Z1TmlVdxoE5UJUP432PzCPxbKbp2ppFAmOyuLJuczEvqZLU8a6hE7UebU2mDzEHGWB4gq84vpJxIrNE0osqm7go7DRrxCpkiSUaVFgv/oPIdXxalWA7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fkDvBVWQ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ljWC/5Z2caE7g4bTRZgshdWjFb5m9133Aw6+mYHyWdY=; b=fkDvBVWQOmdff2PIMNhXDhbp5j
+	Vjuf0wQ+WsS1hEM9EQdBGtianAqmtv21Tnt0AW7BAfX0iq0HPBcbIs2H0OtyPJ9gJ1lvW9fycVZfu
+	cQQ7CBPDID6UksaDzzT23rpePiZ0FDky93RZIyaYtePYZHvjMLpdw9M2zAZtWf1CyRT+fIsteR2TT
+	0Dl8wrQa/MHNJcET3iOiOPh1a6yro8tSZ5eQe9g4zhvf40i5K6iARQ23gkn+nrgJx2ELRzCP/tSeG
+	EOlhTcMLA2q+QbmbfD2iPTMNZgUYJwxrBTXEVWDlVcVuWX8zoIJp8ZCXpfCHrhEyAzYSPTd6V65PL
+	NJsq5FbQ==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWqg1-0000000HQ9Q-2dlJ;
+	Thu, 25 Jul 2024 05:06:05 +0000
+Message-ID: <b7ec9dba-5ba7-40d1-b1a0-e85f3149f445@infradead.org>
+Date: Wed, 24 Jul 2024 22:06:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716213131.6036-1-james.quinlan@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: 9p goo.gl link
+To: "Dr. David Alan Gilbert" <linux@treblig.org>, ericvh@kernel.org,
+ lucho@ionkov.net
+Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZqE9zUXO3agBjno7@gallifrey>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <ZqE9zUXO3agBjno7@gallifrey>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 05:31:15PM -0400, Jim Quinlan wrote:
-> V4 Changes:
->   o Commit "Check return value of all reset_control_xxx calls"
->     -- Blank line before "return" (Stan)
->   o Commit "Use common error handling code in brcmstb_probe()"
->     -- Drop the "Fixes" tag (Stan)
->   o Commit "dt-bindings: PCI ..."
->     -- Separate the main commit into two: cleanup and adding the
->        7712 SoC (Krzysztof)
->     -- Fold maintainer change commit into cleanup change (Krzysztof)
->     -- Use minItems/maxItems where appropriate (Krzysztof)
->     -- Consistent order of resets/reset-names in decl and usage
->        (Krzysztof)
-> 
 
-Rpi mailing list owners: Could you please make the list 'unmoderated'? I haven't
-subscribe to this list, so I just keep getting the 'Your message to
-linux-rpi-kernel awaits moderator approval' for every review comment I post,
-which is a spam to me.
 
-Also I won't subscribe to this list unless I work on Rpi. So using moderated
-list in LKML is just spamming the reviewers.
+On 7/24/24 10:45 AM, Dr. David Alan Gilbert wrote:
+> Hi,
+>   I noticed there was a goo.gl link in Documentation/filesystems/9p.rst
+> 
+>     * VirtFS: A Virtualization Aware File System pass-through
+>       http://goo.gl/3WPDg
+> 
+> Given goo.gl is going away, I was going to expand the link, but
+> the link looks fairly ill; it goes to a sciweavers.org site
+> that has an abstract, but it doesn't seem to download the full document.
+> 
+> I can see links to the document around, but I'm not sure if there's
+> a 'right' address.
 
-- Mani
+Yeah, it (or a variant of it) is available in quite a few places.
 
-> V3 Changes:
->   o Commit "Enable 7712 SOCs"
->     -- Move "model" check from outside to inside func (Stan)
->   o Commit "Check return value of all reset_control_xxx calls"
->     -- Propagate errors up the chain instead of ignoring them (Stan)
->   o Commit "Refactor for chips with many regular inbound BARs"
->     -- Nine suggestions given, nine implemented (Stan)
->   o Commit "Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
->     -- Drop tab, add parens around macro params in expression (Stan)
->   o Commit "Use swinit reset if available"
->     -- Treat swinit the same as other reset controllers (Stan)
->        Stan suggested to use dev_err_probe() for getting resources
->        but I will defer that to future series (if that's okay).
->   o Commit "Get resource before we start asserting resets"
->     -- Squash this with previous commit (Stan)
->   o Commit "Use "clk_out" error path label"
->     -- Move clk_prepare_enable() after getting resouurces (Stan)
->     -- Change subject to "Use more common error handling code in
->        brcm_pcie_probe()" (Markus)
->     -- Use imperative commit description (Markus)
->     -- "Fixes:" tag added for missing error return. (Markus)
->   o Commit "dt-bindings: PCI ..."
->     -- Split off maintainer change in separate commit.
->     -- Tried to accomodate Krzysztof's requests, I'm not sure I
->        have succeeded.  Krzysztof, please see [1] below.
->   
->   [1] Wrt the YAML of brcmstb PCIe resets, here is what I am trying
->       to describe:
-> 
->       CHIP       NUM_RESETS    NAMES
->       ====       ==========    =====
->       4908       1             perst
->       7216       1             rescal
->       7712       3             rescal, bridge, swinit
->       Others     0             -
-> 
-> 
-> V2 Changes (note: four new commits):
->   o Commit "dt-bindings: PCI ..."
->     -- s/Adds/Add/, fix spelling error (Bjorn)
->     -- Order compatible strings alphabetically (Krzysztof)
->     -- Give definitions first then rules (Krzysztof)
->     -- Add reason for change in maintainer (Krzysztof)
->   o Commit "Use swinit reset if available"
->     -- no need for "else" clause (Philipp)
->     -- fix improper use of dev_err_probe() (Philipp) 
->   o Commit "Use "clk_out" error path label"
->     -- Improve commit message (Bjorn)
->   o Commit "PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
->     -- Improve commit subject line (Bjorn)
->   o Commit (NEW) -- Change field name from 'type' to 'model'
->     -- Added as requested (Stanimir)
->   o Commit (NEW) -- Check return value of all reset_control_xxx calls
->     -- Added as requested (Stanimir)
->   o Commit (NEW) "Get resource before we start asserting reset controllers"
->     -- Added as requested (Stanimir)
->   o Commit (NEW) -- "Remove two unused constants from driver"
-> 
-> 
-> V1:
->   This submission is for the Broadcom STB 7712, sibling SOC of the RPi5 chip.
->   Stanimir has already submitted a patch "Add PCIe support for bcm2712" for
->   the RPi version of the SOC.  It is hoped that Stanimir will allow us to
->   submit this series first and subsequently rebase his patch(es).
-> 
->   The largest commit, "Refactor for chips with many regular inbound BARs"
->   affects both the STB and RPi SOCs.  It allows for multiple inbound ranges
->   where previously only one was effectively used.  This feature will also
->   be present in future STB chips, as well as Broadcom's Cable Modem group.
-> 
-> Jim Quinlan (12):
->   dt-bindings: PCI: Cleanup of brcmstb YAML and add 7712 SoC
->   dt-bindings: PCI: brcmstb: Add 7712 SoC description
->   PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
->   PCI: brcmstb: Use bridge reset if available
->   PCI: brcmstb: Use swinit reset if available
->   PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets
->     SoC-specific
->   PCI: brcmstb: Remove two unused constants from driver
->   PCI: brcmstb: Don't conflate the reset rescal with phy ctrl
->   PCI: brcmstb: Refactor for chips with many regular inbound BARs
->   PCI: brcmstb: Check return value of all reset_control_xxx calls
->   PCI: brcmstb: Change field name from 'type' to 'model'
->   PCI: brcmstb: Enable 7712 SOCs
-> 
->  .../bindings/pci/brcm,stb-pcie.yaml           |  50 +-
->  drivers/pci/controller/pcie-brcmstb.c         | 485 +++++++++++++-----
->  2 files changed, 400 insertions(+), 135 deletions(-)
-> 
-> 
-> base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-> -- 
-> 2.17.1
-> 
-
+I prefer this one:
+https://kernel.org/doc/ols/2010/ols2010-pages-109-120.pdf
 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+~Randy
 
