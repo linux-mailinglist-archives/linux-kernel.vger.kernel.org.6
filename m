@@ -1,89 +1,147 @@
-Return-Path: <linux-kernel+bounces-262471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF3D93C77D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:00:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CA393C779
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268A3283AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194791C217D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D8E19DF65;
-	Thu, 25 Jul 2024 17:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115B419DF43;
+	Thu, 25 Jul 2024 16:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=plus.com header.i=@plus.com header.b="nl1byv7C"
-Received: from avasout-peh-004.plus.net (avasout-peh-004.plus.net [212.159.14.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6Dz+PSd"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A221990CD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.159.14.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A42C19D091
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926830; cv=none; b=cxm0jqKKU6R5OB6ekdWGjBnA+Tvt9XLTBdRlo3l9Nv0BNi2JgXyVlewRi5d9Lq8kF9OE+++062FX4nWK/hPJnA3G7ixQ1AeGJ8ZuRNfdJe3RDtWE/D98NnD6+HASnUJpjsRiyfucgAQj1TTKl+zpTOoS7mcNzDhi+x4HqcH+FcM=
+	t=1721926711; cv=none; b=pKU0H1OM3iW32lVBY/63pdC45Eo+3mPR7wpu9oDIR5kOAWb4QnucDCkcaCz+J52kMo7mHxKTfNNDK9fQG9bioTGUerIvXOMP1WvB5K+BJ5K09BmosDSSyHgZg+GuUrbFaX+0tO/a5fcshA+bR8pi/muTdprvi6vpcQINhOr9Unc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926830; c=relaxed/simple;
-	bh=LE100ebAfvvNm788iaZA9PGSbrpBge4zbK/BaP0mAQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dcr+W1cVyF83ybLJtn5GaXHwIol6fhRBa9NoWmobxRAZzhi+sHwSaVQicrDsJ4IQaRFL6JELgD7kKCr4mkCSwRH3cI2WeHZDtaFqkFGN3KD9aFsICzjFEhuYH8rGTG6B8QOuv4F2+m/TLB3txigoe4czM89+BrRuEVl/on9a2M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ramsayjones.plus.com; spf=none smtp.mailfrom=ramsayjones.plus.com; dkim=pass (2048-bit key) header.d=plus.com header.i=@plus.com header.b=nl1byv7C; arc=none smtp.client-ip=212.159.14.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ramsayjones.plus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ramsayjones.plus.com
-Received: from [10.0.2.15] ([80.189.83.109])
-	by smtp with ESMTPA
-	id X1mHsIdKvX9c9X1mIsAUXq; Thu, 25 Jul 2024 17:57:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plus.com; s=042019;
-	t=1721926639; bh=kKtnj6EZPjpP2vjhghYwmp72aP4p18xHgna6SKzTO9I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nl1byv7CW+w99bS6aw1K/GqfdOeAZUyAW6zZNQWVqmgcVhDN9CubkjpRoYQg3BBuI
-	 4cC2bJmtyJDAqcl/q+ZpAeYxbB8I2iy0i73EgjE2jTcc0OKQ3bUeAF+WzJ3XFTkT5W
-	 rdl8TP14HR3kGqL/+wx5mZQXrDl9qDV4IytBa8JhxX44Whg4P9L7uQCVSqnum5M5Es
-	 t93VA0Nrm4dyQOQQ2CUjywt/mTnrMRHBmpLikHcmCvpoo+FS1/Rkki66lmSbZsT2OG
-	 q7U724iJj0qG/nG47WnJU5u+s0BB3JPT8Pi0Yrut6JOZ9sAtHS8mwHPxrrKlNedF2d
-	 3A3TffwQ4eYHQ==
-X-Clacks-Overhead: "GNU Terry Pratchett"
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.4 cv=NPx2+F6g c=1 sm=1 tr=0 ts=66a283ef
- a=oM5NSl/Bl4BpjFr0C8iQlQ==:117 a=oM5NSl/Bl4BpjFr0C8iQlQ==:17
- a=IkcTkHD0fZMA:10 a=PoKn_H0tiGFBPcLqZB8A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
-X-AUTH: ramsayjones@:2500
-Message-ID: <9282286d-1a48-4434-8f5a-1b67035819fd@ramsayjones.plus.com>
-Date: Thu, 25 Jul 2024 17:57:17 +0100
+	s=arc-20240116; t=1721926711; c=relaxed/simple;
+	bh=Eh+GYj41EH2bfKgWDm+bmK5udsi7e7BfjyJqmvPoP/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X0X6eiPK+4WFOd7BIwUj5M+mB8pKecuQyIv9nsGsB8sbxscwfPlm/iwZdrL07BOCvvbsMUmW56+yuVh6MJPQj3Els3qUUrP+C7aqlQnEhJVE7sWCi3W+8paE+2GGxU/qNLfLOCl89z4S/FBq8L9Rgy0COGcIpGDkgXpFQX1jtZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6Dz+PSd; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f5153a3a73so392543e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:58:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721926708; x=1722531508; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VDQ6s6CMG7gHp/w9EVEaonlcBFFTlypRMzTuMlEuBvY=;
+        b=M6Dz+PSdFi0lgHU+SO1xPYPAvd8AskY6vJaB2sfZA2BZujiFnVezu8ikflyQREp7GO
+         TppVhX2GhqxkgYUsi9ID7/B0dlYNvguMhInTg1QOdlx+F03gCCN/BxoZJeE48G7i+1mb
+         iy3hbw0HvkT74PbOwmYcDhNOLDff/dwQwN6q9ElNUAy5PnR8ztA51eFqHtVkQIcX3fBN
+         ME+zaQdU8YEvkP0oFr0eboF2xh/3kmv2hS8HXzF9a8CSmmSJhTW1KZYAZPVi7hInTVe4
+         VI6ybHZlkH8c1aQuqHdwzIH3HH6qaHgdPU1IBCriUptXoonW/LOghbxoXRZcXtd489SY
+         /hWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721926708; x=1722531508;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VDQ6s6CMG7gHp/w9EVEaonlcBFFTlypRMzTuMlEuBvY=;
+        b=Iiq3ccPygSd7lpVIvyusKV7x47AZvtHcvBu3LW/I90yA0E1dZqEseb9zmjtxziwQ+t
+         mkBeeGJI4SSHx8NQlXo257hg//0be9SXyCKATO78QBYBWPrO0aHwcqd/UOxgbuLHCfzE
+         zDKDMoUg9oTsCWfYNgQ2NB4uhS2Z5rXxF2LOmkwYnRW5KSs9cuohCCOjW5l3S2dp1O74
+         PP9V2lTh3IK28N1BvyLl8SCNJNFBxT6qABKZGIz1fSgOSxxf6JiVpJ2xF4+8P29ESARw
+         +N9lt3aOVYHjCnx6P46bvQvTsaVOdXJ/NmBYCLnDP3wSnOchjHUZZRwkfBT7h9eqAJrM
+         gn3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW/jT1zsJubBThpDJsR7xxx7RkeI6/EiVhFtCipZ8cu6xuCaKqfReha/W/EpB/7RePc1liZdVnMcnqBIGMABF3MlHT5Q1QjxbJENQAG
+X-Gm-Message-State: AOJu0Yx2OXmW9E4PzVmYvzXM1zAL9jiTk34hL4y80Eqft7VTx/5HdJFs
+	wwcyr6hX542dQueZpt311mJ+IsovbssC0PHhOOPY3auAvnasJayg527HGEOWtzT51WJVwEr3f/T
+	BprwWlLg2d6qPA9tNk5LbcmwhdDjUItKe04dL+Q==
+X-Google-Smtp-Source: AGHT+IEqzIGu6UGuRS/hG4Muuvv+ROC3+TMPz4G/q7GbQ1qVMcFVJrUiW/7L+Riug4rto673vTz15kixh9I30mEwN70=
+X-Received: by 2002:a05:6122:d8b:b0:4f5:27ac:ce6e with SMTP id
+ 71dfb90a1353d-4f6ca2f4282mr2619326e0c.7.1721926708409; Thu, 25 Jul 2024
+ 09:58:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] Git v2.46.0-rc2
-To: Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
- git-packagers@googlegroups.com
-References: <xmqq7cdavgqa.fsf@gitster.g>
-Content-Language: en-GB
-From: Ramsay Jones <ramsay@ramsayjones.plus.com>
-In-Reply-To: <xmqq7cdavgqa.fsf@gitster.g>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfIe1TZ6YVDKdtHlAbXkC0FUM/ufxF+6bkbjmmU8REdT119woux1Z3pJfp83FaKuvGi7CwKylZ4FI5cX11Dn69nRcOH0BgQJIcPqGWy2KrK0trDdy7TGh
- XqtBa3PxqELPmAkXF7f0RkYAZgRzAnBHzVRy57N/wNhB4nAn+sdlz4GFaH2PRAdNKj0QUtHPimh7H5DT5/PKiw6nOUq+zCRXTig=
+References: <20240725142730.471190017@linuxfoundation.org>
+In-Reply-To: <20240725142730.471190017@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 25 Jul 2024 22:28:16 +0530
+Message-ID: <CA+G9fYsVD0Yn2WPqu3a_CYtDZ=XR4WctQLOyTdn=EoS-idDHGg@mail.gmail.com>
+Subject: Re: [PATCH 5.4 00/43] 5.4.281-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ian Ray <ian.ray@gehealthcare.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 25 Jul 2024 at 20:12, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.4.281 release.
+> There are 43 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.281-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+The following build errors noticed while building arm and arm64 configs with
+toolchains gcc-12 and clang-18 on stable-rc linux-5.4.y
 
-On 24/07/2024 18:31, Junio C Hamano wrote:
-> A release candidate Git v2.46.0-rc2 is now available for testing at
-> the usual places.  Relative to -rc1, we fix a few recent small
-> regressions and nothing else.
+First seen on today builds 25-July-2024.
 
-Just to confirm, running the full test-suite this time, that the 'rc2'
-build passes the 't1460-refs-migrate.sh' test just fine! :)
+  GOOD: 4fb5a81f1046 ("Linux 5.4.280-rc2")
+  BAD:  13f3efb40ee1 ("Linux 5.4.281-rc1")
 
-Thanks!
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-ATB,
-Ramsay Jones
+Build errors:
+-------
+drivers/gpio/gpio-pca953x.c: In function 'pca953x_irq_bus_sync_unlock':
+drivers/gpio/gpio-pca953x.c:699:17: error: implicit declaration of
+function 'guard' [-Werror=implicit-function-declaration]
+  699 |                 guard(mutex)(&chip->i2c_lock);
+      |                 ^~~~~
+drivers/gpio/gpio-pca953x.c:699:23: error: 'mutex' undeclared (first
+use in this function)
+  699 |                 guard(mutex)(&chip->i2c_lock);
+      |                       ^~~~~
 
+metadata:
+------
+  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkAGMFVlBW89jcWOIsv80LLLSa/config
+  download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkAGMFVlBW89jcWOIsv80LLLSa/
+  git_describe: v5.4.280-44-g13f3efb40ee1
+  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git_sha: 13f3efb40ee1218ae1933c1a9f876c2a86c48664
+  git_short_log: 13f3efb40ee1 ("Linux 5.4.281-rc1")
 
+--
+Linaro LKFT
+https://lkft.linaro.org
 
