@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-262534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7048B93C862
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D3693C865
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD1C28258C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61F8C1F2212F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2201E47A5C;
-	Thu, 25 Jul 2024 18:33:19 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4628A4D131;
+	Thu, 25 Jul 2024 18:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/BhvdJq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5149E210F8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E11E3B79C;
+	Thu, 25 Jul 2024 18:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721932398; cv=none; b=H8B2AEMehN5pJKAPE7RH1iZsvbnpDhsqHDFKuCQFcJVmsE3pi/KTYdoWe8kA0oke93/71bc1XR/vPO0/c/JcxVzfutAnqqMtXB/4J64AhIPV8ojkV0My9z62lrABta8honijizcHsr1uMDJYY6VGRdlh1Y63IM3K+nWcI15fVFE=
+	t=1721932502; cv=none; b=U0t8L/+r91kKEFidqmU70/YoFErKOuIW7crK5c1QJgpdzIXCFpt5DnJlIrv6OY5G2bTfBhvPp5etK8SxCLFkH6iTIhqVBO8lTRHbKlEueUwIEyWKJ1IbFqX5pRFDw19/jm2w+cBouhMlXrFgZGDuO69kYJ4jEcFUd0EzA0VHPOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721932398; c=relaxed/simple;
-	bh=x3Uplq3g9tRJ63VMtyTiFluF2YqaQGF7G74yVJkKC50=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aYhTMHrT+tkMqcwcDm+dR5uGiq5DsDbFIuBvmetbtZEQzCMtVkGMk9KccC1ruvhxv1XPgrPcPlA+B6KldNLDKhBgaUruGHUNkPA9nEygvfth+ke9FBo3ze/jvvUWl9ZKLG3VEhWH+U/Hbq0Bq6kHFztzoaMbvsv115EOFmKxpMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-396c41de481so12430535ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:33:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721932396; x=1722537196;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3Uplq3g9tRJ63VMtyTiFluF2YqaQGF7G74yVJkKC50=;
-        b=vC9W3wvmbhxeHF8RjNUjEiqk1m3jeP6vyh1gH/MoZPqtEmiIqYLM7p18xYXy1/vBia
-         bFncfOsHM9+QEh2D1YraLEwZKOGYm7szElkUmJp0VsBoVd5xqzuWHwycHb/NCXvs912o
-         otir6c93y4cLjFZ3HKUNgCrtIsbQn2JSjOt/X2i/Erd3qHe5AKzZ1wRsfbKzkfY+GOQV
-         YFU/2lMfGx4E97uLWZy2tO1JVbG93nRHpwKpaL+XzVH3WMk13cCuAvPFG5FTcBppTeOq
-         DjsDMEVIFvRTAZKPLofciKFbF9Y5NqSPt6y7Tro5dEJBDXooJGv07eNjLdP9CNl9tpYW
-         ftLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKQqnFQPPbGy7BGrYskW74k3ZJx0Ptdn7hNFuquQhF07CSV+Vjl2P+lYGCm/sG9nGdA2KUmctYAMzUgLx32zjUpQIbqnWqupZrfXb
-X-Gm-Message-State: AOJu0YzW7VT8wSOTHBhkOzdlrfc2lc4bW6OX8IIPNfPGaO/62sF6qex5
-	4iWFbl6O4KSc/txpQRHHoVwmkDPIizi8vcz5yAz4qBRpMH92grKjwm8GdGcui6thXTEkhIgQx1/
-	3rgX2zhe9yijBFiy4Z6qJhmxEockf77ni0+2nma+4hM4C9baeLEwVx3c=
-X-Google-Smtp-Source: AGHT+IH2jrqSfCw2gZLBit8Qdra7oizjuhXH36fBGkIDykjebFbU4C6K+slm8yVokO3OVjbqARCt15UY+rRic7ZwAjmAWSVEBrNa
+	s=arc-20240116; t=1721932502; c=relaxed/simple;
+	bh=26T2QjUffzc0MnZFn4Miu/SCpQ+ELbRTz6C+axsjgFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZnNU7H7L2rbh1iqq/AeGf5jylhKtLxDVCrN4apc2xsWYwKYxbtMaXoQnQGy1f2uHa+mdvgncIS8woEe+ZcfQMhm1oAH0QKbBM9kyGGssn1sKkHBYj8Xx3hoOnbHcRwgNTl/j25Yh7l865vEPW8y2r785uaSaXnd2iWmOlFYqM/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/BhvdJq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2BCC116B1;
+	Thu, 25 Jul 2024 18:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721932502;
+	bh=26T2QjUffzc0MnZFn4Miu/SCpQ+ELbRTz6C+axsjgFE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A/BhvdJqEKf4EXKUaYF01vDx52mBO1ws2o10zdq9tKn7A9q4AlQeDGm2PjQzOt5O9
+	 mb1vOLlhfxEFxrmwgUk8jN5ZhPFFBCfnAsuDl7HsskA2QPrPAZVk9csdcJefd3pTdo
+	 QuTADG2PsjJXa7+uEPUpcESE/MVdznSLGJ2jQaYzUOHs0rOBOJXmPVaVHj8oV3DZC/
+	 x3KS6sTbSQIpAuMB3PEGmff7YvlQ1MDY/pbzFDuJ2hfROjIej2ZS2TgdKDERqUJdc7
+	 FyPKN+IKuoybKslhCc8AOzfQdTBjz8UKW0UtqmIkXtYHRlGGLvNuMJHUdzpukFbRvr
+	 9H0fLeMyavDsQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Cc: x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH v3 0/6] Rust: support `CPU_MITIGATIONS` and enable `objtool`
+Date: Thu, 25 Jul 2024 20:33:17 +0200
+Message-ID: <20240725183325.122827-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168f:b0:374:9a34:a0a with SMTP id
- e9e14a558f8ab-39a2187f30dmr2884075ab.6.1721932396538; Thu, 25 Jul 2024
- 11:33:16 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:33:16 -0700
-In-Reply-To: <000000000000a62351060e363bdc@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d2bf2d061e16a028@google.com>
-Subject: Re: [syzbot] memory leak in ___neigh_create (2)
-From: syzbot <syzbot+42cfec52b6508887bbe8@syzkaller.appspotmail.com>
-To: alexander.mikhalitsyn@virtuozzo.com, davem@davemloft.net, den@openvz.org, 
-	dsahern@kernel.org, edumazet@google.com, f.fainelli@gmail.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	nogikh@google.com, pabeni@redhat.com, razor@blackwall.org, 
-	syzkaller-bugs@googlegroups.com, thomas.zeitlhofer+lkml@ze-it.at, 
-	thomas.zeitlhofer@ze-it.at, wangyuweihx@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-This bug is marked as fixed by commit:
-net: stop syzbot
+Hi,
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+This is just v2 with the helper function suggested by Peter.
 
-#syz fix: exact-commit-title
+I dropped Benno's and Alice's Tested-bys from the modified patch, just
+in case, but the logic should be equivalent.
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
+Cheers,
+Miguel
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=42cfec52b6508887bbe8
+v3:
+  - Added `is_rust_noreturn()` helper function (Peter).
+  - Reworded a couple bits.
 
----
-[1] I expect the commit to be present in:
+v2: https://lore.kernel.org/rust-for-linux/20240724161501.1319115-1-ojeda@kernel.org/
+v1: https://lore.kernel.org/rust-for-linux/20231023174449.251550-1-ojeda@kernel.org/
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+Miguel Ojeda (6):
+  rust: module: add static pointer to `{init,cleanup}_module()`
+  x86/rust: support MITIGATION_RETPOLINE
+  x86/rust: support MITIGATION_RETHUNK
+  x86/rust: support MITIGATION_SLS
+  objtool/rust: list `noreturn` Rust functions
+  objtool/kbuild/rust: enable objtool for Rust
 
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+ arch/x86/Makefile               |  7 ++++-
+ rust/Makefile                   | 22 +++++++++------
+ rust/macros/module.rs           | 12 +++++++++
+ scripts/Makefile.build          |  9 +++++--
+ scripts/generate_rust_target.rs | 15 +++++++++++
+ tools/objtool/check.c           | 48 ++++++++++++++++++++++++++++++++-
+ tools/objtool/noreturns.h       |  2 ++
+ 7 files changed, 103 insertions(+), 12 deletions(-)
 
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
 
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+base-commit: b1263411112305acf2af728728591465becb45b0
+--
+2.45.2
 
