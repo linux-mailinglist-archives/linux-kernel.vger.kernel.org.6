@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-261993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B1C93BF12
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4DF93BF08
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F5F1F2467F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D887F1C21156
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6033198E90;
-	Thu, 25 Jul 2024 09:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778C19884D;
+	Thu, 25 Jul 2024 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OjukQg7y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H0FfPFgw"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DEE198A01
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3956C19882E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721899532; cv=none; b=ctTiAd+7pzhMqZgYSBfNkFmrCyCkSGAhcsPLvsUdXig7EINqP0q67s8biZ/O1sQKDtuIOfFx1NSfKwfWXhc80HT+rUBinEocVFVyUW1SDj2midWKW8k/bau8al4/+o8N2hhBZCVZQB184THiV1Lmrix3yXjU7W1D2AoovZ9fQfw=
+	t=1721899529; cv=none; b=jK1bjnzfTZzoYWmynpQfQnC4H/mWyRycaa3t27t/sWazazEZP+cFNf/4WQcLbcVpd7WHKfLvaoUSwp8x+UTpjLXDrxxrtDW+i7L8ZFVJ2/BeSSG3XDnsrRatbiXIEDWJZOc+texpq7zGOoQhqcWRK7h1Mski9x4uOex7yZy3c/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721899532; c=relaxed/simple;
-	bh=W15txsPTe9TCHFyfiRv/b2eKkBA7BJ2ARA357N2McdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VvybVQH26BDLSbBY0MEuZ3/Nwo4Z/Xr/wGyhPqWgFp7rIPEBObQL0n36Qs+NL07oCEINNMWybm6m5exFKdEB1q4jsS9S4F//qvjbVN9/cp4/Hq6UknhcRHlad0M0dJSUdU83aGCX5BdXFbN0Mw0R7d13u3txOXqn8qN7mfhMlMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OjukQg7y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OM4AQh011243;
-	Thu, 25 Jul 2024 09:25:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	P4hPJtddPLad7131fjAv+TwrCcQC43nifLTthCEdNiY=; b=OjukQg7yNimCtgNH
-	vidjaeCUboUvRTdNd74UafriIxLUMDSyRMGQ6BjRaZcn6n53UrJagPQhxTTE1fr3
-	LuLkbq5WglsdTIVs9NesSdFieRzyAKd1te9cg7aV19q9uu610KznaWfN/I0p850M
-	VXJV1vamZicg4Y6+k08ZgG7WBzrNpNxKbNuQZD0So0fJJbyrqgTQepYmgZdtfj5/
-	Can9DsXmi5AmjhHfgrMGuFBpLsbiFBzho3vYDzb82eKS17tlZvT2AbAqUn4RpT2N
-	jW82VWVPdPYTPO9M/2SLkvcd4csgrV5gCGo/r6EFH8Zxh4ChwoXV/lyN+MOsoE8z
-	yq+vZA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40jyrfjyxy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 09:25:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P9PENo031576
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 09:25:14 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 25 Jul
- 2024 02:25:12 -0700
-Message-ID: <9aa64dfc-46ac-2e26-51a9-50875cc3c739@quicinc.com>
-Date: Thu, 25 Jul 2024 14:55:09 +0530
+	s=arc-20240116; t=1721899529; c=relaxed/simple;
+	bh=kVnq7lEY6gwrjM1mi4zF3FeC0D0Ncx7lnf9pQHV9Zy0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cjuOh4Fdw6xmHNHydjdhAIuzPuz61NmlDN8Bx9JzHZscdw1jbFPjsOkNZjf56TpfW0m7ZC400GBBvk2EP/VhccLcVYesIsu0X6HYwWdrT0zt3bZBjBcQBV5Xpjj7OYW9PdpPvXYH+RLi4N2/i177oxbzhFcPrQXpc+Y0aJ1Wzic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H0FfPFgw; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4272738eb9eso5201045e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721899526; x=1722504326; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D2MlzuOoUoymThNON9rT97vhUbZBnF3LUPxsjQQSfSM=;
+        b=H0FfPFgwEuAecy3+4TxcBMRo2E0uMc+JAecNdlz8D/4esnYF9sVJ7ybiQACJ6jNiOJ
+         1iW1X6pfds1PpZCQUGJbohnPOU5v6Fd3Sq7c+oZamrs8Fs8pC8+CmFiAU2CuMDhEJwVw
+         QtRoxeiNM/AlyKnyKiOZTq1fgq6e2LOwTt0JyhdiawL8laSThnLWmg1hEW+dnNGxUEkE
+         98mO7mZIJVGGP8N3etglms4Ykl0chBFEPACVQM7CUWu9myFrfLZwEX6XImVpN65HS+xC
+         twwUUOwZ9OjsxVXsOGbueZ0YHdidF0ohN79Qnad9YXf5/R5Y3/ykDN0QRC+iylFrN0K/
+         kpeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721899526; x=1722504326;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D2MlzuOoUoymThNON9rT97vhUbZBnF3LUPxsjQQSfSM=;
+        b=ez3tzUEJqFm2GimiqKp0F9f+d21w5Kd1sl6M2WbUnDIHEfEKqPyen8n07iOQ0M9E0l
+         bBXh9XQyQX5Dw5U7yT8DxY1f/c7JiLV52BPtOmnThJkix5HMJRnKOpAofuVyQkT/UKA8
+         akBSbddyaUnXix3qaIkEIJHJ859/Snhq5/zPUyL/lTuaEfHeQWnMkK9FdQa1U+qihhkN
+         Hjhzs/qr9QXe8XsmqQ1jVnsbr+n9SQnBgm9e9eXJRbviK9PLWIr0fZAMAR2IyCpRM7hM
+         98kG9ZabQOnZhEPWP7/Qal+dzx7ckiy7d4bTG1hqt78EjwJLnkRMgzWZV0j7u564GvVs
+         4Esw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5IwOr1go2zqQIjchtfLVK0pk/jw8EtE1PuIEhpCXVTzDVuMq7IEb/bhDml9XavEdaEGIAfllSa+Qhx0tdOX7uu096w8nvCNM381yt
+X-Gm-Message-State: AOJu0Yzp+cFuGPhNokkIzYnzSGScJ7g2Lh1/GywCsCNb5MJ+ezq7426A
+	aKByjXv6gDe7oqdGa5Dq1yQxe+MQRMKIvJzytMEg18V0HPEYN4ZZMb7wKbWcD36Yw7mUYkRbpS3
+	0
+X-Google-Smtp-Source: AGHT+IGig2kx03GSwxPx4hLAblVlwgWHF3naMDhrXLgI2PJBfer6j+Z3YpqWo44+c4+YFSI2hVfbAg==
+X-Received: by 2002:a05:600c:154f:b0:426:5b3a:96c with SMTP id 5b1f17b1804b1-4280573c824mr11106235e9.28.1721899526472;
+        Thu, 25 Jul 2024 02:25:26 -0700 (PDT)
+Received: from [192.168.1.191] ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427ef3f45cfsm65830385e9.0.2024.07.25.02.25.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 02:25:25 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+Subject: [PATCH v3 0/3] arm(64): dts: qcom: fix dtbs_check warnings for
+ qcom,spmi-pmic.yaml
+Date: Thu, 25 Jul 2024 10:25:15 +0100
+Message-Id: <20240725-pmic-bindings-v3-0-d7f6007b530d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] mailbox: qcom-cpucp: fix 64BIT dependency
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>
-References: <20240719100247.4012087-1-arnd@kernel.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <20240719100247.4012087-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 54HnbSW0xa2VMOho1qxKGaMoowV3nmSN
-X-Proofpoint-ORIG-GUID: 54HnbSW0xa2VMOho1qxKGaMoowV3nmSN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_09,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=625 malwarescore=0 clxscore=1011 suspectscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 phishscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250063
+X-B4-Tracking: v=1; b=H4sIAPsZomYC/3XMQQ7CIBCF4asY1mLKFNrqynsYFxSGdhKFBgzRN
+ L27tCs1cfle8v0zSxgJEzvtZhYxU6Lgy6j3O2ZG7QfkZMtmUIGsWgA+3cnwnrwlPyTeqsY61Wm
+ nhWLFTBEdPbfe5Vr2SOkR4mvLZ7G+/0pZ8IorpY4S+tpIFOcbeR3DIcSBrakMn7z+5VA4CmMbI
+ V1npP7iy7K8AfaBUrrqAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Rayyan Ansari <rayyan.ansari@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1126;
+ i=rayyan.ansari@linaro.org; h=from:subject:message-id;
+ bh=kVnq7lEY6gwrjM1mi4zF3FeC0D0Ncx7lnf9pQHV9Zy0=;
+ b=owGbwMvMwCXmtuJiX/SRuS2Mp9WSGNIWSf7Ls9qu2LZ38smbSmcZYvq+a7ifUdRZWnfUzMzMW
+ ulk9c7nHaUsDGJcDLJiiiyHm76seb3dSejK9qpTMHNYmUCGMHBxCsBEuicxMjTMDn3Cn54Z1rE5
+ I9/3tp27x9GrXgVlag9/O685cfpUnQ8jw/d8S795Xne/vAhg2fR5bl7MpSD3J4Fn3s5Z/yKjTZz
+ RhB0A
+X-Developer-Key: i=rayyan.ansari@linaro.org; a=openpgp;
+ fpr=C382F4ACEBB74212D4B77ACA46A8D18E5BC49D84
 
+Hi,
+These patches fix all [1] warnings whilst running
+make dtbs_check DT_SCHEMA_FILES=qcom,spmi-pmic.yaml
+on both arm and arm64 qcom device trees.
 
+[1]: There is still one warning left that was fixed by an earlier patch
+by someone else, which has not been picked up: 
+https://lore.kernel.org/all/20240606181027.98537-2-adrian@travitia.xyz/
 
-On 7/19/24 15:32, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This newly added driver fails compile testing on 32-bit architectures
-> because it relies on 64-bit MMIO register access:
-> 
-> drivers/mailbox/qcom-cpucp-mbox.c: In function 'qcom_cpucp_mbox_irq_fn':
-> drivers/mailbox/qcom-cpucp-mbox.c:54:18: error: implicit declaration of function 'readq'; did you mean 'readb'? [-Wimplicit-function-declaration]
->     54 |         status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
->        |                  ^~~~~
->        |                  readb
-> drivers/mailbox/qcom-cpucp-mbox.c:65:17: error: implicit declaration of function 'writeq'; did you mean 'writeb'? [-Wimplicit-function-declaration]
->     65 |                 writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
->        |                 ^~~~~~
->        |                 writeb
-> 
-> Change the Kconfig dependency to disallow that configuration as well.
-> 
-> Fixes: 0e2a9a03106c ("mailbox: Add support for QTI CPUCP mailbox controller")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/mailbox/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index d1f6c758b5e8..4eed97295927 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -278,7 +278,7 @@ config SPRD_MBOX
->   
->   config QCOM_CPUCP_MBOX
->   	tristate "Qualcomm Technologies, Inc. CPUCP mailbox driver"
-> -	depends on ARCH_QCOM || (COMPILE_TEST && 64BIT)
-> +	depends on (ARCH_QCOM || COMPILE_TEST) && 64BIT
+---
+- Link to v1: https://lore.kernel.org/r/20240722-pmic-bindings-v1-0-555942b3c4e1@linaro.org
 
-Hey Arnd,
+---
+- Link to v2: https://lore.kernel.org/r/20240723-pmic-bindings-v2-0-e1cd614f8c4a@linaro.org
 
-Thanks for the patch. This was first reported by Nathan [1] and I
-was planning on re-posting the series after the merge window. Thanks
-again.
+---
+Rayyan Ansari (3):
+      arm64: dts: qcom: pmi8994: Add label to wled node
+      arm64: dts: qcom: pmi8950: Remove address from lpg node
+      ARM: dts: qcom: pma8084: add pon node
 
-Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+ arch/arm/boot/dts/qcom/pma8084.dtsi   | 16 +++++++++++-----
+ arch/arm64/boot/dts/qcom/pmi8950.dtsi |  3 +--
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi |  3 +++
+ 3 files changed, 15 insertions(+), 7 deletions(-)
+---
+base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+change-id: 20240722-pmic-bindings-756df58afa15
 
-[1] https://lore.kernel.org/lkml/20240715031451.GA2940276@thelio-3990X/
+Best regards,
+-- 
+Rayyan Ansari <rayyan.ansari@linaro.org>
 
->   	help
->   	  Qualcomm Technologies, Inc. CPUSS Control Processor (CPUCP) mailbox
->   	  controller driver enables communication between AP and CPUCP. Say
 
