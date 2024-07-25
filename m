@@ -1,64 +1,102 @@
-Return-Path: <linux-kernel+bounces-262175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8788D93C1EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9960993C1EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB0021C21F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239AF28A30F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C26199E9A;
-	Thu, 25 Jul 2024 12:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D88719A2A3;
+	Thu, 25 Jul 2024 12:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX2sZWHc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="heBeOFQT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE8Yqdr+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="heBeOFQT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE8Yqdr+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437AA199241;
-	Thu, 25 Jul 2024 12:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012DF19A291;
+	Thu, 25 Jul 2024 12:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721910222; cv=none; b=Ede5Ub+4tQ8iP3sw10cagd0LK8EgePUuoV9sCNzmKseeKowjbztABfZtcrY+Z3gnQ7FxdpoUWQsd8fQi4ha2Uuhyn7nlBJCKRirQdldywQ3hGdEp0r5aqYpfhubwTo7FRj0hKv05V2vWkD0/9hW3LZZYffXxpm0qPPaeeB5/rDw=
+	t=1721910227; cv=none; b=tldCLNmeeCE5fkp5NPADZkKZ4vJMKXencwFUXUXOuscL92cRsqhnPd9UvQrP3ptGo33nFy3dtATuP8OJmIHClONeb8L26UFinaVe16SN7QpJf1fr29K7y5zX8TXW881M3bPbtpszo4QaJe+qMulhLNza8p3bJwb9wNm8BxsVagw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721910222; c=relaxed/simple;
-	bh=FxpBSkox+kGUdr5ySqjw7luWtMsnywJWHOmsE0BGYZ8=;
+	s=arc-20240116; t=1721910227; c=relaxed/simple;
+	bh=l0v0veZ0g0iGMrnbUOoTVKEJeBWucLvXSvGWaxKSgeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmonBleW2yTqzGInLT/OcDQbSVE7bSOLktygNkbTFquLhC4zsEvwKcGVfZUzba+ZwHFf1GbUnRxwygspUpO/jVak/Yc5R2aM8yltXEoTYwRzwQ8C5mx6d/aSGi0eLN0114T6sY1ia7Tbg4Mtq7RezmyVJj1cLBWwkDE1pDfLwLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qX2sZWHc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9C4C32782;
-	Thu, 25 Jul 2024 12:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721910221;
-	bh=FxpBSkox+kGUdr5ySqjw7luWtMsnywJWHOmsE0BGYZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qX2sZWHc94S27MpTxVZc+U5E2xVhnkLF6TjChRWXH9/tHggOMZTVqaHqw94yTUWg+
-	 f63ezr45jUwxp349qcODGFFU4sTAZG0FS44par0jn7zxECLO5pv9aUjkHDza7iNhUh
-	 /KA9iJirdvlw7ME4A3m28V8mnZK59dgDv+o5HQ4WnAZMC812oq/9GckbzvH1kSqHQG
-	 iFF6N9o/2RIpJdgEygI8e15Nh2eZpjoWcVUWdAtPrW6IJYW5CdCe4s5LkrlXtrLMtj
-	 7DmZptFZWMWZv4iMsbNZXVV/04FirzQxqEw9pNxllmAcDvtUEC629dFOHzxRh75Qv+
-	 Xz1L0P/Kjp75g==
-Date: Thu, 25 Jul 2024 07:23:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: fabrice.gasnier@foss.st.com,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	alsa-devel@alsa-project.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/9] dt-bindings: iio: dfsdm: move to backend framework
-Message-ID: <20240725122340.GA1360128-robh@kernel.org>
-References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
- <20240724153639.803263-5-olivier.moysan@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hsdk5gTugeLO6spLoN0ORpvAJLh6g9FjTHibRZVi0W9NYjJkg72O2KkB7MWkjmbS1loiGqhXh4MQ1XT+9h8ukJAT3Cr9R53x1xokPPNokeW0mQ5ZlL2HvAGy7nLZc7mvkKGak/eqrCTNoYNBZG/QX1OgheN4kiRhvFyigrIhoeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=heBeOFQT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE8Yqdr+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=heBeOFQT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE8Yqdr+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C31821AC6;
+	Thu, 25 Jul 2024 12:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721910224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
+	b=heBeOFQTYN2LLcy1MOPs4QPHrFmyp4xIfAMHB/4nOrPWGwxKxZADecOBf1ORRtSiV3tc+U
+	+Zff8nzKXpMFyAZB3LjZLxA4o4jGyKWa1tdGxzLFeiGCvRC1OM8i2d5cawQHQt1RGv6vdI
+	pV7rQ94LzhoPI0k0T3z4wdkJNyhputk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721910224;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
+	b=ZE8Yqdr+tcKXkkUukYRmITP7pwQk2YSYZ4TJEWV7BeP75v6/o0+8u2SSXbk4rmPzlXkM4I
+	sw9l4lB32hrFcbAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721910224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
+	b=heBeOFQTYN2LLcy1MOPs4QPHrFmyp4xIfAMHB/4nOrPWGwxKxZADecOBf1ORRtSiV3tc+U
+	+Zff8nzKXpMFyAZB3LjZLxA4o4jGyKWa1tdGxzLFeiGCvRC1OM8i2d5cawQHQt1RGv6vdI
+	pV7rQ94LzhoPI0k0T3z4wdkJNyhputk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721910224;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
+	b=ZE8Yqdr+tcKXkkUukYRmITP7pwQk2YSYZ4TJEWV7BeP75v6/o0+8u2SSXbk4rmPzlXkM4I
+	sw9l4lB32hrFcbAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FE3A1368A;
+	Thu, 25 Jul 2024 12:23:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mL3EB9BDombPbAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 12:23:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D3658A0996; Thu, 25 Jul 2024 14:23:43 +0200 (CEST)
+Date: Thu, 25 Jul 2024 14:23:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 19/20] ext4: get rid of ppath in
+ convert_initialized_extent()
+Message-ID: <20240725122343.shdvi722ncsvg7ox@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-20-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,185 +105,155 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724153639.803263-5-olivier.moysan@foss.st.com>
+In-Reply-To: <20240710040654.1714672-20-libaokun@huaweicloud.com>
+X-Spamd-Result: default: False [-2.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.10
 
-On Wed, Jul 24, 2024 at 05:36:32PM +0200, Olivier Moysan wrote:
-> Change the DFSDM binding to use the new IIO backend framework,
-> along with the adoption of IIO generic channels.
-> This binding change allows to add scaling support to the DFSDM.
+On Wed 10-07-24 12:06:53, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> Keep the legacy binding as deprecated for backward compatibility.
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
 > 
-> The io-backends property is supported only in generic IIO channel
-> binding.
+> To get rid of the ppath in convert_initialized_extent(), the following is
+> done here:
 > 
-> - Channel description with the generic binding (Audio and Analog):
+>  * Free the extents path when an error is encountered.
 > 
->   Properties superseded by generic properties:
->     st,adc-channels: becomes "reg" property in channel node
->     st,adc-channel-names: becomes "label" property in channel node
->   Properties moved to channel child node:
->     st,adc-channel-types: becomes st,adc-channel-type
->     st,adc-channel-clk-src, st,adc-alt-channel
+> No functional changes.
 > 
-> - Analog binding:
-> 
->   DFSDM filter channel is configured as an IIO backend consumer.
->   Add io-backends property in channel child nodes.
-> 
->   DFSDM is no more configured as a channel consumer from SD modulator.
->   Use of io-channels in DFSDM node is deprecated.
-> 
-> - Audio binding:
-> 
->   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
->   No change compare to legacy.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  | 124 +++++++++++++++---
->  1 file changed, 108 insertions(+), 16 deletions(-)
+>  fs/ext4/extents.c | 37 +++++++++++++++++++------------------
+>  1 file changed, 19 insertions(+), 18 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> index 2722edab1d9a..ceadd73504a4 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> @@ -102,9 +102,11 @@ patternProperties:
->          items:
->            minimum: 0
->            maximum: 7
-> +        deprecated: true
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index badadcd64e66..737432bb316e 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3810,13 +3810,12 @@ ext4_convert_unwritten_extents_endio(handle_t *handle, struct inode *inode,
+>  	return ERR_PTR(err);
+>  }
 >  
->        st,adc-channel-names:
->          description: List of single-ended channel names.
-> +        deprecated: true
+> -static int
+> +static struct ext4_ext_path *
+>  convert_initialized_extent(handle_t *handle, struct inode *inode,
+>  			   struct ext4_map_blocks *map,
+> -			   struct ext4_ext_path **ppath,
+> +			   struct ext4_ext_path *path,
+>  			   unsigned int *allocated)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+>  	struct ext4_extent *ex;
+>  	ext4_lblk_t ee_block;
+>  	unsigned int ee_len;
+> @@ -3841,29 +3840,25 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
+>  	if (ee_block != map->m_lblk || ee_len > map->m_len) {
+>  		path = ext4_split_convert_extents(handle, inode, map, path,
+>  				EXT4_GET_BLOCKS_CONVERT_UNWRITTEN, NULL);
+> -		if (IS_ERR(path)) {
+> -			*ppath = NULL;
+> -			return PTR_ERR(path);
+> -		}
+> +		if (IS_ERR(path))
+> +			return path;
 >  
->        st,filter-order:
->          description: |
-> @@ -118,6 +120,12 @@ patternProperties:
->        "#io-channel-cells":
->          const: 1
+>  		path = ext4_find_extent(inode, map->m_lblk, path, 0);
+> -		if (IS_ERR(path)) {
+> -			*ppath = NULL;
+> -			return PTR_ERR(path);
+> -		}
+> -		*ppath = path;
+> +		if (IS_ERR(path))
+> +			return path;
+>  		depth = ext_depth(inode);
+>  		ex = path[depth].p_ext;
+>  		if (!ex) {
+>  			EXT4_ERROR_INODE(inode, "unexpected hole at %lu",
+>  					 (unsigned long) map->m_lblk);
+> -			return -EFSCORRUPTED;
+> +			err = -EFSCORRUPTED;
+> +			goto errout;
+>  		}
+>  	}
 >  
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
->        st,adc-channel-types:
->          description: |
->            Single-ended channel input type.
-> @@ -128,6 +136,7 @@ patternProperties:
->          items:
->            enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
->          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +        deprecated: true
+>  	err = ext4_ext_get_access(handle, inode, path + depth);
+>  	if (err)
+> -		return err;
+> +		goto errout;
+>  	/* first mark the extent as unwritten */
+>  	ext4_ext_mark_unwritten(ex);
 >  
->        st,adc-channel-clk-src:
->          description: |
-> @@ -139,6 +148,7 @@ patternProperties:
->          items:
->            enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
->          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +        deprecated: true
+> @@ -3875,7 +3870,7 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
+>  	/* Mark modified extent as dirty */
+>  	err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+>  	if (err)
+> -		return err;
+> +		goto errout;
+>  	ext4_ext_show_leaf(inode, path);
 >  
->        st,adc-alt-channel:
->          description:
-> @@ -147,6 +157,7 @@ patternProperties:
->            If not set, channel n is connected to SPI input n.
->            If set, channel n is connected to SPI input n + 1.
->          type: boolean
-> +        deprecated: true
+>  	ext4_update_inode_fsync_trans(handle, inode, 1);
+> @@ -3884,7 +3879,11 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
+>  	if (*allocated > map->m_len)
+>  		*allocated = map->m_len;
+>  	map->m_len = *allocated;
+> -	return 0;
+> +	return path;
+> +
+> +errout:
+> +	ext4_free_ext_path(path);
+> +	return ERR_PTR(err);
+>  }
 >  
->        st,filter0-sync:
->          description:
-> @@ -165,11 +176,60 @@ patternProperties:
->        - compatible
->        - reg
->        - interrupts
-> -      - st,adc-channels
-> -      - st,adc-channel-names
->        - st,filter-order
->        - "#io-channel-cells"
->  
-> +    patternProperties:
-> +      "^channel@([0-7])$":
-
-Don't need ().
-
-> +        type: object
-> +        $ref: adc.yaml
-> +        unevaluatedProperties: false
-> +        description: Represents the external channels which are connected to the DFSDM.
-> +
-> +        properties:
-> +          reg:
-> +            maximum: 7
-> +
-> +          label:
-> +            description:
-> +              Unique name to identify which channel this is.
-> +
-> +          st,adc-channel-type:
-> +            description: |
-> +              Single-ended channel input type.
-> +              - "SPI_R": SPI with data on rising edge (default)
-> +              - "SPI_F": SPI with data on falling edge
-> +              - "MANCH_R": manchester codec, rising edge = logic 0, falling edge = logic 1
-> +              - "MANCH_F": manchester codec, rising edge = logic 1, falling edge = logic 0
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +            enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
-> +
-> +          st,adc-channel-clk-src:
-> +            description: |
-> +              Conversion clock source.
-> +              - "CLKIN": external SPI clock (CLKIN x)
-> +              - "CLKOUT": internal SPI clock (CLKOUT) (default)
-> +              - "CLKOUT_F": internal SPI clock divided by 2 (falling edge).
-> +              - "CLKOUT_R": internal SPI clock divided by 2 (rising edge).
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +            enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
-> +
-> +          st,adc-alt-channel:
-> +            description:
-> +              Must be defined if two sigma delta modulators are
-> +              connected on same SPI input.
-> +              If not set, channel n is connected to SPI input n.
-> +              If set, channel n is connected to SPI input n + 1.
-> +            type: boolean
-> +
-> +          io-backends:
-> +            description:
-> +              Used to pipe external sigma delta modulator or internal ADC backend to DFSDM channel.
-> +            maxItems: 1
-> +
-> +        required:
-> +          - reg
-> +
->      allOf:
->        - if:
->            properties:
-> @@ -199,9 +259,19 @@ patternProperties:
->                description:
->                  From common IIO binding. Used to pipe external sigma delta
->                  modulator or internal ADC output to DFSDM channel.
-> +              deprecated: true
->  
-> -          required:
-> -            - io-channels
-> +          if:
-> +            required:
-> +              - st,adc-channels
-> +          then:
-> +            required:
-> +              - io-channels
-> +
-> +          patternProperties:
-> +            "^channel@([0-7])$":
-
-And here.
-
-With that and the newline fixed,
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>  static struct ext4_ext_path *
+> @@ -4254,8 +4253,10 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  			 */
+>  			if ((!ext4_ext_is_unwritten(ex)) &&
+>  			    (flags & EXT4_GET_BLOCKS_CONVERT_UNWRITTEN)) {
+> -				err = convert_initialized_extent(handle,
+> -					inode, map, &path, &allocated);
+> +				path = convert_initialized_extent(handle,
+> +					inode, map, path, &allocated);
+> +				if (IS_ERR(path))
+> +					err = PTR_ERR(path);
+>  				goto out;
+>  			} else if (!ext4_ext_is_unwritten(ex)) {
+>  				map->m_flags |= EXT4_MAP_MAPPED;
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
