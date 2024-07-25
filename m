@@ -1,241 +1,170 @@
-Return-Path: <linux-kernel+bounces-261943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4808393BE16
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7165493BE18
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1144B210E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2805628444A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E3185E6E;
-	Thu, 25 Jul 2024 08:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30218754E;
+	Thu, 25 Jul 2024 08:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SA3cAUJw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jaQ2Lf+K";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jQTzTKCS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jaQ2Lf+K";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jQTzTKCS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684D21741EF;
-	Thu, 25 Jul 2024 08:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A737185623;
+	Thu, 25 Jul 2024 08:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721896918; cv=none; b=KztbwVvcvo58//hLZECdGchEhBXntfP5MUL8mIc8NxKSnEogri0hNxY4SMw/yybAkD+PaB9qnmxjpu1bOVoqsOtKHe8nrNm1ZCwg/NQIYsVkAx0Ra5o25NdMwY7qrHf7OkkaGX9oy6wZG9u6RXKjExStTT6PN0pw4xanK8nThRU=
+	t=1721896972; cv=none; b=OwwI1jUPPoeZN5q2fUN6xxIvNpP2avNFMA2eK6oHn0m0hqiHFN9DPuQSADC1ffSf3laoR09+AxfckZMfEB/fwpADplCll6CEl3szsU9UACw0DH43q/y4V8mfBtMRJkM4BZ5X3ILNSv+pzb0BDmaGY2XTySq4zEgTEb5g0DRmrf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721896918; c=relaxed/simple;
-	bh=9PXOAk3QrslKghZrt3UgKYDSYc8WcUr0AucgPJXhyyk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VpgRIMSP9Shoem1HvyIUXLJUqTERfL8gZLAo0pXnUjuGHLJRdJhNE3pHj11c2jf7GIr2YZ4j1Ee4W1F7p6+wDqJQYy8bohDvmAgvBLH5OssPZzu4jQLuMeL8mFqxxXZrKwu/zX8Xy+X2hQUEl3HmqxnsD1B7PbhF8ei6T720c9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SA3cAUJw; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721896916; x=1753432916;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=9PXOAk3QrslKghZrt3UgKYDSYc8WcUr0AucgPJXhyyk=;
-  b=SA3cAUJwfAmvwu946e9uBtY/ei+SCZF51k/fmJHh+bIBDwZ9DXIuaG/F
-   Juqe6LdLpoT3qXqUpclXreWQ+Dz25S9b6rmRRDGQgPMJ1EtuU5XJDM++Y
-   IAdb6J9pDwQBnwuyXeQ+f62QW4ORdC0vcnDONT+jb0sJjOSRLXu/xBO4D
-   SwrvPyUJwSGGict6GKrGJQDorxMDmD915TsHV6rvVAdMzndSJxgn9oYcm
-   PKy21/IpnoQ7ok1BT5rjDH/pt4BGQf95eOfjDl8NrbqMzVHlVNzYbAgSB
-   lhKoLq2LxngLTABcexGrDtmNYbNbr6jJ63/2wjtiJt2WJvicoodL5YhAb
-   Q==;
-X-CSE-ConnectionGUID: /xDCyKSRTeGxWPrI9Bf8fQ==
-X-CSE-MsgGUID: omsMBrSvSi2nfjQyNN1GWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19745410"
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="19745410"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 01:41:55 -0700
-X-CSE-ConnectionGUID: hVCpyLtISkeCPmULuheJ0Q==
-X-CSE-MsgGUID: dAuQGANpRoCCJNBhx6biQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="83461377"
-Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.243])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 01:41:49 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
- neil.armstrong@linaro.org, quic_jesszhan@quicinc.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, dianders@chromium.org, hsinyi@google.com,
- airlied@gmail.com, daniel@ffwll.ch, jagan@edgeble.ai
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zhaoxiong Lv
- <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: Re: [PATCH v1 1/2] drm/panel: jd9365da: Move the sending location
- of the 11/29 command
-In-Reply-To: <20240725083245.12253-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240725083245.12253-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240725083245.12253-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Date: Thu, 25 Jul 2024 11:41:44 +0300
-Message-ID: <87o76lzwvr.fsf@intel.com>
+	s=arc-20240116; t=1721896972; c=relaxed/simple;
+	bh=+xNMIiOutEftQ14fECFJ1Dyu58qcr3nWpFQVY+PuaLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u56AMgph+3+JSSk1mPmluo0PNyMzuD62FUcLERFW/5FiMQQ6zEENcHJqvd0cM59iWhtC4jv/ug1CVVd7fqK2gafZtsFZupYVi0Cu5XTkBKkRCKlk1cmkJbSInXVauK6//TZP8q+n3UkNKDsiUeTccI73LGijhl3PmB2Mo1VkYXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jaQ2Lf+K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jQTzTKCS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jaQ2Lf+K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jQTzTKCS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EDBD1FC81;
+	Thu, 25 Jul 2024 08:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721896968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
+	b=jaQ2Lf+KXTsMY8adapYh4nv2Y9m9rEBL0hsX4WFPPmJEJhu80yEvdsdSKMBfREc7RCx41W
+	Nphc41Vuyy29Og3GA0PtzKJ5s9a11FJlZY2SZnR8FtvQFlwLfR0AKbcaWfX9Ip2f3Kaq8i
+	PjtArjfABpGfKfd9fnQFbj9TyvdpXNI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721896968;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
+	b=jQTzTKCS4KGcqdItqRdp6AzABDPLTcygUrWr6ggcNEDmZrr+9ltGPAt/1OAQGl1ybrGP5D
+	nlzNHnA39GD+wfDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721896968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
+	b=jaQ2Lf+KXTsMY8adapYh4nv2Y9m9rEBL0hsX4WFPPmJEJhu80yEvdsdSKMBfREc7RCx41W
+	Nphc41Vuyy29Og3GA0PtzKJ5s9a11FJlZY2SZnR8FtvQFlwLfR0AKbcaWfX9Ip2f3Kaq8i
+	PjtArjfABpGfKfd9fnQFbj9TyvdpXNI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721896968;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
+	b=jQTzTKCS4KGcqdItqRdp6AzABDPLTcygUrWr6ggcNEDmZrr+9ltGPAt/1OAQGl1ybrGP5D
+	nlzNHnA39GD+wfDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5525713874;
+	Thu, 25 Jul 2024 08:42:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PeN+FAgQomajKgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 08:42:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F18CEA08F2; Thu, 25 Jul 2024 10:42:32 +0200 (CEST)
+Date: Thu, 25 Jul 2024 10:42:32 +0200
+From: Jan Kara <jack@suse.cz>
+To: Haifeng Xu <haifeng.xu@shopee.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	tj@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: don't flush in-flight wb switches for superblocks
+ without cgroup writeback
+Message-ID: <20240725084232.bj7apjqqowae575c@quack3>
+References: <20240725023958.370787-1-haifeng.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725023958.370787-1-haifeng.xu@shopee.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.60
 
-On Thu, 25 Jul 2024, Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
-> Move the 11/29 command from enable() to init() function
-
-OOC, what is the "11/29" command?
-
-BR,
-Jani.
-
->
-> As mentioned in the patch:
-> https://lore.kernel.org/all/20240624141926.5250-2-lvzhaoxiong@huaqin.corp-partner.google.com/
->
-> Our DSI host has different modes in prepare() and enable()
-> functions. prepare() is in LP mode and enable() is in HS mode.
-> Since the 11/29 command must also be sent in LP mode,
-> so we also move 11/29 command to the init() function.
->
-> After moving the 11/29 command to the init() function,
-> we no longer need additional delay judgment, so we delete
-> variables "exit_sleep_to_display_on_delay_ms" and
-> "display_on_delay_ms".
->
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+On Thu 25-07-24 10:39:58, Haifeng Xu wrote:
+> When deactivating any type of superblock, it had to wait for the in-flight
+> wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
+> which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
+> If there are too much dirty data in the superblock, the waiting time may increase
+> significantly.
+> 
+> For superblocks without cgroup writeback such as tmpfs, they have nothing to
+> do with the wb swithes, so the flushing can be avoided.
+> 
+> Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
 > ---
->  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 59 ++++++++++---------
->  1 file changed, 32 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 04d315d96bff..ce73e8cb1db5 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -31,8 +31,6 @@ struct jadard_panel_desc {
->  	bool reset_before_power_off_vcioo;
->  	unsigned int vcioo_to_lp11_delay_ms;
->  	unsigned int lp11_to_reset_delay_ms;
-> -	unsigned int exit_sleep_to_display_on_delay_ms;
-> -	unsigned int display_on_delay_ms;
->  	unsigned int backlight_off_to_display_off_delay_ms;
->  	unsigned int display_off_to_enter_sleep_delay_ms;
->  	unsigned int enter_sleep_to_reset_down_delay_ms;
-> @@ -66,26 +64,6 @@ static inline struct jadard *panel_to_jadard(struct drm_panel *panel)
->  	return container_of(panel, struct jadard, panel);
->  }
+>  fs/super.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 095ba793e10c..f846f853e957 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -621,7 +621,8 @@ void generic_shutdown_super(struct super_block *sb)
+>  		sync_filesystem(sb);
+>  		sb->s_flags &= ~SB_ACTIVE;
 >  
-> -static int jadard_enable(struct drm_panel *panel)
-> -{
-> -	struct jadard *jadard = panel_to_jadard(panel);
-> -	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
-> -
-> -	msleep(120);
-> -
-> -	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> -
-> -	if (jadard->desc->exit_sleep_to_display_on_delay_ms)
-> -		mipi_dsi_msleep(&dsi_ctx, jadard->desc->exit_sleep_to_display_on_delay_ms);
-> -
-> -	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> -
-> -	if (jadard->desc->display_on_delay_ms)
-> -		mipi_dsi_msleep(&dsi_ctx, jadard->desc->display_on_delay_ms);
-> -
-> -	return dsi_ctx.accum_err;
-> -}
-> -
->  static int jadard_disable(struct drm_panel *panel)
->  {
->  	struct jadard *jadard = panel_to_jadard(panel);
-> @@ -202,7 +180,6 @@ static const struct drm_panel_funcs jadard_funcs = {
->  	.disable = jadard_disable,
->  	.unprepare = jadard_unprepare,
->  	.prepare = jadard_prepare,
-> -	.enable = jadard_enable,
->  	.get_modes = jadard_get_modes,
->  	.get_orientation = jadard_panel_get_orientation,
->  };
-> @@ -382,6 +359,12 @@ static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
->  
->  	jd9365da_switch_page(&dsi_ctx, 0x00);
->  
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
->  	return dsi_ctx.accum_err;
->  };
->  
-> @@ -608,6 +591,12 @@ static int cz101b4001_init_cmds(struct jadard *jadard)
->  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE6, 0x02);
->  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE7, 0x0C);
->  
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
->  	return dsi_ctx.accum_err;
->  };
->  
-> @@ -831,6 +820,16 @@ static int kingdisplay_kd101ne3_init_cmds(struct jadard *jadard)
->  
->  	jd9365da_switch_page(&dsi_ctx, 0x00);
->  
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +
->  	return dsi_ctx.accum_err;
->  };
->  
-> @@ -859,8 +858,6 @@ static const struct jadard_panel_desc kingdisplay_kd101ne3_40ti_desc = {
->  	.reset_before_power_off_vcioo = true,
->  	.vcioo_to_lp11_delay_ms = 5,
->  	.lp11_to_reset_delay_ms = 10,
-> -	.exit_sleep_to_display_on_delay_ms = 120,
-> -	.display_on_delay_ms = 20,
->  	.backlight_off_to_display_off_delay_ms = 100,
->  	.display_off_to_enter_sleep_delay_ms = 50,
->  	.enter_sleep_to_reset_down_delay_ms = 100,
-> @@ -1074,6 +1071,16 @@ static int melfas_lmfbx101117480_init_cmds(struct jadard *jadard)
->  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x02);
->  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe7, 0x06);
->  
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +
->  	return dsi_ctx.accum_err;
->  };
->  
-> @@ -1102,8 +1109,6 @@ static const struct jadard_panel_desc melfas_lmfbx101117480_desc = {
->  	.reset_before_power_off_vcioo = true,
->  	.vcioo_to_lp11_delay_ms = 5,
->  	.lp11_to_reset_delay_ms = 10,
-> -	.exit_sleep_to_display_on_delay_ms = 120,
-> -	.display_on_delay_ms = 20,
->  	.backlight_off_to_display_off_delay_ms = 100,
->  	.display_off_to_enter_sleep_delay_ms = 50,
->  	.enter_sleep_to_reset_down_delay_ms = 100,
+> -		cgroup_writeback_umount();
+> +		if (sb->s_bdi != &noop_backing_dev_info)
+> +			cgroup_writeback_umount();
+
+So a more obvious check would be:
+
+		if (sb->s_bdi->capabilities & BDI_CAP_WRITEBACK)
+
+even better would be if we'd pass 'sb' into cgroup_writeback_umount() and
+that function would do this check inside so that callers don't have to
+bother... I know there is only one caller so this is not a huge deal but
+still I'd find it cleaner that way.
+
+								Honza
 
 -- 
-Jani Nikula, Intel
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
