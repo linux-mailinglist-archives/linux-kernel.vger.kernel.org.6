@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-261860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E431A93BD18
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:26:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF36D93BD19
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228431C215DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 422B3B2137E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1304416FF4B;
-	Thu, 25 Jul 2024 07:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/Mpx76N"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E71216F85A;
+	Thu, 25 Jul 2024 07:27:54 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B031CA8A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4AA1CA8A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892411; cv=none; b=g666TPkSNS8qlUT64SDtRbj3HaQBdV214HoLc/DoJdD+QtNGNncxZhnXsQ73KI0thvFvQ1kbFYPJxrQRWjUEK2JbvEcccqvCgQMfgUa9BSJZuxIi7qlfYUdrw5CqW8cN9V5x/L2SLRRklV7dxmFPGCF9Edtcfdpp8UYaj+sdoDg=
+	t=1721892473; cv=none; b=oSXBvUfy/0i7Ol0H0nBn8+eVChWrq9i6uItJY2Zqof7sMoGTyza+KEuc8Catrk7zdy75GdMbeTNSVEm6eOS/W3T1ePlp2/G4oYQMNkd9DhmdDIaGhzp/VivWBkr9JsRt0N22pXVOXscqqXjfNy01HTZ035kPPimHPI+yJ+DclLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892411; c=relaxed/simple;
-	bh=tKPefqgTDnup3MvvY9fJp6KP28+Qto27xhG7wD/859Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQLLdV8oucncJ7akykLZyCU/MD8p8vzyV7dFlmMvTFWPXNCTA2F8jKTs0+lpjGF6iGIYjHP7DWo2inTgDOmguQS+BVMF2eB19L9bSVJ8dVK4IEQrXGTmVkPwr3EMN4yjxmufcnK0Di90W65VmcQe4/kVC/54el6o3DU4vCgYQVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d/Mpx76N; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7515437ff16so472995a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721892408; x=1722497208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3q5HcmtrWAnPNTpXMegj65YWsUrKJvUrcP825ZJd0RU=;
-        b=d/Mpx76NEjTiON77vp/vwVlkjwcgjkBZZeHpaM+nroEHsR+SNODOXvnJFinmqx1/85
-         coQ4J32JnxKml01Yux1hs9e9LysV01LfFUXrf7SWjfDN3dvkkh6TvyymtFQ3zADr5PVF
-         BhdeGpCCBj+gymKXdCyjECmbzOt0YBJtRJP01YdaQq3IcXFTR42K5iXRDpClNzg97ON5
-         zSsI1guFPOEScDvo9I17n+YdtApe362YVL5YJHnc3AkaLTcpfcgxU5VmiZgejbXsb18X
-         r/kAAcn9GFa23uTHl/z0cuBMLEtCAnJQIXpRDv3Rd+fE+eqzQIA0fXrCjqCVJBgqKoSD
-         3pcQ==
+	s=arc-20240116; t=1721892473; c=relaxed/simple;
+	bh=zng6llbHYwkbyhVvc1Ia5n1UWLvbaniSZc4/Gt8JySk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kZ9vJADYp80DDumPiy7ZGJfatbLpVBlSyg++kZYCHJuODKN7WN0FJpylNV2V3WMD6CCDTvVb5x3sDKt+9OxNZHoRXvsS+5XXQNKuZva8HEI2hfKFKSaCTZgn7as0YyV6Lk+fb84x22e6D54/5q8OBvKncTsTR6bz5/rGbdpuyZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81d1b92b559so94726239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:27:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721892408; x=1722497208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3q5HcmtrWAnPNTpXMegj65YWsUrKJvUrcP825ZJd0RU=;
-        b=p2/z/lek55EDSWefCEQHFSpnf2hQ9A7xlV8e1eJnSOEc4kX3Tw2JvdguNK2LnmG81l
-         0av5szhnE0WS8aNeLj8VMpwTNgWgwvcnAn2rfdqjmqMJaWG+yJk5Oqp4DkNC+HK24hzp
-         W+HjlBoKsrTXr5hH9oidkjrkqg5PjQcyXxC2ew/lPMOI0eV/Fgdse/eCl2cALOtJoqcY
-         yRcUpscnxy1ohmielsn66hE2rBhLhz1JaFEHyTtIn/mFGjqKqd6e/tpXCg/E5cJ8QjrM
-         qZxikpHAy/E5wpHpS43h7/JfFVCMh4bX07qD4N7MbUC5Zh33lPH+MbuGhz0xYWKRuYk8
-         VxIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+FlHKBn/SIxcb0rDcgbFW6Vn9B+5gx4YM/wfbBYUBVqdziUCmeu3DuIRPQI8Vh6Bbf0ilRE1K4qNAQx9+X7C5whAJWi9REcA9tB5Y
-X-Gm-Message-State: AOJu0Yw47138tNc1LJDVAKt/KkeqJTzw25G6JCR6byEammpkro6JSgG+
-	a3mDRvBAFV8qJuzZwqFDCqFw9bjJEXwJJ8I467LKYUNmA2nwRpF0eSXFx7bqOok=
-X-Google-Smtp-Source: AGHT+IFf8IuRqTdvt+rSkeNwKKCpAbrFn5dG1AnuJJx6iUv0Giio0LguW6Fgk1lAv6cI7r6gAcfloQ==
-X-Received: by 2002:a05:6a21:2d08:b0:1c2:8dcf:1b8f with SMTP id adf61e73a8af0-1c47b16661emr1239292637.7.1721892408486;
-        Thu, 25 Jul 2024 00:26:48 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7cc4912sm7592335ad.69.2024.07.25.00.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 00:26:47 -0700 (PDT)
-Date: Thu, 25 Jul 2024 12:56:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] OPP: Drop redundant _opp_attach|detach_genpd()
-Message-ID: <20240725072645.chmy2wp7khdymm6j@vireshk-i7>
-References: <20240723144610.564273-1-ulf.hansson@linaro.org>
- <20240723144610.564273-5-ulf.hansson@linaro.org>
+        d=1e100.net; s=20230601; t=1721892471; x=1722497271;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RSRphCPXWq38X0VX8qusHL+i6fBu5dtYeyvNTTE93X4=;
+        b=XtwaXomjjK0tGwdT5ox7WQ9k1LGbzNWmQbkz1zFMLdsTY8Vl++UTa+lXrxcod4BNLr
+         5zdQfjVsul+Its/YPJkzg7pK5eFzNwbgInRhBSD+1Fr3w6uRxusY0RFGsTbomdILSGmI
+         3NXorhWiy2d3oWRoiR8P8aiT3VAA4e5tX/U+Wf/PGF5OzeECoty9Z/DKEph5EBAzlp/+
+         ugvTbYHoVu/2xws8j2eOR4BQ5gSOWn1Is0hw+mJ9+y71PH1q3TgQWeYocOH6SoD6327Z
+         TGKLE68xai16PYvEdBdBixQdz5g3woxafuzpLENg6kZyPYTO0ssg6GV9dkfNNLP3z8nD
+         id4w==
+X-Gm-Message-State: AOJu0YwEoLrRJi7/6JUChguBkIqVgIkc7yliy57h74+T4iYVfJhaCcxk
+	1Bnr1Z1PGWDJbMUe8GicTvLx3D1tjTpL38A1alFwyrjOtueZRTau2vIz0UNy7es7ByUi9ArzP96
+	k2LZugPUOqLmaASeO9QVJ/fYhAVeADytZwQjIkz+Qr8v45GCTmWZKpLU=
+X-Google-Smtp-Source: AGHT+IFaNHTUX+hD7NgsfG7JTrqQxYGR/9xtGBhJ4kxk02w9ZBtrUwGaAwunubofRv7cy3c3Tfa6OZCPoHAM2Ie13EtJGK+xpSf4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723144610.564273-5-ulf.hansson@linaro.org>
+X-Received: by 2002:a92:c242:0:b0:39a:1b94:975a with SMTP id
+ e9e14a558f8ab-39a23fbc61bmr908665ab.3.1721892471573; Thu, 25 Jul 2024
+ 00:27:51 -0700 (PDT)
+Date: Thu, 25 Jul 2024 00:27:51 -0700
+In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001c1da2061e0d556b@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 23-07-24, 16:46, Ulf Hansson wrote:
-> There no longer any users of _opp_attach|detach_genpd(), hence let's drop
-> it along with the corresponding exported functions.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/opp/core.c     | 96 +-----------------------------------------
->  drivers/opp/opp.h      |  3 +-
->  include/linux/pm_opp.h | 38 +----------------
->  3 files changed, 3 insertions(+), 134 deletions(-)
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Nice !
+***
 
--- 
-viresh
+Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+Author: lizhi.xu@windriver.com
+
+before thread stop and free gc_thread, set sbi->gc_thread to NULL, 
+and add lock for reentry f2fs_stop_gc_thread.
+
+#syz test: upstream 2c9b3512402e
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6066c6eecf41..9d7b10831d88 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -204,13 +204,16 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
++	static DEFINE_MUTEX(gct_mutex);
+ 
+ 	if (!gc_th)
+ 		return;
++	mutex_lock(&gct_mutex);
+ 	kthread_stop(gc_th->f2fs_gc_task);
+ 	wake_up_all(&gc_th->fggc_wq);
+-	kfree(gc_th);
+ 	sbi->gc_thread = NULL;
++	kfree(gc_th);
++	mutex_unlock(&gct_mutex);
+ }
+ 
+ static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
 
