@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-262722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2186493CB4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B762493CB4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31EF1F21E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95961C211D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00FA149DFC;
-	Thu, 25 Jul 2024 23:45:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D96149C59;
+	Thu, 25 Jul 2024 23:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNESgzqx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0800E1494CD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8B813C3DD;
+	Thu, 25 Jul 2024 23:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721951105; cv=none; b=Og7fxOEDQX0C3i/ewj2Mdfqvinhi+m2+Vs1Csc7GDmXJMnWn4fXs7HP7uIkh6KIQLnYG3/vmYVm1QFZNAevL1ZCr6UuOUdla4wAkmtOmkNBLuFnsGDe0S/ZDxkWKleZ37P3qdnrPczFq0wxo7a05OC6VGmDfylnrzFuvhEbB2k8=
+	t=1721951238; cv=none; b=lEzgrD7d94m5JzXgjIFM6rySM1IDKgTV40RPVuTyFPxch5LfpqUd+qG3bdwQrDERPx909umOTyZYNcsd2vQK4DEFMo0iVUcIx8aJI3zn2aNtvBvzGp72QZcBWAxDgJLEotlNPwUSUl8D2j8PORsu5fwU3zvRyABdsU5QMlV8idw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721951105; c=relaxed/simple;
-	bh=wwX9ogO+l7SoYYXmYsTfnxkf2Tf/OV6Krfu4CDL3YrE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bmJ62Pvu9Krs0JO5rtXoDz4s0BMOim36qMGNxVO+VHKXU6CF9hGIOYycrm+PesZLf7AEjSR48yQ+YB/EwNj1Q/lzRT+va7fkYboZBudjmQkfM+kyaN53oh6tRQLbLuZmdIXkHyQx/uMtoWHI7bKjLLqlL+wDbC0J33/75iCeuN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7fdfb3333e5so101324739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721951103; x=1722555903;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kD7O2lXC3zqdl4EtbgcEWNtaDBfdLurNknRdZY7aUgs=;
-        b=AnPu8T6jkkwvTdy6cVkAAOJMCh1JmwM2nZ8QNvq1cqyC99YWfW1BXqTsGYmrU+7Jcm
-         IcAQSgxGbjgAb/pFTiv01GrLldnT/wj52m2bWNwJRuFwgqqo/vj0vKKFGest9/FpkOek
-         DCFdaqs6i3OnUJkqckKJo2DhGRXiQ8TMsdiW5DWo+WlFf94tKC5dUO7R/9qNvkMfrZux
-         9MxJ+d0zLxJm9lVJLh/yALm5FeMFWnNBCieoKXL17pJqgDCsqaDdymjYMLhrdHjOpCqx
-         nvpuvOji9FetKeZ0mPRPUgTrTk+bxNjs1wNIJiWakmBhyCU3QovHUulqvWVPtG+f6usO
-         H/gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyBD2rRsF1IYc01I1WUzLzbL/VFHSsLzMa0yqszQokt2rt4nlF4AkDsrf2QE9RNb93HVO3YpdukrWJq9j2b5oOD3toUWllYAiMH+ns
-X-Gm-Message-State: AOJu0YxiCvPoVFm8jPFRUdboPv2pydHjA1CUuSTBOymO0J6HwCp9YWUy
-	eHuNj3aEqeHVcTMTCsujg9ClELPNFwu8wc0DFJq/4YGFDODzaxp8IlAGqnQhGdb/xY+qINYPLBC
-	GdNezjy/A+bzpOI1GUsLzE2n1SVzePpdssaQcM7Vi9In2ykFnYw+KBLE=
-X-Google-Smtp-Source: AGHT+IH9qgQqpxH+zD3KrXMCHbTJdndRs8/9ObQNoj+OGubcWHXMkjSrsrRetYcTWr2Wd6IW3Zl3Hupd4ryprl5+ta3iYXXm2MtY
+	s=arc-20240116; t=1721951238; c=relaxed/simple;
+	bh=4Xp8mZZlsx7mzi8EPIzc79J0caiEGv7PnpWHDRJiQO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqvYnO/WarAkYqqhg2BjBNrvH0hhy1vHxff/Td6AUlyyJLlgehcHOjCkuVHogF1yUg3XEPYb50/xlUB+KUmit4VDgBMyky+5GOQeWjmmxkg+1ILmkE/E/H7j4Z4WEeoU8FVgRDtYWL62tmufDKaaDHgkgtbUKUtBARbN9DiUcK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNESgzqx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A84C116B1;
+	Thu, 25 Jul 2024 23:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721951238;
+	bh=4Xp8mZZlsx7mzi8EPIzc79J0caiEGv7PnpWHDRJiQO0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WNESgzqxQgU12JC/NrUImMtBNfQ+Vbgrgmotu/o/euP0S9VU2Mdlu+PTbzl8GpCM5
+	 iMCBRVsmvwiRuNMw2OOoJXHwwvQ4bOqO+Ei7XWbCYvu7pR6L8DKvenKMCsbJYz4Nle
+	 WMjnTo31bxvX5ZPz+PDh2j6TLCcQRQA1v4Gf28JAPeUDqBrZ9T1OeCK0pTI8KO4JHM
+	 c1XpIP7wPr5mloBN9BQ16K8jM17tm2wzu+TAlar6ZuNwRm3L15Tqd6IKaxVnL/1+hM
+	 ofDWdPrrK6vFqesLGdBdQTGiu/1oSoBo9jLOF1rCWbew79Q9WmMr+mNo5tb9SB2FQD
+	 b3BNxCKzhB/1g==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH bpf-next 0/2] Add kfuncs to support reading xattr from dentry
+Date: Thu, 25 Jul 2024 16:47:04 -0700
+Message-ID: <20240725234706.655613-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3015:b0:4c0:9a3e:c259 with SMTP id
- 8926c6da1cb9f-4c29c211258mr149009173.5.1721951103186; Thu, 25 Jul 2024
- 16:45:03 -0700 (PDT)
-Date: Thu, 25 Jul 2024 16:45:03 -0700
-In-Reply-To: <000000000000ec64cd0616084ae9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d390be061e1afb9c@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_set_handle
-From: syzbot <syzbot+d6282a21a27259b5f7e7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, hdanton@sina.com, johan.hedberg@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, luiz.von.dentz@intel.com, marcel@holtmann.org, 
-	mukattreyee@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+The use case is to tag directories with xattr. For example, "user.allow_x"
+tag on /bin would allow execution of all files under /bin. To achieve this,
+we start from the security_file_open() hook and read xattr of all the
+parent directories.
 
-commit 015d79c96d62cd8a4a359fcf5be40d58088c936b
-Author: Edward Adam Davis <eadavis@qq.com>
-Date:   Mon Jun 17 11:09:37 2024 +0000
+4 kfuncs are added in this set:
 
-    Bluetooth: Ignore too large handle values in BIG
+  bpf_get_dentry_xattr
+  bpf_file_dentry
+  bpf_dget_parent
+  bpf_dput
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13110dad980000
-start commit:   480e035fc4c7 Merge tag 'drm-next-2024-03-13' of https://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e5b814e91787669
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6282a21a27259b5f7e7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f3e213180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162d4723180000
+The first is used to read xattr from dentry; while the other 3 are used to
+walk the directory tree.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Note that, these functions are only allowed from LSM hooks.
 
-#syz fix: Bluetooth: Ignore too large handle values in BIG
+Song Liu (2):
+  bpf: Add kfunc bpf_get_dentry_xattr() to read xattr from dentry
+  selftests/bpf: Add tests for bpf_get_dentry_xattr
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ kernel/trace/bpf_trace.c                      | 60 +++++++++++++++---
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 61 +++++++++++++++++--
+ .../selftests/bpf/progs/test_dentry_xattr.c   | 46 ++++++++++++++
+ .../selftests/bpf/progs/test_get_xattr.c      | 16 ++++-
+ 4 files changed, 168 insertions(+), 15 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+
+--
+2.43.0
 
