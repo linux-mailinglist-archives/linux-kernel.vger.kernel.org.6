@@ -1,221 +1,143 @@
-Return-Path: <linux-kernel+bounces-261816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4CC93BC7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:21:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45D293BC85
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A0C28231C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77595282503
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC9516C69D;
-	Thu, 25 Jul 2024 06:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223B716C6A5;
+	Thu, 25 Jul 2024 06:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9PFecTf"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Svn74ksF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441ED29CF7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9E919BB7
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721888507; cv=none; b=VV5RzE/MPcynzLItcJLQP29G2JZBaR2ffAj1RRUwo2NSbNUAGehd5Ra7LoAOw6DZaBraU/oBT5Lp7/Lw2+ot18XuuTbcQ6bAwQw0dBuveaIgoT3aG+8NQZSOG/KfSQ2j77Hbp9dajLuCytUzHFIHIn8xnofBi3CWjYnnP6Dc80U=
+	t=1721888748; cv=none; b=Q+9Ap4eJUHD1B2pt3aI2l/flYpVs+CRj9Mfcjog2gGVfAX1ZMxCs1r29+yk4NiN4uMQeKunphl8GsSC6lQ2Q0k0NjxBsPBBzEOvqp9gkXIAN8xVtnZ1NzQK0CcDAWH5xg6ljQlBu5Wi/Z884yExlEDVWsBTVxELuOX1DkP3Mn6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721888507; c=relaxed/simple;
-	bh=unE0ruGiBOzaCLLUKL3SbhOOIXj1NOsn9amsLzYlX9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q80p5Q9AAz9/HqMZog/rVoM3YxhBbmp6J65HTJ0gvW4HbIeRQxHOnQNpNe5fT808eTV948JDxvPOLU443TFmn77/SzfGvpjDwRhYnhIR9JTZGV/Kjz3hECmFZZbUSq7s+GXKQHW/LMOGIcsw+vE5QU4ZQ8no4gLWJe2NPFOTFMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9PFecTf; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-823423e3accso156105241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721888505; x=1722493305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2La7RJ3KD31zcZCBzxNjyk9Uud9cTzRN8iK2bDflsug=;
-        b=a9PFecTfaojsOJcRtInLOqNDZAge1r/fPngTsrWO3WXZqyvKC+oB7l7Q8HDuwl/59t
-         0CwB+CVGuI+x1jWQnsdwjBeuQBL17XP5KJ+XMh8cTpz3Ig65pnA1ZNTpM/XC8nPkPM45
-         N2Lfu+LfLzzZHxZ64WIs7vaYpX/zx3kWrFFBynPChu4k35jIVwPlldM9t2aT5+5uNmJf
-         7AJFw5ynRmUV1ocGYyJlSCkhJnrj2WIchwzvGJDst4KgQPtoZTdiM669pJt2OEUVqRh0
-         eIJ0emji8E6OQESiRAlgnyjieJ6U4ydvLL09puAXwjozVQXL5WXsvdnj+TrmvBBODGvj
-         gyRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721888505; x=1722493305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2La7RJ3KD31zcZCBzxNjyk9Uud9cTzRN8iK2bDflsug=;
-        b=do/oY3PWuHuEl6owJb69/j1kx+Lqu/q1gWbXDuwplTLgBVHz+FgWvgx8uRJR0ImiA1
-         mQtK9tQRj327xu/VQMvoWsxRMTOMdKsY2jfAiTF/uCiTMeb54QdbUav7j5pWfhrda8wr
-         TzGaM6PrTzKfkWXnGY5gW9cGBziRg42kYxY47Y5GVxq54KKfZzMVBxOoQH9FwUoCFDXc
-         VKkKhZkNHvZ+MxhLgPztnG9AKSsNvIUYUqg4eVRMGWBEmpSJ731vzvZiUyUIr/59+pv3
-         1L67+dsaJVbE5kZvzALfUCU1CQ6eqz1rSsPrsDZBGr23yxsEY7GwKAoK3rbby2nzEAmN
-         A33g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHc/W5CDN3k+lvh6bZXLjWZ4ygUA2gJrBz0x+NK+WkYzUSeXrRJ5DnUZxP2hvbb9WfWMPO8WYrkqXKmShbiFrphLjVek/LvQhd3lxO
-X-Gm-Message-State: AOJu0YznKEHdLJL9u7oK8TWbvZvs/l+C4ofbPDvIOh3TL08w0SFlEetR
-	MSPnvMy4TW3v6p1bd786eQ+DpAokNCwYcqcfwoxWSO+p54XbhC7WDoZ/RE3lVgSogHrfG6iyJ+E
-	idq2wYSUcuEqXj8lVa/nvF4XS0ww=
-X-Google-Smtp-Source: AGHT+IGzG8S0IZ8DeAe68Qj/KPU3jWFfxLBHEh6bC5AJ78nHUFCdhbn2nxYKEiwB9QB5kGDLDQ3vNJ+00vPru+ex/38=
-X-Received: by 2002:a05:6102:4b89:b0:493:bf46:7f00 with SMTP id
- ada2fe7eead31-493d6400622mr2942648137.5.1721888504973; Wed, 24 Jul 2024
- 23:21:44 -0700 (PDT)
+	s=arc-20240116; t=1721888748; c=relaxed/simple;
+	bh=gT7xCuuBm4YTL921K/hz8dhZ4C1rhSIUnF8BEilq9KU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RUND5KI0oBefjw2+JcOFThYzE43OKiB1rCRIF4HYvamOiIxEpBb6pPCybXhJxZao7jrq7cc2XQ/TWOjFcVsjcfLyKCLPbOewh1QRyACXMRpbaqur56+gLr/f7ZorAji+uXshOnGJSuTV6FWs83mMCeGhT+aIzzNNR9mfzl8R0TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Svn74ksF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P48Jvd006897;
+	Thu, 25 Jul 2024 06:25:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DcakYKsNw9rsmu1ouxOu3e
+	BRMxRp066i73VmpTdSR5A=; b=Svn74ksFIfJFnKHe2YE5vM2Kb6a56Dd4u9ZC/T
+	9/cUowe32fthydwWnC1LgxRVOpS3e2ewpzR0KZMN50CMgHWcX7Cp8fbjwpJ9lGKX
+	yhdYqDOK76nf2krXxPfMF+F42ShvEZZjTAYzzgPnycDe4p04cQKXg30wkvYLRge/
+	6prkmZLPFLU2yRE40TbAsPTkpFo/ovOGKl4s3brQp6hDPQJuwBe9t3WCp03EIrqm
+	VJH8Ty81Gjnny/16XBBEPRlywszka12pOtN1JeOpyW6ZvB6lRD46moKgp/cATiiQ
+	Xdvfk2N1mwBXpbFnIblehne/aT87w1xJWjPnhgsqDfGDu0yw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40k413hqjt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 06:25:34 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P6PXgF021414
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 06:25:33 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 24 Jul 2024 23:25:30 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <gregkh@linuxfoundation.org>, <arve@android.com>, <tkjos@android.com>,
+        <maco@android.com>, <joel@joelfernandes.org>, <brauner@kernel.org>,
+        <cmllamas@google.com>, <surenb@google.com>, <liulei.rjpt@vivo.com>
+CC: <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH v2] binder_alloc: Fix sleeping function called from invalid context
+Date: Thu, 25 Jul 2024 11:55:10 +0530
+Message-ID: <20240725062510.2856662-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725035318.471-1-hailong.liu@oppo.com>
-In-Reply-To: <20240725035318.471-1-hailong.liu@oppo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 25 Jul 2024 18:21:33 +1200
-Message-ID: <CAGsJ_4zWsh50Pzp0ntskT=eyfStALxD5BMNdWFrYJewrrx7V5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] mm/vmalloc: fix incorrect __vmap_pages_range_noflush()
- if vm_area_alloc_pages() from high order fallback to order0
-To: hailong.liu@oppo.com
-Cc: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@suse.com>, Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	"Tangquan . Zheng" <zhengtangquan@oppo.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zZxccSUVXyphlv3DiOD00FgRl4t4MUF8
+X-Proofpoint-GUID: zZxccSUVXyphlv3DiOD00FgRl4t4MUF8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-25_05,2024-07-25_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0
+ clxscore=1011 mlxscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407250039
 
-On Thu, Jul 25, 2024 at 3:53=E2=80=AFPM <hailong.liu@oppo.com> wrote:
->
-> From: "Hailong.Liu" <hailong.liu@oppo.com>
->
-> The scenario where the issue occurs is as follows:
-> CONFIG: vmap_allow_huge =3D true && 2M is for PMD_SIZE
-> kvmalloc(2M, __GFP_NOFAIL|GFP_XXX)
->     __vmalloc_node_range(vm_flags=3DVM_ALLOW_HUGE_VMAP)
->         vm_area_alloc_pages(order=3D9) --->allocs order9 failed and fallb=
-ack to order0
->                                         and phys_addr is aligned with PMD=
-_SIZE
->             vmap_pages_range
->                 vmap_pages_range_noflush
->                     __vmap_pages_range_noflush(page_shift =3D 21) ----> i=
-ncorrect vmap *huge* here
->
-> In fact, as long as page_shift is not equal to PAGE_SHIFT, there
-> might be issues with the __vmap_pages_range_noflush().
->
-> The patch also remove VM_ALLOW_HUGE_VMAP in kvmalloc_node(), There
-> are several reasons for this:
-> - This increases memory footprint because ALIGNMENT.
-> - This increases the likelihood of kvmalloc allocation failures.
-> - Without this it fixes the origin issue of kvmalloc with __GFP_NOFAIL ma=
-y return NULL.
-> Besides if drivers want to vmap huge, user vmalloc_huge instead.
->
-> Fix it by disabling fallback and remove VM_ALLOW_HUGE_VMAP in
-> kvmalloc_node().
-> Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocation=
-s")
->
-> CC: Barry Song <21cnbao@gmail.com>
-> CC: Baoquan He <bhe@redhat.com>
-> CC: Matthew Wilcox <willy@infradead.org>
-> Reported-by: Tangquan.Zheng <zhengtangquan@oppo.com>
-> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
+36c55ce8703c ("binder_alloc: Replace kcalloc with kvcalloc to
+mitigate OOM issues") introduced schedule while atomic issue.
 
-The implementation of HUGE_VMAP appears to be quite disorganized.
-A major change is needed.
+[ 2689.152635][ T4275] BUG: sleeping function called from invalid context at mm/vmalloc.c:2847
+[ 2689.161291][ T4275] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 4275, name: kworker/1:140
+[ 2689.170708][ T4275] preempt_count: 1, expected: 0
+[ 2689.175572][ T4275] RCU nest depth: 0, expected: 0
+[ 2689.180521][ T4275] INFO: lockdep is turned off.
+[ 2689.180523][ T4275] Preemption disabled at:
+[ 2689.180525][ T4275] [<ffffffe031f2a2dc>] binder_alloc_deferred_release+0x2c/0x388
+..
+..
+[ 2689.213419][ T4275]  __might_resched+0x174/0x178
+[ 2689.213423][ T4275]  __might_sleep+0x48/0x7c
+[ 2689.213426][ T4275]  vfree+0x4c/0x15c
+[ 2689.213430][ T4275]  kvfree+0x24/0x44
+[ 2689.213433][ T4275]  binder_alloc_deferred_release+0x2c0/0x388
+[ 2689.213436][ T4275]  binder_proc_dec_tmpref+0x15c/0x2a8
+[ 2689.213440][ T4275]  binder_deferred_func+0xa8/0x8ec
+[ 2689.213442][ T4275]  process_one_work+0x254/0x59c
+[ 2689.213447][ T4275]  worker_thread+0x274/0x3ec
+[ 2689.213450][ T4275]  kthread+0x110/0x134
+[ 2689.213453][ T4275]  ret_from_fork+0x10/0x20
 
-1. when allocating 2.1MB kvmalloc, we shouldn't allocate 4MB memory, which
-is now done by HUGE_VMAP. This is even worse than PMD-mapped THP for
-userspace. We don't even do this for THP. vmap could be done by 1PMD map
-+ 0.1MB PTE mapping instead.
+Fix it by moving the place of kvfree outside of spinlock context.
 
-2. We need to allow fallback to order-0 pages if we're unable to allocate 2=
-MB.
-In this case, we should perform PMD/PTE mapping based on how the pages
-are acquired, rather than assuming they always form contiguous 2MB blocks.
+Fixes: 36c55ce8703c ("binder_alloc: Replace kcalloc with kvcalloc to mitigate OOM issues")
+Acked-by: Carlos Llamas <cmllamas@google.com>
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v2:
+ - Added Acked-by from Carlos.L .
+ - Fixed one typo error in commit text pointed by Carlos.L .
 
-3. Memory is entirely corrupted after Michael's "mm, vmalloc: fix high orde=
-r
-__GFP_NOFAIL allocations". but without it, forcing 2MB  allocation was
-making OOM.
+ drivers/android/binder_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  mm/util.c    | 2 +-
->  mm/vmalloc.c | 9 ---------
->  2 files changed, 1 insertion(+), 10 deletions(-)
->
-> diff --git a/mm/util.c b/mm/util.c
-> index 669397235787..b23133b738cf 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -657,7 +657,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int nod=
-e)
->          * protection games.
->          */
->         return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
-> -                       flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
-> +                       flags, PAGE_KERNEL, 0,
->                         node, __builtin_return_address(0));
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index b00961944ab1..b3acbc4174fb 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -939,9 +939,9 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
+ 			__free_page(alloc->pages[i].page_ptr);
+ 			page_count++;
+ 		}
+-		kvfree(alloc->pages);
+ 	}
+ 	spin_unlock(&alloc->lock);
++	kvfree(alloc->pages);
+ 	if (alloc->mm)
+ 		mmdrop(alloc->mm);
+ 
+-- 
+2.34.1
 
-I'd vote +1 for this. we don't want to waste memory, for example, wasting
-1.9MB memory while allocating 2.1MB kvmalloc. but this should be a separate
-patch.
-
->  }
->  EXPORT_SYMBOL(kvmalloc_node);
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 03c78fae06f3..1914768f473e 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3577,15 +3577,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->                         page =3D alloc_pages(alloc_gfp, order);
->                 else
->                         page =3D alloc_pages_node(nid, alloc_gfp, order);
-> -               if (unlikely(!page)) {
-> -                       if (!nofail)
-> -                               break;
-> -
-> -                       /* fall back to the zero order allocations */
-> -                       alloc_gfp |=3D __GFP_NOFAIL;
-> -                       order =3D 0;
-> -                       continue;
-> -               }
->
->                 /*
->                  * Higher order allocations must be able to be treated as
-> --
-> After 1) I check the code and I can't find a resonable band-aid to fix
-> this. so the v2 patch works but ugly. Glad to hear a better solution :)
-
-This is still incorrect because it undoes Michal's work. We also need to br=
-eak
-the loop if (!nofail), which you're currently omitting.
-
-To avoid reverting Michal's work, the simplest "fix" would be,
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index caf032f0bd69..0011ca30df1c 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3775,7 +3775,7 @@ void *__vmalloc_node_range_noprof(unsigned long
-size, unsigned long align,
-                return NULL;
-        }
-
--       if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
-+       if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP) &
-!(gfp_mask & __GFP_NOFAIL)) {
-                unsigned long size_per_node;
-
-                /*
->
-> [1] https://lore.kernel.org/lkml/20240724182827.nlgdckimtg2gwns5@oppo.com=
-/
-> 2.34.1
-
-Thanks
-Barry
 
