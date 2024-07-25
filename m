@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-261685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD8093BACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:30:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D66593BAC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3140E1F232AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0AA1F220E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7801103;
-	Thu, 25 Jul 2024 02:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NSBXysnc"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2C31BF47;
-	Thu, 25 Jul 2024 02:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48414A84;
+	Thu, 25 Jul 2024 02:30:09 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0DD63D0;
+	Thu, 25 Jul 2024 02:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721874617; cv=none; b=KxVo/xXOt8id5A6P6a/nv2wTYDcN9oxQuYu0PjL190o3mHn5/cqrE+q560vzZ3swDRtRhusalsgcWhLFyKYK67SOuYHbsuSLdBM8J+15tokKAuW3ZA34goP1eDrYGOZMwsDpU0tY6xHMmUr9Jry1RcPClKUsvIJT75udUh9sZYA=
+	t=1721874609; cv=none; b=APGfn1LouXWiFepe0RpBoRJQr3SvDCJnprCbppHsMgvKLDJk11ESlROXR8cbBBRVPNttOZJEWcD75asnDIpukDKhHWLBFg5lels+7Gb/AiCew1qdWWTwql/x/H8hjL6B/roNigp59o0xVQquyCVRF7jwnY1RxZ5rslm1j1qkSc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721874617; c=relaxed/simple;
-	bh=xjdEduBF6+0VtsfyemNHLIEqjJ554ZKbPDNo9CR6xBY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JZIYqMbkg3fvr/kFFkmzrbgmAsvB8/6dFpiBi57Dd3JMBFoO+kUaJ9L70HANLCgUlzkD6drauX/5Fi/GCsUJmQWxbL4pr/eavyNYprY6w6WP7yawmzQl3F0+PAEaGD7FNHHzCE31RmeekrEeHPrX3x4jAarC/LjZ+Y+ufcp1APQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NSBXysnc; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=bEiXP
-	AwDC5NBiYUV+CrcPwSV4ioMuT57F66rliLnkaA=; b=NSBXysncjeEFMEmlZJy47
-	qSixzPmwaZWjYpGUD4AaDA6FQEAefFnck+v0Z9UcD9i3kx6BhxRxAGCsuKntUbXi
-	lQUkZ2rkb6xfQyvMNkHsKtlvBLN6W0VxtTlD4slmDDNOkGxKibiZz8nX8jcqadsq
-	ZE/j9rB5dQReNUpkdY+VDc=
-Received: from localhost.localdomain (unknown [112.97.48.72])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD338WiuKFmBdc3Aw--.17134S3;
-	Thu, 25 Jul 2024 10:29:57 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1721874609; c=relaxed/simple;
+	bh=UflBeGAI8Ewd2P0gL0BG4VcOuURnvNeNQ1BGv2VbtmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NxX2wm9ar8h1OGXVtr3pwU+oCcJT5jvTEN7giyTwYsViiJTBaZ2zYgzTsrB+VDvysCd0EMj0jMdmzuj/FltNmilphrv4wAjEcZJh5d9jUP8D816U8EsLp8tReGfb3KGDK0YGhYNDtWezL26TU2EJrX0NUHl6HGv+JluOSWRPhvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowACnEUGXuKFm2O7cAA--.57002S2;
+	Thu, 25 Jul 2024 10:29:50 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	make24@iscas.ac.cn,
+	liujunliang_ljl@163.com,
+	syoshida@redhat.com,
+	andrew@lunn.ch,
+	horms@kernel.org
+Cc: linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH v2 2/2] bus: mhi: host: pci_generic: Enable trigger_edl for Foxconn SDX55/SDX65/SDX24 products
-Date: Thu, 25 Jul 2024 10:29:41 +0800
-Message-Id: <20240725022941.65948-2-slark_xiao@163.com>
+	stable@vger.kernel.org
+Subject: [PATCH net v4] net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
+Date: Thu, 25 Jul 2024 10:29:42 +0800
+Message-Id: <20240725022942.1720199-1-make24@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240725022941.65948-1-slark_xiao@163.com>
-References: <20240725022941.65948-1-slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,85 +55,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD338WiuKFmBdc3Aw--.17134S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxur15Xr4kJw1DXFyrWr1rZwb_yoW5ZF13pF
-	na9r18J3yktFWfKr4kCr1kCwn8Crs8ury8KFnxGw12yr15A3yjqFsrGw129r15Z3s7Jr1I
-	vF98WFZ8GFsrJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pR0eHhUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQknZGV4Iy0gjgAAsC
+X-CM-TRANSID:zQCowACnEUGXuKFm2O7cAA--.57002S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF15XFyrCr4kuryfCF1kAFb_yoW8AF1fpr
+	47Ga90yrWUJ347Z3ykXw1vg3WFkw4kKay3W348Gw1fZ395Arn5C34FgFyYgw1UGrW5Aa12
+	qF4qvFWxua10vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Since generic trigger_edl mechanism has been imported, all
-products support firehose download shall enable 'edl_trigger'.
+It could lead to error happen because the variable res is not updated if
+the call to sr_share_read_word returns an error. In this particular case
+error code was returned and res stayed uninitialized. Same issue also
+applies to sr_read_reg.
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
+This can be avoided by checking the return value of sr_share_read_word
+and sr_read_reg, and propagating the error if the read operation failed.
+
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/bus/mhi/host/pci_generic.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Changes in v4:
+- added a check for sr_read_reg() as suggestions.
+Changes in v3:
+- added Cc stable line as suggestions.
+Changes in v2:
+- modified the subject as suggestions.
+---
+ drivers/net/usb/sr9700.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index f159a9dd53e7..565b280c539e 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -434,6 +434,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
- static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
- 	.name = "foxconn-sdx55",
- 	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -444,6 +445,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
- static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
- 	.name = "foxconn-t99w175",
- 	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -454,6 +456,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
- static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
- 	.name = "foxconn-dw5930e",
- 	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -463,6 +466,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
+index 0a662e42ed96..cb7d2f798fb4 100644
+--- a/drivers/net/usb/sr9700.c
++++ b/drivers/net/usb/sr9700.c
+@@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 	struct usbnet *dev = netdev_priv(netdev);
+ 	__le16 res;
+ 	int rc = 0;
++	int err;
  
- static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
- 	.name = "foxconn-t99w368",
-+	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -472,6 +477,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
+ 	if (phy_id) {
+ 		netdev_dbg(netdev, "Only internal phy supported\n");
+@@ -189,11 +190,17 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 	if (loc == MII_BMSR) {
+ 		u8 value;
  
- static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
- 	.name = "foxconn-t99w373",
-+	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -481,6 +488,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
- 	.name = "foxconn-t99w510",
-+	.edl = "qcom/sdx24m/foxconn/prog_firehose_sdx24.mbn,
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -490,6 +499,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
- 	.name = "foxconn-dw5932e",
-+	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
+-		sr_read_reg(dev, SR_NSR, &value);
++		err = sr_read_reg(dev, SR_NSR, &value);
++		if (err < 0)
++			return err;
++
+ 		if (value & NSR_LINKST)
+ 			rc = 1;
+ 	}
+-	sr_share_read_word(dev, 1, loc, &res);
++	err = sr_share_read_word(dev, 1, loc, &res);
++	if (err < 0)
++		return err;
++
+ 	if (rc == 1)
+ 		res = le16_to_cpu(res) | BMSR_LSTATUS;
+ 	else
 -- 
 2.25.1
 
