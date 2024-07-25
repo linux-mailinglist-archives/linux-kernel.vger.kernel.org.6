@@ -1,201 +1,118 @@
-Return-Path: <linux-kernel+bounces-261631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B660193BA20
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:28:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8998793BA28
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D171F21E1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0601CB23C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32E163A9;
-	Thu, 25 Jul 2024 01:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C66C6FC1;
+	Thu, 25 Jul 2024 01:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SQ37MeMx"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bI6rUXWM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E067C4428
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB7B20EB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721870923; cv=none; b=sOPKLNAuYWWeb/yZCATRa2yRilILtRlqY30iLONUyngzaBL0ABkQQD+kww1d+ynYG2cJDo9gMLb4ZyD2nprEkXZbatiW+QUJcce5X70VU5+EBCcgvmZWVq965aA+bySX14763h8IOMptX0oG+wbeJBVuMbhf5gYCJz37gete1Y4=
+	t=1721871153; cv=none; b=Q3TKmGA6RL5DOC++y1/0hZj5GjFmoOsxyi47ZQohtatE8cKf/Apkn17nGBOXXGwCW8k5FwZBv1cXGUzzY3OPX1vsIkYo6U45b6BBD6XlJA0bQPFtxmKjwSXSnEBgjRmy7n4nuH1nJIXUnZGTAivNt0BkY8GINBO1nTTGTD21dEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721870923; c=relaxed/simple;
-	bh=93QoUvYNpaXjf/oi4/5ZnzIKnjE+RDQO+G2+qlbiUpY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=kagZlcOBotyolr1A0y4vy1msn+d35CtA/hRBPIHCxsdlkVYlmefs0wrmFlWiWJE7aBH2g39BtZfPpj8/wztSSXWqUm1hcpSCgHfzKZASohrDQ5y7Zs4WWQxEGe4YbQnEyp0xrb39cxN7Y9ww+UKWxBbNwWe4VvlSBn7t5sJv+dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SQ37MeMx; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240725012838epoutp03b3d438dfc0d466e6e1c5137d8983dbc3~lUHpXeotC1735717357epoutp03n
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:28:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240725012838epoutp03b3d438dfc0d466e6e1c5137d8983dbc3~lUHpXeotC1735717357epoutp03n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721870918;
-	bh=eYXPHhdClqTMdVTqA66Qfhv5w8dRduzyKPjbIZb4jUw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=SQ37MeMx2K3QfurkxveQDYzA94Ak8Vc77aQLKaet8WfVNkNp6xRDjUq23K3NhzZlQ
-	 iVW9WYP4RSbpqFjMc3XdCmOlpsuG6L1lbSAGdKJG4HDH+E/qfXLPPnyBngr59J9RO2
-	 yb9wck8Iur9Z7LIm+vIwnpMwE85UX1vLkC21NfTM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240725012838epcas2p4de7572a55604a9d19ad45e8f8c65a139~lUHo9ITPn2511725117epcas2p47;
-	Thu, 25 Jul 2024 01:28:38 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WTtZF5m9kz4x9Q0; Thu, 25 Jul
-	2024 01:28:37 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	90.B9.10012.54AA1A66; Thu, 25 Jul 2024 10:28:37 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240725012836epcas2p29e970d29dec0926032eb8f7e215ea784~lUHnf_4uM1436914369epcas2p2N;
-	Thu, 25 Jul 2024 01:28:36 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240725012836epsmtrp2ee2b3c5afa655f4a784157b420ae7059~lUHnfGxRH1878218782epsmtrp2M;
-	Thu, 25 Jul 2024 01:28:36 +0000 (GMT)
-X-AuditID: b6c32a47-ea1fa7000000271c-ba-66a1aa45d6d8
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.4B.08456.44AA1A66; Thu, 25 Jul 2024 10:28:36 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240725012836epsmtip12b44db21ef24a84496629d7283188584~lUHnQAQRg1203912039epsmtip12;
-	Thu, 25 Jul 2024 01:28:36 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sylwester Nawrocki'"
-	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim
- Akhtar'" <alim.akhtar@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <73922d54-2fb2-480b-a2af-1b1454429d52@kernel.org>
-Subject: RE: [PATCH v4 2/4] arm64: dts: exynos: add initial CMU clock nodes
- in ExynosAuto v920
-Date: Thu, 25 Jul 2024 10:28:36 +0900
-Message-ID: <035701dade31$f8815440$e983fcc0$@samsung.com>
+	s=arc-20240116; t=1721871153; c=relaxed/simple;
+	bh=f5IcGXYse95pgYaA+PA4U920JSA5b88X1Xog3re2538=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=sQe/S0oTuDizpu6sS5Co1BFTbcX/qv7opZInWpMNmDP9J/F1RFPtbVgHtWqjXRWc5QlZu5vLgKuf1ZzJPEORwgF+SoAM85sUSqed0bCKvwEZ8ApXJqot3srSs4kkRmLsKV2Jg/bkG7WG+6kSF0PP+DLMpJ8vA+UIKOff2hLcnWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bI6rUXWM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721871150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3AFvrky8PX7geVy4VOlD+26UP7h3zv3ayB+/222jDiQ=;
+	b=bI6rUXWM7GpuEV+jid4gT2NAHZzjaMAT7eoQJoLhEhio4nnmIlQ/zmFoYEUs8+JdZYCv+x
+	+T5HP88NykzXBZUODdGt6kpGbx2yBnjHntu3dJss/7C1ztAMJ5yQloEjZnwdA/mCj6L7HX
+	6UofiC8DxZX/oEYMWu59GcnP2sKQFv8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-445-Cxb1LMW5NW-3XnmWQtYOiA-1; Wed,
+ 24 Jul 2024 21:32:27 -0400
+X-MC-Unique: Cxb1LMW5NW-3XnmWQtYOiA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C7701955D45;
+	Thu, 25 Jul 2024 01:32:26 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.141])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E54031955D42;
+	Thu, 25 Jul 2024 01:32:20 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: lulu@redhat.com,
+	dtatulea@nvidia.com,
+	mst@redhat.com,
+	jasowang@redhat.com,
+	parav@nvidia.com,
+	sgarzare@redhat.com,
+	netdev@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATH v6 0/3] vdpa: support set mac address from vdpa tool
+Date: Thu, 25 Jul 2024 09:31:01 +0800
+Message-ID: <20240725013217.1124704-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKlY5hu3bVCnsOExtpi/jJA6pOgwAIK48nRASeT9zcBnRCPFrBLH7ug
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmqa7rqoVpBt8OaFg8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20jiwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
-	8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QCcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
-	S2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7Izpt/+yF5wkL+ia+od5gbGPTxdjJwc
-	EgImEvv2XmDqYuTiEBLYwSjxu2shM4TziVHi/dwD7BDON0aJ1ztvssO0vO29yQiR2MsocfHE
-	bKj+l4wS/64dBatiE9CXWN19mw0kISJwh0ni8vQ3YLOYBdYxSmyeeQSsilPATuLlo7NsILaw
-	QILEi+9PWUBsFgFViY5Pu4FqODh4BSwlHi4oAwnzCghKnJz5BKyEWUBbYtnC18wQJylI/Hy6
-	jBXEFhFwk2ib/4QJokZEYnZnG9hDEgInOCQOrXjLBtHgInH630uoZmGJV8e3QP0mJfH53V6o
-	mnyJydffMkE0NzBKXPvXDdVgL7HozE+w45gFNCXW79IHMSUElCWO3IK6jU+i4/Bfdogwr0RH
-	mxBEo5rEpyuXoYbISBw78Yx5AqPSLCSfzULy2SwkH8xC2LWAkWUVo1hqQXFuemqxUYExPLqT
-	83M3MYLTr5b7DsYZbz/oHWJk4mA8xCjBwawkwvvk1dw0Id6UxMqq1KL8+KLSnNTiQ4ymwKCe
-	yCwlmpwPzAB5JfGGJpYGJmZmhuZGpgbmSuK891rnpggJpCeWpGanphakFsH0MXFwSjUweXFy
-	tJXE2ryacdeCVaT49d6F+8Wfxn94+Cq3KO1bY9DCpyZfby2tknVb/cmVuYJ506WNVz4vf2/4
-	f4WfKk+S1Ck5ecfVLuuNRGTTIw+dyHvxLClj8x+1eQL/ZnEuYClLkfJwiA5ZqTkz9vC6PAvJ
-	2SbH/vX+iOU6u//qtsf7dx1dPSt3ed3lnayq2+r4Zwn5z31j+vOLUIbTjgOxStwLHkx8ppts
-	dHfq85OHnhc/3f4tf+GVrzY7NOIig9w+My05p3HldO39iJ2SPfejsxe9Tkt3MXM/51Ua13cr
-	7QnPoQcxxXs7Go002ZJ681XKb3/m2a8zS/vkmrln865ZfM24VJj3acYjy9oQtXdTvuk85Vdi
-	Kc5INNRiLipOBADofneHSAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsWy7bCSnK7LqoVpBh8a9S0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxYHX4/2NVnaPTas62Tw2L6n36NuyitHj8ya5ANYoLpuU1JzMstQifbsEroztj5awF7zn
-	q+iZcJ61gfEVdxcjJ4eEgInE296bjF2MXBxCArsZJfb+nsAGkZCR2Njwnx3CFpa433KEFaLo
-	OaPE16+tjCAJNgF9idXdt9lAEiICj5gkph/5xA7iMAtsYpQ4t/smG0TLd0aJK19awWZxCthJ
-	vHx0FmyHsECcxNUFV1lBbBYBVYmOT7uBajg4eAUsJR4uKAMJ8woISpyc+YQFxGYW0JbofQix
-	GcRetvA1M8R5ChI/ny4DGyMi4CbRNv8JE0SNiMTszjbmCYzCs5CMmoVk1Cwko2YhaVnAyLKK
-	UTK1oDg3PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM4FrW0djDuWfVB7xAjEwfjIUYJDmYlEd4n
-	r+amCfGmJFZWpRblxxeV5qQWH2KU5mBREuf99ro3RUggPbEkNTs1tSC1CCbLxMEp1cAU2x0Y
-	9jlm1cqALrsP+9av7zZfFfaioG+uUG7O5/gCs5TT7O/mGltqnGVLL126pLDs2DR3p7bVe3tN
-	Dd47h3w0/W307OqkuWaXv7Quk92+Y7fERamrH7La3sW9MgiZXhHQtjkwnjl5VuD7gNWfDnxR
-	un2qbf6e64bWZ5NUWWKc1Y9134+/r1NT8yWN6cMG26BDz3nTIn8dFmuo0pGSkb+vvm3J9ldt
-	VvMPt10P4r7bUGC7VSL4vqs1++S964Nm7rrJtqCov9Mi1XiTnHzX/sYmUbGX1mHV81grplk2
-	ZXBFPzzb2H/8rmUgu7nK6hIV5v3zrG9EKv+dv/DLzhVxZ9c7TWKO6CnlljtsMqvlxT4lluKM
-	REMt5qLiRACgz1mrNAMAAA==
-X-CMS-MailID: 20240725012836epcas2p29e970d29dec0926032eb8f7e215ea784
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240722223341epcas2p1b08b47cfefa981a2b31aad7878e3db64
-References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
-	<CGME20240722223341epcas2p1b08b47cfefa981a2b31aad7878e3db64@epcas2p1.samsung.com>
-	<20240722223333.1137947-3-sunyeal.hong@samsung.com>
-	<73922d54-2fb2-480b-a2af-1b1454429d52@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hello Krzysztof,
+Add support for setting the MAC address using the VDPA tool.
+This feature will allow setting the MAC address using the VDPA tool.
+For example, in vdpa_sim_net, the implementation sets the MAC address
+to the config space. However, for other drivers, they can implement their
+own function, not limited to the config space.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Wednesday, July 24, 2024 7:14 PM
-> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Sylwester Nawrocki
-> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>; Alim
-> Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob Herri=
-ng
-> <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v4 2/4=5D arm64: dts: exynos: add initial CMU clock
-> nodes in ExynosAuto v920
->=20
-> On 23/07/2024 00:33, Sunyeal Hong wrote:
-> > Add cmu_top, cmu_peric0 clock nodes and switch USI clocks instead of
-> > dummy fixed-rate-clock.
-> >
-> > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
->=20
-> Thank you for your patch. There is something to discuss/improve.
->=20
-> >  	cpus: cpus =7B
-> >  		=23address-cells =3D <2>;
-> >  		=23size-cells =3D <0>;
-> > =40=40 -182,6 +172,28 =40=40 chipid=4010000000 =7B
-> >  			reg =3D <0x10000000 0x24>;
-> >  		=7D;
-> >
-> > +		cmu_peric0: clock-controller=4010800000 =7B
-> > +			compatible =3D =22samsung,exynosautov920-cmu-peric0=22;
-> > +			reg =3D <0x10800000 0x8000>;
-> > +			=23clock-cells =3D <1>;
-> > +
-> > +			clocks =3D <&xtcxo>,
-> > +				 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
-> > +				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
-> > +			clock-names =3D =22oscclk=22,
-> > +				      =22noc=22,
-> > +				      =22ip=22;
-> > +		=7D;
-> > +
-> > +		cmu_top: clock-controller=4011000000 =7B
->=20
-> This does not look ordered. Please read DTS coding style.
->=20
-I will modify it by referring to the Order of Nodes item in the dts coding =
-style guide document.
+Changelog v2
+ - Changed the function name to prevent misunderstanding
+ - Added check for blk device
+ - Addressed the comments
+Changelog v3
+ - Split the function of the net device from vdpa_nl_cmd_dev_attr_set_doit
+ - Add a lock for the network device's dev_set_attr operation
+ - Address the comments
+Changelog v4
+ - Address the comments
+ - Add a lock for the vdap_sim?_net device's dev_set_attr operation
+Changelog v5
+ - Address the comments
+Changelog v6 
+- Replace all the memcpy of mac address with ether_addr_copy()
+- Remove the check for VIRTIO_NET_F_MAC in vdpa_dev_net_device_attr_set
+- Remove unnecessary check
+- Enhance the error log
 
-> Best regards,
-> Krzysztof
+Cindy Lu (3):
+  vdpa: support set mac address from vdpa tool
+  vdpa_sim_net: Add the support of set mac address
+  vdpa/mlx5: Add the support of set mac address
 
-Thanks,
-Sunyeal Hong.
+ drivers/vdpa/mlx5/net/mlx5_vnet.c    | 28 ++++++++++
+ drivers/vdpa/vdpa.c                  | 80 ++++++++++++++++++++++++++++
+ drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 22 +++++++-
+ include/linux/vdpa.h                 |  9 ++++
+ include/uapi/linux/vdpa.h            |  1 +
+ 5 files changed, 139 insertions(+), 1 deletion(-)
 
+-- 
+2.45.0
 
 
