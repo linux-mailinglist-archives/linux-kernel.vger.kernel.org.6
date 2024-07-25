@@ -1,226 +1,258 @@
-Return-Path: <linux-kernel+bounces-261949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9FA93BE2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4507593BE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386F9283977
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D301C20C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5C4196D80;
-	Thu, 25 Jul 2024 08:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E2C196D8E;
+	Thu, 25 Jul 2024 08:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h54EiO/+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYFtCv/x"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56DB17C203;
-	Thu, 25 Jul 2024 08:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EF7172BAF;
+	Thu, 25 Jul 2024 08:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897337; cv=none; b=SnP6NZkwBJ22aePV1quUCFwtMBtPjobJgpRYPVqoXwCeGgPoQCXyuftv2R7wXxy5yHUiAclih5A+IRR6NdBx4T2Yxe5tOv3MSrhI7kZa8ASjXyKofUbzAUuc5dLDYKWPjozefEFV3QKIVqkMO2EktLVhddFMkqyDeGwMQYtpeLI=
+	t=1721897420; cv=none; b=McjbvH77BrSr7F/+eQnJqGttvOLu1Q2shbsTUsewTNgJOZcditFsmugTy0wFV+kKJ7WDtuP2MlS60upUENe1gWf3ZpFQQ32S8YhlXmeoq2Ki+GsoNlbS+XADDxnmHdLc/rn1MIb5vUVPWeddzGmCO7VxUwiEw9I9Zsnbx8UyqHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897337; c=relaxed/simple;
-	bh=qsFA+cU5P98sdj9RVrkewUegqRBzGVkycpJZ6sBq+qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhU+KCnrxMLUzmULbMtxB6ZsAndijif7RcqHZ24QEy9DGBmkhxIyLvzgcPuzx/i5kZoRoLW6Sext0exrP/UuH2D8eekiAXEWKKv5zN3Ir6Fcgog1CvzxHO7cMe5jGXDHHSbdrke3j9dVlBHOWIS02fccBEtNOkOLHG7cHGXb3Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h54EiO/+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P8TAeU008633;
-	Thu, 25 Jul 2024 08:48:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=r
-	VDLOlXxb2rBhwEK5FY7L6rN/5WkiMbPccj2WY3xA9E=; b=h54EiO/+XdWV09RyE
-	Wo3KQiUj0ewiuvR58LzZhyQNlq+t4DoSNMEuFXyZh7sd9XE8QNcSXrNTd/o7EtIn
-	lqRAVzAwh3UpbLi61YtG3JhD+SdKgPQ1cbleEJqpWFOHCmfd5UQKbME30HmxgCCr
-	OFQNysSTON6Oi5y39Tkli71uo8omkk3hpabqoi2P0E4bPpDNSlvkZi3lRK4DB+Ec
-	mRn5pAMsNdzIzB3t6isnZT/g7YcHE0eIsyuedhHk4DROhrcZ56AvNhoEwJP/d8vE
-	aCrXFPwqF5qYwXjWvr93wGT31uD8/6RR8dI83ngTXb1rvY2fWXJX22g9lSTzGfCZ
-	Z/Rew==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40kgk8rdn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 08:48:33 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46P8mWcI010021;
-	Thu, 25 Jul 2024 08:48:32 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40kgk8rdn6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 08:48:32 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46P6Qhdm009115;
-	Thu, 25 Jul 2024 08:48:31 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40gt93ns1d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 08:48:31 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46P8mRBZ56623472
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Jul 2024 08:48:29 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B5AA32004B;
-	Thu, 25 Jul 2024 08:48:27 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C70C820040;
-	Thu, 25 Jul 2024 08:48:25 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 25 Jul 2024 08:48:25 +0000 (GMT)
-Date: Thu, 25 Jul 2024 14:18:23 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>,
-        zhanchengbin <zhanchengbin1@huawei.com>
-Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
-Message-ID: <ZqIRVzXireJ8fiU1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-3-libaokun@huaweicloud.com>
- <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
- <d33cfec3-4d72-41dc-b020-f17f726ba719@huaweicloud.com>
- <ZpZDSMFbziWq5xOK@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <9ef38162-2eeb-4cf6-aee4-02d6a5952757@huaweicloud.com>
- <ZpdR4pN8IJajB9xc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <9fcb1d52-520f-425f-8b83-debeda423483@huaweicloud.com>
- <ZqCd0fjFzZt00h6N@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <6df79e24-df1a-43da-8d1d-6bd0f8dd2edf@huaweicloud.com>
+	s=arc-20240116; t=1721897420; c=relaxed/simple;
+	bh=jC5zAnmHCIGU30jUjfy72ch01ORGPhCX551H1DKuOV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L8+83DSjdAK0+4KDFz32UussOjde7+UOdhbRwXsa3XrG8VDf4t+IuXbd2OMPpUfEFBlkQcG9y7MLTiVpQmDwW0c1GvzNy22e0GDHhniZoWuFhLIBtsamBP6CwA8LE0s2PvThABvBwZf5hCpYNsC0+tA1dGO/WLvnyOIEGVh1LHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYFtCv/x; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7928d2abe0aso1322352a12.0;
+        Thu, 25 Jul 2024 01:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721897418; x=1722502218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KyACZrVQiZSUQdlMAIG1RTd+aJxmaLi0svwv16Sq6Ck=;
+        b=EYFtCv/xs00auxG8mloooAXNGbpOrETLK9/AaZmJh46w+0Sny4oH9kiGyUIfhG6c3v
+         KH+2FUxy28YbxdDiDgfeHENzaXCtA7HRJQOLd4tG2cVDZb2y+51RYyr8I5ES52+YR+IH
+         GIDCQNTH1HRsdMuBNdMEXijJZnYWgmNx8kVeaeywBXd5ddxZ3yjoHiAS0btACZuVUS7E
+         dE5PPmtDu9OmCjawIXMTfUCMxZ1K7GPC1Tpj8bEkDQixnIbF1yTzsaMM4RN6G1tClwrG
+         8iDPKXqrVMpP+r8A//ykNqIvmbEDGww9jhQSrTcBtAWjbc7Bz9baZnHQMTyUtw3e/x81
+         uqkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721897418; x=1722502218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KyACZrVQiZSUQdlMAIG1RTd+aJxmaLi0svwv16Sq6Ck=;
+        b=GIjwTWsoqTyLiZc/Nz2QWInb7XcNtQ9m8dAjXY8r6YzKGOLJQVnaDXdh+vbomxq1n8
+         YzEeqHjNGw2BZKMVmPR2dxKlsCqPTt5tZV3ieaynyTNO4YzkxoU2iZeap9dAePQU3Yca
+         Wq2tziGFd37R4xjl/9MVqaTeQC87LyqPcIPTuHHzSrw5dLd/FeiDPYds4BXQAq5aTBbf
+         pfvFsYH9jht70dWAjFyPuKUjjdpNHYdhXYGFoX0LPw1PEnipwD2rlrrthuYrQfiBlHCo
+         I8o9+IxkFO9LrAIWAt7pHmaRmOZBigJfpmyEA1H27psxPXurEPnKsNaJxziHltru8EAo
+         zHFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXS2b4bYAEUEIC1LVTQ3L03YmyWPalSYlLByIJBFZfLn22mmelREyYqhwHXo9dnXI2jFaFDHJYFOqDrKWbbtg3XF4Uu26sZwFg8KbdONAHRIO5Z7vMJIz1HBu7jgd9XPijexjG
+X-Gm-Message-State: AOJu0YzVO+VkYVO9DgDULxaE/y6hy9qaBFYZzENHnvMv0/i6rTbb8Aw/
+	Pm3YTdFDLTa3+wDQQkqpJlJCgnNsQvFhzKXDLo33DvN1657BdfdBWQkNyRsL97OEqwS0J22Pqsp
+	3cMtG2UG0CNdgWp877DREdwj1yeI=
+X-Google-Smtp-Source: AGHT+IFw/Zn8rdKu6jDCYJzn+POlVVRXerbX99pI6ynnLFLegmSEQv6BJkKH0aZCPEroS4MHh9Ph5JQKtXKVAsPNBCo=
+X-Received: by 2002:a17:90b:4a8f:b0:2cb:56bd:5d7 with SMTP id
+ 98e67ed59e1d1-2cdb9387aabmr7530216a91.5.1721897418407; Thu, 25 Jul 2024
+ 01:50:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6df79e24-df1a-43da-8d1d-6bd0f8dd2edf@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 94HkO9mayGdlhi1tTE90w950JPGumnrg
-X-Proofpoint-ORIG-GUID: FaYBell6NQ_VoIVfEoXGKOEpsu0iPGwN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_08,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 clxscore=1015 phishscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250054
+References: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com> <CANn89iLAhXWKkA5xZoZPDj--=hD7RxOTkAPVf31_xLU8L-qyjQ@mail.gmail.com>
+In-Reply-To: <CANn89iLAhXWKkA5xZoZPDj--=hD7RxOTkAPVf31_xLU8L-qyjQ@mail.gmail.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Thu, 25 Jul 2024 09:50:06 +0100
+Message-ID: <CAJwJo6byPNeA_K3kgx-xtEpNMNja3+GrfwzhxtAxE4QE4S6-OA@mail.gmail.com>
+Subject: Re: [PATCH net] net/tcp: Disable TCP-AO static key after RCU grace period
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 01:35:10PM +0800, Baokun Li wrote:
-> On 2024/7/24 14:23, Ojaswin Mujoo wrote:
-> > On Wed, Jul 17, 2024 at 02:11:27PM +0800, Baokun Li wrote:
-> > > On 2024/7/17 13:29, Ojaswin Mujoo wrote:
-> > > > On Tue, Jul 16, 2024 at 07:54:43PM +0800, Baokun Li wrote:
-> > > > > Hi Ojaswin,
-> > > > > 
-> > > > > On 2024/7/16 17:54, Ojaswin Mujoo wrote:
-> > > > > > > > But the journal will ensure the consistency of the extents path after
-> > > > > > > > this patch.
-> > > > > > > > 
-> > > > > > > > When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
-> > > > > > > > ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
-> > > > > > > > the extents tree to be inconsistent. But the inconsistency just
-> > > > > > > > exists in memory and doesn't land on disk.
-> > > > > > > > 
-> > > > > > > > For ext4_ext_get_access(), the handle must have been aborted
-> > > > > > > > when it returned an error, as follows:
-> > > > > > > ext4_ext_get_access
-> > > > > > >     ext4_journal_get_write_access
-> > > > > > >      __ext4_journal_get_write_access
-> > > > > > >       err = jbd2_journal_get_write_access
-> > > > > > >       if (err)
-> > > > > > >         ext4_journal_abort_handle
-> > > > > > > > For ext4_ext_dirty(), since path->p_bh must not be null and handle
-> > > > > > > > must be valid, handle is aborted anyway when an error is returned:
-> > > > > > > ext4_ext_dirty
-> > > > > > >     __ext4_ext_dirty
-> > > > > > >      if (path->p_bh)
-> > > > > > >        __ext4_handle_dirty_metadata
-> > > > > > >         if (ext4_handle_valid(handle))
-> > > > > > >           err = jbd2_journal_dirty_metadata
-> > > > > > >            if (!is_handle_aborted(handle) && WARN_ON_ONCE(err))
-> > > > > > >              ext4_journal_abort_handle
-> > > > > > > > Thus the extents tree will only be inconsistent in memory, so only
-> > > > > > > > the verified bit of the modified buffer needs to be cleared to avoid
-> > > > > > > > these inconsistent data being used in memory.
-> > > > > > > > 
-> > > > > > > Regards,
-> > > > > > > Baokun
-> > > > > > Thanks for the explanation Baokun, so basically we only have the
-> > > > > > inconsitency in the memory.
-> > > > > > 
-> > > > > > I do have a followup questions:
-> > > > > > 
-> > > > > > So in the above example, after we have the error, we'll have the buffer
-> > > > > > for depth=0 marked as valid but pointing to the wrong ei_block.
-> > > > > It looks wrong here. When there is an error, the ei_block of the
-> > > > > unmodified buffer with depth=0 is the correct one, it is indeed
-> > > > > 'valid' and it is consistent with the disk. Only buffers that were
-> > > > Hey Baokun,
-> > > > 
-> > > > Ahh I see now, I was looking at it the wrong way. So basically since
-> > > > depth 1 to 4 is inconsistent to the disk we mark then non verified so
-> > > > then subsequent lookups can act accordingly.
-> > > > 
-> > > > Thanks for the explanation! I am in the middle of testing this patchset
-> > > > with xfstests on a POWERPC system with 64k page size. I'll let you know
-> > > > how that goes!
-> > > > 
-> > > > Regards,
-> > > > Ojaswin
-> > > Hi Ojaswin,
-> > > 
-> > > Thank you for the test and feedback!
-> > > 
-> > > Cheers,
-> > > Baokun
-> > Hey Baokun,
-> 
-> Hi Ojaswin,
-> 
-> Sorry for the slow reply, I'm currently on a business trip.
-> 
-> > The xfstests pass for sub page size as well as bs = page size for
-> > POWERPC with no new regressions.
-> Thank you very much for your test!
-> > 
-> > Although for this particular patch I doubt if we would be able to
-> > exersice the error path using xfstests. We might need to artifically
-> > inject error in ext4_ext_get_access or ext4_ext_dirty.  Do you have any
-> > other way of testing this?
-> The issues in this patch set can all be triggered by injecting EIO or
-> ENOMEM into ext4_find_extent(). So not only did I test kvm-xftests
-> several times on x86 to make sure there weren't any regressions,
-> but I also tested that running kvm-xfstests while randomly injecting
-> faults into ext4_find_extent() didn't crash the system.
+Hi Eric, thanks for looking into this,
 
-Ahh got it, thanks. I think I understand the changes well enough now and 
-it makes sense to me to mark them non verified in case of errors.
-Furthermore, the tests also look fine. Feel free to add:
+On Thu, 25 Jul 2024 at 08:48, Eric Dumazet <edumazet@google.com> wrote:
+>
+> On Thu, Jul 25, 2024 at 7:00=E2=80=AFAM Dmitry Safonov via B4 Relay
+> <devnull+0x7f454c46.gmail.com@kernel.org> wrote:
+> >
+> > From: Dmitry Safonov <0x7f454c46@gmail.com>
+> >
+> > The lifetime of TCP-AO static_key is the same as the last
+> > tcp_ao_info. On the socket destruction tcp_ao_info ceases to be
+> > with RCU grace period, while tcp-ao static branch is currently deferred
+> > destructed. The static key definition is
+> > : DEFINE_STATIC_KEY_DEFERRED_FALSE(tcp_ao_needed, HZ);
+> >
+> > which means that if RCU grace period is delayed by more than a second
+> > and tcp_ao_needed is in the process of disablement, other CPUs may
+> > yet see tcp_ao_info which atent dead, but soon-to-be.
+>
+> > And that breaks the assumption of static_key_fast_inc_not_disabled().
+>
+> I am afraid I do not understand this changelog at all.
+>
+> What is "the assumption of static_key_fast_inc_not_disabled()"  you
+> are referring to ?
+>
+> I think it would help to provide more details.
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Sorry, my bad, I'm referring here to the comment/description for the functi=
+on:
 
-> > 
-> > Also, just curious whether you came across this bug during code reading
-> > or were you actually hitting it?
-> The initial issue was that e2fsck was always reporting some sort of
-> extents tree exception after testing, so the processes in question
-> were troubleshooting and hardening, i.e. the first two patches.
-> The other issues were discovered during fault injection testing of
-> the processes in question.
-> 
-> 
-> Regards,
-> Baokun
-> 
+ * static_key_fast_inc_not_disabled - adds a user for a static key
+ * @key: static key that must be already enabled
+ *
+ * The caller must make sure that the static key can't get disabled while
+ * in this function. It doesn't patch jump labels, only adds a user to
+ * an already enabled static key.
+
+Originally it was introduced in commit eb8c507296f6 ("jump_label:
+Prevent key->enabled int overflow"), which is needed for the atomic
+contexts, one of which would be the creation of a full socket from a
+request socket. In that atomic context, we know by the presence of the
+key (md5/ao) that the static branch is already enabled. So, we can
+just increment the ref counter for that static branch instead of
+holding the proper mutex. static_key_fast_inc_not_disabled() is just a
+helper for that usage case. But it must not be used if the static
+branch could get disabled in parallel as it's not protected by
+jump_label_mutex and as a result, races with jump_label_update()
+implementation details.
+
+Specifically, from the log in [1], I see that jump_label_type()
+wrongly tells arch_jump_label_transform_queue() to enable the
+static_brach, when the caller was, in fact,
+__static_key_slow_dec_cpuslocked() - requesting to disable that. And
+then, the x86-specific code produces:
+: jump_label: Fatal kernel bug, unexpected op at
+tcp_inbound_hash+0x1a7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 !=3D 66
+90 0f 1f 00)) size:2 type:1
+
+when it tries to enable the static key; but the op-code is not no-op,
+it's 2-byte jump. The reason for that of course is that intended
+operation was to disable the branch, but it has raced with this
+increment helper.
+
+Hopefully, that clarifies somewhat the situation here.
+
+Thankfully, for TCP-MD5 I did a better job: tcp_md5sig_info_free_rcu()
+and tcp_md5_twsk_free_rcu() are RCU callbacks.
+
+Also, please note that I intentionally call
+static_branch_slow_dec_deferred() variant in the RCU callback, rather
+than synchronous. The reason for that:
+
+ * When the control is directly exposed to userspace, it is prudent to dela=
+y the
+ * decrement to avoid high frequency code modifications which can (and do)
+ * cause significant performance degradation. Struct static_key_deferred an=
+d
+ * static_key_slow_dec_deferred() provide for this.
+
+>
+> >
+> > Happened on netdev test-bot[1], so not a theoretical issue:
+> >
+> > [] jump_label: Fatal kernel bug, unexpected op at tcp_inbound_hash+0x1a=
+7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 !=3D 66 90 0f 1f 00)) size:2 typ=
+e:1
+> > [] ------------[ cut here ]------------
+> > [] kernel BUG at arch/x86/kernel/jump_label.c:73!
+> > [] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > [] CPU: 3 PID: 243 Comm: kworker/3:3 Not tainted 6.10.0-virtme #1
+> > [] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16=
+.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > [] Workqueue: events jump_label_update_timeout
+> > [] RIP: 0010:__jump_label_patch+0x2f6/0x350
+> > ...
+> > [] Call Trace:
+> > []  <TASK>
+> > []  arch_jump_label_transform_queue+0x6c/0x110
+> > []  __jump_label_update+0xef/0x350
+> > []  __static_key_slow_dec_cpuslocked.part.0+0x3c/0x60
+> > []  jump_label_update_timeout+0x2c/0x40
+> > []  process_one_work+0xe3b/0x1670
+> > []  worker_thread+0x587/0xce0
+> > []  kthread+0x28a/0x350
+> > []  ret_from_fork+0x31/0x70
+> > []  ret_from_fork_asm+0x1a/0x30
+> > []  </TASK>
+> > [] Modules linked in: veth
+> > [] ---[ end trace 0000000000000000 ]---
+> > [] RIP: 0010:__jump_label_patch+0x2f6/0x350
+> >
+> > [1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/696681/5=
+-connect-deny-ipv6/stderr
+> >
+> > Cc: stable@kernel.org
+> > Fixes: 67fa83f7c86a ("net/tcp: Add static_key for TCP-AO")
+> > Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> > ---
+> > ---
+> >  net/ipv4/tcp_ao.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+> > index 85531437890c..5ce914d3e3db 100644
+> > --- a/net/ipv4/tcp_ao.c
+> > +++ b/net/ipv4/tcp_ao.c
+> > @@ -267,6 +267,14 @@ static void tcp_ao_key_free_rcu(struct rcu_head *h=
+ead)
+> >         kfree_sensitive(key);
+> >  }
+> >
+> > +static void tcp_ao_info_free_rcu(struct rcu_head *head)
+> > +{
+> > +       struct tcp_ao_info *ao =3D container_of(head, struct tcp_ao_inf=
+o, rcu);
+> > +
+> > +       kfree(ao);
+> > +       static_branch_slow_dec_deferred(&tcp_ao_needed);
+> > +}
+> > +
+> >  void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
+> >  {
+> >         struct tcp_ao_info *ao;
+> > @@ -290,9 +298,7 @@ void tcp_ao_destroy_sock(struct sock *sk, bool twsk=
+)
+> >                         atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem=
+_alloc);
+> >                 call_rcu(&key->rcu, tcp_ao_key_free_rcu);
+> >         }
+> > -
+> > -       kfree_rcu(ao, rcu);
+> > -       static_branch_slow_dec_deferred(&tcp_ao_needed);
+> > +       call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
+> >  }
+> >
+> >  void tcp_ao_time_wait(struct tcp_timewait_sock *tcptw, struct tcp_sock=
+ *tp)
+> >
+> > ---
+> > base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
+> > change-id: 20240725-tcp-ao-static-branch-rcu-85ede7b3a1a5
+> >
+> > Best regards,
+> > --
+> > Dmitry Safonov <0x7f454c46@gmail.com>
+> >
+> >
+
+
+Thanks,
+             Dmitry
 
