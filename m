@@ -1,202 +1,201 @@
-Return-Path: <linux-kernel+bounces-262342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4957293C44D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 959B293C461
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A86B9B20909
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:37:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC1F9B22785
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA2019D07F;
-	Thu, 25 Jul 2024 14:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8439719D074;
+	Thu, 25 Jul 2024 14:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rmmqq1Ci"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEj72h3Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAF513DDB8;
-	Thu, 25 Jul 2024 14:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A041D19AA56;
+	Thu, 25 Jul 2024 14:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721918255; cv=none; b=tE37Oo5cF8mttBCDIjTJgSDzTNiY5U6jDu1/XylqipaCX1JTIaSw1el80ikQ/CkM1PZ440+HIcjZ3bj9jRH81zDBx0F1pupiWvj/npPivoR54CfmIWqptV14nt1iS+oAgv6FjEUmDSJAQK5LPC+h5cxhzuixNikkdC6UGk5259I=
+	t=1721918348; cv=none; b=XHU6PY0QH4Tz07GSyTg1/w21YhPrQhObXbn1sh0uPqBk7h1AmIW0ZqUu6ibQFMOjSMtlNYJfYJWtdr4RSvsGqoUIve/68qRbsKvN8lmx4oSbb4sJgUbCGN9GKtDCS1swNKQzBt3Q+uWWTd7xsxnqDE77WofCsUiwrHQefyDGPTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721918255; c=relaxed/simple;
-	bh=jsKLe1xfJkO7kNI862YjLgzfKiNT8Bh+4bl/90ow/D0=;
+	s=arc-20240116; t=1721918348; c=relaxed/simple;
+	bh=ZpN2ZJEJffbl5pQjjoIFQo1fZ8paO1e2ecxVl4HvIW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nn1jZMjGbLqc+dXUZRecRQ0B0P4+HnaPooPc/cejT6oEyS2ZJQ4W5K2lwT5a5BadtRw0rdgrZ5JWA2TBxO/UjG9poHp9Wmj7yLbMCjrptH+w4eIruFLtF+2wE97GZ+9Odt+FWLc0NNPDDifUoqZm5N+PVjVXy/7XoC2AAGuyhgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rmmqq1Ci; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=L7B4J3xfdz2Y6tZKoIVkSSXHyah9IYkeN+4fghJY3iE=; b=Rmmqq1CiqxGeNspuQMxERRfFPc
-	OTR5qILQnYfTfksJ6bzZAIR3nKtqysigmp2T/k/YC6vkAaL9+HNhGQTQvCDKTCx9mKJOgN7OfX1ve
-	ebin00wmz2oSg8PLZJJtfeu8xEM6GtEwaPE2y2gk8rcl8970cMd7qTF1riN1uZ4mGPV2fS1Hom9FV
-	8PrhpUtOZYRHRyt8FqYG21dYJFOQufMAY0T1+Y7qoBBgKEUeW9Sp/qbFZ/QtWMGMMdd6bc0ahYBed
-	gBJOUgLTq3deARf0t4MlOP/HadV00aoqgG43YJakBS4NHTwt3DcoyowogJBPHjwVFs2eb+IOKCUeP
-	wRJjO5sA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWzam-0000000914G-2mCn;
-	Thu, 25 Jul 2024 14:37:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 939F630037B; Thu, 25 Jul 2024 16:37:14 +0200 (CEST)
-Date: Thu, 25 Jul 2024 16:37:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v8 1/8] rust: types: add `NotThreadSafe`
-Message-ID: <20240725143714.GI13387@noisy.programming.kicks-ass.net>
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
- <20240725-alice-file-v8-1-55a2e80deaa8@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQZiZzREYkg/2skvfmAj95C8C88SPK9eSfbR8YFDOQhmPfumON7x7+bO8xP/nsVdoDzqd6YRoNpz/hqXa51wGJrbmLM5n4KwWMTW1omjYm84RJrm0kescj7a2I4Nh1aao52DKt2402hIaZg4DKodCj5xK2ILiiJZP+KZy7y4CU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEj72h3Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFB2C32782;
+	Thu, 25 Jul 2024 14:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721918348;
+	bh=ZpN2ZJEJffbl5pQjjoIFQo1fZ8paO1e2ecxVl4HvIW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZEj72h3ZDXezeNf/UAMg90fRPyND01zgbh194/2NZlbzCI16RuIa9UGzu4g+MjgB3
+	 va7ZDr59/mZE77rOcUbcCArK1yAHCafuFZfc2tmdUqGqa9vwB/0r669dHNXjoKaUwo
+	 CUupQIQ19WxijEdzmJJ1F+O8N7xd9oof/o/7IRJo11+J0GXqG0zvFaIMqt3S3Ud/Nc
+	 MuibNgV/NvkKR6LL6pfqd0SO1WXFytrLrnixCacDc8lvs9Lj3ajQDOpoxnmBXWx2ju
+	 9WWWn+j2O19QYx0EwlVhfLeZ5J++e5v5BUimiY1P8fZzKI7+pU7aF9YMlaZ0mIF7V/
+	 I/gYx5EiGxocw==
+Date: Thu, 25 Jul 2024 15:39:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se-fw
+ binding doc
+Message-ID: <20240725-filled-outscore-24149588d958@spud>
+References: <20240722-imx-se-if-v6-0-ee26a87b824a@nxp.com>
+ <20240722-imx-se-if-v6-2-ee26a87b824a@nxp.com>
+ <20240722-popper-comfort-7538ea70c77b@spud>
+ <AM9PR04MB8604123E065315093347F66C95A92@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20240723-smitten-shower-1d15c0f3cf97@spud>
+ <AM9PR04MB86043E4B4B2FB206BF9223C695AA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20240724-huddling-neatly-88813c0b1f1d@spud>
+ <DU2PR04MB85990A0AB8AF8ABFCDA4CBD995AB2@DU2PR04MB8599.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DB1xP50rYS+x7RPj"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240725-alice-file-v8-1-55a2e80deaa8@google.com>
+In-Reply-To: <DU2PR04MB85990A0AB8AF8ABFCDA4CBD995AB2@DU2PR04MB8599.eurprd04.prod.outlook.com>
 
-On Thu, Jul 25, 2024 at 02:27:34PM +0000, Alice Ryhl wrote:
-> This introduces a new marker type for types that shouldn't be thread
-> safe. By adding a field of this type to a struct, it becomes non-Send
-> and non-Sync, which means that it cannot be accessed in any way from
-> threads other than the one it was created on.
-> 
-> This is useful for APIs that require globals such as `current` to remain
-> constant while the value exists.
-> 
-> We update two existing users in the Kernel to use this helper:
-> 
->  * `Task::current()` - moving the return type of this value to a
->    different thread would not be safe as you can no longer be guaranteed
->    that the `current` pointer remains valid.
->  * Lock guards. Mutexes and spinlocks should be unlocked on the same
->    thread as where they were locked, so we enforce this using the Send
->    trait.
-> 
-> There are also additional users in later patches of this patchset. See
-> [1] and [2] for the discussion that led to the introduction of this
-> patch.
-> 
-> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=@proton.me/ [1]
-> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=@proton.me/ [2]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Reviewed-by: Björn Roy Baron <bjorn3_gh@protonmail.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/sync/lock.rs | 13 +++++++++----
->  rust/kernel/task.rs      | 10 ++++++----
->  rust/kernel/types.rs     | 21 +++++++++++++++++++++
->  3 files changed, 36 insertions(+), 8 deletions(-)
-> 
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index f6c34ca4d819..d6e9bab114b8 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -6,8 +6,13 @@
->  //! spinlocks, raw spinlocks) to be provided with minimal effort.
->  
->  use super::LockClassKey;
-> -use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
-> -use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
-> +use crate::{
-> +    init::PinInit,
-> +    pin_init,
-> +    str::CStr,
-> +    types::{NotThreadSafe, Opaque, ScopeGuard},
-> +};
-> +use core::{cell::UnsafeCell, marker::PhantomPinned};
->  use macros::pin_data;
->  
->  pub mod mutex;
-> @@ -139,7 +144,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
->  pub struct Guard<'a, T: ?Sized, B: Backend> {
->      pub(crate) lock: &'a Lock<T, B>,
->      pub(crate) state: B::GuardState,
-> -    _not_send: PhantomData<*mut ()>,
-> +    _not_send: NotThreadSafe,
->  }
->  
->  // SAFETY: `Guard` is sync when the data protected by the lock is also sync.
-> @@ -191,7 +196,7 @@ pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
->          Self {
->              lock,
->              state,
-> -            _not_send: PhantomData,
-> +            _not_send: NotThreadSafe,
->          }
->      }
->  }
-> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-> index 55dff7e088bf..278c623de0c6 100644
-> --- a/rust/kernel/task.rs
-> +++ b/rust/kernel/task.rs
-> @@ -4,10 +4,12 @@
->  //!
->  //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
->  
-> -use crate::types::Opaque;
-> +use crate::{
-> +    bindings,
-> +    types::{NotThreadSafe, Opaque},
-> +};
->  use core::{
->      ffi::{c_int, c_long, c_uint},
-> -    marker::PhantomData,
->      ops::Deref,
->      ptr,
->  };
-> @@ -106,7 +108,7 @@ impl Task {
->      pub unsafe fn current() -> impl Deref<Target = Task> {
->          struct TaskRef<'a> {
->              task: &'a Task,
-> -            _not_send: PhantomData<*mut ()>,
-> +            _not_send: NotThreadSafe,
->          }
->  
->          impl Deref for TaskRef<'_> {
-> @@ -125,7 +127,7 @@ fn deref(&self) -> &Self::Target {
->              // that `TaskRef` is not `Send`, we know it cannot be transferred to another thread
->              // (where it could potentially outlive the caller).
->              task: unsafe { &*ptr.cast() },
-> -            _not_send: PhantomData,
-> +            _not_send: NotThreadSafe,
->          }
->      }
 
-As per always for not being able to read rust; how does this extend to
-get_task_struct()? Once you've taken a reference on current, you should
-be free to pass it along to whomever.
+--DB1xP50rYS+x7RPj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jul 25, 2024 at 07:06:30AM +0000, Pankaj Gupta wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Wednesday, July 24, 2024 9:00 PM
+> > To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
+> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
+> > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
+> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
+> > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
+> > linux-arm-kernel@lists.infradead.org
+> > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se=
+-fw
+> > binding doc
+
+For the third time, please fix your mail client so it stops inserting
+this garbage.
+
+> >=20
+> > On Wed, Jul 24, 2024 at 11:02:21AM +0000, Pankaj Gupta wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Conor Dooley <conor@kernel.org>
+> > > > Sent: Tuesday, July 23, 2024 7:38 PM
+> > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
+> > > > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+> > > > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha
+> > Hauer
+> > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
+> > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
+> > > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
+> > > > kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
+> > > > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add
+> > > > imx-se-fw binding doc
+> >=20
+> > Please fix this ^
+> >=20
+> > > > On Tue, Jul 23, 2024 at 09:28:31AM +0000, Pankaj Gupta wrote:
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Conor Dooley <conor@kernel.org>
+> > > > > > Sent: Monday, July 22, 2024 10:20 PM
+> > > > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > > > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring
+> > > > > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;
+> > > > > > Conor Dooley <conor+dt@kernel.org>; Shawn Guo
+> > > > > > <shawnguo@kernel.org>; Sascha
+> > > > Hauer
+> > > > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
+> > > > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
+> > > > > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
+> > > > > > kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> > > > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
+> > > > > > Subject: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add
+> > > > > > imx-se-fw binding doc
+> > > >
+> > > > Please fix this ^
+> > > >
+> > > > > >
+> > > > > > On Mon, Jul 22, 2024 at 10:21:37AM +0530, Pankaj Gupta wrote:
+> > > In case of imx8ulp, there is a single node.
+> > > Having a same node name for both parent and child, is bit strange.
+> > > firmware {
+> > > 	firmware {
+> > > 	};
+> > > };
+> > >
+> > > Request you to allow to re-evaluate this point.
+> >=20
+> > I dunno, it's all firmware so I don't really get why it is so strange!
+> > Can you remind me again why it is inside a parent node to begin with?
+>=20
+> Three type of security firmware(s): HSM, V2X-SHE, V2X-HSM, are running at=
+ the cores dedicated to the each different secure-enclave hardware IP(s).
+> Each firmware receives the message to act and response back with the comp=
+leted act.
+> This message exchanges happens through the Message-Unit hardware interfac=
+e.=20
+> There could be multiple MU for multiple security firmware, that would be =
+used for respective message exchanges.
+>=20
+> This node defines the details of each such MU interface.
+>=20
+> Reason to put under firmware:
+> 	Since this node specifies interface details between kernel and firmware,=
+ it was put under parent "firmware {".
+> 	I am not sure if this reason is correct enough to begin with.
+>=20
+> Thanks for allowing to revisit.
+>=20
+> I will make the change to whatever you finalize now. Thanks.
+
+I'm sorry, I still don't understand why you have the parent node. It
+seems pointless to me, and this new node could be added at the top
+level.
+
+--DB1xP50rYS+x7RPj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJjhwAKCRB4tDGHoIJi
+0vAQAQDbMuDjmie7EWxnnWqDa2jGC6LmbY6qAHkFO27uKsQt+wD6Ax+NJWtrZz69
+lI1yzCU2LhiJN9t8XJxOoMELVtoPsAI=
+=qgEY
+-----END PGP SIGNATURE-----
+
+--DB1xP50rYS+x7RPj--
 
