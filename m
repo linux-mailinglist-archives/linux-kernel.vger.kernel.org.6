@@ -1,402 +1,149 @@
-Return-Path: <linux-kernel+bounces-262449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CFA593C745
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3193C74B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA941C21C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B3381C21E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC8819B5BE;
-	Thu, 25 Jul 2024 16:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0YKy6Mu"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEC819DF64;
+	Thu, 25 Jul 2024 16:40:36 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CD519D082
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D9019DF43
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721925580; cv=none; b=Azh38Ic+LZujzndhGBkIbBB9YMBopkSgpUGgcIVv3K9OeSkNLyes8dCrjBAsPnOHcW0qXYlwX+KQJ0/A5Rl6NCZh1oVIGUDFMV1R96Jr2qFZdGgGL1fTfl4v2jQ8nMEEexYgYM5V6uwao9l12gp0/MZOmhy9VN4dqSCeNK+IJAU=
+	t=1721925636; cv=none; b=VuHwG9tuuhg24vSZYYmfZcoNVwQAqVVtLja1UyEJNe4lR5EUO6lYzO123q1TEI54hjcT9OY8oliTD3uSdoKImdLkEOoOYpoGFmgn/H1JPV8YoKp9tSYTJDjhrayYfTL6pWse0jxqITJejoJfrdehWu0LlqbF8ep5jM8dsPrbI+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721925580; c=relaxed/simple;
-	bh=w0v/iJYVRDvOuOk+qu46YJbJyYB3+t4haue0iNRD7WM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVRjobhKE/SdfXh4+p35KwR7rcAchP97pw41LQVYF6yvaR7O2d0ZwbsOVDcg/Rz4mLFw5JGl4kf/sDlAqKODC9y5hgAEv7rD/B84kpigO8OaXqeZ/Hp20CKe8R+Jy8c7c1HIuDw0A5I9ZMYCAdiBn5K/lsebOOB+QbruM2uGFUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0YKy6Mu; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd66cddd4dso10566055ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721925578; x=1722530378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcSVy1tvOkU8yRLWC0qxdbVVrc8ZEhqmlAiyT2QSHkE=;
-        b=S0YKy6MuYJ0E+8qrH9Xa3OH0armCipBpLZVS/WSDO9404TnPqoFMtiZTILMqjEbA5d
-         xMqEEiSOmU1iLHEuIa4LfnJ2FY9Gd/OUDxPP5oHG4V/c8JMTq+ipl9yltGCMjqtR4dYH
-         suYF5LheXRoNIqt5j2yXMLBGu8heby5NmwLR0YmrNjIJTRrA0qK8i0MLjY6f4SNwy+Go
-         Q1Urtg7cVvf/eZrTPJMEsfSKkphJuoGGVH3ZOZQjA4fbGxnILVgXunOQiddvXtKSJGmm
-         Sd0x/jkPHQ9wh+Cr8H+L8/LS6e3t+mqbanlyk1k8GldHnZ8AbFPryMUn1s46aWWZXcDk
-         rGoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721925578; x=1722530378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QcSVy1tvOkU8yRLWC0qxdbVVrc8ZEhqmlAiyT2QSHkE=;
-        b=YWBh5a4kewDNjozQt/wSfCorMAS6vrt+PVLynGTOK54dh9DretUeYztuiKX9gFnWJR
-         P67VCqw5h73NapqokHdeBgwnkjJBsNtTQ/V+3DrGjzoszEPl4BekxVxoFAo0hGfLNI/d
-         NqLlq01lPp10kqZadpA5Js1E6S4S09ErIRZIvQwPqL24muIvEjc/+6q9Tb1Wr1Gui17J
-         e/LqAD3mXhl2iGPYcFNCpcxXOSXuG4mCB7WxGHHxe7wA+0ssOA18Jk6nz5qVGecwAlE6
-         urVyMebcWqz2vTne9ZB3MEvcbyvWQKmEiAe37Rj5xHEf6mOWCmYtA+L3lwn9x3mwwk8+
-         zgOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpGynFGgX7BJgtlFfXcOL4qui3gCsUbj/yvCjRibXeq304YyZN29gFam/Me9JWQ6NOvT76aL7NnhKnlMA/Y2O/ekX2Y9yWyGw/olbB
-X-Gm-Message-State: AOJu0YxREO0ra/RS2ScVmpLZRIJwHoZEMh3zJfCJIZaltCIDI3Ml7359
-	LR/kZnGtEf/ttNczOW6t5GIkqwYhDgxOrMTbaVwPB9yHbcuD3vVkPliZiXDJCg==
-X-Google-Smtp-Source: AGHT+IHB3MBDNmfV4qXP0PeruhsiIcuNxKT7iPw0JA5SjJko2zFwnnPefUglyTGQ1O1zxG/RUL8Ssw==
-X-Received: by 2002:a17:903:1246:b0:1f8:6bae:28f with SMTP id d9443c01a7336-1fed3870ea6mr39885005ad.9.1721925577381;
-        Thu, 25 Jul 2024 09:39:37 -0700 (PDT)
-Received: from google.com (61.139.125.34.bc.googleusercontent.com. [34.125.139.61])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee4ce6sm16408675ad.157.2024.07.25.09.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 09:39:36 -0700 (PDT)
-Date: Thu, 25 Jul 2024 09:39:32 -0700
-From: David Matlack <dmatlack@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 01/11] KVM: Add lockless memslot walk to KVM
-Message-ID: <ZqJ_xANKf3bNcaHM@google.com>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-2-jthoughton@google.com>
+	s=arc-20240116; t=1721925636; c=relaxed/simple;
+	bh=Ga6x9IkXLr4/KClvs9c0gNauYexfNJznKB82YLQTFbw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=FQBT18fExEIpMuQ1CK9U7+TJYkwiupM0AeuDFiXQXYhzsheWq0TqV/bkJPWi4I83M/p5jU1W8pMTGil3bf44EA+85+AuLMhZHCWPVgbPpaLcL8BQW0VK958763yGEBuM8fFB91wgg+78LVzMKkk/64VZ+bWgC5pz6swB4ZmLNog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-203-6SZKwZkdNQGPE2agbHEO1Q-1; Thu, 25 Jul 2024 17:40:24 +0100
+X-MC-Unique: 6SZKwZkdNQGPE2agbHEO1Q-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 25 Jul
+ 2024 17:39:44 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 25 Jul 2024 17:39:44 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'kernel test robot' <lkp@intel.com>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, 'Linus Torvalds'
+	<torvalds@linuxfoundation.org>
+CC: "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, "'Matthew
+ Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
+	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "Linux
+ Memory Management List" <linux-mm@kvack.org>, 'Andy Shevchenko'
+	<andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'pedro.falcato@gmail.com'"
+	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>
+Subject: RE: [PATCH 4/7] minmax: Simplify signedness check
+Thread-Topic: [PATCH 4/7] minmax: Simplify signedness check
+Thread-Index: Adrd1i0k/JcX2h1sSAO9D37F5HIFAAAt19eAAAiWjHA=
+Date: Thu, 25 Jul 2024 16:39:44 +0000
+Message-ID: <f3b69fcd666e498da74c12f332c3a2a0@AcuMS.aculab.com>
+References: <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
+ <202407252100.fDFchC5O-lkp@intel.com>
+In-Reply-To: <202407252100.fDFchC5O-lkp@intel.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724011037.3671523-2-jthoughton@google.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-24 01:10 AM, James Houghton wrote:
-> Provide flexibility to the architecture to synchronize as optimally as
-> they can instead of always taking the MMU lock for writing.
-> 
-> Architectures that do their own locking must select
-> CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS.
-> 
-> The immediate application is to allow architectures to implement the
-> test/clear_young MMU notifiers more cheaply.
-> 
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
+From: kernel test robot <lkp@intel.com>
+> Sent: 25 July 2024 14:24
+>=20
+> Hi David,
+>=20
+> kernel test robot noticed the following build errors:
+>=20
+> [auto build test ERROR on linux/master]
+> [also build test ERROR on linus/master v6.10 next-20240725]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/David-Laight/minma=
+x-Put-all-the-clamp-
+> definitions-together/20240724-224832
+> base:   linux/master
+> patch link:    https://lore.kernel.org/r/03601661326c4efba4e618ead15fa0e2=
+%40AcuMS.aculab.com
+> patch subject: [PATCH 4/7] minmax: Simplify signedness check
+> config: mips-loongson1b_defconfig (https://download.01.org/0day-
+> ci/archive/20240725/202407252100.fDFchC5O-lkp@intel.com/config)
+> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project
+> 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-
+> ci/archive/20240725/202407252100.fDFchC5O-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407252100.fDFchC5O-lkp=
+@intel.com/
+>=20
+> All errors (new ones prefixed by >>):
+...
+> b286d8b1a690667 Herbert Xu 2016-11-22  75
+> b286d8b1a690667 Herbert Xu 2016-11-22  76  /* Get a spot of the specified=
+ length that does not straddle a page.
+> b286d8b1a690667 Herbert Xu 2016-11-22  77   * The caller needs to ensure =
+that there is enough space for this operation.
+> b286d8b1a690667 Herbert Xu 2016-11-22  78   */
+> b286d8b1a690667 Herbert Xu 2016-11-22  79  static inline u8 *skcipher_get=
+_spot(u8 *start, unsigned int len)
+> b286d8b1a690667 Herbert Xu 2016-11-22  80  {
+> b286d8b1a690667 Herbert Xu 2016-11-22  81  =09u8 *end_page =3D (u8 *)(((u=
+nsigned long)(start + len - 1)) & PAGE_MASK);
+> b286d8b1a690667 Herbert Xu 2016-11-22  82
+> b286d8b1a690667 Herbert Xu 2016-11-22 @83  =09return max(start, end_page)=
+;
+> b286d8b1a690667 Herbert Xu 2016-11-22  84  }
+> b286d8b1a690667 Herbert Xu 2016-11-22  85
 
-Aside from the cleanup suggestion (which should be in separate patches
-anyway):
+I thought this version supported that :-(
+Certainly I've hit and fixed this before.
+Using min/max() on pointers just makes it all more horrid.
+The problem is that is_signed_type() isn't 'constant enough' for pointers.
 
-Reviewed-by: David Matlack <dmatlack@google.com>
+Supporting pointers may require yet another (bloating) _is_constexpr() call=
+.
+Or add a simpler min_ptr() that includes a 'pointer' check.
 
-> ---
->  include/linux/kvm_host.h |  1 +
->  virt/kvm/Kconfig         |  3 +++
->  virt/kvm/kvm_main.c      | 26 +++++++++++++++++++-------
->  3 files changed, 23 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 689e8be873a7..8cd80f969cff 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -266,6 +266,7 @@ struct kvm_gfn_range {
->  	gfn_t end;
->  	union kvm_mmu_notifier_arg arg;
->  	bool may_block;
-> +	bool lockless;
->  };
->  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
->  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
-> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-> index b14e14cdbfb9..632334861001 100644
-> --- a/virt/kvm/Kconfig
-> +++ b/virt/kvm/Kconfig
-> @@ -100,6 +100,9 @@ config KVM_GENERIC_MMU_NOTIFIER
->         select MMU_NOTIFIER
->         bool
->  
-> +config KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
-> +       bool
-> +
->  config KVM_GENERIC_MEMORY_ATTRIBUTES
->         depends on KVM_GENERIC_MMU_NOTIFIER
->         bool
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index d0788d0a72cc..33f8997a5c29 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -555,6 +555,7 @@ struct kvm_mmu_notifier_range {
->  	on_lock_fn_t on_lock;
->  	bool flush_on_ret;
->  	bool may_block;
-> +	bool lockless;
->  };
->  
->  /*
-> @@ -609,6 +610,10 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
->  			 IS_KVM_NULL_FN(range->handler)))
->  		return r;
->  
-> +	/* on_lock will never be called for lockless walks */
-> +	if (WARN_ON_ONCE(range->lockless && !IS_KVM_NULL_FN(range->on_lock)))
-> +		return r;
-> +
->  	idx = srcu_read_lock(&kvm->srcu);
->  
->  	for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-> @@ -640,15 +645,18 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
->  			gfn_range.start = hva_to_gfn_memslot(hva_start, slot);
->  			gfn_range.end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, slot);
->  			gfn_range.slot = slot;
-> +			gfn_range.lockless = range->lockless;
->  
->  			if (!r.found_memslot) {
->  				r.found_memslot = true;
-> -				KVM_MMU_LOCK(kvm);
-> -				if (!IS_KVM_NULL_FN(range->on_lock))
-> -					range->on_lock(kvm);
-> -
-> -				if (IS_KVM_NULL_FN(range->handler))
-> -					goto mmu_unlock;
-> +				if (!range->lockless) {
-> +					KVM_MMU_LOCK(kvm);
-> +					if (!IS_KVM_NULL_FN(range->on_lock))
-> +						range->on_lock(kvm);
-> +
-> +					if (IS_KVM_NULL_FN(range->handler))
-> +						goto mmu_unlock;
-> +				}
->  			}
->  			r.ret |= range->handler(kvm, &gfn_range);
->  		}
-> @@ -658,7 +666,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
->  		kvm_flush_remote_tlbs(kvm);
->  
->  mmu_unlock:
-> -	if (r.found_memslot)
-> +	if (r.found_memslot && !range->lockless)
->  		KVM_MMU_UNLOCK(kvm);
->  
->  	srcu_read_unlock(&kvm->srcu, idx);
-> @@ -679,6 +687,8 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
->  		.on_lock	= (void *)kvm_null_fn,
->  		.flush_on_ret	= true,
->  		.may_block	= false,
-> +		.lockless	=
-> +			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
->  	};
->  
->  	return __kvm_handle_hva_range(kvm, &range).ret;
-> @@ -697,6 +707,8 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
->  		.on_lock	= (void *)kvm_null_fn,
->  		.flush_on_ret	= false,
->  		.may_block	= false,
-> +		.lockless	=
-> +			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
+But this might only be reported by clang with W=3D1.
 
-kvm_handle_hva_range{,_no_flush}() have very generic names but
-they're intimately tied to the "young" notifiers. Whereas
-__kvm_handle_hva_range() is the truly generic handler function.
+=09David
 
-This is arguably a pre-existing issue, but adding
-CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS makes these functions even more
-intamtely tied to the "young" notifiers.
-
-We could rename kvm_handle_hva_range{,_no_flush}() but I think the
-cleanest thing to do might be to just drop them entirely and move their
-contents into their callers (there are only 2 callers of these 3
-functions). That will create a little duplication but IMO will make the
-code easier to read.
-
-And then we can also rename __kvm_handle_hva_range() to
-kvm_handle_hva_range().
-
-e.g. Something like this as the end result:
-
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 86fb2b560d98..0146c83e24bd 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -590,8 +590,8 @@ static void kvm_null_fn(void)
- 	     node;							     \
- 	     node = interval_tree_iter_next(node, start, last))	     \
- 
--static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
--							   const struct kvm_mmu_notifier_range *range)
-+static __always_inline kvm_mn_ret_t kvm_handle_hva_range(struct kvm *kvm,
-+							 const struct kvm_mmu_notifier_range *range)
- {
- 	struct kvm_mmu_notifier_return r = {
- 		.ret = false,
-@@ -674,48 +674,6 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
- 	return r;
- }
- 
--static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
--						unsigned long start,
--						unsigned long end,
--						gfn_handler_t handler)
--{
--	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_mmu_notifier_range range = {
--		.start		= start,
--		.end		= end,
--		.handler	= handler,
--		.on_lock	= (void *)kvm_null_fn,
--		.flush_on_ret	= true,
--		.may_block	= false,
--		.lockless	=
--			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
--	};
 -
--	return __kvm_handle_hva_range(kvm, &range).ret;
--}
--
--static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn,
--							 unsigned long start,
--							 unsigned long end,
--							 gfn_handler_t handler,
--							 bool fast_only)
--{
--	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_mmu_notifier_range range = {
--		.start			= start,
--		.end			= end,
--		.handler		= handler,
--		.on_lock		= (void *)kvm_null_fn,
--		.flush_on_ret		= false,
--		.may_block		= false,
--		.lockless		=
--			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
--		.arg.fast_only		= fast_only,
--	};
--
--	return __kvm_handle_hva_range(kvm, &range).ret;
--}
--
- void kvm_mmu_invalidate_begin(struct kvm *kvm)
- {
- 	lockdep_assert_held_write(&kvm->mmu_lock);
-@@ -808,7 +766,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	 * that guest memory has been reclaimed.  This needs to be done *after*
- 	 * dropping mmu_lock, as x86's reclaim path is slooooow.
- 	 */
--	if (__kvm_handle_hva_range(kvm, &hva_range).found_memslot)
-+	if (kvm_handle_hva_range(kvm, &hva_range).found_memslot)
- 		kvm_arch_guest_memory_reclaimed(kvm);
- 
- 	return 0;
-@@ -854,7 +812,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 	};
- 	bool wake;
- 
--	__kvm_handle_hva_range(kvm, &hva_range);
-+	kvm_handle_hva_range(kvm, &hva_range);
- 
- 	/* Pairs with the increment in range_start(). */
- 	spin_lock(&kvm->mn_invalidate_lock);
-@@ -876,6 +834,17 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
- 					      unsigned long start,
- 					      unsigned long end)
- {
-+	struct kvm *kvm = mmu_notifier_to_kvm(mn);
-+	const struct kvm_mmu_notifier_range range = {
-+		.start		= start,
-+		.end		= end,
-+		.handler	= kvm_age_gfn,
-+		.on_lock	= (void *)kvm_null_fn,
-+		.flush_on_ret	= true,
-+		.may_block	= false,
-+		.lockless	= IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
-+	};
-+
- 	trace_kvm_age_hva(start, end, false);
- 
- 	return kvm_handle_hva_range(mn, start, end, kvm_age_gfn);
-@@ -887,6 +856,18 @@ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
- 					unsigned long end,
- 					bool fast_only)
- {
-+	struct kvm *kvm = mmu_notifier_to_kvm(mn);
-+	const struct kvm_mmu_notifier_range range = {
-+		.start		= start,
-+		.end		= end,
-+		.handler	= kvm_age_gfn,
-+		.on_lock	= (void *)kvm_null_fn,
-+		.flush_on_ret	= false,
-+		.may_block	= false,
-+		.lockless	= IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
-+		.arg.fast_only	= fast_only,
-+	};
-+
- 	trace_kvm_age_hva(start, end, fast_only);
- 
- 	/*
-@@ -902,8 +883,7 @@ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
- 	 * cadence. If we find this inaccurate, we might come up with a
- 	 * more sophisticated heuristic later.
- 	 */
--	return kvm_handle_hva_range_no_flush(mn, start, end, kvm_age_gfn,
--					     fast_only);
-+	return kvm_handle_hva_range(kvm, &range).ret;
- }
- 
- static int kvm_mmu_notifier_test_young(struct mmu_notifier *mn,
-@@ -911,6 +891,18 @@ static int kvm_mmu_notifier_test_young(struct mmu_notifier *mn,
- 				       unsigned long address,
- 				       bool fast_only)
- {
-+	struct kvm *kvm = mmu_notifier_to_kvm(mn);
-+	const struct kvm_mmu_notifier_range range = {
-+		.start		= address,
-+		.end		= address + 1,
-+		.handler	= kvm_test_age_gfn,
-+		.on_lock	= (void *)kvm_null_fn,
-+		.flush_on_ret	= false,
-+		.may_block	= false,
-+		.lockless	= IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
-+		.arg.fast_only	= fast_only,
-+	};
-+
- 	trace_kvm_test_age_hva(address, fast_only);
- 
- 	return kvm_handle_hva_range_no_flush(mn, address, address + 1,
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
->  	};
->  
->  	return __kvm_handle_hva_range(kvm, &range).ret;
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
 
