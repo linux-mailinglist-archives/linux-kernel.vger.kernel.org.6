@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-262518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916D393C821
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819EE93C825
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177FA1C212C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:08:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BC392833D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D0F19DFA5;
-	Thu, 25 Jul 2024 18:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AF319E7FB;
+	Thu, 25 Jul 2024 18:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TYeIIYhy"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FTjMrEPq"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C393763C7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5898E19E7F2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721930877; cv=none; b=EqTzU4esl9G07dRjq0sG/dU0uq9mcKttpG5PMeUKzcBerZX/VNRpmLSvtALIHk5owFWlWP2DIiy/U8IJXDK6JDZvf7PeOltrfagDGEZkyKE8dZVt/mx3y6208C7i9ACBGdrlkTTWfcbrmN8xDHV/I0oelVDI/w69yi7yrxjcaZs=
+	t=1721930881; cv=none; b=lKdpQWRobl7P4goBXmrz6OlZnJqlCTVp5EA7zweLbyvR7pZ4NMXs59u3FqEHjulHBWDTVmTu8yEYYSNeAvJxXdxDLFTLj3k3NYrQyA9i9PkwwyuunbJwRDy/6/7s2Qj7IIdNT3qA2E0hOR9yoGogw9/V1ajeUS/jyXiKDs70+3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721930877; c=relaxed/simple;
-	bh=BWXy71ogJASeYD6YU2Jpukh49PfrQil0GPHkRalsh24=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EzNBoQOjlLokpPEtx18GUBzBGj8h6bvqRAN7tjI21YoLQ8ivJ2oJjzudkaKfcEUfLfrNqrCuY8Uy85PGRzNMpHR7EFo/MPAPV3NN3bfHTwmAYRMSKcREK+RqKasoxlaIa3Q/xGVdMCM5d71i7W/lb5nV4082A3aMGeiltfJ7dA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TYeIIYhy; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1721930881; c=relaxed/simple;
+	bh=Hqc5azVRbGUwAYmN2fQHG0YmRuwfvqYpwYq9g9X88dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AkdRlguDAvwSx9BBPRN//ueEePd2/nHHf9F1/ur4DfvMXGEiM02hdDIEben76Ec7w+4lkFNiiSs0Smn236oqc8GXV4fyl6uo8oMCJmvgJXeqUpxdBKKHSkyFXKaOUcwyuU5serzZyKpCIUPld8180ZS7MwHok4b3bUvoMEKjVoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FTjMrEPq; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cb4d02f34cso136273a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:07:55 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fda7fa60a9so11166265ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721930875; x=1722535675; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8LHpo7icgPXpVB/A3qaYa/kb3/He/pbNang3awxNWGA=;
-        b=TYeIIYhyjcltni4hZtA+/k1slbtu9INJtNaBYJ6Os2vUzapD1d416nnmtN7A2us93k
-         W1x63CL7eUVqB6Awcx3z5URFOvsNFRnk4YYxVmBh5BcsEfZTqIQEffloikLKeMK5yNUR
-         4IbykZEDRnqIXPFBBFhal2IDrdjxCmAFJlP35p+tLfMSq2H+bgqv/mvnbt+r0U2wqru4
-         fcZS1w2TYrKN0Coo7wZxkOWN1wLPBc8yShlnVYxBHzEDPjzGmfZtc4aaSsx/NAVzS3/Q
-         h/bcbKmim0pPNvCQBeWM3socxK+cVp2lQG5P1bT/Z/9ai75RhaKAWNA+Z6W9zuzCtdmw
-         HGNA==
+        d=google.com; s=20230601; t=1721930879; x=1722535679; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUGaRPCQ3N3wWtHO14ZqED92UBSd1h87iBGfjwpcBN0=;
+        b=FTjMrEPqVBzeDD6E4eR/N6vtbJ4X14DZ4q5z5caJdXwcUa5ey71VDOLdo4mGp9NGNe
+         zh549dbw78yHHRvB2pTVQk4pjHIvP7jrbpHH832Sdu5OVpHytBfjHk7MnPuUEl41rWBX
+         2VlGPLpXrIQV1cd/VvpQ0lW0QQSLOcpNkFhh6rSAMYFZGCpwQQBBmX/+Z5ejwFRv28Wk
+         1PG4o/0Uoy8wLI15DHy2a2KIh+mmxZd+YxupjeUXIq0xJyJ4w5svR6RcS1ND5LdVSTmY
+         tPZLN5PvWcY8IXMtJ9AtIk9WHusZ8I6zZNpIKmH6F9Qf4YK43UYqOvAh9QWzGKCKXlGb
+         g+1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721930875; x=1722535675;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8LHpo7icgPXpVB/A3qaYa/kb3/He/pbNang3awxNWGA=;
-        b=A+WRYk9JZlLLHTaPCIl69j4YsxCCBCAAz8S/fPh4SgzJt9vshKBTFZlkRFLD6aLEkf
-         tgjePLFJZbmi+DZlAveBgRyvkAMZ7AOb0PQqKf0S+wVPaMED5LfBCToYaEALLl4i1jTL
-         KfE/wzajSoNiAQOXqv6kJdGe8WKbSf+8aypMFQeTN9o934N9Tl+eQwgNod8GyX4+q1C+
-         h1U7DXFZuBPvo4VspXtbPwFU+TfwuDMkfguVVy7+NRPfcJqlpG16ns98HEBPOxY/OWy+
-         Ypy9FtGmNDN2IFhnkCbd7AORblaqbpTCeV2ISMp3/fFRl2F+bWL2CyXKrulqlLrVWjhV
-         qCJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2SET+8U7X8Oj6WCC6GkaRAvs8VxrV7ecjgXzRaFCegfCwP1LCadYvAGE7NZS0iZWlQs6kK3k4XCZ3GGzBGAgXDrUUpyq7bHTcL2lq
-X-Gm-Message-State: AOJu0YxbMnJSKTSqRATF971iyUQqR5j2CQito0kIBTfpe0mmHyAyZI5L
-	wN6EtvMH1hDGKsBcmifL7YTXkgIxjMS8XqP+QfvRnRaaTj9sCRY1tJaJup2lkiCZwjY7PCTeiL3
-	8hA==
-X-Google-Smtp-Source: AGHT+IF7zMLJuphWTLkC+nevqZK7ixm1Yql8ScY0ucZbb06AZigHjX0DHxi+uHSzp+K6lZveDOipKORXTpI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:1786:b0:2c9:967d:94a4 with SMTP id
- 98e67ed59e1d1-2cf2ede0296mr5153a91.5.1721930874905; Thu, 25 Jul 2024 11:07:54
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721930879; x=1722535679;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UUGaRPCQ3N3wWtHO14ZqED92UBSd1h87iBGfjwpcBN0=;
+        b=gvkwWhBtc5gKti8lJuooTDpHmEo5ps7flgOVw1mDBh/nUf3+MzVm/5Dxlr0CRo8kWQ
+         kD8ukqZA3sGoLBVVQsAFpRifrCvWlw31cZM4vr5FIMocq1X9KpkOhNPRMqX0KtsG3LO8
+         +L9WJJrFkElWkWy/DC0IHVZAmM+vr5ZRIYFqZFL1P364iXQV3HwSQzT9olXvIh4rNFL+
+         Lo+OUY1IYm2THftvo5Z7y33Qi3viUsAmPB1iX9Si7m9ecS7XsRCPnDHjnsUsNJ51vO9I
+         oLlzkdlMDhNjgEpUn5yXBnEZ+Y/lI1sRcq8Q0nkwoPA7nqqABDmQT8q4jCF6NgP13GSv
+         YTKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFCZy2exZnvOAgbyAcslorhpjhRsjYIK3xoywts7aOKOqRoJJJ/D1RIRXdJ4JkMTCgLMZlktDmkx/+WFVuoYEaTeqlMZNyIbpfng1W
+X-Gm-Message-State: AOJu0Yz0K4/leKgARhlX+jxyF9AjxgVfhqgtKKklp9icQNBa31n206uS
+	DpqhDRP8WD93vGuvfOdl8DdKIkLC4gZ6s9nxL/JDm8qJcdT2JcnEgg584SAvng==
+X-Google-Smtp-Source: AGHT+IHI1A1tvfnC1v1eHXLnRKjVzRp5f2FjOQ5bxe8jqwJy1SWM+jZHo5hxZrA2PYuH6SKb8vBZaw==
+X-Received: by 2002:a17:903:1c4:b0:1fc:2ee3:d46f with SMTP id d9443c01a7336-1fed90b6bd7mr34131415ad.11.1721930878977;
+        Thu, 25 Jul 2024 11:07:58 -0700 (PDT)
+Received: from google.com (61.139.125.34.bc.googleusercontent.com. [34.125.139.61])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f9ec7acdsm1454827a12.66.2024.07.25.11.07.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 11:07:58 -0700 (PDT)
 Date: Thu, 25 Jul 2024 11:07:53 -0700
-In-Reply-To: <203755ada291a1366df78c75c57585aff06f30c6.camel@redhat.com>
+From: David Matlack <dmatlack@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Rientjes <rientjes@google.com>,
+	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
+	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn
+ and kvm_age_gfn
+Message-ID: <ZqKUefN3HgBQQkuA@google.com>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-3-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-12-seanjc@google.com>
- <dc19d74e25b9e7e42c693a13b6f98565fb799734.camel@redhat.com>
- <ZoxBV6Ihub8eaVAy@google.com> <203755ada291a1366df78c75c57585aff06f30c6.camel@redhat.com>
-Message-ID: <ZqKUeUQ3BMYgBNUn@google.com>
-Subject: Re: [PATCH v2 11/49] KVM: x86: Disallow KVM_CAP_X86_DISABLE_EXITS
- after vCPU creation
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724011037.3671523-3-jthoughton@google.com>
 
-On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-07-08 at 19:43 +0000, Sean Christopherson wrote:
-> > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > > > Reject KVM_CAP_X86_DISABLE_EXITS if vCPUs have been created, as disabling
-> > > > PAUSE/MWAIT/HLT exits after vCPUs have been created is broken and useless,
-> > > > e.g. except for PAUSE on SVM, the relevant intercepts aren't updated after
-> > > > vCPU creation.  vCPUs may also end up with an inconsistent configuration
-> > > > if exits are disabled between creation of multiple vCPUs.
-> > > 
-> > > Hi,
-> > > 
-> > > I am not sure that PAUSE intercepts are updated either, I wasn't able to find a code
-> > > that does this.
-> > > 
-> > > I agree with this change, but note that there was some talk on the mailing
-> > > list to allow to selectively disable VM exits (e.g PAUSE, MWAIT, ...) only on
-> > > some vCPUs, based on the claim that some vCPUs might run RT tasks, while some
-> > > might be housekeeping.  I haven't followed those discussions closely.
-> > 
-> > This change is actually pulled from that series[*].  IIRC, v1 of that series
-> > didn't close the VM-scoped hole, and the overall code was much more complex as
-> > a result.
-> > 
-> > [*] https://lore.kernel.org/all/20230121020738.2973-2-kechenl@nvidia.com
-> > 
+On 2024-07-24 01:10 AM, James Houghton wrote:
+> Walk the TDP MMU in an RCU read-side critical section. This requires a
+> way to do RCU-safe walking of the tdp_mmu_roots; do this with a new
+> macro. The PTE modifications are now done atomically, and
+> kvm_tdp_mmu_spte_need_atomic_write() has been updated to account for the
+> fact that kvm_age_gfn can now lockless update the accessed bit and the
+> R/X bits).
 > 
-> Hi,
-> Thanks for the pointer, I searched for this patch series in many places but I
-> couldn't find it.
-> Any idea what happened with this patch series btw?
+> If the cmpxchg for marking the spte for access tracking fails, we simply
+> retry if the spte is still a leaf PTE. If it isn't, we return false
+> to continue the walk.
+> 
+> Harvesting age information from the shadow MMU is still done while
+> holding the MMU write lock.
+> 
+> Suggested-by: Yu Zhao <yuzhao@google.com>
+> Signed-off-by: James Houghton <jthoughton@google.com>
 
-Nope.  IIRC, v6 was close to being ready and only had a few cosmetic issues, but
-the author never posted a v7.
+Aside from the comment fixes below,
+
+Reviewed-by: David Matlack <dmatlack@google.com>
+
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/Kconfig            |  1 +
+>  arch/x86/kvm/mmu/mmu.c          | 10 ++++-
+>  arch/x86/kvm/mmu/tdp_iter.h     | 27 +++++++------
+>  arch/x86/kvm/mmu/tdp_mmu.c      | 67 +++++++++++++++++++++++++--------
+>  5 files changed, 77 insertions(+), 29 deletions(-)
+> 
+[...]
+> --- a/arch/x86/kvm/mmu/tdp_iter.h
+> +++ b/arch/x86/kvm/mmu/tdp_iter.h
+> @@ -25,6 +25,13 @@ static inline u64 kvm_tdp_mmu_write_spte_atomic(tdp_ptep_t sptep, u64 new_spte)
+>  	return xchg(rcu_dereference(sptep), new_spte);
+>  }
+>  
+> +static inline u64 tdp_mmu_clear_spte_bits_atomic(tdp_ptep_t sptep, u64 mask)
+> +{
+> +	atomic64_t *sptep_atomic = (atomic64_t *)rcu_dereference(sptep);
+> +
+> +	return (u64)atomic64_fetch_and(~mask, sptep_atomic);
+> +}
+> +
+>  static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
+>  {
+>  	KVM_MMU_WARN_ON(is_ept_ve_possible(new_spte));
+> @@ -32,10 +39,11 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
+>  }
+>  
+>  /*
+> - * SPTEs must be modified atomically if they are shadow-present, leaf
+> - * SPTEs, and have volatile bits, i.e. has bits that can be set outside
+> - * of mmu_lock.  The Writable bit can be set by KVM's fast page fault
+> - * handler, and Accessed and Dirty bits can be set by the CPU.
+> + * SPTEs must be modified atomically if they have bits that can be set outside
+> + * of the mmu_lock. This can happen for any shadow-present leaf SPTEs, as the
+> + * Writable bit can be set by KVM's fast page fault handler, the Accessed and
+> + * Dirty bits can be set by the CPU, and the Accessed and R/X bits can be
+
+"R/X bits" should be "W/R/X bits".
+
+> + * cleared by age_gfn_range.
+
+nit: "age_gfn_range()"
+
 
