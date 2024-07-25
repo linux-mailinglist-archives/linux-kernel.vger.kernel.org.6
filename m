@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-261683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D66593BAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A3993BACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0AA1F220E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9071F23291
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48414A84;
-	Thu, 25 Jul 2024 02:30:09 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EED9125B9;
+	Thu, 25 Jul 2024 02:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0jwu6Xu"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0DD63D0;
-	Thu, 25 Jul 2024 02:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F221103;
+	Thu, 25 Jul 2024 02:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721874609; cv=none; b=APGfn1LouXWiFepe0RpBoRJQr3SvDCJnprCbppHsMgvKLDJk11ESlROXR8cbBBRVPNttOZJEWcD75asnDIpukDKhHWLBFg5lels+7Gb/AiCew1qdWWTwql/x/H8hjL6B/roNigp59o0xVQquyCVRF7jwnY1RxZ5rslm1j1qkSc8=
+	t=1721874669; cv=none; b=Q9gO8V9ZYAwpvXg6wZiCA9o7HrpkCLMTR3gi9ghBMx1WukGXR2orBjpFZ/UZVR7MGPwAZe9+Oi/losGf0jzMRGODWS+j+dbj6L8sksdrou2Rdjt5jpXd1wafoJqWMPz+hYAyjTPRVcX3qMZ7tz3aZq92L1FyKachWOvyGr7jSJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721874609; c=relaxed/simple;
-	bh=UflBeGAI8Ewd2P0gL0BG4VcOuURnvNeNQ1BGv2VbtmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NxX2wm9ar8h1OGXVtr3pwU+oCcJT5jvTEN7giyTwYsViiJTBaZ2zYgzTsrB+VDvysCd0EMj0jMdmzuj/FltNmilphrv4wAjEcZJh5d9jUP8D816U8EsLp8tReGfb3KGDK0YGhYNDtWezL26TU2EJrX0NUHl6HGv+JluOSWRPhvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowACnEUGXuKFm2O7cAA--.57002S2;
-	Thu, 25 Jul 2024 10:29:50 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	make24@iscas.ac.cn,
-	liujunliang_ljl@163.com,
-	syoshida@redhat.com,
-	andrew@lunn.ch,
-	horms@kernel.org
-Cc: linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net v4] net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
-Date: Thu, 25 Jul 2024 10:29:42 +0800
-Message-Id: <20240725022942.1720199-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721874669; c=relaxed/simple;
+	bh=rHYP/JZ0qZvQC5t0SD4oF84A3HWmyGiBcpwoL0QLn5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pBtb/Ryec2kpF3oZJFKjkjovc4Ztmm7jVAIoJcPkqNPV1fiGC+Pg6IsBa9JNtnLbypXTQv8z9rYERH7VVw4xgvXCI5fzR6LEWHVngSJWHrv1zSAtMEVcCebBDCK3f+Qe03Qbn/NKYebZrtEqnUTCn4DJxN4t2QNI8BIZLCOuY7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0jwu6Xu; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a22f09d976so2667967a12.1;
+        Wed, 24 Jul 2024 19:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721874663; x=1722479463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d8h8nTzUAl1WcARF1hup8Fyq1znnGzBKQRxAU25hgOQ=;
+        b=g0jwu6Xuz5/dt2G82sRNt0XLY7gFsh1nMZ8Xr1rFA35ccPexUdpZmilMuZvXtLHWni
+         z9lJVH9exZZj8tMFF2sGtOMKd97r6MQCaI4PtVz80Es6bZWHoezwW611ImtP3zX7Uoh8
+         +U2cFyjTRuCq+5dOL2f7p8xC6jNlHmheinEkIs8WdL9lDAiF4F7jzBcBDc93ARSNZVGo
+         ycJsRxgb4DOvW7TOIuOiA553EeKzHBj02iFOGD03xFMo+ntEF+xCfsfF5ugjUPnVeH1o
+         FcYBgFPifuQfluB7lEPXHf8lY02nqoJ6lXmBatAkd7ivxCdwMqTZ6t+UyBJaJdbTUjlS
+         b1BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721874663; x=1722479463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d8h8nTzUAl1WcARF1hup8Fyq1znnGzBKQRxAU25hgOQ=;
+        b=d8Z2FziZzV1csjKIC1MrkpVNA8koox3Nh20a/U0mtIeA4RbvnEh6Oru/pt8YQZaP9/
+         Ug2A3Zlof6O1ZTtn0niXTe+4BmmseJVCWwfx3StxRIGXP3eKtJITw1C0AjDsnOw3sa6v
+         m/Afpc+JWbjluCvGUntMPAH2n0e4jp0uF8S1b0vGzNaOOj9/bgZy9Ruk/m+LVEVDg+RC
+         FFz9fu51Kw4iPRTboFMToMtKeB+gJGgyp3+2yMm5p7AUR3SAFtunoIoclmEUxSBCalJF
+         +w2JRNhLM4+L4lL5DoYgQdZYpOZzUKwtoSHcqci32ujNB8ZcsNWaiiATaYd0PxfuXtw5
+         42NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgD51lhsauLQvpQk3ozlRcedcQB6uiqOViZnOVWSWXq1hKRSq71tONdoyEqan5b3n6ZAMQ2OsnVHESf6UDoMejS2cKyXttHY+4pGmESsCVDoAvQNjJMkF5XgcUSZJa+9qRbzZ5LAZNxl0X8w==
+X-Gm-Message-State: AOJu0YyaHv/yiHZndPjMkAyTwoBFmSCVEF4XfIEHc1frSnER66znf6i3
+	f4il+p4QOuGgb+qNLIQCZljusVVor6W3aO40tr4L6fNb2gnyF6t8YIp7z9dImR8gW+e7ZXTZeGx
+	s+VkL1HbJgwCXtbBpAs/8vKi6otw=
+X-Google-Smtp-Source: AGHT+IGdGx4ySUzJGl9EnTZK8v8wPNb/wvPcHHbBXF7mKGm9VIRFhtNhDoDoxxMpcTzBRbKe6/wPyWylfhzTadLKR+4=
+X-Received: by 2002:a05:6402:50cf:b0:58c:b2b8:31b2 with SMTP id
+ 4fb4d7f45d1cf-5ac148aa56dmr1404524a12.17.1721874662401; Wed, 24 Jul 2024
+ 19:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACnEUGXuKFm2O7cAA--.57002S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF15XFyrCr4kuryfCF1kAFb_yoW8AF1fpr
-	47Ga90yrWUJ347Z3ykXw1vg3WFkw4kKay3W348Gw1fZ395Arn5C34FgFyYgw1UGrW5Aa12
-	qF4qvFWxua10vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
-	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
-	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
-	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com> <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+In-Reply-To: <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Wed, 24 Jul 2024 22:30:49 -0400
+Message-ID: <CAHB1NagAwSpPzLOa6s9PMPPdJL5dpLUuq=W3t4CWkfLyzgGJxA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, masahiroy@kernel.org, n.schier@avm.de, 
+	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It could lead to error happen because the variable res is not updated if
-the call to sr_share_read_word returns an error. In this particular case
-error code was returned and res stayed uninitialized. Same issue also
-applies to sr_read_reg.
+Hi,
 
-This can be avoided by checking the return value of sr_share_read_word
-and sr_read_reg, and propagating the error if the read operation failed.
+I noticed that you have already merged this patch into the
+mm-nonmm-unstable branch. If I want to continue refining this script,
+should I send a new v2 version or make modifications based on the
+current version?
 
-Found by code review.
+Andrew Morton <akpm@linux-foundation.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=882=
+3=E6=97=A5=E5=91=A8=E4=BA=8C 18:09=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, 23 Jul 2024 05:11:54 -0400 Julian Sun <sunjunchao2870@gmail.com> =
+wrote:
+>
+> > Hi,
+> >
+> > Recently, I saw a patch[1] on the ext4 mailing list regarding
+> > the correction of a macro definition error. Jan mentioned
+> > that "The bug in the macro is a really nasty trap...".
+> > Because existing compilers are unable to detect
+> > unused parameters in macro definitions. This inspired me
+> > to write a script to check for unused parameters in
+> > macro definitions and to run it.
+>
+> Seems a useful contribution thanks.  And a nice changelog!
+>
+> >  scripts/macro_checker.py | 101 +++++++++++++++++++++++++++++++++++++++
+>
+> Makes me wonder who will run this, and why.  Perhaps a few people will
+> run ls and wonder "hey, what's that".  But many people who might have
+> been interested in running this simply won't know about it.
+>
+> "make help | grep check" shows we have a few ad-hoc integrations but I
+> wonder if we would benefit from a top-level `make static-checks'
+> target?
 
-Cc: stable@vger.kernel.org
-Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v4:
-- added a check for sr_read_reg() as suggestions.
-Changes in v3:
-- added Cc stable line as suggestions.
-Changes in v2:
-- modified the subject as suggestions.
----
- drivers/net/usb/sr9700.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
-index 0a662e42ed96..cb7d2f798fb4 100644
---- a/drivers/net/usb/sr9700.c
-+++ b/drivers/net/usb/sr9700.c
-@@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
- 	struct usbnet *dev = netdev_priv(netdev);
- 	__le16 res;
- 	int rc = 0;
-+	int err;
- 
- 	if (phy_id) {
- 		netdev_dbg(netdev, "Only internal phy supported\n");
-@@ -189,11 +190,17 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
- 	if (loc == MII_BMSR) {
- 		u8 value;
- 
--		sr_read_reg(dev, SR_NSR, &value);
-+		err = sr_read_reg(dev, SR_NSR, &value);
-+		if (err < 0)
-+			return err;
-+
- 		if (value & NSR_LINKST)
- 			rc = 1;
- 	}
--	sr_share_read_word(dev, 1, loc, &res);
-+	err = sr_share_read_word(dev, 1, loc, &res);
-+	if (err < 0)
-+		return err;
-+
- 	if (rc == 1)
- 		res = le16_to_cpu(res) | BMSR_LSTATUS;
- 	else
--- 
-2.25.1
-
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
