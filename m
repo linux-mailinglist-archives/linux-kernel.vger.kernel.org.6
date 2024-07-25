@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-261900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B628593BD98
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5835493BD67
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7AFA1C219FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11152282B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F93A1741F5;
-	Thu, 25 Jul 2024 08:03:01 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E3172784;
+	Thu, 25 Jul 2024 07:54:21 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B314171678;
-	Thu, 25 Jul 2024 08:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06515FA72;
+	Thu, 25 Jul 2024 07:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894581; cv=none; b=FDLmmuHONBIBP8MmvwQAzrt/a4523mUKBgrCZSYJ4i2eMuvhwgIo73k0oDBpI7kHSKF2E1bM/qqi1NFQa6NeCgjpggfFOOis4PKw3TmhPRb/gxCFXMGajd6lVnVDkTDAIZcTZHdPuU/ht36eGllk3WwqmQEFonCLtj2cPDZLDzs=
+	t=1721894060; cv=none; b=F45Mc4RrTApMGqTOmpatYTYchafMMJ4asHE3+ei+nmnQSjWMEOSsRqRN2UdIThhpUlfR/HyuiDvBd3fMiZskxmCses3/+MsWtysnPM/piirqc8sms68WDzaFmmGd8/mCO51jiYFOj88GY3+8Nscw2lnSQ7eLGCxfGEPf/17cn+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894581; c=relaxed/simple;
-	bh=pJm0eGj47PP4sVSZ8RsbPyJ1rm5u/FVQfAgFSwim3pA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=LW1OsdQkfSXTJf5zCIPHNudvg4Er+1f5OwvzbWz6Cia5/SU9isO4c5RSbjr6bvUAomyIU+ZEvkq1XRG18G+BYMOKnXRSE55e4hm1f7klVxdNiVAeq8Kk6AOs0hjYXNqUDkJyxh00QO+8xkw6sPGEGJgfZGPV08UX6F069Pqg6d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+	s=arc-20240116; t=1721894060; c=relaxed/simple;
+	bh=EPdastX4Pmv8sg9UqJ3RyMbjyesT9Ro7GxDeZTVWZfc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=MqwblWxDIGeoEz6Nw8N4TroyTq6E1z+VrF8h6J8qqPzoEWvsQGYkaTABCuxa5aszepEsU1v8/mY2a/vNCvQmkoD1m9Qh3gre1PYed2UrzP4cttjCY89cn7FDEiEPvXP7VJplwPkJoY0id+tFdynm2fKBEG66PdSn9zS+LH1kxUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 42C1820050F;
-	Thu, 25 Jul 2024 09:54:16 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 584C61A04CD;
+	Thu, 25 Jul 2024 09:54:17 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0912E200512;
-	Thu, 25 Jul 2024 09:54:16 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 216011A04D6;
+	Thu, 25 Jul 2024 09:54:17 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5EEEC1802183;
-	Thu, 25 Jul 2024 15:54:14 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 860E3180222B;
+	Thu, 25 Jul 2024 15:54:15 +0800 (+08)
 From: Richard Zhu <hongxing.zhu@nxp.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -49,10 +49,12 @@ Cc: hongxing.zhu@nxp.com,
 	linux-kernel@vger.kernel.org,
 	kernel@pengutronix.de,
 	imx@lists.linux.dev
-Subject: [PATCH v3 0/4] Add dbi2 and atu for i.MX8M PCIe EP
-Date: Thu, 25 Jul 2024 15:35:12 +0800
-Message-Id: <1721892916-5782-1-git-send-email-hongxing.zhu@nxp.com>
+Subject: [PATCH v3 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and "atu" for i.MX8M PCIe Endpoint
+Date: Thu, 25 Jul 2024 15:35:13 +0800
+Message-Id: <1721892916-5782-2-git-send-email-hongxing.zhu@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1721892916-5782-1-git-send-email-hongxing.zhu@nxp.com>
+References: <1721892916-5782-1-git-send-email-hongxing.zhu@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,24 +62,62 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-v3 changes:
-- Refine the commit descriptions.
+Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
 
-v2 changes:
-Thanks for Conor's comments.
-- Place the new added properties at the end.
+For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the driver.
+This method is not good.
 
-Ideally, dbi2 and atu base addresses should be fetched from DT.
-Add dbi2 and atu base addresses for i.MX8M PCIe EP here.
+In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
+Frank suggests to fetch the dbi2 and atu from DT directly.
+This commit is preparation to do that for i.MX8M PCIe EP.
 
-[PATCH v3 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and "atu"
-[PATCH v3 2/4] dts: arm64: imx8mq: Add dbi2 and atu reg for i.MX8MQ
-[PATCH v3 3/4] dts: arm64: imx8mp: Add dbi2 and atu reg for i.MX8MP
-[PATCH v3 4/4] dts: arm64: imx8mm: Add dbi2 and atu reg for i.MX8MM
+These changes wouldn't break driver function.
+When "dbi2" and "atu" properties are present, i.MX PCIe driver would
+fetch the according base address from DT directly.
+If only two reg properties are provided, i.MX PCIe driver would falls
+back to the old method.
 
-Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml | 13 +++++++++----
-arch/arm64/boot/dts/freescale/imx8mm.dtsi                    |  8 +++++---
-arch/arm64/boot/dts/freescale/imx8mp.dtsi                    |  7 +++++--
-arch/arm64/boot/dts/freescale/imx8mq.dtsi                    |  8 +++++---
-4 files changed, 24 insertions(+), 12 deletions(-)
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+---
+ .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+index a06f75df8458..84ca12e8b25b 100644
+--- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+@@ -65,12 +65,14 @@ allOf:
+     then:
+       properties:
+         reg:
+-          minItems: 2
+-          maxItems: 2
++          minItems: 4
++          maxItems: 4
+         reg-names:
+           items:
+             - const: dbi
+             - const: addr_space
++            - const: dbi2
++            - const: atu
+ 
+   - if:
+       properties:
+@@ -129,8 +131,11 @@ examples:
+ 
+     pcie_ep: pcie-ep@33800000 {
+       compatible = "fsl,imx8mp-pcie-ep";
+-      reg = <0x33800000 0x000400000>, <0x18000000 0x08000000>;
+-      reg-names = "dbi", "addr_space";
++      reg = <0x33800000 0x100000>,
++            <0x18000000 0x8000000>,
++            <0x33900000 0x100000>,
++            <0x33b00000 0x100000>;
++      reg-names = "dbi", "addr_space", "dbi2", "atu";
+       clocks = <&clk IMX8MP_CLK_HSIO_ROOT>,
+                <&clk IMX8MP_CLK_HSIO_AXI>,
+                <&clk IMX8MP_CLK_PCIE_ROOT>;
+-- 
+2.37.1
+
 
