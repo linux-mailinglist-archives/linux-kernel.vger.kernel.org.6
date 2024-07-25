@@ -1,71 +1,130 @@
-Return-Path: <linux-kernel+bounces-261682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D093BAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEE993BACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E8B1F23291
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F442829D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6A1D299;
-	Thu, 25 Jul 2024 02:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8634CA40;
+	Thu, 25 Jul 2024 02:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+goUH0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9084A6AC0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WDo/GexU"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4278D1103;
+	Thu, 25 Jul 2024 02:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721874483; cv=none; b=hGvcnHnv9gt3GbvNWJ5FRMX80koxQ/S7cdozAmwKwV+cBNHwVHWN1vuyujEda34+diNtHBF9/WZk2wbpUsNRh4haWrOa7aOCmp0UJV+Kp2nAb0+VAAn5ZMe+rRWlc+FutUboW9vvH5J8MEMbjNdamFapCDS+wnRq0BCdl0bgrfQ=
+	t=1721874612; cv=none; b=px8MmZwdnbhO6vVGDm8we9r02OYm2XCNqS8KM0sa8oc7wN7iLkGjXavpul+9z1P5yz1geNZHhioqkoch3APD+Znx/rk037gBLUY78dhhAT27yvnxBX+7sYbQSaMuBfhDYqTXGDXy/ZPQsYA5AHXyxfNXEcpkg05wm7ibbOqofLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721874483; c=relaxed/simple;
-	bh=oQgEv43BvjlKK28svpwUJB/JCTTe8M0XQ4zcDBGE5aY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cGkAIc4EUjyLWeCD4ZTaIodeBgWZdHwBCjel0M8bTsaCtwixIDHcE1WaQk9n1hyl5f+NL8X3FjlvvtL20FN5ZD/ffSlSeGdhlZQAQ61kPV/L8yFbuf/hVstis1gspTPiie5D3ruqpb01uQ4axLnMODfhIeIqHxqB5gdWTmjowXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+goUH0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D4EC32781;
-	Thu, 25 Jul 2024 02:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721874483;
-	bh=oQgEv43BvjlKK28svpwUJB/JCTTe8M0XQ4zcDBGE5aY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r+goUH0sSeeQqlbmHzZAHpxfJZ4UPI5bjb5beOICAyGHFOS1YLPI1gQpsxmo+Z3Wm
-	 LfJUPDcmQfwpYLAp8OxV5plBWIJ1RXwVIxgXRd97YzfJyU8pModWzQhaRlKLfgVb7C
-	 mZ1pd1+f/DZ5T5bbG8RAOPVC0uvALQAnDdgqXNlm6KarjvQcLjK3LNe3tpkTSib9e0
-	 saKutSo+OqgvxknOKHL7wDJsX2AMABOe4c5vX8PyInPcIaqPanowx4pRLduPPAfZv1
-	 tGJxvSz6DA4wMiKMGNz9cgPHhqwWA5KOu2M3K4YHrpjDZDgQ7Q2hlM0RZ/Ip57EVYm
-	 /j7Ycs5Ti56bA==
-Message-ID: <fc034a35-0dd5-4233-91f2-19734bc87559@kernel.org>
-Date: Thu, 25 Jul 2024 10:27:59 +0800
+	s=arc-20240116; t=1721874612; c=relaxed/simple;
+	bh=O8i0WABP/D8cbuRHqibvo0rdzlokK3I0Rgkff/3Fuvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D4Nq08W7BL8cJn6M7DTYjqZcM2u1wvutJ24m0EAcNtrcattx32LhWqkMgOchWa7d/UmCtQyxOPCU6JMhGeBbKoeQGFzNTzOeaNjXtY+Uk+m47jzBYF8/Fv1RZzPW07HuISMo8lENNQLDDK18vYnyCTQYeG0iyoxXOTVCbE2FQr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WDo/GexU; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=3cnS2
+	zlLOTWI1JLQwADS5Z3r5WjUUDAQ8Ha0lgb8yy0=; b=WDo/GexUD3o/e69sI+eAs
+	+2B/woylbLAa23eX0Pu4Bfh7bHQ/wBRBOrNa5nzsv5Ara//4yEE8kVPN3fBBsJ2z
+	gX/hk6pmOnVaRRgRx3aWK0Hgsd/4hjJWi8pwhrpEbQVidQit8K8YBBB/V+hpduGX
+	ASCPMgNv7fMcqOPNF53MQU=
+Received: from localhost.localdomain (unknown [112.97.48.72])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD338WiuKFmBdc3Aw--.17134S2;
+	Thu, 25 Jul 2024 10:29:55 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH v2 1/2] bus: mhi: host: pci_generic: Update the file path for Foxconn SDX55/SDX72
+Date: Thu, 25 Jul 2024 10:29:40 +0800
+Message-Id: <20240725022941.65948-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] libf2fs: add BLKFINISHZONE define if not defined
-To: Wu Bo <bo.wu@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- Wu Bo <wubo.oduw@gmail.com>
-References: <20240724102818.2665047-1-bo.wu@vivo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240724102818.2665047-1-bo.wu@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD338WiuKFmBdc3Aw--.17134S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXr48ZrWUGr1kWw48Jw4ruFg_yoW5Xw1rp3
+	Zavr1UJw4ktrWrKFs7Cw1DCwn3Krs0kry8KasxG342yr15Z3yqqFsrGr12gr1Yvr93Gr1I
+	yF98WFWDCFWDtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi0tCrUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiJQUnZGVOCZhPhgAAsQ
 
-On 2024/7/24 18:28, Wu Bo wrote:
-> BLKFINISHZONE may not defined in old blkzoned.h, and cause build error.
-> 
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
+To separate the images of Foxconn from other vendors, adding a
+new foxconn subfolder under qcom/<platform> for edl image path.
+And delete the fw patch since it's useless for Foxconn devices.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Fixes: bf30a75e6e00 ("bus: mhi: host: Add support for Foxconn SDX72 modems")
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+v2: change the folder path architecture
+---
+ drivers/bus/mhi/host/pci_generic.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Thanks,
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 14a11880bcea..f159a9dd53e7 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -433,8 +433,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+ 
+ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+ 	.name = "foxconn-sdx55",
+-	.fw = "qcom/sdx55m/sbl1.mbn",
+-	.edl = "qcom/sdx55m/edl.mbn",
++	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+ 	.config = &modem_foxconn_sdx55_config,
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+ 	.dma_data_width = 32,
+@@ -444,8 +443,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+ 
+ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+ 	.name = "foxconn-t99w175",
+-	.fw = "qcom/sdx55m/sbl1.mbn",
+-	.edl = "qcom/sdx55m/edl.mbn",
++	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+ 	.config = &modem_foxconn_sdx55_config,
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+ 	.dma_data_width = 32,
+@@ -455,8 +453,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+ 
+ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+ 	.name = "foxconn-dw5930e",
+-	.fw = "qcom/sdx55m/sbl1.mbn",
+-	.edl = "qcom/sdx55m/edl.mbn",
++	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+ 	.config = &modem_foxconn_sdx55_config,
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+ 	.dma_data_width = 32,
+@@ -502,7 +499,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+ 
+ static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
+ 	.name = "foxconn-t99w515",
+-	.edl = "fox/sdx72m/edl.mbn",
++	.edl = "qcom/sdx72m/foxconn/edl.mbn",
+ 	.edl_trigger = true,
+ 	.config = &modem_foxconn_sdx72_config,
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+@@ -513,7 +510,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
+ 
+ static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
+ 	.name = "foxconn-dw5934e",
+-	.edl = "fox/sdx72m/edl.mbn",
++	.edl = "qcom/sdx72m/foxconn/edl.mbn",
+ 	.edl_trigger = true,
+ 	.config = &modem_foxconn_sdx72_config,
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+-- 
+2.25.1
+
 
