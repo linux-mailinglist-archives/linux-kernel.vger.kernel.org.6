@@ -1,175 +1,272 @@
-Return-Path: <linux-kernel+bounces-261759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E32493BBCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB8F93BBD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C05285963
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53207285A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC201C6A4;
-	Thu, 25 Jul 2024 04:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AD51BF40;
+	Thu, 25 Jul 2024 04:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mccDyrD5"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xp55q17U"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791CD17C91;
-	Thu, 25 Jul 2024 04:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA2418C22
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721882574; cv=none; b=FvfN7IE6nEvTUkDDr1k7O3b7kPV/syMFkp0lAPQoe1XORcu0B1rNIWJpSUWXrxfDteqYSoAWx399ntow+pyLYeMJa/j8bneO35NLu/rnk4bmeRLNHlWThZ6VB5ZlPaA+AddkMw+3d2A4r5IdqQCM00TK9r0QJiEVlCp/3GTZZ7E=
+	t=1721882590; cv=none; b=I7DFfas0CE17VbVhEhHx6jqXJXShV8YBmjbDttK2QzSA+vwLeOsuRzazj+oCEvqw4CGzJ0NnzuyLOUTkaQzCTh/rpBFcILZ7kgwbFtEth4sGhdfslPhD9yMRbihfNuYF43Moa/JBTeBj9BBAOoFPXl4KV9Ih7ieUgST+0eepZsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721882574; c=relaxed/simple;
-	bh=jz4m2oY5u4+GI8ZHla+gHQ9Eo4WSDheCjNNKC8IJZFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7Tcj0/pem5aggyzn/SWrHL3AEla3Z0hB0fTF7TACHCVjGvp75Q3Gtni2FqLrOgya12Y1Bjd8x1dk4lAkQeHNw89whF0WTMGVgaxgwZHsHAOGxZrv348emN1f+pX62Lf3p3ifIp+MtvVuY32jGdDsy5XJJTNTeW/pa4PKCWIZ68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mccDyrD5; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6687f2f0986so5329777b3.0;
-        Wed, 24 Jul 2024 21:42:53 -0700 (PDT)
+	s=arc-20240116; t=1721882590; c=relaxed/simple;
+	bh=Cj1OdR8WHmYxJYIiurb013Ums4H2UVNMXpGZF5qHPwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2A9ezW4mV2xMZRfqFM2+xJ/5WKi1LyZV/ZF0LfblsclOhNejZyXnG6SljpBzk5rGJWS/D7qmhMwfGLfEZ+cU8kAXUaXDMuBmDEjHBMxTIAEHgIRt5AQU9GqgmReq4uDkttWY+bFJEbsJtp63ueCRMJ3D+Ntega8gQPjordVn+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xp55q17U; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2e68f5a8so388720b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721882572; x=1722487372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BM0WaX2xBRI+P6wBphQ3Tx8B31SXeSZp7jX6Hq9nAPs=;
-        b=mccDyrD5fX3rw0SQyCW4W9oesUdqF1KxGxH8zi59xoUZb6oSo8OHIE10N8aW6FfUFG
-         /pVOsmqDOe/fjz1ruEjDa+WzvBueg5IRG4CCz3RvULI2F3eTHvjH/R7bXGemYwhaOJN3
-         xpkJBjs+VAcHEZAKvoz0brD1ia9E2tDCydly44hwTQpEnQDuKWDJmvNYWMz1BYZn8T9i
-         NyA9ie/INfPoopI2Gc9b49z1vEqq8hvKDBvLEBfAP6855d8O823kWJxyJkTHWKDHB6re
-         +asQmoi03WMyDNRjRLmStTtSYzAmsfYqpPilc8Xd0QMq2+xt466tPgdDdQ28+hupf7Zs
-         0eVQ==
+        d=linaro.org; s=google; t=1721882588; x=1722487388; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kforIxrR32hXGERHtjq0u+nCqy7s7oB2GTNLcgTbBB0=;
+        b=Xp55q17Um8XJD7AaKJcCEcRZQHIH2dXjhDf5kpDepXolIUme281LKQ7INimi/SO8hj
+         5XbuoZN5wkJZFv2dHzSXK1hKgpL1/aY+HfoTyIRw8RgdXlM4HMtRj4E9590gvMF0GZR4
+         q+TcPUwpqAzIEQvXBO7ONp1gxYnZQc2cXiRsEk1h1435XPc+YcM7oMpGGpgabJW6lCSU
+         SkyZP3ItyZ55EdkxosbWWgOlrwiGzDvmAtrAAxwLOxM5KI+yQ02exHBZ4nCx/01JilSd
+         BDiIqHSsNAmnV/rD+k84j9+EaSA4sezu4KZq+K1YcwY4tasO1CYv1vEfEG27BU9badNu
+         spbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721882572; x=1722487372;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BM0WaX2xBRI+P6wBphQ3Tx8B31SXeSZp7jX6Hq9nAPs=;
-        b=IxV8BBciN2fDTPevxngYoAN5BElbFgvyBT0/Wo75wyHrFkqK4JuDWYAYJ1f62oNQcL
-         ph4mSGGXG/TMqpOGDHzGhOneELh805JoCqtreH8vss/cdKMJxfYE5n4cRYvUFjAOgO0O
-         5waw7NdBzVplSWlEM0CIglz7FNEUIzpSrLzpV7YjnCiEVtII+MXfvWFdTzawL6Bytl0Y
-         ukHmEQYJsVugN9uKjCra97DgQX7p2moufDyQ8dFdOflo5k6ONU0mS5ZAKCP/dGHA9aw9
-         x9X1zmUi5v71LlpkS8MjT2dwQdimJPnXlFU58eZ3q9DtKudZZsLBhIAPavImb4yTIeZB
-         7Yww==
-X-Forwarded-Encrypted: i=1; AJvYcCXyJvqjIp9ccT++JByphmAWjWYhn5qYKeu7zLWSxfMwPrU63GlTa4Gxs1Wg2PFHYQGii4Z1nUwLFriXbOhvjFWgn1UoCgEKQrFBGc8xrpvBFcK2SOYGrMerAMFHEI4BcQFoNTQozm8Nwf329hVfRyzrBHn5XoUvE3UPIHWhERSI
-X-Gm-Message-State: AOJu0Yx9SAAihaz6RnmkTpZdQzjwjrsqgDtbHhdbvhq2lcfZOOwp+qLN
-	QUjnjEsW70EB4tKv6bdSeyXEfu1diHKgYl1Df2wmM76LzCwWZ6SI
-X-Google-Smtp-Source: AGHT+IFNQ4DeNsUdj+8WTej5DpL+p2nkyzhkb6sKbcXGUsQGssDiAK7pUORfI4OXAPspm38fqIVLbw==
-X-Received: by 2002:a0d:e701:0:b0:64b:69f0:f8f2 with SMTP id 00721157ae682-675b51296femr7324417b3.3.1721882572253;
-        Wed, 24 Jul 2024 21:42:52 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8749cdsm356545b3a.152.2024.07.24.21.42.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 21:42:51 -0700 (PDT)
-Message-ID: <32be761b-cebc-48e4-a36f-bbf90654df82@gmail.com>
-Date: Wed, 24 Jul 2024 21:42:48 -0700
+        d=1e100.net; s=20230601; t=1721882588; x=1722487388;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kforIxrR32hXGERHtjq0u+nCqy7s7oB2GTNLcgTbBB0=;
+        b=Ay712LcUcMQatEtB7I/AGnPK1H7FNVcNZ2291xzwPCwg95fB3X0JjOcvUQe1bc81u/
+         JG3z2kX8LSeyBVkGD/9lkTrk5iBkgZDyESEI728mhjKRYX58I39rjm5cG+63tcBmyYJG
+         ciUAUvgM/mjk837iYF5SlU1RBmGHmXMJVDASbw5IPWHQ3O6FCd324HXHVIwaZ0lvw+LX
+         5Gv5+vWbsjJqMokA+ApM6vKzhQTVcFYOrUwjMW8UP0nN6WfmJa6aarKU4AKcoryQTLaF
+         jhqM4DzBHPp40RWH4KV1fLyvWqCAAKVdc1mqTeBvybG6qqFphRtHtzoe4NQdKSdbYX5U
+         Shcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmN2fhjltV2WEmBVf0fdL7GfrCkKq0l0Y60VMCt6+TB2bv7xQh/d1farqMNKE+5t7rbnflGMTxEGTFjoje24s0vX8XzKuJHvkU8oL7
+X-Gm-Message-State: AOJu0YyWiAqia2sjPc9wmc22g7XmXiUEiv4BPictIOeJ+NU74QZ7z5sD
+	8vUClAxbmCNfk6a//KXLZ976WYHBYt4WBkY2WwfjzydrGpsIqvZua8M6odcDxA==
+X-Google-Smtp-Source: AGHT+IHejSYglU67gOhhrkzZa6hhL8uC7FSKZRpllYkdugTHOn/pFSyK/PB4UJ0WAa6BXbBcEvzKig==
+X-Received: by 2002:a05:6a21:2d08:b0:1c2:8dcf:1b8f with SMTP id adf61e73a8af0-1c47b16661emr867852637.7.1721882588416;
+        Wed, 24 Jul 2024 21:43:08 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead71592bsm358996b3a.86.2024.07.24.21.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 21:43:08 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:13:02 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 06/12] PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG,
+ INTR2_CPU_BASE offsets SoC-specific
+Message-ID: <20240725044302.GG2317@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-7-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
- UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
- gregkh@linuxfoundation.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mcgrof@kernel.org, netdev@vger.kernel.org,
- pabeni@redhat.com, woojung.huh@microchip.com
-References: <20240724145458.440023-1-jtornosm@redhat.com>
- <20240724161020.442958-1-jtornosm@redhat.com>
- <8a267e73-1acc-480f-a9b3-6c4517ba317a@lunn.ch>
- <v6uovbn7ld3vlym65twtcvximgudddgvvhsh6heicbprcs5ii3@nernzyc5vu3i>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <v6uovbn7ld3vlym65twtcvximgudddgvvhsh6heicbprcs5ii3@nernzyc5vu3i>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716213131.6036-7-james.quinlan@broadcom.com>
+
+On Tue, Jul 16, 2024 at 05:31:21PM -0400, Jim Quinlan wrote:
+> Our HW design has again changed a register offset which used to be standard
+
+Changed for which SoC? Please mention that this is a preparatory work.
+
+> for all Broadcom SOCs with PCIe cores.  This difference is now reconciled
+> for the registers HARD_DEBUG and INTR2_CPU_BASE.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+
+With that,
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 39 ++++++++++++++++-----------
+>  1 file changed, 24 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 4dc2ff7f3167..073d790d97b7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -122,7 +122,6 @@
+>  #define PCIE_MEM_WIN0_LIMIT_HI(win)	\
+>  		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI + ((win) * 8)
+>  
+> -#define PCIE_MISC_HARD_PCIE_HARD_DEBUG					0x4204
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK	0x2
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK		0x200000
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x08000000
+> @@ -131,9 +130,9 @@
+>  	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
+>  	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
+>  
+> -#define PCIE_INTR2_CPU_BASE		0x4300
+>  #define PCIE_MSI_INTR2_BASE		0x4500
+> -/* Offsets from PCIE_INTR2_CPU_BASE and PCIE_MSI_INTR2_BASE */
+> +
+> +/* Offsets from INTR2_CPU and MSI_INTR2 BASE offsets */
+>  #define  MSI_INT_STATUS			0x0
+>  #define  MSI_INT_CLR			0x8
+>  #define  MSI_INT_MASK_SET		0x10
+> @@ -184,9 +183,11 @@
+>  #define SSC_STATUS_PLL_LOCK_MASK	0x800
+>  #define PCIE_BRCM_MAX_MEMC		3
+>  
+> -#define IDX_ADDR(pcie)			(pcie->reg_offsets[EXT_CFG_INDEX])
+> -#define DATA_ADDR(pcie)			(pcie->reg_offsets[EXT_CFG_DATA])
+> -#define PCIE_RGR1_SW_INIT_1(pcie)	(pcie->reg_offsets[RGR1_SW_INIT_1])
+> +#define IDX_ADDR(pcie)			((pcie)->reg_offsets[EXT_CFG_INDEX])
+> +#define DATA_ADDR(pcie)			((pcie)->reg_offsets[EXT_CFG_DATA])
+> +#define PCIE_RGR1_SW_INIT_1(pcie)	((pcie)->reg_offsets[RGR1_SW_INIT_1])
+> +#define HARD_DEBUG(pcie)		((pcie)->reg_offsets[PCIE_HARD_DEBUG])
+> +#define INTR2_CPU_BASE(pcie)		((pcie)->reg_offsets[PCIE_INTR2_CPU_BASE])
+>  
+>  /* Rescal registers */
+>  #define PCIE_DVT_PMU_PCIE_PHY_CTRL				0xc700
+> @@ -205,6 +206,8 @@ enum {
+>  	RGR1_SW_INIT_1,
+>  	EXT_CFG_INDEX,
+>  	EXT_CFG_DATA,
+> +	PCIE_HARD_DEBUG,
+> +	PCIE_INTR2_CPU_BASE,
+>  };
+>  
+>  enum {
+> @@ -651,7 +654,7 @@ static int brcm_pcie_enable_msi(struct brcm_pcie *pcie)
+>  	BUILD_BUG_ON(BRCM_INT_PCI_MSI_LEGACY_NR > BRCM_INT_PCI_MSI_NR);
+>  
+>  	if (msi->legacy) {
+> -		msi->intr_base = msi->base + PCIE_INTR2_CPU_BASE;
+> +		msi->intr_base = msi->base + INTR2_CPU_BASE(pcie);
+>  		msi->nr = BRCM_INT_PCI_MSI_LEGACY_NR;
+>  		msi->legacy_shift = 24;
+>  	} else {
+> @@ -898,12 +901,12 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	/* Take the bridge out of reset */
+>  	pcie->bridge_sw_init_set(pcie, 0);
+>  
+> -	tmp = readl(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	tmp = readl(base + HARD_DEBUG(pcie));
+>  	if (is_bmips(pcie))
+>  		tmp &= ~PCIE_BMIPS_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK;
+>  	else
+>  		tmp &= ~PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK;
+> -	writel(tmp, base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	writel(tmp, base + HARD_DEBUG(pcie));
+>  	/* Wait for SerDes to be stable */
+>  	usleep_range(100, 200);
+>  
+> @@ -1072,7 +1075,7 @@ static void brcm_config_clkreq(struct brcm_pcie *pcie)
+>  	}
+>  
+>  	/* Start out assuming safe mode (both mode bits cleared) */
+> -	clkreq_cntl = readl(pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	clkreq_cntl = readl(pcie->base + HARD_DEBUG(pcie));
+>  	clkreq_cntl &= ~PCIE_CLKREQ_MASK;
+>  
+>  	if (strcmp(mode, "no-l1ss") == 0) {
+> @@ -1115,7 +1118,7 @@ static void brcm_config_clkreq(struct brcm_pcie *pcie)
+>  			dev_err(pcie->dev, err_msg);
+>  		mode = "safe";
+>  	}
+> -	writel(clkreq_cntl, pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	writel(clkreq_cntl, pcie->base + HARD_DEBUG(pcie));
+>  
+>  	dev_info(pcie->dev, "clkreq-mode set to %s\n", mode);
+>  }
+> @@ -1337,9 +1340,9 @@ static void brcm_pcie_turn_off(struct brcm_pcie *pcie)
+>  	writel(tmp, base + PCIE_MISC_PCIE_CTRL);
+>  
+>  	/* Turn off SerDes */
+> -	tmp = readl(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	tmp = readl(base + HARD_DEBUG(pcie));
+>  	u32p_replace_bits(&tmp, 1, PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+> -	writel(tmp, base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	writel(tmp, base + HARD_DEBUG(pcie));
+>  
+>  	/* Shutdown PCIe bridge */
+>  	pcie->bridge_sw_init_set(pcie, 1);
+> @@ -1425,9 +1428,9 @@ static int brcm_pcie_resume_noirq(struct device *dev)
+>  	pcie->bridge_sw_init_set(pcie, 0);
+>  
+>  	/* SERDES_IDDQ = 0 */
+> -	tmp = readl(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	tmp = readl(base + HARD_DEBUG(pcie));
+>  	u32p_replace_bits(&tmp, 0, PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+> -	writel(tmp, base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	writel(tmp, base + HARD_DEBUG(pcie));
+>  
+>  	/* wait for serdes to be stable */
+>  	udelay(100);
+> @@ -1499,12 +1502,16 @@ static const int pcie_offsets[] = {
+>  	[RGR1_SW_INIT_1] = 0x9210,
+>  	[EXT_CFG_INDEX]  = 0x9000,
+>  	[EXT_CFG_DATA]   = 0x9004,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
+>  
+>  static const int pcie_offsets_bmips_7425[] = {
+>  	[RGR1_SW_INIT_1] = 0x8010,
+>  	[EXT_CFG_INDEX]  = 0x8300,
+>  	[EXT_CFG_DATA]   = 0x8304,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
+>  
+>  static const struct pcie_cfg_data generic_cfg = {
+> @@ -1539,6 +1546,8 @@ static const int pcie_offset_bcm7278[] = {
+>  	[RGR1_SW_INIT_1] = 0xc010,
+>  	[EXT_CFG_INDEX] = 0x9000,
+>  	[EXT_CFG_DATA] = 0x9004,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
+>  
+>  static const struct pcie_cfg_data bcm7278_cfg = {
+> -- 
+> 2.17.1
+> 
 
 
 
-On 7/24/2024 9:25 PM, Lucas De Marchi wrote:
-> On Thu, Jul 25, 2024 at 12:57:05AM GMT, Andrew Lunn wrote:
->>> For the commented case, I have included only one phy because it is 
->>> the hardware
->>> that I have, but other phy devices (modules) are possible and they 
->>> can be some.
->>
->> So this the whole whacker a mole problem. It works for you but fails
->> for 99% of users. How is this helping us?
-> 
-> no, this is the first instance that was found/added.
-> 
-> if you declare a softdep what happens is that the dep is loaded first
-> (needed or not) and your module is loaded after that
-> 
-> if you declare a weakdep, you are just instructing the tools that the
-> module may or may not be needed.  Any module today that does a
-> request_module("foo") could be a candidate to migrate from
-> MODULE_SOFTDEP("pre: foo") to the new weakdep, as long as it handles
-> properly the module being loaded ondemand as opposed to using
-> request_module() to just synchronize the module being loaded.
-> 
->>
->> Maybe a better solution is to first build an initramfs with
->> everything, plus the kitchen sink. Boot it, and then look at what has
->> been loaded in order to get the rootfs mounted. Then update the
->> initramfs with just what is needed? That should be pretty generic,
->> with throw out networking ig NFS root is not used, just load JFFS2 and
->> a NAND driver if it was used for the rootfs, etc.
-> 
-> that works for development systems or if you are fine tuning it for each
-> system you have. It doesn't work for a generic distro with the kitchen
-> sink of modules and still trying to minimize the initrd without end user
-> intervention. So it works for 99% of users.
-
-OK, but 'config USB_LAN78XX' does have a number of 'select' meaning 
-those are hard functional dependencies, and so those should be more than 
-a hint that these modules are necessary. Why should we encode that 
-information twice: once in Kconfig and another time within the module .c 
-file itself? Cannot we have better tooling to help build an initramfs 
-which does include everything that has been selected?
 -- 
-Florian
+மணிவண்ணன் சதாசிவம்
 
