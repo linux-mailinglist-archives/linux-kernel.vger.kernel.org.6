@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-262524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1734693C833
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916D393C821
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D021C21741
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177FA1C212C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398122D05E;
-	Thu, 25 Jul 2024 18:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D0F19DFA5;
+	Thu, 25 Jul 2024 18:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aU6ZdjmL"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TYeIIYhy"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05561CFBE;
-	Thu, 25 Jul 2024 18:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C393763C7
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931307; cv=none; b=IL9Ye3RPAEXbRF5FFgG9zIRd4iluPWt0x8aGXoYa/+9Gl3bFjHjUMbvnnBPo9yn6rFc7zGwgYDac/C0+jmpDi5DjY88Jg/toTgFWwdVuU2fLbyEQv/KU21PiJEXcIffDVd83qCM2Q7bhdW/ECrhvzNwYtmoAuCOF5KxGcyKqQds=
+	t=1721930877; cv=none; b=EqTzU4esl9G07dRjq0sG/dU0uq9mcKttpG5PMeUKzcBerZX/VNRpmLSvtALIHk5owFWlWP2DIiy/U8IJXDK6JDZvf7PeOltrfagDGEZkyKE8dZVt/mx3y6208C7i9ACBGdrlkTTWfcbrmN8xDHV/I0oelVDI/w69yi7yrxjcaZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931307; c=relaxed/simple;
-	bh=f9oPIuuZfcma+zZ7cmW+c4KNs72hYlD1U0n1FbGpWQk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=J8FRLeXnwVfwN+Ynk9yUSul+hWc0C6vAhZIKABLqmRjJNXQgP8Ega1lLkexlku5CylnEMDsgH/7qvHyGKqAlzkpxL1qoqkLA48GOF5rVdU7dKoDUuR3uilvPNDKh5m6zspaUNfmXrj2B0U0yNCnMIQ/vX/3esOvAlHKQ039Qz+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aU6ZdjmL; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.192.84] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 051F93F22D;
-	Thu, 25 Jul 2024 18:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721930791;
-	bh=kjl8LMrfWr6rVujED62zhlYN6A3G3U9WrClP7RazZas=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
-	b=aU6ZdjmLY1xlMQP7IAuRuZSXPB8gEpXmlsVL7xhv+xhWP8eeo0o51eFD97kqCtlo2
-	 XZbvUTbSBwRTxZXADHrX4qIlXbrwxBmqpFj3wgKi2HPk6xSHbJSLhjqEu3ybV850oF
-	 Dzm3vy7853NEb2SR50RJuRUTaRvCbhBJsVbMO1N09ztcoHJAglPGv3ZKO8cHhhzKkZ
-	 jpWxUYmATij1I43tqb/3uJHRiHweyH7T5KYUmLBU6x2slmU10Wx9qLp1y9tv1B2BXA
-	 OMz8d8POusroUChpSgZcC14G4o9Fr1DxiIxG/z+b8BvYcblZ6+YNkLkScFCn0dP0me
-	 k/C4VJzSfKFuw==
-Message-ID: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-Date: Thu, 25 Jul 2024 11:06:28 -0700
+	s=arc-20240116; t=1721930877; c=relaxed/simple;
+	bh=BWXy71ogJASeYD6YU2Jpukh49PfrQil0GPHkRalsh24=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EzNBoQOjlLokpPEtx18GUBzBGj8h6bvqRAN7tjI21YoLQ8ivJ2oJjzudkaKfcEUfLfrNqrCuY8Uy85PGRzNMpHR7EFo/MPAPV3NN3bfHTwmAYRMSKcREK+RqKasoxlaIa3Q/xGVdMCM5d71i7W/lb5nV4082A3aMGeiltfJ7dA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TYeIIYhy; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cb4d02f34cso136273a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721930875; x=1722535675; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8LHpo7icgPXpVB/A3qaYa/kb3/He/pbNang3awxNWGA=;
+        b=TYeIIYhyjcltni4hZtA+/k1slbtu9INJtNaBYJ6Os2vUzapD1d416nnmtN7A2us93k
+         W1x63CL7eUVqB6Awcx3z5URFOvsNFRnk4YYxVmBh5BcsEfZTqIQEffloikLKeMK5yNUR
+         4IbykZEDRnqIXPFBBFhal2IDrdjxCmAFJlP35p+tLfMSq2H+bgqv/mvnbt+r0U2wqru4
+         fcZS1w2TYrKN0Coo7wZxkOWN1wLPBc8yShlnVYxBHzEDPjzGmfZtc4aaSsx/NAVzS3/Q
+         h/bcbKmim0pPNvCQBeWM3socxK+cVp2lQG5P1bT/Z/9ai75RhaKAWNA+Z6W9zuzCtdmw
+         HGNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721930875; x=1722535675;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8LHpo7icgPXpVB/A3qaYa/kb3/He/pbNang3awxNWGA=;
+        b=A+WRYk9JZlLLHTaPCIl69j4YsxCCBCAAz8S/fPh4SgzJt9vshKBTFZlkRFLD6aLEkf
+         tgjePLFJZbmi+DZlAveBgRyvkAMZ7AOb0PQqKf0S+wVPaMED5LfBCToYaEALLl4i1jTL
+         KfE/wzajSoNiAQOXqv6kJdGe8WKbSf+8aypMFQeTN9o934N9Tl+eQwgNod8GyX4+q1C+
+         h1U7DXFZuBPvo4VspXtbPwFU+TfwuDMkfguVVy7+NRPfcJqlpG16ns98HEBPOxY/OWy+
+         Ypy9FtGmNDN2IFhnkCbd7AORblaqbpTCeV2ISMp3/fFRl2F+bWL2CyXKrulqlLrVWjhV
+         qCJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SET+8U7X8Oj6WCC6GkaRAvs8VxrV7ecjgXzRaFCegfCwP1LCadYvAGE7NZS0iZWlQs6kK3k4XCZ3GGzBGAgXDrUUpyq7bHTcL2lq
+X-Gm-Message-State: AOJu0YxbMnJSKTSqRATF971iyUQqR5j2CQito0kIBTfpe0mmHyAyZI5L
+	wN6EtvMH1hDGKsBcmifL7YTXkgIxjMS8XqP+QfvRnRaaTj9sCRY1tJaJup2lkiCZwjY7PCTeiL3
+	8hA==
+X-Google-Smtp-Source: AGHT+IF7zMLJuphWTLkC+nevqZK7ixm1Yql8ScY0ucZbb06AZigHjX0DHxi+uHSzp+K6lZveDOipKORXTpI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:1786:b0:2c9:967d:94a4 with SMTP id
+ 98e67ed59e1d1-2cf2ede0296mr5153a91.5.1721930874905; Thu, 25 Jul 2024 11:07:54
+ -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:07:53 -0700
+In-Reply-To: <203755ada291a1366df78c75c57585aff06f30c6.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] AppArmor updates for 6.11-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKLM <linux-kernel@vger.kernel.org>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Content-Language: en-US
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-12-seanjc@google.com>
+ <dc19d74e25b9e7e42c693a13b6f98565fb799734.camel@redhat.com>
+ <ZoxBV6Ihub8eaVAy@google.com> <203755ada291a1366df78c75c57585aff06f30c6.camel@redhat.com>
+Message-ID: <ZqKUeUQ3BMYgBNUn@google.com>
+Subject: Re: [PATCH v2 11/49] KVM: x86: Disallow KVM_CAP_X86_DISABLE_EXITS
+ after vCPU creation
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Linus,
+On Wed, Jul 24, 2024, Maxim Levitsky wrote:
+> On Mon, 2024-07-08 at 19:43 +0000, Sean Christopherson wrote:
+> > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > > > Reject KVM_CAP_X86_DISABLE_EXITS if vCPUs have been created, as disabling
+> > > > PAUSE/MWAIT/HLT exits after vCPUs have been created is broken and useless,
+> > > > e.g. except for PAUSE on SVM, the relevant intercepts aren't updated after
+> > > > vCPU creation.  vCPUs may also end up with an inconsistent configuration
+> > > > if exits are disabled between creation of multiple vCPUs.
+> > > 
+> > > Hi,
+> > > 
+> > > I am not sure that PAUSE intercepts are updated either, I wasn't able to find a code
+> > > that does this.
+> > > 
+> > > I agree with this change, but note that there was some talk on the mailing
+> > > list to allow to selectively disable VM exits (e.g PAUSE, MWAIT, ...) only on
+> > > some vCPUs, based on the claim that some vCPUs might run RT tasks, while some
+> > > might be housekeeping.  I haven't followed those discussions closely.
+> > 
+> > This change is actually pulled from that series[*].  IIRC, v1 of that series
+> > didn't close the VM-scoped hole, and the overall code was much more complex as
+> > a result.
+> > 
+> > [*] https://lore.kernel.org/all/20230121020738.2973-2-kechenl@nvidia.com
+> > 
+> 
+> Hi,
+> Thanks for the pointer, I searched for this patch series in many places but I
+> couldn't find it.
+> Any idea what happened with this patch series btw?
 
-I know this is running extremely late so I have only included bug fixes
-and a few small cleanups.
-
-In particular the cleanup
-   optimization: try to avoid refing the label in apparmor_file_open
-is nice to have for scaling on large systems, as it avoids take a ref count when
-it isn't necessary. For the file open test resulting in
-
-   kernel test robot noticed a 93.1% improvement of will-it-scale.per_process_ops on:
-
-
-These patches have all been merge tested against your tree as of
-this morning and regression tested against your tree as of yesterday.
-
-thanks
-- john
-
-
-
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
-
-for you to fetch changes up to e0ff0cff1f6cdce0aa596aac04129893201c4162:
-
-   apparmor: unpack transition table if dfa is not present (2024-07-24 11:15:06 -0700)
-
-----------------------------------------------------------------
-apparmor-pr-2024-07-24 PR 2024-07-25
-
-+ Cleanups
-       - optimization: try to avoid refing the label in apparmor_file_open
-       - remove useless static inline function is_deleted
-       - use kvfree_sensitive to free data->data
-       - fix typo in kernel doc
-
-+ Bug fixes
-       - unpack transition table if dfa is not present
-       - test: add MODULE_DESCRIPTION()
-       - take nosymfollow flag into account
-       - fix possible NULL pointer dereference
-       - fix null pointer deref when receiving skb during sock creation
-
-----------------------------------------------------------------
-Alexander Mikhalitsyn (1):
-       apparmor: take nosymfollow flag into account
-
-Christian Göttsche (1):
-       apparmor: fix typo in kernel doc
-
-Colin Ian King (1):
-       apparmor: remove useless static inline function is_deleted
-
-Fedor Pchelkin (1):
-       apparmor: use kvfree_sensitive to free data->data
-
-Georgia Garcia (1):
-       apparmor: unpack transition table if dfa is not present
-
-Jeff Johnson (1):
-       apparmor: test: add MODULE_DESCRIPTION()
-
-Leesoo Ahn (1):
-       apparmor: fix possible NULL pointer dereference
-
-Mateusz Guzik (1):
-       apparmor: try to avoid refing the label in apparmor_file_open
-
-Xiao Liang (1):
-       apparmor: Fix null pointer deref when receiving skb during sock creation
-
-  security/apparmor/apparmorfs.c         |  4 ++++
-  security/apparmor/file.c               | 13 ----------
-  security/apparmor/include/cred.h       | 20 ++++++++++++++++
-  security/apparmor/lsm.c                | 14 ++++++++---
-  security/apparmor/mount.c              |  2 ++
-  security/apparmor/policy.c             |  2 +-
-  security/apparmor/policy_unpack.c      | 43 ++++++++++++++++++++--------------
-  security/apparmor/policy_unpack_test.c |  1 +
-  8 files changed, 65 insertions(+), 34 deletions(-)
-
+Nope.  IIRC, v6 was close to being ready and only had a few cosmetic issues, but
+the author never posted a v7.
 
