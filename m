@@ -1,86 +1,192 @@
-Return-Path: <linux-kernel+bounces-262267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B19193C343
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FEF93C348
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5EC41F228A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D006283909
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107A1198A1D;
-	Thu, 25 Jul 2024 13:47:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FFB19CCEC;
+	Thu, 25 Jul 2024 13:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Zz+UjS"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381391DA4D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FD31DA4D;
+	Thu, 25 Jul 2024 13:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721915225; cv=none; b=eOYvY3FdzCnNMYg6sBp0Kpsddrz2Z84KFdW/ka/KhqsaUz5gYHV35QXoIjzSiNq9t4R9v9prY7YhUC1dkOQSKpH9GHRrfeA4/GQT6igX0rtZWEuNPPazvrG0Y0UOIhasA2ImjBWheM4CT7q+uNgXP21XRAxT5sZLeJomWKlXU0I=
+	t=1721915287; cv=none; b=lDGvjbjuxQeVgdkwRo9M5yHieLipsCBmK5Lm6vA2nc/X8ACkjPGNChA8rh454RSTB7keDUAt0scYmjxa29myqBUe3Bz0cNb7LXzCOVwe8bRnTx88A5Egi/kg1eb1kVrVgO6Ian0exFacmw6X323ygQUkq588naOicowW7uquBGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721915225; c=relaxed/simple;
-	bh=6lhdpxEv1dbuBcxLgSuZikoYhDXPrBvzkFTP5pxuDGY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nhxGwubhyZgoWbsj8jLm4ppQPkqU66A5fGEbaTY6fah2baEbwo4gYFdTEgQuHy86mM0byds848SRtZ4kqT116Jodbqi1hGU4WJNw2Ag7/4ugxNpklyjRE7bY1PcaZFuBL6MYEsjbExeFk+VdkP9oWijWzFzfobq/r+DSAiK/yK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39a16e61586so8416995ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:47:03 -0700 (PDT)
+	s=arc-20240116; t=1721915287; c=relaxed/simple;
+	bh=7Sv6OCEzzkgx+3bkiIC0oHCZE/eFdrysxGn/aVTxDgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YIF8qn2AV/9LfWvy7gG4+HMCWPeVDFqLSuxh5rlfmS/M6Hb0GX0fd1lqnIpGKUa3tDFG5rHe6SRByMefIo+I+CLpiro6QaRxt2fkH1gcBOkpoZp32O8Vo5T7Cso1c5ahz+OBq1uFm6MPncGomThya9vXjxQTjhzex+71nll/ng0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Zz+UjS; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd69e44596so7270445ad.1;
+        Thu, 25 Jul 2024 06:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721915285; x=1722520085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D36avothTiN26DEXRrwl8vL9+l9JWVjxZcAnqb0lUtE=;
+        b=d0Zz+UjSHKvdNFSolbR0RMPaFv1t683Fh9sq/H7h+nf15RcgB3LDaS8MkT3Kn43ZOR
+         nRmfjXrQvyfcbRNo3ajZ1p8aHyToj4tbV4uNNgE1Vq0jl4A57zVDFVSivMe0/Td6co9A
+         5fbCjjmc//RUJxBOdy/NQOz9AQjilx8rLN6SYTy8pgmJqGZ5B1pIB5WbVQBBvtBVWZZ9
+         ofUTmmeJVhpPFJgergA1GOx0uafBJmEYk/AB6wkKaMI7vlSraDPA5/aEDaVoWcw3y0Oa
+         cSz82lkccOHBc1Q7Q5yCUMYoZL5tFnOhp3avZqU5d2SExxWQm9UludKTU9nupSW245Lo
+         qeiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721915223; x=1722520023;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pRB44E2FRoRsJg3xXm/Ek83inkpMoY+QcSWe8Z4/FyM=;
-        b=GXpRlbLTIMHvFkHgKantdzAmzHQv/QMnbFheCljC2uXfdrkajYd0uT2NDtJCDgB3UD
-         /SfnJQp6gJXaD/2/1rhTEyhnDuoJ5ipxFvivwMRVsnPWxrfk4Z0Dq+yyGZaAyySru8tJ
-         /f0n2/+X7oSmOMq2bubcT+6hvuJxwONiinC/lzg9m/RHv5POJ9nkbApbNdCeJNTIQL7o
-         Stzof/RWbB2e4cGHG/6RhTgAyM+Li3iyKoTqgP8eFpon6CsPDkWomDfJ77GMs6HE19lK
-         s8BNpz0Snk55ZalwY5Z6F1NWCsC8C5em9oyF1jtA1bg9aM5EXVS2hEe0SeGV68A7e8jq
-         Pubw==
-X-Gm-Message-State: AOJu0YxlcPHm3ujA+Me3heHslh2rlAiEMKLylqDomra3LrbkqlrRftPL
-	JvxJb8SdjeGei+leV2NJ4C8MDKy9yeBl6J7oYhDX635tg2ijKueJuEagALCB/jrzmR3LK8JDGvw
-	XDesEBmZmeXd2pXsbKbovJdQrZ20b6wDrn8k7fOs+LBRpHtg7pF3QA6A=
-X-Google-Smtp-Source: AGHT+IGGF4HCh9W7h4GtLdhUIYh9Okoa+3xH9w5BUTmatluNWJYMOSOiOkHc+zN9gPD5oyT+D2um4AnuVxLkcCx9jEzT4ls0szWY
+        d=1e100.net; s=20230601; t=1721915285; x=1722520085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D36avothTiN26DEXRrwl8vL9+l9JWVjxZcAnqb0lUtE=;
+        b=R2lYqtFTO26VG5tcW5Ly12ep08bcW5jfYM8t37+kLSEa3a2V3UbvN7D1lM5zsVwd74
+         PGcFugpgpRHTcFKTWIqcVEDd34xi8dZLcWa8FMZwyMlCds5hrCWg1ZxtD5kOJak1Jz0g
+         ecU2op2wzdrey8PNwkx9ANXPO4MENKBVLokm1AvMY240pqdZfAXYJR1YdiPjgxd4Kn8z
+         Xu13rrZGnBePZMoTgWeR5oKo1LT7GWpfvefFSAR7qywqc1kInu/7kZ1p00LYPNC3Qcmk
+         ygD9KDoACkOPq1ONY2oQZO1XjPM5n1fgMqbnPF0E5p5xtS/teVU8h2wfeQd4jT1Jd+3j
+         SHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVT8S11Rh1/RKdlUfG1VKHCuH+4BZakdFa+m7KpmemoMJLYwDIKe/6gSYc8LStjkn6tRl5xExlC3pyNhQEjoe7NI0RClhidJliwRAsHiZCN2wBhi54tKmDE240b1F6oSnWKY0Fo+sjrQPbFOKHbGwVwNadQh5CVxKQEor3R
+X-Gm-Message-State: AOJu0Yzduaw/ANgJTxC1TxCo3kcTspToAXcjq/ylcgvOGE66X/2KFmkC
+	oUCrRsIVRxkc/g9dZibi7MNQq5gA1HQVR1std3zHzkMjsBg2z18Y
+X-Google-Smtp-Source: AGHT+IHrGj4i8av4Df9LjTSzxkl4RLlmaLnBdbHXQEJCzMcaacwmT4UIE6ho2KCbU2sqs1FU8CfR0Q==
+X-Received: by 2002:a17:902:dacc:b0:1f9:b19c:2e3b with SMTP id d9443c01a7336-1fdd6d9ca95mr91682575ad.15.1721915284726;
+        Thu, 25 Jul 2024 06:48:04 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ca8fd5sm14309735ad.64.2024.07.25.06.48.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 25 Jul 2024 06:48:04 -0700 (PDT)
+From: Yunseong Kim <yskelg@gmail.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v2] Bluetooth: hci_core: fix suspicious RCU usage in hci_conn_drop()
+Date: Thu, 25 Jul 2024 22:47:42 +0900
+Message-ID: <20240725134741.27281-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3015:b0:4c0:9a3e:c259 with SMTP id
- 8926c6da1cb9f-4c29c211258mr89928173.5.1721915223349; Thu, 25 Jul 2024
- 06:47:03 -0700 (PDT)
-Date: Thu, 25 Jul 2024 06:47:03 -0700
-In-Reply-To: <20240725131923.3802594-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000038afd8061e12a12c@google.com>
-Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Protection from the queuing operation is achieved with an RCU read lock
+to avoid calling 'queue_delayed_work()' after 'cancel_delayed_work()',
+but this does not apply to 'hci_conn_drop()'.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+commit deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing
+ hdev->{cmd,ncmd}_timer works")
 
-Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Tested-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+The situation described raises concerns about suspicious RCU usage in a
+corrupted context.
 
-Tested on:
+CPU 1                   CPU 2
+ hci_dev_do_reset()
+  synchronize_rcu()      hci_conn_drop()
+  drain_workqueue()       <-- no RCU read protection during queuing. -->
+                           queue_delayed_work()
 
-commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d0409d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12a90075980000
+It displays a warning message like the following
 
-Note: testing is done by a robot and is best-effort only.
+Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > 2
+=============================
+WARNING: suspicious RCU usage
+6.10.0-rc6-01340-gf14c0bb78769 #5 Not tainted
+-----------------------------
+net/mac80211/util.c:4000 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+rcu_scheduler_active = 2, debug_locks = 1
+2 locks held by syz-executor/798:
+ #0: ffff800089a3de50 (rtnl_mutex){+.+.}-{4:4},
+    at: rtnl_lock+0x28/0x40 net/core/rtnetlink.c:79
+
+stack backtrace:
+CPU: 0 PID: 798 Comm: syz-executor Not tainted
+  6.10.0-rc6-01340-gf14c0bb78769 #5
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace.part.0+0x1b8/0x1d0 arch/arm64/kernel/stacktrace.c:317
+ dump_backtrace arch/arm64/kernel/stacktrace.c:323 [inline]
+ show_stack+0x34/0x50 arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xf0/0x170 lib/dump_stack.c:114
+ dump_stack+0x20/0x30 lib/dump_stack.c:123
+ lockdep_rcu_suspicious+0x204/0x2f8 kernel/locking/lockdep.c:6712
+ ieee80211_check_combinations+0x71c/0x828 [mac80211]
+ ieee80211_check_concurrent_iface+0x494/0x700 [mac80211]
+ ieee80211_open+0x140/0x238 [mac80211]
+ __dev_open+0x270/0x498 net/core/dev.c:1474
+ __dev_change_flags+0x47c/0x610 net/core/dev.c:8837
+ dev_change_flags+0x98/0x170 net/core/dev.c:8909
+ devinet_ioctl+0xdf0/0x18d0 net/ipv4/devinet.c:1177
+ inet_ioctl+0x34c/0x388 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0xe4/0x240 net/socket.c:1222
+ sock_ioctl+0x4cc/0x740 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x184/0x218 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x90/0x2e8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common.constprop.0+0x200/0x2a8 arch/arm64/kernel/syscall.c:131
+ el0_svc+0x48/0xc0 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x120/0x130 arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x198 arch/arm64/kernel/entry.S:598
+
+This patch attempts to fix that issue with the same convention.
+
+Cc: stable@vger.kernel.org # v6.1+
+Fixes: deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing hdev->{cmd,ncmd}_timer works")
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Tested-by: Yunseong Kim <yskelg@gmail.com>
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ include/net/bluetooth/hci_core.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 31020891fc68..111509dc1a23 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -1572,8 +1572,13 @@ static inline void hci_conn_drop(struct hci_conn *conn)
+ 		}
+ 
+ 		cancel_delayed_work(&conn->disc_work);
+-		queue_delayed_work(conn->hdev->workqueue,
+-				   &conn->disc_work, timeo);
++
++		rcu_read_lock();
++		if (!hci_dev_test_flag(conn->hdev, HCI_CMD_DRAIN_WORKQUEUE)) {
++			queue_delayed_work(conn->hdev->workqueue,
++							   &conn->disc_work, timeo);
++		}
++		rcu_read_unlock();
+ 	}
+ }
+ 
+-- 
+2.45.2
+
 
