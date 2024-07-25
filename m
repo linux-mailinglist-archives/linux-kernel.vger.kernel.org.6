@@ -1,154 +1,220 @@
-Return-Path: <linux-kernel+bounces-261775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD0B93BBF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6426A93BBFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B02FB21C56
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92A4286297
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F86F1C6A3;
-	Thu, 25 Jul 2024 05:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF961CD11;
+	Thu, 25 Jul 2024 05:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Vr6XZTVN"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjusaka.me header.i=@manjusaka.me header.b="MqwJykL8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MeQWXQT+"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EA512B95
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADBF29CA;
+	Thu, 25 Jul 2024 05:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721884325; cv=none; b=Isp4/Hsx14fLD3+ZyQMF+L0feqLdQe3YQu55enbJhYFlH9YGCh0LHADfgmUpTsbU6J/gbJbsOPQP4kNTDEg7skMYo9CP5PshuDuXDSqe01AnxOnL9jqv2V1RQ/Eu1bBHlxhvgrWvgqUHyf2zMSO6MUBNh/L7t2l46CZtWM9zneI=
+	t=1721884544; cv=none; b=QGDjbWCFurCodLfLbadtw+yb5GNQiKJwAitJchfuRF6a5yGXpm8/KmtOwu0l7f/WHQ2BLoviWCndagBkoSAM3cLMUd/4I+uOFdEWRndgHkoF9Kj44MRo9RGg29ZfuideeJi2RyrfxxpralDJYQan18ncqQCIaqPT33VNhL65A3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721884325; c=relaxed/simple;
-	bh=gP19qtha1QfnGzxFGdkfIe/Kk6Vh/E3r0N4r7kHqpzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjduEOuqFGOhpgyX+Zo+7mDpZf+mRBow5it59sOSNnmXK/A6PXsG2DrcbuLuGrW7CS9vU/lNr32ExiK+FdyAdMpKOc9V3tJuGCC3WABZkgENxCl9xeogGjurWBkqmM2PptLUvT+DaV/jlRQsHsaWZod8nwRaEJTy3alsCxsNWZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Vr6XZTVN; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef2d7d8854so5980781fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721884321; x=1722489121; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3BmdRKWZSq45FPwmbDQuz2L1sHehf6z5rR+bt1yQbs=;
-        b=Vr6XZTVNSonzi1d2JFIC2uQGx4nAYxl+5slFObw7+LNXT5DmnayOnJtn/VyhiiLGWg
-         ryZ3rhVQj2muHpO+yZWqqgyz7Yx2Hr1hfHoeymbotdI0/bI5uugF4TSoa//k4b1Y49kw
-         r5TwwFgH69rd5RIlHrmv+dHtGGYT4D2wBk2to=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721884321; x=1722489121;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u3BmdRKWZSq45FPwmbDQuz2L1sHehf6z5rR+bt1yQbs=;
-        b=Iko3cAmTd/blctIBD+I9s9pyVQMyWo/zqsTfZelj2PeMEDIwuPqeUuRDdCWVRZ/79K
-         7RL4PFPoc4H+sx40Zbp4DrWfUN0lV0U/Pk7r+8YshrtJm5HR/69qNKO16D3ZdDyeqtqd
-         y17MGtoFbJ3raBtI7SuQAVUTtaWB/ddDSq8JtMj+hr2FZKCHbAb7z4wM3Xj/h5o5zf4k
-         0F4VwLC6ORop68IF6+vQQeEVDS6CHVbZfYV5m+D8myTHO9rtHkEMPpfRVW8d2X6xgURZ
-         3GuRN84Zu0GYh0af3CSxXqEUnsEde4kcmduPQppF2y3WFJ0ZHxW+vPq8GxQDdwcS+axh
-         LEeg==
-X-Gm-Message-State: AOJu0Yxi2hG72h2R7DUlUsuuVwnmBjrrsjUioG1meiczDToSB+OMv4b9
-	37RArbdLMrZ4Utq+DK/XfS50q/ksgrcjNC3slsw5JM0C+gxBFj4b9CpDJprhNm1uiPuBd/ifLqI
-	VLxo=
-X-Google-Smtp-Source: AGHT+IH2BezlTgC6NHUPr8/fU1Uh7sArqPj4bPh2O3pDlSvxY4Fm+V1c4Q+ipM0CMW6tCooL/JfQJg==
-X-Received: by 2002:a05:6512:a84:b0:52c:c032:538d with SMTP id 2adb3069b0e04-52fd3f2bf2dmr996550e87.27.1721884320871;
-        Wed, 24 Jul 2024 22:12:00 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c19ecdsm89952e87.203.2024.07.24.22.12.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 22:12:00 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so5647921fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:12:00 -0700 (PDT)
-X-Received: by 2002:a2e:9b89:0:b0:2ef:26f2:d3e5 with SMTP id
- 38308e7fff4ca-2f039d93228mr11421801fa.36.1721884319766; Wed, 24 Jul 2024
- 22:11:59 -0700 (PDT)
+	s=arc-20240116; t=1721884544; c=relaxed/simple;
+	bh=ugClgkqp3o25GQZQ2zOKkXMz+zp9JFfCDQC6cbyBDpU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KEbsViW7ZOSD8B6EZmBhB4QmSJWevEwMi7zSbw9fDvaCGsc8gAC4CovMgOIwJk6QU+QW5sCblyiBQ61Zi8t76eifutEUe4TpJDCXxqXI0ueQdX4QW3KGJHnh695b8C5M73Kz/6cOMr/O6pxUnGmTbj9eeH2+TaD2PR4PG8r7QfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manjusaka.me; spf=pass smtp.mailfrom=manjusaka.me; dkim=pass (2048-bit key) header.d=manjusaka.me header.i=@manjusaka.me header.b=MqwJykL8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MeQWXQT+; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manjusaka.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjusaka.me
+Received: from compute8.internal (compute8.nyi.internal [10.202.2.227])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E037811401EC;
+	Thu, 25 Jul 2024 01:15:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute8.internal (MEProxy); Thu, 25 Jul 2024 01:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjusaka.me; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1721884540; x=1721970940; bh=uhItQUTfSvaoSBISN9Ydg
+	QVPePTnvG2hT1BbYLXVSik=; b=MqwJykL8VezW91SHbn9oa/6C1P3g9Z7iU1qmU
+	lgIZVGfIYeUqUuklDEFfm7N0YOyh/xzail9BvFbrx42BIdlr+qBVJVMGDFY2jHrN
+	+Yyx7giy+zPwmaI/p0SnfL4u3RZTGkwR3im5YRl4CKtK+Ler5raA3H6/mAW19Hqj
+	lyFZ53APREsKBJQDRO29sXVPBWXnDmNJpYH7OB3gx5Fi8Ojerlc6qHkzW7QbS6Ux
+	0YOBDB4hNtWX5JIauzQGOZbuxXXCnJnGaFScHyANnS2RduQGUt/Lsau33HYDI7yz
+	3ncPVe860bxm1J75Z5mfT5E5UjILS9pk0NX514XKWtCB66vmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721884540; x=1721970940; bh=uhItQUTfSvaoSBISN9YdgQVPePTn
+	vG2hT1BbYLXVSik=; b=MeQWXQT+C2Vde9wxGAPAuLMQDyLmD4YJhIe4dhQ0feSn
+	qAbZ55dMAnzexQJtJe4G1RyTS/PhfGEKpEO9IVZkiq91AxuRaT8MkicT+6NuGDoE
+	j5aVlQe1611N+kRBEYA0a3KnoPcHzmTUHVvgeEM+04F5hEyFJOkXbyDR62lx8wFp
+	rXEum13gXgyrJq3XiQwcEqHSbvxQQm9jtIIPGDfkaxq6iSp7NVJhK8lLAjSSh+T6
+	yA2DQeZuP4fg5a47U2SalNP8mlXfuAUSfhkC1lpKbG9S2LG/caBNC/cWhvb5W+m9
+	/6BkXq2KK+OHBWAPjj71l2luNCvlc90iFNinimfRCg==
+X-ME-Sender: <xms:fN-hZmRbQZPsyusIdVejJx7PWfBZWz7f4sdTFrz9OEvXqpg6JmgehQ>
+    <xme:fN-hZrzdFavOce9n6jKYEiEuqr3iGx5IzXrGzuyRu_UP76yuEVOTEmPjfmGbrRGH8
+    K44kg1X0HDT0G_MOLM>
+X-ME-Received: <xmr:fN-hZj2pNubr2jmKEcAOiBdCw1Vd4msGKG9XYO9i3GUkKbuWkgkLkrCS8t-KU0e97gNKVMmSJccgQ9wqoME9dQCcX8kRpSQ7HfNbnLBXC-yFpcYY00B1cgbAKDPXgIg6UgR_Gw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedvgdelgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpegkhhgvrghoucfn
+    ihcuoehmvgesmhgrnhhjuhhsrghkrgdrmhgvqeenucggtffrrghtthgvrhhnpefgudejve
+    ettdekhfejhedufeefvdffkeffteevheeitdehkeekledttefhieeifeenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvgesmhgrnhhjuhhsrghkrgdrmhgv
+    pdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:fN-hZiBJclDCt-RBpYHWcVlIQc86WwAN0nVjBxNAtNf6Sg7IqCmYlA>
+    <xmx:fN-hZvimH1QL3odg79vCg-fPxHgRQ9P9pDi97rcbbh0vqIKgk7-uog>
+    <xmx:fN-hZuqDA79hhnoVkAaaqWjprRWBSIE2PclGCIS7WnSarkF5yckztQ>
+    <xmx:fN-hZij4WHdpgYOXzrdWl-eLJBEiQyozx8ol9-BQDpMdHFYbzoiH5A>
+    <xmx:fN-hZuRAOdA64BcOuf8PTps7ndb1bnJrsvnnvm0U0shns3EaOEEq0xQy>
+Feedback-ID: i3ea9498d:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Jul 2024 01:15:38 -0400 (EDT)
+From: Zheao Li <me@manjusaka.me>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: Zheao Li <me@manjusaka.me>,
+	Leon Hwang <hffilwlqm@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog method to output failure logs to kernel
+Date: Thu, 25 Jul 2024 05:15:11 +0000
+Message-Id: <20240725051511.57112-1-me@manjusaka.me>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <63149ac0-73a4-49c0-975b-75dc3bd32f7a@I-love.SAKURA.ne.jp>
- <CAHk-=whAfNJKeP1WhdP9y0itF_AkgQJMyz8B9TCfAWWQRhDRPw@mail.gmail.com> <5ad7dffa-204e-4d37-acf6-0206d7a87f37@I-love.SAKURA.ne.jp>
-In-Reply-To: <5ad7dffa-204e-4d37-acf6-0206d7a87f37@I-love.SAKURA.ne.jp>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Jul 2024 22:11:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com>
-Message-ID: <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com>
-Subject: Re: [GIT PULL] orphaned patches for 6.11
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Jul 2024 at 21:24, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> If guard() is already backported to older kernels, that would work for
-> the kernel/ksysfs.c part. But I prefer killable version,for a large
-> memory allocation which may cause current thread waiting on this lock
-> might be chosen as an OOM victim is performed from profile_init().
+This is a v2 patch, previous Link: https://lore.kernel.org/bpf/20240724152521.20546-1-me@manjusaka.me/T/#u
 
-.. and this is why I'm not taking these patches from you.
+Compare with v1:
 
-WHY WOULD ANYBODY EVER CARE ABOUT A KILLABLE VERSION?
+1. Format the code style and signed-off field
+2. Use a shorter name bpf_check_attach_target_with_klog instead of
+original name bpf_check_attach_target_with_kernel_log
 
-It's literally *nothing* but stupid worthless extra complexity.
+When attaching a freplace hook, failures can occur,
+but currently, no output is provided to help developers diagnose the root cause.
 
-There are zero real loads where anybody calls this code in parallel.
-Nada. Zilch. There's simply no valid use case. The whole thing is
-literally designed to ever be called once.
+This commit adds a new method, bpf_check_attach_target_with_klog,
+which outputs the verifier log to the kernel.
+Developers can then use dmesg to obtain more detailed information about the failure.
 
-The *ONLY* valid use case is that this write is called *once* to set
-up the profiel buffer (ie will return -EEXIST after it's been set up).
-And even that "called once" is a rare thing that doesn't happen in any
-normal situation.
+For an example of eBPF code,
+Link: https://github.com/Asphaltt/learn-by-example/blob/main/ebpf/freplace/main.go
 
-And when it is called once, that mutex WILL NEVER BLOCK.
+Co-developed-by: Leon Hwang <hffilwlqm@gmail.com>
+Signed-off-by: Leon Hwang <hffilwlqm@gmail.com>
+Signed-off-by: Zheao Li <me@manjusaka.me>
+---
+ include/linux/bpf_verifier.h |  5 +++++
+ kernel/bpf/syscall.c         |  5 +++--
+ kernel/bpf/trampoline.c      |  6 +++---
+ kernel/bpf/verifier.c        | 19 +++++++++++++++++++
+ 4 files changed, 30 insertions(+), 5 deletions(-)
 
-In other words, the only reason the serialization exists is for crazy
-syzbot uses.
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 5cea15c81b8a..8eddba62c194 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -848,6 +848,11 @@ static inline void bpf_trampoline_unpack_key(u64 key, u32 *obj_id, u32 *btf_id)
+ 		*btf_id = key & 0x7FFFFFFF;
+ }
+ 
++int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
++					    const struct bpf_prog *tgt_prog,
++					    u32 btf_id,
++					    struct bpf_attach_target_info *tgt_info);
++
+ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			    const struct bpf_prog *prog,
+ 			    const struct bpf_prog *tgt_prog,
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 869265852d51..bf826fcc8cf4 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3464,8 +3464,9 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
+ 		 */
+ 		struct bpf_attach_target_info tgt_info = {};
+ 
+-		err = bpf_check_attach_target(NULL, prog, tgt_prog, btf_id,
+-					      &tgt_info);
++		err = bpf_check_attach_target_with_klog(prog, NULL,
++							      prog->aux->attach_btf_id,
++							      &tgt_info);
+ 		if (err)
+ 			goto out_unlock;
+ 
+diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+index f8302a5ca400..8862adaa7302 100644
+--- a/kernel/bpf/trampoline.c
++++ b/kernel/bpf/trampoline.c
+@@ -699,9 +699,9 @@ int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+ 	u64 key;
+ 	int err;
+ 
+-	err = bpf_check_attach_target(NULL, prog, NULL,
+-				      prog->aux->attach_btf_id,
+-				      &tgt_info);
++	err = bpf_check_attach_target_with_klog(prog, NULL,
++						      prog->aux->attach_btf_id,
++						      &tgt_info);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 1f5302fb0957..4873b72f5a9a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -21643,6 +21643,25 @@ static int check_non_sleepable_error_inject(u32 btf_id)
+ 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
+ }
+ 
++int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
++					    const struct bpf_prog *tgt_prog,
++					    u32 btf_id,
++					    struct bpf_attach_target_info *tgt_info);
++{
++	struct bpf_verifier_log *log;
++	int err;
++
++	log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
++	if (!log) {
++		err = -ENOMEM;
++		return err;
++	}
++	log->level = BPF_LOG_KERNEL;
++	err = bpf_check_attach_target(log, prog, tgt_prog, btf_id, tgt_info);
++	kfree(log);
++	return err;
++}
++
+ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			    const struct bpf_prog *prog,
+ 			    const struct bpf_prog *tgt_prog,
+-- 
+2.34.1
 
-Really.
-
-And that situation is not worth one single *byte* of complexity, or
-one single line of extra source code to worry about.
-
-That situation wants the absolutely minimal possible "this is the
-simplest solution so that we can forget about this insane case that
-doesn't match any real use-case".
-
-So your "I prefer killable version" is literally a completely unreal
-situation. Your argument of "may cause current thread waiting on this
-lock" is nonsensical.
-
-Nobody we care about ever waits on that lock, because NOBODY EVER DOES THIS.
-
-Except for a crazy syzbot "do random things in a loop", which is not a
-real load.
-
-So no. This is not happening, and you just showed exactly why nobody
-wants to take your patch set. Because you make things more complicated
-than they need to be for no reason.
-
-Stop it. You need to realize that "syzbot complains" is not a real
-load. It may find real bugs, but they are often of exactly the "this
-never happens in real life" kind.
-
-That means that the fixes need to be simple and obvious, and not
-pointlessly have extra complication for no good reason.
-
-And yes, apparently we should just also move the 'prof_buffer' test
-earlier, and do it in profile_tick() too, so that we don't need to
-even worry about the cpumask_available thing.
-
-In other words, start looking for the _trivial_ fixes to trivial bugs,
-instead of looking for more complicated ways to do them.
-
-               Linus
 
