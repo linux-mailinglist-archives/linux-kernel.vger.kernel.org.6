@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-262084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A180993C092
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:08:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE2B93C096
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578012826CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:08:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 159CFB211BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E31991D2;
-	Thu, 25 Jul 2024 11:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFAD1991C9;
+	Thu, 25 Jul 2024 11:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxZS6nYf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oY88QIEH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxZS6nYf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oY88QIEH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ufsvA23n"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8265E132492;
-	Thu, 25 Jul 2024 11:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D7213C907;
+	Thu, 25 Jul 2024 11:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721905680; cv=none; b=YGKn1yWTtENY2jy1r9awW6MFWB9ezV0hRMotdE4m1gS/zY7GoCyeiV7xeCk4LsHhE49Y59mDxBtpNJDql8kACqLowEFAgjban/VwHhEf1Zj5G2X7SCBK+ltGuHznEo1rxMTIgsiyTmdNKlYinhOuomJazIhK8zCsCMj443cCf4o=
+	t=1721905727; cv=none; b=F7GvinJjqQxYFcC9xf0l5ALZf2pkKMr9baE2/hCMJX6+TjJoE7gRvEPjrI+ZGnbT6es/e3l3CSpoL5OAhAbbC65XxF6P3npTAlQV0FYc7R93j5wTUd32GF3ndLUn3+Wy8hGcVI73QrVyFRHtZ1o31TXD4s+iIDM3frpqxe9wPYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721905680; c=relaxed/simple;
-	bh=REWD8dQEXdO6cMsdd0gwSlNZOVimBClEElYDdV3lF7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQolTRfMIv3onvoovn9o5OZbGChzvHBTxquEC2x3ornaIUCsdwb3XLxyoQwZ5bd6qAyPTginU/KUnNH2iO9zXl3GimJKFUGGOjfcfw62S2kr8UFI8HeIjujjopSK2UfRNWZOy+E456ON2iekrkN03++Ar0uTK8/lq2I1LoACZnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxZS6nYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oY88QIEH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxZS6nYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oY88QIEH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1721905727; c=relaxed/simple;
+	bh=RKcCpU42n0Y6Bgxy69mbl5JfvuR02h2bEfJh+w0xUlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WWI7wmJjRZrQ63gwpo/fHvKvtcYf5h7s1WgALnpBt6UTpgQrMLApt0DoMXx+rH6WIHIoij5hQvBa/vv/DaRgESVi2fYJiWe3T6k8ROPH/DDzJt10TVtyr9APNkA1P64lkvoT1tI69/etw7C0QJhhrphMRGhLMDWDMnAF7jwfx+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ufsvA23n; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721905724;
+	bh=RKcCpU42n0Y6Bgxy69mbl5JfvuR02h2bEfJh+w0xUlU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ufsvA23n+iU9k50GS2kFqZILTqWxv4fi4h+qr+gj7F1yLGdrEVKmEeD/J9BdsPJdS
+	 IZ9fTVdV75yT/873LsQU6R6MKTZcDXTXGypO6+rhS/AfCv1BLfb4a08oKZGE7frjHz
+	 h5gIwsOyrfITCFHGW2zeYbOZPtVvUKeOHSZSpog8w9BxfquB/5rVpi0qUEd2MJC4n5
+	 L7PC2T5XADOGP7n3yEWyuVWLy5jK2MEkouZFBqkmBw6LH/Hi3F53EIGUkKvfiHM1Bu
+	 xAcd8D2/OXFc/JmUPXmcqw+t1kBEddbEfEL4yYJAKKg4mVZzUGrMTsSo5GcahNFpR2
+	 zcCjfODEbdsag==
+Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 98DE721216;
-	Thu, 25 Jul 2024 11:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721905676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
-	b=hxZS6nYfiyoryeeoRj1XiJtrkHRgcS4irRzzjG5sTVOLrovHCMhEKZNg3Xe76+SXff9bNq
-	K3IHo1RIFpJhELLaUr5pBYDHrVlQ5f1942AQBZahcSz7x45hU/VYknPRECa6xmJGWTq80O
-	X4K5AMRNCknFRjBGok4eYaOXV5j9Wrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721905676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
-	b=oY88QIEHq7SbeqprDY2wiJGFgthvAXAFtoE0TMapzJp9LY2h4KSPkbutjF6kjRs0ZtFXH0
-	XTc9xbXYoivtKhAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hxZS6nYf;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oY88QIEH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721905676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
-	b=hxZS6nYfiyoryeeoRj1XiJtrkHRgcS4irRzzjG5sTVOLrovHCMhEKZNg3Xe76+SXff9bNq
-	K3IHo1RIFpJhELLaUr5pBYDHrVlQ5f1942AQBZahcSz7x45hU/VYknPRECa6xmJGWTq80O
-	X4K5AMRNCknFRjBGok4eYaOXV5j9Wrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721905676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
-	b=oY88QIEHq7SbeqprDY2wiJGFgthvAXAFtoE0TMapzJp9LY2h4KSPkbutjF6kjRs0ZtFXH0
-	XTc9xbXYoivtKhAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B24D13874;
-	Thu, 25 Jul 2024 11:07:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bLrzIQwyomYYVgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 11:07:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4991DA0996; Thu, 25 Jul 2024 13:07:56 +0200 (CEST)
-Date: Thu, 25 Jul 2024 13:07:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 12/20] ext4: get rid of ppath in ext4_split_extent_at()
-Message-ID: <20240725110756.fuyjfdvgbprma5ml@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-13-libaokun@huaweicloud.com>
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7E79937803EE;
+	Thu, 25 Jul 2024 11:08:40 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	David Gow <davidgow@google.com>,
+	Vitor Massaru Iha <vitor@massaru.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH] selftests: user: remove user suite
+Date: Thu, 25 Jul 2024 16:08:03 +0500
+Message-Id: <20240725110817.659099-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-13-libaokun@huaweicloud.com>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 98DE721216
-X-Spam-Score: -2.31
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim]
+Content-Transfer-Encoding: 8bit
 
-On Wed 10-07-24 12:06:46, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> To get rid of the ppath in ext4_split_extent_at(), the following is done
-> here:
-> 
->  * Free the extents path when an error is encountered.
->  * Its caller needs to update ppath if it uses ppath.
->  * Teach ext4_ext_show_leaf() to skip error pointer.
->  * Propagate ext4_find_extent() error return value in ext4_insert_range().
-> 
-> No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+The user test suite has only one test, test_user_copy which loads
+test_user_copy module for testing. But test_user_copy module has already
+been converted to kunit (see fixes). Hence remove the entire suite.
 
-One nit below:
+Fixes: cf6219ee889f ("usercopy: Convert test_user_copy to KUnit test")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ tools/testing/selftests/Makefile               |  1 -
+ tools/testing/selftests/user/Makefile          |  9 ---------
+ tools/testing/selftests/user/config            |  1 -
+ tools/testing/selftests/user/test_user_copy.sh | 18 ------------------
+ 4 files changed, 29 deletions(-)
+ delete mode 100644 tools/testing/selftests/user/Makefile
+ delete mode 100644 tools/testing/selftests/user/config
+ delete mode 100755 tools/testing/selftests/user/test_user_copy.sh
 
-> @@ -5596,6 +5606,7 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
->  	path = ext4_find_extent(inode, offset_lblk, NULL, 0);
->  	if (IS_ERR(path)) {
->  		up_write(&EXT4_I(inode)->i_data_sem);
-> +		ret = PTR_ERR(path);
->  		goto out_stop;
->  	}
-
-AFAICT this actually fixes a bug where we could have returned 0 although
-ext4_find_extent() spotted an error? This would deserve a separate patch so
-that it could be easily pulled into stable.
-
-Otherwise looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index bc8fe9e8f7f20..af2429431b6b2 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -107,7 +107,6 @@ TARGETS += tmpfs
+ TARGETS += tpm2
+ TARGETS += tty
+ TARGETS += uevent
+-TARGETS += user
+ TARGETS += user_events
+ TARGETS += vDSO
+ TARGETS += mm
+diff --git a/tools/testing/selftests/user/Makefile b/tools/testing/selftests/user/Makefile
+deleted file mode 100644
+index 640a40f9b72bc..0000000000000
+--- a/tools/testing/selftests/user/Makefile
++++ /dev/null
+@@ -1,9 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-# Makefile for user memory selftests
+-
+-# No binaries, but make sure arg-less "make" doesn't trigger "run_tests"
+-all:
+-
+-TEST_PROGS := test_user_copy.sh
+-
+-include ../lib.mk
+diff --git a/tools/testing/selftests/user/config b/tools/testing/selftests/user/config
+deleted file mode 100644
+index 784ed8416324d..0000000000000
+--- a/tools/testing/selftests/user/config
++++ /dev/null
+@@ -1 +0,0 @@
+-CONFIG_TEST_USER_COPY=m
+diff --git a/tools/testing/selftests/user/test_user_copy.sh b/tools/testing/selftests/user/test_user_copy.sh
+deleted file mode 100755
+index f9b31a57439b7..0000000000000
+--- a/tools/testing/selftests/user/test_user_copy.sh
++++ /dev/null
+@@ -1,18 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0
+-# Runs copy_to/from_user infrastructure using test_user_copy kernel module
+-
+-# Kselftest framework requirement - SKIP code is 4.
+-ksft_skip=4
+-
+-if ! /sbin/modprobe -q -n test_user_copy; then
+-	echo "user: module test_user_copy is not found [SKIP]"
+-	exit $ksft_skip
+-fi
+-if /sbin/modprobe -q test_user_copy; then
+-	/sbin/modprobe -q -r test_user_copy
+-	echo "user_copy: ok"
+-else
+-	echo "user_copy: [FAIL]"
+-	exit 1
+-fi
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.2
+
 
