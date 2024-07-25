@@ -1,103 +1,141 @@
-Return-Path: <linux-kernel+bounces-262107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DC293C0D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:28:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C48393C0D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845571C21134
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1001F22445
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C6F199247;
-	Thu, 25 Jul 2024 11:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CD71991DF;
+	Thu, 25 Jul 2024 11:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLRcDziV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NW9/cJSf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QotTbueg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NW9/cJSf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QotTbueg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8489B197A77;
-	Thu, 25 Jul 2024 11:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6FC16F84F;
+	Thu, 25 Jul 2024 11:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721906921; cv=none; b=PxGY1K9n5vU7AN3abEomYTr8UpdBJVmVLdT02VSY06Nr0ECqVN9v7AkOTeTPFJwDu8ZNUS7ejWdwuA5rHd83nCXPQ8Vz5W4BMnkLd4IZDmXZm6zKh/By3q8um3rBM2czx9lUtqHZ8L7s6+pQd3V32AIg7ObTIOObKL09y8Mbo8s=
+	t=1721907115; cv=none; b=RmZ+sfFFyASbOPg41TZtkByW3onV7Lm/egHR8w4chN8bWgGQ8McHoVm1ei30EnvswtycIMlsbHGscxlG22WaQcgJ1sshmp7sTPJmRTupnhXN575lM8qWNR7eH6CXZ86SrfRz052KQJqagFmpIluBECjdKrbXfGeOuRMeS07lKLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721906921; c=relaxed/simple;
-	bh=tqxpcbUfbmXq4gYPOLPFEL8D1WTclkWhQrqiFH5NKao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXYpyHy5ps0K+o9aGlWbDInOoTTnTC9Zu1SjUphTge1+Hfv4nWsnklrPNt5StCjyZgdvoJL5uZ4V2c2ZqYXi5J8RP2nwruS3Fg//BiQ4RJb1KAgQO/TAgbUUnd/hFqUaV0rN7aN/Tv1Tl3QwQ2CUnUZkddDdy3vKkvJvQ3AFbl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLRcDziV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CB5C116B1;
-	Thu, 25 Jul 2024 11:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721906921;
-	bh=tqxpcbUfbmXq4gYPOLPFEL8D1WTclkWhQrqiFH5NKao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NLRcDziVx8Skyei78ECJYsXdlBEmexjDpO0sziANWvbsRbLGYmkRaqzL2cNxWH2zk
-	 d0Jt1RT3BSbMOuk2KD/Y1iKCbpelLxP+uVJ+WUv17zQiUalLM3bLRVKhAlbINfMvkB
-	 ot1zwl8vHI1kq834F3+NVSTv9752DfX/uE49ojNQOhqyLCwlXo/Af2np5GytZ7zNwz
-	 Jw5SbkZOddNs2rviEi9l8Bqe6apTsp5TKcx7wifpHfdW/2r/AqvC5TkyaaWyiGMJ8C
-	 Y9vo4MGteIv98aiGWY1q5pd2xktQ8Lz+DmzKtXENI1IthCa0GxwEisSiE7hXtJdM9m
-	 t0U1Y9d3B5StA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sWweI-00000000094-2Ffb;
-	Thu, 25 Jul 2024 13:28:42 +0200
-Date: Thu, 25 Jul 2024 13:28:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Message-ID: <ZqI26iACl_mQX-zG@hovoldconsulting.com>
-References: <20240723151328.684-1-johan+linaro@kernel.org>
- <nanfhmds3yha3g52kcou2flgn3sltjkzhr4aop75iudhvg2rui@fsp3ecz4vgkb>
- <ZqHuE2MqfGuLDGDr@hovoldconsulting.com>
- <CAA8EJppZ5V8dFC5z1ZG0u0ed9HwGgJRzGTYL-7k2oGO9FB+Weg@mail.gmail.com>
- <ZqIJE5MSFFQ4iv-R@hovoldconsulting.com>
- <y6ctin3zp55gzbvzamj2dxm4rdk2h5odmyprlnt4m4j44pnkvu@bfhmhu6djvz2>
- <ZqIVQzQA5kHpwFgN@hovoldconsulting.com>
- <pbkzwy63j7dh365amgdze2ns4krykckqyx2ncqjw2u4dufuoky@fg6rdpnqh5vb>
+	s=arc-20240116; t=1721907115; c=relaxed/simple;
+	bh=rR1RFY39+eRFR7OmHYrm0/qoxwcoE+S+x41VcI9lVys=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lEfsC63C3xKampuBqlmLuudY/Y2OX5pYYYpUYKGPbUI9Ys+522JAfiRmg4Ckiswp3wOKdZo0RsRP4uwf8vqdEYxreYQ/aaVPDu0WeE+ccr5jFk/TahXlMFD8B90HcYFlrq4NMIpIC0hDcRFQenZcedNv3yBzcjbLdER6H3TAazo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NW9/cJSf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QotTbueg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NW9/cJSf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QotTbueg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C3C47219A4;
+	Thu, 25 Jul 2024 11:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721907100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
+	b=NW9/cJSfT+4oq8mjZG0mU8xNq3Wn4qL2+ycYDDFVRXCnXPdCCBEg0NftGwP6vsLvAedM1L
+	hzvApVC32di11HTiFrdrkwmc8DXnusS8KfusL9bfv/tVlHlSn+J5WOhPfQkqUs30ReNYhE
+	ggGC+ZlSHW94gJyKaLLqNHUHYm7wKu0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721907100;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
+	b=QotTbuegHMZCkRF35uR3pkcedqCggOxcGF2GdODHmdv8KPbUeUEczr4Ez9N+n+p5WKnSgn
+	zZPWsgn2bRwfxgBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721907100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
+	b=NW9/cJSfT+4oq8mjZG0mU8xNq3Wn4qL2+ycYDDFVRXCnXPdCCBEg0NftGwP6vsLvAedM1L
+	hzvApVC32di11HTiFrdrkwmc8DXnusS8KfusL9bfv/tVlHlSn+J5WOhPfQkqUs30ReNYhE
+	ggGC+ZlSHW94gJyKaLLqNHUHYm7wKu0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721907100;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
+	b=QotTbuegHMZCkRF35uR3pkcedqCggOxcGF2GdODHmdv8KPbUeUEczr4Ez9N+n+p5WKnSgn
+	zZPWsgn2bRwfxgBw==
+Date: Thu, 25 Jul 2024 13:31:40 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
+    Joe Lawrence <joe.lawrence@redhat.com>, Nicolai Stange <nstange@suse.de>, 
+    live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [POC 2/7] livepatch: Allow to handle lifetime of shadow variables
+ using the livepatch state
+In-Reply-To: <20231110170428.6664-3-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.2407251329300.21729@pobox.suse.cz>
+References: <20231110170428.6664-1-pmladek@suse.com> <20231110170428.6664-3-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pbkzwy63j7dh365amgdze2ns4krykckqyx2ncqjw2u4dufuoky@fg6rdpnqh5vb>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.10 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Score: -1.10
 
-On Thu, Jul 25, 2024 at 01:24:27PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Jul 25, 2024 at 11:05:07AM GMT, Johan Hovold wrote:
-> > On Thu, Jul 25, 2024 at 11:57:39AM +0300, Dmitry Baryshkov wrote:
-> > > On Thu, Jul 25, 2024 at 10:13:07AM GMT, Johan Hovold wrote:
-> > 
-> > > > It is already part of the bindings for all platforms.
-> > > 
-> > > It is not, it is enabled only for sc7280 and sc8280xp. 
-> > 
-> > No, that's both incorrect and irrelevant. It is used by msm8996 and
-> > older platforms by in-kernel DTs as well. But the point is that is has
-> > been part of the bindings an cannot simply be removed as there can be
-> > out-of-tree DTs that are correctly using this property for any of these
-> > platforms.
-> 
-> It can not be removed from the driver, but it definitely can be remove
-> from bindings.
+> diff --git a/kernel/livepatch/state.c b/kernel/livepatch/state.c
+> index 6693d808106b..4ec65afe3a43 100644
+> --- a/kernel/livepatch/state.c
+> +++ b/kernel/livepatch/state.c
+> @@ -198,11 +198,17 @@ void klp_release_states(struct klp_patch *patch)
+>  		if (is_state_in_other_patches(patch, state))
+>  			continue;
+>  
+> -		if (!state->callbacks.release)
+> -			continue;
+> -
+> -		if (state->callbacks.setup_succeeded)
+> +		if (state->callbacks.release && state->callbacks.setup_succeeded)
+>  			state->callbacks.release(patch, state);
+> +
+> +		if (state->is_shadow)
+> +			klp_shadow_free_all(state->id, state->callbacks.shadow_dtor);
 
-You apparently ignored the word "simply" in "cannot simply be removed".
+The following
 
-Johan
+> +		/*
+> +		 * The @release callback is supposed to restore the original
+> +		 * state before the @setup callback was called.
+> +		 */
+> +		state->callbacks.setup_succeeded = 0;
+
+should go to the previous patch perhaps?
+
+Miroslav
 
