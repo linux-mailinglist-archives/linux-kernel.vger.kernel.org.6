@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-261894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDDC93BD88
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5913193BD89
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772881F225C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6B41C21984
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4DF172BC4;
-	Thu, 25 Jul 2024 08:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9EA171678;
+	Thu, 25 Jul 2024 08:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yfi3s+EM"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aUfVlSLS"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A6B101F2;
-	Thu, 25 Jul 2024 08:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648B2101F2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894471; cv=none; b=SFl7YHRmIONq83F9U5Wvs3slRfOZMFt+52CXtbkuC0mcqrQatnl89VB34NdVQSn4OfZRhtfAWalsYmek9uslEm04XaDgNPoCt9ySBfq9vZIu5WEYjaldxYrJFY7IK2krVivuGTIF/cpp1erD9KwOZgyzMebMpb5XJOlab3+2FBw=
+	t=1721894482; cv=none; b=VpfbabgmZVrJaTwUDc0e+ZyOQx66tn6afugQgYTD38njUuSsF5GMtV3oAp4tHEa/zwWPJRlqnR+XLU8VHaPoQHjCUh2T2pqurRAUfd5W1Q3fVzwoaJfFOFmNLj6NHnhHcO6lEk6okix5hNemdCHsMN9lfY01HFHpmUJar3l+Jok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894471; c=relaxed/simple;
-	bh=kwI4x8K0G8ucv7wyd9WsBTJbrmdgts1vYkZcTKcOx4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d9RAvWQvbotxSlgnXk0d8TAtdPO1lf0keupp0Mqy/djKKvKdWMxFQUZlT69vRPXHEeOEPB4yMXWZ1xDxKiG67M4yF8ogtO0ZBLsNSySRjmWqhlJV7AU68FsIDdLxgIs8hZVID/qOT54w9Gv4FvMZRhPz+Esx7A/TA5mopyLyn/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yfi3s+EM; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-825eaedfef3so179016241.0;
-        Thu, 25 Jul 2024 01:01:09 -0700 (PDT)
+	s=arc-20240116; t=1721894482; c=relaxed/simple;
+	bh=npkVM7gGMbMxc+smSDTLW0bM0295b37GHeFAWgi8Dv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFdYddksgzh5k6KIi8QRIeaeLmabRKCsG/GJ5muAIUbhdiVD3ox/S+3ejGrzMVVxdrfAJrQ8x0vqCIm0XplBimhCY3vjazN1yOKCEy57Z1xu/NHViQf6p+fsPvKFZqKJ2I29wesqIDOK8vBGEDP4z/aeb9r1McWfrQlpfc6Tnvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aUfVlSLS; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so9040661fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721894468; x=1722499268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NXFStL4WDvV8w8BQz0i76L128nEgk4VMRX+9r1vm1UU=;
-        b=Yfi3s+EMGdHfiWDLs8WC8V6dAuBX0zjgT3OArS1vLvNj66NSx0zRIj9MfhHnd4OgtJ
-         DAhEUM9bE9rWTBDbGl/RpMO8Ga/Xr0uEyCD7vMhAJHNAbrlD8l0JnpzyimcHDVWkaPDa
-         1qbWAfdSTRhGffrxjDGBDESMnlT+9B7a5odTEe+Kii0715agu/Khmsw0ycIhu1kDl3cV
-         tIQ0RlmO9+DqB+KcJRY7Yc8/6bOTkGayyVSh7WEqjzQZHvQ+71V4QMo8rIfjhkKqHZxw
-         JDL8aswLgY0AeG2H5wjm0scrA5r3DZZaOYdlASpDvQAi8u+kcwdt1MO/LhKYj6SDYs4d
-         fi6w==
+        d=suse.com; s=google; t=1721894478; x=1722499278; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1rcRioImMxc/6ndik9rsNgcLsBY2YiVPz+IgBUsue8c=;
+        b=aUfVlSLSwmH9//CYucRP5E6h4/X+Cu7s0Tgm/ewyJOSrZWLiyuq7E3xQx1GpX1D7rp
+         MVJ6zJji7G6nphKbpLWrMqbEEIKBDKsO9GX75mHybC8JL2UV91YOKcMM6KWyp80KHcFo
+         42awaRs8dK85XEzQ4m7DHg9AxLKFynbdvfOiudP0zj/xC2CqLREk6aGSVv5cjgdXRl6Q
+         AQF2khR/UeLpP8ZZOjUhxQvPS0B8HuJ/2P+h09G3KFtlbFi/qVMckRnYxWlNSY/1qyEq
+         X93jJg4V73f31CNNzuyeGF/6jmiZEZ541I1S2Ak7YiKSUJhNhEYaRPd1K0KlfMTDuIk8
+         DYuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721894468; x=1722499268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NXFStL4WDvV8w8BQz0i76L128nEgk4VMRX+9r1vm1UU=;
-        b=SrcxFohFPQ350xkgY83HgyzNBfDYUmQ5BM7m4dW/HfNZ9f2jiRNSdrUodImxdTpoQq
-         j/jIY+FFV/OTRGBcn46oETB47O5AxjPUif9VVjhGufqpSIPlw0vDh/W/pHoy4vDUhe1F
-         xGJWTpl4XFbcVOeT1num8UX3hNPAKp9hYEM+kC+aPA/JK3diMIRyj97SGFGj1KSwfExJ
-         yh0+dHfofD6UBe48RKG5HdUa3cUiq9FiGdlh95HLEzBcbXPbvpRzHznFjjdNg9z66cc5
-         phMGL2i39cWPHp20uLGH5IuOEDgJZ0NLkmhxRfGDaYJNnVErXfYyPKx5DJarIzYl4oat
-         ozFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqdN/K0//GLQwHzqlYhG/nHtxVuRQS0vi5b7zWIkPPTkjdQefIRGxV8DOD7J3T3zRzyLBvTP/9XaHJO6ro79Flex7Dic4JPaFBsQaY3RvwLIgD7pPMpbL+bU+FhJhuWttEqddAu91su/9KZAHacRX2aa1igeQe8U/znAVtX15mn2QoeTv1pxPAfy8Y
-X-Gm-Message-State: AOJu0YwVS3UOvC0qZmT2c4gGXNUO3EE5F6A0rvbJtlkBAkd/h+3xl/IZ
-	hj99vniOGJVC+ihLkDsxj+OWIl3zqri8DseuFndbQb/BxvQFCz3q4wW2BWJItFHz/167cekEsb0
-	/o0FhziGq+vjJbTr7yxojP8V9/LY=
-X-Google-Smtp-Source: AGHT+IG2H8sC2sQ2RYkoBe63bCRGsiliAnjuxNL+E6JiRF0jXcoq6nahZ40mNbMRJ8oD1b2IxjhZOUpQVSzDZZsz41I=
-X-Received: by 2002:a05:6102:3fab:b0:492:ab05:8d6e with SMTP id
- ada2fe7eead31-493d63e0ce3mr3242147137.3.1721894468430; Thu, 25 Jul 2024
- 01:01:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721894478; x=1722499278;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rcRioImMxc/6ndik9rsNgcLsBY2YiVPz+IgBUsue8c=;
+        b=ITTZAr+X1N66Zp17XkhfB+dG8RUjj7wG0GkAmArNiOET8l39+8uAGIsWp+LE0rUfe3
+         GLdGtI6rKPj5/B03BSDUF+BnKAhnrGDw6P21sPh6fWAd6neiCaenq7ceEh/02e4i8AMJ
+         5KymzbdxjhoF8CVX1cuSULnMXyoqH3uXJARs6DbXl6urfBtSpsX9y/U7oCBGez+19Hlj
+         u8iOKmTiXKWHU7uN0JzCyvl+L2DUbf+MzPHCMV4gNr6tfzqYLeWc2T6OUYhoGTFt9gzp
+         SnAp2ie6MM09sKRV9WvKRWJjdfAAfeXEPPYULjqnglwXhE8/FhYs/D09Q6viaCSQ/TPX
+         JsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCU048sFX8qwol5jhtVR9yrWQph43BSCM6Y4RdRtHI/G6NwRqytS0WZikVQZFf27p38oQ3cNygWtbyuYaQc7a2RF3CrWgTVOR9A3UURd
+X-Gm-Message-State: AOJu0YzGQfv2QQnqw9CGMRgZK3RYTT5mLiwomkgb4tZFlFMxPfL41v86
+	CANKK3HliYBtxws1cSHo/RdVU4DNDQbAJtLf7tezA3de4Ex2FCrQn2mJ5fufmQA=
+X-Google-Smtp-Source: AGHT+IHcNb2whkudlAoX0PIxv0wM+WiJHVbabURN52CZ95xVY0/XjQG7ggcKAuwehZjH4LmIdYalug==
+X-Received: by 2002:a2e:3603:0:b0:2ef:2dbe:7455 with SMTP id 38308e7fff4ca-2f03db56305mr10047511fa.1.1721894478341;
+        Thu, 25 Jul 2024 01:01:18 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23394sm44719966b.26.2024.07.25.01.01.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 01:01:18 -0700 (PDT)
+Message-ID: <a249e651-a2a1-4ea9-b262-0d04a8abaf0e@suse.com>
+Date: Thu, 25 Jul 2024 10:01:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
- <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
- <CAHB1NagAwSpPzLOa6s9PMPPdJL5dpLUuq=W3t4CWkfLyzgGJxA@mail.gmail.com>
- <20240724194313.01cfc493b253cbe1626ec563@linux-foundation.org>
- <CAHB1NagB0-N777xzODLe19YBV1UJn4YGuUo67-O9cgKKgc-CLg@mail.gmail.com> <20240725-interesting-annoying-mammoth-6bb3ef@buildd>
-In-Reply-To: <20240725-interesting-annoying-mammoth-6bb3ef@buildd>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Thu, 25 Jul 2024 04:00:53 -0400
-Message-ID: <CAHB1Nag1fXh7M5v6nJbp1b-Y_2tXWvnBjcUPGsY61d=GaOo+dg@mail.gmail.com>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-To: Nicolas Schier <n.schier@avm.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, masahiroy@kernel.org, 
-	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] x86/xen: fix memblock_reserve() usage on PVH
+To: Roger Pau Monne <roger.pau@citrix.com>, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+References: <20240725073116.14626-1-roger.pau@citrix.com>
+ <20240725073116.14626-3-roger.pau@citrix.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240725073116.14626-3-roger.pau@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Nicolas Schier <n.schier@avm.de> =E4=BA=8E2024=E5=B9=B47=E6=9C=8825=E6=97=
-=A5=E5=91=A8=E5=9B=9B 00:48=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Jul 24, 2024 at 11:05:43PM -0400, Julian Sun wrote:
-> > Andrew Morton <akpm@linux-foundation.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=
-=8824=E6=97=A5=E5=91=A8=E4=B8=89 22:43=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Wed, 24 Jul 2024 22:30:49 -0400 Julian Sun <sunjunchao2870@gmail.c=
-om> wrote:
-> > >
-> > > > I noticed that you have already merged this patch into the
-> > > > mm-nonmm-unstable branch.
-> > >
-> > > Yup.  If a patch looks desirable (and reasonably close to ready) I'll
-> > > grab it to give it some exposure and testing while it's under
-> > > development, To help things along and to hopefully arrive at a batter
-> > > end result.
-> > >
-> > > > If I want to continue refining this script,
-> > > > should I send a new v2 version or make modifications based on the
-> > > > current version?
-> > >
-> > >
-> > > > Either is OK - whatever makes most sense for the reviewers.  Reissu=
-ing
-> > > > a large patch series for a single line change is counterproductive =
-;)
-> > Thanks for your clarification. I will send a new patch based on the
-> > current version.
->
->
-> > Hi Julian,
-> >
-> > can you please Cc linux-kbuild in v2?
-Sure, sorry for missing that.
-I have sent another patch to reduce false positives and CCed linux-kbuild.
->
-> Kind regards,
-> Nicolas
+On 25.07.24 09:31, Roger Pau Monne wrote:
+> The current usage of memblock_reserve() in init_pvh_bootparams() is done before
+> the .bss is zeroed, and that used to be fine when
+> memblock_reserved_init_regions implicitly ended up in the .meminit.data
+> section.  However after commit 73db3abdca58c memblock_reserved_init_regions
+> ends up in the .bss section, thus breaking it's usage before the .bss is
+> cleared.
+> 
+> Move and rename the call to xen_reserve_extra_memory() so it's done in the
+> x86_init.oem.arch_setup hook, which gets executed after the .bss has been
+> zeroed, but before calling e820__memory_setup().
+> 
+> Fixes: 38620fc4e893 ('x86/xen: attempt to inflate the memory balloon on PVH')
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> ---
+> While the commit that introduced the user-noticeable regression is
+> 73db3abdca58c, I think 38620fc4e893 should have been more careful to not
+> initialize the memblock ranges ahead of the .bss zeroing.
+
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+I'd prefer using 73db3abdca58c for the fixes tag. Otherwise you'd need to
+add this patch to the stable branches, too, which is technically not really
+needed.
+
+Additionally I'd like to drop the Fixes: tag from the prereq patch, as this
+one doesn't really fix anything.
+
+I can do both while committing.
 
 
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+Juergen
 
