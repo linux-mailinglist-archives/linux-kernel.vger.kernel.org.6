@@ -1,166 +1,109 @@
-Return-Path: <linux-kernel+bounces-262191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8305393C22D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:38:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84F093C233
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F5D1F21592
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B0A2827B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3A198E76;
-	Thu, 25 Jul 2024 12:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A611990DE;
+	Thu, 25 Jul 2024 12:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7eRuQ+9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUjblg9q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A061741F8;
-	Thu, 25 Jul 2024 12:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205717557C;
+	Thu, 25 Jul 2024 12:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721911119; cv=none; b=VEmFPa/AZYxuXVJwVkH37KH28/S8DNVQuuD12qUAwyWZkqcEq6bO9KsPT63rkRJQtxm54Ra0WqyRnh8XS6Aw6ilPqA8WWGjmGn+3nQHznjYpz/oJNrx3bIYuCZ9hnf+j74YsysvudXGK4bD+8TLy+yXWpAwUb+3dIUptaEnTJEk=
+	t=1721911164; cv=none; b=tbvrdAwcyGpH5n8G3fNkdMRF3xL0N7jfR6dxRxt5z4/wF/YOfSds5X7mOBSHeeLAs3JhrXUnx7XL8gySrgi2ebV57cP58ZHgFqBthX1JBRbVsGT9U9+7A/29nWefg/96rG+CWcXhDiD6gfmKTvId2fet22gfAAVYtHBPyTVGX7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721911119; c=relaxed/simple;
-	bh=VG+cP0kFl7e/oaB73V3oKDo0+7NMuvP6lVqYhJM22ps=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OcSjzt4IrdL06SKvm1yV8Zq/qzAfG6AHeQ9qHBMVwOcaWux06BBdPvLXac8EH6x+qyWpDI6XZMoXaRjKqWR5ICUVosog00HrcxcXX4SLX/o7EkNse055dir1iGS6h+SSPpeUuqGtWqrCEXOXAC57s3ltJssU/eOmMRISnxwUijY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7eRuQ+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71432C116B1;
-	Thu, 25 Jul 2024 12:38:39 +0000 (UTC)
+	s=arc-20240116; t=1721911164; c=relaxed/simple;
+	bh=JQLCRaTjuF1Y5Tee5FwgNd12L/3NrtzgTxeyESICL+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTIAEEUJfv+cH6FEAjiWRBKsu4ErT8LNiM2z+8GDrS+W+Yizfng+eqgPkfdutdM5FnUI0eBySpuc8FAudA+FOz185n4rSoi2Y6w4AydAKPrOn7sAJe6GZBBEsdL/typXxsiWavg09A86tePAmlXLf5PuJUimmjaRk1cL5XOKyO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUjblg9q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7A65C116B1;
+	Thu, 25 Jul 2024 12:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721911119;
-	bh=VG+cP0kFl7e/oaB73V3oKDo0+7NMuvP6lVqYhJM22ps=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D7eRuQ+9Roalcj7cFfAnZbXasHzhzgikkU6RlUdQ+VRvNx8CP2c1UWvUSrOmPV1XT
-	 I1JWAx5pBzFP8D4LE7QRkmZ1bkwoWiBUCoV9LIthgGWdLSoNIQFpp4ht5XsgPL5DI0
-	 CLyVZfRZTz/GjjjZgq5dZO1a7Ikc4JerefFCdarODgaAyJyC0PD8zyigHGdAbSowyy
-	 bpa74XKJlp4fO3fywS58Doft2m+B4KDDmI23tGw7GUAdJtbiLDkZSVXNcTVKHT4VrL
-	 LuDnWaMCSlPnFQj0prqPGQlfaNhJzZCC20jjvcJuVtlR+rVtSZRq8PygrNbOrh59Qp
-	 EJHbnnn04QuUg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sWxjx-00FITm-6c;
-	Thu, 25 Jul 2024 13:38:37 +0100
-Date: Thu, 25 Jul 2024 13:38:36 +0100
-Message-ID: <865xst3aur.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: jianyong.wu@outlook.com
-Cc: oliver.upton@linux.dev,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Add some statistics under kvm debugfs
-In-Reply-To: <SI2PR04MB4931916BB35936E00B2AD262E3AB2@SI2PR04MB4931.apcprd04.prod.outlook.com>
-References: <SI2PR04MB4931916BB35936E00B2AD262E3AB2@SI2PR04MB4931.apcprd04.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1721911164;
+	bh=JQLCRaTjuF1Y5Tee5FwgNd12L/3NrtzgTxeyESICL+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BUjblg9qtifz3rTtAbR1AfQIDUjhB7OUPlQHc4qTd+fig/e5jBsMGL5Rupt104gce
+	 15vIu8u22Uq5tzTSWWscvq4VwJvoQMVRQ1FmCHSYAmPL6c2Q4RrXj41cdCFZy0eDsI
+	 prIrGLQ3rwmapFrt9JG9bg5qb2bvkto/LHgummU78PgEwLoLjltdUuSxagknA+AdT0
+	 YqWPAAit30NMKGf6NpkCvuB8695bI39mk0MwMzxKq5VuwbYu4Grt+J7mqa77EDU1VK
+	 ainJ5xjg/zkwZH1JOLs+4QqfIFCHY73ZX0+iZBrmFBE/YX+pMZvNZ2ME8svORy9dL6
+	 8MEWuPV95H3kw==
+Date: Thu, 25 Jul 2024 14:39:21 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 25/25] context_tracking, rcu: Rename rcu_dyntick trace
+ event into rcu_watching
+Message-ID: <ZqJHeTE52cn1-4p4@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-26-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: jianyong.wu@outlook.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724144325.3307148-26-vschneid@redhat.com>
 
-On Thu, 25 Jul 2024 04:27:38 +0100,
-jianyong.wu@outlook.com wrote:
+Le Wed, Jul 24, 2024 at 04:43:25PM +0200, Valentin Schneider a écrit :
+> The "rcu_dyntick" naming convention has been turned into "rcu_watching" for
+> all helpers now, align the trace event to that.
 > 
-> From: Jianyong Wu <jianyong.wu@outlook.com>
+> To add to the confusion, the strings passed to the trace event are now
+> reversed: when RCU "starts" the dyntick / EQS state, it "stops" watching.
 > 
-> There are some statistics missing from kvm debugfs on arm64. For
-> example: irq_exits number, irq_injection number and so on. But it's
-> useful to monitoring kvm performance, so, add them here.
-> 
-> Signed-off-by: Jianyong Wu <jianyong.wu@outlook.com>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 > ---
->  arch/arm64/include/asm/kvm_host.h | 3 +++
->  arch/arm64/kvm/guest.c            | 3 +++
->  arch/arm64/kvm/handle_exit.c      | 1 +
->  arch/arm64/kvm/sys_regs.c         | 1 +
->  arch/arm64/kvm/vgic/vgic.c        | 1 +
->  5 files changed, 9 insertions(+)
+>  include/trace/events/rcu.h | 16 ++++++++--------
+>  kernel/context_tracking.c  | 10 +++++-----
+>  2 files changed, 13 insertions(+), 13 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 9e8a496fb284..1e20319977b3 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -1024,6 +1024,9 @@ struct kvm_vcpu_stat {
->  	u64 mmio_exit_user;
->  	u64 mmio_exit_kernel;
->  	u64 signal_exits;
-> +	u64 irq_exits;
-> +	u64 irq_injections;
-> +	u64 handle_sys_reg_exits;
->  	u64 exits;
->  };
->  
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index e2f762d959bb..a3783388a802 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -50,6 +50,9 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
->  	STATS_DESC_COUNTER(VCPU, mmio_exit_user),
->  	STATS_DESC_COUNTER(VCPU, mmio_exit_kernel),
->  	STATS_DESC_COUNTER(VCPU, signal_exits),
-> +	STATS_DESC_COUNTER(VCPU, irq_exits),
-> +	STATS_DESC_COUNTER(VCPU, irq_injections),
-> +	STATS_DESC_COUNTER(VCPU, handle_sys_reg_exits),
->  	STATS_DESC_COUNTER(VCPU, exits)
->  };
->  
-> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index 617ae6dea5d5..d69ab1207da4 100644
-> --- a/arch/arm64/kvm/handle_exit.c
-> +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -335,6 +335,7 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
->  
->  	switch (exception_index) {
->  	case ARM_EXCEPTION_IRQ:
-> +		++vcpu->stat.irq_exits;
->  		return 1;
->  	case ARM_EXCEPTION_EL1_SERROR:
->  		return 1;
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index c9f4f387155f..2a6bfc673636 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -3568,6 +3568,7 @@ int kvm_handle_sys_reg(struct kvm_vcpu *vcpu)
->  	int Rt = kvm_vcpu_sys_get_rt(vcpu);
->  	int sr_idx;
->  
-> +	++vcpu->stat.handle_sys_reg_exits;
->  	trace_kvm_handle_sys_reg(esr);
->  
->  	if (triage_sysreg_trap(vcpu, &sr_idx))
-> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
-> index 4ec93587c8cd..9f7371e01f35 100644
-> --- a/arch/arm64/kvm/vgic/vgic.c
-> +++ b/arch/arm64/kvm/vgic/vgic.c
-> @@ -454,6 +454,7 @@ int kvm_vgic_inject_irq(struct kvm *kvm, struct kvm_vcpu *vcpu,
->  
->  	vgic_queue_irq_unlock(kvm, irq, flags);
->  	vgic_put_irq(kvm, irq);
-> +	++vcpu->stat.irq_injections;
+> diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+> index 4066b6d51e46a..e51ef658437f0 100644
+> --- a/include/trace/events/rcu.h
+> +++ b/include/trace/events/rcu.h
+> @@ -466,40 +466,40 @@ TRACE_EVENT(rcu_stall_warning,
+>  /*
+>   * Tracepoint for dyntick-idle entry/exit events.  These take 2 strings
+>   * as argument:
+> - * polarity: "Start", "End", "StillNonIdle" for entering, exiting or still not
+> + * polarity: "Start", "End", "StillWatching" for entering, exiting or still not
+>   *            being in dyntick-idle mode.
+>   * context: "USER" or "IDLE" or "IRQ".
 
-Like for most stats, I don't think this is warranted. Most of these
-already have trace points associated to it, and you can readily
-*count* those. These stats are an absolute waste of cycles and memory,
-and I have suggested alternative approaches in the past (all of them
-relying on the tracing infrastructure).
+So that should be:
 
-Thanks,
+ * polarity: "Start", "End", "StillWatching" for exiting, entering or still not
+             being in EQS mode.
 
-	M.
+Right?
 
--- 
-Without deviation from the norm, progress is not possible.
+Other than that:
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
