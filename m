@@ -1,174 +1,181 @@
-Return-Path: <linux-kernel+bounces-261754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81D993BBBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633C493BBC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191351C219F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:27:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866101C219AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D3C1B7FD;
-	Thu, 25 Jul 2024 04:27:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8AD12B95;
+	Thu, 25 Jul 2024 04:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i4kH/NIl"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627821103
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45E9187F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721881648; cv=none; b=FnZJBYwC0Vmi7BjZ82Pa2Yw6bIdvN9my5r8QesQ4GAKwdP474Y/SL/NeoRbiTd9qisOPJUiYRusRONyHli0cc17Xt9N9woYKomKN9512ho7HOZOQlfF/XBPaC9vTU1+QWMZRETiHo4oNx7zPcOiGY/zfUGV5QathT2XorAVTUh8=
+	t=1721881879; cv=none; b=m4kXGS3NipxgbyTkK3/pPTfp2TJNVAqmfCvQ07oX/YjAIRQBWlbAI1RksX9dNlibJGzw8M54ne1VhhmhTILfuLh+YvOlArNEfJCdtiaNapmwyd0b8UJdOc2gN/Aq+fhXKkR4OnJc8C504IQSSM9HdNOtekOGIakGpeXe3dTjFLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721881648; c=relaxed/simple;
-	bh=+y0LYOXdo+Rbtg55T3IOqrCtEJNFT6WwTdn6LjJQgC4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m/Lxc7wCi6+cJA6xBheE6R5X27YSaoncSooHYpSHPaDO0nhJcB01TX4zFZ4J7GTbiBcZvh8uow7UqQhbSldoYEZFUvBdX57zvyROZfDBUOhmPdvrAl6qA0YHC3OkwJnI0V2pybwZpbmvuzLQEwkKpumr+MgNB8Q5AkS29awTV0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8489097eso848839f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:27:27 -0700 (PDT)
+	s=arc-20240116; t=1721881879; c=relaxed/simple;
+	bh=X0LCLEP4obca1nLd4uqhOQvKIEY53jmMcqK3W3MSgRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVDM3A+PxE3KzBRvegW1wZY60a5a0k/sFRaV7ZMZMzfk05Pus/tXfV74V8SXw8zC3nLwKx/WTGyHtmRWJNexgcsyZ5kfVCvmj9LDMcXUzWv61NbBKL32IL/JfbdeZxRzO9NrDzQT3OijNPGt9BXSq8snU3Wrsp09maT3/LWir78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i4kH/NIl; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso454260b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721881877; x=1722486677; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XXfannR0i35m+kTBwRZd8UAXF5c0K76k4L1K8mKl1Ek=;
+        b=i4kH/NIldXSji/ilcniMrAQ97CA1IVs40pgk6sl5A/iIyJyoE/0Iaa6qnmwdAP1MsJ
+         I7b0a5Ml2+cnJ9/0FXv44yguYL/2LoAWt2pRmYTQfWJW1WcOyrR/GDQfDaLYExkR6Rhm
+         DQWiKMHZW+iSo+n3iIKH9o5N/gggwVdVyUAVE0no1byd2JKekv8eOdD7OPlIjh2z1onT
+         /cDq4RmOpOHDTRsjy4EcsMKSRRg3/WC34nIz0lQbGkRY+dzTI0cRUhhLX9QdHs2N6lG8
+         lK813LwsqW33VsTcudatAA2Qr7KeOxF5t2VForPD+wRI7bty6u2ab2WgisILKA2B7HUg
+         aRug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721881646; x=1722486446;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/lON8fGworFpTJ7CQFsh8gPqMnx74mEVJ/DboqaaKd4=;
-        b=ez5dKqjCrTZGrnX6SoBSKZGXyuD1S4ktP0XiBxPrF9CvXZTDUQEt7wuwqPiIDQlEKI
-         NQUxn1DDGfMebSG9d/NazKRQnjo4kWE2JzCf0ZtxHs7vPhD6sy/eI6Ks6XIAeFtV25hE
-         jYDHHFnHeOXuwSXxeYZQSP0NNQ3pjSoDi3VYZjb7TMNk5P2wVpJgwPXpXNHtZ45HstQ2
-         71FMUhhgm7Wi3t1ASzWZ4r3Mu7lktmaBRDtYSGpy25OPcJi8f9LMfswdbPzjFLlxg6vf
-         mKwVR1wyeuYhif1S9ftaWqM4qq59359S98Muqi9JmTGaRu1ggnGOE86zrg3c6aDNMh2Z
-         Zpdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7ESLoGpyGqcVovKJtzh8f0ymmWuG7QXfaMPVUs6eNEEnpJhSJhPo7JDhmfva74qECPv2PU8ggNjAzx30IMV2GPfngIAjffpeRYhCM
-X-Gm-Message-State: AOJu0YzGasSHr+KmJktiBfY2Oa+54WeOkIBv2Us0fZT9mdyz/eq2PUax
-	FCqgDeC00ZtBjRWIJ0t9t+lh6U89pDvHpfwjcmdQDttES7QK/4oHjvCQWxSkENdD5hfOCNlk84v
-	rk1qBcTfjlLpBI6hwLQFSu8dPwWQ4w94ZH1YywV21/v2LEcKaFaiiKoY=
-X-Google-Smtp-Source: AGHT+IFKiVs0ynWU6sPaCWcQc5bXJcd0XJIfyj44zLasAXY91uG3+wsbMLFkmbv0EE6qda5A+h8isJyfufw+RA985Cqd6wazdMkN
+        d=1e100.net; s=20230601; t=1721881877; x=1722486677;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXfannR0i35m+kTBwRZd8UAXF5c0K76k4L1K8mKl1Ek=;
+        b=vj+C9N9C8Uq5icsD1e4yjCXCiwSpp5pjrd6/rdK50jEf8lFoY2CVXyPH5j+m2q4Dch
+         BfgZ+lcVzpydN6h5XpKbu0cB6CB5BM92hu7NA53hLMVP6DB4P7k+LKmcaOVsxiBOITXZ
+         61XL4CfV0EEy9MvXnT8YbLwLMVefTFzdofyTobiVdUXrTUdLtK62sN/Iox/c/m217iDu
+         9EsNAdCQUqY6b5ufDrZ+nBi1NeympCivejfsD2eflMR5GBFcPFtHkWUhBD3bDNwc4z6H
+         c5DH5HtOLM6h9wo0AMSWGA4TE1jESzbaBuqqb73fq1ihYSLTmAVxYv3+jP0+4F3aQeF6
+         f7xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVinq6uc9bPASBhmkG26kbCj8jLPAPm6G0Hf3cr+9bYqBImrlzm6QNa6g9GyVUThrnldihEGKXYyGTVaMVPjLwuOPdsgT7CJFn9dMrQ
+X-Gm-Message-State: AOJu0YyDefFYKTjjK9EUNPZDnFBHnYW+ZZ1NdTtesPyfYxtVVdb8FgCq
+	+kp309QXW9Gf9a7UyJmnuDY84jOy0Y2veISDy9fzY320yeavsdPzqxOodFg/5g==
+X-Google-Smtp-Source: AGHT+IGXP64T7aTAPdkei1RXlp7A5rssNN997hjPGJuJA94RsOXciUbGOuoAzAwhs2/QCXjvj/Qa8w==
+X-Received: by 2002:a05:6a00:22d1:b0:70b:152:331 with SMTP id d2e1a72fcca58-70eaa936f64mr2043343b3a.21.1721881876962;
+        Wed, 24 Jul 2024 21:31:16 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead812300sm343213b3a.114.2024.07.24.21.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 21:31:16 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:01:11 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in
+ brcm_pcie_probe()
+Message-ID: <20240725043111.GD2317@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-4-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8412:b0:4c1:4388:46bb with SMTP id
- 8926c6da1cb9f-4c2a0d82265mr29149173.0.1721881646548; Wed, 24 Jul 2024
- 21:27:26 -0700 (PDT)
-Date: Wed, 24 Jul 2024 21:27:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e35983061e0acfa9@google.com>
-Subject: [syzbot] [serial?] general protection fault in n_tty_receive_buf_common
- (2)
-From: syzbot <syzbot+2dda672e146ff12ccb02@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716213131.6036-4-james.quinlan@broadcom.com>
 
-Hello,
+On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
+> o Move the clk_prepare_enable() below the resource allocations.
+> o Add a jump target (clk_out) so that a bit of exception handling can be
+>   better reused at the end of this function implementation.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++------------
+>  1 file changed, 16 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index c08683febdd4..c257434edc08 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  
+>  	pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
+>  
+> -	ret = clk_prepare_enable(pcie->clk);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "could not enable clock\n");
+> -		return ret;
+> -	}
+>  	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+> -	if (IS_ERR(pcie->rescal)) {
+> -		clk_disable_unprepare(pcie->clk);
+> +	if (IS_ERR(pcie->rescal))
+>  		return PTR_ERR(pcie->rescal);
+> -	}
+> +
+>  	pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
+> -	if (IS_ERR(pcie->perst_reset)) {
+> -		clk_disable_unprepare(pcie->clk);
+> +	if (IS_ERR(pcie->perst_reset))
+>  		return PTR_ERR(pcie->perst_reset);
+> +
+> +	ret = clk_prepare_enable(pcie->clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "could not enable clock\n");
+> +		return ret;
+>  	}
+>  
+>  	ret = reset_control_reset(pcie->rescal);
+> -	if (ret)
+> +	if (ret) {
+>  		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> +		goto clk_out;
 
-syzbot found the following issue on:
+Please use a descriptive name for the err labels. Here this err path disables
+and unprepares the clk, so use 'clk_disable_unprepare'.
 
-HEAD commit:    786c8248dbd3 Merge tag 'perf-tools-fixes-for-v6.11-2024-07..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f0d29d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47beaba1a1054668
-dashboard link: https://syzkaller.appspot.com/bug?extid=2dda672e146ff12ccb02
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> +	}
+>  
+>  	ret = brcm_phy_start(pcie);
+>  	if (ret) {
+>  		reset_control_rearm(pcie->rescal);
+> -		clk_disable_unprepare(pcie->clk);
+> -		return ret;
+> +		goto clk_out;
+>  	}
+>  
+>  	ret = brcm_pcie_setup(pcie);
+> @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  
+> +clk_out:
+> +	clk_disable_unprepare(pcie->clk);
+> +	return ret;
+> +
 
-Unfortunately, I don't have any reproducer for this issue yet.
+This is leaking the resources. Move this new label below 'fail'.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e4bf4a8f547d/disk-786c8248.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9b69a5fd8929/vmlinux-786c8248.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e0060dfb7885/bzImage-786c8248.xz
+- Mani
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2dda672e146ff12ccb02@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000044c: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: probably user-memory-access in range [0x0000000000002260-0x0000000000002267]
-CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.10.0-syzkaller-12246-g786c8248dbd3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events_unbound flush_to_ldisc
-RIP: 0010:n_tty_receive_buf_common+0xf3/0x1980 drivers/tty/n_tty.c:1718
-Code: 00 48 89 74 24 60 4a 8d 0c 39 4a 8d 34 3a 48 89 4c 24 70 48 89 74 24 68 48 89 84 24 a0 00 00 00 e8 b2 c7 95 fc 48 8b 44 24 68 <80> 38 00 0f 85 af 15 00 00 48 8b 44 24 18 48 8b a8 60 22 00 00 48
-RSP: 0018:ffffc90000117ad0 EFLAGS: 00010293
-RAX: dffffc000000044c RBX: 0000000000000001 RCX: dffffc0000000000
-RDX: ffff8880172fda00 RSI: ffffffff84f4beee RDI: 000000000000005c
-RBP: 0000000000000004 R08: 0000000000000001 R09: ffffed100bfcec50
-R10: ffff88805fe76287 R11: 0000000000000000 R12: ffffffff84f4d790
-R13: 0000000000000000 R14: ffff88805fe76000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f62429bcfc8 CR3: 0000000066f7a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- tty_ldisc_receive_buf+0xa2/0x190 drivers/tty/tty_buffer.c:387
- tty_port_default_receive_buf+0x70/0xb0 drivers/tty/tty_port.c:37
- receive_buf drivers/tty/tty_buffer.c:445 [inline]
- flush_to_ldisc+0x264/0x780 drivers/tty/tty_buffer.c:495
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:n_tty_receive_buf_common+0xf3/0x1980 drivers/tty/n_tty.c:1718
-Code: 00 48 89 74 24 60 4a 8d 0c 39 4a 8d 34 3a 48 89 4c 24 70 48 89 74 24 68 48 89 84 24 a0 00 00 00 e8 b2 c7 95 fc 48 8b 44 24 68 <80> 38 00 0f 85 af 15 00 00 48 8b 44 24 18 48 8b a8 60 22 00 00 48
-RSP: 0018:ffffc90000117ad0 EFLAGS: 00010293
-RAX: dffffc000000044c RBX: 0000000000000001 RCX: dffffc0000000000
-RDX: ffff8880172fda00 RSI: ffffffff84f4beee RDI: 000000000000005c
-RBP: 0000000000000004 R08: 0000000000000001 R09: ffffed100bfcec50
-R10: ffff88805fe76287 R11: 0000000000000000 R12: ffffffff84f4d790
-R13: 0000000000000000 R14: ffff88805fe76000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055557bdc65c8 CR3: 0000000058bdc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	48 89 74 24 60       	mov    %rsi,0x60(%rsp)
-   5:	4a 8d 0c 39          	lea    (%rcx,%r15,1),%rcx
-   9:	4a 8d 34 3a          	lea    (%rdx,%r15,1),%rsi
-   d:	48 89 4c 24 70       	mov    %rcx,0x70(%rsp)
-  12:	48 89 74 24 68       	mov    %rsi,0x68(%rsp)
-  17:	48 89 84 24 a0 00 00 	mov    %rax,0xa0(%rsp)
-  1e:	00
-  1f:	e8 b2 c7 95 fc       	call   0xfc95c7d6
-  24:	48 8b 44 24 68       	mov    0x68(%rsp),%rax
-* 29:	80 38 00             	cmpb   $0x0,(%rax) <-- trapping instruction
-  2c:	0f 85 af 15 00 00    	jne    0x15e1
-  32:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
-  37:	48 8b a8 60 22 00 00 	mov    0x2260(%rax),%rbp
-  3e:	48                   	rex.W
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+மணிவண்ணன் சதாசிவம்
 
