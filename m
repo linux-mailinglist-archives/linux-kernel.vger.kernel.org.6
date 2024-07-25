@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-261896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4670193BD8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:01:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DAB93BD8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B291F225FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13211F2145A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E54A172BDC;
-	Thu, 25 Jul 2024 08:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423C5171661;
+	Thu, 25 Jul 2024 08:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EuXXDmD3"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L9e3my2b"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582FC172BD8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8495249ED
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894489; cv=none; b=tQYqPsLOp3anQB3QwnZB5WYutUq23zirX5a1BakhYuigqemEcm5NCHjg7+F20ErHH/9OKWjxdPPQ6Doxbag//g2OKhBtxADA6PkbPoXNtIwE5I3PdAlCIvUxnjfXYL5H3Y9AyyALtP2QacIkz7us9pDAPt8ffKiG2ub4ipg6YK4=
+	t=1721894569; cv=none; b=gfZ1T+37vCN3QG3CEdTZHKqjubxrzFT/eJ+Y38bgfPufVH1vw3ag+qVfbBqQF+mChNUVO/+6MVBmhyNHrZAPREmQZAGKSo1R3zBwambDPWLfE8cfjwJaIw+RHTZunV0sojUTWDhfENdr4gg37Zzzn3PbwS/i6fKvr9s2X9Dc9EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894489; c=relaxed/simple;
-	bh=bqtvZKpkX2ndCdEsKZV3b4UVOmkkdVl+Xk4IbYS4A1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXSaQR+suHlAwoNdWfiofuyQyWRa5c0VxwOoYmIODANU7Ey+Q2jC3V88F4KxX4/UtJpN6u9sPvW6Q+JfkUTSNCCueOvud50pjH6LvbuuZ7Vh//AJXGogiM6M05YSwSeCYZKj6R5nPx1M1mpniGiJaZYBk/Dopq/+14BNcJcI+C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EuXXDmD3; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d316f0060so1203855b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:01:28 -0700 (PDT)
+	s=arc-20240116; t=1721894569; c=relaxed/simple;
+	bh=FXcbSU+NO5jzjvmG5c78eyWsBVW8+q+UKaAuNzAvKGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQIx5ik3olIwN1tgnM6brezchjpajGvus5ZH1jz4RILRwAbHtoMLwX3vWZNllrlBggEiczwOLgcsJ/MV1jWBNyF64z2e1KRhrdPsQNZbWW2mCD3IixF5qwWIPYDJC8X+6cIpET0umXB7sCGoBaAf6QdQm1xCZaHB7hvu0OARU8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L9e3my2b; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so29707966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 01:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721894488; x=1722499288; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2c7ggsoOSLdU9DiOS/frhmaIqR3+SdwRnRwQB87GU3U=;
-        b=EuXXDmD3WJ3sGa2FCe0SrrAGhwE5VCWnpq3W2Vyxp5Ki6zZXsio50JsAKHbAau4fPp
-         R3+ShYhKv75QsAgK/oU3Tli61TmsitlnpUvKJdCu1Q4p1iHIrm+hxSUf35nHVD/48TG3
-         UM4ewR3KYYztMecOpwd4gICHlTewRVK9WhydDBe47Ao+ksZD6SoGzyvHpERh5b22r/S1
-         Flih9qyl8x7KHi8HQzj8IkuZJdrO9wABowuhaUkmSv9ziI3SeDfW09Ml46Cb6X8wUGaS
-         Xo4Wa8klMLBygt0DHPreszMGRwHrZ1ZtESFq2yObfiqOvvOnWRnw7P7s8zupZouQOson
-         KpnA==
+        d=suse.com; s=google; t=1721894566; x=1722499366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AP47ysTrD1B/0czQGo5UjPtQ30JzUCGh6ScFen3bgnQ=;
+        b=L9e3my2bSTSWvs5McjwIoAjvGGk5s1Fmo9Cu+XaEZ6giZdH0Qh5WF5COjuV3a1Unqb
+         oFK44qKZUBRZgGr7DfsxfpkaPejKQYrQrO918qrjxJDtDs3K7llXFiRP0zrbODEJ6GtL
+         hh0UYbBKSn1RP4S8It5r+yvqb73o8BEjX7fh4LOLXrDLi0hHL0sZEziHPL9orSD4l/et
+         UpHbUzstYL5BtrqJ7KnY3h6crAqXH5nS8rEsZd2OBDZ1ncL6a4nJA/SYnNkW0yJ9VoKt
+         ZYHWrAqpICgXjCRXfG/9RK2gA3Dz/4B0GipqUvle1ct3N2BTiQO73016YmKmjMUmcnAg
+         u3lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721894488; x=1722499288;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1721894566; x=1722499366;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2c7ggsoOSLdU9DiOS/frhmaIqR3+SdwRnRwQB87GU3U=;
-        b=MDxpVRduh90beksY7t0B7nGImW788LiGAnB2QlZmftcTheou8PtsB7DwxHzlx/ctOU
-         K6WFpATICE8IhFLkwdPFme9hP19fUz+j9rSD+02UM5olD2UYfKzYF4ZzUggD18XdJgTH
-         webX98i+EG/w6vgu3qX3KPQxnv5SRF7ADvrWsDpn/pZEbmXrKI+PZkKhz8pfscboJ5fA
-         KlWWkBB3iSLotxWcNL2VyBBz8LLbFKwebSl/ZgLP6egWmXo3Yhk3J4jGeaMo3tUYC5/K
-         SlbmwBfMHPtcaxF9QmupyNAoWKZG4YWtdD6nesZw8gVY8JghrrUuDxQycolGJsUmP5QU
-         c2gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNlFIh+XTLjITO63Ex0J4NCAtqdO0lujlhzblvVXImRWye+xhULxuWwCCLdtzYG7oF06ugXylwxFqubGOqy5+h6ZcAg/rsXGCfFTCi
-X-Gm-Message-State: AOJu0YxHI8Ykh0A3U9z+OqwsDuoZJwayHGJ8XqRVWkXmIMk9V+iIlB0d
-	qewlpvYjJxeb7O95iC3qG7uw/3Jq0bkrrjHAE8J6+O/oik9cKNXE3zj5FJy6bg==
-X-Google-Smtp-Source: AGHT+IFmvJyqahoU02kPAEWANanSJCeYxaO1E1XGFkFJWmSQRgcWigI4sZuhSewH3maEyGNqF8nq9Q==
-X-Received: by 2002:a05:6a20:a10b:b0:1c2:8d44:d42d with SMTP id adf61e73a8af0-1c4634cda5dmr8263701637.0.1721894487569;
-        Thu, 25 Jul 2024 01:01:27 -0700 (PDT)
-Received: from thinkpad ([2409:40f4:1015:1102:1950:b07b:3704:5364])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f8273af7sm589703a12.30.2024.07.25.01.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 01:01:27 -0700 (PDT)
-Date: Thu, 25 Jul 2024 13:31:19 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Cc: fancer.lancer@gmail.com, vkoul@kernel.org, quic_shazhuss@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nayiluri@quicinc.com, quic_krichai@quicinc.com,
-	quic_vbadigan@quicinc.com, stable@vger.kernel.org,
-	Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dmaengine: dw-edma: Fix unmasking STOP and ABORT
- interrupts for HDMA
-Message-ID: <20240725080119.GC2770@thinkpad>
-References: <1721740773-23181-1-git-send-email-quic_msarkar@quicinc.com>
- <1721740773-23181-2-git-send-email-quic_msarkar@quicinc.com>
+        bh=AP47ysTrD1B/0czQGo5UjPtQ30JzUCGh6ScFen3bgnQ=;
+        b=g1k0ObimmOOqKzfB6PUxDNsH+CAlXZBetvOigCvAxXbHPJ49pPeL15XVGIsU20ByUl
+         E99IIrUaOdGHi97LD5K+wYiwZBOaaOATfFrQPd+Qo7hfu/KLm0pexqymc6I4JVJRwJer
+         tE+n6QMgZPy2gEthiDyjrkRTTTkV3laH5TlFOVv3Lm3nzWNq39r7i4VmuymTUl2hRNRq
+         ubXdHIEWUNf/X9CE2bxYa5iudC0kBxJpIInoHLTBS40mEustQlyXVcPL6WoB5plhKoNA
+         nDW69Nvd/jduCBR1fgAdDQ+XyHbOLq8q3J/BUSCI2oK8MzS8OhPtjiUCktKf32wOkG/a
+         iK8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhTCcOGWDO+YvduwX6gnjekLG20LL2beZ2BNv8WPh2MiVKd+jjVNpOIIWqtMgMpto9SOSRh/FVdpXApY/mSrVBT5T3sIFQqy3a1GZ8
+X-Gm-Message-State: AOJu0YxaX+Q4MWCXISaMTGvYYOYF3v/0wowTBIPuO2ny8IDWWG33+2NI
+	ulx288w2oWzypDjaKIyD5/FA6+cSDJ19swXiM4uk3+S/L02uEOD0LRRCpVyliQw=
+X-Google-Smtp-Source: AGHT+IEVJJ3nESMvDj3qZN35DsT4AR4wlpLYi6EzQNKrYOMLzABEAXbto0MdLywaTjjGWg0Y6EzVuw==
+X-Received: by 2002:a17:907:9694:b0:a7a:b385:37c8 with SMTP id a640c23a62f3a-a7ac4d9f44amr153068366b.5.1721894566083;
+        Thu, 25 Jul 2024 01:02:46 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb021asm44214166b.188.2024.07.25.01.02.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 01:02:45 -0700 (PDT)
+Message-ID: <a2edee01-b895-4d0f-b435-9a92bcc5c411@suse.com>
+Date: Thu, 25 Jul 2024 10:02:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86/xen: move xen_reserve_extra_memory()
+To: Roger Pau Monne <roger.pau@citrix.com>, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+References: <20240725073116.14626-1-roger.pau@citrix.com>
+ <20240725073116.14626-2-roger.pau@citrix.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240725073116.14626-2-roger.pau@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1721740773-23181-2-git-send-email-quic_msarkar@quicinc.com>
 
-On Tue, Jul 23, 2024 at 06:49:31PM +0530, Mrinmay Sarkar wrote:
-> The current logic is enabling both STOP_INT_MASK and ABORT_INT_MASK
-> bit. This is apparently masking those particular interrupts rather than
-> unmasking the same. If the interrupts are masked, they would never get
-> triggered.
+On 25.07.24 09:31, Roger Pau Monne wrote:
+> In preparation for making the function static.
 > 
-> So fix the issue by unmasking the STOP and ABORT interrupts properly.
+> No functional change.
 > 
-> Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
-> cc: stable@vger.kernel.org
-> Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+> Fixes: 38620fc4e893 ('x86/xen: attempt to inflate the memory balloon on PVH')
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Without the Fixes: tag (can be dropped while committing):
 
-- Mani
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-> ---
->  drivers/dma/dw-edma/dw-hdma-v0-core.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> index 10e8f07..fa89b3a 100644
-> --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-> @@ -247,10 +247,11 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
->  	if (first) {
->  		/* Enable engine */
->  		SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
-> -		/* Interrupt enable&unmask - done, abort */
-> -		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup) |
-> -		      HDMA_V0_STOP_INT_MASK | HDMA_V0_ABORT_INT_MASK |
-> -		      HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
-> +		/* Interrupt unmask - STOP, ABORT */
-> +		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup) &
-> +		      ~HDMA_V0_STOP_INT_MASK & ~HDMA_V0_ABORT_INT_MASK;
-> +		/* Interrupt enable - STOP, ABORT */
-> +		tmp |= HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
->  		if (!(dw->chip->flags & DW_EDMA_CHIP_LOCAL))
->  			tmp |= HDMA_V0_REMOTE_STOP_INT_EN | HDMA_V0_REMOTE_ABORT_INT_EN;
->  		SET_CH_32(dw, chan->dir, chan->id, int_setup, tmp);
-> -- 
-> 2.7.4
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Juergen
+
 
