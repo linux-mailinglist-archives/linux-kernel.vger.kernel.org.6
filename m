@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-262226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A5893C2BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C224493C2BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D160E1F22172
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C295281949
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A999199EA3;
-	Thu, 25 Jul 2024 13:16:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AB01990BB
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1686019ADA6;
+	Thu, 25 Jul 2024 13:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fhahh3Ya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4942A224D2;
+	Thu, 25 Jul 2024 13:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721913397; cv=none; b=Uj8UUz5q0IF76WtSBweaCJrtOHVvoZfKGNnleYZac2rqf0raSeS1/FnsmZ6FSAlb8DDbztQdv2Jr/qWJTQkIsotURCHtiOFZC+lySao6vlAxAfdPNea4ssjxD/+lEb19D5/Eo+rryIntvIwYqECFzarDxbUNKMEiAkkaIcTy0Jc=
+	t=1721913456; cv=none; b=rb+e4E4xcFCFGAc3xlodLrU5msKokMERT7VJVf3ITHMLULvh0/k94q6l0oEJoX3DjiHm96nrzWdCVJ/LdoIOTpqvc7Hxgz3Oz6+CVmc7fsSP6OhRmDYKt7OvT0tOiV6D5aI1XHS3kELVbLHJjKLaMYU9XHkxAc0m3FGwbCdnVkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721913397; c=relaxed/simple;
-	bh=No9Ikvyi535j3hZy+Oz/VA8YfIGwVq0eSPfcg14I+bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXhiqAiG8X28e44gopos8B3Nzbyrw87UM0kJhaQo4Y4lm/C8BiG/NeTJakuTwpsPSK8KJi6TKEfGInbAb5KzXCTaprVKZrka9zudULlOKoSdAcSfB0+dh0MAk/cXNFEGZMpqzSRxF99sHyx6NfXPDgdkRTeqVRj4iNL4yufjYWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93CD01007;
-	Thu, 25 Jul 2024 06:16:59 -0700 (PDT)
-Received: from [10.57.93.214] (unknown [10.57.93.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 089003F5A1;
-	Thu, 25 Jul 2024 06:16:31 -0700 (PDT)
-Message-ID: <38a631cf-1f6d-4d68-887a-12c7c5808ebf@arm.com>
-Date: Thu, 25 Jul 2024 14:16:30 +0100
+	s=arc-20240116; t=1721913456; c=relaxed/simple;
+	bh=kia5i5oOPSeeB+S1Khygr3d3dqyhKoYT13dTBTwO7yw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=uCBqf1K6Y76RDjgq1tYbplRyT09t+na6FdNZTTXbXUmYjdU02nhm5YhtoBaQDX7OWzX0kBvx2IcS3hWTPRjwXqXFGkceNvPmjKLp3SfAh/RKEdgobBPr9+QiBibhfvb8HxLK6AHuhN7UI/juP5Sk5qLWDGtpsbiIAhsdIvsD/IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fhahh3Ya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B5E8C116B1;
+	Thu, 25 Jul 2024 13:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721913455;
+	bh=kia5i5oOPSeeB+S1Khygr3d3dqyhKoYT13dTBTwO7yw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=Fhahh3YaLGYkNrvruq9P1OFCLPsRFyqnEFVg2qmtoh41GA2TB0fSVjlu78GF6kXl1
+	 a7nEiIuGI8hhjOT7FopVJVQ2Rn2BmvhQabD/jOwvqf2SdMaO/k9ytNR057e1IO/2cu
+	 M/AZPlSZRrl1i9mhG13btPgBGThwSRQqHcG2c/eiR2YhiSbRXKP2fuKgv+ip/w2Hrv
+	 AyHMVWPHJ7vaG+9fs4rj9TSJNcgl1VgFd0pC5TWZ8LUhz+xjDo+tIpnsujZm26O8pH
+	 mBALkHoVtNUioucpFW5xndoBT26LoMdlVjXViyL0ifpbr3DdruTMmeqD/G4R9lHF3i
+	 YcV8t5BKIb70A==
+Date: Thu, 25 Jul 2024 08:17:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/pelt: Use rq_clock_task() for hw_pressure
-To: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Juri Lelli <juri.lelli@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>, Lukasz Luba <lukasz.luba@arm.com>,
- linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-References: <20240725114200.375611-1-yu.c.chen@intel.com>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <20240725114200.375611-1-yu.c.chen@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: waqar.hameed@axis.com, liweilei@awinic.com, lars@metafoo.de, 
+ linux-iio@vger.kernel.org, kangjiajun@awinic.com, jic23@kernel.org, 
+ linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, krzk+dt@kernel.org
+In-Reply-To: <20240725121252.865836-2-wangshuaijie@awinic.com>
+References: <20240725121252.865836-1-wangshuaijie@awinic.com>
+ <20240725121252.865836-2-wangshuaijie@awinic.com>
+Message-Id: <172191345400.1572973.8660057237993091930.robh@kernel.org>
+Subject: Re: [PATCH V4 1/2] dt-bindings: iio: aw9610x: Add bindings for
+ aw9610x sensor
 
-On 25/07/2024 12:42, Chen Yu wrote:
-> commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
-> removed the decay_shift for hw_pressure. While looking at a related
-> bug report, it is found that this commit uses the sched_clock_task()
-> in sched_tick() while replaces the sched_clock_task() with rq_clock_pelt()
-> in __update_blocked_others(). This could bring inconsistence. One possible
-> scenario I can think of is in ___update_load_sum():
-> 
-> u64 delta = now - sa->last_update_time
-> 
-> 'now' could be calculated by rq_clock_pelt() from
-> __update_blocked_others(), and last_update_time was calculated by
-> rq_clock_task() previously from sched_tick(). Usually the former chases
-> after the latter, it cause a very large 'delta' and brings unexpected
-> behavior. Although this should not impact x86 platform in the bug report,
-> it should be fixed for other platforms.
 
-I agree with this patch but I'm a bit confused here. May I know what you 
-mean by 'should not impact x86 platform in the bug report'? But it 
-closes a bug report on qemu x86_64, so it does have an impact?
-
+On Thu, 25 Jul 2024 12:12:51 +0000, wangshuaijie@awinic.com wrote:
+> From: shuaijie wang <wangshuaijie@awinic.com>
 > 
-> Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202407091527.bb0be229-lkp@intel.com
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> Add device tree bindings for aw9610x proximity sensor.
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
 > ---
->   kernel/sched/fair.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../iio/proximity/awinic,aw9610x.yaml         | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9057584ec06d..cfd4755954fd 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9362,7 +9362,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
->   
->   	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
->   		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-> -		  update_hw_load_avg(now, rq, hw_pressure) |
-> +		  update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
->   		  update_irq_load_avg(rq, 0);
->   
->   	if (others_have_blocked(rq))
 
-Reviewed-by: Hongyan Xia <hongyan.xia2@arm.com>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/input/awinic,aw9610x.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240725121252.865836-2-wangshuaijie@awinic.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
