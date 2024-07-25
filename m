@@ -1,164 +1,263 @@
-Return-Path: <linux-kernel+bounces-262060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E716093C035
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2224A93C037
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BED1C21B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D216C2812C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499A0199EA3;
-	Thu, 25 Jul 2024 10:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078371991A6;
+	Thu, 25 Jul 2024 10:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iex0OlHN"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OzptXv91";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="554nF6J4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZiQU00SF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HHKT8WFH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21DE1993A3;
-	Thu, 25 Jul 2024 10:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E061991A0;
+	Thu, 25 Jul 2024 10:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721904054; cv=none; b=DKaPEPyJsKLbUnDXNXG2BuCSvLLzEJwYhNTmQaHFPwGHC8+rBTyho0x4c2VmE45y7xLNNf72hsnQcZV4oUPbpI4X+cU3ocCPLoj8uqQLLEINO1GqdxBbvukruSAYZlDQwcfkhRQWoHWtYO7YFTmbBxj88loE5ali7rsKwMhalOk=
+	t=1721904071; cv=none; b=UbvChlF2v0rMBf1WHfSW/RDaPoZHU2xIc0pzYcqSPDYQ7ysJ5ppEoJBwcW4Wiu5KpuwgT9rzl4OVIMBvSh1Dtvf3SbxiXJfaU5SCHNRoAPZdHJr34+fmpgrT48/OvKbEHAH6975Par7qwF3zWe80LhBrL+aVgZebnBfWpwQDaB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721904054; c=relaxed/simple;
-	bh=KWNNuFqNb/S25IX+uh0qv+bi86RJdKP7RJ0/PuyXSXs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c/qvZt++mLYUtyR5qOU8MhlnZkkFPoAt8JW4CDDqsLGMyFT6TIvGuJ84nV1I7flIpsYfFg9ZcMOzGjrblmPZ8aiSrk7cBYUst8Saqk/nXN+6wPXzbCKZjUYuH29T07m/sb5nDX/1ibmtRbuUEDNVQNLMApKOCrbmJkoYZQ0aheo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iex0OlHN; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so43731166b.1;
-        Thu, 25 Jul 2024 03:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721904051; x=1722508851; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nf6VPiGgpzV4Bh7OdZ3UQlM8J+Hh+6fmABD4788z7Ds=;
-        b=iex0OlHNXQ8RXvOIevwO5HZ94lCMKHyJGsEg82tlKecLYQUpEzuq7B9ZIZCGiQMnWo
-         u4C9bLgZNt4A9dLm8BHzmHCpOI7MGoCUPTnzai16SYL8m22c2VWDxYm+pNSZwWeDax1W
-         dJCu04Fuwf0hnhDLYJavqolpZ0c96qkF/dHNI4uDwLeqcgupZ0dG18pWK6Jjn2WNRPlt
-         S1Gx8RinG3l52qOFcMdv2AqD/SLXvFBuaAqh+0MrGQcWrQAA6biIHtwg+ubFqK5WxmDK
-         CcZXX3NOq3PHHAz6ffSZsnRG0vo0a4FUUuTjGZN9uyoSvwTZgd6wYrKf2W/Ryy9hVvZW
-         1hqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721904051; x=1722508851;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nf6VPiGgpzV4Bh7OdZ3UQlM8J+Hh+6fmABD4788z7Ds=;
-        b=fEorfXwy+jlB2Y6YlybebygUPpvG2EIwgwsc2q7dlpNA0z+YahsDpho6Ow+kfgdwtj
-         MOxQ2vF+XFMaytba857PR27WpL+vhGnFdTH0HefGdf7fUSUiMvdNyg7MuWo0FPrWViGj
-         lmtWfuqxV9rL+jh9NsqeOE5T+pGjMkZXvLYXnKu5feGIB4ypXYXOeN2yyV2qgFomihhE
-         3ssHpbJOO2dnzvfk166Img6FZKiFRV/gwTFBNb+BsVxIUJcHShhjW8clM7+lbLdIeV91
-         gJG+KDaL2PoPRG66hITQystjsBWOvXuPr+6mPAPVR6MYr3x8aDqEPKasN/dEAOc/8jdj
-         RzdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1yQSHihT5MRJS3neYSbuSwgAuRKiZIzdxVlNfjdONrWGMG7ZxdR7i38FrRT+kc0IiHCu109XHQ9I4B9RgmLDQrRj+p6jOkIhbaC/zAFOKpfcE91ra7jm573kY0dKWkZYEuCBdeBEJ7etkyqNOkCE7zLwHFSQhqpZ4WKHeUhFVCdHgV1G0SMDGFJ1upg==
-X-Gm-Message-State: AOJu0Yzjksd5z2kAKXbIKtbbzadUFnVQiIcm3zh9BjdF7eODZJtkNr//
-	TsSoHoDnImPArluLyIArbL3MGtBkV+maaSxSOwfUyWIC+FS4EepK
-X-Google-Smtp-Source: AGHT+IHFHN1eSuVeoNBYHF2aEjmsl6zUvRBRtaleADXs7+Y8AS7m0pQ7TJ12ZESC7WgwBTmMXOPAkw==
-X-Received: by 2002:a17:906:7d7:b0:a77:e55a:9e87 with SMTP id a640c23a62f3a-a7ac503afd5mr124692966b.48.1721904051139;
-        Thu, 25 Jul 2024 03:40:51 -0700 (PDT)
-Received: from tablet.my.domain (83.25.114.69.ipv4.supernova.orange.pl. [83.25.114.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 03:40:50 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Thu, 25 Jul 2024 12:40:40 +0200
-Subject: [PATCH v2 6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic
- bias regulators
+	s=arc-20240116; t=1721904071; c=relaxed/simple;
+	bh=nGWAWAg+bLrpw5jqBhZxWTPAahTHXUCFq2Wvh8tsIbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CzzUCEd0o2VVV7YwEUOfZl7McRg8cfr2riuIrjVyF5GKPwuMCT97bQUHXmPNijdos9gQpMxennluIKGNeT/YO+/5J/yQvPB2qeKzJhjqp0B/BzVSVnqRPdA01Wp7nwQ7yOK+p2PTbJsdmvgvChtRnpZEmB12MjcpxGEAmQc0ysg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OzptXv91; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=554nF6J4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZiQU00SF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HHKT8WFH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AA82921A9E;
+	Thu, 25 Jul 2024 10:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721904067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IaynsW6MsLBzNbPu7NqwIL3MqshyR0+ZWoe+eptybgM=;
+	b=OzptXv91pfAeqgmJNlPgB7wIPq/LS4ss6QSzw4jpQDBscYehhQ2G8wv17a8mv/VsSN+n7O
+	0wNWdsPTOIIxh8gkieysv/aolwYjkPrIRTfx6penKTKHLD+5aj/untiwkUA4/yFNFZtjKK
+	FPmraXVFhDA+UOVvdbuoE50/KIyqOa0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721904067;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IaynsW6MsLBzNbPu7NqwIL3MqshyR0+ZWoe+eptybgM=;
+	b=554nF6J4F3hgl3S+MHBiajf0dHZbGct6YoraGRpw0Q7s9ozsImV5n9O0JwAP0nbz8EyVZB
+	12jCtzvixcx7ReAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721904065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IaynsW6MsLBzNbPu7NqwIL3MqshyR0+ZWoe+eptybgM=;
+	b=ZiQU00SFM5yT6V9HHZG/0R7Au7URDi7S7oDF6IP4yOlPQX/Vy/IuN58PGCnKWTB1TYeK6s
+	EdOr+1Z8USPw5RNZKL8l65X5PcRutxPRRWsSjGIue3DDqDy9q7U8kx5n8PvZ9XvTYYN0c7
+	9UlcY9ncM1MTJpS26RvciFEcfsKfrx0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721904065;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IaynsW6MsLBzNbPu7NqwIL3MqshyR0+ZWoe+eptybgM=;
+	b=HHKT8WFHBgIBwVrM2kDX4eQ8j5Kdn4z8s0Hu/kpnI+lw6yVuV/oHR/l+0CPwMzDWZqJ/ZY
+	Cx79RFrHNOP79XDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D7D613874;
+	Thu, 25 Jul 2024 10:41:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d9o0IsErombFTQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 10:41:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 393B1A0996; Thu, 25 Jul 2024 12:41:05 +0200 (CEST)
+Date: Thu, 25 Jul 2024 12:41:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 09/20] ext4: get rid of ppath in get_ext_path()
+Message-ID: <20240725104105.5xtgze6cbhbqjsfv@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-10-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-midas-audio-tab3-v2-6-dbc055c27879@gmail.com>
-References: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
-In-Reply-To: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1778;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=KWNNuFqNb/S25IX+uh0qv+bi86RJdKP7RJ0/PuyXSXs=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiuo73T/jCYrP6aHYU23aYR987wIqfIeBMOOC
- hJQMnOR0w+JAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrqAAKCRCzu/ihE6BR
- aK5rD/9YmUzevnGSNsQKWo7b6UYIap/vF5Ks+XvjbkRyABXZjCQqmDJNf4tZ1hk8z5HG2CJlAsp
- 4wqetvaNMjlckh1dvtY/5ow7vQ4t0l/FhPQomwabSjSQJ2zoHldeMcI5bpIr+B4yQUkpeh0QgeR
- f1R+ZvcV3OFkBcFz4UQQ7h18yvW7LATZfxfi2LhNQVx9tl9M3fV1smoaJs1mOijiuMxu5X4TVYs
- ulA3Hnuc4bNPzpKk/Kt0FrgG8+Cd8qL+Vb3mPK0E5I+zkMdTzj8YsknziktUnXA57w/pvfLEELY
- sxTIQj6o2SptMltnODm54rcL3pGE/vhFmczWypdGORSSd6wMFBULknd15yqWC1jsf6Mj10czEfk
- WTjGLe0F2cR4JRIsv9461y6ELZf4D++V8Gii7zggeGdYjp2Av2Mu95QZjwlyhDFoRylmR5HofuF
- sTGBN24AiXzxR711sm3AeBXaA3gQwmsMBMIUXXtN4u0FtBbiaupV7Cljsm6Iq+Br/duy5fzG02s
- 2gHszWlqzdzqV3rF5+hHLIr6kgNVS8TIu2OyKQ93sS4pzotT32zA8aQ8BTocD4QvbknTnjDYsUr
- V+1DVS5TxV7Yr44a4XW+ZU12UBnVWefTyhzc24V9SvPuGo+/zWmIMJEWwo+a7IhDwovRyHhAi6R
- 0Kn8Id6ffUiAvPw==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-10-libaokun@huaweicloud.com>
+X-Spamd-Result: default: False [-2.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huaweicloud.com:email,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.10
 
-Add the samsung,tab3-audio compatible that makes mic bias regulators
-non-required, and drop the dummy main/sub mic bias regulators that
-don't exist in hardware.
+On Wed 10-07-24 12:06:43, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> After getting rid of ppath in get_ext_path(), its caller may pass an error
+> pointer to ext4_free_ext_path(), so it needs to teach ext4_free_ext_path()
+> and ext4_ext_drop_refs() to skip the error pointer. No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Rename earmic bias reg node to voltage-regulator-4
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+Looks good. Feel free to add:
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 70e3091062f9..553ddc3d42da 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -286,21 +286,7 @@ display_3v3_supply: voltage-regulator-3 {
- 		enable-active-high;
- 	};
- 
--	mic_bias_reg: voltage-regulator-4 {
--		compatible = "regulator-fixed";
--		regulator-name = "MICBIAS_LDO_2.8V";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--	};
--
--	submic_bias_reg: voltage-regulator-5 {
--		compatible = "regulator-fixed";
--		regulator-name = "SUB_MICBIAS_LDO_2.8V";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--	};
--
--	earmic_bias_reg: voltage-regulator-6 {
-+	earmic_bias_reg: voltage-regulator-4 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "EAR_MICBIAS_LDO_2.8V";
- 		regulator-min-microvolt = <2800000>;
-@@ -310,10 +296,8 @@ earmic_bias_reg: voltage-regulator-6 {
- 	};
- 
- 	sound: sound {
--		compatible = "samsung,midas-audio";
-+		compatible = "samsung,tab3-audio", "samsung,midas-audio";
- 		model = "TAB3";
--		mic-bias-supply = <&mic_bias_reg>;
--		submic-bias-supply = <&submic_bias_reg>;
- 
- 		lineout-sel-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
- 
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+> ---
+>  fs/ext4/extents.c     |  5 +++--
+>  fs/ext4/move_extent.c | 34 +++++++++++++++++-----------------
+>  2 files changed, 20 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 5217e6f53467..6dfb5d03e197 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -116,7 +116,7 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
+>  {
+>  	int depth, i;
+>  
+> -	if (!path)
+> +	if (IS_ERR_OR_NULL(path))
+>  		return;
+>  	depth = path->p_depth;
+>  	for (i = 0; i <= depth; i++, path++)
+> @@ -125,6 +125,8 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
+>  
+>  void ext4_free_ext_path(struct ext4_ext_path *path)
+>  {
+> +	if (IS_ERR_OR_NULL(path))
+> +		return;
+>  	ext4_ext_drop_refs(path);
+>  	kfree(path);
+>  }
+> @@ -4191,7 +4193,6 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  	path = ext4_find_extent(inode, map->m_lblk, NULL, 0);
+>  	if (IS_ERR(path)) {
+>  		err = PTR_ERR(path);
+> -		path = NULL;
+>  		goto out;
+>  	}
+>  
+> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+> index b0ab19a913bf..a7186d63725a 100644
+> --- a/fs/ext4/move_extent.c
+> +++ b/fs/ext4/move_extent.c
+> @@ -17,27 +17,23 @@
+>   * get_ext_path() - Find an extent path for designated logical block number.
+>   * @inode:	inode to be searched
+>   * @lblock:	logical block number to find an extent path
+> - * @ppath:	pointer to an extent path pointer (for output)
+> + * @path:	pointer to an extent path
+>   *
+> - * ext4_find_extent wrapper. Return 0 on success, or a negative error value
+> - * on failure.
+> + * ext4_find_extent wrapper. Return an extent path pointer on success,
+> + * or an error pointer on failure.
+>   */
+> -static inline int
+> +static inline struct ext4_ext_path *
+>  get_ext_path(struct inode *inode, ext4_lblk_t lblock,
+> -		struct ext4_ext_path **ppath)
+> +	     struct ext4_ext_path *path)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+> -
+> -	*ppath = NULL;
+>  	path = ext4_find_extent(inode, lblock, path, EXT4_EX_NOCACHE);
+>  	if (IS_ERR(path))
+> -		return PTR_ERR(path);
+> +		return path;
+>  	if (path[ext_depth(inode)].p_ext == NULL) {
+>  		ext4_free_ext_path(path);
+> -		return -ENODATA;
+> +		return ERR_PTR(-ENODATA);
+>  	}
+> -	*ppath = path;
+> -	return 0;
+> +	return path;
+>  }
+>  
+>  /**
+> @@ -95,9 +91,11 @@ mext_check_coverage(struct inode *inode, ext4_lblk_t from, ext4_lblk_t count,
+>  	int ret = 0;
+>  	ext4_lblk_t last = from + count;
+>  	while (from < last) {
+> -		*err = get_ext_path(inode, from, &path);
+> -		if (*err)
+> -			goto out;
+> +		path = get_ext_path(inode, from, path);
+> +		if (IS_ERR(path)) {
+> +			*err = PTR_ERR(path);
+> +			return ret;
+> +		}
+>  		ext = path[ext_depth(inode)].p_ext;
+>  		if (unwritten != ext4_ext_is_unwritten(ext))
+>  			goto out;
+> @@ -624,9 +622,11 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+>  		int offset_in_page;
+>  		int unwritten, cur_len;
+>  
+> -		ret = get_ext_path(orig_inode, o_start, &path);
+> -		if (ret)
+> +		path = get_ext_path(orig_inode, o_start, path);
+> +		if (IS_ERR(path)) {
+> +			ret = PTR_ERR(path);
+>  			goto out;
+> +		}
+>  		ex = path[path->p_depth].p_ext;
+>  		cur_blk = le32_to_cpu(ex->ee_block);
+>  		cur_len = ext4_ext_get_actual_len(ex);
+> -- 
+> 2.39.2
+> 
 -- 
-2.45.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
