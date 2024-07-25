@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-261666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6FF93BA82
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:08:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9375B93BA86
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0181C21753
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A971C218CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319576FC6;
-	Thu, 25 Jul 2024 02:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBdWxGzL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC6E6FC6;
+	Thu, 25 Jul 2024 02:09:09 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5B6AB9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083E11725;
+	Thu, 25 Jul 2024 02:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721873329; cv=none; b=l4YkpK089xgdqYnaw9EkbrNcyJ0JLZBN1cWTC4K7YG2v2H+YJaDvuv4d7br61QbrjYMIgdccIEj1H0lxm+INJaP8t4+RAM37jVyhjnvWXE4g8ZHUUi1WF7G2GRCDiMU/1Kl6OvAWXX99Odu61tXkNiUPR4OGSOCxK6fM/xzxoCI=
+	t=1721873349; cv=none; b=EfvW5DR+wX2s9cmUJjmgQL694rLgqY1VpW8tynmmZ/9sZ5CGZ815MR2JU8qEGjmTxwkNFKLKB/vheWBQ4/ddoYg59OTFvHeU/4X1FOE9vUTc/phLDbjHuTtMcC7VVmie1+EAaqTN9CRETsHrH0lNAlYEqDKOo51NtO5N35NoMgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721873329; c=relaxed/simple;
-	bh=hZLfXkRQOcL/yljHe3PrGXlzhVc26RzCNlLV2gPi8CA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=elNeyqyp4hFcCKBmhQIp+mih5FUbd7P7WQIk/lNXAtKLUdBpiK9Q+Y84kn2RdUurzc8B0W/axxA9X5draxXcrhgTfZMSYIyC7HpRv0edmGMEOHNEDiZabzQdKkksrvfAtnd6uIx6RHZ6DKNN/XzDcYA7yWMFQxVNMkkqLhie5vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBdWxGzL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B3DC32781;
-	Thu, 25 Jul 2024 02:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721873329;
-	bh=hZLfXkRQOcL/yljHe3PrGXlzhVc26RzCNlLV2gPi8CA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tBdWxGzL64Mr4pUx0gjhtN2hihht0CzcvZAbXYcmuyKIOmABqQtf8NHMmhsOBmEYL
-	 O57J+vcsbbHfCjehLl1Nlx4GY9YFY5IrwtSDbu9eVS16NCZqOlfmFDi5dXMD7lB8i5
-	 R8yfrC45eZ56RbhjuC+PT+EeYOqtc8KfUfu2mYFfKDeVUzzJ6hVAyKufcCvLlmCmmJ
-	 hborJvsHX1RGNDK3Bze+VLFLyLGEAkb3Q/0vU8kxXzqy5P1VCwAwN4Wdp0p+PgfpUJ
-	 3kusAWvIpvZJcHd2bxf5uKz3iwXg9+to6tMdzmJkf6PGDW6yERvYycazFnr/OwJR60
-	 b6ApY+wjJeB3w==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1721873349; c=relaxed/simple;
+	bh=+kNvqMnTo91nb7DgrwbHiZHaESPi+L4LHpTotwAZIIE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lF13xCCIODVKxeUkxZP0zzVzK4kURLCLKtfdv1jNQnTQkiGl5H7402OouOUi18AMwDJ+lb79suXQNdh0VavNo/n311l8qOUD4Bn8GDV3NV+JNGw69UmYjs0vzqgnzjt5+6SPNNtRRVCEQBqGhjhIax0Zy6bfbn+dRVCgq0cDce4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAD33zqrs6Fm8yfcAA--.20476S2;
+	Thu, 25 Jul 2024 10:08:50 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	noralf@tronnes.org,
+	sam@ravnborg.org
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Subject: [PATCH] f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()
-Date: Thu, 25 Jul 2024 10:08:41 +0800
-Message-Id: <20240725020841.894814-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] drm/client: fix null pointer dereference in drm_client_modeset_probe
+Date: Thu, 25 Jul 2024 10:08:42 +0800
+Message-Id: <20240725020842.1715719-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,74 +53,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD33zqrs6Fm8yfcAA--.20476S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw45GFyrWF48ZF4rArW5Wrg_yoW8GFWUpr
+	43Gr90yFWjvF9rCFs2va97uF17A3W3Jr48GF17Aanxu3Z0qr1jyryYvFy5WFy7Gry3JF15
+	tFnayFW2qF18AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-syzbot reports a f2fs bug as below:
+In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
+assigned to modeset->mode, which will lead to a possible NULL pointer
+dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_report+0xe8/0x550 mm/kasan/report.c:491
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
- __refcount_add include/linux/refcount.h:184 [inline]
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- get_task_struct include/linux/sched/task.h:118 [inline]
- kthread_stop+0xca/0x630 kernel/kthread.c:704
- f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
- f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
- f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
- __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The root cause is below race condition, it may cause use-after-free
-issue in sbi->gc_th pointer.
-
-- remount
- - f2fs_remount
-  - f2fs_stop_gc_thread
-   - kfree(gc_th)
-				- f2fs_ioc_shutdown
-				 - f2fs_do_shutdown
-				  - f2fs_stop_gc_thread
-				   - kthread_stop(gc_th->f2fs_gc_task)
-
-We will call f2fs_do_shutdown() in two paths:
-- for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
-for fixing.
-- for f2fs_shutdown() path, it's safe since caller has already grabbed
-sb->s_umount semaphore.
-
-Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
-Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
-Signed-off-by: Chao Yu <chao@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- fs/f2fs/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v4:
+- modified patch, set ret and break to handle error rightly.
+Changes in v3:
+- modified patch as suggestions, returned error directly when failing to 
+get modeset->mode.
+Changes in v2:
+- added the recipient's email address, due to the prolonged absence of a 
+response from the recipients.
+- added Cc stable.
+---
+ drivers/gpu/drm/drm_client_modeset.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7a37f2b393b9..62d72da25754 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2388,7 +2388,10 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 		}
- 	}
+diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+index 31af5cf37a09..cee5eafbfb81 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -880,6 +880,11 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
  
-+	/* grab sb->s_umount to avoid racing w/ remount() */
-+	down_read(&sbi->sb->s_umount);
- 	ret = f2fs_do_shutdown(sbi, in, readonly);
-+	up_read(&sbi->sb->s_umount);
- 
- 	if (need_drop)
- 		mnt_drop_write_file(filp);
+ 			kfree(modeset->mode);
+ 			modeset->mode = drm_mode_duplicate(dev, mode);
++			if (!modeset->mode) {
++				ret = -ENOMEM;
++				break;
++			}
++
+ 			drm_connector_get(connector);
+ 			modeset->connectors[modeset->num_connectors++] = connector;
+ 			modeset->x = offset->x;
 -- 
-2.40.1
+2.25.1
 
 
