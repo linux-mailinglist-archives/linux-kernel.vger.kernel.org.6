@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-262385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5037993C64F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:23:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E6A93C661
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C131F22488
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F5C9B23E20
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF719D893;
-	Thu, 25 Jul 2024 15:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB8719D8BB;
+	Thu, 25 Jul 2024 15:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="raIEqyh/"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26D1993AE;
-	Thu, 25 Jul 2024 15:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lR/m4czg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E5B18786E;
+	Thu, 25 Jul 2024 15:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921004; cv=none; b=H0F/4amMg8FMLUrn/BY19LycDk7UxGftjbUUinunbZj+PFq/LUWo/bUHqtBJI1p2bVdKQjXYxaOL9Pk/SVxiVHrghKROC7bc8FX/Wsw6lc/a5T3j2s/0hHMgK3WQOdhIDgcDJ9Lb/HNiefJhGkKHVB5gY/so26RKtzVhqE2s3tQ=
+	t=1721921345; cv=none; b=Q2IaGDjHL1XqAAJPmjFxZ4DrrRh/npyQQfYUXNkHX5Azery5XXZFRJUBmGgAlOmjhSITgBsALJr5fveq362560PajYxW1/hx1TSA0HrWwpx8v98quqGO8eauUfVU/CIitW4fcIlUjzNOfyJq4GmFjLZ/zXV0orrqsKZHzFmU138=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921004; c=relaxed/simple;
-	bh=gISgBJP8K+0f5fkIHLXqx+gYvibvOs2vBfW4ph9EQ14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gpQOSCYJtGiiIguzwu/wurf+JTprQbwHMM2me3Vi5/IibgvBRvKmmRHOaq36HlEkKXa9lzXfrk6O9Hj8WgvisUXaj/czL46d6OhTrDUFdPJzFNHdy0ZuDel/LCf4iEH4U98G/a76o8SPFQnvVuLvFtuPbK0nByC4/GvVICRzFrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=raIEqyh/; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F26F120B7165;
-	Thu, 25 Jul 2024 08:23:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F26F120B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721921003;
-	bh=f/OdYnIaYGe0Uwf7xV80gfw5zzsB5T+crnI+/IOcs3E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=raIEqyh/TO3whk0f3/80L36IhTzzUoNtuAHI3ksnoZI6+qcE/CSMf29qRXzIBfEU6
-	 siS2oW3ZzSM+IDRWxL9n4zYuU/DuZvwvhVONrOk6pqe0Go2grgZ2rvxNTvwjQUtRUT
-	 SLDJ4x+UlE0v8NTW3sHT2SjKwq7VpOACW7MvFHQ8=
-Message-ID: <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
-Date: Thu, 25 Jul 2024 08:23:21 -0700
+	s=arc-20240116; t=1721921345; c=relaxed/simple;
+	bh=j7iwCZlrH1K6hWVcAl0gOibuq8HOPwjMGUDQAnfnwB0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eU0G7rGTLghQDRt/bfx4oFJsciM89uum1JAcDsxd12T26JaZhyifvET67QMPd/NiCI//WL9o+sD/GajMQvexI3hf1MCiiRtgpPQcN1SOAQjOZ9pxQuSFTCW89Un5SMxNEy7lHJTuo1CWDhdZvQe6p48prGEq+2csezbLkgouThE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lR/m4czg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E4E6C32782;
+	Thu, 25 Jul 2024 15:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721921345;
+	bh=j7iwCZlrH1K6hWVcAl0gOibuq8HOPwjMGUDQAnfnwB0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=lR/m4czgzV9FQAOdUD1gHdPchL+pC8gqnKdtyCEAiOM0chh30Bsj1djpJDjk7aCip
+	 XNvi3GOaZnLbb+g9aayLEWdaPbUSEOplIGv4Nkm431OsWt96/8dSZTIS+vMXOUBUam
+	 wimr0bI5kzx3i2ikbq7gtjy+4FVHX6S3bUl5ONqUE9nTJOdn8FOvQV/hJN+7k0NDu4
+	 wlGDIkRNOPrvMv7+lVxQs2r1wablYCbOfRc6FJf6juOGoV87+FX9VB+f8zbJh7dBtJ
+	 8dOjp8cijeoW7A59UBRXsLzIGzLG7MLdDWJUkJlvsvsb88j/zqg9pjj57PWRzE+z/g
+	 rNQb5a/0NtRyQ==
+Date: Thu, 25 Jul 2024 17:29:02 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Benjamin Tissoires <bentiss@kernel.org>
+cc: Shuah Khan <shuah@kernel.org>, linux-input@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    bpf@vger.kernel.org
+Subject: Re: [PATCH HID 0/4] HID: selftest fixes after merge into 6.11-rc0
+ tree
+In-Reply-To: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
+Message-ID: <nycvar.YFH.7.76.2407251728080.11380@cbobk.fhfr.pm>
+References: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-To: Saurabh Sengar <ssengar@linux.microsoft.com>, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com, srivatsa@csail.mit.edu
-References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 7/24/2024 10:26 PM, Saurabh Sengar wrote:
-> Currently on a very large system with 1780 CPUs, hv_acpi_init takes
-> around 3 seconds to complete for all the CPUs. This is because of
-> sequential synic initialization for each CPU.
-> 
-> Defer these tasks so that each CPU executes hv_acpi_init in parallel
-> to take full advantage of multiple CPUs.
+On Tue, 23 Jul 2024, Benjamin Tissoires wrote:
 
-I think you mean hv_synic_init() here, not hv_acpi_init()?
-
+> After HID-BPF struct_ops was merged into 6.11-rc0, there are a few
+> mishaps:
+> - the bpf_wq API changed and needs to be updated here
+> - libbpf now auto-attach all the struct_ops it sees in the bpf object,
+>   leading to attempting at attaching them multiple times
 > 
-> This solution saves around 2 seconds of boot time on a 1780 CPU system,
-> that around 66% improvement in the existing logic.
+> Fix the selftests but also prevent the same struct_ops to be attached
+> more than once as this enters various locks, confusions, and kernel
+> oopses.
 > 
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
 > ---
->  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
+> Benjamin Tissoires (4):
+>       selftests/hid: fix bpf_wq new API
+>       selftests/hid: disable struct_ops auto-attach
+>       HID: bpf: prevent the same struct_ops to be attached more than once
+>       selftests/hid: add test for attaching multiple time the same struct_ops
 
-LGTM otherwise.
+Benjamin,
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+for the series
+
+	Acked-by: Jiri Kosina <jkosina@suse.com>
+
+Let's get this fixed ASAP. Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
 
 
