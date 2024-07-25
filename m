@@ -1,109 +1,158 @@
-Return-Path: <linux-kernel+bounces-262476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6AA893C785
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:10:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6E493C787
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF1D1F224A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93599B22F95
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B4E19DF59;
-	Thu, 25 Jul 2024 17:10:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC46219D8A2;
+	Thu, 25 Jul 2024 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1SoH6+U"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B09519B3F9;
-	Thu, 25 Jul 2024 17:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867F919D89F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721927403; cv=none; b=jo+z8rLgcShgIBuilutJOlkDO1vVKt1B14Ikh9SSpMwHci9Qznsb5U/OkJGMFOBNxbLn5nBD4mDIbixLiDOJhwjRLmAMiDLTf1hiSpn7fcMSBafQpA5nFFPZK0j+tCCvRtw7rtbpC80KgEK9t5HTeckdwwmD9sMSqXmkS4Ln9ME=
+	t=1721927454; cv=none; b=WalKEbO9FNM9MwjvjPuX+UDuZ3/jzrgZRWWwgH/PSyx7UqYxQ9eLTECZu1Ocn5myH+Cy2c2jBp4lB/3EaMv+sW68RODt35RuDFMhXeDMWUvjP24fPI4tZeOxKBaYHXrQUG26WE62n8nWW0Sui/Djexi/5e8a39W2dzHJoNU2udo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721927403; c=relaxed/simple;
-	bh=uBdP3W4FKebfPqzkhis1CiagIX57vt/O2fwnyoKKb1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JlWjrz2S6vnXiBEFIwQIRjwYFLDpkfawwZsqCST2EXNA0446jHUMC52aoDb7kHR6a/Uk09Uy5L49I2Xq+0HYlzBL6gFwVPtvoMFta0mnTKN5676e4O5cB4nfGiRCAVA89G+DJbfk7cLQ/93kdTDwYrjCvCuV1dwynpXGqSnsmkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0F9C116B1;
-	Thu, 25 Jul 2024 17:10:01 +0000 (UTC)
-Date: Thu, 25 Jul 2024 13:10:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ajay Kaher <ajay.kaher@broadcom.com>
-Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
- <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
- <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
- Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
- <dan.carpenter@linaro.org>, Vasavi Sirnapalli
- <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
- <alexey.makhalov@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>
-Subject: Re: tracing: user events UAF crash report
-Message-ID: <20240725131021.788374d0@gandalf.local.home>
-In-Reply-To: <CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
-References: <20240719204701.1605950-1-minipli@grsecurity.net>
-	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
-	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
-	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
-	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
-	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721927454; c=relaxed/simple;
+	bh=yq6fiZf90GE/tQySFOVh8V/HeAcKNExS/zycZaa10Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E8ryK5/lm9AKS23F45l5xMszvj/fUJEuhBoqZuL9/6JaiM0NdYK2giyz9HhAFgqEZzpXnTWA1tGe2AotKk8h5IOZQXpCgq7a7te3HVL3mLVDL4g4M1i7IeF8JGLSVJGhZC5DfcSY1icuhZYBXowr4wwNRMuSaovhmNUB/W96pQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M1SoH6+U; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3db18c4927bso55064b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721927451; x=1722532251; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/6EDuIv5npXWqlxfUSzl63jK0iAGmMuRKGsW0DtQFk=;
+        b=M1SoH6+U78cvdRDxe55p9K6etlQYFHjJWxEKzjKJd/itAZSNqin34oBQKMGDjibsmJ
+         zgyP94d64ZAsUWo6LTnf6As9xqhjy0OW8I1/m93sBUvG8APnUav+ynp9x4/81LNZsftB
+         tNeNMHk+I4c5Xx5k98gcyoNMprtd/n5PQBsNY+iqlXkC6LdNBdj/AFvfUavZIYDZMwlK
+         z6HmAPevtVsIhkcGchsIHOj3T3hAO6kbXTkaYVp7I872j29wQ7F3QkXYwikcU8vC0cXN
+         ACO6QaULA8KU5XT3pCJ1DiP4DlM9OrvbX0OcYGTheYEpxcPjuL9LnB6wvgAswbemW7PL
+         n89w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721927451; x=1722532251;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u/6EDuIv5npXWqlxfUSzl63jK0iAGmMuRKGsW0DtQFk=;
+        b=iZt5m4w6Lc4WqKxwGHJ9KMzTfQb1PCoBOP42tM0v89WZ2P6ERaMrk/OvPQHrxixx62
+         1s3JEZu8Wj+jjrRnfHnni6UjPM1kyXgdBzANYoAlAer3dMDhMFV1s1T0wNohvQmp2uPE
+         8IjThGTTls1WR3Vw95zVcNpFOxdP5gOpTJADzkdAYZPru87deE4ICJhdAHnNrtRRN4hF
+         B/YbdPiXyhwLB/kREebaQ+nsyT0Kjy5iPXBSNxiJLQduowfiLHOCkkMJ0UsJER7Ixts3
+         6EDujRL0+IPjZg9IU/AzcXrEP9GmmVoga6Ri9jHrQnFg7djh0TLlRgd4HrYOxZ/tu6OH
+         RYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrHGbwWc8pqv+I/8wUzeGczYufbtl5sk8NIEeCXup7/uRpyN+2CA5IlpzPLYmtvIBnK61GI9Q0zobRhhoo+aIMKE0o7jLPqMR2wNYn
+X-Gm-Message-State: AOJu0YwmokLAr1+qQSf5+EdJxdePeifw7v3GVS9sWKwspODZd/mn7/pS
+	7YG5MC/yl1wFT9XaEa0VitMIlko4eN+g2gmZ9K3VJLFuC/iSbmDQM/J/IqqQgQ/mXCYa7HlMMg5
+	5tghOQmnxpslF3GZEtdHMA0xccd+IHpkUrOTmZw==
+X-Google-Smtp-Source: AGHT+IGZJWFzM9uMa6wq5NoAxXUBEnqFHPu1rf7aDHw1G3YQx/Iwzcp3y7kbrA2Tb6TdzHCuqJn2Ds6P8BN7E4HUIA0=
+X-Received: by 2002:a05:6808:1924:b0:3d9:4004:ff27 with SMTP id
+ 5614622812f47-3db14118421mr2499522b6e.21.1721927451044; Thu, 25 Jul 2024
+ 10:10:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240725142728.511303502@linuxfoundation.org>
+In-Reply-To: <20240725142728.511303502@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 25 Jul 2024 22:40:39 +0530
+Message-ID: <CA+G9fYtZKAiw3abrvxmBovfYbJK7XcpV0aqH8Lg9wPc=i5ULHA@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/33] 4.19.319-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Ian Ray <ian.ray@gehealthcare.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Jul 2024 22:00:14 +0530
-Ajay Kaher <ajay.kaher@broadcom.com> wrote:
+On Thu, 25 Jul 2024 at 20:12, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.319 release.
+> There are 33 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.319-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> Thread A (read event)                      Thread B (remove event)
-> 
-> .                                          worker_thread()
-> .                                          delayed_destroy_user_event()
-> .                                                   -> acquire event_mutex
-> .                                          destroy_user_event()
-> vfs_read()                                 .
-> seq_read()                                .
-> f_start() -> acquire event_mutex           eventfs_remove_dir()
-> . (waiting)                                kfree(user)
-> . (waiting)                                 -> released event_mutex
-> acquired event_mutex
-> f_next()
-> trace_get_fields():
+The following build errors were noticed while building arm and arm64 configs
+with toolchains gcc-12 and clang-18 on stable-rc linux-4.19.y also on
+linux-5.4.y.
 
-Hmm, I wonder if this would fix it?
+First seen on today builds 25-July-2024.
 
--- Steve
+  GOOD: 8b5720263ede ("Linux 4.19.318-rc3")
+  BAD:  f01ba944fe1d ("Linux 4.19.319-rc1")
 
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index 3a2b46847c8b..e9ed2826ff46 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -321,6 +321,8 @@ static void user_event_put(struct user_event *user, bool locked)
- 	 */
- 	refcount_set(&user->refcnt, 1);
- 
-+	user->call.data = NULL;
-+
- 	if (WARN_ON_ONCE(!schedule_work(&user->put_work))) {
- 		/*
- 		 * If we fail we must wait for an admin to attempt delete or
-@@ -973,6 +975,11 @@ size_t copy_nofault(void *addr, size_t bytes, struct iov_iter *i)
- static struct list_head *user_event_get_fields(struct trace_event_call *call)
- {
- 	struct user_event *user = (struct user_event *)call->data;
-+	static LIST_HEAD(head);
-+
-+	/* If the user event is about to be deleted, return no fields */
-+	if (!user)
-+		return &head;
- 
- 	return &user->fields;
- }
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Regressions found on arm:
+  - gcc-12-lkftconfig
+  - clang-18-defconfig
+  - gcc-8-defconfig
+
+Regressions found on arm64:
+  - gcc-12-lkftconfig
+  - clang-18-defconfig
+  - gcc-12-defconfig
+  - gcc-8-defconfig
+
+ Build errors:
+-------
+drivers/gpio/gpio-pca953x.c: In function 'pca953x_irq_bus_sync_unlock':
+drivers/gpio/gpio-pca953x.c:492:17: error: implicit declaration of
+function 'guard' [-Werror=implicit-function-declaration]
+  492 |                 guard(mutex)(&chip->i2c_lock);
+      |                 ^~~~~
+drivers/gpio/gpio-pca953x.c:492:23: error: 'mutex' undeclared (first
+use in this function)
+  492 |                 guard(mutex)(&chip->i2c_lock);
+      |                       ^~~~~
+
+metadata:
+-------
+  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkAGJux4DNHx9cFS4VQJrPrBvc/config
+  download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkAGJux4DNHx9cFS4VQJrPrBvc/
+  git_describe: v4.19.318-34-gf01ba944fe1d
+  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git_sha: f01ba944fe1d15cbd27088980031db315340e6e4
+  git_short_log: f01ba944fe1d ("Linux 4.19.319-rc1")
+
+ --
+Linaro LKFT
+https://lkft.linaro.org
 
