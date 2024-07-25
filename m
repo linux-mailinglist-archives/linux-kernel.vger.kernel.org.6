@@ -1,125 +1,313 @@
-Return-Path: <linux-kernel+bounces-262692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2616D93CAE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABEE93CAE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD3D1C20FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:34:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36FCB21DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18C7143894;
-	Thu, 25 Jul 2024 22:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B193E143C5F;
+	Thu, 25 Jul 2024 22:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ku6jC/wR"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DpCeRh08"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6FE32C8C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474532C8C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721946846; cv=none; b=Rqq6huWVaaOGGZdwtbFaE9caZkvjp6QCYVOSfY1Y6rtXTKPfRuwTAfX9kWiFY8YrFiE0otTw4JzRmC34pluWxen91PlM6iAXfUD0nzJYL/mor2TzspxG79T3iOW2MXHFYRYmr1f7GpvNXY6WLCSYfQIxiMrUctIx6A0I8DEYwDY=
+	t=1721946952; cv=none; b=nY56wwl3BiZxaMackiHZDgtWGS8c5y8UGDs2+AVrVEv+0DdXRPWNy9Zh3gcP3Pcco9s1T+dzB/Ioy+8LXcpfEBbvmRbfM/4gIiFH2sfdn33INsh3IwGz0T8D1bNN+JMIm/lfXAk8NUB8ceEBEQy1MahHPN5L3tsduj9lMWEzHP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721946846; c=relaxed/simple;
-	bh=cGgfznJEdI3Gx9UCrbE7PFhs00X7J6qVrZ1EvVju9Sw=;
+	s=arc-20240116; t=1721946952; c=relaxed/simple;
+	bh=cQJ+qcncN2IgnGJoOeQTzhJlYEh2QX5nFJxhGmYp1QY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FXUXghj0OMtcFjqnfNPdXCl+p3W2+aRTyxTa1UTh64G6KYHTWp2cizhzvz8/zXLAHyGCVytcXydfjdF+0Ue6QF63l39ThwhviFeVmRVuBmNW7RswhA8wspxKa6LLkMu0VUq215Tx88yLjf8gMXOsbWXlReJkLW2F8xDml15yGXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ku6jC/wR; arc=none smtp.client-ip=209.85.167.48
+	 To:Cc:Content-Type; b=MoeBa0XZ4tIV3r87KMPp1OqnrhkcC0V3mqffr7LRYrqBhsZc7zRew2UfEpI9qVyBlkdKQtyJ/dKDX0tIQ1sp7HkpCA4/QjIXSX4uPipMGJTwHxs/+BGjIjCVyLb30fODw46gcd9kXg8btLHHwW3hl3xHxt6/bx55O5Yyaa3tgEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DpCeRh08; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52fc4388a64so1064630e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:34:03 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e05e94a979eso1970867276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:35:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721946842; x=1722551642; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721946950; x=1722551750; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cGgfznJEdI3Gx9UCrbE7PFhs00X7J6qVrZ1EvVju9Sw=;
-        b=ku6jC/wR2AdvyCTshrUsXJ0oKOxumZfMZAwkn0UkXhy5lCz8wXHUgs21V06GIUj7TT
-         EeVbM4ljzKoZCPg1Y4GWt5suKTH/aIiGa+82//gCKhYSGHY4FcHNgOSOcKXU5EwPSJhr
-         h7giFoSm+lV5hwfC87JrWXiStEoTtS+9sIn0Fxt2VoAGk7XIzDn7//8sDALDuTOu+Nb2
-         OrGs0g97iE9Ta2uvnyafmknbAPuy6uvgINGn/L6B1ChTkHYsFH/ahAcB6zBRonQpkeLi
-         aKR2lRKwE/c75BPtTa777H80oTT0EnM3zXecwc1tonafIizZ8kJTQhm951kKb/Lctzow
-         zU7w==
+        bh=YpVjP0KtbEWV6Tn7/HiYJHCVy9nNHdlo2E773Pd3yBk=;
+        b=DpCeRh08dvW9SlqRRHtQs/vgMUl67JnQLO14pAQ8TNrVVYNH+1bbovQdg6l3M4NWXz
+         XElly0us1es2NtxzbXGI/R/j2Y9/cMdrfoxAZTSFF83mixzJIaBlNHoQRpp3tlEju2k/
+         dbXDh/VZvauC44DrXwcy5xWDJckJILxyO5A7hgnmLbiiVVHKgxrlIRFmMdcd+R8RiNFv
+         3ZHkrbZYUD55avHo68EOnMnX7ma11gdhbm0ENozx8g/u0jTeF/jXJwrFDHWqYejyfwzp
+         1ft1WKU5QZ9t9Aa+FVjfMpBPmpwMjytyfw95Fy4OTzy5mrCC5p+wDECZT70Z9DiYGGS8
+         dvCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721946842; x=1722551642;
+        d=1e100.net; s=20230601; t=1721946950; x=1722551750;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cGgfznJEdI3Gx9UCrbE7PFhs00X7J6qVrZ1EvVju9Sw=;
-        b=WEb2ve85PLy2SXZDZgzCQJ/8Ge5onkNNzXvQYtGr1ITUPXmrI+IbDMNqgcbzV/qoPS
-         7eCu5am/99zNP5ZPiXTby2emYun11n6rbAyGbKVs0w5gLIo1TQsRSz4/gqQr7vuyKmlF
-         BCcyIOEoMS1QndoadwV3rPXCvja9Qzt8y9sxdbr0whO3uCWUHrps765qMQF5lv4j4MKq
-         k8+Znti9qZgOh1gFZv/qlJ5j+0YwT+QPny9h4LNxc3IjGRHRf17ggF4URWbHskabnC1a
-         tmkyUf6yztpRd6bj0GFSXqm7j9ITInxuTLeBcKZ4PIuSMnD47YfaID0B2G9zEL1vx82n
-         HgKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKeRKXbriHLWBFM9uCzjUJB9HEVAMDWGuKU+yON2SsWGivX+2haGytN/0tQTsdQMjADMkL4/+FR1V+mGaVFnLn5lV1dsOHx0vZhJUV
-X-Gm-Message-State: AOJu0YypyDZSm+yU7nWTDJgxlcob1JC/GYYOLEoZpE60vD7DrP3Qqls2
-	fdFmyvHmBTZI39s10GoDOsNDS54Pxx4hX89YppyOfbkQk4MMcaskwUt9+CeKqY81BQoLEQX3o2m
-	K6QudtNiK6qBnuodoogcaRtkE6of7ZsHuyxcd
-X-Google-Smtp-Source: AGHT+IEQq8tUhCv0tVkK5hp43CjLo7OghrupRMxYGedGT2oaKiTkLW8JJ09UHgIwz7Z5iBN1NgnX/NdQ+1dzTs757VU=
-X-Received: by 2002:ac2:4f0f:0:b0:52f:154:661b with SMTP id
- 2adb3069b0e04-52fd6087755mr2867109e87.11.1721946841759; Thu, 25 Jul 2024
- 15:34:01 -0700 (PDT)
+        bh=YpVjP0KtbEWV6Tn7/HiYJHCVy9nNHdlo2E773Pd3yBk=;
+        b=CTlJzDIJbQvYBjRv3Kqck4uotlp+U/6NhKNmc4VWGIt4sURXZXM+LPu+0jRrh/iLYZ
+         n/V18AMv42VjJVTZ+JPDX6xPfs29PajqIwtcxn2PbyStXUXPGSHRadPyZYQQt4AWQvr8
+         wi9o4LtILX2awLQYystIELu8x4JVuDTE31PsFHAYWPku8FlizBy8ZWsOMFL69PL4EEr6
+         WWUcYTsDtYY5sc/8WbcNa5O6ZxzLg9o2Gwbq8AVkxQwqTYky+tNgW+h4eqAMbQP4ZdwK
+         Nr/UYmPc0G+27tqBCLXcASUikk/bA1g+1jdhlThPfRWupmgoJ4vJJSRYUAnX/OBHuSVW
+         wOBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMTCYUpAlJtZ6TleG4c4tUDpjgwkEhphnA3LtygaKniN0GgTUrRia0SkXV/ObmcvRr5JYnk4MIFlDS46/rlDWlFFg65vbtBJVrZo5a
+X-Gm-Message-State: AOJu0YweEIN0D2FbggXTvid2SYrTxrAnQ8IWl/rCOvD5846TD5+5mGlr
+	acIMD4/A1SDTI/y4uXtYJWXKtoJKOH7DIHTZTILrESb91vXH4olW5OxU6E9wKcv22fyIYcwY0xH
+	gglDZ7P+fXE+0aMdECmSaXn/htoXZR8ORgwqr
+X-Google-Smtp-Source: AGHT+IGmr4MPiaJyIpCo/BhgUoawx8fTUxSzitSrLmVUuttLQqaBuq66PsrBs3kKIRVwyyzZ1yf+Z6/bPBLBsogIgSI=
+X-Received: by 2002:a5b:60a:0:b0:e05:e410:d166 with SMTP id
+ 3f1490d57ef6-e0b117aae60mr5820777276.18.1721946949830; Thu, 25 Jul 2024
+ 15:35:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724190214.1108049-1-kinseyho@google.com> <20240724190214.1108049-2-kinseyho@google.com>
- <20240725204346.GA1702603@cmpxchg.org>
-In-Reply-To: <20240725204346.GA1702603@cmpxchg.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 25 Jul 2024 15:33:23 -0700
-Message-ID: <CAJD7tkbZkuak=VYa_FLQVa=n+9Yd5EBXq5pc11GSiqn1fy7etg@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during traversal
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kinsey Ho <kinseyho@google.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
+References: <20231212204647.2170650-1-sagis@google.com> <20231212204647.2170650-11-sagis@google.com>
+ <ZeUvtzHmMo9jdMnu@yzhao56-desk.sh.intel.com>
+In-Reply-To: <ZeUvtzHmMo9jdMnu@yzhao56-desk.sh.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Thu, 25 Jul 2024 17:35:37 -0500
+Message-ID: <CAAhR5DHzVqX72jj=VUe0atbsMNuQO3S8n6OiFfuugh9grv=75w@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 10/29] KVM: selftests: TDX: Adding test case for
+ TDX port IO
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: linux-kselftest@vger.kernel.org, Ackerley Tng <ackerleytng@google.com>, 
+	Ryan Afranji <afranji@google.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, Peter Gonda <pgonda@google.com>, 
+	Haibo Xu <haibo1.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Roger Wang <runanwang@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, jmattson@google.com, dmatlack@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 1:43=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
+On Sun, Mar 3, 2024 at 8:49=E2=80=AFPM Yan Zhao <yan.y.zhao@intel.com> wrot=
+e:
 >
-> On Wed, Jul 24, 2024 at 07:02:11PM +0000, Kinsey Ho wrote:
-> > To obtain the pointer to the saved memcg position, mem_cgroup_iter()
-> > currently holds css->refcnt during memcg traversal only to put
-> > css->refcnt at the end of the routine. This isn't necessary as an
-> > rcu_read_lock is already held throughout the function.
+> On Tue, Dec 12, 2023 at 12:46:25PM -0800, Sagi Shahar wrote:
+> > From: Erdem Aktas <erdemaktas@google.com>
 > >
-> > Remove css->refcnt usage during traversal by leveraging RCU.
+> > Verifies TDVMCALL<INSTRUCTION.IO> READ and WRITE operations.
+> >
+> > Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> > Signed-off-by: Ryan Afranji <afranji@google.com>
+> > ---
+> >  .../kvm/include/x86_64/tdx/test_util.h        | 34 ++++++++
+> >  .../selftests/kvm/x86_64/tdx_vm_tests.c       | 82 +++++++++++++++++++
+> >  2 files changed, 116 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/kvm/include/x86_64/tdx/test_util.h=
+ b/tools/testing/selftests/kvm/include/x86_64/tdx/test_util.h
+> > index 6d69921136bd..95a5d5be7f0b 100644
+> > --- a/tools/testing/selftests/kvm/include/x86_64/tdx/test_util.h
+> > +++ b/tools/testing/selftests/kvm/include/x86_64/tdx/test_util.h
+> > @@ -9,6 +9,40 @@
+> >  #define TDX_TEST_SUCCESS_PORT 0x30
+> >  #define TDX_TEST_SUCCESS_SIZE 4
+> >
+> > +/**
+> > + * Assert that some IO operation involving tdg_vp_vmcall_instruction_i=
+o() was
+> > + * called in the guest.
+> > + */
+> > +#define TDX_TEST_ASSERT_IO(VCPU, PORT, SIZE, DIR)                    \
+> > +     do {                                                            \
+> > +             TEST_ASSERT((VCPU)->run->exit_reason =3D=3D KVM_EXIT_IO, =
+   \
+> > +                     "Got exit_reason other than KVM_EXIT_IO: %u (%s)\=
+n", \
+> > +                     (VCPU)->run->exit_reason,                       \
+> > +                     exit_reason_str((VCPU)->run->exit_reason));     \
+> > +                                                                     \
+> > +             TEST_ASSERT(((VCPU)->run->exit_reason =3D=3D KVM_EXIT_IO)=
+ && \
+> > +                     ((VCPU)->run->io.port =3D=3D (PORT)) &&          =
+   \
+> > +                     ((VCPU)->run->io.size =3D=3D (SIZE)) &&          =
+   \
+> > +                     ((VCPU)->run->io.direction =3D=3D (DIR)),        =
+   \
+> > +                     "Got unexpected IO exit values: %u (%s) %d %d %d\=
+n", \
+> > +                     (VCPU)->run->exit_reason,                       \
+> > +                     exit_reason_str((VCPU)->run->exit_reason),      \
+> > +                     (VCPU)->run->io.port, (VCPU)->run->io.size,     \
+> > +                     (VCPU)->run->io.direction);                     \
+> > +     } while (0)
+> > +
+> > +/**
+> > + * Check and report if there was some failure in the guest, either an =
+exception
+> > + * like a triple fault, or if a tdx_test_fatal() was hit.
+> > + */
+> > +#define TDX_TEST_CHECK_GUEST_FAILURE(VCPU)                           \
+> > +     do {                                                            \
+> > +             if ((VCPU)->run->exit_reason =3D=3D KVM_EXIT_SYSTEM_EVENT=
+)  \
+> > +                     TEST_FAIL("Guest reported error. error code: %lld=
+ (0x%llx)\n", \
+> > +                             (VCPU)->run->system_event.data[1],      \
+> > +                             (VCPU)->run->system_event.data[1]);     \
+> > +     } while (0)
+> > +
+> >  /**
+> >   * Assert that tdx_test_success() was called in the guest.
+> >   */
+> > diff --git a/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c b/tools/=
+testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > index 8638c7bbedaa..75467c407ca7 100644
+> > --- a/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > +++ b/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > @@ -2,6 +2,7 @@
+> >
+> >  #include <signal.h>
+> >  #include "kvm_util_base.h"
+> > +#include "tdx/tdcall.h"
+> >  #include "tdx/tdx.h"
+> >  #include "tdx/tdx_util.h"
+> >  #include "tdx/test_util.h"
+> > @@ -74,6 +75,86 @@ void verify_report_fatal_error(void)
+> >       printf("\t ... PASSED\n");
+> >  }
+> >
+> > +#define TDX_IOEXIT_TEST_PORT 0x50
+> > +
+> > +/*
+> > + * Verifies IO functionality by writing a |value| to a predefined port=
+.
+> > + * Verifies that the read value is |value| + 1 from the same port.
+> > + * If all the tests are passed then write a value to port TDX_TEST_POR=
+T
+> > + */
+> > +void guest_ioexit(void)
+> > +{
+> > +     uint64_t data_out, data_in, delta;
+> > +     uint64_t ret;
+> > +
+> > +     data_out =3D 0xAB;
+> > +     ret =3D tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
+> > +                                     TDG_VP_VMCALL_INSTRUCTION_IO_WRIT=
+E,
+> > +                                     &data_out);
+> > +     if (ret)
+> > +             tdx_test_fatal(ret);
+> > +
+> > +     ret =3D tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
+> > +                                     TDG_VP_VMCALL_INSTRUCTION_IO_READ=
+,
+> > +                                     &data_in);
+> > +     if (ret)
+> > +             tdx_test_fatal(ret);
+> > +
+> > +     delta =3D data_in - data_out;
+> > +     if (delta !=3D 1)
+> > +             tdx_test_fatal(ret);
+> > +
+> > +     tdx_test_success();
+> > +}
+> > +
+> > +void verify_td_ioexit(void)
+> > +{
+> > +     struct kvm_vm *vm;
+> > +     struct kvm_vcpu *vcpu;
+> > +
+> > +     uint32_t port_data;
+> > +
+> > +     vm =3D td_create();
+> > +     td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> > +     vcpu =3D td_vcpu_add(vm, 0, guest_ioexit);
+> > +     td_finalize(vm);
+> > +
+> > +     printf("Verifying TD IO Exit:\n");
+> > +
+> > +     /* Wait for guest to do a IO write */
+> > +     td_vcpu_run(vcpu);
+> > +     TDX_TEST_CHECK_GUEST_FAILURE(vcpu);
+> This check is a vain, because the first VMExit from vcpu run is always
+> KVM_EXIT_IO caused by tdg_vp_vmcall_instruction_io().
 >
-> Eh, I don't know about this.
 >
-> RCU ensures that the css memory isn't freed.
->
-> The tryget ensures that the css is still alive and valid.
->
-> In this case, it just so happens that the sibling linkage is also rcu
-> protected. But accessing random css members when the refcount is 0 is
-> kind of sketchy. On the other hand, the refcount is guaranteed to be
-> valid, and rcu + tryget is a common pattern.
+> > +     TDX_TEST_ASSERT_IO(vcpu, TDX_IOEXIT_TEST_PORT, 1,
+> > +                     TDG_VP_VMCALL_INSTRUCTION_IO_WRITE);
+> > +     port_data =3D *(uint8_t *)((void *)vcpu->run + vcpu->run->io.data=
+_offset);
+> > +
+> > +     printf("\t ... IO WRITE: OK\n");
+> So,  even if there's an error in emulating writing of TDX_IOEXIT_TEST_POR=
+T,
+> and guest would then find a failure and trigger tdx_test_fatal(), this li=
+ne
+> will still print "IO WRITE: OK", which is not right.
 
-To be fair, the documentation of css_next_descendant_pre() mentions
-that the requirements are:
-- Either cgroup_mutex or RCU lock is held.
-- Both @pos and @root are accessible.
-- @pos is a descendant of @root.
-
-This reads to me like it is intentional that RCU protection is enough
-for @pos and @root, and that the sibling linkage is RCU protected by
-design. Perhaps we could clarify this further (whether at
-css_next_descendant_pre(), or above the definition of the linkage
-members).
-
+Changed this to "IO WRITE: DONE". This is a useful for understanding
+errors if they happen so I don't want to remove this log entirely.
 >
-> What does this buy us? The tryget is cheap.
+> > +
+> > +     /*
+> > +      * Wait for the guest to do a IO read. Provide the previous writt=
+en data
+> > +      * + 1 back to the guest
+> > +      */
+> > +     td_vcpu_run(vcpu);
+> > +     TDX_TEST_CHECK_GUEST_FAILURE(vcpu);
+> This check is a vain, too, as in  write case.
 
-mem_cgroup_iter() is not an easy function to follow, so I personally
-appreciate the simplicity gains tbh.
+There's no harm in adding this check and it helps debugging issues if
+something unexpected happens.
+Since this check always come together with td_vcpu_run I'm going to
+simplify the code and introduce a TDX_RUN macro that simply runs the
+CPU and checks for reported guest failures which is going to replace
+the td_vcpu_run/TDX_TEST_CHECK_GUEST_FAILURE combo.
+>
+> > +     TDX_TEST_ASSERT_IO(vcpu, TDX_IOEXIT_TEST_PORT, 1,
+> > +                     TDG_VP_VMCALL_INSTRUCTION_IO_READ);
+> > +     *(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset) =3D p=
+ort_data + 1;
+> > +
+> > +     printf("\t ... IO READ: OK\n");
+> Same as in write case, this line should not be printed until after guest
+> finishing checking return code.
+>
+> > +
+> > +     /*
+> > +      * Wait for the guest to complete execution successfully. The rea=
+d
+> > +      * value is checked within the guest.
+> > +      */
+> > +     td_vcpu_run(vcpu);
+> > +     TDX_TEST_CHECK_GUEST_FAILURE(vcpu);
+> > +     TDX_TEST_ASSERT_SUCCESS(vcpu);
+> > +
+> > +     printf("\t ... IO verify read/write values: OK\n");
+> > +     kvm_vm_free(vm);
+> > +     printf("\t ... PASSED\n");
+> > +}
+> > +
+> >  int main(int argc, char **argv)
+> >  {
+> >       setbuf(stdout, NULL);
+> > @@ -85,6 +166,7 @@ int main(int argc, char **argv)
+> >
+> >       run_in_new_process(&verify_td_lifecycle);
+> >       run_in_new_process(&verify_report_fatal_error);
+> > +     run_in_new_process(&verify_td_ioexit);
+> >
+> >       return 0;
+> >  }
+> > --
+> > 2.43.0.472.g3155946c3a-goog
+> >
+> >
+>
 
