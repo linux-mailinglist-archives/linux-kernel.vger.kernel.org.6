@@ -1,212 +1,137 @@
-Return-Path: <linux-kernel+bounces-262714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C94393CB32
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:22:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CCB93CB2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11442812EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7D91F2185A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0B149018;
-	Thu, 25 Jul 2024 23:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DA2149009;
+	Thu, 25 Jul 2024 23:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EhfPFJ/i"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACOVjC3X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A77B149C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AB9DF6C;
+	Thu, 25 Jul 2024 23:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721949709; cv=none; b=lTxfRhwrtszxI+LO9B+ZRk7726BoMwKMUey/YgHrPZ1oKgR5v5Va2uizDwwJ/SZqKxhySSZelHXH8Bw0ipmv9Ki66xdsZYMHm/PshOpM1KHWksx+xH8eZaIppZvJmI1W6DKoKp22S+Hm6/cTUNALQKUgZSwEX2plTEt6PY4//Mw=
+	t=1721949661; cv=none; b=MlQXqLHkfghol2bZtq36P4r5qAwVSrGQE4OrIcRFQJFc1OXcq6naqjlE8Rft+Sm4kop9C4nN8lJnjeYLfI1ZWxv25hyXPT+tdrluGSDG+DYuAkIC84kZJrMg2b3gKZO0xSIkzJimCQ2CpLDHuCR5nT5ypjwbEPbMsuzzgcRMY6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721949709; c=relaxed/simple;
-	bh=qH2ob/GPMxW6QjGdFk/NsUTwDcqVg3OStezb0PUZxuM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kfyKRqAxJUKUwVGlvWmcN6s9+s3rWSWM3TcCexLUd+n9C0fHXXJ/eVPImvupCiFsBbo1eP92LrSGb5DHyON//khk+jsbr+e75OtnxO3836SEPmyGu7fp6I5/eDIgOm4awqfbecvk59+c4AZmS7KnlR0ej7PaKAAjAt0dNzW7gGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EhfPFJ/i; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso2660744276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721949706; x=1722554506; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIeg3QD3T42p/ZQnVld0CvS5klyquBslVZ8Cnqk2AWw=;
-        b=EhfPFJ/iwj+esBuZUYJmS4jht5pSWcH9MfTXEkMQR9C72PhRc+nCdZm2/xtWc0A59a
-         t4fu1eD+t63e6ijVwoU+8FJJ/Id5MJfyLcR4DHyvnASJ7kOZOu7GZBuZmfnvyHvbRoKh
-         nwWv1SoP9xk9xYMjFVGL6BJrKeXhp51d15E0ERCKOGI+zuwigkUJ8Hn+CoZyr3TYZ28j
-         iPOJv8KNs6Ioh5jxXDZsRq7Zm05Bxg4qs2Rtl/cXAil5uk0PceTMsaiJmE7s4v9BAJSw
-         DMr4k2pWqAmwCEjtmfD81WMlRL+Nws6Ps8+yDoEWFnhGVy30OaEUDPOsqmRe61tpWVJ+
-         wfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721949706; x=1722554506;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIeg3QD3T42p/ZQnVld0CvS5klyquBslVZ8Cnqk2AWw=;
-        b=mQ6uC13IRlSeJGaGs5OXj93dYmuoATdJxoL4JD9EaEBsGnZPXF3dxnCMLP6otuLCwT
-         sMm4WiBsSc7GLyu8T3kU7PtlDawI8yhYm3ycB2L4CDAywK/aAJse/BB1hsIpG9fSQH6k
-         ZvYgKHTsoYi88IN8d0TqMqrFmyvD8pRpfr4LVdf38/uxoSQoPceHKHMRhih3PfIWK4Nc
-         urjcWOXfiVIH7OtvL0CXZvC3368qwkA6uvxib59AKUyv41H1O+zKnilvYTb4JGD34dnb
-         zb/O2utBgSll+FPFzibO6mIjS/pxNnz0Ak8Y9pl8P8+dIe1htQq216C4HnuNu5rM/A8j
-         Iu6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUL3gOGPFb+RyeJRH/MqChuCvLr+Vr/JSROQtqkb6J6VT8yhYzb2zMKBq/61lQeD1BrWlrKAPs3X6PYgvWOs/M3+LafY+r2PbC/DVZA
-X-Gm-Message-State: AOJu0YyjLm374dXHWWqBGg+wi6MS/aTlYkZvVaYpTM0J8nkl/G7XSnCW
-	fZDkiYuCjNxQ7QLHbD6ctK8fCK9p+432hmoe+LDwKHpJzp0dFV8/Wsxm83u1iiVvdwayh/1OIGQ
-	vKW6NjQ==
-X-Google-Smtp-Source: AGHT+IGFgF07K78Xk6HyAkYV734bKuaNSlYnh+LI6ONN4gJdXx4TMFBTavf54CUZ0w26vWpdASB/dVOetoAt
-X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
- (user=mmaurer job=sendgmr) by 2002:a25:9bc1:0:b0:e08:6c33:7334 with SMTP id
- 3f1490d57ef6-e0b2cd29922mr30221276.8.1721949706306; Thu, 25 Jul 2024 16:21:46
- -0700 (PDT)
-Date: Thu, 25 Jul 2024 23:20:47 +0000
-In-Reply-To: <20240725232126.1996981-1-mmaurer@google.com>
+	s=arc-20240116; t=1721949661; c=relaxed/simple;
+	bh=YVk+dvynxA0n4+QgQzveKBQ+TXEMcDxfnatQSEQhLyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YLaUozSPBY5VR0iBm9VK7M4bF1A0gR7JL3liwYSzVGbqQPcPBFNPIBp4lBw/zu67TShjZoUqrMN+3+mDEHLEcYNdrteO4+/GlRX+ID7Ui9d9GJD/Nww9LRmDFeV+M2VkaHGQasip+oPuDUx1Gt6U46LbFmexIspoGvRvUmo5NOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACOVjC3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB49C116B1;
+	Thu, 25 Jul 2024 23:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721949660;
+	bh=YVk+dvynxA0n4+QgQzveKBQ+TXEMcDxfnatQSEQhLyg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ACOVjC3XUm639SO5VHu7MFb4n+rYwXla1fTS5xroKv+/E96SV7srVoAlX/k94fBbi
+	 gbOZ7A8wnHPjoZSUh8VaRhYuCpMC8qvf2fqUpU3e+cSupq3u9RRp+fuhC0fBkxNKBn
+	 s+j2Ky1ecy7tIxOLWI3/6A22k8oO9Rx9vQkUYdf9bvCXgjbvJdzlWJGL1/IWl91IjT
+	 hwDB8FpnhBK9y7vK7wrig4suKsVCTAqVofNiGSiBjBGWXVWGU9AzAVFKddjQymWtne
+	 H6M0naLuL+eKlD4u2eFgqpSkn7u+XU9bH5jQOVGk6VVN5bQpTzexJZfNnDW7dZFyzb
+	 5DsuI0n5QwFCA==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.1 00/13] 6.1.102-rc1 review
+Date: Thu, 25 Jul 2024 16:20:56 -0700
+Message-Id: <20240725232056.29239-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240725142728.029052310@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240725232126.1996981-1-mmaurer@google.com>
-X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240725232126.1996981-3-mmaurer@google.com>
-Subject: [PATCH 2/2] kbuild: rust: Enable KASAN support
-From: Matthew Maurer <mmaurer@google.com>
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>
-Cc: Matthew Maurer <mmaurer@google.com>, Alexander Potapenko <glider@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, kasan-dev@googlegroups.com, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Rust supports KASAN via LLVM, but prior to this patch, the flags aren't
-set properly.
+Hello,
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Matthew Maurer <mmaurer@google.com>
+On Thu, 25 Jul 2024 16:37:09 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.1.102 release.
+> There are 13 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.102-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
+
+Tested-by: SeongJae Park <sj@kernel.org>
+
+[1] https://github.com/awslabs/damon-tests/tree/next/corr
+[2] dc0e6d516f8a ("Linux 6.1.102-rc1")
+
+Thanks,
+SJ
+
+[...]
+
 ---
- scripts/Makefile.kasan | 46 +++++++++++++++++++++++++++++++++++++++++-
- scripts/Makefile.lib   |  3 +++
- 2 files changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-index 390658a2d5b7..84572c473e23 100644
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -12,6 +12,7 @@ endif
- KASAN_SHADOW_OFFSET ?= $(CONFIG_KASAN_SHADOW_OFFSET)
- 
- cc-param = $(call cc-option, -mllvm -$(1), $(call cc-option, --param $(1)))
-+rustc-param = $(call rustc-option, -Cllvm-args=-$(1),)
- 
- ifdef CONFIG_KASAN_STACK
- 	stack_enable := 1
-@@ -28,6 +29,7 @@ else
- endif
- 
- CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-address
-+RUSTFLAGS_KASAN_MINIMAL := -Zsanitizer=kernel-address -Zsanitizer-recover=kernel-address
- 
- # -fasan-shadow-offset fails without -fsanitize
- CFLAGS_KASAN_SHADOW := $(call cc-option, -fsanitize=kernel-address \
-@@ -36,13 +38,36 @@ CFLAGS_KASAN_SHADOW := $(call cc-option, -fsanitize=kernel-address \
- 			-mllvm -asan-mapping-offset=$(KASAN_SHADOW_OFFSET)))
- 
- ifeq ($(strip $(CFLAGS_KASAN_SHADOW)),)
-+	KASAN_SHADOW_SUPPORTED := n
-+else
-+	KASAN_SHADOW_SUPPORTED := y
-+endif
-+
-+ifdef CONFIG_RUST
-+	RUSTFLAGS_KASAN_SHADOW := $(call rustc-option $(RUSTFLAGS_KASAN_MINIMAL) \
-+				  -Cllvm-args=-asan-mapping-offset=$(KASAN_SHADOW_OFFSET))
-+	ifeq ($(strip $(RUSTFLAGS_KASAN_SHADOW)),)
-+		KASAN_SHADOW_SUPPORTED := n
-+	endif
-+endif
-+
-+ifeq ($(KASAN_SHADOW_SUPPORTED),y)
- 	CFLAGS_KASAN := $(CFLAGS_KASAN_MINIMAL)
-+	ifdef CONFIG_RUST
-+		RUSTFLAGS_KASAN := $(RUSTFLAGS_KASAN_MINIMAL)
-+	endif
- else
- 	# Now add all the compiler specific options that are valid standalone
- 	CFLAGS_KASAN := $(CFLAGS_KASAN_SHADOW) \
- 	 $(call cc-param,asan-globals=1) \
- 	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
- 	 $(call cc-param,asan-instrument-allocas=1)
-+	ifdef CONFIG_RUST
-+		RUSTFLAGS_KASAN := $(RUSTFLAGS_KASAN_SHADOW) \
-+		 $(call rustc-param,asan-globals=1) \
-+		 $(call rustc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
-+		 $(call rustc-param,asan-instrument-allocas=1)
-+	endif
- endif
- 
- CFLAGS_KASAN += $(call cc-param,asan-stack=$(stack_enable))
-@@ -52,6 +77,11 @@ CFLAGS_KASAN += $(call cc-param,asan-stack=$(stack_enable))
- # memintrinsics won't be checked by KASAN on GENERIC_ENTRY architectures.
- CFLAGS_KASAN += $(call cc-param,asan-kernel-mem-intrinsic-prefix=1)
- 
-+ifdef CONFIG_RUST
-+	RUSTFLAGS_KASAN += $(call rustc-param,asan-stack=$(stack_enable))
-+	RUSTFLAGS_KASAN += $(call rustc-param,asan-kernel-mem-intrinsic-prefix=1)
-+endif
-+
- endif # CONFIG_KASAN_GENERIC
- 
- ifdef CONFIG_KASAN_SW_TAGS
-@@ -73,6 +103,20 @@ ifeq ($(call clang-min-version, 150000)$(call gcc-min-version, 130000),y)
- CFLAGS_KASAN += $(call cc-param,hwasan-kernel-mem-intrinsic-prefix=1)
- endif
- 
-+ifdef CONFIG_RUST
-+	ifdef CONFIG_KASAN_INLINE
-+		rust_instrumentation_flags := $(call rustc-param,hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET))
-+	else
-+		rust_instrumentation_flags := $(call rustc-param,hwasan-instrument-with-calls=1)
-+	endif
-+	RUSTFLAGS_KASAN := -Zsanitizer=kernel-hwaddress -Zsanitizer-recover=kernel-hwaddress \
-+			   $(call rustc-param,hwasan-instrument-stack=$(stack_enable)) \
-+			   $(call rustc-param,hwasan-use-short-granules=0) \
-+			   $(call rustc-param,hwasan-inline-all-checks=0) \
-+			   $(call rustc-param,hwasan-kernel-mem-intrinsic-prefix=1) \
-+			   $(instrumentation_flags)
-+endif
-+
- endif # CONFIG_KASAN_SW_TAGS
- 
--export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE
-+export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE RUSTFLAGS_KASAN
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 9f06f6aaf7fc..4a58636705e0 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -167,6 +167,9 @@ ifneq ($(CONFIG_KASAN_HW_TAGS),y)
- _c_flags += $(if $(patsubst n%,, \
- 		$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object)), \
- 		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
-+_rust_flags += $(if $(patsubst n%,, \
-+		$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object)), \
-+		$(RUSTFLAGS_KASAN))
- endif
- endif
- 
--- 
-2.46.0.rc1.232.g9752f9e123-goog
-
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: sysfs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh
+ok 12 selftests: damon-tests: build_m68k.sh
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
