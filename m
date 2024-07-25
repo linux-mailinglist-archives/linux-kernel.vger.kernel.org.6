@@ -1,181 +1,152 @@
-Return-Path: <linux-kernel+bounces-262053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C181E93C008
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:38:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C0E93C023
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1ADA1C218E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C379A1F21E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6626E198E9E;
-	Thu, 25 Jul 2024 10:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39A1990CC;
+	Thu, 25 Jul 2024 10:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="woBd4nR+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2OicCqM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="12VLq1KH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xs1OCbvW"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c38b864k"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D890198E74;
-	Thu, 25 Jul 2024 10:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3586914D457;
+	Thu, 25 Jul 2024 10:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721903916; cv=none; b=CsI7OPlgHQcP4pxn33ZhEk1/WcL1N0/uil9h14nqbasWUZHttbdJSpIJ3bYZw9+gbs156iYPbe0THPjELcB3e/vGBVyR4UvceIR6ez/43gZhKf0GogXp6KAVZ3Te3cX5sfJddmLVUEUfSwRr6L0CQoZJ17S0dFZS/TiuUsFYavs=
+	t=1721904045; cv=none; b=I9VaqDCVBGyRq0u0UnUygUXZ0OWEumV2t+1eTkmKT8J5T8fh54FLdMJrG9jru8qU7dR/AUBYWseUZxHYONDYZAp6qzRKo+m6vfJMsiEaMcKcuUXN+LuY+UU4jLAgSOYsQSUOTqBg4SN8us5Y10I3fIdYEi2vwvbHqhZCAXRMRCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721903916; c=relaxed/simple;
-	bh=6J70W6t31FAmFT7Miv48fok6V3Se39LFPBt5i+rBr7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VcesXEll0FfO5GrCXTKiP+8nnNXqpWyMzme6uDfBD0wjYFBjPR+o/jmO9yotfsyF5yUQNvYT3GHvgNb532ETQ8kOGPp4hsWzuihjrwhxYLj86nKEwRmTjMNse2/gM4b8xeF18qAssaITtYieZ+PLlukz6CfaL5M6p6TML6SwoSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=woBd4nR+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y2OicCqM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=12VLq1KH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xs1OCbvW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 84FA61F7B2;
-	Thu, 25 Jul 2024 10:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721903912; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nvDC87/jvz0noE+cyWz6Y6Lw756TMFZplIYd+GcXkxg=;
-	b=woBd4nR+SBxt61yqbKopFdY5mGt1gv4ybgMHGpkKLm8UUPBPpX8u/c01RdeH2oTW5gNj8S
-	JPojuapfFuW/lwhx3zdjUt9WXohy7DLLoNlJWIr21D85OOKTSNK9pqlKmAAD3Kt5EFgmAU
-	boJP1NTtzvUVvX6FEM5xw4NlYtzhYUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721903912;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nvDC87/jvz0noE+cyWz6Y6Lw756TMFZplIYd+GcXkxg=;
-	b=Y2OicCqMNVKgSk/wHVrN5n5xhCq1zqEHw6Ynw1Myqupy3+QCHqZeXGeT+hQBk9NR4V+DMw
-	uIChrJiSB7vJ5/CQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=12VLq1KH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xs1OCbvW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721903911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nvDC87/jvz0noE+cyWz6Y6Lw756TMFZplIYd+GcXkxg=;
-	b=12VLq1KHekE2tEnMDhSz1Cb8gxsW+w+Ub0fvwi2ybVMle7Bqw7h+6fDITV1huQXhpSPtGX
-	3KFa+wyIJhlc0vWIBIFwoRRL8gGp5TPmZYzvN7HHEe1ZjqhJYTCHDIzQEb1qCY4QW7ANTd
-	YoWfGxdlRTyXLhuZ05ATkdQLs/7MAtM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721903911;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nvDC87/jvz0noE+cyWz6Y6Lw756TMFZplIYd+GcXkxg=;
-	b=xs1OCbvWgfSMRX4X5To6z+rJHvXm92MIqweK1h9acyF9OqCvqAWBfNTJ87Mn4BXIdAjR39
-	G7AqTr++aCEvNFAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B26713874;
-	Thu, 25 Jul 2024 10:38:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1HYPHicromboTAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 10:38:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3CB28A0996; Thu, 25 Jul 2024 12:38:23 +0200 (CEST)
-Date: Thu, 25 Jul 2024 12:38:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 08/20] ext4: get rid of ppath in ext4_find_extent()
-Message-ID: <20240725103823.fvvinixcctacf4fx@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-9-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1721904045; c=relaxed/simple;
+	bh=m21UR2Li9R6gN31puzH6uj0MqV+URXqK3uxeXiT+fVU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s+ad8KeGIbudClWF3lyiClW0ClSvhX56DTLgVpUzrF5lSjPdetEiMClSPug4IJHgZiLqndxwp3anLbAgM06Cj+MG66wrSMS7wBr1rgIa50HJyvD3tQ1G5XlMeI5prET9vix1HcmlNExBQygUD17dK5HloyXY5xitcmetRggOtsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c38b864k; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ab76558a9so70303266b.1;
+        Thu, 25 Jul 2024 03:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721904042; x=1722508842; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYCkaTEvTDSyuZcCjBDH4ThgdC9LaZkN69s/l2hUZCI=;
+        b=c38b864kacr65IeHUtHC5sV48TE33oIigtuYHhb6ccVXLbvGIkf5uP1mg/4ySDbudm
+         qzOhAia/IdGVyl3ssvFfZqkAcbk5oJFY1z2O7W168oBO1BglTLkPYGjF85xi+P6Nd4yg
+         KVx0d2PoiB2XmMT7B9BJ2LH3oQcC5hO/2yOPtlDFF60KsGLKBKE/4Drl+nghgIhXSUt0
+         MlSkW9tg6mDoemqpB/RcQSeVeQqMqCrYFXCxI6mpOPsHNgrZ6INYeBJ5ZHnEJYakY66/
+         OYDYiGk6iOeUzmTVoo8Ubhxz0rSOtmxPAKPoj6x04NB7pNrVKCdXP5SFifytNdEq6sSW
+         Pbog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721904042; x=1722508842;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KYCkaTEvTDSyuZcCjBDH4ThgdC9LaZkN69s/l2hUZCI=;
+        b=DtLR1sQb3KtQfXLX9aKp7yUHZx3Km/zK+OdT5SRbR9eYxHOot8iHwqua10NeyL4un4
+         5y5zWHj1WDb1PTQUwPHEELiAIff8jUJwjcWVowagitZo2NVQQUVMp8yGZ/4plH996HsK
+         TO1vijcKbAeiNElEkqHxcsT9UouHu3MWjXpsGLwU9fDkzhFH9TIyAMWEPSzKnElovdKn
+         Fltr/HGFNPX4OeubwLE//U9towE3G0EYOoV4Q0ad0PWhTi/qZpdK9f34E58Vu/WcCC1e
+         N0nezdT+pLcKCmjRx5+ZnwfT/Ofqronq0O7c0oAnBM7jjvM3PGAAoiGSLMZSqWKm1Z0A
+         zdzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZGsrI5Fvbr7g7s2NgPS9FGcOC9mI5aLVGOLaRBHPvFnNyr25tzU0jpxyXV7mqjjVQjZm9mOBbDI/ULV2HVXnPm0pX0sItxR5zo109z5hz4iAZZdgxUVOwoQgzza/GHIKP9MpEAjYXZ/bp7H+n3sfACpTHyT5sdKWK2LfHAkAgOGxou7HT0lFZy34x0A==
+X-Gm-Message-State: AOJu0Yw5jqCDFhr75s6+h63dUV+puXLGHND/opgRCTdhdzpcfCZqGmmA
+	H6XNPuX4c9uDMjphPVG6uoGZop60ZPIkLawQ9N8ZXcoISHLIdQh7
+X-Google-Smtp-Source: AGHT+IHeoqNjf3cbZ6y+3Vz9f7hsQ+CfAAZqQdxnrSnI8eb+wbnp5LzKkmDTLaDJ3xyL7tjzktERdA==
+X-Received: by 2002:a17:907:3fa4:b0:a7a:a138:dbc6 with SMTP id a640c23a62f3a-a7ac44dc5acmr292492866b.8.1721904042283;
+        Thu, 25 Jul 2024 03:40:42 -0700 (PDT)
+Received: from tablet.my.domain (83.25.114.69.ipv4.supernova.orange.pl. [83.25.114.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 03:40:41 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v2 0/6] ASoC: samsung: midas_wm1811: Separate compatible
+ for tab3 + fixes
+Date: Thu, 25 Jul 2024 12:40:34 +0200
+Message-Id: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-9-libaokun@huaweicloud.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.69 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 84FA61F7B2
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.69
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKIromYC/2WNQQ6CMBBFr0Jm7ZgWaGtceQ/DYqQDTCLUtEg0h
+ LtbSVy5fC/576+QOAonOBcrRF4kSZgylIcC2oGmnlF8ZihVWSunDY7iKSE9vQSc6VahdrXTlmt
+ j9Qny7BG5k9eevDaZB0lziO/9YdFf+4vZ/9iiUSGZikk5Q52hSz+S3I9tGKHZtu0DNy//KrAAA
+ AA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1970;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=m21UR2Li9R6gN31puzH6uj0MqV+URXqK3uxeXiT+fVU=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiunumjzC2WQrYjAvaAYPWaKTf817wW3d/2Lq
+ u4HjvhbE8uJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrpwAKCRCzu/ihE6BR
+ aHIBD/9vrOZsdbgdZ+ev3QunNEqonKBSK0FHUVOml/7dHmFg2VU4dK7PneaCIRFXMGSPMFQTvoc
+ S+U6oXR95Qho15XHn9qrG2WB2ox8f/mCD5DXTVqjefJ1m89oo7ZryWPtqjuNL9xJZA64plQceaj
+ y6C7Aa1TCHmfJZGy6gWlWq0CFOU2o3bvOrw6gDH0RBlXL1alsBuw0d52h4iDyw0/Ua5ipZ5HQ+Q
+ 0wu2ltu73otbWVK5SPlGNVHkNgeIEmEw2xuZKLu3hXwSEgs7Qp/4EL898evWqtW6sPgcsezg+N0
+ a2MqgdAAEm8l4ss2Laq/Tf0/8bbAuWDpWEthE+xyFWvE9QBc4qN2yIoPHW1pV/eS3ASEh6gfcWt
+ eEthrjOmz4kni7NeiSiJuHYeHC1Y6Y89Ax2HrT1o8jK3DucmUin0YgKvtCs+gbkl/pgVfo0G1zb
+ KkDRitbE0DxBKkJPJFTBfsLLnovl1adXV4Ibx5muwlc2QHyyI7uT442TI82px9DL3L4qZM940kj
+ mXGx5ipcTMEhCX6MDBGOVvMgzHU2sKno0p54LyyEn3lMB5+w7BEAL6KJxo5YUxtpokSgFKS5VKR
+ ENtSuvnalWcmIxndf+Vqa4u8wNLneVC3PXlh0Bzoqnz15ojbh1H43uvmsXiJuGkSIrxcvSaiBBO
+ KEyUJ1unfJB5LbQ==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-On Wed 10-07-24 12:06:42, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> Getting rid of ppath in ext4_find_extent() requires its caller to update
-> ppath. These ppaths will also be dropped later. No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+This is a follow-up to "ASoC: samsung: midas-audio: Add GPIO-based
+headset jack detection"[1]; it appears to have been silently merged
+except for the DTS parts, this patchset is a resend of the DTS patches.
 
-One nit below, otherwise feel free to add:
+Besides the DTS changes necessary to enable headset jack detection
+for the Samsung Galaxy Tab 3 8.0, it also adds a new compatible for
+the Tab 3 (samsung,tab3-audio). This is done so that we can set up
+different requirements in DT binding (Tab 3 does not have main/sub
+bias regulators), and drop the main/sub mic bias dummy regulators
+from the Tab 3 DTSI.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[1] https://lore.kernel.org/all/20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com/
 
-> @@ -3260,11 +3257,12 @@ static int ext4_split_extent_at(handle_t *handle,
->  	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
->  	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
->  	 */
-> -	path = ext4_find_extent(inode, ee_block, ppath,
-> +	path = ext4_find_extent(inode, ee_block, *ppath,
->  				flags | EXT4_EX_NOFAIL);
->  	if (IS_ERR(path)) {
->  		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
->  				 split, PTR_ERR(path));
-> +		*ppath = NULL;
->  		return PTR_ERR(path);
->  	}
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v2:
+- Addressed review comments from Krzysztof (anyOf instead of oneOf in
+  if: statement, fixed earmic_bias_reg node name to correct number,
+  reorganized patches to move headset-mic-bias-supply property next to
+  other headset properties in DTS)
+- Link to v1: https://lore.kernel.org/r/20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com
 
-I think here you forgot to update ppath on success case. It will go away by
-the end of the series but still it's good to keep thing consistent...
+---
+Artur Weber (6):
+      ASoC: dt-bindings: midas-audio: Declare required properties for GPIO jack det
+      ASoC: dt-bindings: midas-audio: Add separate compatible for tab3 audio
+      ARM: dts: samsung: exynos4212-tab3: Fix headset mic, add jack detection
+      ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock to WM1811 codec config
+      ARM: dts: samsung: exynos4212-tab3: Drop interrupt from WM1811 codec
+      ARM: dts: samsung: exynos4212-tab3: Drop dummy mic bias regulators
 
-								Honza
+ .../bindings/sound/samsung,midas-audio.yaml        | 59 +++++++++++++++++++---
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     | 39 ++++++++------
+ 2 files changed, 76 insertions(+), 22 deletions(-)
+---
+base-commit: 91e3b24eb7d297d9d99030800ed96944b8652eaf
+change-id: 20240715-midas-audio-tab3-174716e45618
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Artur Weber <aweber.kernel@gmail.com>
+
 
