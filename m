@@ -1,164 +1,139 @@
-Return-Path: <linux-kernel+bounces-262377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135D093C632
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCD293C637
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B5E281D7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5763628180F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE9419D8A6;
-	Thu, 25 Jul 2024 15:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6186019D890;
+	Thu, 25 Jul 2024 15:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGshEXD2"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SaS60f1Z"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9070319D89E;
-	Thu, 25 Jul 2024 15:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E2019CCE6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721920285; cv=none; b=eFcE5R/ZqcnWHWLRjjORh0Y7ApspeUZCsUZjdQtlOh5nawPBpdAc993ht6mkjmLgh2ZOsrNafOmVXAfEl8MGg3iSxA9DgCauqTpNf1BBOALl4DTlmo0JAd6sdaumFm/MyaYifD2eao3Jf0dI6lqok1B1QuFI5tB5qRRaXB2U/DI=
+	t=1721920510; cv=none; b=aKM8joM/3o1vYBeznVLmzds1rQhRzeesotlp/ImZrEQicokAQNG6xokYKYdx7WxrlsB8IpFmshR5hSzqWn7eGuvKXa0t+W0NCPlqy540dRmM2aUZQ11CPi2niJ9+UEgyymwtU44gllG42oyiaVFJQkYBaSHVvuW021bv+xEpHzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721920285; c=relaxed/simple;
-	bh=4xFnelDtECeH12No2ZkIyBhksNciFIDqEg03JTXCIaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DqQ8qWotWJNsBxuJb5L0TmOScmOKeOYwwG9aC//OIkNPVWSLBBoAcWY8KYp2v9qK0/E59bAF57pE3L7JZ5hV6fqnxRFF81bxUEExDcUqcIeOLu1NYMDo0+4f+9/0oUbzXI8uCJIQiV6AodZAZcljyOBvJ9bOsw60qJ4ql2lkmIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGshEXD2; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d4fb707895so640725eaf.0;
-        Thu, 25 Jul 2024 08:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721920283; x=1722525083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6gG3oCe4oYk3F0rr8MDa2StMvMgMwiYddG9zhTTTwCY=;
-        b=kGshEXD2uWuW8sVzOLLo9PyVhG3rHHomuYYIpQuZxMgZi6dQhf9M5h6bmKi2AVPdhi
-         obUESdH2cve2Wre5JGs3KYciwaBlsIySVE/zfVumYjKxSPTlX3UraYR8f4quEUZBMaBM
-         NGn1jUghtVYt6Uh7++g3El1jG57H8n1jvz2BoDPiCAZ1j/maKLcQKYF5uIurrQbtegk7
-         kBrk1BpaDHY5Xmkv8TxVu4LBEKUX5nKyT9RODTyNHWi/dbEZK2czDZw5ToiM2jhB35kk
-         DyEU41uErfPB3zbObgnZ4f9mThPAOxYwyY683pKTMAXRlX3uhDWvB1TkoCh3khdnjH2W
-         Zu/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721920283; x=1722525083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6gG3oCe4oYk3F0rr8MDa2StMvMgMwiYddG9zhTTTwCY=;
-        b=rQOsoGWS4969EEFWdUT6vsRtrCS46+FdU3LE1Lp1yufAZpx5SWizPK0GvO5A5ZzGYk
-         dUVcsbm50Bd1tpgsjFIXnq2+kyC52XLErlepfPzFpWx9qqIKBaoUVA2FyA3zyWD3NRUE
-         ga2x4sG5XGYoXXYsGTLOaSRMUQotDRKsK3lzQiaClPR2ZBWKaY9yshY0QTJbT03xihuE
-         P5qYQp4SujI4RZYGbj2Q6/X3XBvYdvJerXojGorkf24K05/CJVrnvzWRYYfXgSCYn607
-         yez3+Uj6P0TcQrs6SXaFEFX+EQwzJGVUARy3xs3X8a4cD9jWdEWyfrMqAHRsZ3E6j6P/
-         Qk0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXHJCIf9a2KYTvoKBleebKQSnUU8eU3qT/dy6kgSskibc3wikwbfOmkYEpkI4u1f2PtCAibFuzlqIqMCFUHbCdHbGFzWM2R/OpwYAVp9DSN1Eyq5nbz4lPNfnjK1XNyNo/kws2zZ1yTDIypBq5Azq7+KlTY85Zj3MCb+fyHYWGU0+/YTac5EnnndQKK
-X-Gm-Message-State: AOJu0YxHb7Ptsv2Euan2qL9CVzkphsOUnl3LGMefKA+YF0pogEsX0Q05
-	hLS6muaRd18moWxrU9rCLhFXMj1iJMzSagbcvSW3CDFitej9RkOuC3xqXOGNGwiYkeYrs2/7MvR
-	UyaZAHOLo3MWmo6/lLvxSCApdYc8=
-X-Google-Smtp-Source: AGHT+IGdvGm0ET9gz+yF8PYd3jHpdvWj7fDjAmm2jQoKgtNtCs99S21tDrFv1q7+jVKOpMYn380z+Cn3zdWyJwdoHFw=
-X-Received: by 2002:a05:6359:459c:b0:1aa:c98b:aa0e with SMTP id
- e5c5f4694b2df-1acf89114c5mr444689855d.26.1721920282504; Thu, 25 Jul 2024
- 08:11:22 -0700 (PDT)
+	s=arc-20240116; t=1721920510; c=relaxed/simple;
+	bh=aZW+qcVqbz0DmqDUgj9Sk3vgM7ybguwrIK18bSKjpmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzunBv3LJTdpbrjqf/rizkp1BIvEpbrlBbMuHPvh2FOGNmbRIS//FzMyEQ3fyUoKC1tIHag198/mko29IbB06JOC1fot9sH0xeNg0QVAeINnuVYYM/qYkqmb4j/YgZn1W4j5dx1ByPUzCxf9ziI47zU06PZG/vTddqOK8tXJdZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SaS60f1Z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=cvghIW/iKatkE8AfzZUKowaIp4B42dtcNe1vrp6Jj+g=; b=SaS60f1Z6SBGdr/TNRL2YRdc7J
+	QduHz/8j+ZQtsvZPIS/7Vxodv+HJRQhiUU0fc5pjbLRAmaPy9trHyTiIWEdORzyD+Q8SUBCLTvCSZ
+	lX9icTw6363gr0SYv5UHtu8jkqzpy7h2kxdQigaq7rk/U/H+x6/y/kS6+BtP985lx1XZ8pAy3hOIa
+	3Q8iQn7ZHeBpj+IBOkDy87dj/g2IAkg1qPAFlGhXSHMLbKhRGJBdRVp1r6vTrSVQNBNSROFGRLeep
+	d/WuMBtt4+9QRQ5OkLvrz6nPXleQfbavDO2+l+r1G6SNutwwukWMUafYBwV3KKHE7qfQmD4GK/q3/
+	bIrF88UQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sX0BH-0000000935x-1eKp;
+	Thu, 25 Jul 2024 15:14:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 54D3230037B; Thu, 25 Jul 2024 17:14:58 +0200 (CEST)
+Date: Thu, 25 Jul 2024 17:14:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: zhengzucheng <zhengzucheng@huawei.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, oleg@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] sched/cputime: Fix mul_u64_u64_div_u64() precision
+ for cputime
+Message-ID: <20240725151458.GJ13387@noisy.programming.kicks-ass.net>
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <20240725140508.GH13387@noisy.programming.kicks-ass.net>
+ <b21d9fa7-45be-8346-db28-4c42847e2e0b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725133932.739936-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240725133932.739936-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUpZ6KWdjveVSS72jdSuySCB7KVgo=TSr7tt=G295bPXw@mail.gmail.com>
- <CA+V-a8vmiaYQnf4mCJD-Zx8BqSiDUS5NpaskYkOkuCpE7qH+3g@mail.gmail.com> <CAMuHMdVtdh-ykbm4EOoXU_ZTjOp9Jz9E00OusjtB1A-msTySjg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVtdh-ykbm4EOoXU_ZTjOp9Jz9E00OusjtB1A-msTySjg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 25 Jul 2024 16:10:56 +0100
-Message-ID: <CA+V-a8uYKTpXjsW=p+jHpCtnsNjaAEA8xHNr=KeH=4g5jXmr5A@mail.gmail.com>
-Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a07g044(l1): Correct GICD and
- GICR sizes
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marc Zyngier <maz@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b21d9fa7-45be-8346-db28-4c42847e2e0b@huawei.com>
 
-Hi Geert,
+On Thu, Jul 25, 2024 at 10:49:46PM +0800, zhengzucheng wrote:
+> Sorry, I made a mistake here. CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is not set.
+> 
+> 在 2024/7/25 22:05, Peter Zijlstra 写道:
+> > On Thu, Jul 25, 2024 at 12:03:15PM +0000, Zheng Zucheng wrote:
+> > > In extreme test scenarios:
+> > > the 14th field utime in /proc/xx/stat is greater than sum_exec_runtime,
+> > > utime = 18446744073709518790 ns, rtime = 135989749728000 ns
+> > > 
+> > > In cputime_adjust() process, stime is greater than rtime due to
+> > > mul_u64_u64_div_u64() precision problem.
+> > > before call mul_u64_u64_div_u64(),
+> > > stime = 175136586720000, rtime = 135989749728000, utime = 1416780000.
+> > > after call mul_u64_u64_div_u64(),
+> > > stime = 135989949653530
+> > > 
+> > > unsigned reversion occurs because rtime is less than stime.
+> > > utime = rtime - stime = 135989749728000 - 135989949653530
+> > > 		      = -199925530
+> > > 		      = (u64)18446744073709518790
+> > > 
+> > > Trigger scenario:
+> > > 1. User task run in kernel mode most of time.
+> > > 2. The ARM64 architecture && CONFIG_VIRT_CPU_ACCOUNTING_NATIVE=y &&
+> > >     TICK_CPU_ACCOUNTING=y
+> > > 
+> > > Fix mul_u64_u64_div_u64() conversion precision by reset stime to rtime
+> > > 
+> > > Fixes: 3dc167ba5729 ("sched/cputime: Improve cputime_adjust()")
+> > > Signed-off-by: Zheng Zucheng <zhengzucheng@huawei.com>
+> > > ---
+> > >   kernel/sched/cputime.c | 2 ++
+> > >   1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> > > index aa48b2ec879d..365c74e95537 100644
+> > > --- a/kernel/sched/cputime.c
+> > > +++ b/kernel/sched/cputime.c
+> > > @@ -582,6 +582,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+> > >   	}
+> > >   	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> > > +	if (unlikely(stime > rtime))
+> > > +		stime = rtime;
 
-On Thu, Jul 25, 2024 at 4:07=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Jul 25, 2024 at 4:59=E2=80=AFPM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Thu, Jul 25, 2024 at 3:53=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Thu, Jul 25, 2024 at 3:41=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > The RZ/G2L SoC is equipped with the GIC-600. The GICD + GICDA is 12=
-8kB,
-> > > > and the GICR is 128kB per CPU.
-> > > >
-> > > > Fixes: 68a45525297b2 ("arm64: dts: renesas: Add initial DTSI for RZ=
-/G2{L,LC} SoC's")
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > --- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > > > +++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > > > @@ -1043,8 +1043,8 @@ gic: interrupt-controller@11900000 {
-> > > >                         #interrupt-cells =3D <3>;
-> > > >                         #address-cells =3D <0>;
-> > > >                         interrupt-controller;
-> > > > -                       reg =3D <0x0 0x11900000 0 0x40000>,
-> > > > -                             <0x0 0x11940000 0 0x60000>;
-> > > > +                       reg =3D <0x0 0x11900000 0 0x20000>,
-> > > > +                             <0x0 0x11940000 0 0x40000>;
-> > > >                         interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LO=
-W>;
-> > > >                 };
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi b/arch/ar=
-m64/boot/dts/renesas/r9a07g044l1.dtsi
-> > > > index 9cf27ca9f1d2..6f4d4dc13f50 100644
-> > > > --- a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-> > > > +++ b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-> > > > @@ -16,3 +16,8 @@ cpus {
-> > > >                 /delete-node/ cpu@100;
-> > > >         };
-> > > >  };
-> > > > +
-> > > > +&gic {
-> > > > +       reg =3D <0x0 0x11900000 0 0x20000>,
-> > > > +             <0x0 0x11940000 0 0x20000>;
-> > > > +};
-> > >
-> > > What's the point of overriding this here?
-> > >
-> > Are you suggesting we drop this, as we have no users for it currently?
->
-> I didn't mean to drop it because we have no users of r9a07g044l1.dtsi.
-> I am just wondering what would be the side-effect of not overriding it?
-Not sure what side-effects we would see, maybe the IRQ maintainers can
-comment on it.
+Ooh,.. I see, this is because the generic fallback for
+mul_u64_u64_div_u64() is yuck :/
 
-> After all, all r9a07g044 SoC variants have the same GIC hardware block?
->
-I would assume so, I dont have a r9a07g044l1 SoC to verify it. Maybe I
-will drop this until it's verified.
+On x86_64 this is just two instructions and it does a native:
 
-Cheers,
-Prabhakar
+  u64*u64->u128
+  u128/u64->u64
+
+And this should never happen. But in the generic case, we appoximate and
+urgh.
+
+So yeah, but then perhaps add a comment like:
+
+	/*
+	 * Because mul_u64_u64_div_u64() can approximate on some
+	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
+	 */
+	if (unlikely(stime > rtime))
+		stime = rtime;
+
+Also, I would look into doing a native arm64 version, I'd be surprised
+if it could not do better than the generic variant.
 
