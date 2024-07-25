@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-261720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA05293BB4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7761693BB55
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4461C236DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310A2285240
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E341862C;
-	Thu, 25 Jul 2024 03:40:32 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DDC1865A;
+	Thu, 25 Jul 2024 03:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qH35jpn/"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E83A1429B;
-	Thu, 25 Jul 2024 03:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B673C3C3C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721878831; cv=none; b=Q5s60Hrz3SukCz4NquQZs0P3Mc0No6UDKMClzM1H6zWHzVFbW9wzEENMZAcTOlMNzBthemU5ROloOQvv4+tD4HaMNCmymkXZoKLbQnV5ZKMbf2CkW7gS/Vs3FIu2+Lbupd3we2IjHl5UmzBedG56BrkX6Jr/o5+5mO0aLnb2UAI=
+	t=1721879482; cv=none; b=O6cIKknQYfYXOailTm9NEgAQ5yRYfG2tV/M2TcuyraoiUdQJiENncPOBDcIGT8/UVDuyxmWAvj/LLGlweyZn4QQxRVjzIltyR8szpoAIDB88FiNvDfHLdO9nDUkSYhqn3KAE5qxxe9fEi1tKb0Cj4BnGnUynmkmuU7BNsqo27Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721878831; c=relaxed/simple;
-	bh=kJbT8KCYoWxqA6gfroVgrglJwJ6fwcbcmRrH3HHizIY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JlYgoaZbObsUy/1TZ3b2ss2/QcXe16+fsNQQeKnJLmkC+FIIG/y0sPKEKTI0LEu+ZumpQVUHX70kk3QTMSgC0TYN86MiST00B7ka4l/8jIiKRDwdJkNnmHNXtGUaSxZD0tYkAEmK6vVIur/ywlVCNhm/L5cSseho29oM/f5SymQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 5AFF01C1911;
-	Thu, 25 Jul 2024 03:40:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf18.hostedemail.com (Postfix) with ESMTPA id F22A62F;
-	Thu, 25 Jul 2024 03:40:24 +0000 (UTC)
-Message-ID: <778f1ccf1945f79c317dd0a4d2a90d3855770713.camel@perches.com>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-From: Joe Perches <joe@perches.com>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	n.schier@avm.de, ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
-Date: Wed, 24 Jul 2024 20:40:23 -0700
-In-Reply-To: <CAHB1NaijJ16haCsH3uHy_zVZFXJ7_-qFOk8mFx7QSeqD+X6Z3g@mail.gmail.com>
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
-	 <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
-	 <CAHB1NaijJ16haCsH3uHy_zVZFXJ7_-qFOk8mFx7QSeqD+X6Z3g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721879482; c=relaxed/simple;
+	bh=fCfETQcIwR0zoxCaDh7zmy6xKdyMs2KCqzVmscPbTO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMZd60FRC6ACa9E+JakA8G8aWyTMI816jPpGbuvqupRNRTOW+XFbjd7jjVdR6pHS7bncdHUNSOztWHMme0G6CWxhxL0SQs/FOGHBlOWuLl0NVSg/sANOjjsJ9Jg7Wx8Hynf9UHLR8xIymCfLm24FVWH57TSeUA3x9cXCKztF8uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qH35jpn/; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04c29588so588568e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721879479; x=1722484279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BNYhTjsxqh1MBcJckEFXN+yzwFzXcYglKIB13bT1HUk=;
+        b=qH35jpn/veqEnRHK+l7yp0J0WwfYq++vnIrp8uPeGTtR4QvYGMd8AHeFOauKlswri3
+         QD8djG6JQv9zz7VWMGBoWkPjBS1y5kX+hda56GK6u8d5pKkiMgfBaptGCw1RcSWF6MEZ
+         64AFmKzlKgWiAJAUsjCmm1yiDCv9ixjfvhyVAWJ0W57/pnXtr2uDDstvofchMG7Z2wUH
+         EymM+V0BHaRxheNg/++Oeip/xSi5THj4fYPTzaS6u/4H5in148M5Lsx6WQbcvbaj+iMx
+         Oo/4vDWeQ1+csX257vkzAZyIvHfPvvYyVB3A19079mgUoBvUewWAk2cfqB3mTn0l8IDs
+         Mrmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721879479; x=1722484279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BNYhTjsxqh1MBcJckEFXN+yzwFzXcYglKIB13bT1HUk=;
+        b=FiPAmXnkFxWKcz27hhDjNWASiHUbafTIIJqDXb61aiJcagL4N+6rKT65IcmCx1gdBe
+         2z2nEVvugDh8Zo4Iz86uV8ueFsUEAEuQEB34RfeglmIr99CgrPSKSfBFSHdW1leoxDn9
+         A8XnKjTs0LN0zDXucHpL3vDKeE9wWbR+q5hnwGF/5X2tkrNmxwcoboth480P29EysECh
+         rneFZORW252QXMEk8wKZt324rJ/hF9g8GeMrR9JmBof8YYagX4d8CDQkNEw+2gE9sIgn
+         LLxA6o4uF60oJWF7qZUJUg3cYbIb4oPpMIsOO3DLM7ciOU0+kMI49jVxg56bw6LFkMxi
+         aFtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3sL3zdl46C+Pxm0A4vOq4G6IW6V5LaOBLtzYQ5VxPyOIiZY7jXVK56UCuMmbKc06g7j/WOrCcVUH+jk+t8mtuSBR8OlaFVdE/njvY
+X-Gm-Message-State: AOJu0YxOywo0cKbAPHegT1VmQH6HL8CEkx/xxqKwP3FxLdcHFuFeCoOd
+	ycXG2g4zQaxQBSvXPDUYNinOUCTHnijVsFjV2BGNGPylcRJ+iROCOOak+8eW1a0=
+X-Google-Smtp-Source: AGHT+IFVQ+aVJJmE25JP8a0HX3bdKT13fCdNQmhW/3KOv9baRW9TsF3kvo+Z+I11aF2nOvo3uSUiiw==
+X-Received: by 2002:a05:6512:1c3:b0:52e:f463:977d with SMTP id 2adb3069b0e04-52fd602a7famr308517e87.20.1721879478572;
+        Wed, 24 Jul 2024 20:51:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c1a148sm68691e87.226.2024.07.24.20.51.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 20:51:17 -0700 (PDT)
+Date: Thu, 25 Jul 2024 06:51:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jameson Thies <jthies@google.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	bleung@google.com, abhishekpandit@chromium.org, andersson@kernel.org, 
+	fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, hdegoede@redhat.com, 
+	neil.armstrong@linaro.org, rajaram.regupathy@intel.com, saranya.gopal@intel.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] usb: typec: ucsi: Fix SET_PDR typo in UCSI header
+ file
+Message-ID: <qjtutodlbqhsj3ofdhhw2ggjgh3sqglvxmxt72oz3j3xsswmau@g4b5ub56ctfl>
+References: <20240724201116.2094059-1-jthies@google.com>
+ <20240724201116.2094059-5-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: F22A62F
-X-Rspamd-Server: rspamout03
-X-Stat-Signature: yinzfwq4jaoadypbkc6ti5igxoggrznt
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18qSFkmYW5eJfxlaISbbW3zRe0lZKf/5tU=
-X-HE-Tag: 1721878824-479549
-X-HE-Meta: U2FsdGVkX19G+4F8RoQBavyX6/XNgNral746x0owj110I2rlFdAT6u1sj6Ku7mBgwUdRnembhetu/E2gQkzZJ4Y31zy6IlS0zSjkdyy1Qt+6JJ0i07HFjwgYNNmje6N31P9doFss33sue8wMw19P+U2RUy8KmXprpLXYhg+h2ePjal1/Idl9H9qemdpeM3QTgt5imcZnH+T5oVc8UtcyrFULxU8I/PmjXd6zw/TRn0Wdpj+K7iFsMjrwp6y2miLlIadVciflbfpVFOupVt1y43oPbrW3dY5iIVLk6A69ruS4EHDsNf8FR2GVcivJnPivegGTnmLXnXbY6sScvTJ4mdf+gS1zIONhl5DDDSNIHqbT1Go2JhGwe+R+HHS39gxDOldw06vs434rbhUkJHhQiO5sm76RA2q//FxPvXFlJkf2cOvTG3Mczj3BkJAjtth0ocJph7CR2y7bzBgMGyg3GoGnpqaV8Vw9spnjPwN/SBA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724201116.2094059-5-jthies@google.com>
 
-On Wed, 2024-07-24 at 22:09 -0400, Julian Sun wrote:
-> Joe Perches <joe@perches.com> =E4=BA=8E2024=E5=B9=B47=E6=9C=8824=E6=97=A5=
-=E5=91=A8=E4=B8=89 09:30=E5=86=99=E9=81=93=EF=BC=9A
-> >=20
-> > On Tue, 2024-07-23 at 05:11 -0400, Julian Sun wrote:
-> > > Hi,
-> > >=20
-> > > Recently, I saw a patch[1] on the ext4 mailing list regarding
-> > > the correction of a macro definition error. Jan mentioned
-> > > that "The bug in the macro is a really nasty trap...".
-> > > Because existing compilers are unable to detect
-> > > unused parameters in macro definitions. This inspired me
-> > > to write a script to check for unused parameters in
-> > > macro definitions and to run it.
-> > >=20
-> >=20
-> > checkpatch has a similar test:
-> >=20
-> > https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
-> >=20
-> > $ git log --format=3Demail -1 b1be5844c1a0124a49a30a20a189d0a53aa10578
-> > From b1be5844c1a0124a49a30a20a189d0a53aa10578 Mon Sep 17 00:00:00 2001
-> > From: Xining Xu <mac.xxn@outlook.com>
-> > Date: Tue, 7 May 2024 15:27:57 +1200
-> > Subject: [PATCH] scripts: checkpatch: check unused parameters for
-> >  function-like macro
-> >=20
-> > If function-like macros do not utilize a parameter, it might result in =
-a
-> > build warning.  In our coding style guidelines, we advocate for utilizi=
-ng
-> > static inline functions to replace such macros.  This patch verifies
-> > compliance with the new rule.
-> >=20
-> > For a macro such as the one below,
-> >=20
-> >  #define test(a) do { } while (0)
-> >=20
-> > The test result is as follows.
-> >=20
-> >  WARNING: Argument 'a' is not used in function-like macro
-> >  #21: FILE: mm/init-mm.c:20:
-> >  +#define test(a) do { } while (0)
-> >=20
-> >  total: 0 errors, 1 warnings, 8 lines checked
-> >=20
-> >=20
-> > > Link: https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail=
-.com
-> Yeah, I noticted the test. The difference between checkpatch and
-> macro_checker is that checkpatch only checks the patch files, instead
-> of the entire source files, which results in the inability to check
-> all macros in source files.
+On Wed, Jul 24, 2024 at 08:11:16PM GMT, Jameson Thies wrote:
+> Fix SET_PDR typo in UCSI header file.
+> 
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Jameson Thies <jthies@google.com>
+> ---
+> Changes in V2:
+> - None.
 
-Another possibility:
+Fixes: 470ce43a1a81 ("usb: typec: ucsi: Remove struct ucsi_control")
 
-$ git ls-files -- '*.[ch]' | \
-  xargs ./scripts/checkpatch -f --terse --no-summary --types=3DMACRO_ARG_UN=
-USED
+Note, fixes patches should come before the rest of the changes.
 
-Though I agree the addition of a test for "do {} while (0)" and
-no content would be also be useful for unused macro args tests.
----
- scripts/checkpatch.pl | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+>  drivers/usb/typec/ucsi/ucsi.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+> index 6a958eac5703..a0e91335da80 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.h
+> +++ b/drivers/usb/typec/ucsi/ucsi.h
+> @@ -153,7 +153,7 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
+>  #define UCSI_SET_UOR_ROLE(_r_)		(((_r_) == TYPEC_HOST ? 1 : 2) << 23)
+>  #define UCSI_SET_UOR_ACCEPT_ROLE_SWAPS		BIT(25)
+>  
+> -/* SET_PDF command bits */
+> +/* SET_PDR command bits */
+>  #define UCSI_SET_PDR_ROLE(_r_)		(((_r_) == TYPEC_SOURCE ? 1 : 2) << 23)
+>  #define UCSI_SET_PDR_ACCEPT_ROLE_SWAPS		BIT(25)
+>  
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
+> 
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 39032224d504f..285d29b3e9010 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6060,7 +6060,9 @@ sub process {
- 				}
-=20
- # check if this is an unused argument
--				if ($define_stmt !~ /\b$arg\b/) {
-+				if ($define_stmt !~ /\b$arg\b/ &&
-+				    $define_stmt !~ /^$/ &&
-+				    $define_stmt !~ /^do\s*\{\s*\}\s*while\s*\(\s*0\s*\)$/) {
- 					WARN("MACRO_ARG_UNUSED",
- 					     "Argument '$arg' is not used in function-like macro\n" . "$herec=
-tx");
- 				}
-
+-- 
+With best wishes
+Dmitry
 
