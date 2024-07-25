@@ -1,205 +1,194 @@
-Return-Path: <linux-kernel+bounces-262521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C4793C82E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:12:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA04E93C82F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719F81F22A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90764283EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB26B19E7E7;
-	Thu, 25 Jul 2024 18:12:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E81019DFA7;
+	Thu, 25 Jul 2024 18:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="uySmCrT5"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD6663C7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130F919DF77
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931147; cv=none; b=gpBdBKVBQToqJrZX8hNOx48+vaJF5rl1u+8ItkXRiFSqsfPkO0MASpDgq0c506VTwdC5AqTSALFJd7vE1r8CeKNz07gaIIucXMRxmEsCRKKN6lhDgequQJyd9CT/yCxO4eoaeCOG7TjEmu590QJJnbPh1g+Z6cZYO5YEnSYYGP8=
+	t=1721931159; cv=none; b=hogg+TAqgJLpevGOGHDNnrnKjn7r/jCG3epqOaIjBaRSYmojprlg7H8zYafUIY8vVvcvcCXPFl1rfrA26s5am8WoSFsfFJraRCE0CPq/ZEVNyvtKv//KWyOFL5ZB9KK1UCjOGyrUfjJBXGfxlo7dYFKZKYdDhR+sdrJ0VzwgsVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931147; c=relaxed/simple;
-	bh=4JTPn+J6usux6zvE5pJLxvGgaDpqYPpBK8RRL2QmkvY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PyK+LcquLVRCxkDjSEtTneZa1Zu3iFYq0L/TOTQhoeqCOMP0BBfo8fnPiY48FmoTaaBdNMKehUei8gdpC2FWoMAGponcu+l6lBgGMzfHv6DurLFZ39JUfem9QmAHxjK9wpA8vY1SgZiMgiuEdjn29vLTcQpBBqk7AEjjFCBWHc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a29e7099dso3421965ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:12:25 -0700 (PDT)
+	s=arc-20240116; t=1721931159; c=relaxed/simple;
+	bh=w8DjyYY/K+CfGUon4TY90xEz62jadfxf9SjD0FNzems=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3i9VMQQbxVcljLRMDcLjqsGKGZUrt7G109NgG1ykS6TCsjCZJOmvnFgYetvfn3JKOM/5NtTxuNwOhTrPhDGqFruiUU7h1JnHflyjNmd/Z6Hs7+ij5QZ7PuJzWz75/TsQzAyy8o3G6czprRDGFG5pf581Q1t3lZ51qFrpvBkWH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=uySmCrT5; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7abf92f57bso108904966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:12:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1721931156; x=1722535956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LyY41qShAmJLjLcZhgj2IKLEjliDGOdLrIwF9D2YE9I=;
+        b=uySmCrT5rjyqsuRy53d7IN4S4l1TnNVFXvADd+tWWvysf2NJRYUpMnEWShhOma1WiG
+         poXgTVub7cojxrX/dq4dxMWbmfS7dHi+54eFJcnU3dgVIGNFmktN3nf/Cw+NzJvhQetI
+         QmoXfCPQvVx3JaU3myBJepxfZt7fVplIs+RQphytZ7yW3Y3rpxHyOPxBBbHR+w4nt2Jx
+         pxlOmcimZ6vgpXSmHe90zLJ27tpR5299OGhW3/X2gcJwUzDyx1L36SLJZZ1EVydJkdGx
+         IWEi1QRezScPbyzJ3xMDQR6dAIZdVFkiN7TWFl8TERT37FeEzzcddJXve04fTjapn7Zq
+         evAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721931145; x=1722535945;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JETA834thd8Jh0rYhOK21d9SQK3wbvER8fne9A9biCs=;
-        b=rZuU1dZHTwAMo85ap4bSB7uK7rQLnNgdyTVflYZlEanCgmerUwffcQ0Bp1O75XUebJ
-         5y7EYxnWGT0CO6sOFyJooW/NiKij20g54kddGMLvl/mWX6YB0j1qqRUHdCDLS4IX/nyZ
-         fyq0W8w8gpGB2XnZxVhOhhSBUp3tiMVDU64Ap9+UFyVTPCXDiy8VSo95MuBMYl1fwcmq
-         JTyYgNiJct9Fx/u5iyJTT/CEYAZIBYNya3oH5tc19aD9PzT4VaRuLEGOfJeCtDP0GOD0
-         1GIbH4JRTPpS8jc2cu9D5+5tBb1RFGPINV6bykm983ph8Lg87n6qlslu/5jJeNDCCZeb
-         IdSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJmaMsj7wK4pkaz90vB6Vp3iypsSWE7b3yBeENRCJRS4+AqfPvfVCrCQksrxSLXd/38LLBWB+qREB1bJW8RKYDjZfzbXuCjJKHHz5R
-X-Gm-Message-State: AOJu0YxppeRrSh2hnv1A8mxSG6x1wPUkBgCzgZg2LD3+iQpZi8Ct2rwz
-	DPBEeJjQqtmi8CrDjhmqEZ2tBRo8Q62ROVUUAPm7l/qGhFA21JuGoOaqZLyJ3CL24+4gEX4a6u3
-	7rGiBftxl3OeAY0TnHMTR1G3lifH3hYAh3Ec4umKGvo7CHuZf18NcV1E=
-X-Google-Smtp-Source: AGHT+IF98dI2ibOwPmHuRUwYyhpwZzxsaoiRO5QpRK6ndGSXI7/gYLJKqci9azIV7bPslGoVmCU2jmi+cMggmqMd1ilj63zSKcLU
+        d=1e100.net; s=20230601; t=1721931156; x=1722535956;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LyY41qShAmJLjLcZhgj2IKLEjliDGOdLrIwF9D2YE9I=;
+        b=VxPNgzX9RIb0co2/DEJvfGleu1DANAR4Re2X9i+s/LuQE+UO7VG2IXVpol8zd7tjtF
+         N7nQLnWB3hl5ldLz5xOuDOJ393vMa4i+xXYklW7uUaJiGCjBzGWkK4/uEny35lloirIM
+         nJlDPyOKhYf9wUxPBqUE//YatF5h9ZxN8P0AUnmxls82w5c6OxCyO1k71lWcPFjcPeQy
+         9eib+25zDz5LsaxfhsA/rrKXtSuxxXhz59L0R6BseI34wJ3/pRfGTCyNrG9l2Yl4IiZt
+         hNWfnKByYBbv4rrMjZoNvfe5LIyFB7DBwZPXoPX80ShDW+sTzUtWII/XaUtG+ZHoMEdP
+         naCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfb/poECpOAbMBLIJZHxeSNG7QvJsxyD/ZzLXSAAGZ7g59JGBPAsEsKO8erocVjmQN/7rzK32F2oIAoyWAMc8Bs2rlYNVLFlQizGed
+X-Gm-Message-State: AOJu0YyPwPGIYNqByYTfdaHeyi9fQkLbj+5iozAu8tJe8t6TRrNXjsOk
+	1DcnAhdDbnV93W3Bb0cuyJgdq/RMkRfCTBA2u0smgeiLwxh/N041lyroItX64qw=
+X-Google-Smtp-Source: AGHT+IEVUPlD764fuwcVRZ2jqnDEagaalzJOoY2pO/v+bNg4ObHKlqR02a0G9UvBZUFhcMq7gXOjnA==
+X-Received: by 2002:a17:907:368a:b0:a77:cdaa:889f with SMTP id a640c23a62f3a-a7acb481672mr221132966b.24.1721931156086;
+        Thu, 25 Jul 2024 11:12:36 -0700 (PDT)
+Received: from ?IPV6:2003:f6:af0d:f500:3285:7112:e461:c95c? (p200300f6af0df50032857112e461c95c.dip0.t-ipconnect.de. [2003:f6:af0d:f500:3285:7112:e461:c95c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab580b4sm96286666b.58.2024.07.25.11.12.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 11:12:35 -0700 (PDT)
+Message-ID: <cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+Date: Thu, 25 Jul 2024 20:12:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0b:b0:380:c34a:df56 with SMTP id
- e9e14a558f8ab-39a218579d0mr3109805ab.6.1721931144955; Thu, 25 Jul 2024
- 11:12:24 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:12:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000391c1d061e1656a0@google.com>
-Subject: [syzbot] [wireless?] [usb?] KASAN: use-after-free Read in rtw_load_firmware_cb
-From: syzbot <syzbot+6c6c08700f9480c41fe3@syzkaller.appspotmail.com>
-To: kvalo@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pkshih@realtek.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: tracing: user events UAF crash report
+To: Steven Rostedt <rostedt@goodmis.org>, Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?= <digirigawa@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Vasavi Sirnapalli <vasavi.sirnapalli@broadcom.com>,
+ Alexey Makhalov <alexey.makhalov@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+ <CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+ <5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+ <CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+ <CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+ <CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+ <20240725131021.788374d0@gandalf.local.home>
+ <20240725131632.64cab267@gandalf.local.home>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ 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
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <20240725131632.64cab267@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 25.07.24 19:16, Steven Rostedt wrote:
+> On Thu, 25 Jul 2024 13:10:21 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>>
+>> diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+>> index 3a2b46847c8b..e9ed2826ff46 100644
+>> --- a/kernel/trace/trace_events_user.c
+>> +++ b/kernel/trace/trace_events_user.c
+>> @@ -321,6 +321,8 @@ static void user_event_put(struct user_event *user, bool locked)
+>>  	 */
+>>  	refcount_set(&user->refcnt, 1);
+>>  
+>> +	user->call.data = NULL;
+> 
+> Hmm, it may be possible to just have:
+> 
+> 	user->call.get_fields = NULL;
+> 
+> and then it will just use the call->class->fields instead and that should
+> be initialized to empty.
 
-syzbot found the following issue on:
+Uhm, it's 'user' that has been free'd which makes all of the above
+reading/writing already free'd memory. So no, I don't think that'll fly.
 
-HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=124e2b19980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f828342678294017
-dashboard link: https://syzkaller.appspot.com/bug?extid=6c6c08700f9480c41fe3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1530a6c9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114aa9e6980000
+In fact, in our test environment with memory sanitation features enabled
+we saw that dereferencing 'class' in trace_get_fields() trapping
+(because the underlying object was free'd).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/22dd51445d03/disk-93306970.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f85f111961d5/vmlinux-93306970.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7971b4814e87/bzImage-93306970.xz
+> 
+> -- Steve
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6c6c08700f9480c41fe3@syzkaller.appspotmail.com
+> 
+>> +
+>>  	if (WARN_ON_ONCE(!schedule_work(&user->put_work))) {
+>>  		/*
+>>  		 * If we fail we must wait for an admin to attempt delete or
+>> @@ -973,6 +975,11 @@ size_t copy_nofault(void *addr, size_t bytes, struct iov_iter *i)
+>>  static struct list_head *user_event_get_fields(struct trace_event_call *call)
+>>  {
+>>  	struct user_event *user = (struct user_event *)call->data;
 
-rtw_8822cu 1-1:15.79: Direct firmware load for rtw88/rtw8822c_wow_fw.bin failed with error -2
-==================================================================
-BUG: KASAN: use-after-free in rtw_load_firmware_cb+0x917/0x9f0 drivers/net/wireless/realtek/rtw88/main.c:1764
-Read of size 8 at addr ffff888113598bc0 by task kworker/0:0/8
+Dereferencing a potentially free'd object, so 'user' is now "random" data.
 
-CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.10.0-syzkaller-g933069701c1b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events request_firmware_work_func
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- rtw_load_firmware_cb+0x917/0x9f0 drivers/net/wireless/realtek/rtw88/main.c:1764
- request_firmware_work_func+0x13a/0x250 drivers/base/firmware_loader/main.c:1167
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+>> +	static LIST_HEAD(head);
+>> +
+>> +	/* If the user event is about to be deleted, return no fields */
+>> +	if (!user)
+>> +		return &head;
+>>  
+>>  	return &user->fields;
+>>  }
+> 
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88811359d700 pfn:0x113598
-flags: 0x200000000000000(node=0|zone=2)
-raw: 0200000000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff88811359d700 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 4, migratetype Unmovable, gfp_mask 0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), pid 9, tgid 9 (kworker/0:1), ts 54741596219, free_ts 54774261673
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x1311/0x25f0 mm/page_alloc.c:3438
- __alloc_pages_noprof+0x21e/0x2290 mm/page_alloc.c:4696
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- ___kmalloc_large_node+0x7f/0x1a0 mm/slub.c:4103
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4130
- __do_kmalloc_node mm/slub.c:4146 [inline]
- __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4170
- kmalloc_noprof include/linux/slab.h:685 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- wiphy_new_nm+0x701/0x2120 net/wireless/core.c:477
- ieee80211_alloc_hw_nm+0x1b7a/0x2260 net/mac80211/main.c:828
- ieee80211_alloc_hw include/net/mac80211.h:4857 [inline]
- rtw_usb_probe+0x32/0x1d80 drivers/net/wireless/realtek/rtw88/usb.c:853
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
-page last free pid 9 tgid 9 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- __free_pages_ok+0x5c1/0xba0 mm/page_alloc.c:1214
- __folio_put+0x1dc/0x260 mm/swap.c:128
- device_release+0xa1/0x240 drivers/base/core.c:2581
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1fa/0x5b0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3787
- rtw_usb_probe+0x7a4/0x1d80 drivers/net/wireless/realtek/rtw88/usb.c:925
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3679
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
-
-Memory state around the buggy address:
- ffff888113598a80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888113598b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff888113598b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                           ^
- ffff888113598c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888113598c80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Mathias
 
