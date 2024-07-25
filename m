@@ -1,55 +1,81 @@
-Return-Path: <linux-kernel+bounces-262630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A2193C9C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:43:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077D993C9CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F191C21F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC16528515C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF9013C9C8;
-	Thu, 25 Jul 2024 20:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A260F13C814;
+	Thu, 25 Jul 2024 20:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+S4necl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="zkLpusn7"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E5646522;
-	Thu, 25 Jul 2024 20:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37B146522
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721940223; cv=none; b=WjZgiZqGdXSQP6xrZZo8iWdw+qw5WRudMN9ULXx63RoCaAU/UXL+CWRTeRcz4jpfLlWlgdx3vj2ANuILagZQdpkg9Hobs0pkEIsWrgfcy9pPRoMF721bD3Il45GG+o06oJTgdK+X/WPc5t/0571tu5PTjrzw687Hs4Q72Zp2+Ts=
+	t=1721940235; cv=none; b=XIC0Pyel3gzW7LRWthbbf2AyPOUhprb/IXk5fnyo7Ly4/MMQOkbwWClhswA4KibDG73ExgWFIG0DlwzKVObt33iQlCKjLPkuXdSMljpEyHt58ciQHMcpFOI2SHHU61Co6kvh89aYPaD7xi+zOsGsJjMJ6s3exc5vXn79eDewnv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721940223; c=relaxed/simple;
-	bh=PheuDERKJnugU8Ztha0lFkJDmsZb03WuJNNHt+R+zx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TCZrHnVHcursuVnkr/0qX/Pf/Mlhdhc1cJHd0h577mHce0LzZ8y2uyV308s9WAeneyq5L0p1h9rApsuXzpMX1mBeKvo64D7aIjuZOFnwtLaCPkjMEl31baRuE0k7Ogb1ijCNOwhZW1fsQbme/pKgmbz+QGn0gsZjR4wzUmITSpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+S4necl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2541FC116B1;
-	Thu, 25 Jul 2024 20:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721940223;
-	bh=PheuDERKJnugU8Ztha0lFkJDmsZb03WuJNNHt+R+zx8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=C+S4neclishfSM5QkP5VqCuP7cyQBhqw4nUvoi+uOyDr3TmjIOl37LaR/w09cOnwh
-	 u3yG1GvVG+v86AdfpY+oS8Zzv2dYj6L8QibthYevJfjJhGwIl9EHFG5GuLCnxruHkQ
-	 41t/PPUI60T3rTmDEjRKU08axt6hcjvtYRQNDXNBdENEvlmt64sz+g8r6+yeao58V8
-	 c03BaSWrYyQYC63pxG2kJ/RlBflsu2hswYx7nnHHV2YPCeyrQSf0GCwIuZK+I5uB4v
-	 ZSQAV1IgC8IBVc/LY3dr+uN6CPIpqLnxGjb4wBabrp9JPypzuJZvy17BbCZz4PZ4LJ
-	 99DsyYIBi5IkA==
-Date: Thu, 25 Jul 2024 15:43:41 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, l.stach@pengutronix.de,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v3 0/4] Add dbi2 and atu for i.MX8M PCIe EP
-Message-ID: <20240725204341.GA858380@bhelgaas>
+	s=arc-20240116; t=1721940235; c=relaxed/simple;
+	bh=DBochEcUvC5Di1GgzDbptJzdJQ2SRM5Y9xWstJf+j5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqjatjgM79zQgy8Dz303tqZxfr8bjlPZCD3IAVDWdsfB3G59976KpjHuZ0V57ID3NjnFoBYiu+PTBwkjGD1cTULOEmDAd2FGwVrygpY9b64iMB78rxv90LIgEPnwtn9BmGXvcs9nqq6BHGJxmLsc4K5nrslkaP//KU3Uhbw+FcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=zkLpusn7; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b7a36f26f3so22003976d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1721940231; x=1722545031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2w2v02MhUvqMkE9xn0dmWvuBpH6aLQWzCh6dyW2ZZMo=;
+        b=zkLpusn76JZtEbd1hO6PvpN2mNHGBb9t8BDMVCZM6zg0CfXWdIKndB1vkrW18cY9sg
+         a3H9ZuFxrQDJDd7uEfo+r6r+Ezn8r3KbMZ9/Kv7ZwUTUcEUkcRdsqDQGVTnK7yPF2LQe
+         kq7/FAMllUmAb0Q73Exdiqdlo/Yk6wib/VA8zwZ7EhTulknq63jZE7TN1lnPF4mqn20F
+         8zVnL0i10sOdBxgOPo5FguDJljeIPFTo00NJfBbKnoh5KSh5VJmxwDTwNyMaGPHxXk51
+         vHc3a835r70JsStY8d54UCPu4sQWAeNp0WElwAux8W7c+Xd/JaOuMPX7f+NjSiMNt9gQ
+         FmlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721940231; x=1722545031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2w2v02MhUvqMkE9xn0dmWvuBpH6aLQWzCh6dyW2ZZMo=;
+        b=YusNXwDf1fCoSJ3AJ+PT53DnKwk9LQ2W0TodjvQiBE2+0hssVC2Dpvq6J7IusUtkrx
+         KR0vDY3rCeLaK2H1zGAy7WNRY3OYMLmjiAATzlszjk5XXkP0qksXa9V0p/4zrlWxqfSU
+         Wsi4DXlHWzrHHV2z8J95rVaji8jQHJBGlRxAFcUtCsMCkywrgwmEzbXu6D0TDzi0O6YE
+         SYvWi7zuQxEYqi/yOPueXa22T0zo8vNOEh38cYbkkIBoLYqQbIP7uCurHzbrThWoK6B1
+         FjXbZW0t8A+oV/mzGIxAef4sdnEGvlm81uF373yMFlaXkWP3IlLrDd0A4U7INN6K+XBb
+         eQLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgWEbgc8eJsXMXkGjfensDu1KpsLMtysjMtGU4O5XAk7bTkE0Wo24qVPy8PhlyXX+yirEKd19iZgCpfefOILKrn3OC5B295BLm83+E
+X-Gm-Message-State: AOJu0YwPqhHicGK3vyYLPnKw9zPFAUtHi8viIdcvX+/fJiH4JF4qnTcz
+	J/6v2x2kh+ziAZYTnrXOoTcPCtJPfv1chUcY7IzDHYUa0RuHjptfQAjwZwzkNrI=
+X-Google-Smtp-Source: AGHT+IERJ81gjGSRBt5y2E9uPDUsfZSzqJ4Abn/XUhM4sJZEb9wAV2KXHsy5WREqkXIX5ZxEFnRbsA==
+X-Received: by 2002:a05:6214:124e:b0:6b5:8015:d72d with SMTP id 6a1803df08f44-6bb3c8aefa5mr91122286d6.8.1721940231501;
+        Thu, 25 Jul 2024 13:43:51 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8fb75esm10526736d6.37.2024.07.25.13.43.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 13:43:50 -0700 (PDT)
+Date: Thu, 25 Jul 2024 16:43:46 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kinsey Ho <kinseyho@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during
+ traversal
+Message-ID: <20240725204346.GA1702603@cmpxchg.org>
+References: <20240724190214.1108049-1-kinseyho@google.com>
+ <20240724190214.1108049-2-kinseyho@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,33 +84,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1721892916-5782-1-git-send-email-hongxing.zhu@nxp.com>
+In-Reply-To: <20240724190214.1108049-2-kinseyho@google.com>
 
-On Thu, Jul 25, 2024 at 03:35:12PM +0800, Richard Zhu wrote:
-> v3 changes:
-> - Refine the commit descriptions.
+On Wed, Jul 24, 2024 at 07:02:11PM +0000, Kinsey Ho wrote:
+> To obtain the pointer to the saved memcg position, mem_cgroup_iter()
+> currently holds css->refcnt during memcg traversal only to put
+> css->refcnt at the end of the routine. This isn't necessary as an
+> rcu_read_lock is already held throughout the function.
 > 
-> v2 changes:
-> Thanks for Conor's comments.
-> - Place the new added properties at the end.
-> 
-> Ideally, dbi2 and atu base addresses should be fetched from DT.
-> Add dbi2 and atu base addresses for i.MX8M PCIe EP here.
-> 
-> [PATCH v3 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and "atu"
-> [PATCH v3 2/4] dts: arm64: imx8mq: Add dbi2 and atu reg for i.MX8MQ
-> [PATCH v3 3/4] dts: arm64: imx8mp: Add dbi2 and atu reg for i.MX8MP
-> [PATCH v3 4/4] dts: arm64: imx8mm: Add dbi2 and atu reg for i.MX8MM
-> 
-> Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml | 13 +++++++++----
-> arch/arm64/boot/dts/freescale/imx8mm.dtsi                    |  8 +++++---
-> arch/arm64/boot/dts/freescale/imx8mp.dtsi                    |  7 +++++--
-> arch/arm64/boot/dts/freescale/imx8mq.dtsi                    |  8 +++++---
-> 4 files changed, 24 insertions(+), 12 deletions(-)
+> Remove css->refcnt usage during traversal by leveraging RCU.
 
-For all the patches in this series, can you please:
+Eh, I don't know about this.
 
-  - Separate paragraphs with blank lines so we know where they end.
+RCU ensures that the css memory isn't freed.
 
-  - Wrap commit log to fill 75 columns.
+The tryget ensures that the css is still alive and valid.
+
+In this case, it just so happens that the sibling linkage is also rcu
+protected. But accessing random css members when the refcount is 0 is
+kind of sketchy. On the other hand, the refcount is guaranteed to be
+valid, and rcu + tryget is a common pattern.
+
+What does this buy us? The tryget is cheap.
 
