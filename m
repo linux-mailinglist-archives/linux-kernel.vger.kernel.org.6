@@ -1,135 +1,184 @@
-Return-Path: <linux-kernel+bounces-261600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CC493B9B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:12:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0757A93B9BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D5B2831C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AACB1C21009
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E2A7FF;
-	Thu, 25 Jul 2024 00:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43C6139B;
+	Thu, 25 Jul 2024 00:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8eKLpW1"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9jYYzGU"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A03181
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA204405;
+	Thu, 25 Jul 2024 00:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721866308; cv=none; b=Jtqcx2avHmWBlzAJW6gu6MZTAG6YpKCjz0FDYlZGHYF3fpHNtLCt4uhW8JHgDssp+gQQtSTtN3R3TtnHAPs7Wut5XODr/PKrCBUXQLK2I5IvoW7LMXz/7OorqyyCblYyGOLnW/Tebx5GfxVGhSny2TCLAAkrTHvzQSXWAlu56EI=
+	t=1721866334; cv=none; b=Pk2IGGiDVk1pMOjO0txCAmYwZtQxgdLRSAEtg/3ih/AuXU5o7/OhjSEXc28IJMwTeU9vrOGrr64uQnk++/yQigRFsRKB8n8NSO9W9dUVdQoG+LqK3wz78F7YoQo730LtBS1ln7UzhfJoYH81FSm92U6NbR3B4d2AiLhmLtKthlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721866308; c=relaxed/simple;
-	bh=DnoRRbnk09b0B8+1qooGyYGkdWOHvoZ1oCvjxyFBrdE=;
+	s=arc-20240116; t=1721866334; c=relaxed/simple;
+	bh=HTwUjj5cEtKI6N5t1fd2B2Qf1fdN61H+kPYHrtgbOEk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PgBts2KXga6R1A/r6YSgo20ioTSQodWqTjGvLFAaBr9OyGDfsq4VumzLJ9lwnd8QKz1+JooaRp3A33N1zBkAd0rBdX5AwIarPpmUCcUtjsIoNaK8DV2tlDzOmfBbuQwRPWjzfOb0g/Jfx4cn4VBxI0G7pdRvs0qVs1tcmTLgboE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8eKLpW1; arc=none smtp.client-ip=209.85.216.52
+	 To:Cc:Content-Type; b=flZQHAa2Kn8uLwBslpd8PX0tL6KYiLJFMcON+bF0NbtjlN1cjqNORZcS62u3v502EtPMoMWxAVJYm32YAJIchyN7OeFQN1j9gajFmKkIkP+27eSIrfvwZ4JVrDtFhGE7mQUkWD3RczdQCrU/80gcKpByBp/ChFcVIXZtVGfjCvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9jYYzGU; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2caff99b1c9so274715a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:11:46 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cdadce1a57so289877a91.2;
+        Wed, 24 Jul 2024 17:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721866306; x=1722471106; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721866332; x=1722471132; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gZXhqa1DQ3bCazASLlqpaBv4zjXIIaPzDkd+EFR7iuY=;
-        b=K8eKLpW1YP7YnBp1UH2yzHoyJQ+HvtD1Eo02TItCSfWAYaz/LfbHRDYTKhLzRo6ekF
-         AGZPxFkyPwtqlxG30rFixLGcF8yaayvGpn4o1C6w+4a6iS6kaZ9cTrufACitNALuiBc1
-         ufIzJ5Xy5VgjDkiqyoW65Lbm2cyedDLdjslbxiFWdkChrI4Nj5efQMxUDS1Hz6WphVwI
-         J+kWVPiaEWoaTm/yPVbWz7NcawaiSCmGGFgawqBWJlbidwvlvjmT9Y0gs8mY+aVfeFtM
-         hsWMQzZ686DxdRKMqoIwJiOyHFXRe+uDTc+2iXyoThHPPve/vH4ThGk2Z9MUNSOj7OGR
-         TiZQ==
+        bh=GVBP87MN9e38ZX22I138pr2gWwOeumRDkqSQQxg61Ew=;
+        b=L9jYYzGU5yvbNtga71UNVxTjB0QqYXadd9VJhk6wr0xqz8Qsvh4xVj2svm3n18X6Qc
+         yRRn0kCiPljWUNdQWG6PiDo/MChsevLYVJYRAjI/5Eh4y3iR8T5QrgHVU7rDG6zgx6EG
+         2vqrbSHmF4CteDdxLkHwRMQzWCAgjit+4cH83k0mczqgi8dP3X1Q5ShV7K6ZN6njZstp
+         D18va1O6qEYaz/TCvT5Zu4qZJxD++0ab27qBBY03se8+M8E/lWXk4ZuxaTaM1rEjqRN8
+         3jyp30pnMCZhere7w7pqqfcL1QKS+gDD0fN9WgUw3KZi+mv0ghkRomoKxHveTcxmVZFc
+         YnYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721866306; x=1722471106;
+        d=1e100.net; s=20230601; t=1721866332; x=1722471132;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gZXhqa1DQ3bCazASLlqpaBv4zjXIIaPzDkd+EFR7iuY=;
-        b=TTLsB18JTgi+Ky3wLDUOVt01a7P6KnO4JUKXJgENo6sSs2cxpHZ9RPv+6jb8IdGfrS
-         mOtRQSdP0w8bxZWpf/QgAsHjOf8aSdOrJZd5T5UFiaRen2o5RWl7PhAaGmLU3NeZ+Q90
-         elhE1fVkJxDGk9pTD6x1Ke9w9qs24vRsCN9GBOjbYrNy1kc1FQ/UsPVjC/XVh0MeBN2y
-         zewBgIfZnJXc9jC9ZnopDjkWERgZq9qq2PEWSaeuOXctWdWcsESiOGukKraLmS1/6/Jm
-         XrD8rqjApD18n1PBG0KamYV7V6nnGVCPznpq0CdNZ0N3F59iWc0aLE9+cxvBDXqOgXw0
-         aeqA==
-X-Gm-Message-State: AOJu0YxuoPAKOotTCu4GG3HZurfcqGnXIn7sBwY4VQ5E+ny732wRO/WR
-	8gpscxZKJCHjCxo4l3KRArxmdBEaGU16sx/NVQFqUkPJP0v9fpFcjO9Iq/XgZITpt2oYDPHZ2W9
-	2bvd3yL5pF2qRW4D43TuYDBjJj8Q=
-X-Google-Smtp-Source: AGHT+IEuFi9W/T4IUh5eBaExnLaq7VjDRJJ/QfKQu9HtmAUc8fJ/3+EvOykTSHZIJA3TZ5M3zV61Cp2L4wRJwr9TxT4=
-X-Received: by 2002:a17:90b:1052:b0:2cb:674b:8b20 with SMTP id
- 98e67ed59e1d1-2cf2eb04531mr143238a91.31.1721866306200; Wed, 24 Jul 2024
- 17:11:46 -0700 (PDT)
+        bh=GVBP87MN9e38ZX22I138pr2gWwOeumRDkqSQQxg61Ew=;
+        b=BkP5YVLKix+XYRl6WlLLlMQMTingJIA5tOyP2mSvdCSWNQ66Lo/dyNqXxDU0q11NzL
+         QrU2ZYsd9ukXYUSA8uWRbZeD1UgPd0uh4Fvo9e10d11l/TNZvbpbm9wtxgowGEY+dsm+
+         BNfBENzHbbAqZGn22ROqo96wDSFe+Kw+JgDsUKNiAr1hEgFmBPTaLEwWB8OQFssIBB0V
+         aENB3NkZc/luTW1x/MfX/74GAYJY6gVVZ2hvMXoI6OeLP2V4VBLHuKgMc4emRi9lhASQ
+         Z+OFqFR28raNi8GxrS5OH6jsqdsLGi2ammKWGcVoo8lhG2UT51/2P3HAK3PWq/GY+VUX
+         oJJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ6i0UTmPPF8Cqaki+Sf/d0U9XDX61u54JLShukSsW3O5C2w8GYPWQTo0uy0RUEqeCKK3Mm7ilHhaNu2oAe9BEroDS7Gm3X8v2Cvbv
+X-Gm-Message-State: AOJu0Yy/GNef+9DWvY8TVg4vF5SvaQ26nkxNyhLNkjpHJuEbrZA8xMcn
+	R7qFCHrEEnPwcR2SbGLz8zPWfX+4pngDlyGUmwtV+6zN5b0CS3uENagOCaeNkJNW/OnbkRQ8EdB
+	AtsJ1GmwU2B31xkv8/vY3Ixgdk08=
+X-Google-Smtp-Source: AGHT+IEHWzmDLF1EtSN193rAdplLXWInaEm0IE9RfHXtrWNxaJ4tBLiZUAp6iX5h2nQHbAMhiE1NGWy3xIPlalKhsYg=
+X-Received: by 2002:a17:90b:3142:b0:2ca:f33b:9f26 with SMTP id
+ 98e67ed59e1d1-2cf238cc949mr1266468a91.28.1721866332062; Wed, 24 Jul 2024
+ 17:12:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621073225.3600-1-jiangshanlai@gmail.com> <20240621073225.3600-2-jiangshanlai@gmail.com>
- <87le1sjd2e.fsf@linux.ibm.com>
-In-Reply-To: <87le1sjd2e.fsf@linux.ibm.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Thu, 25 Jul 2024 08:11:34 +0800
-Message-ID: <CAJhGHyCXYhfPX-_TivLP9rs8AYPnF8qBZKgp-4yZ-aJun6DHfg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] workqueue: Reap workers via kthread_stop() and remove detach_completion
-To: Marc Hartmayer <mhartmay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Mete Durlu <meted@linux.ibm.com>
+References: <20240724171459.281234-1-void@manifault.com> <20240724171459.281234-2-void@manifault.com>
+In-Reply-To: <20240724171459.281234-2-void@manifault.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 24 Jul 2024 17:12:00 -0700
+Message-ID: <CAEf4BzY6cc5L7_Yj3XvyCSZGxL=-Vb0g3drFRcsxDd9UB0QC9Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add test for resizing data
+ map with struct_ops
+To: David Vernet <void@manifault.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@google.com, haoluo@google.com, jolsa@kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Marc
-
-Thank you for the report.
-
-On Wed, Jul 24, 2024 at 12:19=E2=80=AFAM Marc Hartmayer <mhartmay@linux.ibm=
-.com> wrote:
-
-> Hi Lai,
+On Wed, Jul 24, 2024 at 10:15=E2=80=AFAM David Vernet <void@manifault.com> =
+wrote:
 >
-> a bisect of a regression in our CI on s390x led to this patch. The bug
-> is pretty easy to reproduce (currently, I only tested it on s390x - will
-> try to test it on x86 as well):
-
-I can't reproduce it in x86 after testing it for only 30 minutes.
-It can definitely theoretically happen in x86.
-
+> Tests that if you resize a map after opening a skel, that it doesn't
+> cause a UAF which causes a struct_ops map to fail to be able to load.
 >
-> 1. Start a Linux QEMU/KVM guest with 2 cores using this patch and enable
->    `panic_on_warn=3D1` for the guest kernel.
-> 2. Run the following command in the KVM guest:
+> Signed-off-by: David Vernet <void@manifault.com>
+> ---
+>  .../bpf/prog_tests/struct_ops_resize.c        | 30 +++++++++++++++++++
+>  .../selftests/bpf/progs/struct_ops_resize.c   | 24 +++++++++++++++
+>  2 files changed, 54 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/struct_ops_res=
+ize.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/struct_ops_resize.c
 >
->   $  dd if=3D/dev/zero of=3D/dev/null & while : ; do chcpu -d 1; chcpu -e=
- 1; done
+> diff --git a/tools/testing/selftests/bpf/prog_tests/struct_ops_resize.c b=
+/tools/testing/selftests/bpf/prog_tests/struct_ops_resize.c
+> new file mode 100644
+> index 000000000000..7584f91c2bd1
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/struct_ops_resize.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <test_progs.h>
+> +#include "struct_ops_resize.skel.h"
+> +
+> +static void resize_datasec(void)
+> +{
+> +       struct struct_ops_resize *skel;
+> +       int err;
+> +
+> +       skel =3D struct_ops_resize__open();
+> +       if (!ASSERT_OK_PTR(skel, "struct_ops_resize__open"))
+> +               return;
+> +
+> +       err  =3D bpf_map__set_value_size(skel->maps.data_resizable, 1 << =
+15);
+> +       if (!ASSERT_OK(err, "bpf_map__set_value_size"))
+> +               goto cleanup;
+> +
+> +       err =3D struct_ops_resize__load(skel);
+> +       ASSERT_OK(err, "struct_ops_resize__load");
+> +
+> +cleanup:
+> +       struct_ops_resize__destroy(skel);
+> +}
+> +
+> +void test_struct_ops_resize(void)
+> +{
+> +       if (test__start_subtest("resize_datasec"))
+> +               resize_datasec();
+
+It seems a bit unnecessary to add an entire new test with a subtest
+just for this. Would you mind adding this testing logic into the
+already existing prog_tests/global_map_resize.c set of cases?
+
+I've applied patch #1, as it's obviously correct, so I didn't want to
+delay the fix. Thanks!
+
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/struct_ops_resize.c b/tool=
+s/testing/selftests/bpf/progs/struct_ops_resize.c
+> new file mode 100644
+> index 000000000000..d0b235f4bbaa
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/struct_ops_resize.c
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bpf.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +
+> +char _license[] SEC("license") =3D "GPL";
+> +
+> +char resizable[1] SEC(".data.resizable");
+> +
+> +SEC("struct_ops/test_1")
+> +int BPF_PROG(test_1)
+> +{
+> +       return 0;
+> +}
+> +
+> +struct bpf_testmod_ops {
+> +       int (*test_1)(void);
+> +};
+> +
+> +SEC(".struct_ops.link")
+> +struct bpf_testmod_ops testmod =3D {
+> +       .test_1 =3D (void *)test_1
+> +};
+> --
+> 2.45.2
 >
-> 3. Wait for the crash. e.g.:
->
-> 2024/07/23 18:01:21 [M83LP63]: [  157.267727] ------------[ cut here ]---=
----------
-> 2024/07/23 18:01:21 [M83LP63]: [  157.267735] WARNING: CPU: 21 PID: 725 a=
-t kernel/workqueue.c:3340 worker_thread+0x54e/0x558
-
-
-> @@ -3330,7 +3338,6 @@ static int worker_thread(void *__worker)
->                 ida_free(&pool->worker_ida, worker->id);
->                 worker_detach_from_pool(worker);
->                 WARN_ON_ONCE(!list_empty(&worker->entry));
-> -               kfree(worker);
->                 return 0;
->         }
-
-The condition "!list_empty(&worker->entry)" can be true when the
-worker is still in the cull_list awaiting being reaped by
-reap_dying_workers() after
-this change.
-
-I will remove the WARN_ON_ONCE().
-
-Thanks
-Lai
 
