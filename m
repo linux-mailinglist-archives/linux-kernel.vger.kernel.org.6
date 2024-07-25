@@ -1,298 +1,297 @@
-Return-Path: <linux-kernel+bounces-261669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CDA93BA8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8758293BA90
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE1BFB22E94
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6DF1C2276D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CAD101D4;
-	Thu, 25 Jul 2024 02:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D18C8DF;
+	Thu, 25 Jul 2024 02:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCO5qEXA"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Te5BZbJf"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2048.outbound.protection.outlook.com [40.107.255.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD7A1876;
-	Thu, 25 Jul 2024 02:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721873551; cv=none; b=eY7XZUnvE5Wjc51eBXWEUlHvLDXx7+BUiNFSFx/hSW/2B9amZsPsekoISQjxXJFHWbIwGMmCKkyb2gTDocn6MWXqc8KXZsKXhneiGOEmbka9+YwdadXeNcS0XWonTeb8enERJ3iMUe2MBtslIazsJkDe5gBRkd+K1CcC4V2EWBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721873551; c=relaxed/simple;
-	bh=TwAAHaebovm4UV86OQdph6KFtJ1zpDwUK7Rhpx86XFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rLuf7zpD14Ot5qTe2lTlfPHFtF0EwODm3WFyPDPtNM6pgsDj2lOvcq41UWWMcPlkeYPPz4RTCCz1ooUqKJwibrloWXcGyKvg4VVw4bFHlPS3Nv9+NU9zX7VlqS39r5+BTw3YPphlW6CRQjh94sa1CJKhHzyOE0I3LM/zlrJ0iFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCO5qEXA; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34722so831669a12.0;
-        Wed, 24 Jul 2024 19:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721873547; x=1722478347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZSaEAhi3W4kaQGqTbLQhYLUILDWPa0M8QCanDq1rNdk=;
-        b=gCO5qEXAdJ3QAVPodHVHALrQ8D2WBebDnmWKQ63HeyhN/pb0MM82j1xh83pDL4WFmX
-         wbSWR1Mdat8nz3HV4GZtq9E51jNzedxgtXg4y4EImwE6rZ3ZMeDXH0CKD9oSjhKy6qtc
-         IQGUDPLEUmfLakkmQelwk3OR2M96d29ziAmitr1Ljplk3g/rZ5+Gosm5N0Ofc71cNJM+
-         2InqZyxL+U3N5qA0rszmZOTmULtE4/1MQ85Hb06vjsMXnKIcnRoFXWsjSilrpSc9uFNb
-         L9C5q7aFHlrmSpxaDAKwt/qr/iwrEzOqogKueD0qJwi62ix00plIknDiWO/bhyPRL5xq
-         lu7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721873547; x=1722478347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZSaEAhi3W4kaQGqTbLQhYLUILDWPa0M8QCanDq1rNdk=;
-        b=TBJLdtGGoQz1aWq7ipVkPBOxx6i+bnHSntOnVx2/GWmTwWMD4YMontaasfc5pcWd8d
-         AV0yLewOeAXenJxmDfrIm86YaX2flaBKkYIXjtPLdpVnkLn0ySHqPZF6LxFgSY80t38T
-         KC2gtKROwoSasojdB/YmBm+sbTIyIsySxotxTiBMt/eHg7xUSbOV3eE4a2fyP2hnIwkR
-         AAzf4byiAiFcup0vBOU+yYBK5Aj3aPB8LyJGXJPl4OTn3TDwQnTGf+1p+EuBeXKlX52S
-         tkrlLiogIWsWso8gYSifD7AsrDOI2OqJdgtoDb+K0fwrKI9gGRIEzaXcVdRrWFt9JShF
-         COvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVU3qEMaHrx3El+4poW181NEoDQypdiBgmzta/BELPyHCJ5MdhvXDRvONnCRa03ma0W7FYAJNm3Y9tnl8bGUsuQpGGQuV3A5NbHSX8O2NHy/KTz9+Dw5LGx6TNvonYUq6VE3Jd+Aak0/6xGhw==
-X-Gm-Message-State: AOJu0YxOIEUZSYd10IU9ewfq5yNnDnXm2Fpbjz4CL24jz78puXKP8wVb
-	A4vTsNNi0Hyhe9dBep6JdDVG/gh3dHdNrNIl9Bw4tomL/Yeh9/afDg+tT4fgmZq58CjipzaphrI
-	mZ2hK9dNk/BpBUq2b48fBoYoT4Jg=
-X-Google-Smtp-Source: AGHT+IH5kSSXFJ4NNPdpzvJbpbyJQqbidh/tlyFWA/KS67ZkLpP3G0QoDuGHfUyZfWTXwjPEGrPEa1+8t0bzjnB41ZM=
-X-Received: by 2002:a50:8d5e:0:b0:58a:f14f:4d6d with SMTP id
- 4fb4d7f45d1cf-5ab1bd5a62fmr3396853a12.19.1721873547280; Wed, 24 Jul 2024
- 19:12:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E361876;
+	Thu, 25 Jul 2024 02:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721873665; cv=fail; b=s5AGg1EM9uGAfAuuSw071HhOsjEBhJHvqaGKG6D7WLjixukxgPdswOf5Ee1WEscPfPTEQja6b+KbMEkKUlVCpEK4xp+Dnd0Xw7IKoUCTd6T0LZX2r5DrHu7Pq2uI3V/DovCufquZKBcCEUZHtZM3miKGIm2BuN17XzILewhhY+g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721873665; c=relaxed/simple;
+	bh=U7sPaSKxBl9AsrVVSHwUjLHpO0kZSstO66xhdqbUd7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Rp9VQn3MpBSY5bwHJsrJAw83+Ohob2HOaFv/Dut36YYviiUamzaA7+mG6cHl+3zxbnLHspYKn/8JHOjV4esQzpOmGGVhBKgkgwilvp9vFPnTdKrC/G/sQkIp9Tf8jkXMslqfYs8mIrcAwf14/xqSBEVGLnEqLviO8tJCOuoWXZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Te5BZbJf; arc=fail smtp.client-ip=40.107.255.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r/JwbUDGPG7WJuD2GiQ/VroT5tjLanw2d+4JdUeme0bG1ljyf7eOTpcm+iPFswwG4Q5Xd5FoVTRRQLsrJ+LgEKBrnHbCkl3bjQZvQ8wkDiOIBrf5nFp2hhg6mhhqNS4XhkRaf4davaapVkeFWIJ2JSw9kBPx2YhiY10yUrX7oF7TsUnGo9+jwYYrK1hwU9sJvNDZnnlq/6GNuVJn2r9RiNK49G4s7lCbTF2puAhl0CTx5tbM+HiJizjDOY43M/iPi+1Nf8kOavp5EBS0jjk0cTufKXb6O/kPUL62+f9TIIKM+ZnC1x4EhQiYq4Cyvb+JullXmLAZYY8+AV0IHK2SMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WU8I3XPlulrftvQutKfwAcNZnYGqc/K0uhAMsDyn3cM=;
+ b=B10V5C8MIcCHrmQT/W2WwlEwmCJVdAemZOOR//Ifubvvz5DZ+Z8s+52Agbwux9o3wwUqxl3DB/hhXZT4hxjSpuK5Z/U5ddbbqMZKcUuMbKv0EQm4Xza76UbsgXWN7Ie+eSqA+lL+d8azh4dRbGEb8O8bjQFc0vIPS3Fqj3TMUUptbG83fX9oCALnKoCz/OTOFRkzIkg97CgHfxS9d6NXGJZNT1o7+oMOWGJmHKL9a6OfM7/1NWdk7PgdqwZ7K+D1Zbphj+0DmzXahn4Ev64LmISSDkbaraDACgjqbzRvXp+YeZ4FcCFrJCa5106FpBllpmL5l4F/s070ptJ269UiUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WU8I3XPlulrftvQutKfwAcNZnYGqc/K0uhAMsDyn3cM=;
+ b=Te5BZbJfAWDS4/3VnZoodMDhaVkjbWYuNgbA5UAOZdXWH6lZ2qqFSUAN1i3wYQvvPERXRGwOyB2xANULkQZXlAzarto2R41teJILwb4+5c1Zo87847WYl1rxj0Zygd8yYquUA7OTxpqfe3icakDd2ZouYWWXi6VlfTfyurP6V4/6jysNX8FOiII3UC8JJQ00eTdAjEFhk8I/a/fleW8gXIeBv40pC+rZ3hzjbv1XXGpucwOplJdvh2DK7GO8SdEXlDd88UkH9AJJsM0ra5FzgsGvkwgCIIxtHq0aguOyz9bq7UArmaQt62ZoVjIzNuCt0mFes9SdLbN3KP01hv9xCQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by PUZPR06MB6104.apcprd06.prod.outlook.com (2603:1096:301:118::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Thu, 25 Jul
+ 2024 02:14:16 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7762.027; Thu, 25 Jul 2024
+ 02:14:15 +0000
+From: Huan Yang <link@vivo.com>
+To: Gerd Hoffmann <kraxel@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Huan Yang <link@vivo.com>
+Subject: [PATCH v2] udmabuf: array alloc use kvmalloc
+Date: Thu, 25 Jul 2024 10:13:49 +0800
+Message-ID: <20240725021349.580574-1-link@vivo.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0010.APCP153.PROD.OUTLOOK.COM (2603:1096::20) To
+ PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com> <20240724100001.qdfexiwinuysqz7x@quack3>
-In-Reply-To: <20240724100001.qdfexiwinuysqz7x@quack3>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Wed, 24 Jul 2024 22:12:13 -0400
-Message-ID: <CAHB1NaiaaTyS1jpX4cm-CP-0-sT7botDUNoob1SHVmDw2qF49w@mail.gmail.com>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-To: Jan Kara <jack@suse.cz>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de, 
-	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PUZPR06MB6104:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1eefeb49-4e5a-49b5-13cf-08dcac4f7b75
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lz+4VP+vjfLhFT7QSkT1UByM8c2ZUi0uaiRUFt+7WYdavBNoaiqeQ9wt25cI?=
+ =?us-ascii?Q?G91DLg0BF4/PkWEfwi+/DEb/YdbU5OCK9NQZi4xO0ZXcRlCproTFHWrG7fzp?=
+ =?us-ascii?Q?ZwUdQPM9s8uXKbA02K52ny2BMAVuGiuL4sw/E/6I39PfWq5xAXVwHm74IkV/?=
+ =?us-ascii?Q?8nodUSh58yN0ZBjLufrEbLZLwmum9uL2QLxf+sAMVvEUGa2qKmInelCoPtpB?=
+ =?us-ascii?Q?1zMzlD9WlEXoWwDgrGwVvQ8pOdXtW805mp6byYgCAZktX0wWQ46Z1jT4u8s/?=
+ =?us-ascii?Q?BIjMlo3uFAwp342anM9k5x0ObehwOMcjtgSOlZGeQ2LNT7dUMBXFdWLKSz48?=
+ =?us-ascii?Q?4ITMBagzkJJw1obL/Wz3Dq/xO6vDI5an6zRHXT/XEccTjudru7XeIdBfx//D?=
+ =?us-ascii?Q?UkE9mgRYza/VXAXS/Y5ytDBY08DxPjn6IKCds+XXQeligK1O/uNri3OWAQdA?=
+ =?us-ascii?Q?ceOSC36dXovQB/bwNEGCJ5VMSyClJcH3E3F5gjfwnPjIFB39al4ZQTi8+tqh?=
+ =?us-ascii?Q?othJCIUXdjCvIwl3LFNZZGskw2YSQmye+m7x0PZ6Ws1CW2F7XruY3oj49o2A?=
+ =?us-ascii?Q?3Aqz4+Xler+Hai4pJqaJFz8hOmjVUu6n9kYm3FFlhSfbs7HJeSHezpxKkGjM?=
+ =?us-ascii?Q?p/6Rf6PeW5mpVPtgMd8DeX1J32lvD9L1GjrfrP1Wcv4o2Kxq1tNwPV5z/ljX?=
+ =?us-ascii?Q?W8EeH2LHl+gpipZck7BG6rVjchty4Y3JMqBZjdmQsCMLjSt/kt79Shr3sUtH?=
+ =?us-ascii?Q?1zJ/iEwpfgt1PQ4IGZ5GyrwjWJORHolYJeuk1HbgfLzyA5G5Or4i7aTZf6Es?=
+ =?us-ascii?Q?lEwkdm+fugLNecmXAywZsNxt8fNpWIr17U/9ncveLEFAGNmN7GrWMOsduUK7?=
+ =?us-ascii?Q?7lo01ZSyB/C96MvSDQA3b8cbXdGN3Jep1mZYooNBaZmZyMcJwNOMnwe8jQuA?=
+ =?us-ascii?Q?NvUpEjhBpjG3F7iwNDAaowJC1fx03DdJGi5qdmkpoRchacbBcSyZJ24/fk1w?=
+ =?us-ascii?Q?7le/xshhU3Ompxami9FvY0Q0EVBIPpyKClReato8fqZhL62H8BYFLk5yzAUR?=
+ =?us-ascii?Q?AHTUWB5thYpO8POJZYmm72s8ZCKFH6Yi8XMmCsAQiVGqfrygA1fZj5Q53G8h?=
+ =?us-ascii?Q?oV0C6Blwjabg4TfTBGxM4rfY8aAy5SSAmp2H/Y9q1N0+ftddT+82odUP5+D7?=
+ =?us-ascii?Q?MTz3x7CXOPQEIv9jBJF3Ye5rf42dUs+f2znX3DXMWt4iEdHgLsQFxGxjZZRJ?=
+ =?us-ascii?Q?oz2OFmRBPhUH2oBWnAFvjNJW0AAU6lBQpZkYu7XinZId04e38iJjag39q4tE?=
+ =?us-ascii?Q?JFCNloED1ZTVH9Q4E0H36OSsfIUXaJIShSkxWcpuzhYK6yAo6Ln711Xp/05Z?=
+ =?us-ascii?Q?uXtBgk2dhfPrfZSP0DWxySHr2X7o4pnr+KBLYg6hkGDTXA6ydg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QiwM6FdxAe6bmaBarMRQp+gIepU9oiC8EMz4O3ILQ0e0cO2UF1smCTLZMuWJ?=
+ =?us-ascii?Q?oSHNxzIcG1pcJONnKdJD+doJK5t4FKYm6Vh2L6+nA0rVXBAU1XXsVCGH2Yqh?=
+ =?us-ascii?Q?5z/DkcnaQfUBHfY7t7lobflKbNyhBiOI3nMnsljz5dZazduSgtBs55yRFcf+?=
+ =?us-ascii?Q?b0G3D+tDJNO6ziSGmlmJR3MWm89xM2f8UkQ4xcT/1FZzeEp2OYi1SqMuLQtl?=
+ =?us-ascii?Q?N9DVIm0A9a7UhoKt+P2uR1JZWQUcKrFocX05OKTSe3wHOGCchbAhJsIeomhF?=
+ =?us-ascii?Q?Jl1VmM5E0Pk35NSGcWiZmT3OD4O7GY0GnBELed8qcDzE7tlyb5Ji+PsDmKeZ?=
+ =?us-ascii?Q?kDaJo8eRlqv1H5k89pdme2kJS7NuxKnkNtHcOOEKOg6o8MgMf7OWNufaOUV1?=
+ =?us-ascii?Q?tcFltK+jpcUJFTceJM8kxo2CjBwH3b3+W1a67Ru+Ia/WOjv7XcWi1ZtmoFX5?=
+ =?us-ascii?Q?zwScCsGaSwe8vae/197EKwPYE+a/jnto3iuXs2T2sPBWiftw8PrY9NexNx58?=
+ =?us-ascii?Q?LWnoZVNH6qDw4LgIJAUUPhSM4DEHFK6iYAZd2gZgeAwOtpo/hWiqfKZQFffK?=
+ =?us-ascii?Q?lUHxXV7w0j4FN6Ze5sWJpNngLrh59NwHZV7SDn5FdUH2+fPO2bOXP56f4Yoi?=
+ =?us-ascii?Q?+AnwcJvxXPt9wqUkYpx2NvH/ICPlQUw9yGTEdeNNpaIsuvmCWqf4q6rDh0Lz?=
+ =?us-ascii?Q?yS/AVp5p0NySusLDoAb1cn583krJk1itvpJbvsjoLwlsfkwVDsVuuWorRqYV?=
+ =?us-ascii?Q?PeTENb9Zsk3G40IuioQl1TTPk2CreVi4l1v6VcKsGG6d+CYDEpgkZxkiRQnZ?=
+ =?us-ascii?Q?q2pmAtv/2kWNPnkzT+fRj5+/Ev/rFivbR5a54KK1iENZE4XmiegIoh8RGa04?=
+ =?us-ascii?Q?SlyqKf7UpIa8nByiHRhG4pz5ocQ/eYN1+hAcwf2KBvwXQgl2anAEmF89LYIW?=
+ =?us-ascii?Q?0Iyo5DvAtKLRJIUErB/ReXnsPhBC2jrjMOzY5uzzvkAY9/5PZvXyfBVp0Ylm?=
+ =?us-ascii?Q?jHWfUE0OsaItF24Xax5SLdmBBbwN4Q6C336eYo9NZmfAt4Ydvpp8OI09aQcc?=
+ =?us-ascii?Q?FnwScVoVFIw9dh4jWSI0LjaoVTGGMiUq2cxXmOH0Y9eDer+F0ZwauErI80LT?=
+ =?us-ascii?Q?r/RuF/3jAEPW+lctEBd917SiMD1Z7E9qakeePiouFqjFSLGxLeKjlIC2H6ON?=
+ =?us-ascii?Q?4888FW4/njQv6/D6NRaEExWYneiujrwyngU0BdgmVNsLm9yoLmHGyBVuuBIp?=
+ =?us-ascii?Q?jJa486iUKVjZXq1K4LRaGXk28LhtXMD5DCVyQCHLWEOtvwXeQybzw6b0xhzW?=
+ =?us-ascii?Q?Lh+Wmrdo425wuDgHrhl5wHyPVRXF4jnMk+Lv/94lpUZN2JHVFdzZYWjaooTQ?=
+ =?us-ascii?Q?5d0eFDNjGodKlaHKJ56UCdz3dhI/LWG8OcCHn9rPbS3BmKGeV/2l23IXwg1Z?=
+ =?us-ascii?Q?BIfUk8BW+Axtb1UB/jAZW8B5I23N4/D7oE1+W70SD9Qk68VnCnPLpynM4/Qn?=
+ =?us-ascii?Q?0KOOpdcDffxz50T13bppPjVaPKgBvnSoCEvblHCsTG4gaaUZl84iu+80UBK/?=
+ =?us-ascii?Q?n2PPnMsTVGu6seEnLzsRZrD9lH2ZvV27SPIddpTE?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1eefeb49-4e5a-49b5-13cf-08dcac4f7b75
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 02:14:15.5424
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cvB0z9hZdqyt68OG2JgPuiYYr/gvUN999fja1rjQyReQk0pJgeMCI0T5FxIrJHuftlbUSxIW7TfoenmlqCvOoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6104
 
-Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B47=E6=9C=8824=E6=97=A5=E5=91=
-=A8=E4=B8=89 06:00=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi!
->
-> On Tue 23-07-24 05:11:54, Julian Sun wrote:
-> > Recently, I saw a patch[1] on the ext4 mailing list regarding
-> > the correction of a macro definition error. Jan mentioned
-> > that "The bug in the macro is a really nasty trap...".
-> > Because existing compilers are unable to detect
-> > unused parameters in macro definitions. This inspired me
-> > to write a script to check for unused parameters in
-> > macro definitions and to run it.
-> >
-> > Surprisingly, the script uncovered numerous issues across
-> > various subsystems, including filesystems, drivers, and sound etc.
-> >
-> > Some of these issues involved parameters that were accepted
-> > but never used, for example:
-> >       #define XFS_DAENTER_DBS(mp,w)   \
-> >       (XFS_DA_NODE_MAXDEPTH + (((w) =3D=3D XFS_DATA_FORK) ? 2 : 0))
-> > where mp was unused.
-> >
-> > While others are actual bugs.
-> > For example:
-> >       #define HAL_SEQ_WCSS_UMAC_CE0_SRC_REG(x) \
-> >               (ab->hw_params.regs->hal_seq_wcss_umac_ce0_src_reg)
-> >       #define HAL_SEQ_WCSS_UMAC_CE0_DST_REG(x) \
-> >               (ab->hw_params.regs->hal_seq_wcss_umac_ce0_dst_reg)
-> >       #define HAL_SEQ_WCSS_UMAC_CE1_SRC_REG(x) \
-> >               (ab->hw_params.regs->hal_seq_wcss_umac_ce1_src_reg)
-> >       #define HAL_SEQ_WCSS_UMAC_CE1_DST_REG(x) \
-> >               (ab->hw_params.regs->hal_seq_wcss_umac_ce1_dst_reg)
-> > where x was entirely unused, and instead, a local variable ab was used.
-> >
-> > I have submitted patches[2-5] to fix some of these issues,
-> > but due to the large number, many still remain unaddressed.
-> > I believe that the kernel and matainers would benefit from
-> > this script to check for unused parameters in macro definitions.
-> >
-> > It should be noted that it may cause some false positives
-> > in conditional compilation scenarios, such as
-> >       #ifdef DEBUG
-> >       static int debug(arg) {};
-> >       #else
-> >       #define debug(arg)
-> >       #endif
-> > So the caller needs to manually verify whether it is a true
-> > issue. But this should be fine, because Maintainers should only
-> > need to review their own subsystems, which typically results
-> > in only a few reports.
->
-> Useful script! Thanks!
->
->
-> > I think you could significantly reduce these false positives by checkin=
-g
-> > whether the macro definition ends up being empty, 0, or "do { } while (=
-0)"
-> > and in those cases don't issue a warning about unused arguments because=
- it
-> > is pretty much guaranteed the author meant it this way in these cases. =
-You
-> > seem to be already detecting the last pattern so adding the first two
-> > should be easy.
-Great suggestion! I will refine this script and send patch v2.
-Thanks for you suggestion, Jan.
->
->                                                                 Honza
->
-> >
-> > [1]: https://patchwork.ozlabs.org/project/linux-ext4/patch/1717652596-5=
-8760-1-git-send-email-carrionbent@linux.alibaba.com/
-> > [2]: https://lore.kernel.org/linux-xfs/20240721112701.212342-1-sunjunch=
-ao2870@gmail.com/
-> > [3]: https://lore.kernel.org/linux-bcachefs/20240721123943.246705-1-sun=
-junchao2870@gmail.com/
-> > [4]: https://sourceforge.net/p/linux-f2fs/mailman/message/58797811/
-> > [5]: https://sourceforge.net/p/linux-f2fs/mailman/message/58797812/
-> >
-> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> > ---
-> >  scripts/macro_checker.py | 101 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 101 insertions(+)
-> >  create mode 100755 scripts/macro_checker.py
-> >
-> > diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
-> > new file mode 100755
-> > index 000000000000..cd10c9c10d31
-> > --- /dev/null
-> > +++ b/scripts/macro_checker.py
-> > @@ -0,0 +1,101 @@
-> > +#!/usr/bin/python3
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Author: Julian Sun <sunjunchao2870@gmail.com>
-> > +
-> > +""" Find macro definitions with unused parameters. """
-> > +
-> > +import argparse
-> > +import os
-> > +import re
-> > +
-> > +macro_pattern =3D r"#define\s+(\w+)\(([^)]*)\)"
-> > +# below two vars were used to reduce false positives
-> > +do_while0_pattern =3D r"\s*do\s*\{\s*\}\s*while\s*\(\s*0\s*\)"
-> > +correct_macros =3D []
-> > +
-> > +def check_macro(macro_line, report):
-> > +    match =3D re.match(macro_pattern, macro_line)
-> > +    if match:
-> > +        macro_def =3D re.sub(macro_pattern, '', macro_line)
-> > +        identifier =3D match.group(1)
-> > +        content =3D match.group(2)
-> > +        arguments =3D [item.strip() for item in content.split(',') if =
-item.strip()]
-> > +
-> > +        if (re.match(do_while0_pattern, macro_def)):
-> > +            return
-> > +
-> > +        for arg in arguments:
-> > +            # used to reduce false positives
-> > +            if "..." in arg:
-> > +                continue
-> > +            if not arg in macro_def and report =3D=3D False:
-> > +                return
-> > +            if not arg in macro_def and identifier not in correct_macr=
-os:
-> > +                print(f"Argument {arg} is not used in function-line ma=
-cro {identifier}")
-> > +                return
-> > +
-> > +        correct_macros.append(identifier)
-> > +
-> > +
-> > +# remove comment and whitespace
-> > +def macro_strip(macro):
-> > +    comment_pattern1 =3D r"\/\/*"
-> > +    comment_pattern2 =3D r"\/\**\*\/"
-> > +
-> > +    macro =3D macro.strip()
-> > +    macro =3D re.sub(comment_pattern1, '', macro)
-> > +    macro =3D re.sub(comment_pattern2, '', macro)
-> > +
-> > +    return macro
-> > +
-> > +def file_check_macro(file_path, report):
-> > +    # only check .c and .h file
-> > +    if not file_path.endswith(".c") and not file_path.endswith(".h"):
-> > +        return
-> > +
-> > +    with open(file_path, "r") as f:
-> > +        while True:
-> > +            line =3D f.readline()
-> > +            if not line:
-> > +                return
-> > +
-> > +            macro =3D re.match(macro_pattern, line)
-> > +            if macro:
-> > +                macro =3D macro_strip(macro.string)
-> > +                while macro[-1] =3D=3D '\\':
-> > +                    macro =3D macro[0:-1]
-> > +                    macro =3D macro.strip()
-> > +                    macro +=3D f.readline()
-> > +                    macro =3D macro_strip(macro)
-> > +                check_macro(macro, report)
-> > +
-> > +def get_correct_macros(path):
-> > +    file_check_macro(path, False)
-> > +
-> > +def dir_check_macro(dir_path):
-> > +
-> > +    for dentry in os.listdir(dir_path):
-> > +        path =3D os.path.join(dir_path, dentry)
-> > +        if os.path.isdir(path):
-> > +            dir_check_macro(path)
-> > +        elif os.path.isfile(path):
-> > +            get_correct_macros(path)
-> > +            file_check_macro(path, True)
-> > +
-> > +
-> > +def main():
-> > +    parser =3D argparse.ArgumentParser()
-> > +
-> > +    parser.add_argument("path", type=3Dstr, help=3D"The file or dir pa=
-th that needs check")
-> > +    args =3D parser.parse_args()
-> > +
-> > +    if os.path.isfile(args.path):
-> > +        get_correct_macros(args.path)
-> > +        file_check_macro(args.path, True)
-> > +    elif os.path.isdir(args.path):
-> > +        dir_check_macro(args.path)
-> > +    else:
-> > +        print(f"{args.path} doesn't exit or is neither a file nor a di=
-r")
-> > +
-> > +if __name__ =3D=3D "__main__":
-> > +    main()
-> > \ No newline at end of file
-> > --
-> > 2.39.2
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+When PAGE_SIZE 4096, MAX_PAGE_ORDER 10, 64bit machine,
+page_alloc only support 4MB.
+If above this, trigger this warn and return NULL.
 
+udmabuf can change size limit, if change it to 3072(3GB), and then alloc
+3GB udmabuf, will fail create.
 
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+[ 4080.876581] ------------[ cut here ]------------
+[ 4080.876843] WARNING: CPU: 3 PID: 2015 at mm/page_alloc.c:4556 __alloc_pages+0x2c8/0x350
+[ 4080.878839] RIP: 0010:__alloc_pages+0x2c8/0x350
+[ 4080.879470] Call Trace:
+[ 4080.879473]  <TASK>
+[ 4080.879473]  ? __alloc_pages+0x2c8/0x350
+[ 4080.879475]  ? __warn.cold+0x8e/0xe8
+[ 4080.880647]  ? __alloc_pages+0x2c8/0x350
+[ 4080.880909]  ? report_bug+0xff/0x140
+[ 4080.881175]  ? handle_bug+0x3c/0x80
+[ 4080.881556]  ? exc_invalid_op+0x17/0x70
+[ 4080.881559]  ? asm_exc_invalid_op+0x1a/0x20
+[ 4080.882077]  ? udmabuf_create+0x131/0x400
+
+Because MAX_PAGE_ORDER, kmalloc can max alloc 4096 * (1 << 10), 4MB
+memory, each array entry is pointer(8byte), so can save 524288 pages(2GB).
+
+Further more, costly order(order 3) may not be guaranteed that it can be
+applied for, due to fragmentation.
+
+This patch change udmabuf array use kvmalloc_array, this can fallback
+alloc into vmalloc, which can guarantee allocation for any size and does
+not affect the performance of kmalloc allocations.
+
+Signed-off-by: Huan Yang <link@vivo.com>
+---
+Changelog:
+ v2 -> v1: rebase, change offset and mempin folio array use kvmalloc,
+change description.
+
+ drivers/dma-buf/udmabuf.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+index 047c3cd2ceff..7addb1720bc3 100644
+--- a/drivers/dma-buf/udmabuf.c
++++ b/drivers/dma-buf/udmabuf.c
+@@ -80,7 +80,7 @@ static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
+ 
+ 	dma_resv_assert_held(buf->resv);
+ 
+-	pages = kmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
++	pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+@@ -88,7 +88,7 @@ static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
+ 		pages[pg] = &ubuf->folios[pg]->page;
+ 
+ 	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
+-	kfree(pages);
++	kvfree(pages);
+ 	if (!vaddr)
+ 		return -EINVAL;
+ 
+@@ -196,8 +196,8 @@ static void release_udmabuf(struct dma_buf *buf)
+ 		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
+ 
+ 	unpin_all_folios(&ubuf->unpin_list);
+-	kfree(ubuf->offsets);
+-	kfree(ubuf->folios);
++	kvfree(ubuf->offsets);
++	kvfree(ubuf->folios);
+ 	kfree(ubuf);
+ }
+ 
+@@ -322,13 +322,13 @@ static long udmabuf_create(struct miscdevice *device,
+ 	if (!ubuf->pagecount)
+ 		goto err;
+ 
+-	ubuf->folios = kmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
++	ubuf->folios = kvmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
+ 				    GFP_KERNEL);
+ 	if (!ubuf->folios) {
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+-	ubuf->offsets = kcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
++	ubuf->offsets = kvcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
+ 				GFP_KERNEL);
+ 	if (!ubuf->offsets) {
+ 		ret = -ENOMEM;
+@@ -343,7 +343,7 @@ static long udmabuf_create(struct miscdevice *device,
+ 			goto err;
+ 
+ 		pgcnt = list[i].size >> PAGE_SHIFT;
+-		folios = kmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
++		folios = kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
+ 		if (!folios) {
+ 			ret = -ENOMEM;
+ 			goto err;
+@@ -353,7 +353,7 @@ static long udmabuf_create(struct miscdevice *device,
+ 		ret = memfd_pin_folios(memfd, list[i].offset, end,
+ 				       folios, pgcnt, &pgoff);
+ 		if (ret <= 0) {
+-			kfree(folios);
++			kvfree(folios);
+ 			if (!ret)
+ 				ret = -EINVAL;
+ 			goto err;
+@@ -369,7 +369,7 @@ static long udmabuf_create(struct miscdevice *device,
+ 				ret = add_to_unpin_list(&ubuf->unpin_list,
+ 							folios[k]);
+ 				if (ret < 0) {
+-					kfree(folios);
++					kvfree(folios);
+ 					goto err;
+ 				}
+ 			}
+@@ -382,7 +382,7 @@ static long udmabuf_create(struct miscdevice *device,
+ 			}
+ 		}
+ 
+-		kfree(folios);
++		kvfree(folios);
+ 		fput(memfd);
+ 		memfd = NULL;
+ 	}
+@@ -398,8 +398,8 @@ static long udmabuf_create(struct miscdevice *device,
+ 	if (memfd)
+ 		fput(memfd);
+ 	unpin_all_folios(&ubuf->unpin_list);
+-	kfree(ubuf->offsets);
+-	kfree(ubuf->folios);
++	kvfree(ubuf->offsets);
++	kvfree(ubuf->folios);
+ 	kfree(ubuf);
+ 	return ret;
+ }
+
+base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
+-- 
+2.45.2
+
 
