@@ -1,129 +1,166 @@
-Return-Path: <linux-kernel+bounces-261782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C91E93BC0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217D093BC0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4301C2253D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB893286130
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC49F1CA9E;
-	Thu, 25 Jul 2024 05:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B60E1CD29;
+	Thu, 25 Jul 2024 05:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="DeKZoMQf"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YEAVhneD"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C7723D0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C871C694
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721885572; cv=none; b=HwAM1eM95Xry593IhjRVEBrnQkLqKcF4lDyh/qoZrpoblayzt0KKrSrmJIeyLRoMZKJf+gxfwg5HaJeSAAB/P2dB0VbAWFuOeclPslW4uaPycpgZZzLrRqGr+GkTHA8gNUQ6hzRYDN18Jy54KmVj3dKlQxrv5ud8+DXGU7YmvN0=
+	t=1721885635; cv=none; b=Cb9bom4/Tza8QHM6naVAXWBvBEByexjDkjiYWEFvY3ci2RF3mtQq7iiOVK7zDMQ8j4FRE/OfSCUhMcU8W9SZHpEijE0WrO4I3lpnstLYnnSnFj+1XA4OzVbM7iXWqzryY6sFgEM9+IbudyvRyBI0EQ8ZTVW5ovNw5xMF0qJWkHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721885572; c=relaxed/simple;
-	bh=uZXbG36Q2EF7GySwh4nfozTd1dHlUpbJih4rSUWGGBM=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=YHqFrFAQLCHcuNg2/vfHURt8C1/g+c17kQJBw0qdOEJCTa0AWyyvLb57i1I0KSdxRQ0i1h6Z9atGBTTttdmP905TmPNl9eaPZwTspwoY0oPN9La+o3VO1+2P6ukMyH6NZhS21CnyxatQMG0BCtXgwhrMBSl/8yuLMQBTvLW4+Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=DeKZoMQf; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
-	by cmsmtp with ESMTPS
-	id Wg2ksCvmnVpzpWr4MsayMv; Thu, 25 Jul 2024 05:31:14 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id Wr4KslV3f5D6dWr4LsbFs1; Thu, 25 Jul 2024 05:31:13 +0000
-X-Authority-Analysis: v=2.4 cv=I6GuR8gg c=1 sm=1 tr=0 ts=66a1e321
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=CTd7gvyGw4ZjSuE7xIAA:9
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NmLFwogGxk8T+/BTvVYv38MvO9AQWSFau4dqyGLbskk=; b=DeKZoMQffW9xoglVHlYzZ4n0l4
-	XMHH1T4NQT8GAUNxDNNQjn95njCbfAWVBq3C1YcKJr0dzuEoa02oewtO59Qa1kdX0nip5oKpezpRD
-	h48pa1XrTMu0UIyPuTnjKcxax+59XizxURlKLDlSqiO+KsocaBYwelg6AF6Tmwbib3W+ths1ibWeX
-	D+CCq5ZVo6YOT1FujbVRSgoeJGx/6DxtzOJVRomOWKtlnlLtPDQh9P/xNouw7E1iodnWI0hs1mZh3
-	6hp5lteYyGG9KPyKg1Um5nawGlmfV6mhU1mlluH3RCUBZvz3FC1vGmV/z9Hopje+u0LtEZtSDd7C2
-	kUniy5CA==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59076 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sWr4G-0031Cc-1l;
-	Wed, 24 Jul 2024 23:31:08 -0600
-Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240723180402.490567226@linuxfoundation.org>
-In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <304aa6ca-71c6-4f72-26b7-72fcea3c6e3e@w6rz.net>
-Date: Wed, 24 Jul 2024 22:31:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1721885635; c=relaxed/simple;
+	bh=2tGfEYHwzW/wGfMKg0R45p2xryVYT+n7SGr2VPkgruw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7ZNwILUZd98gJhBHOq0CdaoPCNaRjlp1/GFf+nqUEq0crFLx5Skg5wWMkTrVLoaQoCKgUXa4pvbPf9kQ5fxBpju+ccBgUsj4cr3C6kIgdcnDkvtpxVo4dOcqBewh0Np/5kvgYGE26ByMfttsVwGCPNrnZjOF6Xhh3EzjhmB9cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YEAVhneD; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc566ac769so3921405ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721885633; x=1722490433; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WvP5xv6a5VWVYL+E3TZ2I1foLVXzeCPYT1zO1NeZJnc=;
+        b=YEAVhneDK1ImT5x4ovFQlcTHpQZxZGz0hDAYSbXkTrPuHQSftcYsRehne9NAKa5sgi
+         weuH3IouNNlV35CRTmW9WzRJyt11Lbb6MgeEYrf2S0/E+NgP4xhv2j0/Xw+c6MtkIS2O
+         40PvKICQfwD0Q0015MfFbRU67C4gO2fqWLelLJug2bq9/cyBzOdkGkfMMiyv4Zh9Xc2q
+         cIKtP26uEEQ/xQJLMHGufbEaxeDkBLh+h9CgWNS6Tom+C02TyNUg93WjtinoIFEYjY1A
+         q/GdQ+fY6Y81RAYUKoLV6iwoYhLD/Ld7h/J0X3DFFtodYcsDwEBUDZjhbIWPtxKsFb/g
+         FIKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721885633; x=1722490433;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WvP5xv6a5VWVYL+E3TZ2I1foLVXzeCPYT1zO1NeZJnc=;
+        b=VZHjk37BAmVHi5oMnUc0no5uA1CsYqrvx3GIRJBQ2BvZv1X+mMYO2/zPp+B67tAdcE
+         XTG8+fEUz5GcMg+1NVZ9rRzKbjd4hwJvPW29HH1ha9GsuRosGawoMxy8XimbbqEyn6ld
+         H5uPOQ6/2TeVOiVDHZGwZzEhV2XceLVkYqU2iOBP4qCZiA26ZDV0boethtwhTV6hLRQX
+         pzQxm2qgEC5Ih0NrXk0eoECFyXwohez1shvwm6k+JaIR3yT053pw5Ndzid9WP4nMBMvb
+         JKUHpwxMq+M6sNGc7+4fVy2rKyJLiT+GVWKPgqS7alq/TEb9R96PaLsS4OrhsXaNLvdr
+         p7BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo7PkjYlWsXP7uYY6G0XRp4cBJZyJEzn2vkWmZ9z0COGrC398kRKsV4axRFrSpDrAvy0BGTKjJkGFVnO6WL8N9difpNalz0jVHp0is
+X-Gm-Message-State: AOJu0Yyv3uo3rv5BroCdhpWx9zPV1k8KXiKY6IEah+aPUhoS+SoR4+LK
+	1NXhSQ/Fz+zKL+ouG2X+zK4qXUlFDCWiMYZsvTrv6Ho0g+GXb9jXeCWNLXHdNQ==
+X-Google-Smtp-Source: AGHT+IG+Jz8QIIFB7Xv4Jj0Zdf+JcdD4DBAsUgPPRHwYyUzYcZicmU3kuQE8eB0QN6KEdH4/zv41pA==
+X-Received: by 2002:a17:902:f68f:b0:1fd:a7a7:20b7 with SMTP id d9443c01a7336-1fed389fd3dmr24712335ad.30.1721885633089;
+        Wed, 24 Jul 2024 22:33:53 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f6dc27sm4984275ad.237.2024.07.24.22.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 22:33:52 -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:03:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Rick Wertenbroek <rick.wertenbroek@gmail.com>,
+	rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
+ address BARs in EPC
+Message-ID: <20240725053348.GN2317@thinkpad>
+References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
+ <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
+ <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
+ <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
+ <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sWr4G-0031Cc-1l
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:59076
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 42
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKqHlJhWgA6EhUbRU/2XvBJ+Y2Jp1GsJYSOnoqfBpKrZOvgO3jT5QBMLtr0cc3cQdT0GbL9ZFUhybsmZZiK7l34SvfkXmT9bfsh6lE3HCYcRSnvksTpr
- hqWPj2Imygloyh9mTiDlQFQW/YSX+1Nz3QOFxGb8Hrr3Vts6x4jCiu8hE3lpSIX3W10peqq6MrGSKkYDnUcuQLhjbRqIoce6gIY=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
 
-On 7/23/24 11:22 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.101 release.
-> There are 105 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.101-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Jul 23, 2024 at 06:48:27PM +0200, Niklas Cassel wrote:
+> Hello Rick,
+> 
+> On Tue, Jul 23, 2024 at 06:06:26PM +0200, Rick Wertenbroek wrote:
+> > >
+> > > But like you suggested in the other mail, the right thing is to merge
+> > > alloc_space() and set_bar() anyway. (Basically instead of where EPF drivers
+> > > currently call set_bar(), the should call alloc_and_set_bar() (or whatever)
+> > > instead.)
+> > >
+> > 
+> > Yes, if we merge both, the code will need to be in the EPC code
+> > (because of the set_bar), and then the pci_epf_alloc_space (if needed)
+> > would be called internally in the EPC code and not in the endpoint
+> > function code.
+> > 
+> > The only downside, as I said in my other mail, is the very niche case
+> > where the contents of a BAR should be moved and remain unchanged when
+> > rebinding a given endpoint function from one controller to another.
+> > But this is not expected in any endpoint function currently, and with
+> > the new changes, the endpoint could simply copy the BAR contents to a
+> > local buffer and then set the contents in the BAR of the new
+> > controller.
+> > Anyways, probably no one is moving live functions between controllers,
+> > and if needed it still can be done, so no problem here...
+> 
+> I think we need to wait for Mani's opinion, but I've never heard of anyone
+> doing so, and I agree with your suggested feature to copy the BAR contents
+> in case anyone actually changes the backing EPC controller to an EPF.
+> (You would need to stop the EPC to unbind + bind anyway, IIRC.)
+> 
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Hi Rick/Niklas,
 
-Tested-by: Ron Economos <re@w6rz@net>
+TBH, I don't think currently we have an usecase for remapping the EPC to EPF. So
+we do not need to worry until the actual requirement comes.
 
+But I really like combining alloc() and set_bar() APIs. Something I wanted to do
+for so long but never got around to it. We can use the API name something like
+pci_epc_alloc_set_bar(). I don't like 'set' in the name, but I guess we need to
+have it to align with existing APIs.
+
+And regarding the implementation, the use of fixed address for BAR is not new.
+If you look into the pci-epf-mhi.c driver, you can see that I use a fixed BAR0
+location that is derived from the controller DT node (MMIO region).
+
+But I was thinking of moving this region to EPF node once we add DT support for
+EPF driver. Because, there can be many EPFs in a single endpoint and each can
+have upto 6 BARs. We cannot really describe each resource in the controller DT
+node.
+
+Given that you really have a usecase now for multiple BARs, I think it is best
+if we can add DT support for the EPF drivers and describe the BAR resources in
+each EPF node. With that, we can hide all the resource allocation within the EPC
+core without exposing any flag to the EPF drivers.
+
+So if the EPF node has a fixed location for BAR and defined in DT, then the new
+API pci_epf_alloc_set_bar() API will use that address and configure it
+accordingly. If not, it will just call pci_epf_alloc_space() internally to
+allocate the memory from coherent region and use it.
+
+Wdyt?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
