@@ -1,458 +1,527 @@
-Return-Path: <linux-kernel+bounces-262552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7082793C884
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:53:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3C293C888
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C731F21FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:53:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9613B22099
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E59B4D8B9;
-	Thu, 25 Jul 2024 18:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AD14CB2B;
+	Thu, 25 Jul 2024 18:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t8trRPBj"
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="UWz7S+rP"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2339376E0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D631D208A5
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721933616; cv=none; b=iYr/OkEF+ZTgRKu3l3z6Gdt1cCTa4VNaTu/RI0pDhpCg0tdyIPrxZo1gvEIH0Jxa3wdwFbd6oJtuJ8Vm+cizwof94tidFySKN123kmNqEiS+4Ap0N/G6CKowvTb55aKuBxeATZUjYbvW5MaPSX+8A+wNY5loFEEQe+LqJb3DImI=
+	t=1721933988; cv=none; b=gwtCkEnt46ZnHgqITDXuzCGk88whEKf4SySsgb/GggDG71vEKvDCufAl9RhV1O5XcfF0Mn5dvEvZWJdjhjB7BDYTOuRc3ffPvJAJo2qN0wLinc1pDoh/gFrT5d/P/sS+ZolKK7oSzPgUYwfyC3XLuL/tNPOmDxO4ZY+csX9IRVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721933616; c=relaxed/simple;
-	bh=2n3NvdW7ZZ5CBR3JsXIU8wAn+XVAnDi35Jo8wH4sgAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6SV++Go+qT52MMBNsANqo4vhOD4Z+juKpzOZ20ekkKiCVSYA0H7df7/HiQi/D+4etRJTu2WaV/qIw3lfVIYVbUacwCiZwjmjPCTAUE/oAHSfn8EmGclzquvvkL2uc6OKoeqBPmBqvR1/n1UaIg7WyWb/cXp5oXUSH7rcqve3NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t8trRPBj; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVKll11K4zplT;
-	Thu, 25 Jul 2024 20:53:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721933603;
-	bh=1NTO2YHsR6j9yghcJaFm/X3h4wCtvkpFPVHqyckGJxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t8trRPBjfUYxtF9dcB/8Dq+SrwY6mlwkEwX6LvHoX/fKPmfAeqT0uH9QwhefmYdW/
-	 0dwNLYNitUeeH+ryNLiGT8zONMVX7YqxkSD9RB5hiE1y7/D9wEqLD8BoTTZs9XWYlE
-	 TpHKP7s/uX0XuEu964VTljy25SVowmNX4+0K7NYI=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVKlj4yxxzTPV;
-	Thu, 25 Jul 2024 20:53:21 +0200 (CEST)
-Date: Thu, 25 Jul 2024 20:53:19 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 2/4] selftests/landlock: Abstract unix socket
- restriction tests
-Message-ID: <20240725.uagai2jeiN4i@digikod.net>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
- <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1721933988; c=relaxed/simple;
+	bh=LCKXz14MJEqj8c+Ukyf4dFxfE9DVs14YQlhQ9l3bA6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXtPAo8TjIt+uOvJJGuhFOUipBFY4wzpLXowLTiGEfZiCGTtoy8ZqpuM2xfXPFz1cL7RpbRELysu1ksdoUvmlH+/D6IcS7n4+KolnBcgMjIx3TcNWBJwHn2elc7n9RYY/i46v91pdpcgwj7Vhn6ETXLGWKaLPAgQzAJd6wvzEt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=UWz7S+rP; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a975fb47eso117811066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721933984; x=1722538784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+PEziUT+u3J/qIm9a1fS3Xh/jbtZXfpQEhKCyc80gyQ=;
+        b=UWz7S+rPRhwcppNmxuqvW56ZGtT5kYCcisJO+B2K4qnbRE8gZijSTB94pmdaVwPXq2
+         7n4Jyu9Ac/qUB7t8bGPs2nBdQp8dZpBrVQKXShtcfsL9sN6AAntdSn+4UDMK90uY+C7c
+         zFt+C/X51eU0Xbn9aP7bAtu81saRlPwg/+0L5wsbPN8wswKq5BZ2Yv7+1lPCfhGbMFxC
+         +dsCSnbjtbTZiaAgYZ4WQahGYFuceKSV6Ld7c40eObOwFO+3FKvQ+hwpJPW6m+yB9ulV
+         Cc3A1PlNDn98TbrvUlCcNebpuxEODkL3FotqAYFBVKULRryCeP+n3mL+kVAh0QtUEhbF
+         023Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721933984; x=1722538784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+PEziUT+u3J/qIm9a1fS3Xh/jbtZXfpQEhKCyc80gyQ=;
+        b=s2zpFdwNWcvvNg2HQmSFGvps37MTkjkid2OuWl4N9eKrBbCgJMCYF6OPGfVTH+9rxr
+         LDG6PLGZK59mJ8oRfp8vVmLVvJDGdRMCuOtBXFSRriEjLrNiBcu17jNb8ekMkiKy2XMc
+         rBNbS78EtPEzQDt95l7gwPaHao7rQozL6B/XuZAkYlhYB880KBA4xBZ3LKdhMdRHtcLg
+         eYHiMx9jFiZeTvfNzeXhsN/vbVUEZvbwr3XLoyByg5Vr/glvVgXDRCNM+x2Jl/5NPng5
+         9OpIdA9nTCSiApANgj4AwnrGAp+B5mit6pqF/00s8GGuxoSbik2K+dMyW9bAjeEwt7e7
+         SUbA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3uiyp5P7InDWf9ywvawdaKd/On88MMs9PZ8bclAzSOBl7sNVmDegyy27KtuOyg5DfcUEA79HMpJWMryDCKS3XRWlIcvjxvNA79uDV
+X-Gm-Message-State: AOJu0Yx6xhO+lJzJCEB3DgiW+zt92VOpff6q88z3ACftNSXCadI+uQpk
+	IUuVUiMixhk5z2NpWicDkS59OrBIXjmylOzCPJza5iWfzqMaZUtg64+j+eeLdOmuI2wekBTuFhX
+	c501TYgkZ1HdGLp7iJTDGrTDmi0KFA4olUHiz8g==
+X-Google-Smtp-Source: AGHT+IHe1/zy3jGG82rPZFbkFNqT7W52BnCq0QLb+M2aRFMhCv88veP459GsAuub93GY+TNW91Z2X4XWX5j6XefaOBo=
+X-Received: by 2002:a17:906:7952:b0:a77:b784:deba with SMTP id
+ a640c23a62f3a-a7ac5129d24mr270561666b.6.1721933983860; Thu, 25 Jul 2024
+ 11:59:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20240724183605.4038597-1-jesse@rivosinc.com> <20240724183605.4038597-7-jesse@rivosinc.com>
+In-Reply-To: <20240724183605.4038597-7-jesse@rivosinc.com>
+From: Evan Green <evan@rivosinc.com>
+Date: Thu, 25 Jul 2024 11:59:07 -0700
+Message-ID: <CALs-Hsvb0A411Dnd3ps=B4-oxM_vz0Bi1Dh1UgiHFYcnjA4v0Q@mail.gmail.com>
+Subject: Re: [PATCH v6 6/8] RISC-V: Detect unaligned vector accesses supported
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
+	Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 10:15:20PM -0600, Tahera Fahimi wrote:
-> The patch has three types of tests:
->   1) unix_socket: base tests the scoping mechanism for a landlocked process,
->      same as the ptrace test.
->   2) optional_scoping: generates three processes with different domains and
->      tests if a process with a non-scoped domain can connect to other processes.
->   3) unix_sock_special_cases: since the socket's creator credentials are used
->      for scoping datagram sockets, this test examines the cases where the
->      socket's credentials are different from the process using it.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-
-You need to add "---" here.  You can test the result by applying this
-patch with `git am`: the comments after these three dashes will not be
-inlcuded in the commit message.
-
-> 
-> Changes in versions:
-> V7:
->  - Introducing landlock ABI version 6.
->  - Adding some edge test cases to optional_scoping test.
->  - Using `enum` for different domains in optional_scoping tests.
->  - Extend unix_sock_special_cases test cases for connected(SOCK_STREAM) sockets.
->  - Modifying inline comments.
-> V6:
->  - Introducing optional_scoping test which ensures a sandboxed process with a
->    non-scoped domain can still connect to another abstract unix socket(either
->    sandboxed or non-sandboxed).
->  - Introducing unix_sock_special_cases test which tests examines scenarios where
->    the connecting sockets have different domain than the process using them.
-> V4:
->  - Introducing unix_socket to evaluate the basic scoping mechanism for abstract
->    unix sockets.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+On Wed, Jul 24, 2024 at 11:36=E2=80=AFAM Jesse Taube <jesse@rivosinc.com> w=
+rote:
+>
+> Run a unaligned vector access to test if the system supports
+> vector unaligned access. Add the result to a new key in hwprobe.
+> This is useful for usermode to know if vector misaligned accesses are
+> supported and if they are faster or slower than equivalent byte accesses.
+>
+> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 > ---
->  tools/testing/selftests/landlock/base_test.c  |   2 +-
->  .../testing/selftests/landlock/ptrace_test.c  | 867 ++++++++++++++++++
->  2 files changed, 868 insertions(+), 1 deletion(-)
-
-Even if these tests are similar to the ptrace's ones, they don't share
-code.  For maintainance reasons and test flexibility, we should have
-these new tests in a "scoped_abstract_unix_test.c" file.
-
-> 
-> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-> index 3c1e9f35b531..52b00472a487 100644
-> --- a/tools/testing/selftests/landlock/base_test.c
-> +++ b/tools/testing/selftests/landlock/base_test.c
-> @@ -75,7 +75,7 @@ TEST(abi_version)
->  	const struct landlock_ruleset_attr ruleset_attr = {
->  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
->  	};
-> -	ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
-> +	ASSERT_EQ(6, landlock_create_ruleset(NULL, 0,
->  					     LANDLOCK_CREATE_RULESET_VERSION));
->  
->  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
-> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-> index a19db4d0b3bd..e7dcefda8ce0 100644
-> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-
-
-> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent, child
-> + * and grand child processes when they can have scoped or non-scoped
-> + * domains.
-> + **/
-> +TEST_F(optional_scoping, unix_scoping)
+> V1 -> V2:
+>  - Add Kconfig options
+>  - Add insn_is_vector
+>  - Add handle_vector_misaligned_load
+>  - Fix build
+>  - Seperate vector from scalar misaligned access
+>  - This patch was almost completely rewritten
+> V2 -> V3:
+>  - Fixed CONFIG_ in Kconfig
+>  - Fixed check_vector_unaligned_access_emulated leaving
+>      vector_misaligned_access as unknown.
+>  - Remove local_irq_enable
+>  - Remove RISCV_DETECT_VECTOR_UNALIGNED_ACCESS
+>  - Remove RISCV_VEC_UNALIGNED_ACCESS_UNSUPPORTED
+> V3 -> V4:
+>  - Spell out _VECTOR_ in macros
+> V4 -> V5:
+>  - Change work_struct *unused to work_struct *work __always_unused
+>  - Add insn_is_vector definition to vector.h when V is not defined
+> V5 -> V6:
+>  - Change check_vector_unaligned_access_emulated to extern
+>  - Move check_unaligned_access_emulated_all_cpus out of the #ifdef
+>    see last commit
+> ---
+>  arch/riscv/Kconfig                         |  35 ++++++
+>  arch/riscv/include/asm/cpufeature.h        |   8 +-
+>  arch/riscv/include/asm/entry-common.h      |  11 --
+>  arch/riscv/include/asm/hwprobe.h           |   2 +-
+>  arch/riscv/include/asm/vector.h            |   2 +
+>  arch/riscv/include/uapi/asm/hwprobe.h      |   5 +
+>  arch/riscv/kernel/Makefile                 |   4 +-
+>  arch/riscv/kernel/sys_hwprobe.c            |  35 ++++++
+>  arch/riscv/kernel/traps_misaligned.c       | 120 ++++++++++++++++++++-
+>  arch/riscv/kernel/unaligned_access_speed.c |  22 ++--
+>  arch/riscv/kernel/vector.c                 |   2 +-
+>  11 files changed, 216 insertions(+), 30 deletions(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 34d24242e37a..ffbe0fdd7fb3 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -717,12 +717,26 @@ config THREAD_SIZE_ORDER
+>           Specify the Pages of thread stack size (from 4KB to 64KB), whic=
+h also
+>           affects irq stack size, which is equal to thread stack size.
+>
+> +config RISCV_MISALIGNED
+> +       bool
+> +       help
+> +         Embed support for detecting and emulating misaligned
+> +         scalar or vector loads and stores.
+> +
+>  config RISCV_SCALAR_MISALIGNED
+>         bool
+> +       select RISCV_MISALIGNED
+>         select SYSCTL_ARCH_UNALIGN_ALLOW
+>         help
+>           Embed support for emulating misaligned loads and stores.
+>
+> +config RISCV_VECTOR_MISALIGNED
+> +       bool
+> +       select RISCV_MISALIGNED
+> +       depends on RISCV_ISA_V
+> +       help
+> +         Enable detecting support for vector misaligned loads and stores=
+.
+> +
+>  choice
+>         prompt "Unaligned Accesses Support"
+>         default RISCV_PROBE_UNALIGNED_ACCESS
+> @@ -774,6 +788,27 @@ config RISCV_EFFICIENT_UNALIGNED_ACCESS
+>
+>  endchoice
+>
+> +choice
+> +       prompt "Vector unaligned Accesses Support"
+> +       depends on RISCV_ISA_V
+> +       default RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
+> +       help
+> +         This determines the level of support for vector unaligned acces=
+ses. This
+> +         information is used by the kernel to perform optimizations. It =
+is also
+> +         exposed to user space via the hwprobe syscall. The hardware wil=
+l be
+> +         probed at boot by default.
+> +
+> +config RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
+> +       bool "Probe speed of vector unaligned accesses"
+> +       select RISCV_VECTOR_MISALIGNED
+> +       help
+> +         During boot, the kernel will run a series of tests to determine=
+ the
+> +         speed of vector unaligned accesses if they are supported. This =
+probing
+> +         will dynamically determine the speed of vector unaligned access=
+es on
+> +         the underlying system if they are supported.
+> +
+> +endchoice
+> +
+>  endmenu # "Platform type"
+>
+>  menu "Kernel features"
+> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm=
+/cpufeature.h
+> index 4ade9f87fc55..5634f702f3fe 100644
+> --- a/arch/riscv/include/asm/cpufeature.h
+> +++ b/arch/riscv/include/asm/cpufeature.h
+> @@ -34,8 +34,8 @@ extern struct riscv_isainfo hart_isa[NR_CPUS];
+>
+>  void riscv_user_isa_enable(void);
+>
+> -#if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
+>  bool check_unaligned_access_emulated_all_cpus(void);
+> +#if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
+>  void check_unaligned_access_emulated(struct work_struct *work __always_u=
+nused);
+>  void unaligned_emulation_finish(void);
+>  bool unaligned_ctl_available(void);
+> @@ -47,6 +47,12 @@ static inline bool unaligned_ctl_available(void)
+>  }
+>  #endif
+>
+> +bool check_vector_unaligned_access_emulated_all_cpus(void);
+> +#if defined(CONFIG_RISCV_VECTOR_MISALIGNED)
+> +void check_vector_unaligned_access_emulated(struct work_struct *work __a=
+lways_unused);
+> +DECLARE_PER_CPU(long, vector_misaligned_access);
+> +#endif
+> +
+>  #if defined(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)
+>  DECLARE_STATIC_KEY_FALSE(fast_unaligned_access_speed_key);
+>
+> diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/a=
+sm/entry-common.h
+> index 0a4e3544c877..7b32d2b08bb6 100644
+> --- a/arch/riscv/include/asm/entry-common.h
+> +++ b/arch/riscv/include/asm/entry-common.h
+> @@ -25,18 +25,7 @@ static inline void arch_exit_to_user_mode_prepare(stru=
+ct pt_regs *regs,
+>  void handle_page_fault(struct pt_regs *regs);
+>  void handle_break(struct pt_regs *regs);
+>
+> -#ifdef CONFIG_RISCV_SCALAR_MISALIGNED
+>  int handle_misaligned_load(struct pt_regs *regs);
+>  int handle_misaligned_store(struct pt_regs *regs);
+> -#else
+> -static inline int handle_misaligned_load(struct pt_regs *regs)
+> -{
+> -       return -1;
+> -}
+> -static inline int handle_misaligned_store(struct pt_regs *regs)
+> -{
+> -       return -1;
+> -}
+> -#endif
+>
+>  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hw=
+probe.h
+> index 150a9877b0af..ef01c182af2b 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -8,7 +8,7 @@
+>
+>  #include <uapi/asm/hwprobe.h>
+>
+> -#define RISCV_HWPROBE_MAX_KEY 7
+> +#define RISCV_HWPROBE_MAX_KEY 8
+>
+>  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>  {
+> diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vec=
+tor.h
+> index be7d309cca8a..c7c023afbacd 100644
+> --- a/arch/riscv/include/asm/vector.h
+> +++ b/arch/riscv/include/asm/vector.h
+> @@ -21,6 +21,7 @@
+>
+>  extern unsigned long riscv_v_vsize;
+>  int riscv_v_setup_vsize(void);
+> +bool insn_is_vector(u32 insn_buf);
+>  bool riscv_v_first_use_handler(struct pt_regs *regs);
+>  void kernel_vector_begin(void);
+>  void kernel_vector_end(void);
+> @@ -268,6 +269,7 @@ struct pt_regs;
+>
+>  static inline int riscv_v_setup_vsize(void) { return -EOPNOTSUPP; }
+>  static __always_inline bool has_vector(void) { return false; }
+> +static __always_inline bool insn_is_vector(u32 insn_buf) { return false;=
+ }
+>  static inline bool riscv_v_first_use_handler(struct pt_regs *regs) { ret=
+urn false; }
+>  static inline bool riscv_v_vstate_query(struct pt_regs *regs) { return f=
+alse; }
+>  static inline bool riscv_v_vstate_ctrl_user_allowed(void) { return false=
+; }
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/u=
+api/asm/hwprobe.h
+> index 023b7771d1b7..48b92fb07edf 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -75,6 +75,11 @@ struct riscv_hwprobe {
+>  #define                RISCV_HWPROBE_MISALIGNED_MASK           (7 << 0)
+>  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE    6
+>  #define RISCV_HWPROBE_KEY_MISALIGNED_PERF      7
+> +#define RISCV_HWPROBE_KEY_VECTOR_MISALIGNED_PERF       8
+> +#define                RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN         0
+> +#define                RISCV_HWPROBE_VECTOR_MISALIGNED_SLOW            2
+> +#define                RISCV_HWPROBE_VECTOR_MISALIGNED_FAST            3
+> +#define                RISCV_HWPROBE_VECTOR_MISALIGNED_UNSUPPORTED     4
+>  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>
+>  /* Flags */
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 8d4e7d40e42f..5b243d46f4b1 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -62,8 +62,8 @@ obj-y +=3D probes/
+>  obj-y  +=3D tests/
+>  obj-$(CONFIG_MMU) +=3D vdso.o vdso/
+>
+> -obj-$(CONFIG_RISCV_SCALAR_MISALIGNED)  +=3D traps_misaligned.o
+> -obj-$(CONFIG_RISCV_SCALAR_MISALIGNED)  +=3D unaligned_access_speed.o
+> +obj-$(CONFIG_RISCV_MISALIGNED) +=3D traps_misaligned.o
+> +obj-$(CONFIG_RISCV_MISALIGNED) +=3D unaligned_access_speed.o
+>  obj-$(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)     +=3D copy-unaligned.o
+>
+>  obj-$(CONFIG_FPU)              +=3D fpu.o
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwpr=
+obe.c
+> index e910e2971984..2e3e324bad38 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -194,6 +194,37 @@ static u64 hwprobe_misaligned(const struct cpumask *=
+cpus)
+>  }
+>  #endif
+>
+> +#ifdef CONFIG_RISCV_VECTOR_MISALIGNED
+> +static u64 hwprobe_vec_misaligned(const struct cpumask *cpus)
 > +{
-> +	pid_t child;
-> +	socklen_t addrlen;
-> +	int sock_len = 5;
-> +	int status;
-> +	struct sockaddr_un addr = {
-> +		.sun_family = AF_UNIX,
-> +	};
-> +	const char sun_path[8] = "\0test";
-> +	bool can_connect_to_parent, can_connect_to_child;
-> +	int pipe_parent[2];
+> +       int cpu;
+> +       u64 perf =3D -1ULL;
 > +
-> +	if (variant->domain_grand_child == SCOPE_SANDBOX)
-> +		can_connect_to_child = false;
-> +	else
-> +		can_connect_to_child = true;
+> +       /* Return if supported or not even if speed wasn't probed */
+> +       for_each_cpu(cpu, cpus) {
+> +               int this_perf =3D per_cpu(vector_misaligned_access, cpu);
 > +
-> +	if (!can_connect_to_child || variant->domain_children == SCOPE_SANDBOX)
-> +		can_connect_to_parent = false;
-> +	else
-> +		can_connect_to_parent = true;
+> +               if (perf =3D=3D -1ULL)
+> +                       perf =3D this_perf;
 > +
-> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
-> +	memcpy(&addr.sun_path, sun_path, sock_len);
+> +               if (perf !=3D this_perf) {
+> +                       perf =3D RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN;
+> +                       break;
+> +               }
+> +       }
 > +
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +       if (perf =3D=3D -1ULL)
+> +               return RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN;
 > +
-> +	if (variant->domain_all == OTHER_SANDBOX)
-> +		create_domain(_metadata);
-> +	else if (variant->domain_all == SCOPE_SANDBOX)
-> +		create_unix_domain(_metadata);
+> +       return perf;
+> +}
+> +#else
+> +static u64 hwprobe_vec_misaligned(const struct cpumask *cpus)
+> +{
+> +       return RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN;
+> +}
+> +#endif
 > +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		int pipe_child[2];
-> +		ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +		pid_t grand_child;
-> +		struct sockaddr_un child_addr = {
-> +			.sun_family = AF_UNIX,
-> +		};
-> +		const char child_sun_path[8] = "\0tsst";
-
-To avoid potential issues with conflicting names, we should use the same
-sun_path as in net_test.c:set_service().  Same for all use of sun_path.
-
+>  static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>                              const struct cpumask *cpus)
+>  {
+> @@ -222,6 +253,10 @@ static void hwprobe_one_pair(struct riscv_hwprobe *p=
+air,
+>                 pair->value =3D hwprobe_misaligned(cpus);
+>                 break;
+>
+> +       case RISCV_HWPROBE_KEY_VECTOR_MISALIGNED_PERF:
+> +               pair->value =3D hwprobe_vec_misaligned(cpus);
+> +               break;
 > +
-> +		memcpy(&child_addr.sun_path, child_sun_path, sock_len);
+>         case RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE:
+>                 pair->value =3D 0;
+>                 if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOZ))
+> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/tra=
+ps_misaligned.c
+> index bb09357778c5..817496a6a2d5 100644
+> --- a/arch/riscv/kernel/traps_misaligned.c
+> +++ b/arch/riscv/kernel/traps_misaligned.c
+> @@ -16,6 +16,7 @@
+>  #include <asm/entry-common.h>
+>  #include <asm/hwprobe.h>
+>  #include <asm/cpufeature.h>
+> +#include <asm/vector.h>
+>
+>  #define INSN_MATCH_LB                  0x3
+>  #define INSN_MASK_LB                   0x707f
+> @@ -322,12 +323,37 @@ union reg_data {
+>         u64 data_u64;
+>  };
+>
+> -static bool unaligned_ctl __read_mostly;
+> -
+>  /* sysctl hooks */
+>  int unaligned_enabled __read_mostly =3D 1;       /* Enabled by default *=
+/
+>
+> -int handle_misaligned_load(struct pt_regs *regs)
+> +#ifdef CONFIG_RISCV_VECTOR_MISALIGNED
+> +static int handle_vector_misaligned_load(struct pt_regs *regs)
+> +{
+> +       unsigned long epc =3D regs->epc;
+> +       unsigned long insn;
 > +
-> +		if (variant->domain_children == OTHER_SANDBOX)
-> +			create_domain(_metadata);
-> +		else if (variant->domain_children == SCOPE_SANDBOX)
-> +			create_unix_domain(_metadata);
+> +       if (get_insn(regs, epc, &insn))
+> +               return -1;
 > +
-> +		grand_child = fork();
-> +		ASSERT_LE(0, grand_child);
-> +		if (grand_child == 0) {
-> +			ASSERT_EQ(0, close(pipe_parent[1]));
-> +			ASSERT_EQ(0, close(pipe_child[1]));
+> +       /* Only return 0 when in check_vector_unaligned_access_emulated *=
+/
+> +       if (*this_cpu_ptr(&vector_misaligned_access) =3D=3D RISCV_HWPROBE=
+_VECTOR_MISALIGNED_UNKNOWN) {
+> +               *this_cpu_ptr(&vector_misaligned_access) =3D RISCV_HWPROB=
+E_VECTOR_MISALIGNED_UNSUPPORTED;
+> +               regs->epc =3D epc + INSN_LEN(insn);
+> +               return 0;
+> +       }
 > +
-> +			char buf1, buf2;
-> +			int err;
+> +       /* If vector instruction we don't emulate it yet */
+> +       regs->epc =3D epc;
+> +       return -1;
+> +}
+> +#else
+> +static int handle_vector_misaligned_load(struct pt_regs *regs)
+> +{
+> +       return -1;
+> +}
+> +#endif
 > +
-> +			if (variant->domain_grand_child == OTHER_SANDBOX)
-> +				create_domain(_metadata);
-> +			else if (variant->domain_grand_child == SCOPE_SANDBOX)
-> +				create_unix_domain(_metadata);
+> +static int handle_scalar_misaligned_load(struct pt_regs *regs)
+>  {
+>         union reg_data val;
+>         unsigned long epc =3D regs->epc;
+> @@ -435,7 +461,7 @@ int handle_misaligned_load(struct pt_regs *regs)
+>         return 0;
+>  }
+>
+> -int handle_misaligned_store(struct pt_regs *regs)
+> +static int handle_scalar_misaligned_store(struct pt_regs *regs)
+>  {
+>         union reg_data val;
+>         unsigned long epc =3D regs->epc;
+> @@ -526,6 +552,86 @@ int handle_misaligned_store(struct pt_regs *regs)
+>         return 0;
+>  }
+>
+> +int handle_misaligned_load(struct pt_regs *regs)
+> +{
+> +       unsigned long epc =3D regs->epc;
+> +       unsigned long insn;
 > +
-> +			self->client = socket(AF_UNIX, variant->type, 0);
-> +			ASSERT_NE(-1, self->client);
+> +       if (IS_ENABLED(CONFIG_RISCV_VECTOR_MISALIGNED)) {
+> +               if (get_insn(regs, epc, &insn))
+> +                       return -1;
 > +
-> +			ASSERT_EQ(1, read(pipe_child[0], &buf2, 1));
-> +			err = connect(self->client,
-> +				      (struct sockaddr *)&child_addr, addrlen);
-> +			if (can_connect_to_child) {
-> +				EXPECT_EQ(0, err);
-> +			} else {
-> +				EXPECT_EQ(-1, err);
-> +				EXPECT_EQ(EPERM, errno);
-> +			}
+> +               if (insn_is_vector(insn))
+> +                       return handle_vector_misaligned_load(regs);
+> +       }
 > +
-> +			if (variant->type == SOCK_STREAM) {
-> +				EXPECT_EQ(0, close(self->client));
-> +				self->client =
-> +					socket(AF_UNIX, variant->type, 0);
-> +				ASSERT_NE(-1, self->client);
-> +			}
+> +       if (IS_ENABLED(CONFIG_RISCV_SCALAR_MISALIGNED))
+> +               return handle_scalar_misaligned_load(regs);
 > +
-> +			ASSERT_EQ(1, read(pipe_parent[0], &buf1, 1));
-> +			err = connect(self->client, (struct sockaddr *)&addr,
-> +				      addrlen);
-> +			if (can_connect_to_parent) {
-> +				EXPECT_EQ(0, err);
-> +			} else {
-> +				EXPECT_EQ(-1, err);
-> +				EXPECT_EQ(EPERM, errno);
-> +			}
-> +			EXPECT_EQ(0, close(self->client));
-> +
-> +			_exit(_metadata->exit_code);
-> +			return;
-> +		}
-> +
-> +		ASSERT_EQ(0, close(pipe_child[0]));
-> +		if (variant->domain_child == OTHER_SANDBOX)
-> +			create_domain(_metadata);
-> +		else if (variant->domain_child == SCOPE_SANDBOX)
-> +			create_unix_domain(_metadata);
-> +
-> +		self->child_server = socket(AF_UNIX, variant->type, 0);
-> +		ASSERT_NE(-1, self->child_server);
-> +		ASSERT_EQ(0, bind(self->child_server,
-> +				  (struct sockaddr *)&child_addr, addrlen));
-> +		if (variant->type == SOCK_STREAM)
-> +			ASSERT_EQ(0, listen(self->child_server, 32));
-> +
-> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +		ASSERT_EQ(grand_child, waitpid(grand_child, &status, 0));
-> +		return;
-> +	}
-> +	ASSERT_EQ(0, close(pipe_parent[0]));
-> +
-> +	if (variant->domain_parent == OTHER_SANDBOX)
-> +		create_domain(_metadata);
-> +	else if (variant->domain_parent == SCOPE_SANDBOX)
-> +		create_unix_domain(_metadata);
-> +
-> +	self->parent_server = socket(AF_UNIX, variant->type, 0);
-> +	ASSERT_NE(-1, self->parent_server);
-> +	ASSERT_EQ(0,
-> +		  bind(self->parent_server, (struct sockaddr *)&addr, addrlen));
-> +
-> +	if (variant->type == SOCK_STREAM)
-> +		ASSERT_EQ(0, listen(self->parent_server, 32));
-> +
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
+> +       return -1;
 > +}
 > +
-> +/*
-> + * Since the special case of scoping only happens when the connecting socket
-> + * is scoped, the client's domain is true for all the following test cases.
-> + */
-> +/* clang-format off */
-> +FIXTURE(unix_sock_special_cases) {
-> +	int server_socket, client;
-> +	int stream_server, stream_client;
-> +};
-> +
-> +/* clang-format on */
-> +FIXTURE_VARIANT(unix_sock_special_cases)
+> +int handle_misaligned_store(struct pt_regs *regs)
 > +{
-> +	const bool domain_server;
-> +	const bool domain_server_socket;
-> +	const int type;
-> +};
+> +       if (IS_ENABLED(CONFIG_RISCV_SCALAR_MISALIGNED))
+> +               return handle_scalar_misaligned_store(regs);
 > +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_dgram_server_sock_domain) {
-> +	/* clang-format on */
-> +	.domain_server = false,
-> +	.domain_server_socket = true,
-> +	.type = SOCK_DGRAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_dgram_server_domain) {
-> +	/* clang-format off */
-> +	.domain_server = true,
-> +	.domain_server_socket = false,
-> +	.type = SOCK_DGRAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_stream_server_sock_domain) {
-> +	/* clang-format on */
-> +	.domain_server = false,
-> +	.domain_server_socket = true,
-> +	.type = SOCK_STREAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_stream_server_domain) {
-> +        /* clang-format off */
-> +        .domain_server = true,
-> +        .domain_server_socket = false,
-> +        .type = SOCK_STREAM,
-> +};
-> +
-> +FIXTURE_SETUP(unix_sock_special_cases)
-> +{
+> +       return -1;
 > +}
 > +
-> +FIXTURE_TEARDOWN(unix_sock_special_cases)
+> +#ifdef CONFIG_RISCV_VECTOR_MISALIGNED
+> +void check_vector_unaligned_access_emulated(struct work_struct *work __a=
+lways_unused)
 > +{
-> +	close(self->client);
-> +	close(self->server_socket);
-> +	close(self->stream_server);
-> +	close(self->stream_client);
-> +}
+> +       long *mas_ptr =3D this_cpu_ptr(&vector_misaligned_access);
+> +       unsigned long tmp_var;
 > +
-> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent and
-> + * child processes when connecting socket has different domain
-> + * than the process using it.
-> + **/
-> +TEST_F(unix_sock_special_cases, dgram_cases)
-> +{
-> +	pid_t child;
-> +	socklen_t addrlen;
-> +	int sock_len = 5;
-> +	struct sockaddr_un addr, addr_stream = {
-> +		.sun_family = AF_UNIX,
-> +	};
-> +	const char sun_path[8] = "\0test";
-> +	const char sun_path_stream[8] = "\0strm";
-> +	int err, status;
-> +	int pipe_child[2], pipe_parent[2];
-> +	char buf_parent;
+> +       *mas_ptr =3D RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN;
 > +
-> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +       kernel_vector_begin();
+> +       __asm__ __volatile__ (
+> +               ".balign 4\n\t"
+> +               ".option push\n\t"
+> +               ".option arch, +zve32x\n\t"
+> +               "       vsetivli zero, 1, e16, m1, ta, ma\n\t"  // Vector=
+s of 16b
+> +               "       vle16.v v0, (%[ptr])\n\t"               // Load b=
+ytes
+> +               ".option pop\n\t"
+> +               : : [ptr] "r" ((u8 *)&tmp_var + 1) : "v0");
+> +       kernel_vector_end();
 > +
-> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
-> +	memcpy(&addr.sun_path, sun_path, sock_len);
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		char buf_child;
-> +
-> +		ASSERT_EQ(0, close(pipe_parent[1]));
-> +		ASSERT_EQ(0, close(pipe_child[0]));
-> +
-> +		/* client always has domain */
-> +		create_unix_domain(_metadata);
-> +
-> +		if (variant->domain_server_socket) {
-> +			int data_socket;
-> +			int fd_sock = socket(AF_UNIX, variant->type, 0);
-> +
-> +			ASSERT_NE(-1, fd_sock);
-> +
-> +			self->stream_server = socket(AF_UNIX, SOCK_STREAM, 0);
-> +
-> +			ASSERT_NE(-1, self->stream_server);
-> +			memcpy(&addr_stream.sun_path, sun_path_stream,
-> +			       sock_len);
-> +			ASSERT_EQ(0, bind(self->stream_server,
-> +					  (struct sockaddr *)&addr_stream,
-> +					  addrlen));
-> +			ASSERT_EQ(0, listen(self->stream_server, 32));
-> +
-> +			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +
-> +			data_socket = accept(self->stream_server, NULL, NULL);
-> +
-> +			ASSERT_EQ(0, send_fd(data_socket, fd_sock));
-> +			ASSERT_EQ(0, close(fd_sock));
-> +			TH_LOG("sending completed\n");
-> +		}
-> +
-> +		self->client = socket(AF_UNIX, variant->type, 0);
-> +		ASSERT_NE(-1, self->client);
-> +		/* wait for parent signal for connection */
-> +		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> +
-> +		err = connect(self->client, (struct sockaddr *)&addr, addrlen);
-> +		if (!variant->domain_server_socket) {
-> +			EXPECT_EQ(-1, err);
-> +			EXPECT_EQ(EPERM, errno);
-> +		} else {
-> +			EXPECT_EQ(0, err);
-> +		}
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +
-> +	ASSERT_EQ(0, close(pipe_child[1]));
-> +	ASSERT_EQ(0, close(pipe_parent[0]));
-> +
-> +	if (!variant->domain_server_socket) {
-> +		self->server_socket = socket(AF_UNIX, variant->type, 0);
-> +	} else {
-> +		int cli = socket(AF_UNIX, SOCK_STREAM, 0);
-> +
-> +		ASSERT_NE(-1, cli);
-> +		memcpy(&addr_stream.sun_path, sun_path_stream, sock_len);
-> +		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> +		ASSERT_EQ(0, connect(cli, (struct sockaddr *)&addr_stream,
-> +				     addrlen));
-> +
-> +		self->server_socket = recv_fd(cli);
-> +		ASSERT_LE(0, self->server_socket);
-> +	}
-> +
-> +	ASSERT_NE(-1, self->server_socket);
-> +
-> +	if (variant->domain_server)
-> +		create_unix_domain(_metadata);
-> +
-> +	ASSERT_EQ(0,
-> +		  bind(self->server_socket, (struct sockaddr *)&addr, addrlen));
-> +	if (variant->type == SOCK_STREAM)
-> +		ASSERT_EQ(0, listen(self->server_socket, 32));
-> +	/* signal to child that parent is listening */
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
->  TEST_HARNESS_MAIN
-> -- 
-> 2.34.1
-> 
-> 
+> +       if (*mas_ptr =3D=3D RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN)
+> +               *mas_ptr =3D RISCV_HWPROBE_VECTOR_MISALIGNED_SLOW;
+
+I'm still not a fan of this "if we don't know, say it's slow" thing.
+Most consumers of this key will do something like "if
+(misaligned_access =3D=3D FAST) install_fast_functions()", and that'll
+work here too. But for usermode that really cares and is trying to
+interpret the other values, they're now forced to treat SLOW and
+UNKNOWN as the same value, since we sometimes return SLOW when we mean
+UNKNOWN. It seems better to me if the kernel is honestly reporting the
+information, and then usermode can extract real meaning from each of
+these values to the extent they care to.
 
