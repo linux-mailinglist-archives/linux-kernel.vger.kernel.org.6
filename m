@@ -1,205 +1,107 @@
-Return-Path: <linux-kernel+bounces-261797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F2093BC40
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7961E93BC46
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449941C234A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0581F23949
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC27113E40F;
-	Thu, 25 Jul 2024 05:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7AA14EC7E;
+	Thu, 25 Jul 2024 05:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jxrq+YPM"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfDeQ8Rk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6A41CD35
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D963014E2F5;
+	Thu, 25 Jul 2024 05:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721886915; cv=none; b=AotpYwUP7Ep49TMN/IWy99dBtP46dg4gcNi0xGC2Zphud8I8aPtLBHgJgXI9P638l1jwSCl6SoMBVikrMK4J0INszw0crSNjXdqWFDbo7vIqqUxDV4m4wU8TnbweLyC4YgXLngg98IHvpRy7YD6N1YFqSyjKfphNZk/33a4TPz0=
+	t=1721887069; cv=none; b=QpXbAzbgVTeeucZ3RuSLKTVaJov7SVHZeE71/lMA+250CTCMfd8noeZTgHe6zdwR5i5HvAGL2sSWbsqrstggVywix5pSl0VQ2sYjn6tgcr/mfuh9O4lkNrhbDaBvNqaV7wYsyD3YZoARCaRyinwCkstzlqoSTyuHdyU7WpQiyrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721886915; c=relaxed/simple;
-	bh=xuzbDE52Bn6g9Euv+PJQJSS0ckZ6+0Rbj8cvnQofx9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LBYikuoGq0nNHWItABSve8UOfsII/rUdIPmyKhtqsIuv6BCYrqcV1x2QzufTqRLP+sNeQmI/udVLYjUI3iJFwUVK20++f9yswVMlkFz6TGW6NLk2knKO0fZXmK9+Gr6NkcyxqxHiaalOEo/rqx9cWKC2S6jvOfFFnCjzmDBkFPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jxrq+YPM; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721886910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OzZHqkug/79QkjvohWjTIiykDjrWCF7qe3jwRF2k0Zc=;
-	b=jxrq+YPMUDN/EtNcSM8Vr6FrUYeofEuJoGyd1CjZ7tXTeUt6kNrNjdfaJD4eEmtkdCxdk/
-	EjwjCQri7eAAqPAGFXmt+5ao20q5FEcrCaaBVHPs/J2/j0JABoos8SC91XnUTGzvVqqqXb
-	euIV3+jiqz+VCU+FRKpQnnCDwLaWfLg=
-Date: Wed, 24 Jul 2024 22:54:53 -0700
+	s=arc-20240116; t=1721887069; c=relaxed/simple;
+	bh=Xzo+/0fKEArw98UEUgyX6dDr16x8+/w97OLWloTwTPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPWEGdSaknn0D2HjNO0wxO5k8+XJcgTMQercjLyVUFQmS79EZTUUWIwuiZoEuDNWlv3Ctk4vDxEihxDuQL5XwEno0G3o3xDIpuR5hTj0Y3TX4JEAvuVdp0bQm+EGMoBTfP4g6NNpANKcF0ava28CMHRTs7wKpQf6TlXtR451aCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfDeQ8Rk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D417CC116B1;
+	Thu, 25 Jul 2024 05:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721887068;
+	bh=Xzo+/0fKEArw98UEUgyX6dDr16x8+/w97OLWloTwTPk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WfDeQ8RkYPzzsKdE0libkMbEAdJRuiyi5kkV5F2ZK6X2KAEzZJTV13vPEOLiPm4BO
+	 ZxDI7mFTtg+L8GpXxhXatA2Z1h4whLXFUxM9ePFm6fN3pKZAMsfI0IoUhmadHAlUs4
+	 itiI3Lj7dclY2VD6BdYjdXO8KtMZ2Fc7SVRMXHkC+5TpvNSV3pk3oImAbEd40q+znj
+	 D2Uil+oJ1nCSoFNX10mNkCae+W92AbCKZoniuQyQs0nL5LbMdZczZsGI9HE9UVceRS
+	 s86u5jlhXP0S5nKRdtGu7CTqaGWvv0dFU/ZUKO6WJKHc4JAD39UKE6XYMQOBi1K1I7
+	 IUWsYb6OD/Q4g==
+Date: Thu, 25 Jul 2024 11:27:44 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
+	kernel test robot <lkp@intel.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, oe-kbuild-all@lists.linux.dev,
+	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH RESEND v9 2/2] dmaengine: Loongson1: Add Loongson-1 APB
+ DMA driver
+Message-ID: <ZqHpWKLhRUi0N5Ps@matsya>
+References: <20240711-loongson1-dma-v9-2-5ce8b5e85a56@gmail.com>
+ <202407140536.iIizeGVy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-Content-Language: en-GB
-To: Zheao Li <me@manjusaka.me>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: Leon Hwang <hffilwlqm@gmail.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240725051511.57112-1-me@manjusaka.me>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20240725051511.57112-1-me@manjusaka.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407140536.iIizeGVy-lkp@intel.com>
 
+On 14-07-24, 05:11, kernel test robot wrote:
+> Hi Keguang,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on d35b2284e966c0bef3e2182a5c5ea02177dd32e4]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-dma-Add-Loongson-1-APB-DMA/20240711-191657
+> base:   d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> patch link:    https://lore.kernel.org/r/20240711-loongson1-dma-v9-2-5ce8b5e85a56%40gmail.com
+> patch subject: [PATCH RESEND v9 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+> config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240714/202407140536.iIizeGVy-lkp@intel.com/config)
+> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240714/202407140536.iIizeGVy-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407140536.iIizeGVy-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from include/linux/printk.h:598,
+>                     from include/asm-generic/bug.h:22,
+>                     from arch/x86/include/asm/bug.h:87,
+>                     from include/linux/bug.h:5,
+>                     from include/linux/fortify-string.h:6,
+>                     from include/linux/string.h:374,
+>                     from include/linux/scatterlist.h:5,
+>                     from include/linux/dmapool.h:14,
+>                     from drivers/dma/loongson1-apb-dma.c:8:
+>    drivers/dma/loongson1-apb-dma.c: In function 'ls1x_dma_start':
+> >> drivers/dma/loongson1-apb-dma.c:137:34: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t' {aka 'long long unsigned int'} [-Wformat=]
+>      137 |         dev_dbg(chan2dev(dchan), "cookie=%d, starting hwdesc=%x\n",
 
-On 7/24/24 10:15 PM, Zheao Li wrote:
-> This is a v2 patch, previous Link: https://lore.kernel.org/bpf/20240724152521.20546-1-me@manjusaka.me/T/#u
->
-> Compare with v1:
->
-> 1. Format the code style and signed-off field
-> 2. Use a shorter name bpf_check_attach_target_with_klog instead of
-> original name bpf_check_attach_target_with_kernel_log
->
-> When attaching a freplace hook, failures can occur,
-> but currently, no output is provided to help developers diagnose the root cause.
->
-> This commit adds a new method, bpf_check_attach_target_with_klog,
-> which outputs the verifier log to the kernel.
-> Developers can then use dmesg to obtain more detailed information about the failure.
->
-> For an example of eBPF code,
-> Link: https://github.com/Asphaltt/learn-by-example/blob/main/ebpf/freplace/main.go
->
-> Co-developed-by: Leon Hwang <hffilwlqm@gmail.com>
-> Signed-off-by: Leon Hwang <hffilwlqm@gmail.com>
-> Signed-off-by: Zheao Li <me@manjusaka.me>
-> ---
->   include/linux/bpf_verifier.h |  5 +++++
->   kernel/bpf/syscall.c         |  5 +++--
->   kernel/bpf/trampoline.c      |  6 +++---
->   kernel/bpf/verifier.c        | 19 +++++++++++++++++++
->   4 files changed, 30 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-> index 5cea15c81b8a..8eddba62c194 100644
-> --- a/include/linux/bpf_verifier.h
-> +++ b/include/linux/bpf_verifier.h
-> @@ -848,6 +848,11 @@ static inline void bpf_trampoline_unpack_key(u64 key, u32 *obj_id, u32 *btf_id)
->   		*btf_id = key & 0x7FFFFFFF;
->   }
->   
-> +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
-> +					    const struct bpf_prog *tgt_prog,
-> +					    u32 btf_id,
-> +					    struct bpf_attach_target_info *tgt_info);
+You should not use %x for dma_addr_t, please see documentation
 
-format issue in the above. Same code alignment is needed for arguments in different lines.
-
-> +
->   int bpf_check_attach_target(struct bpf_verifier_log *log,
->   			    const struct bpf_prog *prog,
->   			    const struct bpf_prog *tgt_prog,
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 869265852d51..bf826fcc8cf4 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -3464,8 +3464,9 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
->   		 */
->   		struct bpf_attach_target_info tgt_info = {};
->   
-> -		err = bpf_check_attach_target(NULL, prog, tgt_prog, btf_id,
-> -					      &tgt_info);
-> +		err = bpf_check_attach_target_with_klog(prog, NULL,
-> +							      prog->aux->attach_btf_id,
-> +							      &tgt_info);
-
-code alignment issue here as well.
-Also, the argument should be 'prog, tgt_prog, btf_id, &tgt_info', right?
-
->   		if (err)
->   			goto out_unlock;
->   
-> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> index f8302a5ca400..8862adaa7302 100644
-> --- a/kernel/bpf/trampoline.c
-> +++ b/kernel/bpf/trampoline.c
-> @@ -699,9 +699,9 @@ int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
->   	u64 key;
->   	int err;
->   
-> -	err = bpf_check_attach_target(NULL, prog, NULL,
-> -				      prog->aux->attach_btf_id,
-> -				      &tgt_info);
-> +	err = bpf_check_attach_target_with_klog(prog, NULL,
-> +						      prog->aux->attach_btf_id,
-> +						      &tgt_info);
-
-code alignment issue here
-
->   	if (err)
->   		return err;
->   
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 1f5302fb0957..4873b72f5a9a 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -21643,6 +21643,25 @@ static int check_non_sleepable_error_inject(u32 btf_id)
->   	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
->   }
->   
-> +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
-> +					    const struct bpf_prog *tgt_prog,
-> +					    u32 btf_id,
-> +					    struct bpf_attach_target_info *tgt_info);
-
-code alignment issue here.
-
-> +{
-> +	struct bpf_verifier_log *log;
-> +	int err;
-> +
-> +	log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
-
-__GFP_NOWARN is unnecessary here.
-
-> +	if (!log) {
-> +		err = -ENOMEM;
-> +		return err;
-> +	}
-> +	log->level = BPF_LOG_KERNEL;
-> +	err = bpf_check_attach_target(log, prog, tgt_prog, btf_id, tgt_info);
-> +	kfree(log);
-> +	return err;
-> +}
-> +
->   int bpf_check_attach_target(struct bpf_verifier_log *log,
->   			    const struct bpf_prog *prog,
->   			    const struct bpf_prog *tgt_prog,
-
-More importantly, Andrii has implemented retsnoop, which intends to locate
-precise location in the kernel where err happens. The link is
-   https://github.com/anakryiko/retsnoop
-
-Maybe you want to take a look and see whether it can resolve your issue.
-We should really avoid putting more stuff in dmesg whenever possible.
-
+-- 
+~Vinod
 
