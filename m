@@ -1,261 +1,179 @@
-Return-Path: <linux-kernel+bounces-261928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443B593BDE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E5693BDF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718651C21A56
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A80ED1C21A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2941741F0;
-	Thu, 25 Jul 2024 08:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1AE1741F2;
+	Thu, 25 Jul 2024 08:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="tbn/p/R8"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2978E1741D4;
-	Thu, 25 Jul 2024 08:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="knvRw69S"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3A0172BD8;
+	Thu, 25 Jul 2024 08:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721895853; cv=none; b=jbLNJ0eQn+QPRiTxdra8F2ULVx6XU89sGoG/PuZdPAeByjtr9F/A58q7lnuHsPGBgqSkVqNG45iRwYxGPgctQ5lolUR7HHourvw3Dx9Yx/jNkGCKO1wHGQnIhI+ygaGbtKZwrNo4dqCpNE+isfmGWziW58wJVTmNYNqduvxqByY=
+	t=1721896149; cv=none; b=rHlnTFzM3NwnL2nOkd3yxH3nT9483NIhHCjtdYkF+mEWqTpxYLMSNWEdmHF9uYCJ7iVyAy/J34DtAMT4/V/CGnUqcKV8w1+bP/7782M7MZ4fG+U+Hy9jV7LQU3crvMs1a6sWgnEo1mTig3y0u/IhLRP26BOQLp79ZTJ1hA0AYHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721895853; c=relaxed/simple;
-	bh=aeaap9eclPL9FbQj5ZdIDNseDkr5CpARzOP9GtSFEsg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=NgYRVVv6opHpkNWzPrAPNOJ7oM8zlU1BaHr/H+hKDtnsKXpK3Xw6ofIAoLUYxDfG2+Hy+BdX0T2P457eoQKWvcLVHm1/bs6y3WCTy7+9fUtMJGyt5FjuncY3EQ8m+aajUxbatK1TP9Y1DPPYaHHmkXBzr21zbmr8m0rznMO3c1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=tbn/p/R8; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721896149; c=relaxed/simple;
+	bh=tN6cAHdUmUxkAdTjBaHHA6rIz2i23coQvVGIBgNEO3c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cllqHAx0cZxMD9fgfnbohGUmeXpsVLLdinso2a6eQbB0CK/pXzLx1TqZwUYGXxCm1pytVWCcoM5+junYZ72JvoJgz2jTMsPZv5OIcjsI83f9YDwGkNC4d8liIZpvqq6y894yd6Ny9IB2KsuZ/zkk6yWOYoKaVwIlAlPJnplAWss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=knvRw69S; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=wKwqb
+	elMp4OiKqBXRvZ4oGV+SEc29Z6xEPPoTzINaBI=; b=knvRw69SXUVrA8YBOWApt
+	Lw7HB28aZXOOdoI8Bt/oSfrttucygnZBMUShgICFWGh4BTr//aRK4r1kq0Sy0wE1
+	YKkWbJEHOQN9EakRmay3Tw+KRSy+QnEptxqxlzIDd+gv4OgcjkNhu3QU3vlWr4av
+	Ekgr5MsFBdwSmDpaJa+3Ig=
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wD3f0YmDKJmW11tAQ--.48631S2;
+	Thu, 25 Jul 2024 16:26:15 +0800 (CST)
+From: soxiebing <soxiebing@163.com>
+To: tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	songxiebing <songxiebing@kylinos.cn>,
+	bo liu <bo.liu@senarytech.com>
+Subject: [PATCH] ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
+Date: Thu, 25 Jul 2024 16:26:10 +0800
+Message-Id: <20240725082610.45504-1-soxiebing@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721895847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7HYnW+Nl3MdFFOY14aJKMCJCcy27SKGZVNUgmyKfR2g=;
-	b=tbn/p/R8JTZFUnBu1wXhDtIlzH5W150mmBC4FE3EjcRhwKYB+4Si8Lua2Kv3d+r/cNDYzJ
-	7ry8f/lIty0BTc6GuOH88/5y1e6GI/txt6HkjKvoDYnbNM/PUIighd5lTHI1N7AXA3KeL1
-	mvgULOdczJREgDujGZFEpYSCkfXlk0i0JXTiM70jgL1bTxT3W5uCY2+PIysqC7opAjINT0
-	U72CMW0r+WVJmTJKAkGdJY1tMqes3yBl//SUqVv6JZawPp2bxjyk704L9WniSCuB9Jd7oS
-	mOJgfEzQCic6MhMmaOrp8izt0DQ43BgjTEpDDPyyUu91+fN0MB8WovUayTZafw==
-Date: Thu, 25 Jul 2024 10:24:07 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Steven Price <steven.price@arm.com>
-Cc: dri-devel@lists.freedesktop.org, boris.brezillon@collabora.com,
- robh@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>,
- Furkan Kardame <f.kardame@manjaro.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
-In-Reply-To: <192dbcd968dfebf825a3a759701bf381@manjaro.org>
-References: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
- <f672e7460c92bc9e0c195804f7e99d0b@manjaro.org>
- <e42a55ba-cbb5-47a4-bec6-9c3067040970@arm.com>
- <192dbcd968dfebf825a3a759701bf381@manjaro.org>
-Message-ID: <d20667e76aa56fb69c91ef327d467d4a@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-CM-TRANSID:_____wD3f0YmDKJmW11tAQ--.48631S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAr1xJw47uF13JFy3Cry3urg_yoWrCrWDpF
+	1rCF1fXrZ3tF1vvayrJrZ7u3WUCFyfZFZrG347tryxtw1a9rykXa47WrySvFWfJFyDKF12
+	vr4q9a4Utr4UXFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeoGQUUUUU=
+X-CM-SenderInfo: 5vr0xvpelqwqqrwthudrp/1tbiRAwnw2VOD6Po+wAAs4
 
-Hello Steven and Boris,
+From: songxiebing <songxiebing@kylinos.cn>
 
-On 2024-07-03 16:52, Dragan Simic wrote:
-> On 2024-07-03 15:20, Steven Price wrote:
->> On 03/07/2024 13:42, Dragan Simic wrote:
->>> On 2024-06-17 22:17, Dragan Simic wrote:
->>>> Panfrost DRM driver uses devfreq to perform DVFS, while using
->>>> simple_ondemand
->>>> devfreq governor by default.  This causes driver initialization to
->>>> fail on
->>>> boot when simple_ondemand governor isn't built into the kernel
->>>> statically,
->>>> as a result of the missing module dependency and, consequently, the
->>>> required
->>>> governor module not being included in the initial ramdisk.  Thus,
->>>> let's mark
->>>> simple_ondemand governor as a softdep for Panfrost, to have its 
->>>> kernel
->>>> module
->>>> included in the initial ramdisk.
->>>> 
->>>> This is a rather longstanding issue that has forced distributions to
->>>> build
->>>> devfreq governors statically into their kernels, [1][2] or has 
->>>> forced
->>>> users
->>>> to introduce some unnecessary workarounds. [3]
->>>> 
->>>> For future reference, not having support for the simple_ondemand
->>>> governor in
->>>> the initial ramdisk produces errors in the kernel log similar to 
->>>> these
->>>> below,
->>>> which were taken from a Pine64 RockPro64:
->>>> 
->>>>   panfrost ff9a0000.gpu: [drm:panfrost_devfreq_init [panfrost]]
->>>> *ERROR* Couldn't initialize GPU devfreq
->>>>   panfrost ff9a0000.gpu: Fatal error during GPU init
->>>>   panfrost: probe of ff9a0000.gpu failed with error -22
->>>> 
->>>> Having simple_ondemand marked as a softdep for Panfrost may not
->>>> resolve this
->>>> issue for all Linux distributions.  In particular, it will remain
->>>> unresolved
->>>> for the distributions whose utilities for the initial ramdisk
->>>> generation do
->>>> not handle the available softdep information [4] properly yet. 
->>>> However, some
->>>> Linux distributions already handle softdeps properly while 
->>>> generating
->>>> their
->>>> initial ramdisks, [5] and this is a prerequisite step in the right
->>>> direction
->>>> for the distributions that don't handle them properly yet.
->>>> 
->>>> [1] 
->>>> https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/blob/linux61/config?ref_type=heads#L8180
->>>> [2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1066
->>>> [3] https://forum.pine64.org/showthread.php?tid=15458
->>>> [4] 
->>>> https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
->>>> [5] 
->>>> https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
->>>> 
->>>> Cc: Diederik de Haas <didi.debian@cknow.org>
->>>> Cc: Furkan Kardame <f.kardame@manjaro.org>
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
->>>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> 
->> Reviewed-by: Steven Price <steven.price@arm.com>
-> 
-> Thanks!
-> 
->>> Just checking, could this patch be accepted, please?  The Lima 
->>> counterpart
->>> has already been accepted. [6]
->> 
->> Thanks for the prod - I have to admit I saw there was discussion about
->> the Lima patch and so just put this on my list to look again later 
->> after
->> the discussion had reached a conclusion.
->> 
->>> The approach in this patch is far from perfect, but it's still fine 
->>> until
->>> there's a better solution, such as harddeps.  I'll continue my 
->>> research
->>> about the possibility for introducing harddeps, which would hopefully
->>> replace quite a few instances of the softdep (ab)use that already 
->>> extend
->>> rather far.  For example, have a look at the commit d5178578bcd4 
->>> (btrfs:
->>> directly call into crypto framework for checksumming) [7] and the 
->>> lines
->>> containing MODULE_SOFTDEP() at the very end of fs/btrfs/super.c. [8]
->> 
->> I agree - it's not perfect, but it's the best we have for now. I hope
->> sometime we'll have a cleaner solution to express dependencies like 
->> this
->> (good luck! ;) ).
-> 
-> Thanks. :)  Implementing harddeps is _relatively_ straightforward, but
-> getting full support for harddeps reach various Linux distributions is
-> going to be an uphill battle without doubt. :)
+'Fixes: 7aeb25908648 ("Fix headset auto detect fail in cx8070 and SN6140")'
 
-Another option has become available for expressing additional module
-dependencies, weakdeps. [1][2]  Long story short, weakdeps are similar
-to softdeps, in the sense of telling the initial ramdisk utilities to
-include additional kernel modules, but weakdeps result in no module
-loading being performed by userspace.
+This patch only handles the unsol_event reporting during interrupts
+and does not include the polling mode used to set jackroll_ms, so
+it's changed to use snd_hda_jack_detect-enable_callback function.
 
-Maybe "weak" isn't the best possible word choice (arguably, "soft" also
-wasn't the best word choice), but weakdeps should be a better choice for
-use with Panfrost and governor_simpleondemand, because weakdeps provide
-the required information to the utilities used to generate initial 
-ramdisks,
-while the actual module loading is left to the kernel.
+Co-developed-by: bo liu <bo.liu@senarytech.com>
+Signed-off-by: songxiebing <songxiebing@kylinos.cn>
+---
+ sound/pci/hda/patch_conexant.c | 54 ++++++----------------------------
+ 1 file changed, 9 insertions(+), 45 deletions(-)
 
-The recent addition of weakdeps renders the previously mentioned 
-harddeps
-obsolete, because weakdeps actually do what we need.  Obviously, "weak"
-doesn't go along very well with the actual nature of the dependency 
-between
-Panfrost and governor_simpleondemand, but it's pretty much just the 
-somewhat
-unfortunate word choice.
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index 17389a3801bd..e994ebad53fa 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -21,12 +21,6 @@
+ #include "hda_jack.h"
+ #include "hda_generic.h"
+ 
+-enum {
+-	CX_HEADSET_NOPRESENT = 0,
+-	CX_HEADSET_PARTPRESENT,
+-	CX_HEADSET_ALLPRESENT,
+-};
+-
+ struct conexant_spec {
+ 	struct hda_gen_spec gen;
+ 
+@@ -48,7 +42,6 @@ struct conexant_spec {
+ 	unsigned int gpio_led;
+ 	unsigned int gpio_mute_led_mask;
+ 	unsigned int gpio_mic_led_mask;
+-	unsigned int headset_present_flag;
+ 	bool is_cx8070_sn6140;
+ };
+ 
+@@ -250,48 +243,19 @@ static void cx_process_headset_plugin(struct hda_codec *codec)
+ 	}
+ }
+ 
+-static void cx_update_headset_mic_vref(struct hda_codec *codec, unsigned int res)
++static void cx_update_headset_mic_vref(struct hda_codec *codec, struct hda_jack_callback *event)
+ {
+-	unsigned int phone_present, mic_persent, phone_tag, mic_tag;
+-	struct conexant_spec *spec = codec->spec;
++	unsigned int mic_persent;
+ 
+ 	/* In cx8070 and sn6140, the node 16 can only be config to headphone or disabled,
+ 	 * the node 19 can only be config to microphone or disabled.
+ 	 * Check hp&mic tag to process headset pulgin&plugout.
+ 	 */
+-	phone_tag = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
+-	mic_tag = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
+-	if ((phone_tag & (res >> AC_UNSOL_RES_TAG_SHIFT)) ||
+-	    (mic_tag & (res >> AC_UNSOL_RES_TAG_SHIFT))) {
+-		phone_present = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_PIN_SENSE, 0x0);
+-		if (!(phone_present & AC_PINSENSE_PRESENCE)) {/* headphone plugout */
+-			spec->headset_present_flag = CX_HEADSET_NOPRESENT;
+-			snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
+-			return;
+-		}
+-		if (spec->headset_present_flag == CX_HEADSET_NOPRESENT) {
+-			spec->headset_present_flag = CX_HEADSET_PARTPRESENT;
+-		} else if (spec->headset_present_flag == CX_HEADSET_PARTPRESENT) {
+-			mic_persent = snd_hda_codec_read(codec, 0x19, 0,
+-							 AC_VERB_GET_PIN_SENSE, 0x0);
+-			/* headset is present */
+-			if ((phone_present & AC_PINSENSE_PRESENCE) &&
+-			    (mic_persent & AC_PINSENSE_PRESENCE)) {
+-				cx_process_headset_plugin(codec);
+-				spec->headset_present_flag = CX_HEADSET_ALLPRESENT;
+-			}
+-		}
+-	}
+-}
+-
+-static void cx_jack_unsol_event(struct hda_codec *codec, unsigned int res)
+-{
+-	struct conexant_spec *spec = codec->spec;
+-
+-	if (spec->is_cx8070_sn6140)
+-		cx_update_headset_mic_vref(codec, res);
+-
+-	snd_hda_jack_unsol_event(codec, res);
++	mic_present = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_PIN_SENSE, 0x0);
++	if (!(mic_present & AC_PINSENSE_PRESENCE)) /* mic plugout */
++		snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
++	else
++		cx_process_headset_plugin(codec);
+ }
+ 
+ static int cx_auto_suspend(struct hda_codec *codec)
+@@ -305,7 +269,7 @@ static const struct hda_codec_ops cx_auto_patch_ops = {
+ 	.build_pcms = snd_hda_gen_build_pcms,
+ 	.init = cx_auto_init,
+ 	.free = cx_auto_free,
+-	.unsol_event = cx_jack_unsol_event,
++	.unsol_event = snd_hda_jack_unsol_event,
+ 	.suspend = cx_auto_suspend,
+ 	.check_power_status = snd_hda_gen_check_power_status,
+ };
+@@ -1163,7 +1127,7 @@ static int patch_conexant_auto(struct hda_codec *codec)
+ 	case 0x14f11f86:
+ 	case 0x14f11f87:
+ 		spec->is_cx8070_sn6140 = true;
+-		spec->headset_present_flag = CX_HEADSET_NOPRESENT;
++		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
+ 		break;
+ 	}
+ 
+-- 
+2.25.1
 
-The support for weakdeps has been already added to the kmod [3][4] and
-Dracut [5] userspace utilities.  I'll hopefully add support for weakdeps
-to mkinitcpio [6] rather soon.
-
-Maybe we could actually add MODULE_HARDDEP() as some kind of syntactic
-sugar, which would currently be an alias for MODULE_WEAKDEP(), so the
-actual hard module dependencies could be expressed properly, and 
-possibly
-handled differently in the future, with no need to go back and track all
-such instances of hard module dependencies.
-
-With all this in mind, here's what I'm going to do:
-
-1) Submit a patch that adds MODULE_HARDDEP() as syntactic sugar
-2) Implement support for weakdeps in Arch Linux's mkinitcpio [6]
-3) Depending on what kind of feedback the MODULE_HARDDEP() patch 
-receives,
-    I'll submit follow-up patches for Lima and Panfrost, which will swap
-    uses of MODULE_SOFTDEP() with MODULE_HARDDEP() or MODULE_WEAKDEP()
-
-Looking forward to your thoughts.
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/module.h?id=61842868de13aa7fd7391c626e889f4d6f1450bf
-[2] 
-https://lore.kernel.org/linux-kernel/20240724102349.430078-1-jtornosm@redhat.com/T/#u
-[3] 
-https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
-[4] 
-https://github.com/kmod-project/kmod/commit/d06712b51404061eef92cb275b8303814fca86ec
-[5] 
-https://github.com/dracut-ng/dracut-ng/commit/8517a6be5e20f4a6d87e55fce35ee3e29e2a1150
-[6] https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio
-
->>> If a filesystem driver can rely on the (ab)use of softdeps, which may 
->>> be
->>> fragile or seen as a bit wrong, I think we can follow the same 
->>> approach,
->>> at least until a better solution is available.
->>> 
->>> [6] 
->>> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0c94f58cef319ad054fd909b3bf4b7d09c03e11c
->>> [7] 
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5178578bcd4
->>> [8] 
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/btrfs/super.c#n2593
->>> 
->>>> ---
->>>>  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>> 
->>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>> b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>> index ef9f6c0716d5..149737d7a07e 100644
->>>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>> @@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
->>>>  MODULE_AUTHOR("Panfrost Project Developers");
->>>>  MODULE_DESCRIPTION("Panfrost DRM Driver");
->>>>  MODULE_LICENSE("GPL v2");
->>>> +MODULE_SOFTDEP("pre: governor_simpleondemand");
 
