@@ -1,81 +1,61 @@
-Return-Path: <linux-kernel+bounces-262643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9627093C9EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:55:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70A893C9F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81B31C22081
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:55:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63473282130
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6853813D51C;
-	Thu, 25 Jul 2024 20:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AACF13D893;
+	Thu, 25 Jul 2024 20:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aH0aIWpB"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNGhYjPm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7273861FCE;
-	Thu, 25 Jul 2024 20:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C1058222;
+	Thu, 25 Jul 2024 20:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721940905; cv=none; b=JlFLLFEQMHmwITlDl1h6mPgNkoHZQBzHdc+JG1Pyor3/0wcKqFIqCxDW9GRwnR3cxYfkuhdh+xfkEqQIt7/QyFSAf7F0UxCtn+0ewTe9ffhv4bc2OMyeILM8vrFMFQr7IYcz+5VZzOMINjIgw1XQOZlWjvDIHFaV7TJZQG8NFzA=
+	t=1721940939; cv=none; b=RwDEqWXHzOKkxiyvnX02pktpjk7AImXWC8gLoritLpaj/0RoO75FtSXGYL8yW8pO2vNpAVj+SAMgby35C0Y6hXj3u3VIZPdiAbJAmchtrlLohzQ4n9lG5C6N8657vChBZHP8kASfH5b9ai4Ikzc1tntVVYxPsbMXTtIzFhZquhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721940905; c=relaxed/simple;
-	bh=K8LW+NrB2evn6pZc+s4SWid7fRlY31iR/EpkNxYRTlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FB18qKdh4UrQTlAAnZCvgdkcmeachBVCN/01phJNz29eemrRZH1gUKA1cMPBj6Tvm2Tn1ZArz0c0QGhg9mUvjtRQULOQ6drMHFr7CnMxU0OCNmWpFxDgW9OF12L9AclKYBH0u59empqV2MM2TZCQ8LzQpj9/cwQxEA32HXGP7eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aH0aIWpB; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7163489149eso237047a12.1;
-        Thu, 25 Jul 2024 13:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721940904; x=1722545704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RLXtc+uqVKCqbWVjFHgQL0L5dVQ3MV0FyYC+mRCNVMM=;
-        b=aH0aIWpB9QqAvLfb6XeLooPavajfXQ9/l6YBUc1F6b1i1VnPTWGo0c0mJBFHDV0myx
-         zYow25ZhOEw40iI+3ZfvJCYL24Cy/FjjtPlEvkt3nIPFSBG2mUxIYJbtCVhS3CGZSq1o
-         TH8agh7eqPH/H+NUmn+6mtabm0IxPej3K1M4fUw4tG6Ufb07VwYigScSraSi9KOLOz1s
-         cJCAwi1T6C4R73SwYpbxZKjD7y2ns+JheHFmcaATHm0C4Op5BN6Zto65roTquB7aK+68
-         a6KY0XSBBTZ2FoEqHcx4G/4JyEyVjG1leMlY7gQwjabAjHVaNN2va1gnRVCkwo8rZ9jo
-         jluA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721940904; x=1722545704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RLXtc+uqVKCqbWVjFHgQL0L5dVQ3MV0FyYC+mRCNVMM=;
-        b=aCxpbyXhOGHGXIpYsoAh/efo043zOcKQm0Sg9G2ffuSrf7cqkSDupcq+ykL0BKJFE1
-         6NoEqbrsNyxHB/HAgWzgfvQFGwXsgW32YCeypJ4NQByxwENhU0j7xQ0/ciPK1DcYnUzt
-         8o5fWYJFld78b4gQfTTRIWi7LfXgT0gAtq7MDI92HSUGhcvOSdcUmvqs/4gLFk6iMjUr
-         MMm6xWwadEfwVKsBP6nJ4r5BJZqYsKW6rdAqOuj6cyzByjJm8rPSuQdIxjtvucRZs6uB
-         WEKg1cWMPUUQ6VNJGzz8Z/DpywyTUhrKflVnioVE3KBFg1LZfhLT3OKdSn2MVYpDjK0p
-         HhyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU3SHtZVqobq/pB1HiYo/DOwtApKCUs2FxDbMj7xKi0E3GuRQ5Tn4lE6RqB9iC7UAGbfzdBO02kDVpzfm+HNvigF0t3W7O+pFL2E+Akpt6VHA7czbNC1dSSnscFsij/bqdocEP1c7LV6hoBISGgXLfRCunqz45lEKv1UumpXDMZotvvJxekPZzp5I=
-X-Gm-Message-State: AOJu0Yzv1YxzJwWUqd67MH9cE+zg/IhQa/YRZucwQYPghhqUUe3uKrp4
-	UmEpbJwB5dDEojzFFudkQQaPnvXt48mpIxlUlXxOa8Wnf7R/YRtGbez37Q==
-X-Google-Smtp-Source: AGHT+IHKxZkD2Dnl6gnx/oHiwCu7THwfC9aAMKNgvKqi3mrLM1I5sg/+VSVlf0hbjMuqWY20kh/82A==
-X-Received: by 2002:a17:90b:1c86:b0:2cd:49c6:e2d7 with SMTP id 98e67ed59e1d1-2cf2ea26c3dmr3377595a91.19.1721940903545;
-        Thu, 25 Jul 2024 13:55:03 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:2c0d:838d:8114:e714])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c9cef7sm1996489a91.29.2024.07.25.13.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 13:55:03 -0700 (PDT)
-Date: Thu, 25 Jul 2024 13:55:00 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: vipulkumar.samar@st.com, viresh.kumar@linaro.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] Input: spear-keyboard - Switch to
- devm_clk_get_prepared()
-Message-ID: <ZqK7pJ3TaqgwVYpE@google.com>
-References: <cover.1721939824.git.christophe.jaillet@wanadoo.fr>
- <ea855328eb4396cd1c44d2b6acc1fc394fcb1508.1721939824.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1721940939; c=relaxed/simple;
+	bh=q/ZVXjVJyqULDlY2L9HHIXXTOO2aCFo8z2iw0QdZvFk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DnJuBzCNoH+PlIBkq/h501qZe6SVIbD16U4HJ4OXKoJ4Cp+yPMaJIHDXBBXo2BrGhGruD7jdy1ciAeVpqXd5LkDcT2KmGX3rr06E4f+T/EE7Led0I3Z/GCMvuBjjE6ZpyRGYVaNL8xDS+yTgqZimlicesHGbYaLZIlwPk5p+NT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNGhYjPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EBE8C116B1;
+	Thu, 25 Jul 2024 20:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721940939;
+	bh=q/ZVXjVJyqULDlY2L9HHIXXTOO2aCFo8z2iw0QdZvFk=;
+	h=Date:From:To:Subject:In-Reply-To:From;
+	b=WNGhYjPmjFIvAT1SwaBYZgJcsw62bVFLXBFg+x8q2lERBtNaSTiui+/tQihI+Opd7
+	 cbGaKU4Msb/uGrrz3CqBMswJosEe+z9yCIeWn6Jzd6PSm3Birc3c6B4UdnzoFKMmSd
+	 TAVbQ39UCJJ+SP6yfu5sq5YyBCLp2GsGIS+lPEEPwNWXa4tgJcbQK+TYj87PL75D74
+	 cxskVvi8m/yF4RwCFMfSWtfAVGMcb6wg8/5HusfF2HluDXMO8UgVd+oJk/ge6cWVON
+	 a00y2h9dhYeb3VDHsQ0+jJ5dA+88pSqflp/vhLHiGKifhW+/mxb/XH3xIeVXW0b/26
+	 cnmvp2sW8L65w==
+Date: Thu, 25 Jul 2024 15:55:37 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Vaibhav Jain <vaibhav@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+	Kowshik Jois B S <kowsjois@linux.ibm.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+Message-ID: <20240725205537.GA858788@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,22 +64,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea855328eb4396cd1c44d2b6acc1fc394fcb1508.1721939824.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
 
-On Thu, Jul 25, 2024 at 10:46:50PM +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
-> error handling path of the probe and completely remove the .remove()
-> function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Thu, Jul 25, 2024 at 11:15:39PM +0530, Amit Machhiwal wrote:
+> ...
+> The crash in question is a critical issue that we would want to have
+> a fix for soon. And while this is still being figured out, is it
+> okay to go with the fix I proposed in the V1 of this patch?
 
-Please refresh after dropping the 1st patch and resend. You may remove
-the call to input_unregister_device() in the context of this change as
-without explicit call to clk_unprepare() on removal we can fully rely on
-devm for cleaning up.
+v6.10 has been released already, and it will be a couple months before
+the v6.11 release.
 
-Thanks.
+It looks like the regression is 407d1a51921e, which appeared in v6.6,
+almost a year ago, so it's fairly old.
 
--- 
-Dmitry
+What target are you thinking about for the V1 patch?  I guess if we
+add it as a v6.11 post-merge window fix, it might get backported to
+stable kernels before v6.11?  But if the plan is to merge the V1 patch
+and then polish it again before v6.11 releases, I'm not sure it's
+worth the churn.
+
+Bjorn
 
