@@ -1,263 +1,85 @@
-Return-Path: <linux-kernel+bounces-262243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6E693C2E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:28:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C757C93C30F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516531F21383
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:28:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7791F21ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CEB199395;
-	Thu, 25 Jul 2024 13:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77C419B5A5;
+	Thu, 25 Jul 2024 13:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qwgv5WgF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OeS2bWh5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qwgv5WgF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OeS2bWh5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYEWS4jC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06731225CE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C48E19B3ED;
+	Thu, 25 Jul 2024 13:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721914101; cv=none; b=Kejj4nqkW+GhGNo9Ie1jsb5735e+aOcqMyONwKFXD39lgTibV1FvSXBdQy/Hs9gcYPOkI7NiAcy+BBEMv+HIg5xn5IeClBXAC3Sjqd8YXIhw5INqfNbq154YQoN83Q5RD2wQvFLzloZEsvSaMt0C2C9n+J+WGV/mOYNTiAu7TSM=
+	t=1721914141; cv=none; b=qeY4XCVUGRhPSU+LodpEkutArtZnqBERgxUXSZP/RxzUzgiH+PGlnLMZO1YkdAtilCW32LkHbeZaxSgcwVXRZFXQycID53u2yO9rpfprRsvxmWV0QLnLm6KzQtEvxDBVJ8Bh6SMHb6ZURBVZUhyOQRgUZSHaqpIPWkJQc0wwSzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721914101; c=relaxed/simple;
-	bh=OzPQPCEJRO1IfmiF18UnKKVnjJj6kZy/1W9LD1bnTw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hpV9ByqJBQPB1zdUSvyBPD5Xe+AUeYGsbFLDqw72j1Wx/+zNAuvCCSzbj6X/hzWkfyqxMfyKrTPXCzCILKYBOdr3EVDsp2MHYQpg3RVIcvfKIljzQ2ARqBZi5CZe61/AnGmF02SjTm1EdkW0y2cv0y7gdSi+sHskJDbQ4viqjE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qwgv5WgF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OeS2bWh5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qwgv5WgF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OeS2bWh5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2D2241F45A;
-	Thu, 25 Jul 2024 13:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721914098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nzZHcDWPcyAz8CXsFh+8t8U1Us29p2EGEPiftIzXCfo=;
-	b=qwgv5WgF0NozgV05o6dKgJiCj6n4+0VZ6+wbyFtdHLcvR0pqj5Bbfq+ESsr9Au8xiOihxB
-	KQKdhyb1C0DYKxDenn8/Z/z/QMKGTKQDfgknYKxvYrsXQFSjjtdB1ydxpJ+XI08J+UgZ8K
-	OCN52G/RhN7UPOy9sppP4kSy27OGQ+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721914098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nzZHcDWPcyAz8CXsFh+8t8U1Us29p2EGEPiftIzXCfo=;
-	b=OeS2bWh5GLU4TULsQV+pdxmOvvcsOrC9Mv8SaatMUNgumCypBzX0gmBPKB2pqU1zx3V+lE
-	WopoegPEOaWmQFDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721914098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nzZHcDWPcyAz8CXsFh+8t8U1Us29p2EGEPiftIzXCfo=;
-	b=qwgv5WgF0NozgV05o6dKgJiCj6n4+0VZ6+wbyFtdHLcvR0pqj5Bbfq+ESsr9Au8xiOihxB
-	KQKdhyb1C0DYKxDenn8/Z/z/QMKGTKQDfgknYKxvYrsXQFSjjtdB1ydxpJ+XI08J+UgZ8K
-	OCN52G/RhN7UPOy9sppP4kSy27OGQ+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721914098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nzZHcDWPcyAz8CXsFh+8t8U1Us29p2EGEPiftIzXCfo=;
-	b=OeS2bWh5GLU4TULsQV+pdxmOvvcsOrC9Mv8SaatMUNgumCypBzX0gmBPKB2pqU1zx3V+lE
-	WopoegPEOaWmQFDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 047A813874;
-	Thu, 25 Jul 2024 13:28:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EEqDAPJSomZlAgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 25 Jul 2024 13:28:18 +0000
-Message-ID: <9e05f9be-9e75-4b4d-84a4-1da52591574b@suse.cz>
-Date: Thu, 25 Jul 2024 15:28:17 +0200
+	s=arc-20240116; t=1721914141; c=relaxed/simple;
+	bh=B9CiMqUY4/aqnqxuh+fJHJ1eA4Qr3qFcO8FOzPa8F0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rnySQDPmcxrx/OPheu7VvJgW7KS80vHnR+UJXaFYMFIRRoK+I3uiW2LPj0BmxLeZG+kVaR6+g3QCBiO2fXypRjQDd1T7JBe+QQORmRRgyIMsh2QhAcDbLorKNpJBD3li+X4R0zAy4pTeDA57Y56v52qlHhf4BIlk/zVKObIClmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYEWS4jC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FD7C4AF0A;
+	Thu, 25 Jul 2024 13:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721914140;
+	bh=B9CiMqUY4/aqnqxuh+fJHJ1eA4Qr3qFcO8FOzPa8F0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XYEWS4jC/34HR83DdGSg+UAaCUDk46SmkvrRgJTTV1Mf3U64UsYTYAwu1Mz1OYYQn
+	 QzDO35f6AB30X8SWtppSBGfE0s8kH2J78Wi7Bk58pUUEKw7shL3YbCG23TnPqFeayS
+	 sequePISzFnA7zZY1YsOLHaymRHNrVwRTZ7RjxwgJu3Y5NtWpGah4XciimF+Kfidpd
+	 UX1YWfTkcOdFyIKQKv36fzgmnB28LdHoauT0Yh0mv/PDrwDr2KCIyx/VDwUswHBXbj
+	 65d7/bE7PiqiKn+qa70vmaxg+4sDdNZt1cMM6WzSMSIurPjGbKJoqkdt2fuTYtCypC
+	 /5Mr9RRKobLeQ==
+Date: Thu, 25 Jul 2024 08:28:58 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	devicetree@vger.kernel.org,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: soc: renesas: Document RZ/V2H GP-EVK
+ board
+Message-ID: <172191413781.1725520.9808711878710206779.robh@kernel.org>
+References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
-Content-Language: en-US
-To: Jann Horn <jannh@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240724-kasan-tsbrcu-v2-0-45f898064468@google.com>
- <20240724-kasan-tsbrcu-v2-2-45f898064468@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240724-kasan-tsbrcu-v2-2-45f898064468@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.59 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FREEMAIL_TO(0.00)[google.com,gmail.com,arm.com,linux-foundation.org,linux.com,kernel.org,lge.com,linux.dev];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.59
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 7/24/24 6:34 PM, Jann Horn wrote:
-> Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_RCU
-> slabs because use-after-free is allowed within the RCU grace period by
-> design.
+
+On Wed, 24 Jul 2024 10:47:06 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Add a SLUB debugging feature which RCU-delays every individual
-> kmem_cache_free() before either actually freeing the object or handing it
-> off to KASAN, and change KASAN to poison freed objects as normal when this
-> option is enabled.
+> Add "renesas,gp-evk" which targets the Renesas RZ/V2H ("R9A09G057")
+> GP-EVK board.
 > 
-> Note that this creates an aligned 16-byte area in the middle of the slab
-> metadata area, which kinda sucks but seems to be necessary in order to be
-> able to store an rcu_head in there that can be unpoisoned while the RCU
-> callback is pending.
-
-An alternative could be a head-less variant of kfree_rcu_mightsleep() that
-would fail instead of go to reclaim if it can't allocate, and upon failure
-we would fall back ot the old behavior and give up on checking that object?
-But maybe it's just too complicated and we just pay the overhead. At least
-this doesn't concern kmalloc caches with their power-of-two alignment
-guarantees where extra metadata blows things up more.
-
-> (metadata_access_enable/disable doesn't work here because while the RCU
-> callback is pending, it will be accessed by asynchronous RCU processing.)
-> To be able to re-poison the area after the RCU callback is done executing,
-> a new helper kasan_poison_range_as_redzone() is necessary.
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> For now I've configured Kconfig.debug to default-enable this feature in the
-> KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_TAGS
-> mode because I'm not sure if it might have unwanted performance degradation
-> effects there.
-> 
-> Note that this is mostly useful with KASAN in the quarantine-based GENERIC
-> mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
-> ->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
-> those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
-> (A possible future extension of this work would be to also let SLUB call
-> the ->ctor() on every allocation instead of only when the slab page is
-> allocated; then tag-based modes would be able to assign new tags on every
-> reallocation.)
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz> #slab
-
-...
-
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -450,6 +450,18 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
->  
->  static int shutdown_cache(struct kmem_cache *s)
->  {
-> +	if (IS_ENABLED(CONFIG_SLUB_RCU_DEBUG) &&
-> +	    (s->flags & SLAB_TYPESAFE_BY_RCU)) {
-> +		/*
-> +		 * Under CONFIG_SLUB_RCU_DEBUG, when objects in a
-> +		 * SLAB_TYPESAFE_BY_RCU slab are freed, SLUB will internally
-> +		 * defer their freeing with call_rcu().
-> +		 * Wait for such call_rcu() invocations here before actually
-> +		 * destroying the cache.
-> +		 */
-> +		rcu_barrier();
-> +	}
-
-I think once we have the series [1] settled (patch 5/6 specifically), the
-delayed destruction could handle this case too?
-
-[1]
-https://lore.kernel.org/linux-mm/20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz/
-
-> +
->  	/* free asan quarantined objects */
->  	kasan_cache_shutdown(s);
->  
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 34724704c52d..999afdc1cffb 100644
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
