@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-262316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E144793C402
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:22:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534C293C408
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65148B21330
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:22:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC8E282265
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2609E19D880;
-	Thu, 25 Jul 2024 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B69B19D081;
+	Thu, 25 Jul 2024 14:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REUUdLqI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNu6cctl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617CC19D091;
-	Thu, 25 Jul 2024 14:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D07D1E4A1;
+	Thu, 25 Jul 2024 14:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917349; cv=none; b=TPGkoPxutiBbvtaeebpd4tbnosaVcNrkZvLxDrjM0+EWXKdUQqu1Yg6VLdjbg0tRz31lHpQhzgfH7cWkWVzSerQOFylUWRKab7/jNabEcYnZczoj/y+5bEG5RgxJZCFbbS3ZsPnJpxTihThtRqReA7woB38sU6uqUuXR88JlXTA=
+	t=1721917473; cv=none; b=m98JEoOaPncPSRVWJMd2XpFzHJ7TwpSzvqL7UEuOnBOdD/NFOXXFuOoXtjuP04jsTq/C/T4LGw8c9YP/kJ0qin+WD64CnrLZmOmaf4KGE2F7N8wO8EufFlnVJrBH+sRf9MyQXWJF4zdNdTAV59my58kKZ1Hxpk+89x+Ni9ogL4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917349; c=relaxed/simple;
-	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
+	s=arc-20240116; t=1721917473; c=relaxed/simple;
+	bh=ynYqNYpFP8nF9JjVVaAwJ/O5Egn7q4qJq5uapoFKe4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pye1o7E1pWwbU3z8HJvfbTHgYkQll/yFvOl/gdBo3glz/tSOmPgoEg7hRMIRDT/+qH5yf++fMGI3pqX7VrkDT0kWMKonNf7JCDP0/ZXkx2eso8MGv6rUm96Kd4ud7F2zoNAYVYDz+fvORiT3bQdy/5C3qTIihhlVNioJPvrQvdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REUUdLqI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5341C32782;
-	Thu, 25 Jul 2024 14:22:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWXoY8OTIOLezvcOWI+ZdkxnnW/PgQywpj3TwRwD8FNbJhwCmy3/MFP0UJmW37iuteQ/kcgvWRB/ErfMS2mQyuRqZCXbbSNmbQhN/IJx8W/2GDWB4UjNZ2tV+lnBi3Dzkd8HnclVROejU0ljNp8i4qN4Ak4+F1I0wL0bFw3Kius=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNu6cctl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF33BC116B1;
+	Thu, 25 Jul 2024 14:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721917348;
-	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
+	s=k20201202; t=1721917472;
+	bh=ynYqNYpFP8nF9JjVVaAwJ/O5Egn7q4qJq5uapoFKe4w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=REUUdLqIyoeSYhmWzkbITk+xAAkWffbxWAah6GwSlP/RmvesVWI0DCdssNefjCA44
-	 rsAsvhhyTlip8ypB18FsjBBeNJrRe55Qh7H/qsZ6tNf1EWJyRPT1YMgE+6aEhMOy7D
-	 /XVMrDWxQ54LdkqWjDmIHlrx/m+R6+uX1vS5UYpwIvT5iu98TnUwOqAU1GbO+MZqNE
-	 UPNIsXO6H930srHPnFRFRYElOhuc6rGIp9+3vrub+a14j+lRzcZkYNlzYKP9SRaKtW
-	 0Fe84o8hTFqhuNUjX5isLyxE59yTS+dD2ZN5IFO9gDxcDDKxpFXyJKnauAhlL1Cl6Q
-	 VB5D6nQoU5WNg==
-Date: Thu, 25 Jul 2024 15:22:24 +0100
+	b=VNu6cctlLHj2aYXV6ZBGkUceYn+n2BjAE1KviFclbQlOzLXLhM4CNnyagJGrd73gk
+	 bDJieBU+VL24KnRm46sgX4xUDxougT6COyS1xeqnHjrqsEwKw234TfqIszH1iu6h4l
+	 y6PUbqkDxd4TXkGnGV3nAWYGWCH/50PlKKtHUJSv5OLLb94eGXWvG3S5XWfsIcYQSM
+	 uZYTa/wijU4zEMZZoIT/7ylrpMSjkYFgjbRyDBi3Fpf7MOZPpmdLajTNMUZG88bZkB
+	 ikOF88h2PxJeKc3lxlacuI9rfBdxTzlKtnZYzkuBpWROve/t7NwdkCXcyVcafHoZ+h
+	 lc3YIt9Gz7kHw==
+Date: Thu, 25 Jul 2024 15:24:28 +0100
 From: Conor Dooley <conor@kernel.org>
 To: pierre-henry.moussay@microchip.com
 Cc: Conor Dooley <conor.dooley@microchip.com>,
 	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/17] dt-bindings: clock: mpfs-clkcfg: Add PIC64GX
- compatibility
-Message-ID: <20240725-upstream-smokeless-6d0eb847a594@spud>
+Subject: Re: [PATCH 10/17] dt-bindings: i2c: microchip: corei2c: Add PIC64GX
+ as compatible with driver
+Message-ID: <20240725-cycling-nature-5e0157e180e3@spud>
 References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
- <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
+ <20240725121609.13101-11-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,72 +61,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oUQL6fU2J0AJLRVY"
+	protocol="application/pgp-signature"; boundary="T4MlqbveCHqxxDay"
 Content-Disposition: inline
-In-Reply-To: <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
+In-Reply-To: <20240725121609.13101-11-pierre-henry.moussay@microchip.com>
 
 
---oUQL6fU2J0AJLRVY
+--T4MlqbveCHqxxDay
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 01:16:00PM +0100, pierre-henry.moussay@microchip.co=
+On Thu, Jul 25, 2024 at 01:16:02PM +0100, pierre-henry.moussay@microchip.co=
 m wrote:
 > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 >=20
-> PIC64GX has a clock controller compatible whith mpfs-clkcfg
+> PIC64GX i2c is compatible with the MPFS driver
+
+Please don't talk about drivers, bindings are for hardware.
+
 >=20
 > Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 > ---
->  .../devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml    | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcf=
-g.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> index e4e1c31267d2..ca889f5df87a 100644
-> --- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> @@ -19,7 +19,11 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    const: microchip,mpfs-clkcfg
-> +    oneOf:
+> diff --git a/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml=
+ b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+> index afa3db726229..4ba8a27eb8e5 100644
+> --- a/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
+> @@ -18,6 +18,10 @@ properties:
+>        - items:
+>            - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatib=
+le SoCs
+>            - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c=
+ IP core
 > +      - items:
-> +          - const: microchip,pic64gx-clkcfg
-> +          - const: microchip,mpfs-clkcfg
-> +      - const: microchip,mpfs-clkcfg
+> +          - const: microchip,pic64gx-i2c
+> +          - const: microchip,mpfs-i2c # Microchip PolarFire SoC compatib=
+le SoCs
 
-Ditto here, the mpfs binding is wrong and I don't want the pic64gx to
-ape that. Instead, we should take the opportunity to fix the binding.
-You're gonna need to do that so that the pinctrl driver can access the
-IOMUX registers correctly. As with the mailbox, either simplemfd or
-syscon are needed here. I mocked something up a few weeks ago while
-talking to someone about a hwmon driver, I'll dig it up when I am back
-to work.
+Why is an mpfs-i2c fallback required? Can't we just fall back to the
+fabric IP?
 
 Cheers,
 Conor.
 
+> +          - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c=
+ IP core
+>        - const: microchip,corei2c-rtl-v7 # Microchip Fabric based i2c IP =
+core
 > =20
 >    reg:
->      items:
 > --=20
 > 2.30.2
 >=20
 >=20
 
---oUQL6fU2J0AJLRVY
+--T4MlqbveCHqxxDay
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJfoAAKCRB4tDGHoIJi
-0suUAQC/tzIWQ+Mg2NnvUYdGhSkTvOGO4cDGQ05zxeqfGSiiWgEA7Rwx2eJ2o5Ny
-E6x8AuEC/cU5wHg6AoUfsPnTv8QKGw4=
-=tflQ
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJgHAAKCRB4tDGHoIJi
+0q+9AQD//e7E3xWxJ1vAVzogdPdHSnLZd0MfwKAmbe060kXDRwD/cc9nchqUhGni
+k4EVfdxZjrYvDaqv/1fHm3dxaVTrFgQ=
+=lynY
 -----END PGP SIGNATURE-----
 
---oUQL6fU2J0AJLRVY--
+--T4MlqbveCHqxxDay--
 
