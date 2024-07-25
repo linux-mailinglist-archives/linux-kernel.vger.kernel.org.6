@@ -1,221 +1,113 @@
-Return-Path: <linux-kernel+bounces-261909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D3D93BDB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:07:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5A793BDB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C109B2292B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8FCB21CC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE95E172BDF;
-	Thu, 25 Jul 2024 08:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715D4173336;
+	Thu, 25 Jul 2024 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlbVAu/y"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="VICrjWgl"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5775B249ED;
-	Thu, 25 Jul 2024 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B85249ED;
+	Thu, 25 Jul 2024 08:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894837; cv=none; b=CCgr570VCkpqSpbbcKm/+eoU4MktFLpkLXtT7+zM0q37ekUs9Lhrrws0xeCaw5gbxDCiWtCNNG6WlXznR7HHLY2l8qJIGTJ5/40Snj9EbqR9CZT9PT8oMKiZnfdcUlwOgmAjDfELx/tgJWkEv+Lr3bqK7nXtZ8pD2lsbFDlNgYg=
+	t=1721894829; cv=none; b=knYGrcNY6r8SHxcjuJpokCZtOCkOCcTM5ochkPWxQGiWIWh4kQy/v5sL8Pk30R9unS6L73nA+ArKmjZz/BsRc3NUlp2b+U1OK5XZ3afCYPBoBpaF3NFdvp4aUGLgjTA5LLNhBvIvNo8ecDS+DZKXuPG9G0Sxa3FvJc7MIckE8Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894837; c=relaxed/simple;
-	bh=uRF8pambJl322RqU1w85aToq0Z8fYmDJceRpw2xLLyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JojZBmQXha2Htxs6zk/6vH9ntyfyNyaKE9MOYt5I+w2LeCLc3oxHNj4Bhc+4ddz/wUirXYc+5NfrMLGjezhGRhoUOYLgHRU+hvMA7tESRsD1S0wc6EZq9CCCkIS7Tj7+kEHEa0iOPq8R99qS56XshZj7Wd2qorDQ+qpoof6A3HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlbVAu/y; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0b2d2e7dc9so323968276.2;
-        Thu, 25 Jul 2024 01:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721894835; x=1722499635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uRF8pambJl322RqU1w85aToq0Z8fYmDJceRpw2xLLyU=;
-        b=mlbVAu/ySEkwBVcZUpTIh+751KZ4d57Crm1ZWz8HQpXKf4MHS+zhnvO2NZSnz0sX0X
-         8uDQbeW09ZRHlOQNgUNtqteed01o5rAWF+0v7NOHWFPTof+kGD6hCy9UT+CXsOZsldE2
-         EJHHYIkzamTAjaSnXQXg4PE7XAPIPvNesxGhs3a1LA4c8EE11ui7f2EE3LU4pFBTROZq
-         Zy8fhBRwYpkiVKPwbx6OUOzFc8IE87xL+Vey7QZkdQUglIczdE16RqHU+s7Iw0HxlXJE
-         9GotP/Qm/mc5RUu/3XfgLpFN/o9BW+zsZ+h/3jFBVGAAosD02mkAXOIQumgF/SwG0nIK
-         w0lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721894835; x=1722499635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uRF8pambJl322RqU1w85aToq0Z8fYmDJceRpw2xLLyU=;
-        b=Ib70SjhZzSPsn5YzVNbbiVsV52R9lnzsxYiTdGjBIJG8aCQrlGNNvpf7BkkFCjiiG6
-         2JtD5usRuoq04Bjb0O38ERqJQvYtTSzUzqkR3Xz45WVJ8y0YPebkrQN2lixXxljzFj3j
-         tYtZeF3mkFzHh083OEZyoSTd+/hcurvwR14+5vGzY7TJh4Z57IZ7+GBH+ADMLEiLj7y8
-         noL8zZgCe18BpcLMF7oP2+19ATi9J/vJYuSEaNgoJq0XE+8lyAU0e36iqeKRAgiuTsQq
-         W6Z4adOccFZYRrx/hHZP2ujXtn7DXnxobW0To+isXqRsr5H5HX1Lxo5kiCYHkkPON8Av
-         EmDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRvts1bmfAtZL4z34FCCaZj83oAL3d6yzelC/Tkd3mimNXktriYC8OgdBMSAgkH2AWdFjyeTbREnicd90DFuUpgZfCsBAktf146drWyc/qcOa3BPoPAojdn5MQMiKwPFcOAdx3F+sI
-X-Gm-Message-State: AOJu0Yx2kzanE3PQGSmyvMQBasmRw6QCtJIiu6wwhYdPzSCWPL/dXMUt
-	r27z1/VW/4Aeo5z/30fD/oRIeFhAwnGvxwp/pvBTgVYSzP/OBw2GDBzQmJUUJ1KhHYeGE9DTdwv
-	2W1aD27ACMu4t31AmngHunwPLqOM=
-X-Google-Smtp-Source: AGHT+IHrhxwnPYZgM5EehjsiQcLvHlMl8QU7y+f+55RQlhP/M18toEOXGDLullzSQcZy1oi+8wBFfnKpLb66fJwp8qM=
-X-Received: by 2002:a05:6902:726:b0:e03:6085:33e9 with SMTP id
- 3f1490d57ef6-e0b231ddd3fmr2157737276.2.1721894835154; Thu, 25 Jul 2024
- 01:07:15 -0700 (PDT)
+	s=arc-20240116; t=1721894829; c=relaxed/simple;
+	bh=et8MeDpeM9VgJU3uJLRPA2b7BO3/WQzeSLIZTNsZP3Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5WjZqSCuQDYLscj0oh5y+o8eb8qQGnxcodPgpO/gmhLCGRF96b2ld70BmM3JA1hSnCoWjHLkxLH7CcFcaprahcO7A/ICrZnBAq/k5dRsw85njGgA8VFZfAJYXI8duD8sndmFgrJ0HfQWo0MsWKp10aI6qRnctXewF4KlbySUi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=VICrjWgl; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ONvp71022308;
+	Thu, 25 Jul 2024 01:06:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=voXGv9KufQht/hBsYwa1gfH1E
+	e9PQIKr4zcoBTbC64o=; b=VICrjWglr/C9vTUWnRar0dBTtQThFv2Za8KUDQI3k
+	MwvFvNNrET1czJ//Wd41pPOhzq6dLNe6x32+CwqN4siJ1ShA9mx5AvfV3jNX43vk
+	hNB7qjuJNXQp8vvLJuRpGsd23JwjhIgqaUgkMTjoBcOf3IOHf5fq3cNH1vV0MxAW
+	DgRRUiCtpKD38DusrtHgM34XYKNmNfzl5O6wEdQ0EWf5qikb09cbmTGJJY6/cgrY
+	5VCqqJkarTCqAdrFWRNjS68YNt+N39bTMZg7BswTwhvc0vHxkxDHnbWgmv2Tlymk
+	KOrIWpeCElUp7A8yURIf2r5QPgXPAjG3VdhAbhuPXvr0A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40kbr9s9ca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 01:06:47 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 25 Jul 2024 01:06:47 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 25 Jul 2024 01:06:47 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id 5F6CD3F706B;
+	Thu, 25 Jul 2024 01:06:43 -0700 (PDT)
+Date: Thu, 25 Jul 2024 13:36:42 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Shigeru Yoshida <syoshida@redhat.com>
+CC: <make24@iscas.ac.cn>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <liujunliang_ljl@163.com>,
+        <andrew@lunn.ch>, <horms@kernel.org>, <linux-usb@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH net v4] net: usb: sr9700: fix uninitialized variable use
+ in sr_mdio_read
+Message-ID: <ZqIHkubX0KK8psPv@test-OptiPlex-Tower-Plus-7010>
+References: <20240725022942.1720199-1-make24@iscas.ac.cn>
+ <20240725.120100.2041590414991833213.syoshida@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
- <20240719115741.3694893-2-rick.wertenbroek@gmail.com> <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
- <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
- <Zp/e2+NanHRNVfRJ@x1-carbon.lan> <20240725053348.GN2317@thinkpad>
-In-Reply-To: <20240725053348.GN2317@thinkpad>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Thu, 25 Jul 2024 10:06:38 +0200
-Message-ID: <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
- address BARs in EPC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Niklas Cassel <cassel@kernel.org>, rick.wertenbroek@heig-vd.ch, 
-	alberto.dassatti@heig-vd.ch, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240725.120100.2041590414991833213.syoshida@redhat.com>
+X-Proofpoint-ORIG-GUID: Cy5fQBZvMOQ1GOPt0UXNsc6IkZ_aefOF
+X-Proofpoint-GUID: Cy5fQBZvMOQ1GOPt0UXNsc6IkZ_aefOF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-25_08,2024-07-25_02,2024-05-17_01
 
-On Thu, Jul 25, 2024 at 7:33=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Tue, Jul 23, 2024 at 06:48:27PM +0200, Niklas Cassel wrote:
-> > Hello Rick,
-> >
-> > On Tue, Jul 23, 2024 at 06:06:26PM +0200, Rick Wertenbroek wrote:
-> > > >
-> > > > But like you suggested in the other mail, the right thing is to mer=
-ge
-> > > > alloc_space() and set_bar() anyway. (Basically instead of where EPF=
- drivers
-> > > > currently call set_bar(), the should call alloc_and_set_bar() (or w=
-hatever)
-> > > > instead.)
-> > > >
-> > >
-> > > Yes, if we merge both, the code will need to be in the EPC code
-> > > (because of the set_bar), and then the pci_epf_alloc_space (if needed=
-)
-> > > would be called internally in the EPC code and not in the endpoint
-> > > function code.
-> > >
-> > > The only downside, as I said in my other mail, is the very niche case
-> > > where the contents of a BAR should be moved and remain unchanged when
-> > > rebinding a given endpoint function from one controller to another.
-> > > But this is not expected in any endpoint function currently, and with
-> > > the new changes, the endpoint could simply copy the BAR contents to a
-> > > local buffer and then set the contents in the BAR of the new
-> > > controller.
-> > > Anyways, probably no one is moving live functions between controllers=
-,
-> > > and if needed it still can be done, so no problem here...
-> >
-> > I think we need to wait for Mani's opinion, but I've never heard of any=
-one
-> > doing so, and I agree with your suggested feature to copy the BAR conte=
-nts
-> > in case anyone actually changes the backing EPC controller to an EPF.
-> > (You would need to stop the EPC to unbind + bind anyway, IIRC.)
-> >
->
-> Hi Rick/Niklas,
->
-> TBH, I don't think currently we have an usecase for remapping the EPC to =
-EPF. So
-> we do not need to worry until the actual requirement comes.
->
-> But I really like combining alloc() and set_bar() APIs. Something I wante=
-d to do
-> for so long but never got around to it. We can use the API name something=
- like
-> pci_epc_alloc_set_bar(). I don't like 'set' in the name, but I guess we n=
-eed to
-> have it to align with existing APIs.
->
-> And regarding the implementation, the use of fixed address for BAR is not=
- new.
-> If you look into the pci-epf-mhi.c driver, you can see that I use a fixed=
- BAR0
-> location that is derived from the controller DT node (MMIO region).
->
-> But I was thinking of moving this region to EPF node once we add DT suppo=
-rt for
-> EPF driver. Because, there can be many EPFs in a single endpoint and each=
- can
-> have upto 6 BARs. We cannot really describe each resource in the controll=
-er DT
-> node.
->
-> Given that you really have a usecase now for multiple BARs, I think it is=
- best
-> if we can add DT support for the EPF drivers and describe the BAR resourc=
-es in
-> each EPF node. With that, we can hide all the resource allocation within =
-the EPC
-> core without exposing any flag to the EPF drivers.
->
-> So if the EPF node has a fixed location for BAR and defined in DT, then t=
-he new
-> API pci_epf_alloc_set_bar() API will use that address and configure it
-> accordingly. If not, it will just call pci_epf_alloc_space() internally t=
-o
-> allocate the memory from coherent region and use it.
->
-> Wdyt?
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+On 2024-07-25 at 08:31:00, Shigeru Yoshida (syoshida@redhat.com) wrote:
+> On Thu, 25 Jul 2024 10:29:42 +0800, Ma Ke wrote:
+> > It could lead to error happen because the variable res is not updated if
+> > the call to sr_share_read_word returns an error. In this particular case
+> > error code was returned and res stayed uninitialized. Same issue also
+> > applies to sr_read_reg.
+> > 
+> > This can be avoided by checking the return value of sr_share_read_word
+> > and sr_read_reg, and propagating the error if the read operation failed.
+> > 
+> > Found by code review.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> 
+> I did a quick check for sr9700.c and there seems to be other
+> suspicious usage of sr_read_reg().  But, for sr_mdio_read(), I think
+> the patch is sufficient.
+> 
+> Reviewed-by: Shigeru Yoshida <syoshida@redhat.com>
+> 
+>  Agree with Shigeru, may be you can submit another patch addressing
+>  "suspicious usage of sr_read_reg" this patch looks good
 
-Hello Mani, thank you for your feedback.
-
-I don't know if the EPF node in the DT is the right place for the
-following reasons. First, it describes the requirements of the EPF and
-not the restrictions imposed by the EPC (so for example one function
-requires the BAR to use a given physical address and this is described
-in the DT EPF node, but the controller could use any address, it just
-configures the controller to use the address the EPF wants, but in the
-other case (e.g., on FPGA), the EPC can only handle a BAR at a given
-physical address and no other address so this should be in the EPC
-node). Second, it is very static, so the EPC relation EPF would be
-bound in the DT, I prefer being able to bind-unbind from configfs so
-that I can make changes without reboot (e.g., alternate between two or
-more endpoint functions, which may have different BAR requirements and
-configurations).
-
-For the EPFs I really think it is good to keep the BAR requirements in
-the code for the moment, this makes it easier to swap endpoint
-functions and makes development easier as well (e.g., binding several
-different EPFs without reboot of the SoC they run on. In my typical
-tests I bind one function, turn-on the host, do tests, turn-off the
-host, make changes to an EPF, scp the new .ko on the SoC, rebind,
-turn-on the host, etc.). For example, I alternate between pci-epf-test
-(6 bars) and pci-epf-nvme (1 bar) of different sizes.
-
-However, I can see a world where both binding and configuring EPF from
-DT and the way it is currently done (alloc/set bar in code) and bind
-in configfs could exist together as each have their use cases. But
-forcing the use of DT seems impractical.
-
-For combining pci_epf_alloc_space and pci_epc_set_bar into a single
-function, everyone seems to agree on this one.
-
-Best regards,
-Rick
+Reviewed-by: Hariprasad Kelam <hkelam@marvell.com>
 
