@@ -1,166 +1,152 @@
-Return-Path: <linux-kernel+bounces-261971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF0093BECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BBB93BED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16FE1C213B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9151F21B5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C322E198845;
-	Thu, 25 Jul 2024 09:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wgXe2iLw"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC24197A68;
+	Thu, 25 Jul 2024 09:14:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1092197559
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F7196C9B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721898846; cv=none; b=AmB1b5vTrNytuAjTrNaxEZKg8ETBC4qH7nMDXotbw+4+hpBkp9jnfoJ6CT5JWTNry3K3VHfFArvxes4qVUtt9daRSEcO2a6gaWkgwtCMZ+MCC54DDwODNmDi4J0KlVtVSelBkMVzKfHhtLWWZCU8cFDOF1MGuhtP/cyU1N2+sCU=
+	t=1721898868; cv=none; b=h9fwF9n2b2NgEB+hxYgUyXdz00wFV5AzAXoJ2Jbql4BBI6bojbGabudKzZena/NIVaAg/5f8hmu1U9Eb+ca7bqcC+k/J5SaYB1z1en7FteG/nTBppdEIfKBCtuUIqPTRbnm1t4cB8hr594hJB+rSgnAjk/bD8zg45VNZ3btwHXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721898846; c=relaxed/simple;
-	bh=udl5LjHEcSA9ybzRnuheOsQzwD8ouVKu2jbaxP7TeJE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=lph6c4rQmHAtUs1VGE4FjM+h2n+U4diHHyYKz+l+alQZJFR4TFDl3ZtijKoEa0PR6XkDD6Y5J8UjKpppUxNQpwn7g1XmGaQNfdj0tLMgaS85htkLAJ0HzCXO3jwo1Fi2C8UVBgA0X9duOIQBrTkMnr1DDu/Mpz4hDNzOq7cJPN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wgXe2iLw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CF31645B;
-	Thu, 25 Jul 2024 11:13:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721898792;
-	bh=udl5LjHEcSA9ybzRnuheOsQzwD8ouVKu2jbaxP7TeJE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=wgXe2iLwDpVM8w4vfGOyysqwBicSVJHdd/4z0P2sJdBv/mGWgz+1KxaYmSgGCeA/A
-	 W9nPcPgBAV4RhMFLS6b9X0AtVw2e3K9D/q1rpHCLSv+DXHnhj39NwUn/4EIt/JUjw9
-	 U95GzaQ6bQODCAg0ZKwi0CDVfa7d7QfO+QvBUAWc=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1721898868; c=relaxed/simple;
+	bh=OJck6c735mAUAKmhsoKSxXh8hUvnqcYBv6b7HoMyNH0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K+dwOitLL68LkE/n58lMprmGJWW0/AtXbgP6CMb0iUOAnJ3ZZR/fsdM0LnkfO8hUpamsXrWmoZJrryrM5FQW3bM3BDTfp1/2vraDs9F7RasKW+2I+GyuPbT8FrjyX+z9USZgEka4X+vD3zEBNsizMmnyAMBF/rGbXkyWL82rrwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37642e69d7eso4441635ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:14:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721898866; x=1722503666;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hs0c5tk+ACqugd2rfgHc3+ND3c0qZdYN2auNxG+ekcs=;
+        b=SFyJfM1PoFrB8at40DTVg/isiuQagB1cYSf6qHHSEEhyrAN00pguBfPawN9Snr9fHo
+         1CgsD1efG9kRegrNLcXrFXowqT/94OOhv7BWltwp76RIypU3i79gG2FAmDRYq43n63WD
+         GtWDsdnyaChDr6xMcjhYvVju2Y18IBy/zrH3Q8z80mHuUkwCh2O2ClF7JwDO84WuWXUc
+         8gbginp6ygjxY6aaG2PeRTsHf0e5lUOilli5+QPY5JfVXogKTskIbm1PaeIutfYP/0gR
+         hNg1aTFm5CCt1gp9HDKcq4nOxu2KBEiagFl9vmx0116MU3CR8L5r3Ixg4NwUrkK3Qj5y
+         WQAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPaAQgk2vW/p5Qts8aG05OPJYposF+ipSff5WPk1Np+vD45s+kmOvrrMJ+3IRqnKSysRD6uzxGnUWPyBnMgefFCesLaP4Uyks5EpH+
+X-Gm-Message-State: AOJu0Yy5XJ8fNJCqXhH2GOmI4rGvBZa/J0kIqBEIpvij58jasoB9ki+m
+	Gaq7xYaj1Uhsd+afCOa+Kkfi2JqYDsVsE5l5M3Nkm4Rg/rEn8grSYDOImkdaxwfU4WRIuH0w8+x
+	mLG2ect4U51THi79mdYzLGvmKnLDyAYnStEyh/OgF5J1H67pG2okIiP4=
+X-Google-Smtp-Source: AGHT+IH2EmX952hG3iXpBvYE+BqQO50J7fjr+L51itj2Vxtf1bc0thuJ1r76yfEE2WqPbFi/jRGIqQilSJUPg7yrMoXkFqnM+WNa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <48989a76-f2b0-4cbc-80f0-bfd0d4c44bcb@collabora.com>
-References: <20240723185856.92814-1-robert.mader@collabora.com> <4rkbs3adnnxalbi237u5anydgm326nvu2ztgiyzufpl6r23vc5@d345nvc4zdqc> <48989a76-f2b0-4cbc-80f0-bfd0d4c44bcb@collabora.com>
-Subject: Re: [PATCH] media: i2c: imx355: Parse and register properties
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, jacopo@jmondi.org, sakari.ailus@linux.intel.com, javierm@redhat.com
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Robert Mader <robert.mader@collabora.com>
-Date: Thu, 25 Jul 2024 10:13:54 +0100
-Message-ID: <172189883420.392292.18276116110750673176@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+X-Received: by 2002:a05:6e02:1a6e:b0:398:3831:4337 with SMTP id
+ e9e14a558f8ab-39a21870618mr940475ab.5.1721898866072; Thu, 25 Jul 2024
+ 02:14:26 -0700 (PDT)
+Date: Thu, 25 Jul 2024 02:14:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000407108061e0ed264@google.com>
+Subject: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Quoting Robert Mader (2024-07-24 21:17:23)
-> Hi Jacopo,
->=20
-> thanks for the quick review!
->=20
-> Should I send a v2 for that (adding V4L2_CID_CAMERA_ORIENTATION and your =
+Hello,
 
-> RB to the commit message) - and if so should I first wait for more=20
-> reviews or is that unnecessary/unlike to happen?
+syzbot found the following issue on:
 
-Reviews are usually slow, but this found it's way into my inbox because
-of a libcamera mention :-D (I do appreciate lore/lei for topic based
-subscriptions!)
+HEAD commit:    28bbe4ea686a Merge tag 'i2c-for-6.11-rc1-second-batch' of ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1519f2b1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fcd331f2f7452dee
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-I don't think theres a specific need to wait for further reviews, but
-this might make it easier for you to send a v2 and know it's done ;-)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5547f17fee20/disk-28bbe4ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d509f262f4fb/vmlinux-28bbe4ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1b4cf478d209/bzImage-28bbe4ea.xz
 
->=20
-> Regards,
->=20
-> Robert
->=20
-> On 24.07.24 09:31, Jacopo Mondi wrote:
-> > Hi Robert
-> >
-> > On Tue, Jul 23, 2024 at 08:58:56PM GMT, Robert Mader wrote:
-> >> Analogous to e.g. the imx219. This enables propagating
-> >> V4L2_CID_CAMERA_SENSOR_ROTATION values so that libcamera
-> > and V4L2_CID_CAMERA_ORIENTATION
-> >
-> >> can detect the correct rotation from the device tree
-> >> and propagate it further to e.g. Pipewire.
-> > Well, yes, that's a consequence. As long as Linux is concerned, this
-> > serves to register the two above mentioned controls.
-> >
-> >> Signed-off-by: Robert Mader <robert.mader@collabora.com>
-> > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >
-> > Thanks
-> >    j
-> >
-> >> ---
-> >>   drivers/media/i2c/imx355.c | 12 +++++++++++-
-> >>   1 file changed, 11 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/media/i2c/imx355.c b/drivers/media/i2c/imx355.c
-> >> index 7e9c2f65fa08..0dd25eeea60b 100644
-> >> --- a/drivers/media/i2c/imx355.c
-> >> +++ b/drivers/media/i2c/imx355.c
-> >> @@ -1520,6 +1520,7 @@ static const struct v4l2_subdev_internal_ops imx=
-355_internal_ops =3D {
-> >>   static int imx355_init_controls(struct imx355 *imx355)
-> >>   {
-> >>      struct i2c_client *client =3D v4l2_get_subdevdata(&imx355->sd);
-> >> +    struct v4l2_fwnode_device_properties props;
-> >>      struct v4l2_ctrl_handler *ctrl_hdlr;
-> >>      s64 exposure_max;
-> >>      s64 vblank_def;
-> >> @@ -1531,7 +1532,7 @@ static int imx355_init_controls(struct imx355 *i=
-mx355)
-> >>      int ret;
-> >>
-> >>      ctrl_hdlr =3D &imx355->ctrl_handler;
-> >> -    ret =3D v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> >> +    ret =3D v4l2_ctrl_handler_init(ctrl_hdlr, 12);
-> >>      if (ret)
-> >>              return ret;
-> >>
-> >> @@ -1603,6 +1604,15 @@ static int imx355_init_controls(struct imx355 *=
-imx355)
-> >>              goto error;
-> >>      }
-> >>
-> >> +    ret =3D v4l2_fwnode_device_parse(&client->dev, &props);
-> >> +    if (ret)
-> >> +            goto error;
-> >> +
-> >> +    ret =3D v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx355_ctrl_o=
-ps,
-> >> +                                          &props);
-> >> +    if (ret)
-> >> +            goto error;
-> >> +
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
 
-In the future (definitely not here) I hope there will be a way for us to
-factor out all of this common code from sensor drivers to make things
-more consistent.
+=====================================================
+BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usbtmc_write+0xc32/0x1220 drivers/usb/class/usbtmc.c:1606
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __ia32_sys_write+0x91/0xe0 fs/read_write.c:652
+ ia32_sys_call+0x2e34/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:5
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3994 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4184
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ usbtmc_create_urb drivers/usb/class/usbtmc.c:757 [inline]
+ usbtmc_write+0x3d3/0x1220 drivers/usb/class/usbtmc.c:1547
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __ia32_sys_write+0x91/0xe0 fs/read_write.c:652
+ ia32_sys_call+0x2e34/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:5
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Byte 3587 of 3588 is uninitialized
+Memory access of size 3588 starts at ffff88804d338000
+
+CPU: 0 UID: 0 PID: 5392 Comm: syz.1.48 Not tainted 6.10.0-syzkaller-12084-g28bbe4ea686a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
 
 
-> >>      imx355->sd.ctrl_handler =3D ctrl_hdlr;
-> >>
-> >>      return 0;
-> >> --
-> >> 2.45.2
-> >>
-> --=20
-> Robert Mader
-> Consultant Software Developer
->=20
-> Collabora Ltd.
-> Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-> Registered in England & Wales, no. 5513718
->
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
