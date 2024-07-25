@@ -1,295 +1,80 @@
-Return-Path: <linux-kernel+bounces-262139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E8193C177
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:12:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9D593C17B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177722822AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6841F214EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E005199395;
-	Thu, 25 Jul 2024 12:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C37199380;
+	Thu, 25 Jul 2024 12:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ypKCQm/n";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5miCrkg/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ypKCQm/n";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5miCrkg/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrCzP5Mk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D7B22089;
-	Thu, 25 Jul 2024 12:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64E219938D;
+	Thu, 25 Jul 2024 12:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721909548; cv=none; b=IDqLrsp7MhsOKt5jErhnxelekX/2u6kse8MVmWoM7TkasItngMXRvXGwj4ctqHeLHrqMDBmWpby6uGn/3BaVsKLlkVuTW/9nwhMFyKaTCiylwI6tCy1IjxAB3WFV0oHou6UdE7w3aRWHN6h/ZW1207+a7K2mWaW8x1s6GISpXMY=
+	t=1721909569; cv=none; b=oovLI6qdGdLjSxOx/LrrIH+IXPVtzAAQKDBMuznmMHwEa+w/Dm8WP6+C8FVcbELjO1uqBK8KCEOS0ylPUqqG3gdK+hKIpxoslPiBX4YMZDZMD7sEhlxJbPg+UbYUIRGFbxQa9sa3ka9W/Kybk/lZ/W4YYhzWlHKdwJIVdw/xhuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721909548; c=relaxed/simple;
-	bh=Ff/59HRlCvj8G3mMo2jas7O6Ju8LyZiYxAQ43k+O+eM=;
+	s=arc-20240116; t=1721909569; c=relaxed/simple;
+	bh=SvCZIbU8mvxMu+WBqkw9ZKqT51Wm9YdZ3pVAHRKa8q0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0A6i9R5BK1S1XSFrMnBL4CMXu0mya4slWm8cPBJ9Y+WOtgspqXpYnuwYCH1YkYqnbiox3/KE6u95WjX3ufFkKGZGikFqkG4c252ADKSZ0uQPWo5oPzFn2giKJJ2k9gvGjM9VdZp9ASiwZ2RefYV0FgDRDUTutpkqf3YvPwCSxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ypKCQm/n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5miCrkg/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ypKCQm/n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5miCrkg/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9114621B2B;
-	Thu, 25 Jul 2024 12:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721909544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CEoJzGyLhtj1CXvSKWZkCZtZwfPh3vxj2e0OM8FawtM=;
-	b=ypKCQm/nSDrPHEEa2PMWe06VYYoR6CO+ROfN4yD90VG7Q6tYUjDYTOmMcUz7+PmJEhySyJ
-	YZ6vI5io2h8577vA/d4vknOxHEN0IpiPHvirj+hCmuVoT+oHukYGgWQon0P89O5EwUtOuQ
-	0ZQp1HN4ZoB7ksbgEQhiWOly94t3N/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721909544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CEoJzGyLhtj1CXvSKWZkCZtZwfPh3vxj2e0OM8FawtM=;
-	b=5miCrkg/68uZ1uz+07r307UfDKB0pkfx1yySKDMZfT0ojaqaS5AOeUpRxrwUcjG217PYOw
-	yUTuAWLGvSCYxOBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721909544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CEoJzGyLhtj1CXvSKWZkCZtZwfPh3vxj2e0OM8FawtM=;
-	b=ypKCQm/nSDrPHEEa2PMWe06VYYoR6CO+ROfN4yD90VG7Q6tYUjDYTOmMcUz7+PmJEhySyJ
-	YZ6vI5io2h8577vA/d4vknOxHEN0IpiPHvirj+hCmuVoT+oHukYGgWQon0P89O5EwUtOuQ
-	0ZQp1HN4ZoB7ksbgEQhiWOly94t3N/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721909544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CEoJzGyLhtj1CXvSKWZkCZtZwfPh3vxj2e0OM8FawtM=;
-	b=5miCrkg/68uZ1uz+07r307UfDKB0pkfx1yySKDMZfT0ojaqaS5AOeUpRxrwUcjG217PYOw
-	yUTuAWLGvSCYxOBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 804061368A;
-	Thu, 25 Jul 2024 12:12:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Cv1HHyhBomZ6aQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 12:12:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E559A0996; Thu, 25 Jul 2024 14:12:16 +0200 (CEST)
-Date: Thu, 25 Jul 2024 14:12:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 15/20] ext4: get rid of ppath in
- ext4_split_convert_extents()
-Message-ID: <20240725121216.mlmmyobjvyjjnln6@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-16-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CKqIpLokP38JxI2og3E+SBrv8pp+VlSGfYRmMftiryvvKRS5quub46NRiSzDpUY73Ekf3D9pf4x4fHna7C29OUFLUboohWIzsD8++2u0SGo+R431RbYaO5CbqvFLP3w5EyX97moxHGYnY9Za8UPLsHfxaoVYdtMhh4WgDTqO/sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrCzP5Mk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C27C116B1;
+	Thu, 25 Jul 2024 12:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721909568;
+	bh=SvCZIbU8mvxMu+WBqkw9ZKqT51Wm9YdZ3pVAHRKa8q0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SrCzP5MkowpQuUmoteQtAweEDOkTmEjmdgTaxp+l0JlL6b/3OqfZXP7eDeJacnjEp
+	 YYGSMyI/OYWGYiRZYF8XueViPEd8SIoglUtnxangEE1FOFDVExgwpishwk7GwsgbkG
+	 gMTcNAc1IUlrh4s7x9z0ubzyc1Xk1+hgyPGRzFj6HcSIBNnwcML0fp2Hrb3lzztmz7
+	 5364FdN52vyamT2CHNkws5h5gMe5/TXWDoB3F6ZIum0h3/CQJ+3gn51Xuz5fHKeiEZ
+	 /OzJQr+KQT620RA5J7rQgQgsqSbF5k3mcC4AHP6LyikB50iNrtZ0ZSLm+Xburc8akx
+	 L5/bEdZqG4JCg==
+Date: Thu, 25 Jul 2024 14:12:45 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 15/25] rcu: Rename rcu_dynticks_eqs_online() into
+ rcu_watching_online()
+Message-ID: <ZqJBPTed7FgoJS9Q@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-16-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-16-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.90 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email,huaweicloud.com:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: 0.90
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724144325.3307148-16-vschneid@redhat.com>
 
-On Wed 10-07-24 12:06:49, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+Le Wed, Jul 24, 2024 at 04:43:15PM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, reflect that change in the related helpers.
 > 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> To get rid of the ppath in ext4_split_convert_extents(), the following is
-> done here:
-> 
->  * Its caller needs to update ppath if it uses ppath.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-
-> ---
->  fs/ext4/extents.c | 65 ++++++++++++++++++++++++-----------------------
->  1 file changed, 33 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 2a4f6c89858c..a41cbb8c4475 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3699,21 +3699,21 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
->   * being filled will be convert to initialized by the end_io callback function
->   * via ext4_convert_unwritten_extents().
->   *
-> - * Returns the size of unwritten extent to be written on success.
-> + * The size of unwritten extent to be written is passed to the caller via the
-> + * allocated pointer. Return an extent path pointer on success, or an error
-> + * pointer on failure.
->   */
-> -static int ext4_split_convert_extents(handle_t *handle,
-> +static struct ext4_ext_path *ext4_split_convert_extents(handle_t *handle,
->  					struct inode *inode,
->  					struct ext4_map_blocks *map,
-> -					struct ext4_ext_path **ppath,
-> -					int flags)
-> +					struct ext4_ext_path *path,
-> +					int flags, unsigned int *allocated)
->  {
-> -	struct ext4_ext_path *path = *ppath;
->  	ext4_lblk_t eof_block;
->  	ext4_lblk_t ee_block;
->  	struct ext4_extent *ex;
->  	unsigned int ee_len;
->  	int split_flag = 0, depth;
-> -	unsigned int allocated = 0;
->  
->  	ext_debug(inode, "logical block %llu, max_blocks %u\n",
->  		  (unsigned long long)map->m_lblk, map->m_len);
-> @@ -3741,14 +3741,8 @@ static int ext4_split_convert_extents(handle_t *handle,
->  		split_flag |= (EXT4_EXT_MARK_UNWRIT2 | EXT4_EXT_DATA_VALID2);
->  	}
->  	flags |= EXT4_GET_BLOCKS_PRE_IO;
-> -	path = ext4_split_extent(handle, inode, path, map, split_flag, flags,
-> -				 &allocated);
-> -	if (IS_ERR(path)) {
-> -		*ppath = NULL;
-> -		return PTR_ERR(path);
-> -	}
-> -	*ppath = path;
-> -	return allocated;
-> +	return ext4_split_extent(handle, inode, path, map, split_flag, flags,
-> +				 allocated);
->  }
->  
->  static int ext4_convert_unwritten_extents_endio(handle_t *handle,
-> @@ -3784,11 +3778,14 @@ static int ext4_convert_unwritten_extents_endio(handle_t *handle,
->  			     inode->i_ino, (unsigned long long)ee_block, ee_len,
->  			     (unsigned long long)map->m_lblk, map->m_len);
->  #endif
-> -		err = ext4_split_convert_extents(handle, inode, map, ppath,
-> -						 EXT4_GET_BLOCKS_CONVERT);
-> -		if (err < 0)
-> -			return err;
-> -		path = ext4_find_extent(inode, map->m_lblk, *ppath, 0);
-> +		path = ext4_split_convert_extents(handle, inode, map, path,
-> +						EXT4_GET_BLOCKS_CONVERT, NULL);
-> +		if (IS_ERR(path)) {
-> +			*ppath = NULL;
-> +			return PTR_ERR(path);
-> +		}
-> +
-> +		path = ext4_find_extent(inode, map->m_lblk, path, 0);
->  		if (IS_ERR(path)) {
->  			*ppath = NULL;
->  			return PTR_ERR(path);
-> @@ -3845,11 +3842,14 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
->  		  (unsigned long long)ee_block, ee_len);
->  
->  	if (ee_block != map->m_lblk || ee_len > map->m_len) {
-> -		err = ext4_split_convert_extents(handle, inode, map, ppath,
-> -				EXT4_GET_BLOCKS_CONVERT_UNWRITTEN);
-> -		if (err < 0)
-> -			return err;
-> -		path = ext4_find_extent(inode, map->m_lblk, *ppath, 0);
-> +		path = ext4_split_convert_extents(handle, inode, map, path,
-> +				EXT4_GET_BLOCKS_CONVERT_UNWRITTEN, NULL);
-> +		if (IS_ERR(path)) {
-> +			*ppath = NULL;
-> +			return PTR_ERR(path);
-> +		}
-> +
-> +		path = ext4_find_extent(inode, map->m_lblk, path, 0);
->  		if (IS_ERR(path)) {
->  			*ppath = NULL;
->  			return PTR_ERR(path);
-> @@ -3915,19 +3915,20 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
->  
->  	/* get_block() before submitting IO, split the extent */
->  	if (flags & EXT4_GET_BLOCKS_PRE_IO) {
-> -		ret = ext4_split_convert_extents(handle, inode, map, ppath,
-> -					 flags | EXT4_GET_BLOCKS_CONVERT);
-> -		if (ret < 0) {
-> -			err = ret;
-> +		*ppath = ext4_split_convert_extents(handle, inode, map, *ppath,
-> +				flags | EXT4_GET_BLOCKS_CONVERT, &allocated);
-> +		if (IS_ERR(*ppath)) {
-> +			err = PTR_ERR(*ppath);
-> +			*ppath = NULL;
->  			goto out2;
->  		}
->  		/*
-> -		 * shouldn't get a 0 return when splitting an extent unless
-> +		 * shouldn't get a 0 allocated when splitting an extent unless
->  		 * m_len is 0 (bug) or extent has been corrupted
->  		 */
-> -		if (unlikely(ret == 0)) {
-> +		if (unlikely(allocated == 0)) {
->  			EXT4_ERROR_INODE(inode,
-> -					 "unexpected ret == 0, m_len = %u",
-> +					 "unexpected allocated == 0, m_len = %u",
->  					 map->m_len);
->  			err = -EFSCORRUPTED;
->  			goto out2;
-> @@ -3988,9 +3989,9 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
->  		err = -EFSCORRUPTED;
->  		goto out2;
->  	}
-> +	allocated = ret;
->  
->  out:
-> -	allocated = ret;
->  	map->m_flags |= EXT4_MAP_NEW;
->  map_out:
->  	map->m_flags |= EXT4_MAP_MAPPED;
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
