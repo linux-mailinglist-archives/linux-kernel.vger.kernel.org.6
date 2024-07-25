@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-262108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C48393C0D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:32:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED9D93C0DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1001F22445
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30EFF282EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CD71991DF;
-	Thu, 25 Jul 2024 11:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB24198E7E;
+	Thu, 25 Jul 2024 11:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NW9/cJSf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QotTbueg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NW9/cJSf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QotTbueg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPvKSvbO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6FC16F84F;
-	Thu, 25 Jul 2024 11:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97073198A3E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721907115; cv=none; b=RmZ+sfFFyASbOPg41TZtkByW3onV7Lm/egHR8w4chN8bWgGQ8McHoVm1ei30EnvswtycIMlsbHGscxlG22WaQcgJ1sshmp7sTPJmRTupnhXN575lM8qWNR7eH6CXZ86SrfRz052KQJqagFmpIluBECjdKrbXfGeOuRMeS07lKLw=
+	t=1721907124; cv=none; b=IQRHV2uks/gEdvc2GAztfZEar9ss4yTW0i3SG4q2PpadxsrNbvu5H6klSq4Pq5BoYSlmAAtNKHbBZSrnxQYTz/95srEuULmpcTk/sim/Bt1/Y9FHUByXaCnInkZ0QAuxmjSZ3b2EBY9dkFgro8+L7iJKGcXj5M+sV6N7Ta9AE+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721907115; c=relaxed/simple;
-	bh=rR1RFY39+eRFR7OmHYrm0/qoxwcoE+S+x41VcI9lVys=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lEfsC63C3xKampuBqlmLuudY/Y2OX5pYYYpUYKGPbUI9Ys+522JAfiRmg4Ckiswp3wOKdZo0RsRP4uwf8vqdEYxreYQ/aaVPDu0WeE+ccr5jFk/TahXlMFD8B90HcYFlrq4NMIpIC0hDcRFQenZcedNv3yBzcjbLdER6H3TAazo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NW9/cJSf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QotTbueg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NW9/cJSf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QotTbueg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	s=arc-20240116; t=1721907124; c=relaxed/simple;
+	bh=2PFaAKT/qKzvR5HmQHNT0YtE+EnpJ+3U4z/gAUFLbho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDcbRASZG9olNde9Nc8Y/1qis349wpGvdQOrAFzYdreJDVWHkQhxU9W1p6edGPPBjepk24GZoFGsGt8kvyy5lO7jyFrKLJX0nejSuNQ5VeOHeeKY0uoDE4Tequ6TR86DCrqnITNMqbwqoe1Grb39mzIIn/M+SwQurFMT7KSE6VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPvKSvbO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721907121;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
+	bh=vyKLgMRT6i9mXd45Il7wt/ZZwWvsdwnv5UBxyQ1yU1Y=;
+	b=KPvKSvbOgB8EiJTG6LNh3LEXBiz+GyngOcIiw66TCuvN4HTj+nrWaa88jRR7w0MCHAV8AP
+	YJINPh3RtIEWnSf3r/D+SfOg49qMh7ONa3F1EI+K4zeAGQmUal4ku1epFCFXXPcpQ4Sqvr
+	T7eaPSyj51Y1wvr1yLhAEM7mxrrLUak=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-Rp-aJfBJPT209rAmpqTPUg-1; Thu,
+ 25 Jul 2024 07:31:58 -0400
+X-MC-Unique: Rp-aJfBJPT209rAmpqTPUg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C3C47219A4;
-	Thu, 25 Jul 2024 11:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721907100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
-	b=NW9/cJSfT+4oq8mjZG0mU8xNq3Wn4qL2+ycYDDFVRXCnXPdCCBEg0NftGwP6vsLvAedM1L
-	hzvApVC32di11HTiFrdrkwmc8DXnusS8KfusL9bfv/tVlHlSn+J5WOhPfQkqUs30ReNYhE
-	ggGC+ZlSHW94gJyKaLLqNHUHYm7wKu0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721907100;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
-	b=QotTbuegHMZCkRF35uR3pkcedqCggOxcGF2GdODHmdv8KPbUeUEczr4Ez9N+n+p5WKnSgn
-	zZPWsgn2bRwfxgBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721907100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
-	b=NW9/cJSfT+4oq8mjZG0mU8xNq3Wn4qL2+ycYDDFVRXCnXPdCCBEg0NftGwP6vsLvAedM1L
-	hzvApVC32di11HTiFrdrkwmc8DXnusS8KfusL9bfv/tVlHlSn+J5WOhPfQkqUs30ReNYhE
-	ggGC+ZlSHW94gJyKaLLqNHUHYm7wKu0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721907100;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A7ozrHK2GDxxKmDNZYI4+zW9TOYZW7KdkmtXD8HtnHc=;
-	b=QotTbuegHMZCkRF35uR3pkcedqCggOxcGF2GdODHmdv8KPbUeUEczr4Ez9N+n+p5WKnSgn
-	zZPWsgn2bRwfxgBw==
-Date: Thu, 25 Jul 2024 13:31:40 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
-    Joe Lawrence <joe.lawrence@redhat.com>, Nicolai Stange <nstange@suse.de>, 
-    live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [POC 2/7] livepatch: Allow to handle lifetime of shadow variables
- using the livepatch state
-In-Reply-To: <20231110170428.6664-3-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.2407251329300.21729@pobox.suse.cz>
-References: <20231110170428.6664-1-pmladek@suse.com> <20231110170428.6664-3-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B4C31955D50;
+	Thu, 25 Jul 2024 11:31:54 +0000 (UTC)
+Received: from redhat.com (unknown [10.42.28.144])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C6C453000197;
+	Thu, 25 Jul 2024 11:31:45 +0000 (UTC)
+Date: Thu, 25 Jul 2024 12:31:42 +0100
+From: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <ZqI3ntUR6bfY1kxo@redhat.com>
+Reply-To: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
+ <20240725012730-mutt-send-email-mst@kernel.org>
+ <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.10 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Score: -1.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-> diff --git a/kernel/livepatch/state.c b/kernel/livepatch/state.c
-> index 6693d808106b..4ec65afe3a43 100644
-> --- a/kernel/livepatch/state.c
-> +++ b/kernel/livepatch/state.c
-> @@ -198,11 +198,17 @@ void klp_release_states(struct klp_patch *patch)
->  		if (is_state_in_other_patches(patch, state))
->  			continue;
->  
-> -		if (!state->callbacks.release)
-> -			continue;
-> -
-> -		if (state->callbacks.setup_succeeded)
-> +		if (state->callbacks.release && state->callbacks.setup_succeeded)
->  			state->callbacks.release(patch, state);
-> +
-> +		if (state->is_shadow)
-> +			klp_shadow_free_all(state->id, state->callbacks.shadow_dtor);
+On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wrote:
+> Hi Michael, thanks for the review!
+> 
+> On Thu, 2024-07-25 at 01:48 -0400, Michael S. Tsirkin wrote:
+> > On Wed, Jul 24, 2024 at 06:16:37PM +0100, David Woodhouse wrote:
+> > > From: David Woodhouse <dwmw@amazon.co.uk>
+> > > 
+> > > The vmclock "device" provides a shared memory region with precision clock
+> > > information. By using shared memory, it is safe across Live Migration.
+> > > 
+> > > Like the KVM PTP clock, this can convert TSC-based cross timestamps into
+> > > KVM clock values. Unlike the KVM PTP clock, it does so only when such is
+> > > actually helpful.
+> > > 
+> > > The memory region of the device is also exposed to userspace so it can be
+> > > read or memory mapped by application which need reliable notification of
+> > > clock disruptions.
+> > > 
+> > > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > > ---
+> > > QEMU implementation at
+> > > https://git.infradead.org/users/dwmw2/qemu.git/shortlog/refs/heads/vmclock
+> > > 
+> > > Although the ACPI device implemented in QEMU (and some other
+> > > hypervisor) stands alone, most of the fields and values herein are
+> > > aligned as much as possible with the nascent virtio-rtc specification,
+> > > with the intent that a version of the same structure can be
+> > > incorporated into that standard.
+> > 
+> > Do you want to just help complete virtio-rtc then? Would be easier than
+> > trying to keep two specs in sync.
+> 
+> The ACPI version is much more lightweight and doesn't take up a
+> valuable PCI slot#. (I know, you can do virtio without PCI but that's
+> complex in other ways).
 
-The following
+In general it shouldn't have to take up a PCI slot, that's just
+a common default policy. virtio-devices only need a dedicated
+slot if there's a need to do hotplug/unplug of them. There is a
+set of core devices for which hotplug doesn't make sense, which
+could all be put as functions in the same slot. ie virtio-rng,
+virtio-balloon and virtio-rtc, could all live in one slot.
 
-> +		/*
-> +		 * The @release callback is supposed to restore the original
-> +		 * state before the @setup callback was called.
-> +		 */
-> +		state->callbacks.setup_succeeded = 0;
+With regards,
+Daniel
+-- 
+|: https://berrange.com      -o-    https://www.flickr.com/photos/dberrange :|
+|: https://libvirt.org         -o-            https://fstop138.berrange.com :|
+|: https://entangle-photo.org    -o-    https://www.instagram.com/dberrange :|
 
-should go to the previous patch perhaps?
-
-Miroslav
 
