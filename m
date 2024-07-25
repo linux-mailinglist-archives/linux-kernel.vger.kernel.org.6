@@ -1,62 +1,49 @@
-Return-Path: <linux-kernel+bounces-262086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8502F93C099
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4D493C09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21C41B210E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F103F282840
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7C01991CF;
-	Thu, 25 Jul 2024 11:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CB51991D8;
+	Thu, 25 Jul 2024 11:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O61oRigc"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dReHLAA2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DA913C907;
-	Thu, 25 Jul 2024 11:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A6113C907;
+	Thu, 25 Jul 2024 11:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721905763; cv=none; b=LYsPvI6lIwIeVP2WmG8pb2R5drP2C3ipw/nERGgV3fVOP2nVjQLQlaV+lmJ5ATUbZ59t+7uwNojilwivt3Ap82j7TYDdZDy6CBrm2W3fr1lW4YoC6g13sxlmY77zWOqW4L8lRVJcLvrCdgk4K83abPMfv5YdRx/hE4Psc4ogxkA=
+	t=1721905832; cv=none; b=CxX5RAcaeR4Pgl+M4wXlF0eEzkYPnMvirTacrssj8LsYARSI/Axisig5VImP78h0BS58A4FhXMm0W5ql/7x/mEwCxIoj9UYktiCXbwanVsyXfcw+CnM9P5PTmMOJk0jIVRzJIDH18F4Ukfpcwoj7fOGlG53QJH5xs4XnyotOl6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721905763; c=relaxed/simple;
-	bh=w73AVOrhHboNOTGCoxQ0nXk68FgJnFYHdRw6SkLlevA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sgTQlyaGiPjbswwNUYZU2F30OoklCgb4or/otQv4O9kNXvIfc631/8xpll9amuwKHvW9UZAISzZ05/OmHYi4ccZs5xNE4NvcRf01bHdH9JgvqALyP1BvcELN4adWrojU8SpvbGb+lDvu/zPyJ4pUsClVIhVEB3lRiE4rrskRUIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O61oRigc; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721905760;
-	bh=w73AVOrhHboNOTGCoxQ0nXk68FgJnFYHdRw6SkLlevA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=O61oRigcM40qDe71FQWWpk9SUV2VPtXO5QB0vCcWMXnC+a3uk9l2GxD3NQv3fsxqy
-	 4fqDxHQhMlG+P7cfVZYfZwbIMjqS5Hza5wvzpfI/Ctcx345B1b+QjUQ3IVpCSvfvGa
-	 j2y4GCJtTPZgfwZe1NKKUpt2e55Y6Ds53grWKJEabdjm8iwpwoIhiTHmc6wA8hiugH
-	 S6FqdCeCciNHv7vLGEufqyr+mdO58g9U2SVcj+5+hS+6udly1ZgPlPwCsQ27AFILg1
-	 r39mpSGOCQ2pfBz9aV39LVIT+3BdQvabHxEBXkUkc6+UgmsxyjLWfRAvB3kV4k8feL
-	 azv3L28uy9pdw==
-Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1807B37803EE;
-	Thu, 25 Jul 2024 11:09:17 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Kees Cook <kees@kernel.org>
-Cc: kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests: lib: remove strscpy test
-Date: Thu, 25 Jul 2024 16:09:04 +0500
-Message-Id: <20240725110910.662147-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721905832; c=relaxed/simple;
+	bh=7GZLHlGu0lfk5E1/84zZotDHhx4rpplG5uA+AcN/49o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=C1p+iHZSGFY5GZNZEuC3r1XgvyoNq1XaAgCH5KmZtewCEI08yienuhz/m0m7L5R0acvi5+vPE588j8abPh5vJADtBhMqdQy1KXEk9dX9VeT+aKqOMySsXqwrio+UrUHTSnRT8uG9YR9TUQTFHt9S2mX83npUyzAaY6FsNLt+hX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dReHLAA2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BBC6CC4AF0A;
+	Thu, 25 Jul 2024 11:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721905831;
+	bh=7GZLHlGu0lfk5E1/84zZotDHhx4rpplG5uA+AcN/49o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dReHLAA2oc1e1bdW/WoiDCwA6Z96+qHicdKVadzEDQ6TiUcxpdb1LbC4uBGgS3PEg
+	 HQnDO9ME3iCrn12heHd314tAFA8PjORcBogbYp9EvyhhGLFtFbhwh2fboFs9SGeevg
+	 E7dlfIePlphyMwt1BzV9nouNnm3isd5+IlPZdqdh+8imS5PfeIcasK4q1C0v7UzdwL
+	 uwp6e96TbbiTJ8bt7kFDUvZ25lF8sOsLBvLtOHVlexgA5qYRfSxjrUpEh4oL+6NdPv
+	 H5QH2UUByY/+TzdFakQ6gxCn8k/8IdR3r3v82hpiGmYA/YFfULl7cOvdya/bK8j9hB
+	 Pbz8asp2fXOlw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AA53DC43638;
+	Thu, 25 Jul 2024 11:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,27 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] tcp: process the 3rd ACK with sk_socket for
+ TFO/MPTCP
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172190583169.25674.14447045356080630577.git-patchwork-notify@kernel.org>
+Date: Thu, 25 Jul 2024 11:10:31 +0000
+References: <20240724-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v3-1-d48339764ce9@kernel.org>
+In-Reply-To: <20240724-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v3-1-d48339764ce9@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, kuniyu@amazon.com, ncardwell@google.com,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
 
-The strscpy test loads test_strscpy module for testing. But test_strscpy
-was converted to Kunit (see fixes). Hence remove strscpy.
+Hello:
 
-Fixes: 41eefc46a3a4 ("string: Convert strscpy() self-test to KUnit")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/lib/strscpy.sh | 3 ---
- 1 file changed, 3 deletions(-)
- delete mode 100755 tools/testing/selftests/lib/strscpy.sh
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/tools/testing/selftests/lib/strscpy.sh b/tools/testing/selftests/lib/strscpy.sh
-deleted file mode 100755
-index be60ef6e1a7fb..0000000000000
---- a/tools/testing/selftests/lib/strscpy.sh
-+++ /dev/null
-@@ -1,3 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0+
--$(dirname $0)/../kselftest/module.sh "strscpy*" test_strscpy
+On Wed, 24 Jul 2024 12:25:16 +0200 you wrote:
+> The 'Fixes' commit recently changed the behaviour of TCP by skipping the
+> processing of the 3rd ACK when a sk->sk_socket is set. The goal was to
+> skip tcp_ack_snd_check() in tcp_rcv_state_process() not to send an
+> unnecessary ACK in case of simultaneous connect(). Unfortunately, that
+> had an impact on TFO and MPTCP.
+> 
+> I started to look at the impact on MPTCP, because the MPTCP CI found
+> some issues with the MPTCP Packetdrill tests [1]. Then Paolo Abeni
+> suggested me to look at the impact on TFO with "plain" TCP.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v3] tcp: process the 3rd ACK with sk_socket for TFO/MPTCP
+    https://git.kernel.org/netdev/net/c/c1668292689a
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
