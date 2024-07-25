@@ -1,99 +1,92 @@
-Return-Path: <linux-kernel+bounces-261605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D44C93B9C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079BE93B9C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5C5285E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D57C1F21E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B262914;
-	Thu, 25 Jul 2024 00:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B62187F;
+	Thu, 25 Jul 2024 00:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4PzYtv1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wo4xR7ko"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B517C2;
-	Thu, 25 Jul 2024 00:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B41F17C2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721866832; cv=none; b=Yc2dbd1epkBJ7vk3scTpyI3EUENdoRNYAE5ScLQalXgOqUyhDFsXOKVZ4uNNIUvucUNjFM2MHZjwy4a2R0CKD0AJCXWJNW2VgjRe0dDYkyx5NbT0VE/t2/gLqcnjJq9eFTwBUctTK1y33NPbWB0QeJVVPrP7PvJ2OhKpjwAAJK8=
+	t=1721867125; cv=none; b=CDtT7Dqxr2JoADLnL3H1UoZL1x8jVLx7e2clgZlpQj8EJuTeVRDPemlia7Iwa/bK+4U2pt1cbvf0sPs1CCoUQIpD6hHyBA0NQM/JxjM5bAbphQulVWtyvswp60JekSH8skzt2PWCr7cQS0qtzOTOjH2f+TwpazS12/u9mt8q2Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721866832; c=relaxed/simple;
-	bh=m5cezUP0xkAXQ2pBXRrRj0V0UkVsrJZ4Yc3vHoEbOzU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DorG5dMvTpcSJpq0uf30bx2azTNUG2/Oz9ihK+3KZ0j8rz2SfPmubIPctyZQxyshmypMVKZGfRP2YGjO9gud9odscvIR8tWMw8WU2OrUjbDj2MTxtQgIcmbIGEsO+xTpsXG9Yfa3Zo3hJDLhXhm6xRMFN2Ktg4/kAGDXMhB7Nj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4PzYtv1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A1A25C4AF0B;
-	Thu, 25 Jul 2024 00:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721866831;
-	bh=m5cezUP0xkAXQ2pBXRrRj0V0UkVsrJZ4Yc3vHoEbOzU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=I4PzYtv1IpSApKRsyC5pZgFx0VzhKmmw0gd5T+iJ3FrVGdyTxz+iP1TccKhLZD6RN
-	 Y4x2DSg9v5ANXP82cpZp8zpuTnv0TFIveZLcbTJ5nmvcJSzaW/NgEEA5KW044Ot4Dn
-	 ML5qOUGKJbUOz/ro9FS7V3T8MSGW5Rica30bba4dZrnuppxG61UjRAMT/IM3mLF8s0
-	 OhdZE+ElKnwv27bXA2oZOPKNOqCEx0d320RWFYZraPic3fWVhW1qs2uufOu5haOhaf
-	 hCljxUGfNTwalBcgWOa4yh2XkdvqQKVeThNMWWDE6KHIcsEE/PjkaBqNf6NiNpQHtz
-	 XwRA9P3RRdCtg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8FCB4C43601;
-	Thu, 25 Jul 2024 00:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1721867125; c=relaxed/simple;
+	bh=OVgAT4kFVK5nQL4LJ4RzeoqCSvbwsqoNvxZg/8f2Cpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzNIDfa/227Qdg6Mhc+IyqOlr3uq27jhoPUt2KErrEv2lCR/t6UArDn9K5qFmRuXNiqB7B1wMPfjKS7Wab9q32+moaL9MQ/KrpGjSBLZCScpPwAqmPC9h46cU+rtRYSkCCBc9rsuJbS+qQs+ltcjKhe0vmHgX+KYdi3r9NQNj3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wo4xR7ko; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 25 Jul 2024 00:25:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721867120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9i8xCty+wlBhuD77WYEniSm6emEYVnVvP2uoezmkh64=;
+	b=wo4xR7koN+IE2YAJNgdj54jBKUwwPmzby5nMtbcIECvDux16LD3XnjhPUq7e/LM+1+UKM5
+	nicWcrdd6vSe1CaGTuAkb+MOi0vLvJZruaVrzXL6ZL6Ph+q0Jz2bc0/Qc47fC+wqY8JdoB
+	3JNu6c1DvsPNgU6zJxUkZwq49EmOjhA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kinsey Ho <kinseyho@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH mm-unstable v1 0/4] Improve mem_cgroup_iter()
+Message-ID: <ZqGbbN2Ue8HLlVmL@google.com>
+References: <20240724190214.1108049-1-kinseyho@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next 1/2] libbpf: Don't take direct pointers into BTF data
- from st_ops
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172186683158.5513.16534010366965699668.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Jul 2024 00:20:31 +0000
-References: <20240724171459.281234-1-void@manifault.com>
-In-Reply-To: <20240724171459.281234-1-void@manifault.com>
-To: David Vernet <void@manifault.com>
-Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, tj@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724190214.1108049-1-kinseyho@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+cc memcg maintainers
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+On Wed, Jul 24, 2024 at 07:02:10PM +0000, Kinsey Ho wrote:
+> Incremental cgroup iteration is being used again [1], but incremental
+> cgroup iteration was introduced for cgroup v1. It hasn't been fully
+> maintained for many years.
 
-On Wed, 24 Jul 2024 12:14:58 -0500 you wrote:
-> In struct bpf_struct_ops, we have take a pointer to a BTF type name, and
-> a struct btf_type. This was presumably done for convenience, but can
-> actually result in subtle and confusing bugs given that BTF data can be
-> invalidated before a program is loaded. For example, in sched_ext, we
-> may sometimes resize a data section after a skeleton has been opened,
-> but before the struct_ops scheduler map has been loaded. This may cause
-> the BTF data to be realloc'd, which can then cause a UAF when loading
-> the program because the struct_ops map has pointers directly into the
-> BTF data.
+This is a bold statement :)
+
+> This patchset improves the reliability of
+> mem_cgroup_iter(), along with improving simplicity and code readability.
 > 
-> [...]
+> [1] https://lore.kernel.org/20240514202641.2821494-1-hannes@cmpxchg.org/
+> 
+> Kinsey Ho (4):
+>   mm: don't hold css->refcnt during traversal
+>   mm: increment gen # before restarting traversal
+>   mm: restart if multiple traversals raced
+>   mm: clean up mem_cgroup_iter()
 
-Here is the summary with links:
-  - [bpf-next,1/2] libbpf: Don't take direct pointers into BTF data from st_ops
-    https://git.kernel.org/bpf/bpf-next/c/7244100e0389
-  - [bpf-next,2/2] selftests/bpf: Add test for resizing data map with struct_ops
-    (no matching commit)
+But the series looks great to me!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+for the series.
 
-
+Thanks!
 
