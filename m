@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-261965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C22E93BEC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F84A93BEC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C4B1F21C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55AEB1F21C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A42A19750B;
-	Thu, 25 Jul 2024 09:11:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7966185E5D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89909196D81;
+	Thu, 25 Jul 2024 09:13:44 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423E91974FE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721898662; cv=none; b=I+6qvwWNf8Hr3xs4oUr2VmNrpXXUw35qmAvjnc9I2/oLUL0v2ISOSdx0CFqDgol//VDJ3kZgs1+brwJ9jNM8iSOT7mqkXmC5Oh3+Fi1AUx78kxwCnYXxsIYnSSytcPlZ0hBuULz/NvNzRT9rZA3Me1xGONfOa/h1nOFB+TqXb7E=
+	t=1721898824; cv=none; b=S2F+4HDexwzLVjQ1ImGG0oQfmmfVwYfEFv6hR+mCnP+3tztjFLGneNwt3X83pfkfG7D94uctfl/U+I1b4HJn/oZUNz0VewBqDQcSPf52Ic9TlRHS/Ku3gjLbcBzPeJ9u42AgZCKraeO4a6qfVILqVe+S3E4tZfNZL5lnWEQwo6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721898662; c=relaxed/simple;
-	bh=oJT8EbXNAOu9BTfU5rIcxECDldIh4IVQ12mqGsQToG4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nxe0M7gl8DhubRTrwFK0r1T/xc/YQGBECwXKSrsaSSMtp8YZ2+NDgMiaFXXP9qmU4yK/MQ/04Mdnzwjegh7jg1g3/gAnCSc4OgS3zXLpHRbTtoIpU0CJpztOKOGOoWcxZbNqREif/1f+87UtxG6kfw58g7d224x0h7U1Gnybbvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 775781007;
-	Thu, 25 Jul 2024 02:11:25 -0700 (PDT)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.40.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E9C233F5A1;
-	Thu, 25 Jul 2024 02:10:57 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64/mm: Avoid direct referencing page table enties in map_range()
-Date: Thu, 25 Jul 2024 14:40:52 +0530
-Message-Id: <20240725091052.314750-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721898824; c=relaxed/simple;
+	bh=NSuiLqwGlqURN9cIwFNSCdCNVTuqijjle2i3OVTJanM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=b2TeSSlY7sq7y286kVSyvhOJVi1Zff9Xf4XsOv0VEus9AlwZC80VchzmTsUUa+IsZB6AalrAR0Km8M6hX67SgxOC0VLZEsUiIHgPYo6EOQTSbBXuDQG74gSwSmXu1/lyvT44L1DLFleh1OVCqdYYovs7Ac4zGZJRLVjsS239kIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-253-uHipkxBVP7SWuPIbzBzFtA-1; Thu, 25 Jul 2024 10:13:36 +0100
+X-MC-Unique: uHipkxBVP7SWuPIbzBzFtA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 25 Jul
+ 2024 10:12:57 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 25 Jul 2024 10:12:57 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linuxfoundation.org>
+CC: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig
+	<hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>, Mateusz Guzik
+	<mjguzik@gmail.com>, "'linux-mm@kvack.org'" <linux-mm@kvack.org>
+Subject: RE: [PATCH 3/7] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Topic: [PATCH 3/7] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Index: Adrd1gZ7oS190yPcQj+hKNIa4uSuaQAEQPEAACLTNbA=
+Date: Thu, 25 Jul 2024 09:12:57 +0000
+Message-ID: <3d6217d937994620a5de0d8967f518c0@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <9751d18defea406fa698630637d8e7db@AcuMS.aculab.com>
+ <24be8665-4717-4ee2-8a81-80fed5181736@app.fastmail.com>
+In-Reply-To: <24be8665-4717-4ee2-8a81-80fed5181736@app.fastmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Like else where in arm64 platform, use WRITE_ONCE() in map_range() while
-creating page table entries. This avoids referencing page table entries
-directly.
+From: Arnd Bergmann
+> Sent: 24 July 2024 18:32
+>=20
+> On Wed, Jul 24, 2024, at 16:29, David Laight wrote:
+>=20
+> > +#define __if_constexpr(expr, if_const, if_not_const)=09=09\
+> > +=09_Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0,=09\
+> > +=09=09char *: (if_const),=09=09=09=09\
+> > +=09=09void *: (if_not_const))
+> > +
+> > -#define __is_constexpr(x) \
+> > -=09(sizeof(int) =3D=3D sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int =
+*)8)))
+> > +#define __is_constexpr(expr) __if_constexpr((expr), 1, 0)
+>=20
+> I don't immediately see anything wrong with this, but I'm
+> still scared of any change to it, especially if this is
+> meant to go straight into mainline.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/kernel/pi/map_range.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Well it would be -rc1 (or maybe -rc2).
 
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 5410b2cac590..b93b70cdfb62 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -56,8 +56,8 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- 			 * table mapping if necessary and recurse.
- 			 */
- 			if (pte_none(*tbl)) {
--				*tbl = __pte(__phys_to_pte_val(*pte) |
--					     PMD_TYPE_TABLE | PMD_TABLE_UXN);
-+				WRITE_ONCE(*tbl, __pte(__phys_to_pte_val(*pte) |
-+					   PMD_TYPE_TABLE | PMD_TABLE_UXN));
- 				*pte += PTRS_PER_PTE * sizeof(pte_t);
- 			}
- 			map_range(pte, start, next, pa, prot, level + 1,
-@@ -79,7 +79,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- 				protval &= ~PTE_CONT;
- 
- 			/* Put down a block or page mapping */
--			*tbl = __pte(__phys_to_pte_val(pa) | protval);
-+			WRITE_ONCE(*tbl, __pte(__phys_to_pte_val(pa) | protval));
- 		}
- 		pa += next - start;
- 		start = next;
--- 
-2.30.2
+> Would it be possible to do patch 4/7 without the new
+> __if_constexpr() and instead still using __builtin_choose_expr()?
+
+The safer option would be to add __if_constexpr() but leave the
+change to __is_constexpr() for 'next'.
+
+=09David
+
+>=20
+>      Arnd
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
