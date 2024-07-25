@@ -1,205 +1,133 @@
-Return-Path: <linux-kernel+bounces-261712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4E593BB3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:28:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FEA93BB3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F76B228D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C882850E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BAE17556;
-	Thu, 25 Jul 2024 03:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NG816zmz"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2026.outbound.protection.outlook.com [40.92.52.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A317C8B;
+	Thu, 25 Jul 2024 03:30:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833E717999
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721878091; cv=fail; b=jMo7mjlZcrtswiDs/xI7FiWydZyxA6ZExYT8Tbe6OEgkqSxiLmvRdFtOwhWN/7qVy9gwPwYA9RbvVb1h/+mpIXKICuiChISQXOGaLf52/BWNiwt/j4qtgBWz/zU1363gokfZdxwl50EdTVoN9+7ezfgXrUidKxqm5cNHnCeMIlk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721878091; c=relaxed/simple;
-	bh=hnd7Z1jvHr5cWHL4/xrVjBbV1XdQvH1p8GJtur1Oxus=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kTgq9L09YT6RjuvrVpjY2N8rRXnJ0luQyolQPVuTm3dWtKO1XddBYvv55f1PDx4D1+WSyOWG9/uh4Cg3+SBKGsAd9w7P2SHR9s0SScCWD+sLEgxVsNqUJpNbQ+quuoecmVzE3pGJ/fIEbfKP7aPlXs7RsJh6LDEtliaRCQ+06w0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NG816zmz; arc=fail smtp.client-ip=40.92.52.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PZ2TyA9lczk+mJ+eWYav0uM6fhUnQEntvDvXZBJklZzb4ylHDKX+Gx//QqPQIxd2oKWa1G4BTepu7X9zI6Ito6tAFCJjHIAg9IL9cPVCTrQt5h89s3tBTFK4xFGyDjVfe0Z36M1vC9qidivAVysdFSq+wlfaRMY9svY/Xf830qS8st4nRSbnwQhb5rgG8aIfuNav1+c1QMhp9L+p2LwhyF39ity/jc6+QdusuVZhxXAttooJw1xscmdgAodSwUW/fOufjj684TnGtKVP0Nrbi9+ObbrxZQbMA0vCv8eNgxv+6MZOiwCVv5ZTbhTTJT78qsS3gMGLP3KsrHWDr5Y7ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FK6ql6RUeiHAjpXwaDuKCmVQev1+txBX3fZ4/pffEoE=;
- b=r9e+e6mbzi7EshtFDwu+96OpTVQ1bcu9DV8FT01pOHeQyQzB5RDkQIqvh4n5xdEFZHNGqBjOTPDbK1rAoEvzh95hxmPCx4luhqRSV0Z4hlNQmpdBgM1GDxs9WWo4gi+nqjAhTvnr8dHi572UjWwhk2N/wozM3utPhQ/QwapnINLNQtXWu6ViJZXFnkzgh9a8AQZjh/ZtRaKGDnBqfIN6/f1DE/G6JKSu7z22Q5+2Yq5dkhxXG+LmOLwr1Wpe+5r/BPSVekjtZucCYBq08w3lD4SG2uOZR62Wme7XH9FHgcZjX6HiLO4ZRnq/I6T6frTPt19f/0bb3tw6Sgku/Ww14Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FK6ql6RUeiHAjpXwaDuKCmVQev1+txBX3fZ4/pffEoE=;
- b=NG816zmzLwprvbTxMEgt3/VICFMsf2pP1CzuwkM7xabrh6zQ8Vok+qixXA+yQsghjB6gIsI14pTixhB3wKhdJwRKKERGr9yC4wgcG+hKkGFt+HomMywFxXXyL9mPQW2Txw7mndFz1hxwrW7hn/AkMRyVVMgakgdGEEddKtRge0iNn3mawHQU205EEKvRDWds68qqeeCtRHyH21jlqiAp2B/g5dfKzrAmkR1/pPMPxAXIww6es2qR6G7VGJqSgT1YqgjIS7BfDKzlGW2ZBAdbGWQjEivPZHoHdtMKI9c1I4NHLHeKy/axRBxa8z+B0Ya7KklemCIdWOsnIgIyPOh/kA==
-Received: from SI2PR04MB4931.apcprd04.prod.outlook.com (2603:1096:4:149::12)
- by SEZPR04MB7339.apcprd04.prod.outlook.com (2603:1096:101:19d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Thu, 25 Jul
- 2024 03:28:04 +0000
-Received: from SI2PR04MB4931.apcprd04.prod.outlook.com
- ([fe80::a6ac:c945:13f6:e963]) by SI2PR04MB4931.apcprd04.prod.outlook.com
- ([fe80::a6ac:c945:13f6:e963%6]) with mapi id 15.20.7807.006; Thu, 25 Jul 2024
- 03:28:04 +0000
-From: jianyong.wu@outlook.com
-To: maz@kernel.org,
-	oliver.upton@linux.dev,
-	jianyong.wu@outlook.com
-Cc: kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: arm64: Add some statistics under kvm debugfs
-Date: Thu, 25 Jul 2024 11:27:38 +0800
-Message-ID:
- <SI2PR04MB4931916BB35936E00B2AD262E3AB2@SI2PR04MB4931.apcprd04.prod.outlook.com>
-X-Mailer: git-send-email 2.7.4
-Content-Type: text/plain
-X-TMN: [3uDDBjxRc9ULXREfj9a0Dt+nB33Dbith]
-X-ClientProxiedBy: SI2P153CA0021.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::20) To SI2PR04MB4931.apcprd04.prod.outlook.com
- (2603:1096:4:149::12)
-X-Microsoft-Original-Message-ID:
- <1721878058-114521-1-git-send-email-jianyong.wu@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488821758F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721878205; cv=none; b=GFt89vAzM3pfDZLDxOzjtnohcUl7D9gOs+y6RP6fjSSh87KaFXdQtEiQvdDVrbS3/BkUE/+l0VY7XSCkMrRl11BnLJOTsovn5UGZK9+tDFRJf61QDIPMpzDUZYkfkP1ATVM+lmGDuuPiLLA7NH/lYiJHnnDxBid64uEVuS8GyX8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721878205; c=relaxed/simple;
+	bh=/u4oJ20HQiHQ1VYKzSXkYUwVYxUNIitDjcsgMsxnL00=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=n0khUai6BqVPb0YTKm3IVVMXQWN1gTzFeSxWD+gef7xAf0i+UBzckRyI6AH7sWtDvDZnxW75dZpDuetRRXbWd/8DQ6mNZUjN8muSjfQeWZ11aIQiiWDULkRfNbooIk0O3xBI1BzjOO/TtSFuhtlU8YvE4eG6n6mPkf0PT6SgpkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f7fb0103fso17945639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:30:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721878203; x=1722483003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OBW2kRrcFqxvb3W1lG0XA7nZdNSdGy1xrVxzEENPdc0=;
+        b=hswUfTlur2bjJp0h2GloAqKbrYFZ3oLL1Hqd7GcnT+yj6haajsHwd92Vya0JoyuqqE
+         HNC73qN0W4WEP8+9qcmEwUwl7SGcttu2GsXiYoMGj5kf5qZ0o/BVwU9OrIA8hW6QX//b
+         up0OaZMASGFM5kgPKWdm5CklMoUiZDhTQqnj8HzEtqeaJBlnsYAhKEeFluX2EYvOW1jE
+         onSEtztX4CRoQUQV6wluZT5CBbfEJmxeTRMzHKj0qwoFH3HnAH8lX38jJQ8b+fGTsKug
+         LZZk7oF6y3oDMI9j7uIpiGDlmWJI00asAZCUpQ1Q5epby2LmV0mju7lnarOyiGFBsvLj
+         4s4w==
+X-Gm-Message-State: AOJu0Yxqcnsbt3NfIHfp+/W2+sr8/1+ZS7rr/k76+wsgU4YxLeODNM0I
+	FT1YxDoaEZDT7eVLv9dXvFlxrMHNnErctFVXeZ5xvlj5A5usPCFT7/DdcPvkJQqetxbj8AKNFzl
+	KXpdFKG15oZbP5TLZG9ln1irhvR6+6NQXfr2p03QOFui5FDSRIRCRacc=
+X-Google-Smtp-Source: AGHT+IHiFN9iY90p00q2dXTYDHvn9pfuMDOkJAsruEBuAGR61r5K823yyZT8tHYR9IFcBKoiPX/AEhLtnLupKKyU/qq4cScKomAx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR04MB4931:EE_|SEZPR04MB7339:EE_
-X-MS-Office365-Filtering-Correlation-Id: 369480f2-a62d-4e1d-4575-08dcac59cb6d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|5072599006|461199028|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	w3TUph9v6K7YfZPa3lM/h3bCJZ2W0aUTiyUDjKqWBxCjGEh5hSzI5SE58eMng3kkRe/EJ9YszFQ51DEKzFl1utCLys+I7rWPHdi3glyZzlBmXARlWVvh5OFcvEGO90XyqUWLfhRxo1dEu0EyEv4dy36KGygWV8/5xVMmbDBvMEmuVvHREOBGMdrYQvPH+uqixqTnDM8pglhQmxBsluivvY1IykfgPrlIY56KNUNYy5SQBGL99CiocM92GNhrpue//3NIrtUFnEqNIkZsoODVWdx0Ga4alKXMwBB62GslZADQKbtBIisKoxG+K9cnJSZT2RldQTG20F5Bkc0pabHFvf4m++u/cdAz9G5mbb1A7gjNVsRGpD5R+FKRrxO+BcGkmrAS/0aHmZnWjq6zTgAN8PnZfwxVKMWVK+GwwBbzX98mcA+YowGcEWPjtR8HzFS17t/WhOqFUM/j+T03KzrzfB6XxX/xgAeJerjxdCQbJNMAJz2ZSD/4+fx95AbbUqLrva4lduPpn59IOVI96HuxCXwbPcs7AzF7bH6HAjtJTyAf245z0FSHwnFRKqoTxpGYQ9kUb8ipOBs3yJnQViewSZIqT1w9G6c4O09q38DfVYXJMMkfSbvfErQqY963o5pMK/bQa00NVlGlJ6hEBypjMMFSZub0GpcGl9dtMThJSE/1MAAJv7vchDwmcqvgnOpBnJomvfxjM4aWBwdlQRRlyw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KJhLcyAX8GfJ8eQIiXfPG/+XWUjCEWbtOuKIWJTLYCyuvhdu9JcT9+WSBs2m?=
- =?us-ascii?Q?U4mXpMh86ybsbHktt+vdHv6C6NaS8VItjn+ZDtOJsUA5OdkATkcA0BIBNZgq?=
- =?us-ascii?Q?tmdRrDm8Cx0I5SRbGzj1A4GoXqxjRv+hLHP5H86fuQN1Q+eiMAcCkKZGX9b1?=
- =?us-ascii?Q?IeJ2gc5uDvwGd1ycSRBHaE+qiXIATFxP6RYsTGB8NIXamnC297P5TSbmLZ97?=
- =?us-ascii?Q?woI7nacfa7YpqGwqBrSicfLr/exJ7zkz6eslyqKuA4TsiIeyR1lBhunUaAze?=
- =?us-ascii?Q?L2LlmIeV0zh+4js2avZn1/exRgUMni9MZWzvUSQ3PFNcZupOGAQY/BJuTKn0?=
- =?us-ascii?Q?BIzw8s5SiG2Wj+tXyrLEx3M52zdOZrg3oGVmMKlUtz/KBxILFBB9yi1Yk1yp?=
- =?us-ascii?Q?SzzGfPw/luO9KEibRq3JgkTBFInWqvv7/NaJJiTp6qmYkuQlM+7/tv+N29dm?=
- =?us-ascii?Q?oCRFRaIKh9PwcEYLvg8lLgku3Wcts6tAQs8guUzTX4JrL5r/3dcvySPel8tf?=
- =?us-ascii?Q?j+AwsmfjHp0XX+5Q+RDwpvfJigb0jxNvuIF/ISSNV1NXAEUdEcrjgLBm5qKT?=
- =?us-ascii?Q?v3hC4wX8kbqnQRe+NR4vL1barHbdAwBwWv3DX6F3YaWXC6g3yHGTl41CDFQo?=
- =?us-ascii?Q?XhiPvHLbLvN3fU7AvA1poQsx7ArYN4Amgtub80ym1/9b+hqg7C08/PBFuKFY?=
- =?us-ascii?Q?mDKg5gPJXQx1cwd/lm2PJNCdCVDrbJVV7luMnSo9K1tgZkqRy2H8iUIov8++?=
- =?us-ascii?Q?QWUcEpfTQUmK6lEXabqCdFmU/1vuBfeDTZOqtLOi2AHMFp4dxCrKiNWIaAMD?=
- =?us-ascii?Q?d9YS22FeyGJPS7FP8NcC/ls3R1mYZhVHCzCe/NUYzjIBj99BM1Eq4DnNGJ83?=
- =?us-ascii?Q?cRH/EkiENzcFXwJk11PaTn2g7aWKlJ+NuJ57/glfsR2Okeg3kYIIZpKha+jR?=
- =?us-ascii?Q?9XcX2q+8od4kHWKbE92livpp7Bix2ES8jAswDa2tVKiySbUjvuRMp0ul57Rs?=
- =?us-ascii?Q?dPTJCjHYlTx/T9YU6AiG60jTIDf7ibiIp97aMZI4GPXsp1zSCKaK0tS3dhwZ?=
- =?us-ascii?Q?mIkwxH8NFZI98W70RyzvzLEOX2NbPy9sjOTHnXQiWvUkYsbuXGvDvtohD0w1?=
- =?us-ascii?Q?4S0gJSqSWCDHnAMu9Qiqtxef/HjLmvGugAK6nLrlX4lY7FUO5kbbaNGNc1kh?=
- =?us-ascii?Q?h0T7JvmyccGm3lv76YqcVWbBt23lbGaBUD8AXBxw3gVB14qeapXXYkQyM+y8?=
- =?us-ascii?Q?HTpgRLWigmusS9L+qO4p?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 369480f2-a62d-4e1d-4575-08dcac59cb6d
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR04MB4931.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 03:28:04.6813
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB7339
+X-Received: by 2002:a05:6638:8504:b0:4b9:ad94:2074 with SMTP id
+ 8926c6da1cb9f-4c29b0ecaf4mr86393173.3.1721878203450; Wed, 24 Jul 2024
+ 20:30:03 -0700 (PDT)
+Date: Wed, 24 Jul 2024 20:30:03 -0700
+In-Reply-To: <20240725022132.965591-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a9d6b2061e0a02de@google.com>
+Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jianyong Wu <jianyong.wu@outlook.com>
+Hello,
 
-There are some statistics missing from kvm debugfs on arm64. For
-example: irq_exits number, irq_injection number and so on. But it's
-useful to monitoring kvm performance, so, add them here.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
 
-Signed-off-by: Jianyong Wu <jianyong.wu@outlook.com>
----
- arch/arm64/include/asm/kvm_host.h | 3 +++
- arch/arm64/kvm/guest.c            | 3 +++
- arch/arm64/kvm/handle_exit.c      | 1 +
- arch/arm64/kvm/sys_regs.c         | 1 +
- arch/arm64/kvm/vgic/vgic.c        | 1 +
- 5 files changed, 9 insertions(+)
+F2FS-fs (loop2): Stopped filesystem due to reason: 0
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: null-ptr-deref in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+BUG: KASAN: null-ptr-deref in __refcount_add include/linux/refcount.h:184 [inline]
+BUG: KASAN: null-ptr-deref in __refcount_inc include/linux/refcount.h:241 [inline]
+BUG: KASAN: null-ptr-deref in refcount_inc include/linux/refcount.h:258 [inline]
+BUG: KASAN: null-ptr-deref in get_task_struct include/linux/sched/task.h:118 [inline]
+BUG: KASAN: null-ptr-deref in kthread_stop+0xca/0x630 kernel/kthread.c:704
+Write of size 4 at addr 0000000000000028 by task syz.2.173/7839
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 9e8a496fb284..1e20319977b3 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -1024,6 +1024,9 @@ struct kvm_vcpu_stat {
- 	u64 mmio_exit_user;
- 	u64 mmio_exit_kernel;
- 	u64 signal_exits;
-+	u64 irq_exits;
-+	u64 irq_injections;
-+	u64 handle_sys_reg_exits;
- 	u64 exits;
- };
- 
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-index e2f762d959bb..a3783388a802 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -50,6 +50,9 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
- 	STATS_DESC_COUNTER(VCPU, mmio_exit_user),
- 	STATS_DESC_COUNTER(VCPU, mmio_exit_kernel),
- 	STATS_DESC_COUNTER(VCPU, signal_exits),
-+	STATS_DESC_COUNTER(VCPU, irq_exits),
-+	STATS_DESC_COUNTER(VCPU, irq_injections),
-+	STATS_DESC_COUNTER(VCPU, handle_sys_reg_exits),
- 	STATS_DESC_COUNTER(VCPU, exits)
- };
- 
-diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-index 617ae6dea5d5..d69ab1207da4 100644
---- a/arch/arm64/kvm/handle_exit.c
-+++ b/arch/arm64/kvm/handle_exit.c
-@@ -335,6 +335,7 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
- 
- 	switch (exception_index) {
- 	case ARM_EXCEPTION_IRQ:
-+		++vcpu->stat.irq_exits;
- 		return 1;
- 	case ARM_EXCEPTION_EL1_SERROR:
- 		return 1;
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index c9f4f387155f..2a6bfc673636 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -3568,6 +3568,7 @@ int kvm_handle_sys_reg(struct kvm_vcpu *vcpu)
- 	int Rt = kvm_vcpu_sys_get_rt(vcpu);
- 	int sr_idx;
- 
-+	++vcpu->stat.handle_sys_reg_exits;
- 	trace_kvm_handle_sys_reg(esr);
- 
- 	if (triage_sysreg_trap(vcpu, &sr_idx))
-diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
-index 4ec93587c8cd..9f7371e01f35 100644
---- a/arch/arm64/kvm/vgic/vgic.c
-+++ b/arch/arm64/kvm/vgic/vgic.c
-@@ -454,6 +454,7 @@ int kvm_vgic_inject_irq(struct kvm *kvm, struct kvm_vcpu *vcpu,
- 
- 	vgic_queue_irq_unlock(kvm, irq, flags);
- 	vgic_put_irq(kvm, irq);
-+	++vcpu->stat.irq_injections;
- 
- 	return 0;
- }
--- 
-2.36.6
+CPU: 0 PID: 7839 Comm: syz.2.173 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_report+0xe8/0x550 mm/kasan/report.c:491
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+ __refcount_add include/linux/refcount.h:184 [inline]
+ __refcount_inc include/linux/refcount.h:241 [inline]
+ refcount_inc include/linux/refcount.h:258 [inline]
+ get_task_struct include/linux/sched/task.h:118 [inline]
+ kthread_stop+0xca/0x630 kernel/kthread.c:704
+ f2fs_stop_gc_thread+0x7b/0xb0 fs/f2fs/gc.c:211
+ f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
+ f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
+ __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff20d575b59
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff20e2a9048 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ff20d705f60 RCX: 00007ff20d575b59
+RDX: 0000000020000140 RSI: 000000008004587d RDI: 0000000000000005
+RBP: 00007ff20d5e4e5d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007ff20d705f60 R15: 00007fff090dad38
+ </TASK>
+==================================================================
+
+
+Tested on:
+
+commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1194629d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1641cea1980000
 
 
