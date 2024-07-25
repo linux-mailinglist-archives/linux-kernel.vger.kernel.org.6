@@ -1,319 +1,241 @@
-Return-Path: <linux-kernel+bounces-262046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924E293BFF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC0393BFF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489B4283372
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C44F2836FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408C2197A7E;
-	Thu, 25 Jul 2024 10:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8A1990A5;
+	Thu, 25 Jul 2024 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9LYrSln"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2k6rnkyL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zvDsF8Ab";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pob+kq6U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t/vHgwDl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FB91990AE;
-	Thu, 25 Jul 2024 10:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF78198E89;
+	Thu, 25 Jul 2024 10:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721903511; cv=none; b=QgSF/X5XVPVrvziWSZ7GE31D2fdY+6x+/YAfhiqmDP0ggKHZV9wO9lU6UeDzMdYnjGR3ou+04t7zwPD3X6TRAvk1vcxh5wJIJEe6iQJwa/h+cKIonKGMwCVKsOSjo0ecuh0PKQzpft2/9UwRoA3H19zfigXQuxsMhD2h9KhfmIM=
+	t=1721903522; cv=none; b=SzOOGDtwSCv/xVoewEkU+ivRlM76HToBKko4+teHm9I+xGXDKp2FTFir1fVz9E+hSmGbt7TUObSH3ZmoUnc/TGqWUp3MbeE3fYAQFRIlUsIzTekCpEKKUoJ9aQuiuqSCuybtL0fg7HOUORI+wWLgqxU71CMaS4jDqfci7B+Jufk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721903511; c=relaxed/simple;
-	bh=ySj53zVL2RP4hd9XKHlE95BaO61mIJrRrZo6GMbFlg0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=inCZ1VjfvRoIkk/j/XuZTRtnXg9r0Ict6VplZScUMJThiERWQQfMLtGPkj0ae3fRmSfTO8kDytQhQ/EKuBEPFGKCNAWz+nWL9CodQ4ejnfN07OKTs8B73hbpzN07TtPyf+8UqR0SgECDdPlzQokPkjSG1hpWEhNStPuypn2s3Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9LYrSln; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so38759366b.1;
-        Thu, 25 Jul 2024 03:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721903508; x=1722508308; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YcFfHHMg/vpKPfjLUUikPwq0DiRK7mCRJuSC9q6OEfA=;
-        b=V9LYrSlneOtU8fkzeUUe2AFGuYPoY6Lx4ws3fwoIQVn2L/W0fm8g+QjdGGuc3LHJTJ
-         ryiuYeronaiii6wUhkIuLxmWbQ9jrU9UvqCkKZ97zMNjYrBPHhImQcTx0rH9dqJBQ/Bn
-         Cqr0d4UHQYQ1gxwx+vzkk90JBN60KKhp7SSxbDkyBwahWn9RTXRXXIn6QZFFwzEKaCZi
-         8k+EILyaDXxektmMSIN6B+8DIFCAIXW1O744dE0va1UxATAxMKfrxp+bWZbMDMUbzM5B
-         NVtBY7eWhXyJxanmmfn2fJWSC1Fz3WxQUAZXMbj68Ef0DVTyNPJlGQSAQoUDcP/tLCh3
-         mh6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721903508; x=1722508308;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YcFfHHMg/vpKPfjLUUikPwq0DiRK7mCRJuSC9q6OEfA=;
-        b=qqWWNtjKsFZKBZb7XG6XkOhAFRECbHeMSv95MgnwaKMjonaz488RuXX0ouO2eWE9O7
-         yqvcGouSjzJ5YMlke/KCOWOdDTouPmRhk6bhHc7neJVyt9OrXFlLHwvX64aAvnu+X+xe
-         7r7eXkG2r6dWE3gTrCynnTYXAsWY8m3VdMwKUM5ZUvT7WJMmUNsBKgmzHqTuOxO+PNqu
-         SSGsWycRW0F9f+xcYU71+FnkcMEc9P3gL15VO3RmKMRke0xl21u3l+fCyAqz1NH9EzA0
-         /K4OHoBqHNIXLviL0kssubUGwooqkg1zWE17IwpBzPaSh7iguqgRnjZu/F2ymku1S4Sl
-         QBHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiwLccFf4fkTfuyXips/CB5nmNLvqQonjwKgEvlkxkx8UfvQBO9H0DrhzyW2otRSrxHa527hAMcVt7hBRXRayQj7AqdL6BixEL6eZ1VKrzVGMq2MvjbfP1GsaGpO0HND0eVyz0IPbdQlQ=
-X-Gm-Message-State: AOJu0Yx+SIY2+OlvENDGCTZ1m/X7s21ENOQAwZLuLSPCV40t4vo0nfjV
-	kNtS5/+CCfbaFHCQj/QR1+G10R9LoEQ9O2Y0sRH1jvI5rFUOEoiL
-X-Google-Smtp-Source: AGHT+IEaqiztPzxb1PzAMKNaHMQ+BRHsmjzlCQLP8D7b3wmw6IZllEQCoc1gR9hApLg4z7JQqimmSA==
-X-Received: by 2002:a17:907:9694:b0:a6f:24fe:f2a7 with SMTP id a640c23a62f3a-a7ac4d9f4a7mr193283366b.10.1721903507280;
-        Thu, 25 Jul 2024 03:31:47 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad903f1sm57280766b.152.2024.07.25.03.31.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 03:31:46 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 25 Jul 2024 12:31:40 +0200
-Subject: [PATCH 2/2] ASoC: constify snd_soc_component_driver struct
+	s=arc-20240116; t=1721903522; c=relaxed/simple;
+	bh=cofU9la5SYvTj7YozW63nX2MFyceKW1t5Jcc+sK0XCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuJUgcYXBR1m8qdKp8/74XbWIlA/HylUx4SmSXrUAJKuixIiMAthSAtrswH8LFZmdrCMH9snzs1BaH9ASeSN8n3il0nVOsSMfm+4Oo0IqAD0/p49vuOP4NUXTKVYNw2de3ZkP0AjHlSO41EoaL2AQ+pkA99yF1QT0gFcW8quJlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2k6rnkyL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zvDsF8Ab; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pob+kq6U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t/vHgwDl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C5B9021A9C;
+	Thu, 25 Jul 2024 10:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721903518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
+	b=2k6rnkyLQEkSF/OMmKXsfQBatlbuqrWVLUbCVTWYxD2uDEQIZV+s5YCl5f5j/mQT8I+J8c
+	4X6UJyWzf9GadYlUfmSubf4bw/vqXxTA/WqhbDZ2Ad6pfqRiSYVC8bS5cRPty4Oot67xBf
+	I7Ybjfvt4fsZZcm9d/tPU0jHoDdQLZ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721903518;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
+	b=zvDsF8AbfW+VUymzrjkc+NAh+gkDHJNnz/O2WOP8qHW+fcO5OCssWfVdWrph7HgxLGItOF
+	QiEaJLdBJ1xEjCBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pob+kq6U;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="t/vHgwDl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721903517; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
+	b=pob+kq6UX+alqac4MGl1uhT98CBmFBrZLTomrLGVVbW5FI5g3O9KdRGUtTfiKFOPS8YI6G
+	fhQi/+JmmyeWFOFOEpiOKGw1eLphIMaCKIFmD4RH/sOUZcwRqhVDnU0uHevo0Odbz2Zlxi
+	0ZSjrLztm4pSZ19XPKNsL+j+G/0Pzwo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721903517;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z0yzzD/Dk3sPTHGa6I/agUhnv5LDHCUgL+l9TOJH6gE=;
+	b=t/vHgwDlfcCBT7tb/RkXF/0yC2yErBUaPi8ZViAY9JGzH4HXD9Xxs3G4ydpa1448J+NEjW
+	7TVG3joP/PDy7kCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B556B13874;
+	Thu, 25 Jul 2024 10:31:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id h7RALJ0pomYfSwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 10:31:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 73016A0996; Thu, 25 Jul 2024 12:31:57 +0200 (CEST)
+Date: Thu, 25 Jul 2024 12:31:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>, stable@kernel.org
+Subject: Re: [PATCH 07/20] ext4: drop ppath from ext4_ext_replay_update_ex()
+ to avoid double-free
+Message-ID: <20240725103157.3dts4pcgqxnpougd@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-8-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-const_snd_soc_component_driver-v1-2-3d7ee08e129b@gmail.com>
-References: <20240725-const_snd_soc_component_driver-v1-0-3d7ee08e129b@gmail.com>
-In-Reply-To: <20240725-const_snd_soc_component_driver-v1-0-3d7ee08e129b@gmail.com>
-To: Tim Harvey <tharvey@gateworks.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721903500; l=8541;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=ySj53zVL2RP4hd9XKHlE95BaO61mIJrRrZo6GMbFlg0=;
- b=JwSs8y19BMfB32bcO/WktQ/BA0jtJssRSuec63vGXGLwGnYUnDXzVtb/uT5vwNXNLja0d9sLR
- U0l0peToTlsBXRy508x93yavE47eCyDYnrAcbXwqnslVzdw1nt3sTT9
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-8-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.31
+X-Rspamd-Queue-Id: C5B9021A9C
 
-The instances of the `snd_soc_component_driver` struct are not modified
-after their declaration, and they are only passed to
-`devm_snd_soc_register_component()`, which expects a constant
-`snd_soc_component_driver`.
+On Wed 10-07-24 12:06:41, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> When calling ext4_force_split_extent_at() in ext4_ext_replay_update_ex(),
+> the 'ppath' is updated but it is the 'path' that is freed, thus potentially
+> triggering a double-free in the following process:
+> 
+> ext4_ext_replay_update_ex
+>   ppath = path
+>   ext4_force_split_extent_at(&ppath)
+>     ext4_split_extent_at
+>       ext4_ext_insert_extent
+>         ext4_ext_create_new_leaf
+>           ext4_ext_grow_indepth
+>             ext4_find_extent
+>               if (depth > path[0].p_maxdepth)
+>                 kfree(path)                 ---> path First freed
+>                 *orig_path = path = NULL    ---> null ppath
+>   kfree(path)                               ---> path double-free !!!
+> 
+> So drop the unnecessary ppath and use path directly to avoid this problem.
+> And use ext4_find_extent() directly to update path, avoiding unnecessary
+> memory allocation and freeing. Also, propagate the error returned by
+> ext4_find_extent() instead of using strange error codes.
+> 
+> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
+> Cc: stable@kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Move all instances of `snd_soc_component_driver` to read-only sections
-by declaring them const.
+Nice! Feel free to add:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- sound/soc/au1x/dbdma2.c              | 2 +-
- sound/soc/au1x/dma.c                 | 2 +-
- sound/soc/bcm/cygnus-pcm.c           | 2 +-
- sound/soc/codecs/cpcap.c             | 2 +-
- sound/soc/codecs/cs43130.c           | 2 +-
- sound/soc/codecs/pcm186x.c           | 4 ++--
- sound/soc/codecs/pcm5102a.c          | 2 +-
- sound/soc/codecs/spdif_receiver.c    | 2 +-
- sound/soc/codecs/spdif_transmitter.c | 2 +-
- sound/soc/codecs/sti-sas.c           | 2 +-
- sound/soc/codecs/tas6424.c           | 2 +-
- sound/soc/stm/stm32_adfsdm.c         | 2 +-
- sound/soc/uniphier/evea.c            | 2 +-
- 13 files changed, 14 insertions(+), 14 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/sound/soc/au1x/dbdma2.c b/sound/soc/au1x/dbdma2.c
-index ea01d6490cec..3392693faeb9 100644
---- a/sound/soc/au1x/dbdma2.c
-+++ b/sound/soc/au1x/dbdma2.c
-@@ -311,7 +311,7 @@ static int au1xpsc_pcm_new(struct snd_soc_component *component,
- }
- 
- /* au1xpsc audio platform */
--static struct snd_soc_component_driver au1xpsc_soc_component = {
-+static const struct snd_soc_component_driver au1xpsc_soc_component = {
- 	.name		= DRV_NAME,
- 	.open		= au1xpsc_pcm_open,
- 	.close		= au1xpsc_pcm_close,
-diff --git a/sound/soc/au1x/dma.c b/sound/soc/au1x/dma.c
-index d2fdebd8881b..c9c2b1e71d55 100644
---- a/sound/soc/au1x/dma.c
-+++ b/sound/soc/au1x/dma.c
-@@ -289,7 +289,7 @@ static int alchemy_pcm_new(struct snd_soc_component *component,
- 	return 0;
- }
- 
--static struct snd_soc_component_driver alchemy_pcm_soc_component = {
-+static const struct snd_soc_component_driver alchemy_pcm_soc_component = {
- 	.name		= DRV_NAME,
- 	.open		= alchemy_pcm_open,
- 	.close		= alchemy_pcm_close,
-diff --git a/sound/soc/bcm/cygnus-pcm.c b/sound/soc/bcm/cygnus-pcm.c
-index 2d1e241d8367..4cb2fe10bcdc 100644
---- a/sound/soc/bcm/cygnus-pcm.c
-+++ b/sound/soc/bcm/cygnus-pcm.c
-@@ -707,7 +707,7 @@ static int cygnus_dma_new(struct snd_soc_component *component,
- 	return 0;
- }
- 
--static struct snd_soc_component_driver cygnus_soc_platform = {
-+static const struct snd_soc_component_driver cygnus_soc_platform = {
- 	.open		= cygnus_pcm_open,
- 	.close		= cygnus_pcm_close,
- 	.prepare	= cygnus_pcm_prepare,
-diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
-index 4f9dabd9d78a..04304a7ad915 100644
---- a/sound/soc/codecs/cpcap.c
-+++ b/sound/soc/codecs/cpcap.c
-@@ -1649,7 +1649,7 @@ static int cpcap_soc_probe(struct snd_soc_component *component)
- 	return cpcap_audio_reset(component, false);
- }
- 
--static struct snd_soc_component_driver soc_codec_dev_cpcap = {
-+static const struct snd_soc_component_driver soc_codec_dev_cpcap = {
- 	.probe			= cpcap_soc_probe,
- 	.controls		= cpcap_snd_controls,
- 	.num_controls		= ARRAY_SIZE(cpcap_snd_controls),
-diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
-index be4037890fdb..90909f452ba5 100644
---- a/sound/soc/codecs/cs43130.c
-+++ b/sound/soc/codecs/cs43130.c
-@@ -2398,7 +2398,7 @@ static int cs43130_probe(struct snd_soc_component *component)
- 	return 0;
- }
- 
--static struct snd_soc_component_driver soc_component_dev_cs43130 = {
-+static const struct snd_soc_component_driver soc_component_dev_cs43130 = {
- 	.probe			= cs43130_probe,
- 	.controls		= cs43130_snd_controls,
- 	.num_controls		= ARRAY_SIZE(cs43130_snd_controls),
-diff --git a/sound/soc/codecs/pcm186x.c b/sound/soc/codecs/pcm186x.c
-index 451a8fd8fac5..13443f569ddb 100644
---- a/sound/soc/codecs/pcm186x.c
-+++ b/sound/soc/codecs/pcm186x.c
-@@ -566,7 +566,7 @@ static int pcm186x_set_bias_level(struct snd_soc_component *component,
- 	return 0;
- }
- 
--static struct snd_soc_component_driver soc_codec_dev_pcm1863 = {
-+static const struct snd_soc_component_driver soc_codec_dev_pcm1863 = {
- 	.set_bias_level		= pcm186x_set_bias_level,
- 	.controls		= pcm1863_snd_controls,
- 	.num_controls		= ARRAY_SIZE(pcm1863_snd_controls),
-@@ -579,7 +579,7 @@ static struct snd_soc_component_driver soc_codec_dev_pcm1863 = {
- 	.endianness		= 1,
- };
- 
--static struct snd_soc_component_driver soc_codec_dev_pcm1865 = {
-+static const struct snd_soc_component_driver soc_codec_dev_pcm1865 = {
- 	.set_bias_level		= pcm186x_set_bias_level,
- 	.controls		= pcm1865_snd_controls,
- 	.num_controls		= ARRAY_SIZE(pcm1865_snd_controls),
-diff --git a/sound/soc/codecs/pcm5102a.c b/sound/soc/codecs/pcm5102a.c
-index 3401a25341e6..9bca53de2475 100644
---- a/sound/soc/codecs/pcm5102a.c
-+++ b/sound/soc/codecs/pcm5102a.c
-@@ -24,7 +24,7 @@ static struct snd_soc_dai_driver pcm5102a_dai = {
- 	},
- };
- 
--static struct snd_soc_component_driver soc_component_dev_pcm5102a = {
-+static const struct snd_soc_component_driver soc_component_dev_pcm5102a = {
- 	.idle_bias_on		= 1,
- 	.use_pmdown_time	= 1,
- 	.endianness		= 1,
-diff --git a/sound/soc/codecs/spdif_receiver.c b/sound/soc/codecs/spdif_receiver.c
-index 862e0b654a1c..7043aa9a206e 100644
---- a/sound/soc/codecs/spdif_receiver.c
-+++ b/sound/soc/codecs/spdif_receiver.c
-@@ -35,7 +35,7 @@ static const struct snd_soc_dapm_route dir_routes[] = {
- 			SNDRV_PCM_FMTBIT_S32_LE | \
- 			SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE)
- 
--static struct snd_soc_component_driver soc_codec_spdif_dir = {
-+static const struct snd_soc_component_driver soc_codec_spdif_dir = {
- 	.dapm_widgets		= dir_widgets,
- 	.num_dapm_widgets	= ARRAY_SIZE(dir_widgets),
- 	.dapm_routes		= dir_routes,
-diff --git a/sound/soc/codecs/spdif_transmitter.c b/sound/soc/codecs/spdif_transmitter.c
-index 736518921555..d997862767ec 100644
---- a/sound/soc/codecs/spdif_transmitter.c
-+++ b/sound/soc/codecs/spdif_transmitter.c
-@@ -35,7 +35,7 @@ static const struct snd_soc_dapm_route dit_routes[] = {
- 	{ "spdif-out", NULL, "Playback" },
- };
- 
--static struct snd_soc_component_driver soc_codec_spdif_dit = {
-+static const struct snd_soc_component_driver soc_codec_spdif_dit = {
- 	.dapm_widgets		= dit_widgets,
- 	.num_dapm_widgets	= ARRAY_SIZE(dit_widgets),
- 	.dapm_routes		= dit_routes,
-diff --git a/sound/soc/codecs/sti-sas.c b/sound/soc/codecs/sti-sas.c
-index c421906a0694..3a1cdb329f31 100644
---- a/sound/soc/codecs/sti-sas.c
-+++ b/sound/soc/codecs/sti-sas.c
-@@ -386,7 +386,7 @@ static int sti_sas_component_probe(struct snd_soc_component *component)
- 	return sti_sas_init_sas_registers(component, drvdata);
- }
- 
--static struct snd_soc_component_driver sti_sas_driver = {
-+static const struct snd_soc_component_driver sti_sas_driver = {
- 	.probe			= sti_sas_component_probe,
- 	.resume			= sti_sas_resume,
- 	.idle_bias_on		= 1,
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index bb0500e9d3ea..9be054837f68 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -364,7 +364,7 @@ static int tas6424_set_bias_level(struct snd_soc_component *component,
- 	return 0;
- }
- 
--static struct snd_soc_component_driver soc_codec_dev_tas6424 = {
-+static const struct snd_soc_component_driver soc_codec_dev_tas6424 = {
- 	.set_bias_level		= tas6424_set_bias_level,
- 	.controls		= tas6424_snd_controls,
- 	.num_controls		= ARRAY_SIZE(tas6424_snd_controls),
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index fb5dd9a68bea..b35c28b70265 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -309,7 +309,7 @@ static void stm32_adfsdm_cleanup(void *data)
- 	iio_channel_release_all_cb(data);
- }
- 
--static struct snd_soc_component_driver stm32_adfsdm_soc_platform = {
-+static const struct snd_soc_component_driver stm32_adfsdm_soc_platform = {
- 	.open		= stm32_adfsdm_pcm_open,
- 	.close		= stm32_adfsdm_pcm_close,
- 	.hw_params	= stm32_adfsdm_pcm_hw_params,
-diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
-index d90b3e4b0104..a4cf14462374 100644
---- a/sound/soc/uniphier/evea.c
-+++ b/sound/soc/uniphier/evea.c
-@@ -384,7 +384,7 @@ static int evea_codec_resume(struct snd_soc_component *component)
- 	return ret;
- }
- 
--static struct snd_soc_component_driver soc_codec_evea = {
-+static const struct snd_soc_component_driver soc_codec_evea = {
- 	.probe			= evea_codec_probe,
- 	.suspend		= evea_codec_suspend,
- 	.resume			= evea_codec_resume,
+								Honza
 
+> ---
+>  fs/ext4/extents.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 1660434fbfc7..b1cfce5b57d2 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -5920,7 +5920,7 @@ int ext4_clu_mapped(struct inode *inode, ext4_lblk_t lclu)
+>  int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+>  			      int len, int unwritten, ext4_fsblk_t pblk)
+>  {
+> -	struct ext4_ext_path *path = NULL, *ppath;
+> +	struct ext4_ext_path *path;
+>  	struct ext4_extent *ex;
+>  	int ret;
+>  
+> @@ -5936,30 +5936,29 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+>  	if (le32_to_cpu(ex->ee_block) != start ||
+>  		ext4_ext_get_actual_len(ex) != len) {
+>  		/* We need to split this extent to match our extent first */
+> -		ppath = path;
+>  		down_write(&EXT4_I(inode)->i_data_sem);
+> -		ret = ext4_force_split_extent_at(NULL, inode, &ppath, start, 1);
+> +		ret = ext4_force_split_extent_at(NULL, inode, &path, start, 1);
+>  		up_write(&EXT4_I(inode)->i_data_sem);
+>  		if (ret)
+>  			goto out;
+> -		kfree(path);
+> -		path = ext4_find_extent(inode, start, NULL, 0);
+> +
+> +		path = ext4_find_extent(inode, start, &path, 0);
+>  		if (IS_ERR(path))
+> -			return -1;
+> -		ppath = path;
+> +			return PTR_ERR(path);
+>  		ex = path[path->p_depth].p_ext;
+>  		WARN_ON(le32_to_cpu(ex->ee_block) != start);
+> +
+>  		if (ext4_ext_get_actual_len(ex) != len) {
+>  			down_write(&EXT4_I(inode)->i_data_sem);
+> -			ret = ext4_force_split_extent_at(NULL, inode, &ppath,
+> +			ret = ext4_force_split_extent_at(NULL, inode, &path,
+>  							 start + len, 1);
+>  			up_write(&EXT4_I(inode)->i_data_sem);
+>  			if (ret)
+>  				goto out;
+> -			kfree(path);
+> -			path = ext4_find_extent(inode, start, NULL, 0);
+> +
+> +			path = ext4_find_extent(inode, start, &path, 0);
+>  			if (IS_ERR(path))
+> -				return -EINVAL;
+> +				return PTR_ERR(path);
+>  			ex = path[path->p_depth].p_ext;
+>  		}
+>  	}
+> -- 
+> 2.39.2
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
