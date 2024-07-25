@@ -1,93 +1,65 @@
-Return-Path: <linux-kernel+bounces-261762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5C093BBD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:48:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D37993BBDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 192691C2384E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:48:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D37EB2296A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008111B94F;
-	Thu, 25 Jul 2024 04:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899B61C6BE;
+	Thu, 25 Jul 2024 04:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5itf1fE"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="AW56FVoi"
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59441862C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388E417565;
+	Thu, 25 Jul 2024 04:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721882901; cv=none; b=dROPQUPjsc/oAaqzya8z+L/4+6r2hy2dIR1UcD3G/SiqyfcNItMHJbo0KVa8Sb+5+k2UqVEiCfxXI0PDOg15mARWH/NMMttFPDgUrlNskcezCd9EFDZ+yLPltwq0YC++PntaSISoSUrws7hPNbjyYnKfMSwzdEmVv7jg1vnQfRQ=
+	t=1721883307; cv=none; b=f15Zd8SzOUsE6sCw+pJ+LqMqEgaMDR9Et0OevTiOIIrZsQ6D6WiqoMf6TCPZFQeRzJD2/45sgf84sx2gtD2+0hr+sOb+ZazqARmYsm93ATocXYcVOZsL5272wzpVzBba65GP57Rxvzk9TLc3XGITxKlAmvA5msvQ4RfDqtdZNgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721882901; c=relaxed/simple;
-	bh=4tkzV4CrdLGLyLxeqqrIR9odUjTIIvuyAKEAUZasaog=;
+	s=arc-20240116; t=1721883307; c=relaxed/simple;
+	bh=1b7IngO0nwhRuFvE2bz2TnqMfK9MlvsriuEpIKDmME8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOqb4NuP7oFTJBM3h1btdbeI8kMrKKTcEalwfr2igijanTy5Z9rG1uHDvTTCm2ZM/KXQH1bwuoX2zQEMixeo7WBFzl3KwY+KldOwYUZ9iDrtYLF3ZxSBJwxCPzsTU72jZFp0YQCKce2oeZwFhAmGoHVp3JQw34vRaIe5/bIaKIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5itf1fE; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-793a3a79a83so335529a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:48:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721882899; x=1722487699; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fuLrTOMZXwDvrh3Gcss0q0VIdIl/tmC7R+/hGCD5mQk=;
-        b=n5itf1fEcC/Fe1QSCWu9b0tXh85FplQ3qRWFHq5FctPL8exhYKOpMOt/iFFstZlTcE
-         ozGlzgHcVy01s9nzZ+iYgDSNTNYId+ntYgigCKBrf9njRzJEf75QlXvIuSZTd+/1qqEK
-         0GuOOKF58koSgfcUY3Ycvf6hZ0z7Xgh3iMbp5aZwFUGXhtvC45m+xhoo3FSflEnvRQ9/
-         5rMcm5zsBAckA2Re9cMnwov/+VLJvw4VY1lX3Xq8ELl36L4//zHHcMpVac2KdyctseiL
-         3cIkoF5RLn3BkpDHkhMSgB1nfvrckRGHZeHFu4SjinU8reMKzRTOp+BYqJ5yLLTmw6As
-         Cpwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721882899; x=1722487699;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fuLrTOMZXwDvrh3Gcss0q0VIdIl/tmC7R+/hGCD5mQk=;
-        b=WJqPV2D00AmGziUT8K2eim13HG31IeqkxACDevlxfx/aGrMh8gK0Yf8/dPibIsGzH0
-         LEnlcmksZgXEEdPxGe05T5urtq1P170G5ZMhUUAadR/3TGm881ck0vey48ABFu7wbhNv
-         QI0K/u+tHiaFdDov5gzTPf+s86vWLBatmvvZ1JUOK3K0hPAeTO831Sm1AfEB4LK0kbfo
-         hq8wD/0Dc3DrdmXkQM0nbQUBcywsLkHlMAHo4OAuG4EfjjvHcRkKPpCgW7P6a3zLeV5t
-         z7OdHpZ6Ib1t01gZ9nth3LLrs7HuYauTUSRzs3mdNIlzt5C7oSL9W6L8Qrc2lv5eFzcj
-         gd1g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8HnucJFQpGhdqQxX1Ha/C14m4ZQjzpJjC0lI+AzUnD60gcI19fn1w9jYgHPMwFRB27D1CC0kwHeNOMhJWAni/ruJHBzhErtiAWjHq
-X-Gm-Message-State: AOJu0YzKkC4H+77wrCDDlb/njZ51jQ00w1TtZt0o4zcbbYHJ184Rx9u+
-	Bue8Del2+B9VDMBgIcomnVy19GSOCq/yuCYdBpr/MeeUdJiCX5iyO7wHEZhYlQ==
-X-Google-Smtp-Source: AGHT+IEWwStak5o3MjRefRdeyCr2slwkGT9/t8cXU3b6WSdv7rBu11QlEfyQkbgSO9bxXTIKVaFdDg==
-X-Received: by 2002:a05:6a20:72ac:b0:1c0:f594:198c with SMTP id adf61e73a8af0-1c4728035d3mr2753100637.11.1721882899113;
-        Wed, 24 Jul 2024 21:48:19 -0700 (PDT)
-Received: from thinkpad ([103.244.168.26])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28e62e6fsm505267a91.57.2024.07.24.21.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 21:48:18 -0700 (PDT)
-Date: Thu, 25 Jul 2024 10:18:12 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 08/12] PCI: brcmstb: Don't conflate the reset rescal
- with phy ctrl
-Message-ID: <20240725044812.GI2317@thinkpad>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-9-james.quinlan@broadcom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAiH4z6Ad09mGv/baMS3qfW+7Ar5B9XEMXCtPu7zowLb+O8EOafxkSqRVJCUrWv4djbVKAPN2768VJjXvqM49FEHkTxeD/mBkGhVn2LTWMXIHziex/zBBzK+lcYFAwHbK1VDIyOUfEeN9ftxyT6Anq27OrK4AgP79Y2xdhWFInY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=AW56FVoi; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1721882893; bh=1b7IngO0nwhRuFvE2bz2TnqMfK9MlvsriuEpIKDmME8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AW56FVoiMFQI7NZdf7NyRNjl+svP8U6sDkonqHDyckp40y+jNf+ErPhSkMwy8AEel
+	 DzdirLTXqEHdYScRuQqAOpn4j1SYdktfTRtkCPy7VnIr0D+iQz0JhH4Dv2bS07a4Fj
+	 G2OrkmwuKeS80xHT17GSZscBPHdsEWvYVZ/L14x0=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Thu, 25 Jul 2024 06:48:12 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 0325480023;
+	Thu, 25 Jul 2024 06:48:13 +0200 (CEST)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id E8A5F181BCF; Thu, 25 Jul 2024 06:48:12 +0200 (CEST)
+Date: Thu, 25 Jul 2024 06:48:12 +0200
+From: Nicolas Schier <n.schier@avm.de>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, masahiroy@kernel.org, ojeda@kernel.org,
+	djwong@kernel.org, kvalo@kernel.org
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+Message-ID: <20240725-interesting-annoying-mammoth-6bb3ef@buildd>
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+ <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+ <CAHB1NagAwSpPzLOa6s9PMPPdJL5dpLUuq=W3t4CWkfLyzgGJxA@mail.gmail.com>
+ <20240724194313.01cfc493b253cbe1626ec563@linux-foundation.org>
+ <CAHB1NagB0-N777xzODLe19YBV1UJn4YGuUo67-O9cgKKgc-CLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,45 +69,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716213131.6036-9-james.quinlan@broadcom.com>
+In-Reply-To: <CAHB1NagB0-N777xzODLe19YBV1UJn4YGuUo67-O9cgKKgc-CLg@mail.gmail.com>
+X-purgate-ID: 149429::1721882892-97E5D4D6-E06623CF/0/0
+X-purgate-type: clean
+X-purgate-size: 1070
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-On Tue, Jul 16, 2024 at 05:31:23PM -0400, Jim Quinlan wrote:
-> We've been assuming that if an SOC has a "rescal" reset controller that we
-> should automatically invoke brcm_phy_cntl(...).  This will not be true in
-> future SOCs, so we create a bool "has_phy" and adjust the cfg_data
-> appropriately (we need to give 7216 its own cfg_data structure instead of
-> sharing one).
-> 
+On Wed, Jul 24, 2024 at 11:05:43PM -0400, Julian Sun wrote:
+> Andrew Morton <akpm@linux-foundation.org> 于2024年7月24日周三 22:43写道：
+> >
+> > On Wed, 24 Jul 2024 22:30:49 -0400 Julian Sun <sunjunchao2870@gmail.com> wrote:
+> >
+> > > I noticed that you have already merged this patch into the
+> > > mm-nonmm-unstable branch.
+> >
+> > Yup.  If a patch looks desirable (and reasonably close to ready) I'll
+> > grab it to give it some exposure and testing while it's under
+> > development, To help things along and to hopefully arrive at a batter
+> > end result.
+> >
+> > > If I want to continue refining this script,
+> > > should I send a new v2 version or make modifications based on the
+> > > current version?
+> >
+> >
+> > > Either is OK - whatever makes most sense for the reviewers.  Reissuing
+> > > a large patch series for a single line change is counterproductive ;)
+> Thanks for your clarification. I will send a new patch based on the
+> current version.
 
-In all commit messages, use imperative tone as per kernel documentation:
+Hi Julian,
 
-"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-to do frotz", as if you are giving orders to the codebase to change
-its behaviour."
+can you please Cc linux-kbuild in v2?
 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index dfb404748ad8..8ab5a8ca05b4 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -222,6 +222,7 @@ enum pcie_type {
->  struct pcie_cfg_data {
->  	const int *offsets;
->  	const enum pcie_type type;
-> +	const bool has_phy;
-
-'has_phy' means the controller supports PHY and the new SoC doesn't have a PHY
-for the controller?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Kind regards,
+Nicolas
 
