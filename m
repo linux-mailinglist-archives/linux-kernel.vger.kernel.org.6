@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-261756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B773793BBC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:33:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E6F93BBC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9AB1C21784
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:33:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4689EB23774
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6370A1CA9E;
-	Thu, 25 Jul 2024 04:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAA18046;
+	Thu, 25 Jul 2024 04:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p+wOKq8U"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NUxOa+HB"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF011C2A8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE3417C91
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721881983; cv=none; b=dOhHi/AS970Ap9dTnAyXkT4cJ5BlAKR1CWys5RncnxnB4DaD86AL2Eyd7TlNrwfjmHBHan4m3wrxgRb8ezIM/R2oRLt3MsYAw/T/rFrrnhb7FHSjtqZhy5CZ07bGQ9+6xXKhqDVe+f6FfNObwdlgsKonUYJmbmRlbo87tDJ+nGw=
+	t=1721882249; cv=none; b=WzK+ZvwHniLQkkVf491P260JVPBU9MMVAlZEu/+FKDkSnVIWI820RlEDumpa+LbmY8i2U8sZqmi2YcOF5BlTuPZ5kOLwM2dnp8BHn3SnDa98CsdcI/w0/n2yl+zsRvrF65R/dDN4iAv0DB49I0YfgaJXYYO6yM0mpTyRyIA8L6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721881983; c=relaxed/simple;
-	bh=9PUDpDX3YVNuKkUqONsTAeenTRx75NVihwe7qXjgTvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G5Z/QZ4gtEStWZUuofm33UCKtmJuiO9clRTGTh2oQczAr73FmoA0i3NJ9t41mYXjwuhxHiziHeqecyifsgYun8ekOgWZTfYszJEpGOR69VV+RAaRu0PNhKk06l+KbgGXLcs8FnPlRjf1mTfRiZrWA2cSqEDg+2hVFvyTyYXhP3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p+wOKq8U; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1721882249; c=relaxed/simple;
+	bh=nQ+RJQHyfq63tZOKYOqsxP8VydZPSKB+6877TeGYgio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChW45ox5JI6BfXRPbD8Ge4Dte+bAfuGk7OdjZjXIk5Pa+EccIqj7Jr9i0mH/kKMoKkMHO93J4uLPWQUcAg02qltmXRiZaK0zwHiqEX4N1kGCf88U+pz1NwpFQsm7DaSZMFMGVv50+ojuV1TQqceC+n6f0pVrqGPWH8jjMDyfVw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NUxOa+HB; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6512866fa87so4779637b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:33:01 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so365511b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:37:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721881981; x=1722486781; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDFqw6oHHPxpfXtOUHUn1IVLUDP2YjdBprOP06yJvHQ=;
-        b=p+wOKq8UFkzZntssawnaETB7+9V4o3x7q6aHPWa/rwUv9OzNPcOFkh9McJeJE0fQb0
-         QoU3DsT8nJ4s3mkcupW88zf2yzAq9aEEthQJH15UwrbYq9tvrBqDJsZGVMBaKhZ7shv5
-         xO2nmHqOh2MaZKSngMEapCmom8y54yk2v1x9sgerz3jamiFgZ48Iwhw+o5M7Dy7H0GVJ
-         PJ331rVDelA5A/AsI0h+CX68lKOthMvk8ms72pCGQh4lV82OyVGS3doXXxQkQnxgZdA8
-         9coGfyDPrf8IYzIFUbLKzs2oJLfWkzFKCKTedijsDlHtstVlsta8a8R0nVNKhTVhYdXn
-         ElQA==
+        d=linaro.org; s=google; t=1721882247; x=1722487047; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j1JZC88oKp8I89s655kcwpoA6y+G6A3ga7BdD3U4lzs=;
+        b=NUxOa+HBG00K471GvLFQE6JMIxdeTHYD8pYpZe+5w8N6yux4Nvawu2MyRCDiVxuI37
+         Q/IKMSrZ1g+LyvxfspAb/6JhCiRAWXL4ZM34iGfukmer/0xm8rTxDl2njcXraKCQvJhX
+         C0mAJGfaH0FXjeFQUSrlJWa9FFEeqgUHuOy3vX+XA9Cg8dgFAsqkVnQQYnwEFxTDFf7E
+         UUSHP/2E0uRGrR5B54QP+yhunPAKJZ39w5rsX9Yw8iERpKnIzMrXETFmFHCHCHOPIv9U
+         Lhc+h9TKEREqU3HcUmpw1pKN7yHeZKPiqlslVZpZ/NwWWH4NhSwoQx2XkpaOlega9iRv
+         uA7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721881981; x=1722486781;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rDFqw6oHHPxpfXtOUHUn1IVLUDP2YjdBprOP06yJvHQ=;
-        b=meIOb8lYml/0SPfMIG6mdr532L2FHJhhxwGTtvSK8vZHcvYxTK5AWONQlfIzG3iK32
-         9Q+v2fNYC5z4j/QFtsOCY9JiDFpeVfArwkrMYDfFhdPnTEp4olwEtoiXX1VhnmZBVCEg
-         2nz1nzOCb88dIlBq8vbXQCKQr72xf0eaCnOzLIKX0uxbN+uncBc/6iJd5ZY29sLozyYF
-         T7PJAzSbFMs1mIJcJ38ohaDzYTaA8X6EIvjJHvckm/c+cXzzsYCvQ68X7cSYLpRl/DCR
-         kCXNY84ptb0aQM+5R0SU8wZFJpFLW/TGi7l5A5RwKOOKO8gurjZy2meYqtsundQH8Ymv
-         IYrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8UldjPOdT+aaGFt1VzscZkL2kcXkmGIC/PwZDq7K3FnJCpr/PijOgmeiKIyfjgxyfuXsuGFU9IVXHIvtLcnmkrMSiRVG0WCC8Tx+u
-X-Gm-Message-State: AOJu0YxdDPOPmLONWx8w0Vw/3i/nW/bh5sdzdJZDpJDhV4IjvOIb1h5N
-	Wb83AXr+3pW1Lqfp1V71dKpkvoVML74j2AYEfZIO/tplPjg3ceEbWwhQ1wcfxCLZ8ww69fSfAtI
-	Ene1ZNb1rb35NynRRLXDlGTOyuG8gYEZGxsp0Ug==
-X-Google-Smtp-Source: AGHT+IHUKsyqw7tG3OOmxBx8cB5eWQECQmicrTjKE/6hNnrXGqghpEGBVp8H937CrHq2VeWgvBoopVddULDaspRFEXw=
-X-Received: by 2002:a0d:e701:0:b0:669:e266:2c55 with SMTP id
- 00721157ae682-6751082c4e4mr17035787b3.5.1721881980943; Wed, 24 Jul 2024
- 21:33:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721882247; x=1722487047;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j1JZC88oKp8I89s655kcwpoA6y+G6A3ga7BdD3U4lzs=;
+        b=kzSSSkUavM+6MetjCFzQHf7WGItWYZoEfugiQ60+t+lnKCevM8HiT2Klv3IwhWv9TC
+         dX09TQenem4sN0dGLcCJoHHH31RLnrum2gu3X0HtFStX3U2Xu1NjXmwttrqHp70bi1KB
+         riRTwf5B0EYJkfEM+g/1Dea1gMMpPCieJ4I8GimfGtAEpQdCYFYmr2f//3dfaOK/APrs
+         LdBAxLDWmkukA9ozhU1GUzaPfIS0BFLpXk93PWEeaDH91XrPlRJEb3FkhaWbRadsEXTt
+         nc/2CigF6dz7FEhABnvjYJkLvxhwu3yZJY3noVtj7il3EwGMYCFU/omCSl1Xh6Al0ZZV
+         gMaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNs6FE1M4Dg2jJBGA2nEzCtqQLpnFF7CmERESr7MbyBBJ9axxbGrwkwwfkZ5Hzz1ODi9wbQpJ90Rn7QRK+hxKm0Qmgsu348BYk0DP3
+X-Gm-Message-State: AOJu0YzV/rRVJ71R65RRJJnksevqWswV6DNXFhpZOLSnX1ds3P6nK9XU
+	lFAF0e+m6cmn16dolm5yr6smM9CVHHbzLR45XXB0T7XT9vIVsZFxSt1/C3tvlQ==
+X-Google-Smtp-Source: AGHT+IHb2jiz9X2SslE25mDu/kpZvHi3w6d2thIeHc9lJAHRInMESIHfvCFleCXeNij5wye9qnJ6mg==
+X-Received: by 2002:a05:6a21:328e:b0:1c3:b1e3:eb42 with SMTP id adf61e73a8af0-1c4727fb229mr2515129637.15.1721882246765;
+        Wed, 24 Jul 2024 21:37:26 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ccd5adsm4291585ad.74.2024.07.24.21.37.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 21:37:26 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:07:20 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 04/12] PCI: brcmstb: Use bridge reset if available
+Message-ID: <20240725043720.GE2317@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-5-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com>
- <20240702-qcom-tee-object-and-ioctls-v1-1-633c3ddf57ee@quicinc.com>
- <ink4tq3wk2jkpybiisaudkun3g2x2drfogrdw43zdpi6yh2u5g@yrvrxzxsi46g>
- <836dab13-9c59-4d87-a600-a0be6506deb2@quicinc.com> <CAA8EJprp2veCaQq8GsYv4Mu1HQbx8nWv0XWtxcE4cu5kxkA16w@mail.gmail.com>
- <f9e5ef49-754c-4d97-8186-634674151b2f@quicinc.com> <gtdr5s7yih7pjuhpfkjmlu2lflya4heiph4wi446rlbxduqlya@5xfix7dyocli>
- <a1f4457a-2313-4d75-9857-0d82cd502343@quicinc.com>
-In-Reply-To: <a1f4457a-2313-4d75-9857-0d82cd502343@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 25 Jul 2024 07:32:49 +0300
-Message-ID: <CAA8EJpojNj0wB1aG3JWBc3AVGAUH7foShiWsX4MYdkYJLWRn8Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/3] firmware: qcom: implement object invoke support
-To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716213131.6036-5-james.quinlan@broadcom.com>
 
-On Thu, 25 Jul 2024 at 07:15, Amirreza Zarrabi
-<quic_azarrabi@quicinc.com> wrote:
->
->
->
-> On 7/25/2024 2:09 PM, Dmitry Baryshkov wrote:
-> > On Thu, Jul 25, 2024 at 01:19:07PM GMT, Amirreza Zarrabi wrote:
-> >>
-> >>
-> >> On 7/4/2024 5:34 PM, Dmitry Baryshkov wrote:
-> >>> On Thu, 4 Jul 2024 at 00:40, Amirreza Zarrabi <quic_azarrabi@quicinc.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 7/3/2024 10:13 PM, Dmitry Baryshkov wrote:
-> >>>>> On Tue, Jul 02, 2024 at 10:57:36PM GMT, Amirreza Zarrabi wrote:
-> >>>>>> Qualcomm TEE hosts Trusted Applications and Services that run in the
-> >>>>>> secure world. Access to these resources is provided using object
-> >>>>>> capabilities. A TEE client with access to the capability can invoke
-> >>>>>> the object and request a service. Similarly, TEE can request a service
-> >>>>>> from nonsecure world with object capabilities that are exported to secure
-> >>>>>> world.
-> >>>>>>
-> >>>>>> We provide qcom_tee_object which represents an object in both secure
-> >>>>>> and nonsecure world. TEE clients can invoke an instance of qcom_tee_object
-> >>>>>> to access TEE. TEE can issue a callback request to nonsecure world
-> >>>>>> by invoking an instance of qcom_tee_object in nonsecure world.
-> >>>>>
-> >>>>> Please see Documentation/process/submitting-patches.rst on how to write
-> >>>>> commit messages.
-> >>>>
-> >>>> Ack.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Any driver in nonsecure world that is interested to export a struct (or a
-> >>>>>> service object) to TEE, requires to embed an instance of qcom_tee_object in
-> >>>>>> the relevant struct and implements the dispatcher function which is called
-> >>>>>> when TEE invoked the service object.
-> >>>>>>
-> >>>>>> We also provids simplified API which implements the Qualcomm TEE transport
-> >>>>>> protocol. The implementation is independent from any services that may
-> >>>>>> reside in nonsecure world.
-> >>>>>
-> >>>>> "also" usually means that it should go to a separate commit.
-> >>>>
-> >>>> I will split this patch to multiple smaller ones.
-> >>>>
-> >>>
-> >>> [...]
-> >>>
-> >>>>>
-> >>>>>> +    } in, out;
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +int qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
-> >>>>>> +    struct qcom_tee_object *object, unsigned long op, struct qcom_tee_arg u[], int *result);
-> >>>>>
-> >>>>> What's the difference between a result that gets returned by the
-> >>>>> function and the result that gets retuned via the pointer?
-> >>>>
-> >>>> The function result, is local to kernel, for instance memory allocation failure,
-> >>>> or failure to issue the smc call. The result in pointer, is the remote result,
-> >>>> for instance return value from TA, or the TEE itself.
-> >>>>
-> >>>> I'll use better name, e.g. 'remote_result'?
-> >>>
-> >>> See how this is handled by other parties. For example, PSCI. If you
-> >>> have a standard set of return codes, translate them to -ESOMETHING in
-> >>> your framework and let everybody else see only the standard errors.
-> >>>
-> >>>
-> >>
-> >> I can not hide this return value, they are TA dependent. The client to a TA
-> >> needs to see it, just knowing that something has failed is not enough in
-> >> case they need to do something based on that. I can not even translate them
-> >> as they are TA related so the range is unknown.
-> >
-> > I'd say it a sad design. At least error values should be standard.
-> >
->
-> Sure. But it is normal. If we finally move to TEE subsystem, this is the value that
-> would be copied to struct tee_ioctl_invoke_arg.ret to pass to the caller of
-> TEE_IOC_INVOKE.
+On Tue, Jul 16, 2024 at 05:31:19PM -0400, Jim Quinlan wrote:
+> The 7712 SOC has a bridge reset which can be described in the device tree.
+> If it is present, use it. Otherwise, continue to use the legacy method to
+> reset the bridge.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index c257434edc08..92816d8d215a 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -265,6 +265,7 @@ struct brcm_pcie {
+>  	enum pcie_type		type;
+>  	struct reset_control	*rescal;
+>  	struct reset_control	*perst_reset;
+> +	struct reset_control	*bridge;
 
-Ack
+'bridge' is an opaque name. Use something like 'bridge_reset'.
+
+>  	int			num_memc;
+>  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
+>  	u32			hw_rev;
+> @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+>  
+>  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+>  {
+> -	u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> +	if (pcie->bridge) {
+> +		if (val)
+> +			reset_control_assert(pcie->bridge);
+> +		else
+> +			reset_control_deassert(pcie->bridge);
+
+Well, these APIs will bail out if the reset_control pointer is NULL. So you can
+just call them directly instead of if..else condition.
+
+- Mani
 
 -- 
-With best wishes
-Dmitry
+மணிவண்ணன் சதாசிவம்
 
