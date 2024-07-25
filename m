@@ -1,199 +1,93 @@
-Return-Path: <linux-kernel+bounces-262495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0374893C7B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A95A793C7BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE952813C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6317C281CA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4362A19DF9B;
-	Thu, 25 Jul 2024 17:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075E219DF94;
+	Thu, 25 Jul 2024 17:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mv6L+T6t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FgNdkf4J"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A161C286
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B530854759
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721929066; cv=none; b=KrNbLbym1S01ROpYkgyjfYoW+iZ7o0MbMz5IVM6ksrFubRw4grX8yjRm8uqNb4D8uDmb0t119/J7XY7IWWcnf7/pQviU/RQt5GLRrAUZWlSjCz2l8zyHWhlfbpRd0oAQjsLsBD5vs7SMMrm8S2Mh+I3Jgs9Yd630JQF4wVh1bV4=
+	t=1721929198; cv=none; b=G0Cm31tIbrMqtuz6PkipaudR7IunI75hko2SiP4qhhYJUL6lo42ummYzsHoReJPBl77Ciyl68spih1XWltOL9wJw8P1lknvaQvLZeRYS9YuhQxfaYv4xz7beadKmMuqKNP3agt3r4FjXCYeA9H76SRvZw8noE+3SrZhFaFJka7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721929066; c=relaxed/simple;
-	bh=vdALvz3a8w2em1aYeLslMZpPgz3ROZ6wXDMrm7mVZBY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D7ENleUulIMn/9oZJnS0uNcmNBThg3FJ/yW45QkHbHfowK2OoQ+JP8TIjxaLDQBixF94NXivVDTjSO47/YVUjNdaAGXJesNyUt+xyv2Nr31Yg2XDoHemQQ8aJsGkJECd/tNERruhtJ4FJNuLJyVVKMjfOIKXieLmU0wZTHe2tRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mv6L+T6t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721929063;
+	s=arc-20240116; t=1721929198; c=relaxed/simple;
+	bh=yoEv3GlbwT6UsQ5b5s5duS6tb26odOD0neXsqOSLGEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgXyc3UNGDZXWr10uymUVBjt2v2APLXqnfT5oW6wPjEaH+bMSsCaBygV37ZzBhk3oOTn1y6804HJHkjKv1Y9usFEbvZRUMJztrgc1FSCvQhxIIPew+yz0SJ59mFVLyRktemtRC+MsDfJFih3aNu3IEK8Buqf3TZCI0GHg5xw55s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FgNdkf4J; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 25 Jul 2024 17:39:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721929193;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6vtQ8ERzCxeHTyQEKEvDyf0dGBFdbqzEzRI9LXLcuWw=;
-	b=Mv6L+T6tpxuNQshUzjEZZ3bOk9rw5GJtAFFBBKcQsUHtFXLJlJoDhoxd2tL+rIrbyMJUAT
-	tEYJN3/v/i57tByWHMvG9qf5+J0hD1qxmK2cKE/m0/2hR/1eZeK2/KzscOoqVwlWYtiLV9
-	HGfqZYf5QEGY3FMlFuffCooqFXKSKcY=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-6kSgTx4sP3auVkEVUUCHKA-1; Thu, 25 Jul 2024 13:37:41 -0400
-X-MC-Unique: 6kSgTx4sP3auVkEVUUCHKA-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b7a8a35146so16215386d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:37:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721929061; x=1722533861;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6vtQ8ERzCxeHTyQEKEvDyf0dGBFdbqzEzRI9LXLcuWw=;
-        b=EK1n92znYpxmnWXUyD7NLELSPStAOAQaSlPwo7sBE6u3XRY/ZAba16S2rNtN/9D1mI
-         5fipf6mlsKZZXRMMPVOERHuWi4aQUBpZRyMiGLV2nsmn1aZmvXdkLG3LN93ZM/nvXpr2
-         TgRcBNviwzVYT3jh+tIwaZZNyQKfhQnwZi23GRQtyyt50dsDmsYwqlNtqyCuysD/sogb
-         s++RbVW47cCuWEqfahph8NFuynXhRHYzxKvPBKKRZh0ToXfCpNR+u2fEKJ22UUInFt/U
-         ayMSJuQA9YjktYdjwroaw3Yx09yJFCBmHB1OaF8Qw1aUBym1aREll8Rnb/CB0mx/V23t
-         zzaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/4zh8pgris8d9TCWP+lJLR+zflsBhnFJdD2PD5msJFJYjr1ugLpHWubzohMUesIt2lCQSybCvmU0MV6vo8I3BpGACQDP69BjOGqjm
-X-Gm-Message-State: AOJu0YxA60vpKcBEOV8F8ZZVc712kcwCIA9Nsv/Tb85Ze1Hw8yB3oZUp
-	z72HHlKv3EgPkqjpuaKursn3MoN7l9VTfQVNW/Oxkf5YuSaHRRxNtglj1vjgEnnc2ppKk3O4QlF
-	udI8AD+0sSf4U51HqXlIwCc3q7Jyt0U3N2H6hXknzfM8AJIFeS34r12UFDGlF1A==
-X-Received: by 2002:a05:6214:4017:b0:6b7:a485:9dd0 with SMTP id 6a1803df08f44-6bb407068c5mr24084776d6.21.1721929061317;
-        Thu, 25 Jul 2024 10:37:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+GM1ErI+F5Scx2xanlXL2A4m0NqINsVmg6FWUPW3i7x0UTJByUNwJfsx51otU+vykh2jW7g==
-X-Received: by 2002:a05:6214:4017:b0:6b7:a485:9dd0 with SMTP id 6a1803df08f44-6bb407068c5mr24084476d6.21.1721929060862;
-        Thu, 25 Jul 2024 10:37:40 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fae79d9sm9217046d6.125.2024.07.25.10.37.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 10:37:40 -0700 (PDT)
-Message-ID: <9b4d5563d8ad04f30ee24d4aaa495f787bdef71d.camel@redhat.com>
-Subject: Re: [PATCH v2 2/2] KVM: VMX: disable preemption when touching
- segment fields
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar
- <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, Dave Hansen
- <dave.hansen@linux.intel.com>,  Thomas Gleixner <tglx@linutronix.de>
-Date: Thu, 25 Jul 2024 13:37:39 -0400
-In-Reply-To: <f183d215c903d4d1e85bf89e9d8b57dd6ce5c175.camel@redhat.com>
-References: <20240716022014.240960-1-mlevitsk@redhat.com>
-	 <20240716022014.240960-3-mlevitsk@redhat.com> <Zpb127FsRoLdlaBb@google.com>
-	 <f183d215c903d4d1e85bf89e9d8b57dd6ce5c175.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	bh=wodKrrDe2cqof0/g9wNaNIiFlKLU0ROQCInky1h/aQo=;
+	b=FgNdkf4JTFnSgALEkNLIckMzWTpjyhh8UIdUCiMC8VSGcsi80CXKKYMsp53gE7tsNBO0Qq
+	sJduM1mngr2yTe7RfxBKc0FoD6rRVSNzanp8hZEsuaC2c0UyI/d2YxNy6bPkkuZ/KXLomQ
+	6YGuQ9RGzooG1yYEvhTuVRpu4WnADZY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org, vbabka@kernel.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+Message-ID: <ZqKN4jF7eQ-o-mNH@google.com>
+References: <20240725094330.72537-1-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725094330.72537-1-songmuchun@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2024-07-25 at 08:59 -0400, Maxim Levitsky wrote:
-> On Tue, 2024-07-16 at 15:36 -0700, Sean Christopherson wrote:
-> > On Mon, Jul 15, 2024, Maxim Levitsky wrote:
-> > > VMX code uses segment cache to avoid reading guest segment fields.
-> > > 
-> > > The cache is reset each time a segment's field (e.g base/access rights/etc)
-> > > is written, and then a new value of this field is written.
-> > > 
-> > > However if the vCPU is preempted between these two events, and this
-> > > segment field is read (e.g kvm reads SS's access rights to check
-> > > if the vCPU is in kernel mode), then old field value will get
-> > > cached and never updated.
-> > 
-> > It'be super helpful to include the gory details about how kvm_arch_vcpu_put()
-> > reads stale data.  Without that information, it's very hard to figure out how
-> > getting preempted is problematic.
+On Thu, Jul 25, 2024 at 05:43:30PM +0800, Muchun Song wrote:
+> The obj_cgroup_memcg() is supposed to safe to prevent the returned
+> memory cgroup from being freed only when the caller is holding the
+> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
+> ignore thoes conditions when users call some upper APIs which call
+> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
+> the link below). So it is better to add lockdep assertion to
+> obj_cgroup_memcg() to find those issues ASAP.
 > 
-> I will do this in next version of this patch.
+> Because there is no user of obj_cgroup_memcg() holding objcg_lock
+> to make the returned memory cgroup safe, do not add objcg_lock
+> assertion (We should export objcg_lock if we really want to do).
+> Additionally, this is some internal implementation detail of memcg
+> and should not be accessible outside memcg code.
 > 
-> >   vmx_vcpu_reset resets the segment cache bitmask and then initializes
-> >   the segments in the vmcs, however if the vcpus is preempted in the
-> >   middle of this code, the kvm_arch_vcpu_put is called which
-> >   reads SS's AR bytes to determine if the vCPU is in the kernel mode,
-> >   which caches the old value.
-> > 
-> > > Usually a lock is required to avoid such race but since vCPU segments
-> > > are only accessed by its vCPU thread, we can avoid a lock and
-> > > only disable preemption, in places where the segment cache
-> > > is invalidated and segment fields are updated.
-> > 
-> > This doesn't fully fix the problem.  It's not just kvm_sched_out() => kvm_arch_vcpu_put()
-> > that's problematic, it's any path that executes KVM code in interrupt context.
-> > And it's not just limited to segment registers, any register that is conditionally
-> > cached via arch.regs_avail is susceptible to races.
-> > 
-> > Specifically, kvm_guest_state() and kvm_guest_get_ip() will read SS.AR_bytes and
-> > RIP in NMI and/or IRQ context when handling a PMI.
-> > A few possible ideas.
-> > 
-> >  1. Force reads from IRQ/NMI context to skip the cache and go to the VMCS.
+> Some users like __mem_cgroup_uncharge() do not care the lifetime
+> of the returned memory cgroup, which just want to know if the
+> folio is charged to a memory cgroup, therefore, they do not need
+> to hold the needed locks. In which case, introduce a new helper
+> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
+> could eliminate a memory access of objcg->memcg for kmem, actually,
+> a really small gain.
 > 
-> This IMHO is the best solution. For segment cache its easy to do, the code
-> will be contained in vmx_read_guest_seg_* functions.
-> 
-> For other VMX registers, this can be lot of work due to the way the code is scattered
-> around. Still probably double.
-> 
-> 
-> >  2. Same thing as #1, but focus it specifically on kvm_arch_vcpu_in_kernel()
-> >     and kvm_arch_vcpu_get_ip(), and WARN if kvm_register_is_available() or
-> >     vmx_segment_cache_test_set() is invoked from IRQ or NMI context.
-> 
-> I agree on this, this is actually one of the suggestions I had originally.
-> ( I didn't notice the kvm_arch_vcpu_get_ip though )
-> 
-> I think I will implement this suggestion.
-> 
-> >  3. Force caching of SS.AR_bytes, CS.AR_bytes, and RIP prior to kvm_after_interrupt(),
-> >     rename preempted_in_kernel to something like "exited_in_kernel" and snapshot
-> >     it before kvm_after_interrupt(), and add the same hardening as #2.
-> > 
-> >     This is doable because kvm_guest_state() should never read guest state for
-> >     PMIs that occur between VM-Exit and kvm_after_interrupt(), nor should KVM
-> >     write guest state in that window.  And the intent of the "preempted in kernel"
-> >     check is to query vCPU state at the time of exit.
-> > 
-> >  5. Do a combination of #3 and patch 02 (#3 fixes PMIs, patch 02 fixes preemption).
-> > My vote is probably for #2 or #4.
-> #4 causes a NULL pointer deference here :) 
-> 
-> >   I definitely think we need WARNs in the caching
-> > code, and in general kvm_arch_vcpu_put() shouldn't be reading cacheable state, i.e.
-> > I am fairly confident we can restrict it to checking CPL.
-> > 
-> > I don't hate this patch by any means, but I don't love disabling preemption in a
-> > bunch of flows just so that the preempted_in_kernel logic works.
-> > 
-> 
-> Thanks for the suggestions!
+> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-Hi,
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-I decided to keep it simple. I'll send a patch which moves call to the vmx_segment_cache_clear
-to be after we done with the segment initialization in vmx_vcpu_reset, and later I
-write a refactoring/hardening to make sure that we don't read the cache
-from the interrupt context.
-
-Best regards,
-	Maxim Levitsky
-
-
-
-> 
-> Best regards,	
-> 	Maxim Levitsky
-> 
-> 
-> 
-
-
+Thanks!
 
