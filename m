@@ -1,161 +1,129 @@
-Return-Path: <linux-kernel+bounces-261665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2045293BA7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:07:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6FF93BA82
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A9E1F23CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0181C21753
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B505B101D4;
-	Thu, 25 Jul 2024 02:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319576FC6;
+	Thu, 25 Jul 2024 02:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QtNUNsik"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBdWxGzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31374687
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5B6AB9
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721873220; cv=none; b=V6f2PB9JzIG9aPmuEaXnFbH0ZnRXJdaziNmJHheUT91jRTj9Nuk0NccyJyrvidRPytQvM352LG+0g544C/dltCsqsoXvzgq0F9FkENM64KG/NvM71bLx0CzOsi1pfBTrTHqsl0Dmvbf/Isxulxa9ZJucP2M7AHXLRtk9Wmtkk2g=
+	t=1721873329; cv=none; b=l4YkpK089xgdqYnaw9EkbrNcyJ0JLZBN1cWTC4K7YG2v2H+YJaDvuv4d7br61QbrjYMIgdccIEj1H0lxm+INJaP8t4+RAM37jVyhjnvWXE4g8ZHUUi1WF7G2GRCDiMU/1Kl6OvAWXX99Odu61tXkNiUPR4OGSOCxK6fM/xzxoCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721873220; c=relaxed/simple;
-	bh=Db6kpzo3jKGxL7dNFcPTi+CiPNq/rVtActj14WbEm+8=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kTygqO7kVvxlGw+udg9RlKyk8RD7My805HZKSs8zu9qmnHAA6K+Eq9pYArFZCL46edB7D86uua3WpAUKtEMqH6fAHg8HHrIQCJWqSszMyPgcqa620d1q+b8TItG0o1XddogfxQ6hkQMyz8Mww+TqKq++rtLkAgXFNlqZn2iufyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QtNUNsik; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721873216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2rlgUlDua/O+ety/21gP62L5Nvewpmt12UqPQy8772E=;
-	b=QtNUNsikaHCTXN3NeGubAOryTOrh+5PhP324oQdRQ7JgsMcOrdcZ4HfuTUiHsigmVLYbOj
-	4VFF9dzom0aH7TMxxblUMEuB75tVHMXwLi4VhLCBXmHT4h373rU4ZshdruFGQI+W1ogYHk
-	3bskyq/iYdaNgf+ZludvqZ6zh5RI6Ds=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-260-WBFq4ykPO1ikuxeexkz5xQ-1; Wed, 24 Jul 2024 22:06:55 -0400
-X-MC-Unique: WBFq4ykPO1ikuxeexkz5xQ-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7a134fd9261so447903a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:06:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721873214; x=1722478014;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2rlgUlDua/O+ety/21gP62L5Nvewpmt12UqPQy8772E=;
-        b=J04C1WBPDjvGsVBSer3Lg0YY3c5MRtQPzj8dGWkFcWTX1yQHh9wKikMklPjF2xrLZ+
-         legXVD9gOy/pASei8nkbasjGwe/1EL/lEF+FLkis5UNU6EXjCsi5Eldux9CIw2uQFfYL
-         6n2gXqBIPt//eOTYC69+lSmTrnc3u6HGxQaYeqV8Of9sn9QoiBK4y0yVjT2cDqy1hCVO
-         lyXAOTouef9rpVcA90Hi3r3Uz9LtP13veqKauEY2jXKW8Lw4HtnBPwzxIBboZ4hQeiiL
-         rLtWBaHcGc68dFXHPOUlJonPAsyBFf53eQrKG2mDQLfnxBhI8Cr0GcgzAH/F0peDFC/y
-         iasw==
-X-Forwarded-Encrypted: i=1; AJvYcCXITnJTjQ25tphoRuF+/MkuvDu68FXufpr/GqTP88G8iSD8lVDR4/sSGT1ySnpkuHgupr633jrV0xB22rQFnkFNNNxSA4A5KWtmW8gv
-X-Gm-Message-State: AOJu0YyPa5s65QGyxu/QHvnj53pdvIEtF5bIltvK6jIAtBTcLe5UPthE
-	HUmwdAzIBaJNwKxmjNGCK0csbAsMKVjpk3YZEaI0mPgVLOKpcr2Dym7E6Cy7SvMjewYX+IeLmnS
-	em59/MWdhiarREaa/CW/fwzF+h9TFy3tBuj/5sd6IlEa+xov7fmJdmdKbXqKYeg==
-X-Received: by 2002:a05:6a21:2d08:b0:1c2:8dcf:1b8f with SMTP id adf61e73a8af0-1c47b16661emr506455637.7.1721873214017;
-        Wed, 24 Jul 2024 19:06:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWLTm16bZczseIwXMZV+RuHzz6bcDYzoG0FMdSUCRVemQzOS28kZBHifAqAhwB2BW5o+AMjg==
-X-Received: by 2002:a05:6a21:2d08:b0:1c2:8dcf:1b8f with SMTP id adf61e73a8af0-1c47b16661emr506425637.7.1721873213616;
-        Wed, 24 Jul 2024 19:06:53 -0700 (PDT)
-Received: from localhost ([126.143.164.49])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28de8f74sm324040a91.43.2024.07.24.19.06.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 19:06:53 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:06:47 +0900 (JST)
-Message-Id: <20240725.110647.2047059058833597230.syoshida@redhat.com>
-To: make24@iscas.ac.cn
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, liujunliang_ljl@163.com, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB2NET: SR9700: fix uninitialized variable use in
- sr_mdio_read
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <20240723140434.1330255-1-make24@iscas.ac.cn>
-References: <20240723140434.1330255-1-make24@iscas.ac.cn>
-X-Mailer: Mew version 6.9 on Emacs 29.4
+	s=arc-20240116; t=1721873329; c=relaxed/simple;
+	bh=hZLfXkRQOcL/yljHe3PrGXlzhVc26RzCNlLV2gPi8CA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=elNeyqyp4hFcCKBmhQIp+mih5FUbd7P7WQIk/lNXAtKLUdBpiK9Q+Y84kn2RdUurzc8B0W/axxA9X5draxXcrhgTfZMSYIyC7HpRv0edmGMEOHNEDiZabzQdKkksrvfAtnd6uIx6RHZ6DKNN/XzDcYA7yWMFQxVNMkkqLhie5vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBdWxGzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B3DC32781;
+	Thu, 25 Jul 2024 02:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721873329;
+	bh=hZLfXkRQOcL/yljHe3PrGXlzhVc26RzCNlLV2gPi8CA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tBdWxGzL64Mr4pUx0gjhtN2hihht0CzcvZAbXYcmuyKIOmABqQtf8NHMmhsOBmEYL
+	 O57J+vcsbbHfCjehLl1Nlx4GY9YFY5IrwtSDbu9eVS16NCZqOlfmFDi5dXMD7lB8i5
+	 R8yfrC45eZ56RbhjuC+PT+EeYOqtc8KfUfu2mYFfKDeVUzzJ6hVAyKufcCvLlmCmmJ
+	 hborJvsHX1RGNDK3Bze+VLFLyLGEAkb3Q/0vU8kxXzqy5P1VCwAwN4Wdp0p+PgfpUJ
+	 3kusAWvIpvZJcHd2bxf5uKz3iwXg9+to6tMdzmJkf6PGDW6yERvYycazFnr/OwJR60
+	 b6ApY+wjJeB3w==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()
+Date: Thu, 25 Jul 2024 10:08:41 +0800
+Message-Id: <20240725020841.894814-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Jul 2024 22:04:34 +0800, Ma Ke wrote:
-> It could lead to error happen because the variable res is not updated if
-> the call to sr_share_read_word returns an error. In this particular case
-> error code was returned and res stayed uninitialized.
-> 
-> This can be avoided by checking the return value of sr_share_read_word
-> and propagating the error if the read operation failed.
-> 
-> Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/net/usb/sr9700.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
-> index 0a662e42ed96..d5bc596f4521 100644
-> --- a/drivers/net/usb/sr9700.c
-> +++ b/drivers/net/usb/sr9700.c
-> @@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
->  	struct usbnet *dev = netdev_priv(netdev);
->  	__le16 res;
->  	int rc = 0;
-> +	int err;
->  
->  	if (phy_id) {
->  		netdev_dbg(netdev, "Only internal phy supported\n");
-> @@ -193,7 +194,10 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
->  		if (value & NSR_LINKST)
->  			rc = 1;
->  	}
-> -	sr_share_read_word(dev, 1, loc, &res);
-> +	err = sr_share_read_word(dev, 1, loc, &res);
-> +	if (err < 0)
-> +		return err;
-> +
+syzbot reports a f2fs bug as below:
 
-The patch looks good to me.  But I think the following sr_read_reg()
-has the same uninit-value access issue.  If sr_read_reg() returns an
-error, value may be uninitialized:
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_report+0xe8/0x550 mm/kasan/report.c:491
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+ __refcount_add include/linux/refcount.h:184 [inline]
+ __refcount_inc include/linux/refcount.h:241 [inline]
+ refcount_inc include/linux/refcount.h:258 [inline]
+ get_task_struct include/linux/sched/task.h:118 [inline]
+ kthread_stop+0xca/0x630 kernel/kthread.c:704
+ f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
+ f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
+ f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
+ __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
-{
-[...]
-	/* Access NSR_LINKST bit for link status instead of MII_BMSR */
-	if (loc == MII_BMSR) {
-		u8 value;
+The root cause is below race condition, it may cause use-after-free
+issue in sbi->gc_th pointer.
 
-		sr_read_reg(dev, SR_NSR, &value);
-		if (value & NSR_LINKST)
-			rc = 1;
-	}
+- remount
+ - f2fs_remount
+  - f2fs_stop_gc_thread
+   - kfree(gc_th)
+				- f2fs_ioc_shutdown
+				 - f2fs_do_shutdown
+				  - f2fs_stop_gc_thread
+				   - kthread_stop(gc_th->f2fs_gc_task)
 
-Why don't we fix it together?
+We will call f2fs_do_shutdown() in two paths:
+- for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
+for fixing.
+- for f2fs_shutdown() path, it's safe since caller has already grabbed
+sb->s_umount semaphore.
 
-Thanks,
-Shigeru
+Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
+Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->  	if (rc == 1)
->  		res = le16_to_cpu(res) | BMSR_LSTATUS;
->  	else
-> -- 
-> 2.25.1
-> 
-> 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 7a37f2b393b9..62d72da25754 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2388,7 +2388,10 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 		}
+ 	}
+ 
++	/* grab sb->s_umount to avoid racing w/ remount() */
++	down_read(&sbi->sb->s_umount);
+ 	ret = f2fs_do_shutdown(sbi, in, readonly);
++	up_read(&sbi->sb->s_umount);
+ 
+ 	if (need_drop)
+ 		mnt_drop_write_file(filp);
+-- 
+2.40.1
 
 
