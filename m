@@ -1,257 +1,460 @@
-Return-Path: <linux-kernel+bounces-262075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8250393C07A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4726793C07E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6244B20FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:57:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621F51C21B30
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F21990DE;
-	Thu, 25 Jul 2024 10:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE451991C5;
+	Thu, 25 Jul 2024 10:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5fGXOppS"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Etg3KoFH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xt3FxY9e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Etg3KoFH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xt3FxY9e"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F3B7CF16
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721905038; cv=fail; b=oYYC+ooZTUlftBSJG3C2aDQwsbWUtHvkU7sxR6GR+ZZ7Ry1oTlYmN9A2LMNdOHCTCApTufLFZxn1hckYeFg7E8Q/NOvm4cRViy7ZSYXYSeWZvjBYmJ4bUo4aKWzVv6ur6Zh0ay8SakTLHZijCN7m5BkdUTnPChS05Sf+95HmZks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721905038; c=relaxed/simple;
-	bh=tN8XSXudxkJEmv8hguRu3zr7BP4AeyOAHMFhEk6KQTU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IHhT9rrYPrP801dBHjFlPyfiyoWhr1uQqey5o86d0T7lGsE0ZNRf5mFekbVRxUgF9G6EYwVp/DLKMa2ovJc3xCdU/7GqwjLAnh6dC3c+NdknUCbeVICxXdSZRvhmsCm9PPi3Xvi2hl5ckYzE2i1HSj2tR/JCNnPBxmPniVyqg1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5fGXOppS; arc=fail smtp.client-ip=40.107.102.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DX9d6gV4urvEfJitsw3FY6R1rscA9jlmCRZDgUw7hgBs8sc55jD6Zqhyp2+zuyGFBY0W6rF9v8neExrKHbZp7K8rfI3kS/hqy265cyu849jv5NExCruvQs/GBWZxyr655BZdpi46FvwzYQoUMWyoX50Ce0i879deAu7i7kXxobzi4HJk2o7TER4K7dry8jtwQo3qcqaiXzGL6PxuvmSxUCJnU6aTdqoysakojyG9rrI7eB6o6+hrc9Y1anQWRg2e0fv4m7cqFwVsVjpipU+GhXxeAnM+9WQcym8Nok81/ZfsiKbs7B0V0vrpj+SaYsuH8L2Ak6+HzaCytgCo8ezt9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hF44TkvbQjejf4C0rmC8LLHrtpXhCjEZR7KxT/EdJWk=;
- b=Emxv+/ecKbMWnzo5bosVGvywD6dC28ucGEUKcBvZYOVik5RHVyEoCwRd8ZC7Z/s5MWsx8dUCQj3EHzK2fcx6gDsyax/rK67qBIbQE7yHO5K7rYAYZAB3VfrKJIgR2mJFkY6RsLNFgkuQGoAcEzhaa/+RKYr7xGdf1pmg5rbJq3wl0Zv72ckR7SvNMAkHNXgtYbMtUvEc7ytUlielnf6E6CIMTGWw2XJBtaD+VMwqyDY7LBbZLsqYJAwmPVZ23RRcZEodiC3dzlajcYOXAoltRYmvHpSQ2B+28QUZCwNEf7+HlFRGoPm37mm4zCj2dnE47DAtxQVZUyM1K4J2KsmvLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hF44TkvbQjejf4C0rmC8LLHrtpXhCjEZR7KxT/EdJWk=;
- b=5fGXOppSMLMViCYpV3W7MAMrcc8lrP2z9TBpJbIOIrZMTF9c4GzmHg5vm7hk3zATDecKf8w/neP3NsFWn19mhLm9wTdRA7IwGdQb52h4iUm8HzWUvRgzFGEzOaOcSzES9r7kpIttDlCBU9G5Ox38e5sxc0pSONbwCbKWG68FoAo=
-Received: from MN0P220CA0002.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:52e::31)
- by BY5PR12MB4290.namprd12.prod.outlook.com (2603:10b6:a03:20e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Thu, 25 Jul
- 2024 10:57:13 +0000
-Received: from BL6PEPF00022575.namprd02.prod.outlook.com
- (2603:10b6:208:52e:cafe::dd) by MN0P220CA0002.outlook.office365.com
- (2603:10b6:208:52e::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Thu, 25 Jul 2024 10:57:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Thu, 25 Jul 2024 10:57:12 +0000
-Received: from BLR-L-SHIVAGAR.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 25 Jul
- 2024 05:57:09 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>
-CC: <vbabka@suse.cz>, <hillf.zj@alibaba-inc.com>,
-	<mgorman@techsingularity.net>, <hannes@cmpxchg.org>, <shivankg@amd.com>
-Subject: [PATCH] mm/vmstat: Fix placement of per-node stats in /proc/zoneinfo
-Date: Thu, 25 Jul 2024 16:26:26 +0530
-Message-ID: <20240725105626.824-1-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500A7197A77;
+	Thu, 25 Jul 2024 10:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721905150; cv=none; b=UEFY7VjlCJKUmyE39q2JF0eS5Int7a2w2NSHy3VDgB0LRylLzJDGQYJA+wsZ74sFSMx4C1p5zG18psMnmhl+90gh02lD2Nvywqy64rELvSJKZcMjbJz8s39wL5yj4UP/NSKITGcOibIoLXjxHTkBuy+g9peOoLw9EXzcLM8brQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721905150; c=relaxed/simple;
+	bh=ehBtB007lhDWJ4xN0DbifAIP/w/O5moSwXyMiiAe2oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QB+e49ey29Cvl5xOHcAjetD35Vb47CFq5QM8GYy/y1e5SWCw3DQN6wXQwegJ11K5HsfhBHk1TdluHZinPukeQFy4cnEkUhGwtK+OgmK9tskVJcU40u8KST+idSnCJQSAICQ0/y1L3qHAWwTwwc8eOcmIQR/4+a33R3u5DbaB2QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Etg3KoFH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xt3FxY9e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Etg3KoFH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xt3FxY9e; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6A0BC21B37;
+	Thu, 25 Jul 2024 10:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721905146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+s8HYX954RevvEABrcX+VxedGvuIf4BNutRXY9xqAbc=;
+	b=Etg3KoFHnq2F4Q0b5TbUQ7003PB4mSjKDCZp6eWu9q/eRrJTeui+LGyGC7bEORcwnYLVwN
+	OmLqBp5PY7hkAWqy9W6Zz1DG0ushxhAVNgArRYhrfGWMFa1OvToETc4MrAJxfqzMcCxhe0
+	H+KNIkICXmzRFY1SO6xSvJFHzOPXRKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721905146;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+s8HYX954RevvEABrcX+VxedGvuIf4BNutRXY9xqAbc=;
+	b=xt3FxY9eYVe5IsNGjM7/RLnUh8Sr85K1mEPCUG2QHgCAVoYu5junqaC13L1Gr2BnLNIdad
+	NNT6jHY9IDmsS5CQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Etg3KoFH;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xt3FxY9e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721905146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+s8HYX954RevvEABrcX+VxedGvuIf4BNutRXY9xqAbc=;
+	b=Etg3KoFHnq2F4Q0b5TbUQ7003PB4mSjKDCZp6eWu9q/eRrJTeui+LGyGC7bEORcwnYLVwN
+	OmLqBp5PY7hkAWqy9W6Zz1DG0ushxhAVNgArRYhrfGWMFa1OvToETc4MrAJxfqzMcCxhe0
+	H+KNIkICXmzRFY1SO6xSvJFHzOPXRKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721905146;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+s8HYX954RevvEABrcX+VxedGvuIf4BNutRXY9xqAbc=;
+	b=xt3FxY9eYVe5IsNGjM7/RLnUh8Sr85K1mEPCUG2QHgCAVoYu5junqaC13L1Gr2BnLNIdad
+	NNT6jHY9IDmsS5CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58B2E13874;
+	Thu, 25 Jul 2024 10:59:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F3qiFfovomaEUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 10:59:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 11B84A0996; Thu, 25 Jul 2024 12:59:06 +0200 (CEST)
+Date: Thu, 25 Jul 2024 12:59:06 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 11/20] ext4: get rid of ppath in ext4_ext_insert_extent()
+Message-ID: <20240725105906.4oab5gqt7ekjgkji@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-12-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|BY5PR12MB4290:EE_
-X-MS-Office365-Filtering-Correlation-Id: be345bad-2640-4e88-65ad-08dcac9889dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ix4YwE59UCITS1WdiVfv0yvV0fKh0zD+gY6cHzsapG2gx8Wdg4QKkBmozLXg?=
- =?us-ascii?Q?/osVK3vble+xZSgf/D7xgOs+jRY+pVloE8zisJADyTghPD+xsiAoF8KSHzTG?=
- =?us-ascii?Q?6XTAhiLudb/4f/ebE4B1lfaze3QAJXUxeUMPWDN0QNGBKrpZi3fO6I+tT5Li?=
- =?us-ascii?Q?j+Vly+YPDNj+DhjMxf4gjzYiKjUk2ukiMN5HRkC5d4rMwctx9T7+Xe/MUL/y?=
- =?us-ascii?Q?VUES8/N0Hi6nSKu394VOx9vWLegYNcUmM61p/3tX62i79lopOeQL9RZBUjgG?=
- =?us-ascii?Q?djdpQ6K2RpRU1eHZ2t+oj8tuDJaP2Kf1SkVHjGAcii3R/5V3mXv2/Gx71on1?=
- =?us-ascii?Q?jjjOM4jHnPi94t5zvDiDZzradfl2YRaUm3c+/D2fbXq7T1Vc2RNa52/VZ+ie?=
- =?us-ascii?Q?V0JFbTyO+e6m4fxFdk2ONe8xZ8FAhT+MT7gkXrXH2QJU2/WtoHztn4ILosA/?=
- =?us-ascii?Q?bUbZ43Dr4bdquVnHzXXpg0g9z+1ZidztYvuDhdbvsSlt60h5/R+T+Q9zW2Vx?=
- =?us-ascii?Q?Q9NmEIvLTZgNeQd9psuDFiG4dqKu498bwRU7oG8iYTyhTeV/SnC6mmeI4aO0?=
- =?us-ascii?Q?HGyVz0NepowaER7ZddvXFVPwkIlu5qG1eeECbL9aHLZPoJ78pproXUI+LPxc?=
- =?us-ascii?Q?feAriotnY3eLOQF8MsNyYWzGSHrb33VWCfflvWE4Tdx7CKVRgf2kjqAvFTsC?=
- =?us-ascii?Q?hHIMWHXVKF7DKL2zqlQHtTFK/tEnMq6dXLXDUXE7snyRNMGv8HfNUmA+G7dO?=
- =?us-ascii?Q?sXYS/KhKpfQWgsVt8gLO+7b0zf+2AuqoZm5+kBmK5Crb8rWsjxyBqgUD8w6y?=
- =?us-ascii?Q?bkupWxu3N/Ot/hYl8aof1mZ0ChmETgan0fwFN+R9tSYdm0lTeBcfW0+VNIFZ?=
- =?us-ascii?Q?QyA76Q6FV4fDVTze3SGnz9TqQv728I1XRnz+lAgklLrfdGZluO7SbUHzyNAt?=
- =?us-ascii?Q?ctsHJkeEoJns8IBr44o90AiGe1b8qt/4OIU6WcGK+bikRs77pWwcDds+PTQO?=
- =?us-ascii?Q?xJwdc9DQx/7tXF+Q9evuWf7eXCyM70IrtKIB+CgiOroZxBCsF7cebUDW5AXE?=
- =?us-ascii?Q?eLoIrtYafyyTq5x6hUDyx/mX5ESCNQlroUHWOGMecEDNERubY9hDb+VKfVJa?=
- =?us-ascii?Q?1b8g4i88TM9ep79+WZN4cK9IxkRnDt2RtLVqKflF94ba13n9o/zPPzc0sphU?=
- =?us-ascii?Q?rFvnL2w/kIRCorXk5bMO703fbX4a2q9I3ZymLOn+sMUarf1Lpgz8pY6jY1MV?=
- =?us-ascii?Q?au6m/C22aLhXve1HOTeWmPtsFNF6DrORSfBb0oC9nrr7HehnSVybeE0oqQJD?=
- =?us-ascii?Q?YUCcEJVE4V8fOBmK1TdttsnZg8J33Mvr9y9dx7MGEumSnYfzMjwcimBqE4zv?=
- =?us-ascii?Q?BWegvoib23cIk0pe6gTfPa9xfJpUZLe++212NfKwFQA/u6BpAI3jLBPCLTi8?=
- =?us-ascii?Q?9JN+Egf4v5wDiALf1X1WyoXLJrDPwTBn?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 10:57:12.6915
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: be345bad-2640-4e88-65ad-08dcac9889dc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022575.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4290
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-12-libaokun@huaweicloud.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 6A0BC21B37
+X-Spam-Score: -2.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,huaweicloud.com:email]
 
-The per-node stats in /proc/zoneinfo output are incorrectly inserted
-between the first populated zone title and its specific stats. This
-creates confusion while reading or parsing its output.
+On Wed 10-07-24 12:06:45, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_ext_insert_extent(), the following is done
+> here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * Its caller needs to update ppath if it uses ppath.
+>  * Free path when npath is used, free npath when it is not used.
+>  * The got_allocated_blocks label in ext4_ext_map_blocks() does not
+>    update err now, so err is updated to 0 if the err returned by
+>    ext4_ext_search_right() is greater than 0 and is about to enter
+>    got_allocated_blocks.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Output of /proc/zoneinfo
+Looks good. Feel free to add:
 
-Node 0, zone      DMA
-  per-node stats
-      nr_inactive_anon 2096
-...
-  pages free     2814
-        boost    0
-...
-      nr_free_pages 2814
-...
-Node 0, zone    DMA32
-  pages free     357384
-        boost    0
-...
-...
-Node 1, zone   Normal
-  per-node stats
-      nr_inactive_anon 87606
-...
-  pages free     51836334
-        boost    0
-...
-Node 1, zone  Movable
-  pages free     0
-        boost    0
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This patch relocates the per-node stats at the beginning for each node,
-followed by the individual zone statistics. This fix results in a clearer
-and more consistent output format.
+								Honza
 
-/proc/zoneinfo output with proposed fix:
-
-Node 0, per-node stats
-      nr_inactive_anon 2783
-      nr_active_anon 36
-...
-Node 0, zone      DMA
-  pages free     3584
-        boost    0
-        min      46
-...
-...
-
-Remove is_zone_first_populated() as it is not used anywhere else.
-
-Fixes: e2ecc8a79ed4 ("mm, vmstat: print node-based stats in zoneinfo file")
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- mm/vmstat.c | 36 +++++++++++-------------------------
- 1 file changed, 11 insertions(+), 25 deletions(-)
-
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8507c497218b..1b32fab265e1 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1663,36 +1663,11 @@ static const struct seq_operations pagetypeinfo_op = {
- 	.show	= pagetypeinfo_show,
- };
- 
--static bool is_zone_first_populated(pg_data_t *pgdat, struct zone *zone)
--{
--	int zid;
--
--	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
--		struct zone *compare = &pgdat->node_zones[zid];
--
--		if (populated_zone(compare))
--			return zone == compare;
--	}
--
--	return false;
--}
--
- static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 							struct zone *zone)
- {
- 	int i;
- 	seq_printf(m, "Node %d, zone %8s", pgdat->node_id, zone->name);
--	if (is_zone_first_populated(pgdat, zone)) {
--		seq_printf(m, "\n  per-node stats");
--		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
--			unsigned long pages = node_page_state_pages(pgdat, i);
--
--			if (vmstat_item_print_in_thp(i))
--				pages /= HPAGE_PMD_NR;
--			seq_printf(m, "\n      %-12s %lu", node_stat_name(i),
--				   pages);
--		}
--	}
- 	seq_printf(m,
- 		   "\n  pages free     %lu"
- 		   "\n        boost    %lu"
-@@ -1773,7 +1748,18 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
-  */
- static int zoneinfo_show(struct seq_file *m, void *arg)
- {
-+	int i;
- 	pg_data_t *pgdat = (pg_data_t *)arg;
-+
-+	seq_printf(m, "Node %d, per-node stats", pgdat->node_id);
-+	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
-+		unsigned long pages = node_page_state_pages(pgdat, i);
-+
-+		if (vmstat_item_print_in_thp(i))
-+			pages /= HPAGE_PMD_NR;
-+		seq_printf(m, "\n      %-12s %lu", node_stat_name(i), pages);
-+	}
-+	seq_putc(m, '\n');
- 	walk_zones_in_node(m, pgdat, false, false, zoneinfo_show_print);
- 	return 0;
- }
+> ---
+>  fs/ext4/ext4.h        |  7 ++--
+>  fs/ext4/extents.c     | 88 ++++++++++++++++++++++++-------------------
+>  fs/ext4/fast_commit.c |  8 ++--
+>  fs/ext4/migrate.c     |  5 ++-
+>  4 files changed, 61 insertions(+), 47 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index cbe8d6062c52..53b4c1f454e6 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3710,9 +3710,10 @@ extern int ext4_map_blocks(handle_t *handle, struct inode *inode,
+>  extern int ext4_ext_calc_credits_for_single_extent(struct inode *inode,
+>  						   int num,
+>  						   struct ext4_ext_path *path);
+> -extern int ext4_ext_insert_extent(handle_t *, struct inode *,
+> -				  struct ext4_ext_path **,
+> -				  struct ext4_extent *, int);
+> +extern struct ext4_ext_path *ext4_ext_insert_extent(
+> +				handle_t *handle, struct inode *inode,
+> +				struct ext4_ext_path *path,
+> +				struct ext4_extent *newext, int gb_flags);
+>  extern struct ext4_ext_path *ext4_find_extent(struct inode *, ext4_lblk_t,
+>  					      struct ext4_ext_path *,
+>  					      int flags);
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 0d6ce9e74b01..fc75390d591a 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -1974,16 +1974,15 @@ static unsigned int ext4_ext_check_overlap(struct ext4_sb_info *sbi,
+>   * inserts requested extent as new one into the tree,
+>   * creating new leaf in the no-space case.
+>   */
+> -int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+> -				struct ext4_ext_path **ppath,
+> -				struct ext4_extent *newext, int gb_flags)
+> +struct ext4_ext_path *
+> +ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+> +		       struct ext4_ext_path *path,
+> +		       struct ext4_extent *newext, int gb_flags)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+>  	struct ext4_extent_header *eh;
+>  	struct ext4_extent *ex, *fex;
+>  	struct ext4_extent *nearex; /* nearest extent */
+> -	struct ext4_ext_path *npath = NULL;
+> -	int depth, len, err;
+> +	int depth, len, err = 0;
+>  	ext4_lblk_t next;
+>  	int mb_flags = 0, unwritten;
+>  
+> @@ -1991,14 +1990,16 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  		mb_flags |= EXT4_MB_DELALLOC_RESERVED;
+>  	if (unlikely(ext4_ext_get_actual_len(newext) == 0)) {
+>  		EXT4_ERROR_INODE(inode, "ext4_ext_get_actual_len(newext) == 0");
+> -		return -EFSCORRUPTED;
+> +		err = -EFSCORRUPTED;
+> +		goto errout;
+>  	}
+>  	depth = ext_depth(inode);
+>  	ex = path[depth].p_ext;
+>  	eh = path[depth].p_hdr;
+>  	if (unlikely(path[depth].p_hdr == NULL)) {
+>  		EXT4_ERROR_INODE(inode, "path[%d].p_hdr == NULL", depth);
+> -		return -EFSCORRUPTED;
+> +		err = -EFSCORRUPTED;
+> +		goto errout;
+>  	}
+>  
+>  	/* try to insert block into found extent and return */
+> @@ -2036,7 +2037,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  			err = ext4_ext_get_access(handle, inode,
+>  						  path + depth);
+>  			if (err)
+> -				return err;
+> +				goto errout;
+>  			unwritten = ext4_ext_is_unwritten(ex);
+>  			ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
+>  					+ ext4_ext_get_actual_len(newext));
+> @@ -2061,7 +2062,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  			err = ext4_ext_get_access(handle, inode,
+>  						  path + depth);
+>  			if (err)
+> -				return err;
+> +				goto errout;
+>  
+>  			unwritten = ext4_ext_is_unwritten(ex);
+>  			ex->ee_block = newext->ee_block;
+> @@ -2086,21 +2087,26 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  	if (le32_to_cpu(newext->ee_block) > le32_to_cpu(fex->ee_block))
+>  		next = ext4_ext_next_leaf_block(path);
+>  	if (next != EXT_MAX_BLOCKS) {
+> +		struct ext4_ext_path *npath;
+> +
+>  		ext_debug(inode, "next leaf block - %u\n", next);
+> -		BUG_ON(npath != NULL);
+>  		npath = ext4_find_extent(inode, next, NULL, gb_flags);
+> -		if (IS_ERR(npath))
+> -			return PTR_ERR(npath);
+> +		if (IS_ERR(npath)) {
+> +			err = PTR_ERR(npath);
+> +			goto errout;
+> +		}
+>  		BUG_ON(npath->p_depth != path->p_depth);
+>  		eh = npath[depth].p_hdr;
+>  		if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max)) {
+>  			ext_debug(inode, "next leaf isn't full(%d)\n",
+>  				  le16_to_cpu(eh->eh_entries));
+> +			ext4_free_ext_path(path);
+>  			path = npath;
+>  			goto has_space;
+>  		}
+>  		ext_debug(inode, "next leaf has no free space(%d,%d)\n",
+>  			  le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
+> +		ext4_free_ext_path(npath);
+>  	}
+>  
+>  	/*
+> @@ -2111,12 +2117,8 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  		mb_flags |= EXT4_MB_USE_RESERVED;
+>  	path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
+>  					path, newext);
+> -	if (IS_ERR(path)) {
+> -		*ppath = NULL;
+> -		err = PTR_ERR(path);
+> -		goto cleanup;
+> -	}
+> -	*ppath = path;
+> +	if (IS_ERR(path))
+> +		return path;
+>  	depth = ext_depth(inode);
+>  	eh = path[depth].p_hdr;
+>  
+> @@ -2125,7 +2127,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  
+>  	err = ext4_ext_get_access(handle, inode, path + depth);
+>  	if (err)
+> -		goto cleanup;
+> +		goto errout;
+>  
+>  	if (!nearex) {
+>  		/* there is no extent in this leaf, create first one */
+> @@ -2183,17 +2185,20 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  	if (!(gb_flags & EXT4_GET_BLOCKS_PRE_IO))
+>  		ext4_ext_try_to_merge(handle, inode, path, nearex);
+>  
+> -
+>  	/* time to correct all indexes above */
+>  	err = ext4_ext_correct_indexes(handle, inode, path);
+>  	if (err)
+> -		goto cleanup;
+> +		goto errout;
+>  
+>  	err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+> +	if (err)
+> +		goto errout;
+>  
+> -cleanup:
+> -	ext4_free_ext_path(npath);
+> -	return err;
+> +	return path;
+> +
+> +errout:
+> +	ext4_free_ext_path(path);
+> +	return ERR_PTR(err);
+>  }
+>  
+>  static int ext4_fill_es_cache_info(struct inode *inode,
+> @@ -3248,24 +3253,29 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	if (split_flag & EXT4_EXT_MARK_UNWRIT2)
+>  		ext4_ext_mark_unwritten(ex2);
+>  
+> -	err = ext4_ext_insert_extent(handle, inode, ppath, &newex, flags);
+> -	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newex, flags);
+> +	if (!IS_ERR(path)) {
+> +		*ppath = path;
+>  		goto out;
+> +	}
+> +	*ppath = NULL;
+> +	err = PTR_ERR(path);
+> +	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
+> +		return err;
+>  
+>  	/*
+> -	 * Update path is required because previous ext4_ext_insert_extent()
+> -	 * may have freed or reallocated the path. Using EXT4_EX_NOFAIL
+> -	 * guarantees that ext4_find_extent() will not return -ENOMEM,
+> -	 * otherwise -ENOMEM will cause a retry in do_writepages(), and a
+> -	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
+> -	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
+> +	 * Get a new path to try to zeroout or fix the extent length.
+> +	 * Using EXT4_EX_NOFAIL guarantees that ext4_find_extent()
+> +	 * will not return -ENOMEM, otherwise -ENOMEM will cause a
+> +	 * retry in do_writepages(), and a WARN_ON may be triggered
+> +	 * in ext4_da_update_reserve_space() due to an incorrect
+> +	 * ee_len causing the i_reserved_data_blocks exception.
+>  	 */
+> -	path = ext4_find_extent(inode, ee_block, *ppath,
+> +	path = ext4_find_extent(inode, ee_block, NULL,
+>  				flags | EXT4_EX_NOFAIL);
+>  	if (IS_ERR(path)) {
+>  		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
+>  				 split, PTR_ERR(path));
+> -		*ppath = NULL;
+>  		return PTR_ERR(path);
+>  	}
+>  	depth = ext_depth(inode);
+> @@ -3324,7 +3334,7 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	ext4_ext_dirty(handle, inode, path + path->p_depth);
+>  	return err;
+>  out:
+> -	ext4_ext_show_leaf(inode, *ppath);
+> +	ext4_ext_show_leaf(inode, path);
+>  	return err;
+>  }
+>  
+> @@ -4313,6 +4323,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  	    get_implied_cluster_alloc(inode->i_sb, map, &ex2, path)) {
+>  		ar.len = allocated = map->m_len;
+>  		newblock = map->m_pblk;
+> +		err = 0;
+>  		goto got_allocated_blocks;
+>  	}
+>  
+> @@ -4385,8 +4396,9 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  		map->m_flags |= EXT4_MAP_UNWRITTEN;
+>  	}
+>  
+> -	err = ext4_ext_insert_extent(handle, inode, &path, &newex, flags);
+> -	if (err) {
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newex, flags);
+> +	if (IS_ERR(path)) {
+> +		err = PTR_ERR(path);
+>  		if (allocated_clusters) {
+>  			int fb_flags = 0;
+>  
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 87c009e0c59a..1dee40477727 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -1777,12 +1777,12 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
+>  			if (ext4_ext_is_unwritten(ex))
+>  				ext4_ext_mark_unwritten(&newex);
+>  			down_write(&EXT4_I(inode)->i_data_sem);
+> -			ret = ext4_ext_insert_extent(
+> -				NULL, inode, &path, &newex, 0);
+> +			path = ext4_ext_insert_extent(NULL, inode,
+> +						      path, &newex, 0);
+>  			up_write((&EXT4_I(inode)->i_data_sem));
+> -			ext4_free_ext_path(path);
+> -			if (ret)
+> +			if (IS_ERR(path))
+>  				goto out;
+> +			ext4_free_ext_path(path);
+>  			goto next;
+>  		}
+>  
+> diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+> index d98ac2af8199..0f68b8a14560 100644
+> --- a/fs/ext4/migrate.c
+> +++ b/fs/ext4/migrate.c
+> @@ -37,7 +37,6 @@ static int finish_range(handle_t *handle, struct inode *inode,
+>  	path = ext4_find_extent(inode, lb->first_block, NULL, 0);
+>  	if (IS_ERR(path)) {
+>  		retval = PTR_ERR(path);
+> -		path = NULL;
+>  		goto err_out;
+>  	}
+>  
+> @@ -53,7 +52,9 @@ static int finish_range(handle_t *handle, struct inode *inode,
+>  	retval = ext4_datasem_ensure_credits(handle, inode, needed, needed, 0);
+>  	if (retval < 0)
+>  		goto err_out;
+> -	retval = ext4_ext_insert_extent(handle, inode, &path, &newext, 0);
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newext, 0);
+> +	if (IS_ERR(path))
+> +		retval = PTR_ERR(path);
+>  err_out:
+>  	up_write((&EXT4_I(inode)->i_data_sem));
+>  	ext4_free_ext_path(path);
+> -- 
+> 2.39.2
+> 
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
