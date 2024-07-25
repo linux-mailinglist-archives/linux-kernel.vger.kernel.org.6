@@ -1,210 +1,110 @@
-Return-Path: <linux-kernel+bounces-262654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1125C93CA17
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB01893CA1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 758D6B22703
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DE02836D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4894F13A40F;
-	Thu, 25 Jul 2024 21:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F088213D8B6;
+	Thu, 25 Jul 2024 21:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="asg1cy7j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MXUWadsd"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D20013E40F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700E91DFF7;
+	Thu, 25 Jul 2024 21:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721941550; cv=none; b=YPxtV5xhBMJ105TE6qOM0menwSvqgS66b+wlwpK7jBbgNdHTnJ8J/ynG6N0s3Wf/C5yeBlH58b4sdcWlIgbEmcugZS7poOBq5ymez5zmUiCB7cLWRP6nK5F9WByycFkKDlujsFGjLFuMe9z7oKkUR3DWWfRt9RhPKZDpZFTaCRk=
+	t=1721942008; cv=none; b=Tnvsgf0ujX2oz4bQSrUgIDnVN5qtzTtj6rnm5fmgVnYnnV5MS2lNKbgY+D//hUHHqYKMMkwqhnD+sTG4pZplsqn7Pp4gdj1Gz2Hr73Q71ylvwgkzb2IxsMU8Bv45jGj9NlrfmHMPEVTcoM+cXYDLS7QCLGywgcBDvCNZg8ZF0j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721941550; c=relaxed/simple;
-	bh=hd0Q+jdLPbwm8zx67+UgjyJB+DectwEmFT4CQrLKJqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CQHcTWOzdtRPcjcPf5hBO0Ki4dPOwSEssTLfKfYqkSBa/FEpst+7/lDL8G6hD7rITFl59e3CG/TfWwWNeMtT822mtXbaoUns+yZ3Ynpzf4GjnpqmKHHnxw3fRFJrwspqStaroMLxQcdVzGLnxFZ22AgE1Wum3UYqq2lagtzHxnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=asg1cy7j; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721941548; x=1753477548;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hd0Q+jdLPbwm8zx67+UgjyJB+DectwEmFT4CQrLKJqs=;
-  b=asg1cy7jcSaUeAEZnTJ6PfKyTWiVeGk0JfRNMrynADqawc9QcCMqYqoB
-   XoNBGYmqSfaPuvFmIy2FbPkAWBOPImnVIkgHuMHo2RtZYhvwM9P0w7RXZ
-   u0MWlFGrLuy7xgvHo9MGxIoGOJOwTUNY2HCOpc3ce4fVjjWoakxhbclbv
-   QCZuxcPH3uBm4fiRpdME/CpFoO7AgLOCJhef+a8RRIfEgBp5pYtyIaNGa
-   bIGMs4R0VzgWsvlMXBxM7I8S8K5uBzN6Yxqoc5+BIbYGMz5Bg+lhTRvuI
-   N2OmJQxTa/7PnKFART+kht/SJkP8gzFvjq0YhH/2tSy+/1DrtveZnXyAZ
-   A==;
-X-CSE-ConnectionGUID: imuBzL5HRjWmWtVhWt67tQ==
-X-CSE-MsgGUID: U9PQ3xZHT2aulTh+Xfavkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="12720264"
-X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
-   d="scan'208";a="12720264"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 14:05:47 -0700
-X-CSE-ConnectionGUID: 5bdJfwZFS4mTVub3fhxl2g==
-X-CSE-MsgGUID: uOjeZl8BQ8+kZpL+mKWb2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
-   d="scan'208";a="90528961"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 14:05:47 -0700
-Date: Thu, 25 Jul 2024 14:11:11 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML
- <linux-kernel@vger.kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Liu,
- Yi L" <yi.l.liu@intel.com>, "Zhang, Tina" <tina.zhang@intel.com>, "Kumar,
- Sanjay K" <sanjay.k.kumar@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
-Message-ID: <20240725141111.6889dd62@jacob-builder>
-In-Reply-To: <BL1PR11MB5271D3D84F93BA16852233F98CAB2@BL1PR11MB5271.namprd11.prod.outlook.com>
-References: <20240719181725.1446021-1-jacob.jun.pan@linux.intel.com>
-	<BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-	<20240724092540.6ef4d28a@jacob-builder>
-	<BL1PR11MB5271D3D84F93BA16852233F98CAB2@BL1PR11MB5271.namprd11.prod.outlook.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721942008; c=relaxed/simple;
+	bh=WDY4qmiOBxXmKYv4nX2vft/++V2zPDsqZEqaE6CO6VE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ff9ObfWK11TySg0PPwfBUPqcpAIlG46vP5eIQ69oXfGnCR6rswfl7qGGnQnV/oe/+KRlQhBfuBhVCIPlvBovMy/HQ8i8mAN2PzI8xLIdXD+puxku9QDlZhSvX80BZZo1RU9xHPDzaDrfxFb5yUJWMKG0IQE1OFh8nucKtLixX10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MXUWadsd; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id X5lysEXlZxIArX5lzscUeW; Thu, 25 Jul 2024 23:13:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721941997;
+	bh=Dvx74GTKCLxtBt0j69CFfrti2x6oZPPqXeUdFjRlfm8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=MXUWadsd6jupaTa7OrpWEZ7IhxbabLX9FFoRqYb1OdbBbhCVQMncLdKG+JPWoA2Nq
+	 nADJuYv9k5mN9AUGinW1GbM5FFL5isgOSNCAauLllrPkVgLxq+DeEMJDEr2pyK4y2U
+	 OqHHc4rJtIAXC9SnUAo1E1zbrjvJLxExc5HpE/+OXAC9xkRyy1Etkqh9chPwKrLTWv
+	 Agw6x0E21/h14BMfyNRttnrHmgbE6edOXK7K9khAOUu7Dc1MegzEx/nRuLt7B0+aG1
+	 4aUujloK+pQjtoQY2U9b9tMH56FRDEL++b+VC6jOU7i4poPDV2xb0XEDULMeaoMxny
+	 xgBcq52QWCuig==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 25 Jul 2024 23:13:17 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Patil Rajesh Reddy <Patil.Reddy@amd.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86/amd/pmf: Fix a double put in amd_pmf_remove()
+Date: Thu, 25 Jul 2024 23:13:10 +0200
+Message-ID: <72a97f7989f56c50e1ca417633fe703593d49189.1721941953.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The 'input_dev' is a managed resource allocated with
+devm_input_allocate_device(), so there is no need to call
+input_unregister_device() explicitly. It will be called automatically
+when the driver is removed.
 
-On Thu, 25 Jul 2024 00:44:05 +0000, "Tian, Kevin" <kevin.tian@intel.com>
-wrote:
+Fixes: 4c92d448e3e6 ("platform/x86/amd/pmf: Use existing input event codes to update system states")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Thursday, July 25, 2024 12:26 AM
-> > 
-> > On Wed, 24 Jul 2024 07:40:25 +0000, "Tian, Kevin" <kevin.tian@intel.com>
-> > wrote:
-> >   
-> > > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > > > Sent: Saturday, July 20, 2024 2:17 AM
-> > > >
-> > > > Currently, there is no impact by this bug on the existing users
-> > > > because no callers are submitting invalidations with 0 descriptors.
-> > > >  
-> > >
-> > > bug fix is for existing users. Please revise the subject line and
-> > > this msg to make it clear that it's for preparation of a new usage.  
-> > The bug is in the qi_submit_sync function itself since it permits
-> > callers to give 0 as count. It is a bug regardless of users.
-> > 
-> > I put "potential" in the subject line to indicate, perhaps it is too
-> > vague. How about just stating what it is fixing:
-> > "Fix potential lockup if qi_submit_sync called with 0 count"
-> > 
-> > Also change this paragraph to:
-> > "Currently, there is no impact by this bug on the existing users because
-> >  no callers are submitting invalidations with 0 descriptors. This fix
-> > will enable future users (such as DMA drain) calling qi_submit_sync()
-> > with 0 count."  
-> 
-> Then please move it to the start.
-> 
-> > > > @@ -1463,8 +1462,14 @@ int qi_submit_sync(struct intel_iommu  
-> > *iommu,  
-> > > > struct qi_desc *desc,
-> > > >  		raw_spin_lock(&qi->q_lock);
-> > > >  	}
-> > > >
-> > > > -	for (i = 0; i < count; i++)
-> > > > -		qi->desc_status[(index + i) % QI_LENGTH] = QI_DONE;
-> > > > +	/*
-> > > > +	 * The reclaim code can free descriptors from multiple
-> > > > submissions
-> > > > +	 * starting from the tail of the queue. When count == 0,
-> > > > the
-> > > > +	 * status of the standalone wait descriptor at the tail of
-> > > > the queue
-> > > > +	 * must be set to QI_TO_BE_FREED to allow the reclaim code
-> > > > to proceed.
-> > > > +	 */
-> > > > +	for (i = 0; i <= count; i++)
-> > > > +		qi->desc_status[(index + i) % QI_LENGTH] =
-> > > > QI_TO_BE_FREED;  
-> > >
-> > > We don't really need a new flag. Just set them to QI_FREE and then
-> > > reclaim QI_FREE slots until hitting qi->head in reclaim_free_desc().  
-> > We do need to have a separate state for descriptors pending to be freed.
-> > Otherwise, reclaim code will advance pass the intended range.
-> >   
-> 
-> The commit msg said that QI_DONE is currently used for conflicting
-> purpose.
-> 
-> Using QI_FREE keeps it only for signaling that a wait desc is completed.
-> 
-> The key is that reclaim() should not change a desc's state before it's
-> consumed by the owner. Instead we always let the owner to change the
-> state and reclaim() only does scan and adjust the tracking fields then
-> such race condition disappears.
-> 
-> In this example T2's slots are changed to QI_FREE by T2 after it completes
-> all the checks. Only at this point those slots can be reclaimed.
+I'm not 100% confident with this change. The error handling scheme is not
+a clear to me as what I usually see. For example, the last calls from
+amd_pmf_probe() don't handle error at all. So the probe just succeeds in
+these cases.
 
-The problem is that without the TO_BE_FREED state, the reclaim code would
-have no way of knowing which ones are to be reclaimed and which ones are
-currently free. Therefore, it cannot track free_cnt.
+So, because of it, it is maybe fine to call input_unregister_device() in
+amd_pmf_deinit_smart_pc(), even if it looks strange to me.
 
-The current reclaim code is not aware of owners nor how many to reclaim.
+Review with care!
+---
+ drivers/platform/x86/amd/pmf/tee-if.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-If I make the following changes and run, free_cnt will keep going up and
-system cannot boot. Perhaps you meant another way?
-
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1204,8 +1204,7 @@ static void free_iommu(struct intel_iommu *iommu)
-  */
- static inline void reclaim_free_desc(struct q_inval *qi)
+diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
+index e246367aacee..cc721fbc3e0b 100644
+--- a/drivers/platform/x86/amd/pmf/tee-if.c
++++ b/drivers/platform/x86/amd/pmf/tee-if.c
+@@ -515,9 +515,6 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+ 
+ void amd_pmf_deinit_smart_pc(struct amd_pmf_dev *dev)
  {
--       while (qi->desc_status[qi->free_tail] == QI_TO_BE_FREED) {
--               qi->desc_status[qi->free_tail] = QI_FREE;
-+       while (qi->desc_status[qi->free_tail] == QI_FREE) {
-                qi->free_tail = (qi->free_tail + 1) % QI_LENGTH;
-                qi->free_cnt++;
-        }
-@@ -1466,10 +1465,10 @@ int qi_submit_sync(struct intel_iommu *iommu, struct qi_desc *desc,
-         * The reclaim code can free descriptors from multiple submissions
-         * starting from the tail of the queue. When count == 0, the
-         * status of the standalone wait descriptor at the tail of the queue
--        * must be set to QI_TO_BE_FREED to allow the reclaim code to proceed.
-+        * must be set to QI_FREE to allow the reclaim code to proceed.
-         */
-        for (i = 0; i <= count; i++)
--               qi->desc_status[(index + i) % QI_LENGTH] = QI_TO_BE_FREED;
-+               qi->desc_status[(index + i) % QI_LENGTH] = QI_FREE;
+-	if (dev->pmf_idev)
+-		input_unregister_device(dev->pmf_idev);
+-
+ 	if (pb_side_load && dev->esbin)
+ 		amd_pmf_remove_pb(dev);
+ 
+-- 
+2.45.2
 
-        reclaim_free_desc(qi);
-        raw_spin_unlock_irqrestore(&qi->q_lock, flags);
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index 1ab39f9145f2..eaf015b4353b 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -382,8 +382,7 @@ enum {
-        QI_FREE,
-        QI_IN_USE,
-        QI_DONE,
--       QI_ABORT,
--       QI_TO_BE_FREED
-+       QI_ABORT
- };
-
-Thanks,
-
-Jacob
 
