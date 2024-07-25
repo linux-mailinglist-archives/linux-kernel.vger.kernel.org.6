@@ -1,120 +1,186 @@
-Return-Path: <linux-kernel+bounces-262083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E9593C090
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A180993C092
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58684B20BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:07:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578012826CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDFE1991C2;
-	Thu, 25 Jul 2024 11:07:08 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E31991D2;
+	Thu, 25 Jul 2024 11:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxZS6nYf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oY88QIEH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxZS6nYf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oY88QIEH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F48196DB1
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8265E132492;
+	Thu, 25 Jul 2024 11:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721905628; cv=none; b=otEFcIItAHgDjTXA0fRp8p44EvQ0qf9291/RSxczkS184HBfA7ioC+8oLv/jgG2op6fKPuiUlwvBbceD3DutwCTt8sNH+p5p4ZwYKIgoxOHcjKUuNST3MJzWtBBzd58c9KXa7CFK71+ET/ClO/r14rRYO3SJ54AeUx4dQmd3NlI=
+	t=1721905680; cv=none; b=YGKn1yWTtENY2jy1r9awW6MFWB9ezV0hRMotdE4m1gS/zY7GoCyeiV7xeCk4LsHhE49Y59mDxBtpNJDql8kACqLowEFAgjban/VwHhEf1Zj5G2X7SCBK+ltGuHznEo1rxMTIgsiyTmdNKlYinhOuomJazIhK8zCsCMj443cCf4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721905628; c=relaxed/simple;
-	bh=U7pxbW2h20/9fkw1j/mWBTICRqPVomUeLj2belKEmDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbDnJTy9ahCfRxjz2wdh380E/2kY8mFKWj4w7/o1mmJVXFvpoDDbScH5YzX1wD7lBP32Kt3/jFxAICgffVMVTa7yWZQ7rSr9qU+pu28oRPnuzFi6Kvx4tZG6kjJ8D6SayCHL01K/VrOYQGYnoYlThedfDWnIr3LvysZLAx8uivs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav115.sakura.ne.jp (fsav115.sakura.ne.jp [27.133.134.242])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46PB6uQp032304;
-	Thu, 25 Jul 2024 20:06:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav115.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp);
- Thu, 25 Jul 2024 20:06:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46PB6t93032300
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 25 Jul 2024 20:06:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <28a0f793-b0d6-4abb-b83c-f54e5a588994@I-love.SAKURA.ne.jp>
-Date: Thu, 25 Jul 2024 20:06:54 +0900
+	s=arc-20240116; t=1721905680; c=relaxed/simple;
+	bh=REWD8dQEXdO6cMsdd0gwSlNZOVimBClEElYDdV3lF7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQolTRfMIv3onvoovn9o5OZbGChzvHBTxquEC2x3ornaIUCsdwb3XLxyoQwZ5bd6qAyPTginU/KUnNH2iO9zXl3GimJKFUGGOjfcfw62S2kr8UFI8HeIjujjopSK2UfRNWZOy+E456ON2iekrkN03++Ar0uTK8/lq2I1LoACZnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxZS6nYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oY88QIEH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxZS6nYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oY88QIEH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 98DE721216;
+	Thu, 25 Jul 2024 11:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721905676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
+	b=hxZS6nYfiyoryeeoRj1XiJtrkHRgcS4irRzzjG5sTVOLrovHCMhEKZNg3Xe76+SXff9bNq
+	K3IHo1RIFpJhELLaUr5pBYDHrVlQ5f1942AQBZahcSz7x45hU/VYknPRECa6xmJGWTq80O
+	X4K5AMRNCknFRjBGok4eYaOXV5j9Wrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721905676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
+	b=oY88QIEHq7SbeqprDY2wiJGFgthvAXAFtoE0TMapzJp9LY2h4KSPkbutjF6kjRs0ZtFXH0
+	XTc9xbXYoivtKhAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hxZS6nYf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oY88QIEH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721905676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
+	b=hxZS6nYfiyoryeeoRj1XiJtrkHRgcS4irRzzjG5sTVOLrovHCMhEKZNg3Xe76+SXff9bNq
+	K3IHo1RIFpJhELLaUr5pBYDHrVlQ5f1942AQBZahcSz7x45hU/VYknPRECa6xmJGWTq80O
+	X4K5AMRNCknFRjBGok4eYaOXV5j9Wrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721905676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwUsOoJhN81051uMj0WumGw4faJjwSqx5ZjLrkg5/SI=;
+	b=oY88QIEHq7SbeqprDY2wiJGFgthvAXAFtoE0TMapzJp9LY2h4KSPkbutjF6kjRs0ZtFXH0
+	XTc9xbXYoivtKhAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B24D13874;
+	Thu, 25 Jul 2024 11:07:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bLrzIQwyomYYVgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 11:07:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4991DA0996; Thu, 25 Jul 2024 13:07:56 +0200 (CEST)
+Date: Thu, 25 Jul 2024 13:07:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 12/20] ext4: get rid of ppath in ext4_split_extent_at()
+Message-ID: <20240725110756.fuyjfdvgbprma5ml@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-13-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] orphaned patches for 6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <63149ac0-73a4-49c0-975b-75dc3bd32f7a@I-love.SAKURA.ne.jp>
- <CAHk-=whAfNJKeP1WhdP9y0itF_AkgQJMyz8B9TCfAWWQRhDRPw@mail.gmail.com>
- <5ad7dffa-204e-4d37-acf6-0206d7a87f37@I-love.SAKURA.ne.jp>
- <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-13-libaokun@huaweicloud.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 98DE721216
+X-Spam-Score: -2.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim]
 
-On 2024/07/25 14:11, Linus Torvalds wrote:
-> So no. This is not happening, and you just showed exactly why nobody
-> wants to take your patch set. Because you make things more complicated
-> than they need to be for no reason.
+On Wed 10-07-24 12:06:46, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_split_extent_at(), the following is done
+> here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * Its caller needs to update ppath if it uses ppath.
+>  * Teach ext4_ext_show_leaf() to skip error pointer.
+>  * Propagate ext4_find_extent() error return value in ext4_insert_range().
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-I'm sending you as a patch set. But that is a result of nobody taking care
-on individual patch (even fine-and-simple the other patch). People fixing
-unpopular bugs are having difficulty with finding maintainers or getting
-responses from maintainers (regardless of whether individual patch is
-complicated). For example,
-https://lkml.kernel.org/r/20230423012744.24320-1-chenzhongjin@huawei.com was
-a result of several comments but still not accepted. I appreciate if you can
-help such people with persuading appropriate maintainers to review/accept.
+One nit below:
 
-> And yes, apparently we should just also move the 'prof_buffer' test
-> earlier, and do it in profile_tick() too, so that we don't need to
-> even worry about the cpumask_available thing.
+> @@ -5596,6 +5606,7 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
+>  	path = ext4_find_extent(inode, offset_lblk, NULL, 0);
+>  	if (IS_ERR(path)) {
+>  		up_write(&EXT4_I(inode)->i_data_sem);
+> +		ret = PTR_ERR(path);
+>  		goto out_stop;
+>  	}
 
-Do you mean
+AFAICT this actually fixes a bug where we could have returned 0 although
+ext4_find_extent() spotted an error? This would deserve a separate patch so
+that it could be easily pulled into stable.
 
- void profile_tick(int type)
- {
- 	struct pt_regs *regs = get_irq_regs();
+Otherwise looks good. Feel free to add:
 
--	if (!user_mode(regs) && cpumask_available(prof_cpu_mask) &&
-+	if (!user_mode(regs) && prof_buffer &&
- 	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
- 		profile_hit(type, (void *)profile_pc(regs));
- }
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-because prof_cpu_mask != NULL is guaranteed if prof_buffer != NULL
-because prof_cpu_mask is assigned before prof_buffer is assigned and
-prof_buffer is never reassigned? That resembles
-https://lkml.kernel.org/r/20230410022226.181812-3-chenzhongjin@huawei.com
-but Chen Zhongjin did not remove the cpumask_available() test.
-
-Can that change survive memory fetch reordering like
-
-	if (!user_mode(regs) &&
- 	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) &&
-	    prof_buffer)
- 		profile_hit(type, (void *)profile_pc(regs));
-
-if cpumask_available() test is removed? We after all cannot forget about
-the cpumask_available thing?
-
-If we can forget about the cpumask_available thing, can we tolerate discarding
-CONFIG_CPUMASK_OFFSTACK=n optimization because we can't remove duplicated
-prof_buffer != NULL test in profile_hits() because do_profile_hits() assumes
-that prof_buffer != NULL?
-
-Conditions/preferences are too much complicated...
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
