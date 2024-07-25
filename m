@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-262642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6899F93C9EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9627093C9EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202771F21581
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81B31C22081
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E926013CA93;
-	Thu, 25 Jul 2024 20:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6853813D51C;
+	Thu, 25 Jul 2024 20:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLgvLDDj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aH0aIWpB"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B91361FCE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7273861FCE;
+	Thu, 25 Jul 2024 20:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721940858; cv=none; b=HRzPqKjnU/IKpuBwZkemvCPrmU5KGU6cyLnVF+XEJ8sF55+S89ITcAdvVZQkFCFhXA9Czh4tu8fORarPfRTEubGcdkejzgpV9Fy5+EIbWOaTkGtdyV1sPLNFPsDSansuGJnkJsE4Yx0sDa9xAp+/FLvFwUVCj5EKAw7pON8epms=
+	t=1721940905; cv=none; b=JlFLLFEQMHmwITlDl1h6mPgNkoHZQBzHdc+JG1Pyor3/0wcKqFIqCxDW9GRwnR3cxYfkuhdh+xfkEqQIt7/QyFSAf7F0UxCtn+0ewTe9ffhv4bc2OMyeILM8vrFMFQr7IYcz+5VZzOMINjIgw1XQOZlWjvDIHFaV7TJZQG8NFzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721940858; c=relaxed/simple;
-	bh=k5XgKfZKuQaShbPcQ6ThZs8P3ZYbgS7XfbQSn8nih/M=;
+	s=arc-20240116; t=1721940905; c=relaxed/simple;
+	bh=K8LW+NrB2evn6pZc+s4SWid7fRlY31iR/EpkNxYRTlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAOx6N8ttbjUYmpVUEvIuG6MsdtMj5ODF5H94v1SHDrHhCX7IQ3px0r+qRw7vs7MYjPRm8Qb8miPs+5hMjswKoV8ZiXT/2waIdYbe0v1EgaSe60+7HIM0fkibBJaBQF+pBvW3THjW0fSuTtViX5HU5XPSu3qctWVQVzUyV7MaS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLgvLDDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D80C116B1;
-	Thu, 25 Jul 2024 20:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721940858;
-	bh=k5XgKfZKuQaShbPcQ6ThZs8P3ZYbgS7XfbQSn8nih/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rLgvLDDj/jasD2/pDtM49kkJ73pgckmTKb+fEsomssWcydRi7ggyWe8W/aipUNKO+
-	 J5F8Gmt2d7PLHw/6elTZEG8kU6W3QDAE/TV4sp0VxN1LWbcIuIn+TES/IhTmNza0yw
-	 x6AcKKCui7WnsXGMe2d0kQzF+3BmdmE4s0cmJy/AVVv012YJp1+PRaT1f2JJ/4SqZT
-	 72BVaur7u7PpesAI1oMYHku9zbf7Mvqs65VP0AN51oH83+fFkkNVwoa9KnjlSZFKOz
-	 EOOi05ETs9X82PYug+aOE2q76RAie1OOXjLttCt4QV4qsOUiPr4kx6wczrG2+rFkkR
-	 9L3ftWZG+6niw==
-Date: Thu, 25 Jul 2024 20:54:16 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] f2fs: atomic: fix to truncate pagecache before
- on-disk metadata truncation
-Message-ID: <ZqK7eC9W9HVweTOJ@google.com>
-References: <20240625031351.3586955-1-chao@kernel.org>
- <20240625031351.3586955-3-chao@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FB18qKdh4UrQTlAAnZCvgdkcmeachBVCN/01phJNz29eemrRZH1gUKA1cMPBj6Tvm2Tn1ZArz0c0QGhg9mUvjtRQULOQ6drMHFr7CnMxU0OCNmWpFxDgW9OF12L9AclKYBH0u59empqV2MM2TZCQ8LzQpj9/cwQxEA32HXGP7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aH0aIWpB; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7163489149eso237047a12.1;
+        Thu, 25 Jul 2024 13:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721940904; x=1722545704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RLXtc+uqVKCqbWVjFHgQL0L5dVQ3MV0FyYC+mRCNVMM=;
+        b=aH0aIWpB9QqAvLfb6XeLooPavajfXQ9/l6YBUc1F6b1i1VnPTWGo0c0mJBFHDV0myx
+         zYow25ZhOEw40iI+3ZfvJCYL24Cy/FjjtPlEvkt3nIPFSBG2mUxIYJbtCVhS3CGZSq1o
+         TH8agh7eqPH/H+NUmn+6mtabm0IxPej3K1M4fUw4tG6Ufb07VwYigScSraSi9KOLOz1s
+         cJCAwi1T6C4R73SwYpbxZKjD7y2ns+JheHFmcaATHm0C4Op5BN6Zto65roTquB7aK+68
+         a6KY0XSBBTZ2FoEqHcx4G/4JyEyVjG1leMlY7gQwjabAjHVaNN2va1gnRVCkwo8rZ9jo
+         jluA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721940904; x=1722545704;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLXtc+uqVKCqbWVjFHgQL0L5dVQ3MV0FyYC+mRCNVMM=;
+        b=aCxpbyXhOGHGXIpYsoAh/efo043zOcKQm0Sg9G2ffuSrf7cqkSDupcq+ykL0BKJFE1
+         6NoEqbrsNyxHB/HAgWzgfvQFGwXsgW32YCeypJ4NQByxwENhU0j7xQ0/ciPK1DcYnUzt
+         8o5fWYJFld78b4gQfTTRIWi7LfXgT0gAtq7MDI92HSUGhcvOSdcUmvqs/4gLFk6iMjUr
+         MMm6xWwadEfwVKsBP6nJ4r5BJZqYsKW6rdAqOuj6cyzByjJm8rPSuQdIxjtvucRZs6uB
+         WEKg1cWMPUUQ6VNJGzz8Z/DpywyTUhrKflVnioVE3KBFg1LZfhLT3OKdSn2MVYpDjK0p
+         HhyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU3SHtZVqobq/pB1HiYo/DOwtApKCUs2FxDbMj7xKi0E3GuRQ5Tn4lE6RqB9iC7UAGbfzdBO02kDVpzfm+HNvigF0t3W7O+pFL2E+Akpt6VHA7czbNC1dSSnscFsij/bqdocEP1c7LV6hoBISGgXLfRCunqz45lEKv1UumpXDMZotvvJxekPZzp5I=
+X-Gm-Message-State: AOJu0Yzv1YxzJwWUqd67MH9cE+zg/IhQa/YRZucwQYPghhqUUe3uKrp4
+	UmEpbJwB5dDEojzFFudkQQaPnvXt48mpIxlUlXxOa8Wnf7R/YRtGbez37Q==
+X-Google-Smtp-Source: AGHT+IHKxZkD2Dnl6gnx/oHiwCu7THwfC9aAMKNgvKqi3mrLM1I5sg/+VSVlf0hbjMuqWY20kh/82A==
+X-Received: by 2002:a17:90b:1c86:b0:2cd:49c6:e2d7 with SMTP id 98e67ed59e1d1-2cf2ea26c3dmr3377595a91.19.1721940903545;
+        Thu, 25 Jul 2024 13:55:03 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:2c0d:838d:8114:e714])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c9cef7sm1996489a91.29.2024.07.25.13.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 13:55:03 -0700 (PDT)
+Date: Thu, 25 Jul 2024 13:55:00 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vipulkumar.samar@st.com, viresh.kumar@linaro.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] Input: spear-keyboard - Switch to
+ devm_clk_get_prepared()
+Message-ID: <ZqK7pJ3TaqgwVYpE@google.com>
+References: <cover.1721939824.git.christophe.jaillet@wanadoo.fr>
+ <ea855328eb4396cd1c44d2b6acc1fc394fcb1508.1721939824.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,32 +84,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240625031351.3586955-3-chao@kernel.org>
+In-Reply-To: <ea855328eb4396cd1c44d2b6acc1fc394fcb1508.1721939824.git.christophe.jaillet@wanadoo.fr>
 
-On 06/25, Chao Yu wrote:
-> We should always truncate pagecache while truncating on-disk data.
+On Thu, Jul 25, 2024 at 10:46:50PM +0200, Christophe JAILLET wrote:
+> Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
+> error handling path of the probe and completely remove the .remove()
+> function.
 > 
-> Fixes: a46bebd502fe ("f2fs: synchronize atomic write aborts")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/file.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 2203904383a6..0355cb054521 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2185,6 +2185,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->  		clear_inode_flag(fi->cow_inode, FI_INLINE_DATA);
->  	} else {
->  		/* Reuse the already created COW inode */
-> +		truncate_setsize(inode, 0);
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-		fi->cow_inode?
+Please refresh after dropping the 1st patch and resend. You may remove
+the call to input_unregister_device() in the context of this change as
+without explicit call to clk_unprepare() on removal we can fully rely on
+devm for cleaning up.
 
->  		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
->  		if (ret) {
->  			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> -- 
-> 2.40.1
+Thanks.
+
+-- 
+Dmitry
 
