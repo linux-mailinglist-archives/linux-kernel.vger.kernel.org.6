@@ -1,77 +1,70 @@
-Return-Path: <linux-kernel+bounces-262659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C7393CA24
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F8A93CA29
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224021C2155C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26071C2167E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B349713D8B3;
-	Thu, 25 Jul 2024 21:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668EE13D893;
+	Thu, 25 Jul 2024 21:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQNdFat8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZDXQR1cI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAB7487AE;
-	Thu, 25 Jul 2024 21:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB55F2746C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721942384; cv=none; b=bQC3rhcn9wP7VYqpgY6enBEnhVgsLxepJng1TvLy/VcV1xCV/+PEEgGJqhJDOMF7MMH0HE23TRQM3vlDR6qeDiUVDW+LoIYkxgJ6GoAjSelmIWkEmpI6LPUug+n1bdtYuezwJEpRzYdsPKStxPP6r7EViFuKxPtwMvFmrwt4TvY=
+	t=1721942839; cv=none; b=TlBLCwia9vfnoavtaQUcKK+HDxQZiTdUr+hXeOoY1QtAyAJcvpgNhvp/Ye6gaGIyQK6u8pYdhY1S5QLQqkLbNLilkMWh5AW/a0TWz7CV9XpneqS4V+UFg86vZrkCPyK1nDve1X3v1xgh5FiawfhviW0kOEqxv7HKtV7LOBw0Syk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721942384; c=relaxed/simple;
-	bh=4sRlyc9TAiWNwMx8udh+t85YIZuWizvHF8I605Y+otI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RPdMmyKf60kDBV7SVGrPEqunM7OQMSNt7VBPLNIJkcqGj3wKIBQbT4gmhO5IaAMKTdnwd9sh35QaxBOJjRTppqNdqWAqizuE3qz3q71GmECCFwln9s1NUTqG74PfxNHUCfzHeCCyt5oVpVuFbvHjD7v8CxSZ6610QxFGEM1rw2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQNdFat8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE71C116B1;
-	Thu, 25 Jul 2024 21:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721942383;
-	bh=4sRlyc9TAiWNwMx8udh+t85YIZuWizvHF8I605Y+otI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=cQNdFat81C9R5idXilDUFZOWeYcVwSyKi+bUw0J8nnfSw1rrKYKTfv3TQHc3o1r2U
-	 vXp8RK8jKbeAK55GkBIgW0CGDDz/nWDNRQh7QOMRI5EGO16vfDAh+41gcIfzPbM7L5
-	 pwHShrOOquJ/A9zx5Da0yCNJVZ4e1Xkl6ZG4qPJPix1EOiuv/8JwmubEcILicZ0Wb3
-	 C3DaGtfdV4HUaxxZt5JZ3WV98h3jKp4dG0edTrqMJMr6CKgPHXcP5L8XOZyxCRabi+
-	 XvGqyumrTP6W6NGqZFvgPLTQ1FQio+LeK19jsgdVCmGvwBqMn6w/oxS3tcir61kz/y
-	 gKWb1kRIQAYcQ==
-Date: Thu, 25 Jul 2024 16:19:41 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	ahalaney@redhat.com, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <20240725211941.GA860190@bhelgaas>
+	s=arc-20240116; t=1721942839; c=relaxed/simple;
+	bh=+VsB7VllEJZkJd3KHqTrfP19Ch0+6lWx7/scESCiW54=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=E1Uew+LZZs2P6SZQ7NweYEqKxDczt61QZ8S64AJWKGNLGt4myZgClw3Um9nOYtAPZBJXFkf53QBzuS1nIswYJ3Evgw1wx084REda93Ql4AJIRscwnDGft17Jh7aUn8rSQIsB2DiuS1wp8iIiTzvAL3cAHYat+6GsMRQ7IrZ7b0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZDXQR1cI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F1EC116B1;
+	Thu, 25 Jul 2024 21:27:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1721942839;
+	bh=+VsB7VllEJZkJd3KHqTrfP19Ch0+6lWx7/scESCiW54=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZDXQR1cItH1hoF+gkZjuykSNYhVgphyQfVz+tYA35o+9rGZrwzXoMtDsqGONeEkZX
+	 bAUXoVdwdeeupb9tjN52LV1yjNbfm/qde13tRQmIif9el3jQ+m9UbYoWO8xt0RYA2Q
+	 kFuWyUB1GgF/YTlWgTbBJLU5WV6HPsitqj4KLIVU=
+Date: Thu, 25 Jul 2024 14:27:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Steven Davis <goldside000@outlook.com>
+Cc: chengming.zhou@linux.dev, hannes@cmpxchg.org, hch@infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
+ urezki@gmail.com, yosryahmed@google.com
+Subject: Re: [PATCH] mm: Capitalize letters for readability
+Message-Id: <20240725142718.b320d59cf52f250392a9a47c@linux-foundation.org>
+In-Reply-To: <PH7P223MB1039AA3BC1E999EE54B1230AF7AB2@PH7P223MB1039.NAMP223.PROD.OUTLOOK.COM>
+References: <20240725132124.b0d317ba1d9e7d1651b71a65@linux-foundation.org>
+	<PH7P223MB1039AA3BC1E999EE54B1230AF7AB2@PH7P223MB1039.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be3e3c5f-0d48-41b0-87f4-2210f13b9460@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 11:23:43AM +0530, Siddharth Vadapalli wrote:
-> On Wed, Jul 24, 2024 at 11:23:04AM -0500, Bjorn Helgaas wrote:
-> > Subject should say something about why this change is needed, not just
-> > translate the C code to English.
+On Thu, 25 Jul 2024 16:49:51 -0400 Steven Davis <goldside000@outlook.com> wrote:
+
+> > But I do think such a change is too trivial to justify churning the
+> > code around.
 > 
-> My intent was to summarize the change to make it easy for anyone to find
-> out what's being done. The commit message below explains in detail as to
-> why they are set to NULL. As an alternative, I could change the $subject
-> to:
-> PCI: j721e: Disable INTx mapping and swizzling
-> where the "Disable" is equivalent to NULL. Kindly let me know if this is
-> acceptable or needs to be improved further.
+> So how do we proceed? I could move onto another patch, or, as you said,
+> change everything and add a checkpatch rule.
 
-Sounds fine to me.
+Let's not bother with this, unless others feel more strongly than I.
 
