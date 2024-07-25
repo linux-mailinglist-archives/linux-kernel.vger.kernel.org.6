@@ -1,140 +1,129 @@
-Return-Path: <linux-kernel+bounces-261781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C617393BC08
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:26:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C91E93BC0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D64B23BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:26:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4301C2253D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537941CA92;
-	Thu, 25 Jul 2024 05:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC49F1CA9E;
+	Thu, 25 Jul 2024 05:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aazhQlQn"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D269125B9;
-	Thu, 25 Jul 2024 05:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="DeKZoMQf"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C7723D0
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721885179; cv=none; b=hgkoEjmzLUWUZCaJa8B6JlNJcJBX5fsHUixR63yvw/v4HD97TuPTRpSSBz5JBBC4clWsV74kQLQOhYvzxqTqoYcoDsQ5DV343lnNABW+VlsKJi58aFUZ09cdHgdQRdelAxFnI25HfePANCgpkvoZVXJbnd+TQpwJHIAvVkV7OHQ=
+	t=1721885572; cv=none; b=HwAM1eM95Xry593IhjRVEBrnQkLqKcF4lDyh/qoZrpoblayzt0KKrSrmJIeyLRoMZKJf+gxfwg5HaJeSAAB/P2dB0VbAWFuOeclPslW4uaPycpgZZzLrRqGr+GkTHA8gNUQ6hzRYDN18Jy54KmVj3dKlQxrv5ud8+DXGU7YmvN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721885179; c=relaxed/simple;
-	bh=tRluP6WyVirJy8G2zBCqGpb2tqnlhAegLSpbjCzVCBM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=XSjdEYHamHGh2ycZKrQKCcZrqY0BTWpo0zXkap5i7hxbQtvo+IfNAFxOzRwtj+HQBYj0nfrk7ael/ldNJfRNgdtbW0ZHaYDdDntdWrA1h+iixOnbzeaGnRaEiEwG4oOKx/w5yIGFsuv4r88xSX+kYoWryJ8IEr7NdB1+0RAXVho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aazhQlQn; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BBED020B7165;
-	Wed, 24 Jul 2024 22:26:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BBED020B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721885172;
-	bh=daSIVeFPy9XrJZuvHVC2wNjvN5BkHjuD/V8ojvrxBP4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aazhQlQnIEZWV8AX7eGKG1CPAxqxNU2cxe8pZjICNXCQ269UFK/OLdinu/rM8BR46
-	 cAxrwXQwC5mglefOhydfURnV7i8BjIUMzlVX+u8dZsbLujU7Te0M8z05A6U/+Ein2B
-	 1ljukPSHlIR60hvRt7+UQYKoKeJDPY/HN80zNJE4=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	srivatsa@csail.mit.edu
-Subject: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-Date: Wed, 24 Jul 2024 22:26:04 -0700
-Message-Id: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1721885572; c=relaxed/simple;
+	bh=uZXbG36Q2EF7GySwh4nfozTd1dHlUpbJih4rSUWGGBM=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=YHqFrFAQLCHcuNg2/vfHURt8C1/g+c17kQJBw0qdOEJCTa0AWyyvLb57i1I0KSdxRQ0i1h6Z9atGBTTttdmP905TmPNl9eaPZwTspwoY0oPN9La+o3VO1+2P6ukMyH6NZhS21CnyxatQMG0BCtXgwhrMBSl/8yuLMQBTvLW4+Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=DeKZoMQf; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id Wg2ksCvmnVpzpWr4MsayMv; Thu, 25 Jul 2024 05:31:14 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id Wr4KslV3f5D6dWr4LsbFs1; Thu, 25 Jul 2024 05:31:13 +0000
+X-Authority-Analysis: v=2.4 cv=I6GuR8gg c=1 sm=1 tr=0 ts=66a1e321
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=CTd7gvyGw4ZjSuE7xIAA:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=NmLFwogGxk8T+/BTvVYv38MvO9AQWSFau4dqyGLbskk=; b=DeKZoMQffW9xoglVHlYzZ4n0l4
+	XMHH1T4NQT8GAUNxDNNQjn95njCbfAWVBq3C1YcKJr0dzuEoa02oewtO59Qa1kdX0nip5oKpezpRD
+	h48pa1XrTMu0UIyPuTnjKcxax+59XizxURlKLDlSqiO+KsocaBYwelg6AF6Tmwbib3W+ths1ibWeX
+	D+CCq5ZVo6YOT1FujbVRSgoeJGx/6DxtzOJVRomOWKtlnlLtPDQh9P/xNouw7E1iodnWI0hs1mZh3
+	6hp5lteYyGG9KPyKg1Um5nawGlmfV6mhU1mlluH3RCUBZvz3FC1vGmV/z9Hopje+u0LtEZtSDd7C2
+	kUniy5CA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59076 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sWr4G-0031Cc-1l;
+	Wed, 24 Jul 2024 23:31:08 -0600
+Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240723180402.490567226@linuxfoundation.org>
+In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <304aa6ca-71c6-4f72-26b7-72fcea3c6e3e@w6rz.net>
+Date: Wed, 24 Jul 2024 22:31:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sWr4G-0031Cc-1l
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:59076
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 42
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKqHlJhWgA6EhUbRU/2XvBJ+Y2Jp1GsJYSOnoqfBpKrZOvgO3jT5QBMLtr0cc3cQdT0GbL9ZFUhybsmZZiK7l34SvfkXmT9bfsh6lE3HCYcRSnvksTpr
+ hqWPj2Imygloyh9mTiDlQFQW/YSX+1Nz3QOFxGb8Hrr3Vts6x4jCiu8hE3lpSIX3W10peqq6MrGSKkYDnUcuQLhjbRqIoce6gIY=
 
-Currently on a very large system with 1780 CPUs, hv_acpi_init takes
-around 3 seconds to complete for all the CPUs. This is because of
-sequential synic initialization for each CPU.
+On 7/23/24 11:22 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.101 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Defer these tasks so that each CPU executes hv_acpi_init in parallel
-to take full advantage of multiple CPUs.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-This solution saves around 2 seconds of boot time on a 1780 CPU system,
-that around 66% improvement in the existing logic.
-
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
----
- drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index c857dc3975be..3395526ad0d0 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1306,6 +1306,13 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void vmbus_percpu_work(struct work_struct *work)
-+{
-+	unsigned int cpu = smp_processor_id();
-+
-+	hv_synic_init(cpu);
-+}
-+
- /*
-  * vmbus_bus_init -Main vmbus driver initialization routine.
-  *
-@@ -1316,7 +1323,8 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
-  */
- static int vmbus_bus_init(void)
- {
--	int ret;
-+	int ret, cpu;
-+	struct work_struct __percpu *works;
- 
- 	ret = hv_init();
- 	if (ret != 0) {
-@@ -1355,12 +1363,31 @@ static int vmbus_bus_init(void)
- 	if (ret)
- 		goto err_alloc;
- 
-+	works = alloc_percpu(struct work_struct);
-+	if (!works) {
-+		ret = -ENOMEM;
-+		goto err_alloc;
-+	}
-+
- 	/*
- 	 * Initialize the per-cpu interrupt state and stimer state.
- 	 * Then connect to the host.
- 	 */
--	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
--				hv_synic_init, hv_synic_cleanup);
-+	cpus_read_lock();
-+	for_each_online_cpu(cpu) {
-+		struct work_struct *work = per_cpu_ptr(works, cpu);
-+
-+		INIT_WORK(work, vmbus_percpu_work);
-+		schedule_work_on(cpu, work);
-+	}
-+
-+	for_each_online_cpu(cpu)
-+		flush_work(per_cpu_ptr(works, cpu));
-+
-+	ret = __cpuhp_setup_state_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online", false,
-+					     hv_synic_init, hv_synic_cleanup, false);
-+	cpus_read_unlock();
-+	free_percpu(works);
- 	if (ret < 0)
- 		goto err_alloc;
- 	hyperv_cpuhp_online = ret;
--- 
-2.43.0
+Tested-by: Ron Economos <re@w6rz@net>
 
 
