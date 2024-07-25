@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-262375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF42D93C62E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135D093C632
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5461C2102A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B5E281D7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7511D19D887;
-	Thu, 25 Jul 2024 15:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE9419D8A6;
+	Thu, 25 Jul 2024 15:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GckM/erz"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGshEXD2"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60FB7482;
-	Thu, 25 Jul 2024 15:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9070319D89E;
+	Thu, 25 Jul 2024 15:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721920215; cv=none; b=hdbLFn+8P/nLBhgBzP+yrWyVyVPb/SeAlbf3OlNU6eBQD99Fl/SargVapeftFgpfWUL8FxNM/DyLyfGWO6jn4y7Za7+1w+DJy1wpZd98Zl88BNk8/ZjqWn7WxNz5DrYsfj8dmjO73HN5hPG9JBIq9oH1m72zVAGd+3QtIoBg3Mw=
+	t=1721920285; cv=none; b=eFcE5R/ZqcnWHWLRjjORh0Y7ApspeUZCsUZjdQtlOh5nawPBpdAc993ht6mkjmLgh2ZOsrNafOmVXAfEl8MGg3iSxA9DgCauqTpNf1BBOALl4DTlmo0JAd6sdaumFm/MyaYifD2eao3Jf0dI6lqok1B1QuFI5tB5qRRaXB2U/DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721920215; c=relaxed/simple;
-	bh=giEmIQyfujgK7trC3Z5BVs33T8wG9iTIdiSpNdknO8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6I9FJCw264fZiXA9ThMZf8ajiklyOP8xiOu/P+l8PBocz5PS5qXMaMYzW1Z0VRSYxNPX12W+jB7xStcZw31GZ9M9sz4a3mj/yvMEv53hl5pK8jNUQKrLeMZ6VIAkdWKCU5APSvpNxfuOZYU2cL2Vu9Y1UixghKWYQKBamNxOk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GckM/erz; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=7fgIlaj7VIBRKbKi7Dde+07wn6FnHltfd48aihj7Dfw=; b=GckM/erz476VA3L3
-	94NtvBcuHNQiXZ9fv1tvbntVTdR1QZA1Z4swFGO/3LUGn2mQWPItsfYAa3lnqGk6SXXGhRyqt3nVw
-	r1toAfTjQDe7vzfJ6Io/eRK9S/ekFqt86iolILI6kSoyj00NKFikJb3EBGf5Upyl1ogCOW2+X4uyA
-	eR0ygJqVbabAmYqs+5EF6LzDp9jHMSGuwe81RYs3Pp+ntliMJzRBiT/aamnKXhNSvr10j5c8vh7pv
-	jadNWvIF6fZYyQBCYFYYqgmE3+7fP56d0m2aDUB4txjsUwoNEOXHMrDbofGhN9gfqIhEBM3bPsTjU
-	aMRULUhFg435qeuIuw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sX06X-00DDOj-0e;
-	Thu, 25 Jul 2024 15:10:05 +0000
-Date: Thu, 25 Jul 2024 15:10:05 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: ericvh@kernel.org, lucho@ionkov.net, v9fs@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: 9p goo.gl link
-Message-ID: <ZqJqzcJRaXgMRLoT@gallifrey>
-References: <ZqE9zUXO3agBjno7@gallifrey>
- <b7ec9dba-5ba7-40d1-b1a0-e85f3149f445@infradead.org>
+	s=arc-20240116; t=1721920285; c=relaxed/simple;
+	bh=4xFnelDtECeH12No2ZkIyBhksNciFIDqEg03JTXCIaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DqQ8qWotWJNsBxuJb5L0TmOScmOKeOYwwG9aC//OIkNPVWSLBBoAcWY8KYp2v9qK0/E59bAF57pE3L7JZ5hV6fqnxRFF81bxUEExDcUqcIeOLu1NYMDo0+4f+9/0oUbzXI8uCJIQiV6AodZAZcljyOBvJ9bOsw60qJ4ql2lkmIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGshEXD2; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d4fb707895so640725eaf.0;
+        Thu, 25 Jul 2024 08:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721920283; x=1722525083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gG3oCe4oYk3F0rr8MDa2StMvMgMwiYddG9zhTTTwCY=;
+        b=kGshEXD2uWuW8sVzOLLo9PyVhG3rHHomuYYIpQuZxMgZi6dQhf9M5h6bmKi2AVPdhi
+         obUESdH2cve2Wre5JGs3KYciwaBlsIySVE/zfVumYjKxSPTlX3UraYR8f4quEUZBMaBM
+         NGn1jUghtVYt6Uh7++g3El1jG57H8n1jvz2BoDPiCAZ1j/maKLcQKYF5uIurrQbtegk7
+         kBrk1BpaDHY5Xmkv8TxVu4LBEKUX5nKyT9RODTyNHWi/dbEZK2czDZw5ToiM2jhB35kk
+         DyEU41uErfPB3zbObgnZ4f9mThPAOxYwyY683pKTMAXRlX3uhDWvB1TkoCh3khdnjH2W
+         Zu/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721920283; x=1722525083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6gG3oCe4oYk3F0rr8MDa2StMvMgMwiYddG9zhTTTwCY=;
+        b=rQOsoGWS4969EEFWdUT6vsRtrCS46+FdU3LE1Lp1yufAZpx5SWizPK0GvO5A5ZzGYk
+         dUVcsbm50Bd1tpgsjFIXnq2+kyC52XLErlepfPzFpWx9qqIKBaoUVA2FyA3zyWD3NRUE
+         ga2x4sG5XGYoXXYsGTLOaSRMUQotDRKsK3lzQiaClPR2ZBWKaY9yshY0QTJbT03xihuE
+         P5qYQp4SujI4RZYGbj2Q6/X3XBvYdvJerXojGorkf24K05/CJVrnvzWRYYfXgSCYn607
+         yez3+Uj6P0TcQrs6SXaFEFX+EQwzJGVUARy3xs3X8a4cD9jWdEWyfrMqAHRsZ3E6j6P/
+         Qk0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXHJCIf9a2KYTvoKBleebKQSnUU8eU3qT/dy6kgSskibc3wikwbfOmkYEpkI4u1f2PtCAibFuzlqIqMCFUHbCdHbGFzWM2R/OpwYAVp9DSN1Eyq5nbz4lPNfnjK1XNyNo/kws2zZ1yTDIypBq5Azq7+KlTY85Zj3MCb+fyHYWGU0+/YTac5EnnndQKK
+X-Gm-Message-State: AOJu0YxHb7Ptsv2Euan2qL9CVzkphsOUnl3LGMefKA+YF0pogEsX0Q05
+	hLS6muaRd18moWxrU9rCLhFXMj1iJMzSagbcvSW3CDFitej9RkOuC3xqXOGNGwiYkeYrs2/7MvR
+	UyaZAHOLo3MWmo6/lLvxSCApdYc8=
+X-Google-Smtp-Source: AGHT+IGdvGm0ET9gz+yF8PYd3jHpdvWj7fDjAmm2jQoKgtNtCs99S21tDrFv1q7+jVKOpMYn380z+Cn3zdWyJwdoHFw=
+X-Received: by 2002:a05:6359:459c:b0:1aa:c98b:aa0e with SMTP id
+ e5c5f4694b2df-1acf89114c5mr444689855d.26.1721920282504; Thu, 25 Jul 2024
+ 08:11:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <b7ec9dba-5ba7-40d1-b1a0-e85f3149f445@infradead.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:09:48 up 78 days,  2:23,  1 user,  load average: 0.07, 0.02, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240725133932.739936-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240725133932.739936-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUpZ6KWdjveVSS72jdSuySCB7KVgo=TSr7tt=G295bPXw@mail.gmail.com>
+ <CA+V-a8vmiaYQnf4mCJD-Zx8BqSiDUS5NpaskYkOkuCpE7qH+3g@mail.gmail.com> <CAMuHMdVtdh-ykbm4EOoXU_ZTjOp9Jz9E00OusjtB1A-msTySjg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVtdh-ykbm4EOoXU_ZTjOp9Jz9E00OusjtB1A-msTySjg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 25 Jul 2024 16:10:56 +0100
+Message-ID: <CA+V-a8uYKTpXjsW=p+jHpCtnsNjaAEA8xHNr=KeH=4g5jXmr5A@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a07g044(l1): Correct GICD and
+ GICR sizes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marc Zyngier <maz@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Randy Dunlap (rdunlap@infradead.org) wrote:
-> 
-> 
-> On 7/24/24 10:45 AM, Dr. David Alan Gilbert wrote:
-> > Hi,
-> >   I noticed there was a goo.gl link in Documentation/filesystems/9p.rst
-> > 
-> >     * VirtFS: A Virtualization Aware File System pass-through
-> >       http://goo.gl/3WPDg
-> > 
-> > Given goo.gl is going away, I was going to expand the link, but
-> > the link looks fairly ill; it goes to a sciweavers.org site
-> > that has an abstract, but it doesn't seem to download the full document.
-> > 
-> > I can see links to the document around, but I'm not sure if there's
-> > a 'right' address.
-> 
-> Yeah, it (or a variant of it) is available in quite a few places.
-> 
-> I prefer this one:
-> https://kernel.org/doc/ols/2010/ols2010-pages-109-120.pdf
+Hi Geert,
 
-Thanks, I'll post a patch.
+On Thu, Jul 25, 2024 at 4:07=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Jul 25, 2024 at 4:59=E2=80=AFPM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Thu, Jul 25, 2024 at 3:53=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Thu, Jul 25, 2024 at 3:41=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > The RZ/G2L SoC is equipped with the GIC-600. The GICD + GICDA is 12=
+8kB,
+> > > > and the GICR is 128kB per CPU.
+> > > >
+> > > > Fixes: 68a45525297b2 ("arm64: dts: renesas: Add initial DTSI for RZ=
+/G2{L,LC} SoC's")
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > >
+> > > Thanks for your patch!
+> > >
+> > > > --- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+> > > > +++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+> > > > @@ -1043,8 +1043,8 @@ gic: interrupt-controller@11900000 {
+> > > >                         #interrupt-cells =3D <3>;
+> > > >                         #address-cells =3D <0>;
+> > > >                         interrupt-controller;
+> > > > -                       reg =3D <0x0 0x11900000 0 0x40000>,
+> > > > -                             <0x0 0x11940000 0 0x60000>;
+> > > > +                       reg =3D <0x0 0x11900000 0 0x20000>,
+> > > > +                             <0x0 0x11940000 0 0x40000>;
+> > > >                         interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LO=
+W>;
+> > > >                 };
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi b/arch/ar=
+m64/boot/dts/renesas/r9a07g044l1.dtsi
+> > > > index 9cf27ca9f1d2..6f4d4dc13f50 100644
+> > > > --- a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
+> > > > +++ b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
+> > > > @@ -16,3 +16,8 @@ cpus {
+> > > >                 /delete-node/ cpu@100;
+> > > >         };
+> > > >  };
+> > > > +
+> > > > +&gic {
+> > > > +       reg =3D <0x0 0x11900000 0 0x20000>,
+> > > > +             <0x0 0x11940000 0 0x20000>;
+> > > > +};
+> > >
+> > > What's the point of overriding this here?
+> > >
+> > Are you suggesting we drop this, as we have no users for it currently?
+>
+> I didn't mean to drop it because we have no users of r9a07g044l1.dtsi.
+> I am just wondering what would be the side-effect of not overriding it?
+Not sure what side-effects we would see, maybe the IRQ maintainers can
+comment on it.
 
-Dave
+> After all, all r9a07g044 SoC variants have the same GIC hardware block?
+>
+I would assume so, I dont have a r9a07g044l1 SoC to verify it. Maybe I
+will drop this until it's verified.
 
-> 
-> -- 
-> ~Randy
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Cheers,
+Prabhakar
 
