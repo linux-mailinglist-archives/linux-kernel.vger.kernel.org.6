@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-262160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0495493C1BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:19:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B4F93C1BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362A31C21CE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597981F260A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5917C19D060;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC47319D06E;
 	Thu, 25 Jul 2024 12:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HzNXomxE"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="aOVcbMe6"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A19B19A28F;
-	Thu, 25 Jul 2024 12:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E2A19A29A;
+	Thu, 25 Jul 2024 12:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721909841; cv=none; b=nJHLhboMspFCo47UxrUnl9U6cxDJjBrHCGqBPDqJ3qIB7NPAfnu3YPOUB0RsoQYpmiDrPNcvGWLjJ3h8niWIdtfOI8ssNIX4SnNY1wfwuM1aimHT2eAwQmaqIxfHtEf0NTvOHlXaF4YDbg/aBfJRC8NsEodqySWelo/FAfG13X4=
+	t=1721909842; cv=none; b=g/5UhvHUcmPmxK80bpNj7Obh2VkPZVuOIL5aCwsNBUNbns2PoiyXOAfg0Ou1TZnR5cKxShmCxNYZJ+VI7JX8gpTqgJeoIMDiwFbKAhqF6LLuumtE8etu9EGCjYmfmFOyopSupA5+oWAZVtWKXgREOx6NavPNO3DdngRdNzP9s38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721909841; c=relaxed/simple;
-	bh=i0qWcHLWcqk1AjPXzPRXDsRBnnrI+QNsbbcnxjTLuIk=;
+	s=arc-20240116; t=1721909842; c=relaxed/simple;
+	bh=Eiai/1UkJa0rSDWeeNuZu43ovReww3TviaxZDm3u3FM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UxvvoZRxBtCbN7d9XprobvsVrFugPOqOXObHR2XEaRivr2xRwGZjBfChOZ2hNIBajO0pMSVyQFoCvHj6su0pTTJEaEWKeEN5dJ+psa8EqaOOirEh7c4kfTkMDgJ+Ul6Hu7iBSi1EEDRPzz31+pc5xNjvN2wRinlKnWh4+Hr8UJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HzNXomxE; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=K5WK05fuWKYPJRlA9G5vWMpTVLor9+hOCF8xNY6CLsockI1QJNDIGmCmV7c+ZZUcSb7dOJnxELFgtHu+UeZnMy51BQXUeISOIEhZrLDHe8/hIxHjS0Tg+iTzB4B8RIQ3bvgFJ7uL9IWy1zbcJP0WBYHnzZV8lLEe2Dc1Tm2jaP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=aOVcbMe6; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,38 +35,39 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1721909840; x=1753445840;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=i0qWcHLWcqk1AjPXzPRXDsRBnnrI+QNsbbcnxjTLuIk=;
-  b=HzNXomxEeaNil6CMwR1+KO9+W6gmDR3QABDYxNPd9o0wtKb5lVRLwZ4R
-   0UFkLnxmN7B1XiMwX/tq1fTRDHj0TKJ8HJjI8yG2nHxKUagW8hlgTAcfR
-   ITTP4LlfQPsUj8bgsBKrVeh2jnPaXzjz+NmcHSboHTIsFVBmI0+zBbTkw
-   ZTrVozFHzSAmRfFpR+ZTTZFYvSIGYz+oiEyRVDSrZMLbHWNBWxwOrPtUX
-   rp+eRZ931JBNKdynnFYDRzM7PftJCQb8LUiIOye1BXBU75gtHfZN/Cz+5
-   BQMac28VHlBU/9jJgVEf1dApcBHZPATVFsfPNqwqwMeu0pL4hZhZMaw8I
-   Q==;
+  bh=Eiai/1UkJa0rSDWeeNuZu43ovReww3TviaxZDm3u3FM=;
+  b=aOVcbMe6ABN0/fcNSUVko4IwB7V0k5TN4rHER5m11202GE6OtxMOQs86
+   RvsZ2ccFVxgNB2H60b0l/+klUACHbfSKzQ3nWL+/sPumSBFxJOeTgv6AI
+   PrDYDJXrEyEzjDpKxHHO8pgYiw9hcn0cgIyGG4JvXG2rq4J8/kkO3xQD4
+   rPwN7QAl3uHIo4c3ImxbEEVeCCUcw35m5327qUw0X19BZ+hiYH9i6iI97
+   TLbW++LSgtx0a+FdXn1Eb2KchNqmdf7UbUpdbiczF4IWsCfxddNzXh1J8
+   KfJj5lYj9KFQpy7JnywHntLZrHeKQrw5aUhkx1bXhpf58wUZsdsXKeT6M
+   w==;
 X-CSE-ConnectionGUID: FjEJXt1iShuJypsmHj+1Bw==
-X-CSE-MsgGUID: 6LYUND7xQ+K1a4QKGbHEuw==
+X-CSE-MsgGUID: L0M9qhp7TDyXKu7xrW03tA==
 X-IronPort-AV: E=Sophos;i="6.09,235,1716274800"; 
-   d="scan'208";a="29650440"
+   d="scan'208";a="29650442"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jul 2024 05:17:18 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 25 Jul 2024 05:16:57 -0700
+ 15.1.2507.35; Thu, 25 Jul 2024 05:17:00 -0700
 Received: from ph-emdalo.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:55 -0700
+ 15.1.2507.35 via Frontend Transport; Thu, 25 Jul 2024 05:16:57 -0700
 From: <pierre-henry.moussay@microchip.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+To: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
+	<daire.mcnamara@microchip.com>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
 CC: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH 15/17] dt-bindings: clk: microchip: Add Microchip PIC64GX host binding
-Date: Thu, 25 Jul 2024 13:16:07 +0100
-Message-ID: <20240725121609.13101-16-pierre-henry.moussay@microchip.com>
+	<linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 16/17] dt-bindings: riscv: microchip: document the PIC64GX curiosity kit
+Date: Thu, 25 Jul 2024 13:16:08 +0100
+Message-ID: <20240725121609.13101-17-pierre-henry.moussay@microchip.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
 References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
@@ -81,97 +82,45 @@ Content-Type: text/plain
 
 From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-Add device tree bindings for the Microchip PIC64GX system
-clock controller
+Update devicetree bindings document with PIC64GX Curiosity Kit, known
+by its "Curiosity-GX1000" product code.
 
 Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 ---
- .../clock/microchip,pic64gx-clock.h           | 76 +++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 include/dt-bindings/clock/microchip,pic64gx-clock.h
+ Documentation/devicetree/bindings/riscv/microchip.yaml | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/clock/microchip,pic64gx-clock.h b/include/dt-bindings/clock/microchip,pic64gx-clock.h
-new file mode 100644
-index 000000000000..91687c9da516
---- /dev/null
-+++ b/include/dt-bindings/clock/microchip,pic64gx-clock.h
-@@ -0,0 +1,76 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Daire McNamara,<daire.mcnamara@microchip.com>
-+ * Copyright (C) 2024 Microchip Technology Inc.  All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MICROCHIP_PIC64GX_H_
-+#define _DT_BINDINGS_CLK_MICROCHIP_PIC64GX_H_
-+
-+#define CLK_CPU		0
-+#define CLK_AXI		1
-+#define CLK_AHB		2
-+
-+#define CLK_ENVM	3
-+#define CLK_MAC0	4
-+#define CLK_MAC1	5
-+#define CLK_MMC		6
-+#define CLK_TIMER	7
-+#define CLK_MMUART0	8
-+#define CLK_MMUART1	9
-+#define CLK_MMUART2	10
-+#define CLK_MMUART3	11
-+#define CLK_MMUART4	12
-+#define CLK_SPI0	13
-+#define CLK_SPI1	14
-+#define CLK_I2C0	15
-+#define CLK_I2C1	16
-+#define CLK_CAN0	17
-+#define CLK_CAN1	18
-+#define CLK_USB		19
-+#define CLK_RESERVED	20
-+#define CLK_RTC		21
-+#define CLK_QSPI	22
-+#define CLK_GPIO0	23
-+#define CLK_GPIO1	24
-+#define CLK_GPIO2	25
-+#define CLK_DDRC	26
-+#define CLK_FIC0	27
-+#define CLK_FIC1	28
-+#define CLK_FIC2	29
-+#define CLK_FIC3	30
-+#define CLK_ATHENA	31
-+#define CLK_CFM		32
-+
-+#define CLK_RTCREF	33
-+#define CLK_MSSPLL	34
-+#define CLK_MSSPLL0	34
-+#define CLK_MSSPLL1	35
-+#define CLK_MSSPLL2	36
-+#define CLK_MSSPLL3	37
-+/* 38 is reserved for MSS PLL internals */
-+
-+/* Clock Conditioning Circuitry Clock IDs */
-+
-+#define CLK_CCC_PLL0		0
-+#define CLK_CCC_PLL1		1
-+#define CLK_CCC_DLL0		2
-+#define CLK_CCC_DLL1		3
-+
-+#define CLK_CCC_PLL0_OUT0	4
-+#define CLK_CCC_PLL0_OUT1	5
-+#define CLK_CCC_PLL0_OUT2	6
-+#define CLK_CCC_PLL0_OUT3	7
-+
-+#define CLK_CCC_PLL1_OUT0	8
-+#define CLK_CCC_PLL1_OUT1	9
-+#define CLK_CCC_PLL1_OUT2	10
-+#define CLK_CCC_PLL1_OUT3	11
-+
-+#define CLK_CCC_DLL0_OUT0	12
-+#define CLK_CCC_DLL0_OUT1	13
-+
-+#define CLK_CCC_DLL1_OUT0	14
-+#define CLK_CCC_DLL1_OUT1	15
-+
-+#endif	/* _DT_BINDINGS_CLK_MICROCHIP_PIC64GX_H_ */
+diff --git a/Documentation/devicetree/bindings/riscv/microchip.yaml b/Documentation/devicetree/bindings/riscv/microchip.yaml
+index 4a29c890619a..5e5f2676e6c0 100644
+--- a/Documentation/devicetree/bindings/riscv/microchip.yaml
++++ b/Documentation/devicetree/bindings/riscv/microchip.yaml
+@@ -4,14 +4,14 @@
+ $id: http://devicetree.org/schemas/riscv/microchip.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Microchip PolarFire SoC-based boards
++title: Microchip SoC-based boards
+ 
+ maintainers:
+   - Conor Dooley <conor.dooley@microchip.com>
+   - Daire McNamara <daire.mcnamara@microchip.com>
+ 
+ description:
+-  Microchip PolarFire SoC-based boards
++  Microchip SoC-based boards
+ 
+ properties:
+   $nodename:
+@@ -32,6 +32,9 @@ properties:
+               - microchip,mpfs-sev-kit
+               - sundance,polarberry
+           - const: microchip,mpfs
++      - items:
++          - const: microchip,pic64gx-curiosity-kit
++          - const: microchip,pic64gx
+ 
+ additionalProperties: true
+ 
 -- 
 2.30.2
 
