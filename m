@@ -1,146 +1,136 @@
-Return-Path: <linux-kernel+bounces-261836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8977993BCC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:54:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6237F93BCC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC9C1C21316
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C63F28115F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F0416DC04;
-	Thu, 25 Jul 2024 06:54:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1228616DC0F;
+	Thu, 25 Jul 2024 06:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6rwL/Gk"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D714C84
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C256A16D9B7
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721890445; cv=none; b=NX7+MGnlUUiModRZ5WyFm0JwYRBX7onFZzC8x9aecCtCXOUb+93lx7iriQZ1lADlaBbxDl0tzCiygt+baAHKZliuTr5UlWBL5nTaozeljt3HEmT/LO8BbuH9wzsnuA4GoU/1CTDF97mjVqqiIL8ziEIzR/3q3UAuWAWnyc0mUe8=
+	t=1721890506; cv=none; b=ETLU4k6fB4ciVWD7EmpqP2GF5EVpEwcg/Gq3KBiChOnTHFWjg/FXTyYGY7rF23xWrhxLEbbTkRIjKdQMc/iV74LOBgdAm7UZnzWXJi8hD+lQuOtAtfAFLSXxrdBeqPgXbAIySNBSAROAsMgeQbDOZmpp2HVbJl8W9RqCaWxYwTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721890445; c=relaxed/simple;
-	bh=RI4rl7qGQXyq0dIZXfsYQrsZsTYHeGhrcK5qL/gWwkQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Pwwl2Ic77mDLF8Yt6Xg4VcdwcjOxqYJKzAWtC9HlitJ7r7G5J/+GYt2Zmaf/couFTgd4Qsokt3jrPuCjxp0uyWX4pY3cMRBHsrQN2455bMaJsaWGj0BEcIUAvVpsinvLAwgDY1Bt3YLLVmWX6mdkRK2zYNzjniNvsklIsE77XeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f66b3d69a8so97222439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:54:03 -0700 (PDT)
+	s=arc-20240116; t=1721890506; c=relaxed/simple;
+	bh=iZkJssa1HPux1cfO7DzXuQvvHYerkUKMKDTMblmlv0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qcr0suS1nKrv2VmDT+bBO2SrrcM0zd/PL6zVSyGztD8LzrwcYEg/zuRgYzh7V0RIqGnXZVm8Qj8w8Z7pXhrd9eplPsAGOV3GrwY/lPGDL0WPDb1m2JuZm/4t2GyCNk2raBNnMpBtxPPMqd1BjpuUGlgnv72j1PxaaDfpVLR+J0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6rwL/Gk; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so2972555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721890503; x=1722495303; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DuTN+kDGENu6xXBj1NgEgyRLozzKhv55rcnYOX8KmhY=;
+        b=E6rwL/Gkqudc+r4hZEYi4xu3khnNhMpNJRfJHCocFaZ5h1DYa8PSTd3V/r4WiSKk9X
+         mIPfPdYadttoO8CKjbkxSPZtEQZ5zrFHpEsWEMdW9zBfrcjUBUGU7Bxnms6C4N7Uw1Wk
+         ydFLzH9M2p2ilHsYnkxFryoRV9/ARnOHfiOdoLAtX+J5b5WRhph2xae9/FA4ZaSlf/Zh
+         q4BAWk9G9kNfMJxhs8TPMuk3pb4LL9meDvGRNV8fAh2bJWHxOJivCgzNN/2AB+XiALG4
+         vHTsw5fhZSc3lTwpk6Q98mmL9eGlSNl7hODPXSWwowXLnT/OUdhrhmFMiD6qF75HFhDW
+         /3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721890443; x=1722495243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1721890503; x=1722495303;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNoyADBIdthsBWCUUzyJ+WuklZlEc3Yeyi7NMBXun80=;
-        b=s8jPOL6oBrxMAON/g3K3dgQRoLQNlgU6cgbF7PFTu6zfK5dfwH7px92rbFmEsDz/au
-         3snvasUUI2Dn5XzyB0pXRuBGQPT+Jy7Awfn1CoJuQlQ36Y77oKx4mBKVs1zpETSrwqGy
-         tvxKdY0Rk9a8uUrDIPPeK2K6/TLjDRTRRBQPrVWZ+B/kQPqGCAvqQBLwjShk03p1UTgE
-         exumf8MylbcgAO5NAEQmCSQMPB978cSayVYB0T6tnn8hH/aCjy/DP8Zfj1/9BpzeEH66
-         sPdjUhaqurM9uuFE4tSmz5RZ2Uhcf1bzIYhXJFN3wX3gFZ5JRxnXkGHDBr582CaiMWaX
-         JViA==
-X-Gm-Message-State: AOJu0YyWlNOnQqv+txF44uWU5LU0DoRhrDDbiTSDhIfbA3CRD8VPuBfb
-	t73p+v51wg8eP98uoJinDUjt7tV05AkEc0tHXVHCdsXvf3V7AE3fZ+eoZ4oqskI+/mcIuceW0L0
-	oreWZjjB99GWQY1vQ5gPmeShheFbGF9gkKbaWuIf16/NXjpxnMnZooPY=
-X-Google-Smtp-Source: AGHT+IFfCv0stfAEKa/s8QYFWON1awcN5+mvF5zf4lDE1xWm023J1Xul9a2+2PRzTkIv9uN64zSzRGl/LOgGInlhfmYvXMjOnX3P
+        bh=DuTN+kDGENu6xXBj1NgEgyRLozzKhv55rcnYOX8KmhY=;
+        b=vAvhlztfAi5YCRr4PiLuxa6QS4J2qKOWmljos/TQocQillyCPfVl2WaX0KtVs4oAgZ
+         bgOzRMyu6JPjNTvHFs7BGusLzJTo+10IzRyqQ3m3fgr4o2vXJA54ujl2Az3MN2rVf+ju
+         WdasKPx0GTYNMMSFF6E+5LmA8YdeEUY46MhOH5DxT6aOxP/aTjlS2b05bJBjHejRwbAC
+         FqZnf6JJ0Ahoep3neApsesFIF57dmhiUYGtKEuuygKfeyGB6Xdj1EyUBDK7QfooPlgp7
+         Oa3MY3e8nrLkMwkTl6QmiOmihN3PINEQJEaQgJwzcKbOiauG2S4yfalzFpyuWG05rvAd
+         +8+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWH/g6hwE2HGfKon9EvDafj7HjyuXX9yKqjhbHucP+KQiUFFDUEvOszuEJCybm5YvFZnri8jToBRcFhIK44Se2bNul50sUNl7+kF8h2
+X-Gm-Message-State: AOJu0Yx3we7PX4BrNdgMReMZPGKU61vtRah8Nt4A8XxIrktn3jgmEzdg
+	LxAQ8icbaaqiKeZ7ndAueLGGAFZj/dg+LgEezywSyai1nDe/2/yF
+X-Google-Smtp-Source: AGHT+IFDb4sD3pOsedkk0/LWcAY+LieYVY8mqTFh3+iKOmjF2aCcPCDJSzJfeDUWQWKsLRFm3/Y0fw==
+X-Received: by 2002:a05:600c:3147:b0:426:64c1:8388 with SMTP id 5b1f17b1804b1-42803b5b18fmr10801735e9.17.1721890502686;
+        Wed, 24 Jul 2024 23:55:02 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f92c7cb3sm61764035e9.0.2024.07.24.23.55.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 23:55:02 -0700 (PDT)
+Message-ID: <d384eb76-502c-4a46-9aa9-44671440b417@gmail.com>
+Date: Thu, 25 Jul 2024 08:55:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:37a9:b0:4c0:a8a5:81df with SMTP id
- 8926c6da1cb9f-4c29bc7952fmr104300173.4.1721890443133; Wed, 24 Jul 2024
- 23:54:03 -0700 (PDT)
-Date: Wed, 24 Jul 2024 23:54:03 -0700
-In-Reply-To: <20240725050750.3007233-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000349950061e0cdcdd@google.com>
-Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] drm/amd/display: use swap() in sort()
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, harry.wentland@amd.com
+Cc: sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
+ christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+ daniel@ffwll.ch, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20240724073749.14338-1-jiapeng.chong@linux.alibaba.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <20240724073749.14338-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Am 24.07.24 um 09:37 schrieb Jiapeng Chong:
+> Use existing swap() function rather than duplicating its implementation.
+>
+> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c:17:29-30: WARNING opportunity for swap().
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9573
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   .../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c    | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+> index 717536d7bb30..8e68a8094658 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
+> @@ -7,16 +7,12 @@
+>   
+>   static void sort(double *list_a, int list_a_size)
+>   {
+> -	double temp;
+>   	// For all elements b[i] in list_b[]
+>   	for (int i = 0; i < list_a_size - 1; i++) {
+>   		// Find the first element of list_a that's larger than b[i]
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in f2fs_start_gc_thread
+While at it please also replace all // comments by using /* */.
 
-F2FS-fs (loop0): Stopped filesystem due to reason: 0
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 7528 Comm: syz.0.131 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:f2fs_start_gc_thread+0x33a/0x570 fs/f2fs/gc.c:191
-Code: 00 00 e8 39 21 a5 fd 4c 89 f7 e8 01 9a 74 fd 43 80 7c 3d 00 00 74 08 4c 89 e7 e8 61 16 08 fe 49 8b 1c 24 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 37 17 08 fe 4c 89 33 48 89 e8 48
-RSP: 0018:ffffc9000b0a79d0 EFLAGS: 00010246
+Apart from that looks good to me.
 
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcacd20 RDI: 0000000000000001
-RBP: ffff8880233dfd00 R08: ffffffff92fd071f R09: 1ffffffff25fa0e3
-R10: dffffc0000000000 R11: fffffbfff25fa0e4 R12: ffff88807ed6d2c8
-R13: 1ffff1100fdada59 R14: ffff88801a3bda00 R15: dffffc0000000000
-FS:  00007f8ea496c6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c003b37000 CR3: 000000002cdaa000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- f2fs_remount+0x14eb/0x1c20 fs/f2fs/super.c:2440
- reconfigure_super+0x445/0x880 fs/super.c:1072
- vfs_cmd_reconfigure fs/fsopen.c:263 [inline]
- vfs_fsconfig_locked fs/fsopen.c:292 [inline]
- __do_sys_fsconfig fs/fsopen.c:473 [inline]
- __se_sys_fsconfig+0xb6e/0xf80 fs/fsopen.c:345
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8ea3b75b59
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8ea496c048 EFLAGS: 00000246
- ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f8ea3d05f60 RCX: 00007f8ea3b75b59
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
-RBP: 00007f8ea3be4e5d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f8ea3d05f60 R15: 00007fffaa6511a8
- </TASK>
-Modules linked in:
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	e8 39 21 a5 fd       	call   0xfda52140
-   7:	4c 89 f7             	mov    %r14,%rdi
-   a:	e8 01 9a 74 fd       	call   0xfd749a10
-   f:	43 80 7c 3d 00 00    	cmpb   $0x0,0x0(%r13,%r15,1)
-  15:	74 08                	je     0x1f
-  17:	4c 89 e7             	mov    %r12,%rdi
-  1a:	e8 61 16 08 fe       	call   0xfe081680
-  1f:	49 8b 1c 24          	mov    (%r12),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 37 17 08 fe       	call   0xfe081770
-  39:	4c 89 33             	mov    %r14,(%rbx)
-  3c:	48 89 e8             	mov    %rbp,%rax
-  3f:	48                   	rex.W
+Regards,
+Christian.
 
-
-Tested on:
-
-commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fbadb1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16adb055980000
+>   		for (int j = i; j < list_a_size - 1; j++) {
+> -			if (list_a[j] > list_a[j + 1]) {
+> -				temp = list_a[j];
+> -				list_a[j] = list_a[j + 1];
+> -				list_a[j + 1] = temp;
+> -			}
+> +			if (list_a[j] > list_a[j + 1])
+> +				swap(list_a[j], list_a[j + 1]);
+>   		}
+>   	}
+>   }
 
 
