@@ -1,231 +1,174 @@
-Return-Path: <linux-kernel+bounces-261753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D83393BBB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:26:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81D993BBBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4563E285AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191351C219F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F401C6A3;
-	Thu, 25 Jul 2024 04:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JvWkQ8Qq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D3C1B7FD;
+	Thu, 25 Jul 2024 04:27:29 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4D6EAC0;
-	Thu, 25 Jul 2024 04:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721881554; cv=fail; b=A1dcOB32U8x8UzrWC7zB72iRzTLt+kR0F9fK2xcK1pnQTlUCg1dunf2/qv5wsWQrpT727cWLbPGkOgI+RmcNSCuBvvMqv+Pjmw1fgwsuUU7XwKwSkcqkFRhHYWBLbh9MfO9m7ob/7ZxdGccgc8uGfQw2oTEACmH51+jmuJg3lgg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721881554; c=relaxed/simple;
-	bh=I7hP6wY6GKYYbJLRq21/T2VS1rTD11B2Xjt8dnHvC4g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dkrXaT2anDYmBTULkGcMUDt+bcIAOJFhAcsobisE/mR5OMZruPlP8LTtOaArSvtrQzE988OzpMeXLrAyqUBIOxmgMqpa6yUNDTYePMFh1GhydPx67ElLthK73IMW8YrRZYZivXExAFVwG1UUHMERHv1aP5JMPTcFebHdrboFNmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JvWkQ8Qq; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721881552; x=1753417552;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=I7hP6wY6GKYYbJLRq21/T2VS1rTD11B2Xjt8dnHvC4g=;
-  b=JvWkQ8QqkglkUTKqfV8HMwj3kxqhDFZMycrC/g0EZpoWC4B1BVgOX107
-   98vtveowPlbvI4F8EAGRRyRplS/LuMExnh3H81Tud7x82eyMRJV0cX7sR
-   Dl/BBr8xc7G3+xkz1MUh4UlhOmkNeW4bds5fqlZaoGSM2WYU16ZgNjIzU
-   6/IInYyGCj3xwzPJnSb9XoYoDj/6uHI/eLyokiUIbgsRW2AlldpghmNAL
-   pfTJSyklrKTqrYkic8fL3JBqoint4B6aw1Wy3n9JjeIu0cj40zBphjNh5
-   V+F0aegITJDaz1tUrSDkGXWuUb19WFUaNdIMMKBxFk2sBBnoaXtDt8Cuh
-   g==;
-X-CSE-ConnectionGUID: rWwyZGH3SXGg+FNiqsJkyw==
-X-CSE-MsgGUID: gg2fEH/DQmK4/DxR2Xolsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19289446"
-X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
-   d="scan'208";a="19289446"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 21:25:51 -0700
-X-CSE-ConnectionGUID: paH1jujwSR+d68Ud/9AL5g==
-X-CSE-MsgGUID: 4xAtO7bES0m4RL2wYS2dVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
-   d="scan'208";a="57590887"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jul 2024 21:25:51 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 24 Jul 2024 21:25:50 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 24 Jul 2024 21:25:49 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 24 Jul 2024 21:25:49 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 24 Jul 2024 21:25:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QUAwSNeGt+4gRHf/sTNYhv+/WJp2E/j2lQ+IZKBypdqOkAJv5RPqXNoWtQiS+yCDhV/bcrJavIDRUwzD6ITJJFiB7Y2vGhAVYHBC2A5/caHBm6NdSUCBJwIzajiZaimkqQQjsonCg+/LzkituNdyrGb4kEjB/cHgOIZOf8wKXbNW6QlT98FrPc/3P+NIoEE/q1bhLBm8MnzvSP8bevrE3YuCxSJ26OI78aFQhXkoz6RUGSIEqPtPOcouyAMkYZwRsL7EfilfsGyP13jEOBY4+4P8QmzGFqhYUiIsH1+lyYrzhiDfRg2WKjRVqHeSit0yTI54+K/7rPRFWsGzPyxZqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ckQRw2jinkF+uWihK7mqquI0kUOB0xkwsEr5NUrRDac=;
- b=NsTh6wJpwBfz+t+LQSUDMBiitGAEy9VgCZlUSKbtLsGfmvWksi7gcljJuMphIGzyNtrZ1p2utHgMu0e8X6O72wXIhR4OTEgrlt5GTVt3QS1bZe070vQNchw81FQ8gc+b4UY2BNeoKSWuoDluSpftfkJqlHYjmfy/S3O/cj2wbULRqlWmHD85ZHckcU3hYsM1tWrUJu2H5dFpobY5JvidPeHvpDuRChel7IM8wX6Ln4EBT0SylprwxxbA8sC1r7pQytEFneFNFQLPKjhZI6ZqXOry7NZm89TDfr7VcBJVmcKDms0Ujz46iom6kulfAvBgSStWYpzQu9sprKxQT49RMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by IA1PR11MB7890.namprd11.prod.outlook.com (2603:10b6:208:3ff::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Thu, 25 Jul
- 2024 04:25:42 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.7784.017; Thu, 25 Jul 2024
- 04:25:42 +0000
-Date: Wed, 24 Jul 2024 23:25:38 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
-	<UNGLinuxDriver@microchip.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<gregkh@linuxfoundation.org>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<mcgrof@kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<woojung.huh@microchip.com>
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-Message-ID: <v6uovbn7ld3vlym65twtcvximgudddgvvhsh6heicbprcs5ii3@nernzyc5vu3i>
-References: <20240724145458.440023-1-jtornosm@redhat.com>
- <20240724161020.442958-1-jtornosm@redhat.com>
- <8a267e73-1acc-480f-a9b3-6c4517ba317a@lunn.ch>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8a267e73-1acc-480f-a9b3-6c4517ba317a@lunn.ch>
-X-ClientProxiedBy: MW4PR03CA0274.namprd03.prod.outlook.com
- (2603:10b6:303:b5::9) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627821103
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721881648; cv=none; b=FnZJBYwC0Vmi7BjZ82Pa2Yw6bIdvN9my5r8QesQ4GAKwdP474Y/SL/NeoRbiTd9qisOPJUiYRusRONyHli0cc17Xt9N9woYKomKN9512ho7HOZOQlfF/XBPaC9vTU1+QWMZRETiHo4oNx7zPcOiGY/zfUGV5QathT2XorAVTUh8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721881648; c=relaxed/simple;
+	bh=+y0LYOXdo+Rbtg55T3IOqrCtEJNFT6WwTdn6LjJQgC4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m/Lxc7wCi6+cJA6xBheE6R5X27YSaoncSooHYpSHPaDO0nhJcB01TX4zFZ4J7GTbiBcZvh8uow7UqQhbSldoYEZFUvBdX57zvyROZfDBUOhmPdvrAl6qA0YHC3OkwJnI0V2pybwZpbmvuzLQEwkKpumr+MgNB8Q5AkS29awTV0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8489097eso848839f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:27:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721881646; x=1722486446;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/lON8fGworFpTJ7CQFsh8gPqMnx74mEVJ/DboqaaKd4=;
+        b=ez5dKqjCrTZGrnX6SoBSKZGXyuD1S4ktP0XiBxPrF9CvXZTDUQEt7wuwqPiIDQlEKI
+         NQUxn1DDGfMebSG9d/NazKRQnjo4kWE2JzCf0ZtxHs7vPhD6sy/eI6Ks6XIAeFtV25hE
+         jYDHHFnHeOXuwSXxeYZQSP0NNQ3pjSoDi3VYZjb7TMNk5P2wVpJgwPXpXNHtZ45HstQ2
+         71FMUhhgm7Wi3t1ASzWZ4r3Mu7lktmaBRDtYSGpy25OPcJi8f9LMfswdbPzjFLlxg6vf
+         mKwVR1wyeuYhif1S9ftaWqM4qq59359S98Muqi9JmTGaRu1ggnGOE86zrg3c6aDNMh2Z
+         Zpdw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ESLoGpyGqcVovKJtzh8f0ymmWuG7QXfaMPVUs6eNEEnpJhSJhPo7JDhmfva74qECPv2PU8ggNjAzx30IMV2GPfngIAjffpeRYhCM
+X-Gm-Message-State: AOJu0YzGasSHr+KmJktiBfY2Oa+54WeOkIBv2Us0fZT9mdyz/eq2PUax
+	FCqgDeC00ZtBjRWIJ0t9t+lh6U89pDvHpfwjcmdQDttES7QK/4oHjvCQWxSkENdD5hfOCNlk84v
+	rk1qBcTfjlLpBI6hwLQFSu8dPwWQ4w94ZH1YywV21/v2LEcKaFaiiKoY=
+X-Google-Smtp-Source: AGHT+IFKiVs0ynWU6sPaCWcQc5bXJcd0XJIfyj44zLasAXY91uG3+wsbMLFkmbv0EE6qda5A+h8isJyfufw+RA985Cqd6wazdMkN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|IA1PR11MB7890:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad0e2fb3-4ede-4a52-8cbe-08dcac61d842
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5sOKwvR7+YRVr3Lw9iH6fR/Kaf+g2n2JI0+AJ3SMlXCtHV6dhMVWk03GL6+Y?=
- =?us-ascii?Q?JXp4icZT9fJ/c0mA8KpVxvrxLG5qtVp3aspHRT0F1V6EJHO5FRJlGhrgPwSk?=
- =?us-ascii?Q?cdkyRO0dYyGL+ZbQ61lfEQ31Zrx5nRRTVfPwEe96xdUgn4pqOKO/Z+brhqcp?=
- =?us-ascii?Q?qFpAGAYi2IwH4p4PKmH2omGkiZk+Oc6vohfAmqcylhyypuikVgH1DnFw43cY?=
- =?us-ascii?Q?2h7ym+r02sze+0LuC4xwVjEC2zDSt5qTCdSmPORKkD/w+XxBcpB+e9jnNgYj?=
- =?us-ascii?Q?Dv0n/M1iWjj6DoFgChExcmWNp3W1PsMtliGMbK7H/iw/3C3WG1meNvyCPdBw?=
- =?us-ascii?Q?/JuRpJm5qPGTJG7h/hO4b6GKEUMvqvTnR3tIKgtKqG9NTgmg3eGdx1pMSL6S?=
- =?us-ascii?Q?SJCdiBSScyc0VCNMtesnkGucDIdNMZ7JrJkY516wfFjRY/Tt2DLsKPUFRiaM?=
- =?us-ascii?Q?qq4G8tzpogppSDmKELQ4SXKxC9Sq94+K0fp5bkpH4+0l/X40XdoF5/5JCTWg?=
- =?us-ascii?Q?m5vWZ1QwHAVqu7yP4XD3X147N4LDdfJgqW0g7LH6tbhKAuXxDKvutxiqi13g?=
- =?us-ascii?Q?74TqAWi/vRkOhKVp4y5HYkjSmE10p5MgPjMc1FaF2/bo+O1+ka/odUiBNbW3?=
- =?us-ascii?Q?/kQ3RoquGDhwMj207oCfMhwULEYQx9Ytj4h83t/k39WbTDO8r5wBgosr97Ue?=
- =?us-ascii?Q?RhZKBqQ4fhwm3qodjxaNuLO8zPF5MhdnHwWAVhEFulS+fwXJCRe2QbgLgDPs?=
- =?us-ascii?Q?fMOusOEjjquCioVkInBnbC2agaTzEU4srVqVSFBBuCE5vYBDOR3/0ZIOey0N?=
- =?us-ascii?Q?G8fLGYRN7wjBSrLvDRCVXT5z4ItRz0RN7EFwyureDSHviIHvArRSL5m3gkxC?=
- =?us-ascii?Q?3t6jIuvrCYA7yhJAv0gMXfgOQLoCJQ13IzjAD+HscWNZW/mzSFAauZYhVzuQ?=
- =?us-ascii?Q?zWhFvUi11J9oNJ12eKxDzY5pI+A2AqbaA5Vj6Jmcmclck5YtUwo7iwUOiHwW?=
- =?us-ascii?Q?oxbwiQhNy8ecdTfWz4vBGTTEhon9O6V3+hDD8FjlzSlmN16ObyF+qvACXnop?=
- =?us-ascii?Q?twO1U5T3EzAGJB8/s8q5HEKSJ+gHeyR2RSdRSMysPbjx+RLDi+/gzpbMM502?=
- =?us-ascii?Q?65bYjtWaBTLT2QrTMsJrAruiR+stDpJXYRV2tXBp34nuI0lYSiwc2frYFOH7?=
- =?us-ascii?Q?A8RKKkmiWroJ83kTwZQqojTNu69n7yjDwJ3M+dnhCTKSrCT6oChL7Bu78Mw7?=
- =?us-ascii?Q?BzW8x8MSUd7R8FQoyFeTPFo5WTCHEp60Xm3n6dAjLjAy/NiznWRyWbcdmJHc?=
- =?us-ascii?Q?UMkPTSDHpL14aVt2lDUK56C5Baz5APuAfxbRyYfIGhOiXQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SgfyvKlyTwu7Jr9UyELr89hmuul5R9yB4i6KkOT7TPufbquNinBbR22a8Css?=
- =?us-ascii?Q?fXdcvG+Ueynqx9KCQl6SJiUczl0f7m+G5i2jcl6yrSevzZUC4zZK+BpS/0NW?=
- =?us-ascii?Q?i864fRPmDFo3G0AgyNNyy09k0r9YiZlUCHj+kQmBFB5dGBbgQ19knMIC/BU+?=
- =?us-ascii?Q?mR+KfaSizqx2KFcPdcMEzp0xEl0ytJvYpy+i3Nq9J+U/UIGcnnQRR0KmoDdc?=
- =?us-ascii?Q?dqAVpGyoGQxGP/9ysfQdaozFxkoZkaKulgyKCFlEZxdWJBev33lXx0WOP/Zq?=
- =?us-ascii?Q?ssLsSfhGcptkOaJexbTEj7S2nCUBtTKAegq6Ibmil3TbBCgi2qgEHUA4+eVa?=
- =?us-ascii?Q?V4jS+oUcXC3FOV9Hd42tFMdoOWRWZGm3exUht4obpK2hyQnKiS+yU3A//nr9?=
- =?us-ascii?Q?mYyDWRTKvTS2D7qSIr8bSWWWgn6uKMR8sJoZATNVN9EawulZeoddv7anaAnu?=
- =?us-ascii?Q?OIxsA9lTnwqZSWZvN6+/GN2TjHXLKcp2FSyAIoUrrPxxl9EH3WsybiCmOANA?=
- =?us-ascii?Q?6zBY667ZCaiDN49g2RdXLQd3MSta0A9gCroTuXy3Dkh9dQ1dJmteYv+fKCjv?=
- =?us-ascii?Q?s9DFbA3/jGAY+dUH1WZNwe1Yh8fWPt5hBf6Ps8/uZ/reIHFtbg1LtI4QCZQK?=
- =?us-ascii?Q?w6x840q+I4Bab7VxXIxdNHCceB7Oh/pSkmM1v2V0dQ+WipQknaw7WpB+G9W/?=
- =?us-ascii?Q?wapbcVgb4o/I7JZk/6GRzVkOfJv/Kfgc3dPrGHK6ht7W6kxAAxsvVz6iOelK?=
- =?us-ascii?Q?nYe/lBEWBAxYz9SV2/huWI+KArkEKakJdOUbyZgap26LrPPMqGcVmGysbkD0?=
- =?us-ascii?Q?7spBEOPiF+0WVgfroALxXcgsc3WwpVA/VB1kBKJmDa/R0HHb1MvpMXtV6S5z?=
- =?us-ascii?Q?mnU/E9mhLdYX5hoh22fkHt8Sm4ChmsRs0SBppaNTE8obii8ztAOWR2GD5I91?=
- =?us-ascii?Q?0wApA//vbNnIcnWt/moF+YivwZwIUhmuE4ve/ho8SeZzv9cz3mi7/IFgrj6M?=
- =?us-ascii?Q?iv6bioodArX6qPF/XxDNhcKBGTWdRaLlLIQGmOnFO53ZJAUIVLKUQzDAbMVO?=
- =?us-ascii?Q?wfj156FlNxb549wGjlN+rG/29PuJ94V5CzDQzoulnRPqP4Xnba1S+0SxzWkL?=
- =?us-ascii?Q?GdLqFIFP9YP8oHERQkh8t7h0H0tNIWQP6YlijOQ4bnZ4nS8EPTrVSPoU/glX?=
- =?us-ascii?Q?Xb5qz5dhfjofAgaOr2FCZjSgSCrNweI1upOQ6VKY1bzXSF1MFbQBFHq6WrmF?=
- =?us-ascii?Q?TjTtn5qwuOdLG/iJYrHyxaqW3Hh8Uf4zTRmWQ2lbiFvx5uzBgypZtpAQz197?=
- =?us-ascii?Q?3TYnaztM4NvPabSulbQ6hJ1EdzXht8nGCR+NbfaXj13y/t2UHTDfRhNqWuIs?=
- =?us-ascii?Q?0x3IOoryK2KC9ZTPOvucULR5+cvegtwFZQcGSnmaDQe49wGKhaEiw03pPzOl?=
- =?us-ascii?Q?yl4SU+s3tQppY2EKsC244m4fJQ/Et1BFf2DDGs5o/X1FNdgAjA4CYvJ5VAFu?=
- =?us-ascii?Q?ZzrA7icVYLhHQ+MP/+bmFeDCqwY3iJj3F1hj/qpQ2iAPGGT+Gh9Ui9kO0YI3?=
- =?us-ascii?Q?h6uvUr4eZoSseg/UIJOwCU++ax4CYzqYNGZ8HnoauCamlFlYhW9UpWe6tTGN?=
- =?us-ascii?Q?Mg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad0e2fb3-4ede-4a52-8cbe-08dcac61d842
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 04:25:42.1908
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AZLWpJ+bA2dgTvnpXiWFap55qXawqI2cVn/YjhoRk1y9bpqFkxn7Ggk7dvSs68F+Gwy2FbJwzjBLaaE4N+jDuprImNijU5ZSBdbWvQQNCyk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7890
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6638:8412:b0:4c1:4388:46bb with SMTP id
+ 8926c6da1cb9f-4c2a0d82265mr29149173.0.1721881646548; Wed, 24 Jul 2024
+ 21:27:26 -0700 (PDT)
+Date: Wed, 24 Jul 2024 21:27:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e35983061e0acfa9@google.com>
+Subject: [syzbot] [serial?] general protection fault in n_tty_receive_buf_common
+ (2)
+From: syzbot <syzbot+2dda672e146ff12ccb02@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 25, 2024 at 12:57:05AM GMT, Andrew Lunn wrote:
->> For the commented case, I have included only one phy because it is the hardware
->> that I have, but other phy devices (modules) are possible and they can be some.
->
->So this the whole whacker a mole problem. It works for you but fails
->for 99% of users. How is this helping us?
+Hello,
 
-no, this is the first instance that was found/added.
+syzbot found the following issue on:
 
-if you declare a softdep what happens is that the dep is loaded first
-(needed or not) and your module is loaded after that
+HEAD commit:    786c8248dbd3 Merge tag 'perf-tools-fixes-for-v6.11-2024-07..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f0d29d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47beaba1a1054668
+dashboard link: https://syzkaller.appspot.com/bug?extid=2dda672e146ff12ccb02
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-if you declare a weakdep, you are just instructing the tools that the
-module may or may not be needed.  Any module today that does a
-request_module("foo") could be a candidate to migrate from
-MODULE_SOFTDEP("pre: foo") to the new weakdep, as long as it handles
-properly the module being loaded ondemand as opposed to using
-request_module() to just synchronize the module being loaded.
+Unfortunately, I don't have any reproducer for this issue yet.
 
->
->Maybe a better solution is to first build an initramfs with
->everything, plus the kitchen sink. Boot it, and then look at what has
->been loaded in order to get the rootfs mounted. Then update the
->initramfs with just what is needed? That should be pretty generic,
->with throw out networking ig NFS root is not used, just load JFFS2 and
->a NAND driver if it was used for the rootfs, etc.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e4bf4a8f547d/disk-786c8248.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9b69a5fd8929/vmlinux-786c8248.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0060dfb7885/bzImage-786c8248.xz
 
-that works for development systems or if you are fine tuning it for each
-system you have. It doesn't work for a generic distro with the kitchen
-sink of modules and still trying to minimize the initrd without end user
-intervention. So it works for 99% of users.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2dda672e146ff12ccb02@syzkaller.appspotmail.com
 
-Lucas De Marchi
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000044c: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000000002260-0x0000000000002267]
+CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.10.0-syzkaller-12246-g786c8248dbd3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events_unbound flush_to_ldisc
+RIP: 0010:n_tty_receive_buf_common+0xf3/0x1980 drivers/tty/n_tty.c:1718
+Code: 00 48 89 74 24 60 4a 8d 0c 39 4a 8d 34 3a 48 89 4c 24 70 48 89 74 24 68 48 89 84 24 a0 00 00 00 e8 b2 c7 95 fc 48 8b 44 24 68 <80> 38 00 0f 85 af 15 00 00 48 8b 44 24 18 48 8b a8 60 22 00 00 48
+RSP: 0018:ffffc90000117ad0 EFLAGS: 00010293
+RAX: dffffc000000044c RBX: 0000000000000001 RCX: dffffc0000000000
+RDX: ffff8880172fda00 RSI: ffffffff84f4beee RDI: 000000000000005c
+RBP: 0000000000000004 R08: 0000000000000001 R09: ffffed100bfcec50
+R10: ffff88805fe76287 R11: 0000000000000000 R12: ffffffff84f4d790
+R13: 0000000000000000 R14: ffff88805fe76000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62429bcfc8 CR3: 0000000066f7a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ tty_ldisc_receive_buf+0xa2/0x190 drivers/tty/tty_buffer.c:387
+ tty_port_default_receive_buf+0x70/0xb0 drivers/tty/tty_port.c:37
+ receive_buf drivers/tty/tty_buffer.c:445 [inline]
+ flush_to_ldisc+0x264/0x780 drivers/tty/tty_buffer.c:495
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:n_tty_receive_buf_common+0xf3/0x1980 drivers/tty/n_tty.c:1718
+Code: 00 48 89 74 24 60 4a 8d 0c 39 4a 8d 34 3a 48 89 4c 24 70 48 89 74 24 68 48 89 84 24 a0 00 00 00 e8 b2 c7 95 fc 48 8b 44 24 68 <80> 38 00 0f 85 af 15 00 00 48 8b 44 24 18 48 8b a8 60 22 00 00 48
+RSP: 0018:ffffc90000117ad0 EFLAGS: 00010293
+RAX: dffffc000000044c RBX: 0000000000000001 RCX: dffffc0000000000
+RDX: ffff8880172fda00 RSI: ffffffff84f4beee RDI: 000000000000005c
+RBP: 0000000000000004 R08: 0000000000000001 R09: ffffed100bfcec50
+R10: ffff88805fe76287 R11: 0000000000000000 R12: ffffffff84f4d790
+R13: 0000000000000000 R14: ffff88805fe76000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557bdc65c8 CR3: 0000000058bdc000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	48 89 74 24 60       	mov    %rsi,0x60(%rsp)
+   5:	4a 8d 0c 39          	lea    (%rcx,%r15,1),%rcx
+   9:	4a 8d 34 3a          	lea    (%rdx,%r15,1),%rsi
+   d:	48 89 4c 24 70       	mov    %rcx,0x70(%rsp)
+  12:	48 89 74 24 68       	mov    %rsi,0x68(%rsp)
+  17:	48 89 84 24 a0 00 00 	mov    %rax,0xa0(%rsp)
+  1e:	00
+  1f:	e8 b2 c7 95 fc       	call   0xfc95c7d6
+  24:	48 8b 44 24 68       	mov    0x68(%rsp),%rax
+* 29:	80 38 00             	cmpb   $0x0,(%rax) <-- trapping instruction
+  2c:	0f 85 af 15 00 00    	jne    0x15e1
+  32:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+  37:	48 8b a8 60 22 00 00 	mov    0x2260(%rax),%rbp
+  3e:	48                   	rex.W
 
->
->	  Andrew
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
