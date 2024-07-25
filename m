@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-262182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284E993C205
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4C993C212
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18F82838C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FAA31C21ABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71AC19A283;
-	Thu, 25 Jul 2024 12:28:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CF2196C9B;
-	Thu, 25 Jul 2024 12:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26737199E87;
+	Thu, 25 Jul 2024 12:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gqfDw6++"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0211993A4
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721910501; cv=none; b=jcNMOKw501Y0da4f4DZuODruqXwlDvTnmBV5pa1U8R9fybsML99Ohj2DlZjk2e+rplN0TLcAoL74b5CW3c3bpA0CPmTU9Z2N/UERDlhTICDgnFj/bBxrnQ02YyE7yO5eg6U1I5hjYMBmpBYhqAIjr2fJlbzX76kUn8L0ZNtjKR0=
+	t=1721910582; cv=none; b=AHTSB2AVLofuMtN9u4Kubg6qA1vAElFuBCLbwwhI3u3e/+sNijPcSQ9gdI5KM75y7ZP8GqublaJANQI0plrgUwHn+8pvJMlsIp6sehJrW1U2yjCpYaloDFXfp8hAFG7CPr9ascAIg2nfLg7A/2INuTMSxxxisXrye7CfE5uFJEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721910501; c=relaxed/simple;
-	bh=SXY4BF5cH45vBfUcgibw+nKHrveyS2+pMaXmqyBH9Ow=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UbzGn48LDzq2FazwcEOT9vO2NxWurKIXRPy2jsJe1l9cRX8YQA8J+wfYR12E6PekGUV4lS5U7qwbXt8KuNj8jaR8mCOerxomVVdXH4FG8bFO8MqLg+4vjQDUBt5iriETBHs7BDVSF2HbOky/9t026kWeBvXsTGbseEGlfYh3ArM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8DxyOneRKJmV4cBAA--.5718S3;
-	Thu, 25 Jul 2024 20:28:14 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMDxIuTcRKJmog8BAA--.7001S4;
-	Thu, 25 Jul 2024 20:28:14 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	x86@kernel.org
-Subject: [PATCH v3 2/2] LoongArch: KVM: Implement function kvm_arch_para_features
-Date: Thu, 25 Jul 2024 20:28:12 +0800
-Message-Id: <20240725122812.3296140-3-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240725122812.3296140-1-maobibo@loongson.cn>
-References: <20240725122812.3296140-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1721910582; c=relaxed/simple;
+	bh=1x+MRrK/gKvb0AP5m2fDvNNFyowu/Kb6wBFKgceGBH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bo/Mb4C4OGlNKSoRBthpZuxKMXo3urf4ZbJnlbMaxDAmjHtHKLc23quGeZ9C9OlYg19myLF3lLECdLfoekp2xKds9TP0H52vTqZXQLsPo8LelNpwJyHq4TezlfqG/xoYXCKvhfPSzWiROZFCP1DAC7qx6O7YWSRiLJOSqvXjKkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gqfDw6++; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721910579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GmqP7A+JPqJziazr6AG6F2fPGPMKo7eb6D/y7TyUksU=;
+	b=gqfDw6++CVupAPu02BFuEpKOKpavCO0AnR4w/Ko7O59nNmkCJBXvkM6HIWxBufVDNA2Tcz
+	88SpRbSDivmnO4gto0InI9MgO8HaezSNDDaJD38uBjo05dkWrYRslDPQzyHFBu1Nw26AnH
+	pt94KUM/X2eKFGIft0HwLhOuK1idktk=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-Gpj9NuYEMdqCXxiUA9LZVQ-1; Thu, 25 Jul 2024 08:29:38 -0400
+X-MC-Unique: Gpj9NuYEMdqCXxiUA9LZVQ-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5a8b0832defso1392043a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:29:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721910577; x=1722515377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GmqP7A+JPqJziazr6AG6F2fPGPMKo7eb6D/y7TyUksU=;
+        b=uDS/3F1Ik7PH2h0iRopv6YC+NjzV79n9X81s7Xv3h8wwiKNW7OCR/ctDRGWRJNH2fM
+         1qKaNK0Ag2zDM2Rfif+ydF0vdnT7zyqXLLym8cZ/p4v4dW/TYT4WCeI93FSLyzBZiJwf
+         2BV27CkxAjfmPDo663Fiu3xWbhW44ZWf0dznAZ1hNwgYk6ZA9OnedRvUu/z86ayViKjr
+         tl6t6tDYSJB4Ge1H9SRExV317T9u/ntH684InxkV6bAMK5hNN38w/asE1oqhsVe3tS+V
+         qiJ2oTeoVbEwVa8mLxo8Jg1P+/pNv+J/ySfQ0AXFh4QXni4IB+w3w14wmbyYFVllTGqD
+         kkxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYopkcU3t3D+Ep8TlmSr1JWzk3mQQhRnt2PIkHXJS9bhmTfhmOS5kkmWTNaGlOObp0G10J0I4l9zn1HKKqp5t2geVBfw1qe8/hHP3d
+X-Gm-Message-State: AOJu0Yz7gxSRPlJgcJ10UUvjXFwkXaPMxam81Kwhy/Xi40Q1ipMqKzAM
+	Jr49Ja7KtU9jdAZtRjs4n6jdSjqWPx3lYsv3bIZyBtD3kegBB146/dEoPhqPoHOmV27BVn2+GiU
+	dO1HKCB4dtih2n79dDtMvLurtcEaybTLX3REJWfmkF4SQlCJqjqa0XEFoG90Lhg==
+X-Received: by 2002:a50:baa3:0:b0:58c:10fd:5082 with SMTP id 4fb4d7f45d1cf-5ab1a7af0f3mr5616856a12.10.1721910577478;
+        Thu, 25 Jul 2024 05:29:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESzTf1Dq4jXq+lb4GZ/ln7u62lD42/qJf2maAOGtbm2TYn0twTp0kEGmFg6gBHrHiC+FsesQ==
+X-Received: by 2002:a50:baa3:0:b0:58c:10fd:5082 with SMTP id 4fb4d7f45d1cf-5ab1a7af0f3mr5616818a12.10.1721910576749;
+        Thu, 25 Jul 2024 05:29:36 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1ec:81aa:776c:8849:e578:516a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac64eb3becsm768874a12.74.2024.07.25.05.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 05:29:36 -0700 (PDT)
+Date: Thu, 25 Jul 2024 08:29:31 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <20240725082828-mutt-send-email-mst@kernel.org>
+References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
+ <20240725012730-mutt-send-email-mst@kernel.org>
+ <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
+ <20240725081502-mutt-send-email-mst@kernel.org>
+ <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxIuTcRKJmog8BAA--.7001S4
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxWw45tw4UWw13tFWkJryUCFX_yoW5GrWrpa
-	yrArn8Gr4jkF1Sya98Jrs8Wr15Jrs7W3WxXF1jka4rAF47Crn8Ar1kta1qyF1DKa48W3WI
-	gFWrJ3sak3WjvabCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1a6r1DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUoxR6UUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
 
-Function kvm_arch_para_features() is to detect supported paravirt features,
-it can be used by device driver to detect and enable paravirt features,
-such as extioi irqchip driver can detect KVM_FEATURE_VIRT_EXTIOI and do
-some optimization.
+On Thu, Jul 25, 2024 at 01:27:49PM +0100, David Woodhouse wrote:
+> On Thu, 2024-07-25 at 08:17 -0400, Michael S. Tsirkin wrote:
+> > On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wrote:
+> > > > Do you want to just help complete virtio-rtc then? Would be easier than
+> > > > trying to keep two specs in sync.
+> > > 
+> > > The ACPI version is much more lightweight and doesn't take up a
+> > > valuable PCI slot#. (I know, you can do virtio without PCI but that's
+> > > complex in other ways).
+> > > 
+> > 
+> > Hmm, should we support virtio over ACPI? Just asking.
+> 
+> Given that we support virtio DT bindings, and the ACPI "PRP0001" device
+> exists with a DSM method which literally returns DT properties,
+> including such properties as "compatible=virtio,mmio" ... do we
+> already?
+> 
+> 
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/asm/kvm_para.h | 10 ++++++++++
- arch/loongarch/kernel/paravirt.c      | 22 +++++++++++++++-------
- 2 files changed, 25 insertions(+), 7 deletions(-)
+In a sense, but you are saying that is too complex?
+Can you elaborate?
 
-diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
-index 9814d56b8d0e..327f331d5237 100644
---- a/arch/loongarch/include/asm/kvm_para.h
-+++ b/arch/loongarch/include/asm/kvm_para.h
-@@ -155,10 +155,20 @@ static __always_inline long kvm_hypercall5(u64 fid,
- 	return ret;
- }
- 
-+#ifdef CONFIG_PARAVIRT
-+bool kvm_para_available(void);
-+unsigned int kvm_arch_para_features(void);
-+#else
-+static inline bool kvm_para_available(void)
-+{
-+	return false;
-+}
-+
- static inline unsigned int kvm_arch_para_features(void)
- {
- 	return 0;
- }
-+#endif
- 
- static inline unsigned int kvm_arch_para_hints(void)
- {
-diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/paravirt.c
-index 9c9b75b76f62..4e8bccf4d92a 100644
---- a/arch/loongarch/kernel/paravirt.c
-+++ b/arch/loongarch/kernel/paravirt.c
-@@ -151,11 +151,14 @@ static void pv_init_ipi(void)
- }
- #endif
- 
--static bool kvm_para_available(void)
-+bool kvm_para_available(void)
- {
- 	int config;
- 	static int hypervisor_type;
- 
-+	if (!cpu_has_hypervisor)
-+		return false;
-+
- 	if (!hypervisor_type) {
- 		config = read_cpucfg(CPUCFG_KVM_SIG);
- 		if (!memcmp(&config, KVM_SIGNATURE, 4))
-@@ -165,16 +168,23 @@ static bool kvm_para_available(void)
- 	return hypervisor_type == HYPERVISOR_KVM;
- }
- 
-+unsigned int kvm_arch_para_features(void)
-+{
-+	static int feature;
-+
-+	if (!feature)
-+		feature = read_cpucfg(CPUCFG_KVM_FEATURE);
-+	return feature;
-+}
-+
- int __init pv_ipi_init(void)
- {
- 	int feature;
- 
--	if (!cpu_has_hypervisor)
--		return 0;
- 	if (!kvm_para_available())
- 		return 0;
- 
--	feature = read_cpucfg(CPUCFG_KVM_FEATURE);
-+	feature = kvm_arch_para_features();
- 	if (!(feature & KVM_FEATURE_IPI))
- 		return 0;
- 
-@@ -260,12 +270,10 @@ int __init pv_time_init(void)
- {
- 	int r, feature;
- 
--	if (!cpu_has_hypervisor)
--		return 0;
- 	if (!kvm_para_available())
- 		return 0;
- 
--	feature = read_cpucfg(CPUCFG_KVM_FEATURE);
-+	feature = kvm_arch_para_features();
- 	if (!(feature & KVM_FEATURE_STEAL_TIME))
- 		return 0;
- 
 -- 
-2.39.3
+MST
 
 
