@@ -1,258 +1,171 @@
-Return-Path: <linux-kernel+bounces-261950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4507593BE2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:50:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B257693BE31
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D301C20C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:50:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE413B21321
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E2C196D8E;
-	Thu, 25 Jul 2024 08:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD67196D90;
+	Thu, 25 Jul 2024 08:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYFtCv/x"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="tht9vLj+"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EF7172BAF;
-	Thu, 25 Jul 2024 08:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB3172BAF;
+	Thu, 25 Jul 2024 08:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897420; cv=none; b=McjbvH77BrSr7F/+eQnJqGttvOLu1Q2shbsTUsewTNgJOZcditFsmugTy0wFV+kKJ7WDtuP2MlS60upUENe1gWf3ZpFQQ32S8YhlXmeoq2Ki+GsoNlbS+XADDxnmHdLc/rn1MIb5vUVPWeddzGmCO7VxUwiEw9I9Zsnbx8UyqHY=
+	t=1721897473; cv=none; b=qAxpe9GtEdyekIc5z6nMDxRqomTAVpMKunYWBAc0uDUHnh05onRg6/b5dFxtyZlR8a+ArPNndTom9MsHAKOPGQ5sHRM49UTYTEmWAmuR6XmC8MVm0pd4NVRCw+2905NNH/kwDm1F89UHCjvKsyswu6qnlqwA/ascO2gkJamOSwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897420; c=relaxed/simple;
-	bh=jC5zAnmHCIGU30jUjfy72ch01ORGPhCX551H1DKuOV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L8+83DSjdAK0+4KDFz32UussOjde7+UOdhbRwXsa3XrG8VDf4t+IuXbd2OMPpUfEFBlkQcG9y7MLTiVpQmDwW0c1GvzNy22e0GDHhniZoWuFhLIBtsamBP6CwA8LE0s2PvThABvBwZf5hCpYNsC0+tA1dGO/WLvnyOIEGVh1LHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYFtCv/x; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7928d2abe0aso1322352a12.0;
-        Thu, 25 Jul 2024 01:50:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721897418; x=1722502218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyACZrVQiZSUQdlMAIG1RTd+aJxmaLi0svwv16Sq6Ck=;
-        b=EYFtCv/xs00auxG8mloooAXNGbpOrETLK9/AaZmJh46w+0Sny4oH9kiGyUIfhG6c3v
-         KH+2FUxy28YbxdDiDgfeHENzaXCtA7HRJQOLd4tG2cVDZb2y+51RYyr8I5ES52+YR+IH
-         GIDCQNTH1HRsdMuBNdMEXijJZnYWgmNx8kVeaeywBXd5ddxZ3yjoHiAS0btACZuVUS7E
-         dE5PPmtDu9OmCjawIXMTfUCMxZ1K7GPC1Tpj8bEkDQixnIbF1yTzsaMM4RN6G1tClwrG
-         8iDPKXqrVMpP+r8A//ykNqIvmbEDGww9jhQSrTcBtAWjbc7Bz9baZnHQMTyUtw3e/x81
-         uqkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721897418; x=1722502218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KyACZrVQiZSUQdlMAIG1RTd+aJxmaLi0svwv16Sq6Ck=;
-        b=GIjwTWsoqTyLiZc/Nz2QWInb7XcNtQ9m8dAjXY8r6YzKGOLJQVnaDXdh+vbomxq1n8
-         YzEeqHjNGw2BZKMVmPR2dxKlsCqPTt5tZV3ieaynyTNO4YzkxoU2iZeap9dAePQU3Yca
-         Wq2tziGFd37R4xjl/9MVqaTeQC87LyqPcIPTuHHzSrw5dLd/FeiDPYds4BXQAq5aTBbf
-         pfvFsYH9jht70dWAjFyPuKUjjdpNHYdhXYGFoX0LPw1PEnipwD2rlrrthuYrQfiBlHCo
-         I8o9+IxkFO9LrAIWAt7pHmaRmOZBigJfpmyEA1H27psxPXurEPnKsNaJxziHltru8EAo
-         zHFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXS2b4bYAEUEIC1LVTQ3L03YmyWPalSYlLByIJBFZfLn22mmelREyYqhwHXo9dnXI2jFaFDHJYFOqDrKWbbtg3XF4Uu26sZwFg8KbdONAHRIO5Z7vMJIz1HBu7jgd9XPijexjG
-X-Gm-Message-State: AOJu0YzVO+VkYVO9DgDULxaE/y6hy9qaBFYZzENHnvMv0/i6rTbb8Aw/
-	Pm3YTdFDLTa3+wDQQkqpJlJCgnNsQvFhzKXDLo33DvN1657BdfdBWQkNyRsL97OEqwS0J22Pqsp
-	3cMtG2UG0CNdgWp877DREdwj1yeI=
-X-Google-Smtp-Source: AGHT+IFw/Zn8rdKu6jDCYJzn+POlVVRXerbX99pI6ynnLFLegmSEQv6BJkKH0aZCPEroS4MHh9Ph5JQKtXKVAsPNBCo=
-X-Received: by 2002:a17:90b:4a8f:b0:2cb:56bd:5d7 with SMTP id
- 98e67ed59e1d1-2cdb9387aabmr7530216a91.5.1721897418407; Thu, 25 Jul 2024
- 01:50:18 -0700 (PDT)
+	s=arc-20240116; t=1721897473; c=relaxed/simple;
+	bh=dHODdX/8kdpsxIa/rTtzdc5tTqYEofnfE/ezMJ1823I=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=d3m1Ki6TN3YH42jQ6Dd5vPab8LKZzX/quAunw/j62sRcEjI1WZie181GH8dVfL3m67JJadVgdqsTBXWLfPu5UURTms0dNjx4zYwonc7HimcocXUF8VSTG/O5g1hColEN2KMjq+UIE5VoaiHsp/dMxCdQ4Y1JXSlE3TU8lJ1nBl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=tht9vLj+; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=tW4sVbmZ6IkoO9JFHpG0v9V4u4ngChK5k3H+tBu6Tis=; t=1721897470; x=1722329470;
+	 b=tht9vLj+JV/Q0cPQyR/8gSnTKHw2KsGupBV16agfkQPl1ksEsWXoA9mL5eL+m5vLf32Dc5EdVF
+	ouaywJldYeXhJgpDO19SO0qE/6I0ZpVWDLj3QLqIASMDBq/F6Kn3omsTPpJg4OyupYQF/hc49u0hf
+	iuEP4O5TymWDbDMPCUttU2uFJ0ScNKjyVEa22zyYF1dreb74S1ne+C4QjFc/QHA5ZD6jq8M3xmhLc
+	jAhgvl6BIYhN7draDJ03JGk4ie4AHcXyZ7ReIVoh9M9tX7R7wjI9ZNDcRWSwsceGtNrQzVAAGOq0p
+	GY9dV8enfPgiuaf1saXjHxkkJn+m0FV24JhcQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sWuBn-00088i-HD; Thu, 25 Jul 2024 10:51:07 +0200
+Message-ID: <564711dc-488c-4898-93fc-bcf42e3a8ccd@leemhuis.info>
+Date: Thu, 25 Jul 2024 10:50:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com> <CANn89iLAhXWKkA5xZoZPDj--=hD7RxOTkAPVf31_xLU8L-qyjQ@mail.gmail.com>
-In-Reply-To: <CANn89iLAhXWKkA5xZoZPDj--=hD7RxOTkAPVf31_xLU8L-qyjQ@mail.gmail.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Thu, 25 Jul 2024 09:50:06 +0100
-Message-ID: <CAJwJo6byPNeA_K3kgx-xtEpNMNja3+GrfwzhxtAxE4QE4S6-OA@mail.gmail.com>
-Subject: Re: [PATCH net] net/tcp: Disable TCP-AO static key after RCU grace period
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Eugene Shalygin <eugene.shalygin@gmail.com>
+Subject: [regression] bluetooth scanning on AX210 stopped working
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1721897470;377314e6;
+X-HE-SMSGID: 1sWuBn-00088i-HD
 
-Hi Eric, thanks for looking into this,
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-On Thu, 25 Jul 2024 at 08:48, Eric Dumazet <edumazet@google.com> wrote:
->
-> On Thu, Jul 25, 2024 at 7:00=E2=80=AFAM Dmitry Safonov via B4 Relay
-> <devnull+0x7f454c46.gmail.com@kernel.org> wrote:
-> >
-> > From: Dmitry Safonov <0x7f454c46@gmail.com>
-> >
-> > The lifetime of TCP-AO static_key is the same as the last
-> > tcp_ao_info. On the socket destruction tcp_ao_info ceases to be
-> > with RCU grace period, while tcp-ao static branch is currently deferred
-> > destructed. The static key definition is
-> > : DEFINE_STATIC_KEY_DEFERRED_FALSE(tcp_ao_needed, HZ);
-> >
-> > which means that if RCU grace period is delayed by more than a second
-> > and tcp_ao_needed is in the process of disablement, other CPUs may
-> > yet see tcp_ao_info which atent dead, but soon-to-be.
->
-> > And that breaks the assumption of static_key_fast_inc_not_disabled().
->
-> I am afraid I do not understand this changelog at all.
->
-> What is "the assumption of static_key_fast_inc_not_disabled()"  you
-> are referring to ?
->
-> I think it would help to provide more details.
+Luiz, I noticed a report about a regression in bugzilla.kernel.org that
+appears to be caused by a change of yours:
 
-Sorry, my bad, I'm referring here to the comment/description for the functi=
-on:
+2e2515c1ba384a ("Bluetooth: hci_event: Set DISCOVERY_FINDING on
+SCAN_ENABLED") [v6.10-rc1]
 
- * static_key_fast_inc_not_disabled - adds a user for a static key
- * @key: static key that must be already enabled
- *
- * The caller must make sure that the static key can't get disabled while
- * in this function. It doesn't patch jump labels, only adds a user to
- * an already enabled static key.
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to write this mail. To quote from █ :
 
-Originally it was introduced in commit eb8c507296f6 ("jump_label:
-Prevent key->enabled int overflow"), which is needed for the atomic
-contexts, one of which would be the creation of a full socket from a
-request socket. In that atomic context, we know by the presence of the
-key (md5/ao) that the static branch is already enabled. So, we can
-just increment the ref counter for that static branch instead of
-holding the proper mutex. static_key_fast_inc_not_disabled() is just a
-helper for that usage case. But it must not be used if the static
-branch could get disabled in parallel as it's not protected by
-jump_label_mutex and as a result, races with jump_label_update()
-implementation details.
+>  Eugene Shalygin 2024-07-23 19:39:38 UTC
+> 
+> With kernel 6.10.0 bluetooth scanning finds no devices (Intel AX210). 6.9.9 works.
 
-Specifically, from the log in [1], I see that jump_label_type()
-wrongly tells arch_jump_label_transform_queue() to enable the
-static_brach, when the caller was, in fact,
-__static_key_slow_dec_cpuslocked() - requesting to disable that. And
-then, the x86-specific code produces:
-: jump_label: Fatal kernel bug, unexpected op at
-tcp_inbound_hash+0x1a7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 !=3D 66
-90 0f 1f 00)) size:2 type:1
+>  Eugene Shalygin 2024-07-24 06:56:42 UTC
+> 
+> $ dmesg | grep -e 'iwlwifi\|Bluetooth'                                                                                                                                                                                          
+> [    2.633116] iwlwifi 0000:03:00.0: enabling device (0000 -> 0002)
+> [    2.643454] Bluetooth: Core ver 2.22
+> [    2.646521] Bluetooth: HCI device and connection manager initialized
+> [    2.647920] Bluetooth: HCI socket layer initialized
+> [    2.648885] Bluetooth: L2CAP socket layer initialized
+> [    2.649972] Bluetooth: SCO socket layer initialized
+> [    2.658734] iwlwifi 0000:03:00.0: Detected crf-id 0x400410, cnv-id 0x400410 wfpm id 0x80000000
+> [    2.660717] iwlwifi 0000:03:00.0: PCI dev 2725/0024, rev=0x420, rfid=0x10d000
+> [    2.662120] Loading firmware: iwlwifi-ty-a0-gf-a0-89.ucode
+> [    2.667789] iwlwifi 0000:03:00.0: TLV_FW_FSEQ_VERSION: FSEQ Version: 0.0.2.42
+> [    2.668164] iwlwifi 0000:03:00.0: loaded firmware version 89.202a2f7b.0 ty-a0-gf-a0-89.ucode op_mode iwlmvm
+> [    2.693021] Bluetooth: hci0: Device revision is 0
+> [    2.694469] Bluetooth: hci0: Secure boot is enabled
+> [    2.698894] Bluetooth: hci0: OTP lock is enabled
+> [    2.700339] Bluetooth: hci0: API lock is enabled
+> [    2.701262] Bluetooth: hci0: Debug lock is disabled
+> [    2.702069] Bluetooth: hci0: Minimum firmware build 1 week 10 2014
+> [    2.702719] Bluetooth: hci0: Bootloader timestamp 2019.40 buildtype 1 build 38
+> [    2.703431] Bluetooth: hci0: No support for _PRR ACPI method
+> [    2.708740] Bluetooth: hci0: Found device firmware: intel/ibt-0041-0041.sfi
+> [    2.711227] Bluetooth: hci0: Boot Address: 0x100800
+> [    2.711230] Bluetooth: hci0: Firmware Version: 120-18.24
+> [    2.773104] iwlwifi 0000:03:00.0: Detected Intel(R) Wi-Fi 6 AX210 160MHz, REV=0x420
+> [    2.783598] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
+> [    2.943521] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
+> [    2.943552] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+> [    2.943578] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
+> [    2.943602] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
+> [    2.943608] Loading firmware: iwlwifi-ty-a0-gf-a0.pnvm
+> [    2.944080] iwlwifi 0000:03:00.0: loaded PNVM version 35148b80
+> [    2.959773] iwlwifi 0000:03:00.0: Detected RF GF, rfid=0x10d000
+> [    3.029643] iwlwifi 0000:03:00.0: base HW address: 2c:33:58:e9:d5:1d
+> [    3.822131] Bluetooth: hci0: Waiting for firmware download to complete
+> [    3.822963] Bluetooth: hci0: Firmware loaded in 1085762 usecs
+> [    3.822999] Bluetooth: hci0: Waiting for device to boot
+> [    3.848969] Bluetooth: hci0: Device booted in 25377 usecs
+> [    3.848982] Bluetooth: hci0: Malformed MSFT vendor event: 0x02
+> [    3.858349] Bluetooth: hci0: Found Intel DDC parameters: intel/ibt-0041-0041.ddc
+> [    3.864001] Bluetooth: hci0: Applying Intel DDC parameters completed
+> [    3.872025] Bluetooth: hci0: Firmware timestamp 2024.18 buildtype 1 build 81528
+> [    3.872028] Bluetooth: hci0: Firmware SHA1: 0xa8bb3f39
+> [    3.882989] Bluetooth: hci0: Fseq status: Success (0x00)
+> [    3.883003] Bluetooth: hci0: Fseq executed: 00.00.02.41
+> [    3.883014] Bluetooth: hci0: Fseq BT Top: 00.00.02.41
+> [    6.943128] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+> [    6.943131] Bluetooth: BNEP filters: protocol multicast
+> [    6.943133] Bluetooth: BNEP socket layer initialized
+> [    6.943661] Bluetooth: MGMT ver 1.22
+> [    6.946103] Bluetooth: ISO socket layer initialized
+> [    7.068883] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
+> [    7.224190] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
+> [    7.225614] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+> [    7.226232] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
+> [    7.226803] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
+> [    7.384675] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
+> [    7.539920] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
+> [    7.541272] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+> [    7.541861] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
+> [    7.542422] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
+> [   16.078066] Bluetooth: RFCOMM TTY layer initialized
+> [   16.078073] Bluetooth: RFCOMM socket layer initialized
+> [   16.078077] Bluetooth: RFCOMM ver 1.11
 
-when it tries to enable the static key; but the op-code is not no-op,
-it's 2-byte jump. The reason for that of course is that intended
-operation was to disable the branch, but it has raced with this
-increment helper.
+>  Eugene Shalygin 2024-07-25 00:13:34 UTC
+> 
+> [bisection] converges to 2e2515c1ba384ae44f6bf13dd64b9a0a950798c4
 
-Hopefully, that clarifies somewhat the situation here.
+See the ticket for more details.
 
-Thankfully, for TCP-MD5 I did a better job: tcp_md5sig_info_free_rcu()
-and tcp_md5_twsk_free_rcu() are RCU callbacks.
-
-Also, please note that I intentionally call
-static_branch_slow_dec_deferred() variant in the RCU callback, rather
-than synchronous. The reason for that:
-
- * When the control is directly exposed to userspace, it is prudent to dela=
-y the
- * decrement to avoid high frequency code modifications which can (and do)
- * cause significant performance degradation. Struct static_key_deferred an=
-d
- * static_key_slow_dec_deferred() provide for this.
-
->
-> >
-> > Happened on netdev test-bot[1], so not a theoretical issue:
-> >
-> > [] jump_label: Fatal kernel bug, unexpected op at tcp_inbound_hash+0x1a=
-7/0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 !=3D 66 90 0f 1f 00)) size:2 typ=
-e:1
-> > [] ------------[ cut here ]------------
-> > [] kernel BUG at arch/x86/kernel/jump_label.c:73!
-> > [] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> > [] CPU: 3 PID: 243 Comm: kworker/3:3 Not tainted 6.10.0-virtme #1
-> > [] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16=
-.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> > [] Workqueue: events jump_label_update_timeout
-> > [] RIP: 0010:__jump_label_patch+0x2f6/0x350
-> > ...
-> > [] Call Trace:
-> > []  <TASK>
-> > []  arch_jump_label_transform_queue+0x6c/0x110
-> > []  __jump_label_update+0xef/0x350
-> > []  __static_key_slow_dec_cpuslocked.part.0+0x3c/0x60
-> > []  jump_label_update_timeout+0x2c/0x40
-> > []  process_one_work+0xe3b/0x1670
-> > []  worker_thread+0x587/0xce0
-> > []  kthread+0x28a/0x350
-> > []  ret_from_fork+0x31/0x70
-> > []  ret_from_fork_asm+0x1a/0x30
-> > []  </TASK>
-> > [] Modules linked in: veth
-> > [] ---[ end trace 0000000000000000 ]---
-> > [] RIP: 0010:__jump_label_patch+0x2f6/0x350
-> >
-> > [1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/696681/5=
--connect-deny-ipv6/stderr
-> >
-> > Cc: stable@kernel.org
-> > Fixes: 67fa83f7c86a ("net/tcp: Add static_key for TCP-AO")
-> > Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
-> > ---
-> > ---
-> >  net/ipv4/tcp_ao.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
-> > index 85531437890c..5ce914d3e3db 100644
-> > --- a/net/ipv4/tcp_ao.c
-> > +++ b/net/ipv4/tcp_ao.c
-> > @@ -267,6 +267,14 @@ static void tcp_ao_key_free_rcu(struct rcu_head *h=
-ead)
-> >         kfree_sensitive(key);
-> >  }
-> >
-> > +static void tcp_ao_info_free_rcu(struct rcu_head *head)
-> > +{
-> > +       struct tcp_ao_info *ao =3D container_of(head, struct tcp_ao_inf=
-o, rcu);
-> > +
-> > +       kfree(ao);
-> > +       static_branch_slow_dec_deferred(&tcp_ao_needed);
-> > +}
-> > +
-> >  void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
-> >  {
-> >         struct tcp_ao_info *ao;
-> > @@ -290,9 +298,7 @@ void tcp_ao_destroy_sock(struct sock *sk, bool twsk=
-)
-> >                         atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem=
-_alloc);
-> >                 call_rcu(&key->rcu, tcp_ao_key_free_rcu);
-> >         }
-> > -
-> > -       kfree_rcu(ao, rcu);
-> > -       static_branch_slow_dec_deferred(&tcp_ao_needed);
-> > +       call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
-> >  }
-> >
-> >  void tcp_ao_time_wait(struct tcp_timewait_sock *tcptw, struct tcp_sock=
- *tp)
-> >
-> > ---
-> > base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
-> > change-id: 20240725-tcp-ao-static-branch-rcu-85ede7b3a1a5
-> >
-> > Best regards,
-> > --
-> > Dmitry Safonov <0x7f454c46@gmail.com>
-> >
-> >
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
 
-Thanks,
-             Dmitry
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 2e2515c1ba384ae44f6bf13dd64b9a0a950798c4
+#regzbot title: Bluetooth: hci_event: bluetooth scanning on AX210
+stopped working
+#regzbot from: Eugene Shalygin <eugene.shalygin@gmail.com>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219088
+#regzbot ignore-activity
 
