@@ -1,90 +1,259 @@
-Return-Path: <linux-kernel+bounces-262195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D1093C23D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F0C93C24B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAD21F218B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044171C20E47
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C201993A3;
-	Thu, 25 Jul 2024 12:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XT/Lh4B5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1721199E87;
+	Thu, 25 Jul 2024 12:45:22 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4C326281;
-	Thu, 25 Jul 2024 12:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB631219EB;
+	Thu, 25 Jul 2024 12:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721911386; cv=none; b=iOUeScpoj9DtQGB/x0iKh3TsRpidiym1WrLpOQUamu11FE2GtKwKwUFTasYawetbhwqSLz5gftymIlxtiaBtvPLJ+b6r02vdi6MbNz1nzmcuYP7mYF6c4HlV2pZsb4xzpJkx/eM1vDWSYFlT7K0jh8H8CzSJ2A6GafZ5+j7MoB4=
+	t=1721911522; cv=none; b=lO8Zxi+xnDa6TuBQw8wMo3LnkmJVsu1rZoAtihDF6YoeNBLMSO5FTKBuomO+ONqBmCvecKfVTDNaB9JeoFuEowAQgxiXTFOiKLFb6tAg1Uucgm1CY/oFp1E8a2kXO9RdM/myr2QM8SB6VQNcJL8SOlaVaG59/zTiLpNumd0tU3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721911386; c=relaxed/simple;
-	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LC7LmhKH2vL1jWh0+xiW6J9iaCcGFEJO1YFMP3KCkRRXLlrTMfIndQav3KXgRF2F/Wuq024Lyotxtbqu8rvYBBNgSW/U3SKYmqDiqzRHbQNQjuXhDZwWuMz3+/ThRHQu2JJeBR08oU9FHn9F2cx1FjGjyKhgHcsh59vo2DpzOes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XT/Lh4B5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226FCC116B1;
-	Thu, 25 Jul 2024 12:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721911386;
-	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XT/Lh4B5uF0w84Fk+Mswy75DQppXHRZTGI0GQPw55xdMn+kFSHSYI052KZtH8o8pw
-	 urHYvsRHa2romZV6EDoDOZn2jTL4hDKE7bgyRITaP89FKpJd5wLi3n8WeikFziC8IO
-	 0tu9EVb1kmeeq+ckDCMOLPDKaef1nA1CTwg41z6/AkcrFItcO8jS5I2QaPzAWFvkRN
-	 uzYx2KzkGHymBf/lf4KFrJmlBf8f0XTeXeZ6EvRqglMi2N17WlPzIjaIJgOwCtt2ru
-	 9uXaw+SqHf9bkLnHi4s4+aeRlariaqtCY4Wq8xnP7Ezhjh4XY9RgR0gP6ElCKTy4x2
-	 RDsiUT8NELpfw==
-From: Will Deacon <will@kernel.org>
-To: thierry.reding@gmail.com,
-	vdumpa@nvidia.com,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	Ashish Mhetre <amhetre@nvidia.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-Date: Thu, 25 Jul 2024 13:42:59 +0100
-Message-Id: <172190932508.3262642.13562592827305317735.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240724173132.219978-1-amhetre@nvidia.com>
-References: <20240724173132.219978-1-amhetre@nvidia.com>
+	s=arc-20240116; t=1721911522; c=relaxed/simple;
+	bh=Kno7oXfRynZA04n185N0SSwq7t3bgmw59672KoymYrc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q6IODlmL0O7s0YIQqAxScTqjO3ExBAFDzgRWxRw2JW3jnlf2t6bwIPd5JLXhJ7IG/s08KsVgFcvkSsOHTkGFTas4OTU0H06a6d1j9oXQd6rCJWsmXg3aRCx6wjxcTMBAPU19i9AilSFYVYLRb4BTKc13997zYxBxFS/1Xyc9+DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sWxq9-000000002Yy-3gXn;
+	Thu, 25 Jul 2024 12:45:02 +0000
+Date: Thu, 25 Jul 2024 13:44:49 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Bc-bocun Chen <bc-bocun.chen@mediatek.com>,
+	Sam Shih <Sam.Shih@mediatek.com>,
+	Weijie Gao <Weijie.Gao@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH RFC net-next] net: pcs: add helper module for standalone
+ drivers
+Message-ID: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 24 Jul 2024 17:31:32 +0000, Ashish Mhetre wrote:
-> PAGE_SIZE can be 16KB for Tegra which is not supported by MMU-500 on
-> both Tegra194 and Tegra234. Retain only valid granularities from
-> pgsize_bitmap which would either be 4KB or 64KB.
-> 
-> 
+Implement helper module for standalone PCS drivers which allows
+standaline PCS drivers to register and users to get instances of
+'struct phylink_pcs' using device tree nodes.
 
-Applied to iommu (next), thanks!
+At this point only a single instance for each device tree node is
+supported, once we got devices providing more than one PCS we can
+extend it and introduce an xlate function as well as '#pcs-cells',
+similar to how this is done by the PHY framework.
 
-[1/1] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-      https://git.kernel.org/iommu/c/726d4f528dbc
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+This is meant to provide the infrastructure suggested by
+Russell King in an earlier review. It just took me a long while to
+find the time to implement this.
+Users are going to be the standalone PCS drivers for 8/10 LynxI as
+well as 64/66 USXGMII PCS found on MediaTek MT7988 SoC.
+See also https://patchwork.kernel.org/comment/25636726/
 
-Cheers,
+The full tree where this is being used can be found at
+
+https://github.com/dangowrt/linux/commits/mt7988-for-next/
+
+ drivers/net/pcs/Kconfig            |  4 ++
+ drivers/net/pcs/Makefile           |  1 +
+ drivers/net/pcs/pcs-standalone.c   | 95 +++++++++++++++++++++++++++++
+ include/linux/pcs/pcs-standalone.h | 25 ++++++++
+ 4 files changed, 129 insertions(+)
+ create mode 100644 drivers/net/pcs/pcs-standalone.c
+ create mode 100644 include/linux/pcs/pcs-standalone.h
+
+diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
+index f6aa437473de..2b02b9351fa4 100644
+--- a/drivers/net/pcs/Kconfig
++++ b/drivers/net/pcs/Kconfig
+@@ -5,6 +5,10 @@
+ 
+ menu "PCS device drivers"
+ 
++config PCS_STANDALONE
++	tristate
++	select PHYLINK
++
+ config PCS_XPCS
+ 	tristate "Synopsys DesignWare Ethernet XPCS"
+ 	select PHYLINK
+diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
+index 4f7920618b90..0cb0057f2b8e 100644
+--- a/drivers/net/pcs/Makefile
++++ b/drivers/net/pcs/Makefile
+@@ -4,6 +4,7 @@
+ pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-plat.o \
+ 				   pcs-xpcs-nxp.o pcs-xpcs-wx.o
+ 
++obj-$(CONFIG_PCS_STANDALONE)	+= pcs-standalone.o
+ obj-$(CONFIG_PCS_XPCS)		+= pcs_xpcs.o
+ obj-$(CONFIG_PCS_LYNX)		+= pcs-lynx.o
+ obj-$(CONFIG_PCS_MTK_LYNXI)	+= pcs-mtk-lynxi.o
+diff --git a/drivers/net/pcs/pcs-standalone.c b/drivers/net/pcs/pcs-standalone.c
+new file mode 100644
+index 000000000000..1569793328a1
+--- /dev/null
++++ b/drivers/net/pcs/pcs-standalone.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Helpers for standalone PCS drivers
++ *
++ * Copyright (C) 2024 Daniel Golle <daniel@makrotopia.org>
++ */
++
++#include <linux/pcs/pcs-standalone.h>
++#include <linux/phylink.h>
++
++static LIST_HEAD(pcs_list);
++static DEFINE_MUTEX(pcs_mutex);
++
++struct pcs_standalone {
++	struct device *dev;
++	struct phylink_pcs *pcs;
++	struct list_head list;
++};
++
++static void devm_pcs_provider_release(struct device *dev, void *res)
++{
++	struct pcs_standalone *pcssa = (struct pcs_standalone *)res;
++
++	mutex_lock(&pcs_mutex);
++	list_del(&pcssa->list);
++	mutex_unlock(&pcs_mutex);
++}
++
++int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs)
++{
++	struct pcs_standalone *pcssa;
++
++	pcssa = devres_alloc(devm_pcs_provider_release, sizeof(*pcssa),
++			     GFP_KERNEL);
++	if (!pcssa)
++		return -ENOMEM;
++
++	devres_add(dev, pcssa);
++	pcssa->pcs = pcs;
++	pcssa->dev = dev;
++
++	mutex_lock(&pcs_mutex);
++	list_add_tail(&pcssa->list, &pcs_list);
++	mutex_unlock(&pcs_mutex);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(devm_pcs_register);
++
++static struct pcs_standalone *of_pcs_locate(const struct device_node *_np, u32 index)
++{
++	struct device_node *np;
++	struct pcs_standalone *iter, *pcssa = NULL;
++
++	if (!_np)
++		return NULL;
++
++	np = of_parse_phandle(_np, "pcs-handle", index);
++	if (!np)
++		return NULL;
++
++	mutex_lock(&pcs_mutex);
++	list_for_each_entry(iter, &pcs_list, list) {
++		if (iter->dev->of_node != np)
++			continue;
++
++		pcssa = iter;
++		break;
++	}
++	mutex_unlock(&pcs_mutex);
++
++	of_node_put(np);
++
++	return pcssa ?: ERR_PTR(-ENODEV);
++}
++
++struct phylink_pcs *devm_of_pcs_get(struct device *dev,
++				    const struct device_node *np,
++				    unsigned int index)
++{
++	struct pcs_standalone *pcssa;
++
++	pcssa = of_pcs_locate(np ?: dev->of_node, index);
++	if (IS_ERR_OR_NULL(pcssa))
++		return ERR_PTR(PTR_ERR(pcssa));
++
++	device_link_add(dev, pcssa->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
++
++	return pcssa->pcs;
++}
++EXPORT_SYMBOL_GPL(devm_of_pcs_get);
++
++MODULE_DESCRIPTION("Helper for standalone PCS drivers");
++MODULE_AUTHOR("Daniel Golle <daniel@makrotopia.org>");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/pcs/pcs-standalone.h b/include/linux/pcs/pcs-standalone.h
+new file mode 100644
+index 000000000000..ad7819f4a2eb
+--- /dev/null
++++ b/include/linux/pcs/pcs-standalone.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_PCS_STANDALONE_H
++#define __LINUX_PCS_STANDALONE_H
++
++#include <linux/device.h>
++#include <linux/phylink.h>
++#include <linux/phy/phy.h>
++#include <linux/of.h>
++
++#if IS_ENABLED(CONFIG_PCS_STANDALONE)
++int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs);
++struct phylink_pcs *devm_of_pcs_get(struct device *dev,
++				    const struct device_node *np, unsigned int index);
++#else
++static inline int devm_pcs_register(struct device *dev, struct phylink_pcs *pcs);
++	return -EOPNOTSUPP;
++}
++static inline struct phylink_pcs *devm_of_pcs_get(struct device *dev,
++						  const struct device_node *np,
++						  unsigned int index)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++#endif /* CONFIG_PCS_STANDALONE */
++#endif /* __LINUX_PCS_STANDALONE_H */
 -- 
-Will
+2.45.2
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
 
