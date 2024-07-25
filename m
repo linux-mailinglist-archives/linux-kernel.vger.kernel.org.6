@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-262003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF63F93BF42
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E122793BF4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE1D1C20C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E03528071E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8483517624F;
-	Thu, 25 Jul 2024 09:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DE1198E81;
+	Thu, 25 Jul 2024 09:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3JWQSla"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="Gw/EF7ml"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B80198A1D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF32D197A7C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900713; cv=none; b=W3unDkGlxtRVCZCg4F0JKIBf3K2CDYTRj4Jqpb5+WKjeqg4+ujE0F7nojQK0s3y2+fDJJDPVyBKwQuSjX1vrXMXHgIICrMAPOxuqQ8CuPOZ5sDPC39zz4NjMJYRmxK9r8ebK5JS8iTQN5lplpE6vfZA/KY+Ojyreab0zT4C8QVw=
+	t=1721900777; cv=none; b=hRQ/cE2d2s6mUlKmTaldqfDllfOUv6rdiDPnVEmnEKKUjc1ixqpplwh0FKc+R6ta5ab6l1kTDERsymm0fmPAvvueK5QUJLdhS4UUM7V9ZGvb4VCtrWXkk8u0Ji1Vn+KqPTvAelXA6MChJD6CSm/FD6rbflGCsfz9FkLeYw4dhs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900713; c=relaxed/simple;
-	bh=cTGmVzxz48I8nx9ljE2V1sbWqEgzP1TM7ZccMjBT4R4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+Hp2jepqTzUc6ZDA02Q31C7rnAHOzg8rwJr6isKSDzKLn5HJwst3h/lWoMPevUvxc+65ErX4GeH0FSgItRIQF+DkwLRIzcXi8bD1jaxUsThAJ54YvdwCJH50bggYfo6K3A5rqecTV2sPxCUBSRXy3YUTzfwm9O44YlNyk6tBAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3JWQSla; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so8709a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721900709; x=1722505509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oeGMhTbFu7+/JGAR3lcMYypAKm4OWpVaWyGrv2COnm0=;
-        b=I3JWQSla3NA0zyS8Oky+F8CDbFcW+QDX5usRfG58P0Acpgq9+FGorH8nBlr4H5jUNe
-         L36o4AVd4tkuJFkheIhBDo5qyr2Sksq8xrJ9Ylgf3WuqSWYwJ9sVdwRSi9lydw+JyrfB
-         CHOSF+208Ug1Hxk2bDD6uGnLpF5caUQR6l8jMqNusrcGlZBAMpVKXkJ0/sqcn5lTTn5S
-         y2MKoNFTQeuakFj8Ujf3l2DSof7qm/yN3gp4GOPj296VdyQQ9xZ5mPN+oKMPBpKyxm2J
-         TtvicLAzTIzeZy9kAme64HNRbIXakibz2iTUhm2QoLuIL8A+XR6PdA7O24E0cxl/jw2F
-         YFYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721900709; x=1722505509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oeGMhTbFu7+/JGAR3lcMYypAKm4OWpVaWyGrv2COnm0=;
-        b=FiOSSuXBYMrJpPRX9NXMTTjAQgXRElJt2nWDX0yoXyxt+7486IEY/YXOIFVxA7QFUS
-         Llt5waQFcV9VMtYzFKyLoCkcJZLd9dZIYx+YCAlRdxb+ClEv9viX9hvfgjrmFwLPcxr3
-         jlih5V5wxf8MfJGwLwHnWLyZwiuQfcczeM6EUpo1laQ5Uyug6dGNV4JB6L/NajhEXsJc
-         MM4PGCt6NSpPrPi0VJL4LICCF1jO2ibbSBniPrskJBUzzDXoQu90727YCsTs9J5BtvK7
-         QfoKYnVS142n1tICFK/NFFinulWv5BU8+rRWPRXVDwPRKfqskdC52tfmWa+74qV5xW01
-         97lg==
-X-Forwarded-Encrypted: i=1; AJvYcCX++xESSbpkygzecCGM0Idk9RVm/Lkgh5iZ8tJ4kcXukGZRe7SDbJdtR9CmpTXjR+7IZUBqRw+Af+NwMG1iB9WhLaOKD+h+k8N+0g39
-X-Gm-Message-State: AOJu0YwQ/Mh6GcyHVvCBUKVpeGPsuxaJIG94I9fRqNZdhoI+4MG9PgLK
-	0fau4mmWt1ygzgWTyZAk2aJmU196BCj2+uSWOUBpXmwfWMJbTVywAo0yR1yxgAlWWSzN3Aq4li9
-	q8WMy4eCLJih3fMVXTF3wiKwBfGFUbaO1NEdp
-X-Google-Smtp-Source: AGHT+IF5a8GLUBdMM8rC+HXTpMcIfTCzxxUZDPzAmu60Ru/iLxOnwc1GzaQyitPVfaWGH4at6uRiw5oO9e5xVJGXvsg=
-X-Received: by 2002:a05:6402:40c3:b0:58b:93:b624 with SMTP id
- 4fb4d7f45d1cf-5ac2a3d8998mr198983a12.1.1721900709071; Thu, 25 Jul 2024
- 02:45:09 -0700 (PDT)
+	s=arc-20240116; t=1721900777; c=relaxed/simple;
+	bh=EWlCTrmr78RmYQSLYt3TEjJuFQwHsJj1/kxDPH9sF8E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FOxF5dhHTV/aNIdflvwDMGjMTHzCru5Hi6YRD1s7ZzjDuU5oCRw0349gLMABb088Yc89zOVMjsjJjHHqGl2mUX1XMaJdzV/qb/hKwNDvWjFFPbdS5TqwGTKyh9BVXVn9qP6d+6tAGTHVNMYvqb4lqdY8tLJEJsY25LvB0u9ESj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=Gw/EF7ml; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1721900762; x=1724492762;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EWlCTrmr78RmYQSLYt3TEjJuFQwHsJj1/kxDPH9sF8E=;
+	b=Gw/EF7mlG4jmHVogcoYKPq5v2WBNrC+6x5OuMkRbBDIZTqABLfGH4FoCeurP7GQR
+	Y3JRuOauRGVnIwIW8s8MplhPkDVOoaUrdUe1bFJsLVRdfmHs2dpQ1rw188ExEUZl
+	meu1REZiXdDX9oDUYpd6G/NqsXkBPTFGvond34zqjUo=;
+X-AuditID: ac14000a-03e52700000021bc-ef-66a21eda37a0
+Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 45.CC.08636.ADE12A66; Thu, 25 Jul 2024 11:46:02 +0200 (CEST)
+Received: from llp-varakala.phytec.de (172.25.0.11) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 25 Jul
+ 2024 11:46:02 +0200
+From: Yashwanth Varakala <y.varakala@phytec.de>
+To: <shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+	<festevam@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<upstream@lists.phytec.de>, <y.varakala@phytec.de>
+Subject: [PATCH 2/3] arm64: boot: dts: freescale: Add no-spiflash overlay
+Date: Thu, 25 Jul 2024 11:44:56 +0200
+Message-ID: <20240725094457.37739-3-y.varakala@phytec.de>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240725094457.37739-1-y.varakala@phytec.de>
+References: <20240725094457.37739-1-y.varakala@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724135622.1797145-1-syoshida@redhat.com>
-In-Reply-To: <20240724135622.1797145-1-syoshida@redhat.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 25 Jul 2024 11:44:56 +0200
-Message-ID: <CANn89iKOWNa28NkQhhey=U_9NgOaymRvzuewb_1=vJ65HX1VgQ@mail.gmail.com>
-Subject: Re: [PATCH net] macvlan: Return error on register_netdevice_notifier()
- failure
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Florix.phytec.de
+ (172.25.0.13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42JZI8nAq3tLblGaweq7whZr9p5jsph/5Byr
+	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
+	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CVsendH9aC
+	boGKGZ0PWBsYp/J1MXJySAiYSPw6c5Oli5GLQ0hgCZPEtfdvGSGcp4wSq25/ZgapYhPQl1ix
+	bhErSEJEYBmjxLfT3WAtzALbGSVOTHzHBFIlLOAp8e3BYjCbRUBVouHrBXYQm1fAUmLR5JlM
+	EPvkJfYfPAs2lVPASuL6nyawuBBQzb+WPWwQ9YISJ2c+YQGxmYHqm7fOZoawJSQOvnjBDFGv
+	KPH+YQc7zMxp514zQ9ihEvPXfGefwCg0C8moWUhGzUIyagEj8ypGodzM5OzUosxsvYKMypLU
+	ZL2U1E2MoIgSYeDawdg3x+MQIxMH4yFGCQ5mJRHeZfcXpgnxpiRWVqUW5ccXleakFh9ilOZg
+	URLnXd0RnCokkJ5YkpqdmlqQWgSTZeLglGpgLL7rdt8jZfuhB4qyhhNTot7PfLNu/rGYy/vW
+	ipT8mDylmqGy68CTsKV/1nssuaGW+VpzWYZkf+3i7IecM1M3nVp+ISvK8e9nq60hEo3Rjvu2
+	NvKHLI6/oJiYVjvF/Un1hRkmYRrfzk35OknH14pbhIVvR0idzkv+L9OjlbLcX138L2Gkkj4h
+	SImlOCPRUIu5qDgRAD+odZ2WAgAA
 
-On Wed, Jul 24, 2024 at 3:56=E2=80=AFPM Shigeru Yoshida <syoshida@redhat.co=
-m> wrote:
->
-> register_netdevice_notifier() may fail, but macvlan_init_module() does
-> not handle the failure.  Handle the failure by returning an error.
+Add devicetree overlay to disable SPI NOR if the module does
+not supports or not equipped with SPI NOR flash.
 
-How could this fail exactly ? Please provide details, because I do not
-think it can.
+Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
+---
+ arch/arm64/boot/dts/freescale/Makefile           |  2 ++
+ .../freescale/imx8mp-phycore-no-spiflash.dtso    | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
 
->
-> Fixes: b863ceb7ddce ("[NET]: Add macvlan driver")
-> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
-> ---
->  drivers/net/macvlan.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
-> index 24298a33e0e9..ae2f1a8325a5 100644
-> --- a/drivers/net/macvlan.c
-> +++ b/drivers/net/macvlan.c
-> @@ -1849,7 +1849,9 @@ static int __init macvlan_init_module(void)
->  {
->         int err;
->
-> -       register_netdevice_notifier(&macvlan_notifier_block);
-> +       err =3D register_netdevice_notifier(&macvlan_notifier_block);
-> +       if (err < 0)
-> +               return err;
->
->         err =3D macvlan_link_register(&macvlan_link_ops);
->         if (err < 0)
-> --
-> 2.45.2
->
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 8f41db93c3d9..dedea4b5c319 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -176,8 +176,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
+ imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
+ imx8mp-phyboard-pollux-rdk-no-rtc-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-rtc.dtbo
++imx8mp-phyboard-pollux-rdk-no-spiflash-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-spiflash.dtbo
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-rtc.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-spiflash.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
+new file mode 100644
+index 000000000000..95329282d559
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 PHYTEC Messtechnik GmbH
++ * Author: Cem Tenruh <c.tenruh@phytec.de>
++ */
++
++/dts-v1/;
++/plugin/;
++
++&flexspi {
++        status = "disabled";
++};
++
++&som_flash {
++        status = "disabled";
++};
+-- 
+2.34.1
+
 
