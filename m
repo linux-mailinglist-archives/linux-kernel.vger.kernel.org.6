@@ -1,259 +1,82 @@
-Return-Path: <linux-kernel+bounces-262176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9960993C1EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:24:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BA693C1F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239AF28A30F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43711C2097A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D88719A2A3;
-	Thu, 25 Jul 2024 12:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F6B19AA6D;
+	Thu, 25 Jul 2024 12:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="heBeOFQT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE8Yqdr+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="heBeOFQT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE8Yqdr+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iybqO3oR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012DF19A291;
-	Thu, 25 Jul 2024 12:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0546419AA59;
+	Thu, 25 Jul 2024 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721910227; cv=none; b=tldCLNmeeCE5fkp5NPADZkKZ4vJMKXencwFUXUXOuscL92cRsqhnPd9UvQrP3ptGo33nFy3dtATuP8OJmIHClONeb8L26UFinaVe16SN7QpJf1fr29K7y5zX8TXW881M3bPbtpszo4QaJe+qMulhLNza8p3bJwb9wNm8BxsVagw=
+	t=1721910250; cv=none; b=MwqhwkYyASm+reXcjGelgt1jzPIeaeCVci0DU/mhLD8nAXsBsE02r/kYJs58QCneKrABKuolIbira4obBjEzgM8aJZ4ScOXOnMjid0iVKqrNQTo6nbC1Sb9r67moXHHWA37ypfi2uqouvgGpZ5+p/ULgc9hvqaxQggin9KziXyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721910227; c=relaxed/simple;
-	bh=l0v0veZ0g0iGMrnbUOoTVKEJeBWucLvXSvGWaxKSgeM=;
+	s=arc-20240116; t=1721910250; c=relaxed/simple;
+	bh=qhWqTS8Ulw609L+HxG78B9+hQiB04CRryb28DdcZsno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hsdk5gTugeLO6spLoN0ORpvAJLh6g9FjTHibRZVi0W9NYjJkg72O2KkB7MWkjmbS1loiGqhXh4MQ1XT+9h8ukJAT3Cr9R53x1xokPPNokeW0mQ5ZlL2HvAGy7nLZc7mvkKGak/eqrCTNoYNBZG/QX1OgheN4kiRhvFyigrIhoeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=heBeOFQT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE8Yqdr+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=heBeOFQT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE8Yqdr+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C31821AC6;
-	Thu, 25 Jul 2024 12:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721910224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
-	b=heBeOFQTYN2LLcy1MOPs4QPHrFmyp4xIfAMHB/4nOrPWGwxKxZADecOBf1ORRtSiV3tc+U
-	+Zff8nzKXpMFyAZB3LjZLxA4o4jGyKWa1tdGxzLFeiGCvRC1OM8i2d5cawQHQt1RGv6vdI
-	pV7rQ94LzhoPI0k0T3z4wdkJNyhputk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721910224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
-	b=ZE8Yqdr+tcKXkkUukYRmITP7pwQk2YSYZ4TJEWV7BeP75v6/o0+8u2SSXbk4rmPzlXkM4I
-	sw9l4lB32hrFcbAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721910224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
-	b=heBeOFQTYN2LLcy1MOPs4QPHrFmyp4xIfAMHB/4nOrPWGwxKxZADecOBf1ORRtSiV3tc+U
-	+Zff8nzKXpMFyAZB3LjZLxA4o4jGyKWa1tdGxzLFeiGCvRC1OM8i2d5cawQHQt1RGv6vdI
-	pV7rQ94LzhoPI0k0T3z4wdkJNyhputk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721910224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=maXuvzdAAcQg9+FFOgyr0GTFX5Y3J3HHBr4nUzQksho=;
-	b=ZE8Yqdr+tcKXkkUukYRmITP7pwQk2YSYZ4TJEWV7BeP75v6/o0+8u2SSXbk4rmPzlXkM4I
-	sw9l4lB32hrFcbAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FE3A1368A;
-	Thu, 25 Jul 2024 12:23:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mL3EB9BDombPbAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 12:23:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D3658A0996; Thu, 25 Jul 2024 14:23:43 +0200 (CEST)
-Date: Thu, 25 Jul 2024 14:23:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 19/20] ext4: get rid of ppath in
- convert_initialized_extent()
-Message-ID: <20240725122343.shdvi722ncsvg7ox@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-20-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZ3eI7loeFnu2dtNg8zMnnh2vtIFX+oVjNdwlmUBZS7tqJ36RELlr9TVBX2WwqOKqGK6yjR/I9VHFcvWHoeEEmvQSCwJTElwPo1nZCKxekVE7cw0hQLK6hDBg7U7uVwBnKZF29//g0cLxV5Ue7T/Nq0glxiiFFLA9SybzY2OdoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iybqO3oR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319BBC32782;
+	Thu, 25 Jul 2024 12:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721910249;
+	bh=qhWqTS8Ulw609L+HxG78B9+hQiB04CRryb28DdcZsno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iybqO3oRvOTsveBaRSxyiMrJaVFMvVf0jEXajlOOH6G3Rb+m/i45mP3oGY/U+9mXe
+	 IwLEsrlfuILoVgwHBVMBTWwU6hMkj+Jia+HKf30TPmqyevg5Amj+OT40V4XIfLZcfr
+	 R2cuX+I/B0rkeRiCP0Rev0FEYumRTqxH/7ajgCalt3CsO6vddWtmGaNb9FNFNnhLF4
+	 721vn4uTRXYT9VX+4AU8Jdsq3oy4zmbGi+OFKsqD8jmaSEczW3J5d8HVTt1gz4I81T
+	 a4Gh1a9xcYsrEBIpj2zXkTbUrtPRTY1XNmmEjyF49SDA77Yo/vUY8XT+EuLtuMmPZU
+	 3uGCGtd8fHNhA==
+Date: Thu, 25 Jul 2024 14:24:06 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 21/25] rcu: Rename dyntick_save_progress_counter()
+ into rcu_watching_snap_save()
+Message-ID: <ZqJD5qPiJicPAR3G@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-22-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-20-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-2.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.10
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724144325.3307148-22-vschneid@redhat.com>
 
-On Wed 10-07-24 12:06:53, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+Le Wed, Jul 24, 2024 at 04:43:21PM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
+> meaning.
 > 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> To get rid of the ppath in convert_initialized_extent(), the following is
-> done here:
-> 
->  * Free the extents path when an error is encountered.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 37 +++++++++++++++++++------------------
->  1 file changed, 19 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index badadcd64e66..737432bb316e 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3810,13 +3810,12 @@ ext4_convert_unwritten_extents_endio(handle_t *handle, struct inode *inode,
->  	return ERR_PTR(err);
->  }
->  
-> -static int
-> +static struct ext4_ext_path *
->  convert_initialized_extent(handle_t *handle, struct inode *inode,
->  			   struct ext4_map_blocks *map,
-> -			   struct ext4_ext_path **ppath,
-> +			   struct ext4_ext_path *path,
->  			   unsigned int *allocated)
->  {
-> -	struct ext4_ext_path *path = *ppath;
->  	struct ext4_extent *ex;
->  	ext4_lblk_t ee_block;
->  	unsigned int ee_len;
-> @@ -3841,29 +3840,25 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
->  	if (ee_block != map->m_lblk || ee_len > map->m_len) {
->  		path = ext4_split_convert_extents(handle, inode, map, path,
->  				EXT4_GET_BLOCKS_CONVERT_UNWRITTEN, NULL);
-> -		if (IS_ERR(path)) {
-> -			*ppath = NULL;
-> -			return PTR_ERR(path);
-> -		}
-> +		if (IS_ERR(path))
-> +			return path;
->  
->  		path = ext4_find_extent(inode, map->m_lblk, path, 0);
-> -		if (IS_ERR(path)) {
-> -			*ppath = NULL;
-> -			return PTR_ERR(path);
-> -		}
-> -		*ppath = path;
-> +		if (IS_ERR(path))
-> +			return path;
->  		depth = ext_depth(inode);
->  		ex = path[depth].p_ext;
->  		if (!ex) {
->  			EXT4_ERROR_INODE(inode, "unexpected hole at %lu",
->  					 (unsigned long) map->m_lblk);
-> -			return -EFSCORRUPTED;
-> +			err = -EFSCORRUPTED;
-> +			goto errout;
->  		}
->  	}
->  
->  	err = ext4_ext_get_access(handle, inode, path + depth);
->  	if (err)
-> -		return err;
-> +		goto errout;
->  	/* first mark the extent as unwritten */
->  	ext4_ext_mark_unwritten(ex);
->  
-> @@ -3875,7 +3870,7 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
->  	/* Mark modified extent as dirty */
->  	err = ext4_ext_dirty(handle, inode, path + path->p_depth);
->  	if (err)
-> -		return err;
-> +		goto errout;
->  	ext4_ext_show_leaf(inode, path);
->  
->  	ext4_update_inode_fsync_trans(handle, inode, 1);
-> @@ -3884,7 +3879,11 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
->  	if (*allocated > map->m_len)
->  		*allocated = map->m_len;
->  	map->m_len = *allocated;
-> -	return 0;
-> +	return path;
-> +
-> +errout:
-> +	ext4_free_ext_path(path);
-> +	return ERR_PTR(err);
->  }
->  
->  static struct ext4_ext_path *
-> @@ -4254,8 +4253,10 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
->  			 */
->  			if ((!ext4_ext_is_unwritten(ex)) &&
->  			    (flags & EXT4_GET_BLOCKS_CONVERT_UNWRITTEN)) {
-> -				err = convert_initialized_extent(handle,
-> -					inode, map, &path, &allocated);
-> +				path = convert_initialized_extent(handle,
-> +					inode, map, path, &allocated);
-> +				if (IS_ERR(path))
-> +					err = PTR_ERR(path);
->  				goto out;
->  			} else if (!ext4_ext_is_unwritten(ex)) {
->  				map->m_flags |= EXT4_MAP_MAPPED;
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
