@@ -1,103 +1,147 @@
-Return-Path: <linux-kernel+bounces-262023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5914C93BF94
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5820893BF54
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899161C21777
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4891F21857
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC56196DA2;
-	Thu, 25 Jul 2024 10:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="oH9rAvw+"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6178196D9D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E70198E7D;
+	Thu, 25 Jul 2024 09:46:56 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0F6198A2A;
+	Thu, 25 Jul 2024 09:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721901734; cv=none; b=o/NtLiCFkSy5+qQhhyAHfR+8A1l53E1keMq4Zr2ITSUhvf6vYOyEJu7KTytKxJRiWyLTFWAhSvAn+FqdFIrBaEobTugTGIndLqVGH7dS4HKp+XkQHgKdy7pTA7ndSpCaa9MriTo2VRaVQXYDzp54sHWmPTgOKGi1fRxLx1IEZPg=
+	t=1721900816; cv=none; b=FGosMPS/+3U6AUX7HLAphd6OJIXJV3qd5yjP0pVb0qktI5/kogsquwb3RKfOp5sPCQFPDpnQGORPz/byoKC1PYLrJ0QDynMSv4wFtyLBvcOkD2R+ytFwH6axhdi18Fu50KesNx6ujLQ5+r1te5tRwcEPuOmoSddAhi66PuP4U8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721901734; c=relaxed/simple;
-	bh=p+Z5HvyEPim/F1tWvZI+HNA0DlL1e4SOzJ7rO1Ny+aY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OC1m1BGLL+XcjhYlTeMpy49/n/fi4Utn+IKXWSAfDnHHGui3/YVeh7+8/UrEex2imWyE3Hq1AMe7x0mQo0gL3rMX6gr5wG6LoI17PF6vDSq+0KooTTL56VnTFA493UzOHvJCp4sARUhvE5Lx5/T4INcbJQcohhgdA1HrrPLadsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=oH9rAvw+; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=9I2sR
-	fuLQW3UShmM+4GOY23wPHqbjvfCFwdmpTEeOoo=; b=oH9rAvw+csdoW4eagzU5Q
-	6wMFUQf/sHxmpr+M8A/eVKQ5w6ghoG2qML1fFN6gOHZkRGkvtrCEnETtJpaMZmeF
-	WK1gi9ZQJ6OGTMIuv/uDYOgtM9Q2RSiiW9Lu5igWK+QOCmRkH/VUnQ/ZngCsYNgq
-	KInoBmMS1qwQsMuSbdtsfI=
-Received: from aitest.fmshzj.com.cn (unknown [61.152.128.138])
-	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wD3P9P4HqJm4SG4Ag--.53260S2;
-	Thu, 25 Jul 2024 17:46:33 +0800 (CST)
-From: wmx129674@126.com
-To: lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ARC-MX <wmx129674@126.com>
-Subject: [PATCH] drivers:regulator:fan53555:add new device chip id
-Date: Thu, 25 Jul 2024 17:46:30 +0800
-Message-Id: <20240725094630.2605801-1-wmx129674@126.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721900816; c=relaxed/simple;
+	bh=Zl6WxDvgI6EdQ86iGmiE7ATIMtA9F82mrPyf5FE1DF8=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=PAd54vqabUapv34rM/FoxpZ80D7d0uWiLMRt1vnRpBWHMEmxgAwXsuuFUvWsfas8ugFKf4xFx1OmjTUWdJ1YFSg+NMrK8qG9N9mQZFYf2cHX95WBZUitUCysQOiTULvAKATkdDXywKU3g5RdHpJbJb1SgHfb3IPlCfJTFeBR89A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id AE7C137811F4;
+	Thu, 25 Jul 2024 09:46:51 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <172142702137.153951.8294803513682327237.robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com> <172142702137.153951.8294803513682327237.robh@kernel.org>
+Date: Thu, 25 Jul 2024 10:46:51 +0100
+Cc: kernel@collabora.com, mchehab@kernel.org, conor+dt@kernel.org, linux-media@vger.kernel.org, nelson.costa@synopsys.com, linux-arm-kernel@lists.infradead.org, heiko@sntech.de, mturquette@baylibre.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, linux-rockchip@lists.infradead.org, shawn.wen@rock-chips.com, sboyd@kernel.org, "Dmitry Osipenko" <dmitry.osipenko@collabora.com>, p.zabel@pengutronix.de, jose.abreu@synopsys.com, linux-kernel@vger.kernel.org, krzk+dt@kernel.org, devicetree@vger.kernel.org, nicolas.dufresne@collabora.com
+To: "Rob Herring (Arm)" <robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P9P4HqJm4SG4Ag--.53260S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw45Ar1ruF1fKFyUXw17GFg_yoWDGwcEk3
-	45Ja4xCrZ8Zan7K3WIqFsIqry5Kr40vr4fuF1UKrW3X3s8Aw15AFWj9F17Ar45XFWUJFnI
-	yF18AFykCrySgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRN73v7UUUUU==
-X-CM-SenderInfo: pzp0ijazwxkqqrswhudrp/1tbiThonCGVLbrkOLAAAsg
+Message-ID: <ae465-66a21f00-1-25170f80@209442668>
+Subject: =?utf-8?q?Re=3A?= [PATCH v4 2/4] =?utf-8?q?dt-bindings=3A?=
+ =?utf-8?q?_media=3A?= Document bindings for HDMI RX Controller
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-From: ARC-MX <wmx129674@126.com>
+On Saturday, July 20, 2024 03:40 IST, "Rob Herring (Arm)" <robh@kernel.=
+org> wrote:
 
-drivers:regulator:fan53555
+>=20
+> On Fri, 19 Jul 2024 18:10:30 +0530, Shreeya Patel wrote:
+> > Document bindings for the Synopsys DesignWare HDMI RX Controller.
+> >=20
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> > ---
+> >=20
+> > Changes in v4 :-
+> >   - No change
+> >=20
+> > Changes in v3 :-
+> >   - Rename hdmirx=5Fcma to hdmi=5Freceiver=5Fcma
+> >   - Add a Reviewed-by tag
+> >=20
+> > Changes in v2 :-
+> >   - Add a description for the hardware
+> >   - Rename resets, vo1 grf and HPD properties
+> >   - Add a proper description for grf and vo1-grf phandles
+> >   - Rename the HDMI Input node name to hdmi-receiver
+> >   - Improve the subject line
+> >   - Include gpio header file in example to fix dt=5Fbinding=5Fcheck=
+ failure
+> >=20
+> >  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++=
+++++
+> >  1 file changed, 132 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw=
+-hdmi-rx.yaml
+> >=20
+>=20
+> My bot found errors running 'make dt=5Fbinding=5Fcheck' on your patch=
+:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> Error: Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.exampl=
+e.dts:53.38-39 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bind=
+ings/media/snps,dw-hdmi-rx.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt=
+=5Fbinding=5Fcheck] Error 2
+> make: *** [Makefile:240: =5F=5Fsub-make] Error 2
+>=20
+> doc reference errors (make refcheckdocs):
+>=20
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20=
+240719124032.26852-3-shreeya.patel@collabora.com
+>=20
+> The base for the series is generally the latest rc1. A different depe=
+ndency
+> should be noted in *this* patch.
+>=20
 
-When I use fan53555, I see an error:
+My HDMI RX patches are based on the linux-next/master branch.
+Since the bot tested the patches on top of rc1, it resulted in some err=
+ors
+due to missing reset ID patches.
 
- FAN53555-regulator 0-0060: Chip ID 0 with rev 12 not supported!
+I think the above statement means I should explicitly mention in this
+patch that it is based on linux-next/master (something to keep in mind
+for future :)
 
-So I fixed this bug
 
-Signed-off-by: ARC-MX <wmx129674@126.com>
----
- drivers/regulator/fan53555.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/regulator/fan53555.c b/drivers/regulator/fan53555.c
-index 17c9bf2043859..c8a2e9405906a 100644
---- a/drivers/regulator/fan53555.c
-+++ b/drivers/regulator/fan53555.c
-@@ -113,6 +113,7 @@ enum {
- enum {
- 	FAN53555_CHIP_REV_00 = 0x3,
- 	FAN53555_CHIP_REV_13 = 0xf,
-+	FAN53555_CHIP_REV_23 = 0xc,
- };
- 
- enum {
-@@ -301,6 +302,10 @@ static int fan53555_voltages_setup_fairchild(struct fan53555_device_info *di)
- 			di->vsel_min = 800000;
- 			di->vsel_step = 10000;
- 			break;
-+		case FAN53555_CHIP_REV_23:
-+			di->vsel_min = 600000;
-+			di->vsel_step = 12500;
-+			break;
- 		default:
- 			dev_err(di->dev,
- 				"Chip ID %d with rev %d not supported!\n",
--- 
-2.25.1
+> If you already ran 'make dt=5Fbinding=5Fcheck' and didn't see the abo=
+ve
+> error(s), then make sure 'yamllint' is installed and dt-schema is up =
+to
+> date:
+>=20
+> pip3 install dtschema --upgrade
+>=20
+> Please check and re-submit after running the above command yourself. =
+Note
+> that DT=5FSCHEMA=5FFILES can be set to your schema file to speed up c=
+hecking
+> your schema. However, it must be unset to test all examples with your=
+ schema.
+>=20
+> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
+=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
+> Kernel mailing list -- kernel@mailman.collabora.com
+> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> This list is managed by https://mailman.collabora.com
 
 
