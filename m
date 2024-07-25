@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-262491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD0A93C7AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2627593C7B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F67EB21D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6D11F225E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0F019DF98;
-	Thu, 25 Jul 2024 17:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0511219E7DB;
+	Thu, 25 Jul 2024 17:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="O2jGFdIy"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="as/xKyy8"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B21199E9F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E5A1DFFD
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721928573; cv=none; b=HbgsHOuCI8n33Ub7nbxGUPc4QeQRYyaKCCGsol6YIIiggkSRYn6UVSFiXKzE5MPQODoYLgHCkGub4eB9A3A/MePxl9kOjlSZkpP76ScsbgwT0HiURQcTd7oe61UJo+fDVHyhf3n+cPvwnXQ9QZQIyE+gnDXsZhQK8hfPZ1YuzyY=
+	t=1721928727; cv=none; b=VNEwzUI43aBU9FthxaJCJIGWF5fzfqHbdDwg3qdQmVfyv8KvVzFwEmscGaMLARXIP6V2Yy3uvwlJB+FENFWHBw1b1etqr6Iv0TsurvpUs2XlhTcS/4YwgwXiOEB92JxcZtppRImtWRjaSOBEd7wQojUxg6twlcQOpHWatlc+Z3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721928573; c=relaxed/simple;
-	bh=N3FzGEoCIhOX3MFBjpVcDtNufAAiuEhtt2RKSDcX/g8=;
+	s=arc-20240116; t=1721928727; c=relaxed/simple;
+	bh=2B8f8WrE/l9cZDKXtQV+EoRITpd2Vb6bfklW5ohZbOU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxBJsd3LEmN8/G6GTG6DKtTM8s//06685z2E2YignI9eNrAzaCnmRf1ReJNhydrnxNo11/X0+Td1Y6ThVcfI1t0hgqHMsnowdGjhN1xJk8vXVZsPpxkCUcEF4ghmmCoSOiilwot/Dfh4vGLfKOaAx6q5P4TuhvvYX5c57s/kZq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=O2jGFdIy; arc=none smtp.client-ip=209.85.210.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7cA7eexBbm8j/5BszscxTFjNncPsFv99jGTtawSGRCaYW47tPlPgmIz7acLiIR1uolrHp3PjCtCbuB89ZjXFkVoHeSj8L6j1BcUZDGazKAHagtjOqTf/m2a51nIdlpqfKAs6mv6h8Wok4LgmcIShZEGIekrvOjQVyvlAw8Y8fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=as/xKyy8; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d399da0b5so91215b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:29:30 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc5549788eso9031055ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1721928570; x=1722533370; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1721928725; x=1722533525; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NCayIjNrRvGhZM69uiC4OvAIpmWWFpkBAk0aaq4aSUc=;
-        b=O2jGFdIyvpi1MpYCdZKrGZ0MiifPl3HGNTjFxylzbVMtUXnfEAKOZbddDzkQjHOWCd
-         QwgA/uG1D+oOFYvDSGDw2pw1JLyHhXYV6OM813Xflb8x4dxT7FvwkOvcGHzN0zBtyS/0
-         5S3iQrJWKYnDy1M+5Alc1RvROm+B5gW6Y43G8=
+        bh=mTcg3xMugKDibMEmmZN7kJxyVON51JXLS1Pzxqr/s+s=;
+        b=as/xKyy86veQMkLqtOOn1xQV4BXzXG6nYWAGOgKt4u2EqnA0oFnWFaTCcIolC+Tdy4
+         6R7eXdl6qo7ioVxsANQkr5eo1TdJ8aaD0bG6l1w65k1GF8Cj5HmkcWrWooxN2PYY8CCg
+         xWueKT/sAwLwnpg7kgmYD2mKw5R0cS8qOo2QU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721928570; x=1722533370;
+        d=1e100.net; s=20230601; t=1721928725; x=1722533525;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NCayIjNrRvGhZM69uiC4OvAIpmWWFpkBAk0aaq4aSUc=;
-        b=jvRIm3hRrPrOHaFoaWO7y5syNWeMhRbbin9PlR9BEp9mitPoAxqVXQLc7BmDYe8jw7
-         RmNHMZbQLbFLY1KRzWPd/ItbHvQI8Im//gOSOcMY+Gurt0gM921jXp8OAHOFdTABNlWL
-         rKb56UdFLhV99M98BWkdX9+KJKfeH84BMUQ8zw5NuPQDGVezQYcyVupUKzXofNJcHRcF
-         OnLfOvVar0VsSypFXfz89b1ljtaUIE92UtwkDxRk9BthKr//1/JEyHyHa0U5qs2gLV+x
-         BoPhoTJR84SCJY76bVplBmNsKW8Fqadlrdr0iaj1/Q3C3LAtGnQXFWc9CGKAoyJ7a7qf
-         hDUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUt3TCLzS5t1hIgh03VAhggkAUzm3Cpuwq8s9BYM50UXdBbu+Dnlhu0WdoJqgUxzaX9gkBvWQl4G9vgImUReVWi3bxOu2LcJaFj6uyO
-X-Gm-Message-State: AOJu0Yyfm3Pwkz+E05Ez475yfB99927Ka36qZnoYQyqxdPabJ/XwgDrx
-	Z5bZ+4NI0ozZyafpY16zkUpIpdW1rjgaLCR3BozgfmPw8PaYU4ddALi5VE7IpPU=
-X-Google-Smtp-Source: AGHT+IECBP9wZR8j26b0macyKUl4ggCAjT7AsfbXpSQ5VAO6+8FmebHqn7MrPbu8eT1i5p5fen8o5A==
-X-Received: by 2002:a05:6a21:a4c1:b0:1c0:ede4:9a73 with SMTP id adf61e73a8af0-1c47b144bcemr3103021637.7.1721928570204;
-        Thu, 25 Jul 2024 10:29:30 -0700 (PDT)
+        bh=mTcg3xMugKDibMEmmZN7kJxyVON51JXLS1Pzxqr/s+s=;
+        b=M5FAH8LN5R0lkL5nDrWckoOLHb3abquRvtiLNjUtDEh/WBkn7klqtnQs6w6V9s//re
+         lmbB/6newR7n4vLwNC9gDQEwxKWUTsZkemuLnxo8UmQDVJKl4TwDpmi8X7PyP8vC3LQd
+         eHr9sQlCbNWaXbeXi9Q+MUplp33Gffxj9ENq4MvrnEzlGkth5H67pxH/8tABiWiBiWrB
+         e2clqim+EXAoInIUvz/f5vVX4DFesgwynhnSbZwDbuezhsIbdloCBldiq3smPCWDLxxH
+         XcZTaZXLrtxTZxHkqmE9Ywm7gf/a3PbXoyzHeVvKi4JSUbfybLSz8vVUgYdABe2gcEKN
+         xSYg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1MPHkYTTRCxPC9p+AjT7JqILwDt8JN9+oJqi7w8uIx6Yxe5poLG8k3MvixSK6wNhDOmeC7E6qWHBJPLJJqkw6viAhtqx8qZ4+i+gT
+X-Gm-Message-State: AOJu0YwVmC06o3yZVxCiiPuhIEf7EX0VS2IZs8MUxT9NXpuCzoxJ2nUZ
+	GR7UEBbCW4xyePh8S9TzGEePlBfP6rn09aUD44aDiy2CD48TqaJvP7mFGMCku3I=
+X-Google-Smtp-Source: AGHT+IEHWuSit46jzp2J7leIsiryxj2NVW4bJWKskg5DpGgQVktJIJ9Ea8ATaouY1IkMnAbA/2Yiag==
+X-Received: by 2002:a17:902:ea0a:b0:1fc:58fc:caf7 with SMTP id d9443c01a7336-1fed91d6d82mr31849155ad.14.1721928725156;
+        Thu, 25 Jul 2024 10:32:05 -0700 (PDT)
 Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead81168csm1376517b3a.112.2024.07.25.10.29.29
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fa988dsm16802115ad.263.2024.07.25.10.32.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 10:29:29 -0700 (PDT)
-Date: Thu, 25 Jul 2024 10:29:27 -0700
+        Thu, 25 Jul 2024 10:32:04 -0700 (PDT)
+Date: Thu, 25 Jul 2024 10:32:02 -0700
 From: Joe Damato <jdamato@fastly.com>
 To: Cindy Lu <lulu@redhat.com>
 Cc: dtatulea@nvidia.com, mst@redhat.com, jasowang@redhat.com,
 	parav@nvidia.com, sgarzare@redhat.com, netdev@vger.kernel.org,
 	virtualization@lists.linux-foundation.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATH v6 1/3] vdpa: support set mac address from vdpa tool
-Message-ID: <ZqKLd9ZIJ4l5tAL8@LQ3V64L9R2>
+Subject: Re: [PATH v6 3/3] vdpa/mlx5: Add the support of set mac address
+Message-ID: <ZqKMEoDIZx8XFhlq@LQ3V64L9R2>
 Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
 	Cindy Lu <lulu@redhat.com>, dtatulea@nvidia.com, mst@redhat.com,
 	jasowang@redhat.com, parav@nvidia.com, sgarzare@redhat.com,
 	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
 	linux-kernel@vger.kernel.org
 References: <20240725013217.1124704-1-lulu@redhat.com>
- <20240725013217.1124704-2-lulu@redhat.com>
+ <20240725013217.1124704-4-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,107 +87,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725013217.1124704-2-lulu@redhat.com>
+In-Reply-To: <20240725013217.1124704-4-lulu@redhat.com>
 
-On Thu, Jul 25, 2024 at 09:31:02AM +0800, Cindy Lu wrote:
-[...]
-> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> index 8d391947eb8d..532cf3b52b26 100644
-> --- a/drivers/vdpa/vdpa.c
-> +++ b/drivers/vdpa/vdpa.c
-> @@ -1361,6 +1361,81 @@ static int vdpa_nl_cmd_dev_config_get_doit(struct sk_buff *skb, struct genl_info
->  	return err;
+On Thu, Jul 25, 2024 at 09:31:04AM +0800, Cindy Lu wrote:
+> Add the function to support setting the MAC address.
+> For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> to set the mac address
+> 
+> Tested in ConnectX-6 Dx device
+> 
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> index ecfc16151d61..d7e5e30e9ef4 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -3785,10 +3785,38 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
+>  	destroy_workqueue(wq);
+>  	mgtdev->ndev = NULL;
 >  }
->  
-> +static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
-> +					struct genl_info *info)
-> +{
-> +	struct vdpa_dev_set_config set_config = {};
-> +	const u8 *macaddr;
-> +	struct vdpa_mgmt_dev *mdev = vdev->mdev;
-> +	struct nlattr **nl_attrs = info->attrs;
-> +	int err = -EINVAL;
 
-Nit: IIRC networking code prefers reverse-xmas tree style and
-macaddr above needs to be moved.
+Nit: Other code in this file separates functions with newlines,
+perhaps one is needed here?
 
-> +	down_write(&vdev->cf_lock);
-> +	if (nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-> +		set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
-> +		macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
-> +
-> +		if (is_valid_ether_addr(macaddr)) {
-> +			ether_addr_copy(set_config.net.mac, macaddr);
-> +			memcpy(set_config.net.mac, macaddr, ETH_ALEN);
-> +			if (mdev->ops->dev_set_attr) {
-> +				err = mdev->ops->dev_set_attr(mdev, vdev,
-> +							      &set_config);
-> +			} else {
-> +				NL_SET_ERR_MSG_FMT_MOD(
-> +					info->extack,
-> +					"device does not support changing the MAC address");
-> +			}
-> +		} else {
-> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
-> +					       "Invalid MAC address");
-> +		}
-> +	}
-> +	up_write(&vdev->cf_lock);
-> +	return err;
-> +}
+> +static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
+> +			      struct vdpa_device *dev,
+> +			      const struct vdpa_dev_set_config *add_config)
 
-Nit: other code in this file has line breaks separating functions.
-Probably good to add one here?
-
-
-> +static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
-> +					 struct genl_info *info)
-
-Nit: Does the above pass ./scripts/checkpatch.pl --strict ? I am asking
-because it seems like the alignment might be off?
+Nit: it appears that the alignment is off on these parameters. Did
+checkpatch.pl --strict pass on this?
 
 > +{
-> +	const char *name;
-> +	int err = 0;
-> +	struct device *dev;
-> +	struct vdpa_device *vdev;
-> +	u64 classes;
-
-Nit: Same as above; I believe networking code is supposed to follow
-reverse xmas tree order so these variables should be rearranged.
-
-> +	if (!info->attrs[VDPA_ATTR_DEV_NAME])
-> +		return -EINVAL;
-> +
-> +	name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
-> +
-> +	down_write(&vdpa_dev_lock);
-> +	dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
-> +	if (!dev) {
-> +		NL_SET_ERR_MSG_MOD(info->extack, "device not found");
-> +		err = -ENODEV;
-> +		goto dev_err;
-> +	}
-> +	vdev = container_of(dev, struct vdpa_device, dev);
-> +	if (!vdev->mdev) {
-> +		NL_SET_ERR_MSG_MOD(info->extack, "unmanaged vdpa device");
-> +		err = -EINVAL;
-> +		goto mdev_err;
-> +	}
-> +	classes = vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
-> +	if (classes & BIT_ULL(VIRTIO_ID_NET)) {
-> +		err = vdpa_dev_net_device_attr_set(vdev, info);
-> +	} else {
-> +		NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not supported",
-> +				       name);
-> +	}
-> +
-> +mdev_err:
-> +	put_device(dev);
-> +dev_err:
-> +	up_write(&vdpa_dev_lock);
-> +	return err;
-> +}
+> +	struct virtio_net_config *config;
+> +	struct mlx5_core_dev *pfmdev;
+> +	struct mlx5_vdpa_dev *mvdev;
+> +	struct mlx5_vdpa_net *ndev;
 
 [...]
 
