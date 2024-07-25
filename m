@@ -1,232 +1,201 @@
-Return-Path: <linux-kernel+bounces-262294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF9A93C3B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D5E93C3BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0191F22785
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8351F22B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B43119CD19;
-	Thu, 25 Jul 2024 14:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E739319CD0F;
+	Thu, 25 Jul 2024 14:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QZW0kiTc"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NTT59Pjd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ji8CL2AE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="THQcBCEx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XzXUTah8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B6D1103
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F80A19B3D7;
+	Thu, 25 Jul 2024 14:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721916443; cv=none; b=rLEtp1HrzcHTT68IiKLNDu4ZqhhZsX6ls/kegEpDf2AI6+B0VeQ2rA6Arrw3liqpMZbxpPkjyJE7+0uCxnhihAz6hZwuAv1dMuset1i3Y1iWhFqcJrL7XkK+rrVjxEtwaT/SU+OyYcFl+2vllWpYVRA6OeCXzxt1oAuPXOKzfmY=
+	t=1721916506; cv=none; b=Wc00lgcgk2UdmfaC+M6AViMJ584b3Ug6vb9sDSp/PUkGkvOwVKHq3IWynv0GRO6bbXn+yQ6pecpQKDtj0Z8/Qfrfu6LsukzDfjnRel73tN97da25bd3UB5hEBLzPwo9wHz9+ZdF6LT7uUZAf/7BinxN7EGFAnlJ48eaUVyVxtns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721916443; c=relaxed/simple;
-	bh=pksET2uKbCnujR75iT+0cBqjz1m524Ir2g+SdXltX4U=;
+	s=arc-20240116; t=1721916506; c=relaxed/simple;
+	bh=7ZymtsaU2hUseLDSUph0VLd1JbABq1jT63J6bQYrsj0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ph2/RP0oCj6Bllo1n+IUu/+5gT20L+Huvzq3ZPsJGr2U/ak30A93+XN1cTRajvPk72jGuuqZQpDoeLKtf6aMTRj/Vn4nvF3dyxAgMmJNXwEStj+1u0odh0YMt8VqUUjPx9po6RrNFAFWMoKocVcwnUL4ZtwtvdVmVhq+MN0+ueo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QZW0kiTc; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d153fec2fso778295b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:07:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721916441; x=1722521241; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a3AyL0HlCFj8TAMHagfyvA5AIVg3hc44mddnltY1Iss=;
-        b=QZW0kiTc9n4grvZ2D0RgCSNPvpgUCUSpWZFbhgIqlWi9NsO7/N8Nu5dDkTJsit7u/T
-         TC624i8LTi42QvlShYVs2MXxLy4L39MiEL8dFyNd3T7ZLCY9b7/w8epSc0jUw9X7l3m3
-         DBZSczBgugtBWyg8kQG7bn/Z/sl9kQ5iU6/8keqZLYGrcqfz1lNOyl7XBu/uM3kp9OKM
-         1jO9e+Z3x0JuCckwOJiANW7foH4xx4AT6PVdAHoE86y3ZFaOHRMSiVW4KF5uK5LgP7wb
-         ATHL6X+oazBvhz2zdIGg/vEYMRdY3l2EC9iVLRNjUVkLr8HB66p/5EcAxyLyLyODuSPY
-         9zLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721916441; x=1722521241;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a3AyL0HlCFj8TAMHagfyvA5AIVg3hc44mddnltY1Iss=;
-        b=V1wDbYaXvK8vwmWQOiEHFs9P7jmze2CJIbIiCyH5iwnGc5MXgVbrtt++vDNLSqAU3m
-         G7E5KlsNBxxOQn9hnoPVoiQcKIQYsJhh5bBuSqFqdtDrPaw/mDRfwc5oll418v8xH6me
-         ywJLSM00xaKsj4sZd2IyoIyr4YHutIpLSAr+3duxcoMM2s3ztDxst1VJwg8oCgN9ix19
-         dP7W3m+vOlrs6TV0UggFFlA/Xs4THjrxfZwN8jic2EV7ywhw6LUP7klsuA3r2MdnrUHC
-         RtSPpoxjdn9pppeEuf5oXPPHKJEPAUvbtPsdjW5+qirR2fdHbrfL5Jq7jSQC79K3m/j5
-         PeOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3+rOE7raL+EtTU/b7u4lKNy2GWfpRjNx/WEsJpHZppmk7tIM6f/D/UoTPNfO1fu1/21nXusyXVZjxxEuMbbM6hTxf5KYSixmfphsk
-X-Gm-Message-State: AOJu0YwxiwiE2XtxPvZF9k3NopSxZIbT3kjcXsBiARt04CiTqEZJoE5l
-	n6Dt17d9NTKE8HOCHCT1dpWm9thFFxqnbvTbtgk5x3BXQnsdL80qu6zAlVmE5g==
-X-Google-Smtp-Source: AGHT+IGTByaLYvqaz+8FOAit23AMhCHovH60IZ7pQuKJeMbNd+SUp0ANSh1klXcJl1BPmRODoET20g==
-X-Received: by 2002:a05:6a00:919f:b0:70d:2693:d215 with SMTP id d2e1a72fcca58-70eae906ad6mr2105027b3a.16.1721916440774;
-        Thu, 25 Jul 2024 07:07:20 -0700 (PDT)
-Received: from thinkpad ([220.158.156.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e15e2sm1168645b3a.3.2024.07.25.07.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 07:07:20 -0700 (PDT)
-Date: Thu, 25 Jul 2024 19:37:15 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Rick Wertenbroek <rick.wertenbroek@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>, rick.wertenbroek@heig-vd.ch,
-	alberto.dassatti@heig-vd.ch,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
- address BARs in EPC
-Message-ID: <20240725140702.GB2274@thinkpad>
-References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
- <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
- <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
- <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
- <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
- <20240725053348.GN2317@thinkpad>
- <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
- <04b1ceb2-538e-4b1b-be5c-5a81d7a457ad@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMTReyLk7fAA+yYgGpNlscgfl7BdppVxO2cC09ZD4HgphVO1RTsHdif2PkyHu9AAqSBL3gfvfXOyIkQ/J8utrfi9BVgPyMZlP4S37QPeFdZRXoE3LstcP4F9WnRjmTeYt4cVsUp9KEd7y1MWWAIpdJMWaRFrYRxP7oOmE+OSpdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NTT59Pjd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ji8CL2AE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=THQcBCEx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XzXUTah8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 89A241F45A;
+	Thu, 25 Jul 2024 14:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721916502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=caOm/uxS2opXn02vZjb14EARqvFtBFXQYGYYAAi6TfU=;
+	b=NTT59Pjd2aG2JZ1FwEAqDsj9joB3aQKjncebjD66Wb3Xt+eQdUoPPQmOP4eV4P2jLg72Sf
+	axh/eQah8OMNNolhDdIEcZuj83nxt0jnOMEQRpZ8wywi9KAf3/wEAz4LpU9kDiN1rfaAwo
+	m20AFgYDAtlNT6NNiTPU+rMneRyTCsY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721916502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=caOm/uxS2opXn02vZjb14EARqvFtBFXQYGYYAAi6TfU=;
+	b=Ji8CL2AE9oLO280RcM2TskMEkxKDf9Q1ksT3hVIhGaEbiuneJjjA4VVWJ2s0d4zrrVA0cc
+	lC6thLbZ9TqfetCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721916501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=caOm/uxS2opXn02vZjb14EARqvFtBFXQYGYYAAi6TfU=;
+	b=THQcBCExcuvhyE2GtBGUU65zFU+EaPRm/CdRCjV2v2TuCDgLk+k9I1Jj1iTTWOLkKa3qRb
+	UMna64jhX436NrbcdoOYQvKDb99ojzYa24xBVHjWuGSknybB7e1xbFHfDT6mWh5Wgn3S0c
+	9A6vKzpWjCQPUEn3JZm2fw4aTLz7TZI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721916501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=caOm/uxS2opXn02vZjb14EARqvFtBFXQYGYYAAi6TfU=;
+	b=XzXUTah8ueHAu0wQnsuMWRWONZykdlgmzSk9X9Yxbd08rDAOMGuDO/boM3g1ijZVJtp4To
+	A/K71S8DVHXVTNAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 745351368A;
+	Thu, 25 Jul 2024 14:08:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C7FhHFVcomZZEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 14:08:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3B312A0996; Thu, 25 Jul 2024 16:08:21 +0200 (CEST)
+Date: Thu, 25 Jul 2024 16:08:21 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] tty: tty_io: fix race between tty_fops and
+ hung_up_tty_fops
+Message-ID: <20240725140821.kfzzn6uh52acwcbm@quack3>
+References: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
+ <20240722-gehminuten-fichtenwald-9dd5a7e45bc5@brauner>
+ <20240722161041.t6vizbeuxy5kj4kz@quack3>
+ <2024072238-reversing-despise-b555@gregkh>
+ <e6e7cb33-f359-43bd-959e-039e82c6915a@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <04b1ceb2-538e-4b1b-be5c-5a81d7a457ad@kernel.org>
+In-Reply-To: <e6e7cb33-f359-43bd-959e-039e82c6915a@I-love.SAKURA.ne.jp>
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.60
 
-On Thu, Jul 25, 2024 at 05:20:00PM +0900, Damien Le Moal wrote:
-> On 7/25/24 17:06, Rick Wertenbroek wrote:
-> > On Thu, Jul 25, 2024 at 7:33 AM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> >>
-> >> On Tue, Jul 23, 2024 at 06:48:27PM +0200, Niklas Cassel wrote:
-> >>> Hello Rick,
-> >>>
-> >>> On Tue, Jul 23, 2024 at 06:06:26PM +0200, Rick Wertenbroek wrote:
-> >>>>>
-> >>>>> But like you suggested in the other mail, the right thing is to merge
-> >>>>> alloc_space() and set_bar() anyway. (Basically instead of where EPF drivers
-> >>>>> currently call set_bar(), the should call alloc_and_set_bar() (or whatever)
-> >>>>> instead.)
-> >>>>>
+On Tue 23-07-24 07:20:34, Tetsuo Handa wrote:
+> On 2024/07/23 1:24, Greg Kroah-Hartman wrote:
+> > On Mon, Jul 22, 2024 at 06:10:41PM +0200, Jan Kara wrote:
+> >> On Mon 22-07-24 16:41:22, Christian Brauner wrote:
+> >>> On Fri, Jul 19, 2024 at 10:37:47PM GMT, Tetsuo Handa wrote:
+> >>>> syzbot is reporting data race between __tty_hangup() and __fput(), and
+> >>>> Dmitry Vyukov mentioned that this race has possibility of NULL pointer
+> >>>> dereference, for tty_fops implements e.g. splice_read callback whereas
+> >>>> hung_up_tty_fops does not.
 > >>>>
-> >>>> Yes, if we merge both, the code will need to be in the EPC code
-> >>>> (because of the set_bar), and then the pci_epf_alloc_space (if needed)
-> >>>> would be called internally in the EPC code and not in the endpoint
-> >>>> function code.
+> >>>>   CPU0                                  CPU1
+> >>>>   ----                                  ----
+> >>>>   do_splice_read() {
+> >>>>                                         __tty_hangup() {
+> >>>>     // f_op->splice_read was copy_splice_read
+> >>>>     if (unlikely(!in->f_op->splice_read))
+> >>>>       return warn_unsupported(in, "read");
+> >>>>                                           filp->f_op = &hung_up_tty_fops;
+> >>>>     // f_op->splice_read is now NULL
+> >>>>     return in->f_op->splice_read(in, ppos, pipe, len, flags);
+> >>>>                                         }
+> >>>>   }
 > >>>>
-> >>>> The only downside, as I said in my other mail, is the very niche case
-> >>>> where the contents of a BAR should be moved and remain unchanged when
-> >>>> rebinding a given endpoint function from one controller to another.
-> >>>> But this is not expected in any endpoint function currently, and with
-> >>>> the new changes, the endpoint could simply copy the BAR contents to a
-> >>>> local buffer and then set the contents in the BAR of the new
-> >>>> controller.
-> >>>> Anyways, probably no one is moving live functions between controllers,
-> >>>> and if needed it still can be done, so no problem here...
+> >>>> Fix possibility of NULL pointer dereference by implementing missing
+> >>>> callbacks, and suppress KCSAN messages by adding __data_racy qualifier
+> >>>> to "struct file"->f_op .
 > >>>
-> >>> I think we need to wait for Mani's opinion, but I've never heard of anyone
-> >>> doing so, and I agree with your suggested feature to copy the BAR contents
-> >>> in case anyone actually changes the backing EPC controller to an EPF.
-> >>> (You would need to stop the EPC to unbind + bind anyway, IIRC.)
-> >>>
+> >>> This f_op replacing without synchronization seems really iffy imho.
 > >>
-> >> Hi Rick/Niklas,
-> >>
-> >> TBH, I don't think currently we have an usecase for remapping the EPC to EPF. So
-> >> we do not need to worry until the actual requirement comes.
-> >>
-> >> But I really like combining alloc() and set_bar() APIs. Something I wanted to do
-> >> for so long but never got around to it. We can use the API name something like
-> >> pci_epc_alloc_set_bar(). I don't like 'set' in the name, but I guess we need to
-> >> have it to align with existing APIs.
-> >>
-> >> And regarding the implementation, the use of fixed address for BAR is not new.
-> >> If you look into the pci-epf-mhi.c driver, you can see that I use a fixed BAR0
-> >> location that is derived from the controller DT node (MMIO region).
-> >>
-> >> But I was thinking of moving this region to EPF node once we add DT support for
-> >> EPF driver. Because, there can be many EPFs in a single endpoint and each can
-> >> have upto 6 BARs. We cannot really describe each resource in the controller DT
-> >> node.
-> >>
-> >> Given that you really have a usecase now for multiple BARs, I think it is best
-> >> if we can add DT support for the EPF drivers and describe the BAR resources in
-> >> each EPF node. With that, we can hide all the resource allocation within the EPC
-> >> core without exposing any flag to the EPF drivers.
-> >>
-> >> So if the EPF node has a fixed location for BAR and defined in DT, then the new
-> >> API pci_epf_alloc_set_bar() API will use that address and configure it
-> >> accordingly. If not, it will just call pci_epf_alloc_space() internally to
-> >> allocate the memory from coherent region and use it.
-> >>
-> >> Wdyt?
-> >>
-> >> - Mani
-> >>
-> >> --
-> >> மணிவண்ணன் சதாசிவம்
+> >> Yeah, when I saw this I was also going "ouch". I was just waiting whether a
+> >> tty maintainer will comment ;)
 > > 
-> > Hello Mani, thank you for your feedback.
+> > I really didn't want to :)
 > > 
-> > I don't know if the EPF node in the DT is the right place for the
-> > following reasons. First, it describes the requirements of the EPF and
-> > not the restrictions imposed by the EPC (so for example one function
-> > requires the BAR to use a given physical address and this is described
-> > in the DT EPF node, but the controller could use any address, it just
-> > configures the controller to use the address the EPF wants, but in the
-> > other case (e.g., on FPGA), the EPC can only handle a BAR at a given
-> > physical address and no other address so this should be in the EPC
-> > node). Second, it is very static, so the EPC relation EPF would be
-> > bound in the DT, I prefer being able to bind-unbind from configfs so
-> > that I can make changes without reboot (e.g., alternate between two or
-> > more endpoint functions, which may have different BAR requirements and
-> > configurations).
+> >> Anyway this replacement of ops in file /
+> >> inode has proven problematic in almost every single case where it was used
+> >> leading to subtle issues.
 > > 
-> > For the EPFs I really think it is good to keep the BAR requirements in
-> > the code for the moment, this makes it easier to swap endpoint
-> > functions and makes development easier as well (e.g., binding several
-> > different EPFs without reboot of the SoC they run on. In my typical
-> > tests I bind one function, turn-on the host, do tests, turn-off the
-> > host, make changes to an EPF, scp the new .ko on the SoC, rebind,
-> > turn-on the host, etc.). For example, I alternate between pci-epf-test
-> > (6 bars) and pci-epf-nvme (1 bar) of different sizes.
-> > 
-> > However, I can see a world where both binding and configuring EPF from
-> > DT and the way it is currently done (alloc/set bar in code) and bind
-> > in configfs could exist together as each have their use cases. But
-> > forcing the use of DT seems impractical.
+> > Yeah, let's not do this.
 > 
-> I do not think using DT for configuring an EPF *ever* make sense. An init script
-> on the EP platform can take care of whatever needs to be configured. DT is for
-> and should be restricted to describing the HW, not things that can be configured
-> at runtime using the HW information.
-> 
+> https://lkml.kernel.org/r/18a58415-4aa9-4cba-97d2-b70384407313@I-love.SAKURA.ne.jp was a patch
+> that does not replace f_op, and
+> https://lkml.kernel.org/r/CAHk-=wgSOa_g+bxjNi+HQpC=6sHK2yKeoW-xOhb0-FVGMTDWjg@mail.gmail.com
+> was a comment from Linus.
 
-No, MHI is a hardware entity. So atleast defining it in DT make sense. But as I
-mentioned in reply to Rick, I haven't implemented it since it is really not
-required now (MHI just needs a single BAR and right now the address is derived
-from EPC node).
+OK, thanks for references. After doing some light audit of tty, I didn't
+find a way how switching f_op could break the system. Still it is giving
+me some creeps because usually there's some god-forgotten place somewhere
+that caches some decision based on f_op content and when f_op change,
+things go out of sync with strange results. And the splice operations
+enabled by tty are complex enough to hide some potential problems.
 
-But for Rick's usecase, I agree with you/Rick that DT doesn't make sense. Thanks
-for clearing it up.
+In fact I'm not sure why tty switches f_op at all. The reliable check for
+tty being hung up seems to be fetching ldisc pointer under a ldisc_lock and
+most operations do this and handle it appropriately -> no need for special
+f_op for hung up state for them. .ioctl notably might need some love but
+overall it doesn't seem too hard to completely avoid changing f_op for tty.
 
-> Doing it this way also makes the EPF code independent on the platform. E.g. if
-> we ever add an EPF node in the DT, that same EPF would not work on an endpoint
-> capable platform using UEFI. That is not acceptable for HW generic EPFs (e.g.
-> nvme, virtio, etc).
-> 
-
-Well, those anyway cannot be defined in DT as they are software implementations
-around hw.
-
-- Mani
-
+								Honza
 -- 
-மணிவண்ணன் சதாசிவம்
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
