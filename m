@@ -1,227 +1,216 @@
-Return-Path: <linux-kernel+bounces-262720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A5293CB3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C5293CB44
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2421F210E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D28A2829E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F3C149C7E;
-	Thu, 25 Jul 2024 23:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7BF145B05;
+	Thu, 25 Jul 2024 23:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvSKvGxd"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uAPV4yBf"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F800145B05
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE6313CFBB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721950098; cv=none; b=BSiuDS5EYd86ymI0PjlRuUeSD1hXJg985LsrpBlMvPfg+kEpwMdRmpOmBM+YF3afV8hwZYq64MvSVAJeri6rwvu2gOYWIAffoRWyx/Hxqw4yEG1tv8Ku5uLniVocWSpfcjOARdCtuoI4gIU2bzPZ6AUbd9yj2KprpOpmHBR2+WA=
+	t=1721950440; cv=none; b=e92lkb/KGbSBUqRo1LHrlrYlCtSp/mJZNlgmSE2ZDFwF4kyR5d2payzy3xbqNEIfmXkxKdP5J2PPx6+8ytioamnWR0ci/U3aHNN05JtT9TAmOi7TnhTa6/BCQ9GTqTxjvxWFFaH4b5F6usrZP6QqQ10/M+l0OGXVv1//9cnzaiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721950098; c=relaxed/simple;
-	bh=rQiHNXeSOGY3neEtQ+ISaU1+DMsNM98qczGQPKXZbFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XI20dsSinSm2v3IUHNGCh+IyqBZbWLfQ7qM65x462duhb6c9YaZg47iq3SzWc2nK/ChFiQnLjR/lVb4dIgywa0Q0rszIUBfyvjEeGxS7vEu3TlXDvunmTHTcG+nCtnZS2/aK2PlrzRMV+QVQhdDXkKSL74Nbp91MwkNOuoXYvHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvSKvGxd; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6694b50a937so18508657b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721950095; x=1722554895; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4hnJFsfLt33aZBeoJY1bqyzrEBlyMzRqpVt6Wmxo/I=;
-        b=IvSKvGxdXcIVkZRq1C6K5KGWvOSdBYPTMxnxSn/AgvkN6CwUz/p0fBjEzBCfQAJSOL
-         m23kuqn0hzUxMypiDBlD8ggSYMogUoiQBoH1hsQcTRyQElTVomTbzKDsIyVVKiVEri2Q
-         0mP8WT7iGMR9tT4QZvbIjII+B9Vc+logUwkGmw/hhvs+75xfQPW63HWJ528fze98Gc5u
-         kIZdXgVMPnvQuitda//qcsyeiI9ml/KFXkTMn+R/MC9DdpcPlRdJFExQqegmmRV6MarC
-         UbL73JhafsqPoQujs+la7gwVEt8om05PgCOsDToKDl8WBEhzboeHdt+9XE+CCTEuQKwJ
-         nZ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721950095; x=1722554895;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p4hnJFsfLt33aZBeoJY1bqyzrEBlyMzRqpVt6Wmxo/I=;
-        b=PAd/YRWcTamy3ywtDlUEIqdoXtK+8oVkWTetT+zvVyYpYsgbg51jqY9LUBYysH9Um/
-         CubQ1yzxfYSGZrP3fZdJwVHKWqmWqsJz+sz0A5H4pJt1g0fVZPnCDP8IzqWk3b4gN0Gd
-         V6MACAqAORW7HMyv13ZWIF9qVBoYqDFdKQPYr3UdYdMxdoA0nyiWUTusJFHRD5jCHsan
-         H9uHy3NQqTjcOMpzZEFINVUqmCNdcILgewwyVvG46vEXap7T6UmYX8n/n2Qn8f0QfNac
-         MW6Zsvd95NY11XKBSEzM6sRtkYdRJ5ZMe6xGD7Oxbjp7SIFmXCWXj10oOQBCIadpsjbH
-         C5Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXswp5cUZWUmiT4s4jWzhfFA7SMDMhMVpTaZzGbuE6aiU/FpdqOqOnrqvBGGKOvF/4Iw9osaW8lMOR5gi8w/62rCdnxlrB0eAY/9i/0
-X-Gm-Message-State: AOJu0Yzjf8hnvQk/MePH6tkaLHCGkzv7YOc4DgqbEeaZnJRvyRg39C+i
-	Ax60ZLGwafYxQygc9Qxur9/0GJszxakl7kJ4r3lA/n1TWE/lKUac
-X-Google-Smtp-Source: AGHT+IHMRvmpREzfHp9MTziEwTmKWI/CclFCpOKGls4UgocwHK4nP3Wuzq9o+Q/xBN8NQZ5Xw1YlYQ==
-X-Received: by 2002:a05:690c:6501:b0:64a:5443:7cbd with SMTP id 00721157ae682-675b9f4d002mr44231387b3.25.1721950095372;
-        Thu, 25 Jul 2024 16:28:15 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-114.fbsv.net. [2a03:2880:25ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-67568113ceesm6043477b3.61.2024.07.25.16.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 16:28:15 -0700 (PDT)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	shakeelb@google.com,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	flintglass@gmail.com
-Subject: [PATCH 2/2] zswap: increment swapin count for non-pivot swapped in pages
-Date: Thu, 25 Jul 2024 16:28:13 -0700
-Message-ID: <20240725232813.2260665-3-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240725232813.2260665-1-nphamcs@gmail.com>
-References: <20240725232813.2260665-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1721950440; c=relaxed/simple;
+	bh=hQN/a6ZYatdkTGJGLUfgGwR5zF0yP8aX/FIZ/dBd7U8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rS3gug45PO1E0UbeVJPH5ENe6huT7B2SYc6nN+zBnwrdSMgq94ST5LXQnxpHS1ysXSC0EGuWdnNMyDENpM8xn8hChlhREOH4INEfDkaIDon1aBA6KXqRmVh5MzcJrYtCZDyoLGL5+mw597IMTWcTd/ulhfQkYd54M4BsxtHNISs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uAPV4yBf; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 25 Jul 2024 23:33:51 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721950435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+9XM/fW5RfwKkN8eewGZAUVoURY2akltnsnwAvZUkc=;
+	b=uAPV4yBf/iuqodww1FoyZ6JHMnBCp2eGgGqbuI6xDaus8JYa6hr4e/AbUxU4i3nYKmM/42
+	3BpEvWbXQnZ1YaS71Njy64i5ZH45wDxTLCDVUmuMPmdck3x0EFMavaPlO9vEkfZ17rcD+l
+	HUzMr+eu/Q0s623RSlhnBjxmzcbmaDw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH v2 3/5] mm: memcg: merge multiple page_counters into a
+ single structure
+Message-ID: <ZqLg30nOUVlerBh1@google.com>
+References: <20240724202103.1210065-1-roman.gushchin@linux.dev>
+ <20240724202103.1210065-4-roman.gushchin@linux.dev>
+ <20240725214227.GC1702603@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725214227.GC1702603@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-Currently, we only increment the swapin counter on pivot pages. This
-means we are not taking into account pages that also need to be swapped
-in, but are already taken care of as part of the readahead window. We
-are also incrementing when the pages are read from the zswap pool, which
-is inaccurate.
+On Thu, Jul 25, 2024 at 05:42:27PM -0400, Johannes Weiner wrote:
+> On Wed, Jul 24, 2024 at 08:21:01PM +0000, Roman Gushchin wrote:
+> > --- a/include/linux/page_counter.h
+> > +++ b/include/linux/page_counter.h
+> > @@ -5,14 +5,71 @@
+> >  #include <linux/atomic.h>
+> >  #include <linux/cache.h>
+> >  #include <linux/limits.h>
+> > +#include <linux/mm_types.h>
+> >  #include <asm/page.h>
+> >  
+> > +/*
+> > + * Page counters are used by memory and hugetlb cgroups.
+> > + * Memory cgroups are using up to 4 separate counters:
+> > + * memory, swap (memory + swap on cgroup v1), kmem and tcpmem.
+> > + * Hugetlb cgroups are using 2 arrays of counters with HUGE_MAX_HSTATE
+> > + * in each to track the usage and reservations of each supported
+> > + * hugepage size.
+> > + *
+> > + * Protection (min/low) is supported only for the first counter
+> > + * with idx 0 and only if the counter was initialized with the protection
+> > + * support.
+> > + */
+> > +
+> > +enum mem_counter_type {
+> > +#ifdef CONFIG_MEMCG
+> > +	/* Unified memory counter */
+> > +	MCT_MEM,
+> > +
+> > +	/* Swap */
+> > +	MCT_SWAP,
+> > +
+> > +	/* Memory + swap */
+> > +	MCT_MEMSW = MCT_SWAP,
+> > +
+> > +#ifdef CONFIG_MEMCG_V1
+> > +	/* Kernel memory */
+> > +	MCT_KMEM,
+> > +
+> > +	/* Tcp memory */
+> > +	MCT_TCPMEM,
+> > +#endif /* CONFIG_MEMCG_V1 */
+> > +#endif /* CONFIG_MEMCG */
+> > +
+> > +	/* Maximum number of memcg counters */
+> > +	MCT_NR_MEMCG_ITEMS,
+> > +};
+> > +
+> > +#ifdef CONFIG_CGROUP_HUGETLB
+> > +#ifdef HUGE_MAX_HSTATE
+> > +#define MCT_NR_HUGETLB_ITEMS HUGE_MAX_HSTATE
+> > +#else
+> > +#define MCT_NR_HUGETLB_ITEMS 1
+> > +#endif
+> > +
+> > +/*
+> > + * max() can't be used here: even though __builtin_choose_expr() evaluates
+> > + * to true, the false clause generates a compiler error:
+> > + * error: braced-group within expression allowed only inside a function .
+> > + */
+> > +#define MCT_NR_ITEMS (__builtin_choose_expr(MCT_NR_MEMCG_ITEMS > MCT_NR_HUGETLB_ITEMS, \
+> > +					    MCT_NR_MEMCG_ITEMS, MCT_NR_HUGETLB_ITEMS))
+> > +
+> > +#else /* CONFIG_CGROUP_HUGETLB */
+> > +#define MCT_NR_ITEMS MCT_NR_MEMCG_ITEMS
+> > +#endif /* CONFIG_CGROUP_HUGETLB */
+> > +
+> >  struct page_counter {
+> >  	/*
+> >  	 * Make sure 'usage' does not share cacheline with any other field. The
+> >  	 * memcg->memory.usage is a hot member of struct mem_cgroup.
+> >  	 */
+> > -	atomic_long_t usage;
+> > +	atomic_long_t usage[MCT_NR_ITEMS];
+> >  	CACHELINE_PADDING(_pad1_);
+> >  
+> >  	/* effective memory.min and memory.min usage tracking */
+> > @@ -25,9 +82,9 @@ struct page_counter {
+> >  	atomic_long_t low_usage;
+> >  	atomic_long_t children_low_usage;
+> >  
+> > -	unsigned long watermark;
+> > -	unsigned long local_watermark; /* track min of fd-local resets */
+> > -	unsigned long failcnt;
+> > +	unsigned long watermark[MCT_NR_ITEMS];
+> > +	unsigned long local_watermark[MCT_NR_ITEMS]; /* track min of fd-local resets */
+> > +	unsigned long failcnt[MCT_NR_ITEMS];
+> >  
+> >  	/* Keep all the read most fields in a separete cacheline. */
+> >  	CACHELINE_PADDING(_pad2_);
+> > @@ -35,8 +92,9 @@ struct page_counter {
+> >  	bool protection_support;
+> >  	unsigned long min;
+> >  	unsigned long low;
+> > -	unsigned long high;
+> > -	unsigned long max;
+> > +	unsigned long high[MCT_NR_ITEMS];
+> > +	unsigned long max[MCT_NR_ITEMS];
+> > +
+> >  	struct page_counter *parent;
+> >  } ____cacheline_internodealigned_in_smp;
+> 
+> This hardcodes way too much user specifics into what should be a
+> self-contained piece of abstraction. Should anybody else try to use
+> the 'struct page_counter' for a single resource elsewhere, they'd end
+> up with up to 5 counters, watermarks, failcnts, highs and maxs etc.
+> 
+> It's clear that the hierarchical aspect of the page_counter no longer
+> works. It was okay-ish when all we had was a simple hard limit. Now we
+> carry to much stuff in it that is only useful to a small set of users.
+> Instead of doubling down and repeating the mistakes we made for struct
+> page, it would be better to move user specific stuff out of it
+> entirely. I think there are two patterns that would be more natural:
+> a) pass a callback function and have a priv pointer in page_counter
+> for user-specifics; or b) remove the hierarchy aspect from the page
+> counter entirely, let the *caller* walk the tree, call the page
+> counter code to trycharge (and log watermark) only that level, and
+> handle everything caller specific on the caller side.
+>
+> All users already have parent linkage in the css, so this would
+> eliminate the parent pointer in page_counter altogether.
+> 
+> The protection stuff could be moved to memcg proper, eliminating yet
+> more fields that aren't interesting to any other user.
 
-This patch rectifies this issue by incrementing whenever we need to
-perform a non-zswap read.
+Hm, Idk, I do agree with what you're saying about the self-contained
+piece of abstraction (and I had very similar thoughts in the process),
+but there are also some complications.
 
-To test this change, I built the kernel under a cgroup with its
-memory.max set to 2 GB:
+First, funny enough, the protection calculation code was just moved to
+mm/page_counter.c by a8585ac68621 ("mm/page_counter: move calculating protection
+values to page_counter"). The commit log says that it's gonna be used by the drm
+cgroup controller, but the code is not (yet?) upstream apparently. I don't have
+any insights here. If there will be the second user for the protection
+functionality, moving it back to memcontrol.c is not feasible.
 
-real: 236.66s
-user: 4286.06s
-sys: 652.86s
-swapins: 81552
+Second, I agree that it would be nice to get rid of the parent pointer in
+struct page_cgroup entirely and use one in css. But Idk how to do it
+without making the code way more messy or duplicate a lot of tree walks.
+In C++ (or another language with generics) we could make struct page_counter
+taking the number of counters and the set of features as template parameters.
 
-For comparison, with just the new second chance algorithm, the build
-time is as follows:
+I feel like with memcg1 code being factored out the benefit of this reorg
+lowered, so how about me resending 2 first patches separately and spending
+more time on thinking on the best long-term strategy? I have some ideas
+here and I thought about this work as a preparatory step, but maybe you're
+right and it makes sense to approach it more comprehensively.
 
-real: 244.85s
-user: 4327.22s
-sys: 664.39s
-swapins: 94663
-
-Without neither:
-
-real: 263.89s
-user: 4318.11s
-sys: 673.29s
-swapins: 227300.5
-
-(average over 5 runs)
-
-With this change, the kernel CPU time reduces by a further 1.7%, and
-the real time is reduced by another 3.3%, compared to just the second
-chance algorithm by itself. The swapins count also reduces by another
-13.85%.
-
-Combinng the two changes, we reduce the real time by 10.32%, kernel CPU
-time by 3%, and number of swapins by 64.12%.
-
-To gauge the new scheme's ability to offload cold data, I ran another
-benchmark, in which the kernel was built under a cgroup with memory.max
-set to 3 GB, but with 0.5 GB worth of cold data allocated before each
-build (in a shmem file).
-
-Under the old scheme:
-
-real: 197.18s
-user: 4365.08s
-sys: 289.02s
-zswpwb: 72115.2
-
-Under the new scheme:
-
-real: 195.8s
-user: 4362.25s
-sys: 290.14s
-zswpwb: 87277.8
-
-(average over 5 runs)
-
-Notice that we actually observe a 21% increase in the number of written
-back pages - so the new scheme is just as good, if not better at
-offloading pages from the zswap pool when they are cold. Build time
-reduces by around 0.7% as a result.
-
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- mm/page_io.c    | 11 ++++++++++-
- mm/swap_state.c |  8 ++------
- 2 files changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index ff8c99ee3af7..0004c9fbf7e8 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -521,7 +521,15 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 
- 	if (zswap_load(folio)) {
- 		folio_unlock(folio);
--	} else if (data_race(sis->flags & SWP_FS_OPS)) {
-+		goto finish;
-+	}
-+
-+	/*
-+	 * We have to read the page from slower devices. Increase zswap protection.
-+	 */
-+	zswap_folio_swapin(folio);
-+
-+	if (data_race(sis->flags & SWP_FS_OPS)) {
- 		swap_read_folio_fs(folio, plug);
- 	} else if (synchronous) {
- 		swap_read_folio_bdev_sync(folio, sis);
-@@ -529,6 +537,7 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 		swap_read_folio_bdev_async(folio, sis);
- 	}
- 
-+finish:
- 	if (workingset) {
- 		delayacct_thrashing_end(&in_thrashing);
- 		psi_memstall_leave(&pflags);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index a1726e49a5eb..3a0cf965f32b 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -698,10 +698,8 @@ struct folio *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 	/* The page was likely read above, so no need for plugging here */
- 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
- 					&page_allocated, false);
--	if (unlikely(page_allocated)) {
--		zswap_folio_swapin(folio);
-+	if (unlikely(page_allocated))
- 		swap_read_folio(folio, NULL);
--	}
- 	return folio;
- }
- 
-@@ -850,10 +848,8 @@ static struct folio *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
- 	/* The folio was likely read above, so no need for plugging here */
- 	folio = __read_swap_cache_async(targ_entry, gfp_mask, mpol, targ_ilx,
- 					&page_allocated, false);
--	if (unlikely(page_allocated)) {
--		zswap_folio_swapin(folio);
-+	if (unlikely(page_allocated))
- 		swap_read_folio(folio, NULL);
--	}
- 	return folio;
- }
- 
--- 
-2.43.0
-
+Thanks!
 
