@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-261859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE52C93BD0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A5593BD01
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE0283097
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085B3283832
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB7617109D;
-	Thu, 25 Jul 2024 07:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB3D16F908;
+	Thu, 25 Jul 2024 07:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EpQR96/G"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IMp2mdPr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301382773C;
-	Thu, 25 Jul 2024 07:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092204428;
+	Thu, 25 Jul 2024 07:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892218; cv=none; b=gZEaEkhfhi3s4TsTgUnR6dJl6wY5UV3dMv2eXz3n1SrkfpKT6j9u2K5L9fD9vNn9n3Hgc3OICZCSX23xmVyQvevfebBVEksurZKWeL8J5RySO88M2vUMHDyyOKldmylvqXhCq2EEgmp0o2yfqVZCFa6iG7APlTCRCxqSwnvfPs4=
+	t=1721892102; cv=none; b=mLIWuDsRs4IHZaOA2bXvS94AfQsJ1502G8MZnU4ceNdt2tFtqpijC8hA8WkgF8mQpOvwlnom93RcWZt6ujMRmps+lkot8K7UNbjNL9G2xitwNx0KbubBHZ1PHR96CL1JMMh4kMHLUnRoLhOgRlwYt3vL8N9uO7jnK4Ry4o9/cDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892218; c=relaxed/simple;
-	bh=GyPLGzIhpsB35WhyIkpQkrT+qzzPtaB3iH1SRs0EeNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R6oYF/9NlUNGsXpZ0ahVFEe1UCCapnBjBQxDYkRVB2q08Tjq4Te9vEtw/F+6MrkzRaPreqUDMGONK5FpK31vpJdbBPpIzzwz7M7QAXAi6QvFO/D30EpgGj7OPNN9y+FgKTIonW6UwQAo8vCD5TJ/w9+I0aJ9dEP+gM2F7IVLpHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EpQR96/G; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1721892102; c=relaxed/simple;
+	bh=ydbfuohjatUcdiCDESO0TMpmlY+ErfumtWftHn6xhc8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ik4LCSlTMrbmpykAY4mzWbQ4Lea5u8/h2j7bWVM9hql7MkfmF2CaQgxgkQYrncBcZtVa2EgHBdSRTbhunZfkTwiz4Y+epVsafwzU126vdn4Z088r5I69JWbPmaqHx67jOxJXtnjITIzpD3T4wj2xJn/LFJKkV9zb9wp4BVuXeM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IMp2mdPr; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OM4A73011243;
-	Thu, 25 Jul 2024 07:23:30 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OJlCC5007911;
+	Thu, 25 Jul 2024 07:21:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=bm0A+PZNNGOd+thGnPWT5MTS/GX57MqMYz9vyIwVTYc=; b=Ep
-	QR96/G8XZVn+PqXbBUyrer9ILWxUcbKV+QrnIY5SYFKAggy+Fuhe3F8q7bcjBhp4
-	uR9RwGfX71iTW/qWmcpNYxuXyF3pe/LLuyez0xXhCHE2Qs4QgdL10Gk8Jq5YtCKy
-	ryxgs8+1vpj4vNYrRhKb6QDmCSdwWR62g9z0lQg/1t1uaUiSKp7Oi9PASObmU1Do
-	Pb1ErlLqYTFI5B6JPmFnA59GcI6+Q2vm9DXo55qVq2VNQ70Vxgq+mr8e4bwOk5k/
-	VBL/3fHbDLD2dwa4ifcfNdcX+uciXVe2//rXmzzkj+1HYMKi1OADwvWeVmVawKxU
-	BvkZWbswMJYaFvmqW4FA==
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ig7qJ9Vxpn3l4dcvLm0+s7oO6xAzUdgvzcwziFSjE6M=; b=IMp2mdPrVEuEhnJ3
+	7VlREr044iOOChgwcf6s/n9GsciRvpy/pavDwnwy4gnAw8y09Tu4Vf4VMHbXun39
+	jNkKU7unhH1g1eX8bzrn2EUFqjNaxdbhRRpf3GH97HYUNgKxo6RkTMV41YqdiY7k
+	zmdd2Yl66ZnAGmfiTLNe6HO6Ataewt+RQ1nBQ7nD7wLyUIGcTnKjtpXixbegm5Ju
+	kYOIK8AI8BytSzUUNoH5S2M/nfjMD2+1cM//qpEuxP3mT42tY0QaVgl5qGvtqhaR
+	4a+ublY6hODYQmrAFbmoeR50QA9JH+VNKmvWUtUQ33EVWeQHKHyR4VhBoebrE8CY
+	ZPAWQQ==
 Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40jyrfjj24-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g4jh473x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:23:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7NT4N027276
+	Thu, 25 Jul 2024 07:21:38 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7LbND025094
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:23:29 GMT
-Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+	Thu, 25 Jul 2024 07:21:37 GMT
+Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 25 Jul 2024 00:23:26 -0700
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <ahalaney@redhat.com>,
-        <manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Qingqing Zhou <quic_qqzhou@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH v3] arm64: dts: qcom: sa8775p: Mark APPS and PCIe SMMUs as DMA coherent
-Date: Thu, 25 Jul 2024 12:51:17 +0530
-Message-ID: <20240725072117.22425-1-quic_qqzhou@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+ 15.2.1544.9; Thu, 25 Jul 2024 00:21:37 -0700
+Received: from nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b]) by
+ nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b%12]) with mapi id
+ 15.02.1544.009; Thu, 25 Jul 2024 00:21:37 -0700
+From: "Yuvaraj Ranganathan (QUIC)" <quic_yrangana@quicinc.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+        "linux-fscrypt@vger.kernel.org"
+	<linux-fscrypt@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Software encryption at fscrypt causing the filesystem access
+ unresponsive
+Thread-Topic: Software encryption at fscrypt causing the filesystem access
+ unresponsive
+Thread-Index: Adrd1KUCQ0a7ysxrSBSnpsfNUNxokAAEOaUAAB9SRWA=
+Date: Thu, 25 Jul 2024 07:21:36 +0000
+Message-ID: <08079d01e25748108aedb95a3c30e5e7@quicinc.com>
+References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+ <20240724162132.GB131596@mit.edu>
+In-Reply-To: <20240724162132.GB131596@mit.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lYtbkWatx8K18YPQnJ8ZyEZrB7n6APKc
-X-Proofpoint-ORIG-GUID: lYtbkWatx8K18YPQnJ8ZyEZrB7n6APKc
+X-Proofpoint-ORIG-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
+X-Proofpoint-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-25_07,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=741 malwarescore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 phishscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2407250046
 
-The SMMUs on sa8775p are cache-coherent. GPU SMMU is marked as such,
-mark the APPS and PCIe ones as well.
+Hello Ted,
 
-Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
-Fixes: 2dba7a613a6e ("arm64: dts: qcom: sa8775p: add the pcie smmu node")
-Cc: stable@vger.kernel.org
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
----
-v2 -> v3:
-  - Remove the line break between tags.
-  - Add the Cc stable tag.
-Link to v2: https://lore.kernel.org/all/20240723075948.9545-1-quic_qqzhou@quicinc.com/
+I don't see fast_commit feature is enabled for this filesystem.
 
-v1 -> v2:
-  - Add the Fixes tags.
-  - Update the commit message.
-Link to v1: https://lore.kernel.org/lkml/20240715071649.25738-1-quic_qqzhou@quicinc.com/
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Here are the filesystem features enabled for that disk partition,
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..95691ab58a23 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -3070,6 +3070,7 @@
- 			reg = <0x0 0x15000000 0x0 0x100000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <2>;
-+			dma-coherent;
- 
- 			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-@@ -3208,6 +3209,7 @@
- 			reg = <0x0 0x15200000 0x0 0x80000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <2>;
-+			dma-coherent;
- 
- 			interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.17.1
+Filesystem features:=20
+has_journal ext_attr resize_inode dir_index stable_inodes filetype needs_re=
+covery extent 64bit flex_bg encrypt sparse_super large_file huge_file dir_n=
+link extra_isize metadata_csum
 
+Thanks,
+Yuvaraj.
+
+-----Original Message-----
+From: Theodore Ts'o <tytso@mit.edu>=20
+Sent: Wednesday, July 24, 2024 9:52 PM
+To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
+Cc: linux-fscrypt@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-ker=
+nel@vger.kernel.org
+Subject: Re: Software encryption at fscrypt causing the filesystem access u=
+nresponsive
+
+WARNING: This email originated from outside of Qualcomm. Please be wary of =
+any links or attachments, and do not enable macros.
+
+On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
+> Hello developers,
+>
+> We are trying to validate a Software file based encryption with=20
+> standard key by disabling Inline encryption and we are observing the=20
+> adb session is hung.  We are not able to access the same filesystem at=20
+> that moment.
+
+The stack trace seems to indicate that the fast_commit feature is enabled. =
+ That's a relatively new feature; can you replicate the hang without fast_c=
+ommit being enabled?
+
+                                                - Ted
 
