@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-262365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0091A93C5D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:00:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B175193C5D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990791F210EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EA12821F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2A919D08A;
-	Thu, 25 Jul 2024 14:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A20A19D886;
+	Thu, 25 Jul 2024 15:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/rdBEq1"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lj+Dk2V7"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B551DFF7;
-	Thu, 25 Jul 2024 14:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092A919D062
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721919592; cv=none; b=N64bSPbmXN8a9DxRvkF4Sniwk2m6LydHFmAVegycqO+JhwTxyGg/ULEABVm/s+xD+BbSCTtd8DUHMuhoJCXLrTzHJfHsrfXrtxdEAN5xYnRk/D1rUpxla4Pz4ijFxj0GGUz/Yi/2HVjtuxElDXrQ9kq11+e23ztfuFaQBk3jLQ0=
+	t=1721919611; cv=none; b=rVjXoUZS2GFX7EODZXmw77ZreD0vVoB23W8g/1Vw32OSi3/64Abp3od5E+EL173KwTvSVjZiAr1rOYETI+HgJ+uNNuUTp0g5YZjJldZoZKT1Jlef2ds/RphZeaTNAl/YPPD/mV+PEuV/mabKHi4wx8cyX04BgL5UlPnxlVado9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721919592; c=relaxed/simple;
-	bh=wA9cO2ijwhFDMlP/FDS2evKDtr/6tZx5A1S4+PKKYaY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VRvrTrbuAMqVVdzEKtGnIiwa1uliiX64LrSsuKSeepFa8pjYw3ozd0L1ZcsVFD81z3wsO6oIJnSZ2gx72y/wsKUvy9CaNdWALtjs7gkJ2K49fi9JGyx3nexIHJInAD37tNgxaYz789H7ehOmkpyZWWLZXYOnS6JYqzObhBN0j+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/rdBEq1; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4ef12e5658bso321661e0c.2;
-        Thu, 25 Jul 2024 07:59:51 -0700 (PDT)
+	s=arc-20240116; t=1721919611; c=relaxed/simple;
+	bh=4+7G3tspcvIA18RcZDSVjgfkOmhgNLYcPE/E3LoZGzk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tvf2UJ/JK4lye3ZWOa5Y+03bXIjB7puHXY99ImtQjR7rVnU69CeZOYAD1PqCOsFOW00EPfj7Z/dXvHGTVPHLVg5Y+7ye7fgC8q0qwUzbVW6A5qoIq7xvH4tRXrl/uVkfsS35tqqTeNZ/XVLxCMCdda23hEb2V1KajgJsR+22uro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lj+Dk2V7; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-367963ea053so744110f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721919590; x=1722524390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1721919608; x=1722524408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rPO4gtNKzKuekmNpwtacwmBBH3AcT7WjOijrZlXLQb0=;
-        b=T/rdBEq1tlI9ZNM6tUiStwiiB/xEzTKllKjsD/76AJHWw9BvaL7bEAM16pJ79Qsdkk
-         F/ZOM2n2eJVBqpdj1rpypeRMzaM3fRI44FZjsMxnGD7BEk67Xgla+mmMzDaWdxZdw0I4
-         4+2Vdm8U5z1OR36vQCetgl8Vpq1lcuBLXnklRJkVjaIWXAMpHzraVCS5ZyzY6C9732Is
-         QRdzT64fZR8QY/C5mhZMlVj2HFN62UHLGVcFpbRMRZjk6EuwS87ejRA+Cx9BabXXsUxN
-         RdFXxVFe5RZDeERlQtBeiGivR1TzduUW+GTHjyS979KgI/5stf+Ft7m1JpJk9ug7/OVp
-         FbpA==
+        bh=c9Z4931Osuxi1qIHEscDRPOvBVDoh/CRmYBymvn/ZBA=;
+        b=Lj+Dk2V74Wwihkgel25WTeByaZzcBfd7/exXLFPDy9RVw5K7bodOelPktM4CjKcFzI
+         yg95I24FvlOGNENZXhuWijGB7AgvWRFeJmYmrb8Wmpye1EbHwLtZaMKyfPP98QdJDmBi
+         sDZv5GrJQj8ekYD3AjE1J6Q/HE3e5tZHKi+CTaHtCCGHTRE6nvRGIzgdQL38mCcto8z6
+         147F8pwhEcpjg4KBfFm6S2sk5Omq+awn6ZC5xSiey8U3dfyXvf/SJVJdHR3MrWIh/Mei
+         XOv64lTI1uHWULn/BUKtBRLqyyK0R2eACuiEn/RpSrQnuTvKiqfGQfRn2Jh5wuIpE53k
+         OqLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721919590; x=1722524390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721919608; x=1722524408;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rPO4gtNKzKuekmNpwtacwmBBH3AcT7WjOijrZlXLQb0=;
-        b=WOD4gEIhZcxs1U5sqZgh8U62maaBmzqb9cB/kLkzgCpAyz04lQyZepKdezLFRJmRps
-         AmKr+nWFXihQAEDCiVvTlZbKBypOwnAzwDNfPAPapexzib4+QmdrwYivzucbUO9AilaS
-         FGzWFDiTacFkrg6VGXbw7pVaf6lmZxl9mGvUyPrOm0k1J6ssZgC4J/dfyIwdZUjF1E10
-         0DIAXhXdpfflRcZkuKkRW/Aubs8yvtqiGehp50SaOYBRc9ZfybOzZA6PzPOZQHjQNuXj
-         ycNddDRAoVLoVSTutPUOWqGz0gLkxEjetiqjGbcg0oaTtMtUKpf4kLLSitzHDldNlhy1
-         B1LA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkTvFeCrAC5Voh87K/ouJUpNJ3zUCQpqILVml+OwOdyzE2n1Q81oSt0yXr+STh3uIaFhk600C1z5sG9LMmJ5pwah6nm3pwiudoefd4sOV5f9X0a+7EwILR4R5WrI+I31axNjPc1Yf6zNhoWYI+OzZ5Xul42Y2+ztxGRGXGZwYIDMoG84m9QVoEh7y/
-X-Gm-Message-State: AOJu0YxZCBDeZcqJyPUhU+k/h8Nj5M+jrUIYDw3TtrRcC90Pgou/ZPXd
-	BfrLGd6YRC3q+kYWFAG1dS1UXr2CIz30rbgGYskENdXx/xefcE5/K2N+/O45C6i4W3VUib/qL52
-	nBdTrh/c+zr5rmwRvZ386brjTGiU=
-X-Google-Smtp-Source: AGHT+IFaJSg0W9tovfwxfphFR6bmF5/CEKViDBBbhsWzrPf/EWQQcLVe1hmsptrLU5ywuBQ+Z/HChdCQ6RmSyWxfkAo=
-X-Received: by 2002:a05:6122:2094:b0:4f5:d98:5ef2 with SMTP id
- 71dfb90a1353d-4f6ca2c36f7mr2388197e0c.4.1721919590234; Thu, 25 Jul 2024
- 07:59:50 -0700 (PDT)
+        bh=c9Z4931Osuxi1qIHEscDRPOvBVDoh/CRmYBymvn/ZBA=;
+        b=BjIZzJRmrb5uGLUq6UZ8RmJc0TnadwF2JTm+xWh6z5fdg92RFdq8YdZlv0ksw1wVde
+         Z7JqSYQlTZOxzY8pzgHGRZBTWh1HqZPHSCES3k6+Uf/lrG62KPw56QW5jEWvPDkb59vI
+         I3LByy9l0UVB1XmzNtB4Nwc3xJy/P8osjEiAGm/bF0Wh0H4U+NbRlhqB8ixC9MAca94F
+         iDpA3W2USoeN05OBDuPUkqGhN5+8iiwZRuWA8tWnG8gIWxyvH3MO56sUCvuuM799qOLk
+         bw1xzdRzDNooYy8bB7mGvKmnGWYIg79W/tWyI1lSm5zjOun1lBkejfoxideouCKKyyf2
+         QOcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsNFa+b5Rv/XVvbR5khi2CXRVD4yUgXsc3+V0UDJPh9ELPDoV4VeJ4SwiuvsbEIrqsR8mucoCYRKxxiQIYkvwoOFDNX/wJ2QA+W+ac
+X-Gm-Message-State: AOJu0YyoXtJN2w1GGWVmUMFdjCRR21DyY3Ebgj+b04IjMkDPfdYgEVQG
+	9p4maliW+IRakqvu3CheLqkZHVO6Ps392JgQuEDsqBVxGT3XlkGgdqm1Erukgn/9CF7HEDLvNEA
+	X
+X-Google-Smtp-Source: AGHT+IHRCPqWVQXC2M7YIeZJcXzY2G3V2diN5IaoIFfqBHPCQ6aIbCtS+NN5DGnwuwi/xs+tmtNdgQ==
+X-Received: by 2002:a05:6000:b87:b0:368:7943:8b1f with SMTP id ffacd0b85a97d-36b3643c8cemr1971438f8f.43.1721919608012;
+        Thu, 25 Jul 2024 08:00:08 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36858148sm2507984f8f.72.2024.07.25.08.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 08:00:07 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: quic_jesszhan@quicinc.com, mwalle@kernel.org, dianders@chromium.org, 
+ linus.walleij@linaro.org, airlied@gmail.com, dmitry.baryshkov@linaro.org, 
+ Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
+References: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
+Subject: Re: (subset) [PATCH v1 0/4] Break some CMDS into helper functions
+Message-Id: <172191960720.1560006.12723976790415124452.b4-ty@linaro.org>
+Date: Thu, 25 Jul 2024 17:00:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725133932.739936-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240725133932.739936-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUpZ6KWdjveVSS72jdSuySCB7KVgo=TSr7tt=G295bPXw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUpZ6KWdjveVSS72jdSuySCB7KVgo=TSr7tt=G295bPXw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 25 Jul 2024 15:57:57 +0100
-Message-ID: <CA+V-a8vmiaYQnf4mCJD-Zx8BqSiDUS5NpaskYkOkuCpE7qH+3g@mail.gmail.com>
-Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a07g044(l1): Correct GICD and
- GICR sizes
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marc Zyngier <maz@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.0
 
-Hi Geert,
+Hi,
 
-On Thu, Jul 25, 2024 at 3:53=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Jul 25, 2024 at 3:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The RZ/G2L SoC is equipped with the GIC-600. The GICD + GICDA is 128kB,
-> > and the GICR is 128kB per CPU.
-> >
-> > Fixes: 68a45525297b2 ("arm64: dts: renesas: Add initial DTSI for RZ/G2{=
-L,LC} SoC's")
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > @@ -1043,8 +1043,8 @@ gic: interrupt-controller@11900000 {
-> >                         #interrupt-cells =3D <3>;
-> >                         #address-cells =3D <0>;
-> >                         interrupt-controller;
-> > -                       reg =3D <0x0 0x11900000 0 0x40000>,
-> > -                             <0x0 0x11940000 0 0x60000>;
-> > +                       reg =3D <0x0 0x11900000 0 0x20000>,
-> > +                             <0x0 0x11940000 0 0x40000>;
-> >                         interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-> >                 };
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi b/arch/arm64/=
-boot/dts/renesas/r9a07g044l1.dtsi
-> > index 9cf27ca9f1d2..6f4d4dc13f50 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-> > @@ -16,3 +16,8 @@ cpus {
-> >                 /delete-node/ cpu@100;
-> >         };
-> >  };
-> > +
-> > +&gic {
-> > +       reg =3D <0x0 0x11900000 0 0x20000>,
-> > +             <0x0 0x11940000 0 0x20000>;
-> > +};
->
-> What's the point of overriding this here?
->
-Are you suggesting we drop this, as we have no users for it currently?
+On Wed, 10 Jul 2024 16:47:11 +0800, Cong Yang wrote:
+> This series main purpose is to break some common CMDS into helper
+> functions (select page and reload CMDS), refer to the discussion
+> between Linus and Doug [1]. It is expected that there will be no
+> impact on the functionality, but I don’t have an actual board to
+> verify it.
+> 
+> [1] https://lore.kernel.org/dri-devel/CAD=FV=VssfZBxwh6i4e_mHhT8vZ_CnXCrUhoeTUeo5xN-FmASg@mail.gmail.com/
+> 
+> [...]
 
-Cheers,
-Prabhakar
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+
+[1/4] drm/panel: boe-tv101wum-nl6: Break some CMDS into helper functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/93183c9959d456530ae502865586522acf21adf7
+[2/4] drm/panel: nt35521: Break some CMDS into helper functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/3c8d2d5da3e29f73fec6e04a424e789422f697db
+[3/4] drm/panel: nt36672e: Break some CMDS into helper functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d969b31afa439f71f810076a5612596dae38fd86
+
+-- 
+Neil
+
 
