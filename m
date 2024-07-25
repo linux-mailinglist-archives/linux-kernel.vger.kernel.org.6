@@ -1,235 +1,188 @@
-Return-Path: <linux-kernel+bounces-261804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6091C93BC5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3E493BC5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05C5B223A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE961C229D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4BA15FD13;
-	Thu, 25 Jul 2024 06:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD2716B3AD;
+	Thu, 25 Jul 2024 06:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KQb+ndp0"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="ebIQfi0S"
+Received: from SE2P216CU007.outbound.protection.outlook.com (mail-koreacentralazon11021106.outbound.protection.outlook.com [40.107.42.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF7F29CA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721887804; cv=none; b=tgPo579e9/fSAG7ZjZ8bO5mz7HYh9A61jZJmvcTOJlJ8zsfuIS/vWDAXoP7jHtoqUbZPVLQC2cQpWr7HYqMrc2Kr7PD/aJ2Eh7JgH52QrefFHmtKPJ2rlNwKAOwroplf0ETh+ksqhGZ9gMyelxt/OWnK/hy++HNyt+2BTwngwIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721887804; c=relaxed/simple;
-	bh=ToXii4KTcTnn6Eip6Km0NKlTz18Fu3ui0CFc4CXPJ7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1ilsFxbG9HpNQkrlOgiAlhmhKeiGj3kcsVCbDxRkF7XPL1t55eD2zSMBuzcRGtU2nbzWfwQkWtPCE67ErjbfZ8RGoHTnEFUGq89OcS2LHYOVfw3CI5kni4mkwiuh2s8LaAUhnR8VarfArM6uo1g4Mad4jqN173kkCIoY+16P/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KQb+ndp0; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721887800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wsYnpeZpScN763r/H/yMXUbWhT15iNELKLaXVGvPo=;
-	b=KQb+ndp0FXeRuup04K4QlyQEq5dDxWh9Fug532N+Apg22F0Rh12vSikaUes6vOHOXQPSGX
-	Jkw8Kh4+33WmzxaojkB3bo0wk/XtElYhQuEgGEnr2ztPhm+Dkm5qt0Y02/CojEff5Bcruc
-	S9TwZvEmtqB9paJ+kvAvnr3C9SeWD28=
-Date: Wed, 24 Jul 2024 23:09:53 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668AF29CA;
+	Thu, 25 Jul 2024 06:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.42.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721887858; cv=fail; b=GBwo/MxLnVk58NkA2OLYl1skpXWVZt2ObJ5cQeHpjr07AZeOmqZQZEqk2AwNekjYOBXBQxc6j1Zt7t9BQI03rxDA4pLM3eNWkPZlYpMFHWQOMCRiJTZuAswJsplqSoVDNhdXHddJ6LgclyN4ZC0o9iJFcPODnbMmL5Egu4E7CqA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721887858; c=relaxed/simple;
+	bh=n42QknomB0eRjyzkOmOSEnHUuWaBOEpUhLf1BhUTDVs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=EyFqRXdwwIKLXbQiWQ8ya8DtUT9MwGYQI2d4y8tV4Qu/+jFekRSN7FT1L/M8YSqM8Ju50655KZ0GSitGMhOs7Zs4bQ4pwKq124IKd68sUnLpAcU7ChIE6aH56u513jw+7XbWCL1kYQT8CGrGy+L/xalBmNFoesQN/MWHRp0NiUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=ebIQfi0S; arc=fail smtp.client-ip=40.107.42.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o4D5ifTxKiCsMYOYBL4a8Ut5JNcoF5c2T/slq2EUeb4MI18Kweesx9/a7QfzfmYwEmz0otS9jGRi5sA3AUE/CdGHnxJ3pTLo3ABuWggHWlKFRtnFDwqDiPxkMBzIqQoffWODfWBoU90teMCQhdNI4ftckFckX5VIl/GjRhRBrM3eSJntuD//mksBuWlfTbHdgNZ60RxWs1rHV66Ze5wY+J7mfmVqhmwBGUWvK34E8xYvTJFtrZl/TnAGe6f6hH27R4plouaQWU4ODq42izsPQCoEMQLWZyxMA129ORLnheGf8woJufJ/dhnlPDwjSncEJ4mI+yCv3bvCJTAXuWRG5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0gfbD4l+B5Ck8hjmXNpAD7wx+nywNzu6SATZfUO3vuY=;
+ b=x9XJcnQsVzQrLqX2Yrf3JBBqXZx/MJKigBr/UJvhwGRVRZ2OKIVWxKDCXjcWQ3jYyXFrLxlG8KXWwO01a8No/wCXVZvk8aKPw+ecclDIQvvorY44OgwLvYw3hUSkH9uaIg7iFNDXB3diEmQsL2nVR1+Yw5d1FHqnvRa8+9l/upuzEHM5iBCCfvmZdAkCg+HpekUWJwjYDfLEeFdeM/1tl5wn+BKyFdrsf8xT3LJwHkFHRH8QLoxo3fPsj2Kf2ibcUFAa1rMV3FjbiodhWM3ysrmoPi2trnOpDOTNr0xZ1XW8ueIwEOGbapAPovmq8QByF2V1mP+zTw17VkHHcMAbLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0gfbD4l+B5Ck8hjmXNpAD7wx+nywNzu6SATZfUO3vuY=;
+ b=ebIQfi0S1RjgEKbgaeAx4417vwHXVqoqYIcLFDXSor+N3P0tk90q4z7w9ACrUGqtnbguzC+7Z1xxuvFz2psQle3NUKSgC+CTgyv0n7b8rZL/motbic2G9sZbwY3cfH4gK3byL4YPGz+YQT+44XRNPpR4o2JaqAtESaal+U3evhE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
+ PU4P216MB1880.KORP216.PROD.OUTLOOK.COM (2603:1096:301:d9::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.28; Thu, 25 Jul 2024 06:10:50 +0000
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07%4]) with mapi id 15.20.7784.020; Thu, 25 Jul 2024
+ 06:10:50 +0000
+From: Nas Chung <nas.chung@chipsnmedia.com>
+To: mchehab@kernel.org,
+	hverkuil@xs4all.nl,
+	bryan.odonoghue@linaro.org,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Nas Chung <nas.chung@chipsnmedia.com>
+Subject: [RESEND v3 0/3] Change V4L2_TYPE_IS_CAPTURE condition
+Date: Thu, 25 Jul 2024 15:10:31 +0900
+Message-Id: <20240725061034.461-1-nas.chung@chipsnmedia.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SE2P216CA0009.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:117::15) To SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-Content-Language: en-GB
-To: Leon Hwang <hffilwlqm@gmail.com>, Zheao Li <me@manjusaka.me>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725051511.57112-1-me@manjusaka.me>
- <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
- <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SL2P216MB1246:EE_|PU4P216MB1880:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb934cbd-9a56-4a29-f842-08dcac708888
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FPZuYG8ck5dj9WNlgFtNyCuYSK1JbKR4t0lTFRjlanjVVxeAayTBIOxEhijh?=
+ =?us-ascii?Q?DwguV7OQgRvx6Ipv1UBpCofnmPhNyEbC2OhWBjadV4yHYvMFlgmytJb05Kak?=
+ =?us-ascii?Q?mwzPmcH1JaWVZvDdujFMomqsfPG+7OpxlhtiXdjkswM3ekd+ewR2prPjBOgq?=
+ =?us-ascii?Q?PDKfMNBKNq5gC2FOSRHo+2VVNnj7ZVqKC0QkbX7uMw/OVDiVSRFDChLx3FnJ?=
+ =?us-ascii?Q?Me1aOTQaJdYErFY0Ff+SvWvs8hTN/eJEKesyxB3wr1uQOABgshgMMquSkE9R?=
+ =?us-ascii?Q?c3qLCm94CA7P5biILaINC1KVeE0SbM/Sdt1EmPRhgEbXAwtn1fpHzHPvac0W?=
+ =?us-ascii?Q?fqw/+96c49Pq3vNBTAuwfXsedfZ3pJMetu1FWMoHHjduh5XBg3gdrCR9TpUa?=
+ =?us-ascii?Q?7Zjysc/7hzowtUJuovknF7T0HQA7BOkmvPAKro5JiT/1+4NJP6SirvfU9aoi?=
+ =?us-ascii?Q?OAvLhF0QGC70MQBPSKOnOTCrp0TGy0tYapYhetMY5t8dpBoo1q8t9HSB/HmY?=
+ =?us-ascii?Q?JcIA3mPVXCMR7iRyIGgHS69w/iickqunAfOHcmXiIkkM3L/eVa8WbdMknwMD?=
+ =?us-ascii?Q?JZlxpgypit8PZ4RQqxE6KK/a84QwG3rgA7qWEors14Ux98PJz0hTDRuelEi8?=
+ =?us-ascii?Q?AvtgE8epp3Rh26bvD4UmibEvM+fvciisBo8gjhJmNN0aqnawFAZDUuZzc6yP?=
+ =?us-ascii?Q?BbVW4CSifsuqHoIobxVgUvoGPJgAsAD0jGRXoLqTRLJX/togqANg9k2bRf4v?=
+ =?us-ascii?Q?1HPW2y2vop9imnzV2MhD2M8nG8xLBq9qxbS/kh0Jq/jjkHGgDlF8UatgGe0z?=
+ =?us-ascii?Q?wygMKv5q3NLnaJmbYdM9/Ymyaz8mPg70hSRClVBoWejlrQORvWSrTeQKK6GY?=
+ =?us-ascii?Q?YZFFUIgffbgoRbKPnvPOR7WR+Q3bnXgmRgYwTHten6VOmHcbmgOvFD3Scxvf?=
+ =?us-ascii?Q?mgTfbZSwk4VwGrUERVdULhvzJ/T3KyVUmNob2+0eo6NsC6IA+j7Gg3WaCPKI?=
+ =?us-ascii?Q?vyO2wRNSGrNSHy9bz8mY38TwYcsjKLd68AOfl1yYoROe69CElA1hvyPR5TTl?=
+ =?us-ascii?Q?rQnJGy8Cbq8yVqTTJJg4ca351+SChYMT2bl1yCYlk36QHHvBAmPBWfHc9XZ9?=
+ =?us-ascii?Q?9bkxf/TLDVp6LznwB+/ss7/ww/VLVR1hbe1hCznKzrXJtACSDi5A4AvkkFij?=
+ =?us-ascii?Q?520+VvEoIGoXrIr7/bbf2jkJtVVa7nXlLkOQsLxOs+6yAqVXrpiV6lyQlv2G?=
+ =?us-ascii?Q?+7c2g59t6zHzah+bP3s2Cfjc70/ZVVtapp/E0KDDIeSvw+54QDJYhrGh3Kwk?=
+ =?us-ascii?Q?IWrfomWMxztHHKJgdjcBoBAJgfFQkHjmYZobdaa6jYeZBphN9vo9yT8Ggy7p?=
+ =?us-ascii?Q?wtBmc4M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?f7VIcQ875bAKzT5yp/y/mN8YPcK08cHESPEYyL+VGWPHiDCrMVeE9gQeYXbG?=
+ =?us-ascii?Q?XR6s11Em3st/Eh5Dq+SvfE0cYozJO6ZUO7RUz24oeB1L8sh531NXJJRWjqkJ?=
+ =?us-ascii?Q?hkCXamnrQ0IO5tGAJTb3fJjEEszmAgK+/gjp6x1sQOgUFCEOLF1zqA8AjZfF?=
+ =?us-ascii?Q?pzliXWJtCbLawc/nQgzjJjtybP+pyh0dNhtACtanShe6R13KQ38NFEA9j6JD?=
+ =?us-ascii?Q?hKwUMT1ko5MFSvPUrEAJfJq/7dDp5ZaDUchiTAzCi6hdrgDp/Uxrwqjb9T24?=
+ =?us-ascii?Q?840EbFiSlCW8en7BNtnFxWKEUtCfLYjKmsrnApmQIjuw5md2vG+TC2bB2b58?=
+ =?us-ascii?Q?Cxpvk3pnXBOOvr+xxi5LOYl2p3CXRraiAGEi7GfoAVQPSppTRT75jjylj14i?=
+ =?us-ascii?Q?D1UiCkMBbsfipLEFSNmYuyX6awASLOFupPAm2tANCCv/l0H+YTyhY2HLjsum?=
+ =?us-ascii?Q?kM1EzRY3bZj4khfwIPZi0tsQEm1jE57haHMk4frwoe+K9wAdoHemJrOh3aPu?=
+ =?us-ascii?Q?Ag8z1H03i44SGOau6afFyItTBs3CCU6w37SBZIzgUauPnjwJ072jzUxgMbn2?=
+ =?us-ascii?Q?GKLRf8wgEhZSPFQyvGTW1lq+LixKbXSn349Md0QznAi7kIZpq++Xao9DXIXY?=
+ =?us-ascii?Q?baZWxmrtHcrEfatr9zLvpMvldyu28qJaJ5Zwp75MrmlA9lc1oDiHGgmepM8f?=
+ =?us-ascii?Q?WoukZf0d0FYzC3nI2HrnVMDXDe5ihT0/pmkQ2keu9k2mKwFvIOb1ujygEll2?=
+ =?us-ascii?Q?FnhbfnAN161NFfJcC28zgjulXyfCCuzVDZCs9tGTCGQVMOeoDXqQqf77DeDZ?=
+ =?us-ascii?Q?SqL6JJFnycJFQNCD/SIJw/7DEWJMPv5qvdeRdOb0zOklV4QGiPpOdjeMauUf?=
+ =?us-ascii?Q?lv0vIwT6khw+pFU+IBs3xsWHjCB1sVYKGdXk64IQHSXfBGE+Q2eg0szBCCnV?=
+ =?us-ascii?Q?sEqM7QVjHuntN+/Fpknk1fZePbwPpT88rripbN2ep99OiZJ3LcGSSW/p790M?=
+ =?us-ascii?Q?gf25OAEf4DUcgNXuFl21H0k6v3QgtG49pLnY6mEXs91g+8aED4vhDt1EL4CU?=
+ =?us-ascii?Q?2TGfNYy3Gmw5Tj1l7qArk5CtfIJYim+7WC++MWY5+CO7iuf3sIzvziCKCufG?=
+ =?us-ascii?Q?TqIhpSGLdco68xYSEzMj2IJj5xitKdkijeHhqa4/9/V8ciKqsw4WnsxJByns?=
+ =?us-ascii?Q?Dlbz9v50Q9L0/hVd525fLQQP+aQMX20zoWpRWixCrsOmuSbxHsjlAD4JTcg0?=
+ =?us-ascii?Q?+f7fy4c3OcL0hg4zn7ZK7r6koxgNRbbICotRnbN36Nl1tDvu0teptkPDuyxe?=
+ =?us-ascii?Q?2F9LdIl7tUYREbyueI4YfCKIWm1wTJ3/v5dazZbWVjFu+XwMtTxeeFIf2ykb?=
+ =?us-ascii?Q?DaqzEoAGqCr8ZEdb6yEqYFt8vAkIJxYowX3f8ucwxqJVAbQAeTpax39kve+I?=
+ =?us-ascii?Q?MY81/20Y82Aa/MgsagDYuR8w/MwJJ+96PpgW9WiJm5v9u3c+pMVbqUeU7Ruj?=
+ =?us-ascii?Q?/2nsY2bsSGYuysexOUypdy5gTbRtXYAuY/bIKqw97JzqtQr9b8kjWIC54Xmx?=
+ =?us-ascii?Q?x6/NL6d+AU3BGOYpQDybmp6vuYgmYm1dC7e6cb+93A8Vq9o1zZo5KRVww8K7?=
+ =?us-ascii?Q?rg=3D=3D?=
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb934cbd-9a56-4a29-f842-08dcac708888
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 06:10:50.7835
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EcXSq5SMFOKoG9rp/9PN9ohUaFWp8SRYa1ZujMtRMu8SzMU0ysi+PdCSibw1Y72faRgtqqEj7LlUCbz53hdPx1GpVeLoq24Jy8SXX+9adlk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU4P216MB1880
+
+Hi, All.
+
+I'm resending v3 patch series submitted on
+https://lore.kernel.org/all/20240604051120.9441-1-nas.chung@chipsnmedia.com/
+
+I have included a cover letter to provide additional context and
+facilitate the review process.
 
 
-On 7/24/24 11:05 PM, Leon Hwang wrote:
->
-> On 25/7/24 13:54, Yonghong Song wrote:
->> On 7/24/24 10:15 PM, Zheao Li wrote:
->>> This is a v2 patch, previous Link:
->>> https://lore.kernel.org/bpf/20240724152521.20546-1-me@manjusaka.me/T/#u
->>>
->>> Compare with v1:
->>>
->>> 1. Format the code style and signed-off field
->>> 2. Use a shorter name bpf_check_attach_target_with_klog instead of
->>> original name bpf_check_attach_target_with_kernel_log
->>>
->>> When attaching a freplace hook, failures can occur,
->>> but currently, no output is provided to help developers diagnose the
->>> root cause.
->>>
->>> This commit adds a new method, bpf_check_attach_target_with_klog,
->>> which outputs the verifier log to the kernel.
->>> Developers can then use dmesg to obtain more detailed information
->>> about the failure.
->>>
->>> For an example of eBPF code,
->>> Link:
->>> https://github.com/Asphaltt/learn-by-example/blob/main/ebpf/freplace/main.go
->>>
->>> Co-developed-by: Leon Hwang <hffilwlqm@gmail.com>
->>> Signed-off-by: Leon Hwang <hffilwlqm@gmail.com>
->>> Signed-off-by: Zheao Li <me@manjusaka.me>
->>> ---
->>>    include/linux/bpf_verifier.h |  5 +++++
->>>    kernel/bpf/syscall.c         |  5 +++--
->>>    kernel/bpf/trampoline.c      |  6 +++---
->>>    kernel/bpf/verifier.c        | 19 +++++++++++++++++++
->>>    4 files changed, 30 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
->>> index 5cea15c81b8a..8eddba62c194 100644
->>> --- a/include/linux/bpf_verifier.h
->>> +++ b/include/linux/bpf_verifier.h
->>> @@ -848,6 +848,11 @@ static inline void bpf_trampoline_unpack_key(u64
->>> key, u32 *obj_id, u32 *btf_id)
->>>            *btf_id = key & 0x7FFFFFFF;
->>>    }
->>>    +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
->>> +                        const struct bpf_prog *tgt_prog,
->>> +                        u32 btf_id,
->>> +                        struct bpf_attach_target_info *tgt_info);
->> format issue in the above. Same code alignment is needed for arguments
->> in different lines.
->>
->>> +
->>>    int bpf_check_attach_target(struct bpf_verifier_log *log,
->>>                    const struct bpf_prog *prog,
->>>                    const struct bpf_prog *tgt_prog,
->>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
->>> index 869265852d51..bf826fcc8cf4 100644
->>> --- a/kernel/bpf/syscall.c
->>> +++ b/kernel/bpf/syscall.c
->>> @@ -3464,8 +3464,9 @@ static int bpf_tracing_prog_attach(struct
->>> bpf_prog *prog,
->>>             */
->>>            struct bpf_attach_target_info tgt_info = {};
->>>    -        err = bpf_check_attach_target(NULL, prog, tgt_prog, btf_id,
->>> -                          &tgt_info);
->>> +        err = bpf_check_attach_target_with_klog(prog, NULL,
->>> +                                  prog->aux->attach_btf_id,
->>> +                                  &tgt_info);
->> code alignment issue here as well.
->> Also, the argument should be 'prog, tgt_prog, btf_id, &tgt_info', right?
->>
->>>            if (err)
->>>                goto out_unlock;
->>>    diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
->>> index f8302a5ca400..8862adaa7302 100644
->>> --- a/kernel/bpf/trampoline.c
->>> +++ b/kernel/bpf/trampoline.c
->>> @@ -699,9 +699,9 @@ int bpf_trampoline_link_cgroup_shim(struct
->>> bpf_prog *prog,
->>>        u64 key;
->>>        int err;
->>>    -    err = bpf_check_attach_target(NULL, prog, NULL,
->>> -                      prog->aux->attach_btf_id,
->>> -                      &tgt_info);
->>> +    err = bpf_check_attach_target_with_klog(prog, NULL,
->>> +                              prog->aux->attach_btf_id,
->>> +                              &tgt_info);
->> code alignment issue here
->>
->>>        if (err)
->>>            return err;
->>>    diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->>> index 1f5302fb0957..4873b72f5a9a 100644
->>> --- a/kernel/bpf/verifier.c
->>> +++ b/kernel/bpf/verifier.c
->>> @@ -21643,6 +21643,25 @@ static int
->>> check_non_sleepable_error_inject(u32 btf_id)
->>>        return btf_id_set_contains(&btf_non_sleepable_error_inject,
->>> btf_id);
->>>    }
->>>    +int bpf_check_attach_target_with_klog(const struct bpf_prog *prog,
->>> +                        const struct bpf_prog *tgt_prog,
->>> +                        u32 btf_id,
->>> +                        struct bpf_attach_target_info *tgt_info);
->> code alignment issue here.
->>
->>> +{
->>> +    struct bpf_verifier_log *log;
->>> +    int err;
->>> +
->>> +    log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
->> __GFP_NOWARN is unnecessary here.
->>
->>> +    if (!log) {
->>> +        err = -ENOMEM;
->>> +        return err;
->>> +    }
->>> +    log->level = BPF_LOG_KERNEL;
->>> +    err = bpf_check_attach_target(log, prog, tgt_prog, btf_id,
->>> tgt_info);
->>> +    kfree(log);
->>> +    return err;
->>> +}
->>> +
->>>    int bpf_check_attach_target(struct bpf_verifier_log *log,
->>>                    const struct bpf_prog *prog,
->>>                    const struct bpf_prog *tgt_prog,
->> More importantly, Andrii has implemented retsnoop, which intends to locate
->> precise location in the kernel where err happens. The link is
->>    https://github.com/anakryiko/retsnoop
->>
->> Maybe you want to take a look and see whether it can resolve your issue.
->> We should really avoid putting more stuff in dmesg whenever possible.
->>
-> retsnoop is really cool.
->
-> However, when something wrong in bpf_check_attach_target(), retsnoop
-> only gets its return value -EINVAL, without any bpf_log() in it. It's
-> hard to figure out the reason why bpf_check_attach_target() returns -EINVAL.
+v3 RESEND
+- Add a cover letter
 
-It should have line number like below in https://github.com/anakryiko/retsnoop
+v3
+- Adding a comment after "V4L2_BUF_TYPE_META_OUTPUT = 14,"
+- Fixing a build warning in the venus/vdec.c code
+- Removing V4L2_BUF_TYPE_VIDEO_OVERLAY in V4L2_TYPE_IS_OUTPUT()
 
-|$ sudo ./retsnoop -e '*sys_bpf' -a ':kernel/bpf/*.c' Receiving data... 
-20:19:36.372607 -> 20:19:36.372682 TID/PID 8346/8346 (simfail/simfail): 
-entry_SYSCALL_64_after_hwframe+0x63 (arch/x86/entry/entry_64.S:120:0) 
-do_syscall_64+0x35 (arch/x86/entry/common.c:80:7) . do_syscall_x64 
-(arch/x86/entry/common.c:50:12) 73us [-ENOMEM] __x64_sys_bpf+0x1a 
-(kernel/bpf/syscall.c:5067:1) 70us [-ENOMEM] __sys_bpf+0x38b 
-(kernel/bpf/syscall.c:4947:9) . map_create (kernel/bpf/syscall.c:1106:8) 
-. find_and_alloc_map (kernel/bpf/syscall.c:132:5) ! 50us [-ENOMEM] 
-array_map_alloc !* 2us [NULL] bpf_map_alloc_percpu Could you double 
-check? It does need corresponding kernel source though. |
+v2
+- Improve commit message
+- Add V4L2_TYPE_IS_VALID(type) macro
 
->
-> How about adding a tracepoint in bpf_check_attach_target_with_klog()?
-> It's to avoid putting stuff in dmesg.
->
-> Thanks,
-> Leon
->
->
+Nas Chung (3):
+  media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
+  media: qcom: venus: Fix uninitialized variable warning
+  media: uapi: v4l: Fix V4L2_TYPE_IS_OUTPUT condition
+
+ drivers/media/platform/qcom/venus/vdec.c |  2 +-
+ include/uapi/linux/videodev2.h           | 11 +++++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
+
 
