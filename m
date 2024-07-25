@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-262559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC41993C899
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0587393C89D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657C0282612
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:08:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A5C282F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9A3BBC2;
-	Thu, 25 Jul 2024 19:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334BB6FB8;
+	Thu, 25 Jul 2024 19:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJgrHf50"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JLu2BEAD"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8284C7B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BE925569
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721934492; cv=none; b=IevqC8XooB5stcMk0S3HGTvATuUusi1KrbL0cEYBSqujX52yCyl46OZrQ1Pc1Oo+ftYVVCnz9y9m39cTg4RJ/bPCEr328sTNQJzHzReRSKkXL7XDwWMZM51aV3jjFsHjr7xpNi2M97ogOyukFkOy8Wu83eGBto7dk+W4uVpBoH8=
+	t=1721934637; cv=none; b=uZ0FijeWkbRKFHFq0/osRUy7jYItFZuH0lxGUQh/Z3eVYnDlxJavZEe2mWwvRcBx/0RHdk1NcKdD4IK7aTa5iHJ2FK0TqRvZN3ZJVCmEZqYMMoC3Foh29lbyCj48PS5uEqjYyAmLSiGNTt+JWxrmzKYMFjbIVhbbAYPLMUHmufg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721934492; c=relaxed/simple;
-	bh=kSttdvFfGUyyYoHoZCW5LJkXQf4weGf5yS33OSA1WYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rOIaBnm6RYmQsSjIet/zZj1BzMTgvBpWvBD3qEAV4ltg8dEsFfEfAUdWJ2pqvQyxtn9LTZ3UU+Fah6mntMNoQvX8lhoYvsL6pY0iqDTla2x3RZvVLrEnVWlN2Fyx8T4yi0FZre8X7oDJZlOU4beq4mIr8hKP5zVW9ZmKpnNGaRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJgrHf50; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721934489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AofTLwe2CDTumu2oM3peD/cu5gWmuIeEi3JZIBTIQxM=;
-	b=CJgrHf501OnnkH7l2614HN/tM1wav/FkugDbh7rHE0QkyBbd8DrLwPv5iFIlPu67cVH9DQ
-	vZ6kzC3pG4UrQ1s3WT2vgmky06lrOvHiGEmlSvdyf9qdFrgCcOpeoPPje3S0iwPgKWux9I
-	8FHqxHstfwAjD/4C1eLJ3gnT5XIhGyY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-saHPERMgOu2UC_-lq3-56w-1; Thu,
- 25 Jul 2024 15:08:03 -0400
-X-MC-Unique: saHPERMgOu2UC_-lq3-56w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7AAFA1955F42;
-	Thu, 25 Jul 2024 19:08:01 +0000 (UTC)
-Received: from [10.2.16.78] (unknown [10.2.16.78])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 52CD11955F40;
-	Thu, 25 Jul 2024 19:07:57 +0000 (UTC)
-Message-ID: <b45c24d2-98ee-4ecc-8d7d-6ac5dfa65c17@redhat.com>
-Date: Thu, 25 Jul 2024 15:07:56 -0400
+	s=arc-20240116; t=1721934637; c=relaxed/simple;
+	bh=0+K5df3pYW8anY0W7obHsaG3gVTkwY1s5smtjcmRj0M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uWXWl+6ZPBiOCHz7CSBJpPpes9spwGjH4tXcPp6VDXG4Qmbe/JUvfkXc9bKVWDTk4infr8u+YVSy4oK2cH5RXVwV6h34DD+SYtBqkB4UhMyxAoWiHpcI1UikAmeh2ZjVc0609VRFNnXuZwHXCen8mSANV43hy/EA4dGPd2Sgueo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JLu2BEAD; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721934633; x=1722193833;
+	bh=+CMCti/PRpVhFuv6i+zLd7yDwT8XVdBoNnx76B9/VLg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JLu2BEADeyUSCboFFSVtM3xxwMnYlT+4DktTQ1ofiuZjuuErGYwSRDGX5CEInEVIo
+	 CZOoZXi7DMkabYi7oaoUMSC9+cm2IF5tbcvERTaepA9a1XWVNBxx3Tc4APMWhEUlW0
+	 qQrN2S00FulHLiyAReddRzjh/s9eUn1rydoeGonzquLq8ze6mMMKkFATgfVJaaI13o
+	 NeU7QLbFCiKg9hE9n4EVg3T+SSd0FXFAjUEec9pgnyVmDkveejTR78/n6wKOeIxaKT
+	 OK9ohY9MeHyRyBi0QgZFG2xKE19xXt7H0UhlC5FG4pZwcd1Nm+hJ5niu5rnCfNF301
+	 FPginJIo6A4lg==
+Date: Thu, 25 Jul 2024 19:10:27 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] Rust: support `CPU_MITIGATIONS` and enable `objtool`
+Message-ID: <6d898710-6864-4a1b-81d3-49a7dd41c166@proton.me>
+In-Reply-To: <20240725183325.122827-1-ojeda@kernel.org>
+References: <20240725183325.122827-1-ojeda@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 2583f17197da26fae3dcd7c623aa827bcef29f06
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup/cpuset: add dec_attach_in_progress helper
-To: chenridong <chenridong@huawei.com>,
- Kamalesh Babulal <kamalesh.babulal@oracle.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725015551.2221867-1-chenridong@huawei.com>
- <e5c92f54-d767-4e71-9f57-9352923bd3e7@oracle.com>
- <de6958aa-27f8-4baa-b76d-88266d009f81@huawei.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <de6958aa-27f8-4baa-b76d-88266d009f81@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 25.07.24 20:33, Miguel Ojeda wrote:
+> Hi,
+>=20
+> This is just v2 with the helper function suggested by Peter.
+>=20
+> I dropped Benno's and Alice's Tested-bys from the modified patch, just
+> in case, but the logic should be equivalent.
 
-On 7/25/24 07:40, chenridong wrote:
->
->
-> On 2024/7/25 19:01, Kamalesh Babulal wrote:
->>
->>
->> On 7/25/24 7:25 AM, Chen Ridong wrote:
->>> There are several functions to decrease attach_in_progress, and they
->>> will wake up cpuset_attach_wq when attach_in_progress is zero. So,
->>> add a helper to make it concise.
->>>
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>> ---
->>>   kernel/cgroup/cpuset.c | 28 +++++++++++++++-------------
->>>   1 file changed, 15 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>> index d4322619e59a..c241845694ac 100644
->>> --- a/kernel/cgroup/cpuset.c
->>> +++ b/kernel/cgroup/cpuset.c
->>> @@ -490,6 +490,17 @@ static inline void 
->>> check_insane_mems_config(nodemask_t *nodes)
->>>       }
->>>   }
->>>   +/*
->>> + * decrease cs->attach_in_progress.
->>> + * wake_up cpuset_attach_wq if cs->attach_in_progress==0.
->>
->> In the description, adding locking constraint of cpuset_mutex would 
->> be helpful.
->> Something like "cpuset_mutex must be held by the caller."
->>
-> Thank you, I will to that.
->>> + */
->>> +static inline void dec_attach_in_progress(struct cpuset *cs)
->>> +{
->>> +    cs->attach_in_progress--;
->>> +    if (!cs->attach_in_progress)
->>> +        wake_up(&cpuset_attach_wq);
->>> +}
->>> +
+I re-ran my tests and the results are the same as with v1.
 
-I would suggested a dec_attach_in_progress_locked() and a 
-dec_attach_in_progress() helpers. The dec_attach_in_progress() helper 
-acquires the cpuset_mutex and call dec_attach_in_progress_locked(). 
-Inside the dec_attach_in_progress_locked(), you can either add a comment 
-about requiring cpuset_mutex held or add a 
-lockdep_assert_held(&cpuset_mutex).
+Tested-by: Benno Lossin <benno.lossin@proton.me>
 
+---
 Cheers,
-Longman
+Benno
 
+> Cheers,
+> Miguel
+>=20
+> v3:
+>   - Added `is_rust_noreturn()` helper function (Peter).
+>   - Reworded a couple bits.
+>=20
+> v2: https://lore.kernel.org/rust-for-linux/20240724161501.1319115-1-ojeda=
+@kernel.org/
+> v1: https://lore.kernel.org/rust-for-linux/20231023174449.251550-1-ojeda@=
+kernel.org/
+>=20
+> Miguel Ojeda (6):
+>   rust: module: add static pointer to `{init,cleanup}_module()`
+>   x86/rust: support MITIGATION_RETPOLINE
+>   x86/rust: support MITIGATION_RETHUNK
+>   x86/rust: support MITIGATION_SLS
+>   objtool/rust: list `noreturn` Rust functions
+>   objtool/kbuild/rust: enable objtool for Rust
+>=20
+>  arch/x86/Makefile               |  7 ++++-
+>  rust/Makefile                   | 22 +++++++++------
+>  rust/macros/module.rs           | 12 +++++++++
+>  scripts/Makefile.build          |  9 +++++--
+>  scripts/generate_rust_target.rs | 15 +++++++++++
+>  tools/objtool/check.c           | 48 ++++++++++++++++++++++++++++++++-
+>  tools/objtool/noreturns.h       |  2 ++
+>  7 files changed, 103 insertions(+), 12 deletions(-)
+>=20
+>=20
+> base-commit: b1263411112305acf2af728728591465becb45b0
+> --
+> 2.45.2
 
 
