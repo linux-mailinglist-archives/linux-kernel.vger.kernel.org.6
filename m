@@ -1,70 +1,126 @@
-Return-Path: <linux-kernel+bounces-262339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75B693C445
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB4C93C449
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E913D1C2188B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 807D61F21CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061F719B5BE;
-	Thu, 25 Jul 2024 14:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D4319D090;
+	Thu, 25 Jul 2024 14:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y5diUdXP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoZZuPm3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FBD13DDB8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E41419D068;
+	Thu, 25 Jul 2024 14:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721918115; cv=none; b=ofGwgg2rqrebOdXJ+r8pWpy9jva43ZBSNG9FRQfNje8jQRo7JH4P+YL7E+rQBRTHufxOjUO3HhzS+zkUDGa83DOewBy0IkPhdlLVowVyIC+4dYtc4as62C4p0HDLtNj4hnUTi3Vy9D0BK/hLjqBu32Qp5k/AqkFMqS+otcFz/AQ=
+	t=1721918127; cv=none; b=YSbqOwos2Pg/xW39GTjeIZVOusXv/z3yWgpT4TdV/MJYe39KyeVNzz771CQ1u0+5FgRymOZYs2GP5UHnpN+hqRm8vdcQPIIC2PQcFsZWbzS/i+YMLI6mpdSr3OgTg7A061zoSJnAuNF3hIEKqrZOj1aXI8UlX22z/6TwTDkW5b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721918115; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1721918127; c=relaxed/simple;
+	bh=dWHk/SHpnPTKCLsDctksze4Kfo/ASX42EotFciliEv4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFS2C1uozeBMNWkkACQPDduDKGHW1ofE5JkB/MANFOaEgIpw5R/D5r1HoJIj6hFuyayM177M3O/wWlakses9KE/hgarTXheu5oznat9xxQOlDZqON6KFqkm/OyCkX4h5s1zztyUuWG7ND3XH5qCk1He4IeeUNc/9MzH85jE2VWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=y5diUdXP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=y5diUdXPPuvhwE9FGLv4sNTFzi
-	SvabJLtXcEIcRYIFRfD+h//JKZf1nJB8APaHOCtxDPhkqdPNooaapumxANE0Qy1lw9/sfoGthT5jP
-	sFjnS9CGNmoKeLUF6jA/qQZpz/xWKijNOTY2y4yINlsvvCTe3EcMJBeA2XjGdDAkciBOdk4bRQX5w
-	ZdmBxypCcbPjahhMYzs6QJIWlk03UeUQyQp75CcKETOP0IczVfNi72P/J6tn6VOI/C2yq7Pc7TSAW
-	sly87arB3C/C9LryVcuWjXarD7hMRPJ3hjZ1uEFry/YumRXZKYTeBlqMyFq1L9rRgNsWb/O562oTC
-	XxoVQzAA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWzYk-00000001I9v-3kHe;
-	Thu, 25 Jul 2024 14:35:10 +0000
-Date: Thu, 25 Jul 2024 07:35:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] tracing: remove tracing_is_on export
-Message-ID: <ZqJinqnSvkbxSGPn@infradead.org>
-References: <2024072508-freefall-headstand-7d47@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3zc2DyLCGQ2hqlTxroUVWUnPsyL+yPt98XcA7wC7A4sCqPZSsRq4ZD+w8QPkMfYYsUgp8+85CTlBf/79ZZZUz8/87cCIhPTNTUCUk1R2UxOerDydQV6NrAzxVtffDQSg0VKYAah1kao82ihWSPjGHimolSR28bTbCtOaaQK9hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoZZuPm3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B6D9C32782;
+	Thu, 25 Jul 2024 14:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721918126;
+	bh=dWHk/SHpnPTKCLsDctksze4Kfo/ASX42EotFciliEv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hoZZuPm3i0aH3yLncV6e7FXvyD9dOK0856uFSu9h35JDDJ7jdWL7E/VKnuTpU9Wfr
+	 UHL+O88SASJ4OvrzVMx1G35NtbFmbBx8svvT6Fu/tc1dlrZdf8F46rLf2JjWvalXT/
+	 qwqo0jHvGvzMmWpH/0ooLxBF4W8NArOA/S9hcraQMSK1VX9CaAGzBtDPy3y/Cak2xP
+	 xmbp3nH4YEy95AUz/yi6bhwmVJIcGGabMYi9ou/IXmfXfqPTPlHeGRdHDHXV64NpiP
+	 /2j9tqIjDGzUKbYcrkNQOr/eY1iCWWOGYLINx51Po9ekkoIO+3erQ3bslr3OuM2pnW
+	 iwR4dqhvMv4qQ==
+Date: Thu, 25 Jul 2024 15:35:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: pierre-henry.moussay@microchip.com
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/17] riscv: dts: microchip: add PIC64GX Curiosity Kit
+ dts
+Message-ID: <20240725-taco-jailbreak-6630da00cda4@spud>
+References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
+ <20240725121609.13101-18-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yPwJHk3tpKNwQYbJ"
+Content-Disposition: inline
+In-Reply-To: <20240725121609.13101-18-pierre-henry.moussay@microchip.com>
+
+
+--yPwJHk3tpKNwQYbJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024072508-freefall-headstand-7d47@gregkh>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: quoted-printable
 
-Looks good:
+On Thu, Jul 25, 2024 at 01:16:09PM +0100, pierre-henry.moussay@microchip.co=
+m wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+>=20
+> The Curiosity-GX10000 (PIC64GX SoC Curiosity Kit) is a compact SoC
+> prototyping board featuring a Microchip PIC64GX SoC
+> PIC64GC-1000. Features include:
+> - 1 GB DDR4 SDRAM
+> - Gigabit Ethernet
+> - microSD-card slot
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> ---
+>  arch/riscv/boot/dts/microchip/Makefile        |   1 +
+>  .../dts/microchip/pic64gx-curiosity-kit.dts   | 114 ++++
+>  arch/riscv/boot/dts/microchip/pic64gx.dtsi    | 616 ++++++++++++++++++
+>  3 files changed, 731 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/microchip/pic64gx-curiosity-kit.d=
+ts
+>  create mode 100644 arch/riscv/boot/dts/microchip/pic64gx.dtsi
+>=20
+> diff --git a/arch/riscv/boot/dts/microchip/Makefile b/arch/riscv/boot/dts=
+/microchip/Makefile
+> index e177815bf1a2..78ba2952a164 100644
+> --- a/arch/riscv/boot/dts/microchip/Makefile
+> +++ b/arch/riscv/boot/dts/microchip/Makefile
+> @@ -4,3 +4,4 @@ dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) +=3D mpfs-m100pfse=
+vp.dtb
+>  dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) +=3D mpfs-polarberry.dtb
+>  dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) +=3D mpfs-sev-kit.dtb
+>  dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) +=3D mpfs-tysom-m.dtb
+> +dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) +=3D pic64gx-curiosity-kit.dtb
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+s/MICROCHIP_// please. And a patch renaming the others would be neat too
+;)
 
+--yPwJHk3tpKNwQYbJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJiqgAKCRB4tDGHoIJi
+0pNIAQDsNaXHT+ww+2ANltZ46PqzzFdkcKcI6MA0PVMYZzWjnQD8DY1vvjdvMqQf
+W3/o/h02Wbut5DXZqtSm+FHFS7ISLgI=
+=ZQmA
+-----END PGP SIGNATURE-----
+
+--yPwJHk3tpKNwQYbJ--
 
