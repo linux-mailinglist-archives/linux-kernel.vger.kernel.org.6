@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-261862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DA693BD1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:28:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6CD93BD1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573491C215A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD1EB21428
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF3D16F830;
-	Thu, 25 Jul 2024 07:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7CD16F8E8;
+	Thu, 25 Jul 2024 07:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QpqeddnU"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GrjrbXOj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22A2171E73
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6041CA8A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892488; cv=none; b=lu/04H/fPemiqqU9kRcJGrRPYNBpeRn5G/mT/yEhcGVOg5s+n5+CHEq+Ro9GtQwSgcr8ydPUn9C9uDEEYQmdZVrFISzOcznTbdHCJtoJizmOKN9KI9h2x8xTEIoa7U4c35MCcAI7sRrXqNL2l13rAd0ZRAlj7/QEiQpTudOQr6Q=
+	t=1721892579; cv=none; b=Lbr7rLZu1wR6nwfEEjr6XAM1mstURvjLu0tw/QFKWdlMosgsoFIMmE8rqouqYQY3o6RKOWfDow4g+nagR3lH1WAVX6VJBEAIpBpKazybpjO9I6Mtka0bQD+/orq/e1K/7eOC2AbnA9fLd/VoxrnDcIPrgFA1C9xsxLMvvUA6v2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892488; c=relaxed/simple;
-	bh=TXOBc5RGZ07+uz9VYCDUS3ExxjW0iKxba918D4AYGB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D7NkKHPRMyL55qMJew1uQ2W6JNdPrdC5p6AdFy5/cW6Z2axTkXZPsxlANl7UUtWwl5NZQhv8SNRXy8wnOm8JJW1GWGxF86jMdXMWeZIZcFw04AfVK535JOfMtVEjbs/fgvRsrXlSStOqaKVwIvlULtryYRnfSZTmL8uPgvxs6ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QpqeddnU; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 450C91BF203;
-	Thu, 25 Jul 2024 07:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721892478;
+	s=arc-20240116; t=1721892579; c=relaxed/simple;
+	bh=d0JcjQ7PzPhrX7UMVBBk4qqjq91f9QiBucj6SkIpuN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcBLx6o6nYtmrWEwUPASikVibeW38vMqVAODEOjp26PBWK8OWFofEDolP1dBDxu6BIKJlgwrnCCUk7ct8GHvuWAi90qFNNiWYpZ0dvXi3Iu7D0uxUnvSm5yXkfpjVUfk03Pbc0rXIIC0rCGFhAFwMrFtahC/B9MtXU8Z6vVCAfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GrjrbXOj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721892576;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9/FpnzBli2yfcW7bypqre7oSlgbkhXnfElxFRUwfx8o=;
-	b=QpqeddnUcTQuicvzmYoQns2jCjWVzKCSm4VbPJ0Gy/qNcjyDInmpuzMKMhV8vVhJAEzE69
-	JvVExLnYdftFTGwE1C5d1nLh3nbd7K5HecqAMZe8IkjRjBEz+R/Ls07Et+mvjTdKGUYqQS
-	wmKfSvt5c9UBwQy4Ru36RfcphPt3iiIGJ4xFqwHc8YB5776qfLRyk6yWE/7jOaETS9RvdE
-	8IHL81X459c9f7KlARNB7PlwgvnMahfPvrbq5wvyto7cCScTNoQr/S8inOnH1oDsG+hXZQ
-	uK0nt5HVGZ7urv2NCuRRvBgBvmC3dkTuI2MdDn/Cy/fXf1P4vst6srApKI/uJQ==
-Date: Thu, 25 Jul 2024 09:27:57 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: LAN966X_OIC should depend on SOC_LAN966 ||
- MFD_LAN966X_PCI
-Message-ID: <20240725092757.2d062719@bootlin.com>
-In-Reply-To: <578dafcbdf8287e73dd30e96e23814b8c029ea96.1721719060.git.geert+renesas@glider.be>
-References: <578dafcbdf8287e73dd30e96e23814b8c029ea96.1721719060.git.geert+renesas@glider.be>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	bh=1pH7HnZMt21wFJEYp8Fh9822e+D5ZPDqcBqi6IuUnUM=;
+	b=GrjrbXOjigr9shVF/KTrD9cRKgE+puN4XLxUGZFyeVT4Ojdlgw4yCSo++57RYwE7Hq3yGK
+	W36ZL2e5Z0IDRdsnFRYdMhbq7yphhIEdNv2nig6Tzw6BFJGEa/Ho4+oUgb8tuqxMpzaTco
+	HdeM/a+gs72l72csf1Z7k/CiuNxKRFE=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-bbzqnDg3MgqRt5YqX8971g-1; Thu, 25 Jul 2024 03:29:32 -0400
+X-MC-Unique: bbzqnDg3MgqRt5YqX8971g-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b5de421bc6so8891606d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:29:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721892572; x=1722497372;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1pH7HnZMt21wFJEYp8Fh9822e+D5ZPDqcBqi6IuUnUM=;
+        b=syCmcIQf/fE9MWFSlaSQQJdtxlizJUbqqTaafYMQHCz8J9BZbiBSW7JM5t2mt3sHGY
+         meVDj7KbFqKGhZma56DlOQ7TdaP2WKVTToc+3/mUV6WlKBjIGhCU2esM4d1NB7pkv1yn
+         4PkUQczNRVRlZiYZyt8bFl12wQdiZKgdDq21P3sJbJx+K6dgL3HJeIHbocAd25csLkKb
+         zFXHWiBzCXAx+MygYmHbUjevt5tIdtYjXojBhOn9tn0mhfiUJABUQ3O+3T8r1Pk1KsjR
+         jSqWBKz7cI6BPwmLGBwjNtD1ot5vIy7/PiEKYd4hOcCHkffFRK11pCKmTPZT2qFViWUd
+         V9DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWjrf5uzb4NE3YmmTxjzKFtAgVBwptivzqZ3BWa2rXc93hUx6oJ5zgCgHlS0fBN2UAUrnOjiIO70VeRWpXHh5WVu7ZzF8up7Nmkd30
+X-Gm-Message-State: AOJu0YyTrq87olW/9/sRH6mXJxVzCeUiYlXzcijScEJk8O9ZwkLMgIJO
+	dalfKC6bxlZuCTAxmHxtk/T4RISJDqqtx4L7mjFT3OxK7OyCEUOT/2Gz0mZ2kxl6NvHC4WJmZn4
+	IEN4RcBIh9c4OvKmOUZ+lj5TVtOcs1zjMeGRYyk1Hw9dy23SQxfMo3d5feQ57bQ==
+X-Received: by 2002:a05:6214:2029:b0:6b7:a7ff:7b4a with SMTP id 6a1803df08f44-6bb3cad5a71mr26072346d6.46.1721892572097;
+        Thu, 25 Jul 2024 00:29:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwO8oiY53pBHmyd+hR5FHYIgHgSd27hC0p5tTZUSBOIdG0bNK75vJYrjlZQ0rISZGwv8KfpQ==
+X-Received: by 2002:a05:6214:2029:b0:6b7:a7ff:7b4a with SMTP id 6a1803df08f44-6bb3cad5a71mr26072246d6.46.1721892571860;
+        Thu, 25 Jul 2024 00:29:31 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.147.11])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8f63e7sm4352566d6.30.2024.07.25.00.29.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 00:29:31 -0700 (PDT)
+Date: Thu, 25 Jul 2024 09:29:26 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Wander Lairson Costa <wander@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] sched/deadline: fixes and improvements
+Message-ID: <ZqH-1o9pc062F-hG@jlelli-thinkpadt14gen4.remote.csb>
+References: <20240724142253.27145-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724142253.27145-1-wander@redhat.com>
 
-Hi Geert,
+Hi Wander,
 
-On Tue, 23 Jul 2024 09:17:53 +0200
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-
-> The Microchip LAN966x outband interrupt controller is only present on
-> Microchip LAN966x SoCs.  However, when used as a PCI endpoint, all
-> peripherals of the LAN966x SoC can be accessed by the PCI host.  Hence
-> add dependencies on SOC_LAN966 and MFD_LAN966X_PCI, to prevent asking
-> the user about this driver when configuring a kernel without Microchip
-> LAN966x SoC and PCIe support.
-
-I would expect a make olddefconfig silently disable LAN966X_OIC.
-This is not the case ?
-
+On 24/07/24 11:22, Wander Lairson Costa wrote:
+> Hello,
 > 
-> Fixes: 3e3a7b35332924c8 ("irqchip: Add support for LAN966x OIC")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> The patch defining MFD_LAN966X_PCI has not been accepted yet.
-> Hence my initial thought was to add a dependency on PCI instead, but
-> that wouldn't make much sense, as the OIC driver cannot be used without
-> the MFD driver anyway.  Alternatively, the MFD_LAN966X_PCI dependency
-> could be dropped for now, requiring a follow-up patch later.
+> This patch series addresses specific issues and improvements within
+> the scheduler's deadline (DL) class. The patches aim to fix warnings,
+> remove redundant checks, and consolidate timer cancellation logic for
+> better consistency and code quality.
 > 
-> "[PATCH v2 18/19] mfd: Add support for LAN966x PCI device"
-> https://lore.kernel.org/all/20240527161450.326615-19-herve.codina@bootlin.com/
-> ---
->  drivers/irqchip/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> Patch 1: Fix warning in migrate_enable for boosted tasks
 > 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index bac1f0cb26e67a2b..b8d5ca3183824c93 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -171,6 +171,7 @@ config IXP4XX_IRQ
->  
->  config LAN966X_OIC
->  	tristate "Microchip LAN966x OIC Support"
-> +	depends on SOC_LAN966 || MFD_LAN966X_PCI || COMPILE_TEST
->  	select GENERIC_IRQ_CHIP
->  	select IRQ_DOMAIN
->  	help
+> Fix a warning caused by unnecessary calls to setup_new_dl_entity for
+> boosted tasks during CPU migate_enable calls.
+> 
+> Patch 2: sched/deadline: Consolidate Timer Cancellation
+> 
+> Consolidate timer cancellation logic into dedicated functions,
+> ensuring consistent behavior and reducing code duplication.
+> 
+> Changelog
+> ---------
+> 
+> v2:
+> * Drop patch to remove the redundant WARN_ON call.
+> * Change the "Fixes" tag in the patch 1.
+> * Change function names in the patch 2.
+> 
+> Wander Lairson Costa (2):
+>   sched/deadline: Fix warning in migrate_enable for boosted tasks
+>   sched/deadline: Consolidate Timer Cancellation
+> 
+>  kernel/sched/deadline.c | 45 ++++++++++++++++++++++++++---------------
+>  1 file changed, 29 insertions(+), 16 deletions(-)
 
-SOC_LAN966 is used only for the SOC mode of the LAN966x.
-In that case, the LAN966x OIC driver is not used. Indeed, this
-driver is used only in LAN966x PCI endpoint mode.
+Looks good to me now.
 
-depends on MFD_LAN966X_PCI is indeed correct but, as you mentioned
-it, patch defining MFD_LAN966X_PCI has not been accepter yet and
-MFD_LAN966X_PCI is probably going to be renamed (the driver is
-going to move from drivers/mfd to drivers/misc).
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
+Thanks!
+Juri
 
-Best regards,
-Hervé
 
