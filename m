@@ -1,103 +1,192 @@
-Return-Path: <linux-kernel+bounces-262311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C61793C3EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:19:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C6A93C3F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B0A1F22E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA6E281013
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3113119D069;
-	Thu, 25 Jul 2024 14:18:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DC119AD94
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B91B19D884;
+	Thu, 25 Jul 2024 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zcFW9nQ7"
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B19B19D06E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917136; cv=none; b=CxTmoyUuxSRpX4sd4YkAacNmhHUNc54Crf6ZO6Y6OYSwcbmF4GgWHRUk4IKdQ2e/5rMKSYqkz5ET3BKy+mIzBcWe7SvTA9QfdxmN2fwDNv+qHmmCHpkK1zuTZ9QUrZIH/IJ71OwYbsVWE6rWhIs8FEGou/tPEIdwCXOYrweaEY8=
+	t=1721917152; cv=none; b=J449OqPgHiD3QPds5E1UKcyPQbxiM1TjTfaRzSak6qcwA4J9x6la1wFQYewEf7nBPmRYAqqBG+qNMNESAZyVrl+v5wTfzqSS5SDgyvr5ZjfpXa6iNpi0Shj23laZlicG9yOmzLwT5di97TmfngLr7id0ezTs0d4JtEM+GTIBRkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917136; c=relaxed/simple;
-	bh=48+AwyM1NnP2TJNuZ7+Ry6RqItTHU1eayrqC+q7FuDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SCwHOY1YTRSOSD16CxlR17DkBNRdsWZ1Qpd8n+KHUEwC8Sem6Lv52IM0xvMaovi9xvbUqpOQomKGOxglFFCfP8UhulQO026e9pRIkmKHIgI//dyKVSEIt71Oyrfyy+Ap2rsUo5PtJsk9tGT36lFbAYAErVTFepGpe55NLfKYPIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B534B1007;
-	Thu, 25 Jul 2024 07:19:19 -0700 (PDT)
-Received: from [10.57.93.214] (unknown [10.57.93.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26DA53F73F;
-	Thu, 25 Jul 2024 07:18:51 -0700 (PDT)
-Message-ID: <1152aa46-281a-42c1-bcb1-42aee8fa9368@arm.com>
-Date: Thu, 25 Jul 2024 15:18:50 +0100
+	s=arc-20240116; t=1721917152; c=relaxed/simple;
+	bh=cyEcSr+BhonFVEnaLt8EGxFa7DNtRZULsVk42jLsu3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTu+xZk6/m2x8820XXFqcPOjx/JgYK4I8cFKp3Y9k/VIir8oa0qcIeAEPv6FZYw+vH5S81RUg9wu6di5XgyPRrGi0D1K7OCYZpHPxc4Lvuh2+orNLHuq2u+Aw+2OVC4hVccZUBYVeSp1lpkFBfy2tKMrTsfrZZ0j1vctiXfwWPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zcFW9nQ7; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVCg75W6Vz6mt;
+	Thu, 25 Jul 2024 16:18:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721917139;
+	bh=A637sdMYYX6WYQ5znC+hqJDdcWKIM518ApZarQd9nwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zcFW9nQ7pI98dhdsjoDJXcYXA0xWq1pKaQp2dgMZRLQPY1XICzqreGW5nNnFNVt9g
+	 t+xSTi5rrQEj9HyDotsxUooDtgmwl0jAXhouWM8GVVlnzyWcX7D04UyT8auVzoKKez
+	 a7hN/QlVDcWRJMq3msmH2ZWUQvkMYuomZjUzRTZc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVCg71zk6zwKy;
+	Thu, 25 Jul 2024 16:18:59 +0200 (CEST)
+Date: Thu, 25 Jul 2024 16:18:57 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] samples/landlock: Support abstract unix socket
+ restriction
+Message-ID: <20240725.dei1Kaimi8ze@digikod.net>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <4f533a80d56d9f57d50a87d55101cfdeb03404c3.1721269836.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/pelt: Use rq_clock_task() for hw_pressure
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Juri Lelli <juri.lelli@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
- kernel test robot <oliver.sang@intel.com>
-References: <20240725114200.375611-1-yu.c.chen@intel.com>
- <38a631cf-1f6d-4d68-887a-12c7c5808ebf@arm.com>
- <ZqJafRf/fM/whI+6@chenyu5-mobl2>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <ZqJafRf/fM/whI+6@chenyu5-mobl2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4f533a80d56d9f57d50a87d55101cfdeb03404c3.1721269836.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 25/07/2024 15:00, Chen Yu wrote:
-> Hi Hongyan,
+On Wed, Jul 17, 2024 at 10:15:21PM -0600, Tahera Fahimi wrote:
+> - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
+>   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
+>   unix sockets.
+> - Change to LANDLOCK_ABI_LAST to 6.
 > 
-> On 2024-07-25 at 14:16:30 +0100, Hongyan Xia wrote:
->> On 25/07/2024 12:42, Chen Yu wrote:
->>> commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
->>> removed the decay_shift for hw_pressure. While looking at a related
->>> bug report, it is found that this commit uses the sched_clock_task()
->>> in sched_tick() while replaces the sched_clock_task() with rq_clock_pelt()
->>> in __update_blocked_others(). This could bring inconsistence. One possible
->>> scenario I can think of is in ___update_load_sum():
->>>
->>> u64 delta = now - sa->last_update_time
->>>
->>> 'now' could be calculated by rq_clock_pelt() from
->>> __update_blocked_others(), and last_update_time was calculated by
->>> rq_clock_task() previously from sched_tick(). Usually the former chases
->>> after the latter, it cause a very large 'delta' and brings unexpected
->>> behavior. Although this should not impact x86 platform in the bug report,
->>> it should be fixed for other platforms.
->>
->> I agree with this patch but I'm a bit confused here. May I know what you
->> mean by 'should not impact x86 platform in the bug report'? But it closes a
->> bug report on qemu x86_64, so it does have an impact?
->>
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  samples/landlock/sandboxer.c | 25 +++++++++++++++++++------
+>  1 file changed, 19 insertions(+), 6 deletions(-)
 > 
-> It should not have any impact on x86_64. I added the bug link here because I checked
-> the code while looking at that report. But that report might be false positve,
-> or at least not caused by this logic introduced by this commit, because
-> CONFIG_SCHED_HW_PRESSURE was not even set in the kernel config[1]. Maybe I should
-> remove the 'reported-by' and 'closes' tags?
-> 
-> [1] https://download.01.org/0day-ci/archive/20240709/202407091527.bb0be229-lkp@intel.com/config-6.9.0-rc1-00051-g97450eb90965
-> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index e8223c3e781a..d280616585d4 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -14,6 +14,7 @@
+>  #include <fcntl.h>
+>  #include <linux/landlock.h>
+>  #include <linux/prctl.h>
+> +#include <linux/socket.h>
+>  #include <stddef.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> @@ -55,6 +56,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+>  #define ENV_FS_RW_NAME "LL_FS_RW"
+>  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+>  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> +#define ENV_SCOPED_NAME "LL_SCOPED"
+>  #define ENV_DELIMITER ":"
+>  
+>  static int parse_path(char *env_path, const char ***const path_list)
+> @@ -208,7 +210,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  
+>  /* clang-format on */
+>  
+> -#define LANDLOCK_ABI_LAST 5
+> +#define LANDLOCK_ABI_LAST 6
+>  
+>  int main(const int argc, char *const argv[], char *const *const envp)
+>  {
+> @@ -216,6 +218,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	char *const *cmd_argv;
+>  	int ruleset_fd, abi;
+>  	char *env_port_name;
+> +	char *env_scoped_name;
+>  	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
+>  	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+>  
+> @@ -223,14 +226,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		.handled_access_fs = access_fs_rw,
+>  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
+>  	};
+>  
+>  	if (argc < 2) {
+>  		fprintf(stderr,
+> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+>  			"<cmd> [args]...\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"Execute a command in a restricted environment.\n\n");
+>  		fprintf(stderr,
+> @@ -251,15 +255,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		fprintf(stderr,
+>  			"* %s: list of ports allowed to connect (client).\n",
+>  			ENV_TCP_CONNECT_NAME);
+> +		fprintf(stderr, "* %s: list of allowed restriction on IPCs.\n",
 
-Yeah, it might be a good idea to remove the link to avoid confusion, 
-like you said HW pressure is not compiled in.
+"allowed restrictions" or "restrictions"?
 
-Even if there is pressure support, before your patch the big 'delta' 
-should only result in a HW pressure value that decays more than it 
-should, and should not be able to block tasks like in that bug report, 
-so it's very likely that it's unrelated.
+> +			ENV_SCOPED_NAME);
+>  		fprintf(stderr,
+>  			"\nexample:\n"
+>  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>  			"%s=\"9418\" "
+>  			"%s=\"80:443\" "
+> +			"%s=\"a\" "
+>  			"%s bash -i\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"This sandboxer can use Landlock features "
+>  			"up to ABI version %d.\n",
+> @@ -326,7 +333,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	case 4:
+>  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+>  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> -
+
+No need to remove this line.
+
+> +		__attribute__((fallthrough));
+> +	case 5:
+> +		/* Removes IPC scoping mechanism for ABI < 6 */
+> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+
+There is an inconsistency here, please take a look at previous similar
+changes.
+
+>  		fprintf(stderr,
+>  			"Hint: You should update the running kernel "
+>  			"to leverage Landlock features "
+> @@ -357,7 +367,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		ruleset_attr.handled_access_net &=
+>  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>  	}
+> -
+> +	/* Removes IPC scoping attribute if not supported by a user. */
+> +	env_scoped_name = getenv(ENV_SCOPED_NAME);
+> +	if (!env_scoped_name)
+> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+>  	ruleset_fd =
+>  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>  	if (ruleset_fd < 0) {
+> -- 
+> 2.34.1
+> 
+> 
 
