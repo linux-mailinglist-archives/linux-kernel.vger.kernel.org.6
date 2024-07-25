@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-262000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F35D93BF2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:38:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B25793BF3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F1B2819E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4DDB216F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1D1198825;
-	Thu, 25 Jul 2024 09:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF6E19883B;
+	Thu, 25 Jul 2024 09:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NkpYvZVZ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iYp9Z+9l"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C49119882E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCA41741FE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721900317; cv=none; b=SUpJQ4C+sc6PMq51M5Uf7CpEYEhHVcLBPWkG8jcyZePy9yci9K43rVP9YQh1O2D0wAyRTDo/8d2Q11gEiLQpHAdb4k7MJ0Mgq1G/YNib2pMt2NNGs+mn+AQ6m08vyn3rMoXmb4UKm4DGyiFDTngCiNR0KC8oldmIfZNv+QX6vw4=
+	t=1721900623; cv=none; b=F2GhLQtzjOCThNMhYQZLwlx/PJAE3g/oQxwejfIkDLyemrDGJoSOLiy9FB0CI6lR5hP5utW1ODXP3sNJyyCA/1ax6uwp4J9jLl5Hp1SiFTFaSXu2VaKxK27P5Ag3sX1vmlP/wmwu/UEuKrzMkemJaURnqybEzzHBYi3FimsKZ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721900317; c=relaxed/simple;
-	bh=hb9nkF2epFQFHjaDtYLTuSh5dWNP8eOlbA6nvUSQKwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oARJwL72bl8LHiqHrpSQm0OQYbjUC3qDY3qi2adJwdsGuXdtfigztgSnzqMcO4N9bQpZvYwZX/iqfzuFfiddaiqJcdskfY77IceeLgqOwddVIGuCvwOB8xODVTE7np25t/uWZm2qjMrcKRQRPAaK0VgzoXSna8ErO/WvxwjTr1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NkpYvZVZ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6fd513f18bso31378566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:38:35 -0700 (PDT)
+	s=arc-20240116; t=1721900623; c=relaxed/simple;
+	bh=OfRkrMGGgNibJB9z9Co5Oyh5Kyaj4J7TqHXMn4wIC+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqHLZ7JT27+GeRejUIxfji8xG4aXHPdJwEgMxmxEMn/BZys6JaVdy40FbtTbVZjfUzs4/cIyaaiKUR1Iayw/A2SV7wx9a2FxBPqUEHFeoKht8Bf6pqK8vyY1FDghDjj76fWPAzd8i+xpa54S/JiW7mozeNXvYkkZClDEfXoIjN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iYp9Z+9l; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-427b1d4da32so10212805e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 02:43:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721900314; x=1722505114; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oW2kUzY/zrUY3o3SxhYU0xffCdGPSOZ86O2BpsusKg0=;
-        b=NkpYvZVZTTYiHJOVSvVF/DH4wjuyXWXv6Mnx/Yok6FIHhNwwfcFVwv5ZEo5rJm+g6o
-         xZzfJtUYPLHhcP4EPPo7mQ+6CpH3cdNnZMXdTUF6+pnJD3YZGpBXlYWXaxCS4ZEi/Gtp
-         b3900cN/QnDISXI6Z/gQ8eSyBaJcVnXfS+xRspN17BM3nwQEcJZ3+gpm0c7aFp92K7pe
-         8HfdHMG7G0PRzFPmTDofvLbFGRqWVfXP0aPXxXUJ5KAiAiHStqkTx1cdM7/8Bgze45eV
-         PMBp4/LD1ixPP8K6TWaQqwoKiCFcknamATCLDm/QgCkLlAui/0hs9UZxJzkDCLlamRAI
-         73Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721900314; x=1722505114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1721900620; x=1722505420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oW2kUzY/zrUY3o3SxhYU0xffCdGPSOZ86O2BpsusKg0=;
-        b=HYIGf4KcNbqWQbYB1jkokJt+Vx4Ye0kPHLjQfuuLZQNvY8FaSWJmZwS6OaLywaxR1W
-         MZOtyi/uQ+6IDrPTgqHY96qmHK7lF5JB32oFDrhISlTfaazvoNMySNnZm4KtJIEGpmCE
-         cNXQObPMimT18+0qd0yuVRQlucnUlgmRnIWWHzU3mleYWhTtoZXW2XGhX/cDm21EUQ4y
-         972FWeuavpbGrblcABWiCnH72xsnsmuMaqQw44nRWfGxDc4qlsQdB+WOuWYtgeEMBWq3
-         3tz8L5DoiaFfOSiSDmQWm2Ar5qNi5pH/prYPpinglaiUP6QnXhbIR9umBZEVDzfMD++x
-         +6yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQTnrLV1wkGWT0O/KS6ObeELJN2YTCPvBTjdypLdbdBJnaJ/EGKN+Kx3ao3Qza24VF5HCGkhg3tnokvXM8iIARAfddwKu0aS2fJmaN
-X-Gm-Message-State: AOJu0YzG5e3JzYuLFX0sDU8hNIHFkiAnPMtXYmMKDeep89J9zmyK82mp
-	0bdiYn5Yl5KrBSxSlQL+mkYWE8ZRHnasIoB44XqJFeNom4sG0jwLft3uOexYca9OSJHNjSi0gFI
-	mRh8=
-X-Google-Smtp-Source: AGHT+IECWpI5VnoSqnkn5P0EW43K3U3vSJvnZ8eWqaDqIzUWXmrhMeFaRkO1vIkoocBUmFGFlXDnzw==
-X-Received: by 2002:a17:906:c145:b0:a7a:a138:dbc1 with SMTP id a640c23a62f3a-a7acb3f02e1mr107001066b.20.1721900313753;
-        Thu, 25 Jul 2024 02:38:33 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4116fsm52574866b.103.2024.07.25.02.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 02:38:33 -0700 (PDT)
-Date: Thu, 25 Jul 2024 11:38:31 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: xiujianfeng <xiujianfeng@huawei.com>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH v5 2/5] cgroup/pids: Make event counters hierarchical
-Message-ID: <hs3oag7blyg5kkdu6ikbw7f6hefkdfk2qgqqnpothq7yx4qsts@gv2v4dbpfmv6>
-References: <20240521092130.7883-1-mkoutny@suse.com>
- <20240521092130.7883-3-mkoutny@suse.com>
- <f124ce60-196e-2392-c4a9-11cdcacf9927@huawei.com>
- <cb0efc16-6df2-72b7-47ea-ce524d428cc1@huawei.com>
+        bh=084GPfdeuP46Jz6Dyrdsi8DzZT3jnbvpNucHJZ1TuaA=;
+        b=iYp9Z+9lo2Uo2yb2ZX65AhT1LXOZ7NhKsLiJmlLfttNBUDKPOsLqrm//gEpQfDu5GJ
+         ebCGmyojB9bR92eXCaLLdZVgTb03fibtsPRPrIjJ2+pGXCgsZKbZ/mi0989O47IloXmR
+         nqaDZpyUbmjA6aLjwdX+dGURagKwF/84nl5cmDcMNc4UrdKlIxNx5YnkaRq5JcrTap+s
+         mzvybc5TP8uXA1O0ERowcthPUU0rD4npO8AbxshEMxwW+nz9vFHz6ec4Iz7a9aPAlh0a
+         C1sON7N1Ae6iwlOWBNFya2YvNOJjfX5mCkmHHxo/AJUSTWBvzr3Gb0my7WcsByr22reJ
+         PERQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721900620; x=1722505420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=084GPfdeuP46Jz6Dyrdsi8DzZT3jnbvpNucHJZ1TuaA=;
+        b=BfDuuI50nK/XXGg+Vknw4TldXF7FvrJoOvDAwO4n2iMbt0KILPPyibUBwlp+lq7i/l
+         VIWE64jiVWCJ3VOF3x0TgyIR2Yn3NfDcduPZ3sWbMvxruEMUJ/OoPsZZrmfln/e0WrLU
+         ccYsfOBZRpolupdbjiADyOMq3JRxB2B9mEk1Tj79bf/KF8o/IaOqYM7igFTR3gtiFKbR
+         HfclgE87VmW1ZY80u5HNqjpbWaSAngN4O4xs3NuP+rfYJf7mhgap/NyVVXL5nDc7Q2+s
+         29Zuq2PrHiHuGJ5mbO5LI0+OCH9KjXXchR2nUOGrQoWOlkiIILLfo/vpFfcfKqPMR5CZ
+         pCiw==
+X-Forwarded-Encrypted: i=1; AJvYcCX01d9JE/jrKpUG21hvcufSSa3gqKYZ1TkKHcYkEddcm0IPxuPRr+aQx9h6fBQqLAoONhwcJ+UOduB8G3j4DU/WFWB7ItZQ9FutjKKg
+X-Gm-Message-State: AOJu0YxcgijPYS6TNzKVtuYPaRbuW4AkKOxP0utKTaAVeXlYDLufiT2e
+	4fADtjZe9yokUU9Afws4DppjscVG4LntjWauC7Quesysfr6NoVRjKtTPb/llF8+oGI1xnyLOLw1
+	nCYdILRl8iPuwu1xDghP71WFO7tL50uNjygyb
+X-Google-Smtp-Source: AGHT+IE6X14IZDQ5Pvi0EHuAL+bLPA+DtdyDVXsBLCAhdXaKVx0/zepn3uPZTG5qlk+pSFE1iO35aByaX/zvkbfjpw4=
+X-Received: by 2002:a05:6000:b81:b0:360:8c88:ab82 with SMTP id
+ ffacd0b85a97d-36b31baa2d5mr1493373f8f.30.1721900619824; Thu, 25 Jul 2024
+ 02:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q37u4k236h4pzrv7"
-Content-Disposition: inline
-In-Reply-To: <cb0efc16-6df2-72b7-47ea-ce524d428cc1@huawei.com>
-
-
---q37u4k236h4pzrv7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240724161501.1319115-1-ojeda@kernel.org>
+In-Reply-To: <20240724161501.1319115-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 25 Jul 2024 11:43:28 +0200
+Message-ID: <CAH5fLgiCLxe3bjHtf3frY3vOsYucu4cFDtDR1UUZYXCGwxLv8w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Rust: support `CPU_MITIGATIONS` and enable `objtool`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Jianfeng.
+On Wed, Jul 24, 2024 at 6:15=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Hi,
+>
+> This is an updated series to the CPU mitigations support for Rust. It
+> also has the patch to enable `objtool`, so that we can start running it
+> for Rust.
+>
+> It would be nice to get this applied soon, so that we start being
+> warning-free (since we already get warnings under IBT builds via
+> `vmlinux.o`). I am happy to take it through the Rust tree if the x86 and
+> objtool maintainers give an Acked-by, or through any of the other trees,
+> as you prefer. Otherwise, I think at this point we would need to make
+> Rust exclusive to the mitigations, which isn't great.
+>
+> With this series, again, x86_64 is warning-free with `objtool` enabled. I
+> tested `-O2`/`-Os` and the Rust versions we support under `-O2` (mainly
+> for the `noreturn` patch, which uses heuristics), as well as IBT vs. no
+> IBT (i.e.  running on individual object files vs. in `vmlinux`). I also
+> did an arm64 build.
+>
+> Testing is very welcome for this one!
 
-On Tue, Jul 16, 2024 at 11:27:39AM GMT, xiujianfeng <xiujianfeng@huawei.com=
-> wrote:
-> On 2024/7/3 14:59, xiujianfeng wrote:
-=2E..
-> >         for (; parent_pids(p); p =3D parent_pids(p)) {
-> >                 if (p =3D=3D pids_over_limit) {
-> >                         limit =3D true;
-> >                         atomic64_inc(&p->events_local[PIDCG_MAX]);
-> >                         cgroup_file_notify(&p->events_local_file);
-> >                 }
-> >                 if (limit)
-> >                         atomic64_inc(&p->events[PIDCG_MAX]);
-> >=20
-> >                 cgroup_file_notify(&p->events_file);
-> >         }
-> > }
-> >=20
-> > Consider this scenario: there are 4 groups A, B, C,and D. The
-> > relationships are as follows, the latter is the child of the former:
-> >=20
-> > root->A->B->C->D
-> >=20
-> > Then the user is polling on C.pids.events. When a process in D forks and
-> > fails due to B.max restrictions(pids_forking is D, and pids_over_limit
-> > is B), the user is awakened. However, when the user reads C.pids.events,
-> > he will find that the content has not changed. because the 'limit' is
-> > set to true started from B, and C.pids.events shows as below:
-> >=20
-> > seq_printf(sf, "max %lld\n", (s64)atomic64_read(&events[PIDCG_MAX]));
-> >=20
-> > Wouldn't this behavior confuse the user? Should the code to be changed
-> > to this?
+Verified that this eliminates the relevant warnings in an x86 build of
+the android-mainline kernel.
 
-Two generic notes:
-- event notifications can be rate limited, so users won't necessarily
-  see every change,
-- upon notification it's better to read the event counter/status anyway
-  to base a response on it.
-
-But your remark is justified, there is no reason in this case for
-"spurious" event notification. It's an omission from v3 version of the
-patch when there had been also pids.events:max.imposed (that'd trigger
-events from D up to the root, it's only internal PIDCG_FORKFAIL now).
-
-The upwards traversal loop can be simplified and fixed with only
-PIDCG_MAX exposed. Can you send it as a separate patch please?
-
-(Apologies for late response, somehow I didn't see your e-mails.)
-
-Michal
-
---q37u4k236h4pzrv7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZqIdEAAKCRAt3Wney77B
-SdzDAQDFHxjJt2JJhI0O9L5Frx7c6tdltnSjJD5lGd6xbuWuKAD/bywRNtDNhUNw
-boPmBSmMastkeBVP03nYhqm1kBlneQY=
-=o/0c
------END PGP SIGNATURE-----
-
---q37u4k236h4pzrv7--
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
