@@ -1,166 +1,210 @@
-Return-Path: <linux-kernel+bounces-262460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC5393C764
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:49:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E4593C75E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEBA01C21F6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DD541C20FEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C45C19DF78;
-	Thu, 25 Jul 2024 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RylKNUxC"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47EE19D070;
+	Thu, 25 Jul 2024 16:48:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CC4197A76
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F24611711;
+	Thu, 25 Jul 2024 16:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926143; cv=none; b=DV3PvPliyMtXXbM64MEGktVhyF/tN1DWRUOjLpKOOavOz/TjwVpdmAF1R2h4pCsrS+mkIhPuIYT7llg73jaoNkLJbRNQqnxSkHkysXF/wNh7avRORK+McXPCulBGJNESlNQL89u7JFqLqFcBExIGc/mII4pCpDyWvr63cNu2Bi8=
+	t=1721926113; cv=none; b=F/0ryGtXsLL+zLBzGBjMyDG79ONevJK0WY4hp9tN7lElfCfsR7JPHgaril6xhdh7CBwzNgke6oWvnB1HeAnAZzfb6JmREaOPfh0w8a3cRZbS4TVPADltj1h56KSfqA7rR5G75deMXFtUt29o7TEyn/ikTsIIhy4DIvQG56R6e6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926143; c=relaxed/simple;
-	bh=zl9tyaX3atF1FD6Oj4CMVfjVeFukwL1OauJx8MZgj8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SL19WBiDjOlenWFhFl7Bl99wJHlxlOpsqHsmDU8EYY9AYyEYKfZxtWIw+BfadpAZAIl6XFqq2I69ZXUZY/D2Ufq9BqWsbzYJsRwmtkfu7rBVAldJ6T8tn92DqJONcZo7DJCvIg5WCfPjAXxSMlTvLtpixu98pHYQRBSz8unZ660=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RylKNUxC; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f50c673e83so361979e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:49:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721926141; x=1722530941; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKCeuZLzTZnQ+M0GtznLWK7b6OnFbkvquUnPvitUBac=;
-        b=RylKNUxCOMpWmu5WLb1960ne3PH8OYw+ng7cLM+Dn3ELYqI+n9KR0WEa+PYsq2JjfJ
-         vnrmzgrFewtZLoAbJmU0Gd6CITa066IGlhg4IQ8DkIXygAkCqtwnB3H5/6zkaZSGRuDP
-         pfBhz3fsxzMJoHF6BEYKYFWVpypS05puQU3ZXvnVqWcvEHHo7wlu74s02LWkBOQMV4Y4
-         I5XQOvAnfF+83uv2LR/BJs8jqyfkIhA+nScZe1g0+TYi70gCBfWn5huiESl5xkwphxkW
-         Xkc4yaHjF04sLLHaj7eLWmdljWzz5GndhAcECILamY2phJickP8iwJtibuRaPoJnl/Fi
-         fHdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721926141; x=1722530941;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jKCeuZLzTZnQ+M0GtznLWK7b6OnFbkvquUnPvitUBac=;
-        b=GI29L0v7L1S2iSi/2Di0s6phVrOBEsPJNVAP8dXfiL9aZ7YYnviCgDsxe++GTTUfUk
-         s3XLQ7RtrHiJtt4iYIRaFHsoXmKM+4lwtlqg2qXyWhxFgrLnTXDAc9PzydLjfUsmkc9T
-         w7nIT0z1m/3keXGXNrLJO1E8YbI9xWWYSG6E8EBV7LCrgRGU7vf+S0u34i8As2dttPRb
-         rbm4CIbtllZA0KXZ7a/X7EG8qusjL/G+DI/dkKLwTJsYi3NQj+s/Nb+m3xSSMFtUHj+x
-         7EOyME0H8dXvlpgqDyTwz8PPtONqyVFi0f4PAI5BLO62AU1r2900n3cItZS/iACBu3yp
-         txLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr+mX/zSvY3/96I6woLZjLHAPaR96tXh5vdFFXwb39cnoOcnTIvyxWRqR/TX326r5SpSeTr1kEyYeFIhs45zJI4bbgKf4OsfBAdIP4
-X-Gm-Message-State: AOJu0YwCmWhyVdORKVYe/KB5qawBK3eB2ripspa5w7xX0v5YCD5IF+fJ
-	tvoA98J4CUSMOU9xMQLBtF7/0tDOBECX2efQQ+YjPDEyNindYm2jgSoccsVTG3dc2do3FvlY700
-	2jNEnlO6YtQvLkQdZQ4lXLkbpeCtnZ+X+n3Nu/w==
-X-Google-Smtp-Source: AGHT+IH+sca/eScSSpr1hspS4ecSOGX3fro/SHs8Yt+aVmqnAYTWGrfofCR+92nWoCEokUgsHg1b91tdBPwJtE+Jp5c=
-X-Received: by 2002:a05:6122:1d4a:b0:4f3:828:7a47 with SMTP id
- 71dfb90a1353d-4f6ca2da2fbmr3128684e0c.6.1721926140905; Thu, 25 Jul 2024
- 09:49:00 -0700 (PDT)
+	s=arc-20240116; t=1721926113; c=relaxed/simple;
+	bh=r259sq61Z4l77qCTYaT0H8XdbOSWShHwDGzQp27SP7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AWwC2dOhHa8lzIH+cFbtzJrIJdQPPHf5xXxP/haqRlKP8wHFXu0bRdOrz7gA924AUSbfJF2EerewWgTKwAw8nTE9UShDzgb6pZ2oF82LY5McLGMn+0ql7i3yyB+BJs6xOTi051DOW2fDaeIZ9jCSiU/IHg6fKcxxMCVUz0YGQgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6299CC116B1;
+	Thu, 25 Jul 2024 16:48:31 +0000 (UTC)
+Date: Thu, 25 Jul 2024 12:48:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Vasavi Sirnapalli
+ <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240725124851.645981d3@gandalf.local.home>
+In-Reply-To: <CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725142738.422724252@linuxfoundation.org>
-In-Reply-To: <20240725142738.422724252@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 25 Jul 2024 22:18:49 +0530
-Message-ID: <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
-Subject: Re: [PATCH 5.15 00/87] 5.15.164-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 25 Jul 2024 at 20:22, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.164 release.
-> There are 87 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.164-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Thu, 25 Jul 2024 21:45:03 +0530
+Ajay Kaher <ajay.kaher@broadcom.com> wrote:
 
-The following build errors noticed while building arm configs with toolchains
-gcc-12 and clang-18 on stable-rc linux-5.15.y
+> On Mon, Jul 22, 2024 at 5:38=E2=80=AFPM Mathias Krause <minipli@grsecurit=
+y.net> wrote:
+> >
+> > On 22.07.24 13:13, Ajay Kaher wrote: =20
+> > > On Sat, Jul 20, 2024 at 2:17=E2=80=AFAM Mathias Krause <minipli@grsec=
+urity.net> wrote: =20
+> > >>
+> > >> I noticed, the user events ftrace selftest is crashing every now and
+> > >> then in our automated tests. Digging into, I found that the following
+> > >> is triggering the issue very reliable:
+> > >>
+> > >> - in one shell, as root:
+> > >>   # while true; do ./kselftest/user_events/ftrace_test; done
+> > >>
+> > >> - in a second shell, again as root:
+> > >>   # cd /sys/kernel/tracing
+> > >>   # while true; do cat events/user_events/__test_event/format; done =
+2>/dev/null
+> > >> =20
+> > >
+> > > Tried to reproduced on 6.10.0-rc7-100.ph5+, only getting repeated out=
+put as: =20
+>=20
+> < sending again after correcting alignments >
+>=20
+> Mathias, thanks for reporting. I am able to reproduce the 'KASAN:
+> slab-use-after-free'.
+>=20
+> Steve, let me know if anything wrong in my investigation:
 
-First seen on today builds 25-July-2024.
+Hi Ajay,
 
-  GOOD: b84034c8f228 ("Linux 5.15.163-rc2")
-  BAD:  1d0703aa8114 ("Linux 5.15.164-rc1")
+Thanks for analyzing this.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>=20
+> [ 6264.339882] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [ 6264.339970] BUG: KASAN: slab-use-after-free in f_start+0x2b5/0x370
+>=20
+> This belongs to  f_start() ->  f_next() -> trace_get_fields():
+>=20
+>     trace_get_fields(struct trace_event_call *event_call)
+>     {
+>         if (!event_call->class->get_fields)
+>         return &event_call->class->fields;
+>         return event_call->class->get_fields(event_call);
+>     }
+>=20
+> This happens while reading 'events/user_events/__test_event/format'.
+>=20
+>=20
+> Allocation:
+> [ 6264.347212] Allocated by task 3287:
+> [ 6264.348247]  kasan_save_stack+0x26/0x50
+> [ 6264.348256]  kasan_save_track+0x14/0x40
+> [ 6264.348260]  kasan_save_alloc_info+0x37/0x50
+> [ 6264.348265]  __kasan_kmalloc+0xb3/0xc0
+> [ 6264.348268]  kmalloc_trace_noprof+0x168/0x330
+> [ 6264.348280]  user_event_parse_cmd+0x57b/0x26c0
+> [ 6264.348286]  user_events_ioctl+0xa92/0x1850
+> [ 6264.348290]  __x64_sys_ioctl+0x138/0x1b0
+> [ 6264.348295]  x64_sys_call+0x9a4/0x1f20
+> [ 6264.348299]  do_syscall_64+0x4b/0x110
+>=20
+> user_event_parse_cmd() -> user_event_parse() {
+>     .
+>     user =3D kzalloc(sizeof(*user), GFP_KERNEL_ACCOUNT);
+>=20
+> Link: https://elixir.bootlin.com/linux/v6.10/source/kernel/trace/trace_ev=
+ents_user.c#L2118
+>=20
+>=20
+> Freed:
+> [ 6264.350333]  kfree+0xd1/0x2b0
+> [ 6264.350337]  destroy_user_event.part.0+0x313/0x450
+> [ 6264.350341]  destroy_user_event+0x129/0x1a0
+> [ 6264.350344]  delayed_destroy_user_event+0x62/0xd0
+> [ 6264.350347]  process_one_work+0x621/0xf60
+> [ 6264.350359]  worker_thread+0x760/0x14f0
+>=20
+> static int destroy_user_event(struct user_event *user) {
+>     .
+>     kfree(user->call.print_fmt);
+>     kfree(EVENT_NAME(user));
+>     kfree(user);  <--
+>=20
+> Link: https://elixir.bootlin.com/linux/v6.10/source/kernel/trace/trace_ev=
+ents_user.c#L1510
+>=20
+>=20
+> Race condition:
+>=20
+> Thread A i.e. event reader able to reach the f_start() as the path is
+> valid. Thread A waiting for lock. At the sametime, Thread B has
+> acquired lock and removing events entry followed by free the
+> user_event object. Later once Thread A got the lock it tried to read
+> address which belongs to struct trace_event_call (struct
+> trace_event_call is member of struct user_event)
+>=20
+> Thread A (read event)                      Thread B (remove event)
+>=20
+> .                                                        worker_thread()
+> .
+> delayed_destroy_user_event()
+> .                                                               ->
+> acquire event_mutex
+> .                                                        destroy_user_eve=
+nt()
+> vfs_read()                                         .
+> seq_read()                                        .
+> f_start() -> acquire event_mutex      eventfs_remove_dir()
+> . (waiting)                                          kfree(user)
+> . (waiting)                                          -> released event_mu=
+tex
+> acquired event_mutex
+> f_next()
+> trace_get_fields():
 
-Build log:
--------
-from drivers/net/wireless/ralink/rt2x00/rt2800lib.c:25:
-drivers/net/wireless/ralink/rt2x00/rt2800lib.c: In function
-'rt2800_txpower_to_dev':
-include/linux/build_bug.h:78:41: error: static assertion failed:
-"clamp() low limit (char)(-7) greater than high limit (char)(15)"
-   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-      |                                         ^~~~~~~~~~~~~~
-include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-   77 | #define static_assert(expr, ...) __static_assert(expr,
-##__VA_ARGS__, #expr)
-      |                                  ^~~~~~~~~~~~~~~
-include/linux/minmax.h:66:17: note: in expansion of macro 'static_assert'
-   66 |
-static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),
- \
-      |                 ^~~~~~~~~~~~~
-include/linux/minmax.h:76:17: note: in expansion of macro '__clamp_once'
-   76 |                 __clamp_once(val, lo, hi, __UNIQUE_ID(__val),
-         \
-      |                 ^~~~~~~~~~~~
-include/linux/minmax.h:180:36: note: in expansion of macro '__careful_clamp'
-  180 | #define clamp_t(type, val, lo, hi)
-__careful_clamp((type)(val), (type)(lo), (type)(hi))
-      |                                    ^~~~~~~~~~~~~~~
-drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3993:24: note: in
-expansion of macro 'clamp_t'
- 3993 |                 return clamp_t(char, txpower, MIN_A_TXPOWER,
-MAX_A_TXPOWER);
-      |                        ^~~~~~~
+What really bothers me is that refcnt logic. I'm not sure if this is an
+issue, but the fact that you can inc the refcnt without holding the
+event_mutex looks wrong to me. I would guess it would WARN if that refcnt
+was incremented when zero, but there is a window where it gets set to 1
+again. Too bad there's not a way to do a refcnt_set_if_zero() or something
+to atomically set the value but warn if it's not zero. But then again, if
+it did get incremented when zero, there should have been a warning then too.
+
+But I don't think that's causing this.
+
+Will look further.
+
+-- Steve
 
 
-metadata:
-----
-  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkA3TgHM4HJPklKlKvochTS6Sk/config
-  download_url:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2jkA3TgHM4HJPklKlKvochTS6Sk/
-  git_describe: v5.15.163-88-g1d0703aa8114
-  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git_sha: 1d0703aa8114ca7fa386273d01ed8a7e1b66d335
-  git_short_log: 1d0703aa8114 ("Linux 5.15.164-rc1")
+>=20
+> I think you have added the following check in f_start() to prevent
+> this race condition, but somehow with eventfs still some gap to race cond=
+ition.
+>=20
+> static void *f_start(struct seq_file *m, loff_t *pos) {
+>     mutex_lock(&event_mutex);
+>     if (!event_file_data(m->private))   <--
+>         return ERR_PTR(-ENODEV);
+>=20
+> -Ajay
 
---
-Linaro LKFT
-https://lkft.linaro.org
 
