@@ -1,121 +1,146 @@
-Return-Path: <linux-kernel+bounces-262345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8C293C472
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E07C93C47A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6211C212BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC1C1F2282C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB51019D88C;
-	Thu, 25 Jul 2024 14:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD2C19D083;
+	Thu, 25 Jul 2024 14:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WL5/OYQ+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XiE51TIG"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB619D07A;
-	Thu, 25 Jul 2024 14:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7382519D8AA
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721918392; cv=none; b=aglWUHhzA1enAx8OC47rV6Lx13R0rX12qHFT1L3neSLewyjfCw8Kg6M2uct9iServYFZ4Z0jYEaPwzEcJaSQIi1W9qqFjzmgc365mkksIKiDYyAvOZE3ShNEamV5r71hr4Qo2IWqvWzat/Rt29XNipFXuBRlDq2D97QCiGCpJb4=
+	t=1721918400; cv=none; b=WQtIjRCUkkGLAI2yKWoEr1Dpl9VFmCvlqHEKFQNbUhlILRjlRF6XB7SaL/KFOh+bWO8pHgu2djIp0Awha2tOVKFkPgMpDsBYIZAVKo3d7roJkeriQHPERf7ilWxFfBID5xjcLSbq/FSvuHDHEer1RhReGxunSUX+qn57D1+0vBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721918392; c=relaxed/simple;
-	bh=8iE2fLIuKiX/R1Mck8oWn/wV8sca/R7pF11OZS3T544=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y75VAZin04y/PrJkF93Tza6NV/OTJVo6aAMI73txpqM1ultU1NrZBiTzqyjZJttXWcqrb42xNbuz0n2CMLJVIs9Mdeb9JFG+CJwGU1jJGoyJnWFBO3v/zkpzTrRQ+XL0oNqMHzeJ54LoUOyd2Z5JT4PwMWLmMut9SlSl019LnGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WL5/OYQ+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fT+P3bL2alqk783XUIpMyvxWyxVKIMjRx9YDa8Msrv8=; b=WL5/OYQ+RT6V2Tl5hRTNfUjVwL
-	oYtEItO5DN/EmTddff9oHpV7Z1VvU/Hz+Wd/ZHHcYbz51Wp7Pyq1+pk0K/7zQPkMmENAMlmbCODHD
-	e5Vr8IhAmtm1e63eRQfIZYn4YhuFhEfyTM2m+FX40WG1cnKnrVwE7Qp3XJyhDFybOgRokQsOqhLVU
-	exQ2/h/Jc8DM+0kWg1+tInyN9tyTGSg30g+Urn5OCITbb2OMIKeZqU36FmGsCWt4pMVGSDnv5zLvN
-	cjcI8uRXUENjfZNyTD2zcw+U34WMrESbsJV14YTD1M0PxUQTTJxWSlubgoMyN5eOUzZyr4+eXPHz4
-	BZFIqkRQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWzdC-00000001Iql-2cGb;
-	Thu, 25 Jul 2024 14:39:46 +0000
-Date: Thu, 25 Jul 2024 07:39:46 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <ZqJjsg3s7H5cTWlT@infradead.org>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <Zp-_RDk5n5431yyh@infradead.org>
- <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
- <ZqEhMCjdFwC3wF4u@infradead.org>
- <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+	s=arc-20240116; t=1721918400; c=relaxed/simple;
+	bh=0jprevtwm97HPlvDbJ8iak+QX7zBxOzWXvkyqSqMkaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ipj1HcK3jrAWIAscInzn5PnQT1KoYgu+umh2HiNZNaIvBCIjA/c679PLyJ4EsCFgdVZ5B8T3z59WKJMb1gAOYjWVgpyUd1t53j2cTYMEzPmMLXO/CKmt4OmyGj9D/wxjNu6MSNs8pfKQyQII+E4AN9NCzLk/mN8cbIfG6PNULjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XiE51TIG; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-369f68f63b1so597415f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721918396; x=1722523196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EmNcaMBYjNffFp8Y9eqYmsbKgIfRFa8ntga4/Bnlk8U=;
+        b=XiE51TIG0QSwxM6R7gAJhuGIKhU8Wwv8LqrMssvrQkEr9uGbDiE2G6iX5nrP6LGlVR
+         YjfWORVvdZzJJBiIMFOoW3I1dZdcBxoAm1XqJ/NQJ1ulUKmYi8UAkvhswnD6NQNryhDy
+         Oa4/mk+XZxRMPm05/HOalEMueflQllHl1JTSXhKOgZt2auJez+pYDWLS8Gcfl/E8fN+L
+         BZS1nZ+3Y+jCvbX26wUwkE6BsZcvAMuH25wjjebmIOeUV2l0Y4FAiI9gOrNLudTElrtv
+         YbUAJxJznlKZidOwZFj4ctT7xQ4hr5EpWmdAJcB89SPA4gpmqwdhh69R7qHyJVQqnzJL
+         outQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721918396; x=1722523196;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EmNcaMBYjNffFp8Y9eqYmsbKgIfRFa8ntga4/Bnlk8U=;
+        b=hwn9b0PGLDsBx5PCYzuTk2Ozv9WMKqT/m0iG9XnW0nMXd3CL12LXOuEF7BHJXa/2At
+         ssB2KCwGft2scw8dhcOcSHPCOLzZRu9Kowv+wD0ND/lxUaHQjGKipIgiHuXsGccW8aER
+         slCuyjNtEWhzg9AEddLiKEE96UnCSfQCCWrrskju4lJoao/GfjNyFjGTDMuBG7//eWf6
+         /tjWJAa0qzM6l5eFOa7bPp148ttO4uJA0nthSWoVo2gnOgPaYFfdW5sLar9VTX+AQ/CF
+         xDHjPYy8xs2yIedCtpbZbnK3WUKLsyo6eRe1BdIS+vyxjFObePX2iCtLfxLzppU1vpxv
+         /5Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXauIsTs8qYg6O/OqHog6cJOPHxmvDPouUmy5xQqkRZSANT3r149QTUGj5VZ50ko2elBTnlRQU2K0EBS/mF8i0fla53H7lxqk4IhKRt
+X-Gm-Message-State: AOJu0YybnJH1YeCfZgVXox/Wgi/qzc5tCT0lUE4I7OSP37RhrQI0iwJz
+	xrDAqG2ZgAtShSJzMEU0xaq2DH1dpd4QvLo9D9fcheTw+t2lJ3RE27+ptTsBgWU=
+X-Google-Smtp-Source: AGHT+IGf7oywhAAEa3IVVaOAoTIXoWXB5zTQ9uLQU8Ixr/J7YCMLGoCiSQGBGBt7sL48QVY7/UM+8A==
+X-Received: by 2002:adf:fe0c:0:b0:368:6596:c60c with SMTP id ffacd0b85a97d-36b3639dc76mr1767102f8f.30.1721918395512;
+        Thu, 25 Jul 2024 07:39:55 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857dc2sm2403560f8f.77.2024.07.25.07.39.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 07:39:55 -0700 (PDT)
+Message-ID: <97233c2e-78ff-40a0-b808-6929deff4427@tuxon.dev>
+Date: Thu, 25 Jul 2024 17:39:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
+ doesn't support PIN_CFG_OEN
+Content-Language: en-US
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 11:01:33AM +0800, Youling Tang wrote:
-> - It doesn't feel good to have only one subinit/exit in a file.
->   Assuming that there is only one file in each file, how do we
->   ensure that the files are linked in order?(Is it sorted by *.o
->   in the Makefile?)
 
-Yes, link order already matterns for initialization order for built-in
-code, so this is a well known concept.
 
-> - Even if the order of each init is linked correctly, then the
->   runtime will be iterated through the .subinitcall.init section,
->   which executes each initfn in sequence (similar to do_initcalls),
->   which means that no other code can be inserted between each subinit.
-
-I don't understand this comment.  What do you mean with no other
-code could be inserted?
-
-> If module_subinit is called in module_init, other code can be inserted
-> between subinit, similar to the following:
+On 23.07.2024 19:47, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> ```
-> static int __init init_example(void)
-> {
->     module_subinit(inita, exita);
+> Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
+> PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_OEN
+> configuration.
 > 
->     otherthing...
+> -EINVAL is a valid error when dumping the pin configurations. Returning
+> -EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the
+> message 'ERROR READING CONFIG SETTING 16' being printed during dumping
+> pinconf-pins.
 > 
->     module_subinit(initb, exitb);
+> For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
+> PIN_CONFIG_OUTPUT_ENABLE config.
 > 
->     return 0;
-> }
+> Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OEN read/write functions")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yikes.  That's really not the point of having init calls, but just
-really, really convoluted control flow.
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-> module_init(init_example);
-> ```
+> ---
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> IMHO, module_subinit() might be better called in module_init().
-
-I strongly disagree.
-
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> index 632180570b70..3ef20f2fa88e 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -1261,7 +1261,9 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+>  		break;
+>  
+>  	case PIN_CONFIG_OUTPUT_ENABLE:
+> -		if (!pctrl->data->oen_read || !(cfg & PIN_CFG_OEN))
+> +		if (!(cfg & PIN_CFG_OEN))
+> +			return -EINVAL;
+> +		if (!pctrl->data->oen_read)
+>  			return -EOPNOTSUPP;
+>  		arg = pctrl->data->oen_read(pctrl, _pin);
+>  		if (!arg)
+> @@ -1402,7 +1404,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+>  
+>  		case PIN_CONFIG_OUTPUT_ENABLE:
+>  			arg = pinconf_to_config_argument(_configs[i]);
+> -			if (!pctrl->data->oen_write || !(cfg & PIN_CFG_OEN))
+> +			if (!(cfg & PIN_CFG_OEN))
+> +				return -EINVAL;
+> +			if (!pctrl->data->oen_write)
+>  				return -EOPNOTSUPP;
+>  			ret = pctrl->data->oen_write(pctrl, _pin, !!arg);
+>  			if (ret)
 
