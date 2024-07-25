@@ -1,99 +1,123 @@
-Return-Path: <linux-kernel+bounces-262579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF82893C8E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5035F93C90A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996CF1F22A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069E31F2333B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800AF5FEE6;
-	Thu, 25 Jul 2024 19:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eL6p79dk"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4632E762EB;
+	Thu, 25 Jul 2024 19:46:17 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3784207D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3BA768EC;
+	Thu, 25 Jul 2024 19:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721936679; cv=none; b=GyqFgNUykxS712ifOCcuvGPNrNTcbWg/tv8K3MJvpGnxe03kekoOzAtHIx1EoRxRTBP7Ce/5ab3EPvQ11ZE0+3Pn5ZRYWzby0Bdra0EGKeRfSNOB9Bokdn572Msld1tjVczoHJpuPqCZSLDqRqruAS/h43C8YEcCsVbGJIdliKk=
+	t=1721936776; cv=none; b=FHYhQ5lUljeiCSt7NuqgmsksJZ2O1zPsve8qAQZ75tffqDR5u/EvGJ0iBpXXwCx0/zwjXndrX2bhiEZ0n0pO0uhzZeRpLs9lpfcqcK2lJIU+s6F4p2ozGY49hx0IPZ5/ir9oYi5n1CYlHlirIzeHsQc6wDwofIXLM9cTVs+PtCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721936679; c=relaxed/simple;
-	bh=aBqBls9wVV0blKbvPQzDI5DoagTO6aoeGuyhrOnXOOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AtNv2c4w0dC9QmuOUvqKjaW7XjmjVhF65Ja0xTXhCWVyFkxDVGpNXuwFzP7uZbs+WPP2uaaD8fgZgWO8sv3S+hfakbl/dO8snBJhu2c1UqiNel/3FKOCdrdqxCg+Rc3nnVJnlGaWuUZ10GNrjDdBBp/pgW1a8Beszmu16PJQpck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eL6p79dk; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4f6bd3a7bbdso571051e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721936677; x=1722541477; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4iUXopDP6Wh0plwE1SwD0Ncn0XN49Aez3fic2VDamk=;
-        b=eL6p79dkGS4oNdnj+W7SWTYnXx2HnR3v+MtM5sLfbmsk6x0JTn3ue2B8oEo90t+wbe
-         sEtZTfrzrU34Khx6doG4TEPGjFC0vq9d3QE44yMI7KdG8tmWvBpwxgnZTDpZBsZ8Vzad
-         WfR7NKjI6h8dVaMo9qRYO9WgiNeGKb+UXAgYU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721936677; x=1722541477;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q4iUXopDP6Wh0plwE1SwD0Ncn0XN49Aez3fic2VDamk=;
-        b=tcx1owrfu/KDSUhFZT6JdTHyCmPGm1tXx9gPa8393j78wXd5u53ipc2N1svCEGpwL5
-         lC5bSGmFWMAUV9JsH/lvbmCgUBMmBmtUj8j+PX5o58mcP9s6HD7jexZoYUTIv+ck5UbX
-         vNF37tbB8vumLzaKAyCUpQbRy5D8nJiAXqUtSPn/Q0g7hM/nqS0KL4mU6jhcUyEymyiZ
-         m/HXHewpsGdOGh14EYX4ro52FP1EnkVEfpNkvzXzjfSqYM77gLy4c9SPG1Uqd9mJtXIV
-         hdtV4OJ1ZxiTu1TJ4rIrX0vEjdG4+z/iSQFpoWjX/iBJi5U8+LOZBgS9qs50ZFbxCIib
-         4VbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+W54/Jqc3h/5HnmZL82fJ9ATNaxOrQL2jrYF7qfdSHCjuqkVL8EVj+4sknix4KcpOBzP0qBpn4dHbB5onvsgl9cHnLSQcFBFzLslN
-X-Gm-Message-State: AOJu0YzrcS68NyJ5tlIUOJ6fcfS0YMT/UmNxSyPwu252gR5L5VRAk1FG
-	DnoM8G8cMV0cX2SGkqaLVyACF5oNKMHDWx8eFqRbVrFEgcGTd7wB6S5PUZR7aLk4bE0M7MCG5eZ
-	zVb8=
-X-Google-Smtp-Source: AGHT+IGmGJBkLnfZwxv13FopcC3X3+B72wpoiCLwRvh19sE+gIZD5mLT5YbKEng7Ptnf1h4la5geZw==
-X-Received: by 2002:a05:6122:411a:b0:4f5:2960:6ca6 with SMTP id 71dfb90a1353d-4f6ca2a1831mr3922441e0c.2.1721936676906;
-        Thu, 25 Jul 2024 12:44:36 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f6c86c687bsm291048e0c.30.2024.07.25.12.44.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 12:44:36 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f6b7250d6dso507989e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:44:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+vksqmoyOGCnfz3Iqet0i0O1no1GEciPPX4cgxiJkNaTxlleUNXHuyguMcX3x4aiNO5bHlTEnZZbkuhtKEm2oigcMJy7HC7X78m48
-X-Received: by 2002:a05:6102:292c:b0:493:dee7:9b8e with SMTP id
- ada2fe7eead31-493dee79daamr2651186137.7.1721936676300; Thu, 25 Jul 2024
- 12:44:36 -0700 (PDT)
+	s=arc-20240116; t=1721936776; c=relaxed/simple;
+	bh=PwOHSuXwXja0mNgYGH2EcNlFeXFHwyvrdGGEYegbbzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lU3qUx63vJsYJTElc4Wv7Ufom+Io88U9TOI+FsELafQ0gcEKS84sGS/ZWRfW5N/oTws0mz0PGaVxL2qQaMFz8jVEVoLra2vGhh8Nltnz77VxpOGtYmfKN6j3Ywu3P5d+/RppoxlCASxVO6b3UlSMBPYqbYVopJPLQ7kv/vssm9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cdd.versanet.de ([94.134.12.221] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sX4PN-0001rD-GO; Thu, 25 Jul 2024 21:45:49 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH 0/7] Drivers to support the MCU on QNAP NAS devices
+Date: Thu, 25 Jul 2024 21:45:32 +0200
+Message-Id: <20240725194539.1780790-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
- <CAHk-=wiF3yeWehcvqY-4X7WNb8n4yw_5t0H1CpEpKi7JMjaMfw@mail.gmail.com> <CAK7LNARi5S0u3DD6fhtm8KTT-Cmd5xyaYsOsM+FmT69mOcdfwQ@mail.gmail.com>
-In-Reply-To: <CAK7LNARi5S0u3DD6fhtm8KTT-Cmd5xyaYsOsM+FmT69mOcdfwQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 25 Jul 2024 12:44:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgcLs_7SW14k6O2dM6F_C_KYgrgvL6yHW6w=H-a+o1Hcw@mail.gmail.com>
-Message-ID: <CAHk-=wgcLs_7SW14k6O2dM6F_C_KYgrgvL6yHW6w=H-a+o1Hcw@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for v6.11-rc1
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 25 Jul 2024 at 12:30, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> I deduplicated the code in a slightly different way.
+This implements a set of drivers for the MCU used on QNAP NAS devices.
 
-Thanks, looks fine (from just a quick look at the patch),
+Of course no documentation for the serial protocol is available, so
+thankfully QNAP has a tool on their rescue-inird to talk to the MCU and
+I found interceptty [0] to listen to what goes over the serial connection.
 
-           Linus
+In general it looks like there are two different generations in general,
+an "EC" device and now this "MCU" - referenced in the strings of the
+userspace handlers for those devices.
+
+For the MCU "SPEC3" and "SPEC4" are listed which is configured in
+the model.conf of the device. When setting the value from SPEC4 to
+SPEC3 on my TS433, the supported commands change, but the command
+interface stays the same and especially the version command is the
+same.
+
+The binding also does not expose any interals of the device that
+might change, so hopefully there shouldn't be big roadblocks to
+support different devices, apart from possibly adapting the commands.
+
+
+[0] https://github.com/geoffmeyers/interceptty
+
+Heiko Stuebner (7):
+  dt-bindings: mfd: add binding for qnap,mcu devices
+  mfd: add base driver for qnap-mcu devices
+  leds: add driver for LEDs from qnap-mcu devices
+  Input: add driver for the input part of qnap-mcu devices
+  hwmon: add driver for the hwmon parts of qnap-mcu devices
+  arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+  arm64: dts: rockchip: set hdd led labels on qnap-ts433
+
+ .../devicetree/bindings/mfd/qnap,mcu.yaml     |  43 +++
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   |  58 +++
+ drivers/hwmon/Kconfig                         |  12 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/qnap-mcu-hwmon.c                | 352 +++++++++++++++++
+ drivers/input/misc/Kconfig                    |  12 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/qnap-mcu-input.c           | 156 ++++++++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-qnap-mcu.c                  | 247 ++++++++++++
+ drivers/mfd/Kconfig                           |  10 +
+ drivers/mfd/Makefile                          |   2 +
+ drivers/mfd/qnap-mcu.c                        | 356 ++++++++++++++++++
+ include/linux/mfd/qnap-mcu.h                  |  28 ++
+ 15 files changed, 1290 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/qnap,mcu.yaml
+ create mode 100644 drivers/hwmon/qnap-mcu-hwmon.c
+ create mode 100644 drivers/input/misc/qnap-mcu-input.c
+ create mode 100644 drivers/leds/leds-qnap-mcu.c
+ create mode 100644 drivers/mfd/qnap-mcu.c
+ create mode 100644 include/linux/mfd/qnap-mcu.h
+
+-- 
+2.39.2
+
 
