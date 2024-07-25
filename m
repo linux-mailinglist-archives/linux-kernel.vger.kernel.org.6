@@ -1,96 +1,129 @@
-Return-Path: <linux-kernel+bounces-262474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFE393C781
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:04:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1140893C783
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F00D0B21FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D6D1C225B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519DC19DF65;
-	Thu, 25 Jul 2024 17:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4E19DF59;
+	Thu, 25 Jul 2024 17:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=plus.com header.i=@plus.com header.b="f3/D9Ylw"
-Received: from avasout-peh-004.plus.net (avasout-peh-004.plus.net [212.159.14.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=mentovai.com header.i=@mentovai.com header.b="aPfwoEpD"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27878199EA5
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.159.14.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F44426286
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721927086; cv=none; b=qQLJ5vb+WTl2iLI8DdFnBHKmvsNUu19egnn4lsIbGDCwHO/zgbVpKIiE0qQdBMigo7oKj4eAZtI9+HRZPfmyKAsaZ+wJtftPE3Nhi9D74BJKVSN1geBAOEmGfN5k2QDWnXNPD/9U+XMkDIrZDYFNKP7xstFuYOwdqwELOtdgim8=
+	t=1721927124; cv=none; b=bwn+S3gnOktwrJKS47Z3cPKWwvBHr44actsjSQntONJBHL4kRuT1AEjQsslDEZlmTi0u/Crs/gg2ck7WrCIjmWXSp157EFO0FOtgLrCL3Zzij08MgbCoXM3HGaFpIRqjr+Z3Qu18a6boPNXbvN9vt63NOCSubDV2HnePLR/l0b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721927086; c=relaxed/simple;
-	bh=MlTM3GOUl9TwzdbEXqpa/qULHio3TqMp2hWQnXjx5Vg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TmgOKaNhv+N1JfNqG8BSxAsikn+Sz+/v6wNhDUO//7JtvVUqZicXFaSwKGVEjbsmd71CvVvRYGHs3P8ze6/P1FvTIiFg9K4yYKgEkedV7LMKxvO2LprCehpa9/oZEufrnxtIXFiZALLKgjdla1S49G7/mzHxHXWNp/O0htLjSms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ramsayjones.plus.com; spf=none smtp.mailfrom=ramsayjones.plus.com; dkim=pass (2048-bit key) header.d=plus.com header.i=@plus.com header.b=f3/D9Ylw; arc=none smtp.client-ip=212.159.14.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ramsayjones.plus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ramsayjones.plus.com
-Received: from [10.0.2.15] ([80.189.83.109])
-	by smtp with ESMTPA
-	id X1tRsIdzTX9c9X1tTsAUcY; Thu, 25 Jul 2024 18:04:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plus.com; s=042019;
-	t=1721927083; bh=1YYXO61tGUo1p5KA5s0OWrI7imhDBNJwS3HHcQxwT3I=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=f3/D9Ylw4/8XAW7S+FRewYx/hFGyf8fOVo+HiTI6SQ6fMSAN8yM6b7HPXiCGz/n1k
-	 uTYMirROz2SIppJAszOMBbF1D591UmznCsz+0U+D5eDhWFyqCcaRxc8F0QEerPxRjm
-	 3H8GJN+evZe34U875ixatY5uURPplaLGMl0rlexw76ciJQ5QKK+oqpWpj6oKGBY2mr
-	 yy8uxqSRyFnSX8Mfp5xhZJY58vXJVq1FpodMbmyDN9OxgZa1IKuAdwmtN3EVLmNfA6
-	 4W6RiPzdYJxko7Zm15CGHlCyUdY/uwkvoKeGdhZi7qmykf4DiiINr8qMXd1WWb0tkL
-	 kOu+LsSQdpBCg==
-X-Clacks-Overhead: "GNU Terry Pratchett"
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.4 cv=NPx2+F6g c=1 sm=1 tr=0 ts=66a285ab
- a=oM5NSl/Bl4BpjFr0C8iQlQ==:117 a=oM5NSl/Bl4BpjFr0C8iQlQ==:17
- a=IkcTkHD0fZMA:10 a=EfSOSDqkiofDkBLqXn0A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
-X-AUTH: ramsayjones@:2500
-Message-ID: <c56ec3fc-405b-45c6-845f-1a25e52a283d@ramsayjones.plus.com>
-Date: Thu, 25 Jul 2024 18:04:41 +0100
+	s=arc-20240116; t=1721927124; c=relaxed/simple;
+	bh=0qvlF0z+W69f0VM9zRlqTHHhCzgFSjLYfgyhx97A8xs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D5aVINIux1arYMEizPtheCkgk2Tbd6ZDJk+6LTVt24IDwmc5z6AycY2mZjBakwNnZkzzzfSJbYkoaSWvzPjg6cKBTkAvroeMCw/ur9zbeqs3rwI++uanXukZ7WqYAW/aMIEe2jNj7gPx5cQk57d0v9mhy2OfANzc1cSsMZ8YxMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mentovai.com; spf=pass smtp.mailfrom=mentovai.com; dkim=pass (1024-bit key) header.d=mentovai.com header.i=@mentovai.com header.b=aPfwoEpD; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mentovai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentovai.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d5f6c56fso75047685a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mentovai.com; s=google; t=1721927121; x=1722531921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iL/4KMSZN6XD67fqJQklqdxeiI1GyJnNUyuo727b0Ns=;
+        b=aPfwoEpDnR4PJeVdnOIppaNakg9lCZL/6mNbPFIP8llB/G5/YIGcyaW44dSPm88S4x
+         bo5Vcma1fon9iJekrn1TuylU8vGwqdGtOnb00QjVbDVWKxixDtfhLLAkvsQ0oAJfrWQS
+         7o2cNsZGLkxJWZO6WUB7nAyB2tOzGzpRL/FbA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721927121; x=1722531921;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iL/4KMSZN6XD67fqJQklqdxeiI1GyJnNUyuo727b0Ns=;
+        b=gk8tFC3pJ2VkPg+/frp/iMoUGjiiLLDwDPGf5IR3pJ9PP4JV6ZVZH6K0WGrWLSCoGH
+         xSy4cwPB3gwtuJh1sx3esPFu8BG895uDwV+hDxNKNv7Blq5o+RscnUgS4RQcalzz9/wj
+         hJeJtaMvL6xzUSUwkN+NbhMX3SZIbRnmCwLJUjtYzDXx1W9La6ULtrSBm9evz9owLzKP
+         wzSiX8eET+Lu3X4HLdv5ijNqYQiAYKuyREJTxn//BWNLyNVfBP4hcoeAlB/QtMw018HL
+         UWa5gvw90TY0iAtmMvuHA9jLDKDGPFpW/O5Vhk9uqOlM664zZXFbCe6iByze9QvBkQqD
+         BW0g==
+X-Gm-Message-State: AOJu0YzY3iE/3ZzfShmzUfFyKYj8Z2odrvQuQJIcdGAQqcdyx8fRy57d
+	frojwlBXnKcj/40Ls7LRLtzaRggpFCP/NFZ6jjHBTqtISoMlhBAw1IhsQqH+7iM=
+X-Google-Smtp-Source: AGHT+IGYMJlb4MeNRB6hGkW8I8J20GB1qlmNlfQ9itynIkAZ6t0HMzIxxZcjAEQ+Mhx42wXpbEKuPA==
+X-Received: by 2002:a05:620a:318a:b0:7a1:d9a1:b9b with SMTP id af79cd13be357-7a1d9a10fb9mr265021085a.60.1721927121104;
+        Thu, 25 Jul 2024 10:05:21 -0700 (PDT)
+Received: from redacted ([2600:4040:9ce0:6400:b9f3:7389:4965:5876])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7444bfesm100705985a.118.2024.07.25.10.05.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 10:05:20 -0700 (PDT)
+From: Mark Mentovai <mark@mentovai.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Jonas Gorski <jonas.gorski@gmail.com>,
+	Russell Senior <russell@personaltelco.net>,
+	=?UTF-8?q?L=C3=B3r=C3=A1nd=20Horv=C3=A1th?= <lorand.horvath82@gmail.com>,
+	Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+	Shiji Yang <yangshiji66@outlook.com>
+Subject: [PATCH] net: phy: realtek: add support for RTL8366S Gigabit PHY
+Date: Thu, 25 Jul 2024 13:05:19 -0400
+Message-ID: <20240725170519.43401-1-mark@mentovai.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] Git v2.46.0-rc2
-From: Ramsay Jones <ramsay@ramsayjones.plus.com>
-To: Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
- git-packagers@googlegroups.com
-References: <xmqq7cdavgqa.fsf@gitster.g>
- <9282286d-1a48-4434-8f5a-1b67035819fd@ramsayjones.plus.com>
-Content-Language: en-GB
-In-Reply-To: <9282286d-1a48-4434-8f5a-1b67035819fd@ramsayjones.plus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfDi9y3G2AjVt+CMG1Cax7YrMDGp+V+mW7M0LSi0qmFBvgMRYr5Yo474cbFq1t8vvd0I3wMBXakL5LTGZHZRLMZgItuIvFL0iEFYzqaYcBVliKKlSkHX0
- ylWzLKmoA8459J3qSOaVPoyoPNpv/n+clgZ1xsuJtzYREOFwmLmQDkBfw2x2B9/YbKIHS6/84XWxi+CBtJMNCfXTDPhTWKJl2tc=
+Content-Transfer-Encoding: 8bit
 
+The PHY built in to the Realtek RTL8366S switch controller was
+previously supported by genphy_driver. This PHY does not implement MMD
+operations. Since 9b01c885be36 (2023-02-13, in 6.3), MMD register reads
+have been made during phy_probe to determine EEE support. For
+genphy_driver, these reads are transformed into 802.3 annex 22D clause
+45-over-clause 22 mmd_phy_indirect operations that perform MII register
+writes to MII_MMD_CTRL and MII_MMD_DATA. This overwrites those two MII
+registers, which on this PHY are reserved and have another function,
+rendering the PHY unusable while so configured.
 
+Proper support for this PHY is restored by providing a phy_driver that
+declares MMD operations as unsupported by using the helper functions
+provided for that purpose, while remaining otherwise identical to
+genphy_driver.
 
-On 25/07/2024 17:57, Ramsay Jones wrote:
-> 
-> 
-> On 24/07/2024 18:31, Junio C Hamano wrote:
->> A release candidate Git v2.46.0-rc2 is now available for testing at
->> the usual places.  Relative to -rc1, we fix a few recent small
->> regressions and nothing else.
-> 
-> Just to confirm, running the full test-suite this time, that the 'rc2'
-> build passes the 't1460-refs-migrate.sh' test just fine! :)
-> 
+Fixes: 9b01c885be36 ("net: phy: c22: migrate to genphy_c45_write_eee_adv()")
+Fixes: https://github.com/openwrt/openwrt/issues/15981
+Link: https://github.com/openwrt/openwrt/issues/15739
+Reported-by: Russell Senior <russell@personaltelco.net>
+Signed-off-by: Mark Mentovai <mark@mentovai.com>
+---
+ drivers/net/phy/realtek.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Err, I had intended to add ... on cygwin, here! ;)
-
-[hopefully, that was clear, since it didn't fail on Linux, but ...]
-
-ATB,
-Ramsay Jones
-
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index bed839237fb5..87865918dab6 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -1465,6 +1465,13 @@ static struct phy_driver realtek_drvs[] = {
+ 		.handle_interrupt = genphy_handle_interrupt_no_ack,
+ 		.suspend	= genphy_suspend,
+ 		.resume		= genphy_resume,
++	}, {
++		PHY_ID_MATCH_EXACT(0x001cc960),
++		.name		= "RTL8366S Gigabit Ethernet",
++		.suspend	= genphy_suspend,
++		.resume		= genphy_resume,
++		.read_mmd	= genphy_read_mmd_unsupported,
++		.write_mmd	= genphy_write_mmd_unsupported,
+ 	},
+ };
+ 
+-- 
+2.45.2
 
 
