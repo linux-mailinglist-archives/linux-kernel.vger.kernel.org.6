@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-261800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA52493BC49
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7BD93BC4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B531F2231A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2401F23978
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06B016A938;
-	Thu, 25 Jul 2024 06:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E51E2B9D3;
+	Thu, 25 Jul 2024 06:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T+1fRtcn"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yByTCVu+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3EC4206D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C30620310
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721887261; cv=none; b=NNFev9WKOqmiVEuO1hKJiGObMgs6Y8v5ggDzUekGCDJbqbFLH+lf6V/07PTc6VnHhINVQTiDDpzal/cnM+zVuDkAluqZIscOkx0bxBBM2h4dMdURrJQJZA4QLGf9v3l4mWvQIvdRX1nvMu9xUiWwaz3dZnDjWG+2mof4ltskbtU=
+	t=1721887336; cv=none; b=S6owiRGxDHZ0dAo4orUOjR7Btvo93xJj/tv4sVIBfFwYyAKAe8Ggxgz2pZE4xp8CM6eU4frxPWCqUW8JYeHaiFEQO53WwP0c6TNwNZDMd9bE8iZYl5amUh7YKdCByJFsLRF09e+9tUS1O3ky0knXHwqywjqfVfTqRZZX7IKWmx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721887261; c=relaxed/simple;
-	bh=GzHjjxIDFwEMHMzhz4cnseDzBQdKO8qFZ+HP+s/9t2U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Ep1niq2BhF9as6lJ6s2O2r3UJWciXrG6g8z7Um2Q5qZOC1k7jc9t5glAFipVquXFQ8XlnbV5WmG4t/+U391HfJuxSp6zxuDkeKSj6JDSqSbDxGtlDWSaoAORVudEjRY4asFLmUDaHCYDXkBtBrD2Dx+u8xW/sqYFp9ToABpg1PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T+1fRtcn; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240725060055epoutp0132e14aa7bfb1a457166a16fbada9c5ef~lX1YBnk7W0236402364epoutp01y
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:00:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240725060055epoutp0132e14aa7bfb1a457166a16fbada9c5ef~lX1YBnk7W0236402364epoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721887255;
-	bh=vRNYyuiZ/cqW3uzGGflNYphSAwnFfuFIlD/3TcPliec=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=T+1fRtcnkMrdc8zeT980FB1rsPyPWybYjlwk7wG/b0drXiQLllvqJzL8caZmkez5a
-	 MD8P7RhlXiuUcdzmf8JExJZ9Ht6UEYy68SbyPAnITxyrTa8aL5YZbqYrJUlYwlveR8
-	 1OfQs/gY73DuNZhVwgeY87ywGmeoRQ4DES16r2Lo=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240725060055epcas1p44ced5d792e3cd91b3e66cd8566bf23a8~lX1Xngei22645726457epcas1p4S;
-	Thu, 25 Jul 2024 06:00:55 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.38.243]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WV0cQ5TRfz4x9QC; Thu, 25 Jul
-	2024 06:00:54 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.4B.08992.61AE1A66; Thu, 25 Jul 2024 15:00:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240725060054epcas1p1494596fab623da39060e9dd2cc766cd2~lX1W_7glJ2963529635epcas1p1H;
-	Thu, 25 Jul 2024 06:00:54 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240725060054epsmtrp1e6ee0b44c9788f0674bbf615f1cfc26f~lX1W_LNhJ0895008950epsmtrp1R;
-	Thu, 25 Jul 2024 06:00:54 +0000 (GMT)
-X-AuditID: b6c32a33-96dfa70000002320-4e-66a1ea16a69a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	78.A6.19367.61AE1A66; Thu, 25 Jul 2024 15:00:54 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240725060054epsmtip21756e52d8d7bbe9ddf62b8779a146722~lX1WwlvI22933529335epsmtip2i;
-	Thu, 25 Jul 2024 06:00:54 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: "'Christoph Hellwig'" <hch@infradead.org>, "'Dongliang Cui'"
-	<dongliang.cui@unisoc.com>
-Cc: <linkinjeon@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
-	<hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>,
-	<cuidongliang390@gmail.com>, "'Zhiguo Niu'" <zhiguo.niu@unisoc.com>,
-	<sj1557.seo@samsung.com>
-In-Reply-To: <ZqD8dWFG5uxmJ6yn@infradead.org>
-Subject: RE: [PATCH v2] exfat: check disk status during buffer write
-Date: Thu, 25 Jul 2024 15:00:54 +0900
-Message-ID: <17d6401dade58$0287e640$0797b2c0$@samsung.com>
+	s=arc-20240116; t=1721887336; c=relaxed/simple;
+	bh=CEJSUnaa5jIf4nyG6AIV3kMsICNFCuXqAz7oD3ADV+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jE12VkDfaaNfqsWcfFpz7RazDlzeqkJKiykzEn5HfQ7UGZBqLcnyWxZOtsonbU7pV2zliDdsaFTe889swHyHZaqkVUTUmDTduPUM2hBUapDGg13W4riQwhVPq2q5iIOpFrbwCS2kyUms+wwf4jYoSSd2EcXOgsQfjRfjVdSCBHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yByTCVu+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc692abba4so5118425ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721887334; x=1722492134; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lT7pVgmY6+k5PdKkioS4N3aBOVBxViwY3ci9i1PhHtU=;
+        b=yByTCVu+WCmDwJM8cIxwxNnWk04q+ziEOznrCWhnQHJsDf9acnlhIvGGPOOIu+hR9x
+         c6GtwO5hzQ2GQr+KbGYJICNhfrJNIIn1o4rwcjEHpc4wwUyUnnVZrhB2hSAvYk0syBN5
+         pR/oDZ/5f0bvSGrKi8OxcAr3Ez0QXcRJU8Ci5F9pANLoxqvnlrSy7P8x0RxrSFvqpX+7
+         t/bnvF+DAXojBUYDtyD/TBZArH9Q3P0PlkVeCun1SCFNmElGy8GknCXMcWgSMicAkynw
+         pTcxbW2xUanCanghN64Pr9zx6S6qR4HN1tHrtiHDOSdyz/k79G2O+6QOHNpTuLKaA9eK
+         mrMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721887334; x=1722492134;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lT7pVgmY6+k5PdKkioS4N3aBOVBxViwY3ci9i1PhHtU=;
+        b=qyvcXUJCZ7ab1yntVpZKISaL19vWJaqB73xFrMk3FT8u5s9gbPdeA9RqM86DrR3nFG
+         +2nB7mjGHXY91l2mVbz1EwSQOCQZQBvtHAfUxMS3oqNJIK2FdA18bHfyDdINBZEpx1Xw
+         VY9r8jPvjAT6vtvDI2G2F9/ROcElCbIUUHd3q0/3SAFB11m5uJ+m5gIcfdGajmww6Kbt
+         5I9EliLQ0V+MZl7nKwgCz95VhbStactm0SjjJSmr8SDMSJ7Mekgy9E5Zmd4i5YHpzdDi
+         5PEPbKLc00ay401at8MfHCLim7GxldeO//wYvv76eZGuXaratQa2ShtpXmW8nKND+WBA
+         Ps+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUV2n+NSbCkUUdmen5fH2AIb4Fiz4VWMgbL+N2WAaGFeYGtEzRXVctma2/PptpjR4dGWe6zzMlrgda5LVp8oxevlkvYQ63z9EzfgJmK
+X-Gm-Message-State: AOJu0Yxw4qa6dqc5LbCH7QXwn0HQYR8bEYL13SOBeIicY1wDZUc9kAg6
+	ZLjJUeaTp5tURQ6TE/WrHf3h8VWhhSCsKxEVfFl8tTOIDHttx/LlKTQJl1OAjwE=
+X-Google-Smtp-Source: AGHT+IFe2E3BGyxWknIirjIQ6011l9JnES0NRsCiqCFVXsQdUs6+INPxuFjsH8/OVGUavXN6Ey161g==
+X-Received: by 2002:a17:902:e804:b0:1f9:fc92:1b65 with SMTP id d9443c01a7336-1fed35360c8mr22007925ad.9.1721887334263;
+        Wed, 24 Jul 2024 23:02:14 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee82bdsm5623535ad.141.2024.07.24.23.02.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 23:02:13 -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:32:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
+ domains
+Message-ID: <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
+References: <20240701114748.hodf6pngk7opx373@vireshk-i7>
+ <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+ <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+ <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
+ <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7>
+ <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
+ <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQItpdPUYDcdohGaqP+peTI17yo97wDEgLlZAlqmsEKxSGnjgA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGJsWRmVeSWpSXmKPExsWy7bCmga7Yq4VpBk/vqltM/HGF1eLl5rfM
-	FvM/P2GzOD1hEZPFoz33mCwmTlvKbLFn70kWi8u75rBZvD7wkNliy78jrBZTnx5jdeD22Dnr
-	LrvH5hVaHptWdbJ59G1ZxehxuP0su8fnTXIBbFENjDaJRckZmWWpCql5yfkpmXnptkqhIW66
-	FkoKGfnFJbZK0YaGRnqGBuZ6RkZGeqZGsVZGpkoKeYm5qbZKFbpQvUoKRckFQLW5lcVAA3JS
-	9aDiesWpeSkOWfmlID/pFSfmFpfmpesl5+cqKZQl5pQCjVDST/jGmNH9qo21oJ2lou9DJ1sD
-	4yzmLkZODgkBE4nTc58zdTFycQgJ7GCUuPRxKzOE84lR4s6La6xwztf7y1lgWu4ePQ7VspNR
-	4uCBJqiWl4wSnTOXMYFUsQnoSjy58RNsiYhArETj7ansIEXMAr1MEi83rgMr4gQq2tN3hrGL
-	kYNDWMBF4t9Hc5Awi4CqxMwrzxlBbF4BK4mdxyawQdiCEidnPgG7gllAXmL72zlQTyhI7P50
-	lBVil5PE2+/HmSBqRCRmd7aBHSchsINDYtPho4wQDS4Sa17vg2oWlnh1fAs7hC0l8bK/jR2i
-	oZtR4vjHd1A/z2CUWNLhAGHbSzS3NrOBHM0soCmxfpc+xDI+iXdfe1ghSgQlTl/rZgYpkRDg
-	lehoE4IIq0h8/7CTBWbVlR9XmSYwKs1C8tosJK/NQvLCLIRlCxhZVjGKpRYU56anJhsWGCLH
-	+CZGcJLWMt7BeHn+P71DjEwcjIcYJTiYlUR4l91fmCbEm5JYWZValB9fVJqTWnyIMRkY2BOZ
-	pUST84F5Iq8k3tDMzNLC0sjE0NjM0JCwsImlgYmZkYmFsaWxmZI475krZalCAumJJanZqakF
-	qUUwW5g4OKUamDo/JG87rfgxKeWFa7CU3XElA8P3TQH9yhlmYRu8wrQnOd1hPXun9/RkPpl2
-	a8OVUr/myGoIHNIKPmMbuGC5FMukjfxXFbI3dXv22hwX7Bbfo8ekOzEmK4jHRZJNr8Cn8Vxx
-	xuTZTSH/ONdamGWrbZhXZWnEnRU+beHxa99EjGa3v4i4yd4/o0hd3VXk6+17WpM3BexUYahU
-	v/hsmfupd6HrpmyIL5t+dK758Rn5Lbe6+6+2fFnpxMIWoX9Ixmf2LG/ZE98bJHmY/Gd4Pf7k
-	E2rXEiHdfIX12dopoSdZy3Yo26R8leES5n1gGHd364KK5Zazv2z1rXn29vGnlvjfdts+x/X5
-	Msw03MW1Q22SEktxRqKhFnNRcSIA6Z4UcYkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsWy7bCSvK7Yq4VpBmfXC1pM/HGF1eLl5rfM
-	FvM/P2GzOD1hEZPFoz33mCwmTlvKbLFn70kWi8u75rBZvD7wkNliy78jrBZTnx5jdeD22Dnr
-	LrvH5hVaHptWdbJ59G1ZxehxuP0su8fnTXIBbFFcNimpOZllqUX6dglcGd2v2lgL2lkq+j50
-	sjUwzmLuYuTkkBAwkbh79DhTFyMXh5DAdkaJrfuWs3QxcgAlpCQO7tOEMIUlDh8uhih5zihx
-	9e0tFpBeNgFdiSc3foLNERGIlTjW/Y8ZpIhZYCqTxO69c6GGbmKUaNz3nQmkihOoY0/fGUaQ
-	qcICLhL/PpqDhFkEVCVmXnnOCGLzClhJ7Dw2gQ3CFpQ4OfMJ2D3MAnoSbRvBSpgF5CW2v50D
-	db+CxO5PR1khbnCSePv9OBNEjYjE7M425gmMwrOQTJqFMGkWkkmzkHQsYGRZxSiaWlCcm56b
-	XGCoV5yYW1yal66XnJ+7iREccVpBOxiXrf+rd4iRiYPxEKMEB7OSCO+y+wvThHhTEiurUovy
-	44tKc1KLDzFKc7AoifMq53SmCAmkJ5akZqemFqQWwWSZODilGpjKKyqDzIOaio129M3LuS8m
-	cOjR3PpP6XzVL6v27zDhXRfqvE2h4pKlmnn/9r7fD/uMluQZnLkZ0+X4Quxps/dhDs7VjLVt
-	kzQ8J7w5fbZMePtny0n2Py/ntJYc3Z/96cyH12xsqWsVPtdeSn6cmHZSlb9jfd3ZLV1hkudZ
-	vXcKeKSdefM2z8I01irpxKc53c85ru47zhXCGfnPbe+HW2dZfh4rKet7zeocplI9h32n0/R7
-	j73lc3Wa9r4Jub/K4MHHm6uPXzgoE/HA79L0jMn6GjwNYjbNrQ46x69F37XbPOHzjJg9VpIN
-	hscmFxQdOj1Zy/DbvWu8kxsPnOXU2/DJq9nghVCGR0nU353T0/YrsRRnJBpqMRcVJwIAyK/Q
-	KycDAAA=
-X-CMS-MailID: 20240725060054epcas1p1494596fab623da39060e9dd2cc766cd2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240724130711epcas1p3a6b887e2f40e3430e22d739093485cc6
-References: <20240723105412.3615926-1-dongliang.cui@unisoc.com>
-	<CGME20240724130711epcas1p3a6b887e2f40e3430e22d739093485cc6@epcas1p3.samsung.com>
-	<ZqD8dWFG5uxmJ6yn@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
 
-> > +static int exfat_block_device_ejected(struct super_block *sb)
-> > +{
-> > +	struct backing_dev_info *bdi = sb->s_bdi;
-> > +
-> > +	return bdi->dev == NULL;
-> > +}
-> 
-> NAK, file systems have no business looking at this.  What you probably
-> really want is to implement the ->shutdown method for exfat so it gets
-> called on device removal.
+On 18-07-24, 12:38, Ulf Hansson wrote:
+> I understand your point, but we don't need to call
+> dev_pm_opp_set_opp() from _set_required_opps() to accomplish this.
 
-Oh! Thank you for your additional comments. I completely missed this part.
-I agree with what you said. Implementing ->shutdown seems to be the
-right decision.
+I _strongly_ feel that the OPP core should be doing what other frameworks, like
+clk, regulator, genpd, are doing in this case. Call recursively.
 
+> In fact, I have realized that calling dev_pm_opp_set_opp() from there
+> doesn't work the way we expected.
+>
+> More precisely, at each recursive call to dev_pm_opp_set_opp() we are
+> changing the OPP for a genpd's OPP table for a device that has been
+> attached to it. The problem with this, is that we may have several
+> devices being attached to the same genpd, thus sharing the same
+> OPP-table that is being used for their required OPPs. So, we may have
+> several active requests for different OPPs for a genpd's OPP table
+> simultaneously. It seems wrong from the OPP library point of view. To
+> me, it's would be better to leave any kind of aggregation to be
+> managed by genpd itself.
+
+Right. I see this problem too and that's why I said earlier that OPP core was
+designed for a different use case and genpd doesn't fit perfectly. Though I
+don't see how several calls the dev_pm_opp_set_opp() simultaneously is a
+problem. This can happen without recursive calling too, where simultaneous calls
+for genpds occur.
+
+I think the main problem here, on how genpd doesn't fit with OPP core, is that
+the OPP core is trying to do some sort of aggregation generally at its level,
+like avoiding a change of OPP if the OPP is same. I think the right way to fix
+this is by not doing any aggregation at OPP core level and genpd handle it all.
+Which you are also aligned with I guess. This would also mean that OPP core
+shouldn't try configuring, clk, regulator, bandwidth, etc for a genpd. The Genpd
+core should handle that, else we may end up incorrectly configuring things.
+
+I guess this is what you were trying to say as well, when you were trying to
+replace the recursive call with set-level only.
+
+I think, we don't need that change but rather avoid all these extra settings
+from dev_pm_opp_set_opp() itself.
+
+Also consider that genpd configuration doesn't only happen with recursive call,
+but can happen with a call to dev_pm_opp_set_opp() directly too for the genpd.
+
+> The API as such isn't the problem, but rather that we are recursivly
+> calling dev_pm_opp_set_opp() for the required-devs.
+
+I think that design is rather correct, just like other frameworks. Just that we
+need to do only set-level for genpds and nothing else. That will have exactly
+the same behavior that you want.
+
+> In the single PM domain case, this would simply not work, as there is
+> not a separate virtual device we can assign to the required-dev to.
+
+We can assign the real device in that case, why is that a problem ?
+
+-- 
+viresh
 
