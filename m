@@ -1,60 +1,103 @@
-Return-Path: <linux-kernel+bounces-262485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4025393C793
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:14:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8038193C794
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE6E7B20B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68491B2126C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3E719D8A7;
-	Thu, 25 Jul 2024 17:14:47 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18AF19B3F9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B119DF54;
+	Thu, 25 Jul 2024 17:16:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568A14A82;
+	Thu, 25 Jul 2024 17:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721927687; cv=none; b=BwIyU0iXjyLPccB6EBmXsFRithRYN+88+97OFyxvLtsqZVsb8StHxPIUBBQWwqV0jsRlKs2z/bTFOoicw2p1ohP6BmORDyZW8fEk5RCZh1/eWYvquhpMdzCf2ySDAZEQVBTg9XicLEeDJ9fr1YLqyirjF8tMpjtgAWWvbcuRSy0=
+	t=1721927774; cv=none; b=JsTCy+JmZ5M/nap/LNLutCza0EQdz2h632i1Yj1f/T73P3xuLFXdzDwI20ZLPc/diTg7CEFb+yLKaLNFjqyySHfKyMVJ8fCv8ayuiqAGTHaqkROwOj5RSXgz41OObgK4kK2nKU+bxk77gkUXlKMI3F3AP/PVM3gN0Z6VJo44E6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721927687; c=relaxed/simple;
-	bh=CNk/DQuHy42B8dpzVfkzz+ODFYNL+SclierQzdBXmJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDOn4AI4J4I6/H1Y229UDaIaAxUnSAnM5GicFExfqkkva9v9BjJZZ68E3sIvbvi75PVIgmM+L9MLledk8oLtiQAHf5gS6TqQFZ1kZIDvdUYuz1Y+TffKXA9Xoc6UXLqgMOaaUezzB1IYZhYAiLVO4/Ve/KDdkt0UoP9GGAvTEgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by mail.home.local (8.17.1/8.17.1/Submit) id 46PHEhId031037;
-	Thu, 25 Jul 2024 19:14:43 +0200
-Date: Thu, 25 Jul 2024 19:14:43 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc: add stdbool.h header
-Message-ID: <ZqKIA0+hEc2lE8gF@1wt.eu>
-References: <20240725-nolibc-stdbool-v1-1-a6ee2c80bcde@weissschuh.net>
+	s=arc-20240116; t=1721927774; c=relaxed/simple;
+	bh=WbAzZRlEYkN2KDT4LrhkDUIkqp+bsK1buji5VXHRhVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rRvcOHFnxs8fdwl3BwmBywEHeEbfE7rxXl3W/1f1D6b/CIzRCMfYtnrQE3RzFR6+fp1jaYwmN2zPBlMMYNamnbCwA48TAWzxeBXoezgm4fBsgmJN258WMYqGnxb4QCLPCXbDAXlfiaBe0SLXr48j8LjSrqmZI5sEhYNH1cWdbis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD13C116B1;
+	Thu, 25 Jul 2024 17:16:12 +0000 (UTC)
+Date: Thu, 25 Jul 2024 13:16:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Vasavi Sirnapalli
+ <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240725131632.64cab267@gandalf.local.home>
+In-Reply-To: <20240725131021.788374d0@gandalf.local.home>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+	<20240725131021.788374d0@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240725-nolibc-stdbool-v1-1-a6ee2c80bcde@weissschuh.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 07:10:44PM +0200, Thomas Weiﬂschuh wrote:
-> stdbool.h is very simple.
-> Provide an implementation for the user convenience.
+On Thu, 25 Jul 2024 13:10:21 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
+> index 3a2b46847c8b..e9ed2826ff46 100644
+> --- a/kernel/trace/trace_events_user.c
+> +++ b/kernel/trace/trace_events_user.c
+> @@ -321,6 +321,8 @@ static void user_event_put(struct user_event *user, bool locked)
+>  	 */
+>  	refcount_set(&user->refcnt, 1);
+>  
+> +	user->call.data = NULL;
 
-Acked-by: Willy Tarreau <w@1wt.eu>
+Hmm, it may be possible to just have:
 
-Thank you for this one as well!
-Willy
+	user->call.get_fields = NULL;
+
+and then it will just use the call->class->fields instead and that should
+be initialized to empty.
+
+-- Steve
+
+
+> +
+>  	if (WARN_ON_ONCE(!schedule_work(&user->put_work))) {
+>  		/*
+>  		 * If we fail we must wait for an admin to attempt delete or
+> @@ -973,6 +975,11 @@ size_t copy_nofault(void *addr, size_t bytes, struct iov_iter *i)
+>  static struct list_head *user_event_get_fields(struct trace_event_call *call)
+>  {
+>  	struct user_event *user = (struct user_event *)call->data;
+> +	static LIST_HEAD(head);
+> +
+> +	/* If the user event is about to be deleted, return no fields */
+> +	if (!user)
+> +		return &head;
+>  
+>  	return &user->fields;
+>  }
+
 
