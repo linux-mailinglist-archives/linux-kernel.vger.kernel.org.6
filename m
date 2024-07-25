@@ -1,162 +1,224 @@
-Return-Path: <linux-kernel+bounces-262383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C65D93C64A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8064D93C64D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1F71C215BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:21:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3EE1F22A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24D419D89E;
-	Thu, 25 Jul 2024 15:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B128F19D893;
+	Thu, 25 Jul 2024 15:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MKHfxdxQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6blw3LG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD021993AE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D671993AE;
+	Thu, 25 Jul 2024 15:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721920906; cv=none; b=rNyPIx7UoTBD3gn6PITKWt4egEWJk6ztSrchk6pnzknznCtoy4wsW9NROVa1ixVg51slfAAosf60XCZlG+CNmQISQ2V9SLkixV7zo+AeDJSmc3OPO95bxIjzihnVFDM8/sENcr4kGf4qb4tJH6K9jpHNZPiFoNR3iHlXFr4juzQ=
+	t=1721920941; cv=none; b=gAuDkTfobPz4pVkF+EkaKZTKM3d3eKoCBD5Rt/6qhovZGKPrChlTDjMae7Q5oxLGk5dlcjIrLGY2AkuDLzi6qSKxubg+M+CDvUAdim/md3dgwNofJRWuvGkk7Jo/ETDdLVEhS1i1k8WCfNC5N9JZlQzx6CAMgDUM0K+cu9BwTMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721920906; c=relaxed/simple;
-	bh=RkNVsX0GJWP39VhHnsRew4x+r/mYmpi8tLHm7VuNQnI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HOxuNSMT1/JKDlj+qes/hR+N2LQRfjrWScBRYYLQ4TISkBbt0PimOLtugUS6JpSGWOZRQeQ6uZ+NYD1N9Gomo/xWU08DFBsA9Tw+IN/SEVcTs7r9f+uay0k/4XhbQ4sE7kpnlYU78SXdtoL6tIguDrZBApnxCzpRwzTC9uYTIBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MKHfxdxQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721920903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z8Tjgy4dHalmku2MigGV36hJgcomQ9zlrQHbeuGTVtQ=;
-	b=MKHfxdxQDLeDjoRt155tJ66XTkJWcNhC3MIoXZHa6Sm14/R6uSUrvGloGWND7ShEkb5F2C
-	Z9AlqSyerw5ZaURvkm9j9Vw8loYfdvgeEmtxp2bXh9mdF8ZLaLW7nwvIbAkS2U70OzZ8Is
-	LITaf/5iRewgeCFu+AOf69M7gAGxDCk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-113-BNqzsN9MMnmhOY1MCCGDwg-1; Thu, 25 Jul 2024 11:21:42 -0400
-X-MC-Unique: BNqzsN9MMnmhOY1MCCGDwg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42809bbece7so238705e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 08:21:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721920901; x=1722525701;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z8Tjgy4dHalmku2MigGV36hJgcomQ9zlrQHbeuGTVtQ=;
-        b=SieO/RJ3at6IWO5WoB1fwAV47Z0owie2jvM3tn3wUwgc3A6F6rmAUYrFW5i0HbLBCk
-         +thEa14lV+jgL/HjCshwTGSI9J+SgDLdpsUKNrCI/p9mGTQWtxUumSgABUQEgLNXLl07
-         v9ABk4qK20TMfz3Ou12HpGVUhj30CiEjfYmf5X/1YMu5Mh/+wFTewe7Wq5UtWRwY7Nha
-         PQiBxscq1GTmzZUQ9e8G0FFuhqIr08iPNTmtt05VLE2yf+wxn0nVg3gIPfnU1AnFgxwL
-         os8z+3HG8RLzEYdf/6EkxiYwHbCCJUEsWA/MU5yK22kqZ9kb3hb3s1i2zraqdrtiaFf7
-         Ldvw==
-X-Forwarded-Encrypted: i=1; AJvYcCW784XPtX7pc42VUsVb8Gx4COVn/9MI5G5b1LsMNKJ9qb/ZcpsaTReDkoPNBe7GxAv5NxRkcG4qLIaFGviGMjIDKg1ZeVeenNFLMdMS
-X-Gm-Message-State: AOJu0Yzvcn6QC8aydQ6ZwcJkeELZnHQk61aqJ8dqIafJzPYaiJ/F5SNM
-	fFQID6opLRZUI6Nlx/pfDD7GqWw7epc67H1kzikkuH04vfhDgCtG8AVR547Rwt8U0o0k800/kah
-	hdWG2pRrN7cNWrTY+s/LMskUdfGISghZDJlFxp64KqUM7gMlNlr80OkG49pQDVQ==
-X-Received: by 2002:a05:600c:19c7:b0:427:9f6f:4913 with SMTP id 5b1f17b1804b1-4280576b7famr12152515e9.5.1721920901107;
-        Thu, 25 Jul 2024 08:21:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUoq9MyYvXOU4HItbU3COs+rrthKOGlBJJ1A0/BR1JqKct+++msddOJXUIccyRZvEURjAPIw==
-X-Received: by 2002:a05:600c:19c7:b0:427:9f6f:4913 with SMTP id 5b1f17b1804b1-4280576b7famr12152425e9.5.1721920900677;
-        Thu, 25 Jul 2024 08:21:40 -0700 (PDT)
-Received: from pstanner-thinkpadp1gen5.fritz.box (200116b82d135a0064271627c11682d8.dip.versatel-1u1.de. [2001:16b8:2d13:5a00:6427:1627:c116:82d8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36416e2esm2558518f8f.0.2024.07.25.08.21.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 08:21:40 -0700 (PDT)
-Message-ID: <9529b8012b1a1573316d65727f231f5cf54d0315.camel@redhat.com>
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?=
-	 <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
-Date: Thu, 25 Jul 2024 17:21:39 +0200
-In-Reply-To: <ZqJgkLxJjJS7xpp1@infradead.org>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	 <ZqJgkLxJjJS7xpp1@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721920941; c=relaxed/simple;
+	bh=gAWZqpgLpw/cslZTppcs196uMtnC5f1eZdrcRvgrq0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRxVa2n4lZHfUgQ+9ryl5/wcz4UUglaC7R6BN8gEpucCj6LdTwwQbgrGBaCNRLsMUUHwhzGPHheBflHG5ND7PMPy/tegLwtVIQ2OyxMaRSNz1MYdIi0yvBFcH5zhJYLiuVNUZbrDmJ5brq6W/EUwPzU/HmpaIsjExqewEjXwt3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6blw3LG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23B6C116B1;
+	Thu, 25 Jul 2024 15:22:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721920941;
+	bh=gAWZqpgLpw/cslZTppcs196uMtnC5f1eZdrcRvgrq0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y6blw3LGVh4qrB5AXwaTsh92xrwezBsfddhhJ18CaZZjCKk18fyND5fWS6jxAXe88
+	 vVWgPqoy161CYTPnttncrx+Ghv1i7Yi15f6gjIf4FW9MM2RdHRP2h/YYakTS1+myMT
+	 SfxuOnK8NgA3HymDhzKIeRVlUSOiEY7k/JyLKTTJrWe4qygwGlXkLA7f5tJhCGHgxk
+	 jHT3gMrykfrztimHyZxm9suhznx2NBrcJAElBtRMvWgLMU0388oJ2QaI/qQfzbz4U6
+	 MAuQgfAtWkq+Erkxv2rutXoa+kMgthXswersZYh3LC2dhaH/2E5BoXryroOxbB+rPD
+	 rV4aQqAIR2/ng==
+Date: Thu, 25 Jul 2024 20:52:12 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 00/25] context_tracking, rcu: Spring cleaning of
+ dynticks references
+Message-ID: <20240725152212.GA927726@neeraj.linux>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724144325.3307148-1-vschneid@redhat.com>
 
-On Thu, 2024-07-25 at 07:26 -0700, Christoph Hellwig wrote:
-> Can we please fix this to never silently redirect to a manager
-> version
+On Wed, Jul 24, 2024 at 04:43:00PM +0200, Valentin Schneider wrote:
+> Git info
+> ========
+> 
+> The series is based on rcu/next at:
+> f395ae346be5 ("Merge branches 'doc.2024.06.06a', 'fixes.2024.06.06a', 'mb.2024.06.03a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a' and 'rcutorture.2024.06.06a' into HEAD")
+>
 
-It is not the fix or the recent changes (which the fix is for) to PCI
-devres that is doing that. pci_intx() has been "silently redirect[ing]
-to a managed version" since 15 years.
+Hi Valentin,
 
-The changes merged into v6.11 attempted to keep this behavior exactly
-identical as a preparation for later cleanups. The fix here only
-corrects the position of the redirection to where the "crazy devres
-voodoo" had always been:
+I see that this series is based on paulmck/linux-rcu.git next branch,
+whereas the RCU tree has moved to shared tree now [1] and the next
+branch there is pulled for v6.11 (tag: rcu.2024.07.12a). I get merge
+conflicts while applying it. Can you please rebase?
 
-void pci_intx(struct pci_dev *pdev, int enable)
-{
-	u16 pci_command, new;
 
-	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git/log/?h=next
 
-	if (enable)
-		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
-	else
-		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
 
-	if (new !=3D pci_command) {
-		struct pci_devres *dr;
+- Neeraj
 
-		pci_write_config_word(pdev, PCI_COMMAND, new);
-
-		/* voodoo_begin */
-		dr =3D find_pci_dr(pdev);
-		if (dr && !dr->restore_intx) {
-			dr->restore_intx =3D 1;
-			dr->orig_intx =3D !enable;
-		}
-		/* voodoo_end */
-	}
-}
-EXPORT_SYMBOL_GPL(pci_intx);
-
-> and add a proper pcim_intx instead=C2=A0
-
-That has already been done. pcim_intx() sits in drivers/pci/devres.c
-
-> and use that where people actually
-> want to use the crazy devres voodoo instead?=C2=A0 Doing this silently
-> underneath will always create problems.
-
-That's precisely what all my work is all about. The hybrid nature of
-pci_intx(), pci_set_mwi() and all pci*request*() functions needs to be
-removed.
-
-However, that will take us some while, because the APIs are partly
-ossificated and every user that relies on implicit crazy devres voodoo
-has to be identified and then ported to *explicit* half-crazy devres
-voodoo.
-
-More details here:
-https://lore.kernel.org/all/20240613115032.29098-1-pstanner@redhat.com/
-
-P.
-
->=20
->=20
-
+> It's also available as a git tree at:
+> https://gitlab.com/vschneid/linux.git -b redhat/isolirq/defer/v3-rcu-v3
+> 
+> 
+> Series description
+> ==================
+> 
+> I've done one patch per renaming for my own sanity, a lot of these probably
+> deserve to be squashed together (e.g. all of the nmi_nesting into one).
+> 
+> At the end of the renaming exercise, the remaining RCU references to "dyntick"
+> are:
+> - Comments in core RCU code:
+>   kernel/rcu/:
+>   tree.h:208:8:	/* 3) dynticks interface. */
+>   tree.h:209:46:	int  watching_snap;		/* Per-GP tracking for dynticks. */
+>   tree_nocb.h:55:19: * about entering dyntick-idle mode.
+>   tree_plugin.h:873:4: * dyntick-idle quiescent state visible to other CPUs, which will in
+>   Kconfig:11:4:	# Dynticks-idle tracking
+>   tree.c:358:56: * We inform the RCU core by emulating a zero-duration dyntick-idle period.
+>   tree.c:773:10: * is in dynticks idle mode, which is an extended quiescent state.
+>   tree.c:793:54: * by virtue of being in or having passed through an dynticks idle state since
+>   tree.c:808:44:	 * If the CPU passed through or entered a dynticks idle phase with
+>   tree.c:1986:14:		/* Collect dyntick-idle snapshots. */
+>   tree.c:1989:13:		/* Handle dyntick-idle and offline CPUs. */
+>   tree.c:2683:54: * Otherwise, invoke the specified function to check dyntick state for
+>   tree.c:2743:16: * CPUs are in dyntick-idle mode.
+> 
+> 
+> - Stale documentation in RCU/Design/Data-Structures/Data-Structures.rst
+>   referencing fields that have been moved out of RCU after
+>   904e600e60f4 ("rcu/context_tracking: Move dynticks_nesting to context tracking")
+> 
+> Testing
+> =======
+> 
+> Ran through TREE01 and TREE04.
+> 
+> Revisions
+> =========
+> 
+> v2 -> v3
+> ++++++++
+> 
+> o Collected Reviewed-By
+> o Rebased onto latest rcu/next
+> 
+> o Made it clear rcu_dynticks_in_eqs_since() is to be used in wait-for-EQS loops
+> o Slight rename variations following v2 suggestions
+> 
+> Cheers,
+> Valentin
+> 
+> 
+> Valentin Schneider (25):
+>   treewide: context_tracking: Rename CONTEXT_* into CT_STATE_*
+>   context_tracking, rcu: Rename RCU_DYNTICKS_IDX into CT_RCU_WATCHING
+>   context_tracking, rcu: Rename ct_dynticks() into ct_rcu_watching()
+>   context_tracking, rcu: Rename ct_dynticks_cpu() into
+>     ct_rcu_watching_cpu()
+>   context_tracking, rcu: Rename ct_dynticks_cpu_acquire() into
+>     ct_rcu_watching_cpu_acquire()
+>   context_tracking, rcu: Rename struct context_tracking
+>     .dynticks_nesting into .nesting
+>   context_tracking, rcu: Rename ct_dynticks_nesting() into ct_nesting()
+>   context_tracking, rcu: Rename ct_dynticks_nesting_cpu() into
+>     ct_nesting_cpu()
+>   context_tracking, rcu: Rename struct context_tracking
+>     .dynticks_nmi_nesting into .nmi_nesting
+>   context_tracking, rcu: Rename ct_dynticks_nmi_nesting() into
+>     ct_nmi_nesting()
+>   context_tracking, rcu: Rename ct_dynticks_nmi_nesting_cpu() into
+>     ct_nmi_nesting_cpu()
+>   context_tracking, rcu: Rename DYNTICK_IRQ_NONIDLE into
+>     CT_NESTING_IRQ_NONIDLE
+>   context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*()
+>   context_tracking, rcu: Rename rcu_dynticks_curr_cpu_in_eqs() into
+>     rcu_watching_curr_cpu()
+>   rcu: Rename rcu_dynticks_eqs_online() into rcu_watching_online()
+>   rcu: Rename rcu_dynticks_in_eqs() into rcu_watching_snap_in_eqs()
+>   rcu: Rename rcu_dynticks_in_eqs_since() into
+>     rcu_watching_snap_stopped_since()
+>   rcu: Rename rcu_dynticks_zero_in_eqs() into rcu_watching_zero_in_eqs()
+>   rcu: Rename struct rcu_data .dynticks_snap into .watching_snap
+>   rcu: Rename struct rcu_data .exp_dynticks_snap into .exp_watching_snap
+>   rcu: Rename dyntick_save_progress_counter() into
+>     rcu_watching_snap_save()
+>   rcu: Rename rcu_implicit_dynticks_qs() into rcu_implicit_eqs()
+>   rcu: Rename rcu_momentary_dyntick_idle() into rcu_momentary_eqs()
+>   rcu: Update stray documentation references to rcu_dynticks_eqs_{enter,
+>     exit}()
+>   context_tracking, rcu: Rename rcu_dyntick trace event into
+>     rcu_watching
+> 
+>  .../Data-Structures/Data-Structures.rst       |  28 ++--
+>  .../Tree-RCU-Memory-Ordering.rst              |   8 +-
+>  .../Memory-Ordering/TreeRCU-dyntick.svg       |   8 +-
+>  .../Design/Memory-Ordering/TreeRCU-gp-fqs.svg |   8 +-
+>  .../RCU/Design/Memory-Ordering/TreeRCU-gp.svg |   8 +-
+>  .../Memory-Ordering/TreeRCU-hotplug.svg       |   4 +-
+>  arch/Kconfig                                  |   2 +-
+>  arch/arm64/kernel/entry-common.c              |   2 +-
+>  arch/powerpc/include/asm/interrupt.h          |   6 +-
+>  arch/powerpc/kernel/interrupt.c               |   6 +-
+>  arch/powerpc/kernel/syscall.c                 |   2 +-
+>  arch/x86/entry/common.c                       |   2 +-
+>  include/linux/context_tracking.h              |  32 ++--
+>  include/linux/context_tracking_state.h        |  58 ++++----
+>  include/linux/entry-common.h                  |   2 +-
+>  include/linux/rcutiny.h                       |   2 +-
+>  include/linux/rcutree.h                       |   2 +-
+>  include/trace/events/rcu.h                    |  18 +--
+>  kernel/context_tracking.c                     | 140 +++++++++---------
+>  kernel/entry/common.c                         |   2 +-
+>  kernel/rcu/rcu.h                              |   4 +-
+>  kernel/rcu/rcutorture.c                       |   4 +-
+>  kernel/rcu/tasks.h                            |   2 +-
+>  kernel/rcu/tree.c                             | 111 +++++++-------
+>  kernel/rcu/tree.h                             |   4 +-
+>  kernel/rcu/tree_exp.h                         |   8 +-
+>  kernel/rcu/tree_nocb.h                        |   2 +-
+>  kernel/rcu/tree_plugin.h                      |   6 +-
+>  kernel/rcu/tree_stall.h                       |   6 +-
+>  kernel/sched/core.c                           |   4 +-
+>  kernel/stop_machine.c                         |   2 +-
+>  kernel/trace/trace_osnoise.c                  |   4 +-
+>  32 files changed, 256 insertions(+), 241 deletions(-)
+> 
+> --
+> 2.43.0
+> 
 
