@@ -1,171 +1,208 @@
-Return-Path: <linux-kernel+bounces-261951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B257693BE31
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4CE93BE36
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE413B21321
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FDB1C210A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD67196D90;
-	Thu, 25 Jul 2024 08:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D15196DA2;
+	Thu, 25 Jul 2024 08:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="tht9vLj+"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB3172BAF;
-	Thu, 25 Jul 2024 08:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E41741E1;
+	Thu, 25 Jul 2024 08:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897473; cv=none; b=qAxpe9GtEdyekIc5z6nMDxRqomTAVpMKunYWBAc0uDUHnh05onRg6/b5dFxtyZlR8a+ArPNndTom9MsHAKOPGQ5sHRM49UTYTEmWAmuR6XmC8MVm0pd4NVRCw+2905NNH/kwDm1F89UHCjvKsyswu6qnlqwA/ascO2gkJamOSwA=
+	t=1721897536; cv=none; b=FBvKbzkEAAubBdGjzDLbUmXDgDkBZx+grQywF1wcZGPFTnnLt0UKyRCvpP5BAIXlH+i3FDJd67MRdF1MWx3fvQE2AhvQ2zuthFVdoD6uOAQEqKT8lLoP7WT2PdGG175v4FH6QWRl7yz+5S4+b1i1RC+w7DksCyJFNMeYtdExSG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897473; c=relaxed/simple;
-	bh=dHODdX/8kdpsxIa/rTtzdc5tTqYEofnfE/ezMJ1823I=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=d3m1Ki6TN3YH42jQ6Dd5vPab8LKZzX/quAunw/j62sRcEjI1WZie181GH8dVfL3m67JJadVgdqsTBXWLfPu5UURTms0dNjx4zYwonc7HimcocXUF8VSTG/O5g1hColEN2KMjq+UIE5VoaiHsp/dMxCdQ4Y1JXSlE3TU8lJ1nBl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=tht9vLj+; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
-	:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=tW4sVbmZ6IkoO9JFHpG0v9V4u4ngChK5k3H+tBu6Tis=; t=1721897470; x=1722329470;
-	 b=tht9vLj+JV/Q0cPQyR/8gSnTKHw2KsGupBV16agfkQPl1ksEsWXoA9mL5eL+m5vLf32Dc5EdVF
-	ouaywJldYeXhJgpDO19SO0qE/6I0ZpVWDLj3QLqIASMDBq/F6Kn3omsTPpJg4OyupYQF/hc49u0hf
-	iuEP4O5TymWDbDMPCUttU2uFJ0ScNKjyVEa22zyYF1dreb74S1ne+C4QjFc/QHA5ZD6jq8M3xmhLc
-	jAhgvl6BIYhN7draDJ03JGk4ie4AHcXyZ7ReIVoh9M9tX7R7wjI9ZNDcRWSwsceGtNrQzVAAGOq0p
-	GY9dV8enfPgiuaf1saXjHxkkJn+m0FV24JhcQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sWuBn-00088i-HD; Thu, 25 Jul 2024 10:51:07 +0200
-Message-ID: <564711dc-488c-4898-93fc-bcf42e3a8ccd@leemhuis.info>
-Date: Thu, 25 Jul 2024 10:50:51 +0200
+	s=arc-20240116; t=1721897536; c=relaxed/simple;
+	bh=U5ZDTXxkRIk/3JvEIigcQBdT7eXHTE8XK4nJqoJsIaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ox3RdYu8M00ro6mw7qurIM2IBpRG448dmXs/q29Nhp88kooKmSmeEe7E7WUhAorfE5CDRAgTX5C9r4Jay/Rc3KqmzBxU7EWZn/w2kQl8Hiq0Qtk/tPa3Q3CdNECoeXCsltxJ4+1kH10EAM9eXnGmfsJalfcYWjrCEIGkFy1U4Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 370061F7F4;
+	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
+	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
+	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721897532;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
+	yEfbug76xpuQM+Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GfGZTkxN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BOSzqu0U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
+	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
+	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721897532;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
+	yEfbug76xpuQM+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C34513874;
+	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id je6YBjwSomZxLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 08:52:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BAD3FA08F2; Thu, 25 Jul 2024 10:51:56 +0200 (CEST)
+Date: Thu, 25 Jul 2024 10:51:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de,
+	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
+Subject: Re: [PATCH] scripts: reduce false positives in the macro_checker
+ script.
+Message-ID: <20240725085156.dezpnf44cilt46su@quack3>
+References: <20240725075830.63585-1-sunjunchao2870@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- Eugene Shalygin <eugene.shalygin@gmail.com>
-Subject: [regression] bluetooth scanning on AX210 stopped working
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1721897470;377314e6;
-X-HE-SMSGID: 1sWuBn-00088i-HD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725075830.63585-1-sunjunchao2870@gmail.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 370061F7F4
+X-Spam-Score: -3.81
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
-
-Luiz, I noticed a report about a regression in bugzilla.kernel.org that
-appears to be caused by a change of yours:
-
-2e2515c1ba384a ("Bluetooth: hci_event: Set DISCOVERY_FINDING on
-SCAN_ENABLED") [v6.10-rc1]
-
-As many (most?) kernel developers don't keep an eye on the bug tracker,
-I decided to write this mail. To quote from █ :
-
->  Eugene Shalygin 2024-07-23 19:39:38 UTC
+On Thu 25-07-24 03:58:30, Julian Sun wrote:
+> Reduce false positives in the macro_checker
+> in the following scenarios:
+>   1. Conditional compilation
+>   2. Macro definitions with only a single character
+>   3. Macro definitions as (0) and (1)
 > 
-> With kernel 6.10.0 bluetooth scanning finds no devices (Intel AX210). 6.9.9 works.
-
->  Eugene Shalygin 2024-07-24 06:56:42 UTC
+> Before this patch:
+> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> 	99
 > 
-> $ dmesg | grep -e 'iwlwifi\|Bluetooth'                                                                                                                                                                                          
-> [    2.633116] iwlwifi 0000:03:00.0: enabling device (0000 -> 0002)
-> [    2.643454] Bluetooth: Core ver 2.22
-> [    2.646521] Bluetooth: HCI device and connection manager initialized
-> [    2.647920] Bluetooth: HCI socket layer initialized
-> [    2.648885] Bluetooth: L2CAP socket layer initialized
-> [    2.649972] Bluetooth: SCO socket layer initialized
-> [    2.658734] iwlwifi 0000:03:00.0: Detected crf-id 0x400410, cnv-id 0x400410 wfpm id 0x80000000
-> [    2.660717] iwlwifi 0000:03:00.0: PCI dev 2725/0024, rev=0x420, rfid=0x10d000
-> [    2.662120] Loading firmware: iwlwifi-ty-a0-gf-a0-89.ucode
-> [    2.667789] iwlwifi 0000:03:00.0: TLV_FW_FSEQ_VERSION: FSEQ Version: 0.0.2.42
-> [    2.668164] iwlwifi 0000:03:00.0: loaded firmware version 89.202a2f7b.0 ty-a0-gf-a0-89.ucode op_mode iwlmvm
-> [    2.693021] Bluetooth: hci0: Device revision is 0
-> [    2.694469] Bluetooth: hci0: Secure boot is enabled
-> [    2.698894] Bluetooth: hci0: OTP lock is enabled
-> [    2.700339] Bluetooth: hci0: API lock is enabled
-> [    2.701262] Bluetooth: hci0: Debug lock is disabled
-> [    2.702069] Bluetooth: hci0: Minimum firmware build 1 week 10 2014
-> [    2.702719] Bluetooth: hci0: Bootloader timestamp 2019.40 buildtype 1 build 38
-> [    2.703431] Bluetooth: hci0: No support for _PRR ACPI method
-> [    2.708740] Bluetooth: hci0: Found device firmware: intel/ibt-0041-0041.sfi
-> [    2.711227] Bluetooth: hci0: Boot Address: 0x100800
-> [    2.711230] Bluetooth: hci0: Firmware Version: 120-18.24
-> [    2.773104] iwlwifi 0000:03:00.0: Detected Intel(R) Wi-Fi 6 AX210 160MHz, REV=0x420
-> [    2.783598] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
-> [    2.943521] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
-> [    2.943552] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
-> [    2.943578] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
-> [    2.943602] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
-> [    2.943608] Loading firmware: iwlwifi-ty-a0-gf-a0.pnvm
-> [    2.944080] iwlwifi 0000:03:00.0: loaded PNVM version 35148b80
-> [    2.959773] iwlwifi 0000:03:00.0: Detected RF GF, rfid=0x10d000
-> [    3.029643] iwlwifi 0000:03:00.0: base HW address: 2c:33:58:e9:d5:1d
-> [    3.822131] Bluetooth: hci0: Waiting for firmware download to complete
-> [    3.822963] Bluetooth: hci0: Firmware loaded in 1085762 usecs
-> [    3.822999] Bluetooth: hci0: Waiting for device to boot
-> [    3.848969] Bluetooth: hci0: Device booted in 25377 usecs
-> [    3.848982] Bluetooth: hci0: Malformed MSFT vendor event: 0x02
-> [    3.858349] Bluetooth: hci0: Found Intel DDC parameters: intel/ibt-0041-0041.ddc
-> [    3.864001] Bluetooth: hci0: Applying Intel DDC parameters completed
-> [    3.872025] Bluetooth: hci0: Firmware timestamp 2024.18 buildtype 1 build 81528
-> [    3.872028] Bluetooth: hci0: Firmware SHA1: 0xa8bb3f39
-> [    3.882989] Bluetooth: hci0: Fseq status: Success (0x00)
-> [    3.883003] Bluetooth: hci0: Fseq executed: 00.00.02.41
-> [    3.883014] Bluetooth: hci0: Fseq BT Top: 00.00.02.41
-> [    6.943128] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> [    6.943131] Bluetooth: BNEP filters: protocol multicast
-> [    6.943133] Bluetooth: BNEP socket layer initialized
-> [    6.943661] Bluetooth: MGMT ver 1.22
-> [    6.946103] Bluetooth: ISO socket layer initialized
-> [    7.068883] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
-> [    7.224190] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
-> [    7.225614] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
-> [    7.226232] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
-> [    7.226803] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
-> [    7.384675] iwlwifi 0000:03:00.0: WRT: Invalid buffer destination
-> [    7.539920] iwlwifi 0000:03:00.0: WFPM_UMAC_PD_NOTIFICATION: 0x20
-> [    7.541272] iwlwifi 0000:03:00.0: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
-> [    7.541861] iwlwifi 0000:03:00.0: WFPM_AUTH_KEY_0: 0x90
-> [    7.542422] iwlwifi 0000:03:00.0: CNVI_SCU_SEQ_DATA_DW9: 0x0
-> [   16.078066] Bluetooth: RFCOMM TTY layer initialized
-> [   16.078073] Bluetooth: RFCOMM socket layer initialized
-> [   16.078077] Bluetooth: RFCOMM ver 1.11
-
->  Eugene Shalygin 2024-07-25 00:13:34 UTC
+> After this patch:
+> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> 	11
 > 
-> [bisection] converges to 2e2515c1ba384ae44f6bf13dd64b9a0a950798c4
+> Most of the current warnings are valid now.
+> 
+> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+...
+>  def file_check_macro(file_path, report):
+> +    # number of conditional compiling
+> +    cond_compile = 0
+>      # only check .c and .h file
+>      if not file_path.endswith(".c") and not file_path.endswith(".h"):
+>          return
+> @@ -57,7 +72,14 @@ def file_check_macro(file_path, report):
+>          while True:
+>              line = f.readline()
+>              if not line:
+> -                return
+> +                break
+> +            line = line.strip()
+> +            if line.startswith(cond_compile_mark):
+> +                cond_compile += 1
+> +                continue
+> +            if line.startswith(cond_compile_end):
+> +                cond_compile -= 1
+> +                continue
+>  
+>              macro = re.match(macro_pattern, line)
+>              if macro:
+> @@ -67,6 +89,11 @@ def file_check_macro(file_path, report):
+>                      macro = macro.strip()
+>                      macro += f.readline()
+>                      macro = macro_strip(macro)
+> +                if file_path.endswith(".c")  and cond_compile != 0:
+> +                    continue
+> +                # 1 is for #ifdef xxx at the beginning of the header file
+> +                if file_path.endswith(".h") and cond_compile != 1:
+> +                    continue
+>                  check_macro(macro, report)
+>  
+>  def get_correct_macros(path):
 
-See the ticket for more details.
+So I don't think this is right. As far as I understand this skips any macros
+that are conditionally defined? Why? There is a lot of them and checking
+them is beneficial... The patterns you have added should be dealing with
+most of the conditional defines anyway.
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
-
-#regzbot introduced: 2e2515c1ba384ae44f6bf13dd64b9a0a950798c4
-#regzbot title: Bluetooth: hci_event: bluetooth scanning on AX210
-stopped working
-#regzbot from: Eugene Shalygin <eugene.shalygin@gmail.com>
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219088
-#regzbot ignore-activity
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
