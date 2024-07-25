@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-262220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE96193C2AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7464F93C2B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F301C20F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73B11F2213E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDEE19AD72;
-	Thu, 25 Jul 2024 13:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A839F19AD72;
+	Thu, 25 Jul 2024 13:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X5cLhsh5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ECy/kY4D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76E517557C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B06B17557C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721912859; cv=none; b=eC6TiDEBuTtse8bmMxvSZOfeCFiRqcBhEgo7CdsB8fpBo+lv2QKmFh9m1IoCJAvZ8flpt5Yil7bPj2YZeshEchJB2tg7qm7/BuUo+xOxNxqSxNC2x/6MZhDKGW3HdL01hQeSClC5PMN3Qs+SE6dud+0XMX4kD/MoiCZZBYaOSig=
+	t=1721912891; cv=none; b=JvQquvzxbdsjGCZZoqjP37YpwePCNJa9eiujDgV7RZ6fCPzNRALl6/N5d/kX0qUEyCzzCspWA8+dqXBxjw8p6ULtANq5orEFZYl8AanxHXwDxu3glJxFhPnvdUVCzaAfwsgyqjUJ1kbVGj7kSJm5WpleXx+WDQXl0V2TYSQtALU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721912859; c=relaxed/simple;
-	bh=v5FjqDVvTamk0srm2faB9slvRVcHie4xryseftv9uS4=;
+	s=arc-20240116; t=1721912891; c=relaxed/simple;
+	bh=exkd5yrQEHa63RQu6Kp/OBbgIAChv4vSmyDvJCFnUxc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FE10E+UiV4/AaGU6EzhU6JmQW/fnZNH1QgioqDLfEFfhefoIaKmUAEaXNg1pJsML0CU2yYWbZxyh71dcafTKZ1jAjy59cfK0sEAtPho6+Y3joF5sR08KBiXeQIhV6gX9dZCzrFLM/VgbZ94UfkxBiJwaqH4ifVaZx56/ofVrBvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X5cLhsh5; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=MkemhdQ9+3f5YrL2Lf44Fy+JVZmvwt4B4oVGF8g+dFHvU+qtfkwY6NSUUHm6yQh8K8UaeTmnhr8r7nZ8GuHb+jxNyFGzpiCnpPaS85KBLmfI7dqefbK0zTESNjR/KmH7UusgNSJOpHOa3GpNfsK4p5HjsmIibvv8b4WPb5Z+g8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ECy/kY4D; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721912856;
+	s=mimecast20190719; t=1721912889;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NFOfnXod23eXLrrcZDgNCx1C4bEGvgqLi4FsG5UaOVw=;
-	b=X5cLhsh5KtcdZvSGlI11+jwOx2sz+Bg66flyx9uZfcJMdabEji4DMa+rtV6jxdEKolEwfV
-	8kbAmGLtyg2UVidDN+hU97xt6/hqaInYCKTp3nGmcQT4BxuYkUo8LX73+ZjI5LXf3h1/Ub
-	yTs/5YYcngHRVEM7Mh3iJDmj+81z1fo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=C90WVXnRByK02IGsr4VoeHHtRY4XCUNngxrovTS3q/Q=;
+	b=ECy/kY4D6NXkZnlD2+LS5wSFB/qytf3CZmZGN9PivgG9zzRVgYe78sGc5+wt1++43edKAD
+	rumR7TchFmxBm2Enbf25vLOSZnrHvaZoKiBLjBm9el4PXIcjl2h9lTvjTgnsC0N2idzFKH
+	LygOn/hOxygJFk5Neyzvf/lIikkf/zE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-qViX0_GTM_-38vgllPLdCw-1; Thu, 25 Jul 2024 09:07:35 -0400
-X-MC-Unique: qViX0_GTM_-38vgllPLdCw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428076fef5dso4489335e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:07:35 -0700 (PDT)
+ us-mta-77-7Tf9M7OdNkqBhYWbWPn22g-1; Thu, 25 Jul 2024 09:08:06 -0400
+X-MC-Unique: 7Tf9M7OdNkqBhYWbWPn22g-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-426703ac975so4858465e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:08:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721912854; x=1722517654;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NFOfnXod23eXLrrcZDgNCx1C4bEGvgqLi4FsG5UaOVw=;
-        b=eHjxMy90iWebTb4o9MM/R0cYoeoPhA6/O8k83FtiCpJ98CRY7a26CP0lcefnNndxU3
-         f62PfjBO7E5qJQNi0Y257RYpmc7bxx6wat7BJvwsjvIQCrj7ovWPDlTNhCMTzuUplw8g
-         Z0/U4ar74jpe/niBJIhCuEUfbobobFix9DcNHapwWdxetbebDCqA9bQrUjjj1VtwF3WP
-         4Lh+XsRoKJ3Uyw12oo+b1RM1Q0jjeYIMcbNZabSlp+yCb4Fg8KltxpgxuiKiNcS470vK
-         NKUtFIXDvFeJHOvggfdMg8KnzCAi/jqeXASdhT9HqEBYlr9cjtJd8f+QihpEh6jOyvaG
-         i7kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdNCHJQact+BuPPeiZYrlyJZg7IcZbjg11dIiXW/NH5ag1i6aW8Z4DhuACIX7oTLNfgzr7X3iCL1m8okBE/onwKnhgKrn7keGel1VV
-X-Gm-Message-State: AOJu0YwI8dAIhHGH5RxocrMt3ymIJRez5HZ+TEhgsaTRieZyWlSlyvTc
-	QFfGXWexdv/NmqqzYdRiiNGxdd1so8oDYqeu30XXPSr8ECwW+HO4Dw1aK+yly6Zt62bi+Y9ON5V
-	Xcn44SElcNq7Hsshx5UowQVVH5D6OlUZ6dPn7TDMTGHyNyx8RTBS0+VmnkJOFAg==
-X-Received: by 2002:a05:600c:a4b:b0:426:4f47:6037 with SMTP id 5b1f17b1804b1-42805711e0dmr15837275e9.19.1721912854243;
-        Thu, 25 Jul 2024 06:07:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE4/40Ipsovkw8qmvQ3TpfowfqGoM/UQA10Uy+POeRRIv/gssEEbMYj4OAz/h1elI/71Kw5A==
-X-Received: by 2002:a05:600c:a4b:b0:426:4f47:6037 with SMTP id 5b1f17b1804b1-42805711e0dmr15837085e9.19.1721912853816;
-        Thu, 25 Jul 2024 06:07:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721912885; x=1722517685;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C90WVXnRByK02IGsr4VoeHHtRY4XCUNngxrovTS3q/Q=;
+        b=A9mr6YbbBjtxhoxJIMUmhZYIXAtottwHtY+EzNZlw8kUVZAzkXH6PLSd0TCh+pVNWv
+         vrwk0TnwF2DFvituyL5XtLgvsNygKsXn/NrGZOr/gn6FZ9nt0oAt2lb79ohc7SNy13X4
+         iOLsx9bBgSLgwPjLt0aBhEc+LPNIddhBlckeEAUnf/3dtu7eFMHVhBldiDvEm0Yjts9g
+         VzRtqYWFFrOikl1o9o1LeNWkHhz05KwDfCax5V4WUzGHBgvCrq6++CSY11NBdjZ4AQ7R
+         CsR6A3w0fo25fBQXUMmPBE7s/KMagm+nrITJMIKUy32U9hjpQmTgSadOYoJK4gaUcioM
+         Phhw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7bd4DTVP5MDl6ZUlMIKYaFZbRpKqQp6/KqSZFsr4xLBa/oiYqKcHFX8a/3yxYUaQzegADy7wodnXKPqjTvOhyvGm1waAsZ80ILdSA
+X-Gm-Message-State: AOJu0Yym6lVr5TB9+50m0hOVw13OtMkbg5pdQatGVj+zyDM2ldRkpLz7
+	8cE180pJORiH4W7xAo4B0oYC1h80ikwLfOzQMEbLWG+3aYAlL8iHtsdUo7CXIc2Qn06lEwQsW6P
+	RzKQyrBgjRKyWBJlEZ69Tm8sQTUlUDghCqPRnt7tZyrBVLe00Xw5LWgL4DRu/QA==
+X-Received: by 2002:a05:600c:4707:b0:426:62a2:34fc with SMTP id 5b1f17b1804b1-42803b482abmr19539575e9.11.1721912885523;
+        Thu, 25 Jul 2024 06:08:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnLUKkTu6kuy+cLnNv2N1SWYWXhmUAw0NOsG4WIMKAA7Xk+WY2qEwd75y+5kDrb2IjMUVHpg==
+X-Received: by 2002:a05:600c:4707:b0:426:62a2:34fc with SMTP id 5b1f17b1804b1-42803b482abmr19539305e9.11.1721912884996;
+        Thu, 25 Jul 2024 06:08:04 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c706:2c00:5f6:3120:375a:3e4? (p200300cbc7062c0005f63120375a03e4.dip0.t-ipconnect.de. [2003:cb:c706:2c00:5f6:3120:375a:3e4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36861b61sm2124670f8f.97.2024.07.25.06.07.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f941352asm75641125e9.41.2024.07.25.06.08.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 06:07:33 -0700 (PDT)
-Message-ID: <ceab7792-ae7a-4605-bd78-73353d71f87a@redhat.com>
-Date: Thu, 25 Jul 2024 15:07:32 +0200
+        Thu, 25 Jul 2024 06:08:04 -0700 (PDT)
+Message-ID: <d46323c0-7435-418e-a9fb-2e3ea11b9544@redhat.com>
+Date: Thu, 25 Jul 2024 15:08:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +82,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm: shmem: simplify the suitable huge orders
- validation for tmpfs
+Subject: Re: [PATCH v2 2/3] mm: shmem: rename shmem_is_huge() to
+ shmem_huge_global_enabled()
 To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
  hughd@google.com
 Cc: willy@infradead.org, 21cnbao@gmail.com, ryan.roberts@arm.com,
  ziy@nvidia.com, ioworker0@gmail.com, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
 References: <cover.1720755677.git.baolin.wang@linux.alibaba.com>
- <ee1b6ac287bb376a9da88a23e1ef16951eb94a4e.1720755678.git.baolin.wang@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
+ <26dfca33f394b5cfa68e4dbda60bf5f54e41c534.1720755678.git.baolin.wang@linux.alibaba.com>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -138,18 +138,13 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ee1b6ac287bb376a9da88a23e1ef16951eb94a4e.1720755678.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <26dfca33f394b5cfa68e4dbda60bf5f54e41c534.1720755678.git.baolin.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13.07.24 15:24, Baolin Wang wrote:
-> Move the suitable huge orders validation into shmem_suitable_orders() for
-> tmpfs, which can reuse some code to simplify the logic.
-> 
-> In addition, we don't have special handling for the error code -E2BIG when
-> checking for conflicts with PMD sized THP in the pagecache for tmpfs, instead,
-> it will just fallback to order-0 allocations like this patch does, so this
-> simplification will not add functional changes.
+> The shmem_is_huge() is now used to check if the top-level huge page is enabled,
+> thus rename it to reflect its usage.
 > 
 > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 > ---
