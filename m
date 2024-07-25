@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-262511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A619793C7E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E9D93C7E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618AD282091
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103461F23603
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CC219DF88;
-	Thu, 25 Jul 2024 17:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2403A19E7E0;
+	Thu, 25 Jul 2024 17:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNs7YgoZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHg8duUI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F124D199EB4;
-	Thu, 25 Jul 2024 17:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B6F19D8AB;
+	Thu, 25 Jul 2024 17:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721930330; cv=none; b=r1IANjE6PSuV9BCOeEWmGCWmLiOqkjyVSmvD/sQ6YzKOd1H7MWe4LoLrDcduxlsbCfnleYozII7nh29YDPhDzcEM3Lt1sO4eNQEla5P43YZbgjymQN70xb/yRTP/MzGOilee2vAxgeSznipY8p2LIm4AZwJcQTcLCoUTb8mp2d8=
+	t=1721930339; cv=none; b=Vn0USXx8LAg4E18tgtwyg1K9xOb+3I0WkZvrIMjPF8CaViPBC0yYKtp2iSaPvq3gvNOmGeplNbtVLseqji9PBLMDM0MOlVhSSj6/8YMggoAi69XLLfH0kHtNXvTJg7LZRvL+/Ze1BYqoER+8myui/1evGVMLuLSAqCysOL37oEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721930330; c=relaxed/simple;
-	bh=EGYBpKTIl+vBjeNpw+reRLBGEh+DlIq/lDipFjYTfkE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Vh3OSDLqoYb2mVOHkLobqoqTD4Sur0V7Vg6IzI9loXaBirX5S9z9WvuYgyumzhpS3U+c+v3UUv2DiNUYzP9jCX40eYx0xiLfHPVJMv87wkOB8Y1M54FxGX+I0MszbNxWKvHbY0bXtzhmv8FAkb5zR9qskRfrBjKpK2aRTFb5Dhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNs7YgoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5167C116B1;
-	Thu, 25 Jul 2024 17:58:49 +0000 (UTC)
+	s=arc-20240116; t=1721930339; c=relaxed/simple;
+	bh=ksZxtGQ5DZ+6mstx85eEqx7V+pB1g9WvFQ0VaWSbzEI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CmxHb54pvAHlG4X5j7RJ+ebZcVMZSIAOPNCiaPBGvKSuDouBT3pubyXCn3HFCuKvU4AIJSJ+od7stmrSiUgqRRL3xAELiX6mgQYSPCJp/ljE++EsBwDd3VGGtpLQmIzYjkpTlO7OzfmdVEs01Y/UNghU41YbfTJlfE9L+O+oN5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHg8duUI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EFFB3C116B1;
+	Thu, 25 Jul 2024 17:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721930329;
-	bh=EGYBpKTIl+vBjeNpw+reRLBGEh+DlIq/lDipFjYTfkE=;
+	s=k20201202; t=1721930339;
+	bh=ksZxtGQ5DZ+6mstx85eEqx7V+pB1g9WvFQ0VaWSbzEI=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=BNs7YgoZeXOiClzMwx2SzyA8POv1U+WrDl3LE5lxFLq+158TY2TrCO3exaECV4dwX
-	 atEuafzF5NOTHY2njCO2nXA8XapB790VFUU14b8k69VWuPnpyC8ooFfZRBEoHj4qd+
-	 cqnEx0lH5vABIgCHBs3klgr3bN/haImS5GaFv9Q1uSJQxaFY4PWyzOcGJ9AufXd8uu
-	 noCV52oGO/QVZ92TxVrtWyi8r4kjt4M3s/OCuX0eRvqaPZp5acjYUkP1R6KZzdpVzA
-	 NG6A17Zvt+QQ+LKxmCcx249xBvus7sZPmx5YRV15aYz1Uh2PzE4YC6yQgZKGXxJq5W
-	 WWXA5gCXdCXDA==
+	b=lHg8duUID96qWhHIlwEFqokXczwnLdZHCittGugwzjYy/iAAo+a9QPxhdfqrz2efU
+	 GnO9cus6hA+8XKgl9wYhGHmle3gSGl/eeoj+cr/WXUT3+6m8Iu7W8lQQmlKR1Q1Mgr
+	 2FtGGkm2zMQ7KZnDvNAo4dphGKR5a36vQiEqk36KgOvfe0KWaOjkMpAreKx/GQLSFE
+	 f6qZSwCDn+55KkGPUE8P+xhlvdnLjroDfcMTR5h7GRi2AQAbo3oDyTGpQFLVcFLjto
+	 JD3UjfTJTvC5SBxMKeWZ24EsdBci4rKeCrjJBEnZ4Uza8ekC5aP9IHL8IL3OkNcUb2
+	 LrtRHaIr1Li6w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CC4D8C43445;
-	Thu, 25 Jul 2024 17:58:49 +0000 (UTC)
-Subject: Re: [GIT PULL REQUEST] watchdog - v6.11 release cycle.
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7230C43445;
+	Thu, 25 Jul 2024 17:58:58 +0000 (UTC)
+Subject: Re: [GIT PULL] dma-mapping fix for Linux 6.11
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240724115254.GA19031@www.linux-watchdog.org>
-References: <20240724115254.GA19031@www.linux-watchdog.org>
-X-PR-Tracked-List-Id: <linux-watchdog.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240724115254.GA19031@www.linux-watchdog.org>
-X-PR-Tracked-Remote: git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.11-rc1
-X-PR-Tracked-Commit-Id: 63d097d46799dc6ab4d1430482cd5ab6a409c4ec
+In-Reply-To: <ZqESJ3kPSvh3mG3G@infradead.org>
+References: <ZqESJ3kPSvh3mG3G@infradead.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZqESJ3kPSvh3mG3G@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.11-2024-07-24
+X-PR-Tracked-Commit-Id: 28e8b7406d3a1f5329a03aa25a43aa28e087cb20
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b2eed73360dffea91ea64e8f19330c950dd42ebb
-Message-Id: <172193032982.22070.16396201789383088220.pr-tracker-bot@kernel.org>
-Date: Thu, 25 Jul 2024 17:58:49 +0000
-To: Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Biju Das <biju.das.jz@bp.renesas.com>, Chen Ni <nichen@iscas.ac.cn>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Sascha Hauer <s.hauer@pengutronix.de>, Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+X-PR-Merge-Commit-Id: 9cf601e865198c72e2a53118eaf37dcfd9a6cf1f
+Message-Id: <172193033893.22070.2888636634378990521.pr-tracker-bot@kernel.org>
+Date: Thu, 25 Jul 2024 17:58:58 +0000
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Wed, 24 Jul 2024 13:52:54 +0200:
+The pull request you sent on Wed, 24 Jul 2024 07:39:35 -0700:
 
-> git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.11-rc1
+> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.11-2024-07-24
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b2eed73360dffea91ea64e8f19330c950dd42ebb
+https://git.kernel.org/torvalds/c/9cf601e865198c72e2a53118eaf37dcfd9a6cf1f
 
 Thank you!
 
