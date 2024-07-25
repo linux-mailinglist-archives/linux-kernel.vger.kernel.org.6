@@ -1,77 +1,85 @@
-Return-Path: <linux-kernel+bounces-262368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E134F93C60D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:01:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C1E93C690
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BAD2282C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB8F1F2402A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2294319D8BB;
-	Thu, 25 Jul 2024 15:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A87419D89A;
+	Thu, 25 Jul 2024 15:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HI9hlt+k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJIAL/pq"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F52219CCF7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E7626281;
+	Thu, 25 Jul 2024 15:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721919689; cv=none; b=L6yP0X7uS8RSVjDJCfzACCnOKl1WYBUMsI8nbed79MeXPLCknugKOjNukF5ramS+LbCUx2OyBi60Jczf+3ctNiLpmunkK+AserQHC3cwNPrQlQwfnbAxLKZSlfUw5GtKQsuWjtoJz0GS4iYprzu+Mr4qwhdOsitdv9JCcUExfp0=
+	t=1721921851; cv=none; b=oqQeoMYQhENwpUVNf5aFzOVMcese6unaG2MaBbGUn7gOoQUKFDfY5iW4yOJiYkV5OO6JpZig26JQ8mT0q9COTV+258K/EJJkJEU/JjwFWz8yVha/EwgMqrmGhhj2EMNPlcn1CG23UVbwxcrsdw0V4T1peKMRV0edVVoBdeU3H4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721919689; c=relaxed/simple;
-	bh=KhGQutkuUF3lfyGgp4QnoP1AzxbSh/MzUrDflGzKQWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VarNQvFbMgedu73ToOdSVJbKmo3QYB1Tv/TiUqa7S9Kgi9/XnzgGwUT4+P/3J1KGPLqop0zy1B0BZHIz/GfWmUpmiFr44imF+v4B39Vv7do4kD+ODPp8SJIlodpfxXr86rvP3884Uy3lV47o9AXzEUTSyM04GNjz15xoQzrLYr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HI9hlt+k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721919687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DVAMN3U4tDyBzO81PDmsnSjhouOzOOdSN5L9d+/nJFg=;
-	b=HI9hlt+kgiCZVABSKITpVDvjUqv2AVFbSqUVBFO5ysPBLMZz5hYYpxWfJIm5O3xyooIOwt
-	bHyBaVx8bgXvL2ZxXQogIqgcMBKeGOWtEYETtIV6e5o9J1aBgvWJczSc3Lh/khisUpBhYm
-	poFSBqY8d6/+Fmc6+ZPVViRD1GP9Gp4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-A0MbT0NwNbuP-TLZwjqGGA-1; Thu,
- 25 Jul 2024 11:01:24 -0400
-X-MC-Unique: A0MbT0NwNbuP-TLZwjqGGA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5B5D1956046;
-	Thu, 25 Jul 2024 15:01:18 +0000 (UTC)
-Received: from starship.lan (unknown [10.22.8.132])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5DD211955F40;
-	Thu, 25 Jul 2024 15:01:16 +0000 (UTC)
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Borislav Petkov <bp@alien8.de>,
+	s=arc-20240116; t=1721921851; c=relaxed/simple;
+	bh=/n1Atm57G9O6shSYbXoTXtiSyztvvlrIo7zuTgBSym8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FvgLzWqUuLOtnu5IO1kzoFTxGAXaE4fbtgCrLSO7WnFSRK9ETDXVEDr8lgfIZ+Pwgj6D7bMvJTf8XhanHeRdz5yPQ1ys3P3iSyWMWQau+vEmUnvBHTwCnALrqjOCMFhDSDeBin5zdvIVgeaJfuckn4ygXpJaZY4NE/sPeZmkJUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJIAL/pq; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d2e68f5a8so814831b3a.3;
+        Thu, 25 Jul 2024 08:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721921850; x=1722526650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n31QORMfNE3yoo2+NSX27M5mqLxkfeiPRY8j0VlreVA=;
+        b=bJIAL/pqIlK9778RYAUbDHh2qgWXPmx8nlifERoxXdV0ww2gk3KY42oeUgX4+lo4UA
+         1zVJzwJuhVpH6RxNwVgl2t2NvhTxCoi40k18Pe8wf7h/FIa0M9lsctE6FXRuJzd1E9ZG
+         jhpuGy2AsfZMnYm+AOoL4jsHJSt/SHrxj0EvJ/9HXuWs1UutpNlsUCq0qosLWz4F7wu5
+         R+KRt0WvIG1ZyIX6HLd/eqhmd5TM66qVbImY172Dgy00RRJYkMy/3qENZUNExJDLKssd
+         2y+BWaa8C1HDkVnFk9d9uKVyjxj4IKePplpsOvXqcS299rTkeXKNzjOhg90PQacnjXS4
+         Hi4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721921850; x=1722526650;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n31QORMfNE3yoo2+NSX27M5mqLxkfeiPRY8j0VlreVA=;
+        b=b7bn5YWuz8gUCEOpRLpi/aRj00+V5U7KjDh6V1TPDxMic8XSQmH7BNGv7LocSeAFwt
+         6f19v8Y+S9f5JSYHlks4bmLgy6sTjDc4SObgf7EMyJDPFU8dq9pwY/pCskiN3h3WIN6M
+         8q3NItkGHzcWigZUs+35/OqVH4Jkt18cjMzlcFBhJdo8NXHoVstEaLwl/HosCEZXQlrX
+         LaIGUc3PBuIukGwOQ1gutQK0ZvrpkQNsLoYVL/KtxZ7SjEDsqnOSo5DpBhr7dZ3wCvKS
+         eOJPgtUuebv3PhuqmYSKMGLjlfQHIYHawOCv4ly58WD0XgT0uOixloauJjkI7ACtqwnm
+         puzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyyuQrqbKm7ly1huX0UVRMTf/WG4/oGoASEYvIxoeYG8SO9TsYd6E5zuTjakRyr9bYaK7hAW4SkYv1R4D0X5uNQ3mIKmtP/coiUmMMvoH0oU6kDw1Reb6ddmU9LM/TtsEyKzo8h7l5UmYer5A=
+X-Gm-Message-State: AOJu0YyZbOzM6poPyINNYB/Dwy3u17VDZjg30Fz0kxjB009VQIDU09ax
+	RYlH5SAW6upXzC7xvIeCI/QIYdwfMlhMpWOs4+lvshrWJ9TLH5QN
+X-Google-Smtp-Source: AGHT+IHyopklPWWOH9v4gmeeKYcsv7eHQMUjPDIU7eRRYcDOql08gKbqmBXmg8h/XYLe3mFlGWRPTQ==
+X-Received: by 2002:a05:6a00:1ac7:b0:705:97b3:4605 with SMTP id d2e1a72fcca58-70eae98fd23mr2782223b3a.25.1721921849671;
+        Thu, 25 Jul 2024 08:37:29 -0700 (PDT)
+Received: from kousik.local ([2405:201:c006:380f:2afe:8fe2:1930:3917])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead712bf0sm1270369b3a.74.2024.07.25.08.37.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 08:37:29 -0700 (PDT)
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	x86@kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>
-Subject: [PATCH 2/2] KVM: SVM: fix emulation of msr reads/writes of MSR_FS_BASE and MSR_GS_BASE
-Date: Thu, 25 Jul 2024 11:01:10 -0400
-Message-Id: <20240725150110.327601-3-mlevitsk@redhat.com>
-In-Reply-To: <20240725150110.327601-1-mlevitsk@redhat.com>
-References: <20240725150110.327601-1-mlevitsk@redhat.com>
+	Kousik Sanagavarapu <five231003@gmail.com>
+Subject: [PATCH v2 0/2] ti: davinci, keystone: txt to yaml
+Date: Thu, 25 Jul 2024 20:33:10 +0530
+Message-ID: <20240725153711.16101-1-five231003@gmail.com>
+X-Mailer: git-send-email 2.45.2.827.g557ae147e6.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,50 +87,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-If these msrs are read by the emulator (e.g due to 'force emulation' prefix),
-SVM code currently fails to extract the corresponding segment bases,
-and return them to the emulator.
+Convert txt bindings of DaVinci Timer and DaVinci/Keystone WDT
+Controller to dtschema.
 
-Fix that.
+v1: https://lore.kernel.org/linux-devicetree/20240721170840.15569-1-five231003@gmail.com/
 
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
----
- arch/x86/kvm/svm/svm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Changes vs v1:
+- Change davinci timer binding's file name to match with the compatible.
+  Also add "maxItems" for interrupts.
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index c58da281f14f..3fc01ba2bd4a 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -2875,6 +2875,12 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_CSTAR:
- 		msr_info->data = svm->vmcb01.ptr->save.cstar;
- 		break;
-+	case MSR_GS_BASE:
-+		msr_info->data = svm->vmcb01.ptr->save.gs.base;
-+		break;
-+	case MSR_FS_BASE:
-+		msr_info->data = svm->vmcb01.ptr->save.fs.base;
-+		break;
- 	case MSR_KERNEL_GS_BASE:
- 		msr_info->data = svm->vmcb01.ptr->save.kernel_gs_base;
- 		break;
-@@ -3100,6 +3106,12 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_CSTAR:
- 		svm->vmcb01.ptr->save.cstar = data;
- 		break;
-+	case MSR_GS_BASE:
-+		svm->vmcb01.ptr->save.gs.base = data;
-+		break;
-+	case MSR_FS_BASE:
-+		svm->vmcb01.ptr->save.fs.base = data;
-+		break;
- 	case MSR_KERNEL_GS_BASE:
- 		svm->vmcb01.ptr->save.kernel_gs_base = data;
- 		break;
+- Change the order of compatibles in wdt controller bindings touched in
+  order to match DTS.
+
+- Drop 3/3 from v1 which might effect users and should not have been
+  included in this series in the first place.
+
+Kousik Sanagavarapu (2):
+  dt-bindings: timer: ti,davinci-timer: convert to dtschema
+  dt-bindings: watchdog: ti,davinci-wdt: convert to dtschema
+
+ .../bindings/timer/ti,da830-timer.yaml        | 68 +++++++++++++++++++
+ .../bindings/timer/ti,davinci-timer.txt       | 37 ----------
+ .../bindings/watchdog/davinci-wdt.txt         | 24 -------
+ .../bindings/watchdog/ti,davinci-wdt.yaml     | 52 ++++++++++++++
+ 4 files changed, 120 insertions(+), 61 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/ti,da830-timer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/davinci-wdt.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml
+
 -- 
-2.26.3
+2.45.2.827.g557ae147e6.dirty
 
 
