@@ -1,91 +1,95 @@
-Return-Path: <linux-kernel+bounces-262422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDAE93C6E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C73193C6EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CAE91C21D3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:58:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DD671C21FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0301319D895;
-	Thu, 25 Jul 2024 15:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MwDtNN0x"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB7819DF40;
+	Thu, 25 Jul 2024 15:59:36 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DDC19CCE6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 15:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BD54759;
+	Thu, 25 Jul 2024 15:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721923110; cv=none; b=RGYuznd0FVZGhVJL0LEVROoY4pmfT8+qGi585OAz8CtSwIpylFQx7tJqeoUNb8BqRMAnV+xylZzuYd1FGk1vVthwlgnXbnqPGXYUHjUpV3aRt/lZgVEfeFRUVtOVZmkkyR75CbW/drpaISGco4NZs/THdc11BOe/tmTUpxVwPho=
+	t=1721923176; cv=none; b=DIv2cmqWj+U6PRyPzOrtdlR4yfMJKSefLgcKQ34yJnFZFXLXUrF59mzidWFH7b1msAObzhZaHNPKUcWzBFtpz6eG4TtlDDwZ8kimOENFCWFOcnrUAQhiZuOo98rpp6gKEfmnZF5GMbGXKeJ+7p3e1CGal1hsfGKlyiQEb4voRNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721923110; c=relaxed/simple;
-	bh=Gg3qOkyKWzSPtHOylZLZPM98LObUiDyDGCldIoS8GKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJe7z8tT10h6pqNo5A8v906BoKp0CtEkSG1M0erbVUfgwDNpCOBAeFXKFGbffwbsX8E0Hh9+7A4dZvUn7n/cqHeFwGsZnzvCGz+sfjvgoH3e9tnlVbnEvXTTrT/DiHrWaOxDXMUZ52gt5kOpZI9oY++aA83KhnFT+dbjrdgtFgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MwDtNN0x; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 25 Jul 2024 08:58:20 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721923105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JHy3kMv2+9CvwokKG6SI4pSO0K4nWpJXUttrkSjNaHI=;
-	b=MwDtNN0xYUcYHlHs5WBURHCSX6acncLBPvSBWss8baAl5dJLlCi/7W1lUmuhU+OpS72J88
-	GQhLuqUFOqx7F25tBQKZEGP9is0416Io+vE2O5qfZrN437Y4FCQ6+k+QaKh1n6ZcOM0Fhr
-	wuLfqgK3sTYwy0QV6V183cXk+qD01DU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, akpm@linux-foundation.org, vbabka@kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm: kmem: add lockdep assertion to obj_cgroup_memcg
-Message-ID: <jim27oum4wu6q3yp6skiemwckvoq64uyuyb75or7a326ojhuza@kn4l5dezqenj>
-References: <20240725094330.72537-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1721923176; c=relaxed/simple;
+	bh=gDOU6QQOrbtz6N9UbEfgvHFGXIdB4+i5OpwEQYFZphY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ggGSiShcoPNgA9Gjjy1aboyH7yA2AVYzpF99Au8LmbDf9Y36aztg/1DuxhGpoyzEd/i2l/cItploi6HqekqO37USrgNafgD6UA2+utttYsqhg48qKMmhWgaNaBKlyu8svSgYK2G+gIdJpVQMdM+pPpkLeT0qiO8LeBSb0ZJ/tI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 25 Jul
+ 2024 18:59:29 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 25 Jul
+ 2024 18:59:28 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] drm/i915/guc: prevent a possible int overflow in wq offsets
+Date: Thu, 25 Jul 2024 08:59:25 -0700
+Message-ID: <20240725155925.14707-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725094330.72537-1-songmuchun@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Thu, Jul 25, 2024 at 05:43:30PM GMT, Muchun Song wrote:
-> The obj_cgroup_memcg() is supposed to safe to prevent the returned
-> memory cgroup from being freed only when the caller is holding the
-> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
-> ignore thoes conditions when users call some upper APIs which call
-> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
-> the link below). So it is better to add lockdep assertion to
-> obj_cgroup_memcg() to find those issues ASAP.
-> 
-> Because there is no user of obj_cgroup_memcg() holding objcg_lock
-> to make the returned memory cgroup safe, do not add objcg_lock
-> assertion (We should export objcg_lock if we really want to do).
-> Additionally, this is some internal implementation detail of memcg
-> and should not be accessible outside memcg code.
-> 
-> Some users like __mem_cgroup_uncharge() do not care the lifetime
-> of the returned memory cgroup, which just want to know if the
-> folio is charged to a memory cgroup, therefore, they do not need
-> to hold the needed locks. In which case, introduce a new helper
-> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
-> could eliminate a memory access of objcg->memcg for kmem, actually,
-> a really small gain.
-> 
-> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+It may be possible for the sum of the values derived from
+i915_ggtt_offset() and __get_parent_scratch_offset()/
+i915_ggtt_offset() to go over the u32 limit before being assigned
+to wq offsets of u64 type.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Mitigate these issues by expanding one of the right operands
+to u64 to avoid any overflow issues just in case.
 
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
+
+Fixes: 2584b3549f4c ("drm/i915/guc: Update to GuC version 70.1.1")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+index 9400d0eb682b..908ebfa22933 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+@@ -2842,9 +2842,9 @@ static void prepare_context_registration_info_v70(struct intel_context *ce,
+ 		ce->parallel.guc.wqi_tail = 0;
+ 		ce->parallel.guc.wqi_head = 0;
+ 
+-		wq_desc_offset = i915_ggtt_offset(ce->state) +
++		wq_desc_offset = (u64)i915_ggtt_offset(ce->state) +
+ 				 __get_parent_scratch_offset(ce);
+-		wq_base_offset = i915_ggtt_offset(ce->state) +
++		wq_base_offset = (u64)i915_ggtt_offset(ce->state) +
+ 				 __get_wq_offset(ce);
+ 		info->wq_desc_lo = lower_32_bits(wq_desc_offset);
+ 		info->wq_desc_hi = upper_32_bits(wq_desc_offset);
 
