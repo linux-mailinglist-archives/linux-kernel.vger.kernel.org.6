@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-262673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B43493CA61
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23EC93CA5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7CE1C21C60
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2887E1C21D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE639146A8A;
-	Thu, 25 Jul 2024 21:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC66143C7B;
+	Thu, 25 Jul 2024 21:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqmAgIJK"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsvO6bot"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C074143875
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D066D299;
+	Thu, 25 Jul 2024 21:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721944570; cv=none; b=ahbMLk7LE4Nb/6IlMYV+IQuawZe5597p2bFxhQMhOVrTHMZkSBNNQTUtjz4QO0f953gLxP27486CTdS3nSctuwnAXnXQZyi0Xbt+7d0kiWZ+9D5JLaSZRZ2g0NWtK4bhOfSruWFrGFNbUlRJo9pGNENWNxUAkb1aJjUi7QwakR8=
+	t=1721944552; cv=none; b=LYuqYn80urQJ70XJXWjW91aG4WHr0WyfiQ1mSKyCfUTL3Sok+ICMUNkoiLys3JseNGeJMdiOPGx0yDp/A4zzY79iIdWKrya1q+TkTV8fGQKTmxkko09MGPUy2tJyuo83rT+7XHJYKPSKFcE5dWd47MSWEejGotqx1AZZgQ9arKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721944570; c=relaxed/simple;
-	bh=G0SV+4c0df7kDP/HmTtBo/ahkooNcX5psIcCqUvYfMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mrC0tpxBavwQwrtnc1rk68zt8I5QG+a5qoZoj9JVs+bqPiFQHbDH/c6RTLeANIfFj4rPDN9sZdZex2S6HzHu7DIkKisFRt+0z9z19V/0VkKvyf9jrCNdttQv/yDNHmPm+SoDWANS5xJQJowaCpo4HZpzthMDmSS5lweFoRce2z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uqmAgIJK; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44fee2bfd28so15571cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:56:08 -0700 (PDT)
+	s=arc-20240116; t=1721944552; c=relaxed/simple;
+	bh=f/y/eQdO+nZNsf79eD0MTTu44yx0PRUxwcM7ov7dwQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0Q1RYV1alFGXNGFzkbSMXm5RStl9uwwoZio4idtfXyCvMNRTC2HzgnbHwU6zCJnPO7VaPxpkNKc67xK+lBc674nov3fzh9gecwLkxylJKv/5TvQ/A+RhoevBOfgVDXyQvJel00+ope+k5neAsuUjjg8WPtG5Tre/eBQRdgBNWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hsvO6bot; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-267b7ef154aso382386fac.0;
+        Thu, 25 Jul 2024 14:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721944567; x=1722549367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o5zN0Ee2V5PvZ/loIwKVW1h0fdtsfazaCJoYyQYKYrE=;
-        b=uqmAgIJKpg5s7UutiKdKoBc9GtLlyX1yNbNEaw8svVLCSmzlfvDmhVQKD3jyO8T28p
-         qwUfXTbkWV4qB8LSsr6W/kjt9wk9NOOKzoxLDJTbdVSPKzq3tQCpq5OKaAwg8de2cOf9
-         V6nB+jT48JhIG+YAhOKN9dlfvY3XBkLnQqTLyI0OeoapAIH+iP/w+Imqubb4BLnmrpTe
-         Xyw23lWIAGiE64UG8GHlMN9fcaxF2BvMLPV4XZcShEuzE2iJ/HXmD34kaDIQdHktGFvA
-         9fjq8hFEZSzhg9P89ZWDC+kP6aZm1sRJB/2xvArd9cDszcbN4oglmC6GNxXMvic5mEpd
-         GmGg==
+        d=gmail.com; s=20230601; t=1721944550; x=1722549350; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tyKmzVZHG6xXf2tfTNoOwez/koflQnQIOHNmdJNoBVw=;
+        b=hsvO6botmvyRH7yCYFpsycFZN90AK6QU4GyqGdaRCd8157YN2MSpSh2Zd8GdqPowzW
+         +6FBA42T4bFwsdG85TLabKIYgMVqqWec6EgOzxvgJVR+UC1GUW33afC/SZVeeocqFNqw
+         I4Gz2U1geR/H1OOmnGC93Cobe2VQQo5YcQWnvAIxOqD/78aj4VXTFP9mu/CuMVY7e+jk
+         wWA8aBpOE4YTCfnef3FtgHhgupv9WPFGUCaMTBv8Y2uUFg6X/ugJ7DB8vRgZyJimseXf
+         eOwr5lNJUf2GB3wqk6sVN3zzac9pjCU56zqLzG8/vS9cNJzo7/A5BfJlkwxvrV17fQmr
+         MimA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721944567; x=1722549367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o5zN0Ee2V5PvZ/loIwKVW1h0fdtsfazaCJoYyQYKYrE=;
-        b=NeVAoU8+VGm8mGoEeufm3YbXvPWrhJYAj2igG+yL4+RwFcqXytq3BIKjjS2zAjnSWZ
-         Td5QXQeGTFglOY5B6ay3g35Yw5nTNT8G4QGa3jF4WFo9NbyTDPeE2n7IDaJ7FqkNDjPf
-         1vdYbh99G/tVqaBhrzY/VtfiWxwjQ2owTDuLw5JPmbuueRfcxQnQtch3fxChlMxXW91e
-         SVAHGnQI9KgYC4Mykiygd0EyA6yJntub180UWusWpN//j/tiUF3a1KKThYS/lBEmuFTa
-         8pLwGueFb1Hv07VIpaLvd7gsDOdPK/d0MGBrq0Q1gKJ2mIB0fABjzQgTEEgmcm/zEKAa
-         phVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYwJ6se+cPDpX8WcrDZTVgCCuXyoF37ULs2YgmHhGhXmZuqRKCNfGy/hKw2juVYc5P6x9ab2yxrKDg//E1szeywlIi13uL+HUE/etb
-X-Gm-Message-State: AOJu0YyZRga7saH6jgfxjZhnArY0tJ7BHAcOFO8OiQm/5nGoRztURJpn
-	TAjdA/NaOXX8MQuvRxE1Mo/AEnpnLtnVX/H5npxX9wlplqiPN+XdQjz1/O4hMp+da3atIZCTj/S
-	2gerBprBlIj/kB0j7TJXj0n3xkAh6s2pJu/u+
-X-Google-Smtp-Source: AGHT+IFhP5/yTm7ISgwUHXy+IaF0SeriofzfJKq8H3XwJMAsEhtvrR3NBZlrFcMQ5LfszxCadNdzcI48wvWetEqqHuE=
-X-Received: by 2002:a05:622a:134b:b0:447:e76a:c04b with SMTP id
- d75a77b69052e-44ff3a6ea56mr930791cf.10.1721944567177; Thu, 25 Jul 2024
- 14:56:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721944550; x=1722549350;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tyKmzVZHG6xXf2tfTNoOwez/koflQnQIOHNmdJNoBVw=;
+        b=MHOv/EFwyOs4yGiWw41/XENk74FsYm26aTP4kVGO7ow5VcmdUQPyyWUUVBr1h98mr+
+         P+JsukpL3l5V9anBfuTbaI5ry0OvuRX7Okr6tACv9zNDUgO0VPYEVly88PqDj/QmIvnL
+         rkdaFAmY4VPDDDWxhGr2Lq1lbCsBA5/uB8wpVZ6tRoHDs8rE4k7gFXYN5EFbLDdkTB/t
+         1kzTjFPhUBEC74Bbd8ZwD3eGmtfeqwr/9aabaaof5FIJl9bzpBcytU84l+5PudQEpzgl
+         lO0XKCOtfQ3cce+4Xe1Wu+Qti3nNMdXflgTy23nZXNbAzuGlm/gfhyTLeRIgkpY6Ngjq
+         B67A==
+X-Forwarded-Encrypted: i=1; AJvYcCWnVHIG0YQmaccQjOQqNbk50iRJFfxPK8AussF/4TgNK92Hvg3MWW6k638f/aN3U3/MupXtYLn08AXsBOLR1o74b5yTqeNMH17BGSrLQ661iriaiE3C/nJKkUEGgN3YStnbR4qtNsjkYaxi1bKyBCpoz3SwWID3UHcIIVP658W+RA59aiDQOHS6LBU=
+X-Gm-Message-State: AOJu0YxvSq6XtDNER5Qu9rriDTRoSElacnBJt3LIbEHy2lq1VBGOL+ty
+	QMB+oHWzds7exvgmqgNnL6AS9HBKxiZb4h1SJPGNajaSPO2tBZu5
+X-Google-Smtp-Source: AGHT+IHvK/U5eN1rm/XknTUDFUH2U4SSW9uh7q0CqsaHxB7a/uis94oIqF2KC6MiPb232MxB5DBUzg==
+X-Received: by 2002:a05:6870:d60b:b0:25e:b5ed:998 with SMTP id 586e51a60fabf-264a0baca7emr4830850fac.5.1721944550013;
+        Thu, 25 Jul 2024 14:55:50 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:2c0d:838d:8114:e714])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead88d9efsm1566349b3a.180.2024.07.25.14.55.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 14:55:49 -0700 (PDT)
+Date: Thu, 25 Jul 2024 14:55:46 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vipulkumar.samar@st.com, viresh.kumar@linaro.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] Input: spear-keyboard - Fix a double put in
+ spear_kbd_remove()
+Message-ID: <ZqLJ4mZaKgzPVMFb@google.com>
+References: <cover.1721939824.git.christophe.jaillet@wanadoo.fr>
+ <a39197be6248ebe5385e4f352241b4ba5e857c42.1721939824.git.christophe.jaillet@wanadoo.fr>
+ <ZqK7HQMtV8oavTsM@google.com>
+ <0e4f8499-97b1-49a7-b5af-11203cf625d7@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com> <20240724011037.3671523-4-jthoughton@google.com>
-In-Reply-To: <20240724011037.3671523-4-jthoughton@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Thu, 25 Jul 2024 14:55:30 -0700
-Message-ID: <CADrL8HV5M-n72KDseDKWpGrUVMjC147Jqz98PxyG2ZeRVbFu8g@mail.gmail.com>
-Subject: Re: [PATCH v6 03/11] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-To: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson <seanjc@google.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0e4f8499-97b1-49a7-b5af-11203cf625d7@wanadoo.fr>
 
-On Tue, Jul 23, 2024 at 6:11=E2=80=AFPM James Houghton <jthoughton@google.c=
-om> wrote:
->
-> Replace the MMU write locks (taken in the memslot iteration loop) for
-> read locks.
->
-> Grabbing the read lock instead of the write lock is safe because the
-> only requirement we have is that the stage-2 page tables do not get
-> deallocated while we are walking them. The stage2_age_walker() callback
-> is safe to race with itself; update the comment to reflect the
-> synchronization change.
->
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> ---
+On Thu, Jul 25, 2024 at 11:34:14PM +0200, Christophe JAILLET wrote:
+> Le 25/07/2024 à 22:52, Dmitry Torokhov a écrit :
+> > Hi Christophe,
+> > 
+> > On Thu, Jul 25, 2024 at 10:46:49PM +0200, Christophe JAILLET wrote:
+> > > The 'input_dev' is a managed resource allocated with
+> > > devm_input_allocate_device(), so there is no need to call
+> > > input_unregister_device() in the remove function.
+> > > 
+> > > In fact, this call was correctly removed in commit 6102752eb354 ("Input:
+> > > spear-keyboard - switch to using managed resources"), but silently
+> > > re-introduced later in the commit in Fixes.
+> > 
+> > This change is incorrect as it leads to an active and enabled clock
+> > being unprepared to early. We need to unregister input device which in
+> > turn will call spear_kbd_close() if needed which will disable the clock
+> > in question. Only after that we can unprepare it.
+> > 
+> > There is also no double put as input core will recognize that input
+> > device was unregistered explicitly and will not attempt to unregister it
+> > 2nd time through devm:
+> 
+> Got it.
+> 
+> Thanks for the review and the detailed explanation.
+> Sorry for the noise.
+> 
+> I'll resend as asked in patch 2/2, if saving some lines of code makes enough
+> sense for you.
+> But as said in the cover letter, if there is no issue, I'm not sure it worth
+> the time for an old driver.
 
-Here is some data to show that this patch at least *can* be helpful:
+I generally like infrastructure cleanups, unless it is too much trouble.
 
-# arm64 patched to do aging (i.e., set HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONL=
-Y)
-# The test is faulting memory in while doing aging as fast as possible.
-# taskset -c 0-32 ./access_tracking_perf_test -l -r /dev/cgroup/memory
--p -v 32 -m 3
+Thanks.
 
-# Write lock
-vcpu wall time                : 3.039207157s
-lru_gen avg pass duration     : 1.660541541s, (passes:2, total:3.321083083s=
-)
-
-# Read lock
-vcpu wall time                : 3.010848445s
-lru_gen avg pass duration     : 0.306623698s, (passes:11, total:3.372860688=
-s)
-
-Aging is able to run significantly faster, but vCPU runtime isn't
-affected much (in this test).
-
-It would be really nice to motivate this patch with a test that didn't
-require patching the kernel... Oliver and Marc, please let me know if
-you'd like to see more data. I'm also happy to simply drop this patch.
+-- 
+Dmitry
 
