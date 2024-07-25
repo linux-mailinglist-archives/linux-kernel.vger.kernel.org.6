@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-262315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562AA93C3FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:22:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E144793C402
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0084A1F21857
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65148B21330
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1168919D074;
-	Thu, 25 Jul 2024 14:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2609E19D880;
+	Thu, 25 Jul 2024 14:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v5lqmdeL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7Nj0AwXx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RVg2Mzyv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GuWnXYZY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REUUdLqI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EE73FB3B;
-	Thu, 25 Jul 2024 14:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617CC19D091;
+	Thu, 25 Jul 2024 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917345; cv=none; b=fEaCifi0wIW+B7h8fNo7S/rxM8ZJ06GBitdjHEcMOdC9W+TshVKZbyr+6zJ2TiC+oYpH6jOghzSQtzb83wjN2UevwhmGhQEVdry+ntDYwDAFgBmxKjCdXL3FFmYWk2sRIsBOvK1uHbOSXAym5tscEjg4dcN2nGqCJXLDxshAt0Q=
+	t=1721917349; cv=none; b=TPGkoPxutiBbvtaeebpd4tbnosaVcNrkZvLxDrjM0+EWXKdUQqu1Yg6VLdjbg0tRz31lHpQhzgfH7cWkWVzSerQOFylUWRKab7/jNabEcYnZczoj/y+5bEG5RgxJZCFbbS3ZsPnJpxTihThtRqReA7woB38sU6uqUuXR88JlXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917345; c=relaxed/simple;
-	bh=x6yaEcNXka7zLvCUrgE1GLUa/j6Jw8KxrmSLNIkNQBA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Jf0FrXWTCnEUUYg3l82zWMErspCdmmci414hWWMPbvezfcUwlHaBJnguVb1/UV2RYp1Wjh8hCpxpHyTxPu9S2ttmMfAU6oV4uJQeI2yLkJZPgtFRuAMeT1u0wWoxt0z4bdtgwhG7Be0PzfEJLQX6cXrpBf5ju/qy1UZZpIPiKdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v5lqmdeL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7Nj0AwXx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RVg2Mzyv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GuWnXYZY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EDEE721A78;
-	Thu, 25 Jul 2024 14:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721917342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C6YxQJSxttdUENcvV08MHKl8gDBGHZs+9QcV1B9xW9E=;
-	b=v5lqmdeLLVgjj3BJwYdvopkyHMWMx+8+0tbYlRH5e6V3Vy7mhY2pmpWU3NJzGfUfBlzHlB
-	WY0TUNbVgwiP7GI70JXKtb9QtTLwI5uoiM/uJY5hDtoA48RtGsDJajRJ+ZTsFL9O2ILpo1
-	GmZug1WLu+vvEEBQsDfuRdI00ikDCo4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721917342;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C6YxQJSxttdUENcvV08MHKl8gDBGHZs+9QcV1B9xW9E=;
-	b=7Nj0AwXxNCfuJkyGpq5fUZYDnE621CUCk0qlshrCAHMbcy14l7guGcRRPF0jbdxE25DBv6
-	Aa2yxVbfdFcMY2Dw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721917341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C6YxQJSxttdUENcvV08MHKl8gDBGHZs+9QcV1B9xW9E=;
-	b=RVg2MzyvTlFkMeNuwuCAbdQJfiUZ2nXV8poeirQBCQoRfGlI/0UE7Lruf9GOOn/gyMywQr
-	gmbszJ5SpZe7xXMnMoVO1y72hDr9M9kC3hoCmdG2eUf8JVq/4QF6ULUY+5E7/fE63gKqK7
-	pfi+1qes1ImUApE3x8X3af+0t7aBXr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721917341;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C6YxQJSxttdUENcvV08MHKl8gDBGHZs+9QcV1B9xW9E=;
-	b=GuWnXYZY8CTDxpN6FCloE5ru2adBZRQdS1wxmywT43l2G+zV/zMizb2a9UH7Oan/8gVq4o
-	b8bE8xYm0DwQKxCg==
-Date: Thu, 25 Jul 2024 16:22:21 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
-    Joe Lawrence <joe.lawrence@redhat.com>, Nicolai Stange <nstange@suse.de>, 
-    live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [POC 0/7] livepatch: Make livepatch states, callbacks, and shadow
- variables work together
-In-Reply-To: <20231110170428.6664-1-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.2407251619500.21729@pobox.suse.cz>
-References: <20231110170428.6664-1-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1721917349; c=relaxed/simple;
+	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pye1o7E1pWwbU3z8HJvfbTHgYkQll/yFvOl/gdBo3glz/tSOmPgoEg7hRMIRDT/+qH5yf++fMGI3pqX7VrkDT0kWMKonNf7JCDP0/ZXkx2eso8MGv6rUm96Kd4ud7F2zoNAYVYDz+fvORiT3bQdy/5C3qTIihhlVNioJPvrQvdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REUUdLqI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5341C32782;
+	Thu, 25 Jul 2024 14:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721917348;
+	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=REUUdLqIyoeSYhmWzkbITk+xAAkWffbxWAah6GwSlP/RmvesVWI0DCdssNefjCA44
+	 rsAsvhhyTlip8ypB18FsjBBeNJrRe55Qh7H/qsZ6tNf1EWJyRPT1YMgE+6aEhMOy7D
+	 /XVMrDWxQ54LdkqWjDmIHlrx/m+R6+uX1vS5UYpwIvT5iu98TnUwOqAU1GbO+MZqNE
+	 UPNIsXO6H930srHPnFRFRYElOhuc6rGIp9+3vrub+a14j+lRzcZkYNlzYKP9SRaKtW
+	 0Fe84o8hTFqhuNUjX5isLyxE59yTS+dD2ZN5IFO9gDxcDDKxpFXyJKnauAhlL1Cl6Q
+	 VB5D6nQoU5WNg==
+Date: Thu, 25 Jul 2024 15:22:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: pierre-henry.moussay@microchip.com
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/17] dt-bindings: clock: mpfs-clkcfg: Add PIC64GX
+ compatibility
+Message-ID: <20240725-upstream-smokeless-6d0eb847a594@spud>
+References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
+ <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-4.10 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.10
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oUQL6fU2J0AJLRVY"
+Content-Disposition: inline
+In-Reply-To: <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
 
-Hi Petr,
 
-On Fri, 10 Nov 2023, Petr Mladek wrote:
+--oUQL6fU2J0AJLRVY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This POC is a material for the discussion "Simplify Livepatch Callbacks,
-> Shadow Variables, and States handling" at LPC 2013, see
-> https://lpc.events/event/17/contributions/1541/
-> 
-> It obsoletes the patchset adding the garbage collection of shadow
-> variables. This new solution is based on ideas from Nicolai Stange.
-> And it should also be in sync with Josh's ideas mentioned into
-> the thread about the garbage collection, see
-> https://lore.kernel.org/r/20230204235910.4j4ame5ntqogqi7m@treble
+On Thu, Jul 25, 2024 at 01:16:00PM +0100, pierre-henry.moussay@microchip.co=
+m wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+>=20
+> PIC64GX has a clock controller compatible whith mpfs-clkcfg
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> ---
+>  .../devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml    | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcf=
+g.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> index e4e1c31267d2..ca889f5df87a 100644
+> --- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> @@ -19,7 +19,11 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: microchip,mpfs-clkcfg
+> +    oneOf:
+> +      - items:
+> +          - const: microchip,pic64gx-clkcfg
+> +          - const: microchip,mpfs-clkcfg
+> +      - const: microchip,mpfs-clkcfg
 
-looks good to me. It is a huge improvement I would say.
+Ditto here, the mpfs binding is wrong and I don't want the pic64gx to
+ape that. Instead, we should take the opportunity to fix the binding.
+You're gonna need to do that so that the pinctrl driver can access the
+IOMUX registers correctly. As with the mailbox, either simplemfd or
+syscon are needed here. I mocked something up a few weeks ago while
+talking to someone about a hwmon driver, I'll dig it up when I am back
+to work.
 
-As you mention elsewhere, it would also be nice to include some 
-documentation and samples in the next revision.
+Cheers,
+Conor.
 
-The selftests would need to be ported to the new infrastructure.
+> =20
+>    reg:
+>      items:
+> --=20
+> 2.30.2
+>=20
+>=20
 
-Do we still need klp_state->data member? Now that it can be easily coupled 
-with shadow variables, is there a reason to preserve it?
+--oUQL6fU2J0AJLRVY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Miroslav
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJfoAAKCRB4tDGHoIJi
+0suUAQC/tzIWQ+Mg2NnvUYdGhSkTvOGO4cDGQ05zxeqfGSiiWgEA7Rwx2eJ2o5Ny
+E6x8AuEC/cU5wHg6AoUfsPnTv8QKGw4=
+=tflQ
+-----END PGP SIGNATURE-----
+
+--oUQL6fU2J0AJLRVY--
 
