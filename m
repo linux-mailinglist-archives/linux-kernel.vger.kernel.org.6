@@ -1,149 +1,96 @@
-Return-Path: <linux-kernel+bounces-262101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3344793C0C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BC793C0C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5419E1C20F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB7A282BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D10619924A;
-	Thu, 25 Jul 2024 11:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJSumhwg"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D438B1991CF;
+	Thu, 25 Jul 2024 11:27:39 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEEF1991A8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A61F481A3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721906724; cv=none; b=nyZ9GNAXE7v4QIAEosOR+HgPyH57eAc1O+TckYjygOmYjjlNFFiX8QXNddigaXraDJ6rx1I9bUk4C9W8c9RfZZEO2z3eWi8Lh/NHQzDduqA2dhN9FJo2I16tb+7FEAD+mBnXyYlmetJHH3HXWGgOhd9O/CBsdCpBhN0LyrTrpnw=
+	t=1721906859; cv=none; b=beMvQjSjv8Yda9Sb/p+KPXTX6Vt9hrCG4TMdswMhDhG1pBRZH8he6kByuwQGpiCBT+VgS04DkSvtksBG+D4Q/qFfS7b7KNGeWMK8UuKagjz/VezSBcXLgtZzSx7jyCVK36p2pxk6N6vztxs2BtvjQNZJjBJIV0gHTrRF9DIDkrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721906724; c=relaxed/simple;
-	bh=JsK7yJjBr07hesTWuuOd0Olz1bm2HQodZpRdnFA5cgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9NExnWg7ZIsEll4VqA5wXRj2SWhm8W/Pxf/4nH3pQcwXz4lLjefhuY0/a8oYeGOln6cmeSpuDpOPJ/pc9PDVthnjaFEiRmXKGjPhwd04SjANaEmM30vcOWSlmtaqzTJ5uY9kHmezbT82EN9Dp8JNmMAYlyXMvYXy/NKSR4pTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJSumhwg; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-704466b19c4so393031a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721906722; x=1722511522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
-        b=HJSumhwgmCZaXodmOfg9ocbC3JhI/zX3ZkZKQpY8n7OmYpBJQaCFWdKtCbqGheR0lj
-         wk9rAZTfmsWYHGAB2HSKqndQpPWohjTi4ATfVsBpp4nxGYYGSG8TiH414rB5URn744rt
-         jchQGsCf3hNbbqxUhEJmNCaRbsbICuv1smWBhpVyQlhlmcjfmW5UF8Xmzzu7MLLb9oKR
-         e9RFiSPPil4Y38xgvFxYs05KHV7UoPQUkkd+zQiOaNt8lkGOjSwPOU7xnwJvjItrFhRp
-         1j3dyzCoaKZFahyeSVpjcy3LGgcwI08hIBxIesIVAYETq7zEjEqkpNf9R6LG/mLzFAFH
-         Dp+g==
+	s=arc-20240116; t=1721906859; c=relaxed/simple;
+	bh=q/ysU9cg8jYRm+8hfANGwFbsQq7VFjX2FCB0xvE+4iY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=M3ob/ZxuEzdNOAbq88FAcwauieIx3+deCnER+XJNbLxnyq5m1gPQ6KhduoFppVLR6E+itmBGFCBKn9YMBFfHF1c19dW0ON8KFc/I2krBwPsbcrFOYJLwwG7U8ScSY9n5Gm+6WrKEjsxJjB/8PFd+SS3LEo4dMfL7hD6P+MUKfew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39696c3f2d6so5685695ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:27:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721906722; x=1722511522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
-        b=qvVECnbiteSY/hzPzPciaih4PtvbOuodveLbc0j8G6vSegdRbphgmra/4ixQ7lLgV6
-         cWhd/SkXxXB/fssIn/Mu9tbZW3e+vcZ6oNnL+Ku1ODtQTD5jT3EYhJpKs54PUOYX7Sos
-         cQfEbfQhzXysH1wDgmSw2QTGfq02M2Bu/K0yV0o1IGM/ziNYVm+AaXnu8CJ6o2kOu+jH
-         p6ThBoz5q5PjFjBFVmklGSnv7uoxCb0J5IQvJRBFfhOAo3ijBvH2LHpuIR0NZb1YzkiG
-         C9ndc4GPJJ6IFXR0kiXXHTqfuSpThwtUi1SpKs53i58eyuFivUaJJERG0E/iTAmfEYss
-         LKYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX08x2r+BSO2EypwlMaw4fDa8zj7E+AyFoXIku5/oCILA0t6QJiU7YCXwWzuyMCVqJNDZkd29Yyy0M87k4x6v2zdd38re1lmEJTNbrP
-X-Gm-Message-State: AOJu0Yx68UJOWB/S88uHVIPyzATDnzmEK9UBld6mYgJo28VhfMmg6xB5
-	OcHxuhRp7r1/yud6VLMtfi33eiXxkMeX9us6ku0KgnvCx3UMH9osrUCwVze4iXQ=
-X-Google-Smtp-Source: AGHT+IGB/C7i53ZMxQDVG7er3qrj96VmG0v9dXH1VLSTmcs7GQ7h6A9jCwiBR5/hKLh7wLBNc8M2NA==
-X-Received: by 2002:a05:6870:b020:b0:229:f022:ef83 with SMTP id 586e51a60fabf-266ede9b2f8mr1951899fac.43.1721906722263;
-        Thu, 25 Jul 2024 04:25:22 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8af074sm937252b3a.218.2024.07.25.04.25.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 04:25:21 -0700 (PDT)
-Date: Thu, 25 Jul 2024 16:55:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
- <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7>
- <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
- <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
- <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1721906857; x=1722511657;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wd/d5Ug6swLIb4pf47yLWm9uS9LlD3WeYFnzvWtTcKg=;
+        b=GI/3ugiGzNR+zS3nwbpnthVL2dgqLa4FRwIRf8O/C/bd0uKFNCn4BVaaRBTUUEOlyP
+         JhJ3S+lpTEHk5Ez3dycj8NYqSLcHzNPagkZ5oWUjIJuOHhm+3YDiVMghoeNzea5B0+To
+         DdXnweuj9AYkFCqix1T65DclK6FJDs9sRmya7BTc9OvJeSw6q8nycW7llJcet5TjSa2h
+         E94NScgwtEjmMpiCRVbxgcifvqJjv2rPMutOQPuoNRuiJXFuAO4S86YiH+AiX9Ge2SJL
+         5pT8UGoNSjNQ5E3I1U3gTGv4JOhgJ56H+Og8gpgdH9erhbBg6ToSOzyiXNUP8+72Z4bq
+         Zynw==
+X-Gm-Message-State: AOJu0YyGNe6zN1o9vDqd/nmSAg6FIP87/Aoq8/rUxkWIYx+Os7Rg0J+X
+	0dQlu42nS8E7NXrRzKfrDEw7g17ojGWJ3xg3Ta6hEzPkSLR4d+aJ8ooyYTGi/Ytu25b++RZ4a6Q
+	aLGchM3AIc0M8crna9r0OBrSlVR0pxEUWVVQGvmDMbJehfOV43UgMnnY=
+X-Google-Smtp-Source: AGHT+IE2v+sGRVJQbZ+UFCsiWmgjAw5aDoiw86ecOW2pHGQ3fDHb1LqQfEiOdOBkJhf9nDkMjkgA3RUnZFtSJmY9OGlQzbN9dkZ9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+X-Received: by 2002:a92:c54c:0:b0:396:a820:a62d with SMTP id
+ e9e14a558f8ab-39a24039b06mr1587425ab.6.1721906857359; Thu, 25 Jul 2024
+ 04:27:37 -0700 (PDT)
+Date: Thu, 25 Jul 2024 04:27:37 -0700
+In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000091ce4d061e10aecb@google.com>
+Subject: Re: [syzbot] Re: [PATCH net] tun: Remove nested call to
+ bpf_net_ctx_set() in do_xdp_generic()
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-07-24, 11:21, Ulf Hansson wrote:
-> Right.
-> 
-> The main issue in regards to the above, is that we may end up trying
-> to vote for different devices, which votes correspond to the same
-> OPP/OPP-table. The one that comes first will request the OPP, the
-> other ones will be ignored as the OPP core thinks there is no reason
-> to already set the current OPP.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Right, but that won't happen with the diff I shared earlier where we set
-"forced" to true. Isn't it ?
+***
 
-> > I think that design is rather correct, just like other frameworks. Just that we
-> > need to do only set-level for genpds and nothing else. That will have exactly
-> > the same behavior that you want.
-> 
-> I don't quite understand what you are proposing. Do you want to add a
-> separate path for opp-levels?
+Subject: Re: [PATCH net] tun: Remove nested call to bpf_net_ctx_set() in do_xdp_generic()
+Author: aha310510@gmail.com
 
-Not separate paths, but ignore clk/regulator changes if the table belongs to a
-genpd.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-> The problem with that would be that platforms (Tegra at least) are
-> already using a combination of opp-level and clocks.
+---
+ net/core/dev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If they are using both for a genpd's OPP table (and changes are made for both
-opp-level and clock by the OPP core), then it should already be wrong, isn't it?
-Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
-aggregation happens in the genpd core), but clock setting would always reflect
-the second caller. This should be fixed too, isn't it ?
-
-> To be able to call dev_pm_opp_set_opp() on the required-dev (which
-> would be the real device in this case), we need to add it to genpd's
-> OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
-> 
-> The problem with this, is that the real device already has its own OPP
-> table (with the required-OPPs pointing to genpd's OPP table), which
-> means that we would end up adding the device to two different OPP
-> tables.
-
-I was terrified for a minute after reading this and the current code, as I also
-thought there is an issue there. But I was confident that we used to take care
-of this case separately earlier. A short dive into git logs got me to this:
-
-commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
-
-This should be working just fine I guess.
-
--- 
-viresh
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 6ea1d20676fb..a741000c81d8 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5150,6 +5150,8 @@ int do_xdp_generic(struct bpf_prog *xdp_prog, struct sk_buff **pskb)
+ 			bpf_net_ctx_clear(bpf_net_ctx);
+ 			return XDP_DROP;
+ 		}
++		
++		bpf_net_ctx_clear(bpf_net_ctx);
+ 	}
+ 	return XDP_PASS;
+ out_redir:
+--
 
