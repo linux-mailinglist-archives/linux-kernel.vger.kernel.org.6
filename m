@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-261814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D523693BC76
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E480793BC7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F46F1F25676
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFAD21C216BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5738916C694;
-	Thu, 25 Jul 2024 06:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE6816C84B;
+	Thu, 25 Jul 2024 06:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkWmJd9W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTOKuK73"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B164206D;
-	Thu, 25 Jul 2024 06:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9155814F111;
+	Thu, 25 Jul 2024 06:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721888330; cv=none; b=dWWqAf1K6kLrk8YV+IM+ncGxZxTBvVm7n2ezZm2njndtJQEKMd12f+CDqf1mCkUl/C4K71+Hai9QXmHomNxcx5DRpB5Z2sJClAeMCEVKvW2IgvIe0QML3KL/AgGJp3vxFu3hcYA7NI9yHP6LUINMMDwfSdfR2k2sjlQiMRskjzg=
+	t=1721888467; cv=none; b=pZGWGBgs5Wb9HmwVABGVC26FL6RMWO1CoIEjTKvvtH0nujw8zdDqjHTT6oGNV0kAKKGByywqpvjapr/wSY3hcxmEyuc131ZIq/0H3i9wf/Vq+Uljx7/INyS49cX3jPdmTMY+qaE2qTfPmVu0XoPQpOsaoWHr4V7EcDD7KrDditY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721888330; c=relaxed/simple;
-	bh=BEU3AT7o8i8mr/yhBN5LCnFU6PLegsNE9FA7szrqdsg=;
+	s=arc-20240116; t=1721888467; c=relaxed/simple;
+	bh=Ayg2wEWH8Ar09dOTu0SF1cvek1Sf0LqcopqXUz5dpN4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bR4ocBoaFbrTXaHV0w7IPO+a84tBYnElExKGkqNIX4+W4aLzcI9zZffa637CBmVNaGAmON/tXicUMgiU1Ewq6z5hqMGfL8SldEBVjcUHrsmLqGBMkPZjirIk6TpYMg1na5nPfGt5P6CPObIRzozfYXB++zSHFBeuqtGv4HVndKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkWmJd9W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521BBC32786;
-	Thu, 25 Jul 2024 06:18:46 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EuYZFtIvEm3lst0gk0ist1mevNbYlgZ4iurRxqkfs9V7GO0GT8e+zcDpPL08nYNvr2Ho9elBIWjUivTkr16GKgs7s/43OVg1V2QYwO1eIP43kjl+FtAKBaOMIVYnK3v8rZCkI7P6PREii9dSyZhA+3H6qdJ38e6rzdPQe3MGm0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTOKuK73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C990C4AF07;
+	Thu, 25 Jul 2024 06:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721888330;
-	bh=BEU3AT7o8i8mr/yhBN5LCnFU6PLegsNE9FA7szrqdsg=;
+	s=k20201202; t=1721888467;
+	bh=Ayg2wEWH8Ar09dOTu0SF1cvek1Sf0LqcopqXUz5dpN4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TkWmJd9W0twtVGO0uUOTurTTwTP/FGlJwlDPEkLx+zDUm2ZPUBZ0rl/YdeJkTNbNI
-	 P0fCGRGWnanptWmwxOPu5pL50UhjeykkKNGExwd7vm7bMG3P5ZhqIBvZaBe0PTo7IY
-	 kzzhUIsDKQVfaYQggFodxpiyvGQaEr/xkSHQZxBRQ31lKWhhdH+R5M+mzpdZLij1hH
-	 mz+47kWsrHlKoBfVYF9pj4C2jAlwyXox44MVsTpUuW7hnFiU67Wfr3eTeW6Rxd2oao
-	 L5TAT5F113toi17DvW9pnSB49GrQTkm0UeRrBWL4oqnACsX4IPAnnuHGgaaeb5PsPn
-	 VYtSctKlEmrQg==
-Message-ID: <b358e743-d264-4c18-95a3-393b9d20a87c@kernel.org>
-Date: Thu, 25 Jul 2024 08:18:44 +0200
+	b=jTOKuK736rJ3K7vRUnass0/LLV/xOt/a5f46jJb+M84fYuseK0f3UWvFhU2HIDg7T
+	 mOXENRVdLIHISWLxeloET9SOIA/Ah3ldYz/hZavebIGpOOjo0t76e8vPdF4a0c5Nr/
+	 rY/B13LP+LsN2TT2vCYgjccdtQLQkL3uqhYiH2rRCGRzDpcT7njUp7X5Z4oC/dYRTg
+	 CM/StraLljwO2Ll5kHBBMVYz6fnNi71fQEqfCMwmuFK3UO+TwpGLRACS/V3IpupMT0
+	 8AEpNlBdo4CXUSFqcTnfmzXWqJb+68lVY2moY+GwFdo4sAl0WSwdZkb0g1Hdu//Ljv
+	 5QkXzIGSUQNLQ==
+Message-ID: <bf6cd1c9-d60a-4ef1-89f3-5d28e003ce2d@kernel.org>
+Date: Thu, 25 Jul 2024 08:21:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: display: Add Sharp Memory LCD bindings
-To: Alex Lanzano <lanzano.alex@gmail.com>, mehdi.djait@bootlin.com,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>, 'Rob Herring' <robh@kernel.org>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240725004734.644986-2-lanzano.alex@gmail.com>
+References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+ <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
+ <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+ <20240723205714.GA1093352-robh@kernel.org>
+ <035501dade31$55cc7f40$01657dc0$@samsung.com>
+ <03b201dade3f$3d66e3b0$b834ab10$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,27 +111,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240725004734.644986-2-lanzano.alex@gmail.com>
+In-Reply-To: <03b201dade3f$3d66e3b0$b834ab10$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/07/2024 02:47, Alex Lanzano wrote:
-> Add device tree bindings for the monochrome Sharp Memory LCD
+On 25/07/2024 05:03, sunyeal.hong wrote:
+
+> - dts
+> cmu_misc: clock-controller@10020000 {
+> 	compatible = "samsung,exynosautov920-cmu-misc";
+> 	reg = <0x10020000 0x8000>;
+> 	#clock-cells = <1>;
 > 
-> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> ---
->  .../bindings/display/sharp,sharp-memory.yaml  | 97 +++++++++++++++++++
->  include/dt-bindings/display/sharp-memory.h    |  9 ++
->  2 files changed, 106 insertions(+)
+> 	clocks = <&xtcxo>,
+> 		 <&cmu_top DOUT_CLKCMU_MISC_NOC>;
+> 	clock-names = "oscclk",
+> 		      "noc";
+> };
+> 
+> In this case, can you tell me how to handle it?
+> And if a new clock item is added and a new cmu block uses only the clock item added and oscclk, a problem may occur.
 
-BTW, look at your original binding:
-https://lore.kernel.org/dri-devel/2a7c51b6e619c02ec175a5c219b0a0fd7a24499d.1701267411.git.mehdi.djait@bootlin.com/
+The same problem was in your original version, so why suddenly it appeared?
 
-Why did you decide to introduce mistakes? Eg. dropping all $refs?
-
-And finally look at the comment:
-https://lore.kernel.org/dri-devel/5dbdf7bd-cfa3-492b-a0a3-fdc323cf11f8@linaro.org/
-You just ignored it completely....
+Anyway, why clock would be missing? You just wrote in the bindings that
+there is such input clock.
 
 Best regards,
 Krzysztof
