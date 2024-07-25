@@ -1,145 +1,219 @@
-Return-Path: <linux-kernel+bounces-261889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A48493BD6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:56:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5C893BD72
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65F01C215C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B14B1C215C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91729172BAE;
-	Thu, 25 Jul 2024 07:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1068D172BA7;
+	Thu, 25 Jul 2024 07:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AD/6i5C9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsUiJCqv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B10339A0;
-	Thu, 25 Jul 2024 07:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128371CA8A;
+	Thu, 25 Jul 2024 07:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894153; cv=none; b=cUh+ZaPME5ozN8DEDrQHw+hBMI2rFVl3aMVa4Y6ZJZ9yXd38eIBNqGM94x91awEYdLfC8PoJUW6IzjbTKw5N+dvTxRKMlswJF0jK686zbZ7K46uUKF02NyCve+WNjWDhCNCvRtxp+Qju1UB47oPwxsspaACKWI4mO370NT4eYHw=
+	t=1721894169; cv=none; b=auTpYYYuhVTtOD/g6lpujsuRsnD9SBqGakvGRIel/Igvvyodo76oacNukrhSJDiZz37T1GrGxl9a35IiK+4m421Uu7ej8DSWAedTCOj+0KEEQ316vQ0ecNttaT9u8j+hjZ7jDZ1az2QkZNmIe6Q55nlM07etTJU42H8C5neGwfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894153; c=relaxed/simple;
-	bh=chCmIQYabtrZYvk26GkBBhDtyVx5a8TzmOZ1Q+e7BmU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGLlINXB5mcunuCSHmrnqdllyRjRAMNKav1xaFPPjd4aJWgN4G9AAiLzwvP3aonRYyaf4fSzapYGuAlG+zwYNfmiBn0xqs41sz38OLrC4eiAfBKOWsTqFfxkqaPTfA7TidCaOCGOUq+rBC56c5jndVTOopdv5BxZYq+hwND1mCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AD/6i5C9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OIA6ax005413;
-	Thu, 25 Jul 2024 07:55:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=chCmIQYabtrZYvk26GkBBhDt
-	yVx5a8TzmOZ1Q+e7BmU=; b=AD/6i5C9RIPqIrJ0aAtD8ggUUQVP3YcWNS5bfq6S
-	eR4uxzsyswDDbmgEpjOzBFi/IeoB/1RFLYJ1ZQAP+4krsCc0+Mw4fKHXLO1q+W6j
-	2txmaEPyuiG/DbBN3FmFaRZP0weOJS1APa1VTjSTakaqYEQ+7cRiFLktd1CfRiq1
-	DmWERtAIqJx7kGu+wBLb+0H1gHhlOtVcqmI3OC2l9fhPkREaFwYfk5/tynHVED2W
-	yZv1azHX+uW6PeN4JETqbPSHp8hD67+Fms5kZqZ8jSaw6UKM+NufRnGkz03GD7J7
-	SUfFcm+25e13Xn8zM8fUL/wsE8Va75e77XqNzTfgQcvv/A==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487mbxe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:55:47 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7tjbb031582
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:55:45 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 25 Jul 2024 00:55:40 -0700
-Date: Thu, 25 Jul 2024 13:25:36 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
-        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v4 2/5] dt-bindings: usb: qcom,dwc3: Update ipq5332 clock
- details
-Message-ID: <ZqIE+JuzLldybKBE@hu-varada-blr.qualcomm.com>
-References: <20240723090304.336428-1-quic_varada@quicinc.com>
- <20240723090304.336428-3-quic_varada@quicinc.com>
- <ac34c454-4800-4057-9a50-e0c5db1d3806@kernel.org>
- <ZqDoXu9+Y4+O8M7W@hu-varada-blr.qualcomm.com>
- <bc2da461-fd21-44d1-85a7-f89c60e2b207@kernel.org>
+	s=arc-20240116; t=1721894169; c=relaxed/simple;
+	bh=ZHVsBB6x2x05Z+XropA/5+9MxAt3hXtxuwKN6bsXG+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LyhQU18UJiLKlGslzWEPiD18pGRc06FQlsQXUPodCfmqVlxhq/75l2sn/8KBiSnN4B77ja8Hsr0Pm4M6RH/DnMKS/+Z0Qwb9HWnYfYS3cLhH7ReJTCV21lEylXFI6/yrBCXdIWqMfYSAPEX1mWz8yC2bobxgu0mggDbnbUnsh+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SsUiJCqv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66AD4C116B1;
+	Thu, 25 Jul 2024 07:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721894168;
+	bh=ZHVsBB6x2x05Z+XropA/5+9MxAt3hXtxuwKN6bsXG+E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SsUiJCqvdtcgmeh4wm6n4nrEp2bn+cSwjezsnLfRZjU4BRomlSYN9hJ3+rO/w4WHn
+	 /ZaLh+rzMKDYfXIRNwBuqada7wFu8FIZ4Ls7/ZZvsdxEDAqjIUG7ejwt/S5p21E2x9
+	 NwEL8f1UShimXIcTkLQqkyXQVK1NAL+e+gnPotbBlJb4KF7GgDhyTvZ+B/yUQPqU62
+	 M9xL6WTURFE9qp350ldViw4ebbcJg+lrb6ysKwwc6H1Op1UQjAaH6BxSBTaigIoYxG
+	 RFbkJFd0ZNsI4aGoWuecLuqI0/PLKfzwftT/4Iuj2jCoIzLofwIySvePRAKr94haP2
+	 58BUAkCWwNUkA==
+Message-ID: <09d31a95-813d-46e6-be11-421ca4f93f7b@kernel.org>
+Date: Thu, 25 Jul 2024 09:56:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <bc2da461-fd21-44d1-85a7-f89c60e2b207@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vOHc3t_mfv5P5DKBlbdKpKqjay9Gdq_3
-X-Proofpoint-GUID: vOHc3t_mfv5P5DKBlbdKpKqjay9Gdq_3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_07,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=863
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407250050
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>, 'Rob Herring' <robh@kernel.org>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+ <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
+ <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+ <20240723205714.GA1093352-robh@kernel.org>
+ <035501dade31$55cc7f40$01657dc0$@samsung.com>
+ <03b201dade3f$3d66e3b0$b834ab10$@samsung.com>
+ <bf6cd1c9-d60a-4ef1-89f3-5d28e003ce2d@kernel.org>
+ <03ef01dade5c$ce407820$6ac16860$@samsung.com>
+ <8ee739e7-8405-49d7-93f8-f837effe169b@kernel.org>
+ <9647f1b5-9f34-42f0-b7b9-56ad9708855b@kernel.org>
+ <041b01dade62$5861b2d0$09251870$@samsung.com>
+ <e31a69d9-0cdb-4e5f-9227-c7790538f55d@kernel.org>
+ <041c01dade67$5842edf0$08c8c9d0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <041c01dade67$5842edf0$08c8c9d0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 01:55:41PM +0200, Krzysztof Kozlowski wrote:
-> On 24/07/2024 13:41, Varadarajan Narayanan wrote:
-> > On Wed, Jul 24, 2024 at 08:27:03AM +0200, Krzysztof Kozlowski wrote:
-> >> On 23/07/2024 11:03, Varadarajan Narayanan wrote:
-> >>> USB uses icc-clk framework to enable the NoC interface clock.
-> >>> Hence the 'iface' clock is removed from the list of clocks.
-> >>> Update the clock-names list accordingly.
-> >>
-> >> But the clock is still there and is still used by this block. This looks
-> >> like adjusting hardware per Linux implementation.
-> >>
-> >> Why suddenly this clock was removed from this hardware?
-> >
-> > This clock per se is not used by the USB block. It is needed to
-> > enable the path for CPU to reach the USB block (and vice versa).
-> > Hence, we were adviced to use the ICC framework to enable this
-> > clock and not the clocks/clock-names DT entries.
-> >
-> > Please refer to [1] where similar clocks for IPQ9574 were NAK'ed.
->
-> So the original submission was not correct?
+On 25/07/2024 09:50, sunyeal.hong wrote:
+> Hello Krzysztof,
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Thursday, July 25, 2024 4:32 PM
+>> To: sunyeal.hong <sunyeal.hong@samsung.com>; 'Rob Herring'
+>> <robh@kernel.org>
+>> Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>; 'Chanwoo Choi'
+>> <cw00.choi@samsung.com>; 'Alim Akhtar' <alim.akhtar@samsung.com>; 'Michael
+>> Turquette' <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>;
+>> 'Conor Dooley' <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org;
+>> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC
+>> CMU bindings
+>>
+>> On 25/07/2024 09:14, sunyeal.hong wrote:
+>>> Hello Krzysztof,
+>>>
+>>>> -----Original Message-----
+>>>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> Sent: Thursday, July 25, 2024 3:41 PM
+>>>> To: sunyeal.hong <sunyeal.hong@samsung.com>; 'Rob Herring'
+>>>> <robh@kernel.org>
+>>>> Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>; 'Chanwoo Choi'
+>>>> <cw00.choi@samsung.com>; 'Alim Akhtar' <alim.akhtar@samsung.com>;
+>>>> 'Michael Turquette' <mturquette@baylibre.com>; 'Stephen Boyd'
+>>>> <sboyd@kernel.org>; 'Conor Dooley' <conor+dt@kernel.org>;
+>>>> linux-samsung-soc@vger.kernel.org;
+>>>> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>>>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>>>> Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920
+>>>> SoC CMU bindings
+>>>>
+>>>> On 25/07/2024 08:37, Krzysztof Kozlowski wrote:
+>>>>>>   then:
+>>>>>>     properties:
+>>>>>>       clocks:
+>>>>>>         items:
+>>>>>>           - description: External reference clock (38.4 MHz)
+>>>>>>           - description: CMU_MISC NOC clock (from CMU_MISC)
+>>>>>>
+>>>>>>       clock-names:
+>>>>>>         items:
+>>>>>>           - const: oscclk
+>>>>>>           - const: noc
+>>>>>>
+>>>>>> If there is anything I misunderstand, please guide me.
+>>>>>>
+>>>>>
+>>>>> You did not address my questions at all instead just copied again
+>>>>> the same. It is not how it works.
+>>>>>
+>>>>> I am not going to discuss like this.
+>>>>
+>>>> And in case it is still unclear - just look at your bindings and DTS.
+>>>> They say you have three clocks!
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> Let me answer your questions first.
+>>> In the existing V4 patch, clock items were declared in if then for each
+>> block, so there was no problem.
+>>
+>> No. Again, look at your binding and DTS.
+>>
+>> 1. What clocks did you define for cmu-top?
+> Cmu-top has one clock(oscclk).
+>> 2. What clocks did you define for cmu-peric0?
+> Cmu-peric0 has three clocks(oscclk, noc and ip)
+>>
+>> Rob's advice is reasonable and you must follow it, unless you are not
+>> telling us something. There is no other choice, no other compatibles, no
+>> other devices.
+>>
+> Yes, that's right. In this patch, modifications are possible according to Rob's review.
+>>> If modified according to Rob's comment, problems may occur as the input
+>> clock is configured differently for each block.
+>>
+>> But it is not! Look at your binding.
+> The reason I mentioned this was to ask how to handle problems that may occur when adding cmu for a new block in a new patch.
+> As you mentioned, this issue does not exist in this patch.
 
-Unlike MSM SoC, IPQ SoC doesn't use RPM to aggregate bandwidth
-requests and scale the NoC frequency. The NoCs are turned on and
-set to a specific frequency at boot time and that is used for the
-lifetime of the system. Hence interconnect was not considered and
-this submission was accepted.
+A new block? And how do we know about it? Bindings are supposed to be
+complete. We see bindings and you receive review.
 
-The same approach was used for PCIe and at that point the
-consensus was to move to interconnect. Hence implemented the ICC
-driver and updating the existing USB driver to use the ICC
-driver.
+Post complete bindings.
 
-> You really need to stop sending DTS based on current driver support and
-> focus on proper hardware description.
->
-> Such things pop up from time to time for Qualcomm and I don't see much
-> of improvement. And we do not talk about some ancient code, predating
-> guidelines, but IPQ5332 upstreamed ~1 year ago.
+Best regards,
+Krzysztof
 
-We are trying, but falling short. Hopefully we meet the
-expectations soon.
-
-Thanks
-Varada
 
