@@ -1,110 +1,173 @@
-Return-Path: <linux-kernel+bounces-261657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C048F93BA65
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B641293BA69
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF7B283DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 684C62842DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C746A01E;
-	Thu, 25 Jul 2024 01:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="srn4n+kJ"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD9ACA40;
+	Thu, 25 Jul 2024 01:48:50 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41DF63A9;
-	Thu, 25 Jul 2024 01:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD415567F;
+	Thu, 25 Jul 2024 01:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721871824; cv=none; b=oElfWBUiiOldcIOpTrEaYljyNrsa+6eMdZlDDLqAUTNnEXeJz0nmf1dsdTQE5KHf3eKI/GXSgyc1/GwLbHn4ChMgz+1QePL8gpKsnp1F5p4h37FMtBk030JysMK4GVxAdmohbmK07MLy3VpswSwuWviH42DOBGLkfB74Gv1+4Mk=
+	t=1721872130; cv=none; b=d7MJcysbLxP83VDeizsWkIJN9dJOjk2fWP8nynKMPw7CZQz6HcUbEhSi75CuklQGmc0qIPb5yaAzVRMOQ8gyNa0skZTzwMuO5/1UlkDvrcE6UBXEoOHgg20jE8yI5cyjGwPfplv/sFcCPcLyc1JwKURXKp+hNJubfeBDylYCg9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721871824; c=relaxed/simple;
-	bh=W27i8GsddWkkGbO43nNSrNo7kUCmHrqjkxKShFt8uBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DPkk2ngVE41UFy0E4VT4YYLs7x1hcOrtLwErzX8mRgjSxSvHkOB06xStl15ITxvnaX1ADXjUvVe/gGi8lFu63J0emDnS1sOEoCPSWXXIVYfzHN+5s+mrmp34o7nPQJ7yqe+a/35e4L9yCPhGMqNY+lRPazItiZ1QLEu3QCqkVdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=srn4n+kJ; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4WTtvf1skBzDqWn;
-	Thu, 25 Jul 2024 01:43:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1721871822; bh=W27i8GsddWkkGbO43nNSrNo7kUCmHrqjkxKShFt8uBE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=srn4n+kJrmAxuGdPRwpNbOq2jilBzgpNuAvZJZnYe7CiyjSxKuXgj0P0qZCapmGjB
-	 RGo/XBnpo5X2H/muUWMTWptuOAOutG5r1M5Bi9rZCHMqxahnWvn1E9RDC4PMHXXk0k
-	 xdVmimIbC2BfY6lD/vLj8bN47AVtiosREPKW6g9w=
-X-Riseup-User-ID: 3C13B24D9ADA5A948DEBA86D6218C0230D81CB46BC5330AC4AE95BA046F5E57E
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WTtvb3YpXzJrRJ;
-	Thu, 25 Jul 2024 01:43:39 +0000 (UTC)
-From: Dang Huynh <danct12@riseup.net>
-Date: Thu, 25 Jul 2024 08:42:20 +0700
-Subject: [PATCH v2 11/11] arm64: dts: qcom: sm6115-pro1x: Enable ATH10K
- WLAN
+	s=arc-20240116; t=1721872130; c=relaxed/simple;
+	bh=ZOqUap9ZIFAa0oA5dK3qqGY70Hb+gcTYUSfSf/CUZ1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=llQTy+ctgwb4Nhvg+v8lmmhSOcTG8l4XaY9a3NAvpMwPm+vhgtWgvvaMKOWbd6rZvedDStjPdpRyyf5FQf7QaSy4vmwS8YOhlA4LBR+2bYQItiYCM9rTZxy5PS5x6MwICOGg8+Xi1v4emQna24Q3xjEWKH6oqPz87nsYq/R9+tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WTtzG4NRDzMqrD;
+	Thu, 25 Jul 2024 09:46:50 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0A70D180088;
+	Thu, 25 Jul 2024 09:48:38 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 25 Jul
+ 2024 09:48:37 +0800
+Message-ID: <53ed023b-c86c-498a-b1fc-2b442059f6af@huawei.com>
+Date: Thu, 25 Jul 2024 09:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+To: Hillf Danton <hdanton@sina.com>
+CC: Roman Gushchin <roman.gushchin@linux.dev>, <tj@kernel.org>,
+	<bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240724110834.2010-1-hdanton@sina.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <20240724110834.2010-1-hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-qx1050-feature-expansion-v2-11-5fac4bbd946f@riseup.net>
-References: <20240725-qx1050-feature-expansion-v2-0-5fac4bbd946f@riseup.net>
-In-Reply-To: <20240725-qx1050-feature-expansion-v2-0-5fac4bbd946f@riseup.net>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dang Huynh <danct12@riseup.net>
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Enable onboard Wi-Fi on the F(x)tec Pro1X.
 
-For reference, HW/SW identifies as:
-qmi chip_id 0x120 chip_family 0x4007 board_id 0xff soc_id 0x40670000
-qmi fw_version 0x324103d6 fw_build_timestamp 2021-12-02 08:20
-fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.3.2.4-00982-QCAHLSWMTPLZ-1
 
-Signed-off-by: Dang Huynh <danct12@riseup.net>
----
- arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 2024/7/24 19:08, Hillf Danton wrote:
+> On Fri, 19 Jul 2024 02:52:32 +0000 Chen Ridong <chenridong@huawei.com>
+>> We found a hung_task problem as shown below:
+>>
+>> INFO: task kworker/0:0:8 blocked for more than 327 seconds.
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       flags:0x00004000
+>> Workqueue: events cgroup_bpf_release
+>> Call Trace:
+>>   <TASK>
+>>   __schedule+0x5a2/0x2050
+>>   ? find_held_lock+0x33/0x100
+>>   ? wq_worker_sleeping+0x9e/0xe0
+>>   schedule+0x9f/0x180
+>>   schedule_preempt_disabled+0x25/0x50
+>>   __mutex_lock+0x512/0x740
+>>   ? cgroup_bpf_release+0x1e/0x4d0
+>>   ? cgroup_bpf_release+0xcf/0x4d0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   ? cgroup_bpf_release+0x1e/0x4d0
+>>   ? mutex_lock_nested+0x2b/0x40
+>>   ? __pfx_delay_tsc+0x10/0x10
+>>   mutex_lock_nested+0x2b/0x40
+>>   cgroup_bpf_release+0xcf/0x4d0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   process_scheduled_works+0x23a/0x8a0
+>>   worker_thread+0x231/0x5b0
+>>   ? __pfx_worker_thread+0x10/0x10
+>>   kthread+0x14d/0x1c0
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork+0x59/0x70
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork_asm+0x1b/0x30
+>>   </TASK>
+>>
+>> This issue can be reproduced by the following methods:
+>> 1. A large number of cpuset cgroups are deleted.
+>> 2. Set cpu on and off repeatly.
+>> 3. Set watchdog_thresh repeatly.
+>>
+>> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+>> acquired in different tasks, which may lead to deadlock.
+>> It can lead to a deadlock through the following steps:
+>> 1. A large number of cgroups are deleted, which will put a large
+>>     number of cgroup_bpf_release works into system_wq. The max_active
+>>     of system_wq is WQ_DFL_ACTIVE(256). When cgroup_bpf_release can not
+>>     get cgroup_metux, it may cram system_wq, and it will block work
+>>     enqueued later.
+>> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
+>>     smp_call_on_cpu work into system_wq. However it may be blocked by
+>>     step 1.
+>> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
+>> 4. When a cpuset is deleted, cgroup release work is placed on
+>>     cgroup_destroy_wq, it will hold cgroup_metux and acquire
+>>     cpu_hotplug_lock.read. Acquiring cpu_hotplug_lock.read is blocked by
+>>     cpu_hotplug_lock.write as mentioned by step 3. Finally, it forms a
+>>     loop and leads to a deadlock.
+>>
+>> cgroup_destroy_wq(step4)	cpu offline(step3)		WatchDog(step2)			system_wq(step1)
+>> 												......
+>> 								__lockup_detector_reconfigure:
+>> 								P(cpu_hotplug_lock.read)
+>> 								...
+>> 				...
+>> 				percpu_down_write:
+>> 				P(cpu_hotplug_lock.write)
+>> 												...256+ works
+>> 												cgroup_bpf_release:
+>> 												P(cgroup_mutex)
+>> 								smp_call_on_cpu:
+>> 								Wait system_wq
+>> ...
+>> css_killed_work_fn:
+>> P(cgroup_mutex)
+>> ...
+>> cpuset_css_offline:
+>> P(cpu_hotplug_lock.read)
+>>
+> 	worker_thread()
+> 	manage_workers()
+> 	maybe_create_worker()
+> 	create_worker() // has nothing to do with WQ_DFL_ACTIVE
+> 	process_scheduled_works()
+> 
+> Given idle worker created independent of WQ_DFL_ACTIVE before handling
+> work item, no deadlock could rise in your scenario above.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-index 3f6676edc9a7..2ef2733bff48 100644
---- a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-+++ b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-@@ -536,6 +536,17 @@ &usb_qmpphy_out {
- 	remote-endpoint = <&pmi632_ss_in>;
- };
- 
-+&wifi {
-+	vdd-0.8-cx-mx-supply = <&pm6125_l8a>;
-+	vdd-1.8-xo-supply = <&pm6125_l16a>;
-+	vdd-1.3-rfa-supply = <&pm6125_l17a>;
-+	vdd-3.3-ch0-supply = <&pm6125_l23a>;
-+
-+	qcom,ath10k-calibration-variant = "Fxtec_QX1050";
-+
-+	status = "okay";
-+};
-+
- &xo_board {
- 	clock-frequency = <19200000>;
- };
+Hello Hillf, did you mean to say this issue couldn't happen?
+I wish it hadn't happen, as it took me a long time to figure out.
+However, it did happen. It could be reproduced with the method I 
+offered, You can access the scripts using this link: 
+https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t.
 
--- 
-2.45.2
+It's not about how the pool's workers were created, but rather the 
+limit(system_wq ) of workqueue. If system_wq reaches its max_active 
+limit, the work enqueued afterward will be placed on 
+pwq->inactive_works. In this scenario described above, the problem is 
+all active works(cgroup_bpf_release) are blocked, and the 
+inactive_works(smp_call_on_cpu) couldn't be executed when it forms a loop.
 
+We have discussed this before in V1, you can find in the Link.
+
+Thanks
+Ridong
 
