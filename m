@@ -1,211 +1,212 @@
-Return-Path: <linux-kernel+bounces-261854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E4E93BCF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:15:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6493BCFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7EB31F21E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DDB1C21183
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC66716F274;
-	Thu, 25 Jul 2024 07:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6B416F8EF;
+	Thu, 25 Jul 2024 07:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KsXXub12"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="nVyNd2J/"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5830216EB7A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8903328387
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721891699; cv=none; b=NRm1/BGelskNgNQ3NeXfSepwYCuX2EPEb3hSE/bbUzSufIk8zQ78NcO6ZTNTdqmrxOqcMfRQ8u2BbnjXKPeqz/PW7BKZET+aUPDyxpMpxAyJSBFlveWu0cbTt8pkna8NQu82+qtC6yQOpeIlOezc3ZrFg8m2cKzaz9c7v7pdLCI=
+	t=1721891813; cv=none; b=kkoT6JzrCCqLoy18pppw8soqORPPyuXajLnotVaEEHarf2N0sYNZ8BhJQk7mm2VO5nQMcQ5XmhYyoqf8+x97CM+6FeRB9YfixyKFkVFhtFOPixaanG2RceJShMV2R+cclOllZSSjpUq5xsMD6cuxiAeNQIf7I9NxG7sVSq0b7+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721891699; c=relaxed/simple;
-	bh=UdgqSHS409D1rofviHHAOQHQWR4JYhERIscY+LUJNY8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ubPbS5vbAWTaSwiak5lDoyCaX0qwm1q67YlbnCDcOvkBmubLlM6fJCz2y3kBeXyktHHUD7L1TDbdFKJ5cU5l/88VPThoET6WE9UUmYd4v9ZoR3RCdkPTnQ8wJggfBkTbNe+YdprN98/yZtZzY9dvjamXcnowRlrOUePvdA9+78c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KsXXub12; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240725071455epoutp01a0f4ed98d66d28a107e33a66b0b169fa~lY1_tlcGX0885408854epoutp01e
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:14:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240725071455epoutp01a0f4ed98d66d28a107e33a66b0b169fa~lY1_tlcGX0885408854epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721891695;
-	bh=T1pST/qs6/biy6dUmAy2u7uPzcT5nWxyTZbj3XUrC7A=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=KsXXub12QPkan1ozvly1V69oN6Hwd1O5A3dypWf0XNEQJxkqMOBbvDKYdMz9YqqJY
-	 K5GQxWldtGmcbgZgx4xgjnr7wp0wIC0kpSh0JXcBIqI35Ax1BPUFoTtJIQXOVRI6qX
-	 FTqqHNbGzKlEAZy3XLGojVq8QTeQqieOawYdGB+U=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240725071454epcas2p1bbad7209cda5d174e1e7fdadb01a2c68~lY1_R4cWE0658906589epcas2p1T;
-	Thu, 25 Jul 2024 07:14:54 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WV2Fp0dRYz4x9Pw; Thu, 25 Jul
-	2024 07:14:54 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	86.52.10066.D6BF1A66; Thu, 25 Jul 2024 16:14:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240725071453epcas2p27007de4ad8fc01b93fa05a5446706d3e~lY19PgY0o0571805718epcas2p2N;
-	Thu, 25 Jul 2024 07:14:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240725071453epsmtrp14c074403ce791f9f2f66b0f230e27fb1~lY19ObSIe1832118321epsmtrp1H;
-	Thu, 25 Jul 2024 07:14:53 +0000 (GMT)
-X-AuditID: b6c32a46-4b7fa70000002752-0b-66a1fb6d4cbc
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A3.0F.08964.D6BF1A66; Thu, 25 Jul 2024 16:14:53 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240725071453epsmtip203bcedd8916ffcb66de7ec00d6b7356a~lY19AVCva0881408814epsmtip2-;
-	Thu, 25 Jul 2024 07:14:53 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Rob Herring'"
-	<robh@kernel.org>
-Cc: "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
-	<cw00.choi@samsung.com>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-	"'Michael	Turquette'" <mturquette@baylibre.com>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <9647f1b5-9f34-42f0-b7b9-56ad9708855b@kernel.org>
-Subject: RE: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-Date: Thu, 25 Jul 2024 16:14:53 +0900
-Message-ID: <041b01dade62$5861b2d0$09251870$@samsung.com>
+	s=arc-20240116; t=1721891813; c=relaxed/simple;
+	bh=iRiZSjOVzyMj4SAUrdzoEmxUrieP5Mlht5w42sA7nZM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=P6fLbFUiHWOYqC1+SzjZNAPyCBHH/GkyiWvbEJbXkjBLwGFPxfcd0XVRJzD/b5i9awbuSvXLG2RKK4qOrxBEZii7vGbbGwMsbiRJKwHW1wASM4N62wMTnz83wTFlBk+g0t+fqzqdqp7CajT0EKBo82bEwJp7k4MJ3hZouUVxkEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=nVyNd2J/; arc=none smtp.client-ip=193.222.135.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 45789 invoked from network); 25 Jul 2024 09:16:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1721891801; bh=vMfoJ6VDxLmxzRr6RMfJhEfVmXvH4xRv1RuIwr71CqI=;
+          h=From:To:CC:Subject;
+          b=nVyNd2J/rDnr47uvQ5yqBflH39CyAkkyCT8B0/SHBgZWBSxFEgBzIO70XLa3b8VE+
+           KR12JvMAty6a1HSrPN5mQFkQ/1pk4a12aREdxKVY6CE9sqtShsIp7KjswYBJ1zIuLc
+           R62O9KcyZYzQqSuDDFE6IJSHT3zQTXSDej7I7b1o=
+Received: from 46.204.13.103.mobile.internet.t-mobile.pl (HELO [127.0.0.1]) (mat.jonczyk@o2.pl@[46.204.13.103])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <paul.e.luse@linux.intel.com>; 25 Jul 2024 09:16:41 +0200
+Date: Thu, 25 Jul 2024 09:15:40 +0200
+From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+To: Paul E Luse <paul.e.luse@linux.intel.com>
+CC: Yu Kuai <yukuai3@huawei.com>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
+ regressions@lists.linux.dev
+Subject: =?US-ASCII?Q?Re=3A_Filesystem_corruption_when_adding_a_new?=
+ =?US-ASCII?Q?_RAID_device_=28delayed-resync=2C_write-mostly=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240724141906.10b4fc4e@peluse-desk5>
+References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl> <ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl> <f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl> <20240724141906.10b4fc4e@peluse-desk5>
+Message-ID: <2123BF84-5F16-4938-915B-B1EE0931AC03@o2.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKlY5hu3bVCnsOExtpi/jJA6pOgwAIfj46DASLmYXQCkOemkQII707mAaDCc8MCEkcIaAFr8TEUAoKtsZ4CN02U2q/kTupA
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmqW7u74VpBkcOWlk8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20jiwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
-	8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QCcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
-	S2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7IzXmxdxFxwjL9i6uSfrA2MU3i6GDk5
-	JARMJD5/283YxcjFISSwg1HiWudeKOcTo0Tj/VMsEM43RolzC7aywrR0Tm9ngkjsZZTYPXk5
-	lPOSUaLnRwcjSBWbgL7E6u7bbCC2iECQxLZta8BGMQvsYpbo2d3NDJLgFLCTmHDpCViRsECY
-	xNYZEM0sAqoSZ2bPBYvzClhK9J5ZAmULSpyc+YQFxGYW0JZYtvA1M8RJChI/ny5jhViWJ3Hl
-	wQpmiBoRidmdbcwgiyUEDnBIrLlxlx2iwUWi8/8cJghbWOLV8S1QcSmJl/1tUHa+xOTrb5kg
-	mhuAQfOvG2qbvcSiMz+BijiANmhKrN+lD2JKCChLHLkFdRufRMfhv+wQYV6JjjYhiEY1iU9X
-	LkMNkZE4duIZ8wRGpVlIPpuF5LNZSD6YhbBrASPLKkax1ILi3PTUYqMCI3h0J+fnbmIEp18t
-	tx2MU95+0DvEyMTBeIhRgoNZSYR32f2FaUK8KYmVValF+fFFpTmpxYcYTYFhPZFZSjQ5H5gB
-	8kriDU0sDUzMzAzNjUwNzJXEee+1zk0REkhPLEnNTk0tSC2C6WPi4JRqYLqTkVcl1O+w/o6D
-	z3slC+mK9ZcSYk4larF+2OYmYClvlRWq+9PGJE4ne6vX4oaSlAqntMev7tbx/ImYsyfCwEHG
-	eL1Kz663xxxysqruvo7unXxli+uZJVecA5L8bafN9/qR3bz5x0GrlZNKvZoPzV2sulvxmLLN
-	7Z3R7ZWNtVHTYx5lnJRKezJv3vd6hngZXoELYjJOB3bkS2/frBhQ25H2XH+K+3KLG4uc1H01
-	Doe2PLwefCVigcK6a4k2jm73X19t/bOoS+urL/OexxN5bnAZGyqy+BroF7G1Fpcl2ai/39yx
-	3mrKQ1v18B5ziRBuGw/FiOjfvNql+p1yxl/il6R6uN8S3hP+o4kxTV+JpTgj0VCLuag4EQBA
-	I3YTSAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSvG7u74VpBg+2Slo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20jiwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBntk9ULlvNX
-	nH0xh7mB8TN3FyMnh4SAiUTn9HamLkYuDiGB3YwSz9bNZ4RIyEhsbPjPDmELS9xvOcIKUfSc
-	UaLj51dmkASbgL7E6u7bbCC2iECQxLb/j8CKmAUOMUv86JvMApIQEpjAInFyrwyIzSlgJzHh
-	0hOwBmGBEInJi1qZQGwWAVWJM7PngsV5BSwles8sgbIFJU7OfAI2h1lAW6L3YSsjjL1s4Wtm
-	iOsUJH4+XcYKcUSexJUHK5ghakQkZne2MU9gFJ6FZNQsJKNmIRk1C0nLAkaWVYySqQXFuem5
-	xYYFhnmp5XrFibnFpXnpesn5uZsYwXGopbmDcfuqD3qHGJk4GA8xSnAwK4nwLru/ME2INyWx
-	siq1KD++qDQntfgQozQHi5I4r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QD04XnmnO1pt06f7Du
-	DaP8rd+ia3MsUxI/zzK/tHmh107lfiXew1t1Ps7SVgxtUxCvM9c7ymLkeJWFg2npvQ+T9VfO
-	MXDYu9VbwOnz/pnLf0bUhu2be8rtDOvZi9UiYrMmLMnc+MBH5uWFVmbuZxd+P90c7puk96ft
-	kZzOnY0MCyy4BU7o1nuZ71NqYcktC58tsPF+6JNnYk+q30Xse5N2+tjz9gjFIMVT8eymck0i
-	/d/tTl9azFv2z/rcxYUHX61Xm/L2o9jWuOtL3ZpvvAox+Max5bPE0oSOTb6y73zWTZnvN9tf
-	88H5nJeHbk6zzi2t+ZZ/Ksb30IGoTC9eqbvJav9Zv2pHNP6dYrBS22CCkIwSS3FGoqEWc1Fx
-	IgBlEeyNMgMAAA==
-X-CMS-MailID: 20240725071453epcas2p27007de4ad8fc01b93fa05a5446706d3e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d
-References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
-	<CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
-	<20240722223333.1137947-2-sunyeal.hong@samsung.com>
-	<20240723205714.GA1093352-robh@kernel.org>
-	<035501dade31$55cc7f40$01657dc0$@samsung.com>
-	<03b201dade3f$3d66e3b0$b834ab10$@samsung.com>
-	<bf6cd1c9-d60a-4ef1-89f3-5d28e003ce2d@kernel.org>
-	<03ef01dade5c$ce407820$6ac16860$@samsung.com>
-	<8ee739e7-8405-49d7-93f8-f837effe169b@kernel.org>
-	<9647f1b5-9f34-42f0-b7b9-56ad9708855b@kernel.org>
+X-WP-MailID: a78301d0c9577853a67c75e05b3e30fe
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [MfPA]                               
 
-Hello Krzysztof,
+Dnia 24 lipca 2024 23:19:06 CEST, Paul E Luse <paul=2Ee=2Eluse@linux=2Einte=
+l=2Ecom> napisa=C5=82/a:
+>On Wed, 24 Jul 2024 22:35:49 +0200
+>Mateusz Jo=C5=84czyk <mat=2Ejonczyk@o2=2Epl> wrote:
+>
+>> W dniu 22=2E07=2E2024 o=C2=A007:39, Mateusz Jo=C5=84czyk pisze:
+>> > W dniu 20=2E07=2E2024 o=C2=A016:47, Mateusz Jo=C5=84czyk pisze:
+>> >> Hello,
+>> >>
+>> >> In my laptop, I used to have two RAID1 arrays on top of NVMe and
+>> >> SATA SSD drives: /dev/md0 for /boot (not partitioned), /dev/md1
+>> >> for remaining data (LUKS
+>> >> + LVM + ext4)=2E For performance, I have marked the RAID component
+>> >> device for /dev/md1 on the SATA SSD drive write-mostly, which
+>> >> "means that the 'md' driver will avoid reading from these devices
+>> >> if at all possible" (man mdadm)=2E
+>> >>
+>> >> Recently, the NVMe drive started having problems (PCI AER errors
+>> >> and the controller disappearing), so I removed it from the arrays
+>> >> and wiped it=2E However, I have reseated the drive in the M=2E2 sock=
+et
+>> >> and this apparently fixed it (verified with tests)=2E
+>> >>
+>> >> =C2=A0=C2=A0 =C2=A0$ cat /proc/mdstat
+>> >> =C2=A0=C2=A0 =C2=A0Personalities : [raid1] [linear] [multipath] [rai=
+d0] [raid6]
+>> >> [raid5] [raid4] [raid10] md1 : active raid1 sdb5[1](W)
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 471727104 blocks s=
+uper 1=2E2 [2/1] [_U]
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 4/4 pages =
+[16KB], 65536KB chunk
+>> >>
+>> >> =C2=A0=C2=A0 =C2=A0md2 : active (auto-read-only) raid1 sdb6[3](W) sd=
+a1[2]
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 3142656 blocks sup=
+er 1=2E2 [2/2] [UU]
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 0/1 pages =
+[0KB], 65536KB chunk
+>> >>
+>> >> =C2=A0=C2=A0 =C2=A0md0 : active raid1 sdb4[3]
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2094080 blocks sup=
+er 1=2E2 [2/1] [_U]
+>> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+>> >> =C2=A0=C2=A0 =C2=A0unused devices: <none>
+>> >>
+>> >> (md2 was used just for testing, ignore it)=2E
+>> >>
+>> >> Today, I have tried to add the drive back to the arrays by using a
+>> >> script that executed in quick succession:
+>> >>
+>> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md0 --add --readwrite /dev/nvme0n1p2
+>> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md1 --add --readwrite /dev/nvme0n1p3
+>> >>
+>> >> This was on Linux 6=2E10=2E0, patched with my previous patch:
+>> >>
+>> >> =C2=A0=C2=A0=C2=A0 https://lore=2Ekernel=2Eorg/linux-raid/2024071120=
+2316=2E10775-1-mat=2Ejonczyk@o2=2Epl/
+>> >>
+>> >> (which fixed a regression in the kernel and allows it to start
+>> >> /dev/md1 with a single drive in write-mostly mode)=2E
+>> >> In the background, I was running "rdiff-backup --compare" that was
+>> >> comparing data between my array contents and a backup attached via
+>> >> USB=2E
+>> >>
+>> >> This, however resulted in mayhem - I was unable to start any
+>> >> program with an input-output error, etc=2E I used SysRQ + C to save
+>> >> a kernel log:
+>> >>
+>> > Hello,
+>> >
+>> > It is possible that my second SSD has some problems and high read
+>> > activity during RAID resync triggered it=2E Reads from that drive are
+>> > now very slow (between 10 - 30 MB/s) and this suggests that
+>> > something is not OK=2E
+>>=20
+>> Hello,
+>>=20
+>> Unfortunately, hardware failure seems not to be the case=2E
+>>=20
+>> I did test it again on 6=2E10, twice, and in both cases I got
+>> filesystem corruption (but not as severe)=2E
+>>=20
+>> On Linux 6=2E1=2E96 it seems to be working well (also did two tries)=2E
+>>=20
+>> Please note: in my tests, I was using a RAID component device with
+>> a write-mostly bit set=2E This setup does not work on 6=2E9+ out of the
+>> box and requires the following patch:
+>>=20
+>> commit 36a5c03f23271 ("md/raid1: set max_sectors during early return
+>> from choose_slow_rdev()")
+>>=20
+>> that is in master now=2E
+>>=20
+>> It is also heading into stable, which I'm going to interrupt=2E
+>
+>Hi Mateusz,
+>
+>I'm pretty interested in what is happening here especially as it
+>relates to write-mostly=2E  Couple of questions for you:
+>
+>1) Are you able to find a simpler reproduction for this, for example
+>without mixing SATA and NVMe=2E  Maybe just using two known good NVMe
+>SSDs and follow your steps to repro?
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Thursday, July 25, 2024 3:41 PM
-> To: sunyeal.hong <sunyeal.hong=40samsung.com>; 'Rob Herring'
-> <robh=40kernel.org>
-> Cc: 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>; 'Chanwoo Choi'
-> <cw00.choi=40samsung.com>; 'Alim Akhtar' <alim.akhtar=40samsung.com>; 'Mi=
-chael
-> Turquette' <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.or=
-g>;
-> 'Conor Dooley' <conor+dt=40kernel.org>; linux-samsung-soc=40vger.kernel.o=
-rg;
-> linux-clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v4 1/4=5D dt-bindings: clock: add ExynosAuto v920 S=
-oC
-> CMU bindings
->=20
-> On 25/07/2024 08:37, Krzysztof Kozlowski wrote:
-> >>   then:
-> >>     properties:
-> >>       clocks:
-> >>         items:
-> >>           - description: External reference clock (38.4 MHz)
-> >>           - description: CMU_MISC NOC clock (from CMU_MISC)
-> >>
-> >>       clock-names:
-> >>         items:
-> >>           - const: oscclk
-> >>           - const: noc
-> >>
-> >> If there is anything I misunderstand, please guide me.
-> >>
-> >
-> > You did not address my questions at all instead just copied again the
-> > same. It is not how it works.
-> >
-> > I am not going to discuss like this.
->=20
-> And in case it is still unclear - just look at your bindings and DTS.
-> They say you have three clocks=21
->=20
-> Best regards,
-> Krzysztof
->=20
+Hello,
 
-Let me answer your questions first.
-In the existing V4 patch, clock items were declared in if then for each blo=
-ck, so there was no problem.
-If modified according to Rob's comment, problems may occur as the input clo=
-ck is configured differently for each block.
+Well, I have three drives in my laptop: NVMe, SATA SSD (in the DVD bay) an=
+d SATA HDD (platter)=2E I could do tests on top of these two SATA drives=2E
+But maybe it would be easier for me to bisect (or guess-bisect) in the cur=
+rent setup, I haven't made up my mind yet=2E
 
-I think it would be better to keep the bindings in v4 patch form like the e=
-xisting exynos models.
+>
+>2) I don't fully understand your last two statements, maybe you can
+>clarify?  With your max_sectors patch does it pass or fail?  If pass,
+>what do mean by "I'm going to interrupt"? It sounds like you mean the
+>patch doesn't work and you are trying to stop it??
 
-Thanks for your comment.
+Without this patch I wouldn't be able to do the tests=2E Without it, degra=
+ded RAID1 with a single drive in write-mostly mode doesn=E2=80=99t start at=
+ all=2E
 
-Best regards,
-Sunyeal
+With my last statement I meant that I was going to stop this patch from go=
+ing to stable kernels=2E At this point, it doesn=E2=80=99t seem to me that =
+my patch
+is the direct cause of the problems, that I missed something=2E However, I=
+ think that it is currently better to fail this setup outright rather than =
+risk
+somebody's data=2E
 
+I have made further tests:
+
+- vanilla 6=2E8=2E0 with a write-mostly drive works correctly,
+
+- vanilla 6=2E10-rc6 without the write mostly bit set also works correctly=
+=2E=20
+
+So it seems that the problem happens only with the write-mostly mode and a=
+fter 6=2E8=2E0=2E
+
+Greetings,
+
+Mateusz
 
 
