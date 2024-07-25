@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-262355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C4A93C50C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7C593C515
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C461F24230
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3262F1C21DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7D019D074;
-	Thu, 25 Jul 2024 14:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DF11E89C;
+	Thu, 25 Jul 2024 14:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PCQXhSs9"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aMgznN66"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8921E895
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D9D1E895
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721918799; cv=none; b=e1CtzvJpm2Ee7g5h/Y/SaVzewP2CHYAFCZXdZ+fmYQNW8Ldz4S1bfWEtU9Wu0vVuunPW0Uk9wfBbkNxZtsDGmoslwcFtzc8nscjxwBQ7yMKDL+6cjxiZiBwF5UlBOnwUwHuOHsnCySokdyHogFblJEt0zQolJ4k/35KzUfrJjwE=
+	t=1721918816; cv=none; b=GvDJ53iVYZfyFbTPuzdauk6GvmbXdeQujcqy8sLy/2/QmB60s4IcNLIy3MtHeYlKCKAggEsyLzdGDA4ajKGIJ4ZdJqFuy/efAxbGW7eNfA2CvWHAQvahFZTD/iOfM/Fum7SGZclkKWFzMD/S5sw23VqqBXgTVZSEb83L1L1VbXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721918799; c=relaxed/simple;
-	bh=mT9MNFKr7aPAgYb5AtQxuvxZh/ZL8WawfhwUBSoD+kI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=N8cgnZE00TQ3T7Ad3smXfeNvQ0SpMqxAjs+GYrPamDQw1cxl89mtYT0HdIdxxYhPA3yk91k9/WafcGV2zklaQ5WyYdGqwH04CWbqFeaFYsT3PAZ7qO366jCZ+Hd41CZVXHekPiRJlixCfBVdPL+tEr0gGRvCq1UeE1eXhOPA4nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PCQXhSs9; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7f3c804daf7so1992139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721918796; x=1722523596; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qJ44A6ixhFSJuEsftmBa7Xjp0gzBXl2+go4fssUyIos=;
-        b=PCQXhSs9ZcXnCyYEtAsvfzs5JZVl6r9m/gfizQoQvy+ZZ2YEFTJaTEV/bEiUfzz5d6
-         xqyP1W1REeVLNXZj0xlp51pzP4s2xvTBWu5mxDrmComg6D4Lof3OGDtP9yUm0SOpCRb9
-         babTrl2zG1/pZL8+VkJg1KCtQ892ALaRyI7beMIXF49MwwVwhrD7qWgoBFAgZBY19BaD
-         W1joZJI65+Ds7hQwxlLBco1SFfWtXyyd5s+KBIjIlN0Lfk4Bkn2jQ5Au3ImT6c5pnu4J
-         77nYHLqngGy1p3xIjjscDgBDCs+amYNhgX3K0QrejE7whA9VJ4PYRIhtCM64v8fKk7qJ
-         GjHA==
+	s=arc-20240116; t=1721918816; c=relaxed/simple;
+	bh=UXpXmJvT0va0l3p81se0HFl/LbI/kH9FMntWyqrkBcg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e6kHESstI5l5tJl0cn8sb0bTjIeEULStMJiB3CTknJdiz9/PNftI3QZMOpUAeZr6CcIjCSlcxBnVqgSaMtlS3fq82PSZ4m2dEoZRGTWN8IpO6UrwA+MweAf2qt3q11WZJ1Vd19jFEBuc8vKZNdg4RRLoi56G3hFd+0dexxwyE/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aMgznN66; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721918812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UXpXmJvT0va0l3p81se0HFl/LbI/kH9FMntWyqrkBcg=;
+	b=aMgznN66Yxmw4KC+WYXZsDvrzgb3ADaTsq8tZidAwhddM6KTh8UT90tt9Msgwp1kllEX8r
+	8dlx1GSLtjRTA+/LSMTyK1KAyRdWunvitiZnGguxaNeK7Ymx7GKUPVQkUm5KZ7CPpIG02V
+	j1SH1t4iNO7n1UIzJHwFnbmS1Q31biI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-336-JFyNhCs_MNuwtuLayFAuRA-1; Thu, 25 Jul 2024 10:46:47 -0400
+X-MC-Unique: JFyNhCs_MNuwtuLayFAuRA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-367990b4beeso611250f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:46:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721918796; x=1722523596;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qJ44A6ixhFSJuEsftmBa7Xjp0gzBXl2+go4fssUyIos=;
-        b=ZoqA0gxWDF0pp9NEPe/XDg9O8ybFyxmMjOi87/sJK568qm99staEAWbZWW+e99pGQn
-         ROZhs1eczzT2GjfpEItWCQbmYxuRukhii9mm3PNs3dQwPGZ60YweTosNxeqtQP9Aemlf
-         SFMbp/JfScFZc9b13uPXTeKcOXRnkg+gxzEfsEefyCeiggRl7MLMRisa/lumu02EZ7qX
-         WnXzLLdVZcr2/gTPcjORMgQ7qhNlGv4oa5HckumbKwPdlyIjMW3mCr7WSSG35u8/Gorw
-         6U/8glrSO8eQLKYkPKWs5Pg1zJ8NeWeIH8usMibfsRL46uWDl1HVeG3zFeHKXG8FQCco
-         8WFA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8VTZMV5YW88gZ3OS4zmfG28lMr6OwYbn1NJ94ndfb5FSiIOcdah62cjlyA3vOdfjD8ThqgpFEszaotnPc3FUVh62Fm3Tn52vaW8fo
-X-Gm-Message-State: AOJu0Yy3X+mOAhZ+IFjaFiifxQM8w0NkkURa1EreNFRV5zt2zl/wFlkx
-	cCIToxO4eCm4cBtnSJ4eHArKhNPqQDIgD3rEjT/y+FG6ot3wRfse9xHwdiHK3cyc7saKbSC1EeH
-	G
-X-Google-Smtp-Source: AGHT+IGA9KwcxBUdYQDg20GqQAKCjSIkt0PdFqcrD+7PVFv1W533RWITS7rn/Jx4ssMY3sa3NjAzQA==
-X-Received: by 2002:a05:6e02:17cd:b0:375:a4f9:e701 with SMTP id e9e14a558f8ab-39a22d22302mr19350355ab.3.1721918796065;
-        Thu, 25 Jul 2024 07:46:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa5a0c5csm1086245a12.91.2024.07.25.07.46.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 07:46:35 -0700 (PDT)
-Message-ID: <b8783e34-1011-4eae-86cc-9ba2b310863d@kernel.dk>
-Date: Thu, 25 Jul 2024 08:46:34 -0600
+        d=1e100.net; s=20230601; t=1721918806; x=1722523606;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UXpXmJvT0va0l3p81se0HFl/LbI/kH9FMntWyqrkBcg=;
+        b=RKWXYIIVTB0DUa+qJdLUfJ+ygMm5PhAKSkTBq39wwo6Eqnjbd+NKMoTAbAOPK3SNLw
+         bMy4ZFP6lsE084m1O+/9gSDjePKcrr/vI4HbFL8whU/NYaqu/2aLHFeH4MsWp/HOVnWv
+         FXTYKlnfavmH4POWeLE5A9NvKPiCPQPkqxE+qVmP1emmXlWq417ZmLEvk8/S3DoZKGTT
+         jL4wn9s8TqYtPJnaLwLDJz+g3L97K0oc7iDTgygVC3PonhifX+VwNng/7AxUZHU7BISA
+         NmFZLtCKAw3Cbbna07te2PUXJETPPKRCFF/0x60ww6s4idFrKo0Y7Ft0QeOZVw3uE4Pz
+         WWkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/2LjoN/v9SirQ3qRQi7LuKTfHFlgtUn2152hugNoJ0ZOrwQbJQvLlnl1Eq4V8TaLg6nXWbBWh/lOPHJWtd7gzj0wD8IMTlNlVyxiU
+X-Gm-Message-State: AOJu0YyoANVF116oM021JaJ3myD5u8WuZvMrIL42ZYZHhUBEFkjeTckB
+	epZc1yG0QbUj/FieldugzPrfaJ0m4RaFB2v7eHC5IZ2ADVKgZSEv2agu+1h9XYsMhozcPOLkF0i
+	Pt++cEeo3PooafDKlAip14ZFlv+/CTAlQDs4ClbnrKpnu+AylFYKjJxTvoL1jfw==
+X-Received: by 2002:adf:e281:0:b0:366:e64f:b787 with SMTP id ffacd0b85a97d-36b319dbda9mr2129994f8f.8.1721918805889;
+        Thu, 25 Jul 2024 07:46:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGK86Bkeo6mGzPN+xwCuZD5Bq8Yc6ON5LsThd8oveDep2INDu56QbTBosMfiRiBF84C7tMKtg==
+X-Received: by 2002:adf:e281:0:b0:366:e64f:b787 with SMTP id ffacd0b85a97d-36b319dbda9mr2129978f8f.8.1721918805511;
+        Thu, 25 Jul 2024 07:46:45 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857d5asm2414743f8f.84.2024.07.25.07.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 07:46:44 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney"
+ <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Neeraj
+ Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 14/25] context_tracking, rcu: Rename
+ rcu_dynticks_curr_cpu_in_eqs() into rcu_watching_curr_cpu()
+In-Reply-To: <ZqJAwZiJ3oC-Kr36@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-15-vschneid@redhat.com>
+ <ZqJAwZiJ3oC-Kr36@localhost.localdomain>
+Date: Thu, 25 Jul 2024 16:46:43 +0200
+Message-ID: <xhsmhcyn1zfzg.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in
- io_req_task_work_add_remote
-To: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000a4fe65061e049a02@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <000000000000a4fe65061e049a02@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/24/24 3:03 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-by: syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com
-> Tested-by: syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         c33ffdb7 Merge tag 'phy-for-6.11' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17d29bb5980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f26f43c6f7db5ad2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=120b7dad980000
-> 
-> Note: testing is done by a robot and is best-effort only.
+On 25/07/24 14:10, Frederic Weisbecker wrote:
+> Le Wed, Jul 24, 2024 at 04:43:14PM +0200, Valentin Schneider a =C3=A9crit=
+ :
+>> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+>> RCU_WATCHING, reflect that change in the related helpers.
+>>
+>> Note that "watching" is the opposite of "in EQS", so the negation is lif=
+ted
+>> out of the helper and into the callsites.
+>>
+>> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+>> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+>
+> You may need to update the patch title on this one.
+>
 
-#syz test: git://git.kernel.dk/linux io_uring-6.11
+Duh, there's a few of these, sorry about & thanks for spotting them.
 
--- 
-Jens Axboe
-
+> Thanks.
 
 
