@@ -1,83 +1,132 @@
-Return-Path: <linux-kernel+bounces-261707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FAA93BB2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD8993BB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0449B22522
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211E21F2277A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C963C17556;
-	Thu, 25 Jul 2024 03:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgMH+8RY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1615179AE;
+	Thu, 25 Jul 2024 03:22:21 +0000 (UTC)
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AB911CA9;
-	Thu, 25 Jul 2024 03:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9800414A84;
+	Thu, 25 Jul 2024 03:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721877715; cv=none; b=SyVo3SxssDDcLgqhES56mEt4AWTf1YgRbc5kOiQ2OkVTFt9GXH1gy0/YXKzego2KLkV8KRWSMwOigKR3M0HyXKDOtiGHfFEmzrrF0koIfra5qT9xYK10NZwOO4PPfRr/XXXR1HlsnzhcMBJEmgybKeDePg9j0l+VOvwMT4IG9lU=
+	t=1721877741; cv=none; b=bJ6KmesbTCfy+nq8QegeZoxPzf0R6h6NPxCzh4+pmb59PAd9ErTUCZdeXMdtsKa3UFXuS/OebFAK2pXCWGuQxPIcissOjapoyz26K0J6QYO4M5jShidwXhfzRBKYyyTZ7uOmtR3wNYItvvf2s1gb+dVk5Z8coo8CMMzva0CTRok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721877715; c=relaxed/simple;
-	bh=g74e3WBgbVSeQta0CVKZFBOP7VtQ2Ll8vRhMwBAW99I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fWkjj+1Cz8hB8oF6r4zHU9lGYiiOH5XXVMqpNxYp8MgvuoXXlc2GGXt0JPF7L6s3ejgYEiXLt3mDcRwjiv3XDHj72dieLK979r8+3LQF4b9tRGBfJ4m1rqAsg71C9oSQA23ONXWH9CKwz8ZOSIxS6b1V/22+dhturbqTwyfS3wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgMH+8RY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319DDC32781;
-	Thu, 25 Jul 2024 03:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721877714;
-	bh=g74e3WBgbVSeQta0CVKZFBOP7VtQ2Ll8vRhMwBAW99I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UgMH+8RYjRyIV+kmXBFgw7xHESnHJ/iQdYfQzdW7wcpH1Ame+7ixb0hmuWdPdU/gv
-	 h5dgB6AX+VcqrMF+QKLBl8FdJmBHw4HZF6GF+DSNorG+0ry6psiG7FfCSJEI2RAcF4
-	 tNQ+GRHKnzSIaRQQJV3tWBIM8az5y+cMDuXbL0hewtxSISYOLay2sk0hqq5dpWSL+T
-	 ljGL47L+AqziR4gSw0gTv7Fkf6v7Kv5uH1/K8Cv6xXAIZnRgooBc+tdLumH3rVJwz5
-	 /wZXjmp/ZCkKOAXq0tGCZjrohuVX/FjVWq10JnJhQ/iGfJMTCPB5dx9FXp/vx9AUir
-	 Gp8deLmfFBF7Q==
-Message-ID: <3446a775-99b7-43c3-a35c-1a0f72688e97@kernel.org>
-Date: Thu, 25 Jul 2024 11:21:50 +0800
+	s=arc-20240116; t=1721877741; c=relaxed/simple;
+	bh=FufYzk/kh5jvAWxnZ+ZomZYTNa8qa1JUc+Myw1osqyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UW+Od/NFc+adTzTKNnm/P5qzWiWSq1ZVNK5ZDZ0/WkDy4dFHqKmn8MuGPNn8As5L5Y8/R9j8KyflZ0RJBlVIrM7vA0hYjRowgaAie7NO0Z9In8ECdFkNQgMX5I5XvvVdo7tbFGp1U1Y8UQ28C3h7s/A+Kd3vUjM2yVxBF18R2YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-807007b8dd1so18408539f.2;
+        Wed, 24 Jul 2024 20:22:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721877738; x=1722482538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9UNZQIakbqcX1AcTbuUziW8quMf/irCIuvBquh9X+9Q=;
+        b=HCwNCcZZWxMCchy4GS4kf92Qn4C4y21wwZYAzohLt+XAsy8MAnVANN5EJKCPqqNGNr
+         tu+Wl9c7yptAIwPfdCCsvXzCpbKU0AUxvR9lQn1l8EyGLJ8GPusdicl2GkyU9Zbg+OlJ
+         WmUF3XKwpLE4Fo5l+sg0W+UETDcL6EgZ7YUhZX2ZNsIXHtlNFY8EPfnMzMcH7EkW0qXR
+         e6q/7sUVMoXSEefII2y9TL5331w0U+GxE+Jtvi17bBgPkNeriRfjrShOBLED7hkjw/JY
+         NraTnHljii9i/IjEABhWD+rAgArRpiz3c3UryrSTs46LnxjvDu1MRYEVRmsh/otHKhN5
+         /FlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5JCpiZtsbvvVM0WqW+F1nLKv56uCkkaY3JU0GJd5GEe4QOHcsYjwKFHRCOcpqXC5VKzuYodniSjhMU7hh/kWfVEq0XLkNiEDYBYFJ
+X-Gm-Message-State: AOJu0YxSJB+DTeV5mE/0T3m0dxX4P0hLaaauP9ALXeNQ7oFDBGYdE9qQ
+	xfENLs3sgx0g7VFa+UPx0FkYnO9lQ/zPrQxtt8GjwXaY69dB/mepV/Wnzzd4
+X-Google-Smtp-Source: AGHT+IEZSo6IiOfEFmDGUaMKgic38X+teHZqMjp0KriEv60vzWDzDvixKog8qj4QX8TlmzkgEndvHw==
+X-Received: by 2002:a05:6e02:20c2:b0:383:290e:6937 with SMTP id e9e14a558f8ab-39a23fa340fmr7634635ab.11.1721877738009;
+        Wed, 24 Jul 2024 20:22:18 -0700 (PDT)
+Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a22e97b10sm2681885ab.27.2024.07.24.20.22.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 20:22:17 -0700 (PDT)
+From: David Vernet <void@manifault.com>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH bpf-next] selftests/bpf: Load struct_ops map in global_maps_resize test
+Date: Wed, 24 Jul 2024 22:22:14 -0500
+Message-ID: <20240725032214.50676-1-void@manifault.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: prevent possible int overflow in dir_block_index()
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-References: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/25 1:05, Nikita Zhandarovich wrote:
-> The result of multiplication between values derived from functions
-> dir_buckets() and bucket_blocks() *could* technically reach
-> 2^30 * 2^2 = 2^32.
-> 
-> While unlikely to happen, it is prudent to ensure that it will not
-> lead to integer overflow. Thus, use mul_u32_u32() as it's more
-> appropriate to mitigate the issue.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
-> 
-> Fixes: 3843154598a0 ("f2fs: introduce large directory support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In prog_tests/test_global_maps_resize.c, we test various use cases for
+resizing global maps. Commit 7244100e0389 ("libbpf: Don't take direct
+pointers into BTF data from st_ops") updated libbpf to not store pointers
+to volatile BTF data, which for some users, was causing a UAF when resizing
+a datasec array.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Let's ensure we have coverage for resizing datasec arrays with struct_ops
+progs by also including a struct_ops map and struct_ops prog in the
+test_global_map_resize skeleton. The map is automatically loaded, so we
+don't need to do anything other than add it to the BPF prog being tested
+to get the coverage.
 
-Thanks,
+Signed-off-by: David Vernet <void@manifault.com>
+---
+ .../selftests/bpf/progs/test_global_map_resize.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/tools/testing/selftests/bpf/progs/test_global_map_resize.c b/tools/testing/selftests/bpf/progs/test_global_map_resize.c
+index 1fbb73d3e5d5..714b29c7f8b2 100644
+--- a/tools/testing/selftests/bpf/progs/test_global_map_resize.c
++++ b/tools/testing/selftests/bpf/progs/test_global_map_resize.c
+@@ -3,6 +3,7 @@
+ 
+ #include "vmlinux.h"
+ #include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+@@ -60,3 +61,18 @@ int data_array_sum(void *ctx)
+ 
+ 	return 0;
+ }
++
++SEC("struct_ops/test_1")
++int BPF_PROG(test_1)
++{
++	return 0;
++}
++
++struct bpf_testmod_ops {
++	int (*test_1)(void);
++};
++
++SEC(".struct_ops.link")
++struct bpf_testmod_ops st_ops_resize = {
++	.test_1 = (void *)test_1
++};
+-- 
+2.45.2
+
 
