@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-262257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998CD93C321
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:38:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F22093C328
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5781F22532
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:38:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FD58B2209E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3102719B3DD;
-	Thu, 25 Jul 2024 13:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD2A19B3D6;
+	Thu, 25 Jul 2024 13:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUjrGYu8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUMFbeIa"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675BBC8DF;
-	Thu, 25 Jul 2024 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683B5199386;
+	Thu, 25 Jul 2024 13:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721914672; cv=none; b=W+2y0NxTVUh9eWFwIpFiUuuFwzpDARfo+YfrTS0Gr4bWHliHTtcYTXRs9jQrPFRCuDjR2y4pIWT2n4Pz5tDS0hd8uWR9zKMzSBPTRS/P0u56T9pRz1YeHjX8eD+UIZYC/84j+A+aSDWiwgmrLQnSCaN/75m4flok4Fz41f02UJ4=
+	t=1721914878; cv=none; b=qMxNm1d0VnTZN/tsN4Wz3Y3P2x87jaU5TPlmB3O+5AvGJFlrOAOGZndlc45Q7obfQz4f5oIHPRyBiyGxzgVyHr6Cj8HZbg2I/HDYayhaqiVxyN7YSccnluVDeYEmg+/qco0pSYdqm1oDcIMzioTEHqVkmy3gpTne4f/04HCPqcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721914672; c=relaxed/simple;
-	bh=uQ/kUueeeni8nylLapPehWnOoiFUDkwvC3TYLWPtfZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kq557uItp+OjYPmIIoBeLJnfxXxfMBNP8XmkeAXvGoMsDtjsaZQPIA9MnlxcaKB06dirGAyR27ev4s2ytE8QPY6aQS+SM46J8z0n1N0P3Wp5Fxd+z1O0yNXOSPP9r+7fRnyAzPUvJ7LOXYY7KRgxFSGPOnRRUHNAdRV/OsQZoKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUjrGYu8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9B9C4AF0A;
-	Thu, 25 Jul 2024 13:37:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721914672;
-	bh=uQ/kUueeeni8nylLapPehWnOoiFUDkwvC3TYLWPtfZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oUjrGYu8pxZX0KjizUZN5Z/M2rfAKgJAH53eNqOzwlUO7vBrSeU4KFcPPCvG9w0mV
-	 A2DMxmEpG/2GeZcdI5QoXTzD5tuHFlK0ZL7BBBqz4IuaN1emFJxuxVgg5Id6H2hcJw
-	 e+8wcIHCdCipwvWM9vdTqY2hYOZ8PszWbCT8aecN0c7UEwLB5x+tjLau2xY5Z7ypQ8
-	 3uiPMC5aoqPWY5Bs9QU0nXVCAarD8L/k+48tXEcgPKgpTeaCXP+ogOzKJ4z2zgNXjf
-	 HZkpW6weq5/z7v+CCt+IBVjp6t0wUR3SKTqqKSVt1Dr8wtV1yOLNwwPVqA1FNOyBMg
-	 ddEimL/R5O1Cg==
-Date: Thu, 25 Jul 2024 08:37:50 -0500
-From: Rob Herring <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: fabrice.gasnier@foss.st.com, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
+	s=arc-20240116; t=1721914878; c=relaxed/simple;
+	bh=jr8RkuofIrv2GpVTzr7VAquVKcbs6xxM9KiSEKIaXo0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bZTYGUdJVZfMC7w+X9Iy51mH6n8/V3K81q02p6JPVzM0pB0/p7DvcTbSZ5kmf0kdSg7qu/Ppmu6UzdV2dWA3ccgyZjxleBGGOVmVpob18yb2msjWmfEA6sFh8dDv4LCyAbnjoUnGqFYUOFUee81gvQhnVsjala2SzvqulEs6gOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUMFbeIa; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso1754081fa.2;
+        Thu, 25 Jul 2024 06:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721914874; x=1722519674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=de5NYmDZaWferNnERIlXiRqvJzYda1gY/qbCbtYlfX4=;
+        b=iUMFbeIaz4Yn29UWis8K7yWqp0kzPyC6EH1ijC9sMEPFUGmnbB8UR5jfGIiMrwb355
+         CdMWVbPgWC8rpt3w0k6m06vw4hYcFEe7lbrIx3uMmb+Uks3mVKHVwyuWm6j6Lj9PPjbb
+         QTiGNYYQHC9UevJ/I9frAQq/LUQvGQqGFhAtoJu2lnn5dNoxHFzFuPOYJl7FSZzhlBYk
+         w3lhhpYyGWfctVQ8v5vyYZBjfzQiYfSMWQhk+wuLNio6KzLHyHvqFyJNCrlL4DuRSWIC
+         OZdmW37Jvt7wqt9/Lbnf7i+YvmL8nR9US7VS00HYkd7wXQpEa5t+3H1Ti2dLg+9XVWPJ
+         k1Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721914874; x=1722519674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=de5NYmDZaWferNnERIlXiRqvJzYda1gY/qbCbtYlfX4=;
+        b=nJeKqNjW/jHmUTjKKGkQk+IkLE9M6Vay0TTZcMTSEaJHnxwC7rFAKuK+WZXXQtA477
+         uWGaOop6HD8EAZLSyHiKYpw1E5a+Nj7cSTZsdakq+NAHlUKzEsVpX5rRFLDhph2uoRHg
+         jBtxW1/5iftX2eN1LdXDpezmMYDfW9KrU/szXz1FWET6lejINAAUHQVGdD6WFSWAN/vK
+         gDEOMm4KCPYSi601L4jSCO+FmjJFBRczmCgNiHxiGZNg3Py3vlSwFAI2eUE2VmIZhJEt
+         6k1FYIPSEYqk0s1bECB6Y3Yp6wsQmih3CKRPZvwKBwi/HHS9bOw+0k+IZ4uww5sqAP0v
+         3PSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgdjy0+4vENsSz3388xsoEbmtgZQgJbdF8P8raT8bDAwAJjhjExodFXL0kxUuHF+1W8TTw7Y8s9SzLXz7kGkZ/2qNDatRikCbESsoyYJhBEEY2vP3C58e89g041PS1gcbc+8g/CNwN+w==
+X-Gm-Message-State: AOJu0Yxi8/y4iZb1KbE296YVHznLOB1K+3wL+5Pb9HhuEa8rv6K14uZt
+	so84tY2++rlQA5tJM+hRoNdT62xF/J0x15bguPNqJxd8GdILlUNY
+X-Google-Smtp-Source: AGHT+IGsyr/fXTdxKDnOG3EpC6gEevKuJdCtQEbDGL8qpcFw5SHc+FK/ZI3El6lhwZG7ghaQ2swY7Q==
+X-Received: by 2002:a2e:b55a:0:b0:2ef:2e8f:73e7 with SMTP id 38308e7fff4ca-2f03dbf2761mr13558691fa.47.1721914874118;
+        Thu, 25 Jul 2024 06:41:14 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e605esm80447085e9.34.2024.07.25.06.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 06:41:13 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Marc Zyngier <maz@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] dt-bindings: iio: add backend support to sd
- modulator
-Message-ID: <20240725133750.GA1726974-robh@kernel.org>
-References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
- <20240724153639.803263-6-olivier.moysan@foss.st.com>
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/5] arm64: dts: renesas: Correct GICD and GICR sizes
+Date: Thu, 25 Jul 2024 14:39:27 +0100
+Message-Id: <20240725133932.739936-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724153639.803263-6-olivier.moysan@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024 at 05:36:33PM +0200, Olivier Moysan wrote:
-> The legacy sd modulator driver registers the sigma delta modulator as
-> an IIO channel provider. This implementation is not convenient when the
-> SD modulator has to be cascaded with another IIO device. The scaling
-> information is distributed across devices, which makes it difficult to
-> report consistent scaling data on IIO devices.
-> 
-> The solution is to expose these cascaded IIO devices as an aggregate
-> device, which report global scaling information.
-> Add IIO backend support to SD modulator to allow scaling information
-> management.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../bindings/iio/adc/sigma-delta-modulator.yaml | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> index cab0d425eaa4..b245971fecb0 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-> @@ -18,18 +18,31 @@ properties:
->        - sd-modulator
->        - ads1201
->  
-> +  '#io-backend-cells':
-> +    const: 0
-> +
->    '#io-channel-cells':
->      const: 0
->  
->  required:
->    - compatible
-> -  - '#io-channel-cells'
-> +
-> +anyOf:
-> +  - required: ['#io-backend-cells']
-> +  - required: ['#io-channel-cells']
->  
->  additionalProperties: false
->  
->  examples:
->    - |
-> -    ads1202: adc {
-> +    // Backend binding example. SD modulator configured as an IIO backend device
-> +    ads1201_0 {
-> +      compatible = "sd-modulator";
-> +      #io-backend-cells = <0>;
-> +    };
-> +
-> +    // Legacy binding example. SD modulator configured as an IIO channel provider
-> +    ads1201_1 {
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Why the node name change? 'adc' is generic and was correct.
+Hi All,
 
-This should be a separate example. (Add '- |').
+This patch series aims to correct GICD and GICR sizes on RZ/G2L(LC),
+RZ/G2UL, RZ/V2L and RZ/G3S SoCs. These SoCs are equipped with GIC-600.
 
->        compatible = "sd-modulator";
->        #io-channel-cells = <0>;
->      };
-> -- 
-> 2.25.1
-> 
+Cheers,
+Prabhakar
+
+Lad Prabhakar (5):
+  arm64: dts: renesas: r9a08g045: Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g043u: Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g054(l1): Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g044(l1): Correct GICD and GICR sizes
+  arm64: dts: renesas: r9a07g044c1: Correct GICD and GICR sizes
+
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi  | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi   | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a07g044c1.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi   | 4 ++--
+ arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi   | 4 ++--
+ 7 files changed, 23 insertions(+), 8 deletions(-)
+
+-- 
+2.34.1
+
 
