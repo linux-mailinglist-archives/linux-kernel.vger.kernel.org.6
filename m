@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-262100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3252493C0BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3344793C0C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95615B2206D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5419E1C20F8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51E419AA66;
-	Thu, 25 Jul 2024 11:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D10619924A;
+	Thu, 25 Jul 2024 11:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XkH2aDr9"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJSumhwg"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAEE19A29A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEEF1991A8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721906646; cv=none; b=ZWoZVX5J9boV5GntqK/HcBiUJylF2XXdDOfqaBVuouK7vcgsX+qTw5wrud/Z5f5HnFSNLrIzX/nOQv9vyh/9AVihjS+iI+k3WyqmUQgeymLG2zo/L8D3lbxphtQSi8K5UkKljAWaOm6vDzS/JeB6RYZUTcD86mJyqg5zZYTH/Tc=
+	t=1721906724; cv=none; b=nyZ9GNAXE7v4QIAEosOR+HgPyH57eAc1O+TckYjygOmYjjlNFFiX8QXNddigaXraDJ6rx1I9bUk4C9W8c9RfZZEO2z3eWi8Lh/NHQzDduqA2dhN9FJo2I16tb+7FEAD+mBnXyYlmetJHH3HXWGgOhd9O/CBsdCpBhN0LyrTrpnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721906646; c=relaxed/simple;
-	bh=IezU2W8rytHN1+OJjzdCLOScjz5OOSUaMHzxu2FqxSk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dbZwBLY005Ub1m0t1h6uiOiGadwXA3zlVy2brCkHyRyrEeNYy+GBRFoCZuV8IGPJUdPZxuZWR6U5qIcYBBZTKM+Qex2tKhSY/gZdX9504g1VyslbkLHTPgwOrChHulAvsg+Divd82qcKY7hyqhE6/d8LKHtZP4c+IpxgccR5mpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XkH2aDr9; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1721906724; c=relaxed/simple;
+	bh=JsK7yJjBr07hesTWuuOd0Olz1bm2HQodZpRdnFA5cgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9NExnWg7ZIsEll4VqA5wXRj2SWhm8W/Pxf/4nH3pQcwXz4lLjefhuY0/a8oYeGOln6cmeSpuDpOPJ/pc9PDVthnjaFEiRmXKGjPhwd04SjANaEmM30vcOWSlmtaqzTJ5uY9kHmezbT82EN9Dp8JNmMAYlyXMvYXy/NKSR4pTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJSumhwg; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3687f91af40so509964f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:24:05 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-704466b19c4so393031a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721906644; x=1722511444; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fuc1obU/KvJR69EdA4JL3jyV+SdcVptiD/ClFtmUvzY=;
-        b=XkH2aDr9HNOLJdQOaumUwwY+YYe/r55sg2VQkWcL0aQGwBpzd9YMfxik78XDHlokjW
-         YR9p0JNd1ymN9VhtDRUb8dAZU6+09I3MNds2vi7RPZPv0wVUp0lP0y7B6sfIIhs4V9oM
-         7VC4NDgxSBrKhw8PNV4+MeO8f5bKG7E1vBY+EgJiIH81e8Shz6J6IHtbNuWTNvV4dGP4
-         UzwuTuKaJ+DcH8RynLb6OrMC0h4IMSn4zQQIeqN7+b3fWumDBerdvz2e/Wv/LFbhLsT6
-         kHpq30q0lHC2zvU2yTIxlOO3yTnptxtB7fqbpJ0afuI9HgOgqJEslosW9lP5mUW+yo45
-         +OYw==
+        d=linaro.org; s=google; t=1721906722; x=1722511522; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
+        b=HJSumhwgmCZaXodmOfg9ocbC3JhI/zX3ZkZKQpY8n7OmYpBJQaCFWdKtCbqGheR0lj
+         wk9rAZTfmsWYHGAB2HSKqndQpPWohjTi4ATfVsBpp4nxGYYGSG8TiH414rB5URn744rt
+         jchQGsCf3hNbbqxUhEJmNCaRbsbICuv1smWBhpVyQlhlmcjfmW5UF8Xmzzu7MLLb9oKR
+         e9RFiSPPil4Y38xgvFxYs05KHV7UoPQUkkd+zQiOaNt8lkGOjSwPOU7xnwJvjItrFhRp
+         1j3dyzCoaKZFahyeSVpjcy3LGgcwI08hIBxIesIVAYETq7zEjEqkpNf9R6LG/mLzFAFH
+         Dp+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721906644; x=1722511444;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fuc1obU/KvJR69EdA4JL3jyV+SdcVptiD/ClFtmUvzY=;
-        b=O3L2Kd+fR/OgHtQxFBRmvkM+eGDcsdyVz/o9XcdnRzWXsHJvH481V1qaEWOPfw5ieL
-         SFF4bWykaMi0ZKoOWO91w8kjUsfdp8l1TfUqRA/Axgt9E1Ydm8IP9qsOuoVjJTHpuUXZ
-         S7R3h0axfBdUDyPC+Fi69fUG4bLf62emEgW/5oj6gfvwN0WtWZV0rsR5tebCXAay2dUz
-         CJ73Rh4X+mtdCKIrRjWjOhmru8+ULvt/nyuQAT5FMSH+t8+X9oiYYXw9HyXJAaBBOhX6
-         JJqTULvGlgCYYdgrgKudPHTynN0WqhRPo01Jh/iFYP5hOd+wtRXkzw5cLpJU8Haie7+v
-         cGFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMETdJa5xkuq58sBZFzLFmtXXHfa3pnkF9x7y5yiBMpOUhk2NlhN75JDcOxAJvoVdDQ2Zj56HNroHDc6lyYKwuhUNkpGa/1Br7+rQQ
-X-Gm-Message-State: AOJu0YxsXxg52CiZAUOCv59y0bLHhghxxpjs19CcYdmLw2NG5LasLvfB
-	G6i9HJgOboKwQNgsXFtrBX40pmGf7QmSr2vQEY4t5xqd/7aJn08bzmR5mQ9kWkQ=
-X-Google-Smtp-Source: AGHT+IEpQs3fxfrt410fx954ueUVYLvEFG6tI5ahSFyUrB+n2S+LTUldQrepCDb1PHiuZbAbge4L7Q==
-X-Received: by 2002:adf:f64f:0:b0:367:9828:f42d with SMTP id ffacd0b85a97d-36b31a4acd9mr1754985f8f.53.1721906643810;
-        Thu, 25 Jul 2024 04:24:03 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367e072asm1823607f8f.42.2024.07.25.04.24.02
+        d=1e100.net; s=20230601; t=1721906722; x=1722511522;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
+        b=qvVECnbiteSY/hzPzPciaih4PtvbOuodveLbc0j8G6vSegdRbphgmra/4ixQ7lLgV6
+         cWhd/SkXxXB/fssIn/Mu9tbZW3e+vcZ6oNnL+Ku1ODtQTD5jT3EYhJpKs54PUOYX7Sos
+         cQfEbfQhzXysH1wDgmSw2QTGfq02M2Bu/K0yV0o1IGM/ziNYVm+AaXnu8CJ6o2kOu+jH
+         p6ThBoz5q5PjFjBFVmklGSnv7uoxCb0J5IQvJRBFfhOAo3ijBvH2LHpuIR0NZb1YzkiG
+         C9ndc4GPJJ6IFXR0kiXXHTqfuSpThwtUi1SpKs53i58eyuFivUaJJERG0E/iTAmfEYss
+         LKYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX08x2r+BSO2EypwlMaw4fDa8zj7E+AyFoXIku5/oCILA0t6QJiU7YCXwWzuyMCVqJNDZkd29Yyy0M87k4x6v2zdd38re1lmEJTNbrP
+X-Gm-Message-State: AOJu0Yx68UJOWB/S88uHVIPyzATDnzmEK9UBld6mYgJo28VhfMmg6xB5
+	OcHxuhRp7r1/yud6VLMtfi33eiXxkMeX9us6ku0KgnvCx3UMH9osrUCwVze4iXQ=
+X-Google-Smtp-Source: AGHT+IGB/C7i53ZMxQDVG7er3qrj96VmG0v9dXH1VLSTmcs7GQ7h6A9jCwiBR5/hKLh7wLBNc8M2NA==
+X-Received: by 2002:a05:6870:b020:b0:229:f022:ef83 with SMTP id 586e51a60fabf-266ede9b2f8mr1951899fac.43.1721906722263;
+        Thu, 25 Jul 2024 04:25:22 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8af074sm937252b3a.218.2024.07.25.04.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 04:24:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 25 Jul 2024 13:23:49 +0200
-Subject: [PATCH 7/7] ASoC: codecs: wcd939x: Move max port number defines to
- enum
+        Thu, 25 Jul 2024 04:25:21 -0700 (PDT)
+Date: Thu, 25 Jul 2024 16:55:19 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
+ domains
+Message-ID: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
+References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+ <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
+ <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7>
+ <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
+ <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
+ <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
+ <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-asoc-wsa88xx-port-arrays-v1-7-80a03f440c72@linaro.org>
-References: <20240725-asoc-wsa88xx-port-arrays-v1-0-80a03f440c72@linaro.org>
-In-Reply-To: <20240725-asoc-wsa88xx-port-arrays-v1-0-80a03f440c72@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1490;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=IezU2W8rytHN1+OJjzdCLOScjz5OOSUaMHzxu2FqxSk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmojXIk1Qbl0Iz5KBaJYKuj2Qh1UtAtZ0R+L4Iu
- QPHwZbXeJyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZqI1yAAKCRDBN2bmhouD
- 1zGvD/9lV+y+SrlBfQ7yOLDLv7oPdnM38VM/viNyVIT0BCtBO1cQIqak1MpJ+VzgJFg7wxm45xJ
- rzbYHIQXM4rVzd6z3x4i7KjJqs/tW7gB4UyuLT173BKU0ScNuU01SaoIQvzkGJT7Xs8v4M2ht40
- jQR1xGzufBOfFmJwMgiArP58KcGok2mjx2PHdu3WScEqxlbPCPPovxjQwIyutXPNUMx0PaTsDOK
- 33605E8o9Gt4i+E2tTBYCTzJcH5LQjdIFFSySsx8MY6s5vyKbytntCyxaahQZV9Qf8J7dBFX6ug
- RzPLtwP2/LfnGFvngYU64mDvC38Dv4rpl+T7Ufrae4K7Lq4kFkiCa8rRdY3/ActDCYaIVHuG+Hn
- oUS5UvvtETkK0B2oiu1nxWO0U6yR4PWthV+F1KGLANunnSvQio25Pus7sp5PVTHRzbTkC4ngEeG
- tQ6NPBnqrmeOEoQK/v0I0q/FaRAWB3+hGMvUPreQQwKJ0ajNnLDCrQzRXqihzFW0CQf+P6Tpu6D
- RjGbwC/retdTGBnZV03iQKXOAjBuqaGCT6v27jWvCA2d/RT1ven4liULuTqlkWL/lgTFKoTVf7Y
- 9ZTfJ3LezBmVls/gHDRczKT3Djr23nUwoIVomyLCZg6OpBtBUD3FLswFdKVX3V5QNXIV8r2Eukw
- g2PsqiVBMnqYuTA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
 
-Instead of having separate define to indicate number of TX and RX
-Soundwire ports, move it to the enums defining actual port
-indices/values.  This makes it more obvious why such value was chosen as
-number of TX/RX ports.
-Note: the enums start from 1, thus number of ports equals to the last
-vaue in the enum.
+On 25-07-24, 11:21, Ulf Hansson wrote:
+> Right.
+> 
+> The main issue in regards to the above, is that we may end up trying
+> to vote for different devices, which votes correspond to the same
+> OPP/OPP-table. The one that comes first will request the OPP, the
+> other ones will be ignored as the OPP core thinks there is no reason
+> to already set the current OPP.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- sound/soc/codecs/wcd939x.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Right, but that won't happen with the diff I shared earlier where we set
+"forced" to true. Isn't it ?
 
-diff --git a/sound/soc/codecs/wcd939x.h b/sound/soc/codecs/wcd939x.h
-index 1571c2120cfc..3204fb10b58d 100644
---- a/sound/soc/codecs/wcd939x.h
-+++ b/sound/soc/codecs/wcd939x.h
-@@ -842,9 +842,6 @@
- #define WCD939X_DSD_HPHR_CFG5				   (0x35a6)
- #define WCD939X_MAX_REGISTER				   (WCD939X_DSD_HPHR_CFG5)
- 
--#define WCD939X_MAX_SWR_PORTS		(6)
--#define WCD939X_MAX_RX_SWR_PORTS	(6)
--#define WCD939X_MAX_TX_SWR_PORTS	(4)
- #define WCD939X_MAX_SWR_CH_IDS		(15)
- 
- struct wcd939x_sdw_ch_info {
-@@ -863,6 +860,7 @@ enum wcd939x_tx_sdw_ports {
- 	WCD939X_ADC_DMIC_1_2_PORT,
- 	WCD939X_DMIC_0_3_MBHC_PORT,
- 	WCD939X_DMIC_3_7_PORT,
-+	WCD939X_MAX_TX_SWR_PORTS = WCD939X_DMIC_3_7_PORT,
- };
- 
- enum wcd939x_tx_sdw_channels {
-@@ -888,6 +886,8 @@ enum wcd939x_rx_sdw_ports {
- 	WCD939X_LO_PORT,
- 	WCD939X_DSD_PORT,
- 	WCD939X_HIFI_PCM_PORT,
-+	WCD939X_MAX_RX_SWR_PORTS = WCD939X_HIFI_PCM_PORT,
-+	WCD939X_MAX_SWR_PORTS = WCD939X_MAX_RX_SWR_PORTS,
- };
- 
- enum wcd939x_rx_sdw_channels {
+> > I think that design is rather correct, just like other frameworks. Just that we
+> > need to do only set-level for genpds and nothing else. That will have exactly
+> > the same behavior that you want.
+> 
+> I don't quite understand what you are proposing. Do you want to add a
+> separate path for opp-levels?
+
+Not separate paths, but ignore clk/regulator changes if the table belongs to a
+genpd.
+
+> The problem with that would be that platforms (Tegra at least) are
+> already using a combination of opp-level and clocks.
+
+If they are using both for a genpd's OPP table (and changes are made for both
+opp-level and clock by the OPP core), then it should already be wrong, isn't it?
+Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
+aggregation happens in the genpd core), but clock setting would always reflect
+the second caller. This should be fixed too, isn't it ?
+
+> To be able to call dev_pm_opp_set_opp() on the required-dev (which
+> would be the real device in this case), we need to add it to genpd's
+> OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
+> 
+> The problem with this, is that the real device already has its own OPP
+> table (with the required-OPPs pointing to genpd's OPP table), which
+> means that we would end up adding the device to two different OPP
+> tables.
+
+I was terrified for a minute after reading this and the current code, as I also
+thought there is an issue there. But I was confident that we used to take care
+of this case separately earlier. A short dive into git logs got me to this:
+
+commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
+
+This should be working just fine I guess.
 
 -- 
-2.43.0
-
+viresh
 
