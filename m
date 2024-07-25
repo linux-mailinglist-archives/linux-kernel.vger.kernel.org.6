@@ -1,199 +1,119 @@
-Return-Path: <linux-kernel+bounces-261716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7EE93BB43
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:34:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C3793BB51
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A3CFB2313D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8CFB1C2192C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678271BF47;
-	Thu, 25 Jul 2024 03:34:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55A71C6A3;
-	Thu, 25 Jul 2024 03:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2258318028;
+	Thu, 25 Jul 2024 03:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c46Nkvyw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5AB17722;
+	Thu, 25 Jul 2024 03:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721878458; cv=none; b=Ao2udfuivmqkxY30W1e9ZriSdqNHzHEpnUWZFosgVSJHyiP/zy7SWV4qoQ7sDojYNfUrjadvVH0nHoLmxskXXewCNjRbTfNAUHKyKe85TUkZvOt/I96GvMu9ddrE4Hzr6aJJ6q6Axzth8hU/4cMiRuqQvOc4DA+QHC1VklnRZBQ=
+	t=1721878853; cv=none; b=u7Q1hQp/jrDRJdgCxLCyUf1hhJ45V2K8YxhuKqP04Fqj+4sWvbPyJrzFWZxDO4TO2A99xJ2L6+2mtqruMiLAeYSBVOJ0hOw/7gkLHCMExzG5fXnla5bZtaJpeMmNPobM7+aui2PuC/BD9tJTTkEfqWe+b7kzAekefST+cyvPiVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721878458; c=relaxed/simple;
-	bh=3JiK5bvfiVwsBCbg5kudqDXogJePvcqJ6U9YebVM7RU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h7QpWknUdMC+zmyfThLPbdnk6My4LDobso3d46coW4Y9Ab3qfqUawfjEZPHey33dHlmYHsNYrJqPbYdVX1fkrf10Z9qi+YcNg+sc4XaccLAnXzpPC9E2qHzS/17IJT/XTHyHlRIdAZtxEgMiMB9N81QV2ykGhisq4Zyfyrc6jEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8Bx7eqxx6Fm81UBAA--.5278S3;
-	Thu, 25 Jul 2024 11:34:09 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMBxicWsx6FmppEAAA--.37S5;
-	Thu, 25 Jul 2024 11:34:09 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v5 3/3] LoongArch: KVM: Add vm migration support for LBT registers
-Date: Thu, 25 Jul 2024 11:34:04 +0800
-Message-Id: <20240725033404.2675204-4-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240725033404.2675204-1-maobibo@loongson.cn>
-References: <20240725033404.2675204-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1721878853; c=relaxed/simple;
+	bh=+/SfHcWvZuzX5BpxFTHb0SOKVhDlmAD0pvwxtii3/9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1/9PKCm/7gLqnsIj+KczO9nmnnh80m3iBGHbqvn51NrQ7PDajJaknhkYs571OBJHU8FxHYgbf5PrCD8wAnUxncbSD/C3MZYKrO8YFL4q6F1His2n612frLXCgKy+3C/1X81TDQA10XRMJQCICzHcKgR8PSH68x2CpMeBE4vH4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c46Nkvyw; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721878851; x=1753414851;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+/SfHcWvZuzX5BpxFTHb0SOKVhDlmAD0pvwxtii3/9s=;
+  b=c46NkvywEzrrW3OzAG6kl1linE543u1D/A8CK5aasu7+fHdd0SL41TBe
+   yC/EFC/IfcVGJJBGgxA3mVFKNLSY7co4/ozCvZSwK/I3UatjTqFZx/8TK
+   4BgYzLTxKHEHJvav/jAYsfh6oaWiCsZwrT4BbRNhIKBH6HQrU1VJAf+oL
+   unP+u9/4A+rurWG6befxKON7mGGpHP2B31q0evoOTjFQlotmx7Rt0/ygi
+   ttCGjLOsXucDk3TChRFAxStDdxHTsLmD1fEir+PV9AlZacw6oqFikKmlI
+   UM127QPL3/XpyQgFEqucP/MFe05eduvytiPYArHP56kFJ1rRznTlWXZ4w
+   Q==;
+X-CSE-ConnectionGUID: gIRzvfBfSvq9MMbWSQTdOQ==
+X-CSE-MsgGUID: HaKJdgM5SqWskyPFP5eDBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="31011505"
+X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
+   d="scan'208";a="31011505"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 20:40:51 -0700
+X-CSE-ConnectionGUID: OPYShQlcTvOHVabSwQwkdw==
+X-CSE-MsgGUID: D07xcoM9SzSpX0iEQmX2Rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
+   d="scan'208";a="52817584"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 24 Jul 2024 20:40:48 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWpLR-000nii-1V;
+	Thu, 25 Jul 2024 03:40:45 +0000
+Date: Thu, 25 Jul 2024 11:40:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>,
+	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, mustafa.eskieksi@gmail.com,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
+Subject: Re: [PATCH v4 1/2] HP: wmi: added support for 4 zone keyboard rgb
+Message-ID: <202407251136.aymIqEw3-lkp@intel.com>
+References: <20240719100011.16656-2-carlosmiguelferreira.2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxicWsx6FmppEAAA--.37S5
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXr1rAFW3uw1DZF1Dury5KFX_yoWrAr17pr
-	1DArs3Gr18Krn3C3yxKF1q9r17Xr4IkrWkZFySqa18Kr90vryFyw4ktr9xGFy3Jr48u3yf
-	C3Wvyw4jkF1xJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
-	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxU4AhLUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719100011.16656-2-carlosmiguelferreira.2003@gmail.com>
 
-Every vcpu has separate LBT registers. And there are four scr registers,
-one flags and ftop register for LBT extension. When VM migrates, VMM
-needs to get LBT registers for every vcpu.
+Hi Carlos,
 
-Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register type,
-the following macro is added to get/put LBT registers.
-  KVM_REG_LOONGARCH_LBT_SCR0
-  KVM_REG_LOONGARCH_LBT_SCR1
-  KVM_REG_LOONGARCH_LBT_SCR2
-  KVM_REG_LOONGARCH_LBT_SCR3
-  KVM_REG_LOONGARCH_LBT_EFLAGS
-  KVM_REG_LOONGARCH_LBT_FTOP
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
- arch/loongarch/kvm/vcpu.c             | 56 +++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
+[auto build test WARNING on lee-leds/for-leds-next]
+[also build test WARNING on v6.10]
+[cannot apply to linus/master next-20240724]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-index 49bafac8b22d..003fb766c93f 100644
---- a/arch/loongarch/include/uapi/asm/kvm.h
-+++ b/arch/loongarch/include/uapi/asm/kvm.h
-@@ -64,6 +64,7 @@ struct kvm_fpu {
- #define KVM_REG_LOONGARCH_KVM		(KVM_REG_LOONGARCH | 0x20000ULL)
- #define KVM_REG_LOONGARCH_FPSIMD	(KVM_REG_LOONGARCH | 0x30000ULL)
- #define KVM_REG_LOONGARCH_CPUCFG	(KVM_REG_LOONGARCH | 0x40000ULL)
-+#define KVM_REG_LOONGARCH_LBT		(KVM_REG_LOONGARCH | 0x50000ULL)
- #define KVM_REG_LOONGARCH_MASK		(KVM_REG_LOONGARCH | 0x70000ULL)
- #define KVM_CSR_IDX_MASK		0x7fff
- #define KVM_CPUCFG_IDX_MASK		0x7fff
-@@ -77,6 +78,14 @@ struct kvm_fpu {
- /* Debugging: Special instruction for software breakpoint */
- #define KVM_REG_LOONGARCH_DEBUG_INST	(KVM_REG_LOONGARCH_KVM | KVM_REG_SIZE_U64 | 3)
- 
-+/* LBT registers */
-+#define KVM_REG_LOONGARCH_LBT_SCR0	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 1)
-+#define KVM_REG_LOONGARCH_LBT_SCR1	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 2)
-+#define KVM_REG_LOONGARCH_LBT_SCR2	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 3)
-+#define KVM_REG_LOONGARCH_LBT_SCR3	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 4)
-+#define KVM_REG_LOONGARCH_LBT_EFLAGS	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 5)
-+#define KVM_REG_LOONGARCH_LBT_FTOP	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 6)
-+
- #define LOONGARCH_REG_SHIFT		3
- #define LOONGARCH_REG_64(TYPE, REG)	(TYPE | KVM_REG_SIZE_U64 | (REG << LOONGARCH_REG_SHIFT))
- #define KVM_IOC_CSRID(REG)		LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index aeb5f76a86c1..76719bf522b7 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -597,6 +597,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcpu,
- 			break;
- 		}
- 		break;
-+	case KVM_REG_LOONGARCH_LBT:
-+		if (!kvm_guest_has_lbt(&vcpu->arch))
-+			return -ENXIO;
-+
-+		switch (reg->id) {
-+		case KVM_REG_LOONGARCH_LBT_SCR0:
-+			vcpu->arch.lbt.scr0 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR1:
-+			vcpu->arch.lbt.scr1 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR2:
-+			vcpu->arch.lbt.scr2 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR3:
-+			vcpu->arch.lbt.scr3 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_EFLAGS:
-+			vcpu->arch.lbt.eflags = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_FTOP:
-+			vcpu->arch.fpu.ftop = v;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -663,6 +691,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
- 			break;
- 		}
- 		break;
-+	case KVM_REG_LOONGARCH_LBT:
-+		if (!kvm_guest_has_lbt(&vcpu->arch))
-+			return -ENXIO;
-+
-+		switch (reg->id) {
-+		case KVM_REG_LOONGARCH_LBT_SCR0:
-+			*v = vcpu->arch.lbt.scr0;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR1:
-+			*v = vcpu->arch.lbt.scr1;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR2:
-+			*v = vcpu->arch.lbt.scr2;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR3:
-+			*v = vcpu->arch.lbt.scr3;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_EFLAGS:
-+			*v = vcpu->arch.lbt.eflags;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_FTOP:
-+			*v = vcpu->arch.fpu.ftop;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
+url:    https://github.com/intel-lab-lkp/linux/commits/Carlos-Ferreira/HP-wmi-added-support-for-4-zone-keyboard-rgb/20240719-180603
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20240719100011.16656-2-carlosmiguelferreira.2003%40gmail.com
+patch subject: [PATCH v4 1/2] HP: wmi: added support for 4 zone keyboard rgb
+config: i386-kismet-CONFIG_LEDS_CLASS_MULTICOLOR-CONFIG_HP_WMI-0-0 (https://download.01.org/0day-ci/archive/20240725/202407251136.aymIqEw3-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20240725/202407251136.aymIqEw3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407251136.aymIqEw3-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for LEDS_CLASS_MULTICOLOR when selected by HP_WMI
+   WARNING: unmet direct dependencies detected for LEDS_CLASS_MULTICOLOR
+     Depends on [n]: NEW_LEDS [=n] && LEDS_CLASS [=n]
+     Selected by [y]:
+     - HP_WMI [=y] && X86_PLATFORM_DEVICES [=y] && X86_PLATFORM_DRIVERS_HP [=y] && ACPI_WMI [=y] && INPUT [=y] && (RFKILL [=y] || RFKILL [=y]=n)
+
 -- 
-2.39.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
