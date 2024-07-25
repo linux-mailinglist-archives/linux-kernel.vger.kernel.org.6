@@ -1,197 +1,188 @@
-Return-Path: <linux-kernel+bounces-261867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F33F93BD24
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 234B493BD23
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200AF1F225EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904801F2262A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F9C172BDF;
-	Thu, 25 Jul 2024 07:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E77172BA9;
+	Thu, 25 Jul 2024 07:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="EpxaULCZ"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPtgLQZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF5817279E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D7171E70;
+	Thu, 25 Jul 2024 07:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892723; cv=none; b=LkXOkcZYJl5GbdcYKMUXKo+/WAsiWMfDZXZm/DFLuHVM1fFsz3Ak5OLZdnnskYYmnMrq4XFFvPeNL9K0nE4P52pr9XpHSnstgb9Yxkp4DjPsGE/2/BYJ+IWwFaLsOwJwYaShRIMJbGX9V223jijM/NBbkDoKGBnQ/TAPL/mW94E=
+	t=1721892721; cv=none; b=XQbzGPYHa/a5g82j2eS6GXsk41m0wHiHonldJYM6KK2W8QFf7HtcvGxvlpyw6q4xoMwuERwANz3UBIp1xfPkpxt5F1qIfu0LzzjvnG9fKeUAdh4DvD+8bjrGgRBoCJyN8Pqs3F3fIne6tPWlleby00wqgA+MvzREHK/i5H+ql/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892723; c=relaxed/simple;
-	bh=fyrhbCXnlByRYnhG528ptI2X/mfEToljyaGXElZ8V0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J4HW6kNtxIWka9tx0KAlLZ+yzJycpcMmsSVjs6p50dT8KDPyzQw3m4naddMS2ruPnXlYi8uK+4Sxy9/U439pBznhzg9igAneRfjTqW+rDg4hb5BEogXr/GnxF3fFrCa1e1oqIlMK4KLFrW/FQlMEZ0JPhM6uxjQrhMC3kDMuPHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=EpxaULCZ; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b7a0ef0e75so3700036d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1721892720; x=1722497520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2GVlNStJvrT8ORCcRB8+CmsmV0FyqBN6Hy+p1P9rZbw=;
-        b=EpxaULCZ7JOiGQLmE1TnbjDGmWohdaOPbAlwX5Hn274vCo2ZbPaMPahJ7P804uKHR/
-         n4u7ETXPohG0PBU5QNad2IduOmc62RMIukCbhKhOh0RldmWyC9GvZJjxzAf2J32ITy8I
-         /4kLE47kwNJ6Z9YXXQGJg5dN/rAowHXBIGiZc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721892720; x=1722497520;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GVlNStJvrT8ORCcRB8+CmsmV0FyqBN6Hy+p1P9rZbw=;
-        b=r6kl4yjOLuVL1Kyt1nUUXA4Oi/L3J3iT1bYFvBzLNYADJKiRspF4QlateArACO/3FF
-         fdV19JDykrgmS0nuLjRhQonFNsJgOfmtrV3wS0HX6f+NdvChkpDwuobGIXMBVBPebwBv
-         dIY1hgjEJlv0sGeJWb3nzRfkedM0dS9cjKsyQ3jxa5tC+j/Krk6W//fPeBG61DolUdES
-         4Qidow/Z6NQDxGP2M9ukNK8FcVkDmQWP+t0zXk3N3Jjs9rDOAwlLanXjXKDA6OfPqpFp
-         6BwUNEYde6OoA12WGVzn32yLDxr2RCxAkiB+DoPtYLP1hF28eeqAL7UP/peieSSpqpWC
-         F5jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjmQUCJrOrsiR0RNTt1hPaJFbqdv7nBonwxbwxeLGKnspxihmSHv5udTmUxY2naEfZcJQdCQBe8nhqMLcmlOuQOBX5HSBgtlwCVe0s
-X-Gm-Message-State: AOJu0Yx7Ot16d4io/soFkPOE+pJRMNmUWBgY9+uJpw4fXcz9iwyfY92/
-	LSfT5L5/aqH5jgRVA1xpCcgxIrWEt3zmHo5tIQZpfe7w6Ip+dbOSktvtDcesDF8=
-X-Google-Smtp-Source: AGHT+IHfDJbquxK4yoeiAtgbU0j7N/IGyrHV9CdR7h6snx/JBoTzCuXUsX3oxBVqaoEeHvgUuwnjCQ==
-X-Received: by 2002:a05:6214:202f:b0:6b0:6dba:c947 with SMTP id 6a1803df08f44-6bb40700306mr13763466d6.18.1721892720336;
-        Thu, 25 Jul 2024 00:32:00 -0700 (PDT)
-Received: from localhost ([213.195.124.163])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f9143e1sm4321446d6.61.2024.07.25.00.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 00:31:59 -0700 (PDT)
-From: Roger Pau Monne <roger.pau@citrix.com>
-To: xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org,
-	Juergen Gross <jgross@suse.com>,
-	Roger Pau Monne <roger.pau@citrix.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 2/2] x86/xen: fix memblock_reserve() usage on PVH
-Date: Thu, 25 Jul 2024 09:31:15 +0200
-Message-ID: <20240725073116.14626-3-roger.pau@citrix.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240725073116.14626-1-roger.pau@citrix.com>
-References: <20240725073116.14626-1-roger.pau@citrix.com>
+	s=arc-20240116; t=1721892721; c=relaxed/simple;
+	bh=GXQn+ZUgrSyMhB9EXmBCgrV8m1XI9dGY09dsbyovfIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8k5gbN7FUhauOWv22Br0yNUaEJkDGvYklS8LlRumJpqjrAmkhiLOtMAwwFJarso0DKR0GjLRyAtKNiV/lBuE9ShXvKQlpXMmOcPZgoTdiIRQPTrXFRofMPZNXQ429TFHEt+SmbmRsjn4+fRrdShy7YPkLepCdFswM8DRASR0/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPtgLQZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03EAEC116B1;
+	Thu, 25 Jul 2024 07:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721892720;
+	bh=GXQn+ZUgrSyMhB9EXmBCgrV8m1XI9dGY09dsbyovfIM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aPtgLQZRqwkKkWp9m/9matsFdVkkywKZUsgh+393PhT4uu2IlhjYlC2J4B8e4jpz5
+	 YX8zAMLsFkZYeJDYaTfdgdjKHPsNG4U+LxWKufCNIyctkm2vIOb6I3zbg9VwFwqKqs
+	 k/1fiKZfvaF1x5cMdxmbQFdnsFU4OAWI5SD2UWzTr2l2MGqzrnGCkVPXc11eoJCSOB
+	 oH9NePdogJa5Q7cpmgpnO+roeXjYQESzu7qiGzpuLTJOal+uAaeQTJuKCMVEZjNwq5
+	 E6xdU8BSfPaPnXsd9FPpMpBspN6a0lg66E1nxBvCIWohM9FeuFhiAiKdmsOpVTFj3m
+	 zXtjn2JYSl7lg==
+Message-ID: <e31a69d9-0cdb-4e5f-9227-c7790538f55d@kernel.org>
+Date: Thu, 25 Jul 2024 09:31:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>, 'Rob Herring' <robh@kernel.org>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+ <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
+ <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+ <20240723205714.GA1093352-robh@kernel.org>
+ <035501dade31$55cc7f40$01657dc0$@samsung.com>
+ <03b201dade3f$3d66e3b0$b834ab10$@samsung.com>
+ <bf6cd1c9-d60a-4ef1-89f3-5d28e003ce2d@kernel.org>
+ <03ef01dade5c$ce407820$6ac16860$@samsung.com>
+ <8ee739e7-8405-49d7-93f8-f837effe169b@kernel.org>
+ <9647f1b5-9f34-42f0-b7b9-56ad9708855b@kernel.org>
+ <041b01dade62$5861b2d0$09251870$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <041b01dade62$5861b2d0$09251870$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-The current usage of memblock_reserve() in init_pvh_bootparams() is done before
-the .bss is zeroed, and that used to be fine when
-memblock_reserved_init_regions implicitly ended up in the .meminit.data
-section.  However after commit 73db3abdca58c memblock_reserved_init_regions
-ends up in the .bss section, thus breaking it's usage before the .bss is
-cleared.
+On 25/07/2024 09:14, sunyeal.hong wrote:
+> Hello Krzysztof,
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Thursday, July 25, 2024 3:41 PM
+>> To: sunyeal.hong <sunyeal.hong@samsung.com>; 'Rob Herring'
+>> <robh@kernel.org>
+>> Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>; 'Chanwoo Choi'
+>> <cw00.choi@samsung.com>; 'Alim Akhtar' <alim.akhtar@samsung.com>; 'Michael
+>> Turquette' <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>;
+>> 'Conor Dooley' <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org;
+>> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC
+>> CMU bindings
+>>
+>> On 25/07/2024 08:37, Krzysztof Kozlowski wrote:
+>>>>   then:
+>>>>     properties:
+>>>>       clocks:
+>>>>         items:
+>>>>           - description: External reference clock (38.4 MHz)
+>>>>           - description: CMU_MISC NOC clock (from CMU_MISC)
+>>>>
+>>>>       clock-names:
+>>>>         items:
+>>>>           - const: oscclk
+>>>>           - const: noc
+>>>>
+>>>> If there is anything I misunderstand, please guide me.
+>>>>
+>>>
+>>> You did not address my questions at all instead just copied again the
+>>> same. It is not how it works.
+>>>
+>>> I am not going to discuss like this.
+>>
+>> And in case it is still unclear - just look at your bindings and DTS.
+>> They say you have three clocks!
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Let me answer your questions first.
+> In the existing V4 patch, clock items were declared in if then for each block, so there was no problem.
 
-Move and rename the call to xen_reserve_extra_memory() so it's done in the
-x86_init.oem.arch_setup hook, which gets executed after the .bss has been
-zeroed, but before calling e820__memory_setup().
+No. Again, look at your binding and DTS.
 
-Fixes: 38620fc4e893 ('x86/xen: attempt to inflate the memory balloon on PVH')
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
----
-While the commit that introduced the user-noticeable regression is
-73db3abdca58c, I think 38620fc4e893 should have been more careful to not
-initialize the memblock ranges ahead of the .bss zeroing.
----
- arch/x86/include/asm/xen/hypervisor.h |  5 -----
- arch/x86/platform/pvh/enlighten.c     |  3 ---
- arch/x86/xen/enlighten_pvh.c          | 15 ++++++++++++---
- 3 files changed, 12 insertions(+), 11 deletions(-)
+1. What clocks did you define for cmu-top?
+2. What clocks did you define for cmu-peric0?
 
-diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
-index 64fbd2dbc5b7..a9088250770f 100644
---- a/arch/x86/include/asm/xen/hypervisor.h
-+++ b/arch/x86/include/asm/xen/hypervisor.h
-@@ -62,11 +62,6 @@ void xen_arch_unregister_cpu(int num);
- #ifdef CONFIG_PVH
- void __init xen_pvh_init(struct boot_params *boot_params);
- void __init mem_map_via_hcall(struct boot_params *boot_params_p);
--#ifdef CONFIG_XEN_PVH
--void __init xen_reserve_extra_memory(struct boot_params *bootp);
--#else
--static inline void xen_reserve_extra_memory(struct boot_params *bootp) { }
--#endif
- #endif
- 
- /* Lazy mode for batching updates / context switch */
-diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index 8c2d4b8de25d..944e0290f2c0 100644
---- a/arch/x86/platform/pvh/enlighten.c
-+++ b/arch/x86/platform/pvh/enlighten.c
-@@ -75,9 +75,6 @@ static void __init init_pvh_bootparams(bool xen_guest)
- 	} else
- 		xen_raw_printk("Warning: Can fit ISA range into e820\n");
- 
--	if (xen_guest)
--		xen_reserve_extra_memory(&pvh_bootparams);
--
- 	pvh_bootparams.hdr.cmd_line_ptr =
- 		pvh_start_info.cmdline_paddr;
- 
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index 91c6db4ec054..728a4366ca85 100644
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -9,6 +9,7 @@
- #include <asm/io_apic.h>
- #include <asm/hypervisor.h>
- #include <asm/e820/api.h>
-+#include <asm/setup.h>
- 
- #include <xen/xen.h>
- #include <asm/xen/interface.h>
-@@ -41,8 +42,9 @@ EXPORT_SYMBOL_GPL(xen_pvh);
-  * hypervisor should notify us which memory ranges are suitable for creating
-  * foreign mappings, but that's not yet implemented.
-  */
--void __init xen_reserve_extra_memory(struct boot_params *bootp)
-+static void __init pvh_reserve_extra_memory(void)
- {
-+	struct boot_params *bootp = &boot_params;
- 	unsigned int i, ram_pages = 0, extra_pages;
- 
- 	for (i = 0; i < bootp->e820_entries; i++) {
-@@ -94,6 +96,14 @@ void __init xen_reserve_extra_memory(struct boot_params *bootp)
- 	}
- }
- 
-+static void __init pvh_arch_setup(void)
-+{
-+	pvh_reserve_extra_memory();
-+
-+	if (xen_initial_domain())
-+		xen_add_preferred_consoles();
-+}
-+
- void __init xen_pvh_init(struct boot_params *boot_params)
- {
- 	u32 msr;
-@@ -107,8 +117,7 @@ void __init xen_pvh_init(struct boot_params *boot_params)
- 	pfn = __pa(hypercall_page);
- 	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
- 
--	if (xen_initial_domain())
--		x86_init.oem.arch_setup = xen_add_preferred_consoles;
-+	x86_init.oem.arch_setup = pvh_arch_setup;
- 	x86_init.oem.banner = xen_banner;
- 
- 	xen_efi_init(boot_params);
--- 
-2.45.2
+Rob's advice is reasonable and you must follow it, unless you are not
+telling us something. There is no other choice, no other compatibles, no
+other devices.
+
+> If modified according to Rob's comment, problems may occur as the input clock is configured differently for each block.
+
+But it is not! Look at your binding.
+
+
+Best regards,
+Krzysztof
 
 
