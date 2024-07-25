@@ -1,226 +1,153 @@
-Return-Path: <linux-kernel+bounces-262120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1465393C101
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:40:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CF193C103
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1859F1C20FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435A31F21FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567D0199249;
-	Thu, 25 Jul 2024 11:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="iwmmXcM0"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA0C199251;
+	Thu, 25 Jul 2024 11:40:24 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0C616D4C3;
-	Thu, 25 Jul 2024 11:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B7F16D4C3;
+	Thu, 25 Jul 2024 11:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721907609; cv=none; b=azvbPSaLeItVAxK8Z2rthoieTi7qWeye+3gM3CaokAlQxp+pvYm73YXp3Zc73fzvFHtesT2+bBLw6qkZReCqW7u0uQqXAsT/axUrKOrKZA5gLrwge7w53bT2ALK2tMxB80qJBauflHEDno5LlK5QRc/9l1eoCJBZw4/9vwpAo3Y=
+	t=1721907623; cv=none; b=lL1V/8KbqsGxycLtPzqexYhvQJUKrA4wcETRZ6vij5UQk9nbRB6Kl7RuOU+0N748I5yS9sf6GzoVg7pYFlAf2ugzOjirFuEXUTe4zjQVhBanlCTdSy3EKuNOqYQt58qf9yVORAarPWmdGdopxl14V4n5iaeiKRdaiuXzupCPCP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721907609; c=relaxed/simple;
-	bh=fjIl38MPpR6EspID/CmBJyuL9XdT99m/wKla7QeZ1TA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=XrQ484KPoeH61e9l5yXOFmmHMtXMBI+vflIP2Zge3zJa4rFwDClIGQLwAM9/bZZFj2ps0hB5uvSX2NZ/J76cpno9wl/BcpBQCT2F3F0FetQY7quvnawhAr2SvxOLP3hiC/Jvi40NVWADEGOT2HGhjPAUI4OTPNFhVPnoJ0ATOHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=iwmmXcM0; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721907623; c=relaxed/simple;
+	bh=x/jTSeOOMzGPoBXYqDy5bsmeArwSYudVrZXlX+289Yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kj6CN1HwIJT4pOVmPaeynAjrybi6tSzilEjDzDqo8lvFvGYGSQV5mkpazhQXZerm4wkwU9aWlHzBojmfrXSJUmPL5lNez2q4pftXgjm1gVDgg9tu+m6X+ZsdX3IyIScNewZiH65niKgReaPAwByfKaG25Bx0GcOV50k3GGEUDFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WV84t68h0z1HFVZ;
+	Thu, 25 Jul 2024 19:37:34 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F56F140259;
+	Thu, 25 Jul 2024 19:40:17 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 25 Jul
+ 2024 19:40:16 +0800
+Message-ID: <de6958aa-27f8-4baa-b76d-88266d009f81@huawei.com>
+Date: Thu, 25 Jul 2024 19:40:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721907605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MKkwczeb2Wdcu0GU+l0zWcYRLI5FKPw8pU+pCi+Cqrw=;
-	b=iwmmXcM0LsY1zREoBfPNApQ6r4uYOh8RWwwp90sHG0VZkq9+xeiaXJfGXQ+ENYaMGp6vsR
-	p2KUrRoH2liOnZqFwuG7Ou8l9h1CPkZMXmny1KxOYMk0JsrWVVr7E5+UtpdTXDmZ5FdZsP
-	hXoK96OBoYMPC3/aP2oN9SiItXtoHsfM9Ona3Cqk6jfsjS3cfCzbYWQFqDvPu9/uwAaWiv
-	T5bd4Et8osUejwVE1pjv1phmp15g6RbQoXrlkJRuobaErv+lY1lf2TDQMDKJA/WzLuehCc
-	PY5qN/2U1IBCvC3GjzhE5KD1NecT4eiSyIVFeb2mzOwd53cfg3yym2+9gJMebA==
-Date: Thu, 25 Jul 2024 13:40:04 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Steven Price <steven.price@arm.com>
-Cc: dri-devel@lists.freedesktop.org, boris.brezillon@collabora.com,
- robh@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>,
- Furkan Kardame <f.kardame@manjaro.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
-In-Reply-To: <ae62139f-3655-44d0-aeb7-15c6b67eb97c@arm.com>
-References: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
- <f672e7460c92bc9e0c195804f7e99d0b@manjaro.org>
- <e42a55ba-cbb5-47a4-bec6-9c3067040970@arm.com>
- <192dbcd968dfebf825a3a759701bf381@manjaro.org>
- <d20667e76aa56fb69c91ef327d467d4a@manjaro.org>
- <ae62139f-3655-44d0-aeb7-15c6b67eb97c@arm.com>
-Message-ID: <c2b1016fb633f89cfeb96da2b761e494@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup/cpuset: add dec_attach_in_progress helper
+To: Kamalesh Babulal <kamalesh.babulal@oracle.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <longman@redhat.com>,
+	<adityakali@google.com>, <sergeh@kernel.org>, <mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240725015551.2221867-1-chenridong@huawei.com>
+ <e5c92f54-d767-4e71-9f57-9352923bd3e7@oracle.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <e5c92f54-d767-4e71-9f57-9352923bd3e7@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Hello Steven,
 
-On 2024-07-25 11:20, Steven Price wrote:
-> On 25/07/2024 09:24, Dragan Simic wrote:
->> Hello Steven and Boris,
+
+On 2024/7/25 19:01, Kamalesh Babulal wrote:
 > 
-> <snip>
 > 
->> Another option has become available for expressing additional module
->> dependencies, weakdeps. [1][2]  Long story short, weakdeps are similar
->> to softdeps, in the sense of telling the initial ramdisk utilities to
->> include additional kernel modules, but weakdeps result in no module
->> loading being performed by userspace.
->> 
->> Maybe "weak" isn't the best possible word choice (arguably, "soft" 
->> also
->> wasn't the best word choice), but weakdeps should be a better choice 
->> for
->> use with Panfrost and governor_simpleondemand, because weakdeps 
->> provide
->> the required information to the utilities used to generate initial
->> ramdisks,
->> while the actual module loading is left to the kernel.
->> 
->> The recent addition of weakdeps renders the previously mentioned 
->> harddeps
->> obsolete, because weakdeps actually do what we need.  Obviously, 
->> "weak"
->> doesn't go along very well with the actual nature of the dependency 
->> between
->> Panfrost and governor_simpleondemand, but it's pretty much just the
->> somewhat
->> unfortunate word choice.
->> 
->> The support for weakdeps has been already added to the kmod [3][4] and
->> Dracut [5] userspace utilities.  I'll hopefully add support for 
->> weakdeps
->> to mkinitcpio [6] rather soon.
+> On 7/25/24 7:25 AM, Chen Ridong wrote:
+>> There are several functions to decrease attach_in_progress, and they
+>> will wake up cpuset_attach_wq when attach_in_progress is zero. So,
+>> add a helper to make it concise.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 28 +++++++++++++++-------------
+>>   1 file changed, 15 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index d4322619e59a..c241845694ac 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -490,6 +490,17 @@ static inline void check_insane_mems_config(nodemask_t *nodes)
+>>   	}
+>>   }
+>>   
+>> +/*
+>> + * decrease cs->attach_in_progress.
+>> + * wake_up cpuset_attach_wq if cs->attach_in_progress==0.
 > 
-> That sounds much closer to the dependency we want to advertise for
-> Panfrost so that's great.
+> In the description, adding locking constraint of cpuset_mutex would be helpful.
+> Something like "cpuset_mutex must be held by the caller."
 > 
->> Maybe we could actually add MODULE_HARDDEP() as some kind of syntactic
->> sugar, which would currently be an alias for MODULE_WEAKDEP(), so the
->> actual hard module dependencies could be expressed properly, and 
->> possibly
->> handled differently in the future, with no need to go back and track 
->> all
->> such instances of hard module dependencies.
+Thank you, I will to that.
+>> + */
+>> +static inline void dec_attach_in_progress(struct cpuset *cs)
+>> +{
+>> +	cs->attach_in_progress--;
+>> +	if (!cs->attach_in_progress)
+>> +		wake_up(&cpuset_attach_wq);
+>> +}
+>> +
+>>   /*
+>>    * Cgroup v2 behavior is used on the "cpus" and "mems" control files when
+>>    * on default hierarchy or when the cpuset_v2_mode flag is set by mounting
+>> @@ -3421,9 +3432,7 @@ static void cpuset_cancel_attach(struct cgroup_taskset *tset)
+>>   	cs = css_cs(css);
+>>   
+>>   	mutex_lock(&cpuset_mutex);
+>> -	cs->attach_in_progress--;
+>> -	if (!cs->attach_in_progress)
+>> -		wake_up(&cpuset_attach_wq);
+>> +	dec_attach_in_progress(cs);
+>>   
+>>   	if (cs->nr_migrate_dl_tasks) {
+>>   		int cpu = cpumask_any(cs->effective_cpus);
+>> @@ -3538,9 +3547,7 @@ static void cpuset_attach(struct cgroup_taskset *tset)
+>>   		reset_migrate_dl_data(cs);
+>>   	}
+>>   
+>> -	cs->attach_in_progress--;
+>> -	if (!cs->attach_in_progress)
+>> -		wake_up(&cpuset_attach_wq);
+>> +	dec_attach_in_progress(cs);
+>>   
+>>   	mutex_unlock(&cpuset_mutex);
+>>   }
+>> @@ -4284,9 +4291,7 @@ static void cpuset_cancel_fork(struct task_struct *task, struct css_set *cset)
+>>   		return;
+>>   
+>>   	mutex_lock(&cpuset_mutex);
+>> -	cs->attach_in_progress--;
+>> -	if (!cs->attach_in_progress)
+>> -		wake_up(&cpuset_attach_wq);
+>> +	dec_attach_in_progress(cs);
+>>   	mutex_unlock(&cpuset_mutex);
+>>   }
+>>   
+>> @@ -4319,10 +4324,7 @@ static void cpuset_fork(struct task_struct *task)
+>>   	guarantee_online_mems(cs, &cpuset_attach_nodemask_to);
+>>   	cpuset_attach_task(cs, task);
+>>   
+>> -	cs->attach_in_progress--;
+>> -	if (!cs->attach_in_progress)
+>> -		wake_up(&cpuset_attach_wq);
+>> -
+>> +	dec_attach_in_progress(cs);
+>>   	mutex_unlock(&cpuset_mutex);
+>>   }
+>>   
 > 
-> Please do! While "weak" dependencies tell the initramfs tools what to
-> put in, it would be good to be able to actually express that this 
-> module
-> actually requires the governor.
-
-Great, I'm glad that you agree.  Here's the MODULE_HARDDEP() patch on
-the linux-modules mailing list, and we'll see will it be accepted:
-
-https://lore.kernel.org/linux-modules/04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org/T/#u
-
-> I can see the potential utility in
-> initramfs tools wanting to put a module in without "weak" dependencies
-> if initramfs size was limited[1] and "limited support" was appropriate,
-> and that's not what Panfrost gives. So having a way of fixing this in
-> the future without churn in driver would be good.
-
-Sure, that's a good example, but unfortunately, omitting weakdep modules
-that way from the initial ramdisk, and keeping only the harddep modules,
-wouldn't be that simple. :(  In fact, it's unknown which one(s) of the
-weakdep modules is/are actually needed on some platform or device, so
-pruning the weakdep modules would require some additional information,
-to end up with a fully functional device after booting it up.
-
-Of course, the distinction between the harddeps and the weakdeps opens
-up a path towards using such additional "pruning information" in a safe
-and robust way, by ensuring that the absolutely required harddep modules
-aren't pruned away.
-
-This is just another example of how "weak" was a somewhat
-unfortunate word choice, but we've got to live with it. :)
-
->> With all this in mind, here's what I'm going to do:
->> 
->> 1) Submit a patch that adds MODULE_HARDDEP() as syntactic sugar
->> 2) Implement support for weakdeps in Arch Linux's mkinitcpio [6]
->> 3) Depending on what kind of feedback the MODULE_HARDDEP() patch 
->> receives,
->>    I'll submit follow-up patches for Lima and Panfrost, which will 
->> swap
->>    uses of MODULE_SOFTDEP() with MODULE_HARDDEP() or MODULE_WEAKDEP()
-> 
-> It sounds good from my perspective. It will be interesting to see what
-> feedback comes from people more familiar with initramfs tools.
-
-Great, thanks once again!
-
-> [1] Although from my understanding it's firmware which is the real 
-> cause
-> of bloat in initramfs size. I guess I need to start paying attention to
-> this for panthor which adds GPU firmware - although currently tiny in
-> comparison to others.
-
-We might have a solution for the initramfs bloat induced by the firmware
-blobs, which I'm going to fight for, one way or another. :)  Though, 
-only
-time will tell will the related patches be accepted. [7]
-
-[7] 
-https://lore.kernel.org/linux-rockchip/9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org/T/#u
-
->> Looking forward to your thoughts.
->> 
->> [1] 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/module.h?id=61842868de13aa7fd7391c626e889f4d6f1450bf
->> [2] 
->> https://lore.kernel.org/linux-kernel/20240724102349.430078-1-jtornosm@redhat.com/T/#u
->> [3] 
->> https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
->> [4] 
->> https://github.com/kmod-project/kmod/commit/d06712b51404061eef92cb275b8303814fca86ec
->> [5] 
->> https://github.com/dracut-ng/dracut-ng/commit/8517a6be5e20f4a6d87e55fce35ee3e29e2a1150
->> [6] https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio
->> 
->>>>> If a filesystem driver can rely on the (ab)use of softdeps, which
->>>>> may be
->>>>> fragile or seen as a bit wrong, I think we can follow the same
->>>>> approach,
->>>>> at least until a better solution is available.
->>>>> 
->>>>> [6]
->>>>> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0c94f58cef319ad054fd909b3bf4b7d09c03e11c
->>>>> [7]
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5178578bcd4
->>>>> [8]
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/btrfs/super.c#n2593
->>>>> 
->>>>>> ---
->>>>>>  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
->>>>>>  1 file changed, 1 insertion(+)
->>>>>> 
->>>>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>>>> b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>>>> index ef9f6c0716d5..149737d7a07e 100644
->>>>>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>>>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>>>>> @@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
->>>>>>  MODULE_AUTHOR("Panfrost Project Developers");
->>>>>>  MODULE_DESCRIPTION("Panfrost DRM Driver");
->>>>>>  MODULE_LICENSE("GPL v2");
->>>>>> +MODULE_SOFTDEP("pre: governor_simpleondemand");
 
