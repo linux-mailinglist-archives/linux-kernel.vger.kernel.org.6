@@ -1,251 +1,123 @@
-Return-Path: <linux-kernel+bounces-262091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F41693C0A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCCD93C0AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A05A6B213FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E95E28115C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BE819925F;
-	Thu, 25 Jul 2024 11:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68A1991D9;
+	Thu, 25 Jul 2024 11:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mgf3u5nz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Zl9Ts+f"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E42E1991AB
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9E373440
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721906466; cv=none; b=ntR5GHczjZfGdrgIgzaFQPbe1/bmy0icv1Fw10U34cvl/Isr52XugMhYrDFMpEbCZAKXGq1Z15zWL2DhIwcNjq8olsI4Q9ab/VPThbbRImZbaj1BtjKbFyHT+/pb0Jxj4PR+ZLpdvoy7b6fNa3hL3kkVLpEIe92R5NpbxVmC40M=
+	t=1721906500; cv=none; b=HIAIiobvna2g/uFwBvVkPOd3Ax2cxdAlAZDCOn1q5XNWX1e4+jgRwiRi5vRVzKCSeXms8tpCAWHu6/OyiUlmBHg/ZyGx1NzpBWgTHaBcsIewdEkT9UyI4EdXGdz+Fu1PHY6uRdZNKKrOghZH1H+pBgv9MR8Vt0KAB9rvehVkH4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721906466; c=relaxed/simple;
-	bh=E393x25IIG2PjHFTyTTWubra+t3kSqI48PhdEqj3xsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iJE2QtTTHl3plEHJ6FSVmnGGCAz8cYaRMxLmGrsASMFYTwvpwdakqhMFn6Ic1bszOVxMbXCzwDDmpt6EeBHPuFZ714Qb5/aeYxaFtGUuxWOKok26777nRfVP1pMqlO4WDwBHrKQyIIV+uwL03UZXOzYc/1arPExon07JzRw/+OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mgf3u5nz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721906463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/RcU6ENJ/Nt41p8RxOylXqN7jgSp+MCYSjVSMYB2J4=;
-	b=Mgf3u5nzIYlNjJLXNtHpEwy0jSpD3NFLteFy5pRZo/GPsVAuLQOlR3AHkPRgaF/dy2pEmK
-	M5J65qyZkjz9eYtyJ3X9ubMqn882QJPmjE18PYH5pvHEzUf/PMYjMHSLkBphy8etB4UxEW
-	WGtTWWyJME8/0xKdKfopHMOj+xjs+1c=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-Tj9TUx_cPNKJLMFYfczvGw-1; Thu, 25 Jul 2024 07:21:01 -0400
-X-MC-Unique: Tj9TUx_cPNKJLMFYfczvGw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3687f5de494so124642f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:21:01 -0700 (PDT)
+	s=arc-20240116; t=1721906500; c=relaxed/simple;
+	bh=bNK2Rdb+sbPRuTNNO52XZgJ4Mc01lVByhyX1fO2QeF0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IyKt/5dEwRpuksOzqA1sXpJTLiIvJB6T8U9GwGYG/1mnclR8N1iuy1fFC8Ad6qA7yucX2N7216xt8C5+792h4nQdxgZtr17ZW6q1xtUv+7o2NnKEORRvl5YSzRBqo4hQyxfJJvjq8r9EizA5rXK9I/nFoo7OrYIsBdnokUgVngM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Zl9Ts+f; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03623b24ddso1522312276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721906497; x=1722511297; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qXxzvoTYw9Q90MrAUj707Lx9EKjgQYfFYb1jceR3KGg=;
+        b=0Zl9Ts+fSbWO1FUZ3567/yfd/ctndC+3AwKo0fBVWiWBZkbJkcxVD4ouGQbSbPjFLg
+         IUAp44XsgdjzxvcBLTwJzAcDuY/4szCX7ZrizV3JgPwkqxlqpmLyGJUWDbSIQXV6f/Nf
+         +U+05stF8IP+CKmbfQ4aTvAgpJ5wJgXUtbwlXvGF50GKVO+l2FesQqu8FGbBE6BqiTxY
+         3XYgYUOco7MEfWoLLKfuAkBbPr6v233F5f6vYIrdPa32uEJEowPq8C21cFyZefriAM2N
+         gssYGJQinekv+ct0esnIJVMWxFxng4v0MDx3pyNT/gQeUd6rYR2s9iBergxQLX5ZTvd9
+         ee3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721906460; x=1722511260;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/RcU6ENJ/Nt41p8RxOylXqN7jgSp+MCYSjVSMYB2J4=;
-        b=V4IO/0ervu3LWiDhfydjr8LovkwcdnOeQqQWNd/17BSr2Za0Xj1woVT2l3u9G6X6FH
-         iCvmhagWDvx0B+66yEgelqUI4np3gZBO3LHpphyvWqcjI42WtrXwWMT4W2gN//h+iprF
-         3nawAPxOf7gHAM0IIzQcQFEfVml0G4+WcJhW2qxq51DZCfWHV38rebKj5jUPcVNz/h5+
-         m7vanIz10SOCE1IcyUIOFAffIiq8MjXMhOpLpVsjF2NTh/Ledivn4ONorHkFD5DcRver
-         SVEPZHrKu7DS8ErP5uJPeqwCAV3/hcyQyj2stHfrcweuH8qjUoHIBm9JbjeO1rdQ8F2I
-         cSSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY2Zs0G+ktAS0XNyVEOkrfsDW3cc89PwyOXk74w8ZhuKQMIDv8hi282d+X+ZLsKdF38PP7ll6TLEit2eU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbXXtGI7GLj5WZgT7meJlBM+xzqwtjp6RQ4fvy9LwnL4AfWxZB
-	uFAYCU4L8iG12BL1fj03/eax1tsdmdCvGHNLQoJFS9icPehva5sUEF1FDVBoh72km7VFSVsmb1n
-	CzQEra7EQ1FMbjXOq7XmWKYMob+Qs0YzzT+ll78NU79XHopzab0/Fs+R6KodSCA==
-X-Received: by 2002:a05:600c:4511:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-428053c0936mr8553435e9.0.1721906460446;
-        Thu, 25 Jul 2024 04:21:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFs0hS+4jr12gekyxSSo+/sBI5EgsvR7qp+YV72mbT4WUmt0CTs2xCHVE2M9xlSdygkPfJGjA==
-X-Received: by 2002:a05:600c:4511:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-428053c0936mr8553185e9.0.1721906459941;
-        Thu, 25 Jul 2024 04:20:59 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b231:be10::f71? ([2a0d:3341:b231:be10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42807246ca4sm22683535e9.11.2024.07.25.04.20.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 04:20:59 -0700 (PDT)
-Message-ID: <541d338f-bffc-4393-a501-92d01e5c8edb@redhat.com>
-Date: Thu, 25 Jul 2024 13:20:57 +0200
+        d=1e100.net; s=20230601; t=1721906498; x=1722511298;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qXxzvoTYw9Q90MrAUj707Lx9EKjgQYfFYb1jceR3KGg=;
+        b=tMFKm9jUHF3FgKvQQ9nWSKV1zUVJQ/0enLqOPDZfox8YMSzVVgLVZHHatJ5qSqz16m
+         hicHHDr22fgY5QpRss0f1iLWxBdOLu42PzZilEjzkrpSI1bXz9ApT0h+7pwJKgLmMruU
+         RPNE/3aAUgifj+WhuEJeFclhULNDVDTc6Pye9km19mrer0UQaOSUvrSziizcahMF/0zs
+         Co7inAPo0tzGLQbfvh50s+9RgEeOWJkFCyDfyyrns/Rd0LxpWXlJwULjnuFWEfV1JJqb
+         mQZg9ufWxVTkZ8YXnm8q3uUtcI2ehbQe7mcwQtwSE6NeasgBojRzjncn84T1r00Z19+s
+         FGOg==
+X-Gm-Message-State: AOJu0Ywhp16IPHoWIeKdNGgJ022SZBoh5u9A2V6wfa9DvA6+z8r67IY+
+	EhgxtYHHHsGqWiuaT/KRV6UHJNDqB53ZmxLpkqmm2MRzMqQc9yATlNxa5zdM7L8tMinPkhcWw0E
+	912Se46ZAlQ==
+X-Google-Smtp-Source: AGHT+IE1CuavMDLzmwhVhYdF9UUQwYY/6XMxw6XUx6aRr5wG/fcuPFq+V2QW03BkBTV4306145yRHHHAgNs+OQ==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a25:9381:0:b0:e03:6556:9fb5 with SMTP id
+ 3f1490d57ef6-e0b2cd60603mr3189276.11.1721906497626; Thu, 25 Jul 2024 04:21:37
+ -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:21:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-To: David Woodhouse <dwmw2@infradead.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
- "Chashper, David" <chashper@amazon.com>,
- "Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>
-Cc: "Christopher S . Hall" <christopher.s.hall@intel.com>,
- Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
- Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Message-ID: <20240725112126.415071-1-joychakr@google.com>
+Subject: [PATCH] nvmem: core: WARN_ONCE on nvmem reg_read/write() returning
+ positive values
+From: Joy Chakraborty <joychakr@google.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Joy Chakraborty <joychakr@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Nvmem core currently expects 0 to be returned on successful read/write
+and negative for failure from nvmem producers.
+Warn incase any nvmem producer returns positive values which might
+happen if any producer ends up returning the number of bytes read or
+written.
 
-Just a bunch of 'nits below
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+---
+ drivers/nvmem/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-On 7/24/24 19:16, David Woodhouse wrote:
-> diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
-> new file mode 100644
-> index 000000000000..9c508c21c062
-> --- /dev/null
-> +++ b/drivers/ptp/ptp_vmclock.c
-
-[...]
-
-> +/*
-> + * Multiply a 64-bit count by a 64-bit tick 'period' in units of seconds >> 64
-> + * and add the fractional second part of the reference time.
-> + *
-> + * The result is a 128-bit value, the top 64 bits of which are seconds, and
-> + * the low 64 bits are (seconds >> 64).
-> + *
-> + * If __int128 isn't available, perform the calculation 32 bits at a time to
-> + * avoid overflow.
-> + */
-> +static inline uint64_t mul_u64_u64_shr_add_u64(uint64_t *res_hi, uint64_t delta,
-> +					       uint64_t period, uint8_t shift,
-> +					       uint64_t frac_sec)
-
-Please, no 'inline' in \.c files
-
-> +{
-> +	unsigned __int128 res = (unsigned __int128)delta * period;
-> +
-> +	res >>= shift;
-> +	res += frac_sec;
-> +	*res_hi = res >> 64;
-> +	return (uint64_t)res;
-> +}
-> +
-> +static inline bool tai_adjust(struct vmclock_abi *clk, uint64_t *sec)
-> +{
-
-Same here
-
-> +	if (likely(clk->time_type == VMCLOCK_TIME_UTC))
-> +		return true;
-> +
-> +	if (clk->time_type == VMCLOCK_TIME_TAI &&
-> +	    (clk->flags & VMCLOCK_FLAG_TAI_OFFSET_VALID)) {
-> +		if (sec)
-> +			*sec += clk->tai_offset_sec;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static int vmclock_get_crosststamp(struct vmclock_state *st,
-> +				   struct ptp_system_timestamp *sts,
-> +				   struct system_counterval_t *system_counter,
-> +				   struct timespec64 *tspec)
-> +{
-> +	ktime_t deadline = ktime_add(ktime_get(), VMCLOCK_MAX_WAIT);
-> +	struct system_time_snapshot systime_snapshot;
-> +	uint64_t cycle, delta, seq, frac_sec;
-> +
-> +#ifdef CONFIG_X86
-> +	/*
-> +	 * We'd expect the hypervisor to know this and to report the clock
-> +	 * status as VMCLOCK_STATUS_UNRELIABLE. But be paranoid.
-> +	 */
-> +	if (check_tsc_unstable())
-> +		return -EINVAL;
-> +#endif
-> +
-> +	while (1) {
-> +		seq = st->clk->seq_count & ~1ULL;
-> +		virt_rmb();
-
-Please document which other barrier pair witht this one
-
-> +
-> +		if (st->clk->clock_status == VMCLOCK_STATUS_UNRELIABLE)
-> +			return -EINVAL;
-> +
-> +		/*
-> +		 * When invoked for gettimex64(), fill in the pre/post system
-> +		 * times. The simple case is when system time is based on the
-> +		 * same counter as st->cs_id, in which case all three times
-> +		 * will be derived from the *same* counter value.
-> +		 *
-> +		 * If the system isn't using the same counter, then the value
-> +		 * from ktime_get_snapshot() will still be used as pre_ts, and
-> +		 * ptp_read_system_postts() is called to populate postts after
-> +		 * calling get_cycles().
-> +		 *
-> +		 * The conversion to timespec64 happens further down, outside
-> +		 * the seq_count loop.
-> +		 */
-> +		if (sts) {
-> +			ktime_get_snapshot(&systime_snapshot);
-> +			if (systime_snapshot.cs_id == st->cs_id) {
-> +				cycle = systime_snapshot.cycles;
-> +			} else {
-> +				cycle = get_cycles();
-> +				ptp_read_system_postts(sts);
-> +			}
-> +		} else
-> +			cycle = get_cycles();
-
-Please use the brackets even for the else case
-
-[...]
-> +static int ptp_vmclock_get_time_fn(ktime_t *device_time,
-> +				   struct system_counterval_t *system_counter,
-> +				   void *ctx)
-> +{
-> +	struct vmclock_state *st = ctx;
-> +	struct timespec64 tspec;
-> +	int ret;
-> +
-> +#ifdef SUPPORT_KVMCLOCK
-> +	if (READ_ONCE(st->sys_cs_id) == CSID_X86_KVM_CLK)
-> +		ret = vmclock_get_crosststamp_kvmclock(st, NULL, system_counter,
-> +						       &tspec);
-> +	else
-> +#endif
-> +		ret = vmclock_get_crosststamp(st, NULL, system_counter, &tspec);
-> +
-> +	if (!ret)
-> +		*device_time = timespec64_to_ktime(tspec);
-> +
-> +	return ret;
-> +}
-> +
-> +
-
-Please, don't add 2 consecutive blank lines.
-
-Cheers,
-
-Paolo
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index e1ec3b7200d7..0a42e6a0e8bb 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -58,10 +58,13 @@ static BLOCKING_NOTIFIER_HEAD(nvmem_notifier);
+ static int __nvmem_reg_read(struct nvmem_device *nvmem, unsigned int offset,
+ 			    void *val, size_t bytes)
+ {
++	int ret = -EINVAL;
++
+ 	if (nvmem->reg_read)
+-		return nvmem->reg_read(nvmem->priv, offset, val, bytes);
++		ret = nvmem->reg_read(nvmem->priv, offset, val, bytes);
+ 
+-	return -EINVAL;
++	WARN_ONCE(ret > 0, "nvmem reg_read should not return positive value, please return 0 on success");
++	return ret;
+ }
+ 
+ static int __nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
+@@ -73,6 +76,7 @@ static int __nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
+ 		gpiod_set_value_cansleep(nvmem->wp_gpio, 0);
+ 		ret = nvmem->reg_write(nvmem->priv, offset, val, bytes);
+ 		gpiod_set_value_cansleep(nvmem->wp_gpio, 1);
++		WARN_ONCE(ret > 0, "nvmem reg_write should not return positive value, please return 0 on success");
+ 		return ret;
+ 	}
+ 
+-- 
+2.45.2.1089.g2a221341d9-goog
 
 
