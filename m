@@ -1,186 +1,196 @@
-Return-Path: <linux-kernel+bounces-261881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A71B93BD52
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F049F93BD51
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D05283D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7866283D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00839172796;
-	Thu, 25 Jul 2024 07:48:04 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1651172780;
+	Thu, 25 Jul 2024 07:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kCK1M23F"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE642746C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE216DEC4
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 07:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721893683; cv=none; b=ZwMlWaRDyfwH81rwmPpN/8/PCoXsPXcnE0xnynlAGfUX/oC1nnyTMUdHZk6GbldB46VqZGY4l4cKMTFj9tULKqogWyH8Shc+bX7K15BdZZnsToV4/g5YEHfVfF5dCRWr5ne8r01/DXyuEytblMKSkmxXjAuodS0B0Kl38jSb27Q=
+	t=1721893683; cv=none; b=M3EIAilpNNSaB1A5NNLhjGgww7T8d+TfoMA68q0jD5RzP/4AWVHSZCr9ROp/xZJWVtn/PYrUpOfn4TSKvKNf7TVfoMG3yNEVQYd0GDPDC48BfSYCxFrM3cAQX+ljKtUobKlc7n41snJ7lHv4G/WuCgCdjVZBYyr4Zqf7XE8IRmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721893683; c=relaxed/simple;
-	bh=qbaFtf/9fhPyd7Ys7bVx5jIbo3OTmEh2tq8Bd7lME+8=;
+	bh=Un3ywfhMAKXc1GXVQ6ZW/heu5eZHJL0vPtfHPNGqZ5s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lnCoI7EnNDyvje8+sDQLNsyT0KL1cqJgm2ETBIDzCtXL/e8ESy3aOuPwAY/BQNStVXzReyDmDTeIGmk2hn1OoSuJIfptNTClZxaCRt8jSUM+cfrNNJ/8S/33CCO99OE1Whai/RB6uvb9swzFREOzjMLGylHQVdf87DMyqy0Ou1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-66c7aeac627so6910727b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:48:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=YFxztv8/GlVc4w374ZzLFEMr/3A5O2tsyFzkxus+RxCkYxaGKtI/K3diUSPudR5U3+/MRGgyiTyiz3BuAbgZLJbgqoFtQ8sbtIiw4HmHe26HsKl/7XMOGgeqW0p0s6b9/5OqbjSaPtyAaHZPXFbdyq40SzeV5R+6xsTF9cxlfRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kCK1M23F; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso9749a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721893680; x=1722498480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCGWKjrWoshl6H68F9lar6GO9FnrLS6GdyfH/s87qJQ=;
+        b=kCK1M23FWsGPCg7jqnzBfpz18i4Wg3Eb1+UoMLtN1Z1UqSQ0MgrkIVUaBfxWhwhPU8
+         87ahBAD+za1Jp34biPaqdnlB9kMbkj6VIx7bp2+pQ7M9aO00nfEi3Lr17ZGPpPgKYtt4
+         2F5QpEoY+evm/MZL44wcWZEdiV5sZB30weotFhMXE7AfsGeqtt8sg6NKoCMa2J5+v2wl
+         E6eU9e7rtlrveA7lO2KvS5VYkdo6QduWC8F6jB/Q1JL0pmlaM05dpiNaVEXVjpBG6dPk
+         mZAuunucmuUW9B1n09PAOOW6WhbqfBFPHm3/4Vw4hJZ6x8bLZsVA0QpXKrD1dxy05qLb
+         /ZMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721893679; x=1722498479;
+        d=1e100.net; s=20230601; t=1721893680; x=1722498480;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oT+mi+VVs0OXeh4RipXbGeW6Cs6PjcVF3A2qy0tP5JU=;
-        b=QCdzondWg7ToiuuZqjWNDv0VcOrcxMLX2pscHuU8iLvw0V9SLBKnLEKdHuDL9X5+Nl
-         gH9jJCm2t8XcDBgbXOCB4Ggkleq6nrq57Pd8XUsyOSboFkR9SkYPRo3tndKilcEOzi3h
-         yQwtBbh8MpNlAgRflFdixEE8Zetxs0pz5+rgmhOhRm13diQvyEh9EC33DdE8xnRsMIrX
-         gFLQEUNyfEehvjjjeIzgNnr9rRGos/dm2fX4PJstmW82V20myb/aL6RwBOWkBPUBtp8y
-         /BA+0qY9A4t7v4Wt3C6q490rtABa8jgxS98oaFPgcOnVqkf1vVWfi7RDAl1SmFUTz5Y5
-         /qrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeS9D/9kEiDi/72DzlEJvumivORqqB3xxhU3jnWOrC3d9ahMAn928xppDGIMDgz28X+pEAIeom/mnpozN0GUQjtvJbLlBX3vQCdzfm
-X-Gm-Message-State: AOJu0YxWQe1su2DRl9a5jWdpSLnnmsZ5F1zxC0nLqRcFvpma8FHUwBPZ
-	X7m3xOh0UUhPLsAMB8apw1FBpCDb8Ld5NaeuT0MSdiNSi1F74Iyu9K3mIzkW
-X-Google-Smtp-Source: AGHT+IEvfapHTbNehA0HQTxaqun/SCgcFXlH6pUG7ShOd+3RlWSH6hXb/ssDyhBIhmSymskKgzSeqw==
-X-Received: by 2002:a81:a24f:0:b0:61b:e645:3e94 with SMTP id 00721157ae682-675b38232b5mr11461217b3.5.1721893678864;
-        Thu, 25 Jul 2024 00:47:58 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-67566dd9043sm2545557b3.16.2024.07.25.00.47.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 00:47:58 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-64b29539d86so6174727b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 00:47:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAfLp7vyIZ/6kDS5hlkYlRpVEzeAoVG3NdFBzlvWtLMXBVfbBk3AsP0fUUDbAhZEOm8pdEmEKmkkZ5AfSqegoHf1G/z67sniuun+LO
-X-Received: by 2002:a0d:d206:0:b0:632:c442:2316 with SMTP id
- 00721157ae682-675b3823daamr10984047b3.3.1721893678344; Thu, 25 Jul 2024
- 00:47:58 -0700 (PDT)
+        bh=hCGWKjrWoshl6H68F9lar6GO9FnrLS6GdyfH/s87qJQ=;
+        b=FVC/mfAKzA8+WBbFRUmN/qcAVRMe6qwpOMjwA1iv5IzKoagQ/W3+eKLQIswSrA+ego
+         eg3EBa+JDUMULvm3T9WUiP1uLp0ctLVJAIpmB/4J5lcqUIVsDr7Fbk/DOeTarvWyRJkY
+         t3duKYhz6FedydLib/P7YC2DZMcxGxj++gTtr3WDMEmQQ68fMrCRMEI5u2c3zwarSgG8
+         bqBXJaJq5xP30Rx7LRDJEMZkwhhVTOwOLE2JgxIO9DjNxzXz7fikC0fqi1HvobLEfTEt
+         k18DMD63s1NoD3k53Xw6OZy0nwFHh6exjyvxTu8qpk353vUj9Qu/F0k2pAJ4dHT3QUd9
+         u2ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVTprS6Peg1fqyPdCKDO6VpkFdaDkBRfyP2lTK3sGRyHHKFadhaMdi/Fz9/pschXQT4nvsyXUNVw6ZAzWLtdCj18W6MMkpkH6xLdQEv
+X-Gm-Message-State: AOJu0YwVyHZNrg3/9Jyy6Iq4iaaO6AREK/MLslA9JNrWIQ0YOcS4xzOE
+	YTl/PPNyjX9/gCO9K4g7JxSg0wRd2yDDQVPq6f20FrjE7+031v/FCO5Uw3fAa8UlpHRbF9jkauC
+	eox+lD3zYVp8MRhKGcVGslUhAdvSuz6kV4PwO
+X-Google-Smtp-Source: AGHT+IGK9sBoV+zYaXMaYO7SSthTraaty8ZITM3xNb9OcjQAMZpJ4rMAC3af5DduNRkmMYDH5MoVzNoi2Dyn7SuON94=
+X-Received: by 2002:a05:6402:40d5:b0:58b:90c6:c59e with SMTP id
+ 4fb4d7f45d1cf-5ac2d052975mr156449a12.7.1721893679261; Thu, 25 Jul 2024
+ 00:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <578dafcbdf8287e73dd30e96e23814b8c029ea96.1721719060.git.geert+renesas@glider.be>
- <20240725092757.2d062719@bootlin.com>
-In-Reply-To: <20240725092757.2d062719@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 25 Jul 2024 09:47:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUanrrZW5_MOXO=oMi7efAAYVAWjJb1dFd8vQ_JHhfCSQ@mail.gmail.com>
-Message-ID: <CAMuHMdUanrrZW5_MOXO=oMi7efAAYVAWjJb1dFd8vQ_JHhfCSQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: LAN966X_OIC should depend on SOC_LAN966 || MFD_LAN966X_PCI
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com>
+In-Reply-To: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Jul 2024 09:47:47 +0200
+Message-ID: <CANn89iLAhXWKkA5xZoZPDj--=hD7RxOTkAPVf31_xLU8L-qyjQ@mail.gmail.com>
+Subject: Re: [PATCH net] net/tcp: Disable TCP-AO static key after RCU grace period
+To: 0x7f454c46@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herv=C3=A9,
-
-On Thu, Jul 25, 2024 at 9:27=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
-> On Tue, 23 Jul 2024 09:17:53 +0200
-> Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> > The Microchip LAN966x outband interrupt controller is only present on
-> > Microchip LAN966x SoCs.  However, when used as a PCI endpoint, all
-> > peripherals of the LAN966x SoC can be accessed by the PCI host.  Hence
-> > add dependencies on SOC_LAN966 and MFD_LAN966X_PCI, to prevent asking
-> > the user about this driver when configuring a kernel without Microchip
-> > LAN966x SoC and PCIe support.
+On Thu, Jul 25, 2024 at 7:00=E2=80=AFAM Dmitry Safonov via B4 Relay
+<devnull+0x7f454c46.gmail.com@kernel.org> wrote:
 >
-> I would expect a make olddefconfig silently disable LAN966X_OIC.
-> This is not the case ?
-
-I guess it does.  However, I never use that, as it would cause me
-to miss new symbols that I do want to enable for my target platforms.
-
-Quoting Linus Torvals[1]:
-
-    I use "make oldconfig" for every single machine I boot, because
-why wouldn't I?
-    Isn't that what everybody does?
-
-"make oldconfig" is what I have been using for ages, too...
-
-> > Fixes: 3e3a7b35332924c8 ("irqchip: Add support for LAN966x OIC")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > The patch defining MFD_LAN966X_PCI has not been accepted yet.
-> > Hence my initial thought was to add a dependency on PCI instead, but
-> > that wouldn't make much sense, as the OIC driver cannot be used without
-> > the MFD driver anyway.  Alternatively, the MFD_LAN966X_PCI dependency
-> > could be dropped for now, requiring a follow-up patch later.
-> >
-> > "[PATCH v2 18/19] mfd: Add support for LAN966x PCI device"
-> > https://lore.kernel.org/all/20240527161450.326615-19-herve.codina@bootl=
-in.com/
-> > ---
-> >  drivers/irqchip/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> > index bac1f0cb26e67a2b..b8d5ca3183824c93 100644
-> > --- a/drivers/irqchip/Kconfig
-> > +++ b/drivers/irqchip/Kconfig
-> > @@ -171,6 +171,7 @@ config IXP4XX_IRQ
-> >
-> >  config LAN966X_OIC
-> >       tristate "Microchip LAN966x OIC Support"
-> > +     depends on SOC_LAN966 || MFD_LAN966X_PCI || COMPILE_TEST
-> >       select GENERIC_IRQ_CHIP
-> >       select IRQ_DOMAIN
-> >       help
+> From: Dmitry Safonov <0x7f454c46@gmail.com>
 >
-> SOC_LAN966 is used only for the SOC mode of the LAN966x.
-> In that case, the LAN966x OIC driver is not used. Indeed, this
-> driver is used only in LAN966x PCI endpoint mode.
+> The lifetime of TCP-AO static_key is the same as the last
+> tcp_ao_info. On the socket destruction tcp_ao_info ceases to be
+> with RCU grace period, while tcp-ao static branch is currently deferred
+> destructed. The static key definition is
+> : DEFINE_STATIC_KEY_DEFERRED_FALSE(tcp_ao_needed, HZ);
+>
+> which means that if RCU grace period is delayed by more than a second
+> and tcp_ao_needed is in the process of disablement, other CPUs may
+> yet see tcp_ao_info which atent dead, but soon-to-be.
 
-IC. From the description in the bindings (and the commit message of
-3e3a7b35332924c8), I was under the impression it is used for both:
+> And that breaks the assumption of static_key_fast_inc_not_disabled().
 
-  The Microchip LAN966x outband interrupt controller (OIC) maps the interna=
-l
-  interrupt sources of the LAN966x device to an external interrupt.
-  When the LAN966x device is used as a PCI device, the external interrupt i=
-s
-  routed to the PCI interrupt.
+I am afraid I do not understand this changelog at all.
 
-Perhaps it should be reworded, e.g.:
+What is "the assumption of static_key_fast_inc_not_disabled()"  you
+are referring to ?
 
-    The Microchip LAN966x outband interrupt controller (OIC) maps the inter=
-nal
-    interrupt sources of the LAN966x device to a PCI interrupt when the LAN=
-966x
-    device is used as a PCI device.
+I think it would help to provide more details.
 
-Or perhaps I misunderstood completely, and the internal interrupt
-sources can be mapped to a different external interrupt for other use
-cases, too?
-
-> depends on MFD_LAN966X_PCI is indeed correct but, as you mentioned
-> it, patch defining MFD_LAN966X_PCI has not been accepter yet and
-> MFD_LAN966X_PCI is probably going to be renamed (the driver is
-> going to move from drivers/mfd to drivers/misc).
-
-IC. So a dependency on PCI is currently the best option?
-
-[1] https://lore.kernel.org/all/CAHk-=3DwiqETvfxW_mG6++9uX4tY5gYbqqXsMURDw1=
-nQy0q0qohw@mail.gmail.com/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+> Happened on netdev test-bot[1], so not a theoretical issue:
+>
+> [] jump_label: Fatal kernel bug, unexpected op at tcp_inbound_hash+0x1a7/=
+0x870 [ffffffffa8c4e9b7] (eb 50 0f 1f 44 !=3D 66 90 0f 1f 00)) size:2 type:=
+1
+> [] ------------[ cut here ]------------
+> [] kernel BUG at arch/x86/kernel/jump_label.c:73!
+> [] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> [] CPU: 3 PID: 243 Comm: kworker/3:3 Not tainted 6.10.0-virtme #1
+> [] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3=
+-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [] Workqueue: events jump_label_update_timeout
+> [] RIP: 0010:__jump_label_patch+0x2f6/0x350
+> ...
+> [] Call Trace:
+> []  <TASK>
+> []  arch_jump_label_transform_queue+0x6c/0x110
+> []  __jump_label_update+0xef/0x350
+> []  __static_key_slow_dec_cpuslocked.part.0+0x3c/0x60
+> []  jump_label_update_timeout+0x2c/0x40
+> []  process_one_work+0xe3b/0x1670
+> []  worker_thread+0x587/0xce0
+> []  kthread+0x28a/0x350
+> []  ret_from_fork+0x31/0x70
+> []  ret_from_fork_asm+0x1a/0x30
+> []  </TASK>
+> [] Modules linked in: veth
+> [] ---[ end trace 0000000000000000 ]---
+> [] RIP: 0010:__jump_label_patch+0x2f6/0x350
+>
+> [1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao-dbg/results/696681/5-c=
+onnect-deny-ipv6/stderr
+>
+> Cc: stable@kernel.org
+> Fixes: 67fa83f7c86a ("net/tcp: Add static_key for TCP-AO")
+> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> ---
+> ---
+>  net/ipv4/tcp_ao.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+> index 85531437890c..5ce914d3e3db 100644
+> --- a/net/ipv4/tcp_ao.c
+> +++ b/net/ipv4/tcp_ao.c
+> @@ -267,6 +267,14 @@ static void tcp_ao_key_free_rcu(struct rcu_head *hea=
+d)
+>         kfree_sensitive(key);
+>  }
+>
+> +static void tcp_ao_info_free_rcu(struct rcu_head *head)
+> +{
+> +       struct tcp_ao_info *ao =3D container_of(head, struct tcp_ao_info,=
+ rcu);
+> +
+> +       kfree(ao);
+> +       static_branch_slow_dec_deferred(&tcp_ao_needed);
+> +}
+> +
+>  void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
+>  {
+>         struct tcp_ao_info *ao;
+> @@ -290,9 +298,7 @@ void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
+>                         atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem_a=
+lloc);
+>                 call_rcu(&key->rcu, tcp_ao_key_free_rcu);
+>         }
+> -
+> -       kfree_rcu(ao, rcu);
+> -       static_branch_slow_dec_deferred(&tcp_ao_needed);
+> +       call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
+>  }
+>
+>  void tcp_ao_time_wait(struct tcp_timewait_sock *tcptw, struct tcp_sock *=
+tp)
+>
+> ---
+> base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
+> change-id: 20240725-tcp-ao-static-branch-rcu-85ede7b3a1a5
+>
+> Best regards,
+> --
+> Dmitry Safonov <0x7f454c46@gmail.com>
+>
+>
 
