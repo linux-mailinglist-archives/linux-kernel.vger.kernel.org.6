@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-262281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B3C93C36C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C7E93C370
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 15:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36302832EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81A41C21C18
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 13:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0A919D06A;
-	Thu, 25 Jul 2024 13:53:41 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3831219CCEA;
+	Thu, 25 Jul 2024 13:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MU519thk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C2F19D06D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 13:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667FE1E528;
+	Thu, 25 Jul 2024 13:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721915621; cv=none; b=MQeFGF/6EwS17FLH1ECuFwvc0Y4R7zsZf1/6DF98OP4ox8ybJYRSysSqFJE/g8ZBN88JBWVuKF0k3e/7id7q6gMw4EfxYHlVu7cxUSjgQDqjuhYnhS6/NWWLf0XVSjeQkGhYHCv5YoAKGZ3sjhG/CuTAowQfgp3B1dn/gMC/nDo=
+	t=1721915656; cv=none; b=OxjiRSOzJY1edPn+yKEK2jIayDDDDyjXxbaHzxtIaatkpJlaBq9HBhTDjmRXAiGB9icm2wEWrroQAGMop/c7VtofDaHBFjvhxBrAeYlnI9ifhEHrEcltzqOZyqi+CzQXoPYS3tJ9TBBueJxtNVbe3jcdBSBbaEmc+ZsdxCUuLuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721915621; c=relaxed/simple;
-	bh=J97+8GDUyXu4RsMWTgGQJvhbjUN2hFSbpzDeLCK0hVk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=swOn6RjOlih5kpPaJlLBLd71pkE/S2IbK6vWqbGpPzDAOtAooToMySD2ysiFlI4ux5dWxipB4J66xy7YqxmZDg0AYHWos+y9yM+nkcDynNYEw24ylKhnjMYdwZP8L8U2+uJDLsNTIEjfib8ktFRwJYIKkVFQzllEfyPbkFNiS7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39673758efeso9376655ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 06:53:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721915619; x=1722520419;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IbSESdSfl8Zy6XV/J6M7oHTzF6wnNaXjH3/ukGJlvGU=;
-        b=WHV2SOaD+DuILhx72LhotuRJkC/0NpjNIjYszBpx3+prKo1hMJKRE5jotk97G7sO9J
-         /EIS1k2XHDy9mpP+//DDk+NPi8NZIIhlGMhF0rxG9aTrXDPUJCb0DKupXT4oWkdujRmW
-         4gK+TxqZpA+zl18fSANT2W1Ifb1SH3cWv/W/c7Qxt9jlIGMQ4qAIRIKcbww/EQfSLPmT
-         YZgKFpjJC1FIt9ymXx5NETiCeAR4i1iZd1bjIqGtqSRzQzWa81Skvkk3Xne8PgRwpYOD
-         PEIvBZ4AR/oQdjkCIxKo8H0fuQiwpRT8nSRbDk/eMqis5DNvqU4fC3M+2cvmJY/Et/pb
-         +vZw==
-X-Gm-Message-State: AOJu0YwtE1AW5npec4rUDUXz/MQU6anVTilBCFn0cxtW44IUT2V7pqfg
-	qvMhA+DG/wSSY4mqHlU6666725vRGnPq2ZolZxLv7HNpSWENzAOAKmM1JqESb6S1DpCa5dO/AJu
-	Uy4GXG3vsbhfCcrt1KuhIc/ayfnnsl/HHT83ZoS0A9jvwE9L1kOMJW0Q=
-X-Google-Smtp-Source: AGHT+IGJ/McZXe1+PUdkkxLpBU0pznv01yqwJwQWXb0ulcsoUnCK3JeRn7UyNIuNOIPe6q/Xj67KAc55W3TVbhZTDhyj0NLcFMWF
+	s=arc-20240116; t=1721915656; c=relaxed/simple;
+	bh=QkwNv+vuYe0uHTDbGVG/f6jANCQqZGgAw3yLAcYu+rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAxxXaxhbjU1v7kIyd/A1PYBGZxeM7RELOk2ig8ukw6KpqmCQ9XyooP5fatt6Lb1U7GwH7vLv90NT3oNmUsM7qIuZqB5yo3UGjvl30StlnGtad6BeBt//s0WMqVQQrol5p3No3g5p0MQyDk25BxPqNhVM5iA52L6NIpzTgBVetA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MU519thk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F6BC32782;
+	Thu, 25 Jul 2024 13:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721915656;
+	bh=QkwNv+vuYe0uHTDbGVG/f6jANCQqZGgAw3yLAcYu+rA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MU519thkZw7NMwAgmh7YzJlv3avBxfoXblpC7AJxO0O2iLLho4ThndgAQ2fiuYZlJ
+	 qn5pLhKqOAsEcAXPc1NEf4xy/qsr5bSN5cYRkOvt6NBQm9OJVK2KFWaRj5GRbgMRJ6
+	 ocQVN1UJkz1uQcUwh+ZsdBVFBDtS420epvftYbo2eY9pZg/edbfBQ2jq3Ns8/qiOTr
+	 bXl0GmZZV19OERrQ+t/DUA7X9ZReCu4cZOTQqYI2F4lfVcb/nLnB7aonN5hpLbfqIq
+	 v9Lckl3NGgAPb61bs85qIm3UUTtG27nyLX8gc32WDAIOQSGOBIHmCUC6wwAcD/b6cQ
+	 evbQ53wwhzjjg==
+Message-ID: <d9e0e87c-0332-48b3-879d-258ca0fe58ee@kernel.org>
+Date: Thu, 25 Jul 2024 15:54:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c85:b0:398:d1fe:9868 with SMTP id
- e9e14a558f8ab-39a23fcf0dcmr1378775ab.4.1721915618921; Thu, 25 Jul 2024
- 06:53:38 -0700 (PDT)
-Date: Thu, 25 Jul 2024 06:53:38 -0700
-In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cca23f061e12b868@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/2] dt-bindings: iio: aw9610x: Add bindings for
+ aw9610x sensor
+To: "Rob Herring (Arm)" <robh@kernel.org>, wangshuaijie@awinic.com
+Cc: waqar.hameed@axis.com, liweilei@awinic.com, lars@metafoo.de,
+ linux-iio@vger.kernel.org, kangjiajun@awinic.com, jic23@kernel.org,
+ linux-kernel@vger.kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org
+References: <20240725121252.865836-1-wangshuaijie@awinic.com>
+ <20240725121252.865836-2-wangshuaijie@awinic.com>
+ <172191345400.1572973.8660057237993091930.robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <172191345400.1572973.8660057237993091930.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 25/07/2024 15:17, Rob Herring (Arm) wrote:
+> 
+> On Thu, 25 Jul 2024 12:12:51 +0000, wangshuaijie@awinic.com wrote:
+>> From: shuaijie wang <wangshuaijie@awinic.com>
+>>
+>> Add device tree bindings for aw9610x proximity sensor.
+>>
+>> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+>> ---
+>>  .../iio/proximity/awinic,aw9610x.yaml         | 61 +++++++++++++++++++
+>>  1 file changed, 61 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+>  	 $id: http://devicetree.org/schemas/input/awinic,aw9610x.yaml
+>  	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
 
-***
+Look, still not tested.
 
-Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-Author: lizhi.xu@windriver.com
+You got comment on v3 that you must it prior to sending. The comment
+also explained how to perform the testing.
 
-before thread stop and free gc_thread, set sbi->gc_thread to NULL, 
-and add lock for reentry f2fs_stop_gc_thread.
+You responded that you will implement testing but as easily we can see
+here, you still did not test it.
 
-#syz test: upstream 2c9b3512402e
+Please, stop wasting our time. TEST your patches BEFORE sending.
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6066c6eecf41..484eb5082604 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -203,14 +203,20 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 
- void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
- {
--	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
-+	struct f2fs_gc_kthread *gc_th;
-+	static DEFINE_MUTEX(gct_mutex);
- 
--	if (!gc_th)
--		return;
-+	mutex_lock(&gct_mutex);
-+	gc_th = sbi->gc_thread;
-+	if (!gc_th || !virt_addr_valid(gc_th))
-+		goto unlock;
-+
-+	sbi->gc_thread = NULL;
- 	kthread_stop(gc_th->f2fs_gc_task);
- 	wake_up_all(&gc_th->fggc_wq);
- 	kfree(gc_th);
--	sbi->gc_thread = NULL;
-+unlock:
-+	mutex_unlock(&gct_mutex);
- }
- 
- static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
+Best regards,
+Krzysztof
+
 
