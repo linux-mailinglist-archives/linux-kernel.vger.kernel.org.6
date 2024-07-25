@@ -1,78 +1,70 @@
-Return-Path: <linux-kernel+bounces-262440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CA693C723
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:28:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368FF93C727
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541F42833E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678521C21941
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E446919DF6D;
-	Thu, 25 Jul 2024 16:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205E219DF7D;
+	Thu, 25 Jul 2024 16:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VtzUo0tV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyMfYCjV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCF719DF57
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D2A19DF65;
+	Thu, 25 Jul 2024 16:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721924900; cv=none; b=IgYNscqdLXbVrx8SS02feb8W0lVTejN54nyqw7CqaqhtBSMngW4kfoLxgR7pDQI5uSu8CpqCm84svBzxykJwFqHylc4pvMcefnZKW7XULC0AaGnSQxyIlWb3WFOhWT33zr+8d/Q5jpy2FEoCBPLwDVkD+rqJ7YRVmLNFuN9Zp0g=
+	t=1721924941; cv=none; b=CW6tlzeu/gd1Ttk4yX2Zvf4agLQUCa/UpvMIfbf0eeBW2ckFpQpcmBcMYc8xDnXVZYkAu2z3EJlr/2R20rEUhXXu3BpPzkMO7MMdW+8sE1WNnR1/hKD6k7WxywWvZ6dievDWLBjVsvMyf5a/AC77z1tUCndYFYNNFHCr6QxE9x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721924900; c=relaxed/simple;
-	bh=Fy3kYahgwmE/GH4851HLgNpm3At9MaQwpO/m3ngJEhk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NWOhthbyL+TvxdkEnCcihu5Xb8tedS4/f4rJTblcamnYyMVGa5TUlrYRlANCHuF7FTfTLSIZoNF/Mm/wVL/tZaeGFl4Hvgok9QnlFJbpwmF2N/Yc9+YlHd2OTYCYs6zR5NDriyVSUvso/OTpfX3DfRi5eBia66O+7qEumjfDbwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VtzUo0tV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721924897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cZ+wQu25/ua22FV3hTgwYKgkP5cYl1BWWCM6PQeMbuQ=;
-	b=VtzUo0tVrMN0zAdCzABUK+RcMPeRyQKAyLBUQ8zWQb77Ck2XYOeQ8PvWSWy5vaWrssrKJD
-	C1bM27596cJvUj7FJtfhwnRUUcr6HzeIfF1JePSrkG65dSupkjfknIHX3G8mmV3H0h06Ns
-	7ghTVmTalaOGMyUSVqWTLmXIhstOm80=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-486-e8OTtE_rNSmuXvxUmi4GXQ-1; Thu, 25 Jul 2024 12:28:15 -0400
-X-MC-Unique: e8OTtE_rNSmuXvxUmi4GXQ-1
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3db18cf7be8so39815b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 09:28:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721924895; x=1722529695;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cZ+wQu25/ua22FV3hTgwYKgkP5cYl1BWWCM6PQeMbuQ=;
-        b=k3cV0HflWNU78m+la1XnQy3AbyreP1D7Cf9ve8RZQleYXBAPOau+g3m42TgBVuRNMU
-         OQRB2RjnH5+o2OH80GhZ1fNYaS3jizSa9Zs8WLZKmqNlRNdPDxeb/BI8DqE5Iu8QwqK6
-         h1ZTIPNktXRWZryygdxfpxv/gFP9UKldA/SbIFTdrZ9Q1sWelKPFuQu69yg+dLMreRdL
-         Zmdz1odOMHunsJF+MNCgYAVvHbJwLHRW6n+JrzGXkpLx3FRN/ArC6Kr5FquWsl8rjwN1
-         akLq/+LJGkbMGLajDE3I9AijEWlUsSrmeitNmaGKI1TCd/b8KFIo0BIaRyYAAP8ctHKl
-         6Fwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEeG6UXsFL+QWZHsPvkZBwStFVQEU4Z52bxmmitpQmCgemG6i1LrtjGU+DoeVqjP5WKoOshRiL3wgi86Zd0aXssABShiD0xz49eWPj
-X-Gm-Message-State: AOJu0Yz/cU17yrocn/8OWd74eUWEOQt0DnHwBr+pX1w7Ca97A3yJ7x+z
-	OLR90C0fCEkVMK10CPZL0lCjXnsf2XCWSakoa0KsLKvg4D1963MIvvMzCq/lUVkZ7HOmgUCvEZ7
-	GKzRD/93Fd/a8a8pva/MSkT2BkLmzXve1Br0TdKnBb4bTPnX0LmvI3U3P/WLSrA==
-X-Received: by 2002:a05:6808:181d:b0:3d6:53fc:e813 with SMTP id 5614622812f47-3db140bff2cmr3159248b6e.27.1721924893346;
-        Thu, 25 Jul 2024 09:28:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMAqQVsztQReopcibpry4r4T/+OwZn5ktiSNKQro8eLj3uPSHdhUfG11WU01ulpVQ63n41VQ==
-X-Received: by 2002:a05:6808:181d:b0:3d6:53fc:e813 with SMTP id 5614622812f47-3db140bff2cmr3159220b6e.27.1721924892887;
-        Thu, 25 Jul 2024 09:28:12 -0700 (PDT)
-Received: from [192.168.1.111] ([2600:1700:1ff0:d0e0::d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8d82c2sm8781806d6.16.2024.07.25.09.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 09:28:12 -0700 (PDT)
-From: Andrew Halaney <ahalaney@redhat.com>
-Date: Thu, 25 Jul 2024 11:28:07 -0500
-Subject: [PATCH] power: sequencing: pwrseq-qcom-wcn: Depend on WCN36XX
+	s=arc-20240116; t=1721924941; c=relaxed/simple;
+	bh=rA8r5GE2DmreSp4mzMERlx21Ozsy7idcGW/81EsYAjo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Jds7Wwnv0V2jTV2TdPsbzCcxfrbC4PrxjTHAwZDhV2BpFMZ8QMMFB0axK+vrgpU4kphLfY6NXOH4BFvq8xMyb7iZAWsSAZzyN+MOTfpS+LJOoX0VRYMde9P7nx4/cXL9SrcnuecoGaSMmilIZy0bF6Uz43H5jS6R1OV1+7t2CbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyMfYCjV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2470FC116B1;
+	Thu, 25 Jul 2024 16:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721924940;
+	bh=rA8r5GE2DmreSp4mzMERlx21Ozsy7idcGW/81EsYAjo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CyMfYCjVimpSdrI/6NFuvB4RwQK2i2ehRHRAwXgwmifhEwwaPtfPhy/RarehoVDih
+	 m6tAo/0CyllD9poiPv69XdsODkaF1PDmZDmf/OnerivmewQKHipRxc6zKsk3Td9B5w
+	 8ehAkthL7Q9qtEmDTqC9LbMPsjfvbgQP1QEa8O9yw70+ESjjLkkJH8Fvcu5CWQSi17
+	 7bRAJ0GvSEFQWNFLyTFn4g18zKZH6A2Cvnca6l7Z74b7MfyuOZLQ54E0u9Xf3Slh3C
+	 2Rj+NwGKR7pZxhKZIU1vYDxaKMPkz7FTP1hVdIuvfwpkgR1R88GVfsQQw/Y1UuUGs8
+	 OlC1KbzaQB5mA==
+From: Lee Jones <lee@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+In-Reply-To: <20240226-audio-i350-v5-3-54827318b453@baylibre.com>
+References: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
+ <20240226-audio-i350-v5-3-54827318b453@baylibre.com>
+Subject: Re: (subset) [PATCH RESEND v5 03/16] dt-bindings: mfd: mediatek:
+ Add codec property for MT6357 PMIC
+Message-Id: <172192493586.1054722.4853871002402475676.b4-ty@kernel.org>
+Date: Thu, 25 Jul 2024 17:28:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,51 +72,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-pwrseq-wcn-config-v1-1-021dce9f2513@redhat.com>
-X-B4-Tracking: v=1; b=H4sIABZ9omYC/x3MQQqAIBBA0avErBswSYuuEi3KRpuNmkIF0t2Tl
- m/xf4FMiSnD1BRIdHHm4Cu6tgFzrN4R8l4NUsheDFJhvFOmE2/j0QRv2aHYtNbjpoyWAmoXE1l
- +/ue8vO8HghHL7WMAAAA=
-To: Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andrew Halaney <ahalaney@redhat.com>
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-This driver does sequencing for the hardware driven by WCN36XX, let's
-make it depend on that. Without WCN36XX, we're sequencing power for
-nothing.
+On Fri, 14 Jun 2024 09:27:46 +0200, Alexandre Mergnat wrote:
+> Add the audio codec sub-device. This sub-device is used to set the
+> optional voltage values according to the hardware.
+> The properties are:
+>   - Setup of microphone bias voltage.
+>   - Setup of the speaker pin pull-down.
+> 
+> Also, add the audio power supply property which is dedicated for
+> the audio codec sub-device.
+> 
+> [...]
 
-Fixes: 2f1630f437df ("power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets")
-Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
----
-I *think* this makes sense, but if you disagree please let me know. I
-was sorting out configs in fedora and noticed this was being asked for
-builds that didn't have WCN36XX enabled, which seems odd to me at least.
----
- drivers/power/sequencing/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Applied, thanks!
 
-diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
-index c9f1cdb665248..a4765cb33a80e 100644
---- a/drivers/power/sequencing/Kconfig
-+++ b/drivers/power/sequencing/Kconfig
-@@ -16,6 +16,7 @@ if POWER_SEQUENCING
- config POWER_SEQUENCING_QCOM_WCN
- 	tristate "Qualcomm WCN family PMU driver"
- 	default m if ARCH_QCOM
-+	depends on WCN36XX
- 	help
- 	  Say Y here to enable the power sequencing driver for Qualcomm
- 	  WCN Bluetooth/WLAN chipsets.
+[03/16] dt-bindings: mfd: mediatek: Add codec property for MT6357 PMIC
+        commit: 3821149eb101fe2d45a4697659e60930828400d8
 
----
-base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
-change-id: 20240725-pwrseq-wcn-config-0b6668b5c620
-
-Best regards,
--- 
-Andrew Halaney <ahalaney@redhat.com>
+--
+Lee Jones [李琼斯]
 
 
