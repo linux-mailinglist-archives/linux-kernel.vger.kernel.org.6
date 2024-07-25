@@ -1,208 +1,87 @@
-Return-Path: <linux-kernel+bounces-261952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4CE93BE36
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29CB93BE3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 10:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FDB1C210A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE9283846
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 08:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D15196DA2;
-	Thu, 25 Jul 2024 08:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27305196D8E;
+	Thu, 25 Jul 2024 08:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWALtTPG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E41741E1;
-	Thu, 25 Jul 2024 08:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615BD196446;
+	Thu, 25 Jul 2024 08:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897536; cv=none; b=FBvKbzkEAAubBdGjzDLbUmXDgDkBZx+grQywF1wcZGPFTnnLt0UKyRCvpP5BAIXlH+i3FDJd67MRdF1MWx3fvQE2AhvQ2zuthFVdoD6uOAQEqKT8lLoP7WT2PdGG175v4FH6QWRl7yz+5S4+b1i1RC+w7DksCyJFNMeYtdExSG0=
+	t=1721897673; cv=none; b=oZ6fHrGI9uDWJWMPYKnw4PbEsBiBx0aNv6tk89fNSzDaMdadGjMofE2zPfWIKw3z+REM73uElAamYWzUHZLd0qlorF+oEWnrubytZrVc5RPS2SV8yd92v7LTvVsnjhBN4PWBFtY8ZJZaFAvQTP1y5mo5vYb/BKVLfHoERd1bL58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897536; c=relaxed/simple;
-	bh=U5ZDTXxkRIk/3JvEIigcQBdT7eXHTE8XK4nJqoJsIaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ox3RdYu8M00ro6mw7qurIM2IBpRG448dmXs/q29Nhp88kooKmSmeEe7E7WUhAorfE5CDRAgTX5C9r4Jay/Rc3KqmzBxU7EWZn/w2kQl8Hiq0Qtk/tPa3Q3CdNECoeXCsltxJ4+1kH10EAM9eXnGmfsJalfcYWjrCEIGkFy1U4Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 370061F7F4;
-	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
-	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
-	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
-	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721897532;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
-	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
-	yEfbug76xpuQM+Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GfGZTkxN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BOSzqu0U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
-	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
-	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
-	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721897532;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
-	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
-	yEfbug76xpuQM+Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C34513874;
-	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id je6YBjwSomZxLQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 08:52:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BAD3FA08F2; Thu, 25 Jul 2024 10:51:56 +0200 (CEST)
-Date: Thu, 25 Jul 2024 10:51:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de,
-	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
-Subject: Re: [PATCH] scripts: reduce false positives in the macro_checker
- script.
-Message-ID: <20240725085156.dezpnf44cilt46su@quack3>
-References: <20240725075830.63585-1-sunjunchao2870@gmail.com>
+	s=arc-20240116; t=1721897673; c=relaxed/simple;
+	bh=LFjleej6va1/xz+ykBTWahA4XEevUy9aUUCl2TISl9A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dbULOC+6S1AapLTS0C/yx9mA8DY58izh2lUpG68ZR76+pjP/X9PMaSlGvOMReBOelkIrEPl0nvbGU81NH9Tol83mUPJyHlXIGKm5EDM2ttVz3+DCm2tQluOGUPyemoMjkEhx7pNnxLLIwHoEF9uHvbH79gDn/mumtyNMhEmu1qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWALtTPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF7CCC116B1;
+	Thu, 25 Jul 2024 08:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721897672;
+	bh=LFjleej6va1/xz+ykBTWahA4XEevUy9aUUCl2TISl9A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gWALtTPGUCIDdJ6T1ps6V3LAanrIzxeTbPUVX6B0s0+oogI/KwDupB3+uR0fdxcxr
+	 qmY/1FSpEdOaJH3Kx+2ad65MGVj9C1wUDRDK/7VPNi6TBEg7eghu9/NyVxbcCEmhyT
+	 Smaejv1OV1eA9/UqIdPRVhXqgzFiaYKJrxVfM/VRpDncNqUael/uers1/ZtTJ8wOxa
+	 TCwbTz+YhKvlJZWtVw9dIWEqYN/lLi7X3P26DhUoXTAC5EL9oDBEVC00jeH5zxC46M
+	 0JGMxBf/7rtpU2g9j4G2ZTR3nn9ozCBgtCk946lWVID5JUlYHU7qMgeAQ3gpGHayvI
+	 hc2iCO/F6C6XQ==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Lukasz Majewski <lukma@denx.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Christian Marangi <ansuelsmth@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+ =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
+ Daniel Golle <daniel@makrotopia.org>, Li Zetao <lizetao1@huawei.com>, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240710100651.4059887-1-lukma@denx.de>
+References: <20240710100651.4059887-1-lukma@denx.de>
+Subject: Re: (subset) [PATCH v1 net-next] leds: trigger: netdev: Add
+ support for tx_err and rx_err notification with LEDs
+Message-Id: <172189767041.875230.3269889865332839490.b4-ty@kernel.org>
+Date: Thu, 25 Jul 2024 09:54:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725075830.63585-1-sunjunchao2870@gmail.com>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 370061F7F4
-X-Spam-Score: -3.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.81 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu 25-07-24 03:58:30, Julian Sun wrote:
-> Reduce false positives in the macro_checker
-> in the following scenarios:
->   1. Conditional compilation
->   2. Macro definitions with only a single character
->   3. Macro definitions as (0) and (1)
+On Wed, 10 Jul 2024 12:06:51 +0200, Lukasz Majewski wrote:
+> This patch provides support for enabling blinking of LEDs when RX or TX
+> errors are detected.
 > 
-> Before this patch:
-> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
-> 	99
+> Approach taken in this patch is similar to one for TX or RX data
+> transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
 > 
-> After this patch:
-> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
-> 	11
+> One can inspect transmission errors with:
+> ip -s link show eth0
 > 
-> Most of the current warnings are valid now.
-> 
-> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-...
->  def file_check_macro(file_path, report):
-> +    # number of conditional compiling
-> +    cond_compile = 0
->      # only check .c and .h file
->      if not file_path.endswith(".c") and not file_path.endswith(".h"):
->          return
-> @@ -57,7 +72,14 @@ def file_check_macro(file_path, report):
->          while True:
->              line = f.readline()
->              if not line:
-> -                return
-> +                break
-> +            line = line.strip()
-> +            if line.startswith(cond_compile_mark):
-> +                cond_compile += 1
-> +                continue
-> +            if line.startswith(cond_compile_end):
-> +                cond_compile -= 1
-> +                continue
->  
->              macro = re.match(macro_pattern, line)
->              if macro:
-> @@ -67,6 +89,11 @@ def file_check_macro(file_path, report):
->                      macro = macro.strip()
->                      macro += f.readline()
->                      macro = macro_strip(macro)
-> +                if file_path.endswith(".c")  and cond_compile != 0:
-> +                    continue
-> +                # 1 is for #ifdef xxx at the beginning of the header file
-> +                if file_path.endswith(".h") and cond_compile != 1:
-> +                    continue
->                  check_macro(macro, report)
->  
->  def get_correct_macros(path):
+> [...]
 
-So I don't think this is right. As far as I understand this skips any macros
-that are conditionally defined? Why? There is a lot of them and checking
-them is beneficial... The patterns you have added should be dealing with
-most of the conditional defines anyway.
+Applied, thanks!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1/1] leds: trigger: netdev: Add support for tx_err and rx_err notification with LEDs
+      commit: 8ed8ccdc279cf840a456c9dddb572fbee45ab6ae
+
+--
+Lee Jones [李琼斯]
+
 
