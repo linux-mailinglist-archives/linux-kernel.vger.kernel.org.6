@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-261706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D09A93BB25
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:19:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FAA93BB2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 05:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74F01F229A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:19:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0449B22522
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 03:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D347017588;
-	Thu, 25 Jul 2024 03:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C963C17556;
+	Thu, 25 Jul 2024 03:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dEtsn0pg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgMH+8RY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3383A55;
-	Thu, 25 Jul 2024 03:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AB911CA9;
+	Thu, 25 Jul 2024 03:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721877563; cv=none; b=nCQ7fy9vT9HqSogT0wIAkbGygoOX9N6jvFj/BPebeRtfvMB9ZeP1ccRyt3H+JNfSRM4vBfuqfYdRpeHQbNFG0nglVwpbEdDLoRf7bixOP2wCjycokqFkG+JqbqIn90d400pqNlmsGI6YwkgbOnCN9JPIzPliYz2x5MG8o9wqe1U=
+	t=1721877715; cv=none; b=SyVo3SxssDDcLgqhES56mEt4AWTf1YgRbc5kOiQ2OkVTFt9GXH1gy0/YXKzego2KLkV8KRWSMwOigKR3M0HyXKDOtiGHfFEmzrrF0koIfra5qT9xYK10NZwOO4PPfRr/XXXR1HlsnzhcMBJEmgybKeDePg9j0l+VOvwMT4IG9lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721877563; c=relaxed/simple;
-	bh=Oyu9e9cS1J8TLhhoFzQJPeb+pmXDRRGVPSe7KN1Bxjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lepC1jyjN1pEpeCsaC/ha+xY9Oelj2d/lbnJMBHBoiDxlYutn5okIxX1uArMnF5ZxU0Ls464N+mvONXdvk/Mt2QgM9SJIJhf113nsouKd39YGvqSq7+1Yg86fQd3OSGpixrhPAluG2UwBZJdA78XTlaKT5ZpBmaqxUcMQ2Ajjwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dEtsn0pg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OJeUM6015382;
-	Thu, 25 Jul 2024 03:19:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	I+Ap1P9IKjo7HTjyi1RDe4oJj/8sZMijIP9T833o4XA=; b=dEtsn0pgnyF2Ez0k
-	aN0RKC7dhpl924bQCjJlzFBUXthmH6JqwWF/wcpfYlEA8Xwk3nPaHIEbPPnTQ1V8
-	cCtAkHYC3zsce9qD6+WEohkDcanrn96Syj9tHk+0rWaN4/Ix9KePy8q+Gs+PJbCY
-	yo4dulThY6sd3J4Pyb2uTRoux3DNEoRBBpxGvZtB94TMs9dLImBPrAgxsrXcPzzt
-	hYGaDM0HqisO4ptfr2CXbZgzYPV0wX7YwoLMvqfwxFTfd8ZizcOkzfCbNLUQPH+l
-	OvCIpsrSz2RmQz4to0iXdCTTVlWKbEzPGIxz45QICd1u1FNmOfgww3Vf4G53loID
-	jXhiMA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40jxxbj4q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 03:19:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P3JC3s005899
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 03:19:12 GMT
-Received: from [10.4.85.8] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 24 Jul
- 2024 20:19:09 -0700
-Message-ID: <f9e5ef49-754c-4d97-8186-634674151b2f@quicinc.com>
-Date: Thu, 25 Jul 2024 13:19:07 +1000
+	s=arc-20240116; t=1721877715; c=relaxed/simple;
+	bh=g74e3WBgbVSeQta0CVKZFBOP7VtQ2Ll8vRhMwBAW99I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fWkjj+1Cz8hB8oF6r4zHU9lGYiiOH5XXVMqpNxYp8MgvuoXXlc2GGXt0JPF7L6s3ejgYEiXLt3mDcRwjiv3XDHj72dieLK979r8+3LQF4b9tRGBfJ4m1rqAsg71C9oSQA23ONXWH9CKwz8ZOSIxS6b1V/22+dhturbqTwyfS3wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgMH+8RY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319DDC32781;
+	Thu, 25 Jul 2024 03:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721877714;
+	bh=g74e3WBgbVSeQta0CVKZFBOP7VtQ2Ll8vRhMwBAW99I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UgMH+8RYjRyIV+kmXBFgw7xHESnHJ/iQdYfQzdW7wcpH1Ame+7ixb0hmuWdPdU/gv
+	 h5dgB6AX+VcqrMF+QKLBl8FdJmBHw4HZF6GF+DSNorG+0ry6psiG7FfCSJEI2RAcF4
+	 tNQ+GRHKnzSIaRQQJV3tWBIM8az5y+cMDuXbL0hewtxSISYOLay2sk0hqq5dpWSL+T
+	 ljGL47L+AqziR4gSw0gTv7Fkf6v7Kv5uH1/K8Cv6xXAIZnRgooBc+tdLumH3rVJwz5
+	 /wZXjmp/ZCkKOAXq0tGCZjrohuVX/FjVWq10JnJhQ/iGfJMTCPB5dx9FXp/vx9AUir
+	 Gp8deLmfFBF7Q==
+Message-ID: <3446a775-99b7-43c3-a35c-1a0f72688e97@kernel.org>
+Date: Thu, 25 Jul 2024 11:21:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,109 +49,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] firmware: qcom: implement object invoke support
+Subject: Re: [PATCH] f2fs: prevent possible int overflow in dir_block_index()
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, stable@vger.kernel.org
+References: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>
-References: <20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com>
- <20240702-qcom-tee-object-and-ioctls-v1-1-633c3ddf57ee@quicinc.com>
- <ink4tq3wk2jkpybiisaudkun3g2x2drfogrdw43zdpi6yh2u5g@yrvrxzxsi46g>
- <836dab13-9c59-4d87-a600-a0be6506deb2@quicinc.com>
- <CAA8EJprp2veCaQq8GsYv4Mu1HQbx8nWv0XWtxcE4cu5kxkA16w@mail.gmail.com>
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <CAA8EJprp2veCaQq8GsYv4Mu1HQbx8nWv0XWtxcE4cu5kxkA16w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XQnD-UDnS82PqeeJ-5QfnkbWWoycYGRt
-X-Proofpoint-GUID: XQnD-UDnS82PqeeJ-5QfnkbWWoycYGRt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_03,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 lowpriorityscore=0 adultscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250018
 
+On 2024/7/25 1:05, Nikita Zhandarovich wrote:
+> The result of multiplication between values derived from functions
+> dir_buckets() and bucket_blocks() *could* technically reach
+> 2^30 * 2^2 = 2^32.
+> 
+> While unlikely to happen, it is prudent to ensure that it will not
+> lead to integer overflow. Thus, use mul_u32_u32() as it's more
+> appropriate to mitigate the issue.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with static
+> analysis tool SVACE.
+> 
+> Fixes: 3843154598a0 ("f2fs: introduce large directory support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-On 7/4/2024 5:34 PM, Dmitry Baryshkov wrote:
-> On Thu, 4 Jul 2024 at 00:40, Amirreza Zarrabi <quic_azarrabi@quicinc.com> wrote:
->>
->>
->>
->> On 7/3/2024 10:13 PM, Dmitry Baryshkov wrote:
->>> On Tue, Jul 02, 2024 at 10:57:36PM GMT, Amirreza Zarrabi wrote:
->>>> Qualcomm TEE hosts Trusted Applications and Services that run in the
->>>> secure world. Access to these resources is provided using object
->>>> capabilities. A TEE client with access to the capability can invoke
->>>> the object and request a service. Similarly, TEE can request a service
->>>> from nonsecure world with object capabilities that are exported to secure
->>>> world.
->>>>
->>>> We provide qcom_tee_object which represents an object in both secure
->>>> and nonsecure world. TEE clients can invoke an instance of qcom_tee_object
->>>> to access TEE. TEE can issue a callback request to nonsecure world
->>>> by invoking an instance of qcom_tee_object in nonsecure world.
->>>
->>> Please see Documentation/process/submitting-patches.rst on how to write
->>> commit messages.
->>
->> Ack.
->>
->>>
->>>>
->>>> Any driver in nonsecure world that is interested to export a struct (or a
->>>> service object) to TEE, requires to embed an instance of qcom_tee_object in
->>>> the relevant struct and implements the dispatcher function which is called
->>>> when TEE invoked the service object.
->>>>
->>>> We also provids simplified API which implements the Qualcomm TEE transport
->>>> protocol. The implementation is independent from any services that may
->>>> reside in nonsecure world.
->>>
->>> "also" usually means that it should go to a separate commit.
->>
->> I will split this patch to multiple smaller ones.
->>
-> 
-> [...]
-> 
->>>
->>>> +    } in, out;
->>>> +};
->>>> +
->>>> +int qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
->>>> +    struct qcom_tee_object *object, unsigned long op, struct qcom_tee_arg u[], int *result);
->>>
->>> What's the difference between a result that gets returned by the
->>> function and the result that gets retuned via the pointer?
->>
->> The function result, is local to kernel, for instance memory allocation failure,
->> or failure to issue the smc call. The result in pointer, is the remote result,
->> for instance return value from TA, or the TEE itself.
->>
->> I'll use better name, e.g. 'remote_result'?
-> 
-> See how this is handled by other parties. For example, PSCI. If you
-> have a standard set of return codes, translate them to -ESOMETHING in
-> your framework and let everybody else see only the standard errors.
-> 
-> 
-
-I can not hide this return value, they are TA dependent. The client to a TA
-needs to see it, just knowing that something has failed is not enough in
-case they need to do something based on that. I can not even translate them
-as they are TA related so the range is unknown.
+Thanks,
 
