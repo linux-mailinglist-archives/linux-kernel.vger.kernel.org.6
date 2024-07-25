@@ -1,297 +1,164 @@
-Return-Path: <linux-kernel+bounces-261670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8758293BA90
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E5E93BA91
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6DF1C2276D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CCC1F22E0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 02:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D18C8DF;
-	Thu, 25 Jul 2024 02:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Te5BZbJf"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2048.outbound.protection.outlook.com [40.107.255.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B859910A2A;
+	Thu, 25 Jul 2024 02:16:21 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E361876;
-	Thu, 25 Jul 2024 02:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721873665; cv=fail; b=s5AGg1EM9uGAfAuuSw071HhOsjEBhJHvqaGKG6D7WLjixukxgPdswOf5Ee1WEscPfPTEQja6b+KbMEkKUlVCpEK4xp+Dnd0Xw7IKoUCTd6T0LZX2r5DrHu7Pq2uI3V/DovCufquZKBcCEUZHtZM3miKGIm2BuN17XzILewhhY+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721873665; c=relaxed/simple;
-	bh=U7sPaSKxBl9AsrVVSHwUjLHpO0kZSstO66xhdqbUd7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Rp9VQn3MpBSY5bwHJsrJAw83+Ohob2HOaFv/Dut36YYviiUamzaA7+mG6cHl+3zxbnLHspYKn/8JHOjV4esQzpOmGGVhBKgkgwilvp9vFPnTdKrC/G/sQkIp9Tf8jkXMslqfYs8mIrcAwf14/xqSBEVGLnEqLviO8tJCOuoWXZg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Te5BZbJf; arc=fail smtp.client-ip=40.107.255.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r/JwbUDGPG7WJuD2GiQ/VroT5tjLanw2d+4JdUeme0bG1ljyf7eOTpcm+iPFswwG4Q5Xd5FoVTRRQLsrJ+LgEKBrnHbCkl3bjQZvQ8wkDiOIBrf5nFp2hhg6mhhqNS4XhkRaf4davaapVkeFWIJ2JSw9kBPx2YhiY10yUrX7oF7TsUnGo9+jwYYrK1hwU9sJvNDZnnlq/6GNuVJn2r9RiNK49G4s7lCbTF2puAhl0CTx5tbM+HiJizjDOY43M/iPi+1Nf8kOavp5EBS0jjk0cTufKXb6O/kPUL62+f9TIIKM+ZnC1x4EhQiYq4Cyvb+JullXmLAZYY8+AV0IHK2SMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WU8I3XPlulrftvQutKfwAcNZnYGqc/K0uhAMsDyn3cM=;
- b=B10V5C8MIcCHrmQT/W2WwlEwmCJVdAemZOOR//Ifubvvz5DZ+Z8s+52Agbwux9o3wwUqxl3DB/hhXZT4hxjSpuK5Z/U5ddbbqMZKcUuMbKv0EQm4Xza76UbsgXWN7Ie+eSqA+lL+d8azh4dRbGEb8O8bjQFc0vIPS3Fqj3TMUUptbG83fX9oCALnKoCz/OTOFRkzIkg97CgHfxS9d6NXGJZNT1o7+oMOWGJmHKL9a6OfM7/1NWdk7PgdqwZ7K+D1Zbphj+0DmzXahn4Ev64LmISSDkbaraDACgjqbzRvXp+YeZ4FcCFrJCa5106FpBllpmL5l4F/s070ptJ269UiUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WU8I3XPlulrftvQutKfwAcNZnYGqc/K0uhAMsDyn3cM=;
- b=Te5BZbJfAWDS4/3VnZoodMDhaVkjbWYuNgbA5UAOZdXWH6lZ2qqFSUAN1i3wYQvvPERXRGwOyB2xANULkQZXlAzarto2R41teJILwb4+5c1Zo87847WYl1rxj0Zygd8yYquUA7OTxpqfe3icakDd2ZouYWWXi6VlfTfyurP6V4/6jysNX8FOiII3UC8JJQ00eTdAjEFhk8I/a/fleW8gXIeBv40pC+rZ3hzjbv1XXGpucwOplJdvh2DK7GO8SdEXlDd88UkH9AJJsM0ra5FzgsGvkwgCIIxtHq0aguOyz9bq7UArmaQt62ZoVjIzNuCt0mFes9SdLbN3KP01hv9xCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by PUZPR06MB6104.apcprd06.prod.outlook.com (2603:1096:301:118::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Thu, 25 Jul
- 2024 02:14:16 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7762.027; Thu, 25 Jul 2024
- 02:14:15 +0000
-From: Huan Yang <link@vivo.com>
-To: Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: [PATCH v2] udmabuf: array alloc use kvmalloc
-Date: Thu, 25 Jul 2024 10:13:49 +0800
-Message-ID: <20240725021349.580574-1-link@vivo.com>
-X-Mailer: git-send-email 2.45.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0010.APCP153.PROD.OUTLOOK.COM (2603:1096::20) To
- PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C902914;
+	Thu, 25 Jul 2024 02:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721873781; cv=none; b=CqxYP1zgifrR+cuHu3aghvNITBTEjOtuW7z9qu30XAngK9NDYr1PGevBvMK3/RZWhUccMr9lTOrjF0vT3Mw3Kx/ZOLLhH1o94YkJIErnsBwZkAUgcXPgc9xFhQ54XF/Egg7cP3/Ma6oFlOMOjPqEUshF5tAWT4i7SVWnfS2wFUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721873781; c=relaxed/simple;
+	bh=XuaIdgysxkYXF0pfGRwT213/rDERO44AiZG9z99Ilns=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OhDRNz2vboV8SMupvz6AQ5PzFoT3K+QHEpPIRQaxasCoYCtgeHw+G08+MM0/snXPbkXAAyXQ4u/8aTVov1sKgi1q0/oH/B3PKhJl9oq0i507DBbrpTCANimjAeSBXEewjZsgFo1Ruj40WXZbZfcB8u5RVMHeniZWeWc8+F0c6LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WTvXL2s9pzQn5C;
+	Thu, 25 Jul 2024 10:12:02 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E97A180102;
+	Thu, 25 Jul 2024 10:16:14 +0800 (CST)
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 25 Jul 2024 10:16:12 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Hui Wang <hw.huiwang@huawei.com>, Changbin Du
+	<changbin.du@huawei.com>
+Subject: [PATCH v6 0/8] perf: Support searching local debugging vdso or specify vdso path in cmdline
+Date: Thu, 25 Jul 2024 10:15:41 +0800
+Message-ID: <20240725021549.880167-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PUZPR06MB6104:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1eefeb49-4e5a-49b5-13cf-08dcac4f7b75
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lz+4VP+vjfLhFT7QSkT1UByM8c2ZUi0uaiRUFt+7WYdavBNoaiqeQ9wt25cI?=
- =?us-ascii?Q?G91DLg0BF4/PkWEfwi+/DEb/YdbU5OCK9NQZi4xO0ZXcRlCproTFHWrG7fzp?=
- =?us-ascii?Q?ZwUdQPM9s8uXKbA02K52ny2BMAVuGiuL4sw/E/6I39PfWq5xAXVwHm74IkV/?=
- =?us-ascii?Q?8nodUSh58yN0ZBjLufrEbLZLwmum9uL2QLxf+sAMVvEUGa2qKmInelCoPtpB?=
- =?us-ascii?Q?1zMzlD9WlEXoWwDgrGwVvQ8pOdXtW805mp6byYgCAZktX0wWQ46Z1jT4u8s/?=
- =?us-ascii?Q?BIjMlo3uFAwp342anM9k5x0ObehwOMcjtgSOlZGeQ2LNT7dUMBXFdWLKSz48?=
- =?us-ascii?Q?4ITMBagzkJJw1obL/Wz3Dq/xO6vDI5an6zRHXT/XEccTjudru7XeIdBfx//D?=
- =?us-ascii?Q?UkE9mgRYza/VXAXS/Y5ytDBY08DxPjn6IKCds+XXQeligK1O/uNri3OWAQdA?=
- =?us-ascii?Q?ceOSC36dXovQB/bwNEGCJ5VMSyClJcH3E3F5gjfwnPjIFB39al4ZQTi8+tqh?=
- =?us-ascii?Q?othJCIUXdjCvIwl3LFNZZGskw2YSQmye+m7x0PZ6Ws1CW2F7XruY3oj49o2A?=
- =?us-ascii?Q?3Aqz4+Xler+Hai4pJqaJFz8hOmjVUu6n9kYm3FFlhSfbs7HJeSHezpxKkGjM?=
- =?us-ascii?Q?p/6Rf6PeW5mpVPtgMd8DeX1J32lvD9L1GjrfrP1Wcv4o2Kxq1tNwPV5z/ljX?=
- =?us-ascii?Q?W8EeH2LHl+gpipZck7BG6rVjchty4Y3JMqBZjdmQsCMLjSt/kt79Shr3sUtH?=
- =?us-ascii?Q?1zJ/iEwpfgt1PQ4IGZ5GyrwjWJORHolYJeuk1HbgfLzyA5G5Or4i7aTZf6Es?=
- =?us-ascii?Q?lEwkdm+fugLNecmXAywZsNxt8fNpWIr17U/9ncveLEFAGNmN7GrWMOsduUK7?=
- =?us-ascii?Q?7lo01ZSyB/C96MvSDQA3b8cbXdGN3Jep1mZYooNBaZmZyMcJwNOMnwe8jQuA?=
- =?us-ascii?Q?NvUpEjhBpjG3F7iwNDAaowJC1fx03DdJGi5qdmkpoRchacbBcSyZJ24/fk1w?=
- =?us-ascii?Q?7le/xshhU3Ompxami9FvY0Q0EVBIPpyKClReato8fqZhL62H8BYFLk5yzAUR?=
- =?us-ascii?Q?AHTUWB5thYpO8POJZYmm72s8ZCKFH6Yi8XMmCsAQiVGqfrygA1fZj5Q53G8h?=
- =?us-ascii?Q?oV0C6Blwjabg4TfTBGxM4rfY8aAy5SSAmp2H/Y9q1N0+ftddT+82odUP5+D7?=
- =?us-ascii?Q?MTz3x7CXOPQEIv9jBJF3Ye5rf42dUs+f2znX3DXMWt4iEdHgLsQFxGxjZZRJ?=
- =?us-ascii?Q?oz2OFmRBPhUH2oBWnAFvjNJW0AAU6lBQpZkYu7XinZId04e38iJjag39q4tE?=
- =?us-ascii?Q?JFCNloED1ZTVH9Q4E0H36OSsfIUXaJIShSkxWcpuzhYK6yAo6Ln711Xp/05Z?=
- =?us-ascii?Q?uXtBgk2dhfPrfZSP0DWxySHr2X7o4pnr+KBLYg6hkGDTXA6ydg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QiwM6FdxAe6bmaBarMRQp+gIepU9oiC8EMz4O3ILQ0e0cO2UF1smCTLZMuWJ?=
- =?us-ascii?Q?oSHNxzIcG1pcJONnKdJD+doJK5t4FKYm6Vh2L6+nA0rVXBAU1XXsVCGH2Yqh?=
- =?us-ascii?Q?5z/DkcnaQfUBHfY7t7lobflKbNyhBiOI3nMnsljz5dZazduSgtBs55yRFcf+?=
- =?us-ascii?Q?b0G3D+tDJNO6ziSGmlmJR3MWm89xM2f8UkQ4xcT/1FZzeEp2OYi1SqMuLQtl?=
- =?us-ascii?Q?N9DVIm0A9a7UhoKt+P2uR1JZWQUcKrFocX05OKTSe3wHOGCchbAhJsIeomhF?=
- =?us-ascii?Q?Jl1VmM5E0Pk35NSGcWiZmT3OD4O7GY0GnBELed8qcDzE7tlyb5Ji+PsDmKeZ?=
- =?us-ascii?Q?kDaJo8eRlqv1H5k89pdme2kJS7NuxKnkNtHcOOEKOg6o8MgMf7OWNufaOUV1?=
- =?us-ascii?Q?tcFltK+jpcUJFTceJM8kxo2CjBwH3b3+W1a67Ru+Ia/WOjv7XcWi1ZtmoFX5?=
- =?us-ascii?Q?zwScCsGaSwe8vae/197EKwPYE+a/jnto3iuXs2T2sPBWiftw8PrY9NexNx58?=
- =?us-ascii?Q?LWnoZVNH6qDw4LgIJAUUPhSM4DEHFK6iYAZd2gZgeAwOtpo/hWiqfKZQFffK?=
- =?us-ascii?Q?lUHxXV7w0j4FN6Ze5sWJpNngLrh59NwHZV7SDn5FdUH2+fPO2bOXP56f4Yoi?=
- =?us-ascii?Q?+AnwcJvxXPt9wqUkYpx2NvH/ICPlQUw9yGTEdeNNpaIsuvmCWqf4q6rDh0Lz?=
- =?us-ascii?Q?yS/AVp5p0NySusLDoAb1cn583krJk1itvpJbvsjoLwlsfkwVDsVuuWorRqYV?=
- =?us-ascii?Q?PeTENb9Zsk3G40IuioQl1TTPk2CreVi4l1v6VcKsGG6d+CYDEpgkZxkiRQnZ?=
- =?us-ascii?Q?q2pmAtv/2kWNPnkzT+fRj5+/Ev/rFivbR5a54KK1iENZE4XmiegIoh8RGa04?=
- =?us-ascii?Q?SlyqKf7UpIa8nByiHRhG4pz5ocQ/eYN1+hAcwf2KBvwXQgl2anAEmF89LYIW?=
- =?us-ascii?Q?0Iyo5DvAtKLRJIUErB/ReXnsPhBC2jrjMOzY5uzzvkAY9/5PZvXyfBVp0Ylm?=
- =?us-ascii?Q?jHWfUE0OsaItF24Xax5SLdmBBbwN4Q6C336eYo9NZmfAt4Ydvpp8OI09aQcc?=
- =?us-ascii?Q?FnwScVoVFIw9dh4jWSI0LjaoVTGGMiUq2cxXmOH0Y9eDer+F0ZwauErI80LT?=
- =?us-ascii?Q?r/RuF/3jAEPW+lctEBd917SiMD1Z7E9qakeePiouFqjFSLGxLeKjlIC2H6ON?=
- =?us-ascii?Q?4888FW4/njQv6/D6NRaEExWYneiujrwyngU0BdgmVNsLm9yoLmHGyBVuuBIp?=
- =?us-ascii?Q?jJa486iUKVjZXq1K4LRaGXk28LhtXMD5DCVyQCHLWEOtvwXeQybzw6b0xhzW?=
- =?us-ascii?Q?Lh+Wmrdo425wuDgHrhl5wHyPVRXF4jnMk+Lv/94lpUZN2JHVFdzZYWjaooTQ?=
- =?us-ascii?Q?5d0eFDNjGodKlaHKJ56UCdz3dhI/LWG8OcCHn9rPbS3BmKGeV/2l23IXwg1Z?=
- =?us-ascii?Q?BIfUk8BW+Axtb1UB/jAZW8B5I23N4/D7oE1+W70SD9Qk68VnCnPLpynM4/Qn?=
- =?us-ascii?Q?0KOOpdcDffxz50T13bppPjVaPKgBvnSoCEvblHCsTG4gaaUZl84iu+80UBK/?=
- =?us-ascii?Q?n2PPnMsTVGu6seEnLzsRZrD9lH2ZvV27SPIddpTE?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1eefeb49-4e5a-49b5-13cf-08dcac4f7b75
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2024 02:14:15.5424
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cvB0z9hZdqyt68OG2JgPuiYYr/gvUN999fja1rjQyReQk0pJgeMCI0T5FxIrJHuftlbUSxIW7TfoenmlqCvOoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6104
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100011.china.huawei.com (7.221.188.204)
 
-When PAGE_SIZE 4096, MAX_PAGE_ORDER 10, 64bit machine,
-page_alloc only support 4MB.
-If above this, trigger this warn and return NULL.
+The vdso dumped from process memory (in buildid-cache) lacks debugging
+info. To annotate vdso symbols with source lines we need a debugging
+version.
 
-udmabuf can change size limit, if change it to 3072(3GB), and then alloc
-3GB udmabuf, will fail create.
+For x86, we can find them from your local build as
+'arch/x86/entry/vdso/vdso{32,64}.so.dbg'. Or they may resides in
+'/lib/modules/<version>/vdso/vdso{32,64}.so' on Ubuntu. But notice that the
+builid has to match. 
 
-[ 4080.876581] ------------[ cut here ]------------
-[ 4080.876843] WARNING: CPU: 3 PID: 2015 at mm/page_alloc.c:4556 __alloc_pages+0x2c8/0x350
-[ 4080.878839] RIP: 0010:__alloc_pages+0x2c8/0x350
-[ 4080.879470] Call Trace:
-[ 4080.879473]  <TASK>
-[ 4080.879473]  ? __alloc_pages+0x2c8/0x350
-[ 4080.879475]  ? __warn.cold+0x8e/0xe8
-[ 4080.880647]  ? __alloc_pages+0x2c8/0x350
-[ 4080.880909]  ? report_bug+0xff/0x140
-[ 4080.881175]  ? handle_bug+0x3c/0x80
-[ 4080.881556]  ? exc_invalid_op+0x17/0x70
-[ 4080.881559]  ? asm_exc_invalid_op+0x1a/0x20
-[ 4080.882077]  ? udmabuf_create+0x131/0x400
+If user doesn't specify the path, perf will search them internally as long
+as vmlinux when recording samples. The searched debugging vdso will add to
+buildid cache.
 
-Because MAX_PAGE_ORDER, kmalloc can max alloc 4096 * (1 << 10), 4MB
-memory, each array entry is pointer(8byte), so can save 524288 pages(2GB).
+Below samples are captured on my local build kernel. perf succesfully
+find debugging version vdso and we can annotate with source without
+specifying vdso path.
 
-Further more, costly order(order 3) may not be guaranteed that it can be
-applied for, due to fragmentation.
+$ sudo perf record -a
+$ sudo perf report --objdump=llvm-objdump
 
-This patch change udmabuf array use kvmalloc_array, this can fallback
-alloc into vmalloc, which can guarantee allocation for any size and does
-not affect the performance of kmalloc allocations.
+Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+__vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+Percent│       movq    -48(%rbp),%rsi
+       │       testq   %rax,%rax
+       │     ;               return vread_hvclock();
+       │       movq    %rax,%rdx
+       │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+       │     ↑ js      eb
+       │     ↑ jmp     74
+       │     ;               ts->tv_sec = vdso_ts->sec;
+  0.02 │147:   leaq    2(%rbx),%rax
+       │       shlq    $4, %rax
+       │       addq    %r10,%rax
+       │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+  9.38 │152:   movl    (%r10),%ecx
 
-Signed-off-by: Huan Yang <link@vivo.com>
----
-Changelog:
- v2 -> v1: rebase, change offset and mempin folio array use kvmalloc,
-change description.
+When doing cross platform analysis, we need to specify the vdso path if
+we are interested in its symbols. At most two vdso can be given. Also you
+can pack your buildid cache with perf-archive if the debugging vdso can be
+found on the sampled machine.
 
- drivers/dma-buf/udmabuf.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+$ sudo perf report --objdump=llvm-objdump \
+      --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 047c3cd2ceff..7addb1720bc3 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -80,7 +80,7 @@ static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
- 
- 	dma_resv_assert_held(buf->resv);
- 
--	pages = kmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
-+	pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
- 	if (!pages)
- 		return -ENOMEM;
- 
-@@ -88,7 +88,7 @@ static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
- 		pages[pg] = &ubuf->folios[pg]->page;
- 
- 	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
--	kfree(pages);
-+	kvfree(pages);
- 	if (!vaddr)
- 		return -EINVAL;
- 
-@@ -196,8 +196,8 @@ static void release_udmabuf(struct dma_buf *buf)
- 		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
- 
- 	unpin_all_folios(&ubuf->unpin_list);
--	kfree(ubuf->offsets);
--	kfree(ubuf->folios);
-+	kvfree(ubuf->offsets);
-+	kvfree(ubuf->folios);
- 	kfree(ubuf);
- }
- 
-@@ -322,13 +322,13 @@ static long udmabuf_create(struct miscdevice *device,
- 	if (!ubuf->pagecount)
- 		goto err;
- 
--	ubuf->folios = kmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
-+	ubuf->folios = kvmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
- 				    GFP_KERNEL);
- 	if (!ubuf->folios) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
--	ubuf->offsets = kcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
-+	ubuf->offsets = kvcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
- 				GFP_KERNEL);
- 	if (!ubuf->offsets) {
- 		ret = -ENOMEM;
-@@ -343,7 +343,7 @@ static long udmabuf_create(struct miscdevice *device,
- 			goto err;
- 
- 		pgcnt = list[i].size >> PAGE_SHIFT;
--		folios = kmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
-+		folios = kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
- 		if (!folios) {
- 			ret = -ENOMEM;
- 			goto err;
-@@ -353,7 +353,7 @@ static long udmabuf_create(struct miscdevice *device,
- 		ret = memfd_pin_folios(memfd, list[i].offset, end,
- 				       folios, pgcnt, &pgoff);
- 		if (ret <= 0) {
--			kfree(folios);
-+			kvfree(folios);
- 			if (!ret)
- 				ret = -EINVAL;
- 			goto err;
-@@ -369,7 +369,7 @@ static long udmabuf_create(struct miscdevice *device,
- 				ret = add_to_unpin_list(&ubuf->unpin_list,
- 							folios[k]);
- 				if (ret < 0) {
--					kfree(folios);
-+					kvfree(folios);
- 					goto err;
- 				}
- 			}
-@@ -382,7 +382,7 @@ static long udmabuf_create(struct miscdevice *device,
- 			}
- 		}
- 
--		kfree(folios);
-+		kvfree(folios);
- 		fput(memfd);
- 		memfd = NULL;
- 	}
-@@ -398,8 +398,8 @@ static long udmabuf_create(struct miscdevice *device,
- 	if (memfd)
- 		fput(memfd);
- 	unpin_all_folios(&ubuf->unpin_list);
--	kfree(ubuf->offsets);
--	kfree(ubuf->folios);
-+	kvfree(ubuf->offsets);
-+	kvfree(ubuf->folios);
- 	kfree(ubuf);
- 	return ret;
- }
+I also improved perf-buildid-cache command recognize vdso when adding files, then
+place it at correct place.
 
-base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
+v6:
+  - split "perf: build-id: try to search debugging vdso and add to cache" 
+    by functional logical. (suggested by Adrian)
+v5:
+  - Searching the vdso in record stage instead of report. So the debugging
+    vdso will be in build-id cache. This is friendly for cross-machine analysis.
+  - Improve perf-buildid-cache command recognize vdso when adding files
+v4:
+  - split the refactoring from the actual change.
+v3:
+  - update documentation.
+v2:
+  - now search vdso automatically as long as vmlinux, as suggested by Adrian.
+  - remove change 'prefer symsrc_filename for filename'.
+
+Changbin Du (8):
+  perf: support specify vdso path in cmdline
+  perf: disasm: refactor function dso__disassemble_filename
+  perf: disasm: use build_id_path if fallback failed
+  perf: symbol: generalize vmlinux path searching
+  perf: build-id: add support for build-id cache vdso debug
+  perf: build-id: extend build_id_cache__find_debug() to find local
+    debugging vdso
+  perf: disasm: prefer debugging files in build-id cache
+  perf buildid-cache: recognize vdso when adding files
+
+ tools/perf/Documentation/perf-annotate.txt |   3 +
+ tools/perf/Documentation/perf-c2c.txt      |   3 +
+ tools/perf/Documentation/perf-inject.txt   |   3 +
+ tools/perf/Documentation/perf-report.txt   |   3 +
+ tools/perf/Documentation/perf-script.txt   |   3 +
+ tools/perf/Documentation/perf-top.txt      |   3 +
+ tools/perf/builtin-annotate.c              |   2 +
+ tools/perf/builtin-buildid-cache.c         |  26 ++-
+ tools/perf/builtin-c2c.c                   |   2 +
+ tools/perf/builtin-inject.c                |   2 +
+ tools/perf/builtin-report.c                |   2 +
+ tools/perf/builtin-script.c                |   2 +
+ tools/perf/builtin-top.c                   |   2 +
+ tools/perf/util/build-id.c                 |  57 +++++-
+ tools/perf/util/disasm.c                   | 131 ++++++++-----
+ tools/perf/util/machine.c                  |   4 +-
+ tools/perf/util/symbol.c                   | 209 ++++++++++++++++-----
+ tools/perf/util/symbol.h                   |   9 +-
+ tools/perf/util/symbol_conf.h              |   5 +
+ 19 files changed, 359 insertions(+), 112 deletions(-)
+
 -- 
-2.45.2
+2.34.1
 
 
