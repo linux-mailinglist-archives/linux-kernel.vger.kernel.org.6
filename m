@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-262472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD1693C77E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:02:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8579F93C77F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25872844CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79541C21DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCB319D892;
-	Thu, 25 Jul 2024 17:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79FD19D891;
+	Thu, 25 Jul 2024 17:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DqHwgswH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VRsW9J1s"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399A426286
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F031F1B812
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926934; cv=none; b=MENir8W/QSV0AptKzSEnOsjnVJxF9TszlTiFyvfg+6hFKxPROnf4PebHU+5/3HGtOUicHktTOrLuNc18qnCQGQ1CSi6WGOV+wddgTrkPWCtU1CavEAmL01VgRqMO3ou7T1svGoTpBvfzHFJ5Wwnr+kmefQtmjHShN0qPEg77hZ4=
+	t=1721926986; cv=none; b=m31yRTHdPAj7cIYN4ifjXRdVveyILcNPvb9SkPnM2m4ppoae0a4HqDfZvYatv5QUe+W1tkQptrzUim+woL7t9ghaN3fkHlpAk1kH9pzmN4Veu8FRka1aWWehoIiRjQoskwWwn2bySxX9JWbHEWUl2aTv6edH/oaWNZE+Trqr5hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926934; c=relaxed/simple;
-	bh=kTokRip6+zG139kcI4R3CFeRyk8ffJ8yT6wEqIiNPgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FWQaPhbbyMjX+mLZIaPk4HOHqC0iee0HHXkFO4BEgBOG4Id/ktmko465uwhRc5cI1/qH9AVYp3u+b8pUAfoQIMDwqM8+6AbrDF4vGAGytqtyxYbhy2QxzPGjGUhsKmuzwWDMK6yZP7VdDxBbC+iZD5vzug8NM615sSM2S5pUBuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DqHwgswH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721926932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WBSxPgh64JOs+4ms35CG8zRXGEwO0ju9A2tPRKm0s4E=;
-	b=DqHwgswHWw0j1dyJPfA/b8U2CJfOdnta4gDeZioWh13/ztmGs0lEDr3NdhmQHzDgxkTJ2k
-	cneCUsW2VOp5mHkimKPhTSS9tNLbjn1LGEO3Z9RjTRU7MwcLBbOYJLBvdq3Q2Rbwki1/Bn
-	J+anmLkqbA0i3jy6snk3aGY67e0L49M=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-27ytda8vNNiDWsx6fWT4XQ-1; Thu,
- 25 Jul 2024 13:02:10 -0400
-X-MC-Unique: 27ytda8vNNiDWsx6fWT4XQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FE7F1955BF2;
-	Thu, 25 Jul 2024 17:02:08 +0000 (UTC)
-Received: from [10.2.16.78] (unknown [10.2.16.78])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8335D1955D42;
-	Thu, 25 Jul 2024 17:02:03 +0000 (UTC)
-Message-ID: <96aec91c-aa5c-4352-b93c-323b22011370@redhat.com>
-Date: Thu, 25 Jul 2024 13:02:01 -0400
+	s=arc-20240116; t=1721926986; c=relaxed/simple;
+	bh=ShgQ0JhyjtWoViG5e0U/sbL9/kIAuqN/XlVVMl12WLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p1+4P8EgZ9iXtwMJ0NdD8LWr4KWVos8ba6U6o7B/zY5j6RQvh12DWTK36edii0c27Vsda71O/9aXQ1U1+zf4u8Gl6Dzui3HlP4ME4FLSWB2td0PoTCzjGlHRxPPYpagRqrBlfahRtsALo/OaJbBSeT49RYDolYXUlqqTAeEUFig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VRsW9J1s; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so91099166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1721926982; x=1722531782; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uO1vLwT5TgmbirPBYsCNupkLZDUfDp6exkmMnd87h3E=;
+        b=VRsW9J1sQ0F7XKUTMWCZXQII8kkfwMgZVIj7AocdbumVdJMIOZSHxkhDlfV0VSK+HO
+         D0IyMBA6jV5Yn8umn3kP+jUadieyXlc85bnzFg6lIGT4fCG3FfhwQa81EJAFpka4pOjm
+         ByqjMSJfpbd2F/Kx4Pj1GOQkTb/2FESVLA2pQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721926982; x=1722531782;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uO1vLwT5TgmbirPBYsCNupkLZDUfDp6exkmMnd87h3E=;
+        b=SXaBvf8JIo+y6ogs5rTbNDwzUtDrC2br9AxLahwIcwWdXgpM1qQuP7YbJ++szZLm3I
+         9D61nyOHqyDBfcUGZeeiP/yWAyVBkmqMaPQ8Oi8b7Fg5PiG29DwvCY40ikQEGOrtzOox
+         jhDWHnPGFYq9o+tyQGSyQFJC/GxDnrA2RTWNrHWwLIBEPcPhbqQPY/02qj2+aQKCmm6b
+         FBETe5JyxLRutmIL5PoTEf9JsFFF8KSiT/27OqsN9EBAgqMFScn0iWlIJ/okeBRXCnq8
+         MX6cpPeI4h0N+Hik+LIs6/DKs6b/rw6i7s9a7vcceeZ+drGZYjo9/DfenJ7M1BLZt9Rv
+         HaXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6RgvioGVUzVpDUq0zDQmyup6d2QaMHarAQMegjUtUuLoj5pdFyT6N+ASvPWHuoM3V7K5q4dIkdkVx3sb6vTnLWHwX16jHmlDRDA9z
+X-Gm-Message-State: AOJu0YxfXDXfSiUnVHslcuBASeEqBQj7I6sIhxboUQH8Ae19GiY2zFsQ
+	1ejuFwWaCwVhMGsxgh67qQIYAkLRk1S23kMczqoy9RtsIXPw74d2wF5U/Cknh0Ot3CrfRJ3wee4
+	SIYk=
+X-Google-Smtp-Source: AGHT+IFKNSSoFuL9obl9PQkOhESa7WXGl/uUrlpuTbRJUQ4RBjGiZFCxFqIDugEE/As3oE+JPuPMVA==
+X-Received: by 2002:a17:907:2d0a:b0:a7a:a212:be48 with SMTP id a640c23a62f3a-a7ac5087e56mr275018966b.56.1721926982013;
+        Thu, 25 Jul 2024 10:03:02 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb98a2sm88810466b.217.2024.07.25.10.03.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jul 2024 10:03:01 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so1575855a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:03:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWK6BiCazU5zStO54xtCdEhqUQjk72+YZs5XwC4+QlH73K5JWrl1Z6nodHELtEOgYdrCmyfX/4TRYyxqyMHtIFH3H+EzPFTaTvcIGmE
+X-Received: by 2002:a05:6402:3587:b0:5a1:c43:82ca with SMTP id
+ 4fb4d7f45d1cf-5ac2c1c73b3mr2343280a12.26.1721926981090; Thu, 25 Jul 2024
+ 10:03:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rcu: Use system_unbound_wq to avoid disturbing isolated
- CPUs
-To: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vratislav Bendel <vbendel@redhat.com>
-References: <20240723181025.187413-1-longman@redhat.com>
- <20240725153552.GA927762@neeraj.linux>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240725153552.GA927762@neeraj.linux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com> <ef130c0a-b82f-472f-8c53-f7ef4c236c44@app.fastmail.com>
+ <CAHk-=wh_+muDANgpjC6_31QMh4OnKEOgbZiD_MymHxAHRZRyqg@mail.gmail.com> <5a129d04e0b84b48ba6c5189a047ac8f@AcuMS.aculab.com>
+In-Reply-To: <5a129d04e0b84b48ba6c5189a047ac8f@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Thu, 25 Jul 2024 10:02:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whLcr11D28vu2NotZYn3GNH6BCTK57Zw4d4v7eut39z=g@mail.gmail.com>
+Message-ID: <CAHk-=whLcr11D28vu2NotZYn3GNH6BCTK57Zw4d4v7eut39z=g@mail.gmail.com>
+Subject: Re: [PATCH 4/7] minmax: Simplify signedness check
+To: David Laight <David.Laight@aculab.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/25/24 11:35, Neeraj Upadhyay wrote:
-> On Tue, Jul 23, 2024 at 02:10:25PM -0400, Waiman Long wrote:
->> It was discovered that isolated CPUs could sometimes be disturbed by
->> kworkers processing kfree_rcu() works causing higher than expected
->> latency. It is because the RCU core uses "system_wq" which doesn't have
->> the WQ_UNBOUND flag to handle all its work items. Fix this violation of
->> latency limits by using "system_unbound_wq" in the RCU core instead.
->> This will ensure that those work items will not be run on CPUs marked
->> as isolated.
->>
-> Alternative approach here could be, in case we want to keep per CPU worker
-> pools, define a wq with WQ_CPU_INTENSIVE flag. Are there cases where
-> WQ_CPU_INTENSIVE wq won't be sufficient for the problem this patch
-> is fixing?
+On Thu, 25 Jul 2024 at 02:01, David Laight <David.Laight@aculab.com> wrote:
+>
+> The condition is '>= 0' so it doesn't matter if it is '1' or '0'.
 
-What exactly will we gain by defining a WQ_CPU_INTENSIVE workqueue? Or 
-what will we lose by using system_unbound_wq? All the calls that are 
-modified to use system_unbound_wq are using WORK_CPU_UNBOUND as their 
-cpu. IOW, they doesn't care which CPUs are used to run the work items. 
-The only downside I can see is the possible loss of some cache locality.
+Yes, but that's because the whole conditional is so inexplicably complex.
 
-In fact, WQ_CPU_INTENSIVE can be considered a subset of WQ_UNBOUND. An 
-WQ_UNBOUND workqueue will avoid using isolated CPUs, but not a 
-WQ_CPU_INTENSIVE workqueue.
+But the explanation is:
 
-Cheers,
-Longman
+> That gives a 'comparison of unsigned type against 0 is always true' warning.
+> (The compiler generates that for code in the unused branches of both
+> __builtin_choose_expr() and _Generic().)
+> Moving the comparison to the outer level stops all such compiler warnings.
 
+Christ. This whole series is a nightmare of "add complexity to deal
+with stupid issues".
 
+But the kernel test robot clearly found even more issues.
+
+I think we need to just go back to the old code. It was stupid and
+limited and caused us to have to be more careful about types than was
+strictly necessary.
+
+But it was also about a million times simpler, and didn't cause build
+time regressions.
+
+             Linus
 
