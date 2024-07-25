@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-261857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A5593BD01
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699AC93BD0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085B3283832
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25523282C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 07:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB3D16F908;
-	Thu, 25 Jul 2024 07:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D727F16F830;
+	Thu, 25 Jul 2024 07:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IMp2mdPr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oQcPRt0g"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092204428;
-	Thu, 25 Jul 2024 07:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC1C16D9B9;
+	Thu, 25 Jul 2024 07:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892102; cv=none; b=mLIWuDsRs4IHZaOA2bXvS94AfQsJ1502G8MZnU4ceNdt2tFtqpijC8hA8WkgF8mQpOvwlnom93RcWZt6ujMRmps+lkot8K7UNbjNL9G2xitwNx0KbubBHZ1PHR96CL1JMMh4kMHLUnRoLhOgRlwYt3vL8N9uO7jnK4Ry4o9/cDQ=
+	t=1721892194; cv=none; b=PfyZkCM+/olsrwpV96JmR7osoaC7yqzg9V4YMtSHirZbC8E11/YmyTp91Ao3Ctiz8OjN2htEb47UpQ7p+MeOs8gMVzhwDZo7J1zlRzdlW9lavKwcneXyTmjbPeErUHGG6NElyKbapLMHbFRjLBPie2OxIjtAHKDdEEENJh8glPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892102; c=relaxed/simple;
-	bh=ydbfuohjatUcdiCDESO0TMpmlY+ErfumtWftHn6xhc8=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ik4LCSlTMrbmpykAY4mzWbQ4Lea5u8/h2j7bWVM9hql7MkfmF2CaQgxgkQYrncBcZtVa2EgHBdSRTbhunZfkTwiz4Y+epVsafwzU126vdn4Z088r5I69JWbPmaqHx67jOxJXtnjITIzpD3T4wj2xJn/LFJKkV9zb9wp4BVuXeM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IMp2mdPr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OJlCC5007911;
-	Thu, 25 Jul 2024 07:21:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ig7qJ9Vxpn3l4dcvLm0+s7oO6xAzUdgvzcwziFSjE6M=; b=IMp2mdPrVEuEhnJ3
-	7VlREr044iOOChgwcf6s/n9GsciRvpy/pavDwnwy4gnAw8y09Tu4Vf4VMHbXun39
-	jNkKU7unhH1g1eX8bzrn2EUFqjNaxdbhRRpf3GH97HYUNgKxo6RkTMV41YqdiY7k
-	zmdd2Yl66ZnAGmfiTLNe6HO6Ataewt+RQ1nBQ7nD7wLyUIGcTnKjtpXixbegm5Ju
-	kYOIK8AI8BytSzUUNoH5S2M/nfjMD2+1cM//qpEuxP3mT42tY0QaVgl5qGvtqhaR
-	4a+ublY6hODYQmrAFbmoeR50QA9JH+VNKmvWUtUQ33EVWeQHKHyR4VhBoebrE8CY
-	ZPAWQQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g4jh473x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:21:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7LbND025094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:21:37 GMT
-Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 25 Jul 2024 00:21:37 -0700
-Received: from nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b]) by
- nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b%12]) with mapi id
- 15.02.1544.009; Thu, 25 Jul 2024 00:21:37 -0700
-From: "Yuvaraj Ranganathan (QUIC)" <quic_yrangana@quicinc.com>
-To: Theodore Ts'o <tytso@mit.edu>,
-        "linux-fscrypt@vger.kernel.org"
-	<linux-fscrypt@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Thread-Topic: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Thread-Index: Adrd1KUCQ0a7ysxrSBSnpsfNUNxokAAEOaUAAB9SRWA=
-Date: Thu, 25 Jul 2024 07:21:36 +0000
-Message-ID: <08079d01e25748108aedb95a3c30e5e7@quicinc.com>
-References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
- <20240724162132.GB131596@mit.edu>
-In-Reply-To: <20240724162132.GB131596@mit.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721892194; c=relaxed/simple;
+	bh=LybX6K9ckx8LWHxoZ8RF7U51lUc9uadONdKAka89nR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rKRcaXmenZx7yTIzp3TIe5RASh0m5HY+mjP8JFxwlmD3+fhSiQItFQh6QaY4lNv/x6h6aiEQYddkN0tRrZmMndW1jhkj0whqe1nAEHVnSPvNXSWA9F3fvJ5C0ot2kgRT4bpUN8IAlx2LaukbMtpwlolUC2bLenqUdf68wJ/llBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oQcPRt0g; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721892190;
+	bh=LybX6K9ckx8LWHxoZ8RF7U51lUc9uadONdKAka89nR8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oQcPRt0gV6n4RhWpSjX2OkdJhXIIy0qJSx1BiKa33V58VcISEGOS/6+rnSFlHlgbR
+	 EhpChXPIXtqLflIdzPrlrQBSzKz8xdVa3ZVsONDIFMuBcjVkZ/Gy9Nd8wrLmFJDgOb
+	 W/NdvgA7aMY3Pfs7bpV5TYvw3gMITgdc++x6JdBpywwoOx1KBaJKxLWdeDwWnr8GfJ
+	 hxSQS3osndlbfRrY+mZq9bXWLr8TTo10dslQp2nY+Umg8EvYYTWgTA/cYMiZYMa/DJ
+	 K1pNov4d76V5Vb8JSo0NNJkCZBZr0eWB6+0WDXRKRut+o0fJPzABHEc0N58O3t+1zl
+	 czYPPpZPws/kQ==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D514837808FA;
+	Thu, 25 Jul 2024 07:23:09 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	wenst@chromium.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] arm64: dts: mediatek: mt8186: Fix supported-hw mask for GPU OPPs
+Date: Thu, 25 Jul 2024 09:22:43 +0200
+Message-ID: <20240725072243.173104-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
-X-Proofpoint-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_07,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250046
+Content-Transfer-Encoding: 8bit
 
-Hello Ted,
+The speedbin eFuse reads a value 'x' from 0 to 7 and, in order to
+make that compatible with opp-supported-hw, it gets post processed
+as BIT(x).
 
-I don't see fast_commit feature is enabled for this filesystem.
+Change all of the 0x30 supported-hw to 0x20 to avoid getting
+duplicate OPPs for speedbin 4, and also change all of the 0x8 to
+0xcf because speedbins different from 4 and 5 do support 900MHz,
+950MHz, 1000MHz with the higher voltage of 850mV, 900mV, 950mV
+respectively.
 
-Here are the filesystem features enabled for that disk partition,
+Fixes: f38ea593ad0d ("arm64: dts: mediatek: mt8186: Wire up GPU voltage/frequency scaling")
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8186.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Filesystem features:=20
-has_journal ext_attr resize_inode dir_index stable_inodes filetype needs_re=
-covery extent 64bit flex_bg encrypt sparse_super large_file huge_file dir_n=
-link extra_isize metadata_csum
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+index 4763ed5dc86c..d63a9defe73e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+@@ -731,7 +731,7 @@ opp-850000000 {
+ 		opp-900000000-3 {
+ 			opp-hz = /bits/ 64 <900000000>;
+ 			opp-microvolt = <850000>;
+-			opp-supported-hw = <0x8>;
++			opp-supported-hw = <0xcf>;
+ 		};
+ 
+ 		opp-900000000-4 {
+@@ -743,13 +743,13 @@ opp-900000000-4 {
+ 		opp-900000000-5 {
+ 			opp-hz = /bits/ 64 <900000000>;
+ 			opp-microvolt = <825000>;
+-			opp-supported-hw = <0x30>;
++			opp-supported-hw = <0x20>;
+ 		};
+ 
+ 		opp-950000000-3 {
+ 			opp-hz = /bits/ 64 <950000000>;
+ 			opp-microvolt = <900000>;
+-			opp-supported-hw = <0x8>;
++			opp-supported-hw = <0xcf>;
+ 		};
+ 
+ 		opp-950000000-4 {
+@@ -761,13 +761,13 @@ opp-950000000-4 {
+ 		opp-950000000-5 {
+ 			opp-hz = /bits/ 64 <950000000>;
+ 			opp-microvolt = <850000>;
+-			opp-supported-hw = <0x30>;
++			opp-supported-hw = <0x20>;
+ 		};
+ 
+ 		opp-1000000000-3 {
+ 			opp-hz = /bits/ 64 <1000000000>;
+ 			opp-microvolt = <950000>;
+-			opp-supported-hw = <0x8>;
++			opp-supported-hw = <0xcf>;
+ 		};
+ 
+ 		opp-1000000000-4 {
+@@ -779,7 +779,7 @@ opp-1000000000-4 {
+ 		opp-1000000000-5 {
+ 			opp-hz = /bits/ 64 <1000000000>;
+ 			opp-microvolt = <875000>;
+-			opp-supported-hw = <0x30>;
++			opp-supported-hw = <0x20>;
+ 		};
+ 	};
+ 
+-- 
+2.45.2
 
-Thanks,
-Yuvaraj.
-
------Original Message-----
-From: Theodore Ts'o <tytso@mit.edu>=20
-Sent: Wednesday, July 24, 2024 9:52 PM
-To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
-Cc: linux-fscrypt@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-ker=
-nel@vger.kernel.org
-Subject: Re: Software encryption at fscrypt causing the filesystem access u=
-nresponsive
-
-WARNING: This email originated from outside of Qualcomm. Please be wary of =
-any links or attachments, and do not enable macros.
-
-On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
-> Hello developers,
->
-> We are trying to validate a Software file based encryption with=20
-> standard key by disabling Inline encryption and we are observing the=20
-> adb session is hung.  We are not able to access the same filesystem at=20
-> that moment.
-
-The stack trace seems to indicate that the fast_commit feature is enabled. =
- That's a relatively new feature; can you replicate the hang without fast_c=
-ommit being enabled?
-
-                                                - Ted
 
