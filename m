@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-262200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484F793C257
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F23D793C25D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D5C1F21380
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F1F1F21EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B55A19AA78;
-	Thu, 25 Jul 2024 12:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E7719AD5F;
+	Thu, 25 Jul 2024 12:49:00 +0000 (UTC)
 Received: from out28-170.mail.aliyun.com (out28-170.mail.aliyun.com [115.124.28.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9AE19A2B2;
-	Thu, 25 Jul 2024 12:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627D119AA52;
+	Thu, 25 Jul 2024 12:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721911728; cv=none; b=ueked7A+GWsWqODDCthMEqoN0ZHyJvKoqd2WUA128QQBFs6pBdpS7BRyoJztzaApDLmgSnz40PKjUAZBbEhsrcB/9bN58tLut7o3UBe79mGmXAN0OvR/SUcb86lvlcvFewkeeMYCfmLLo0cfCb1KvO1+ZJXf6G8GKK5mGDFF8io=
+	t=1721911740; cv=none; b=GodRePVbdEE7BxMSlboAWtOxLpqZYerfIaA/JcLzd/uP+LW+nXnKPEAFVw8GjUzF3KuocAp5+BVS8kAYAywR8/1n9+wGcV4ltrELG4siMyDfNqwKvQOcgvBbQOS3OfaVVs25AkxFZwWHo0A0wuA49fDsPTAtwo5Rq/aq+IaL6Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721911728; c=relaxed/simple;
-	bh=UWEdzEaMcLD0lGqWSV6HpaVhkIXsfG2/ugkaS8wWBdM=;
+	s=arc-20240116; t=1721911740; c=relaxed/simple;
+	bh=fcyt51znHViXcRAwfdoP9hM6yaqdUQfl2x3m/fKXDZs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fBtMdFWBT22Ep+l1QKkCVtu35/t6tcy7jOu+qdhkabD/lfEFogdSVB3mkV60MDwfKoOu7ARoxbOjhlByEEtpGLwtO6OZVYD8q9WbjJn+1JLI+tc8GfcMYvY20475A4t4h5nB12zDuhYLMN+fDIwCP5rF0NyP7UJZwfHhOkGyJAs=
+	 MIME-Version; b=iEozPWFs7hvbOVvuoSSqvKGhGDWhieKhmPIHSIImpuClQAkVU81lBLoP3EnTv1qrSpbjFqb+bPGTs/0hPD0XoR31JXXjPmg3db+HMGeIug3AErfYB0cKJpGfhz8FPYiDvp3KrnAssiR2TT1ygNdkfK4K/+GW7FgAy1u/IFMGQEM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07728087|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.121679-0.00208055-0.87624;FP=17686365795973719130|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033023108233;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YZYN6F6_1721911711;
-Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YZYN6F6_1721911711)
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07514232|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.0594848-0.00113714-0.939378;FP=7877110177032922334|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033045192045;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YZYEnRg_1721911727;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YZYEnRg_1721911727)
           by smtp.aliyun-inc.com;
-          Thu, 25 Jul 2024 20:48:36 +0800
+          Thu, 25 Jul 2024 20:48:54 +0800
 From: wangshuaijie@awinic.com
-To: krzk@kernel.org
+To: waqar.hameed@axis.com
 Cc: conor+dt@kernel.org,
 	devicetree@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	jeff@labundy.com,
+	jic23@kernel.org,
 	kangjiajun@awinic.com,
 	krzk+dt@kernel.org,
-	linux-input@vger.kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	liweilei@awinic.com,
 	robh@kernel.org,
 	wangshuaijie@awinic.com
-Subject: Re: [PATCH V2 0/5] Add support for Awinic SAR sensor
-Date: Thu, 25 Jul 2024 12:48:31 +0000
-Message-ID: <20240725124831.891084-1-wangshuaijie@awinic.com>
+Subject: Re: [PATCH V3 0/2] Add support for Awinic SAR sensor
+Date: Thu, 25 Jul 2024 12:48:47 +0000
+Message-ID: <20240725124847.891270-1-wangshuaijie@awinic.com>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <b6cf55a8-5032-4db9-9431-b938158a1706@kernel.org>
-References: <b6cf55a8-5032-4db9-9431-b938158a1706@kernel.org>
+In-Reply-To: <pndbk32vnhz.fsf@axis.com>
+References: <pndbk32vnhz.fsf@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,113 +59,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,=0D
-=0D
-On Fri, 12 Jul 2024 14:02:40 +0200, krzk@kernel.org wrote:=0D
->On 12/07/2024 11:49, wangshuaijie@awinic.com wrote:=0D
->> Hi Jeff=EF=BC=8C=0D
->> =0D
->> Thank you very much for your valuable suggestions. They are indeed a gre=
-at help to me. =0D
->> =0D
->> There are some issues with this driver, but I will do my utmost to impro=
-ve it =0D
->> based on your advice. I will change the input subsystem in the driver to=
- the =0D
->> IIO subsystem and place it in the IIO/proximity directory. I will also m=
-odify =0D
->> the structure of the driver to make it appear more reasonable.=0D
->> =0D
->> On Wed, 5 Jun 2024 22:04:16 -0500, jeff@labundy.com wrote:=0D
->>> Hi Shuaijie,=0D
->>>=0D
->>> On Wed, Jun 05, 2024 at 09:11:38AM +0000, wangshuaijie@awinic.com wrote=
-:=0D
->>>> From: shuaijie wang <wangshuaijie@awinic.com>=0D
->>>>=0D
->>>> Add drivers that support Awinic SAR (Specific Absorption Rate)=0D
->>>> sensors to the Linux kernel.=0D
->>>>=0D
->>>> The AW9610X series and AW963XX series are high-sensitivity=0D
->>>> capacitive proximity detection sensors.=0D
->>>>=0D
->>>> This device detects human proximity and assists electronic devices=0D
->>>> in reducing SAR to pass SAR related certifications.=0D
->>>>=0D
->>>> The device reduces RF power and reduces harm when detecting human prox=
-imity.=0D
->>>> Increase power and improve signal quality when the human body is far a=
-way.=0D
->>>>=0D
->>>> This patch implements device initialization, registration,=0D
->>>> I/O operation handling and interrupt handling, and passed basic testin=
-g.=0D
->>>=0D
->>> Thank you for your submission! It's always great to see new devices=0D
->>> introduced to the kernel. Maybe I can give some high-level feedback=0D
->>> first.=0D
->>>=0D
->>> Unfortunately, I don't think we can review this driver in its current=0D
->>> form; the style and structure are simply too different from what is=0D
->>> expected in mainline. Many of these problems can be identified with=0D
->>> checkpatch [1].=0D
->>>=0D
->>> To that point, I don't think this driver belongs as an input driver.=0D
->>> The input subsystem tends to be a catch-all for sensors in downstream=0D
->>> kernels, and some bespoke SOC vendor HALs tend to follow this approach,=
-=0D
->>> but that does not necessarily mean input is always the best choice.=0D
->>>=0D
->>> SAR devices are a special case where an argument could be made for the=
-=0D
->>> driver to be an input driver, or an IIO/proximity driver. If the device=
-=0D
->>> emits binary near/far events, then an input driver is a good choice;=0D
->>> typically the near/far event could be mapped to a switch code such as=0D
->>> SW_FRONT_PROXIMITY.=0D
->>>=0D
->>> If the device emits continuous proximity data (in arbitrary units or=0D
->>> otherwise), however, IIO/proximity seems like a better choice here. Thi=
-s=0D
->>> driver seems to report proximity using ABS_DISTANCE, which is kind of a=
-n=0D
->>> abuse of the input subsystem, and a strong indicator that this driver=0D
->>> should really be an IIO/proximity driver. If you disagree, I think we=0D
->>> at least need some compelling reasoning in the commit message.=0D
->>>=0D
->>> Regardless of this choice, this driver should really only be 2-3 patche=
-s=0D
->>> (not counting cover letter): one for the binding, and one for a single,=
-=0D
->>> homogenous driver for each of the two devices, unless they have enough=
-=0D
->>> in common that they can be supported by a single driver. Mainline tends=
-=0D
->>> to avoid vendor-specific (and especially part-specific) entire director=
-ies.=0D
->>>=0D
->>> I agree with Krzysztof's advice in one of the other patches; I think it=
-=0D
->>> would be best to study some existing drivers in mainline to gain a=0D
->>> better sense of how they are organized, then use those as a model. If I=
-=0D
->>> may suggest, consider referring to drivers such as [2] and its cousins=
-=0D
->>> in the same directory; these are capacitive proximity sensors that can=
-=0D
->>> be used as buttons, but SAR devices tend to be built upon the same prin=
-ciple.=0D
+On Fri, 12 Jul 2024 13:49:28 +0200, waqar.hameed@axis.com wrote:=0D
+>On Fri, Jul 12, 2024 at 11:31 +0000 wangshuaijie@awinic.com wrote:=0D
 >=0D
->Not much improved in v3 in this regard.=0D
->=0D
->Sorry, this code is not ready for review. There are so many trivial=0D
->style issues, it's like someone sends us Windows drivers for Linux.=0D
->=0D
->Best regards,=0D
->Krzysztof=0D
+>> From: shuaijie wang <wangshuaijie@awinic.com>=0D
+>>=0D
+>> Add drivers that support Awinic SAR (Specific Absorption Rate)=0D
+>> sensors to the Linux kernel.=0D
+>>=0D
+>> The AW9610X series and AW963XX series are high-sensitivity=0D
+>> capacitive proximity detection sensors.=0D
+>>=0D
+>> This device detects human proximity and assists electronic devices=0D
+>> in reducing SAR to pass SAR related certifications.=0D
+>>=0D
+>> The device reduces RF power and reduces harm when detecting human proxim=
+ity.=0D
+>> Increase power and improve signal quality when the human body is far awa=
+y.=0D
+>>=0D
+>> This patch implements device initialization, registration,=0D
+>> I/O operation handling and interrupt handling, and passed basic testing.=
 =0D
-Thank you very much for your suggestion. I will try my best to optimize=0D
-the code and make it look more appropriate.=0D
+>>=0D
+>> shuaijie wang (2):=0D
+>>   dt-bindings: iio: Add YAML to Awinic proximity sensor=0D
+>>   Add support for Awinic proximity sensor=0D
+>>=0D
+>>  .../iio/proximity/awinic,aw96xxx.yaml         |  127 ++=0D
+>>  drivers/iio/proximity/Kconfig                 |   10 +=0D
+>>  drivers/iio/proximity/Makefile                |    2 +=0D
+>>  drivers/iio/proximity/aw9610x.c               | 1150 ++++++++++=0D
+>>  drivers/iio/proximity/aw963xx.c               | 1371 ++++++++++++=0D
+>>  drivers/iio/proximity/aw_sar.c                | 1850 +++++++++++++++++=
+=0D
+>>  drivers/iio/proximity/aw_sar.h                |   23 +=0D
+>>  drivers/iio/proximity/aw_sar_comm_interface.c |  550 +++++=0D
+>>  drivers/iio/proximity/aw_sar_comm_interface.h |  172 ++=0D
+>>  drivers/iio/proximity/aw_sar_type.h           |  371 ++++=0D
+>>  10 files changed, 5626 insertions(+)=0D
+>>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awin=
+ic,aw96xxx.yaml=0D
+>>  create mode 100644 drivers/iio/proximity/aw9610x.c=0D
+>>  create mode 100644 drivers/iio/proximity/aw963xx.c=0D
+>>  create mode 100644 drivers/iio/proximity/aw_sar.c=0D
+>>  create mode 100644 drivers/iio/proximity/aw_sar.h=0D
+>>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.c=0D
+>>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.h=0D
+>>  create mode 100644 drivers/iio/proximity/aw_sar_type.h=0D
+>>=0D
+>>=0D
+>> base-commit: 43db1e03c086ed20cc75808d3f45e780ec4ca26e=0D
+>=0D
+>This is version 3, but I cannot see a description of the incremental=0D
+>changes between the versions (or links) in this cover letter. It will=0D
+>therefore make it harder to review...=0D
+>=0D
+>It also looks like the _actual_ commit messages in the patch series have=0D
+>some kind of description of the changes from previous versions. That is=0D
+>also not correct. Please read=0D
+>https://docs.kernel.org/process/submitting-patches.html#respond-to-review-=
+comments=0D
+>and=0D
+>https://docs.kernel.org/process/submitting-patches.html#the-canonical-patc=
+h-format=0D
+=0D
+Thank you for taking the time to reply to my email. You're right,=0D
+I did not do a good job of keeping track of the version update records.=0D
+I will include relevant change logs in the next version.=0D
 =0D
 Kind regards,=0D
 Wang Shuaijie=
