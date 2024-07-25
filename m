@@ -1,129 +1,142 @@
-Return-Path: <linux-kernel+bounces-262475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1140893C783
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F1B93C789
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 19:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D6D1C225B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:05:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48881F22B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 17:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4E19DF59;
-	Thu, 25 Jul 2024 17:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D8B19D8A7;
+	Thu, 25 Jul 2024 17:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mentovai.com header.i=@mentovai.com header.b="aPfwoEpD"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y3vEmBgZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F44426286
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B719B3F9
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721927124; cv=none; b=bwn+S3gnOktwrJKS47Z3cPKWwvBHr44actsjSQntONJBHL4kRuT1AEjQsslDEZlmTi0u/Crs/gg2ck7WrCIjmWXSp157EFO0FOtgLrCL3Zzij08MgbCoXM3HGaFpIRqjr+Z3Qu18a6boPNXbvN9vt63NOCSubDV2HnePLR/l0b8=
+	t=1721927509; cv=none; b=XMWT5uETlXX3ODjRDzTtkpZ9GozCvRZipB8+2N67HUV8qIsv68Ez1/Gstpro56o+SzA2YekTkv9HdVhkHBvXNICgVEzD6i72KrjzmQDyblxyFJ62IsyM6nZXuXS3B2OGL9TatHF1PiL8DB29tdUuvXGc5eTx9E7cB4pD5qHrZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721927124; c=relaxed/simple;
-	bh=0qvlF0z+W69f0VM9zRlqTHHhCzgFSjLYfgyhx97A8xs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D5aVINIux1arYMEizPtheCkgk2Tbd6ZDJk+6LTVt24IDwmc5z6AycY2mZjBakwNnZkzzzfSJbYkoaSWvzPjg6cKBTkAvroeMCw/ur9zbeqs3rwI++uanXukZ7WqYAW/aMIEe2jNj7gPx5cQk57d0v9mhy2OfANzc1cSsMZ8YxMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mentovai.com; spf=pass smtp.mailfrom=mentovai.com; dkim=pass (1024-bit key) header.d=mentovai.com header.i=@mentovai.com header.b=aPfwoEpD; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mentovai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentovai.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d5f6c56fso75047685a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 10:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mentovai.com; s=google; t=1721927121; x=1722531921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iL/4KMSZN6XD67fqJQklqdxeiI1GyJnNUyuo727b0Ns=;
-        b=aPfwoEpDnR4PJeVdnOIppaNakg9lCZL/6mNbPFIP8llB/G5/YIGcyaW44dSPm88S4x
-         bo5Vcma1fon9iJekrn1TuylU8vGwqdGtOnb00QjVbDVWKxixDtfhLLAkvsQ0oAJfrWQS
-         7o2cNsZGLkxJWZO6WUB7nAyB2tOzGzpRL/FbA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721927121; x=1722531921;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iL/4KMSZN6XD67fqJQklqdxeiI1GyJnNUyuo727b0Ns=;
-        b=gk8tFC3pJ2VkPg+/frp/iMoUGjiiLLDwDPGf5IR3pJ9PP4JV6ZVZH6K0WGrWLSCoGH
-         xSy4cwPB3gwtuJh1sx3esPFu8BG895uDwV+hDxNKNv7Blq5o+RscnUgS4RQcalzz9/wj
-         hJeJtaMvL6xzUSUwkN+NbhMX3SZIbRnmCwLJUjtYzDXx1W9La6ULtrSBm9evz9owLzKP
-         wzSiX8eET+Lu3X4HLdv5ijNqYQiAYKuyREJTxn//BWNLyNVfBP4hcoeAlB/QtMw018HL
-         UWa5gvw90TY0iAtmMvuHA9jLDKDGPFpW/O5Vhk9uqOlM664zZXFbCe6iByze9QvBkQqD
-         BW0g==
-X-Gm-Message-State: AOJu0YzY3iE/3ZzfShmzUfFyKYj8Z2odrvQuQJIcdGAQqcdyx8fRy57d
-	frojwlBXnKcj/40Ls7LRLtzaRggpFCP/NFZ6jjHBTqtISoMlhBAw1IhsQqH+7iM=
-X-Google-Smtp-Source: AGHT+IGYMJlb4MeNRB6hGkW8I8J20GB1qlmNlfQ9itynIkAZ6t0HMzIxxZcjAEQ+Mhx42wXpbEKuPA==
-X-Received: by 2002:a05:620a:318a:b0:7a1:d9a1:b9b with SMTP id af79cd13be357-7a1d9a10fb9mr265021085a.60.1721927121104;
-        Thu, 25 Jul 2024 10:05:21 -0700 (PDT)
-Received: from redacted ([2600:4040:9ce0:6400:b9f3:7389:4965:5876])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7444bfesm100705985a.118.2024.07.25.10.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 10:05:20 -0700 (PDT)
-From: Mark Mentovai <mark@mentovai.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Jonas Gorski <jonas.gorski@gmail.com>,
-	Russell Senior <russell@personaltelco.net>,
-	=?UTF-8?q?L=C3=B3r=C3=A1nd=20Horv=C3=A1th?= <lorand.horvath82@gmail.com>,
-	Mieczyslaw Nalewaj <namiltd@yahoo.com>,
-	Shiji Yang <yangshiji66@outlook.com>
-Subject: [PATCH] net: phy: realtek: add support for RTL8366S Gigabit PHY
-Date: Thu, 25 Jul 2024 13:05:19 -0400
-Message-ID: <20240725170519.43401-1-mark@mentovai.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721927509; c=relaxed/simple;
+	bh=Yqsz5/5rP8qqF6gLQi+CN5/bfg5TXf2TedAhyYyK3Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cifcVzN00YzdztiZS2KNsZPLycqJkSmPT+iu+2qNSHCJZ61RB8mGOvKSAcAkSzrMPnC2Ak/gjKo5jIiJ8Clv5o3+HGkrZ/cMpcTgZTx0ioiCro958Di2YUmHOyXnc9Vl/u7DO/JQ4OqGFGFv8i/mkKSyi5ncqhU+ZKfbD9FWUrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y3vEmBgZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721927505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MI94CKgS+ARheFWOvKMQDjVSLqIUbZ9rA0M66DyuLhY=;
+	b=Y3vEmBgZ0UI1j0/q2JnSGKuxjuXTNKTV6oN2upTYVX2P3ASAlAp+1TyYwtObXyzLDeGT00
+	yVs49wnhA+n8pj0bArmKVDKxyUK2pzwGo+D+JF2XJYcxQgwWlk7ntARe1O6N/rYIVC1CaC
+	5sShveWBcC5egTQhp+XjDowWhcfPG5U=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-mwvHHg7rPAOPRv7oDZ5maw-1; Thu,
+ 25 Jul 2024 13:11:41 -0400
+X-MC-Unique: mwvHHg7rPAOPRv7oDZ5maw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EF2F71955D52;
+	Thu, 25 Jul 2024 17:11:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.93])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A21A03000194;
+	Thu, 25 Jul 2024 17:11:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 25 Jul 2024 19:09:58 +0200 (CEST)
+Date: Thu, 25 Jul 2024 19:09:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, brauner@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, clm@fb.com,
+	riel@surriel.com, ffledgling@meta.com
+Subject: Re: [PATCH RFC exit] Sleep at TASK_IDLE when waiting for application
+ core dump
+Message-ID: <20240725170951.GB6602@redhat.com>
+References: <1936bd18-775b-43e3-bfd5-2cd343565f06@paulmck-laptop>
+ <20240725132849.GA6602@redhat.com>
+ <21406a91-8801-453a-9833-a4e24c7e90ca@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21406a91-8801-453a-9833-a4e24c7e90ca@paulmck-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The PHY built in to the Realtek RTL8366S switch controller was
-previously supported by genphy_driver. This PHY does not implement MMD
-operations. Since 9b01c885be36 (2023-02-13, in 6.3), MMD register reads
-have been made during phy_probe to determine EEE support. For
-genphy_driver, these reads are transformed into 802.3 annex 22D clause
-45-over-clause 22 mmd_phy_indirect operations that perform MII register
-writes to MII_MMD_CTRL and MII_MMD_DATA. This overwrites those two MII
-registers, which on this PHY are reserved and have another function,
-rendering the PHY unusable while so configured.
+On 07/25, Paul E. McKenney wrote:
+>
+> How does the updated patch shown below look to you?
 
-Proper support for this PHY is restored by providing a phy_driver that
-declares MMD operations as unsupported by using the helper functions
-provided for that purpose, while remaining otherwise identical to
-genphy_driver.
+Thanks, looks good to me ;)
 
-Fixes: 9b01c885be36 ("net: phy: c22: migrate to genphy_c45_write_eee_adv()")
-Fixes: https://github.com/openwrt/openwrt/issues/15981
-Link: https://github.com/openwrt/openwrt/issues/15739
-Reported-by: Russell Senior <russell@personaltelco.net>
-Signed-off-by: Mark Mentovai <mark@mentovai.com>
----
- drivers/net/phy/realtek.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Oleg.
 
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index bed839237fb5..87865918dab6 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -1465,6 +1465,13 @@ static struct phy_driver realtek_drvs[] = {
- 		.handle_interrupt = genphy_handle_interrupt_no_ack,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+	}, {
-+		PHY_ID_MATCH_EXACT(0x001cc960),
-+		.name		= "RTL8366S Gigabit Ethernet",
-+		.suspend	= genphy_suspend,
-+		.resume		= genphy_resume,
-+		.read_mmd	= genphy_read_mmd_unsupported,
-+		.write_mmd	= genphy_write_mmd_unsupported,
- 	},
- };
- 
--- 
-2.45.2
+> ------------------------------------------------------------------------
+> 
+> commit a6c7779283d67a409b81616a5b485ac21637d7e7
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Wed Jul 24 16:51:52 2024 -0700
+> 
+>     exit: Sleep at TASK_IDLE when waiting for application core dump
+>     
+>     Currently, the coredump_task_exit() function sets the task state
+>     to TASK_UNINTERRUPTIBLE|TASK_FREEZABLE, which usually works well.
+>     But a combination of large memory and slow (and/or highly contended)
+>     mass storage can cause application core dumps to take more than
+>     two minutes, which can cause check_hung_task(), which is invoked by
+>     check_hung_uninterruptible_tasks(), to produce task-blocked splats.
+>     There does not seem to be any reasonable benefit to getting these splats.
+>     
+>     Furthermore, as Oleg Nesterov points out, TASK_UNINTERRUPTIBLE could
+>     be misleading because the task sleeping in coredump_task_exit() really
+>     is killable, albeit indirectly.  See the check of signal->core_state
+>     in prepare_signal() and the check of fatal_signal_pending()
+>     in dump_interrupted(), which bypass the normal unkillability of
+>     TASK_UNINTERRUPTIBLE, resulting in coredump_finish() invoking
+>     wake_up_process() on any threads sleeping in coredump_task_exit().
+>     
+>     Therefore, change that TASK_UNINTERRUPTIBLE to TASK_IDLE.
+>     
+>     Reported-by: Anhad Jai Singh <ffledgling@meta.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Acked-by: Oleg Nesterov <oleg@redhat.com>
+>     Cc: Jens Axboe <axboe@kernel.dk>
+>     Cc: Christian Brauner <brauner@kernel.org>
+>     Cc: Andrew Morton <akpm@linux-foundation.org>
+>     Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>     Cc: Chris Mason <clm@fb.com>
+>     Cc: Rik van Riel <riel@surriel.com>
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index f95a2c1338a8..b0d18f7b6d15 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -429,7 +429,7 @@ static void coredump_task_exit(struct task_struct *tsk)
+>  			complete(&core_state->startup);
+>  
+>  		for (;;) {
+> -			set_current_state(TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
+> +			set_current_state(TASK_IDLE|TASK_FREEZABLE);
+>  			if (!self.task) /* see coredump_finish() */
+>  				break;
+>  			schedule();
+> 
 
 
