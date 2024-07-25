@@ -1,100 +1,140 @@
-Return-Path: <linux-kernel+bounces-262463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D893893C76C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E6593C76D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE44283053
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB525282877
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 16:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D83D19DF41;
-	Thu, 25 Jul 2024 16:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D019D091;
+	Thu, 25 Jul 2024 16:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MG0Eir9q"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bh+dgbAv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330418786F;
-	Thu, 25 Jul 2024 16:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EB21D545
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 16:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721926318; cv=none; b=rFj0f+qmRO2z7Oxa1Ozm90ux6dXK67OCGoVAxwZ9/pQx4BbYxm/Y0acD2D//j3Kdn4CYhi7ejDSGT/uG8fOSgjgvo+OeaynET8lcJvzTX/E4qzdknVOJggIW3Xabum6/sdDk+VY+e5xdzbvWuHpXIG4yVJOF/oOuiCxkRgVRjkE=
+	t=1721926401; cv=none; b=PDenMv1VyJeDFiliYVKviddTyIZefmr/5ih0esQqiamqpvZFYicsaupB5CbrwIoT40WEUdjrvSoWTdCF973/jz4uWavFfA4BICkNIygxeNGTT0U+e/qUiQSM9n8EKATJKLwhQNzkvtYg8eseyCVe1YXGh6gn5QZN3oayqWF/4iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721926318; c=relaxed/simple;
-	bh=LO0trDf3tcvnDiZLS8lZvt8i57f3eDeRwzr9VWx4wMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RY8eytKSg54+vE2hXU8HWLByVFbKFO2ze+AqMVS1/ybMP7fLsfIk2bA0mKoGkbCifz7ZPx4QjLNp13u4yseflca9gXZedwmGsFyTdPovFeIWd8K9P6CQi1jNUF3NkT8V8o9Sjl5GugM5QUwLpwWklIO1yCj0SitVI1qjjo3dTl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MG0Eir9q; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso693023f8f.3;
-        Thu, 25 Jul 2024 09:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721926315; x=1722531115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LO0trDf3tcvnDiZLS8lZvt8i57f3eDeRwzr9VWx4wMA=;
-        b=MG0Eir9qjxwHM4r1/Oc0w+mUX08b959jYRv7lLRI4lxpSnXzXV0qtWjCxGZbPezpqs
-         v3Lgnu9dLKa3NKpToU5FACgrVEIBMUgb5O0sj9C6dyZc7W77JzHLJfR5qHVIpUXfTduN
-         AV5yIJ91ILP5+PvIkoRgY0dISESAq64PGwhwiI+xm82bsOODsvxWwqsqY3RbE2ELjNgb
-         IcvnU7akJvWz7yy6nxmd3G9jiCTINV2dtAOIzeMvf+JdJzdQsp1bNp/KiSe13Q4OGjsg
-         j89CD8dWVSjt6aS/+we1LfNRiXwc8GqgP4AHJCI83DwbKJcnL49VjkgDtyC8C4HB81Xr
-         11rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721926315; x=1722531115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LO0trDf3tcvnDiZLS8lZvt8i57f3eDeRwzr9VWx4wMA=;
-        b=J3DbCKcEv1WqJoqUsxdsjpOmFs10Lm9WMOjoGJf76GBCYj2QcCBexRrkxOoDiAz26r
-         QNOCW+UEDuSNaT3RAvyoqaLxIypKQbOO3TWdZeUJYupQVAVTYXyKFbEx1g3Wj6yNBAZ+
-         IPMFVgoKldhySeW8THfsOMlxCT5wt+IYRxY5bSxrco1xEDnW/48wneUfoKaPjFGJVHj8
-         6yPcAYN0eL+WFmdA0dOJOVRnDwQKgKKPMyYXjZyQdKsfwBcvtWKuaqyFHqhMVyr3cvd0
-         BH6XYDVN4HLAePyYMChrcEc3g5ZINo3uqYVQ7M651tUr3cPcoDl8V/fG3ab3XC33VrXz
-         HBvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkSzzaIKVx+NS+ioEOQBMvjJwuB8xD5+HCG4f5rnp6uIvhoNt/BSCJTn2JgiZX5diQIPZ51mBrNS4cbI/QomfeYHkxbAJJdiIEaSL0iB1DFkNgKtIy0B01UyrPu57NJUli
-X-Gm-Message-State: AOJu0YwHCjKdoxOTauGMmSCMBu+5IhI/saRk7J9yWDjkJlrymI/3jGjk
-	3xriu45feRYOV0PhWoWWEoYGQBSyu45ypcxhr45ELQ34xEnywQek5+tU/OB/KJ0OfXD9BcPN9Lm
-	30G/FIc4i7bycpfBFnCIi6UTOdGBxxm0aFK2xLw==
-X-Google-Smtp-Source: AGHT+IF6xWzQOYKFBCFTvdcsGzFQ+/gROkMAYGBXJ0cX81+0TMDNQbeuXayLLUmvHN+ae1Tai8qoMUCHx2GnVkBi5rg=
-X-Received: by 2002:adf:cb94:0:b0:367:98e6:362b with SMTP id
- ffacd0b85a97d-36b31b4cdb2mr2618471f8f.42.1721926314909; Thu, 25 Jul 2024
- 09:51:54 -0700 (PDT)
+	s=arc-20240116; t=1721926401; c=relaxed/simple;
+	bh=+4LlKYDTgAhPZmYC0SMXOXNTQ6Qeoe1ZKAUx/gCLEp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhrKdmor4lXMKKOiI/LNvXajJpr0o1V6LbUN11tL0dDiJH7Bn+DRdzqu0TtoNBa7nHmZPpx3JI9A72ay3WYl3RBhUhXjD6EelzEzxxEYjZviMUyrOQQppD41bchQ93oZgAzg/jTK1MwHn6+iA/Ux1Cg45MdVhI+0pPBZ7EIriTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bh+dgbAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC589C116B1;
+	Thu, 25 Jul 2024 16:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721926401;
+	bh=+4LlKYDTgAhPZmYC0SMXOXNTQ6Qeoe1ZKAUx/gCLEp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bh+dgbAvSjID/AhQ1jSSZiMZO6mGq8NpoZ/91FphQd9ok/ugXlvEV8SAXRvILTBWh
+	 ztVRAk+37960TOTmWMU/Z4cGgguWJnDhxlqmrUzYaScWGB3LoDDf1S1MrAlGM1qKD7
+	 MKoxHjqQneX2R4RaUqkFsYAULPI0ETl9VqvhijU5WlgmFhW5eOuzf9fuwny0oAqtXz
+	 7ohPizIk0PoneOeXGgcKPhh6+u3kn1z4H1qCGwIp1dMxx6iQAi7PnBgmxQ7QHqauOA
+	 nbLWCzg44pPUBiUPr6cwLK9cV711YbCGupsDd554bBehWo09bmogxIjelHWMBTDp0S
+	 cTsGKK43lQruQ==
+Date: Thu, 25 Jul 2024 16:53:19 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
+	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH] f2fs: fix to use per-inode maxbytes and cleanup
+Message-ID: <ZqKC_wqbe_1qqQmf@google.com>
+References: <1721295366-21008-1-git-send-email-zhiguo.niu@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725051511.57112-1-me@manjusaka.me> <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
- <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com> <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
- <43e95369-3a4f-428b-b0e0-329880173167@manjusaka.me>
-In-Reply-To: <43e95369-3a4f-428b-b0e0-329880173167@manjusaka.me>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 25 Jul 2024 09:51:43 -0700
-Message-ID: <CAADnVQKtu1=ybxbzLQUMZQz3pwNJVjB+18t0vAhGAb=6kK8UbQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-To: Manjusaka <me@manjusaka.me>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Leon Hwang <hffilwlqm@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1721295366-21008-1-git-send-email-zhiguo.niu@unisoc.com>
 
-On Wed, Jul 24, 2024 at 11:33=E2=80=AFPM Manjusaka <me@manjusaka.me> wrote:
->
-> Actually, for personally, I think it would be better to get the error mes=
-sage from dmesg.
+On 07/18, Zhiguo Niu wrote:
+> This is a supplement to commit 6d1451bf7f84 ("f2fs: fix to use per-inode maxbytes")
+> for some missed cases, also cleanup redundant code in f2fs_llseek.
+> 
+> Cc: Chengguang Xu <cgxu519@mykernel.net>
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>  fs/f2fs/data.c   | 2 +-
+>  fs/f2fs/file.c   | 7 ++-----
+>  fs/f2fs/verity.c | 5 +++--
+>  3 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 6457e5b..1d41d99 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2064,7 +2064,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  static inline loff_t f2fs_readpage_limit(struct inode *inode)
+>  {
+>  	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+> -		return inode->i_sb->s_maxbytes;
+> +		return max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
 
-This is a non-starter. We're not going to pollute dmesg with
-verifier messages.
+F2FS_BLK_TO_BYTES(max_file_blocks(inode))?
+
+>  
+>  	return i_size_read(inode);
+>  }
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index effbaa6..e6411d5 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -431,7 +431,7 @@ static bool __found_offset(struct address_space *mapping,
+>  static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+>  {
+>  	struct inode *inode = file->f_mapping->host;
+> -	loff_t maxbytes = inode->i_sb->s_maxbytes;
+> +	loff_t maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
+>  	struct dnode_of_data dn;
+>  	pgoff_t pgofs, end_offset;
+>  	loff_t data_ofs = offset;
+> @@ -513,10 +513,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+>  static loff_t f2fs_llseek(struct file *file, loff_t offset, int whence)
+>  {
+>  	struct inode *inode = file->f_mapping->host;
+> -	loff_t maxbytes = inode->i_sb->s_maxbytes;
+> -
+> -	if (f2fs_compressed_file(inode))
+> -		maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
+> +	loff_t maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
+>  
+>  	switch (whence) {
+>  	case SEEK_SET:
+> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+> index f7bb0c5..7fc787c 100644
+> --- a/fs/f2fs/verity.c
+> +++ b/fs/f2fs/verity.c
+> @@ -74,7 +74,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+>  	struct address_space *mapping = inode->i_mapping;
+>  	const struct address_space_operations *aops = mapping->a_ops;
+>  
+> -	if (pos + count > inode->i_sb->s_maxbytes)
+> +	if (pos + count > (max_file_blocks(inode) << F2FS_BLKSIZE_BITS))
+>  		return -EFBIG;
+>  
+>  	while (count) {
+> @@ -237,7 +237,8 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
+>  	pos = le64_to_cpu(dloc.pos);
+>  
+>  	/* Get the descriptor */
+> -	if (pos + size < pos || pos + size > inode->i_sb->s_maxbytes ||
+> +	if (pos + size < pos ||
+> +	    pos + size > (max_file_blocks(inode) << F2FS_BLKSIZE_BITS) ||
+>  	    pos < f2fs_verity_metadata_pos(inode) || size > INT_MAX) {
+>  		f2fs_warn(F2FS_I_SB(inode), "invalid verity xattr");
+>  		f2fs_handle_error(F2FS_I_SB(inode),
+> -- 
+> 1.9.1
 
