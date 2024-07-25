@@ -1,85 +1,97 @@
-Return-Path: <linux-kernel+bounces-262528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F0193C84D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:23:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6068C93C84F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B073B283889
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8035E1C21035
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 18:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3865E2C1B4;
-	Thu, 25 Jul 2024 18:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A9A3771C;
+	Thu, 25 Jul 2024 18:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="joz9LKTP"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B0Sz0iC2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2760A210F8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3408210FB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931811; cv=none; b=Khdpg3iBrGWApYak4CM5WkJphBGD7rRmImGTu9C9r82eRqLsCgaks4dVNLPMM8PudNgCGpCulGmobMeHlFJHe3qCTy9EfOqGJaC+eWQzY0XfbdAjWnaLAzs9Xe/grfDsNpWpauZ7oC3WmZY1Z5W01/7Vd6xrhdB75clPPKch3OE=
+	t=1721931885; cv=none; b=S/IWJln0hRpE4/7+ZaLykeWXdkNuy7Ya3dCzpBNwNoGG45FkdS8MP3hvk4nA8OMsfsxoyxlm86tJAIgZ3XkvHYypD/LUoo/9SxUoeItq06DjlDLznkP56FQWzlKcG5oHiBTOC1rKshT4rWSc34qQyBDNsUtJTHvLyKZBw6Qv6fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931811; c=relaxed/simple;
-	bh=EgEtuaM1w9SIxRjRrGQqJpo1WaJB9BUCujCEJzAr99M=;
+	s=arc-20240116; t=1721931885; c=relaxed/simple;
+	bh=i3R8nP9zLb+svWwS6BlGQj3N7iJXoBGSLMafotY8l+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MC7FcOKCrallm11a5N/T841STvYJ2QHbCR019zbNXg53NWCZZOosrF3PnLcGO5UGFhgnqyRJpjmh6sKt1I0VSrY50hW61y7ABzozhLX2WjQNJfHLBk7P5GUNnjDkvx2TRC7wrFlwnMowzCWb8tR1tAOb3Uh3uKxpBiE0bOccaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=joz9LKTP; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1dcc7bc05so21277385a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:23:28 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tV6RXM7+zl7Ovkiu+ubLNUIY4AxkS4dTXkGWtSuCO1kWykjPEgeNV6fB+njVjpGrZi27zu6EG9VshCsH0Sh51MyTLGaNMNgq+8MDSQrv77HmFdWxctgtFyMtAsAOdtHdq7Tzy1A7nxv2FFhBt5uVdv0jNoASehBiVNaRIUDAaTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B0Sz0iC2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd66cddd4dso11553535ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 11:24:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1721931808; x=1722536608; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721931883; x=1722536683; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyvNjjqobDzo2nVAxqnhjliyH8DNl57hvC/5geRPhII=;
-        b=joz9LKTPe27qKHQmOUzHt34AK2cvzZotNlU/91GswfS+nQxwVMheNF/jNgpitSe/IZ
-         VoW0uh00uqgoITWimH3eB4s4h811fuMrSbXLy65tBooeK0iqnI83z0isxzpHJjUmpTpy
-         gVq35OWEwRUZzU2Nat6Hh47VE0pHfS6RUqTGCVuNOVHQXmi4Rc7QrYPrbqv0u+oShA/w
-         LR0MrwqH/F5heo1OyWVIoSVA9w9uB40uOkPyv2ZztJC1j7zIT54HudNeEty96sr4koi0
-         nX2HH/EUWcic4JwKf+jLYYrdDybzls4eG3tyBH2YnSHi3F21iIMrE0wpWEIlyCrXzv/d
-         OuSw==
+        bh=Se8gRYY5LIzNKXtdqfpnU7+bApyeWuI8Q5DVjozYskA=;
+        b=B0Sz0iC2mQxQ1OlnT48cw0EaJRrxh3u4oaSuWDITfETMQ5TAw5Jmtwp/Ub681JbEOg
+         k3ExGVrA1en2nRKW8pmyMzH0oe1eRaodEJl0IulyJxTfu3mu5Fks+/5rr8ZSvUbL8hz0
+         OFJ9Hu/4rLy1d+lsQKe6sHAQu25if6Eu8DWB5hP5pJc1jYVHRSG2Ma5H3WaDHI9zhH7r
+         MgO006Gm7ZZoJEAAGO0ztS9WVK0bDeaw2UyAYIvE3kS5HmANHOHpcSmUi2WS+vac6aGV
+         uqUZ488oQSxmby2BMrno2rluMLBeBTqFL68ccdCyckkGlUXRINoYtoQgR4qHqzSKLU6p
+         QcDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721931808; x=1722536608;
+        d=1e100.net; s=20230601; t=1721931883; x=1722536683;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AyvNjjqobDzo2nVAxqnhjliyH8DNl57hvC/5geRPhII=;
-        b=fnm2127kyzBTsfBWcsLmjXLyJzGSI+M/5Eiys/Mwt3j3glQz2iHehqg6XRtsLPatkt
-         bsEQd4tIcootMiXbkJebTODo38aDiBLDbjZWGFUePQ+hXuH6sUH82U1W0LRLceRWRWeV
-         RKDWIPoDlVdNItYSvbc4NAQSurSwW9+BWM2au7zdGRNkP00/EQ8kJ0MW7S6KaGbmJJ56
-         ROFvey9m+uCQCVdLNiWZTHNLhMO5dQvweKBJNrkb3jKKG0zZFvS6/ZTkLImjKN9IVoV5
-         xZ4pnIGtLtvoByr3je8LRxLg8FbX/2cvdj0PSm/xGOqDZr9Uv9PHhcmKc8xO7kYrBwID
-         Ti2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUIs/C1xyV46s+OcVGThQGSOUlqBA4uEb1xmvmBRpdBCkek2BLVmVS6qqHdLtUSU2DpsS7D3XLszAq9/MjJT9w7NwjDdhooFiZBHyRK
-X-Gm-Message-State: AOJu0YyG0dO5V6pjFJsYoHNVdzfhZeBR4y07xDP9KEDybatEqu2CxqRf
-	ZBsSHQLN7H/zQoYvsEtNE3okKFixNB5zzaK24DyBgsLJlEtBNYmv1urN/Y82fA==
-X-Google-Smtp-Source: AGHT+IEM5Pm5c6CfZSOAnNl7b0CiQM8WJGV7l2L9UCEWETuR+l2rd0k3fr8sk+NF2+488kFRGVVLKg==
-X-Received: by 2002:a05:620a:1a9f:b0:7a1:d08d:e2fa with SMTP id af79cd13be357-7a1d455dce1mr540124285a.1.1721931808130;
-        Thu, 25 Jul 2024 11:23:28 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b1e6csm106939985a.32.2024.07.25.11.23.27
+        bh=Se8gRYY5LIzNKXtdqfpnU7+bApyeWuI8Q5DVjozYskA=;
+        b=xECpc8YxPmayaNCBe6oDpbMHAlQnN3UufBuYdz56sYRf15wySWMrod9LCNiISFbdgu
+         wLsNYSvji0tqRQzSvCeMMMwRSYynPg8xR/AHlj/HH0IFWl6bDzlfdSfEx/TprPeauYx8
+         G9OyATjCxkP9Uv9cSZE1R4rJKcCM0L0Y9R0E/MGVWtdpXGCob7JAPz+eJE+9sTw6tQ0Q
+         Ai9RGj0WnkXaiXRS5QQ51UpzAnaxC1hTTyhyrhXvDieggPJ1jhdFO5AA2IW26YHsc6So
+         O8mXJeeAW2CIoJqtaaKmMZUmdskt2gpBaK5tUhbSUCyFfQWGI7X7LjBw3miAxGhHFvcM
+         1qKA==
+X-Forwarded-Encrypted: i=1; AJvYcCX34dH8OPk4jBQew6pCh5tNd1WZiLzmceibKKgGwcltcibo6TChrPHLQC/uXnzXaKydQHZcETRCZfjZLA4gCfMDaaCe19ThLCtlBqb3
+X-Gm-Message-State: AOJu0Yw/nCCkagoMbyDsASLqz9ZzF4YInJq6CZi2cQfRmnGyohSk4Usq
+	oTNZErAhOIgdAcbAzHQH6jjcJfEDBFfEglZB65KA5RhZTD+5Wd/a+OC2x5NYSQ==
+X-Google-Smtp-Source: AGHT+IGk5VWe3MPnS2h4842sbCO2M3IxnHPFyqsvxia4EgfDcheEN/25uzJzuwNsHLA2SFZv0xA2tg==
+X-Received: by 2002:a17:902:da91:b0:1fc:5b68:ffb8 with SMTP id d9443c01a7336-1fed38ba92fmr44676985ad.30.1721931882617;
+        Thu, 25 Jul 2024 11:24:42 -0700 (PDT)
+Received: from google.com (61.139.125.34.bc.googleusercontent.com. [34.125.139.61])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fa4045sm17298215ad.258.2024.07.25.11.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 11:23:27 -0700 (PDT)
-Date: Thu, 25 Jul 2024 14:23:25 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: crwulff@gmail.com, linux-usb@vger.kernel.org,
-	Roy Luo <royluo@google.com>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	yuan linyu <yuanlinyu@hihonor.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: core: Check for unset descriptor
-Message-ID: <d24a4b7f-0d3a-4c24-9de3-5f14297b0904@rowland.harvard.edu>
-References: <20240725010419.314430-2-crwulff@gmail.com>
- <2024072512-arguably-creole-a017@gregkh>
+        Thu, 25 Jul 2024 11:24:42 -0700 (PDT)
+Date: Thu, 25 Jul 2024 11:24:37 -0700
+From: David Matlack <dmatlack@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Rientjes <rientjes@google.com>,
+	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
+	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 09/11] KVM: x86: Implement fast_only versions of
+ kvm_{test_,}age_gfn
+Message-ID: <ZqKYZagP55dVD1m4@google.com>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-10-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,61 +100,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024072512-arguably-creole-a017@gregkh>
+In-Reply-To: <20240724011037.3671523-10-jthoughton@google.com>
 
-On Thu, Jul 25, 2024 at 06:56:19AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 24, 2024 at 09:04:20PM -0400, crwulff@gmail.com wrote:
-> > From: Chris Wulff <crwulff@gmail.com>
-> > 
-> > Make sure the descriptor has been set before looking at maxpacket.
-> > This fixes a null pointer panic in this case.
-> > 
-> > This may happen if the gadget doesn't properly set up the endpoint
-> > for the current speed, or the gadget descriptors are malformed and
-> > the descriptor for the speed/endpoint are not found.
-> > 
-> > No current gadget driver is known to have this problem, but this
-> > may cause a hard-to-find bug during development of new gadgets.
-> > 
-> > Fixes: 54f83b8c8ea9 ("USB: gadget: Reject endpoints with 0 maxpacket value")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Chris Wulff <crwulff@gmail.com>
-> > ---
-> > v2: Added WARN_ONCE message & clarification on causes
-> > v1: https://lore.kernel.org/all/20240721192048.3530097-2-crwulff@gmail.com/
-> > ---
-> >  drivers/usb/gadget/udc/core.c | 10 ++++------
-> >  1 file changed, 4 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> > index 2dfae7a17b3f..81f9140f3681 100644
-> > --- a/drivers/usb/gadget/udc/core.c
-> > +++ b/drivers/usb/gadget/udc/core.c
-> > @@ -118,12 +118,10 @@ int usb_ep_enable(struct usb_ep *ep)
-> >  		goto out;
-> >  
-> >  	/* UDC drivers can't handle endpoints with maxpacket size 0 */
-> > -	if (usb_endpoint_maxp(ep->desc) == 0) {
-> > -		/*
-> > -		 * We should log an error message here, but we can't call
-> > -		 * dev_err() because there's no way to find the gadget
-> > -		 * given only ep.
-> > -		 */
-> > +	if (!ep->desc || usb_endpoint_maxp(ep->desc) == 0) {
-> > +		WARN_ONCE(1, "%s: ep%d (%s) has %s\n", __func__, ep->address, ep->name,
-> > +			  (!ep->desc) ? "NULL descriptor" : "maxpacket 0");
+On 2024-07-24 01:10 AM, James Houghton wrote:
+> These fast-only versions simply ignore the shadow MMU. We can locklessly
+> handle the shadow MMU later.
 > 
-> So you just rebooted a machine that hit this, that's not good at all.
-> Please log the error and recover, don't crash a system (remember,
-> panic-on-warn is enabled in billions of Linux systems.)
+> Set HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY for X86_64 only, as that is
+> the only case where the TDP MMU might be used. Without the TDP MMU, the
+> fast-only notifiers will always be no-ops. It would be ideal not to
+> report has_fast_only if !tdp_mmu_enabled, but tdp_mmu_enabled can be
+> changed at any time.
 
-That should not be a problem.  This WARN_ONCE is expected never to be 
-triggered except by a buggy gadget driver.  It's a debugging tool; the 
-developer will get an indication in the kernel log of where the problem 
-is instead of just a panic.
+tdp_mmu_enabled is a read-only KVM parameter. And even when it was
+writable, it was still fixed for a given VM at VM creation time.
 
-However, if you feel strongly about this, Chris probably won't mind 
-changing it to pr_err() plus dump_stack() instead of WARN_ONCE().
+Would it make more sense to have kvm_arch_post_init_vm() set
+has_fast_aging if the architecture supports it. And for x86 that means
+iff tdp_mmu_enabled.
 
-Alan Stern
+> 
+> Signed-off-by: James Houghton <jthoughton@google.com>
+> ---
+>  arch/x86/kvm/Kconfig   | 1 +
+>  arch/x86/kvm/mmu/mmu.c | 4 ++--
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 6ac43074c5e9..ed9049cf1255 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -24,6 +24,7 @@ config KVM
+>  	select KVM_COMMON
+>  	select KVM_GENERIC_MMU_NOTIFIER
+>  	select KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
+> +	select HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY if X86_64
+>  	select HAVE_KVM_IRQCHIP
+>  	select HAVE_KVM_PFNCACHE
+>  	select HAVE_KVM_DIRTY_RING_TSO
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 919d59385f89..3c6c9442434a 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -1641,7 +1641,7 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>  	if (tdp_mmu_enabled)
+>  		young |= kvm_tdp_mmu_age_gfn_range(kvm, range);
+>  
+> -	if (kvm_has_shadow_mmu_sptes(kvm)) {
+> +	if (!range->arg.fast_only && kvm_has_shadow_mmu_sptes(kvm)) {
+>  		write_lock(&kvm->mmu_lock);
+>  		young = kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
+>  		write_unlock(&kvm->mmu_lock);
+> @@ -1657,7 +1657,7 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>  	if (tdp_mmu_enabled)
+>  		young |= kvm_tdp_mmu_test_age_gfn(kvm, range);
+>  
+> -	if (!young && kvm_has_shadow_mmu_sptes(kvm)) {
+> +	if (!young && !range->arg.fast_only && kvm_has_shadow_mmu_sptes(kvm)) {
+>  		write_lock(&kvm->mmu_lock);
+>  		young = kvm_handle_gfn_range(kvm, range, kvm_test_age_rmap);
+>  		write_unlock(&kvm->mmu_lock);
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
+> 
 
