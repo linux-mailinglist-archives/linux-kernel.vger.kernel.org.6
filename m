@@ -1,110 +1,120 @@
-Return-Path: <linux-kernel+bounces-262656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB01893CA1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1E093CA1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DE02836D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917EE1F2164F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F088213D8B6;
-	Thu, 25 Jul 2024 21:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MXUWadsd"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A3C13CFAA;
+	Thu, 25 Jul 2024 21:14:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700E91DFF7;
-	Thu, 25 Jul 2024 21:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7ED225D9;
+	Thu, 25 Jul 2024 21:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721942008; cv=none; b=Tnvsgf0ujX2oz4bQSrUgIDnVN5qtzTtj6rnm5fmgVnYnnV5MS2lNKbgY+D//hUHHqYKMMkwqhnD+sTG4pZplsqn7Pp4gdj1Gz2Hr73Q71ylvwgkzb2IxsMU8Bv45jGj9NlrfmHMPEVTcoM+cXYDLS7QCLGywgcBDvCNZg8ZF0j4=
+	t=1721942080; cv=none; b=MNdE90aZsexfUjE67wcI1XEY59gk9DxexQh/sNH/GBCUc7aGzJysLbDFaWHQ56cAeKo3IkvjfR+QBF0BRYyPfcTaN4pL/qbSKp6yfPNWU8qpJQmmqR+MbQvZetucUc1b7yqAJoqbZqlj8S+fpFl/W/KF7PwuB1+Ljo/MH8WyDFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721942008; c=relaxed/simple;
-	bh=WDY4qmiOBxXmKYv4nX2vft/++V2zPDsqZEqaE6CO6VE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ff9ObfWK11TySg0PPwfBUPqcpAIlG46vP5eIQ69oXfGnCR6rswfl7qGGnQnV/oe/+KRlQhBfuBhVCIPlvBovMy/HQ8i8mAN2PzI8xLIdXD+puxku9QDlZhSvX80BZZo1RU9xHPDzaDrfxFb5yUJWMKG0IQE1OFh8nucKtLixX10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MXUWadsd; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id X5lysEXlZxIArX5lzscUeW; Thu, 25 Jul 2024 23:13:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721941997;
-	bh=Dvx74GTKCLxtBt0j69CFfrti2x6oZPPqXeUdFjRlfm8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=MXUWadsd6jupaTa7OrpWEZ7IhxbabLX9FFoRqYb1OdbBbhCVQMncLdKG+JPWoA2Nq
-	 nADJuYv9k5mN9AUGinW1GbM5FFL5isgOSNCAauLllrPkVgLxq+DeEMJDEr2pyK4y2U
-	 OqHHc4rJtIAXC9SnUAo1E1zbrjvJLxExc5HpE/+OXAC9xkRyy1Etkqh9chPwKrLTWv
-	 Agw6x0E21/h14BMfyNRttnrHmgbE6edOXK7K9khAOUu7Dc1MegzEx/nRuLt7B0+aG1
-	 4aUujloK+pQjtoQY2U9b9tMH56FRDEL++b+VC6jOU7i4poPDV2xb0XEDULMeaoMxny
-	 xgBcq52QWCuig==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 25 Jul 2024 23:13:17 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Patil Rajesh Reddy <Patil.Reddy@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/pmf: Fix a double put in amd_pmf_remove()
-Date: Thu, 25 Jul 2024 23:13:10 +0200
-Message-ID: <72a97f7989f56c50e1ca417633fe703593d49189.1721941953.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721942080; c=relaxed/simple;
+	bh=NuLRowIVm+Fl0x9TYugEgL9W/RUQUOnDqgYa0XpoF0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SO8+WJfQPyD8ZD19EJqfTtEK+Hl3ozM9N0qPRcf0+fy7wDsBleNd6vzds9/bjJ7o8Sz9lH8L7zssq5Ymq00cZ31qvT8I16LCGt5pkMFBlFCskRtjFPeDWJje4WhcEJyHnkLMy3kmXxv8uwaDkzFJGT9SMuZFUDGOMiBjf6lTkQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE92C116B1;
+	Thu, 25 Jul 2024 21:14:38 +0000 (UTC)
+Date: Thu, 25 Jul 2024 17:14:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Ajay Kaher <ajay.kaher@broadcom.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Vasavi Sirnapalli
+ <vasavi.sirnapalli@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Beau Belgrave <beaub@linux.microsoft.com>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240725171459.598d9500@gandalf.local.home>
+In-Reply-To: <1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+	<CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+	<5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+	<CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+	<CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+	<CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+	<20240725131021.788374d0@gandalf.local.home>
+	<20240725131632.64cab267@gandalf.local.home>
+	<cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+	<20240725150517.3184e078@gandalf.local.home>
+	<0d1a8c46-43a7-42d6-bcbf-647a5a68c3c5@grsecurity.net>
+	<20240725161519.35fd3bd6@gandalf.local.home>
+	<1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The 'input_dev' is a managed resource allocated with
-devm_input_allocate_device(), so there is no need to call
-input_unregister_device() explicitly. It will be called automatically
-when the driver is removed.
+On Thu, 25 Jul 2024 22:41:23 +0200
+Mathias Krause <minipli@grsecurity.net> wrote:
 
-Fixes: 4c92d448e3e6 ("platform/x86/amd/pmf: Use existing input event codes to update system states")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
+> > diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> > index 6ef29eba90ce..5fbfa1c885de 100644
+> > --- a/kernel/trace/trace_events.c
+> > +++ b/kernel/trace/trace_events.c
+> > @@ -1627,12 +1627,14 @@ static int f_show(struct seq_file *m, void *v)
+> >  
+> >  static void *f_start(struct seq_file *m, loff_t *pos)
+> >  {
+> > +	struct trace_event_file *file;
+> >  	void *p = (void *)FORMAT_HEADER;
+> >  	loff_t l = 0;
+> >  
+> >  	/* ->stop() is called even if ->start() fails */
+> >  	mutex_lock(&event_mutex);
+> > -	if (!event_file_data(m->private))
+> > +	file = event_file_data(m->private);
+> > +	if (!file || (file->flags & EVENT_FILE_FL_FREED))
+> >  		return ERR_PTR(-ENODEV);
+> >  
+> >  	while (l < *pos && p)
+> > 
+> >   
+> 
+> Nope, still the same splats.
 
-I'm not 100% confident with this change. The error handling scheme is not
-a clear to me as what I usually see. For example, the last calls from
-amd_pmf_probe() don't handle error at all. So the probe just succeeds in
-these cases.
+Can you reshow the splats. Because I'm now confused.
 
-So, because of it, it is maybe fine to call input_unregister_device() in
-amd_pmf_deinit_smart_pc(), even if it looks strange to me.
+destroy_user_event() which is under event_mutex calls
+user_event_set_call_visible() with false, that will then call:
 
-Review with care!
----
- drivers/platform/x86/amd/pmf/tee-if.c | 3 ---
- 1 file changed, 3 deletions(-)
+trace_remove_event_call() -> probe_remove_event_call() ->
+ __trace_remove_event_call() -> event_remove() ->
+ remove_event_from_tracers()
 
-diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-index e246367aacee..cc721fbc3e0b 100644
---- a/drivers/platform/x86/amd/pmf/tee-if.c
-+++ b/drivers/platform/x86/amd/pmf/tee-if.c
-@@ -515,9 +515,6 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
- 
- void amd_pmf_deinit_smart_pc(struct amd_pmf_dev *dev)
- {
--	if (dev->pmf_idev)
--		input_unregister_device(dev->pmf_idev);
--
- 	if (pb_side_load && dev->esbin)
- 		amd_pmf_remove_pb(dev);
- 
--- 
-2.45.2
+Where remove_event_from_tracers() loops over all the instances and will set
+each of the file pointers flags associated to the event: EVENT_FILE_FL_FREED
+
+Then it returns back to destroy_user_event() that would free the event.
+
+The f_start() that was in your crash, with the new patch, should take the
+event_mutex before referencing the event that was freed. And with that flag
+being set, it should exit out.
+
+Did you remove all the other patches before applying this one?
+
+-- Steve
+
 
 
