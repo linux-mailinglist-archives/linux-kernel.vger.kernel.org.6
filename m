@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-262190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E4B93C224
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8305393C22D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 14:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447A0283C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F5D1F21592
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 12:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0C41993A3;
-	Thu, 25 Jul 2024 12:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3A198E76;
+	Thu, 25 Jul 2024 12:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M5mdT9St"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7eRuQ+9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19ED225CE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 12:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A061741F8;
+	Thu, 25 Jul 2024 12:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721910804; cv=none; b=K+GeimnliiHAcVyv8JbOMny1r9fEjok6xOJcFNcgbF1ni/7UCsn7W/nxPgceNjhn0kCxalKP1Ji1NslnUztir8DtAMc2tktmohqp1YPRBH1mZ9F+GO58kMUls/YUodBaXwmzA09rN0gS477t/Hzmxc6EJvCqbPxZbr9JCnxtRyw=
+	t=1721911119; cv=none; b=VEmFPa/AZYxuXVJwVkH37KH28/S8DNVQuuD12qUAwyWZkqcEq6bO9KsPT63rkRJQtxm54Ra0WqyRnh8XS6Aw6ilPqA8WWGjmGn+3nQHznjYpz/oJNrx3bIYuCZ9hnf+j74YsysvudXGK4bD+8TLy+yXWpAwUb+3dIUptaEnTJEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721910804; c=relaxed/simple;
-	bh=loisQvxB80cBHcqxsD4j7QC4s2voKR2VBQscCedYzEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NvJV6nUamLSF9uYSD43FvipOJVuMKoB8QPDwt5Skr/zyERHk+kS5H7pBPPQeM5LAbJzyoaLuhrwZ99b7bhNUMEtqpHtm9rCJYVuN2lcKbut8/qioCbTFfD/3bcdDLA02HV9fhGbIooYAx4Mg08cCXRMJ/RTclXOXGxHzHpaotdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M5mdT9St; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721910802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MtA7yhRfm5XfOtod2ZhYC2Xuv723Fg+huPBrtR9uGkE=;
-	b=M5mdT9StJs4UtZzRstWJiAu3ffcrGx5y4oJ4t6Ig64d7jCRSbG1qqOPJQYOxW570nCjd1y
-	n8yO9YkZ13R+dnlZzI/uCU7CaA6SLVnGl1M/YmBLoerBEnD/hmZmm/3fR3YnlvvIzqY9dt
-	B1Z92nCp9zy5EHmIl6Cd6vetkiLCsoM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-xhVK7QVPPImoKoEOkXRudw-1; Thu, 25 Jul 2024 08:33:20 -0400
-X-MC-Unique: xhVK7QVPPImoKoEOkXRudw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4266d0183feso6673995e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 05:33:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721910799; x=1722515599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MtA7yhRfm5XfOtod2ZhYC2Xuv723Fg+huPBrtR9uGkE=;
-        b=mr/V6HBOOwCzLUJbmpyOJ7grElF0fA6k8R5K9pE5o2QDncbNSxd5q7WyI6yBlKSSc4
-         GFJKN09GZVNYCPNQTZ/gUBP6fN1b+ky/xz9buneK/XkWNSilLZU9AnPqnGMCu9InQ0+S
-         iVC/BZGqpGRr+FHHs7WLPm/lJb6oioqs+3id02vxzuGBkwzHV3efTR9/1FXamuWrC/LK
-         iXm3oP6XGA3svooveCimnMUnvJ9tMsgwLEEr2KaXDHgFx2kC76nvWyUP3Ywjc6VN26a1
-         UatzCfC/OGnB29YrKQsCgCeeQTbmb/VMMw+kR9FhTJCruy/gmR727mIh6OGF34xG+u2a
-         jjbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXL6LWm7OpxmZk9RVItv4cmrWHEV3XSCX4iS+3lxvlWAu1LwXYNTJVSsnquW9ODzaRjc3Kiwcp0tiPWhVxjClejMRf5UkCvTsYz85RX
-X-Gm-Message-State: AOJu0YxG0xZKNmInSXZJTfl34zJ9KqC02FH4aYehz/BD6kwE5dxXvZxD
-	YagwwNqIUnOXpvl1xooAyZv2BkbHS5W95XpTiPrm5n3fhTb1rCo9OStkeGEdojGiMO98K6IXFqi
-	k2M/qBJj0kNwVuCqLFEgvr9PxSRVlPOqUaL5/zAURax2Ocb26xlMBuuAfneftvA==
-X-Received: by 2002:a05:6000:10c4:b0:363:d980:9a9e with SMTP id ffacd0b85a97d-36b31a5187amr2126819f8f.55.1721910799454;
-        Thu, 25 Jul 2024 05:33:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNFg/vuWe2oFay9N039fn3TrlpoXUmzQUlnFxLTZeAWFsuS7LiKQSxku9klsp/j5rRo846+Q==
-X-Received: by 2002:a05:6000:10c4:b0:363:d980:9a9e with SMTP id ffacd0b85a97d-36b31a5187amr2126769f8f.55.1721910798847;
-        Thu, 25 Jul 2024 05:33:18 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1ec:81aa:776c:8849:e578:516a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367f0e26sm2054573f8f.47.2024.07.25.05.33.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 05:33:18 -0700 (PDT)
-Date: Thu, 25 Jul 2024 08:33:12 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240725083215-mutt-send-email-mst@kernel.org>
-References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
- <20240725012730-mutt-send-email-mst@kernel.org>
- <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
- <20240725081502-mutt-send-email-mst@kernel.org>
- <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
- <20240725082828-mutt-send-email-mst@kernel.org>
- <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
+	s=arc-20240116; t=1721911119; c=relaxed/simple;
+	bh=VG+cP0kFl7e/oaB73V3oKDo0+7NMuvP6lVqYhJM22ps=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OcSjzt4IrdL06SKvm1yV8Zq/qzAfG6AHeQ9qHBMVwOcaWux06BBdPvLXac8EH6x+qyWpDI6XZMoXaRjKqWR5ICUVosog00HrcxcXX4SLX/o7EkNse055dir1iGS6h+SSPpeUuqGtWqrCEXOXAC57s3ltJssU/eOmMRISnxwUijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7eRuQ+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71432C116B1;
+	Thu, 25 Jul 2024 12:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721911119;
+	bh=VG+cP0kFl7e/oaB73V3oKDo0+7NMuvP6lVqYhJM22ps=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D7eRuQ+9Roalcj7cFfAnZbXasHzhzgikkU6RlUdQ+VRvNx8CP2c1UWvUSrOmPV1XT
+	 I1JWAx5pBzFP8D4LE7QRkmZ1bkwoWiBUCoV9LIthgGWdLSoNIQFpp4ht5XsgPL5DI0
+	 CLyVZfRZTz/GjjjZgq5dZO1a7Ikc4JerefFCdarODgaAyJyC0PD8zyigHGdAbSowyy
+	 bpa74XKJlp4fO3fywS58Doft2m+B4KDDmI23tGw7GUAdJtbiLDkZSVXNcTVKHT4VrL
+	 LuDnWaMCSlPnFQj0prqPGQlfaNhJzZCC20jjvcJuVtlR+rVtSZRq8PygrNbOrh59Qp
+	 EJHbnnn04QuUg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sWxjx-00FITm-6c;
+	Thu, 25 Jul 2024 13:38:37 +0100
+Date: Thu, 25 Jul 2024 13:38:36 +0100
+Message-ID: <865xst3aur.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: jianyong.wu@outlook.com
+Cc: oliver.upton@linux.dev,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Add some statistics under kvm debugfs
+In-Reply-To: <SI2PR04MB4931916BB35936E00B2AD262E3AB2@SI2PR04MB4931.apcprd04.prod.outlook.com>
+References: <SI2PR04MB4931916BB35936E00B2AD262E3AB2@SI2PR04MB4931.apcprd04.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: jianyong.wu@outlook.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Jul 25, 2024 at 01:31:19PM +0100, David Woodhouse wrote:
-> On Thu, 2024-07-25 at 08:29 -0400, Michael S. Tsirkin wrote:
-> > On Thu, Jul 25, 2024 at 01:27:49PM +0100, David Woodhouse wrote:
-> > > On Thu, 2024-07-25 at 08:17 -0400, Michael S. Tsirkin wrote:
-> > > > On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wrote:
-> > > > > > Do you want to just help complete virtio-rtc then? Would be easier than
-> > > > > > trying to keep two specs in sync.
-> > > > > 
-> > > > > The ACPI version is much more lightweight and doesn't take up a
-> > > > > valuable PCI slot#. (I know, you can do virtio without PCI but that's
-> > > > > complex in other ways).
-> > > > > 
-> > > > 
-> > > > Hmm, should we support virtio over ACPI? Just asking.
-> > > 
-> > > Given that we support virtio DT bindings, and the ACPI "PRP0001" device
-> > > exists with a DSM method which literally returns DT properties,
-> > > including such properties as "compatible=virtio,mmio" ... do we
-> > > already?
-> > > 
-> > > 
-> > 
-> > In a sense, but you are saying that is too complex?
-> > Can you elaborate?
+On Thu, 25 Jul 2024 04:27:38 +0100,
+jianyong.wu@outlook.com wrote:
 > 
-> No, I think it's fine. I encourage the use of the PRP0001 device to
-> expose DT devices through ACPI. I was just reminding you of its
-> existence.
+> From: Jianyong Wu <jianyong.wu@outlook.com>
 > 
+> There are some statistics missing from kvm debugfs on arm64. For
+> example: irq_exits number, irq_injection number and so on. But it's
+> useful to monitoring kvm performance, so, add them here.
 > 
+> Signed-off-by: Jianyong Wu <jianyong.wu@outlook.com>
+> ---
+>  arch/arm64/include/asm/kvm_host.h | 3 +++
+>  arch/arm64/kvm/guest.c            | 3 +++
+>  arch/arm64/kvm/handle_exit.c      | 1 +
+>  arch/arm64/kvm/sys_regs.c         | 1 +
+>  arch/arm64/kvm/vgic/vgic.c        | 1 +
+>  5 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 9e8a496fb284..1e20319977b3 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1024,6 +1024,9 @@ struct kvm_vcpu_stat {
+>  	u64 mmio_exit_user;
+>  	u64 mmio_exit_kernel;
+>  	u64 signal_exits;
+> +	u64 irq_exits;
+> +	u64 irq_injections;
+> +	u64 handle_sys_reg_exits;
+>  	u64 exits;
+>  };
+>  
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index e2f762d959bb..a3783388a802 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -50,6 +50,9 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+>  	STATS_DESC_COUNTER(VCPU, mmio_exit_user),
+>  	STATS_DESC_COUNTER(VCPU, mmio_exit_kernel),
+>  	STATS_DESC_COUNTER(VCPU, signal_exits),
+> +	STATS_DESC_COUNTER(VCPU, irq_exits),
+> +	STATS_DESC_COUNTER(VCPU, irq_injections),
+> +	STATS_DESC_COUNTER(VCPU, handle_sys_reg_exits),
+>  	STATS_DESC_COUNTER(VCPU, exits)
+>  };
+>  
+> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
+> index 617ae6dea5d5..d69ab1207da4 100644
+> --- a/arch/arm64/kvm/handle_exit.c
+> +++ b/arch/arm64/kvm/handle_exit.c
+> @@ -335,6 +335,7 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
+>  
+>  	switch (exception_index) {
+>  	case ARM_EXCEPTION_IRQ:
+> +		++vcpu->stat.irq_exits;
+>  		return 1;
+>  	case ARM_EXCEPTION_EL1_SERROR:
+>  		return 1;
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index c9f4f387155f..2a6bfc673636 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -3568,6 +3568,7 @@ int kvm_handle_sys_reg(struct kvm_vcpu *vcpu)
+>  	int Rt = kvm_vcpu_sys_get_rt(vcpu);
+>  	int sr_idx;
+>  
+> +	++vcpu->stat.handle_sys_reg_exits;
+>  	trace_kvm_handle_sys_reg(esr);
+>  
+>  	if (triage_sysreg_trap(vcpu, &sr_idx))
+> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+> index 4ec93587c8cd..9f7371e01f35 100644
+> --- a/arch/arm64/kvm/vgic/vgic.c
+> +++ b/arch/arm64/kvm/vgic/vgic.c
+> @@ -454,6 +454,7 @@ int kvm_vgic_inject_irq(struct kvm *kvm, struct kvm_vcpu *vcpu,
+>  
+>  	vgic_queue_irq_unlock(kvm, irq, flags);
+>  	vgic_put_irq(kvm, irq);
+> +	++vcpu->stat.irq_injections;
 
-Confused. You said "I know, you can do virtio without PCI but that's
-complex in other ways" as the explanation why you are doing a custom
-protocol.
+Like for most stats, I don't think this is warranted. Most of these
+already have trace points associated to it, and you can readily
+*count* those. These stats are an absolute waste of cycles and memory,
+and I have suggested alternative approaches in the past (all of them
+relying on the tracing infrastructure).
+
+Thanks,
+
+	M.
 
 -- 
-MST
-
+Without deviation from the norm, progress is not possible.
 
