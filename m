@@ -1,198 +1,172 @@
-Return-Path: <linux-kernel+bounces-261973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8D593BED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F01893BEDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 11:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD76B21E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE571C2118A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 09:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0C197A66;
-	Thu, 25 Jul 2024 09:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D11197558;
+	Thu, 25 Jul 2024 09:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="STIL99Y3"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAUIdSjF"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4A4196D81;
-	Thu, 25 Jul 2024 09:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DB481E;
+	Thu, 25 Jul 2024 09:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721898917; cv=none; b=JdhPi41N5EgQPsJ7nmeA6PPVmKwNtHZU9m7nrkdN/xb244fUjFhVkPnC5bvPWyNYsTSNOAwcmdLw9E6OLUJTElR47qi2P54r8Xc1a+HL5XAve8+Osm81Faj00uMtx+6xG0WPgbvHm5vLv9psnGm1swqviJoG+C07LidCMzB5kAs=
+	t=1721898948; cv=none; b=BC/GomjfyCchbzcrg+fGh6HQGEvsfGJBbI8XD7J+Pj90+rBWbaVf0ichqqrXZxyyujlf4DBSsL0mLVHjQn3hyHIPb69MgTJwmsgD4Gdoyfy0srbxdElsrFXwtdKndeCRd1IGB9zqhzugYxY5ikhr9MyWX51ap0jzJYq2T5CmuMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721898917; c=relaxed/simple;
-	bh=j/yEqQAjIIj8LyMCGBMo0d80ZyZhhJcxYmZ4C+SgD3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=B1tsdrTnsOfC7+CM70+N/gUq5IUQ8o5qqX1fpG3+ShALfnaPjRKtmK0LCla5uWKsdK/pvvi57P4duBMhb1aacX9IQOh9u+tJDAAbEEzjWkz8Zuknri0SZrGx84JgT1Y7CQOLdx1dKVOS4o9JD7xkxMEzGWVQwTcfAaBfDkAAwD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=STIL99Y3; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P913mY031056;
-	Thu, 25 Jul 2024 09:14:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:content-transfer-encoding:mime-version; s=pp1; bh=z
-	d459GkdTLJ6KePvJP/djHYd8THQtJpUegDopIMFIFQ=; b=STIL99Y3trAX6alw0
-	0WfNnJCoKyh/LASafm0FLOJ04dIfIgGAL14NK6gK8yoeHQN4pmWECpbEax5RALjX
-	ISbT3trO6fYwWx4o4MXhu2NVZ8bCWnFyf5cmxAZMVBWHQqnl9dbueo9iIOgAiQh0
-	W6lmxJDi6g8bZ8Au/Tpk/wEK4nijIp8C+5jtn6bmMO/S0KELheSrMt2OOFjcL4mc
-	7Li/bTKHNRMRXhT5HiozKmeFjwmSYjwPn0SuhSG8W+cHdAaOj5L9hjS0EwDjvZCY
-	t3QJJug0x0QWxtKzpv+0W+H9Nq4WlkiL9mNEPBoomw8lmUEQnxGXXr6hhcO1HcL8
-	dR9jQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40kdgx0whq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 09:14:41 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46P9COOt020102;
-	Thu, 25 Jul 2024 09:14:40 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40kdgx0whn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 09:14:40 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46P6HqQT009083;
-	Thu, 25 Jul 2024 09:14:40 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40gt93nvsq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 09:14:39 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46P9Ea4q34407136
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Jul 2024 09:14:38 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B9BB20040;
-	Thu, 25 Jul 2024 09:14:36 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C6152004E;
-	Thu, 25 Jul 2024 09:14:34 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 25 Jul 2024 09:14:34 +0000 (GMT)
-Date: Thu, 25 Jul 2024 14:44:32 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 01/20] ext4: refactor ext4_ext_rm_idx() to index 'path'
-Message-ID: <ZqIXeLgvSZbEq74w@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-2-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-2-libaokun@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RtiPOznXzb7O-uSbQNXb8fwnyQmYVJPg
-X-Proofpoint-GUID: mi4IZ8pLJ9o344ND79WJK2OQjNShjkHw
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1721898948; c=relaxed/simple;
+	bh=OcwgtfgPw0hhdhtKtHhoQsMyS9KzBLMScSWx7P0e2cs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=laOP2VNMVMOXZA+jEDTyZ67TCEmX+EpUhnSv8RVNTsFmOg/Ow8HwndqxaIFoCmFPuMiJoTZw2a0w2BUIf7X1bRftgjo+39H4trp8IllNTNjkNmI6ZoBmEzY919v5gmVylx4sqTUGJOt9KaIhkLN2DsPk3nsEyc+VaJgGvehHa8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAUIdSjF; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so942869a12.0;
+        Thu, 25 Jul 2024 02:15:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721898945; x=1722503745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ysBx5Z51EpiZcBKUWEbzyyIn2+Nt7E1e5BC6UDT7EQE=;
+        b=XAUIdSjFFoUFoYSvFiO24+hIwLYFo1hvbSbHT8wXlTmAxH+mOb32i2SdLfd1wAUEJW
+         EOFvJNCa2nCXRVmFzLALNxnnLSREs78CXay8fh3DOIKRkxTTrIH8qGBr0a3MazA03M5y
+         mKtwkfipMuGF6cuat8wI2Lrn2gFb4azlwc25Wv8sE7UibTVCEdqY+FaocGx5Z1IKGjiO
+         ao2y+26mMma12qR/eKIdwJXRfMte+r8595XjYM/xNv5YZqqekNierStb9sZN6ZNBhGiT
+         T6aLMDzMFCqdlbMywMqdyrrD7UW/h91P99vlgkmEhOtYOTzfrA3zHR08YN5NYljvREZV
+         QGLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721898945; x=1722503745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ysBx5Z51EpiZcBKUWEbzyyIn2+Nt7E1e5BC6UDT7EQE=;
+        b=mbKiVOc5uXgzqHqE2oP5HSBqdEYkpJA+CQ38qZsMZR85ooelmY+FoOKFW6jOn2dZ3O
+         t/CWSxGCDqGsTOyVkJRxSGCc04h4gINf7ltGqSUOFcfQfvyVK6DqjzaWrA3/DXW7sQts
+         HRgbhmYdxM6mCm8Dt9sd1mJrjqfbe0kBUgsjHtbYXdlLGg35wgpAyzPzbV5xmmSVcoR/
+         oQGz9x8jzJ8brmfjoiYy8fl4+N2f5eVWgYAYJlAF3EeCEPjgitC42ujcEF2hUdXHt482
+         zOGSsNbTQG8RuMyH+KQcjjOP451L3jyNJw/YJvgYM2ic+eZhKdkstY1xCZD/MwgE87lT
+         zTuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOzGJbjHspFnYUMPQy/82ehSRqKSCUrQ06nVXNx4xSL/xuA8ovr6h+vIAZ8OtI9VFoer9ET41wYsg9e0S6kw/lEEYWhBNWBtFMAFvbk+/aezvGjROES9k5Wc/g5Dh7L8fsn7Rf+pn7sa7O/7uPXilzAKyVADzYeSRrFXr64yMq0ywk1ea3hhxBIw==
+X-Gm-Message-State: AOJu0Yzc7h7TPUmUND/Sf6j3oWMSPMtORqrMT0Os4mNj1uTBRFrOHiC1
+	IDTj/64/kGLBe+/HGKoaAnTTZYcPuidt+6VCgT/XGB7jfk8DrakVpqD1u//WvwYzXsafu7XRAtq
+	P+LFTTKhDVA1Y/3yLhS/3H9wcj+M=
+X-Google-Smtp-Source: AGHT+IGhAa6wCja7qg4dQ0/wwMduOr4UN/fm29G/e5fxGtFKB4d6+ysR2xYbfM2QDED6KN/IpGrm/XlhsbvHP2bcUcs=
+X-Received: by 2002:a50:f68d:0:b0:5a2:8bef:c370 with SMTP id
+ 4fb4d7f45d1cf-5ac6261dc83mr996668a12.15.1721898945272; Thu, 25 Jul 2024
+ 02:15:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_09,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=606 adultscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250058
+References: <20240725075830.63585-1-sunjunchao2870@gmail.com> <20240725085156.dezpnf44cilt46su@quack3>
+In-Reply-To: <20240725085156.dezpnf44cilt46su@quack3>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Thu, 25 Jul 2024 05:15:34 -0400
+Message-ID: <CAHB1NagCqP4k9XvmAoyZ8NaRb0Y-bT1unnnOsmnt-mE6_k=8Rg@mail.gmail.com>
+Subject: Re: [PATCH] scripts: reduce false positives in the macro_checker script.
+To: Jan Kara <jack@suse.cz>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, n.schier@avm.de, ojeda@kernel.org, 
+	djwong@kernel.org, kvalo@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 12:06:35PM +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> As suggested by Honza in Link，modify ext4_ext_rm_idx() to leave 'path'
-> alone and just index it like ext4_ext_correct_indexes() does it. This
-> facilitates adding error handling later. No functional changes.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Link: https://lore.kernel.org/all/20230216130305.nrbtd42tppxhbynn@quack3/
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  fs/ext4/extents.c | 32 +++++++++++++++-----------------
->  1 file changed, 15 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index e067f2dd0335..bff3666c891a 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -2279,27 +2279,26 @@ static int ext4_ext_rm_idx(handle_t *handle, struct inode *inode,
->  {
->  	int err;
->  	ext4_fsblk_t leaf;
-> +	int k = depth - 1;
->  
->  	/* free index block */
-> -	depth--;
-> -	path = path + depth;
-> -	leaf = ext4_idx_pblock(path->p_idx);
-> -	if (unlikely(path->p_hdr->eh_entries == 0)) {
-> -		EXT4_ERROR_INODE(inode, "path->p_hdr->eh_entries == 0");
-> +	leaf = ext4_idx_pblock(path[k].p_idx);
-> +	if (unlikely(path[k].p_hdr->eh_entries == 0)) {
-> +		EXT4_ERROR_INODE(inode, "path[%d].p_hdr->eh_entries == 0", k);
->  		return -EFSCORRUPTED;
->  	}
-> -	err = ext4_ext_get_access(handle, inode, path);
-> +	err = ext4_ext_get_access(handle, inode, path + k);
->  	if (err)
->  		return err;
->  
-> -	if (path->p_idx != EXT_LAST_INDEX(path->p_hdr)) {
-> -		int len = EXT_LAST_INDEX(path->p_hdr) - path->p_idx;
-> +	if (path[k].p_idx != EXT_LAST_INDEX(path[k].p_hdr)) {
-> +		int len = EXT_LAST_INDEX(path[k].p_hdr) - path[k].p_idx;
->  		len *= sizeof(struct ext4_extent_idx);
-> -		memmove(path->p_idx, path->p_idx + 1, len);
-> +		memmove(path[k].p_idx, path[k].p_idx + 1, len);
->  	}
->  
-> -	le16_add_cpu(&path->p_hdr->eh_entries, -1);
-> -	err = ext4_ext_dirty(handle, inode, path);
-> +	le16_add_cpu(&path[k].p_hdr->eh_entries, -1);
-> +	err = ext4_ext_dirty(handle, inode, path + k);
->  	if (err)
->  		return err;
->  	ext_debug(inode, "index is empty, remove it, free block %llu\n", leaf);
-> @@ -2308,15 +2307,14 @@ static int ext4_ext_rm_idx(handle_t *handle, struct inode *inode,
->  	ext4_free_blocks(handle, inode, NULL, leaf, 1,
->  			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
->  
-> -	while (--depth >= 0) {
-> -		if (path->p_idx != EXT_FIRST_INDEX(path->p_hdr))
-> +	while (--k >= 0) {
-> +		if (path[k + 1].p_idx != EXT_FIRST_INDEX(path[k + 1].p_hdr))
->  			break;
-> -		path--;
-> -		err = ext4_ext_get_access(handle, inode, path);
-> +		err = ext4_ext_get_access(handle, inode, path + k);
->  		if (err)
->  			break;
-> -		path->p_idx->ei_block = (path+1)->p_idx->ei_block;
-> -		err = ext4_ext_dirty(handle, inode, path);
-> +		path[k].p_idx->ei_block = path[k + 1].p_idx->ei_block;
-> +		err = ext4_ext_dirty(handle, inode, path + k);
->  		if (err)
->  			break;
->  	}
+Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B47=E6=9C=8825=E6=97=A5=E5=91=
+=A8=E5=9B=9B 04:52=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu 25-07-24 03:58:30, Julian Sun wrote:
+> > Reduce false positives in the macro_checker
+> > in the following scenarios:
+> >   1. Conditional compilation
+> >   2. Macro definitions with only a single character
+> >   3. Macro definitions as (0) and (1)
+> >
+> > Before this patch:
+> >       sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> >       99
+> >
+> > After this patch:
+> >       sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> >       11
+> >
+> > Most of the current warnings are valid now.
+> >
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> ...
+> >  def file_check_macro(file_path, report):
+> > +    # number of conditional compiling
+> > +    cond_compile =3D 0
+> >      # only check .c and .h file
+> >      if not file_path.endswith(".c") and not file_path.endswith(".h"):
+> >          return
+> > @@ -57,7 +72,14 @@ def file_check_macro(file_path, report):
+> >          while True:
+> >              line =3D f.readline()
+> >              if not line:
+> > -                return
+> > +                break
+> > +            line =3D line.strip()
+> > +            if line.startswith(cond_compile_mark):
+> > +                cond_compile +=3D 1
+> > +                continue
+> > +            if line.startswith(cond_compile_end):
+> > +                cond_compile -=3D 1
+> > +                continue
+> >
+> >              macro =3D re.match(macro_pattern, line)
+> >              if macro:
+> > @@ -67,6 +89,11 @@ def file_check_macro(file_path, report):
+> >                      macro =3D macro.strip()
+> >                      macro +=3D f.readline()
+> >                      macro =3D macro_strip(macro)
+> > +                if file_path.endswith(".c")  and cond_compile !=3D 0:
+> > +                    continue
+> > +                # 1 is for #ifdef xxx at the beginning of the header f=
+ile
+> > +                if file_path.endswith(".h") and cond_compile !=3D 1:
+> > +                    continue
+> >                  check_macro(macro, report)
+> >
+> >  def get_correct_macros(path):
+>
+>
+> > So I don't think this is right. As far as I understand this skips any m=
+acros
+> > that are conditionally defined? Why? There is a lot of them and checkin=
+g
+> > them is beneficial... The patterns you have added should be dealing wit=
+h
+> > most of the conditional defines anyway.
+Yes, this skips all checks for conditional macro. This is because I
+observed that almost all false positives come from conditional
+compilation. Testing showed that skipping them does not cause the
+genuine warnings to disappear.
+Also as you said, it may still lead to skipping checks for genuinely
+problematic macro definitions. Perhaps we could provide an option that
+allows users to control whether or not to check macros under
+conditional compilation?
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Look good to me as well. Feel free to add:
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-
-Regards,
-ojaswin
-> -- 
-> 2.39.2
-> 
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
