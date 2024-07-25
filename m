@@ -1,219 +1,139 @@
-Return-Path: <linux-kernel+bounces-262648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B533493CA01
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 22:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31C493CA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 23:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69243281D59
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 20:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A7781C220A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 21:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127C013D601;
-	Thu, 25 Jul 2024 20:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56648137C35;
+	Thu, 25 Jul 2024 21:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCaz5/pO"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsNTZmT5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895431C6BE;
-	Thu, 25 Jul 2024 20:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F3F225D9;
+	Thu, 25 Jul 2024 21:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721941171; cv=none; b=uHI2ojITx9dT4UWzyg6o2cXxLQhHPF+ESucHQj6BtNimtjhi2SRSw71Sa8VkIHpcOQvgE8UK2IqP8UE1qCRcdVSZs+EFmOuqJCQJ0nYzIpL7Lz8gJvjO5gzURfOL/ZCp1WkInxmrK5ILK+t4Hp+Xl4uJyHiWHhBvulM2RZhnETo=
+	t=1721941218; cv=none; b=cdr5ejMdFdE27oQ4AAvQKa2/oXSO7qxC8pzog84GvxdVS2irUhsxf3RHxFYECX6oQk2l6geNkxB5v6T1wE5nZk93jvIp9dOaU4BOaMBn8YkWIYHTQJqFTSLch9P6fGLcDkhCyCiC+imjrc3uYPSwjMAxzWN20J1JR46NIfrGmEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721941171; c=relaxed/simple;
-	bh=e1KohRFif6uCY9LT104gO5hBEyXEhKhGGC4vLFpivm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Em4rLYApoaOf0z/26csprDALMq6i94+n0mj+hfb+3xR+b3GY6jz8IQeRwMSvXx/URo+sbDAMPDrwWM57pD5aGkt6e5mdFT1JlMCIe3rFDEGOOH9Dzl03ZQcx65XWLKVAAHxMS2Dc1KvflnOft4EPB+YmoyTtAXAwCmXYeCaMb28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nCaz5/pO; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-710437d0affso221231a12.3;
-        Thu, 25 Jul 2024 13:59:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721941169; x=1722545969; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4gCniBGiUh7RbvIXsajAgjTfTdLghfosUa+OF1HFMA=;
-        b=nCaz5/pOAWprToJEkVcVx77yHGJgy/DFwSPl+YHPp5dZtfF3lNrNyLKO8/pZiHJDn2
-         Ffp7V4fJ8NseXbdr2AkxgT1s2uLIzcLw6EanB/N0z9XNrs3/PcrSMtaL0czDFLyR0a95
-         MRpdYqrOUxcEn9AH5qJ1qbLyYW7gUEQJZS8K+Cfw8KLYE+zLRXtJaduGvbtQTkA7i5yk
-         FkC1PrM4r0N793AVKYi8/vuY1rFQSbswRPc6SuXfMcEydbIQfJiBbvuDEbL2hqbJVl8g
-         da/l+oA1jUlndqo8FXE1o7ZGNsWRoe/LW/IBPAJB5xCB4292b4eEvFPVH8qDRQ38C9kX
-         9MBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721941169; x=1722545969;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I4gCniBGiUh7RbvIXsajAgjTfTdLghfosUa+OF1HFMA=;
-        b=SPULCI85HNPwcvC0oHbPthGqAlRu5tnC1H1jJzkydrfGviMmASbCrNUO15drkorAFJ
-         zE5yewtItrLlsw7SHR4dJTmW0udooWnni7Zgx+rEiVRym2Df2gY4t8r8oDoLNbOdgv4C
-         kcxbzzIxlAKhev6P0nHK61LhthCs0qkoi4gDqs2lf7sAHQztRQFwtNrFHESgRnl6CXlp
-         LnYfm7IKgJIp7GOPGp8KKd0DpX+ef+nezWX1x5AhA2+oscgAUEeaM/NmT8sv6HA++mXJ
-         dXdi+4h9djFJerMZqTYlN0eHgyboitzRs8QfmIj1uTp3A/WA6nOG5+Br9yG2I4TVPiLX
-         HYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcPAxYi70Y2nez6A7CNSHHYXTDsl7uLVSxZOBHaZMJqV5gYw7avPWiRA8HWJBq7+HzfXDz1Kvq5hbohpXDATiTTgi1T6Wk8eF5QTZ/DzKTammuYcg8fSxfDfFQwfoNASn06062
-X-Gm-Message-State: AOJu0Yz5fAsT4cc/C4okeikdNq0vQJlpXLs0kYnu34UcLi6fJJq4UZkg
-	3CBlhGcxYR0YXCQgG3V9kBZTZYJ4PlRffsaPxLkRGn1GqCWdfVmGUuSaa4DgkR7Kb7MNkKFb3hC
-	cZLj6B8vYWUMS4tMqmlse9HOcLo0=
-X-Google-Smtp-Source: AGHT+IFA0VZ111JxLn9HdP00YaL4Z9quBI2prN0idkkDGmhMU4bZZeeTu2CxFkR1MXDUXDfcRnEz5m1mcFb+wqqyzHE=
-X-Received: by 2002:a05:6a20:7494:b0:1c0:bf35:ef4c with SMTP id
- adf61e73a8af0-1c4727aad83mr5501536637.11.1721941168624; Thu, 25 Jul 2024
- 13:59:28 -0700 (PDT)
+	s=arc-20240116; t=1721941218; c=relaxed/simple;
+	bh=d82TzPmf1GFgbEQwl4JV+d0VZLw0hz4hcnslcwaoSwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=E01JP1zG1WBFA+oJbI36XQGjE7BRMo3E6knrmpFgMYGHU3LQG0ZWDkIye8Ww4tiMG/g2Ghp+Fa0evKb3Wwk6o8THe2rK2dUEvs1t0v+yJcu2f/9UDZVqco9nNI7szClKWwxZMe4ICt2lrJWJPR20iD0wqBi5IKkhvOP2BL3Ebs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsNTZmT5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86AAC4AF0A;
+	Thu, 25 Jul 2024 21:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721941218;
+	bh=d82TzPmf1GFgbEQwl4JV+d0VZLw0hz4hcnslcwaoSwg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HsNTZmT5o2TWMgYnetJ4RaZzEeVAKej/WlnTqMoHuZ1+3nyP8UXf0/w7WfjnI2J9z
+	 Y6qsJhbpC+YCtywKRpLzfgasalSGXOxYGwXiNXpg4M2VeCkb4oEKdTNBc5rQPhOmgW
+	 RN1KhBBufYS8tnkki+9c16Z70gYy1ZvUm2lz4kbYDBzcEAViQpCDYFXQaKua+kxF4b
+	 4nsk/cJ0dE5fLpZRZenZrY5HWO3ofUuGNvXwnV6zggQyucT37maeM7bpMyc78I1ToD
+	 unPFpMYI12Va4MNrt4wdn6msQ1hVGywssXuTeMGjqyTjufySGnmUPy9Ydm4u/RKUPl
+	 mxXA0MBKc03eg==
+Date: Thu, 25 Jul 2024 16:00:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+Message-ID: <20240725210016.GA859301@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
-In-Reply-To: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 25 Jul 2024 16:59:16 -0400
-Message-ID: <CADnq5_NuAL4=hMyc6G0QkbSrjCXa6qFM-bFtt3A7DY6cCmCt9w@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
- track offsets
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Jerome Glisse <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725120729.59788-2-pstanner@redhat.com>
 
-Applied.  Thanks!
+[+cc Christoph]
 
-Alex
+On Thu, Jul 25, 2024 at 02:07:30PM +0200, Philipp Stanner wrote:
+> pci_intx() is a function that becomes managed if pcim_enable_device()
+> has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
+> pcim_intx()") changed this behavior so that pci_intx() always leads to
+> creation of a separate device resource for itself, whereas earlier, a
+> shared resource was used for all PCI devres operations.
+> 
+> Unfortunately, pci_intx() seems to be used in some drivers' remove()
+> paths; in the managed case this causes a device resource to be created
+> on driver detach.
+> 
+> Fix the regression by only redirecting pci_intx() to its managed twin
+> pcim_intx() if the pci_command changes.
+> 
+> Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+> Reported-by: Damien Le Moal <dlemoal@kernel.org>
+> Closes: https://lore.kernel.org/all/b8f4ba97-84fc-4b7e-ba1a-99de2d9f0118@kernel.org/
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-On Thu, Jul 25, 2024 at 2:20=E2=80=AFPM Nikita Zhandarovich
-<n.zhandarovich@fintech.ru> wrote:
->
-> Several cs track offsets (such as 'track->db_s_read_offset')
-> either are initialized with or plainly take big enough values that,
-> once shifted 8 bits left, may be hit with integer overflow if the
-> resulting values end up going over u32 limit.
->
-> Some debug prints take this into account (see according dev_warn() in
-> evergreen_cs_track_validate_stencil()), even if the actual
-> calculated value assigned to local 'offset' variable is missing
-> similar proper expansion.
->
-> Mitigate the problem by casting the type of right operands to the
-> wider type of corresponding left ones in all such cases.
->
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
->
-> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni tiling inf=
-ormations v11")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Applied to for-linus for v6.11, thanks!
+
 > ---
-> P.S. While I am not certain that track->cb_color_bo_offset[id]
-> actually ends up taking values high enough to cause an overflow,
-> nonetheless I thought it prudent to cast it to ulong as well.
->
->  drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/rade=
-on/evergreen_cs.c
-> index 1fe6e0d883c7..d734d221e2da 100644
-> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
-> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
-> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct rade=
-on_cs_parser *p, unsigned i
->                 return r;
->         }
->
-> -       offset =3D track->cb_color_bo_offset[id] << 8;
-> +       offset =3D (unsigned long)track->cb_color_bo_offset[id] << 8;
->         if (offset & (surf.base_align - 1)) {
->                 dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not aligned wi=
-th %ld\n",
->                          __func__, __LINE__, id, offset, surf.base_align)=
-;
-> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct rade=
-on_cs_parser *p, unsigned i
->                                 min =3D surf.nby - 8;
->                         }
->                         bsize =3D radeon_bo_size(track->cb_color_bo[id]);
-> -                       tmp =3D track->cb_color_bo_offset[id] << 8;
-> +                       tmp =3D (unsigned long)track->cb_color_bo_offset[=
-id] << 8;
->                         for (nby =3D surf.nby; nby > min; nby--) {
->                                 size =3D nby * surf.nbx * surf.bpe * surf=
-.nsamples;
->                                 if ((tmp + size * mslice) <=3D bsize) {
-> @@ -476,10 +476,10 @@ static int evergreen_cs_track_validate_cb(struct ra=
-deon_cs_parser *p, unsigned i
->                         }
->                 }
->                 dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer size %=
-d, "
-> -                        "offset %d, max layer %d, bo size %ld, slice %d)=
-\n",
-> +                        "offset %ld, max layer %d, bo size %ld, slice %d=
-)\n",
->                          __func__, __LINE__, id, surf.layer_size,
-> -                       track->cb_color_bo_offset[id] << 8, mslice,
-> -                       radeon_bo_size(track->cb_color_bo[id]), slice);
-> +                       (unsigned long)track->cb_color_bo_offset[id] << 8=
-,
-> +                       mslice, radeon_bo_size(track->cb_color_bo[id]), s=
-lice);
->                 dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d %d =
-%d %d %d %d %d)\n",
->                          __func__, __LINE__, surf.nbx, surf.nby,
->                         surf.mode, surf.bpe, surf.nsamples,
-> @@ -608,7 +608,7 @@ static int evergreen_cs_track_validate_stencil(struct=
- radeon_cs_parser *p)
->                 return r;
->         }
->
-> -       offset =3D track->db_s_read_offset << 8;
-> +       offset =3D (unsigned long)track->db_s_read_offset << 8;
->         if (offset & (surf.base_align - 1)) {
->                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not alig=
-ned with %ld\n",
->                          __func__, __LINE__, offset, surf.base_align);
-> @@ -627,7 +627,7 @@ static int evergreen_cs_track_validate_stencil(struct=
- radeon_cs_parser *p)
->                 return -EINVAL;
->         }
->
-> -       offset =3D track->db_s_write_offset << 8;
-> +       offset =3D (unsigned long)track->db_s_write_offset << 8;
->         if (offset & (surf.base_align - 1)) {
->                 dev_warn(p->dev, "%s:%d stencil write bo base %ld not ali=
-gned with %ld\n",
->                          __func__, __LINE__, offset, surf.base_align);
-> @@ -706,7 +706,7 @@ static int evergreen_cs_track_validate_depth(struct r=
-adeon_cs_parser *p)
->                 return r;
->         }
->
-> -       offset =3D track->db_z_read_offset << 8;
-> +       offset =3D (unsigned long)track->db_z_read_offset << 8;
->         if (offset & (surf.base_align - 1)) {
->                 dev_warn(p->dev, "%s:%d stencil read bo base %ld not alig=
-ned with %ld\n",
->                          __func__, __LINE__, offset, surf.base_align);
-> @@ -722,7 +722,7 @@ static int evergreen_cs_track_validate_depth(struct r=
-adeon_cs_parser *p)
->                 return -EINVAL;
->         }
->
-> -       offset =3D track->db_z_write_offset << 8;
-> +       offset =3D (unsigned long)track->db_z_write_offset << 8;
->         if (offset & (surf.base_align - 1)) {
->                 dev_warn(p->dev, "%s:%d stencil write bo base %ld not ali=
-gned with %ld\n",
->                          __func__, __LINE__, offset, surf.base_align);
+> Alright, I reproduced this with QEMU as Damien described and this here
+> fixes the issue on my side. Feedback welcome. Thank you very much,
+> Damien.
+> 
+> It seems that this might yet again be the issue of drivers not being
+> aware that pci_intx() might become managed, so they use it in their
+> unwind path (rightfully so; there probably was no alternative back
+> then).
+> 
+> That will make the long term cleanup difficult. But I think this for now
+> is the most elegant possible workaround.
+> ---
+>  drivers/pci/pci.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e3a49f66982d..ffaaca0978cb 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4477,12 +4477,6 @@ void pci_intx(struct pci_dev *pdev, int enable)
+>  {
+>  	u16 pci_command, new;
+>  
+> -	/* Preserve the "hybrid" behavior for backwards compatibility */
+> -	if (pci_is_managed(pdev)) {
+> -		WARN_ON_ONCE(pcim_intx(pdev, enable) != 0);
+> -		return;
+> -	}
+> -
+>  	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+>  
+>  	if (enable)
+> @@ -4490,8 +4484,15 @@ void pci_intx(struct pci_dev *pdev, int enable)
+>  	else
+>  		new = pci_command | PCI_COMMAND_INTX_DISABLE;
+>  
+> -	if (new != pci_command)
+> +	if (new != pci_command) {
+> +		/* Preserve the "hybrid" behavior for backwards compatibility */
+> +		if (pci_is_managed(pdev)) {
+> +			WARN_ON_ONCE(pcim_intx(pdev, enable) != 0);
+> +			return;
+> +		}
+> +
+>  		pci_write_config_word(pdev, PCI_COMMAND, new);
+> +	}
+>  }
+>  EXPORT_SYMBOL_GPL(pci_intx);
+>  
+> -- 
+> 2.45.2
+> 
 
