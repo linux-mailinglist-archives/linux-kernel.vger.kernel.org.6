@@ -1,207 +1,145 @@
-Return-Path: <linux-kernel+bounces-263167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874DE93D1EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED0693D1FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42619282756
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493021F22A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3547179965;
-	Fri, 26 Jul 2024 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BA178373;
+	Fri, 26 Jul 2024 11:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbRfLKCc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KtNCe0t8"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E6214277;
-	Fri, 26 Jul 2024 11:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDD9178385
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992630; cv=none; b=CeB00D17z4BqzusVSYoOF2YbGK9FEVp0jYzAR31DyBVDcr/ZvCOTiYw/Cb2OwLJn/ydstn3juuF5eq9MwO2mQY3SF44FAM1Z4CRmdmvePh/bKsSOGuDodwiaHDy/n7eIqGJqVNZv/q3F6EjrewAhwtc/St1Ttz1rX3xjkabM98c=
+	t=1721992723; cv=none; b=gjqfIWEkHknK37J/RxlbCDYbfiSyl/dPAFM+OzsST/xguNTv2uUtjdcJ3z5/JFdt7MyKTx9bx4kyUPJeXl69YyEd+jp/4M7lUi/yXXRvpTgGa7ls/+WlpISKe7lP6GT010ySnqnOrELKVhqnAWCi/qcDk4kCHy+Auhr5I5KLVsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992630; c=relaxed/simple;
-	bh=xz21XeKk6Jh5vorDOFaezBjDi7mGuYx6lx40T8g4h3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QO4r6gmakbLAFpncRilCm6C3xUeNn/WgGA4rIcicKXCV1HwbehVcVjXOtMLZ4+VrtJWBO/0P6+kN/JrRhkVM0CyaJNpQ+70v8V2mUZqzedCMYWY+nHx95IpFi+ZM0kwwdZMPsSp/2m88qWA7wWPT1QLxcGkS6Rf+ZQ/rSU2RKiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbRfLKCc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999E2C4AF09;
-	Fri, 26 Jul 2024 11:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992629;
-	bh=xz21XeKk6Jh5vorDOFaezBjDi7mGuYx6lx40T8g4h3c=;
-	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=IbRfLKCcUs1m+iV8xkOBqr7dD7BNE3R6uY3g2GTPoa/ISwret+2be6edJQEU7kbQX
-	 rSctWtZLrHYdaiH4qLvPp4LtCNUr61zZlLYpvDkWS3Fwvda8AqFHlxDokEGJ53Uh4M
-	 s57oak1znDytaN3flPaDD6JZtM31nKM0CDsJCJq8v7xSiIB+a06c1Sdn8hDCtS5//p
-	 ZGtAgxg/BM36T91sSXSqMdcPJ1fjqMiBfb+Z/MV6Xm05L5InLAIx3DZWrLwXs0cOhk
-	 siFotPG8oCcLewdvqkfFdLiKjHLiAeuQMburKIdPgfhXmib9fci1xkvi98kjx2BgD/
-	 0UxK6KcF3HXHA==
-Message-ID: <79d13e65-ca4a-461f-9888-9664e204f2ed@kernel.org>
-Date: Fri, 26 Jul 2024 13:16:59 +0200
+	s=arc-20240116; t=1721992723; c=relaxed/simple;
+	bh=iPIs676Ucz0BFAPc0hUibqb4aH8rrVS00mYl6TySE0A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qQVynBJNaurRThCGr7jtmp5txa0VahzIPIpPI9eSkNk3ypUdu8GDbuKzyMqpklV3VvgStbILF101kbqqLVwm+4pPQNWpjpTuOPEC7glMnEYgdHpWlCHBmU3p7W6w8ghDzCUGM9He/Bu9CzDS2e/pdDb43LLFKQpD41qIcVvU6XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KtNCe0t8; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso202054766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721992719; x=1722597519; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s1uKdlL0wSEZi8PR/aafT2ubUVc/pu4j0AuCIvADTbc=;
+        b=KtNCe0t8hwo/JeZ1RpiXPi6B17rEl17TzflU14ekmqAvEraiZIU0DYmoJ6+aOrSCuw
+         87U9P172wvUHUT8eHxai8h+P8RNgcyHvSFvZzHMcT5EbTIiGiVl/yppzs2nSJVo21wEL
+         Y2YVd6IWTVlizoztTneFcPxJ69HG/uNGZbbboEb5fkeMw0iEdpwp0AK8gmDztoN1QySS
+         gOZI/LKiTE+M9I1WrH+YZlpXn98EQD4yF8S5lE+zx9QFH+47gCJMxYTqhAS1yE1stxR7
+         m/d05XovuFMDBYx5sfwvOVC6HVaXQP/xfD49VmQaXTwl1N4xD1801g66/tFQZ5ebpmPp
+         q1/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721992719; x=1722597519;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s1uKdlL0wSEZi8PR/aafT2ubUVc/pu4j0AuCIvADTbc=;
+        b=RhiwfhmZyMLyJMMPwWDSXKvKyMZ7N+Msj4/F4FtliugK2L4/pai9n8KyBFU7OTVg5i
+         gqjDDzawKpnck7atb4M72ryv5d2TfxTRjboHD8VHHFmEwfVgNP8LJPHHEY3SAVIs8R00
+         xmlEovOtLpDxhfQJxM5nZJVmIlR6H9g1efyHh0kdLOhIDztYKQNP6u/dyH7mq4Zv5jMM
+         VmkgrxFTDQSVRZpVcvpbQ6PK2HhezQe6EBuZx2nqmdiAmu4THMNokH065wW/jqWSHMVl
+         zScA2t0dBNXuMGkhi2mMxkcpP3aS3EexPtk5Gp4T25ehi77KK/0er7/K87DHt/w0HG6+
+         EZVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiqUZmcjVyt+MQahju4OcnCRK2xWBWYyI6O91p4mkHo18sUdUNY/EmiKWSHxyrigWjLc6IAsWy1lZdIre4jOI37srTDNrUh9hYvyli
+X-Gm-Message-State: AOJu0Yx8V9+wbl5mji5+JBwygkEn1lTSjWeyRTKhCh1rH3Hr3i0VGT3/
+	2VOTzRfsjNTgdnDv5zDJ7ggXPEEs8P2oJPCQRyB4Y8HDJcK26bx/aame8vYpYVc=
+X-Google-Smtp-Source: AGHT+IGHu6xTju0RbmaTB0Dy2P+ddiDMN8D4wOU+C0PeZvuRz87E8qSyxApkJD6EGVWwoobzF5Xq6w==
+X-Received: by 2002:a17:907:2d24:b0:a7a:9d1e:3b26 with SMTP id a640c23a62f3a-a7acb549275mr421259766b.37.1721992719060;
+        Fri, 26 Jul 2024 04:18:39 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab233aasm164703166b.8.2024.07.26.04.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 04:18:38 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Google-Original-From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/3] Update Konrad Dybcio's email addresses
+Date: Fri, 26 Jul 2024 13:18:22 +0200
+Message-Id: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/10] arm64: dts: aspeed: Add initial AST2700 EVB
- device tree
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- quic_bjorande@quicinc.com, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
- m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-10-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240726110355.2181563-10-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP6Fo2YC/x3MQQqAIBBA0avErBNMo6SrRITaVEOloRFBePek5
+ Vv8/0LEQBihK14IeFMk7zKqsgC7arcgoykbBBc1b0XDLn+SZZt3QU8jHpp2priyjeTGGqkhh2f
+ AmZ5/2g8pfQKYJ6pkAAAA
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721992717; l=2541;
+ i=konradybcio@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=iPIs676Ucz0BFAPc0hUibqb4aH8rrVS00mYl6TySE0A=;
+ b=y37EdpPnKb8Uuo1vP3UyO10uS4Yy5aBrR7It7aQ9tbVd9QdazQPQ5o2NGj8MGWFoSa4MRnPPc
+ DnUX7Yunj3PCdZV2CImioEtUcYA9dZXN1FNJa0bSpthvfs1q3b+CGmz
+X-Developer-Key: i=konradybcio@kernel.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 26/07/2024 13:03, Kevin Chen wrote:
-> ---
->  arch/arm64/boot/dts/aspeed/Makefile        |  4 ++
->  arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 50 ++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
->  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> 
-> diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
-> new file mode 100644
-> index 000000000000..ffe7e15017cc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/aspeed/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +dtb-$(CONFIG_ARCH_ASPEED) += \
-> +	ast2700-evb.dtb
-> diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> new file mode 100644
-> index 000000000000..187c458e566b
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> @@ -0,0 +1,50 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +/dts-v1/;
-> +
-> +#include "aspeed-g7.dtsi"
-> +#include <dt-bindings/gpio/aspeed-gpio.h>
-> +
-> +/ {
-> +	model = "AST2700A1-EVB";
-> +	compatible = "aspeed,ast2700a1-evb", "aspeed,ast2700";
+Patch 3 should probably go straight to Rob's dt-bindings tree
 
-You have never tested this.
+Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+---
+Konrad Dybcio (3):
+      mailmap: Add an entry for Konrad Dybcio
+      MAINTAINERS: Update Konrad Dybcio's email address
+      dt-bindings: Batch-update Konrad Dybcio's email
 
-Sorry, test your DTS first.
-
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS12,115200n8";
-
-Drop.
-
-> +		stdout-path = &uart12;
-> +	};
-> +
-> +	firmware {
-> +		optee: optee {
-> +			compatible = "linaro,optee-tz";
-> +			method = "smc";
-> +		};
-> +	};
-> +
-> +	memory@400000000 {
-> +		device_type = "memory";
-> +		reg = <0x4 0x00000000 0x0 0x40000000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		mcu_fw: mcu-firmware@42fe00000 {
-> +			reg = <0x4 0x2fe00000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +
-> +		atf: trusted-firmware-a@430000000 {
-> +			reg = <0x4 0x30000000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		optee_core: optee_core@430080000 {
-
-Read DTS coding style.
-
-> +			reg = <0x4 0x30080000 0x0 0x1000000>;
-> +			no-map;
-> +		};
-> +	};
-> +};
-> +
-
-Remove stray blank line.
+ .mailmap                                                            | 2 ++
+ Documentation/devicetree/bindings/clock/qcom,dispcc-sm6350.yaml     | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml       | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml        | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml        | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6125-gpucc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6375-dispcc.yaml     | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml        | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm6375-gpucc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml      | 2 +-
+ Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml | 2 +-
+ .../devicetree/bindings/display/panel/asus,z00t-tm5p5-nt35596.yaml  | 2 +-
+ .../devicetree/bindings/display/panel/sony,td4353-jdi.yaml          | 2 +-
+ .../devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml          | 2 +-
+ .../devicetree/bindings/interconnect/qcom,sc8280xp-rpmh.yaml        | 2 +-
+ .../devicetree/bindings/interconnect/qcom,sm8450-rpmh.yaml          | 2 +-
+ Documentation/devicetree/bindings/iommu/qcom,iommu.yaml             | 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,mdm9607-tlmm.yaml    | 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml     | 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml     | 2 +-
+ Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml     | 2 +-
+ .../devicetree/bindings/soc/qcom/qcom,rpm-master-stats.yaml         | 2 +-
+ MAINTAINERS                                                         | 6 +++---
+ 26 files changed, 29 insertions(+), 27 deletions(-)
+---
+base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
+change-id: 20240726-topic-konrad_email-808c630bcb3a
 
 Best regards,
-Krzysztof
+-- 
+Konrad Dybcio <konradybcio@kernel.org>
 
 
