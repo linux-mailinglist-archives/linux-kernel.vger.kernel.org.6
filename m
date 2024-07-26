@@ -1,233 +1,132 @@
-Return-Path: <linux-kernel+bounces-263788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0178593DA7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:01:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D8893DA49
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5062DB24F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068351C2330C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5E142AAA;
-	Fri, 26 Jul 2024 21:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E8A14D282;
+	Fri, 26 Jul 2024 21:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSXgr8gw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cp5TIsdn"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B95E1534EC;
-	Fri, 26 Jul 2024 21:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0771494DB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722031078; cv=none; b=ZUqU9yl/z/HKKXTVIVPdZ6qDbeJJnB04PVh1qHpFPm2glRo3j1CbHCqZy6iB7JfR1/PfR2gDUSIdlJNCfwJXxGKSa9UrPx0xJDgEjtuLPF4IIttizSbOSDh9n3oy/BwjnzC7jolXROvG8XU5CGDMEs50UcHEXlE1fP3HTcJ4+a8=
+	t=1722031028; cv=none; b=R26vIFat1WvG9wVARr/0ifyU64MG6QELQg84CWkgXi1HiOpUbPhzUxgX7AH8pPu4WSIV2YKSOEWP7rDZMLfZS3t+SmCjnESaHhVWZ0jSLV78YCmURc8enX6E+rOXlzUF6SqA23+9ykh5hG+73Y3KihLLYBs66F8eDM24Dn1GUzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722031078; c=relaxed/simple;
-	bh=Yz6bJUlYF+iMHAiEYs34cVgoTt8huaFYwVmLFroPfBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g2EI3H7nGDSeo/3ng3NHpCd6bJmLa5CpBapHHaEvH3wSJn1jxoD8ELgOTgKtTbfpggDRXXkDVXZvcS/RP9MYmUhr0NJ5Uc6HVimB/X3L2sKd3nzf9pRW/Zebu2VzGFjgRFjaIWWsK9tboW1XAqkMvhO4Fz0txZAYTLyII3OrFpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSXgr8gw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92415C4AF0B;
-	Fri, 26 Jul 2024 21:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722031078;
-	bh=Yz6bJUlYF+iMHAiEYs34cVgoTt8huaFYwVmLFroPfBE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FSXgr8gw6zdBoVhwLdneQntEUu+abZ/Ach0L65MTN35uk9wogOwhZRMYHMrrSycTe
-	 8bReYUBFBSCMGDCLGsJC3msiEp1UPf3bZyTCXOdn8LewsSAVlW10jJGMoXf2MSFyjd
-	 ooyyzp2RbVRoCsIV8aioV2Y6Clqu3KYfkw/VLLSRND9qUsKV67KNsD/cnRSBUd2eNH
-	 sOcjXGTvGjvScLH8fRZ5kkorPEcw5EIDkHQOJ44QRciDWxf7N/BTSwMijjpFEzKTmL
-	 HXVRWEvtGYwvqZ8Q4oxxOm+5m0/7w6rbNJMejSNP9FruDG91/dwpGj6DqKPsH6k3Yi
-	 H447CgOiKGM3g==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [RFC PATCH 20/20] rcu: Use kthread preferred affinity for RCU exp kworkers
-Date: Fri, 26 Jul 2024 23:56:56 +0200
-Message-ID: <20240726215701.19459-21-frederic@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240726215701.19459-1-frederic@kernel.org>
-References: <20240726215701.19459-1-frederic@kernel.org>
+	s=arc-20240116; t=1722031028; c=relaxed/simple;
+	bh=n5EgPjLJ4DlM/FvKwJG0Rb1NknqdotR7NtvK958V26o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bde7b5HiY0PmCg7/4plZTbPkXP4LWjRDupbc2ONAGwLWOXy8JFJvd4ReUSUA873J1moRiXurqNIP2hJEhaBXBqiu5gixfktlHevj5BHOSWOnXvde9P+SvaZNxJMDV499NCNk9k6Lruv0EUdoq73StDy6Y32EsBekggG3iF4LWBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cp5TIsdn; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc47abc040so8781375ad.0;
+        Fri, 26 Jul 2024 14:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722031026; x=1722635826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G7VvZc34TPqv2SpARPN9B3UMyNKJRlpoSjXgpLtWBpQ=;
+        b=cp5TIsdnWTpUQaImw4UcM2deouT9iaBON8KVx+1BTrov0u16tL96UBi/CdsE3LxM92
+         yCD+IzngYRISqExeIMcv9JjSZAk/r/YdW4p8iRzj+0efjYPI7ZrmKo18dijatupSkXTI
+         t4SFmzZeejCvmSIpJSFtrLdOzteCSkRxR+CM+qhwHlszMWFgcf20mqI8lWd/wXRHwXkV
+         H9TKE9hc/64eDHg+Wp4H9XE42deBf2XktwkcmOQCj+Ko+QvVL6+/c3q60N9bXJWuVRVk
+         kWAVPEjDjeoDFWtFG+eURn/ZKz8ydQ7gQBzYdLOG/Aztnm7U2ZWMOCU21JGEpp3JnyQ1
+         zF0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722031026; x=1722635826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G7VvZc34TPqv2SpARPN9B3UMyNKJRlpoSjXgpLtWBpQ=;
+        b=Xrn9/YcZb/Q+KZvyXgpNQetK537KVa9dlsheLrQg4moAJyLlyGbTLGBonD7AIzxCSJ
+         Jo8cxz19d2kCrMd5tgxNViy0cTRSFcZ16Kaiu6MeoQYzp3Qw5wcsqqXGzRzoKEM4x8bV
+         lhOA+5IUF8VvIy5NA2jELNx3sVsVHEahXj/Y8UBr7u1XHB5XRyFRMdmynoJaMpDzGUN3
+         e6/mcL4JinAtPaCnnAPQ5831hpS2fYrNsl0C1Tjk2qZmGnudrFyLj1zho5/brTMtFjRC
+         ERq5lf5tvMd1q1QEE9VsMpHDO6j+Zqf4cYUyk2d4fff9zN3DO7Crvf+VVtZzijdaQPoc
+         d5zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEJYdh9uJ80zY823fDrzKr4X0QOTWaCG+l+vRAGTvN3arIaV37Hszeno1FBRlIn8RRorN8+4cjvejdvTaCiG1TOvgtZA/la2DDu+yJYNXWvNnpq05vy8XRD3EuqhfAokl+FAcDVgHYrA==
+X-Gm-Message-State: AOJu0Yz98J0NzIEWeUOciws4AHZlNqs+GvH1eLMl300qY0JMOI5ctgmT
+	sD0JAUbMrIZq1TsUHo6doTVSa5qvgdOd9cAuSetFKDWwTvC3bJHbGIO/5w==
+X-Google-Smtp-Source: AGHT+IGV9VFIAPhBUa6SDtwo5s8zyqiZeIy8iZDtSndQqmcqJuMXR74/sE3szho7hw7s1EWNXtbXXQ==
+X-Received: by 2002:a17:902:ee4c:b0:1fb:9280:c96e with SMTP id d9443c01a7336-1ff04889615mr10456815ad.62.1722031026364;
+        Fri, 26 Jul 2024 14:57:06 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:891c:7447:8bd1:fbbc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f671e8sm37699815ad.228.2024.07.26.14.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 14:57:05 -0700 (PDT)
+Date: Fri, 26 Jul 2024 14:57:03 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: hdegoede@redhat.com, inux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: atkbd - fix LED state at suspend/resume
+Message-ID: <ZqQbr8aZnaYi20Dp@google.com>
+References: <20240726102730.24836-1-maqianga@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726102730.24836-1-maqianga@uniontech.com>
 
-Now that kthreads have an infrastructure to handle preferred affinity
-against CPU hotplug and housekeeping cpumask, convert RCU exp workers to
-use it instead of handling all the constraints by itself.
+Hi Qiang,
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree.c | 105 +++++++++-------------------------------------
- 1 file changed, 19 insertions(+), 86 deletions(-)
+On Fri, Jul 26, 2024 at 06:27:30PM +0800, Qiang Ma wrote:
+> After we turn on the keyboard CAPSL LED and let the system suspend,
+> the keyboard LED is not off, and the kernel log is as follows:
+> 
+> [  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
+> [  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+> [  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
+> [  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+> 
+> The log shows that after the command 0xed is sent, the data
+> sent is 0x04 instead of 0x00.
+> 
+> Solution:
+> Add a bitmap variable ledon in the atkbd structure, and then set ledon
+> according to code-value in the event, in the atkbd_set_leds function,
+> first look at the value of lenon, if it is 0, there is no need to
+> look at the value of dev->led, otherwise, Need to look at dev->led
+> to determine the keyboard LED on/off.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e038f4abb872..f3e40a1dea65 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4777,6 +4777,22 @@ rcu_boot_init_percpu_data(int cpu)
- 	rcu_boot_init_nocb_percpu_data(rdp);
- }
- 
-+static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
-+{
-+	cpumask_var_t affinity;
-+	int cpu;
-+
-+	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
-+		return;
-+
-+	for_each_leaf_node_possible_cpu(rnp, cpu)
-+		cpumask_set_cpu(cpu, affinity);
-+
-+	kthread_affine_preferred(t, affinity);
-+
-+	free_cpumask_var(affinity);
-+}
-+
- struct kthread_worker *rcu_exp_gp_kworker;
- 
- static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
-@@ -4789,7 +4805,7 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 	if (rnp->exp_kworker)
- 		return;
- 
--	kworker = kthread_run_worker(0, name, rnp_index);
-+	kworker = kthread_create_worker(0, name, rnp_index);
- 	if (IS_ERR_OR_NULL(kworker)) {
- 		pr_err("Failed to create par gp kworker on %d/%d\n",
- 		       rnp->grplo, rnp->grphi);
-@@ -4799,16 +4815,9 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
- 
- 	if (IS_ENABLED(CONFIG_RCU_EXP_KTHREAD))
- 		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
--}
- 
--static struct task_struct *rcu_exp_par_gp_task(struct rcu_node *rnp)
--{
--	struct kthread_worker *kworker = READ_ONCE(rnp->exp_kworker);
--
--	if (!kworker)
--		return NULL;
--
--	return kworker->task;
-+	rcu_thread_affine_rnp(kworker->task, rnp);
-+	wake_up_process(kworker->task);
- }
- 
- static void __init rcu_start_exp_gp_kworker(void)
-@@ -4893,79 +4902,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
--{
--	cpumask_var_t affinity;
--	int cpu;
--
--	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
--		return;
--
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		cpumask_set_cpu(cpu, affinity);
--
--	kthread_affine_preferred(t, affinity);
--
--	free_cpumask_var(affinity);
--}
--
--/*
-- * Update kthreads affinity during CPU-hotplug changes.
-- *
-- * Set the per-rcu_node kthread's affinity to cover all CPUs that are
-- * served by the rcu_node in question.  The CPU hotplug lock is still
-- * held, so the value of rnp->qsmaskinit will be stable.
-- *
-- * We don't include outgoingcpu in the affinity set, use -1 if there is
-- * no outgoing CPU.  If there are no CPUs left in the affinity set,
-- * this function allows the kthread to execute on any CPU.
-- *
-- * Any future concurrent calls are serialized via ->kthread_mutex.
-- */
--static void rcutree_affinity_setting(unsigned int cpu, int outgoingcpu)
--{
--	cpumask_var_t cm;
--	unsigned long mask;
--	struct rcu_data *rdp;
--	struct rcu_node *rnp;
--	struct task_struct *task_exp;
--
--	rdp = per_cpu_ptr(&rcu_data, cpu);
--	rnp = rdp->mynode;
--
--	task_exp = rcu_exp_par_gp_task(rnp);
--
--	/*
--	 * If CPU is the boot one, this task is created later from early
--	 * initcall since kthreadd must be created first.
--	 */
--	if (!task_exp)
--		return;
--
--	if (!zalloc_cpumask_var(&cm, GFP_KERNEL))
--		return;
--
--	mutex_lock(&rnp->kthread_mutex);
--	mask = rcu_rnp_online_cpus(rnp);
--	for_each_leaf_node_possible_cpu(rnp, cpu)
--		if ((mask & leaf_node_cpu_bit(rnp, cpu)) &&
--		    cpu != outgoingcpu)
--			cpumask_set_cpu(cpu, cm);
--	cpumask_and(cm, cm, housekeeping_cpumask(HK_TYPE_RCU));
--	if (cpumask_empty(cm)) {
--		cpumask_copy(cm, housekeeping_cpumask(HK_TYPE_RCU));
--		if (outgoingcpu >= 0)
--			cpumask_clear_cpu(outgoingcpu, cm);
--	}
--
--	if (task_exp)
--		set_cpus_allowed_ptr(task_exp, cm);
--
--	mutex_unlock(&rnp->kthread_mutex);
--
--	free_cpumask_var(cm);
--}
--
- /*
-  * Has the specified (known valid) CPU ever been fully online?
-  */
-@@ -4994,7 +4930,6 @@ int rcutree_online_cpu(unsigned int cpu)
- 	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
- 		return 0; /* Too early in boot for scheduler work. */
- 	sync_sched_exp_online_cleanup(cpu);
--	rcutree_affinity_setting(cpu, -1);
- 
- 	// Stop-machine done, so allow nohz_full to disable tick.
- 	tick_dep_clear(TICK_DEP_BIT_RCU);
-@@ -5207,8 +5142,6 @@ int rcutree_offline_cpu(unsigned int cpu)
- 	rnp->ffmask &= ~rdp->grpmask;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 
--	rcutree_affinity_setting(cpu, cpu);
--
- 	// nohz_full CPUs need the tick for stop-machine to work quickly
- 	tick_dep_set(TICK_DEP_BIT_RCU);
- 	return 0;
+I am not sure why duplicating input_dev->led which is supposed to record
+which LEDs are currently active on an input device would solve the
+issue. Could you please explain?
+
+The input core is supposed to turn off all LEDs on suspend. This happens
+in input_dev_toggle() which is called from input_dev_suspend(). It
+iterates over all LEDs on a device and turns off active ones one by
+one.
+
+I think what happens here is we are running afoul of the throttling done
+in atkbd (see atkbd_schedule_event_work), and it does not actually turn
+off all LEDs in time. But on the other hand atkbd_cleanup() (which is
+called to suspend the keyboard) calls
+
+	ps2_command(&atkbd->ps2dev, NULL, ATKBD_CMD_RESET_DEF);
+
+which should turn off everything anyways.
+
+I think we need better understand what is going on here. Maybe post the
+entire communication between the kernel and i8042?
+
+Thanks.
+
 -- 
-2.45.2
-
+Dmitry
 
