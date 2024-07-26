@@ -1,82 +1,97 @@
-Return-Path: <linux-kernel+bounces-263628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387C693D86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F8693D86E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD6942815A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7279282E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D74CB37;
-	Fri, 26 Jul 2024 18:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB9243155;
+	Fri, 26 Jul 2024 18:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaJIT8QQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyNc01my"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D32482D7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A3F3A1DC;
+	Fri, 26 Jul 2024 18:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722019123; cv=none; b=Oq3LlovXqkwV9VpiIMxcl+R6JNnPyDzWgZW+s5ogghW3TTo54kdB1fSf+Me3R8Oe7HcouR8wNnVVtPLRER/s9E4RqMPF+CizN4VgbJ75pGkVXZgCHmzVthjysXqCYqlAov1O/a5TCz+D8j3RqCD0ot2nUoNuVRSQLjcDPPZVu/Y=
+	t=1722019142; cv=none; b=tWCtxWjeKWwUY76QxgeLOrB6HpALiS0Yh7oGI/+g8PPMhZifJhv0BD2zwSenlqTnLtBch8nuT4z9nNmJ77+wR5HDZ2noraj9IPg1l/CT9XpIFwI6kYwd6QpzEPlkSULDsgQVnboxhhDnD+6YOthsVmKHwlgb5RqzWKgDL6J8/mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722019123; c=relaxed/simple;
-	bh=yNIQL6oRiqBKwOBRftDEcZtXqb13kdM79vCiHX74Z4E=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=jXolBwYeI6F1HRQlt2PLAlViYAaPbFZBLGyc2x87DkDUs0H9IXgfj1zFIKqQCtWBoAWQDvU7ftPVAgqr6ayNA61YEWZ3MG5rYosxclE2m+uZ5silJpSzcHN6yccx/VtHaX3U+0+bNZ94wfDgklgsNnxtPMk9E9hMxwWa21KipE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaJIT8QQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC686C32782;
-	Fri, 26 Jul 2024 18:38:42 +0000 (UTC)
+	s=arc-20240116; t=1722019142; c=relaxed/simple;
+	bh=Vsg5y8daZVUKgFBS8/PBVEbLVWxUX3hNaa7iZO3dLS4=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=twYqUmpKDTPbKfDc3cP2cHRtk2pVfHKZ7dkc54Gj0U20TKvOVoftsMJ1MConAgL6GvTOCpdFSwKKjlsS7hYC0yj05asPScbcyQfInUQn+gZkH3IU114j31IhPjnFbEPcv2VYHoScBRxJdMBGbu42dfinE4lyJAk3f2e18STkxuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyNc01my; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29356C32782;
+	Fri, 26 Jul 2024 18:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722019123;
-	bh=yNIQL6oRiqBKwOBRftDEcZtXqb13kdM79vCiHX74Z4E=;
+	s=k20201202; t=1722019141;
+	bh=Vsg5y8daZVUKgFBS8/PBVEbLVWxUX3hNaa7iZO3dLS4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=qaJIT8QQ77Seowh+L6+QGiYHYS+Ugt7687AG4Tc0iDZArerNauXyntvakzH7alhnp
-	 2AW/BUz7kKoQuqJe6dsx36rIeI3zg66qY8AFpioVia9ExGV6mteK/Yq/2JL40bJcCG
-	 kQhS9Oq0lit50AJvsGElxxRE+KT01zhQTM1uy+xadZ/raG7eyrtL63U6Y4mo3D+ivM
-	 W44nl1uVREmmT5Y2YQPlaph3fbEsH9Dk0uhifXghiGc5CqdwhCqVctZWSTGWdv3o4o
-	 6vg+lcF7nKL51qqsubLnHqlQq1YufnmAhVOuBuPLPSRcLQ8ePvyd8ACCXmIoBA6lTp
-	 Ax+9KvkXU6djw==
-Message-ID: <e50192fb5b0b56a8af3c45c47d235cf5.broonie@kernel.org>
+	b=GyNc01my3WYplCkK8RcriDlHOEcd2/2/W5xKRdR1Ktcmk/l3hAHZ4QV6169Rq9ul7
+	 1ZK5qqcSdqEMolQ2/UHrbQPKRQUkUx8XmK1BMlxk4zgo3epqIh7HQHE2xb8crblB/7
+	 Oz6lS+aShAT4k+L36K/4klHLOus5FUZF4FaQDA/o9C1fqigZMMfle63mPZEwHmUl22
+	 2B0lfPs1I5XVOu6XamYOxTcStdDkfnak74Y0s5PG4b429m9AsS3MdPi9jPPxmfAmjy
+	 SZ64By9p8GcrZzwBGbBfHGr5epdxrpSpkR3H6QEGTv6b8UmVaVjuD1qdSYI0HeZPDg
+	 DZ8aVvQ59DM7w==
+Message-ID: <bf741d1595d001bdd140a858fb45134a.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator fixes for v6.11-merge-window
-Date: Fri, 26 Jul 2024 19:38:35 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.11-merge-window
+Date: Fri, 26 Jul 2024 19:38:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit ef0b29e744965e8abc14260503a559366219035c:
+The following changes since commit 3048dc8ba46b7ba11581f2a7e06849af0df13136:
 
-  regulator: dt-bindings: pca9450: Make interrupt optional (2024-07-08 12:50:21 +0100)
+  spi: dt-bindings: at91: Add sama7d65 compatible string (2024-07-12 00:18:43 +0100)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.11-merge-window
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.11-merge-window
 
-for you to fetch changes up to e975d955c07cbc2cd6a83a5d8235d8373441fdb9:
+for you to fetch changes up to fc28d1c1fe3b3e2fbc50834c8f73dda72f6af9fc:
 
-  regulator: Further restrict RZG2L USB VBCTRL regulator dependencies (2024-07-26 15:11:25 +0100)
-
-----------------------------------------------------------------
-regulator: Fixes for v6.11
-
-These two commits clean up the excessively loose dependencies for the
-RZG2L USB VBCTRL regulator driver, ensuring it shouldn't prompt for
-people who can't use it.
+  spi: spidev: add correct compatible for Rohm BH2228FV (2024-07-18 11:17:09 +0100)
 
 ----------------------------------------------------------------
-Biju Das (1):
-      regulator: renesas-usb-vbus-regulator: Update the default
+spi: Fixes for v6.11
 
-Mark Brown (1):
-      regulator: Further restrict RZG2L USB VBCTRL regulator dependencies
+The bulk of this is a series of fixes for the microchip-core driver
+mostly originating from one of their customers, I also applied an
+additional patch adding support for controlling the word size which came
+along with it since it's still the merge window and clearly had a bunch
+of fairly thorough testing.
 
- drivers/regulator/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We also have a fix for the compatible used to bind spidev to the
+BH2228FV.
+
+----------------------------------------------------------------
+Conor Dooley (2):
+      dt-bindings: trivial-devices: fix Rohm BH2228FV compatible string
+      spi: spidev: add correct compatible for Rohm BH2228FV
+
+Naga Sureshkumar Relli (1):
+      spi: microchip-core: fix the issues in the isr
+
+Steve Wilkins (5):
+      spi: microchip-core: defer asserting chip select until just before write to TX FIFO
+      spi: microchip-core: only disable SPI controller when register value change requires it
+      spi: microchip-core: fix init function not setting the master and motorola modes
+      spi: microchip-core: ensure TX and RX FIFOs are empty at start of a transfer
+      spi: microchip-core: add support for word sizes of 1 to 32 bits
+
+ .../devicetree/bindings/trivial-devices.yaml       |   4 +-
+ drivers/spi/spi-microchip-core.c                   | 190 ++++++++++++---------
+ drivers/spi/spidev.c                               |   1 +
+ 3 files changed, 114 insertions(+), 81 deletions(-)
 
