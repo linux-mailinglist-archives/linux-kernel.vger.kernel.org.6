@@ -1,272 +1,184 @@
-Return-Path: <linux-kernel+bounces-262742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A00C93CC18
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9ECD93CC1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3251C2149F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674AD1F222D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF96EC7;
-	Fri, 26 Jul 2024 00:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D82EDB;
+	Fri, 26 Jul 2024 00:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb3SCh3N"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fe7K/vzq"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7419B;
-	Fri, 26 Jul 2024 00:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0122816
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721954030; cv=none; b=PMk6O4uzXG6b/eoq3TDKqzSSWroz87vyu0azlURTBI+HAgZrk4DQnlnP7VaR/2Wjy8HV78TeqkzKjE3ucVW7PqZ0RSIKg7q5/kqv0tj9YwZ+wSP+48fyBmTBopfR29BqhDprtFzP5EtIRwm7UKo/wQLjytUeC7e6KwRhkn1TrGM=
+	t=1721954108; cv=none; b=pmzvFDiNrmFiIqtAfUROwU3XY00oORyUzHiZ5G8eIiXe0s3YKMgk5Up4+FvHMcWAKLUezj7tGpVHbTNIayU/QAUnTEcTQg18facXjMxIkAiyHRW+Nfgt4YMrDC4svQTvwtDTRmfmlmcyMkZcgYjHv5Ot1qZujP3Y5R7A5pmYlqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721954030; c=relaxed/simple;
-	bh=3JWQJxgRjgnRDkV+J163/giXHdA9KJEk2gKFlONUNB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4Tg14XdPJBFmvBiJrW7yIF3hvJvFU09tsL3lEeJDD8I+2O4ivQZU3pexy1ybAuszN2gKGsyNcRSs3Dw0zEkCVgqD4uD4jSPCDLOKe4ZfR0LNU8yqFKP37BhjIkiztYqME/5eLQ1tvVS7bYtRLj4+vdprnP8G16Zn7paLDzCJfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb3SCh3N; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-67682149265so10467877b3.2;
-        Thu, 25 Jul 2024 17:33:48 -0700 (PDT)
+	s=arc-20240116; t=1721954108; c=relaxed/simple;
+	bh=eXsvx/oB2qbjHdSp6vi8FE0sL5fteTwRYvum4R3pSAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWnMFV02HfujYwByTx9zpRuYzg2EkdDPfgelQAqBQ/y6DgoJBqQ/bVJyto0OT6SR+TXRNuuEipJs7O3iTOYtX8c4PV5XOiCx2mMTOndXEm0SWJ/ioix5zPrjGfEXIoCRliXgSZkDXg0o5LwHBp51/01fsAXowpLW8XpdwQVfbLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fe7K/vzq; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd657c9199so27055ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:35:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721954027; x=1722558827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGbRMFqNjqE2FGzKnJAnVl6N0locpudqp71TjSFPoRA=;
-        b=fb3SCh3NkQmZMDiIwnW6nhNcnjLbjJU6YbVskaX4HPoSFV/GAgSPEipxMCiwyC9oy6
-         63lSy5p1km9JWH4/7qmHXTj87A7aGTkyhMkgeeWOhHF2HFrM4+IAvmjfTgTw0noe/ny1
-         nXHBuY1nUKOdI3c3WHPuo2L7+B8ICjqglMYgst7ueU5dcvVtEtaR5WmQwLROWvbtLPYy
-         uodEWP3RYCTd7R43SmAxtov8qF2bSoaQg4XESUKWgjFe958Ddwsotm5pBw6VODZbGfAB
-         CA6pz4riF1vH9f1WaplsrFk8+OmffEfmFHcVJrVNh6fuYzQ5QMXFtwvTkDCDwSZd//ao
-         Flkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721954027; x=1722558827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1721954106; x=1722558906; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PGbRMFqNjqE2FGzKnJAnVl6N0locpudqp71TjSFPoRA=;
-        b=eTrrC20tLSe1PQMmVVF2vnah/oLjGyGuF5VvOS1dN8qrOOoWXTR+WoYw89YUsAFkfp
-         nwHxx0XtQRy1nu2i7YtbvBbR3+GGznoOH/jib/U/Qil2+y2fY2e+oqzo4g4if46fR2Q6
-         u7aHWutGr+WvbDehB5DMXw5VjWVwPfRd/GGB4epZfMCmTOYvZWDrsoO48wI6FF+l0hFt
-         v5vhimkf8NfxDRx9FVqT7GSK2jpDqd69+xJwGS0EGUJkceqcyrVF/bW3PMz872wS1T82
-         ElkFUlzvJE4RcK+vDrRZtZ0guRNX11gtF2KWg7nIkIUEzcoLCFeOtvIOnpP1d165fBvB
-         2AvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVykLn+PM0vrVeMFIMIcycvBQuyCjOxn79e0FsGXv76mPzHhlVMqIQuPF+5k751+8lf7y8ITryawji/JknXlh6jDMRs+a/dzigAftz31ZMqLfPkyiumE2QAu/j51tXJmZjzbX0cnKRTtw==
-X-Gm-Message-State: AOJu0YxKEqnekWfV9YmmXjD9h9jGsQiPHSWkOL86sITCxPhl1N6FKPpT
-	zWvln1Tlit8kjbEECojx0LGLUF14hmGN+OprmmtHJ4dMgi7VoZy9crFYT1Lw
-X-Google-Smtp-Source: AGHT+IGvyKLluKIWk4xhy3Z+igBHGE1XI2dKeVygogOJaSS0FOIYI1CJKYYr8IK+0PZw+U7Unncn8Q==
-X-Received: by 2002:a81:bf4e:0:b0:648:3fb2:753b with SMTP id 00721157ae682-67512028191mr51762717b3.24.1721954027486;
-        Thu, 25 Jul 2024 17:33:47 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3faea19bsm11714666d6.121.2024.07.25.17.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 17:33:46 -0700 (PDT)
-Date: Thu, 25 Jul 2024 20:33:44 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mehdi.djait@bootlin.com, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: Add Sharp Memory LCD bindings
-Message-ID: <7l5jyzk4ojxtmihsnuz355x2qk632vgxdspgllxljhpzxzdhcb@aq5xyd64d2kb>
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240725004734.644986-2-lanzano.alex@gmail.com>
- <c7bf08aa-e7a0-4b60-b9fe-b43215ce3fb9@kernel.org>
+        bh=YXmOiT3ja7tbFfoShPzcte9+u5DgaoMfXxdrhdWg4sE=;
+        b=Fe7K/vzqIkO2XB6kGODBl/cQ+t/LtaxPaN0VuUg/G+7j0Nht2KSMN9ShODCTyNhKh4
+         H4b+QVDSbkCYKJDgb2xlztZv7NSWloe9m7yB6tpBBo6Y7rmJGjGs8GggPVbqeqUQv8aO
+         HBcERGvbQJOazTzoV0jGydKZUHmZa1CcPO98mnrstRvLUc4+vkRkVchnBWyLJ9LEGyXC
+         JjuvVrTxNtT52tHE+R6sT1dB8GOG0al1hf/zAo4tTTYc+iEHpQfsmKIO33yuKlkXBZuI
+         y8iavahxE1I2pwI7ahkdmItlZpRzG9eIJcuRJgIes7R4+ACjgtV7iUX+x1fD/B7b1575
+         uRkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721954106; x=1722558906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YXmOiT3ja7tbFfoShPzcte9+u5DgaoMfXxdrhdWg4sE=;
+        b=S/xuhz6Kz3mYAQSm95rqh8KlOiDk6bNP4W+ncjT9+X6Vy5L+tfkeRs0KF50Tp2qk94
+         7CEtN1axiWRmk8ZYlZe1WLaSg068+AB5+0AxkFUBw09FldQPEnjx5oMs/m/cJpd31wmX
+         PzjuchRaW7PqRX/cdi5DNSVsDNVPY5dEZUCYa7wHAB12Qy9AEXeadNLNUXrOcLds4Q8h
+         YQ1u0V/GU3vxk1MCO0rlB0UB1tT7NHlAHX45++pMZ1kdPzxl4f/d7nKl7BL8xlXY1lY/
+         N9g7AVC+Z/MUQ0FgAQ3L8Yy101wUYi54FkTeWM46DbtBEnDVX5AOKbWLXAcFLXUQ69zX
+         3gBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3p0Y31a6GPQUlzkHAESaIIlUlbDLr3tlsqoMPs74sDYG1hxDm7XMXIuXh87r8qhZ6ClxKGRItHwaSQmdhmYdCCkuu7AiCO3qXFcB0
+X-Gm-Message-State: AOJu0YyZoNW0zlDjfYLu9lqB5UfL65BvR1rxDvdl0AMmrVH7Xc4w3dAC
+	IIYSPRM5ecBy2A0DM+WbUrnGwg5AXLzYVEnRkkLtaIRx/0oaF3AdeY/rJaVL2VyHHVe0eLuqZVe
+	B0jDyUasRXW9/G6bXIt38ZaF6d3sLjXDPsHYl
+X-Google-Smtp-Source: AGHT+IFnv7tfdYJpXM8klvYkuM0VxwmIgdPCwCR+A2LuBYkT8SZpSWEYLkUMwdBrr+1/n3tswklB7a7UCo/1ZzddTK8=
+X-Received: by 2002:a17:903:2988:b0:1f3:3ede:9b0 with SMTP id
+ d9443c01a7336-1feee856698mr1378625ad.10.1721954105611; Thu, 25 Jul 2024
+ 17:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7bf08aa-e7a0-4b60-b9fe-b43215ce3fb9@kernel.org>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-3-jthoughton@google.com> <ZqKUefN3HgBQQkuA@google.com>
+In-Reply-To: <ZqKUefN3HgBQQkuA@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Thu, 25 Jul 2024 17:34:29 -0700
+Message-ID: <CADrL8HXoGeafwNvSyMF0=MMjkbodyYrA6+J638QXgyC_TW76XQ@mail.gmail.com>
+Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+To: David Matlack <dmatlack@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the review! I will address these comments in V2
+On Thu, Jul 25, 2024 at 11:08=E2=80=AFAM David Matlack <dmatlack@google.com=
+> wrote:
+>
+> On 2024-07-24 01:10 AM, James Houghton wrote:
+> > Walk the TDP MMU in an RCU read-side critical section. This requires a
+> > way to do RCU-safe walking of the tdp_mmu_roots; do this with a new
+> > macro. The PTE modifications are now done atomically, and
+> > kvm_tdp_mmu_spte_need_atomic_write() has been updated to account for th=
+e
+> > fact that kvm_age_gfn can now lockless update the accessed bit and the
+> > R/X bits).
+> >
+> > If the cmpxchg for marking the spte for access tracking fails, we simpl=
+y
+> > retry if the spte is still a leaf PTE. If it isn't, we return false
+> > to continue the walk.
+> >
+> > Harvesting age information from the shadow MMU is still done while
+> > holding the MMU write lock.
+> >
+> > Suggested-by: Yu Zhao <yuzhao@google.com>
+> > Signed-off-by: James Houghton <jthoughton@google.com>
+>
+> Aside from the comment fixes below,
+>
+> Reviewed-by: David Matlack <dmatlack@google.com>
 
-On Thu, Jul 25, 2024 at 08:17:01AM GMT, Krzysztof Kozlowski wrote:
-> On 25/07/2024 02:47, Alex Lanzano wrote:
-> > Add device tree bindings for the monochrome Sharp Memory LCD
-> > 
-> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+Thank you!
+
+>
 > > ---
-> >  .../bindings/display/sharp,sharp-memory.yaml  | 97 +++++++++++++++++++
-> >  include/dt-bindings/display/sharp-memory.h    |  9 ++
-> >  2 files changed, 106 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
-> >  create mode 100644 include/dt-bindings/display/sharp-memory.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml b/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
-> > new file mode 100644
-> > index 000000000000..a79edd97c857
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
-> 
-> Filename based on compatible, so e.g. sharp,ls010b7dh04.yaml.
-> 
-> > @@ -0,0 +1,97 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/sharp,sharp-memory.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  arch/x86/include/asm/kvm_host.h |  1 +
+> >  arch/x86/kvm/Kconfig            |  1 +
+> >  arch/x86/kvm/mmu/mmu.c          | 10 ++++-
+> >  arch/x86/kvm/mmu/tdp_iter.h     | 27 +++++++------
+> >  arch/x86/kvm/mmu/tdp_mmu.c      | 67 +++++++++++++++++++++++++--------
+> >  5 files changed, 77 insertions(+), 29 deletions(-)
+> >
+> [...]
+> > --- a/arch/x86/kvm/mmu/tdp_iter.h
+> > +++ b/arch/x86/kvm/mmu/tdp_iter.h
+> > @@ -25,6 +25,13 @@ static inline u64 kvm_tdp_mmu_write_spte_atomic(tdp_=
+ptep_t sptep, u64 new_spte)
+> >       return xchg(rcu_dereference(sptep), new_spte);
+> >  }
+> >
+> > +static inline u64 tdp_mmu_clear_spte_bits_atomic(tdp_ptep_t sptep, u64=
+ mask)
+> > +{
+> > +     atomic64_t *sptep_atomic =3D (atomic64_t *)rcu_dereference(sptep)=
+;
 > > +
-> > +title: Sharp Memory LCD panels
+> > +     return (u64)atomic64_fetch_and(~mask, sptep_atomic);
+> > +}
 > > +
-> > +maintainers:
-> > +  - Alex Lanzano <lanzano.alex@gmail.com>
-> > +
-> > +description:
-> > +  This binding is for the Sharp Memory LCD monochrome displays.
-> 
-> Do not say that binding is a binding... instead describe hardware.
-> 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - sharp,ls010b7dh04
-> > +      - sharp,ls011b7dh03
-> > +      - sharp,ls012b7dd01
-> > +      - sharp,ls013b7dh03
-> > +      - sharp,ls013b7dh05
-> > +      - sharp,ls018b7dh02
-> > +      - sharp,ls027b7dh01
-> > +      - sharp,ls027b7dh01a
-> > +      - sharp,ls032b7dd02
-> > +      - sharp,ls044q7dh01
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  spi-cs-high: true
-> 
-> You can drop it.
-> 
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 2000000
-> > +
-> > +  vcom-mode:
-> 
-> Missing vendor prefix.
-> 
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      VCOM is a signal that prevents DC bias from being built up in
-> > +      the panel resulting in pixels being forever stuck in one state.
-> > +      vcom-mode can be set to one of three modes
-> > +
-> > +      SHARP_MEMORY_SOFTWARE_VCOM - This method uses a kthread to periodically send a
-> > +      "maintain display" message to the display, toggling the vcom
-> > +      bit on and off with each message
-> 
-> You described Linux, this is not suitable for bindings.
-> 
-> > +
-> > +      SHARP_MEMORY_EXTERNAL_VCOM - This method relies on an external clock to generate
-> > +      the signal on the EXTCOMM pin
-> > +
-> > +      SHARP_MEMORY_PWM_VCOM - This method uses a pwm device to generate the signal
-> > +      on the EXTCOMM pin
-> 
-> I don't see why do you even need this property. Just choose the best
-> option based on available connections/pins.
-> 
+> >  static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_=
+spte)
+> >  {
+> >       KVM_MMU_WARN_ON(is_ept_ve_possible(new_spte));
+> > @@ -32,10 +39,11 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_pte=
+p_t sptep, u64 new_spte)
+> >  }
+> >
+> >  /*
+> > - * SPTEs must be modified atomically if they are shadow-present, leaf
+> > - * SPTEs, and have volatile bits, i.e. has bits that can be set outsid=
+e
+> > - * of mmu_lock.  The Writable bit can be set by KVM's fast page fault
+> > - * handler, and Accessed and Dirty bits can be set by the CPU.
+> > + * SPTEs must be modified atomically if they have bits that can be set=
+ outside
+> > + * of the mmu_lock. This can happen for any shadow-present leaf SPTEs,=
+ as the
+> > + * Writable bit can be set by KVM's fast page fault handler, the Acces=
+sed and
+> > + * Dirty bits can be set by the CPU, and the Accessed and R/X bits can=
+ be
+>
+> "R/X bits" should be "W/R/X bits".
 
-I wanted to cover most of the hardware configurations I've seen with these
-displays. This property simplifies the driver implementation and allows the user
-to explicitly state how the VCOM signal will be generated on their platform.
+Thanks. Right, we are clearing all of VMX_EPT_RWX_MASK.
 
-> > +
-> > +    enum: [ 0, 1, 2 ]
-> 
-> Here 0/1/2 but above something entirely else. Just use strings.
-> 
-> > +
-> > +  enable-gpios:
-> > +    maxItems: 1
-> > +    description: Enables display
-> 
-> Drop description and maxItems. :true is enough
-> 
-> > +
-> > +  pwms:
-> > +    maxItems: 1
-> > +    description: External VCOM signal
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - spi-cs-high
-> > +  - vcom-mode
-> > +
-> 
-> allOf:
-> 
-> and missing ref to spi peripheral props
-> 
-> > +if:
-> > +  properties:
-> > +    vcom-mode:
-> > +      # SHARP_MEMORY_PWM_VCOM
-> > +      enum: [2]
-> > +then:
-> > +  required:
-> > +    - pwms
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/display/sharp-memory.h>
-> > +
-> > +    spi {
-> > +            #address-cells = <1>;
-> > +            #size-cells = <0>;
-> 
-> Mess indentation.
-> 
-> Use 4 spaces for example indentation.
-> 
-> > +
-> > +            display@0{
-> > +                    compatible = "sharp,ls013b7dh03";
-> > +                    reg = <0>;
-> > +                    spi-cs-high;
-> > +                    spi-max-frequency = <1000000>;
-> > +                    vcom-mode = <SHARP_MEMORY_SOFTWARE_VCOM>;
-> > +            };
-> > +    };
-> > +...
-> > diff --git a/include/dt-bindings/display/sharp-memory.h b/include/dt-bindings/display/sharp-memory.h
-> > new file mode 100644
-> > index 000000000000..dea14c7bd7ec
-> > --- /dev/null
-> > +++ b/include/dt-bindings/display/sharp-memory.h
-> > @@ -0,0 +1,9 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +#ifndef _DT_BINDINGS_SHARP_MEMORY
-> > +#define _DT_BINDINGS_SHARP_MEMORY
-> > +
-> > +#define SHARP_MEMORY_SOFTWARE_VCOM	0
-> > +#define SHARP_MEMORY_EXTERNAL_VCOM	1
-> > +#define SHARP_MEMORY_PWM_VCOM		2
-> 
-> Nope, drop the binding.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+>
+> > + * cleared by age_gfn_range.
+>
+> nit: "age_gfn_range()"
 
-Best regards,
-Alex
+Thanks, will fix this and all the other places where I've left off the ().
 
