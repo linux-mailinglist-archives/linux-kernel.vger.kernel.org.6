@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-263855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E61293DB79
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE46393DB7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED67DB24084
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03563B2358E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6403172BB9;
-	Fri, 26 Jul 2024 23:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2986F1741E9;
+	Fri, 26 Jul 2024 23:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P8nc3QSi"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kCTSWtId"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBFB171670
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30D7172762
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722037996; cv=none; b=NEZdxTgapah3UbgYcPD5t+6ZBomLwL8u27KGboC69v278cBYaMG+G8DAlmZ1Nzd6glW2x2kmj6BIr9F9lUKle4H2vEwiypYas/1RQy6dOQDLKDfn0Dsrac1VpefwzHKOVo6vdyNb5uqpqk9qeoXoHZaD2GKv79vfM7XnrI+sb/U=
+	t=1722037998; cv=none; b=WlfyUMCwPu96O9vjspz1u6Z2F4gcGs3PJ5vGlcC1TszQHo+28boyq+QkNom4B/Czo6E9Z7FT0/UO4uf/IJgbX/guTGWaUfwJVMJbe9Qi7eEPrmDURy84F37X2iUSF7/jqHqjtDo5CCaQJHLcET8YxxSK9t1KD+f1wVjpC3Jvp7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722037996; c=relaxed/simple;
-	bh=ew26wDO2OFK9/ZL4S01JfkaAnmh//qDEW5lL4oKuI6U=;
+	s=arc-20240116; t=1722037998; c=relaxed/simple;
+	bh=RHZeaSr31fCCvyOcLLpe++oP0vx96AuhdExL9Q1bNo4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fsQZ5sgD9Ami846PRq0UonOmFf+ZSuHqSnLzmQtS0A5fF3kWGmthxf9OTvpxxvEdlt3pqPHg5IdDQvn5ClN72ZwWGR7GgwIQWj/geTgDhKLonuVqervK7kzo1qxVN0ceWgiVRk+hw2A4Zv7aeIR8CihIahi1CMxqA12gFXx0mxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P8nc3QSi; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=GkgME6qFaHoaNz7W4O2TpWb5/K6AWrtBHtJp1jjg1i1HLZ9DdTDKgy4qGfPseHx4NxrGPcsXThOWaORLbNqmimDnRm2hEjL7Lh+BL84/OF9jeCphrIOsYviSUwIaK7hpIMqQDNDbveuptg1NIrBO0SUdl+qC2F0rRpuod/z55Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kCTSWtId; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc53227f21so12113325ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:53:14 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a1188b3bc2so1412325a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722037994; x=1722642794; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722037996; x=1722642796; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=YtgPpIjPSqL3TzmlwlpLZvvahtPd8ef2dtbW1LnZzVw=;
-        b=P8nc3QSilOdFQme/xrj8NlBR5omdDMecY1PdOWRIgdd8geUHUUKBoqEbTpw1FmTv4z
-         NILu6gs57GoP7AdtkwfKaVPwl+z4kkkCyrJPilFEEpeiSbE+bX1ajcgKtKYvRTFxsXLs
-         ivjlYWzKuEEk/OtMsSIKk/SDIbd9aYIGRS8dpYc0i+d4dxisI1z44yElUBrrxWaWPvWZ
-         HbbtxC6XgmMfT1IEdCcri3fMV0BjHKJlU559MMIHbN8gw7V3+ubYtz7VyDfru/DFCuB7
-         NAFK8AyKqipY+SEBGZFA1+4GR8IgM1OqN/jthabYT5AlAQfR3o87MoKtp8pAjm8XdRU8
-         9ZiA==
+        bh=oqsp5dWmLf1ceGtEyEpwn2+TSiYr9kgkgYyCIEXijOU=;
+        b=kCTSWtId1rHIZgmfsdqgQ5rr5qjwVYRpqhiAjlZgNwGPzSbamMwXx10J6U5t/+/VC6
+         xZEuKeLSfx+5+fDzVhBtur6rMPAm4ZwpHOZIhaUJcS3yH42v8xWgXTFEtnX0ILpJQT0P
+         WRz66MsDqfL5hxrAtaonU7xHvW/hOCj0GjaW/6i1CkVHtJGjNL7XX7frQerDXCuYGJFO
+         ZXtZki55GpST/Q18pCz5z99EfGuaDiHvhR5GQvSC61w/SOmuk5tDNZiOinVaMdReWyuN
+         nbqRwh9Z51ENrs1IC2+T9cC5dMduSkF0IN+G8xuXI/Sf/FcvoPH5ARg06pQMuzp9itM+
+         bLHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722037994; x=1722642794;
+        d=1e100.net; s=20230601; t=1722037996; x=1722642796;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YtgPpIjPSqL3TzmlwlpLZvvahtPd8ef2dtbW1LnZzVw=;
-        b=sSDUQ9hloV7h2x44fcVU24hxsnn7FUhUiev34gyXNtjYVoERLQzL5bl+VjbiqeqHo7
-         X8QgX5as/jDDXOKgTpSSeMQKAIbtYgbHIkco1rkiAMIR+XESh1IN0RIA869oDCd0Np1p
-         Mqu8SjAtsMOafjxj0BUwq8k7sLARgszc9LHtQkL48ZpxGY6EJu7D7YRpvgPMJ+7frzTX
-         Wd1+qI6XiG+kjggUjWBJG4QSvH0OM2/0j/ippj828QGBr4nRP/r40DCMbs2RX0fVkWAh
-         xfjOnLdUmbauUABHfXbjgDPThVpUWHVA4C+D9M+ArMvB73S2dyxKhXxb+8fSr3abs0PU
-         8aKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfrR/CUbM5bZBdoYN0GcWbZSayD5v5kS/HX7YzxL1+nhfkz8RByJUpBcqTcwkkhPrgaMWPcHN5fSQSEMSy/jHIkO/tSxsO7/jB8OX2
-X-Gm-Message-State: AOJu0YxWZADSzoT07zUh1zxxS+ePebAOyeVIKVuwUQlqzCFVW88jz1Df
-	CHz/1msyex+P7260+hvUltVTD1QwEFUx7IM/PBPMEWV66/nxj2VS9bWJdas0N7E5SADW59TgxxM
-	mkQ==
-X-Google-Smtp-Source: AGHT+IHmoajaYWuB/CstqlwF+EMvaWyxqBn3H/lV1e3JQu2uS0IU9winjnCx9o/cN/zsyEDP3UE3pPbYXjw=
+        bh=oqsp5dWmLf1ceGtEyEpwn2+TSiYr9kgkgYyCIEXijOU=;
+        b=El4wPUo8hHbkR/jhSbiro2IZCSXUWd5jY/xjA/r2F1XhOoGC3M+iNLzmMvrWjXR5Ue
+         wmIkU8DZRrpmLiE0oXwyw9zKPcumwlOxhWLs5tQIXU7HIcjAmfu6xpMbVJeclx9AVxCS
+         lMMboj3aOVRW3kY8FQFNOewvR6ycVth7ep10iVhar6XRy9rqqz0kWH3NQO9EJ/jMxBjN
+         BbPU9gyABao8PlrAczYg38jD68q5n0aIe752k1MzA95iIPirZteqDKbJbbKFJ22dZ1eZ
+         CJxeXQvBlFpGUfG+U0N1Fn/kEA2CUdZ4vue2WatsOsMvX8mNvB9cMYyzolWgAVx5ER7F
+         f4pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtpWVpaQKPsLZOuYXZRNuV0sOnN4XIiMys+RMkn1uEu9EWkelq+BQO9mifvivSfC0TcvTyIG7wLwmSveM6qDHZUWnFU1D0Oth43pgf
+X-Gm-Message-State: AOJu0YyA1JkwE9iA20LpWaoEiRhGtjOhijbdQpnZ7B9A7AFhRF3EDBve
+	o2aLA6EPKFnNHWRQsrCb105n1deRB2nGbKBOyA8Ea/vaJV9zR22qYvNwq5jpaAASJ93wNmqIpm1
+	yaA==
+X-Google-Smtp-Source: AGHT+IGPnVvSSR8GC4je1DUQj4K0eIO0wDIdrfABFjI4ae5Nt/lU6oCOfX0avnzwArksU/NKeR8FWd7ZKxM=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:e744:b0:1fe:d72d:13bc with SMTP id
- d9443c01a7336-1ff04822069mr906395ad.5.1722037993928; Fri, 26 Jul 2024
- 16:53:13 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:5a9:b0:6be:8aa5:bffb with SMTP id
+ 41be03b00d2f7-7ac8e0bb8cdmr3560a12.4.1722037995764; Fri, 26 Jul 2024 16:53:15
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 26 Jul 2024 16:51:27 -0700
+Date: Fri, 26 Jul 2024 16:51:28 -0700
 In-Reply-To: <20240726235234.228822-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240726235234.228822-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240726235234.228822-19-seanjc@google.com>
-Subject: [PATCH v12 18/84] KVM: Remove pointless sanity check on @map param to kvm_vcpu_(un)map()
+Message-ID: <20240726235234.228822-20-seanjc@google.com>
+Subject: [PATCH v12 19/84] KVM: Explicitly initialize all fields at the start
+ of kvm_vcpu_map()
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -93,40 +94,68 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop kvm_vcpu_{,un}map()'s useless checks on @map being non-NULL.  The map
-is 100% kernel controlled, any caller that passes a NULL pointer is broken
-and needs to be fixed, i.e. a crash due to a NULL pointer dereference is
-desirable (though obviously not as desirable as not having a bug in the
-first place).
+Explicitly initialize the entire kvm_host_map structure when mapping a
+pfn, as some callers declare their struct on the stack, i.e. don't
+zero-initialize the struct, which makes the map->hva in kvm_vcpu_unmap()
+*very* suspect.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/kvm_main.c | 6 ------
- 1 file changed, 6 deletions(-)
+ virt/kvm/kvm_main.c | 40 ++++++++++++++++------------------------
+ 1 file changed, 16 insertions(+), 24 deletions(-)
 
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 56c2d11761e0..21ff0f4fa02c 100644
+index 21ff0f4fa02c..67a50b87bb87 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -3092,9 +3092,6 @@ int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
- 	void *hva = NULL;
- 	struct page *page = KVM_UNMAPPED_PAGE;
+@@ -3088,32 +3088,24 @@ void kvm_release_pfn(kvm_pfn_t pfn, bool dirty)
  
--	if (!map)
+ int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
+ {
+-	kvm_pfn_t pfn;
+-	void *hva = NULL;
+-	struct page *page = KVM_UNMAPPED_PAGE;
+-
+-	pfn = gfn_to_pfn(vcpu->kvm, gfn);
+-	if (is_error_noslot_pfn(pfn))
 -		return -EINVAL;
 -
- 	pfn = gfn_to_pfn(vcpu->kvm, gfn);
- 	if (is_error_noslot_pfn(pfn))
- 		return -EINVAL;
-@@ -3122,9 +3119,6 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_map);
- 
- void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty)
- {
--	if (!map)
--		return;
+-	if (pfn_valid(pfn)) {
+-		page = pfn_to_page(pfn);
+-		hva = kmap(page);
+-#ifdef CONFIG_HAS_IOMEM
+-	} else {
+-		hva = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
+-#endif
+-	}
 -
- 	if (!map->hva)
- 		return;
+-	if (!hva)
+-		return -EFAULT;
+-
+-	map->page = page;
+-	map->hva = hva;
+-	map->pfn = pfn;
++	map->page = KVM_UNMAPPED_PAGE;
++	map->hva = NULL;
+ 	map->gfn = gfn;
+ 
+-	return 0;
++	map->pfn = gfn_to_pfn(vcpu->kvm, gfn);
++	if (is_error_noslot_pfn(map->pfn))
++		return -EINVAL;
++
++	if (pfn_valid(map->pfn)) {
++		map->page = pfn_to_page(map->pfn);
++		map->hva = kmap(map->page);
++#ifdef CONFIG_HAS_IOMEM
++	} else {
++		map->hva = memremap(pfn_to_hpa(map->pfn), PAGE_SIZE, MEMREMAP_WB);
++#endif
++	}
++
++	return map->hva ? 0 : -EFAULT;
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_map);
  
 -- 
 2.46.0.rc1.232.g9752f9e123-goog
