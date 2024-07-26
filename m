@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-263705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982DA93D980
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:02:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA9EF93D984
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98351C23749
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF51C233C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5792115535A;
-	Fri, 26 Jul 2024 20:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170C613A40B;
+	Fri, 26 Jul 2024 20:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lz5sOQO9"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwSe4L8r"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52E0153812
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED79D383BF;
+	Fri, 26 Jul 2024 20:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722024012; cv=none; b=MB9SGRBPqCChWm5yPKKZkHzFqE9HEe684x2nyh583/W3hVjpHgq09jXZ9cMtHOj7TqHIOapOOQCpzlBZx4YDth0DXcxGjc+5gTx7ojgqqZlZtUvia059w/wlsmrj5bEQXopwau2YjkRn4V/lC23ttURoinCcVzlR30NEiFjtJLY=
+	t=1722024167; cv=none; b=inq/hvBUI0WiJ+vjEb86udy/iYWLF63rW6lv7ztWITlPNn40iXVBGcd6hIa+JV4KiqJsB/PjGJRBxgGfMlwtOjh/adkkvaPVhuZg3Ze8izMp+sWpVfi9e4nHlV0LkCjK73v7Dhiswff3Kily12O6t9oiLEieN5TE4uw1fFPlOII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722024012; c=relaxed/simple;
-	bh=PqLeQmAqctIEHugxsI29m+1Hl3ds83kYxxQINp0RkQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FbtzQuUKCB5c86kpTOn59FjatZkZ7EKZkbWy3OlspBbq776I3ifaRlf7rXGZ+1HAU2dm0SvlhsiJzNq8ES8zUf8xineKot2tgYBvsB87PXpkvhfseb5fmikOE0NSLgJMLZagbU6KP8i+f1cT4oqnEJXFUmdm6K1fbh4KaqxVBgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lz5sOQO9; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a2a90243c9so2581862a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:00:10 -0700 (PDT)
+	s=arc-20240116; t=1722024167; c=relaxed/simple;
+	bh=GFsF+jKskuhgGnBjr3n4TRAHhLbxgaBJyMzCDsYbsn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bIynP6bkO8irCw0fYF7bYwpyoEUUZJDmCUnuYLFWglXrQgPFO9iFVy8NbOrL83BdcIWSuPzVGextXlhkzHcXxVFHLtR4LF2m0vN2ubmQm3syV0zPjeTHTblviIe3fJVKdBHnmTqfvM3sA/JcDc4OdVrW61+FYJEOYYfpri8mzJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwSe4L8r; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b79fc76d03so5968966d6.1;
+        Fri, 26 Jul 2024 13:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722024009; x=1722628809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aAD0QrgAhMaN+Loo56/InWrP52EhZGGkh8jgEKYZ7JE=;
-        b=lz5sOQO9FnX+k5p+LKcHqWXL5IYMPYuBBD6uBS5Ib3dS1vBt04gBPJ7/lfOXl4sZBe
-         1EkHWpU5sDg24xifWfon3ziO9KH8czZeav8gOZ7CcAYOnTmF0DY+okwRwVjLOkC03Dok
-         WpSe1sE848qkJsJ5qDkCWJ2f6g2HqLxpCGNLpuMIJhynCav23SPxVd4lOhvFGcAytdtd
-         ab/VQoSX5AunENzwUI3oLQqEe8ZssLv3DozW29aLmnZ1D/QVDbvhAcVriSdET0b6kUQZ
-         DdFhsu++v4udXngApgfY4xf+v+VRyC3/VwEPZgaLdyfv9XFF4WE3UboQPzFg8lDUnsnn
-         VuXA==
+        d=gmail.com; s=20230601; t=1722024165; x=1722628965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nJxI3RUALg6qvPeKhK5g5YhXu5vNqGOcbCAXjfUdd6M=;
+        b=GwSe4L8rVXH0t51SQtGgecGOktchOgmjsR/Sb2B6lR1dMH6FVxPk/UeMtXIHAsKLnH
+         oVNJ/uGi0sxrMaTUKKvHjpI2zitYBSiRx9PWzxPsJYplhhvlcjZQEBPZtSAHZstfGSc8
+         y1N0oX80COw3xGguWtjISGIkLiEcWy0DPo5Z3Tdbzw9fUjR5yln9umPHDHlU8TSoA+Ng
+         b2FGVFoY+tnYGcifCM5KSfm6sAlsdhQG3ZGCfCIl5WF2M2wxemt3LavfknS0jlWXyA4q
+         TY74mGng8MVBr99TGDLm+y0d2T3jHJJi7C1gUqWidA+c9ViJR8PAYBhZ6ZnC5GQj4+ic
+         nzOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722024009; x=1722628809;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aAD0QrgAhMaN+Loo56/InWrP52EhZGGkh8jgEKYZ7JE=;
-        b=ukkc5qj0VveWtGAIcqqKTzJUOu9z6qGYOVNSqBR1xEHlkeLrZNT2qZH65XzDJhV8lB
-         1uHLShyHmFPlcefyPagfCAM/auq3nG89toIVXTKUSmR2X55+gIcAzEnZE/KkdnCAUvam
-         jwDLomp48zVK5ei1HN71rleOkS8mpmsr5JG/SwN6Uw8HAetYSyXG+O2GOJIruNHvnQQx
-         Zy9r6SQT86a6ll3bVfigtYIH4PHrF9eSn488GilEUcbPTg3n/mMdfs7rSZF+ESZCSMaI
-         MK+8WEDcuaESaBQAbUlTJmTcSX+DGEzhnXLsv4Eb7ANGTPUMLulfoBweMJjgoLaET5Zi
-         JYsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh6sd5tg659mEAuyCSNwkApWl+KLzw3paJGlbVObo0B518+LC3JnF9QtoAuEIN54Id9TLyztSm/3ws2780x3nOiC9oDHKTICbaUYFT
-X-Gm-Message-State: AOJu0YwqHmcK1LtXTtQDAekoPgGkeghqMXrD4lT1pX/ATNhli0hsqv8i
-	Y4K/v7R6F1KkXxK9hOZtoejdKuZ9EbbZDAz+QkzkjLzLubIRwRt/JScWW8qjP0g=
-X-Google-Smtp-Source: AGHT+IEEzUyGNvBusd6G8ilz3PdSiFX7wBdFiW9IWqA0E01M8aJkR571/CYCOKrUufcdbTMsQmFD1w==
-X-Received: by 2002:a17:907:1c19:b0:a7a:a7b8:adae with SMTP id a640c23a62f3a-a7d3fdb7dc9mr45197666b.4.1722024009219;
-        Fri, 26 Jul 2024 13:00:09 -0700 (PDT)
-Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad90e1esm209999166b.151.2024.07.26.13.00.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 13:00:08 -0700 (PDT)
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Judith Mendez <jm@ti.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Linux regression tracking <regressions@leemhuis.info>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] can: m_can: Limit coalescing to peripheral instances
-Date: Fri, 26 Jul 2024 21:59:44 +0200
-Message-ID: <20240726195944.2414812-8-msp@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240726195944.2414812-1-msp@baylibre.com>
-References: <20240726195944.2414812-1-msp@baylibre.com>
+        d=1e100.net; s=20230601; t=1722024165; x=1722628965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nJxI3RUALg6qvPeKhK5g5YhXu5vNqGOcbCAXjfUdd6M=;
+        b=cD8VpRrXQkyq8lJ0Y2196WFkfahLkY2og/3F39hDtKLVkeAin+0VSyLuBRhK2Y3yjX
+         cRDYgKd/6f9cXrWQB7nV9CXcSN1/GcJjIHVoN7lCLQKgF83afpbYUTWrS+IW8ilnObJs
+         Yycb1/PupC3wg9cHA5pIKjN6UlgM4QMPPcEj+aKDLLzkt3HQBAg7IPRP8+frBBuGxI3o
+         M24zYM4GMXv9h5/G0mlh8oBGYBpIccLVkNBAMwMZAo6NBdQCszOhN4CmPsZiAz/3Wp7K
+         0vTog4sX1sM8en4rOJabXpC682IjS3sISiXqzEfsOoTFj8lFBSxNTtTOL91pPmlU09me
+         W2YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/89Ud8YwZi544eyJbofpnqtZOf6oWLfPTwc6vuFQn92M7QUGPGhPcTAJUCghju4wIzWXsGg/OaxQNtDkmqtVYsbfGvsQB614gRW8+U7RSKSP/jA9ndavm0Xw0lYEzCcW759Kv
+X-Gm-Message-State: AOJu0YzQHG6jVzp0xo5lQyiUym89GeBrIKLpq/+sfNnbE7LNDrRsWz8u
+	6pPCgS21wt/NOdzr47bE8wU4JLC/pIwRXfyYX4VmGU3xpFTWcRO/
+X-Google-Smtp-Source: AGHT+IHB6Z+lbg7XWIRMElM0+HtT1YAvNgKpK/ewPBfnsocH6+ThAkHe4XJsJe9r0X4FQZXNDw/HEw==
+X-Received: by 2002:a05:6214:2a47:b0:6b7:b2eb:ae82 with SMTP id 6a1803df08f44-6bb55a44de6mr9274016d6.29.1722024164770;
+        Fri, 26 Jul 2024 13:02:44 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6bb3fa94e63sm19727426d6.76.2024.07.26.13.02.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 13:02:43 -0700 (PDT)
+Message-ID: <d873b5f1-4208-4e9f-9846-965ba27073e2@gmail.com>
+Date: Fri, 26 Jul 2024 13:02:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.9 00/29] 6.9.12-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240725142731.678993846@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240725142731.678993846@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The use of coalescing for non-peripheral chips in the current
-implementation is limited to non-existing. Disable the possibility to
-set coalescing through ethtool.
+On 7/25/24 07:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.12 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.12-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
- drivers/net/can/m_can/m_can.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 7c9ad9f7174e..663eb4247029 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -2182,7 +2182,7 @@ static int m_can_set_coalesce(struct net_device *dev,
- 	return 0;
- }
- 
--static const struct ethtool_ops m_can_ethtool_ops = {
-+static const struct ethtool_ops m_can_ethtool_ops_coalescing = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS_IRQ |
- 		ETHTOOL_COALESCE_RX_MAX_FRAMES_IRQ |
- 		ETHTOOL_COALESCE_TX_USECS_IRQ |
-@@ -2193,18 +2193,20 @@ static const struct ethtool_ops m_can_ethtool_ops = {
- 	.set_coalesce = m_can_set_coalesce,
- };
- 
--static const struct ethtool_ops m_can_ethtool_ops_polling = {
-+static const struct ethtool_ops m_can_ethtool_ops = {
- 	.get_ts_info = ethtool_op_get_ts_info,
- };
- 
--static int register_m_can_dev(struct net_device *dev)
-+static int register_m_can_dev(struct m_can_classdev *cdev)
- {
-+	struct net_device *dev = cdev->net;
-+
- 	dev->flags |= IFF_ECHO;	/* we support local echo */
- 	dev->netdev_ops = &m_can_netdev_ops;
--	if (dev->irq)
--		dev->ethtool_ops = &m_can_ethtool_ops;
-+	if (dev->irq && cdev->is_peripheral)
-+		dev->ethtool_ops = &m_can_ethtool_ops_coalescing;
- 	else
--		dev->ethtool_ops = &m_can_ethtool_ops_polling;
-+		dev->ethtool_ops = &m_can_ethtool_ops;
- 
- 	return register_candev(dev);
- }
-@@ -2390,7 +2392,7 @@ int m_can_class_register(struct m_can_classdev *cdev)
- 	if (ret)
- 		goto rx_offload_del;
- 
--	ret = register_m_can_dev(cdev->net);
-+	ret = register_m_can_dev(cdev);
- 	if (ret) {
- 		dev_err(cdev->dev, "registering %s failed (err=%d)\n",
- 			cdev->net->name, ret);
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.45.2
+Florian
 
 
