@@ -1,175 +1,184 @@
-Return-Path: <linux-kernel+bounces-263088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371A893D0DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4687D93D0E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94071F2236B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41BF1F2285B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9AA17838E;
-	Fri, 26 Jul 2024 10:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11D3178CC3;
+	Fri, 26 Jul 2024 10:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2qaNsi32"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B0D1779A4
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="plreNQT5"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF5A17623E;
+	Fri, 26 Jul 2024 10:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721988449; cv=none; b=WMRnlhSKI085qsnx3R8T8cdXPWhBe+HsWNb1HOkAmuHT774AUJ2kNfPf3OUyn1TasHg/F65JKCKGwBn26oGXWARrH1quC31i+/K1LN8M2KSXXzxCXObdy0w1P3z4dweBiVVZQt7Hsj7fa3PeUoqVL5YkXodXZo8CiCWbHakkvYI=
+	t=1721988506; cv=none; b=ZFVeyi4Z7cjCx/U9EinhzJpIzrAQTbzsvtJLFdY7cW/psgowyglKpYT0uL2UaALmPsAJoinhe26KuAjfL8BWt3YeU9O/pAarOKUSlESLuEDZ9B1BYOHLb1fzTXc8tfEfr4yw/rF45E91o1wqVKw7HsHpmVuHK/sUiOzHRN1XBDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721988449; c=relaxed/simple;
-	bh=d6RAV3x+NFkqdpVb86ATPZjPs7X0Voj8XsmWJrljTJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMU9jRz9+Nb/TgveTnD6DdMPOsBxz0n8IW/Tj3HufErtW9h0k9E1o55M/gmOEtBSVQY6AY1uaHKqC1muIQUPopD9P2y/ix5fJi4ZdLc/WCfhpDC7nzLMaJOsZyU886juh5UXoMcKDlghJB86a5rc3mNw+u67GXMSlQ6MvkzRfmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2qaNsi32; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721988446;
-	bh=d6RAV3x+NFkqdpVb86ATPZjPs7X0Voj8XsmWJrljTJQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=2qaNsi32srLc1IjeuNAQNW4FjclHKcJH4eubhhwDHttyzpfCRX3fuKY8K1JZA4wRg
-	 qogbBjsOP/IcSAc+mhEhRKEq5yPYhI5Z3DquDZEvgK/meNnW0FWCtEfoSPJtFOXk/6
-	 h/FT9qKMqz4eugPJB7gNJcRPdk06dnUPwMrD0YpFH/v/H+Qq+n/oemyeRGS0O/ic71
-	 Ws1DmQ0emOCjrewj54u9q7/mOz+4QOBd3uUzpeSZAJq8a3pesHJxh5TyK4Q4k6VG2h
-	 B1ydv39K73z/eS+wlRe/+I8/uSBemdxr2Hyw1Qdo4FwO2OM3ircAJ7aeb3LsRj7KDY
-	 Rgj+XcRkrX8BQ==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 696E03780BDB;
-	Fri, 26 Jul 2024 10:07:23 +0000 (UTC)
-Message-ID: <27bd3884-51d8-454f-9ddc-6b5765fd744b@collabora.com>
-Date: Fri, 26 Jul 2024 15:37:20 +0530
+	s=arc-20240116; t=1721988506; c=relaxed/simple;
+	bh=Ood64rNIOWuYqSpflyYa5lV4UQwXqOLunxYo926e0IU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OrLlHtAj9U5GRyCl31BBIsX/Acs3YFGJK9S0oGtZQf3DINqAeXG+UHEkycmpONCKhaI/ifEnZpWhqAfr5ncIiEmCo1xVXstDBaq6/OlD89B1aEUZXbJ8q6iKvOa8fGRXUXNEL1b09GNqySKlAaUavcDdQojanArDAy3G+NUAoRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=plreNQT5; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pg+iy
+	yeRYmJJkwTJ+9hZ3wWgHFf7YDFOM4S6n15Ntzk=; b=plreNQT53znNl3EYtM7Vd
+	9lnyLIWglDjr7FeCoAmhZSPKPBcZdiH/15ttk9XqyTv7ShU8OvdFVWcTVSOkbdkC
+	HBtTwLlIV0Ej328MddeYD/zT74l7BZZfFWWYx2ctPZnQ2JWxsDyVvdspAe9ykkOg
+	HpuY00VDgKW87m2wvwZIcA=
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wDHjxtgdaNmPaOCAA--.28851S2;
+	Fri, 26 Jul 2024 18:07:29 +0800 (CST)
+From: soxiebing <soxiebing@163.com>
+To: tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	songxiebing <songxiebing@kylinos.cn>,
+	bo liu <bo.liu@senarytech.com>
+Subject: [PATCH v2] ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
+Date: Fri, 26 Jul 2024 18:07:26 +0800
+Message-Id: <20240726100726.50824-1-soxiebing@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240726012342.8645-1-soxiebing@163.com>
+References: <20240726012342.8645-1-soxiebing@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] drm/ci: rockchip: add tests for rockchip display
- driver
-Content-Language: en-US
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- deborah.brouwer@collabora.com, robdclark@gmail.com,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240724101015.523535-1-vignesh.raman@collabora.com>
- <20240724101015.523535-6-vignesh.raman@collabora.com>
- <CAPj87rMJUSRJ9G1uv-w5a_4qqS0R1dDaUEofoJf=ehbMszdfOw@mail.gmail.com>
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <CAPj87rMJUSRJ9G1uv-w5a_4qqS0R1dDaUEofoJf=ehbMszdfOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHjxtgdaNmPaOCAA--.28851S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAr1xuw1kZF13JFWrXFy7ZFb_yoWrZF1fpF
+	1rCF1fXrZ3tF1vvayrJws7u3WUCFyrZFZrG347t3yfJw1a9ry8Xa4IgrySqFWfJFyDKF12
+	vr4qgFyUtr4UZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0mhrUUUUU=
+X-CM-SenderInfo: 5vr0xvpelqwqqrwthudrp/1tbiJx4ow2XAm9gpvAACsj
 
-Hi Daniel,
+From: songxiebing <songxiebing@kylinos.cn>
 
-On 26/07/24 13:06, Daniel Stone wrote:
-> Hi Vignesh,
-> 
-> On Wed, 24 Jul 2024 at 11:12, Vignesh Raman <vignesh.raman@collabora.com> wrote:
->> For rockchip rk3288 and rk3399, the display driver is rockchip
->> and gpu driver is panfrost. Currently, in drm-ci for rockchip
->> rk3288 and rk3399, only the gpu driver is tested. Refactor
->> the existing rockchip jobs to test both display and gpu driver
->> and update xfails.
-> 
-> Could you also please add RK3588 in a new series (no need to hold this
-> one up), with Rockchip KMS and Panthor GPU? You can use the
-> rk3588-rock5-b device type in LAVA.
+The previous fix (7aeb25908648) only handles the unsol_event reporting
+during interrupts and does not include the polling mode used to set
+jackroll_ms, so now we are replacing it with snd_hda_jack_detect_enable_callback.
 
-Sure. I Will add and send it in a new series.
+V1 -> V2: fix char persent compile error
 
-> 
->> diff --git a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
->> index cf3a747f7cec..826cca5efbff 100644
->> --- a/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
->> +++ b/drivers/gpu/drm/ci/xfails/mediatek-mt8183-fails.txt
-> 
-> This is in the wrong patch?
+Fixes: 7aeb25908648 ("ALSA: hda/conexant: Fix headset auto detect fail in cx8070 and SN6140")
+Co-developed-by: bo liu <bo.liu@senarytech.com>
+Signed-off-by: bo liu <bo.liu@senarytech.com>
+Signed-off-by: songxiebing <songxiebing@kylinos.cn>
+---
+ sound/pci/hda/patch_conexant.c | 54 ++++++----------------------------
+ 1 file changed, 9 insertions(+), 45 deletions(-)
 
-Yes, this needs to be dropped. Thanks for pointing that out.
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index 17389a3801bd..4472923ba694 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -21,12 +21,6 @@
+ #include "hda_jack.h"
+ #include "hda_generic.h"
+ 
+-enum {
+-	CX_HEADSET_NOPRESENT = 0,
+-	CX_HEADSET_PARTPRESENT,
+-	CX_HEADSET_ALLPRESENT,
+-};
+-
+ struct conexant_spec {
+ 	struct hda_gen_spec gen;
+ 
+@@ -48,7 +42,6 @@ struct conexant_spec {
+ 	unsigned int gpio_led;
+ 	unsigned int gpio_mute_led_mask;
+ 	unsigned int gpio_mic_led_mask;
+-	unsigned int headset_present_flag;
+ 	bool is_cx8070_sn6140;
+ };
+ 
+@@ -250,48 +243,19 @@ static void cx_process_headset_plugin(struct hda_codec *codec)
+ 	}
+ }
+ 
+-static void cx_update_headset_mic_vref(struct hda_codec *codec, unsigned int res)
++static void cx_update_headset_mic_vref(struct hda_codec *codec, struct hda_jack_callback *event)
+ {
+-	unsigned int phone_present, mic_persent, phone_tag, mic_tag;
+-	struct conexant_spec *spec = codec->spec;
++	unsigned int mic_present;
+ 
+ 	/* In cx8070 and sn6140, the node 16 can only be config to headphone or disabled,
+ 	 * the node 19 can only be config to microphone or disabled.
+ 	 * Check hp&mic tag to process headset pulgin&plugout.
+ 	 */
+-	phone_tag = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
+-	mic_tag = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
+-	if ((phone_tag & (res >> AC_UNSOL_RES_TAG_SHIFT)) ||
+-	    (mic_tag & (res >> AC_UNSOL_RES_TAG_SHIFT))) {
+-		phone_present = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_PIN_SENSE, 0x0);
+-		if (!(phone_present & AC_PINSENSE_PRESENCE)) {/* headphone plugout */
+-			spec->headset_present_flag = CX_HEADSET_NOPRESENT;
+-			snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
+-			return;
+-		}
+-		if (spec->headset_present_flag == CX_HEADSET_NOPRESENT) {
+-			spec->headset_present_flag = CX_HEADSET_PARTPRESENT;
+-		} else if (spec->headset_present_flag == CX_HEADSET_PARTPRESENT) {
+-			mic_persent = snd_hda_codec_read(codec, 0x19, 0,
+-							 AC_VERB_GET_PIN_SENSE, 0x0);
+-			/* headset is present */
+-			if ((phone_present & AC_PINSENSE_PRESENCE) &&
+-			    (mic_persent & AC_PINSENSE_PRESENCE)) {
+-				cx_process_headset_plugin(codec);
+-				spec->headset_present_flag = CX_HEADSET_ALLPRESENT;
+-			}
+-		}
+-	}
+-}
+-
+-static void cx_jack_unsol_event(struct hda_codec *codec, unsigned int res)
+-{
+-	struct conexant_spec *spec = codec->spec;
+-
+-	if (spec->is_cx8070_sn6140)
+-		cx_update_headset_mic_vref(codec, res);
+-
+-	snd_hda_jack_unsol_event(codec, res);
++	mic_present = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_PIN_SENSE, 0x0);
++	if (!(mic_present & AC_PINSENSE_PRESENCE)) /* mic plugout */
++		snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
++	else
++		cx_process_headset_plugin(codec);
+ }
+ 
+ static int cx_auto_suspend(struct hda_codec *codec)
+@@ -305,7 +269,7 @@ static const struct hda_codec_ops cx_auto_patch_ops = {
+ 	.build_pcms = snd_hda_gen_build_pcms,
+ 	.init = cx_auto_init,
+ 	.free = cx_auto_free,
+-	.unsol_event = cx_jack_unsol_event,
++	.unsol_event = snd_hda_jack_unsol_event,
+ 	.suspend = cx_auto_suspend,
+ 	.check_power_status = snd_hda_gen_check_power_status,
+ };
+@@ -1163,7 +1127,7 @@ static int patch_conexant_auto(struct hda_codec *codec)
+ 	case 0x14f11f86:
+ 	case 0x14f11f87:
+ 		spec->is_cx8070_sn6140 = true;
+-		spec->headset_present_flag = CX_HEADSET_NOPRESENT;
++		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
+ 		break;
+ 	}
+ 
+-- 
+2.25.1
 
-> 
->> +++ b/drivers/gpu/drm/ci/xfails/panfrost-rk3288-skips.txt
->> @@ -0,0 +1,71 @@
->> +# Suspend to RAM seems to be broken on this machine
->> +.*suspend.*
->> +
->> +# Too unstable, machine ends up hanging after lots of Oopses
->> +kms_cursor_legacy.*
->> +
->> +# Started hanging the machine on Linux 5.19-rc2:
->> +#
->> +# [IGT] kms_plane_lowres: executing
->> +# [IGT] kms_plane_lowres: starting subtest pipe-F-tiling-y
->> +# [IGT] kms_plane_lowres: exiting, ret=77
-> 
-> ret 77 is a pure skip here, as you'd expect from a pipe F test,
-> because Rockchip doesn't have six CRTCs.
-> 
->> +# Console: switching to colour frame buffer device 170x48
->> +# rockchip-drm display-subsystem: [drm] *ERROR* flip_done timed out
->> +# rockchip-drm display-subsystem: [drm] *ERROR* [CRTC:35:crtc-0] commit wait timed out
->> +# BUG: spinlock bad magic on CPU#3, kms_plane_lowre/482
->> +# 8<--- cut here ---
->> +# Unable to handle kernel paging request at virtual address 7812078e
->> +# [7812078e] *pgd=00000000
->> +# Internal error: Oops: 5 [#1] SMP ARM
->> +# Modules linked in:
->> +# CPU: 3 PID: 482 Comm: kms_plane_lowre Tainted: G        W         5.19.0-rc2-323596-g00535de92171 #1
->> +# Hardware name: Rockchip (Device Tree)
->> +# Process kms_plane_lowre (pid: 482, stack limit = 0x1193ac2b)
->> +#  spin_dump from do_raw_spin_lock+0xa4/0xe8
->> +#  do_raw_spin_lock from wait_for_completion_timeout+0x2c/0x120
->> +#  wait_for_completion_timeout from drm_crtc_commit_wait+0x18/0x7c
->> +#  drm_crtc_commit_wait from drm_atomic_helper_wait_for_dependencies+0x44/0x168
->> +#  drm_atomic_helper_wait_for_dependencies from commit_tail+0x34/0x180
->> +#  commit_tail from drm_atomic_helper_commit+0x164/0x18c
->> +#  drm_atomic_helper_commit from drm_atomic_commit+0xac/0xe4
->> +#  drm_atomic_commit from drm_client_modeset_commit_atomic+0x23c/0x284
->> +#  drm_client_modeset_commit_atomic from drm_client_modeset_commit_locked+0x60/0x1c8
->> +#  drm_client_modeset_commit_locked from drm_client_modeset_commit+0x24/0x40
->> +#  drm_client_modeset_commit from drm_fbdev_client_restore+0x58/0x94
->> +#  drm_fbdev_client_restore from drm_client_dev_restore+0x70/0xbc
->> +#  drm_client_dev_restore from drm_release+0xf4/0x114
->> +#  drm_release from __fput+0x74/0x240
->> +#  __fput from task_work_run+0x84/0xb4
->> +#  task_work_run from do_exit+0x34c/0xa20
->> +#  do_exit from do_group_exit+0x34/0x98
-> 
-> So this is pointing to the error being that, when a client exits, the
-> kernel attempts to restore fbdev and then it's broken. Pinning
-> pipe-F-tiling-y as specifically responsible for this seems quite odd
-> to me, given that it doesn't do anything but only skips. Is that maybe
-> just because it's the last test running in the kms_plane_lowres group
-> before it exits? Or does it occur more wildly on other test groups?
-
-This was skipped for Linux 5.19-rc2. I will remove from skips and will 
-check the behavior.
-
-> 
->> +tools_test@tools_test,Fail
-> 
-> I keep noticing this failing everywhere. What's up with that? Have you
-> reported these logs to the igt list?
-
-I will check this issue and report to igt developers.
-
-Thanks.
-
-Regards,
-Vignesh
 
