@@ -1,143 +1,193 @@
-Return-Path: <linux-kernel+bounces-262825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A918F93CD63
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:51:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7190193CD65
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E911F21C66
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 04:51:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F76FB21F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB5926AFB;
-	Fri, 26 Jul 2024 04:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981D22B9BE;
+	Fri, 26 Jul 2024 05:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwRjHiIs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z7v5dm5W"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647B428EF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA81816
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721969469; cv=none; b=Wrnv2yBAVwcchibPUamljNdoAyKo7hb+/m+1MqBQpT+4EnXzgGUwEY+qiecGWdqR4r1uNpQ47nIYOEq+BbNjUC+ZkgFW61qvQ/++OCku+5kzvrsaOPcdDhC6uXisyol6A3mVslahzrBV4qre7FZMQ3bJCQKNxLGLAyV11OoLOTM=
+	t=1721970058; cv=none; b=mSnCmeMDh6b6wGaQp+jZDpDWY9/t5BZWjCZeMHHI+SH5EZDmjYIM7rxUrz+/OwLqa2MFE6AoNJSSCC//rgKFX5EeVgXYfWEcNWycMw6X8L7uVQw/Rg3VLg4/htwCzXW1WdqBmMUnQw4eWp3AvPo++OlSCdaCCngZ0RmdQBVj6oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721969469; c=relaxed/simple;
-	bh=41U3J3A3A9ZA5BCLpOFkq85Qoqhlbjx7I/O2B4k/1oU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XM95NZrh8wGhLmKL0HJ+hQ1tF8/1GK6C8hEu/h2jBBX4+Bi1AY5XBmiCmp8Q+lc01v4UcT/BSdOl3RUrGtvccNleuSUJVQOl3P9Wk1IRCmLS+S26V+C4zsBv3Ofr8Jc+yqgZHLyLXKjwc5/J22G4kHQM51HeZOEV+K4sBlsw6eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WwRjHiIs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE914C4AF0E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721969468;
-	bh=41U3J3A3A9ZA5BCLpOFkq85Qoqhlbjx7I/O2B4k/1oU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WwRjHiIs+WJJ+/NzzD5nz3y+W5eqrAczgaszDEpZJcB935264DyyVTEuXAexr1dx3
-	 deXg5G1g1TxICwze7GrnZ2LwRzIripmKCk6TvrAA+XmLPI/6V2jGG85a28AUcfO2RN
-	 HiHC8VKs7EZ92qAwmkm2t/lKuoXeUZ6chzWVNoNG26VYT+sa3j4Jq5/AfHt04RIFyM
-	 v/8R+ZNYCI9cTCj1jGY9scx7XoylXwt6fHN57PGJXbJVIRPsgLBrwUUbdMTJ9lsu0m
-	 fJ3wbWjT1HdN6YlzTmw59SMFUBexz/OqoXAPe1WoCQYPSMvHHKIcSuQgpdUXCcEAub
-	 FteAm6E+zBJOw==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-65f7bd30546so14226007b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 21:51:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWSUZGaTU61P5gV3Y1yDpRuzyCO1bcEWl+aeVA2WCcoSCpLOsGdVvea2X9G9tHP3EcIxg+GMSkQeq07DEr+7KFxjW3d9xSNVP5xMXSX
-X-Gm-Message-State: AOJu0YzxXkOFd0J1+L+vBAHwktf5SGG2btnVnB5gp/uXAxhB8GSF0UwD
-	nLeUqO0vuyF8jXocllMQ6WlBEhJC8tN155u0U1WfWj31kKM+87HyvRvDFkh7LB5OnDIgITedUhL
-	W1DAwlUPm+3q25z3gyYnEbagMZmMzwbkqIcZl5Q==
-X-Google-Smtp-Source: AGHT+IF+O4lS4JpENJT6yNGqLEYFk/y/UK2OSsAnM3uMh/CQu9R+YmD9uaEELQc5QrI3dV5t6PdyhDtrQV2Tim5bUBA=
-X-Received: by 2002:a81:9c54:0:b0:65f:7e5a:648a with SMTP id
- 00721157ae682-672c025edeemr62028157b3.16.1721969468010; Thu, 25 Jul 2024
- 21:51:08 -0700 (PDT)
+	s=arc-20240116; t=1721970058; c=relaxed/simple;
+	bh=7cQE4DreW0nnWzVtbhS5eHBCqO/8IcvYzVFaSAUa610=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVL8e9pPdABk7V6XbQjyfpmH9pYIVuACx8ojptixnZr3z7KUv+76VbK779VYOQu6suY5ooXJtA8mfz1EtjuWnj88RdTz1t001OLhGrAXItEM20F3GsUFhSk4OAErhQ5ahL5P3VZT+5idQ5nAShtTVZEF6SrL+SYI50ZKHSgJlCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z7v5dm5W; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc4fcbb131so2573255ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:00:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721970056; x=1722574856; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XkyPiJ1VWNXyBLLv2Zv2CGX8+twZbAnSoyqpJBWj7kY=;
+        b=z7v5dm5Wu4QVM4GEN2tfxObEJdya7CcYJlTXHacOUqkE+yEblHls7p9Xj7gEUfzF5w
+         HL4syFlCIjgW0AGj1QxHN5DwpwSKu4au5Id6cDkLNIW8AbY8CLwDF4GNPs3PEUQsFagx
+         N5rYB7r4/nqy5oIAh8QM+8VKPltHWlImYHAY6auePxHkseu16PxpRGnudcWo6+C9t5WZ
+         IyaSn39irbqxHT49FWD00jRXTAb3BN9CE+B9llCSO8UmiGVDoEtJx45toZL8ED102Ek8
+         dXExthKceRrOqiQfLc967z1NQHWdAbfpq7cdZuYj437OYPtRaHznYV8rH4dBtlCU+bbW
+         nJaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721970056; x=1722574856;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XkyPiJ1VWNXyBLLv2Zv2CGX8+twZbAnSoyqpJBWj7kY=;
+        b=jkdeUByLxj2ZjiaaTcMQ02MTSCNGE7NZrgNtKt/dAcmY6nC/yfjzYUkQ9MTieGr60a
+         WBLJxZLU2JeaJcEll6wgXicrLLE2ZfFlDsYngoOfsAcQr7UtJMtiMJ5DHV6AW7WraEao
+         VZN/xcDdlRJkKhLySLLogMIQlLtJpJnZYUAvzBB5EruSITEGNElhPOHg1GfSZP+tjZDh
+         +QuK4jbPMd7G76NG8TVeEr7xQ07pRekkKs70ODNIxEsK9K1FevBYmEtKStWU0LIRQJXi
+         iuUoSZalc+UMI04bYoyg8629QRG0LzcT7+ZhQuCuoOSGh1gqnWYRoKOM0qkEuG7Ogzob
+         I5WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbZhpwI0HPdEEOAx4Yrv/InIqnc8bvz9wvImKCZ4uOi/k2LmOyL1WCpN0VnKK9VbjBKoKrmCCLaADpzxbsvuIC10Re1X9IbiF2WV2R
+X-Gm-Message-State: AOJu0Yy4N4NMRHYgEPfb6HvLTY8pU/XDYatDG1+lZUQqB2umeqsK+Rfa
+	3DVoz0eGnSymFrUmjSWRILlpy/XskN8ZW+ithu2UdfrG+RIXTOKFq8FVHVDjJA==
+X-Google-Smtp-Source: AGHT+IG685Oi881SsTsCjzskaH51WF/ar3f/zBxEFzMJDo1tV0AHf75SMqNnY4nFujlMkdUbHJ5b5g==
+X-Received: by 2002:a17:902:cf07:b0:1fa:ab25:f625 with SMTP id d9443c01a7336-1fed92a577cmr51446315ad.38.1721970055988;
+        Thu, 25 Jul 2024 22:00:55 -0700 (PDT)
+Received: from thinkpad ([220.158.156.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fcc493sm22682985ad.282.2024.07.25.22.00.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 22:00:55 -0700 (PDT)
+Date: Fri, 26 Jul 2024 10:30:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v2 1/2] bus: mhi: host: pci_generic: Update the file
+ path for Foxconn SDX55/SDX72
+Message-ID: <20240726050051.GA2628@thinkpad>
+References: <20240725022941.65948-1-slark_xiao@163.com>
+ <20240725035954.GA2317@thinkpad>
+ <6dd00891.8235.190e91ac139.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
- <20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org> <ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
- <CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
- <b4b31314-1125-40ee-b784-20abc78bd468@arm.com> <CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
- <874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com> <a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
- <87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com> <43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
- <87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com> <f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
- <87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com> <4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
- <87le1q6jyo.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXu268d2cBmm0a2Azr3=Aum19cSgY+7YijESrBCVK3a9w@mail.gmail.com>
- <87zfq43o4n.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87zfq43o4n.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 25 Jul 2024 21:50:56 -0700
-X-Gmail-Original-Message-ID: <CACePvbXZ_DqxwiNPckBPAhxqoDoMRFRzhM24_8TcHQz-LTop_w@mail.gmail.com>
-Message-ID: <CACePvbXZ_DqxwiNPckBPAhxqoDoMRFRzhM24_8TcHQz-LTop_w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from nonfull list
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6dd00891.8235.190e91ac139.Coremail.slark_xiao@163.com>
 
-On Thu, Jul 25, 2024 at 7:07=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
-> > If the freeing of swap entry is random distribution. You need 16
-> > continuous swap entries free at the same time at aligned 16 base
-> > locations. The total number of order 4 free swap space add up together
-> > is much lower than the order 0 allocatable swap space.
-> > If having one entry free is 50% probability(swapfile half full), then
-> > having 16 swap entries is continually free is (0.5) EXP 16 =3D 1.5 E-5.
-> > If the swapfile is 80% full, that number drops to 6.5 E -12.
->
-> This depends on workloads.  Quite some workloads will show some degree
-> of spatial locality.  For a workload with no spatial locality at all as
-> above, mTHP may be not a good choice at the first place.
-
-The fragmentation comes from the order 0 entry not from the mTHP. mTHP
-have their own valid usage case, and should be separate from how you
-use the order 0 entry. That is why I consider this kind of strategy
-only works on the lucky case. I would much prefer the strategy that
-can guarantee work not depend on luck.
-
-> >> - Order-4 pages need to be swapped out, but no enough order-4 non-full
-> >>   clusters available.
+On Thu, Jul 25, 2024 at 04:56:03PM +0800, Slark Xiao wrote:
+> 
+> At 2024-07-25 11:59:54, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
+> >On Thu, Jul 25, 2024 at 10:29:40AM +0800, Slark Xiao wrote:
+> >> To separate the images of Foxconn from other vendors, adding a
+> >> new foxconn subfolder under qcom/<platform> for edl image path.
+> >> And delete the fw patch since it's useless for Foxconn devices.
+> >> 
+> >> Fixes: bf30a75e6e00 ("bus: mhi: host: Add support for Foxconn SDX72 modems")
+> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >> ---
+> >> v2: change the folder path architecture
+> >> ---
+> >>  drivers/bus/mhi/host/pci_generic.c | 13 +++++--------
+> >>  1 file changed, 5 insertions(+), 8 deletions(-)
+> >> 
+> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> >> index 14a11880bcea..f159a9dd53e7 100644
+> >> --- a/drivers/bus/mhi/host/pci_generic.c
+> >> +++ b/drivers/bus/mhi/host/pci_generic.c
+> >> @@ -433,8 +433,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+> >>  
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+> >>  	.name = "foxconn-sdx55",
+> >> -	.fw = "qcom/sdx55m/sbl1.mbn",
+> >> -	.edl = "qcom/sdx55m/edl.mbn",
+> >> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
 > >
-> > Exactly.
+> >I think you misunderstood what I suggested in earlier revision. You should add
+> >the Foxconn specific fw only if it is different from the qcom one. Is it really
+> >different for all these modems? Otherwise, what is the point of adding them?
 > >
-> >>
-> >> So, we need a way to migrate non-full clusters among orders to adjust =
-to
-> >> the various situations automatically.
+> >- Mani
+> 
 > >
-> > There is no easy way to migrate swap entries to different locations.
-> > That is why I like to have discontiguous swap entries allocation for
-> > mTHP.
->
-> We suggest to migrate non-full swap clsuters among different lists, not
-> swap entries.
+> Hi Mani,
+> Yes, all programer files are different with default. We add a sign step for each image
+> file. That means other vendor's edl image(including Qualcomm) can't be applied for
+> Foxconn devices. 
+> 
 
-Then you have the down side of reducing the number of total high order
-clusters. By chance it is much easier to fragment the cluster than
-anti-fragment a cluster.  The orders of clusters have a natural
-tendency to move down rather than move up, given long enough time of
-random access. It will likely run out of high order clusters in the
-long run if we don't have any separation of orders.
+Gotcha. Please include this info in the commit message as people may wonder what
+the difference between yours and qcom.
 
-> >> But yes, data is needed for any performance related change.
->
-> BTW: I think non-full cluster isn't a good name.  Partial cluster is
-> much better and follows the same convention as partial slab.
+Unrelated question to this patch: Once the EDL is programmed, what are the
+images that the user has to flash using Firehose protocol? Is that the full SDK
+or just SBL/APPS image?
 
-I am not opposed to it. The only reason I hold off on the rename is
-because there are patches from Kairui I am testing depending on it.
-Let's finish up the V5 patch with the swap cache reclaim code path
-then do the renaming as one batch job. We actually have more than one
-list that has the clusters partially full. It helps reduce the repeat
-scan of the cluster that is not full but also not able to allocate
-swap entries for this order.  Just the name of one of them as
-"partial" is not precise either. Because the other lists are also
-partially full. We'd better give them precise meaning systematically.
+If so, what is the size of the images?
 
-Chris
+- Mani
+
+> >>  	.config = &modem_foxconn_sdx55_config,
+> >>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >>  	.dma_data_width = 32,
+> >> @@ -444,8 +443,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+> >>  
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+> >>  	.name = "foxconn-t99w175",
+> >> -	.fw = "qcom/sdx55m/sbl1.mbn",
+> >> -	.edl = "qcom/sdx55m/edl.mbn",
+> >> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+> >>  	.config = &modem_foxconn_sdx55_config,
+> >>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >>  	.dma_data_width = 32,
+> >> @@ -455,8 +453,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+> >>  
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+> >>  	.name = "foxconn-dw5930e",
+> >> -	.fw = "qcom/sdx55m/sbl1.mbn",
+> >> -	.edl = "qcom/sdx55m/edl.mbn",
+> >> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+> >>  	.config = &modem_foxconn_sdx55_config,
+> >>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >>  	.dma_data_width = 32,
+> >> @@ -502,7 +499,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+> >>  
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
+> >>  	.name = "foxconn-t99w515",
+> >> -	.edl = "fox/sdx72m/edl.mbn",
+> >> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
+> >>  	.edl_trigger = true,
+> >>  	.config = &modem_foxconn_sdx72_config,
+> >>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> @@ -513,7 +510,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
+> >>  
+> >>  static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
+> >>  	.name = "foxconn-dw5934e",
+> >> -	.edl = "fox/sdx72m/edl.mbn",
+> >> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
+> >>  	.edl_trigger = true,
+> >>  	.config = &modem_foxconn_sdx72_config,
+> >>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> -- 
+> >> 2.25.1
+> >> 
+> >
+> >-- 
+> >மணிவண்ணன் சதாசிவம்
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
