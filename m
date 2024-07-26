@@ -1,175 +1,168 @@
-Return-Path: <linux-kernel+bounces-262850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B68493CDD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F2393CDD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88EDB282DD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF371F23520
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE512156677;
-	Fri, 26 Jul 2024 05:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAAB156678;
+	Fri, 26 Jul 2024 05:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbQQdzMn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED05A18641
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="GFJKXki/"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FB918641;
+	Fri, 26 Jul 2024 05:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721973340; cv=none; b=G+umL9OdPqV37e6AAhYZIT1LOfh/qUaiy4SEyJKeZXZA/8jiGaxTXd99Plg+4IwPz4RVy8pP9huA7FpDAil98gxmTq4yTU7qT9k3/6ZdFLO/zlzRnknO9EyE2iSGdhyRihegKCoB+04XwM8qMgn5+xaPDIJGuMr1G9BDjROkKzk=
+	t=1721973383; cv=none; b=BXvwC6ieMoWnS3V+RoZireja+TCG1dnxzI6AGDYxdsyO+WPZ+tt4E31a4g+r7QxbxJioSO+AjRNRB5WExdwt2rTUdiqFJzf7M4RJ5G6zwXWtJVhbsAjTrHXby7Ncb3OoXoEYqs4b+LqmN+7gHZ38xCKYMbRtFdc2MfPXrbSq7tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721973340; c=relaxed/simple;
-	bh=k0Voiw1tqOqaSA+ul5dSBP+qW+fdcsI9oLOuIpuZ7P8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pbZ5OM4/3O6n3XhKx/65uYhzMrY0w4Tc8CfV2HojXmBml0T7EQxYdR/zf5QKCa+YAIyxDVRuTLjQeOdwAELf3ViPpr7OYynfV7bLsTzTGXSe1vsYgHWDKUcDviAwQ5doiqCsoMxUbdy1iM1/+EALNUM1hKscZIhC2ZkQsBJy9IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbQQdzMn; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721973338; x=1753509338;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=k0Voiw1tqOqaSA+ul5dSBP+qW+fdcsI9oLOuIpuZ7P8=;
-  b=IbQQdzMn7TB8VY5NO8/iSGnN5Lbu9jeXfwSNpaYPSuTJ5+S2gBw5yOxL
-   rPd0/q7p28gLEJAk3tpCdpOnVd9/OjejFKzDNDRwkV33NeXKHzLxuA9C+
-   ajnfo0HORPSWaABOQXt58WNIa/oG22/njYYxd409mzOTZ5IOhTPjMS+RK
-   aKBZn2f/LVFJsNGQ5pDUaG5aYSV3FCfPG6YMOB1FZK5hfHd1OMGXNFks9
-   ctPRkZXnHwDPrtUFczVeJnvIdISwlpOzeh43KVdpu/iQU9phdUIL0DJvW
-   KAytG4Yb9Nn9ch3CeSkB/LhgGjDRFHq9cVo+ZwBP4gEpLzSBxfQY7QAcC
-   A==;
-X-CSE-ConnectionGUID: XX4W3QIVRgWTVL7pITqM5w==
-X-CSE-MsgGUID: V9/PuyoIRNyoOvmiZD7Nsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="19905394"
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="19905394"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 22:55:37 -0700
-X-CSE-ConnectionGUID: CYK+Ga7FRbmLZDWoDeX/Og==
-X-CSE-MsgGUID: 4C7s8pMgSSyyAqOJUnUGFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="52833629"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 22:55:35 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Hugh
- Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <CACePvbXZ_DqxwiNPckBPAhxqoDoMRFRzhM24_8TcHQz-LTop_w@mail.gmail.com>
-	(Chris Li's message of "Thu, 25 Jul 2024 21:50:56 -0700")
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
-	<20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
-	<ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
-	<CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
-	<b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
-	<CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-	<874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
-	<87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
-	<87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
-	<87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
-	<87le1q6jyo.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbXu268d2cBmm0a2Azr3=Aum19cSgY+7YijESrBCVK3a9w@mail.gmail.com>
-	<87zfq43o4n.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbXZ_DqxwiNPckBPAhxqoDoMRFRzhM24_8TcHQz-LTop_w@mail.gmail.com>
-Date: Fri, 26 Jul 2024 13:52:02 +0800
-Message-ID: <87o76k3dkt.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721973383; c=relaxed/simple;
+	bh=Yv6YnquaJR+7s5kkMZ1WaQR28i8RML9zoz3vMC2yYiE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=J9B45XkvGL+/U1N9pHqctc0HUEoahJ6TrTcdXNFHyS3V7ljkVcgkdK0iNducbT+9vAmlG2UZ7pJr32B38eBCfG0Ma0C6hc6Nq+NdNlGXbAdZS8B4r4CADCMfsAr/Ml3gEDI8iodWjFfyINyqKZatf5OuKm7BJeVfCREL9BOTH04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=GFJKXki/ reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=AxKXyD8rptQV0LY9/v84VGXH3WprRNEeQMnUtqC2/W0=; b=G
+	FJKXki/wnDXNE9OpF0ZQY+yCHEB/zr5XJ+dDyMh/K7729YsqZmf++qw23nBFayKC
+	Jpo5W3gauHruc5OYcSG4bjMZZhKF4Z/iWxvWX8JfT5SvpTAT0gsluGl6XfGi8usp
+	hlYtffHSK5q62NLVhImSwr1uHdtruYxNu8+BmIJFkw=
+Received: from slark_xiao$163.com ( [112.97.49.20] ) by
+ ajax-webmail-wmsvr-40-110 (Coremail) ; Fri, 26 Jul 2024 13:55:40 +0800
+ (CST)
+Date: Fri, 26 Jul 2024 13:55:40 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: Re: [PATCH v2 1/2] bus: mhi: host: pci_generic: Update the
+ file path for Foxconn SDX55/SDX72
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240726050051.GA2628@thinkpad>
+References: <20240725022941.65948-1-slark_xiao@163.com>
+ <20240725035954.GA2317@thinkpad>
+ <6dd00891.8235.190e91ac139.Coremail.slark_xiao@163.com>
+ <20240726050051.GA2628@thinkpad>
+X-NTES-SC: AL_Qu2ZA/WcvEsv5iCRZukfmk8Sg+84W8K3v/0v1YVQOpF8jCfp6yY8d2ZAJnTv2+GDCDCwtRuUdgJo2MNifrdmeo4Bed+C2lL+eOjB5L5uauyX1w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <5aa442e3.4d45.190ed9bf7c0.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v09cOqNmMkw8AA--.60277W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbioxUnZGVOEm2jbwAFso
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Chris Li <chrisl@kernel.org> writes:
-
-> On Thu, Jul 25, 2024 at 7:07=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
-> wrote:
->> > If the freeing of swap entry is random distribution. You need 16
->> > continuous swap entries free at the same time at aligned 16 base
->> > locations. The total number of order 4 free swap space add up together
->> > is much lower than the order 0 allocatable swap space.
->> > If having one entry free is 50% probability(swapfile half full), then
->> > having 16 swap entries is continually free is (0.5) EXP 16 =3D 1.5 E-5.
->> > If the swapfile is 80% full, that number drops to 6.5 E -12.
->>
->> This depends on workloads.  Quite some workloads will show some degree
->> of spatial locality.  For a workload with no spatial locality at all as
->> above, mTHP may be not a good choice at the first place.
->
-> The fragmentation comes from the order 0 entry not from the mTHP. mTHP
-> have their own valid usage case, and should be separate from how you
-> use the order 0 entry. That is why I consider this kind of strategy
-> only works on the lucky case. I would much prefer the strategy that
-> can guarantee work not depend on luck.
-
-It seems that you have some perfect solution.  Will learn it when you
-post it.
-
->> >> - Order-4 pages need to be swapped out, but no enough order-4 non-full
->> >>   clusters available.
->> >
->> > Exactly.
->> >
->> >>
->> >> So, we need a way to migrate non-full clusters among orders to adjust=
- to
->> >> the various situations automatically.
->> >
->> > There is no easy way to migrate swap entries to different locations.
->> > That is why I like to have discontiguous swap entries allocation for
->> > mTHP.
->>
->> We suggest to migrate non-full swap clsuters among different lists, not
->> swap entries.
->
-> Then you have the down side of reducing the number of total high order
-> clusters. By chance it is much easier to fragment the cluster than
-> anti-fragment a cluster.  The orders of clusters have a natural
-> tendency to move down rather than move up, given long enough time of
-> random access. It will likely run out of high order clusters in the
-> long run if we don't have any separation of orders.
-
-As my example above, you may have almost 0 high-order clusters forever.
-So, your solution only works for very specific use cases.  It's not a
-general solution.
-
->> >> But yes, data is needed for any performance related change.
->>
->> BTW: I think non-full cluster isn't a good name.  Partial cluster is
->> much better and follows the same convention as partial slab.
->
-> I am not opposed to it. The only reason I hold off on the rename is
-> because there are patches from Kairui I am testing depending on it.
-> Let's finish up the V5 patch with the swap cache reclaim code path
-> then do the renaming as one batch job. We actually have more than one
-> list that has the clusters partially full. It helps reduce the repeat
-> scan of the cluster that is not full but also not able to allocate
-> swap entries for this order.  Just the name of one of them as
-> "partial" is not precise either. Because the other lists are also
-> partially full. We'd better give them precise meaning systematically.
-
-I don't think that it's hard to do a search/replace before the next
-version.
-
---
-Best Regards,
-Huang, Ying
+CkF0IDIwMjQtMDctMjYgMTM6MDA6NTEsICJNYW5pdmFubmFuIFNhZGhhc2l2YW0iIDxtYW5pdmFu
+bmFuLnNhZGhhc2l2YW1AbGluYXJvLm9yZz4gd3JvdGU6Cj5PbiBUaHUsIEp1bCAyNSwgMjAyNCBh
+dCAwNDo1NjowM1BNICswODAwLCBTbGFyayBYaWFvIHdyb3RlOgo+PiAKPj4gQXQgMjAyNC0wNy0y
+NSAxMTo1OTo1NCwgIk1hbml2YW5uYW4gU2FkaGFzaXZhbSIgPG1hbml2YW5uYW4uc2FkaGFzaXZh
+bUBsaW5hcm8ub3JnPiB3cm90ZToKPj4gPk9uIFRodSwgSnVsIDI1LCAyMDI0IGF0IDEwOjI5OjQw
+QU0gKzA4MDAsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+ID4+IFRvIHNlcGFyYXRlIHRoZSBpbWFnZXMg
+b2YgRm94Y29ubiBmcm9tIG90aGVyIHZlbmRvcnMsIGFkZGluZyBhCj4+ID4+IG5ldyBmb3hjb25u
+IHN1YmZvbGRlciB1bmRlciBxY29tLzxwbGF0Zm9ybT4gZm9yIGVkbCBpbWFnZSBwYXRoLgo+PiA+
+PiBBbmQgZGVsZXRlIHRoZSBmdyBwYXRjaCBzaW5jZSBpdCdzIHVzZWxlc3MgZm9yIEZveGNvbm4g
+ZGV2aWNlcy4KPj4gPj4gCj4+ID4+IEZpeGVzOiBiZjMwYTc1ZTZlMDAgKCJidXM6IG1oaTogaG9z
+dDogQWRkIHN1cHBvcnQgZm9yIEZveGNvbm4gU0RYNzIgbW9kZW1zIikKPj4gPj4gU2lnbmVkLW9m
+Zi1ieTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0AxNjMuY29tPgo+PiA+PiAtLS0KPj4gPj4gdjI6
+IGNoYW5nZSB0aGUgZm9sZGVyIHBhdGggYXJjaGl0ZWN0dXJlCj4+ID4+IC0tLQo+PiA+PiAgZHJp
+dmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyB8IDEzICsrKysrLS0tLS0tLS0KPj4gPj4g
+IDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4+ID4+IAo+
+PiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2Ry
+aXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gPj4gaW5kZXggMTRhMTE4ODBiY2Vh
+Li5mMTU5YTlkZDUzZTcgMTAwNjQ0Cj4+ID4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3Bj
+aV9nZW5lcmljLmMKPj4gPj4gKysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMu
+Ywo+PiA+PiBAQCAtNDMzLDggKzQzMyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NvbnRy
+b2xsZXJfY29uZmlnIG1vZGVtX2ZveGNvbm5fc2R4NzJfY29uZmlnID0gewo+PiA+PiAgCj4+ID4+
+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NTVf
+aW5mbyA9IHsKPj4gPj4gIAkubmFtZSA9ICJmb3hjb25uLXNkeDU1IiwKPj4gPj4gLQkuZncgPSAi
+cWNvbS9zZHg1NW0vc2JsMS5tYm4iLAo+PiA+PiAtCS5lZGwgPSAicWNvbS9zZHg1NW0vZWRsLm1i
+biIsCj4+ID4+ICsJLmVkbCA9ICJxY29tL3NkeDU1bS9mb3hjb25uL3Byb2dfZmlyZWhvc2Vfc2R4
+NTUubWJuIiwKPj4gPgo+PiA+SSB0aGluayB5b3UgbWlzdW5kZXJzdG9vZCB3aGF0IEkgc3VnZ2Vz
+dGVkIGluIGVhcmxpZXIgcmV2aXNpb24uIFlvdSBzaG91bGQgYWRkCj4+ID50aGUgRm94Y29ubiBz
+cGVjaWZpYyBmdyBvbmx5IGlmIGl0IGlzIGRpZmZlcmVudCBmcm9tIHRoZSBxY29tIG9uZS4gSXMg
+aXQgcmVhbGx5Cj4+ID5kaWZmZXJlbnQgZm9yIGFsbCB0aGVzZSBtb2RlbXM/IE90aGVyd2lzZSwg
+d2hhdCBpcyB0aGUgcG9pbnQgb2YgYWRkaW5nIHRoZW0/Cj4+ID4KPj4gPi0gTWFuaQo+PiAKPj4g
+Pgo+PiBIaSBNYW5pLAo+PiBZZXMsIGFsbCBwcm9ncmFtZXIgZmlsZXMgYXJlIGRpZmZlcmVudCB3
+aXRoIGRlZmF1bHQuIFdlIGFkZCBhIHNpZ24gc3RlcCBmb3IgZWFjaCBpbWFnZQo+PiBmaWxlLiBU
+aGF0IG1lYW5zIG90aGVyIHZlbmRvcidzIGVkbCBpbWFnZShpbmNsdWRpbmcgUXVhbGNvbW0pIGNh
+bid0IGJlIGFwcGxpZWQgZm9yCj4+IEZveGNvbm4gZGV2aWNlcy4gCj4+IAo+Cj5Hb3RjaGEuIFBs
+ZWFzZSBpbmNsdWRlIHRoaXMgaW5mbyBpbiB0aGUgY29tbWl0IG1lc3NhZ2UgYXMgcGVvcGxlIG1h
+eSB3b25kZXIgd2hhdAo+dGhlIGRpZmZlcmVuY2UgYmV0d2VlbiB5b3VycyBhbmQgcWNvbS4KCj4K
+SWYgcG9zc2libGUsIHBlbGFzZSBoZWxwIG1lIGFkZCBpdCBpbnRvIG15IGNvbW1pdCBtZXNzYWdl
+LgoKCj5VbnJlbGF0ZWQgcXVlc3Rpb24gdG8gdGhpcyBwYXRjaDogT25jZSB0aGUgRURMIGlzIHBy
+b2dyYW1tZWQsIHdoYXQgYXJlIHRoZQo+aW1hZ2VzIHRoYXQgdGhlIHVzZXIgaGFzIHRvIGZsYXNo
+IHVzaW5nIEZpcmVob3NlIHByb3RvY29sPyBJcyB0aGF0IHRoZSBmdWxsIFNESwo+b3IganVzdCBT
+QkwvQVBQUyBpbWFnZT8KPgoKPklmIHNvLCB3aGF0IGlzIHRoZSBzaXplIG9mIHRoZSBpbWFnZXM/
+CgoKVGhpcyBkZXBlbmRzIG9uIGEgcmF3IGZpbGUsIGxldCdzIHRha2UgU0RYNjUgYXMgYW4gZXhh
+bXBsZS4gVGhlIGZpbGXCoApyYXdwcm9ncmFtX25hbmRfcDRLX2IyNTZLLnhtbCBjb250YWlucyBi
+ZWxvdyBpdGVtczoKLi4uLi4KPGVyYXNlIFBBR0VTX1BFUl9CTE9DSz0iNjQiIFNFQ1RPUl9TSVpF
+X0lOX0JZVEVTPSI0MDk2IiBudW1fcGFydGl0aW9uX3NlY3RvcnM9IjY0MCIgc3RhcnRfc2VjdG9y
+PSIwIi8+Cjxwcm9ncmFtIFBBR0VTX1BFUl9CTE9DSz0iNjQiIFNFQ1RPUl9TSVpFX0lOX0JZVEVT
+PSI0MDk2IiBmaWxlbmFtZT0ieGJsLmVsZi5lbmMiIGxhYmVsPSJzYmwiIGxhc3Rfc2VjdG9yPSI2
+MzkiIG51bV9wYXJ0aXRpb25fc2VjdG9ycz0iNjQwIiBwaHlzaWNhbF9wYXJ0aXRpb25fbnVtYmVy
+PSIwIiBzdGFydF9zZWN0b3I9IjAiLz4KLi4uLi4KPGVyYXNlIFBBR0VTX1BFUl9CTE9DSz0iNjQi
+IFNFQ1RPUl9TSVpFX0lOX0JZVEVTPSI0MDk2IiBudW1fcGFydGl0aW9uX3NlY3RvcnM9IjI3NDU2
+IiBzdGFydF9zZWN0b3I9IjE2NTEyIi8+CsKgIDxwcm9ncmFtIFBBR0VTX1BFUl9CTE9DSz0iNjQi
+IFNFQ1RPUl9TSVpFX0lOX0JZVEVTPSI0MDk2IiBmaWxlbmFtZT0iTk9OLUhMT1MudWJpLmVuYyIg
+bGFiZWw9Im1vZGVtIiBsYXN0X3NlY3Rvcj0iNDM5NjciIG51bV9wYXJ0aXRpb25fc2VjdG9ycz0i
+Mjc0NTYiIHBoeXNpY2FsX3BhcnRpdGlvbl9udW1iZXI9IjAiIHN0YXJ0X3NlY3Rvcj0iMTY1MTIi
+Lz4KLi4uCgoKVGhpcyBmaWxlIGNvbnRhaW5zIDIgcGFydCwgImVyYXNlIiBhbmQgInByb2dyYW0i
+LgplcmFzZSB3aWxsIHRlbGwgdGhlIHRvb2wgdG8gZXJhc2UgdGhlIHBhcnRpdGlvbiBmcm9tIHNl
+Y3RvciB4IHRvIHkuCkFuZCAicHJvZ3JhbSIgd2lsbCB0ZWxsIHRoZSB0b29sIHRvIGZsYXNoIHRo
+ZSBmaWxlIGludG8gdGhhdCBwYXJ0aW9uIHdoaWNoIHN0YXJ0IGZyb20gc2VjdG9yIG0gdG8gbi4K
+CgpTbyB0aGUgbG9naWNhbCBpcywgZnVsbCBTREsgb3IganVzdCBvbmUgb3Igc29tZSBwYXJ0aXRp
+b25zIGFyZSBmbGFzaGVkIGRlcGVuZHMgb24gdGhpcyByYXcgZmlsZS4KTm9ybWFsbHksIGZ1bGwg
+U0RLIGlzIHRoZSBtYWluIHNjZW5hcmlvLiBBbmQgdGhlIHNpemUgaXMgYWJvdXQgMTUwTUIgdG8g
+MjAwTUIuClRoYW5rcy4gCgo+Cj4tIE1hbmkKPgo+PiA+PiAgCS5jb25maWcgPSAmbW9kZW1fZm94
+Y29ubl9zZHg1NV9jb25maWcsCj4+ID4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFS
+X05VTSwKPj4gPj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gPj4gQEAgLTQ0NCw4ICs0NDMs
+NyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4
+NTVfaW5mbyA9IHsKPj4gPj4gIAo+PiA+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rl
+dl9pbmZvIG1oaV9mb3hjb25uX3Q5OXcxNzVfaW5mbyA9IHsKPj4gPj4gIAkubmFtZSA9ICJmb3hj
+b25uLXQ5OXcxNzUiLAo+PiA+PiAtCS5mdyA9ICJxY29tL3NkeDU1bS9zYmwxLm1ibiIsCj4+ID4+
+IC0JLmVkbCA9ICJxY29tL3NkeDU1bS9lZGwubWJuIiwKPj4gPj4gKwkuZWRsID0gInFjb20vc2R4
+NTVtL2ZveGNvbm4vcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4iLAo+PiA+PiAgCS5jb25maWcgPSAm
+bW9kZW1fZm94Y29ubl9zZHg1NV9jb25maWcsCj4+ID4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RF
+RkFVTFRfQkFSX05VTSwKPj4gPj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gPj4gQEAgLTQ1
+NSw4ICs0NTMsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2Zv
+eGNvbm5fdDk5dzE3NV9pbmZvID0gewo+PiA+PiAgCj4+ID4+ICBzdGF0aWMgY29uc3Qgc3RydWN0
+IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fZHc1OTMwZV9pbmZvID0gewo+PiA+PiAgCS5u
+YW1lID0gImZveGNvbm4tZHc1OTMwZSIsCj4+ID4+IC0JLmZ3ID0gInFjb20vc2R4NTVtL3NibDEu
+bWJuIiwKPj4gPj4gLQkuZWRsID0gInFjb20vc2R4NTVtL2VkbC5tYm4iLAo+PiA+PiArCS5lZGwg
+PSAicWNvbS9zZHg1NW0vZm94Y29ubi9wcm9nX2ZpcmVob3NlX3NkeDU1Lm1ibiIsCj4+ID4+ICAJ
+LmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2NvbmZpZywKPj4gPj4gIAkuYmFyX251bSA9
+IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiA+PiAgCS5kbWFfZGF0YV93aWR0aCA9IDMyLAo+
+PiA+PiBAQCAtNTAyLDcgKzQ5OSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZf
+aW5mbyBtaGlfZm94Y29ubl9kdzU5MzJlX2luZm8gPSB7Cj4+ID4+ICAKPj4gPj4gIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3NTE1X2luZm8gPSB7
+Cj4+ID4+ICAJLm5hbWUgPSAiZm94Y29ubi10OTl3NTE1IiwKPj4gPj4gLQkuZWRsID0gImZveC9z
+ZHg3Mm0vZWRsLm1ibiIsCj4+ID4+ICsJLmVkbCA9ICJxY29tL3NkeDcybS9mb3hjb25uL2VkbC5t
+Ym4iLAo+PiA+PiAgCS5lZGxfdHJpZ2dlciA9IHRydWUsCj4+ID4+ICAJLmNvbmZpZyA9ICZtb2Rl
+bV9mb3hjb25uX3NkeDcyX2NvbmZpZywKPj4gPj4gIAkuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVM
+VF9CQVJfTlVNLAo+PiA+PiBAQCAtNTEzLDcgKzUxMCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+bWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3NTE1X2luZm8gPSB7Cj4+ID4+ICAKPj4g
+Pj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9kdzU5
+MzRlX2luZm8gPSB7Cj4+ID4+ICAJLm5hbWUgPSAiZm94Y29ubi1kdzU5MzRlIiwKPj4gPj4gLQku
+ZWRsID0gImZveC9zZHg3Mm0vZWRsLm1ibiIsCj4+ID4+ICsJLmVkbCA9ICJxY29tL3NkeDcybS9m
+b3hjb25uL2VkbC5tYm4iLAo+PiA+PiAgCS5lZGxfdHJpZ2dlciA9IHRydWUsCj4+ID4+ICAJLmNv
+bmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDcyX2NvbmZpZywKPj4gPj4gIAkuYmFyX251bSA9IE1I
+SV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiA+PiAtLSAKPj4gPj4gMi4yNS4xCj4+ID4+IAo+PiA+
+Cj4+ID4tLSAKPj4gPuCuruCuo+Cuv+CuteCuo+CvjeCuo+CuqeCvjSDgrprgrqTgrr7grprgrr/g
+rrXgrq7gr40KPgo+LS0gCj7grq7grqPgrr/grrXgrqPgr43grqPgrqngr40g4K6a4K6k4K6+4K6a
+4K6/4K614K6u4K+NCg==
 
