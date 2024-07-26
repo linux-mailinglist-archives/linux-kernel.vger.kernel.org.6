@@ -1,113 +1,343 @@
-Return-Path: <linux-kernel+bounces-263597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A48893D817
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2B093D819
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BEF91C22EBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C4A2829AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5A833997;
-	Fri, 26 Jul 2024 18:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0AE3B791;
+	Fri, 26 Jul 2024 18:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A+yA6E3F"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="StvPGw0P"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D04430
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8DA2E644
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017822; cv=none; b=qClVDXR4FwOaef06vThDz+TjmJB4BqU2XAdqMQ1CdHi1jKG9YhAwBQ+FTwztZV4eihM16JEjkgaDFSlAEbqPTq0ts7gb/GMSQbPM1cY082MRm5DWKU7tNv/d8uEbfHPDhQ66fyNHw3q5ORnGVWBXLtSrBfPWUJCN97a1VwoGx74=
+	t=1722017881; cv=none; b=G+Amok7/tYrnjLMtmN62op33VWJ/38iZpzo8h/ESPRE5tcKZGFYudltnm1qHnMAHSrbqIBliwqm20eNE21qgbZaWWgrvmnDopMOVRzrfn/j0XsIIJ8rpaHfPSrzwbDogjMBNy915VVvauaFxxMk7BJDvNTBAThLFuTMbzdbhH6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017822; c=relaxed/simple;
-	bh=jfcq9dMtKAd1p6EqpkxhcKHETx/vTMZ1v5D4g+Fx9z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P2VVkhGI38V77fTsR2b05GTHsyEm9YQqA9uNPUAwa418IYdAbT0mMGd2u8IDWGw2i9kLf21qGtDd+b/8xkiuh9olmKUroHKf8cC7RfOqG/xGX/T+MD7/NcP5zxuEqv+6mHmN0Hk29mgTtM2u0fDKo3o9Gwf9n1HHcwUOOGHSFa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A+yA6E3F; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 26 Jul 2024 11:16:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722017816;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Swun6CogEp3EWEPStG+jjImIZ9tcFlvinrHHXIyi+ps=;
-	b=A+yA6E3FeWWMRIxWCPIEgHvwDvnszVvf1jIzTbK9EdowIuJTq5pFgOvy2JRyFyaOF+ONiQ
-	ycykG5HKkldwdAgPZDgwORMXq0BxxLo7Ss4Ns8SQQ/4nI2Saaf0UdtRh3AGdZHOWlTy/N7
-	nlAD17Er47tOjTk6w6pG8SvJJPxt8JQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Greg Thelen <gthelen@google.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
-Message-ID: <qivq2vwax5t5gzpu2r7ktfgmxgyroxycgc7klgfascd3cdlkaj@wnoq4u2mq57l>
-References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
- <CAJD7tkaR3s6fzRZWdvMvfSRBRaozSj7d2pH5HUjtbuOW+RROFA@mail.gmail.com>
- <lhlfj2keag2ciurt7v76d4nhyk5k5czrkvuocbgxkeep6zgwgo@ifjthvn5osvr>
- <CAJD7tkaW8bkwpUChJPc-Bw1epfrLySVhgr8528yZg5eCg3d=JA@mail.gmail.com>
- <z2chqotbjp27rtq4c5mrmz3llsn3o523goq4ycy5jt7s4atcdp@xyb34euw2s45>
- <CAJD7tkYCERG5pUTcdmw8UGks8wtK9W9jzZGZODE6sZ-9-WEv-g@mail.gmail.com>
+	s=arc-20240116; t=1722017881; c=relaxed/simple;
+	bh=iNXRAuShoPFV8EbSD1nlq3fKisPFVuqcoHZCgPOnMcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ibj/6/qhuf3a570/msbBsXNdxjJSYqFjireE1ZHTB3hnGjBo9tznc+hurUWbt6Cde2cdUdIcHGeVJnRKEMAfj3H4mu6eot92heJQsTALx1fMxcWSrdPTiRE+ffeGGJ3R2vJMe0WdMkSffKsTzoN+Z4EIBzeeBjA++qOhmrs6yuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=StvPGw0P; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-708e75d8d7cso803451a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722017878; x=1722622678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8v4j6Kmsi//EQBNaeRK94t6ko3fmxzbzxpLIUFXfJmE=;
+        b=StvPGw0PvUl+E8/yJOxruuiNX4ZpQl9LYTvHOXMrAdAMMfO5KktsV/oAZrn4n6/5dx
+         p1PjL38sipbnUHXBhfzXatpaZHUDWNRCccrzf71QqhxsHP0BXIdVgrT59YwfhvbwMmd0
+         13rkgbusTWicHWCDSVs2B4K/5QIEbSrOnopNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722017878; x=1722622678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8v4j6Kmsi//EQBNaeRK94t6ko3fmxzbzxpLIUFXfJmE=;
+        b=e9qcU7F5db53aBXpaulIUdM7Bat+x4h01MrIln7lGYNNnfhpYX3WSi+Hm9ECfMNOHY
+         UJaQrmfVqMiVM+oT3uJGiqTNr2NkRdtNCYSazH1pflI0N5POKRHwK7Fg6GQoBCDbIv2g
+         9sqO11YSndMCulUtS0M3aUEzb9RHC34q11leKvf+5SuaXhxyAVybvW21AcD2Q5R3trAU
+         NrR9LQNCrncRJAtqt82yADCKIWioUj6FiDV5THSKEu7jOKLeeXEwjCT9e/b44qQt8qsU
+         ctJWfbuiiHI7Edefv4alC0CcEiZzzkPUL2uX0XZYN2mGwTjlk+pwNI8cGth6EUjVSFxc
+         VSgA==
+X-Forwarded-Encrypted: i=1; AJvYcCX81nMeeN8ZX3abfLMIQf2Lns6bjSzL4/hcNV3EWYEZPyUTqBQh1s9diTMdSx6XqfEQWNlZDkZ8tNeu6sl/zdyfRFLar3pay4gRRUn/
+X-Gm-Message-State: AOJu0YxUCzfErbQywmZmrRv3b3GhF/sqluIrYj0vmNRSSPIjqMoU5Xn4
+	f9U0MAWrlGBypg9k5rqcrdEOl6lVpYjj2k7Lp1gpcZ27wAVQyR3GSsVo0VwUca7FMa8zs7p2RGe
+	JHRDGdNVT7U4kU5F29Axy7shmN28FFoyTj0YL
+X-Google-Smtp-Source: AGHT+IERZnTCqmhM+vqiVlanP0wPqZdcVEb2wkDDWZ7sXULI/hMtjPea6urdQjsBJhSihLbQ14D8Dl0uok7A1/XNrF4=
+X-Received: by 2002:a05:6870:472b:b0:25e:19fe:f240 with SMTP id
+ 586e51a60fabf-267d4d1315fmr686006fac.9.1722017877674; Fri, 26 Jul 2024
+ 11:17:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkYCERG5pUTcdmw8UGks8wtK9W9jzZGZODE6sZ-9-WEv-g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <ZjsKPSgV39SF0gdX@wunner.de> <20240510052616.GC4162345@black.fi.intel.com>
+ <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
+ <20240511043832.GD4162345@black.fi.intel.com> <20240511054323.GE4162345@black.fi.intel.com>
+ <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
+ <ZkUcihZR_ZUUEsZp@wunner.de> <20240516083017.GA1421138@black.fi.intel.com>
+ <20240516100315.GC1421138@black.fi.intel.com> <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
+ <20240626080517.GZ1532424@black.fi.intel.com>
+In-Reply-To: <20240626080517.GZ1532424@black.fi.intel.com>
+From: Esther Shimanovich <eshimanovich@chromium.org>
+Date: Fri, 26 Jul 2024 14:17:46 -0400
+Message-ID: <CA+Y6NJEg-1uGCS0eJ2QP4p6EEh2S+6-yTAUKpPvvqDpyb6_DMQ@mail.gmail.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Lukas Wunner <lukas@wunner.de>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rajat Jain <rajatja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 10:43:31AM GMT, Yosry Ahmed wrote:
-> On Fri, Jul 26, 2024 at 10:30 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Fri, Jul 26, 2024 at 09:25:27AM GMT, Yosry Ahmed wrote:
-> > > On Fri, Jul 26, 2024 at 8:48 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > >
-> > [...]
-> > > >
-> > > > No, the workloads running in non-root memcgs will not see any
-> > > > difference. Only the workloads running in root will see charging
-> > > > overhead.
-> > >
-> > > Oh yeah we already charge the root's page counters hierarchically in
-> > > the upstream kernel, we just do not charge them if the origin of the
-> > > charge is the root itself.
-> > >
-> > > We also have workloads that iterate top-level memcgs to calculate the
-> > > total charged memory, so memory.children_usage for the root memcg
-> > > would help.
-> > >
-> > > As for memory.current, do you have any data about how much memory is
-> > > charged to the root itself? We think of the memory charged to the root
-> > > as system overhead, while the memory charged to top-level memcgs
-> > > isn't.
-> > >
-> > > So basically total_memory - root::memory.children_usage would be a
-> > > fast way to get a rough estimation of system overhead. The same would
-> > > not apply for total_memory - root::memory.current if I understand
-> > > correctly.
-> >
-> > Please note that root::memory.children_usage will have top level zombies
-> > included as well (at least until lru reparenting is not done). So, for
-> > your example it would provide good estimation of top level zombie memory
-> > through root::memory.children_usage - top_level(alive)::memory.current.
-> 
-> Good point. The fact that it includes the top-level zombies makes it
-> less valuable for this use case, as zombie memory is considered system
-> overhead as well. So we need to iterate the top level memcgs anyway.
+On Wed, Jun 26, 2024 at 4:05=E2=80=AFAM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> I will be on vacation starting next week for the whole July. The patch
+> is kind of "pseudo-code" in that sense that it probably needs some
+> additional work, cleanup, maybe drop the serial number checks and so on.
+> You are free to use it as you see fit, or submit upstream as proper
+> patch if nobody objects.
 
-Most of the users use systemd which has fixed top level hierarchy, so
-this is fine for most users. 
+I cleaned it up, but I think I'd like to run it by you before
+submitting it, as you are the author and also some of my cleanups
+ended up being a bit more involved than I anticipated.
+
+For cleanup, I did the following:
+
+1) I ended up moving the changes from pcie_set_pcie_untrusted to
+pci_set_removable for multiple reasons:
+
+- The downstream bug I ran into happened because of the "removable" attribu=
+te.
+
+- There seems to be a reason why both removable and untrusted exist
+despite both having the same logic. pci_fixup_early is run after
+pcie_set_pcie_untrusted, but before pci_set_removable. It seems like
+this was done on purpose so that downstream security policies can use
+quirks to set specific internal, fixed devices as untrusted.
+
+- The way you wrote it makes the attributes removable =3D untrusted,
+which wasn't the case before, and undos the pci_fixup_early quirks
+logic.
+
+- If you want to make sure that these non-tunneled discrete
+thunderbolt chips are labeled as trusted, we may have to duplicate
+this logic in both functions (which seems to be already the case
+anyways in their current state).
+I just don't fully know what the "untrusted" attribute entails, so I
+am erring on the more conservative side of only making changes I fully
+understand.
+
+2) I changed this comment into code:
+
+> +/* root->external_facing is true, parent !=3D NULL */
+
+3) I edited legacy comments to reflect what the code does now. I also
+changed your comments to reflect how I changed the code, but for the
+most part I kept your words in as they were really clear.
+
+4) I removed the serial checks as you suggested
+
+> If nothing has happened when I come back, I can pick up the work if I
+> still remember this ;-)
+
+I did my best to clean up! I'm unsure if you will want me to duplicate
+this logic to pcie_set_pcie_untrusted, so just let me know if I should
+fix that, and I'll send it to the kernel! (I'm assuming with the
+Co-developed-by, and the Signed-off-by lines, to properly attribute
+you?)
+
+I hope you had a nice vacation! Both you and Lukas Wurner have been so
+helpful and attentive.
+
+The cleaned up patch is below:
+
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 43159965e09e9..fc3ef2cf66d58 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1613,24 +1613,161 @@ static void set_pcie_untrusted(struct pci_dev *dev=
+)
+                dev->untrusted =3D true;
+ }
+
++/*
++ * Checks if the PCIe switch that contains pdev is directly under
++ * the specified bridge.
++ */
++static bool pcie_switch_directly_under(struct pci_dev *bridge,
++                                      struct pci_dev *parent,
++                                      struct pci_dev *pdev)
++{
++       /*
++        * If the device has a PCIe type, that means it is part of a PCIe
++        * switch.
++        */
++       switch (pci_pcie_type(pdev)) {
++       case PCI_EXP_TYPE_UPSTREAM:
++               if (parent =3D=3D bridge)
++                       return true;
++               break;
++
++       case PCI_EXP_TYPE_DOWNSTREAM:
++               if (pci_pcie_type(parent) =3D=3D PCI_EXP_TYPE_UPSTREAM) {
++                       parent =3D pci_upstream_bridge(parent);
++                       if (parent =3D=3D bridge)
++                               return true;
++               }
++               break;
++
++       case PCI_EXP_TYPE_ENDPOINT:
++               if (pci_pcie_type(parent) =3D=3D PCI_EXP_TYPE_DOWNSTREAM) {
++                       parent =3D pci_upstream_bridge(parent);
++                       if (parent && pci_pcie_type(parent) =3D=3D
+PCI_EXP_TYPE_UPSTREAM) {
++                               parent =3D pci_upstream_bridge(parent);
++                               if (parent =3D=3D bridge)
++                                       return true;
++                       }
++               }
++               break;
++       }
++
++       return false;
++}
++
++static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
++{
++       struct fwnode_handle *fwnode;
++
++       /*
++        * For USB4 the tunneled PCIe root or downstream ports are marked w=
+ith
++        * the "usb4-host-interface" property so we look for that first. Th=
+is
++        * should cover the most cases.
++        */
++       fwnode =3D fwnode_find_reference(dev_fwnode(&pdev->dev),
++                                      "usb4-host-interface", 0);
++       if (!IS_ERR(fwnode)) {
++               fwnode_handle_put(fwnode);
++               return true;
++       }
++
++       /*
++        * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
++        * before Alder Lake do not have the above device property so we
++        * use their PCI IDs instead. All these are tunneled. This list
++        * is not expected to grow.
++        */
++       if (pdev->vendor =3D=3D PCI_VENDOR_ID_INTEL) {
++               switch (pdev->device) {
++               /* Ice Lake Thunderbolt 3 PCIe Root Ports */
++               case 0x8a1d:
++               case 0x8a1f:
++               case 0x8a21:
++               case 0x8a23:
++               /* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
++               case 0x9a23:
++               case 0x9a25:
++               case 0x9a27:
++               case 0x9a29:
++               /* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
++               case 0x9a2b:
++               case 0x9a2d:
++               case 0x9a2f:
++               case 0x9a31:
++                       return true;
++               }
++       }
++
++       return false;
++}
++
++static bool pcie_is_tunneled(struct pci_dev *root, struct pci_dev *parent,
++                            struct pci_dev *pdev)
++{
++       /* Return least trusted outcome if params are invalid */
++       if (!(root && root->external_facing && parent))
++               return true;
++
++       /* Anything directly behind a "usb4-host-interface" is tunneled */
++       if (pcie_has_usb4_host_interface(parent))
++               return true;
++
++       /*
++        * Check if this is a discrete Thunderbolt/USB4 controller that is
++        * directly behind a PCIe Root Port marked as "ExternalFacingPort".
++        * These are not behind a PCIe tunnel.
++        */
++       if (pcie_switch_directly_under(root, parent, pdev))
++               return false;
++
++       return true;
++}
++
+ static void pci_set_removable(struct pci_dev *dev)
+ {
+-       struct pci_dev *parent =3D pci_upstream_bridge(dev);
++       struct pci_dev *parent, *root;
++
++       parent =3D pci_upstream_bridge(dev);
+
+        /*
+-        * We (only) consider everything downstream from an external_facing
+-        * device to be removable by the user. We're mainly concerned with
+-        * consumer platforms with user accessible thunderbolt ports that a=
+re
+-        * vulnerable to DMA attacks, and we expect those ports to be marke=
+d by
+-        * the firmware as external_facing. Devices in traditional hotplug
+-        * slots can technically be removed, but the expectation is that un=
+less
+-        * the port is marked with external_facing, such devices are less
+-        * accessible to user / may not be removed by end user, and thus no=
+t
+-        * exposed as "removable" to userspace.
++        * We're mainly concerned with consumer platforms with user accessi=
+ble
++        * thunderbolt ports that are vulnerable to DMA attacks.
++        * We expect those ports to be marked by the firmware as
+external_facing.
++        * Devices outside external_facing ports are labeled as removable, =
+with
++        * the exception of discrete thunderbolt chips within the chassis.
++        *
++        * Devices in traditional hotplug slots can technically be removed,
++        * but the expectation is that unless the port is marked with
++        * external_facing, such devices are less accessible to user / may =
+not
++        * be removed by end user, and thus not exposed as "removable" to
++        * userspace.
+         */
+-       if (parent &&
+-           (parent->external_facing || dev_is_removable(&parent->dev)))
++       if (!parent)
++               return;
++
++       if (dev_is_removable(&parent->dev))
+                dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
++
++       root =3D pcie_find_root_port(dev);
++
++       if (root && root->external_facing) {
++               /*
++                * All devices behind a PCIe root port labeled as
++                * "ExternalFacingPort" are tunneled by definition,
++                * with the exception of discrete Thunderbolt/USB4
++                * controllers that add Thunderbolt capabilities
++                * to CPUs that lack integrated Thunderbolt.
++                * They are identified because by definition, they
++                * aren't tunneled.
++                *
++                * Those discrete Thunderbolt/USB4 controllers are
++                * not removable. Only their downstream facing ports
++                * are actually something that are exposed to the
++                * wild so we only mark devices tunneled behind those
++                * as removable.
++                */
++               if (pcie_is_tunneled(root, parent, dev))
++                       dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
++       }
+ }
+
+ /**
 
