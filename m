@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-263589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC3893D800
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:09:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E7193D808
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341832835BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:09:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C305F1F21D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA3A17BB15;
-	Fri, 26 Jul 2024 18:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434117D34E;
+	Fri, 26 Jul 2024 18:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+QyDVFn"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oArlGx+H"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D792E633
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE8917A580;
+	Fri, 26 Jul 2024 18:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017298; cv=none; b=kMMT/WaMbebkMkMhrkYMLRUOcSOBHBN/NVGJkodH/rZui8+EbFsj1LMqghnMBRgdsNRhtc/hnfaBERrD5i67310lDbJRjcUP7mrQe+xuyMQULCkaennTeZJCpk0rR3cNKO7v5w2BVk+A+OYUSFMWn0AFJ2Sy2MGPT0B/Ua9UFw4=
+	t=1722017352; cv=none; b=cYEjYbJZOHsy7BDbQ0JHfSXVOea2pqBnUaRJTivQ/iPXN+CGL6HXsjxxi7uyBzbXvzHEUOpltCsIvXxYIWr+/tmuwCW/myhLTyWOaHUOG5fVY3gG4+Z/pRYZFsQ43dv63q+EvSfGfWm79jUW2/Bd99zJ9YYG14x6DexS/Ze1qmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017298; c=relaxed/simple;
-	bh=GxmoYIeBXMGpKO1+bZK55byxlD5ApVDBz7Iy5st0gJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uuiSeecZZ77spIJ1L5dw5hsFmfWtuNqe2FvaVR/u2Xt70oHn4Ke+lCJx4vTEQd7HXECrJKretNsQJw8cIODITDlgvwHqoleEYknm9kCt1cC8XQoCM6UPDkYWFODloLZBHylnFVwlDfso+fR9jx5u3FoEDQFQBb02oO/YRyX8Rrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+QyDVFn; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-654cf0a069eso23175867b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722017296; x=1722622096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
-        b=D+QyDVFnMmZxdzlFjgXelWCHAnLdsGVHFOxt2VFwIJkwtoIXZzhD/jPVg5QLc0c1Hf
-         7cVQ/ThOopBOi1uN0rW5tFccw1G/UnkNjY8Tb69lN+h1BNS6MNDE0sxefbcvUxQUgz9m
-         F/ESNm1sGRL/Qmlz5xtExaUhEiVGWQ4udY/iuRsV9BeyqiW1k+Sur+Z6edhHiw4b4kpA
-         DXvio62XKbwKagkIjgIdfOLYznce+5Erd00GTTCmM1+fYV1bb5Z/8w9husIdHMUtbknT
-         QdBQWE4ZNHHxrvhIwW1JRRUov1de6Uuq+/A0s2Gx+mTevJNWPPSBWc9k3suD7EggcTah
-         dUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722017296; x=1722622096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
-        b=Kj9aY86MdKfP1qoRDEsUcBOZlnxcRbQisjHcTsMjxG0OIDx6nITTeXVubWb/kLHUU8
-         yeGqk+2eLSPB9EzNK3Xyt7dUswVPRYLhedgN3vmXV7lLoHzGWWEsTEqNMI8mMGG6XHsp
-         EqqiQz8RLrmBLp71d419mschiS76XClDkyMbkxjxMXXqOUviZ2IRbdtSTgDB+jLYNa8x
-         RDQMbEp70tY8PamkC1W9ou2XmHfD/S6+h55gnJbTJFiJjMGKoDFuFjIKjo+cFmUKXfxF
-         s8h8Dvl5HG7H9evYn0snnCIfGBuarmBwPi2MK/cwtOK/jm82bFh6MjXOtdOeckuzdRvo
-         iALQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4LD10f6zZ6RxVKuwEHCAM4Anx+2yz6fsZZWfBU5UnNnyJCnjtsuVjCpRIayWjSjhhsX2V24AAlmEBvUKoaMnw+GMYMOM53b5Z6HWA
-X-Gm-Message-State: AOJu0YzCp28szpxL1y5xj5NufGI5MY+nz4lhxl42LlYAvfGaW/dIHNAl
-	EzX454Vfjs7eODSePPabAQm5xY9oceBfN7vFYFTbGcTiBbxqJWj9YOTGfm5LIU9XZ1a/gDsMtmk
-	lFfp8kflKIZ8SnYJXZ4dJDqiZRRm/+NI6cabBXg==
-X-Google-Smtp-Source: AGHT+IFkESiWao/vWnFp/DsXlGOMMM3aoXRS1ZwQbcgc7JCIUzd6EJnTYt77j/BQJ878gOluPtcgh7p7GqV6PD/zXX0=
-X-Received: by 2002:a05:690c:4a01:b0:64a:e2ab:be33 with SMTP id
- 00721157ae682-67a073b4271mr7940997b3.22.1722017296429; Fri, 26 Jul 2024
- 11:08:16 -0700 (PDT)
+	s=arc-20240116; t=1722017352; c=relaxed/simple;
+	bh=QwKVfIJx6b6w9eytozal7rkLHjdJGPTRw1tI+tPnJqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFb7021O/AvY6lrOp3UjunxQ1ABWd6IQAMhj20+TLe3DWWCfSTyFi2ncvIyUFl+YfUsWyihtkpIDtD1zv8ib2bA/J4N2txMPlarhFroOi+DeldLMWdK67Svrs16UJuNAZ3y+4JOzwtXN6mcEosetZXfNGdrMumLPI3L8vIwpBwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oArlGx+H; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5Y+bBdbxxKC2hf51b7J1S8qThB2b/5XgdfKw1OYTUmk=; b=oArlGx+Huj22K57mLVmHcbr0Xl
+	MiQWzuEi4Bl7fRZsVt+B9ZKIiRlk60bv4A1VwbYD2R+Rij6yZOAmguXQjSY/MHCs+c5GLg+B3THb3
+	3L32kWuUMtGuW5OmDt0vugl+4K77MJTbYl21N3h8WQHlnLaDt19jUm/cZTwsI/giT5Mdk2ZVaQSEi
+	dAPaioHkwR/mfs6CveVJ30rbYPtXcU+9XwlzNWTKLLmrSaqNALfDlg5Bho5b/WSTNBGtSdnkr8Fxd
+	Kg9ecy0O4QzGYhFP4PuJgMaBPF/t2ijbsQYxLefX5IusHSMB6Z92ApoMggnQ+t2OmX4XcWnwFI/4X
+	MPHP0EfA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXPNG-00000004cOz-4BYF;
+	Fri, 26 Jul 2024 18:09:02 +0000
+Date: Fri, 26 Jul 2024 11:09:02 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: David Sterba <dsterba@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	Youling Tang <youling.tang@linux.dev>, kreijack@inwind.it,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <ZqPmPufwqbGOTyGI@infradead.org>
+References: <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+ <ZqJjsg3s7H5cTWlT@infradead.org>
+ <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+ <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+ <ZqOs84hdYkSV_YWd@infradead.org>
+ <20240726152237.GH17473@twin.jikos.cz>
+ <20240726175800.GC131596@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240726110136eucas1p2c100992bb710acb5a12bb294401d4aeb@eucas1p2.samsung.com>
- <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-3-m.majewski2@samsung.com>
-In-Reply-To: <20240726110114.1509733-3-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jul 2024 13:08:05 -0500
-Message-ID: <CAPLW+4n==hm=tiDOZ14LMw-nWGbu22m2rh7nEJyUR6f0AwzOAg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] drivers/thermal/exynos: use pm_sleep_ptr instead
- of conditional compilation
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Anand Moon <linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726175800.GC131596@mit.edu>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> Slightly simpler and nothing is lost if _suspend and _resume functions
-> are built unconditionally.
->
-> Suggested-by: Anand Moon <linux.amoon@gmail.com>
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
+On Fri, Jul 26, 2024 at 01:58:00PM -0400, Theodore Ts'o wrote:
+> Yeah, that's my reaction as well.  This only saves 50 lines of code in
+> ext4, and that includes unrelated changes such as getting rid of "int
+> i" and putting the declaration into the for loop --- "for (int i =
+> ...").  Sure, that saves two lines of code, but yay?
+> 
+> If the ordering how the functions gets called is based on the magic
+> ordering in the Makefile, I'm not sure this actually makes the code
+> clearer, more robust, and easier to maintain for the long term.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+So you two object to kernel initcalls for the same reason and would
+rather go back to calling everything explicitly?
 
->  drivers/thermal/samsung/exynos_tmu.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index 9b7ca93a72f1..b68e9755c933 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1132,7 +1132,6 @@ static void exynos_tmu_remove(struct platform_devic=
-e *pdev)
->                 clk_unprepare(data->clk_sec);
->  }
->
-> -#ifdef CONFIG_PM_SLEEP
->  static int exynos_tmu_suspend(struct device *dev)
->  {
->         exynos_tmu_control(to_platform_device(dev), false);
-> @@ -1152,15 +1151,11 @@ static int exynos_tmu_resume(struct device *dev)
->
->  static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
->                                 exynos_tmu_suspend, exynos_tmu_resume);
-> -#define EXYNOS_TMU_PM  (&exynos_tmu_pm)
-> -#else
-> -#define EXYNOS_TMU_PM  NULL
-> -#endif
->
->  static struct platform_driver exynos_tmu_driver =3D {
->         .driver =3D {
->                 .name   =3D "exynos-tmu",
-> -               .pm     =3D EXYNOS_TMU_PM,
-> +               .pm     =3D pm_sleep_ptr(&exynos_tmu_pm),
->                 .of_match_table =3D exynos_tmu_match,
->         },
->         .probe =3D exynos_tmu_probe,
-> --
-> 2.45.1
->
 
