@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-263462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF0993D668
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C768993D669
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28021283EEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7315C1F24B27
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC318179950;
-	Fri, 26 Jul 2024 15:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32E2178CFA;
+	Fri, 26 Jul 2024 15:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wifk2Ggx"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jKbyNKNP"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD3134A8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476B1171D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722008919; cv=none; b=B0pfYDjjn5sDdVy6tBMV3lNkGoWzDhEFkV4Btr9K1iXH7joD87PGri6rUOImF3K1cfDAEkxqGUS6ISTJROs7Jsa/OX/0KZnAFoKJLybTta/w3GNXzgsEFqlOr2a8qtlH1anXobIeJ/0hNiNYu0ALm/lnA+cL8uNgvWvPIRA6kDA=
+	t=1722008999; cv=none; b=T5IYGKbh5GvLZlTqS18vUuXuswNlsHf/50xO4NtWQ3hZoIyayJpN0OaY/3p0RfU9bGkBMLs2Bz6AiP3quep0LFW5BQYv/D/fNzDGWPhYsV3QW7V1eMu/O2k8EbsVpEbpCKd2TA4sWGQYKgXefz5OIX0zTrRzSxTmaaVrD79aP/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722008919; c=relaxed/simple;
-	bh=zvZF8HfrQejz/1nRGpvJtpbFBJCy6sW8t11b31BLtko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GsyP6HnTOnikpkgCMvf59ysqz1At4n/ykkzYUSfNKbLDwJcR7Rj/5Za0QKMNzrCPLRhDfHcHdxhyfISOMvSdotDdZLsxYkQ0aKlJCLQvW55jRwJOtfyHP8Nms+qfYxdMD2ZVsdyMj9LxMBpz4o3TbpfiME8Pypg7Vu5V7TSka1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wifk2Ggx; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 26 Jul 2024 08:48:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722008915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xAiY6xy1vYp9Vc1+qLGpcdiwV7rz8YuP3/AppObKDGI=;
-	b=wifk2GgxWaDid6XNGUsTYPZa1z6WURX6tZpEpkZzaULvdWVlNffUIfuvnz0gb0NTdb9DAz
-	+oTxgqp5oP2J/sfKsBMnIYBDV/ARnzywPd4o1z8DnskdBrz9PvpXHQQ+iUIoicY3wgZlbP
-	U5zLMIKIIwktVO1i09fXxkdHIFywSjI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Greg Thelen <gthelen@google.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
-Message-ID: <lhlfj2keag2ciurt7v76d4nhyk5k5czrkvuocbgxkeep6zgwgo@ifjthvn5osvr>
-References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
- <CAJD7tkaR3s6fzRZWdvMvfSRBRaozSj7d2pH5HUjtbuOW+RROFA@mail.gmail.com>
+	s=arc-20240116; t=1722008999; c=relaxed/simple;
+	bh=ZVjNmYH0CFCMOJu5tLroppDvKSB8ERbSbPAQ70CYN6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LOTyD59ZsK4h1SpDVtSxABc0B33LqUOaaX/s2LblAGVERPy6txuBp6ErgThYXjZEhsx8q38/vkn2ULf8vB5uFnNgeecQ68X3TwrETu1SdC1RBBGPpeQxfNXZE3ZHj9vmVGBncSMNJbGl21uztnlp/Ot88IWhVfp0n2Z8KmEzO7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jKbyNKNP; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3123433a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722008996; x=1722613796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OJmIU/xMtXs5ILphdbN0nBg+cHcFFdfHSxNrMLT9xnY=;
+        b=jKbyNKNPrr/t9THq+bUAF2SjvrEyejvR9GYHE+ij/WmN07v97qXtKYTB1+4+komHWS
+         g5YtLHZQHAQhmhXTtZjcM9xjEOp5K0cUfLNgKTzwIw9MgLe6jlnEHXTqkj9r+SAwO8dV
+         BpH0ehvjpRhaiveFxQFsJmXYnJXtMmgTiP5wyJzvtdF10CwcLdJj4rmnK4m9Gl1kOX95
+         4nFtmPYOPQUK1PfUbrniKlmbwcaLViwQ9fd9qiCNLSvNTG3L2Yiuw0pzdrhdQpq4lktF
+         dlR7oPTQCz9bwxy/MtYCga5jq8mfl8/bnuhnWPPmPtGszFu2epPi2VAQn6lQzPkLTWMo
+         1QEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722008996; x=1722613796;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OJmIU/xMtXs5ILphdbN0nBg+cHcFFdfHSxNrMLT9xnY=;
+        b=B5OZuvU4Vg/9vWZ4k/CDiKG3nj6I4bE8pFCoZB+OWeLinnC3ew4/6woS6OVrJVSoJy
+         UC9BdQCyjGF27N5v/5LPcZJt+ZUvxd20mi8MBZOdCBtgdRUWaGSrLHNFUnQpvSRkMx91
+         /FJM673VSQdWVYxe82pEGAl0r04RxvYiJysJmNnt6m1mQe/YJ0GowGqvwjHmDn9hKJEN
+         vf3Jv/JNX4gCxyFPRZMnBebj2MWOI8IWpgT9JrOggq2jAuYohxho4UYpQulyzW0ghABS
+         CIcKf3b4PAZtjhv+XaHFEEgy9ssa9hmBW2PshooEQYu+2gXdhU/RxAvHZfH6Hk/d27oo
+         8cdQ==
+X-Gm-Message-State: AOJu0Yygt6FQcsZ9Q3xP4Mm9ndsU4ePwfLxv+aN7zr9KhTa4Sh2YWJ3q
+	5Mji+I2Ta1G2e5Zi0shpQyRWhAO9atu3YnaNeXKofxQs3X5P1+m7bdbZHTtDOMY=
+X-Google-Smtp-Source: AGHT+IHE6mKmIoUGO6LEog/bMeOJtuAahkq+yuppNC31XhzC/J7PHLxbb6EKh1Hx9zcgz32g8K5ICg==
+X-Received: by 2002:a17:907:7204:b0:a7a:9144:e23b with SMTP id a640c23a62f3a-a7acb3fb925mr369040266b.19.1722008995552;
+        Fri, 26 Jul 2024 08:49:55 -0700 (PDT)
+Received: from debian.fritz.box. (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de6fsm191156266b.63.2024.07.26.08.49.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 08:49:55 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] lib: checksum: Use ARRAY_SIZE() to improve assert_setup_correct()
+Date: Fri, 26 Jul 2024 17:49:46 +0200
+Message-Id: <20240726154946.230928-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkaR3s6fzRZWdvMvfSRBRaozSj7d2pH5HUjtbuOW+RROFA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 25, 2024 at 04:20:45PM GMT, Yosry Ahmed wrote:
-> On Mon, Jul 22, 2024 at 3:53 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > Linux kernel does not expose memory.current on the root memcg and there
-> > are applications which have to traverse all the top level memcgs to
-> > calculate the total memory charged in the system. This is more expensive
-> > (directory traversal and multiple open and reads) and is racy on a busy
-> > machine. As the kernel already have the needed information i.e. root's
-> > memory.current, why not expose that?
-> >
-> > However root's memory.current will have a different semantics than the
-> > non-root's memory.current as the kernel skips the charging for root, so
-> > maybe it is better to have a different named interface for the root.
-> > Something like memory.children_usage only for root memcg.
-> >
-> > Now there is still a question that why the kernel does not expose
-> > memory.current for the root. The historical reason was that the memcg
-> > charging was expensice and to provide the users to bypass the memcg
-> > charging by letting them run in the root. However do we still want to
-> > have this exception today? What is stopping us to start charging the
-> > root memcg as well. Of course the root will not have limits but the
-> > allocations will go through memcg charging and then the memory.current
-> > of root and non-root will have the same semantics.
-> >
-> > This is an RFC to start a discussion on memcg charging for root.
-> 
-> I vaguely remember when running some netperf tests (tcp_rr?) in a
-> cgroup that the performance decreases considerably with every level
-> down the hierarchy. I am assuming that charging was a part of the
-> reason. If that's the case, charging the root will be similar to
-> moving all workloads one level down the hierarchy in terms of charging
-> overhead.
+Use ARRAY_SIZE() to simplify the assert_setup_correct() function and
+improve its readability.
 
-No, the workloads running in non-root memcgs will not see any
-difference. Only the workloads running in root will see charging
-overhead.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ lib/checksum_kunit.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/lib/checksum_kunit.c b/lib/checksum_kunit.c
+index 4e4d081a1d3b..be04aa42125c 100644
+--- a/lib/checksum_kunit.c
++++ b/lib/checksum_kunit.c
+@@ -468,12 +468,9 @@ static __wsum to_wsum(u32 x)
+ 
+ static void assert_setup_correct(struct kunit *test)
+ {
+-	CHECK_EQ(sizeof(random_buf) / sizeof(random_buf[0]), MAX_LEN);
+-	CHECK_EQ(sizeof(expected_results) / sizeof(expected_results[0]),
+-		 MAX_LEN);
+-	CHECK_EQ(sizeof(init_sums_no_overflow) /
+-			 sizeof(init_sums_no_overflow[0]),
+-		 MAX_LEN);
++	CHECK_EQ(ARRAY_SIZE(random_buf), MAX_LEN);
++	CHECK_EQ(ARRAY_SIZE(expected_results), MAX_LEN);
++	CHECK_EQ(ARRAY_SIZE(init_sums_no_overflow), MAX_LEN);
+ }
+ 
+ /*
+-- 
+2.39.2
 
 
