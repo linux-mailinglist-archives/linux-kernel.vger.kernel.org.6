@@ -1,46 +1,78 @@
-Return-Path: <linux-kernel+bounces-263049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF3993D054
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09D793D055
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07D91C20CFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3347D2811A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3431D17798C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30E6178370;
 	Fri, 26 Jul 2024 09:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0d2+CaX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FTfJ0GH9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C098174E;
-	Fri, 26 Jul 2024 09:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749086116
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721985563; cv=none; b=EiujpkpAr8xILhoGJOxIhece1sKe8OmF3ekhnbeT5au9V9ZedTcxypRC8W2a9RwFeRdS5FsSTOHi36ln951h5+SItUC3/qQGQYZybQ9QvtJVV9XAke63bzD4OtEtjTBaKcWeVgzDH0UZ4vRuD2B31aBoftCjESYI9RtYMPzJ6GU=
+	t=1721985563; cv=none; b=eZSLbhZvHwE1srRX7SoHslaea2eVgLY/UNn7P1ol0ODGhWVpiUqZfLV89p+JP9FsY4hvrb8MAp/5STkgt+UfIIOGiIoIQbMxqaouVMnFreMQoF1V187lv7Dtxe7ltrjQPChSy7+SjOcJVGOIL2JXNV8Cmx8n4rgk4X4zwcdVP4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721985563; c=relaxed/simple;
-	bh=tMi0zgrFMpPuBV9tMsXKq38gTeYqBlk4gkAooZNByMQ=;
+	bh=GrJWO5DhLL5w4lfHh9wzpS6QchcXa2w8UZ7Q4qGFw9o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tk+PVqLfcDiVs03EQ95GQUv3LHas3D1H5X3tx358jKZW31WFvWIRq6bhPT6Pc6nLublAqUE6XnCpXYJqhqUY/pTRQiB7uwYsuvKpZhdiFUEZ3CQk3xiUPGoCUg8mtT5iZREKqRwjAW4Gb7RmlI/BXCfRzQVBhXKhMBNanrAofC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0d2+CaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6FE1C32782;
-	Fri, 26 Jul 2024 09:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721985563;
-	bh=tMi0zgrFMpPuBV9tMsXKq38gTeYqBlk4gkAooZNByMQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z0d2+CaXqpcgY/qKxO4r8zT0cguOQK8rctC3XSCYroSY6aJqFiDrs1gQpdx68XTd5
-	 rqaDHk+1sdfmFKFVrdy4tTfEBhsmP+SvR4/sSkvuzkIY2qFDGfFy1J3VXGiXWTy2bY
-	 hyViXo7x48g/b06dj8lnO9ppKWkAUMANWdvQB4qpZ/SEYVHr1dh6yOrTij1/wU80At
-	 aExo4vEUFZaRVKk51HshkGctPkWA7ZYsKu0KwvB8+DRvdk7AEK0YpuxEpAtqzZV5Jz
-	 6pw1gXMrAXHdd1HwiEYXHQyL8Qqy3mMQZctQxjxyYxD64tO9SpND/s32Y56/KDR4z1
-	 iPJBPeJKEd7iQ==
-Message-ID: <ff922cad-0e0a-4ab7-981b-62ac60ff2d26@kernel.org>
+	 In-Reply-To:Content-Type; b=nWyUzFv0fQ5MKwKrYXEiU/UwX1W8fNihagFQ+YiAeu8aGE54iSTaoLw5b3KUhNembaIsM5BnMWUyoiX9aYot3O4oEv6GFcUg1Dd0B0RMkFbURdEprLLUW524l7YW859IuLdDPNRpVIw0p/3aU7oZd2B/s9AptQYCSdZ4BbMzQfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FTfJ0GH9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721985559;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G0DkkIK3PSnUAyLdrY0sM7ojGwG6G8mQKTPJBTwsLP0=;
+	b=FTfJ0GH9sAeEXEqBVEX7cvtyC3YSdSP1sUPseClDZ9rCFDX/uEsa6UTxPorQjxO0Ybyh1e
+	7OuHV0s3X5xDRxvWAClNwCfa1GabxlhiPCC/cNHr3BJHK8vEiZxPdUOVHmlnV/8Weh5ols
+	n2S8ZEiKX5ayzOK0KAApoVUxjkvr6jc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-13-gO1yMqj5OIaQp9mH2OikzQ-1; Fri, 26 Jul 2024 05:19:18 -0400
+X-MC-Unique: gO1yMqj5OIaQp9mH2OikzQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428076fef5dso10989475e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:19:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721985557; x=1722590357;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G0DkkIK3PSnUAyLdrY0sM7ojGwG6G8mQKTPJBTwsLP0=;
+        b=m1zP3RQwvt5rhD43GyJvjb1Sh5MfkhtKh3WrfP/N64Fp44RcbF9PlhYq8vC1z29fhT
+         6rgq5txqlUbW9zn+K+Ks0VrJxsFmByPLUuMS7r+FlgxnayyPRBetG2eQ+7XF/Z3NtxnH
+         Vy+cTwWUAjqe/dBjU4zBufSQ9Ey7v+GWWt8PC1gzWQZtiG05O5c1E3NgWZs33gxiSwEK
+         x38yDN9MCWtlSCEBb9HOc3tBsg6QthmMM4DdtM9Bc/V+p437ycHTwzzMaLcPTddxapQm
+         xyfMcdNtn7b0CUAI+sJQMjnyOjocnh1WZn5U7hTXBsEd5qzOaad1NLtrwYN/HS0AKvyE
+         zIXg==
+X-Gm-Message-State: AOJu0Ywh5Us1JrsH9t0ISSZuAi56OQZacilMYzeDmQ8mPelHEfIT5sA+
+	X+CwL/RHBFzXz0McQkoHTEF1QaTwclYadIsSJ67mdfW3XrrVBwJiyFdYjE4f4ruwogoyMUwEt8I
+	uxfMs18ypzzWupJHsXBgLuL+Z1+S4jVZEJeFfOdLmjHctbUAO7TmdhiyJoRGIIg==
+X-Received: by 2002:a05:600c:1ca0:b0:426:59fe:ac2e with SMTP id 5b1f17b1804b1-4280573b45amr35846615e9.29.1721985556855;
+        Fri, 26 Jul 2024 02:19:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAQxegzcsGBbxhGNrCZAfeb7+WhfKfdbsPMTMY/zauZkvyIWuONfz3yMsjRSEJXO8btEK7gw==
+X-Received: by 2002:a05:600c:1ca0:b0:426:59fe:ac2e with SMTP id 5b1f17b1804b1-4280573b45amr35846485e9.29.1721985556370;
+        Fri, 26 Jul 2024 02:19:16 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c713:a600:7ca0:23b3:d48a:97c7? (p200300cbc713a6007ca023b3d48a97c7.dip0.t-ipconnect.de. [2003:cb:c713:a600:7ca0:23b3:d48a:97c7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93592b6sm113534545e9.3.2024.07.26.02.19.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 02:19:15 -0700 (PDT)
+Message-ID: <7d88ac63-46b9-4b2e-a46b-c78d8d1d9f0e@redhat.com>
 Date: Fri, 26 Jul 2024 11:19:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,149 +81,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: Add phyBOARD-Pollux dts for rpmsg
-To: Yashwanth Varakala <y.varakala@phytec.de>, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de
-References: <20240725094457.37739-1-y.varakala@phytec.de>
- <20240725094457.37739-4-y.varakala@phytec.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 0/2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Muchun Song <muchun.song@linux.dev>, Peter Xu <peterx@redhat.com>,
+ Oscar Salvador <osalvador@suse.de>
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725134129.fc9165ac6413c4f774b786c1@linux-foundation.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240725094457.37739-4-y.varakala@phytec.de>
-Content-Type: text/plain; charset=UTF-8
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240725134129.fc9165ac6413c4f774b786c1@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/07/2024 11:44, Yashwanth Varakala wrote:
-> Adds a devicetree containing reserved memory regions used for intercore
-> communication between A53 and M7 cores.
+On 25.07.24 22:41, Andrew Morton wrote:
+> On Thu, 25 Jul 2024 20:39:53 +0200 David Hildenbrand <david@redhat.com> wrote:
 > 
-> Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile        |  2 +
->  .../dts/freescale/imx8mp-phycore-rpmsg.dtso   | 57 +++++++++++++++++++
->  2 files changed, 59 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
+>> Working on another generic page table walker that tries to avoid
+>> special-casing hugetlb, I found a page table locking issue with hugetlb
+>> folios that are not mapped using a single PMD/PUD.
+>>
+>> For some hugetlb folio sizes, GUP will take different page table locks
+>> when walking the page tables than hugetlb when modifying the page tables.
+>>
+>> I did not actually try reproducing an issue, but looking at
+>> follow_pmd_mask() where we might be rereading a PMD value multiple times
+>> it's rather clear that concurrent modifications are rather unpleasant.
+>>
+>> In follow_page_pte() we might be better in that regard -- ptep_get() does
+>> a READ_ONCE() -- but who knows what else could happen concurrently in
+>> some weird corner cases (e.g., hugetlb folio getting unmapped and freed).
+>>
+>> Did some basic sanity testing with various hugetlb sizes on x86-64 and
+>> arm64. Maybe I'll find some time to actually write a simple reproducer in
+>> the common weeks, so this wouldn't have to be all-theoretical for now.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index dedea4b5c319..80cc87d50301 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -177,9 +177,11 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
->  imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
->  imx8mp-phyboard-pollux-rdk-no-rtc-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-rtc.dtbo
->  imx8mp-phyboard-pollux-rdk-no-spiflash-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-spiflash.dtbo
-> +imx8mp-phyboard-pollux-rdk-rpmsg-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-rpmsg.dtbo
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-rtc.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-spiflash.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-rpmsg.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
-> new file mode 100644
-> index 000000000000..a5694f3aecaa
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
-> @@ -0,0 +1,57 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 PHYTEC Messtechnik GmbH
-> + * Author: Dominik Haller <d.haller@phytec.de>
-> + * 	   Cem Tenruh <c.tenruh@phytec.de>
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/imx8mp-clock.h>
-> +
-> +&{/} {
-> +	imx8mp-cm7 {
+> When can we be confident that this change is merge-worthy?
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+I'm convinced that it is the right thing to do, but I don't think we 
+have to rush this.
 
+As Baolin notes, we fixed the same issue in the past, unfortunately also 
+without a reproducer IIUC, so I'll try to reproduce the race, but I'm 
+not 100% sure if I'll manage to do so..
 
-> +		compatible = "fsl,imx8mn-cm7";
-> +		clocks = <&clk IMX8MP_CLK_M7_DIV>;
-> +		mboxes = <&mu 0 1
-> +			&mu 1 1
-> +			&mu 3 1>;
+So it's certainly merge-worthy after it had a bit of exposure to -next, 
+but no need to rush this upstream.
 
-That's one or there entries? look wrong.
+Thanks!
 
-> +		mbox-names = "tx", "rx", "rxdb";
-> +		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
-> +		rsc-da = <0x55000000>;
-> +		status = "okay";
+-- 
+Cheers,
 
-Why? Did you disable it anywhere? You add a new node.
-
-> +	};
-> +
-> +	reserved-memory {
-> +		ranges;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +
-> +		m7_reserved: m7@0x80000000 {
-> +			no-map;
-> +			reg = <0 0x80000000 0 0x1000000>;
-> +		};
-> +
-> +		rsc_table: rsc_table@550ff000 {
-
-Please follow DTS coding style... This applies to all your contributions.
-
-Best regards,
-Krzysztof
+David / dhildenb
 
 
