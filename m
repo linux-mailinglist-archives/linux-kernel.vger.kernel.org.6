@@ -1,365 +1,301 @@
-Return-Path: <linux-kernel+bounces-263325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C14F93D459
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:40:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D0093D45B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3DB286BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66EFF1C2465F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85A117C236;
-	Fri, 26 Jul 2024 13:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1NaWQUC+"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7C117C222;
+	Fri, 26 Jul 2024 13:40:03 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B95217C22E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72317C214
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001111; cv=none; b=bKALBwE0kkk6gjXRH/2Fa1dRYVxislmbu15rAk/hgQiPDHlsJtPUnxtjop2LsT9DHiWqW7NYxqY4xLBL9oGdTOWd/5NuPM7ih3JTO6brZp4qjLX02lQ86Vf3951or32iwPGtYSd9TciGhe3edSy881g1cLL//wmUvUWhrOdC3QM=
+	t=1722001202; cv=none; b=DjJvBEWRVGwZdqO8+v0meneWsVzoCwGT4Q0X2Z6RLb4q31Vx6gQ9DWRwi4/Army4ta+dFNF0EllGW742X5EHLuINTTopqQyMkCgh/lhTNQDf/FfOYstggpNaVmu6xrWDVYDgGPUdPZXJr+zPgQVmOQa8QPgsBNaR8OjYxHO9pEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001111; c=relaxed/simple;
-	bh=1Zkeq+FwqQEawcogj4oIwsbpb8D1Iv72qVcSnJf5tMA=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:Mime-Version:
-	 References:In-Reply-To; b=bnJ66cl1Df4k/ijA2jj4itEhm5bWGagm0pz99neRBavvCBYkEIEgioZa7uN98NeMfIb0sVm9DAWm3q8b82LRvDJ2hYqqG8lb2w9YMdHIMY6CMcdwhDqf2F3Q3/ucWzhiQwmIhVoJ+ZuA9fdsmq8i4IiDG2tW3+lBthx+j/xdtbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1NaWQUC+; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-427d2c8c632so15274915e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722001106; x=1722605906; darn=vger.kernel.org;
-        h=in-reply-to:references:content-transfer-encoding:mime-version:to
-         :from:subject:cc:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GigEj7Lw695sg9deooVuaRWVw5+qGFsdSGqMpUPvSFE=;
-        b=1NaWQUC+lYWv5rEPn5Ato0AIUIK7uiKQjUha6BCl0yPfiL3JIfVzLd9Kheg8s/2jT5
-         hzp3RQOmJjjcbwsLpaMGpzxPGh+bMmsmlUoj5nq7uF5E6Z4GlQOvvtpfUThbD9DZ/CYM
-         yr9ZaPyrG3goy2GXv9/6dXIFCZFG3RovPI3EalyNFsGSUNIbXFGy1dmicmiAFDSCq7gj
-         e7Bt7oiH3FZq1IYNrw5azadPGTseEEYEU4V4x/Y0Pv4v/4Ujc45DAW7m6EGdi3hXpqGT
-         YddW1zeVx0KZyYtCcSIwOUp2cEoWtyIDbrChZluyO+o8J+FtQQEeYmbxLLwksVKTwrLN
-         Q0jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722001106; x=1722605906;
-        h=in-reply-to:references:content-transfer-encoding:mime-version:to
-         :from:subject:cc:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GigEj7Lw695sg9deooVuaRWVw5+qGFsdSGqMpUPvSFE=;
-        b=ghEtrZ2oCazOab0IC665BGtbh4xC5BK6atiDXY+jqs0m8LVBrjQvkBHJ+cNQ6wiUlN
-         Ws6/+WfiNIJvA2cwXh6P2EmfCYCqZiM7hNJOGGI2YDMPLggJZVDXS3Y5yOY98BgLUit8
-         6wAeECkiZucRxWc/UGP6MS0Ev7wVbk/bULmGY2lOGH5JM3qKw0YC204CZtdqECbouCA0
-         obpZ1qt6ocbEv1V8LZbQv6ZadzNSto72IEgQpBxOqGiI1UYgoJ844cfVtGFbquVkReB7
-         ycutx30sGWLnIzSopcDXK55pEsKgRLVM4kZcpnlnmj9XhBpP8FFh2b+gFPI/hyWagaEK
-         jbDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMveGvWJoIwm50ylyNUj1td6T+wZWGB9c5nG0geWLRK7Jwv+6X5f5Tds0NYsxv71C4wfpFewVRmrqrAaS69CF97ZLrV2YmDW6R+xGq
-X-Gm-Message-State: AOJu0Yznr6qwDNktZqk3goPy2Ojq/467AwoGP7ZuBYdAc7sqY6W4yzBN
-	kgELbxr3IHCHNDwXTNOH7KMHbMoT0nH92gRnfYrvRB/GfnPqR0aqgRiOm/J1Cgg=
-X-Google-Smtp-Source: AGHT+IGDZyhVw3kXH9RHTJAk2rcXnF8LgZzeybbdjh6TQjgDoePuX2hy6ELD0soTgQTGWbm60VfOjA==
-X-Received: by 2002:a05:600c:548b:b0:426:5f75:1c2c with SMTP id 5b1f17b1804b1-42806b83e4amr35706195e9.11.1722001106301;
-        Fri, 26 Jul 2024 06:38:26 -0700 (PDT)
-Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f940e62dsm123524595e9.39.2024.07.26.06.38.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 06:38:25 -0700 (PDT)
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 26 Jul 2024 15:38:24 +0200
-Message-Id: <D2ZIG2NK223D.J9VK1MWOICE3@baylibre.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "David Lechner" <dlechner@baylibre.com>
-Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
-From: "Esteban Blanc" <eblanc@baylibre.com>
-To: =?utf-8?q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- <baylibre-upstreaming@groups.io>, "Lars-Peter Clausen" <lars@metafoo.de>,
- "Michael Hennerich" <Michael.Hennerich@analog.com>, "Jonathan Cameron"
- <jic23@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Nuno Sa"
- <nuno.sa@analog.com>
+	s=arc-20240116; t=1722001202; c=relaxed/simple;
+	bh=4XTRGwKwuQCsqUP4XNR63fe4p/KxBF9AQtsX4ouoWHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WGlrztJLEofnilHiBWUwyx7ucneP8DPKqx+FxqnQWpKAZZl9PESLOySFcclrPRCctD2TN9nlBb9c+tC4iNqKWFU+Jjk7NQLj5K/kk9RTLhmghJB2Cn2wRHk3tc9U55RNwZSqP/1iSIR7hkMglSg6uj87h9sCfk0iWGJjln9KnxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46QDdnMV038150;
+	Fri, 26 Jul 2024 22:39:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
+ Fri, 26 Jul 2024 22:39:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46QDdnWZ038145
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 26 Jul 2024 22:39:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <59026394-b346-494c-91a3-5d3fd96bcd40@I-love.SAKURA.ne.jp>
+Date: Fri, 26 Jul 2024 22:39:49 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.17.0
-References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
- <20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
- <0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@gmail.com>
-In-Reply-To: <0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] orphaned patches for 6.11
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <63149ac0-73a4-49c0-975b-75dc3bd32f7a@I-love.SAKURA.ne.jp>
+ <CAHk-=whAfNJKeP1WhdP9y0itF_AkgQJMyz8B9TCfAWWQRhDRPw@mail.gmail.com>
+ <5ad7dffa-204e-4d37-acf6-0206d7a87f37@I-love.SAKURA.ne.jp>
+ <CAHk-=wjYB_aeCxtBW2+-GqcF2PxwJ5061BFrAMp3mJgBy3GGvQ@mail.gmail.com>
+ <28a0f793-b0d6-4abb-b83c-f54e5a588994@I-love.SAKURA.ne.jp>
+ <CAHk-=wg74E_1NXafYaemRT7R9dqU3DSOf+YGftD832BJqXBwoQ@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHk-=wg74E_1NXafYaemRT7R9dqU3DSOf+YGftD832BJqXBwoQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nuno,
+On 2024/07/26 1:55, Linus Torvalds wrote:
+> The code could do something like
+> 
+>         struct pt_regs *regs;
+> 
+>         /* Are we supposed to profile at all? */
+>         if (!prof_buffer)
+>                 return;
+>         /* Are we profiling this CPU? */
+>         if (cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
+>                 return;
 
-> > +			struct {
-> > +				s32 val[AD4030_MAX_DIFF_CHANNEL_NB];
-> > +				u8 common[AD4030_MAX_COMMON_CHANNEL_NB];
->
-> Not sure common makes sense as it comes aggregated with the sample. Maybe=
- this
-> could as simple as:
->
-> struct {
-> 	s32 val;
-> 	u64 timestamp __aligned(8);
-> } rx_data ...
+Then, a patch would look like:
 
-See below my answer on channels order and storagebits.
+ kernel/ksysfs.c  |  6 ++++++
+ kernel/profile.c | 29 +++++++++++++++++++++++++----
+ 2 files changed, 31 insertions(+), 4 deletions(-)
 
-> So, from the datasheet, figure 39 we have something like a multiplexer wh=
-ere we
-> can have:
->
-> - averaged data;
-> - normal differential;
-> - test pattern (btw, useful to have it in debugfs - but can come later);
-> - 8 common mode bits;
->
-> While the average, normal and test pattern are really mutual exclusive, t=
-he
-> common mode voltage is different in the way that it's appended to differe=
-ntial
-> sample. Making it kind of an aggregated thingy. Thus I guess it can make =
-sense
-> for us to see them as different channels from a SW perspective (even more=
- since
-> gain and offset only apply to the differential data). But there are a cou=
-ple of
-> things I don't like (have concerns):
->
-> * You're pushing the CM channels into the end. So when we a 2 channel dev=
-ice
-> we'll have:
->
->  in_voltage0 - diff
->  in_voltage1 - diff
->  in_voltage2 - CM associated with chan0
->  in_voltage0 - CM associated with chan1
->
-> I think we could make it so the CM channel comes right after the channel =
-where
-> it's data belongs too. So for example, odd channels would be CM channels =
-(and
-> labels could also make sense).
+diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
+index 07fb5987b42b..7fc258774dee 100644
+--- a/kernel/ksysfs.c
++++ b/kernel/ksysfs.c
+@@ -92,7 +92,13 @@ static ssize_t profiling_store(struct kobject *kobj,
+ 				   const char *buf, size_t count)
+ {
+ 	int ret;
++	static DEFINE_MUTEX(lock);
+ 
++	/*
++	 * We need serialization, for profile_setup() initializes prof_on
++	 * value and profile_init() allocates prof_buf for only once.
++	 */
++	guard(mutex)(&lock);
+ 	if (prof_on)
+ 		return -EEXIST;
+ 	/*
+diff --git a/kernel/profile.c b/kernel/profile.c
+index 2b775cc5c28f..70332a49e26e 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -119,6 +119,12 @@ int __ref profile_init(void)
+ 
+ 	cpumask_copy(prof_cpu_mask, cpu_possible_mask);
+ 
++	/*
++	 * profile_tick() expects that prof_cpu_mask is allocated and
++	 * initialized before prof_buffer is allocated.
++	 */
++	wmb();
++
+ 	prof_buffer = kzalloc(buffer_bytes, GFP_KERNEL|__GFP_NOWARN);
+ 	if (prof_buffer)
+ 		return 0;
+@@ -332,11 +338,26 @@ EXPORT_SYMBOL_GPL(profile_hits);
+ 
+ void profile_tick(int type)
+ {
+-	struct pt_regs *regs = get_irq_regs();
++	struct pt_regs *regs;
+ 
+-	if (!user_mode(regs) && cpumask_available(prof_cpu_mask) &&
+-	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
+-		profile_hit(type, (void *)profile_pc(regs));
++	/* Are we supposed to profile at all? */
++	if (!prof_buffer)
++		return;
++	/*
++	 * cpumask_available(prof_cpu_mask) == true is guaranteed if prof_buffer != NULL,
++	 * for profile_init() allocates prof_cpu_mask before allocating prof_buffer, and
++	 * prof_buffer is never released if allocation of prof_buffer succeeded, and
++	 * prof_cpu_mask is released only when allocation of prof_buffer failed.
++	 */
++	rmb();
++	/* Are we profiling this CPU? */
++	if (!cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
++		return;
++	/* This is the old kernel-only legacy profiling */
++	regs = get_irq_regs();
++	if (user_mode(regs))
++		return;
++	profile_hit(type, (void *)profile_pc(regs));
+ }
+ 
+ #ifdef CONFIG_PROC_FS
 
-I must agree with you it would make more sense.
+But now, I'm inclined to remove prof_cpu_mask completely because
+cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) is likely always
+true due to
 
-> Other thing that came to mind is if we could somehow use differential =3D=
- true
-> here. Having something like:
->
-> in_voltage1_in_voltage0_raw - diff data
-> ...
-> And the only thing for CM would be:
->
-> in_voltage1_raw
-> in_voltage1_scale
->
-> (not sure if the above is doable with ext_info - maybe only with device_a=
-ttrs)
->
-> The downside of the above is that we don't have a way to separate the sca=
-n
-> elements. Meaning that we don't have a way to specify the scan_type for b=
-oth the
-> common mode and differential voltage. That said, I wonder if it is that u=
-seful
-> to buffer the common mode stuff? Alternatively, we could just have the sc=
-an_type
-> for the diff data and apps really wanting the CM voltage could still acce=
-ss the
-> raw data. Not pretty, I know...
+  a CPU cannot call profile_tick() if that CPU is offline
 
-At the moment the way I "separate" them is by looking at the
-`active_scan_mask`. If the user asked for differential channel only, I put =
-the
-chip in differential only mode. If all the channels are asked, I put
-the chip in differential + common mode. This way there is no need to
-separate anything in differential mode. See below for an example where
-this started.
+and
 
-> However, even if we go with the two separate channels there's one thing t=
-hat
-> concerns me. Right now we have diff data with 32 for storage bits and CM =
-data
-> with 8 storage bits which means the sample will be 40 bits and in reality=
- we
-> just have 32. Sure, now we have SW buffering so we can make it work but t=
-he
-> ultimate goal is to support HW buffering where we won't be able to touch =
-the
-> sample and thus we can't lie about the sample size. Could you run any tes=
-t with
-> this approach on a HW buffer setup?=20
+  cpumask_set_cpu(cpu, prof_cpu_mask) is called when that CPU becomes
+  online and cpumask_clear_cpu(cpu, prof_cpu_mask) is called when
+  that CPU becomes offline
 
-Let's take AD4630-24 in diff+cm mode as an example. We would have 4 channel=
-s:
-- Ch0 diff with 24 bits of realbits and 24 bits of storagebits
-- Ch0 cm with 8 bits of realbits and 8 bits of storagebits
-- Ch1 diff with 24 bits of realbits and 24 bits of storagebits
-- Ch1 cm with 8 bits of realbits and 8 bits of storagebits
-ChX diff realbits + ChX cm realbits =3D 32 bits which is one sample as sent
-by the chip.
+. According to include/linux/cpuhotplug.h , CPUHP_PROFILE_PREPARE
+belongs to PREPARE section. Therefore, if I understand correctly,
+when profile_dead_cpu() is called due to a CPU getting offline or
+memory allocation in profile_prepare_cpu() failed, that CPU can't be
+inside profile_tick(). Then, cpumask_test_cpu() test inside
+profile_tick() must be always true and can be removed. A patch that
+can be folded into the patch shown above would look like:
 
-The problem I faced when trying to do this in this series is that IIO doesn=
-'t
-seem to like 24 storagebits and the data would get garbled. In diff only
-mode with the same channel setup (selecting only Ch0 diff and Ch1 diff)
-the data is also garbled. I used iio-oscilloscope software to test this set=
-up.
-Here is the output with iio_readdev:
-```
-# iio_readdev -s 1 ad4630-24 voltage0
-WARNING: High-speed mode not enabled
-Unable to refill buffer: Invalid argument (22)
-```
+ kernel/profile.c | 58 ++++--------------------------------------------
+ 1 file changed, 4 insertions(+), 54 deletions(-)
 
-I think this is happening when computing the padding to align ch1 diff.
-In `iio_compute_scan_bytes` this line `bytes =3D ALIGN(bytes, length);`
-will be invoked with bytes =3D 3 and length =3D 3 when selecting ch0 diff
-and ch1 diff (AD4630-24 in differential mode). The output is 5. As
-specified in linux/align.h:
-> @a is a power of 2
-In our case `a` is `length`, and 3 is not a power of 2.
+diff --git a/kernel/profile.c b/kernel/profile.c
+index 70332a49e26e..837932f4ae4f 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -47,7 +47,6 @@ static unsigned short int prof_shift;
+ int prof_on __read_mostly;
+ EXPORT_SYMBOL_GPL(prof_on);
+ 
+-static cpumask_var_t prof_cpu_mask;
+ #if defined(CONFIG_SMP) && defined(CONFIG_PROC_FS)
+ static DEFINE_PER_CPU(struct profile_hit *[2], cpu_profile_hits);
+ static DEFINE_PER_CPU(int, cpu_profile_flip);
+@@ -114,17 +113,6 @@ int __ref profile_init(void)
+ 
+ 	buffer_bytes = prof_len*sizeof(atomic_t);
+ 
+-	if (!alloc_cpumask_var(&prof_cpu_mask, GFP_KERNEL))
+-		return -ENOMEM;
+-
+-	cpumask_copy(prof_cpu_mask, cpu_possible_mask);
+-
+-	/*
+-	 * profile_tick() expects that prof_cpu_mask is allocated and
+-	 * initialized before prof_buffer is allocated.
+-	 */
+-	wmb();
+-
+ 	prof_buffer = kzalloc(buffer_bytes, GFP_KERNEL|__GFP_NOWARN);
+ 	if (prof_buffer)
+ 		return 0;
+@@ -138,7 +126,6 @@ int __ref profile_init(void)
+ 	if (prof_buffer)
+ 		return 0;
+ 
+-	free_cpumask_var(prof_cpu_mask);
+ 	return -ENOMEM;
+ }
+ 
+@@ -273,9 +260,6 @@ static int profile_dead_cpu(unsigned int cpu)
+ 	struct page *page;
+ 	int i;
+ 
+-	if (cpumask_available(prof_cpu_mask))
+-		cpumask_clear_cpu(cpu, prof_cpu_mask);
+-
+ 	for (i = 0; i < 2; i++) {
+ 		if (per_cpu(cpu_profile_hits, cpu)[i]) {
+ 			page = virt_to_page(per_cpu(cpu_profile_hits, cpu)[i]);
+@@ -308,14 +292,6 @@ static int profile_prepare_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int profile_online_cpu(unsigned int cpu)
+-{
+-	if (cpumask_available(prof_cpu_mask))
+-		cpumask_set_cpu(cpu, prof_cpu_mask);
+-
+-	return 0;
+-}
+-
+ #else /* !CONFIG_SMP */
+ #define profile_flip_buffers()		do { } while (0)
+ #define profile_discard_flip_buffers()	do { } while (0)
+@@ -343,16 +319,6 @@ void profile_tick(int type)
+ 	/* Are we supposed to profile at all? */
+ 	if (!prof_buffer)
+ 		return;
+-	/*
+-	 * cpumask_available(prof_cpu_mask) == true is guaranteed if prof_buffer != NULL,
+-	 * for profile_init() allocates prof_cpu_mask before allocating prof_buffer, and
+-	 * prof_buffer is never released if allocation of prof_buffer succeeded, and
+-	 * prof_cpu_mask is released only when allocation of prof_buffer failed.
+-	 */
+-	rmb();
+-	/* Are we profiling this CPU? */
+-	if (!cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
+-		return;
+ 	/* This is the old kernel-only legacy profiling */
+ 	regs = get_irq_regs();
+ 	if (user_mode(regs))
+@@ -439,10 +405,6 @@ static const struct proc_ops profile_proc_ops = {
+ int __ref create_proc_profile(void)
+ {
+ 	struct proc_dir_entry *entry;
+-#ifdef CONFIG_SMP
+-	enum cpuhp_state online_state;
+-#endif
+-
+ 	int err = 0;
+ 
+ 	if (!prof_on)
+@@ -452,26 +414,14 @@ int __ref create_proc_profile(void)
+ 				profile_prepare_cpu, profile_dead_cpu);
+ 	if (err)
+ 		return err;
+-
+-	err = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "AP_PROFILE_ONLINE",
+-				profile_online_cpu, NULL);
+-	if (err < 0)
+-		goto err_state_prep;
+-	online_state = err;
+-	err = 0;
+ #endif
+ 	entry = proc_create("profile", S_IWUSR | S_IRUGO,
+ 			    NULL, &profile_proc_ops);
+-	if (!entry)
+-		goto err_state_onl;
+-	proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
+-
+-	return err;
+-err_state_onl:
++	if (entry)
++		proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
+ #ifdef CONFIG_SMP
+-	cpuhp_remove_state(online_state);
+-err_state_prep:
+-	cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
++	else
++		cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
+ #endif
+ 	return err;
+ }
 
-It works fine with Ch0/1 diff with 24 realbits and 32 storagebits with 8
-bits shift.
-
-Intrestingly, a similar setup works great on AD4630-16:
-- Ch0 diff with 16 bits of realbits and 16 bits of storagebits
-- Ch0 cm with 8 bits of realbits and 8 bits of storagebits
-- Ch1 diff with 16 bits of realbits and 16 bits of storagebits
-- Ch1 cm with 8 bits of realbits and 8 bits of storagebits
-
-In `iio_compute_scan_bytes` we will have ALIGN(3, 2) which will output
-4, everything is fine. The output of iio-oscilloscope is as expected,
-a clean sinewave and iio_readdev does not throw an error.
-
-All this to say that at the moment, I'm not sure how I will be able to
-put the CM byte in a separate channel for AD4630-24 without buffering it.
-It would be useful to return a "packed" buffer.
-
-> > +static int ad4030_conversion(struct ad4030_state *st, const struct
-> > iio_chan_spec *chan)
-> > +{
-> > +	unsigned int bytes_to_read =3D (BITS_TO_BYTES(chan->scan_type.realbit=
-s)
-> > +
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 ((st->mode =3D=3D AD4030_OUT_DATA_MD_24_DI=
-FF_8_COM
-> > ||
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 st->mode =3D=3D AD4030_OUT_DATA_MD_16_DIFF=
-_8_COM) ?
-> > 1 : 0)) *
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 st->chip->num_channels;
-> > +	struct spi_transfer xfer =3D {
-> > +		.rx_buf =3D st->rx_data.raw,
-> > +		.len =3D bytes_to_read,
-> > +	};
-> > +	unsigned char byte_index;
-> > +	unsigned int i;
-> > +	int ret;
-> > +
-> > +	gpiod_set_value_cansleep(st->cnv_gpio, 1);
-> > +	ndelay(AD4030_TCNVH_NS);
-> > +	gpiod_set_value_cansleep(st->cnv_gpio, 0);
-> > +	ndelay(AD4030_TCNVL_NS + AD4030_TCONV_NS);
-> > +
-> > +	ret =3D spi_sync_transfer(st->spi, &xfer, 1);
-> > +	if (ret || (st->mode !=3D AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
-> > +		=C2=A0=C2=A0=C2=A0 st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM))
->
-> You should guarantee that st->mode is not invalid...
-
-I don't see a code path where this could be the case. It's initialized
-at 0 in the probe (a valid value) and always set before `ad4030_conversion`
-in `ad4030_set_mode` called by `ad4030_buffer_preenable`. If the value
-is invalid, this is a driver error, not an invalid input from the user.
-Should I put an assert then?
-
-> > +		return ret;
-> > +
-> > +	byte_index =3D st->chip->precision_bits =3D=3D 16 ? 3 : 4;
-> > +	for (i =3D 0; i < st->chip->num_channels; i++)
->
-> So even for a single channel conversion we are going through all?
-
-Yes. For ad4030-24 (this patch), that ok since num_channels =3D 1.
-For AD4630, we are getting the 2 channels samples anyway. Current
-allowed `scan_mask` are ch0 and ch1 (diff mode) or ch0 to ch3 (diff +
-common mode). The only case I could optimized currently is if I allowed
-scan_mask such as: ch0 & ch2, ch0 & ch1 & ch2, ch0 & ch1 & ch3. I'm not
-sure it makes sense to allow such `scan_mask` since the HW does not
-support it.
 What do you think?
-
-> > +static int ad4030_read_raw(struct iio_dev *indio_dev,
-> > +			=C2=A0=C2=A0 struct iio_chan_spec const *chan, int *val,
-> > +			=C2=A0=C2=A0 int *val2, long info)
-> > +{
-> > +	struct ad4030_state *st =3D iio_priv(indio_dev);
-> > +	int ret;
-> > +
-> > +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
->
-> Oh this is not neat :(. I guess there's still no work to make conditional=
- guards
-> to look more as the typical pattern...
-
-Yeah... At first I put checks inside each function. Then I put guards
-inside each function. But at the end, almost every arm of the switch
-case needs to be in direct mode so... I can put it back in the function,
-as you wish.
-
-> > +		switch (info) {
-> > +		case IIO_CHAN_INFO_RAW:
-> > +			return ad4030_single_conversion(indio_dev, chan,
-> > val);
-> > +
-> > +		case IIO_CHAN_INFO_SCALE:
-> > +			*val =3D (st->vref_uv * 2) / MILLI;
-> > +			*val2 =3D st->chip->precision_bits;
-> > +			return IIO_VAL_FRACTIONAL_LOG2;
->
-> I don't think this applies to CM?
-
-Indded. Scale is not available for the CM channels.
-
-> > +static int ad4030_detect_chip_info(const struct ad4030_state *st)
-> > +{
-> > +	unsigned int grade;
-> > +	int ret;
-> > +
-> > +	ret =3D regmap_read(st->regmap, AD4030_REG_CHIP_GRADE, &grade);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	grade =3D FIELD_GET(AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE, grade);
-> > +	if (grade !=3D st->chip->grade)
-> > +		return dev_err_probe(&st->spi->dev, -EINVAL,
-> > +				"Unknown grade(%u) for %s\n", grade,
-> > +				st->chip->name);
->
-> I think in here we still want to proceed and just print a warning...
-
-I've put this in because it's a quick and easy way to check:
-- If the SPI communication is working,
-- If the correct chip is installed. If it's not the correct one, we can
-  be sure that the parameters used to get any data out the chip will be
-  wrong and the data completely useless.
-
-If you feel that there is a use case I missed I will put a warning
-instead, no problem.
-
-
-All the comments I skipped and not replied to will be fixed in a V2.
-
-Best regards,
-
---=20
-Esteban "Skallwar" Blanc
-BayLibre
 
