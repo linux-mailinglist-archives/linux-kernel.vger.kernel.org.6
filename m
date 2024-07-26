@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-262792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDA493CCCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 04:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C0D93CCCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 04:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F6E1C21754
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D209282437
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F891C69C;
-	Fri, 26 Jul 2024 02:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6556020DC3;
+	Fri, 26 Jul 2024 02:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3yzOtQY"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDTyFOTm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D178D19470
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED8E1B947;
+	Fri, 26 Jul 2024 02:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721962476; cv=none; b=JBvNkGiatOwb1ZzJBxhHi+RYZc4+uXlCCZYS0/oy6UDfVDoTyhonUEfBrJ82NAjnmwlGgVUivaBr+JDqDIwxpIkhljwNciX227KCxyRwitHutb8B+GxnpyfAQfiO/tyoQs70VlaHa6DXVnphwHxf+uOUTEHCfgeEsa1cTgbRCkA=
+	t=1721962546; cv=none; b=Ng8IY63Yj41RBJYekR0dnmpYPuxzGIWm4F9Je962ahaNM83ZYWYk4phkltFL0qhhI4aBrZdgSOmi6wmqXCgdjcsqC7JwdwY50sty9+rqfVliIrcFKApf05StRl57ufWeKnGBmFOQRPZZdfBmiEJXmNH8NVz7yHdwrqIIcX5Ld60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721962476; c=relaxed/simple;
-	bh=vMWEPcOUyRtngX8M6Mrk7Ot3BrsooySnXeJ6tKMXbgM=;
+	s=arc-20240116; t=1721962546; c=relaxed/simple;
+	bh=rG5tjABluGl5jSIlvCNi682GBmX8Z4Ux3yVbb7xs/1Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CItpDTzOOi3eYJs+dbXbLrKVAqomAhF8yfa5mBECbGvcI5jYr3HXkePjM+ZyOZbfjOxDosvscyolvqisi81rFGDLB5arONFJ0SN+X10Rnl9YFJ91JPSs+DzO3xuF4iuewXO/ANwpxBYYuaF+ShlHjAQ652Tlqn2UHCy5qnh+zv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3yzOtQY; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b79c969329so1130056d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 19:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721962473; x=1722567273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vMWEPcOUyRtngX8M6Mrk7Ot3BrsooySnXeJ6tKMXbgM=;
-        b=B3yzOtQY63MF8JoED0niIDz9TT3H1TfbhmB5NrYQP/Co2+Je9xF6rIzAAiDm/aF0FC
-         fr1YnAztR70UWDGLUJ9M2XTRG7UfcNZhqBDi8Pt6fLa1nLlH/E0LKI5azOCjB8pCcMrR
-         poelfoewNg5Ns2anklcRb+HRPqiXSvrr49K0c/oUEw4k7wjmzM9KeAaZbpjrrM6gVu0i
-         fLOxT3IzYOyZ02RwmRnxT+KYr6gmDmFJI4lc9pRzPNoe3zqy/tB5XNcNmTS3XLrf+W+V
-         AfU0v4MH90LOD0MT/KS6BH5RNJt0sfDOouquzq0O1pIPb9ytOMVnc76CEmiGKH1A9DGh
-         R03w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721962473; x=1722567273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vMWEPcOUyRtngX8M6Mrk7Ot3BrsooySnXeJ6tKMXbgM=;
-        b=LL56BjHtKsmP1eYn6oNB8c57zGNznYmWeM22G2LCHborAFP6Venxs0We44EvHptLMi
-         HuPYW+37FtZaY4uWwvNi4sEIwU42tYQ07TqgdCvfAiInHtwW2oEMW3csvQte00pnr+zv
-         f+Vh9K2JiCE8dUzeA0jB13uq3Sqj0mz6mze1tUrRT9wSCK+ktlanvWtL4zyBXkFKLCcC
-         GjUyQ//mX8IuI6CooKrsDL7h5k8Ba1rlgn73Lu7rcEia2pE0QLprKRRYd/LrwkoXP54n
-         Z9YYAVvmVq6U5Ryx5NPNzz+pTB2iMKesFLQTH9BV2qS2ZgawY/M6zHYmFlYXVwbm56+A
-         C8MA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5+MDj70KO9zZ27bzV8M1iQcmD60zLc/tua6/S2v655xCXyR39DcM6aPHrjKMRzuLdRO98rnky7kcJYoJS7E9EO9bPWBNwRUDK6BVT
-X-Gm-Message-State: AOJu0YyFy8vkuAE/DZYGycCwU6oBquRmNbGrWqC589Qk/CH+a0pz8t0c
-	ulLII+CrPzhqOodGy/v0ibAqqHGBL2J6mTn58jesaERNRPMf79X/0nObVYPejncmk2FCzppCDNv
-	CZVz42ZoidCWIg6bTSoMq/uQ6aZY=
-X-Google-Smtp-Source: AGHT+IGOQG6kEeEk4W6pWxgMURol6Xanle3nUcYpoZucv3qedwwOmvakuhCva0EZ6ZuOdupHajHH7jrim00j9Kyy9wU=
-X-Received: by 2002:a05:6214:2263:b0:6b5:e9d6:1ce2 with SMTP id
- 6a1803df08f44-6bb408597c7mr49022356d6.27.1721962473518; Thu, 25 Jul 2024
- 19:54:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=GSfyYv2v21A1zHo+5jWaSNvAZh4sD0MHHr8bmicCyYbnO3NVRysiIMoadLsJ30TZ9ZL/lQhoRS4vvur/iyQtNA50s1r2uXGnWTwPmVoMZ8nwsmviqhEbgtvIbYKiQEAKHPT8WCY5tM1BcbUKXD7jlXnpXgRro0tuxmg0qw+v9Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDTyFOTm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49C47C116B1;
+	Fri, 26 Jul 2024 02:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721962546;
+	bh=rG5tjABluGl5jSIlvCNi682GBmX8Z4Ux3yVbb7xs/1Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IDTyFOTmsYAtt/A2DLVLAbZiXfCsmc6MS4ef6q2B5BO6495/+LgUAjj1o3uYs9bGK
+	 FFoVUimbtIDrO5eZ6IcbnQAqvd3yapiNt7DPbOE0l+QSor5crhRU3rPi7ElMCj5StJ
+	 +KHSPvAnpv1Q9Lw2Nxq97azt1xCNFwmidNjuO/CvbE6GETC3Mrs13XNqS1e7653Kpg
+	 W7uikWONpLSEteSQAAK7OMh6074cCkxElm06fMyuf2PQf+mZ/HVETFdpxvSp/21vEZ
+	 vtqMGX4LqoWHAAtHhuUR/Ct/j7Y9trBfHZ9W3F+i1hDZsLwO7HjVRmAvH5LLCf364X
+	 YkZtjSi0Zdu+g==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so211305166b.0;
+        Thu, 25 Jul 2024 19:55:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpc3PvukAmLjyaBRk0xU0vUBsFCBXLx82EPvpe0S1fncRki7r19yUKjv20NJuwhfPqOUQxmXbs9LIXCEYsF6IFtM3MyRSRLvEdb2bYofc9g7yuxMRclmiwisIBi2eW2xhY
+X-Gm-Message-State: AOJu0YxpJCgbShr9BLBjb43SEV9U2E9OPPylN7l6bO9ADhkUcZ4szCaD
+	CtqhCPl7B25gj2/HsskoetbT/kY0fqI7qLapHWLz6lOocmfp2oG//jiqVXeYtC1336cpG4F3V/m
+	g7cB0VcA7blUs3VXeoTgg7yWayC8=
+X-Google-Smtp-Source: AGHT+IE4toV1Z8IEIkI9dLEtzNT/nSio8g4ih23Ay9wLdv4UiDf78cC3Ce/5CiLn8M6oYP1rZEPnyxLFAdWIfYBzpXY=
+X-Received: by 2002:a17:907:970d:b0:a77:ab9e:9202 with SMTP id
+ a640c23a62f3a-a7ab2bb46f7mr777476566b.4.1721962544864; Thu, 25 Jul 2024
+ 19:55:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725232813.2260665-1-nphamcs@gmail.com>
-In-Reply-To: <20240725232813.2260665-1-nphamcs@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 25 Jul 2024 19:54:18 -0700
-Message-ID: <CAKEwX=NURfoLBrnYtsW08+bUHRb8FpBLoizt=QEEkuxRhPjGBg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] improving dynamic zswap shrinker protection scheme
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org, yosryahmed@google.com, linux-mm@kvack.org, 
-	kernel-team@meta.com, linux-kernel@vger.kernel.org, flintglass@gmail.com, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>
+References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
+ <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
+In-Reply-To: <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 26 Jul 2024 10:55:32 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
+Message-ID: <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
+Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for kvm_hypercall
+To: maobibo <maobibo@loongson.cn>
+Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn, kernel@xen0n.name, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	wangyuli@uniontech.com, Wentao Guan <guanwentao@uniontech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 4:28=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
+On Fri, Jul 26, 2024 at 9:49=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
 :
+>
+>
+>
+> On 2024/7/25 =E4=B8=8B=E5=8D=889:48, Dandan Zhang wrote:
+> > The kvm_hypercall set for LoongArch is limited to a1-a5.
+> > The mention of a6 in the comment is undefined that needs to be rectifie=
+d.
+> >
+> > Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> > Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+> > ---
+> >   arch/loongarch/include/asm/kvm_para.h | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/inc=
+lude/asm/kvm_para.h
+> > index 335fb86778e2..43ec61589e6c 100644
+> > --- a/arch/loongarch/include/asm/kvm_para.h
+> > +++ b/arch/loongarch/include/asm/kvm_para.h
+> > @@ -39,9 +39,9 @@ struct kvm_steal_time {
+> >    * Hypercall interface for KVM hypervisor
+> >    *
+> >    * a0: function identifier
+> > - * a1-a6: args
+> > + * a1-a5: args
+> >    * Return value will be placed in a0.
+> > - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
+> > + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
+> >    */
+> >   static __always_inline long kvm_hypercall0(u64 fid)
+> >   {
+> >
+>
+> Dandan,
+>
+> Nice catch. In future hypercall abi may expand such as the number of
+> input register and output register, or async hypercall function if there
+> is really such requirement.
+>
+> Anyway the modification is deserved and it is enough to use now, thanks
+> for doing it.
+>
+> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Maybe it is better to implement kvm_hypercall6() than remove a6 now?
 
-My bad, I messed up the cc-ing. I missed Chengming, and used Shakeel's
-Google email :)
-
-Rectifying this now...
+Huacai
+>
 
