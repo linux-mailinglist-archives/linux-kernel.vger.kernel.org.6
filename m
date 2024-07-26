@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-263417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC2A93D58A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:04:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61BB93D59B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F3C1F21D79
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6A71F24042
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E537317838E;
-	Fri, 26 Jul 2024 15:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C153917B4FC;
+	Fri, 26 Jul 2024 15:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m12twyTo"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XRacDgs/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DE21CD39
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAF417967C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006233; cv=none; b=PZMl9T2Tnj6+sbBSA4x/8jMqMMjOtu61rmRZLmuqpnvA7gYo8Iv5oYkSo5FwadARSG+i3zszsrOMUXvtDwBifVn5GzoT7SqW5XJrUaXRPGc0EM8kqGr4NXzkSlZa2Dt22cQGYVVCDF1T17RoNFwAteiv7LJqg64qAhSDUdkRpVo=
+	t=1722006475; cv=none; b=e6KrMKmyIeyv/Pi3zYiZMREdND+CrlYlpewb2HyE7FJ4Ap+lhoM31DhX5d98MfPb1iR5sgItMxbe5YnmvQTizT+2Wu85qfz1v7xUrn63bM1g5I8DV6CWCAqRHjaObhzfs11RoBxzZbUtBJ0tBm6v6LoCc2Ci0O4x1tiKWQ3RxWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006233; c=relaxed/simple;
-	bh=BMGxaSXqdPMq+4pPEklbnF3dYHS0Wrz39i3IzGixcGw=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=aKh38XmzLCHXoaznmlopshfyW/rTWg8dqPbobwtc/Q4iFlm1dBqO0xEK8VZMXiiJZ3R3Tk4LNWR0OIkvE/JSdUQIGtQu4sru+qhYmAtSsGl4m3+ViU2X4jqPj9isoy85UYttYHInD049ejtRVPKv7dM5s/2wCKARBEvZ0dqYXTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m12twyTo; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240726150349euoutp026db8f2411a31324cc1edcc1e373aa94f~ly4q9I-I60761007610euoutp02U
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:03:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240726150349euoutp026db8f2411a31324cc1edcc1e373aa94f~ly4q9I-I60761007610euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722006229;
-	bh=BMGxaSXqdPMq+4pPEklbnF3dYHS0Wrz39i3IzGixcGw=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=m12twyTo4XtaxMpq2/9KsGvuWqVHSPMLIhLqzC5ZZzv+uPy/CtX4vv9rLs+yvqaJu
-	 V+b+T052U0H1b6XVXDTMIMX4pZSsZGvtQR5igYPbopIAQDlVoFkYrV+wv49KXWWlk+
-	 MjSJKPS6+AfB58Sb/I9n+teQm1HfxwEEdVK125ik=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240726150348eucas1p2794c2d6fe56e7b20f94687c472348a67~ly4qX60890600606006eucas1p2z;
-	Fri, 26 Jul 2024 15:03:48 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-61-66a3bad46e4e
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5F.AA.09624.4DAB3A66; Fri, 26
-	Jul 2024 16:03:48 +0100 (BST)
+	s=arc-20240116; t=1722006475; c=relaxed/simple;
+	bh=l9aMkn+xt88Ok0/4b9aN2UQPYeXAHN9x8QJcScXTjYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ffXq2F3AnXyv+zQh0U6vpWaa+xSdDEMv4Lk8rvFXOoaRUinF24eQpIDNdnuZFMyO0qxAW+1Q3rg4cPm38PwJhnwCO/6NL7xTIR3ORXWMj+Id3LytXfi/wxx1vZ1jZWKXrKLJdXyJ+bHckWjecuyQltZvtAFvzHPHUfadpS60Y2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XRacDgs/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722006472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hcrSbRRNq3UgkpcRSzhVfFxj5WTgmNA01IUpGR6Hr34=;
+	b=XRacDgs/Mzs2TRDlJQVyC6a336xwSil5aqS5yuXTP8IVRDDjK1CGK+fzRS2R9garMIlqId
+	Ftt8/bEmY7kyYiLWHzzLMACB1LAHJe4oFhkYhHpbgkVeNl3BiHMrGx38tBiFL545r38ZM1
+	Rg0QMMalGMXndwZxIiq5YWPQeaE2AdE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-260-uU9eNeBmOBmxsbHiNspYkQ-1; Fri,
+ 26 Jul 2024 11:07:47 -0400
+X-MC-Unique: uU9eNeBmOBmxsbHiNspYkQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 396AC1955D4D;
+	Fri, 26 Jul 2024 15:07:42 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.193.153])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AF9BB1955D45;
+	Fri, 26 Jul 2024 15:07:31 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	xen-devel@lists.xenproject.org,
+	linux-fsdevel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v1 0/3] mm: split PTE/PMD PT table Kconfig cleanups+clarifications
+Date: Fri, 26 Jul 2024 17:07:25 +0200
+Message-ID: <20240726150728.3159964-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [PATCH v2 0/6] Add initial Exynos850 support to the thermal
- driver
-Reply-To: m.majewski2@samsung.com
-Sender: Mateusz Majewski <m.majewski2@samsung.com>
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
-	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR
-	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
-	Moon <linux.amoon@gmail.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20240726110114.1509733-1-m.majewski2@samsung.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240726150348eucms1p356a6209b11c81924a1dac027555466cd@eucms1p3>
-Date: Fri, 26 Jul 2024 17:03:48 +0200
-X-CMS-MailID: 20240726150348eucms1p356a6209b11c81924a1dac027555466cd
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a
-X-EPHeader: Mail
-X-ConfirmMail: N,general
-CMS-TYPE: 201P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87pXdi1OM7i2TNHiwbxtbBbft1xn
-	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
-	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
-	HpuX1Hv0bVnF6PF5k1wARxSXTUpqTmZZapG+XQJXxo63kxkLXrFWvN/znrWB8R1LFyMnh4SA
-	icSHP01MXYxcHEICKxgl5tz7zdjFyMHBKyAo8XeHMEiNsECgxLHGNWD1QgKKEp3b37BBxI0k
-	Dr3YBWazCRhIPHizjB1kjojAVSaJZ08/gTnMAk+YJSZcmwK1jVdiRvtTKFtaYvvyrYwgNqeA
-	vcSSSR8ZIeKiEjdXv2WHsd8fmw8VF5FovXeWGcIWlHjwczdUXEbi5IJlUHaxxMu1l6BqKiSO
-	L5kONcdcYtPcNawgNq+Ar8T129PBbmARUJW4//cbK8jDEgIuEmue8IGEmQXkJba/ncMMEmYW
-	0JRYv0sfosJR4vaeCoiBAhJrTsyBWiQhsbXlCStEJ5/EpG3TmWGe3THvCROErSpxfM8kZpjH
-	n7TcZprAqDQLEdCzkOydhbB3ASPzKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMD0dvrf
-	8U87GOe++qh3iJGJg/EQowQHs5II77L7C9OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ86qmyKcK
-	CaQnlqRmp6YWpBbBZJk4OKUamKaYXhJnW+PK9LCQJ8cswvJgzNG2mgjrzM6eCu5zMx79vC8h
-	NJVlkVJQzBfFfeLmhQvFLjJ13Jyl+0j4RuRZYTW34MbFQU5GXAFhE/O/Ps//4yGx4Ea61pm1
-	kgc3zBDZxv10zU329ptvQ68vDk2vW1BdeHGn6hGlgxEZ1+9kp03nXhnz7OecZzJyD25/DPt7
-	L25Cm318hdnfeqVwxVfCfr0+3wwjdgWvnNj6JntvpMT9l5v/JNTF92oVi5Rc7Ne4Fnz+ZF7o
-	z/POU5Zxa6p5Jf5Jczyz+0WAOktrvtfRBT9tOQW/TZp07VLv8r/d89+EG7DfkNa55dy/KMIt
-	U7G+NWfh4zVHqqY3VKlf4lkuq8RSnJFoqMVcVJwIAJTCqDDeAwAA
-X-CMS-RootMailID: 20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a
-References: <20240726110114.1509733-1-m.majewski2@samsung.com>
-	<CGME20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a@eucms1p3>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Forgot to mention it in the cover letter, but as discussed in v1 in
-https://lore.kernel.org/lkml/CAPLW+4nfEjP4FDjRJORyyKk46x4VfFAcMuK88jXUT_LJoP1N_g@mail.gmail.com,
-this requires support for the TMU clock to run, available in
-https://lore.kernel.org/lkml/20240723163311.28654-2-semen.protsenko@linaro.org.
-This series builds fine without this, only it is not possible to write a
-devicetree source for this without the mentioned series, so as I
-understand it is ok for this to be in review anyway?
+This series is a follow up to the fixes:
+	"[PATCH v1 0/2] mm/hugetlb: fix hugetlb vs. core-mm PT locking"
 
-By the way, I am going to have some more time to help with the upstream
-kernel, and have access to most of the supported SoCs. If you feel that
-it is appropriate, I would be very happy to become one of the
-maintainers of this driver :)
+When working on the fixes, I wondered why 8xx is fine (-> never uses split
+PT locks) and how PT locking even works properly with PMD page table
+sharing (-> always requires split PMD PT locks).
+
+Let's improve the split PT lock detection, make hugetlb properly depend
+on it and make 8xx bail out if it would ever get enabled by accident.
+
+As an alternative to patch #3 we could extend the Kconfig SPLIT_PTE_PTLOCKS
+option from patch #2 -- but enforcing it closer to the code that actually
+implements it feels a bit nicer for documentation purposes, and there
+is no need to actually disable it because it should always be disabled
+(!SMP).
+
+Did a bunch of cross-compilations to make sure that split PTE/PMD
+PT locks are still getting used where we would expect them.
+
+[1] https://lkml.kernel.org/r/20240725183955.2268884-1-david@redhat.com
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+
+David Hildenbrand (3):
+  mm: turn USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig
+    options
+  mm/hugetlb: enforce that PMD PT sharing has split PMD PT locks
+  powerpc/8xx: document and enforce that split PT locks are not used
+
+ arch/arm/mm/fault-armv.c      |  6 +++---
+ arch/powerpc/mm/pgtable.c     |  6 ++++++
+ arch/x86/xen/mmu_pv.c         |  7 ++++---
+ fs/Kconfig                    |  4 ++++
+ include/linux/hugetlb.h       |  5 ++---
+ include/linux/mm.h            |  8 ++++----
+ include/linux/mm_types.h      |  2 +-
+ include/linux/mm_types_task.h |  3 ---
+ kernel/fork.c                 |  4 ++--
+ mm/Kconfig                    | 18 +++++++++++-------
+ mm/hugetlb.c                  |  8 ++++----
+ mm/memory.c                   |  2 +-
+ 12 files changed, 42 insertions(+), 31 deletions(-)
+
+-- 
+2.45.2
+
 
