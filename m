@@ -1,101 +1,61 @@
-Return-Path: <linux-kernel+bounces-263071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D65C93D09B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B946C93D09C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E5228237C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94751C20C1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8DA178CF2;
-	Fri, 26 Jul 2024 09:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8E7176AAC;
+	Fri, 26 Jul 2024 09:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTRkgLU4"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jOWGv1kf"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A1F17836C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE613E3EA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721987256; cv=none; b=hJHA79Jl3psqW16EjcTX8MuSY5X2SCDdNlqLMsmByUTJWHBV/FD+EqN5hMHXwghpbyH+bkAbv/Y7vMJXvSRyR0/W/rNBoDyfJYkIcBlSCD03+ZyPppr69x3OpuQEej5CK4qlJI4zrpcJmHqP4ktaOkxeI7VccB9qAs1IaIAf3es=
+	t=1721987270; cv=none; b=qPPx8tt4T3D2QgKW8aD1TgtZtVS3kgiTWbmoup9vDAMUuqCbzQtO3SbJ+yuW7hWRB8zMubafzVvp3ok0j04Q9dLEMHrBNCbVWGm8UgiXyXtvRvDIp/nn2y2XrUkaCIWH7WONrHSF9pdOutRu3qZJHLWqzSN32uLMYnn8bk0AJR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721987256; c=relaxed/simple;
-	bh=bXOB40B+8P35FLMeevMSsTouLOFbjy0oSgq6ugv5yjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nocms/58LNNenvMM9m5T+c8CPOODVi/1dFf8Tegf8XcJCHm0IsRG+JtHeCfFU2UWbrws1Nvg+VPz5eDDu6m9y/yqd3C8TQIM8i57QKKZ76t/Np/VkpT3d4CRzDMFvtxJ652wJDSYqOwRolIk7F4kbuLnlno+idS+l3wrM0UydVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTRkgLU4; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4fccdd78so3606985ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721987254; x=1722592054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hXeSWJ/2XL0C00VB4D2wsSnDGte33aaztEw6N6+DVHo=;
-        b=NTRkgLU4uPMNfQOhmS6daoTqhdwamv1HkJAZgu2DGpyHvsQsD6XKJqv9Tn/+WQEVaS
-         KoDwpHKJWD8tnglIuczgZrgjkYrsxjlK629LrXB/Sa8+fwbdpQjBgvasuYJYMzDkTV5F
-         08Fwg6CcG3Z/OF2vM62rA00UEqodQ7dkAm56m8G1KIR0TSRP+WKANddGfK9CrQXuii8C
-         RS8J5i0kp8sHltXpxbDjiSnQyMRhJWTZdG72SBfi84J0Bkl1fdprfE1L7BaXQGqnDJyI
-         O4a1tVdtkOQ1rtsTDG64t5ZZX688WBG41t5MzZCSXz6cTZdwNVVsOqiyvuqQrgZtGNQ2
-         p3PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721987254; x=1722592054;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hXeSWJ/2XL0C00VB4D2wsSnDGte33aaztEw6N6+DVHo=;
-        b=YhRX64vyBxcvZ0L9cbbuhBYPiTuSxAcoGIJaLEp5oT+YVl71cgoXNC3OLGWnz8Rwr7
-         GiE1/MTClOiyTe5V+a6rhnM50SZY4uEwvFqw1mhFMuDft85hXBrk50dMCX8zlj9cYeBD
-         hOTIytPunc9L2tCtzwtQZ8G/X5NoTmnO2lm6KlMOyT6tL4uRM5bSP4/CBWaU0ZXG82bM
-         iDoTj9zU86D73tn1lwnDGSO7UyGXxg/K8SIjQOjnvssxfMtrq89PwNjNTL7fEnvxKV69
-         nqneO/bdDLrf4HDbnwYmRNc3LKCZcaZrxj0x8uHfQTgMP5Dl51k6SduWQBkYRYeYZr0Q
-         LFFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ6mRUv1ajYp/tHHvcHnK2XgDZcYXI8L6SQaxFhT0SRB+GVan5shnvwK1+VUJf6LsXSZ8F++B1PxcvqVJLmGP1Py3IRM1h49AufwBy
-X-Gm-Message-State: AOJu0YyMk2fi/OMHbZ4eaZP/6LqO7vn8ZIpEpOVRzsvDkQJNwMX33vc7
-	/RVIgyUEfzSpQ2k5VJNGDJZv+M9FTgmq4lUytBTf8CLu0SIhkjf4
-X-Google-Smtp-Source: AGHT+IEsB98ir1v1O+pC1M3K6sUPTrlIGX/N1CqYehZBqQeCofKQvFrGpl3C0i9QXGJhDvMHh4MUqQ==
-X-Received: by 2002:a17:902:dacc:b0:1fd:95ac:506b with SMTP id d9443c01a7336-1fed3af263fmr68421725ad.64.1721987254203;
-        Fri, 26 Jul 2024 02:47:34 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d15e98sm28127455ad.99.2024.07.26.02.47.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 02:47:33 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: ying.huang@intel.com,
-	baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hannes@cmpxchg.org,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
+	s=arc-20240116; t=1721987270; c=relaxed/simple;
+	bh=f1Jgm1SW/bZyNrA1MPxl/UUPCfrLD4iDQuVNCuFzFGU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rSnZiHPF53mE98rP8tHUWAVEbasGLG7fY/GCxak1CK7/GHETAZPRAyxfw65rifFVWuwo/+0OmqHL5fTnwnnqpEm8pRW2VvxWEIklsF0sDJQhHuXTQWuVahF9kmw13w8KnP0Sl0upG/8vtqpTuNzNqkYb8tI28E4RwMHGycUmDCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jOWGv1kf; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1721987259; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=K1O75+dU/oxc7RMbWfEpo6GrZGyE2ZFXuZ+LFp9QDcw=;
+	b=jOWGv1kf0f1029Ahsy0Spn2i3SIgsIcfs8c7Q9G7kHyaup6wy9kqjCyUF2iM25XEL8d1PvkPtle2w1pMzqEN+HZ3vhZNY3/LOTQXx2t/JWUOQZMDfGQsLtwwls1g0LJK5YzY4qQM1XSNUDnzuNpEUVfVc031MB7H7niq+BYQ95k=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0WBLOnXO_1721987249;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WBLOnXO_1721987249)
+          by smtp.aliyun-inc.com;
+          Fri, 26 Jul 2024 17:47:38 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: harry.wentland@amd.com
+Cc: sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	mhocko@suse.com,
-	minchan@kernel.org,
-	nphamcs@gmail.com,
-	ryan.roberts@arm.com,
-	senozhatsky@chromium.org,
-	shakeel.butt@linux.dev,
-	shy828301@gmail.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	willy@infradead.org,
-	xiang@kernel.org,
-	yosryahmed@google.com
-Subject: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
-Date: Fri, 26 Jul 2024 21:46:18 +1200
-Message-Id: <20240726094618.401593-5-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240726094618.401593-1-21cnbao@gmail.com>
-References: <20240726094618.401593-1-21cnbao@gmail.com>
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] drm/amd/display: Use ARRAY_SIZE for array length
+Date: Fri, 26 Jul 2024 17:47:28 +0800
+Message-Id: <20240726094728.1161-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,151 +64,205 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+Use of macro ARRAY_SIZE to calculate array size minimizes
+the redundant code and improves code reusability.
 
-Quote Ying's comment:
-A user space interface can be implemented to select different swap-in
-order policies, similar to the mTHP allocation order policy. We need
-a distinct policy because the performance characteristics of memory
-allocation differ significantly from those of swap-in. For example,
-SSD read speeds can be much slower than memory allocation. With
-policy selection, I believe we can implement mTHP swap-in for
-non-SWAP_SYNCHRONOUS scenarios as well. However, users need to understand
-the implications of their choices. I think that it's better to start
-with at least always never. I believe that we will add auto in the
-future to tune automatically, which can be used as default finally.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1552:57-58: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1561:57-58: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1573:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1578:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1592:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1597:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1611:50-51: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1616:50-51: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1630:50-51: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1635:50-51: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1649:60-61: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1663:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1677:52-53: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1691:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1705:53-54: WARNING: Use ARRAY_SIZE.
+./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1719:54-55: WARNING: Use ARRAY_SIZE.
 
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9580
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
- Documentation/admin-guide/mm/transhuge.rst |  6 +++
- include/linux/huge_mm.h                    |  1 +
- mm/huge_memory.c                           | 44 ++++++++++++++++++++++
- mm/memory.c                                |  3 +-
- 4 files changed, 53 insertions(+), 1 deletion(-)
+ .../display/dc/spl/dc_spl_scl_easf_filters.c  | 63 ++++++-------------
+ 1 file changed, 20 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 058485daf186..2e94e956ee12 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -144,6 +144,12 @@ hugepage sizes have enabled="never". If enabling multiple hugepage
- sizes, the kernel will select the most appropriate enabled size for a
- given allocation.
+diff --git a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
+index 09bf82f7d468..e847af94419a 100644
+--- a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
++++ b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
+@@ -1530,14 +1530,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_value(struct spl_fixed31_32 rati
+ 	value = lookup_table_index_ptr->reg_value;
  
-+Transparent Hugepage Swap-in for anonymous memory can be disabled or enabled
-+by per-supported-THP-size with one of::
-+
-+	echo always >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/swapin_enabled
-+	echo never >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/swapin_enabled
-+
- It's also possible to limit defrag efforts in the VM to generate
- anonymous hugepages in case they're not immediately free to madvise
- regions or to never try to defrag memory and simply fallback to regular
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e25d9ebfdf89..25174305b17f 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -92,6 +92,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
- #define TVA_IN_PF		(1 << 1)	/* Page fault handler */
- #define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
-+#define TVA_IN_SWAPIN          (1 << 3)        /* Do swap-in */
+ 	while (count < num_entries) {
+-
+ 		lookup_table_index_ptr = (lookup_table_base_ptr + count);
+ 		if (lookup_table_index_ptr->numer < 0)
+ 			break;
  
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0167dc27e365..41460847988c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -80,6 +80,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
- unsigned long huge_anon_orders_always __read_mostly;
- unsigned long huge_anon_orders_madvise __read_mostly;
- unsigned long huge_anon_orders_inherit __read_mostly;
-+unsigned long huge_anon_orders_swapin_always __read_mostly;
- 
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 unsigned long vm_flags,
-@@ -88,6 +89,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 		if (ratio.value < spl_fixpt_from_fraction(
+-			lookup_table_index_ptr->numer,
+-			lookup_table_index_ptr->denom).value) {
++		    lookup_table_index_ptr->numer,
++		    lookup_table_index_ptr->denom).value) {
+ 			value = lookup_table_index_ptr->reg_value;
+ 			break;
+ 		}
+@@ -1548,21 +1547,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_value(struct spl_fixed31_32 rati
+ }
+ uint32_t spl_get_v_bf3_mode(struct spl_fixed31_32 ratio)
  {
- 	bool smaps = tva_flags & TVA_SMAPS;
- 	bool in_pf = tva_flags & TVA_IN_PF;
-+	bool in_swapin = tva_flags & TVA_IN_SWAPIN;
- 	bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
- 	unsigned long supported_orders;
+-	uint32_t value;
+-	unsigned int num_entries = sizeof(easf_v_bf3_mode_lookup) /
+-		sizeof(struct scale_ratio_to_reg_value_lookup);
+-	value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+-		easf_v_bf3_mode_lookup, num_entries);
+-	return value;
++	unsigned int num_entries = ARRAY_SIZE(easf_v_bf3_mode_lookup);
++	return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_v_bf3_mode_lookup, num_entries);
+ }
+ uint32_t spl_get_h_bf3_mode(struct spl_fixed31_32 ratio)
+ {
+-	uint32_t value;
+-	unsigned int num_entries = sizeof(easf_h_bf3_mode_lookup) /
+-		sizeof(struct scale_ratio_to_reg_value_lookup);
+-	value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+-		easf_h_bf3_mode_lookup, num_entries);
+-	return value;
++	unsigned int num_entries = ARRAY_SIZE(easf_h_bf3_mode_lookup);
++	return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_h_bf3_mode_lookup, num_entries);
+ }
+ uint32_t spl_get_reducer_gain6(int taps, struct spl_fixed31_32 ratio)
+ {
+@@ -1570,13 +1561,11 @@ uint32_t spl_get_reducer_gain6(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
  
-@@ -100,6 +102,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 		supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_reducer_gain6_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain6_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain6_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_reducer_gain6_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain6_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain6_6tap_lookup, num_entries);
+ 	} else
+@@ -1589,13 +1578,11 @@ uint32_t spl_get_reducer_gain4(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
  
- 	orders &= supported_orders;
-+	if (in_swapin)
-+		orders &= READ_ONCE(huge_anon_orders_swapin_always);
- 	if (!orders)
- 		return 0;
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_reducer_gain4_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain4_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain4_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_reducer_gain4_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain4_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain4_6tap_lookup, num_entries);
+ 	} else
+@@ -1608,13 +1595,11 @@ uint32_t spl_get_gainRing6(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
  
-@@ -523,8 +527,48 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
- static struct kobj_attribute thpsize_enabled_attr =
- 	__ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_gain_ring6_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring6_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring6_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_gain_ring6_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring6_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring6_6tap_lookup, num_entries);
+ 	} else
+@@ -1627,13 +1612,11 @@ uint32_t spl_get_gainRing4(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
  
-+static DEFINE_SPINLOCK(huge_anon_orders_swapin_lock);
-+
-+static ssize_t thpsize_swapin_enabled_show(struct kobject *kobj,
-+				    struct kobj_attribute *attr, char *buf)
-+{
-+	int order = to_thpsize(kobj)->order;
-+	const char *output;
-+
-+	if (test_bit(order, &huge_anon_orders_swapin_always))
-+		output = "[always] never";
-+	else
-+		output = "always [never]";
-+
-+	return sysfs_emit(buf, "%s\n", output);
-+}
-+
-+static ssize_t thpsize_swapin_enabled_store(struct kobject *kobj,
-+				     struct kobj_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	int order = to_thpsize(kobj)->order;
-+	ssize_t ret = count;
-+
-+	if (sysfs_streq(buf, "always")) {
-+		spin_lock(&huge_anon_orders_swapin_lock);
-+		set_bit(order, &huge_anon_orders_swapin_always);
-+		spin_unlock(&huge_anon_orders_swapin_lock);
-+	} else if (sysfs_streq(buf, "never")) {
-+		spin_lock(&huge_anon_orders_swapin_lock);
-+		clear_bit(order, &huge_anon_orders_swapin_always);
-+		spin_unlock(&huge_anon_orders_swapin_lock);
-+	} else
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+static struct kobj_attribute thpsize_swapin_enabled_attr =
-+	__ATTR(swapin_enabled, 0644, thpsize_swapin_enabled_show, thpsize_swapin_enabled_store);
-+
- static struct attribute *thpsize_attrs[] = {
- 	&thpsize_enabled_attr.attr,
-+	&thpsize_swapin_enabled_attr.attr,
- #ifdef CONFIG_SHMEM
- 	&thpsize_shmem_enabled_attr.attr,
- #endif
-diff --git a/mm/memory.c b/mm/memory.c
-index 14048e9285d4..27c77f739a2c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4091,7 +4091,8 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
- 	 * and suitable for swapping THP.
- 	 */
- 	orders = thp_vma_allowable_orders(vma, vma->vm_flags,
--			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
-+			TVA_IN_PF | TVA_IN_SWAPIN | TVA_ENFORCE_SYSFS,
-+			BIT(PMD_ORDER) - 1);
- 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
- 	orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_gain_ring4_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring4_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring4_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_gain_ring4_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring4_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring4_6tap_lookup, num_entries);
+ 	} else
+@@ -1646,8 +1629,7 @@ uint32_t spl_get_3tap_dntilt_uptilt_offset(int taps, struct spl_fixed31_32 ratio
+ 	unsigned int num_entries;
  
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_dntilt_uptilt_offset_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_dntilt_uptilt_offset_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_dntilt_uptilt_offset_lookup, num_entries);
+ 	} else
+@@ -1660,8 +1642,7 @@ uint32_t spl_get_3tap_uptilt_maxval(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt_maxval_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt_maxval_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt_maxval_lookup, num_entries);
+ 	} else
+@@ -1674,8 +1655,7 @@ uint32_t spl_get_3tap_dntilt_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_dntilt_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_dntilt_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_dntilt_slope_lookup, num_entries);
+ 	} else
+@@ -1688,8 +1668,7 @@ uint32_t spl_get_3tap_uptilt1_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt1_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt1_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt1_slope_lookup, num_entries);
+ 	} else
+@@ -1702,8 +1681,7 @@ uint32_t spl_get_3tap_uptilt2_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt2_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt2_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt2_slope_lookup, num_entries);
+ 	} else
+@@ -1716,8 +1694,7 @@ uint32_t spl_get_3tap_uptilt2_offset(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt2_offset_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt2_offset_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt2_offset_lookup, num_entries);
+ 	} else
 -- 
-2.34.1
+2.32.0.3.g01195cf9f
 
 
