@@ -1,177 +1,151 @@
-Return-Path: <linux-kernel+bounces-263097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4367893D107
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9503D93D10F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04985280FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A051C210E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A722178CC8;
-	Fri, 26 Jul 2024 10:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8264179650;
+	Fri, 26 Jul 2024 10:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DcZeFSwA"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xel7RjZJ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA382B9C4;
-	Fri, 26 Jul 2024 10:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F0017920E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721989294; cv=none; b=quSXOEU0H6gxEp1n1TGe9KbYWJPmJjRLqgfththPPD1G3/4YhZFJ+WOboCAC6Sl4agX9AmJhv/hNOD9erK4IN7B7b8yodlt6Vn5O1Q6GOFMQGONVpWzdrUOGVb4qxyqe1qeNWDMIvW4964J98mlw/3CKJ4JcyGRLnJQImEERsZ4=
+	t=1721989398; cv=none; b=p79S+ALFXAavWw9pd5UtR4G8fHV5WNECw501kbXUrgM7Bu0SnIgSIAcZAA/L+tzx9fu4Jf9vSBE+1qd8EoQvlXejtF6Vjp+BPcSIGcs4tucIPkP7tIR5VuZ1m8iEdXuTd9ZZmjKhmOxh9WlLX4RA9qwA805DEcwFD0T/PZHaaCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721989294; c=relaxed/simple;
-	bh=S/x4OJAKOpbCcalQ3AmuCSpX6cHV4yf/SgFn4iRJr34=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evgth7cYJV6PFEf7WQA9ZWPmAkgBIGtpJi9a2/eEjxFnwrxoznpFMjAqQyT8DmV2ebnwxEZ5mId6AwOz2E2626rSuhjRSDcyqjmvG6YFAX4azwrr8u3WIMtDXsGOt5KFsOS2qsNMLn0jMXwPznWX15tnWzK1LBci6BGwo1QLhQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DcZeFSwA; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46QAL4Wk043121;
-	Fri, 26 Jul 2024 05:21:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721989264;
-	bh=DDWXHd+C8mav68s6sbzJJqLpFP/Y42ZVqzrbT7u/foo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DcZeFSwA0qqtfUyqsNflK8Q/HpG2kzTmKjEuo1CeCePlnYZzgFRQtDFTNW/97zkRd
-	 w+xTRjEt0rj4c6fv8WfrXb8TmUpKBsFZ2dvGpmQQfiADbRq6F2i9+v6ZCZhzVx9zl9
-	 GhEXwIpNHNqnAiqbpMZZYL8SylY5UBUvUSSWtuCY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46QAL4n3085116
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 26 Jul 2024 05:21:04 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 26
- Jul 2024 05:21:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 26 Jul 2024 05:21:04 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46QAL31v067014;
-	Fri, 26 Jul 2024 05:21:04 -0500
-Date: Fri, 26 Jul 2024 15:51:03 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "sudeep.holla@arm.com"
-	<sudeep.holla@arm.com>,
-        "cristian.marussi@arm.com"
-	<cristian.marussi@arm.com>,
-        "mturquette@baylibre.com"
-	<mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "arm-scmi@vger.kernel.org"
-	<arm-scmi@vger.kernel.org>,
-        "vigneshr@ti.com" <vigneshr@ti.com>, "kamlesh@ti.com" <kamlesh@ti.com>
-Subject: Re: [PATCH] clk: scmi: add is_prepared hook
-Message-ID: <20240726102103.dh6upqdeq2tj4hgn@dhruva>
-References: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
- <20240726085305.sb57f3i2ezvtwrwz@dhruva>
- <PAXPR04MB8459C5A372FADDD970BCA33088B42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1721989398; c=relaxed/simple;
+	bh=VuMF3KoncyaI8CPrPZlQbATP2kYcE2y/7t+nGV+ZexI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ln0DocNM6igrVPLMwuePXkBzfWPZA0M8CVs9Q7/g6Yn/78/irOrLEpsJ6v/z3gjiU7kozJwmCeI49OBeEChoxj61AGo01JdZGuX//Tf7GAYKbhwv40aJrAqBIjmjdC2tSruBAqFkf9ly7vmFknIMcilMQGeM+th65QllKUxDjVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xel7RjZJ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52fc14aa5f5so2687e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:23:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721989393; x=1722594193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NOFadCdnFUNbKiegYZZRp810q0uwCcDa0ulZ63Y8FbI=;
+        b=Xel7RjZJNOa5uNUtKvZVIyMwhF3n335jRizRAvaN7UhzAMO5e9bNq79EKYGtPJ5krW
+         VxuIbIgTMXXfOVC0tJod5CkNh6a1fZcnWOgySSHargVnk6U+EIoveL5J5EixL3kvL7XG
+         gU2zJ5ppUDulWJoaRh7HfPhg8szGpkvRWKWbYRUptW+vws9oyvL9zedj3h/iV4jG9RGy
+         vHNHbtI55qoQC5Y+q1iVDenBky2kmrTn/OLycbCoUNDDxYEsZMdP/x4P8IYgmhUJEXcl
+         nTZO2IEx9cONQ1czTgiDtyhkWAk3tQdkhQXeZbqVrPDBKDnziGGdqw+pfOhbPUlolLc5
+         ot6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721989393; x=1722594193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NOFadCdnFUNbKiegYZZRp810q0uwCcDa0ulZ63Y8FbI=;
+        b=jeXxW1SWT+Fp8kYipho3Y7AwsGL/eZZLOHXgY0cPuv1vBGD1UD3hQyn0RBZ8XQeTnu
+         sobEcW7yvU9LCw8i917TkfGEz0XoS4Qk910hisOflowvUJpJFq3HyLY8HOeGrEIoXHsB
+         lXiZdkSd3bfcBgkYNvG1x1epme62wnqpZyC6ZaYOe2enQe5HQUr4esza9CwV75ZsaM44
+         wX3O7ulXeh6FS0QS1h0wt7TF0RBMuZbad+P9/SSPMDt1Xse+avMrrPAXFEK/jKsVzDmM
+         uE+8mLhmtAcZp+oZ71d76LacHJMEKzFAfJ6TUEBl36CpwA9MzfR42eiH3Pf6ewqLi7FZ
+         b4Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPKNOXsrO+8ZNhlDctsCXNrSN5/sBDih0jW/JQ4vvrM2ROj4oASqDwn3F+Jgr8Fom1F4Bm0swYljnEzp4d7Z0f/ZM+L0lTY0dl7NeJ
+X-Gm-Message-State: AOJu0YyM+Bhg2dQz9hvnaHdpfB9DMapvHK3DCQkDCnVMX7IJVBjJ/KPn
+	alXemxETldfT05eYn03iBdDNrrL2qu/eiplcXkQpS+N53Jo//fFE9qxYMZ/qLM/LirAr+eYJP1h
+	SYCpd7LkZz54d7svxwwacue0nZfJBUkbP9JCk
+X-Google-Smtp-Source: AGHT+IF9PsWLNO3FCxU7aVV4sNWcmYQNVE+PU7vZtXlmu0uxBM72nozjBz9oOKU4fU1os2TPNEsTgE1Tex2EPNoxxSU=
+X-Received: by 2002:a05:6512:3e21:b0:52c:cc9b:be20 with SMTP id
+ 2adb3069b0e04-52fdb52d825mr121406e87.1.1721989392884; Fri, 26 Jul 2024
+ 03:23:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459C5A372FADDD970BCA33088B42@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240725232126.1996981-1-mmaurer@google.com> <20240725232126.1996981-3-mmaurer@google.com>
+ <CA+fCnZdwRcdOig0u-D0vnFz937hRufTQOpCqGiMeo5B+-1iRVA@mail.gmail.com>
+In-Reply-To: <CA+fCnZdwRcdOig0u-D0vnFz937hRufTQOpCqGiMeo5B+-1iRVA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 26 Jul 2024 12:23:01 +0200
+Message-ID: <CACT4Y+Y+XmdNervhF5WAEyVwprJ32m7Pd8FF2fKy3K9FiTpJtQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kbuild: rust: Enable KASAN support
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Matthew Maurer <mmaurer@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Alexander Potapenko <glider@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, kasan-dev@googlegroups.com, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
+	Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Jul 26, 2024 at 09:28:52 +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH] clk: scmi: add is_prepared hook
-> > 
-> > On Jul 25, 2024 at 17:07:41 +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Some clks maybe default enabled by hardware, so add is_prepared
-> > hook
-> > 
-> > Why is_prepared when there is an is_enabled hook?
-> 
-> This patch is for non-atomic clk ops. The is_enabled hook is
-> In atomic clk ops.
-> 
-> > See in the atomic case we already have something similar:
-> > 
-> > ops->is_enabled = scmi_clk_atomic_is_enabled;
-> > 
-> > > to get the status of the clk. Then when disabling unused clks, those
-> > > unused clks but default hardware on clks could be in off state to save
-> > > power.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/clk/clk-scmi.c | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c index
-> > > d86a02563f6c..d2d370337ba5 100644
-> > > --- a/drivers/clk/clk-scmi.c
-> > > +++ b/drivers/clk/clk-scmi.c
-> > > @@ -142,6 +142,20 @@ static void scmi_clk_disable(struct clk_hw
-> > *hw)
-> > >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);  }
-> > >
-> > > +static int scmi_clk_is_enabled(struct clk_hw *hw) {
-> > > +	int ret;
-> > > +	bool enabled = false;
-> > > +	struct scmi_clk *clk = to_scmi_clk(hw);
-> > > +
-> > > +	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled,
-> > NOT_ATOMIC);
-> > > +	if (ret)
-> > > +		dev_warn(clk->dev,
-> > > +			 "Failed to get state for clock ID %d\n", clk-
-> > >id);
-> > > +
-> > > +	return !!enabled;
-> > > +}
-> > > +
-> > >  static int scmi_clk_atomic_enable(struct clk_hw *hw)  {
-> > >  	struct scmi_clk *clk = to_scmi_clk(hw); @@ -280,6 +294,7
-> > @@
-> > > scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
-> > >  		} else {
-> > >  			ops->prepare = scmi_clk_enable;
-> > >  			ops->unprepare = scmi_clk_disable;
-> > > +			ops->is_prepared = scmi_clk_is_enabled;
-> > 
-> > IMO from the decription and what the function is doing is_enabled
-> > makes
-> > more sense here to me, unless there's a better explanation.
-> > 
-> > Ref: linux/clk-provider.h
-> > is_prepared: Queries the hardware to determine if the clock is prepared
-> > vs
-> > is_enabled: Queries the hardware to determine if the clock is enabled
-> 
-> SCMI firmware has no knowledge of prepare/unprepared.
-> 
-> As wrote in the beginning, this patch is for non atomic clk ops.
+On Fri, 26 Jul 2024 at 01:57, Andrey Konovalov <andreyknvl@gmail.com> wrote=
+:
+>
+> On Fri, Jul 26, 2024 at 1:21=E2=80=AFAM Matthew Maurer <mmaurer@google.co=
+m> wrote:
+> >
+> > Rust supports KASAN via LLVM, but prior to this patch, the flags aren't
+> > set properly.
 
-OK, I got carried away with the wording of is_prepared a bit but it
-seems like prepare/unprepare are inter changeably used to enable/disable
-in non atomic cases and so it makes sense to follow suit with is_prepared.
+This is great, thanks, Matthew!
 
-Thanks for clarifying,
-
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Does Rust support KUnit tests?
+It would be good to add at least a simple positive test similar to the
+existing ones so that the support does not get rotten soon.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/=
+kasan/kasan_test.c
 
 
--- 
-Best regards,
-Dhruva
+
+> > Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> > Signed-off-by: Matthew Maurer <mmaurer@google.com>
+>
+> Hi Matthew,
+>
+> >  CFLAGS_KASAN_MINIMAL :=3D -fsanitize=3Dkernel-address
+> > +RUSTFLAGS_KASAN_MINIMAL :=3D -Zsanitizer=3Dkernel-address -Zsanitizer-=
+recover=3Dkernel-address
+>
+> If I recall correctly, the reason we need CFLAGS_KASAN_MINIMAL is
+> because older compilers don't support some of the additional options.
+> With Rust, this shouldn't be needed, as it requires a modern compiler
+> that does support all needed options. E.g., for CONFIG_KASAN_SW_TAGS,
+> we also don't have the MINIMAL thing for the same reason. (Possibly,
+> we also already don't need this for GENERIC KASAN, as the GCC version
+> requirement was raised a few times since KASAN was introduced.)
+>
+> >         # Now add all the compiler specific options that are valid stan=
+dalone
+> >         CFLAGS_KASAN :=3D $(CFLAGS_KASAN_SHADOW) \
+> >          $(call cc-param,asan-globals=3D1) \
+> >          $(call cc-param,asan-instrumentation-with-call-threshold=3D$(c=
+all_threshold)) \
+> >          $(call cc-param,asan-instrument-allocas=3D1)
+> > +       ifdef CONFIG_RUST
+> > +               RUSTFLAGS_KASAN :=3D $(RUSTFLAGS_KASAN_SHADOW) \
+> > +                $(call rustc-param,asan-globals=3D1) \
+> > +                $(call rustc-param,asan-instrumentation-with-call-thre=
+shold=3D$(call_threshold)) \
+> > +                $(call rustc-param,asan-instrument-allocas=3D1)
+>
+> I'm wondering if there's a way to avoid duplicating all options for
+> Rust. Perhaps, some kind of macro?
+>
+> Thanks!
 
