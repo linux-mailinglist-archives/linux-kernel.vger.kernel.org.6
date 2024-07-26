@@ -1,196 +1,131 @@
-Return-Path: <linux-kernel+bounces-263537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF47F93D766
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82FC93D77A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C4E1F24A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254471C22F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF26117D364;
-	Fri, 26 Jul 2024 17:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lCEjZ9uf"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B59F17C7C9;
+	Fri, 26 Jul 2024 17:18:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377BA17D34C;
-	Fri, 26 Jul 2024 17:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722014077; cv=fail; b=ihfMjqNH71+k2vkvp+TrbZzNBfPnc48V13KJyQZwx4pmCYndxLM9dM2P4MYajDSY0SSKZJ8SleO7jF1YUsaQAm7LiMXIH+LgjxLq9Gvb/CjbeQNNHt3MHB/7UG6wFcqln6YzFXoHPokGfeiuyCYwoBvx9pTpoo9QI8aXJ/2kpqE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722014077; c=relaxed/simple;
-	bh=JgonWANmBKNq4Zobs8w8evCLg33/BXJCwfDZtBUMoP8=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=K/TpmQ2veh284DbOxIkWlixFToADUK4vX0Ie/AuWNcsY+m4J2LAH0jQdtqkl4GZFQoLgGvYjt1smU1dgIk4vKxVjPRUQWoHbDq8oxWnwN9ELQ11IcpYEbbP4NOeqVEWxBxOHa3Yn8PbDVU2luHzVnOhveXjISkYku4ABjlrEwrU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lCEjZ9uf; arc=fail smtp.client-ip=40.107.237.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gvc5ynittfiCL0TrtKFCip6c8LuJEG7toIgWChQZToHv4UsYqG4QIjFeHA62VR2MPJ25kA5UQKUvFuSbnXyzg7lNitCeftQCoBoxuDIW7aPnIEaCcjquI8zF4UK3nPG+bz5Aa2txX264JgAZalstkhslbgkO60aNyrWIsUz4lwGM1OBKrlVHPRfWnhXtJPjY5n0WcmvMIsyJLAbcw7FAr/WdWM3qAhH5VLIWL5qYPeTjy66z7DuyWE9p2jEhSSY0wdRvtPTVvzPTJzA7jzUznNKXTSoXLahdphEC5YT/srRN0pU7pb2tIN3LWlINBTpmC7eUWBDa1ATcFVpHz61PsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e/dnQ70uL+DgNgeBGkx+cvjebm+1m4ZKf9c75pIzJs0=;
- b=S5xBAB/QO+yVKTex9bjajXbLvS9S2J85G7gIcvGMBR+qEP/cV9vMYFzgj1wqpSRSVqAb/rxmm8fxdfNydmUVQE/+DVCYL8+FWDCjW7CGK5gP32l2OUswzVdPhrP9c/IwNzsZQczebWX5fkkSFFmb9d9S6LdnXu6aHmw9dJ/KN0ulXULkidGS9drP/cXwFHX2L+0kNTmaE1KLingYz3DvfrzPHQaLvqPTWjy5tTQcAPaXfY8CeVzQ2MG7iW5T2IoAMmbfrDfXcbtGrA5ztjdmycH7gF1ry2sLCdbiux6ginan5TN5EP//AOAJDRCfUUrBbeOCWj+ZxieIyiiuL/NmRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e/dnQ70uL+DgNgeBGkx+cvjebm+1m4ZKf9c75pIzJs0=;
- b=lCEjZ9ufqXmoaYa/Jx57hOuMN9bJkS6XcIIWdivFudbhAV8vntsiORZzGvUFOBcZJYqWcC/FISDbjc0No0mr8aEgfyvA+OpGJ/AXK0QIpV1ZAmbRi7RNKgoKdQSq+mwhhwJ4IvHahpttz7C7b8UswxxW6646RCb0FB76GODJK5XjDwjhEKwLheetf7cBMlZHa0GICpvdZ1yLWPqIbYw6DwsATK5samdhWrk+Gbjm5eP7TyhGNnRGYFYJTmTPFsb1j6ZhEtXqO5Xf07B4CCeGdTpvEQBf4CBObmO5C/fB9rlBtBL7r3ac88uxO84GWcgUlZ7SZFH8Nitw2/VCFGp05Q==
-Received: from MW4P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::9) by
- CY5PR12MB6228.namprd12.prod.outlook.com (2603:10b6:930:20::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.28; Fri, 26 Jul 2024 17:14:32 +0000
-Received: from MWH0EPF000971E7.namprd02.prod.outlook.com
- (2603:10b6:303:8b:cafe::7c) by MW4P221CA0004.outlook.office365.com
- (2603:10b6:303:8b::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Fri, 26 Jul 2024 17:14:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- MWH0EPF000971E7.mail.protection.outlook.com (10.167.243.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 17:14:32 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
- 2024 10:14:30 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 26 Jul 2024 10:14:29 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 26 Jul 2024 10:14:29 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.6 00/16] 6.6.43-rc1 review
-In-Reply-To: <20240725142728.905379352@linuxfoundation.org>
-References: <20240725142728.905379352@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889D311C83
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722014286; cv=none; b=tnRq+DX5sWD0e+rHZuhLdICLZcdDW2kieYWakIfvAH8pr2Z63oxPoENryHCDtyLqdWBsTtrAfSM39g5gxelmltPfg3/LchzLoVZGHkdfe9Pf8aOM1gnjkOStCN/aUFBGSi2lUXaw/AX0z8kivgqePSZgmYDcu4ttJLzPhVypWGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722014286; c=relaxed/simple;
+	bh=hAk9tSS6KrB9Q7/s8z/2D19I7YuQ8hsyVXUzLpLN1e4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YcGokg8pLrpcd4j/dAmSOaIFivzB5rip3IDq9lbzrcly0zejomtp10IzesOc6FkFLwVgMJ6lotYtt4uBpTefwU0TqmBqUfOYUpCVvFG4kSkKL2P2FY3P+BXNRpa4WQQr1ev5qPIt7xFp96TmcOcp8Jxp1GGtlDvYNdF9M2eDOTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3987dace329so28295025ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:18:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722014285; x=1722619085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbFCHuKsOVQmhgIz2OuhtCVxOwJfzQDTLiBU2A45lSI=;
+        b=Epl4/agfyvEDAmqbGzaBvSYMrWgXQWR0s/D5ROBxJHxwY7XPPGUd4RD0oD7z+hORXP
+         2OmDdg2d4pko9bRvi5+pdMu4Ucr9V/OetPrSz7Ksb83AzzG2asNh52WjEHtFFnE8BxkA
+         LPD6gG4w+Dkpd9D6GJ7+pOeNvCeSwcsB1fW6yBBkRcgSdlv5qUcGbTZV3TycAz7EZOe9
+         10FF2nNwzw5R3Ys1hWx/E6GuE3KQPm/sWXGQJ0pRo2lkV9ACX+kd7f5/VpZrIZSOV0Vx
+         zj1xHjsigy8qGXLwrR4Rvd3eNtnnOD6z6JUk7E1FfwKiTr1qIPSNnk9wKNyKaKJhY55M
+         Wi+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW48/li4v8JlHx3+yvL75skBbMyNj/Plna3VnM6enZcnMY8P0KbIgm4Imi3li6Ax7l2ZvjJMsMwQ5/qw6/yXeXKKS7cH/uqkDiQ/BPU
+X-Gm-Message-State: AOJu0YydcB9YGV/t02LdoC2ULJ3OqBKadUDkGqmFgVAuyLrpbvQnWk/M
+	Eqw35r9WuORyZg04dC5F/R390czjW1tpBxEjiyVcS0T/HUFkguHKvzMJFyFFnA/DF1SyumasSqP
+	cQJEJVjSMADt6IS2UWbVZB3bqbkagJlXfIT/59bbsovOMiPVudJoIn6g=
+X-Google-Smtp-Source: AGHT+IHPpsPSUKrQFbp7OGIVC2gJ7sKZn6O3KEV5tdUC/Py3Om20+/XD4eYYW+fpvs9DkOV3pUREiRe/CgrC7pK4z9UemsUtKuZQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <49315694-da12-4493-a496-ab47fee63b46@drhqmail202.nvidia.com>
-Date: Fri, 26 Jul 2024 10:14:29 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E7:EE_|CY5PR12MB6228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85323be1-24d6-45f7-cc83-08dcad966a75
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2NnaXByektHTkVCVEhaSzV0OHBSb1dBQ0V0MFExa2tYdlpKTm1OdDZDWXFI?=
- =?utf-8?B?bEpqckJhYVVQb3VmVkt0VS9sd3NPZUFydEpyN2s4Y1N0M29DZUQ2ckoyV1M4?=
- =?utf-8?B?VGMxVWowQkNzeUNvdTNSdXdsclpLRGRBRzN5U0VKbVlDZUc0VUVrVHJJaWcw?=
- =?utf-8?B?T1dIckd4QnNWU1VIMytQeGh2R2Y5c3VDNnZuL2pXRHVCdVo0aEhrY2JWMjRN?=
- =?utf-8?B?aUMzOHZrUlJic0kySGwvVHJxdWxjVlh5RVhFQ1MwSDNwdXlkbmJiZTI0V3Rt?=
- =?utf-8?B?Y0xId3lWbU1OaTU4b3NISFBua3hNTWhpdU5wZExDNUxoeGF5aFJUWEZFNTBU?=
- =?utf-8?B?TnY5S1hjSW42WVRsMTRjdXZXZG9zQS9NTi9qajdaWXNaSGNEWjRheEl0Znht?=
- =?utf-8?B?ZmcwblVSWWR6bW9VVmdjV2pmR1lnL1FkV0ZUQytZMTFlRzE4MjZTbWVRNnNY?=
- =?utf-8?B?NGI4eHRHOXFQcmVhT2MwMW8wN2lCQmUzcmNEYWYzRnRNWW1sYm8wOGRSbGRj?=
- =?utf-8?B?TWFMclVoM2Z1WHR1ZFl3alBGVVNiV0tBWmlMTlpsZDdpV28xVWlaMjdtVEM3?=
- =?utf-8?B?STE1bWlQYWNkSlpGdlZUbkp6TlpvY3ZqNUZBUTNHdlZVRU95N3ZtQUJFb1d0?=
- =?utf-8?B?ZDVDMEpYWE9VUjZmQ3o2NEFsYy9Dbno5a0NVS1o3NGQ2QWhNb2RCOWFyUU10?=
- =?utf-8?B?Nmg5L2EzQWgwMzl0T2RNSDVnTk9hOG9FTzRFb2xaWUJaQlJWZFZ2M0ZIRGR4?=
- =?utf-8?B?bW1sSmVrNEdjYUROckhpSmttU00wbG8xTEdzVWF3ejk4VGd4R0F4S2xrNVdN?=
- =?utf-8?B?bEJOMm51b0VFR1hHVkR5QzZsYnBxQytud3Z6bkZaZEhZbUxoUlhrejAzNHFR?=
- =?utf-8?B?SmpJL0UvYkg3U0JpVmowMTNzRERrQUxWbVJITEVsMWRHdm14YkJPbVAxNnp4?=
- =?utf-8?B?MVNJOTNvMTRZWmJLSUU2Z1JRSUtpdEdVSEgvT3BOcm9YcUhxOUtNWVFvOVpB?=
- =?utf-8?B?MTdqMEdKNXBhY2IrUzB2RzFrRDI4aC8wcmRNWEJzcnNjdzcwYmtlQkErTFFq?=
- =?utf-8?B?d2JJUi9hdithNjNEVGVtbGx6djQ0a09BbmlDbE81bHZlNW9RU2I3amcrVzJV?=
- =?utf-8?B?Q09aVDI5aVJVK0Q3a3E5MEtpUkx4WnpWWG11NWFIZi9DZVlybTZQQ09hK2hG?=
- =?utf-8?B?TWRiTXRobG94c1JNSlRtUmRGbXlZTXFIRm9EUVVWaXhpQ2hwa3FIZWRpKzMx?=
- =?utf-8?B?RlBTcE1YUFk1d3A1Tnk4akpYa1FJdTFkbGRNN1VycHoydGVuUTlQQ01mUzdU?=
- =?utf-8?B?VlRoVjFadnYyZllUUDNpeEVvSHRpR2t0VXk4aUZRZTJlVldXY1E3d1p6cDZq?=
- =?utf-8?B?RGVDaWxXdndEU3dSSGUzeGNIRXMwQzU3R0IrZjNveHJUUTJ0Szl1Q1FOR2RV?=
- =?utf-8?B?cmJ1b3VCZ3pUMEpiYmdUZTRmZm82Rm4wL1JhaXM0dUxGa3JRcldWUFg4TFJp?=
- =?utf-8?B?REpLcTd5dWxEN0gyNHRJbzFPZ1paeTRLSmlpYVF4alRvWFU3VDRzK1BXZTZN?=
- =?utf-8?B?UlBKOU9uOXhuYS9Xb1psc21kTFNzTVVBRzJFWHp3WHFnd25LZjBxZmc3QVdB?=
- =?utf-8?B?eFlwR1VyM0xwODRaTjBmQ0hmbERvZ0RVVE9XRitSNGtzVThLejBNL2p6aVhs?=
- =?utf-8?B?Z0o4N3I4bzlSaU5kZG9tTEEyR2pPYVZQQW9CdDBWdTZSbUEvTE42YzUwME92?=
- =?utf-8?B?Y1pkUWFQa1F0bDlXUzlQUkZ0TW9PQThUcUdGc0VnK21KNFJ6WnFlRmt0VFNv?=
- =?utf-8?B?WEZUT09hWjhJTHBTM2sxeWpjRHY3dW5ZWGgyR29nNzh4S3paTk9mRE9pTzUz?=
- =?utf-8?B?N1BOcmNKTFpKQ29sZ1BrZTFhUXRiaGVoVVVDU1pFWXpDUGFPTmFOQ1FuVzhq?=
- =?utf-8?Q?Kh7/ElVLxx+cUctWyqftiBfItTX4095Z?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 17:14:32.1791
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85323be1-24d6-45f7-cc83-08dcad966a75
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6228
+X-Received: by 2002:a05:6e02:178d:b0:397:3a28:94f1 with SMTP id
+ e9e14a558f8ab-39aec4177b3mr19665ab.3.1722014284667; Fri, 26 Jul 2024 10:18:04
+ -0700 (PDT)
+Date: Fri, 26 Jul 2024 10:18:04 -0700
+In-Reply-To: <tencent_ED660A3CBD379296C036AA4A1A75D7771D09@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bc6e43061e29b172@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dbSplit
+From: syzbot <syzbot+dca05492eff41f604890@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Jul 2024 16:37:13 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.43 release.
-> There are 16 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.43-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hello,
 
-All tests passing for Tegra ...
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: array-index-out-of-bounds in dbSplit
 
-Test results for stable-v6.6:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+loop0: detected capacity change from 0 to 32768
+loop0: detected capacity change from 32768 to 32745
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dmap.c:2629:27
+index 4294967295 is out of range for type 's8[1365]' (aka 'signed char[1365]')
+CPU: 1 PID: 5951 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-11323-g7846b618e0a4-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dbSplit+0x1fd/0x220 fs/jfs/jfs_dmap.c:2629
+ dbAllocBits+0x4e5/0x9a0 fs/jfs/jfs_dmap.c:2192
+ dbAllocDmap fs/jfs/jfs_dmap.c:2033 [inline]
+ dbAllocDmapLev+0x250/0x4a0 fs/jfs/jfs_dmap.c:1987
+ dbAllocCtl+0x113/0x920 fs/jfs/jfs_dmap.c:1823
+ dbAllocAG+0x28f/0x10b0 fs/jfs/jfs_dmap.c:1364
+ dbAlloc+0x658/0xca0 fs/jfs/jfs_dmap.c:888
+ dtSplitUp fs/jfs/jfs_dtree.c:979 [inline]
+ dtInsert+0xda7/0x6b00 fs/jfs/jfs_dtree.c:868
+ jfs_create+0x7ba/0xbb0 fs/jfs/namei.c:137
+ lookup_open fs/namei.c:3578 [inline]
+ open_last_lookups fs/namei.c:3647 [inline]
+ path_openat+0x1a9a/0x3470 fs/namei.c:3883
+ do_filp_open+0x235/0x490 fs/namei.c:3913
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3b4dd75b59
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3b4ebb0048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f3b4df05f60 RCX: 00007f3b4dd75b59
+RDX: 000000000000275a RSI: 0000000020000080 RDI: ffffffffffffff9c
+RBP: 00007f3b4dde4e5d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f3b4df05f60 R15: 00007ffda143f618
+ </TASK>
+---[ end trace ]---
 
-Linux version:	6.6.43-rc1-ge83c10183573
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested on:
 
-Jon
+commit:         7846b618 Merge tag 'rtc-6.11' of git://git.kernel.org/..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d89903980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
+dashboard link: https://syzkaller.appspot.com/bug?extid=dca05492eff41f604890
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=176745f1980000
+
 
