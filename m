@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-263414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356A993D57E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F3793D57F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4981D1C230FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77F71F21746
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375AB1CD2A;
-	Fri, 26 Jul 2024 15:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9941CD39;
+	Fri, 26 Jul 2024 15:02:00 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BBE18E1E;
-	Fri, 26 Jul 2024 15:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3326BA42;
+	Fri, 26 Jul 2024 15:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006057; cv=none; b=JTtaIT6V0K+JfGEXca8Se15NnwrtKLx0QHcJOV5Z7t+ovwwLy8g7u6g95cF1ez7JKNr+5WtBsLf8txTve1GTDw0uAd9UhELPUVn85vXgIIg1asV+FDLU7kqG5QuPSDpc6qdwmj4qTjPNhm6sSrSuWnwAP3KFsMDYUJitUBKVFvU=
+	t=1722006119; cv=none; b=Q1Og2T2dyx0ARnxFC8snZsHu8C7/Qyqj9YrWTtOnGeWOA+zMCxG1wRNJjwFVbPCvgkRVxHsznjWxzZoNZ0oMwdMT2hvIvUWXBxnTWOP8vg3+P7elKzFGYMT4JZg2aYuXp87csZhOLqd3e0RQEcvU1xqK/xJTdoU5NJPMgP7kSXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006057; c=relaxed/simple;
-	bh=njvtIAKad291UXxaRgGlGZjM7RXaqPijLOQ4QuDdfFw=;
+	s=arc-20240116; t=1722006119; c=relaxed/simple;
+	bh=Rmxlr2zbzrZFAVX6QcKKChdsEGuKdhnNrE/Xh03XGPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjVyIpKD0pqM32KrEBl18maYIJqytaQg25wOTYTfR3Dt8R0RCsrAHCmjxa9FFfuBvzESQpI7ydk4tNpvo0Bcz+p7VqBiXhfS3rpwRR4b1zAhSf2EHT+f68zMRfqNkYyEIwC/8b89jLuzvmVo5gLtHeBkVPUwdIVyLWV20QxiKwc=
+	 Content-Type:Content-Disposition:In-Reply-To; b=gk2QQ6kRFWfuh21XjpX84z2bxeAWmp/vCYRXEw0NTfQ6aLJk0Xiw3Swx5slfeL+gzArzzfmQGkhS4TsvfEC0sF73GblC3ODEVq7BC9tVqYhOD8Ta2XvD1xJ3zoR5Qpi8rDx3ixcFISvldinLkkxsT5hzluHW7Xvd91uLycr1e8I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37ECD1007;
-	Fri, 26 Jul 2024 08:01:21 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D66521007;
+	Fri, 26 Jul 2024 08:02:22 -0700 (PDT)
 Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8AE383F73F;
-	Fri, 26 Jul 2024 08:00:53 -0700 (PDT)
-Date: Fri, 26 Jul 2024 16:00:51 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBD293F73F;
+	Fri, 26 Jul 2024 08:01:54 -0700 (PDT)
+Date: Fri, 26 Jul 2024 16:01:52 +0100
 From: Cristian Marussi <cristian.marussi@arm.com>
-To: Etienne CARRIERE <etienne.carriere@st.com>
+To: Peng Fan <peng.fan@nxp.com>
 Cc: Cristian Marussi <cristian.marussi@arm.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
@@ -43,77 +43,149 @@ Cc: Cristian Marussi <cristian.marussi@arm.com>,
 	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
 	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
 	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"peng.fan@oss.nxp.com" <peng.fan@oss.nxp.com>,
+	"etienne.carriere@st.com" <etienne.carriere@st.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
 	"michal.simek@amd.com" <michal.simek@amd.com>,
 	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
 	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
 	"ptosi@google.com" <ptosi@google.com>,
 	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
-Subject: Re: [PATCH v2 4/8] firmware: arm_scmi: Make MBOX transport a
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
+	Etienne Carriere <etienne.carriere@foss.st.com>
+Subject: Re: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
  standalone driver
-Message-ID: <ZqO6IyaOaTbuQBOd@pluto>
+Message-ID: <ZqO6YH-OTAFwWv_b@pluto>
 References: <20240710173153.4060457-1-cristian.marussi@arm.com>
- <20240710173153.4060457-5-cristian.marussi@arm.com>
- <PAXPR10MB46879DC8AB435367E0D3C251FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
+ <20240710173153.4060457-7-cristian.marussi@arm.com>
+ <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR10MB46879DC8AB435367E0D3C251FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
+In-Reply-To: <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Tue, Jul 23, 2024 at 01:41:04PM +0000, Etienne CARRIERE wrote:
-> Hi Cristian,
-> 
-> On Wednesday, July 10, 2024, Cristian Marussi wrote:
-> > Make SCMI mailbox transport a standalne driver that can be optionally
+On Thu, Jul 11, 2024 at 12:57:46PM +0000, Peng Fan wrote:
+> > Subject: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
+> > standalone driver
+> > 
+> > Make SCMI OPTEE transport a standalone driver that can be optionally
 > > loaded as a module.
-> > 
+> > 
+> > CC: Etienne Carriere <etienne.carriere@foss.st.com>
 > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 > > ---
-> >  drivers/firmware/arm_scmi/Kconfig             |  4 +-
-> >  drivers/firmware/arm_scmi/Makefile            |  3 +-
-> >  drivers/firmware/arm_scmi/common.h            |  3 --
-> >  drivers/firmware/arm_scmi/driver.c            |  3 --
-> >  .../{mailbox.c => scmi_transport_mailbox.c}   | 44 +++++++++++++------
-> >  5 files changed, 36 insertions(+), 21 deletions(-)
-> >  rename drivers/firmware/arm_scmi/{mailbox.c => scmi_transport_mailbox.c} (88%)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> > index aa5842be19b2..135e34aefd70 100644
+> > v1 --> v2
+> > - handle platform_driver_register() failures
+> > ---
+> >  drivers/firmware/arm_scmi/Kconfig             |  6 +-
+> >  drivers/firmware/arm_scmi/Makefile            |  2 +-
+> >  drivers/firmware/arm_scmi/common.h            |  3 -
+> >  drivers/firmware/arm_scmi/driver.c            |  3 -
+> >  .../{optee.c => scmi_transport_optee.c}       | 91 ++++++++++---------
+> >  5 files changed, 52 insertions(+), 53 deletions(-)  rename
+> > drivers/firmware/arm_scmi/{optee.c => scmi_transport_optee.c} (90%)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/Kconfig
+> > b/drivers/firmware/arm_scmi/Kconfig
+> > index a4d44ef8bf45..def7e3f09356 100644
 > > --- a/drivers/firmware/arm_scmi/Kconfig
 > > +++ b/drivers/firmware/arm_scmi/Kconfig
-> > @@ -75,7 +75,7 @@ config ARM_SCMI_HAVE_MSG
-> >            available.
-> >  
-> >  config ARM_SCMI_TRANSPORT_MAILBOX
-> > -       bool "SCMI transport based on Mailbox"
-> > +       tristate "SCMI transport based on Mailbox"
-> >          depends on MAILBOX
-> >          select ARM_SCMI_HAVE_TRANSPORT
-> >          select ARM_SCMI_HAVE_SHMEM
-> > @@ -85,6 +85,8 @@ config ARM_SCMI_TRANSPORT_MAILBOX
-> >  
-> >            If you want the ARM SCMI PROTOCOL stack to include support for a
-> >            transport based on mailboxes, answer Y.
-> > +         This driver can also be built as a module.  If so, the module
+> > @@ -89,8 +89,8 @@ config ARM_SCMI_TRANSPORT_MAILBOX
+> >  	  will be called scmi_transport_mailbox.
+> > 
+> >  config ARM_SCMI_TRANSPORT_OPTEE
+> > -	bool "SCMI transport based on OP-TEE service"
+> > -	depends on OPTEE=y || OPTEE=ARM_SCMI_PROTOCOL
+> > +	tristate "SCMI transport based on OP-TEE service"
+> > +	depends on OPTEE
+> >  	select ARM_SCMI_HAVE_TRANSPORT
+> >  	select ARM_SCMI_HAVE_SHMEM
+> >  	select ARM_SCMI_HAVE_MSG
+> > @@ -100,6 +100,8 @@ config ARM_SCMI_TRANSPORT_OPTEE
+> > 
+> >  	  If you want the ARM SCMI PROTOCOL stack to include
+> > support for a
+> >  	  transport based on OP-TEE SCMI service, answer Y.
+> > +	  This driver can also be built as a module.  If so, the module
+> > +	  will be called scmi_transport_optee.
+> > 
+> >  config ARM_SCMI_TRANSPORT_SMC
+> >  	tristate "SCMI transport based on SMC"
+> > diff --git a/drivers/firmware/arm_scmi/Makefile
+> > b/drivers/firmware/arm_scmi/Makefile
+> > index 6868a47fa4ab..b04119ce972f 100644
+> > --- a/drivers/firmware/arm_scmi/Makefile
+> > +++ b/drivers/firmware/arm_scmi/Makefile
+> > @@ -7,13 +7,13 @@ scmi-driver-
+> > $(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
+> > -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
+> > scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o
+> > system.o voltage.o powercap.o  scmi-protocols-y += pinctrl.o  scmi-
+> > module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
+> > 
+> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) +=
+> > scmi_transport_smc.o
+> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) +=
+> > scmi_transport_mailbox.o
+> > +obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) +=
+> > scmi_transport_optee.o
+> > 
+> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o diff --git
+> > a/drivers/firmware/arm_scmi/common.h
+> > b/drivers/firmware/arm_scmi/common.h
+> > index edb786cde25c..0ce1d804b3fc 100644
+> > --- a/drivers/firmware/arm_scmi/common.h
+> > +++ b/drivers/firmware/arm_scmi/common.h
+> > @@ -289,9 +289,6 @@ int
+> > scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info
+> > *cinfo,  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO  extern const
+> > struct scmi_desc scmi_virtio_desc;  #endif -#ifdef
+> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE -extern const struct
+> > scmi_desc scmi_optee_desc; -#endif
+> > 
+> >  void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr,
+> > void *priv);
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/driver.c
+> > b/drivers/firmware/arm_scmi/driver.c
+> > index b14c5326930a..67b416c7f2f5 100644
+> > --- a/drivers/firmware/arm_scmi/driver.c
+> > +++ b/drivers/firmware/arm_scmi/driver.c
+> > @@ -3251,9 +3251,6 @@ ATTRIBUTE_GROUPS(versions);
+> > 
+> >  /* Each compatible listed below must have descriptor associated with
+> > it */  static const struct of_device_id scmi_of_match[] = { -#ifdef
+> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE
+> > -	{ .compatible = "linaro,scmi-optee", .data =
+> > &scmi_optee_desc },
+> > -#endif
+> >  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
+> >  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
+> > #endif diff --git a/drivers/firmware/arm_scmi/optee.c
+> > b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > similarity index 90%
+> > rename from drivers/firmware/arm_scmi/optee.c rename to
+> > drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > index 99f3b0bfb956..7a16c8d3e213 100644
+> > --- a/drivers/firmware/arm_scmi/optee.c
+> > +++ b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > @@ -1,6 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /*
+> > - * Copyright (C) 2019-2021 Linaro Ltd.
+> > + * Copyright (C) 2019-2024 Linaro Ltd.
 > 
-> Nitpicking: replace the 2 space char before "if so," with a single one?
-> Applies also to patch 5/8, 6/8 and 7/8.
-> 
-
-Fixed in V3.
-
-> Other wise LGTM , but my comment on patch 3/8 that would affect
-> use of DEFINE_SCMI_TRANSPORT_DRIVER() in patch 5 to 7.
-> 
-
-Yes I reworked the macros params.
+> This should be kept unchanged?
+ 
+Yes, as said, it will be fixed in V3.
 
 Thanks,
 Cristian
