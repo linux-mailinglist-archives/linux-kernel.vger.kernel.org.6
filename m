@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-263573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884CC93D7D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0E793D7DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AA21C22E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EA51F21C1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6617CA0E;
-	Fri, 26 Jul 2024 17:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA3A17BB10;
+	Fri, 26 Jul 2024 17:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAQh8Rs8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hmk4H21h"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC07E17C7CF;
-	Fri, 26 Jul 2024 17:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEE17623E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722016381; cv=none; b=n4hiQZiFISouNQKYR3HbG3v46iCNns4z8W4CF/BoqpTb2AaPfyIBGE6PgMVPRW6Zuzuq8poKFb0LIsqMD+Xg3uy41BbqOW2/vJ6T9j9mU4y2RmOuMvISYNXs9YSLaW5p7SwAlkRB+shdznjUEjMNp9oi6fVqnvhYUWXR0lQvI30=
+	t=1722016587; cv=none; b=Pni18MK4NXL7mea/TcoBYf9PWnJcpaR1JfKsxczOt4IPx5LoG/FHVWmQyLeBLNiAWKFoiW0ko30rVONSguqL1lc6jVVSdem8UgL2WU0HCB2jjVU69cBCUmX5ICJe5DKYjUriDXlTymK6xrDOPNIkOYuAHj3zDg9E/PW0vHz65ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722016381; c=relaxed/simple;
-	bh=gbriWgUniQV5sMUGUpc7uG99BGb3pVKbc+1MWsqJxl0=;
+	s=arc-20240116; t=1722016587; c=relaxed/simple;
+	bh=D0JVdJPhPCLp5esR4XLwLE5OGpidKIvLh93BHT5WLxQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hE6qn3bSLV0GC6OV1EmH0jS3N4bO8AQiDlA33tUi+R53UMKJ3kunolWxOUTabSu7H8uU9vtmAmlfshiHKB047KhdqB5QUOfsAO0NUySYoH5S8gSAg6rZE8FuXTNzhXkrbGKrKkhAD4DqPi4B60B/rJ1T2f+R7EvQ7HRIQ3RHfKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAQh8Rs8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAC7C32782;
-	Fri, 26 Jul 2024 17:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722016381;
-	bh=gbriWgUniQV5sMUGUpc7uG99BGb3pVKbc+1MWsqJxl0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VAQh8Rs86BVc0bQxBQpsw7E3oB7YUvEzDioyvNYyYRWg3/YE7BJZ9Bb5yeZktWUpE
-	 1jI2lNv0JjHBTeMrqFoOx4732CF0GlVQ8ls/qKpBs5EaMagA0+TzO3hURk91b+c2nJ
-	 GYh/ZaOkeTJ/Ehvehu29zHCbM1rfeyyShv0iZfQnHzViqUZtSQh7WwhFsgBPAwKaaR
-	 nXKjVlm1GJwtqXN4zJMB6FcsT14q3jUJG4IAHR0gTYtnyeAzTexMgGLCGw3OqNya4Y
-	 gHCfIMUscJ9mctMB6SDLSpL1yVxgIEmLbOAyZax3r6DQVedli9R+6goBy+Yf/JOwlD
-	 YhO2AP739onfg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso22825781fa.0;
-        Fri, 26 Jul 2024 10:53:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrsVPzPygjIKRSXvxldVLhsgDZ1wWrePEaktv6iuCfZkgR8IOsVkkD3ubu1EvUjwYDyLSku+2H5lbS941ejyByE2fYCCm0HR7a7IgZClId9VQ5axIR3x2Bbb2gkIqGwQgfHGRjutTEa6fJg0vwDkJmBVxJoR3/R/Wf0GIkAxwx1hE=
-X-Gm-Message-State: AOJu0YwOV0vHjL9EaHuV4O/3uqHs+KDvdwDGhncAp0QXY0QWnuSbh5ph
-	ZKBggRmt0lpf2mw7FO7mCzy1T5z8dKc3QXzkUaJRaA217EytR4VapUci2TymQJKMagA0XKYz7Id
-	iC1WcR0bXmIuIxzigZ5C2mu4j+A==
-X-Google-Smtp-Source: AGHT+IGIboFhjpqofVqlOelOMvR4+RrtFqzfu/57gAtHLJz3rx7lzmCVwhoRpixh1COmKEuQcel3sDSsZgJ8oYzdKa4=
-X-Received: by 2002:a05:651c:a09:b0:2ef:2d54:f590 with SMTP id
- 38308e7fff4ca-2f12ee278bamr4650001fa.24.1722016379634; Fri, 26 Jul 2024
- 10:52:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=F0V5rYCdL344GrLtk7aUTYqw6919pPqd+m1n8Pd4MM3doJXgJCIe8PhnGinAQeMH3XEfLg1FItwP3Ic49aV/5iG2v9AxdZ1gmZjU69beESkBwNiKO0TPNkmPhG224HsZxUfnxyzX7gYDyAkooA1OPUbmofIrE7+VSRZeRTGTYdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hmk4H21h; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e087264e297so2197751276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722016584; x=1722621384; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
+        b=hmk4H21hNCE2HaZfJCJd67DSwkAcmdhWfb2i4z4d+VkBenwhonIVE79nB6yOfXcQlQ
+         FOnK66DRu7tJBylr2GhuX7qW2eT+XseSkpdden2AAHg5qRnBlguILlrXDLMPWVp5E5bb
+         0tNvcXbDlO0WEeBEAHc6NoG0mI1sTA7O3rht2kQ4C6m7UCRjLlUqtZ+ywmvNcKSTLTkV
+         XR8hOnXiTJZ/W3JZCH76znHlk5mQ8kfeIRFH2ZV8hVH/a6fA256Ft4wzvLwGMaej6KpQ
+         qMJqKKVgTEkNHaNnoDGslZlbSIdoxmwHOXp53w4qE0hK/OvYRrHPYbGMgm9SGrpMzub8
+         R1XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722016584; x=1722621384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
+        b=fQ0derew8H27AlmtBeVLJCZCiXhLsgFxdwI3mhu/VroC5LXsRSA9yS5z+9VjB6NhgH
+         qJZ97nB6m368Zcn7bkUPA1aPqUlJKH/JGkbCZ0Vb6LKpWvJG7l4vbayrRp596aGMtXPx
+         o91P6TZCqkQua/dOb4TJkwiQehjdL4e466FIc/Fak3j8oiHIvb8tJRa3H/KKJUF157tF
+         lKMGqZ7dQSE0W2Y/8Yxl6VSaIi4/H871+b1DGLy7/mQbLR+wpAAeU/rSsrGT3Kc/URfR
+         CYhHUA//stUu8uqbY6XZoqC+UGLZRBavHQIJdbXZd+wPv5Nn0adAkZYV1UFSv2NyxKPL
+         64IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnFXAEBHBrdI1fF2prRBuUUObL0XT69nJhOqnyJY9HqUVqr5EPA0MQiXmA5X6f5XEYZaJREQ7qsmRolp5rY7Xdo7tQdtZVEhAgX1wd
+X-Gm-Message-State: AOJu0YweCMh4EXBlRGW0a58DGccJcNE3YoPt7cdaZGFuQ9lWtJzASN1h
+	Za8KEvKUbgyqzTxY/T3H2kbcM7IoapfDdnIGmGh0KfI+UNSCpJbMHxiE012Ee45gJkFOuNNWQsg
+	rlPykIvyMKPtaOUyghM7yidS8Rbx23/G5w+vxIw==
+X-Google-Smtp-Source: AGHT+IFRD79UEjDaEHKHCsvV9s7KnHcAuekNi2ZVuvc9B/6COZfuwaKlCuHkfaA1N/a3WtELB0IlOea81E3BIThlJOo=
+X-Received: by 2002:a25:ab11:0:b0:e0b:1407:e322 with SMTP id
+ 3f1490d57ef6-e0b544485afmr656498276.1.1722016583941; Fri, 26 Jul 2024
+ 10:56:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
- <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
- <a6c92c73-13fb-8e9c-29de-1437654c3880@amd.com> <20240723162107.GA501469-robh@kernel.org>
- <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com> <CAL_JsqJjhaLFm9jiswJTfi4yZFYGKJUdC+HV662RLWEkJjxACw@mail.gmail.com>
- <ac3aeec4-70fc-cd9e-498c-acab0b218d9b@amd.com> <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
-In-Reply-To: <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 26 Jul 2024 12:52:46 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
-Message-ID: <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Saravana Kannan <saravanak@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	Lukas Wunner <lukas@wunner.de>
+References: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org> <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
+In-Reply-To: <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 26 Jul 2024 12:56:12 -0500
+Message-ID: <CAPLW+4nrxXOz_gaKR6dLZxiNW5AEMUZRMcmAyzpnd_GKzdVdnw@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to FIELD_PREP()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 6:06=E2=80=AFPM Lizhi Hou <lizhi.hou@amd.com> wrote=
-:
+On Fri, Jul 26, 2024 at 1:02=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 >
-> Hi Amit,
+> Hi,
 >
+> On Wed, 2024-07-10 at 07:45 +0100, Andr=C3=A9 Draszik wrote:
+> > Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
+> > (constant) initialisers, not constant values.
+> >
+> > Use FIELD_PREP() where possible. It has better error checking and is
+> > therefore the preferred macro to use in those cases.
+> >
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
 >
-> I try to follow the option which add a OF flag. If Rob is ok with this,
-> I would suggest to use it instead of V1 patch
+> Any comments on this patch?
 >
-> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> index dda6092e6d3a..a401ed0463d9 100644
-> --- a/drivers/of/dynamic.c
-> +++ b/drivers/of/dynamic.c
-> @@ -382,6 +382,11 @@ void of_node_release(struct kobject *kobj)
->                                 __func__, node);
->          }
->
-> +       if (of_node_check_flag(node, OF_CREATED_WITH_CSET)) {
-> +               of_changeset_revert(node->data);
-> +               of_changeset_destroy(node->data);
-> +       }
 
-What happens if multiple nodes are created in the changeset?
+Looks good to me:
 
-> +
->          if (node->child)
->                  pr_err("ERROR: %s() unexpected children for %pOF/%s\n",
->                          __func__, node->parent, node->full_name);
-> @@ -507,6 +512,7 @@ struct device_node *of_changeset_create_node(struct
-> of_changeset *ocs,
->          np =3D __of_node_dup(NULL, full_name);
->          if (!np)
->                  return NULL;
-> +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-This should be set where the data ptr is set.
-
-Rob
+> Cheers,
+> Andre'
+>
+>
 
