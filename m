@@ -1,301 +1,183 @@
-Return-Path: <linux-kernel+bounces-263625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BADC93D866
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA68A93D868
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F581F243EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C511C23445
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46AC3FB83;
-	Fri, 26 Jul 2024 18:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AboQ4Nxb"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED034500E;
+	Fri, 26 Jul 2024 18:36:30 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E9A25776
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E5D383A1
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722018910; cv=none; b=CacQgZpcglldnMVS3qRHvWu7i+mn4o2W1onKvOvR9FE3K0H5i/W0MGO22Z25xGZpyrjszfSwNj8OnFIa6DeM+JS2OeZU0Hpsf6p/4PYcmDLrr7w7jr/u8NEZIsS1yLAVgdJ7kK3hIOp0IRPV/JbynzHHOsM1Heg6PyNzdp3k4xI=
+	t=1722018989; cv=none; b=BcUps2kuJTGepty1Q0bGYvlSnyvgRmXWRwxiFzfO9TrOZJJeiIF1EQnNBSXbCXX2rRPdFlIUgLJAqXh8OZQXb+yiHUW9PxnhwsSqYpbxOrCW2zqMUhDhEDjYiNLpriGDjszzS9nryF4iFCzJsSca9Cw/9qrC4dD7dVYR+MGzMiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722018910; c=relaxed/simple;
-	bh=hRA8HZQcGcG6SxkVlDko/Vh5liedbsC6En7Rt/1y780=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cx2aseXMCSwuP3dzK36BbbQws3QcmdpJe6gNoc7VHTg9uAOgnCUwBu7SHnUO8oRCGaNxmCC4By4i4aYf7bGatiDd7t0KeATgzPtLvuuo+S/7OZj9WLB8cWvyeJnje1naJbsNaPOjgafGkVi99CFg5R7L8CiemdS93HJnBR0Bdi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AboQ4Nxb; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52fc14d6689so1728515e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722018907; x=1722623707; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKiBPMLdAq3VqCci1gfJFsY5sdAkK4cbjCTzOGmnldU=;
-        b=AboQ4NxbrDe81AzA0pn+P9IwKShmzNBkeaFlqLuLYg3/QzM+26LFz8zF78xC9rAIPc
-         nYylyuEcfTJMm06+L1mxNDxE4bxX9/XpMFzEmLiFWpH/7ewZuWyET6YlmcOH+mYUXnMD
-         i9DKRa0ZEWaAMPA9Eu3g+/Ay/KdMYuba5wWQU=
+	s=arc-20240116; t=1722018989; c=relaxed/simple;
+	bh=WKH5BgxiUJ5hc/0TawnXFMva1YrvHmK2+4/SJPVa7WU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l2NiQhdIPWoivnDpzok4Msp4c4my+b4RplnXJWJc1DgBDFdmPtK0r8RWUsdlCgQuCcQDdqMFczDOTea+WJPcN1gbRfnah/UoNtjMow4gCvgirlMx8C8zHm6NkERE8VNS43wZYy9vvWpxOo4Up0cCJZNGcP9UPYv4U9+mswRUMNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81d1b92b559so191203839f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:36:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722018907; x=1722623707;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XKiBPMLdAq3VqCci1gfJFsY5sdAkK4cbjCTzOGmnldU=;
-        b=R3xqbbp56v6dg45LuWAFp/Zur4bfDkV1SNTZCrHwPI1Gv+veYqTrKrF8YLFRCsqaI7
-         r81Z54YIPnrm1LUUVQzeVsAS5D2zor+14Rth0ibFqm9mk+RjNNKbxLXKoCxuclTvsTrM
-         +IS44zwAbst47CxV+za95fYjui0SUZxoeNk3WXiuzW63Of1LRTnYiPWtJK3q6tsMXhCO
-         jUR1qeqw6mI/m91j2CBTWc7yiOSbz/1lXa5M7RLERaS+ICfK82+Ap258BsteLcLtnOKc
-         bCyLULa78veURupfErosiElEke8yXu1VHKRF4Z0y79qQbc7qNGHSIaT69TBgcj2oKgsu
-         leKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWc1z5ukOTZrigze/cm3qTLgVZCKwiGKXjpyD+cmKaWr3p7mXujNLr9f+S3PAVpGFrxelNkCyHNbxuGDicapMkE6FPf+GddqL/mbY/Y
-X-Gm-Message-State: AOJu0YzKhWoiRiMxUKJw38BohtPR6UFBbHnJbttNCPU4E782qaUnddPY
-	IuZhdfAgybI6eoVazW59FBZvmd2IkB0D7zCHKSTn5STsr53t1PlxsA5WujVWgYUgPUrTQKw8zPg
-	uojLB3/br4HwcLP2HyXl4o2WfoRJZJ6MD2yp8
-X-Google-Smtp-Source: AGHT+IEbgJ14TM04t5gLjRe+UpYBB4YU4vQ+M/sK7yhVHORwhDBaUiHtDXx+lP6/YaX5tbkBl/fUpC0VCWpMQlYsIo0=
-X-Received: by 2002:ac2:548c:0:b0:52e:a721:497b with SMTP id
- 2adb3069b0e04-5309b2bcc59mr423378e87.38.1722018906590; Fri, 26 Jul 2024
- 11:35:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722018987; x=1722623787;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LXUTmDkvfShi+Ru3wRXvmBuP0y61Ox5D+M6fEe2yMgI=;
+        b=Lojk9AX9X09HpSo2CEHQu+nwxiOshBkyTHKKrm+HRaB0QOmoKdsrZqkINQAPfmMnCi
+         YqC5biyQ+6cnHOJJuXXrMMZrOewFVlMiOlylO+xM+gFz0nzelD2Po9obyTCx8NWGsPXV
+         Qvp9vLhKHh54z7OEZaPDIQuXoXdgElb18Seon1FguA4dSYkpEOKzdnqF45PQhNyu9O2h
+         SOHjULeI2KrXS7QmxZXQez6XSOiNb4dQSAP2qpYK/Co2HlHP1LTdwi5tu7WAw+tYZ85y
+         9IfztReNNmofgrHCbHtd652ABKPwe3lzF+32UOqB+N2TNDPcZg0BXIIOcq4EjI246Dy5
+         ZMlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWp//xzpC8okxcABLCAincIHltGYATF6TExiHsTfG3aEq7MWp51jxi+zOw4gL1+X/+uLbyqsuU6Ec0V/hJbwi27wryHYvMHizZvwfq
+X-Gm-Message-State: AOJu0YwL95WQfBpnv5DGKEH6B8iPe5NLYjgwnU4sjz6X5VjWwH89/jJX
+	pbM65iJb1sQ9dtWPLFy0RtmsxLVdfxmmX4KokBFrPnj7ZF6F5T7Qzt3uxJUugOX3SyiMdEtaYKT
+	GsZk8YCqC0lzuRlECi2f1ej0e0qdGYdtBhnH9BinOamjpmLHuATNprCM=
+X-Google-Smtp-Source: AGHT+IGwsxfxkMPSYzW7wzlc5uNtrSeS/NDGHEL7SNU2t10tgEi57ZzRunHzntq1JXhj6Hz/Qqa3bTFpiuBJB+/kmq6Qb7T9q/lX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-4-james.quinlan@broadcom.com> <20240725043111.GD2317@thinkpad>
- <CA+-6iNz9R5uMogd6h+BkgRvKrsmyH2VXsGO_5e=6yqC=JzjigA@mail.gmail.com> <20240726050423.GB2628@thinkpad>
-In-Reply-To: <20240726050423.GB2628@thinkpad>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Fri, 26 Jul 2024 14:34:54 -0400
-Message-ID: <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000004293d0061e2ac579"
-
---0000000000004293d0061e2ac579
+X-Received: by 2002:a05:6638:981d:b0:4c2:7179:ce03 with SMTP id
+ 8926c6da1cb9f-4c63e6639d9mr4551173.2.1722018987365; Fri, 26 Jul 2024 11:36:27
+ -0700 (PDT)
+Date: Fri, 26 Jul 2024 11:36:27 -0700
+In-Reply-To: <0000000000004da3b0061808451e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000009e6b5061e2aca90@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
+From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jiri@resnulli.us, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 1:04=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Thu, Jul 25, 2024 at 03:45:59PM -0400, Jim Quinlan wrote:
-> > On Thu, Jul 25, 2024 at 12:31=E2=80=AFAM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
-> > > > o Move the clk_prepare_enable() below the resource allocations.
-> > > > o Add a jump target (clk_out) so that a bit of exception handling c=
-an be
-> > > >   better reused at the end of this function implementation.
-> > > >
-> > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> > > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> > > > ---
-> > > >  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++--------=
-----
-> > > >  1 file changed, 16 insertions(+), 13 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/co=
-ntroller/pcie-brcmstb.c
-> > > > index c08683febdd4..c257434edc08 100644
-> > > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > > @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_=
-device *pdev)
-> > > >
-> > > >       pcie->ssc =3D of_property_read_bool(np, "brcm,enable-ssc");
-> > > >
-> > > > -     ret =3D clk_prepare_enable(pcie->clk);
-> > > > -     if (ret) {
-> > > > -             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > -             return ret;
-> > > > -     }
-> > > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev=
-->dev, "rescal");
-> > > > -     if (IS_ERR(pcie->rescal)) {
-> > > > -             clk_disable_unprepare(pcie->clk);
-> > > > +     if (IS_ERR(pcie->rescal))
-> > > >               return PTR_ERR(pcie->rescal);
-> > > > -     }
-> > > > +
-> > > >       pcie->perst_reset =3D devm_reset_control_get_optional_exclusi=
-ve(&pdev->dev, "perst");
-> > > > -     if (IS_ERR(pcie->perst_reset)) {
-> > > > -             clk_disable_unprepare(pcie->clk);
-> > > > +     if (IS_ERR(pcie->perst_reset))
-> > > >               return PTR_ERR(pcie->perst_reset);
-> > > > +
-> > > > +     ret =3D clk_prepare_enable(pcie->clk);
-> > > > +     if (ret) {
-> > > > +             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > +             return ret;
-> > > >       }
-> > > >
-> > > >       ret =3D reset_control_reset(pcie->rescal);
-> > > > -     if (ret)
-> > > > +     if (ret) {
-> > > >               dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
-> > > > +             goto clk_out;
-> > >
-> > > Please use a descriptive name for the err labels. Here this err path =
-disables
-> > > and unprepares the clk, so use 'clk_disable_unprepare'.
-> > ack
-> > >
-> > > > +     }
-> > > >
-> > > >       ret =3D brcm_phy_start(pcie);
-> > > >       if (ret) {
-> > > >               reset_control_rearm(pcie->rescal);
-> > > > -             clk_disable_unprepare(pcie->clk);
-> > > > -             return ret;
-> > > > +             goto clk_out;
-> > > >       }
-> > > >
-> > > >       ret =3D brcm_pcie_setup(pcie);
-> > > > @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_d=
-evice *pdev)
-> > > >
-> > > >       return 0;
-> > > >
-> > > > +clk_out:
-> > > > +     clk_disable_unprepare(pcie->clk);
-> > > > +     return ret;
-> > > > +
-> > >
-> > > This is leaking the resources. Move this new label below 'fail'.
-> > What resources is it leaking?  At "clk_out" the return value will be ne=
-gative
-> > and only managed resources have been allocated at that juncture.
-> >
->
-> Right, but what about the err path below this one? If that path is taken,=
- then
-> clks won't be released, right?
-No, that is the same situation.  The clock is originally allocated
-with "devm_clk_get_optional()", i.e. it is a managed resource.
- If the probe fails, and it does in both of these error paths,
-Linux deallocates the newly formed device structure and all of its resource=
-s.
-Perhaps I am missing something?
+syzbot has found a reproducer for the following issue on:
 
->
-> It is not a good design to return from each err labels. There should be o=
-nly one
-> return for all err labels at the end and those labels need to be in rever=
-se
-> order w.r.t the actual code.
+HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a8dabd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=381b8eb3d35e3ad9
+dashboard link: https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e99275980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137c299d980000
 
-Agreed.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1722389b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3ad0b42d0812/vmlinux-1722389b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/67a851e0e5f8/bzImage-1722389b.xz
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
 
---0000000000004293d0061e2ac579
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+netlink: 'syz-executor122': attribute type 10 has an invalid length.
+dummy0: left promiscuous mode
+dummy0: entered promiscuous mode
+============================================
+WARNING: possible recursive locking detected
+6.10.0-syzkaller-12562-g1722389b0d86 #0 Not tainted
+--------------------------------------------
+syz-executor122/5360 is trying to acquire lock:
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCenPxyWO7KXw8o3HXf0rLW38lulHTR
-R7MQuYYGfaK1JTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MjYxODM1MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEADpYiPqZzxeQNtLOkQs4POJdOUPKWmsjT7lEo3iuybcwCSX18
-ub/P3ulwfpcFsjLOT2ZINL3CNhTtQ+eVhaeJ6KCmeLqRifw6RxjQHHBhu89vnTnkbG1ejuuHOUru
-+tUYYYOv3mHTUtS2oKosfxVBnPSsp1XviMZxwJbvRgug8rTJWGEieSzyjuWQR/WhFsJNE/7hgncZ
-8hQ8iT7fK+I4XPgaA6gs/3jmevwn7/b1y8si9ObsYT9DxC/RYp6hpie9Q85CK9D1zaUZt6Zh2gnO
-VQWixktMNarJllj+0HPHM7gdGVdwuH2ul9LZn9nhyo+iDL9CykHUkDDQ8hxeqDFQsw==
---0000000000004293d0061e2ac579--
+but task is already holding lock:
+ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(team->team_lock_key);
+  lock(team->team_lock_key);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by syz-executor122/5360:
+ #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
+ #1: ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5360 Comm: syz-executor122 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_deadlock kernel/locking/lockdep.c:3061 [inline]
+ validate_chain kernel/locking/lockdep.c:3855 [inline]
+ __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
+ lock_acquire kernel/locking/lockdep.c:5759 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ team_port_change_check drivers/net/team/team_core.c:2950 [inline]
+ team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
+ dev_change_flags+0x10c/0x160 net/core/dev.c:8914
+ vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ dev_open net/core/dev.c:1515 [inline]
+ dev_open+0x144/0x160 net/core/dev.c:1503
+ team_port_add drivers/net/team/team_core.c:1216 [inline]
+ team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
+ do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
+ do_setlink+0xcaf/0x3ff0 net/core/rtnetlink.c:2907
+ __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
+ rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
+ netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f424ca7e7b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd8c496978 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f424ca7e7b9
+RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffd8c4969a0
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
