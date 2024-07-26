@@ -1,307 +1,332 @@
-Return-Path: <linux-kernel+bounces-263836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6317893DB34
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4483B93DB3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4D3BB23375
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:49:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A618AB2359E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F165714F114;
-	Fri, 26 Jul 2024 23:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAEB154C0A;
+	Fri, 26 Jul 2024 23:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wwJxJwAT"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oh62CaBW"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B4C14A09D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63CF4430
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722037747; cv=none; b=ZoEgI+IgVcpUfQKJA7JSD9pPQ2oo+DqEBcx8RNLQULEtnHi8NRs9HxZEZS5019c+idn4K1fqRMJ/gOPvkWi1oPa5I84wPOv3p3cKJx+0BM8NiN0ELtKmf9hNbeOLZHCFCUpzwEqphVX5CA8Hs8eo4f71RbHopAsITnDUq1a4wtI=
+	t=1722037961; cv=none; b=NsdsHm/bVbr5uL59mus/v2n0m2bwENuQTPOivFOw21+bZ8k0UASjChDtoSk3V7Dy6tLGvGuUB0+2H107CqQRl/1BAKXGcDZjP14yjv7tQ93hn2RkCOdsGoZntO9OWoEQxzGsnNHoFSGcslImF/C/9FIGS8BYpkHIgxaWq697fUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722037747; c=relaxed/simple;
-	bh=nbQAmLIvVZkzMXYyzjgZSHL3YvJp1sN6oP6f7dR4Ob8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+kwFB7dxfttzJ3RhB51vqY/pfn1AZIyV7O1XljIeN/WvPc6ztQpMJLCII+8EOP4Hc2WwK0s+F95WEnHu4psw6Wl1mZ01d9S4Gz2kebj6YOUtWYylx3dpPErRC23IxykYXFzW1CKyLNxs5oOkwZKbLrltjHNhLbXf+eAdFjOEbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wwJxJwAT; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1722037961; c=relaxed/simple;
+	bh=avyK+sgjip8mGDKx+P8MZVPI7apOzI37V6tcFp859Fg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VGcMnRNvJFjkW+ISAj3lsNanIoHNndvZKoV+IcbFLlYS59D35ZmK6hlHE3txh2Q34CeLbBZpPr2DvyP+aJDzh4ClYt3D1QVyb/dKngKnWAqGouHktobc7GEcy4q4uDTdMIm/6NlmBG8eQ0xR/VGYID5f42MjUEf1iHegA86vQUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oh62CaBW; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd657c9199so68815ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:49:05 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e087ed145caso388497276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722037745; x=1722642545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26UwVmpvjibxv5HZF4j+xkY0oxrA+FZv7Yj8a7DqR0k=;
-        b=wwJxJwATM/rEMhbGyuxQGQMF7ZlSUOqFIUAzDJel4jokXKMXIpP1wxa69FlWJkMC3u
-         DsqnrcB82HetHtTi/0ofqHVjoP9cupMUsd0jc0dtntt6pdWY5PX4x1C2v8KrlSvRjQwq
-         iJGYEl7zpMuE+OeGpU1sggZvxfgL6A3VmL2qAURex4e+cMp9bnwla+Ws+vQ797g2byLn
-         7Kr8RGgmIyV6x2F8GXVtW0oNWSnVziq41F0KDxd/kWoDOYW9uQLOm3WLrsaU+ZocQhHR
-         CheU7YdUb60fMRIlp6n9sta288fiDIU96NCTnywtaaRkr5wZ/Gxg4cl2bEEia81OkBX7
-         GRVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722037745; x=1722642545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1722037958; x=1722642758; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=26UwVmpvjibxv5HZF4j+xkY0oxrA+FZv7Yj8a7DqR0k=;
-        b=lIC3Gja35Vruo/aR/2HmMBm/I55mF+X8sLe9Xar86GDZ0hMAb6cjsMv78ab8i0m7Nx
-         KxEKkA7Xnc8FgtZAMCsRTIKJRpkrmBFdfrMKC3sVBzt8kErhBn+y8MuE0vTVS14w3Seh
-         6nG1QZf4bu7sx10iEG4c4+kkVe4TPmD6/zTALSE2qkuJRMUqjZFSS5MX3Et2IK5lF/0/
-         JdWKYgZfpkjwX8Y/DCRq5ASylLuPqLkKTnPPXLDOcxyF4Zuf0vykz0UzAQxRYtLJCAkb
-         ff2MPVUSrdHn3Y42aIY+jdgbUdKIRuEP3//5c/w8e/ZuPAVxSPw7rLT1LF1phJbQRExf
-         mA7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX5r9E6EwNeCkn4xSH+XCbuRu7Oj2XgXxClM4/aSQTVP5/aJRYMZjvbn5B1pydHHplC42NQ4aURJ9kTMvMM2IIbc70hhnisFI5gkkJR
-X-Gm-Message-State: AOJu0YzfuYxsnUQ2bpNAZE2cuD9C+1MZvH0qR30P3NVCDtpTa2r0RLqs
-	04BV8UNoRvdX6lkCKNOrWe+IavEV1pjMPcY47pMrVfXpKzBZpUQO7a270dI69uiZvNs/CtnAHJc
-	ednWAnYtfBYFA6nFtQpSaKsiZUAFw1qzzGwvp
-X-Google-Smtp-Source: AGHT+IG6ZLaL5sWTQXFM/uooYEGuLijzAG7wOiEhXH8Qw3WkvEeJSkTXmuWkkO4Z1DyjjKWmXtiB6aZrFMavW8IVn/Y=
-X-Received: by 2002:a17:902:d54f:b0:1fc:7357:9076 with SMTP id
- d9443c01a7336-1feee8554ecmr4744465ad.6.1722037744391; Fri, 26 Jul 2024
- 16:49:04 -0700 (PDT)
+        bh=GlsoNmguYxHdPLcIEUjx1oIy+wRnU4Jxi7Q36OcxhEA=;
+        b=oh62CaBWzR8LPMwmURBQor56FazwRpq5CGSoLr1AB2X3oO48eLboyC5/cyNmMgfaaq
+         WzrXtp3a0miTs0anW96EtZEpgX2jMQ+OBuXcv1lOMdFxy64I4brSh2gTnhj4I4qdpsfK
+         4I0gtLx/WWKcyvzfmJ9S5ibAqUVtbwPotgKpI397gH1vgdkTs0C6O9ObeRT1kJQ0pXvT
+         wpxGe2U0IIOlSWBRMJ3/8z832wKOlCIkicMs01ia4CUJfYBarsLwIwybv+boptccAnNh
+         nYL6xTEAFiGld/0irtn6IZe9s3TdHvkKZZPfi+WZZRx2S96TuhC3NY+kvL3MTTEMhdrc
+         BKZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722037958; x=1722642758;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlsoNmguYxHdPLcIEUjx1oIy+wRnU4Jxi7Q36OcxhEA=;
+        b=ZEtBrjuFdS3qD9Evn1PMeEIwriFeV9dm5v6fnbLNOgalaF1D89O8JMT7wKnQB6+hFR
+         IDe5WmBzpRd8wf/93/foGIzG+UIBY4GeS9x3YQQsAwDHRg7MVct3TQCuOpNBVejicFYD
+         taO8ZeNYsohPVqbbe6B7VDRb7UnffGndSCBhyWJ5k8+pdFegYrFoqnyo6+DF5K7st5h9
+         2WTu1KJLo1wZpGlGSELYOy0uA6cDqQVayjMBeLv+Y+BNzjRmbIZwA6BmXnedqedISGNC
+         mE8mkXwByw5sOIvllf2rDDE/dpQ7sYtqRI3nQJ3u4SWDhdcQW79s/wWZ+PIOuCx2ZXha
+         qvSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVIqtzUrDLuUbxE6caju7+WDMLUd1CuHC8/IApn5vKId2MRjIOkO4emkLua8HbT/BgPLpRMXw8PN8gwTI+Hgbv3yYVDARFTbFh+OO7
+X-Gm-Message-State: AOJu0YwxFnA8oXDVb/5E9aCy9PduoFhWcpJWX3XbgqyYdQSS8xsKvgGN
+	fBIJPseR92MzRNS1KY2OXrlazIAZZUaRsS77oCFHZCTYO5hx4UHDOFn6LmQbVr2uZq96E/P8fz1
+	JPQ==
+X-Google-Smtp-Source: AGHT+IFCH1oh4Y8/oiPAKKZDfTSrq8OctuCbDjHGO9FWuVz/aIwZKKAQhyg1yG69wkiF5914XVtW9HUBfXk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1005:b0:e0b:f93:fe8c with SMTP id
+ 3f1490d57ef6-e0b5427fa67mr79730276.0.1722037957798; Fri, 26 Jul 2024 16:52:37
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 26 Jul 2024 16:51:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240726102826.787004-1-howardchu95@gmail.com> <20240726102826.787004-2-howardchu95@gmail.com>
-In-Reply-To: <20240726102826.787004-2-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 26 Jul 2024 16:48:52 -0700
-Message-ID: <CAP-5=fWi_FhQahxsKOaqdMp9agZqC3obHR_mo78+Ms9v1wZavg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] perf record off-cpu: Add direct off-cpu event
-To: Howard Chu <howardchu95@gmail.com>
-Cc: namhyung@kernel.org, acme@kernel.org, adrian.hunter@intel.com, 
-	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
+Message-ID: <20240726235234.228822-1-seanjc@google.com>
+Subject: [PATCH v12 00/84] KVM: Stop grabbing references to PFNMAP'd pages
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 3:28=E2=80=AFAM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Add direct off-cpu event called "offcpu-time-direct". Add a threshold to
-> dump direct off-cpu samples, "--off-cpu-thresh". Default value of
-> --off-cpu-thresh is UULONG_MAX(no direct off-cpu samples), and
-> --off-cpu-thresh's unit is milliseconds.
->
-> Bind fds and sample_id in off_cpu_start()
->
-> Note that we add "offcpu-time-direct" event using parse_event(), because =
-we
-> need to make it no-inherit, otherwise perf_event_open() will fail.
->
-> Introduce sample_type_embed, indicating the sample_type of a sample
-> embedded in BPF output. More discussions in later patches.
->
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Suggested-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-record.c   |  2 ++
->  tools/perf/util/bpf_off_cpu.c | 53 ++++++++++++++++++++++++++++++++++-
->  tools/perf/util/off_cpu.h     |  1 +
->  tools/perf/util/record.h      |  1 +
->  4 files changed, 56 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index a94516e8c522..708d48d309d6 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -3325,6 +3325,7 @@ static struct record record =3D {
->                 .ctl_fd              =3D -1,
->                 .ctl_fd_ack          =3D -1,
->                 .synth               =3D PERF_SYNTH_ALL,
-> +               .off_cpu_thresh      =3D ULLONG_MAX,
->         },
->         .tool =3D {
->                 .sample         =3D process_sample_event,
-> @@ -3557,6 +3558,7 @@ static struct option __record_options[] =3D {
->                             "write collected trace data into several data=
- files using parallel threads",
->                             record__parse_threads),
->         OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analys=
-is"),
-> +       OPT_U64(0, "off-cpu-thresh", &record.opts.off_cpu_thresh, "time t=
-hreshold(in ms) for dumping off-cpu events"),
->         OPT_END()
->  };
->
-> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.=
-c
-> index 6af36142dc5a..905a11c96c5b 100644
-> --- a/tools/perf/util/bpf_off_cpu.c
-> +++ b/tools/perf/util/bpf_off_cpu.c
-> @@ -13,6 +13,7 @@
->  #include "util/cgroup.h"
->  #include "util/strlist.h"
->  #include <bpf/bpf.h>
-> +#include <internal/xyarray.h>
->
->  #include "bpf_skel/off_cpu.skel.h"
->
-> @@ -45,10 +46,12 @@ static int off_cpu_config(struct evlist *evlist)
->                 .size   =3D sizeof(attr), /* to capture ABI version */
->         };
->         char *evname =3D strdup(OFFCPU_EVENT);
-> +       char off_cpu_direct_event[64];
->
->         if (evname =3D=3D NULL)
->                 return -ENOMEM;
->
-> +       /* off-cpu event in the end */
->         evsel =3D evsel__new(&attr);
->         if (!evsel) {
->                 free(evname);
-> @@ -65,12 +68,22 @@ static int off_cpu_config(struct evlist *evlist)
->         free(evsel->name);
->         evsel->name =3D evname;
->
-> +       /* direct off-cpu event */
-> +       snprintf(off_cpu_direct_event, sizeof(off_cpu_direct_event), "bpf=
--output/no-inherit=3D1,name=3D%s/", OFFCPU_EVENT_DIRECT);
-> +       if (parse_event(evlist, off_cpu_direct_event)) {
-> +               pr_err("Failed to open off-cpu event\n");
-> +               return -1;
-> +       }
-> +
->         return 0;
->  }
->
->  static void off_cpu_start(void *arg)
->  {
->         struct evlist *evlist =3D arg;
-> +       struct evsel *evsel;
-> +       struct perf_cpu pcpu;
-> +       int i, err;
->
->         /* update task filter for the given workload */
->         if (!skel->bss->has_cpu && !skel->bss->has_task &&
-> @@ -86,6 +99,27 @@ static void off_cpu_start(void *arg)
->                 bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
->         }
->
-> +       /* sample id and fds in BPF's perf_event_array can only be set af=
-ter record__open() */
-> +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT_DIRECT);
-> +       if (evsel =3D=3D NULL) {
-> +               pr_err("%s evsel not found\n", OFFCPU_EVENT_DIRECT);
-> +               return;
-> +       }
-> +
-> +       if (evsel->core.id)
-> +               skel->bss->sample_id =3D evsel->core.id[0];
-> +
-> +       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
-> +               err =3D bpf_map__update_elem(skel->maps.offcpu_output,
-> +                                          &pcpu.cpu, sizeof(__u32),
-> +                                          xyarray__entry(evsel->core.fd,=
- pcpu.cpu, 0),
-> +                                          sizeof(__u32), BPF_ANY);
-> +               if (err) {
-> +                       pr_err("Failed to update perf event map for direc=
-t off-cpu dumping\n");
-> +                       return;
-> +               }
-> +       }
-> +
->         skel->bss->enabled =3D 1;
->  }
->
-> @@ -130,14 +164,24 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
-arget *target,
->  {
->         int err, fd, i;
->         int ncpus =3D 1, ntasks =3D 1, ncgrps =3D 1;
-> +       __u64 offcpu_thresh;
->         struct strlist *pid_slist =3D NULL;
->         struct str_node *pos;
-> +       struct evsel *evsel;
->
->         if (off_cpu_config(evlist) < 0) {
->                 pr_err("Failed to config off-cpu BPF event\n");
->                 return -1;
->         }
->
-> +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT_DIRECT);
-> +       if (evsel =3D=3D NULL) {
-> +               pr_err("%s evsel not found\n", OFFCPU_EVENT_DIRECT);
-> +               return -1 ;
-> +       }
-> +
-> +       evsel->sample_type_embed =3D OFFCPU_SAMPLE_TYPES;
-> +
->         skel =3D off_cpu_bpf__open();
->         if (!skel) {
->                 pr_err("Failed to open off-cpu BPF skeleton\n");
-> @@ -250,7 +294,6 @@ int off_cpu_prepare(struct evlist *evlist, struct tar=
-get *target,
->         }
->
->         if (evlist__first(evlist)->cgrp) {
-> -               struct evsel *evsel;
->                 u8 val =3D 1;
->
->                 skel->bss->has_cgroup =3D 1;
-> @@ -272,6 +315,14 @@ int off_cpu_prepare(struct evlist *evlist, struct ta=
-rget *target,
->                 }
->         }
->
-> +       offcpu_thresh =3D opts->off_cpu_thresh;
-> +
-> +       if (opts->off_cpu_thresh !=3D ULLONG_MAX)
-> +               offcpu_thresh =3D opts->off_cpu_thresh * 1000000; /* off-=
-cpu-thresh is in ms */
+arm64 folks, the first two patches are bug fixes, but I have very low
+confidence that they are correct and/or desirable.  If they are more or
+less correct, I can post them separately if that'd make life easier.  I
+included them here to avoid conflicts, and because I'm pretty sure how
+KVM deals with MTE tags vs. dirty logging will impact what APIs KVM needs
+to provide to arch code.
 
-nit: In this comment, it's not clear if you are referring to the
-option or the variable. In modern languages it is usual to have some
-kind of "duration" type. As we're using u64s I'd be tempted to add a
-"_ms" suffix, just to make clear what the units for the time are. I
-think that'd make this:
-offcpu_thresh_ms =3D opts->off_cpu_thresh_ns * 1000000
+On to the series...  The TL;DR is that I would like to get input on two
+things:
 
-Thanks,
-Ian
+ 1. Marking folios dirty/accessed only on the intial stage-2 page fault
+ 2. The new APIs for faulting, prefetching, and doing "lookups" on pfns
 
-> +
-> +       skel->bss->offcpu_thresh =3D offcpu_thresh;
-> +       skel->bss->sample_type   =3D OFFCPU_SAMPLE_TYPES;
-> +
->         err =3D off_cpu_bpf__attach(skel);
->         if (err) {
->                 pr_err("Failed to attach off-cpu BPF skeleton\n");
-> diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
-> index 2dd67c60f211..a349f8e300e0 100644
-> --- a/tools/perf/util/off_cpu.h
-> +++ b/tools/perf/util/off_cpu.h
-> @@ -9,6 +9,7 @@ struct perf_session;
->  struct record_opts;
->
->  #define OFFCPU_EVENT  "offcpu-time"
-> +#define OFFCPU_EVENT_DIRECT  "offcpu-time-direct"
->
->  #define OFFCPU_SAMPLE_TYPES  (PERF_SAMPLE_IDENTIFIER | PERF_SAMPLE_IP | =
-\
->                               PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
-> diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-> index a6566134e09e..3c11416e6627 100644
-> --- a/tools/perf/util/record.h
-> +++ b/tools/perf/util/record.h
-> @@ -79,6 +79,7 @@ struct record_opts {
->         int           synth;
->         int           threads_spec;
->         const char    *threads_user_spec;
-> +       u64           off_cpu_thresh;
->  };
->
->  extern const char * const *record_usage;
-> --
-> 2.45.2
->
+This is (spiritually) v12 of David Steven's series to play nice with pfns
+that are "valid", i.e. have a struct page, but are not refcounted.  Whereas
+David's series only (mostly) fixed things for x86, this series goes for
+broke and completely eliminates KVM's long-standing (and heinous) behavior
+of essentially guessing which pfns are refcounted pages (see
+kvm_pfn_to_refcounted_page()).
+
+Getting there requires "fixing" arch code that isn't obviously broken.
+Specifically, to get rid of kvm_pfn_to_refcounted_page(), KVM needs to
+stop marking pages/folios dirty/accessed based solely on the pfn that's
+stored in KVM's stage-2 page tables.  In v11, KVM x86 did this by tagging
+SPTEs with a flag (using a software-available bit).
+
+But that isn't a viable option for some flavors of x86 (we're out of
+software-available bits), and more importantly I've convinced myself[*]
+that marking folios _dirty_ after SPTEs have been installed is completely
+unnecessary, and that marking folios accessed is likewise unnecessary for
+real world workloads (and if this is a sticking point, I have ideas on
+how to handle it more gracefully; more at the bottom).
+
+So, instead of tracking which SPTEs correspond to refcounted pages, v12
+simply removes all of the code that operates on "struct page" based on
+the pfn in stage-2 PTEs.  This is the back ~40-50% of the series.  Most
+of the patches are relevatively uninteresting from a code perspective,
+it's the concept itself (of not marking folios dirty/accessed from SPTEs)
+that needs discussion.
+
+For x86 in particular, which sets accessed/dirty status when that info
+would be "lost", e.g. when SPTEs are zapped or KVM clears the dirty flag
+in a SPTE, foregoing the updates provides very measurable performance
+improvements for related operations.  E.g. when clearing dirty bits as
+part of dirty logging, and zapping SPTEs to reconstitue huge pages when
+disabling dirty logging.
+
+The other big change from v11 is that I opted to go with dedicated,
+specific, and hopefully descriptive APIs to wrap kvm_follow_pfn() instead
+of expose the "inner" helper to arch code.  In part because I still don't
+love kvm_follow_pfn(), and fewer callers means its easier to change if/when
+someone comes up with a better name.  But also because I think/hope that
+having dedicated APIs will make it easier for arch developers to understand
+what is the right/preferred way to do certain operations.  E.g. so that all
+architectures use the same core flow for handling stage-2 page faults.
+Long term, I would love to standardize that code even more, but this series
+is already waaaay too big.
+
+Along the way, I also discovered that several of the inputs to hva_to_pfn()
+(and it's myriad wrappers) could be removed.  E.g. the rather weirdly named
+@atomic flag can be removed by deduplicating x86's prefetching code.
+
+As for capturing accessed information on zapped SPTEs, e.g. to prevent
+losing accessed information because NUMA balancing mucks with things, my
+thought is that arch code can preserve the accessed information in SPTEs
+that are unmapped/zapped because protections were modified, e.g. so that
+LRU-initiated aging can still collect information.  I'm not at all
+convinced that this is necessary outside of tests that care about exact
+counts, e.g. KVM selftests, but I'll post an RFC KVM x86 series to get
+the conversation started.
+
+Note, I'm purposefully not capturing the delta from v11=>v12, because
+there is zero chance I will get everything, and while this is a spiritual
+successor to David's v11, in practice it's like 98% new code.
+
+[*] https://lore.kernel.org/all/20240320005024.3216282-1-seanjc@google.com
+
+David Stevens (3):
+  KVM: Replace "async" pointer in gfn=>pfn with "no_wait" and error code
+  KVM: Introduce kvm_follow_pfn() to eventually replace "gfn_to_pfn"
+    APIs
+  KVM: Migrate kvm_vcpu_map() to kvm_follow_pfn()
+
+Sean Christopherson (81):
+  KVM: arm64: Release pfn, i.e. put page, if copying MTE tags hits
+    ZONE_DEVICE
+  KVM: arm64: Disallow copying MTE to guest memory while KVM is dirty
+    logging
+  KVM: Drop KVM_ERR_PTR_BAD_PAGE and instead return NULL to indicate an
+    error
+  KVM: Allow calling kvm_release_page_{clean,dirty}() on a NULL page
+    pointer
+  KVM: Add kvm_release_page_unused() API to put pages that KVM never
+    consumes
+  KVM: x86/mmu: Skip the "try unsync" path iff the old SPTE was a leaf
+    SPTE
+  KVM: x86/mmu: Mark folio dirty when creating SPTE, not when
+    zapping/modifying
+  KVM: x86/mmu: Mark page/folio accessed only when zapping leaf SPTEs
+  KVM: x86/mmu: Don't force flush if SPTE update clears Accessed bit
+  KVM: x86/mmu: Use gfn_to_page_many_atomic() when prefetching indirect
+    PTEs
+  KVM: Rename gfn_to_page_many_atomic() to kvm_prefetch_pages()
+  KVM: Drop @atomic param from gfn=>pfn and hva=>pfn APIs
+  KVM: Annotate that all paths in hva_to_pfn() might sleep
+  KVM: x86/mmu: Drop kvm_page_fault.hva, i.e. don't track intermediate
+    hva
+  KVM: Drop unused "hva" pointer from __gfn_to_pfn_memslot()
+  KVM: Remove pointless sanity check on @map param to kvm_vcpu_(un)map()
+  KVM: Explicitly initialize all fields at the start of kvm_vcpu_map()
+  KVM: Use NULL for struct page pointer to indicate mremapped memory
+  KVM: nVMX: Rely on kvm_vcpu_unmap() to track validity of eVMCS mapping
+  KVM: nVMX: Drop pointless msr_bitmap_map field from struct nested_vmx
+  KVM: nVMX: Add helper to put (unmap) vmcs12 pages
+  KVM: Use plain "struct page" pointer instead of single-entry array
+  KVM: Provide refcounted page as output field in struct kvm_follow_pfn
+  KVM: Move kvm_{set,release}_page_{clean,dirty}() helpers up in
+    kvm_main.c
+  KVM: pfncache: Precisely track refcounted pages
+  KVM: Pin (as in FOLL_PIN) pages during kvm_vcpu_map()
+  KVM: nVMX: Mark vmcs12's APIC access page dirty when unmapping
+  KVM: Pass in write/dirty to kvm_vcpu_map(), not kvm_vcpu_unmap()
+  KVM: Get writable mapping for __kvm_vcpu_map() only when necessary
+  KVM: Disallow direct access (w/o mmu_notifier) to unpinned pfn by
+    default
+  KVM: Add a helper to lookup a pfn without grabbing a reference
+  KVM: x86: Use kvm_lookup_pfn() to check if retrying #PF is useful
+  KVM: x86: Use kvm_lookup_pfn() to check if APIC access page was
+    installed
+  KVM: x86/mmu: Add "mmu" prefix fault-in helpers to free up generic
+    names
+  KVM: x86/mmu: Put direct prefetched pages via kvm_release_page_clean()
+  KVM: x86/mmu: Add common helper to handle prefetching SPTEs
+  KVM: x86/mmu: Add helper to "finish" handling a guest page fault
+  KVM: x86/mmu: Mark pages/folios dirty at the origin of make_spte()
+  KVM: Move declarations of memslot accessors up in kvm_host.h
+  KVM: Add kvm_faultin_pfn() to specifically service guest page faults
+  KVM: x86/mmu: Convert page fault paths to kvm_faultin_pfn()
+  KVM: guest_memfd: Provide "struct page" as output from
+    kvm_gmem_get_pfn()
+  KVM: x86/mmu: Put refcounted pages instead of blindly releasing pfns
+  KVM: x86/mmu: Don't mark unused faultin pages as accessed
+  KVM: Move x86's API to release a faultin page to common KVM
+  KVM: VMX: Hold mmu_lock until page is released when updating APIC
+    access page
+  KVM: VMX: Use __kvm_faultin_page() to get APIC access page/pfn
+  KVM: PPC: e500: Mark "struct page" dirty in kvmppc_e500_shadow_map()
+  KVM: PPC: e500: Mark "struct page" pfn accessed before dropping
+    mmu_lock
+  KVM: PPC: e500: Use __kvm_faultin_pfn() to handle page faults
+  KVM: arm64: Mark "struct page" pfns accessed/dirty before dropping
+    mmu_lock
+  KVM: arm64: Use __kvm_faultin_pfn() to handle memory aborts
+  KVM: RISC-V: Mark "struct page" pfns dirty iff a stage-2 PTE is
+    installed
+  KVM: RISC-V: Mark "struct page" pfns accessed before dropping mmu_lock
+  KVM: RISC-V: Use kvm_faultin_pfn() when mapping pfns into the guest
+  KVM: PPC: Use __kvm_faultin_pfn() to handle page faults on Book3s HV
+  KVM: PPC: Use __kvm_faultin_pfn() to handle page faults on Book3s
+    Radix
+  KVM: PPC: Drop unused @kvm_ro param from
+    kvmppc_book3s_instantiate_page()
+  KVM: PPC: Book3S: Mark "struct page" pfns dirty/accessed after
+    installing PTE
+  KVM: PPC: Use kvm_faultin_pfn() to handle page faults on Book3s PR
+  KVM: LoongArch: Mark "struct page" pfns dirty only in "slow" page
+    fault path
+  KVM: LoongArch: Mark "struct page" pfns accessed only in "slow" page
+    fault path
+  KVM: LoongArch: Mark "struct page" pfn accessed before dropping
+    mmu_lock
+  KVM: LoongArch: Use kvm_faultin_pfn() to map pfns into the guest
+  KVM: MIPS: Mark "struct page" pfns dirty only in "slow" page fault
+    path
+  KVM: MIPS: Mark "struct page" pfns accessed only in "slow" page fault
+    path
+  KVM: MIPS: Mark "struct page" pfns accessed prior to dropping mmu_lock
+  KVM: MIPS: Use kvm_faultin_pfn() to map pfns into the guest
+  KVM: PPC: Remove extra get_page() to fix page refcount leak
+  KVM: PPC: Use kvm_vcpu_map() to map guest memory to patch dcbz
+    instructions
+  KVM: Convert gfn_to_page() to use kvm_follow_pfn()
+  KVM: Add support for read-only usage of gfn_to_page()
+  KVM: arm64: Use __gfn_to_page() when copying MTE tags to/from
+    userspace
+  KVM: PPC: Explicitly require struct page memory for Ultravisor sharing
+  KVM: Drop gfn_to_pfn() APIs now that all users are gone
+  KVM: s390: Use kvm_release_page_dirty() to unpin "struct page" memory
+  KVM: Make kvm_follow_pfn.refcounted_page a required field
+  KVM: x86/mmu: Don't mark "struct page" accessed when zapping SPTEs
+  KVM: arm64: Don't mark "struct page" accessed when making SPTE young
+  KVM: Drop APIs that manipulate "struct page" via pfns
+  KVM: Don't grab reference on VM_MIXEDMAP pfns that have a "struct
+    page"
+
+ Documentation/virt/kvm/locking.rst     |  80 ++--
+ arch/arm64/include/asm/kvm_pgtable.h   |   4 +-
+ arch/arm64/kvm/guest.c                 |  25 +-
+ arch/arm64/kvm/hyp/pgtable.c           |   7 +-
+ arch/arm64/kvm/mmu.c                   |  21 +-
+ arch/loongarch/kvm/mmu.c               |  40 +-
+ arch/mips/kvm/mmu.c                    |  26 +-
+ arch/powerpc/include/asm/kvm_book3s.h  |   4 +-
+ arch/powerpc/kvm/book3s.c              |   7 +-
+ arch/powerpc/kvm/book3s_32_mmu_host.c  |   7 +-
+ arch/powerpc/kvm/book3s_64_mmu_host.c  |  12 +-
+ arch/powerpc/kvm/book3s_64_mmu_hv.c    |  25 +-
+ arch/powerpc/kvm/book3s_64_mmu_radix.c |  35 +-
+ arch/powerpc/kvm/book3s_hv_nested.c    |   4 +-
+ arch/powerpc/kvm/book3s_hv_uvmem.c     |  25 +-
+ arch/powerpc/kvm/book3s_pr.c           |  14 +-
+ arch/powerpc/kvm/book3s_xive_native.c  |   2 +-
+ arch/powerpc/kvm/e500_mmu_host.c       |  19 +-
+ arch/riscv/kvm/mmu.c                   |   9 +-
+ arch/s390/kvm/vsie.c                   |   4 +-
+ arch/x86/kvm/lapic.c                   |  15 +-
+ arch/x86/kvm/mmu/mmu.c                 | 191 ++++----
+ arch/x86/kvm/mmu/mmu_internal.h        |   5 +-
+ arch/x86/kvm/mmu/paging_tmpl.h         |  29 +-
+ arch/x86/kvm/mmu/spte.c                |  23 +-
+ arch/x86/kvm/mmu/tdp_mmu.c             |  16 -
+ arch/x86/kvm/svm/nested.c              |   4 +-
+ arch/x86/kvm/svm/sev.c                 |  12 +-
+ arch/x86/kvm/svm/svm.c                 |   8 +-
+ arch/x86/kvm/vmx/nested.c              |  42 +-
+ arch/x86/kvm/vmx/vmx.c                 |  28 +-
+ arch/x86/kvm/vmx/vmx.h                 |   2 -
+ arch/x86/kvm/x86.c                     |  16 +-
+ include/linux/kvm_host.h               | 124 +++--
+ virt/kvm/guest_memfd.c                 |  19 +-
+ virt/kvm/kvm_main.c                    | 603 ++++++++++---------------
+ virt/kvm/kvm_mm.h                      |  36 +-
+ virt/kvm/pfncache.c                    |  20 +-
+ 38 files changed, 698 insertions(+), 865 deletions(-)
+
+
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
