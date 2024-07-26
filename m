@@ -1,134 +1,243 @@
-Return-Path: <linux-kernel+bounces-262773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CDD93CC8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FDF93CC8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8211F2248A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261A9282564
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D041BC39;
-	Fri, 26 Jul 2024 01:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6461B947;
+	Fri, 26 Jul 2024 01:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="XKszq6Xq"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtASLlCn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05E0320F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B717578;
+	Fri, 26 Jul 2024 01:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721958935; cv=none; b=cKGE0EwN6koL1qcuKR3hf7lbmAK/aN3W6RhVkTilD/tz3pPw8qMHpaVy8ywsMPQjh+r8z8zXVlcrnL1rY3Yw6WvFRQ53YzqAJTmebTD7bcIxifIw0kFKT66lDBNTOPED+NwcPuO6xYfWDrvVhzEWIYrUudA2nFaxLvZlYsZMtk8=
+	t=1721959045; cv=none; b=UHu8ghADBpPLydxm2rqKWkitvydBX5t0aywngfc/Lu8lwYaMf1eYFNc4CqngeooORMLhZux6GPVD6Ty9awWO7pnxy/Arl5M2Fk1s7JqbVDTpRI113yiwec8tOQuG8b3mwr2aycsyXr2f9fG17zsw9P14ZqtZpkyVDIgRyn2DraA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721958935; c=relaxed/simple;
-	bh=WYqZridchZzfdN6QnNSxKIdLAnZBSVIQm81qtZ+/BJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxgIYvYOE39prcGqAo4qRy+jA4QHTQu730GRiAOU11WqMBaQV//FTsabpDMoGk/r4fKU0vkEL2JR8mgAeeh/2eKNZ0j9usZD86qvUvPeqqzku91uKSLmJg3li08s/RMOkwIXDcbhXCpcy017y2h7osPBxeoOakbvx/dzeVq+ytI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=XKszq6Xq; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d9bcb47182so296565b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 18:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1721958932; x=1722563732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwZLflB06V4tnnB1EWMignUoULBKSrqsfwebBDmI2fA=;
-        b=XKszq6XqcG1sJjOBOaUlzpYQurFzlqo5ErX82NJlEZgwnqUSPe43kKvM8SZ42c4+z3
-         Y/Z4abuhOL802P0xJWpDTjc/8fMHlTpkreFnZIPn3CWMJVNjnZGmgEiyzNBVX0eWI7+V
-         gXvYd98jdWd4ifiirAhvo5GtBiVvsUoSZjBcLuLxrfkJlcxaSAvxoGrRUa0NVtx60ozL
-         lDJmNEpdMt1H5+tFj/KARnUmYbMY58ZB5TtKaVhYsvmqNYDFFxmQYs3VclMO3BGh4vwK
-         42OV354ErYYJQepZsRRszH2N/nM5ORMDcdQuecRyWRg2PmKKBnVLQF/wM2HklbwiJ4aM
-         ZTPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721958932; x=1722563732;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lwZLflB06V4tnnB1EWMignUoULBKSrqsfwebBDmI2fA=;
-        b=bEUJzsnQnGv2fUw9vlNmZVQ189yVIv3TQ6tToOBLPS7QhwRmrEBSmNSdDv4T72qUlz
-         kXwizTYSCI8WbJsgC9aVzFWSRfPeQaJ7Gcbc3WOilNLwpquTz9oOyWO3Kxs6KMWpOhdv
-         ptva5nRwzaaWglJcP2Pugnx/mK3dMjizgb6BB2H1EWrse1HMSgB4bRp6Ow8p0oWPE0nx
-         LcMzV9X7meGFF2TF/aNM+4lYFfAlIL0m3g/hLtDNjC7B8sYlaua6/iXaUNNseyyVjzwu
-         LQP1KCkRhr/8kS3yFfh+Y2nhYcifmf4Ug1GhA3it6uDyQqlIT53Uwa3j8zxTjMb6zglh
-         KNAA==
-X-Forwarded-Encrypted: i=1; AJvYcCX13bo9Ddc7GreFqLe+RW/Ib/ACslwz8S55IrpNSVZYuKpLxN5mE40AEBUgXhy9+NRKyXHPLj6yLMNz8GWH7exTS2Dc8Enoq1qs0bMj
-X-Gm-Message-State: AOJu0YwROlDwO1PIFLqpYYNpRHoELFJvp+3ORjZRvWoYmZsdkBXCPFfz
-	ampHsKxA/mbo6e6c5b/Ueh1YNheM3ID1K5uKYOu8/iS9KH4bXRbV97cIjWo7RmntI9LQN1OxT7r
-	Bpf0=
-X-Google-Smtp-Source: AGHT+IHfvKlhTS94BpVJJTIAh0iHmmNCdLG03YYWoEQxpyHfOQ6GoTN0j7Qeo4O9DHpwZL4tivVUzQ==
-X-Received: by 2002:a05:6808:1449:b0:3db:31b:1d5b with SMTP id 5614622812f47-3db10ef676fmr6465894b6e.13.1721958931962;
-        Thu, 25 Jul 2024 18:55:31 -0700 (PDT)
-Received: from [10.54.24.59] ([143.92.118.3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f7c73cffsm1539945a12.8.2024.07.25.18.55.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jul 2024 18:55:31 -0700 (PDT)
-Message-ID: <ed6f4fc6-bde5-4b04-badc-c4927334f766@shopee.com>
-Date: Fri, 26 Jul 2024 09:55:26 +0800
+	s=arc-20240116; t=1721959045; c=relaxed/simple;
+	bh=oChcQZZT8W/cZSh69mW2NQ3t5gRenM6b+5iA03yhxDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gpiySCu0izA1PCxAKbfYRc0Nh2y6sktIuESPZpEB/nZTm2wLmnzia80qUYEnaMRgV2fBElej6u+AQj9ZavCiml0fXxrTHWnTIibzER8tClNoJgBVUj2B5uIc3F/mruoNgRtwQdNvbdZTCJZPHyxnrAebZQbCHewAKwyvYrG0pyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtASLlCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96BFCC116B1;
+	Fri, 26 Jul 2024 01:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721959044;
+	bh=oChcQZZT8W/cZSh69mW2NQ3t5gRenM6b+5iA03yhxDE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VtASLlCnBxZEp8cFwUh4F+2tIAuPeXnfSglNX6ZhD7mYcXHAwjf4jMYWp3659iJkk
+	 6+HHupkxOo24Gd/T+urrlnBaHun0KsySGtLLqOFDQ+pk68I5VShQfLenU9ATlf15tk
+	 cSallnfPZ7fJKR+uDPKcz5j0fhK8GBOWL83R3hN0WbSLyYcVX/MtBy2meKbjKsJhNA
+	 /xxZT1DRN40sEEnBdDWXdGnnh6LtM+NUQg4FACNwtRul/G22d7iezDtOJSeJdh+bJ0
+	 XzZGojFPaPS9carqDmLkRk8k2+0uorFzLhYWFiee12dV/QZ0dPyMQXd/jM0yyuWayX
+	 V5ShcA56+3a6A==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2] perf annotate: Cache debuginfo for data type profiling
+Date: Thu, 25 Jul 2024 18:57:23 -0700
+Message-ID: <20240726015723.1329937-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: don't flush in-flight wb switches for superblocks
- without cgroup writeback
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tj@kernel.org,
- axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725023958.370787-1-haifeng.xu@shopee.com>
- <20240725084232.bj7apjqqowae575c@quack3>
-From: Haifeng Xu <haifeng.xu@shopee.com>
-In-Reply-To: <20240725084232.bj7apjqqowae575c@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-             
+In find_data_type(), it creates and deletes a debug info whenver it
+tries to find data type for a sample.  This is inefficient and it most
+likely accesses the same binary again and again.
 
-On 2024/7/25 16:42, Jan Kara wrote:
-> On Thu 25-07-24 10:39:58, Haifeng Xu wrote:
->> When deactivating any type of superblock, it had to wait for the in-flight
->> wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
->> which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
->> If there are too much dirty data in the superblock, the waiting time may increase
->> significantly.
->>
->> For superblocks without cgroup writeback such as tmpfs, they have nothing to
->> do with the wb swithes, so the flushing can be avoided.
->>
->> Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
->> ---
->>  fs/super.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/super.c b/fs/super.c
->> index 095ba793e10c..f846f853e957 100644
->> --- a/fs/super.c
->> +++ b/fs/super.c
->> @@ -621,7 +621,8 @@ void generic_shutdown_super(struct super_block *sb)
->>  		sync_filesystem(sb);
->>  		sb->s_flags &= ~SB_ACTIVE;
->>  
->> -		cgroup_writeback_umount();
->> +		if (sb->s_bdi != &noop_backing_dev_info)
->> +			cgroup_writeback_umount();
-> 
-> So a more obvious check would be:
-> 
-> 		if (sb->s_bdi->capabilities & BDI_CAP_WRITEBACK)
-> 
-> even better would be if we'd pass 'sb' into cgroup_writeback_umount() and
-> that function would do this check inside so that callers don't have to
-> bother... I know there is only one caller so this is not a huge deal but
-> still I'd find it cleaner that way.
-> 
-> 								Honza
-> 
+Let's add a single entry cache the debug info structure for the last DSO.
+Depending on sample data, it usually gives me 2~3x (and sometimes more)
+speed ups.
 
-Yes, Thanks for you suggestions!
+Note that this will introduce a little difference in the output due to
+the order of checking stack operations.  It used to check the stack ops
+before checking the availability of debug info but I moved it after the
+symbol check.  So it'll report stack operations in DSOs without debug
+info as unknown.  But I think it's ok and better to have the checking
+near the caching logic.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2) add an assertion for the single-threaded case.
+
+ tools/perf/util/annotate-data.c | 15 ++------------
+ tools/perf/util/annotate-data.h |  2 +-
+ tools/perf/util/annotate.c      | 35 +++++++++++++++++++++++++++++++++
+ tools/perf/util/annotate.h      |  2 ++
+ tools/perf/util/session.c       |  2 ++
+ 5 files changed, 42 insertions(+), 14 deletions(-)
+
+diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+index 734acdd8c4b7..f125ac5f0bda 100644
+--- a/tools/perf/util/annotate-data.c
++++ b/tools/perf/util/annotate-data.c
+@@ -1345,16 +1345,9 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
+  */
+ struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
+ {
+-	struct annotated_data_type *result = NULL;
+ 	struct dso *dso = map__dso(dloc->ms->map);
+ 	Dwarf_Die type_die;
+ 
+-	dloc->di = debuginfo__new(dso__long_name(dso));
+-	if (dloc->di == NULL) {
+-		pr_debug_dtp("cannot get the debug info\n");
+-		return NULL;
+-	}
+-
+ 	/*
+ 	 * The type offset is the same as instruction offset by default.
+ 	 * But when finding a global variable, the offset won't be valid.
+@@ -1364,13 +1357,9 @@ struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
+ 	dloc->fbreg = -1;
+ 
+ 	if (find_data_type_die(dloc, &type_die) < 0)
+-		goto out;
+-
+-	result = dso__findnew_data_type(dso, &type_die);
++		return NULL;
+ 
+-out:
+-	debuginfo__delete(dloc->di);
+-	return result;
++	return dso__findnew_data_type(dso, &type_die);
+ }
+ 
+ static int alloc_data_type_histograms(struct annotated_data_type *adt, int nr_entries)
+diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+index 992b7ce4bd11..37a1a3b68e0b 100644
+--- a/tools/perf/util/annotate-data.h
++++ b/tools/perf/util/annotate-data.h
+@@ -123,9 +123,9 @@ struct data_loc_info {
+ 	u64 var_addr;
+ 	u8 cpumode;
+ 	struct annotated_op_loc *op;
++	struct debuginfo *di;
+ 
+ 	/* These are used internally */
+-	struct debuginfo *di;
+ 	int fbreg;
+ 	bool fb_cfa;
+ 
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a2ee4074f768..2ef119539336 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -25,6 +25,7 @@
+ #include "srcline.h"
+ #include "units.h"
+ #include "debug.h"
++#include "debuginfo.h"
+ #include "annotate.h"
+ #include "annotate-data.h"
+ #include "evsel.h"
+@@ -2326,6 +2327,20 @@ u64 annotate_calc_pcrel(struct map_symbol *ms, u64 ip, int offset,
+ 	return map__rip_2objdump(ms->map, addr);
+ }
+ 
++static struct debuginfo_cache {
++	struct dso *dso;
++	struct debuginfo *dbg;
++} di_cache;
++
++void debuginfo_cache__delete(void)
++{
++	dso__put(di_cache.dso);
++	di_cache.dso = NULL;
++
++	debuginfo__delete(di_cache.dbg);
++	di_cache.dbg = NULL;
++}
++
+ /**
+  * hist_entry__get_data_type - find data type for given hist entry
+  * @he: hist entry
+@@ -2360,6 +2375,25 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
+ 		return NULL;
+ 	}
+ 
++	/*
++	 * It needs to protect di_cache as well as data_types and global_vars in
++	 * DSO when enabling multi-threading.
++	 */
++	assert(perf_singlethreaded);
++
++	if (map__dso(ms->map) != di_cache.dso) {
++		dso__put(di_cache.dso);
++		di_cache.dso = dso__get(map__dso(ms->map));
++
++		debuginfo__delete(di_cache.dbg);
++		di_cache.dbg = debuginfo__new(dso__long_name(di_cache.dso));
++	}
++
++	if (di_cache.dbg == NULL) {
++		ann_data_stat.no_dbginfo++;
++		return NULL;
++	}
++
+ 	/* Make sure it has the disasm of the function */
+ 	if (symbol__annotate(ms, evsel, &arch) < 0) {
+ 		ann_data_stat.no_insn++;
+@@ -2404,6 +2438,7 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
+ 			.ip = ms->sym->start + dl->al.offset,
+ 			.cpumode = he->cpumode,
+ 			.op = op_loc,
++			.di = di_cache.dbg,
+ 		};
+ 
+ 		if (!op_loc->mem_ref && op_loc->segment == INSN_SEG_NONE)
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 9ba772f46270..27d9540604ef 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -543,4 +543,6 @@ struct annotated_basic_block {
+ int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
+ 			      struct list_head *head);
+ 
++void debuginfo_cache__delete(void);
++
+ #endif	/* __PERF_ANNOTATE_H */
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 5596bed1b8c8..f9072e003367 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -36,6 +36,7 @@
+ #include "util.h"
+ #include "arch/common.h"
+ #include "units.h"
++#include "annotate.h"
+ #include <internal/lib.h>
+ 
+ #ifdef HAVE_ZSTD_SUPPORT
+@@ -304,6 +305,7 @@ void perf_session__delete(struct perf_session *session)
+ 		return;
+ 	auxtrace__free(session);
+ 	auxtrace_index__free(&session->auxtrace_index);
++	debuginfo_cache__delete();
+ 	perf_session__destroy_kernel_maps(session);
+ 	perf_decomp__release_events(session->decomp_data.decomp);
+ 	perf_env__exit(&session->header.env);
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
