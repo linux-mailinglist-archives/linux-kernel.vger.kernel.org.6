@@ -1,64 +1,119 @@
-Return-Path: <linux-kernel+bounces-263809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCBA93DAC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B3193DACA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193E51F22D8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198B01F228AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6909C14D2A6;
-	Fri, 26 Jul 2024 22:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C411534FB;
+	Fri, 26 Jul 2024 22:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D26PbP65"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A1eLqX/o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYynmnwN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A1eLqX/o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYynmnwN"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96255149E1D;
-	Fri, 26 Jul 2024 22:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D81114F118;
+	Fri, 26 Jul 2024 22:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722033659; cv=none; b=eXsq4ilkmcijjwzxP4My3DmTi1XoPWU0WydUHrM22QxQYZRvzVkOQpkyy4cAhQ/b8M34qQPrhiK2GPHpp+aL+V7shMItYyv+8WooQ9YPgc1nzuFKCsp867rXSB96NG4vVOOII01FutcgFDDa+JBgzgxtPfPG2Q1v86Rx09LtwHw=
+	t=1722033956; cv=none; b=NM/692P0HDrSpeSfmvhwjb9cng/TTsh1bOqwnoFYUrab/4GOmyccmkmZTXDykbmHOLlSDDkmokoYZa3l4AruQ6zgioGErReBVaYR4SnH9oYjtgxO9SmKT4RmPaZ85jelCjXD9AZLrMuc0uzbK+VaeeEB7Pk8AGtpCdTLRZ/1eIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722033659; c=relaxed/simple;
-	bh=TQ9lohRa2QJoVt7ObZqSokbS/JdwhTgCvCBZ8u69srs=;
+	s=arc-20240116; t=1722033956; c=relaxed/simple;
+	bh=hOE0Z1kvdh6uIGZYovKHSoP1hXB54DzI0w7nD3XgJXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gY+JNh+UFXZmqsyhE/OqmlUJ9ld/8EiesgLmArbNeK2OuEiB1G6EjBfrd7HQyGfwR01LkHdd5q9j5raLmQHsJZuKUPTwdNh0RAH1d97ll0qPTNu3pWbVWvL/pSPvi+i9EzjFGDUs6B5pYDM02B78Nf1VFMT5G8qTv9Wcyj+SEww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D26PbP65; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA79C32782;
-	Fri, 26 Jul 2024 22:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722033659;
-	bh=TQ9lohRa2QJoVt7ObZqSokbS/JdwhTgCvCBZ8u69srs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=D26PbP65t+dxWMBZI/5/le9DTBGroSNdIPxylRvd7Aq7n4lVgA/bioXRxlO/KGYVL
-	 rTowmtkmrOHER0pGrGaygj/KIaAtfdlWXOr894BftKROPzFRC21M0j8GXH0SeQd5H6
-	 pg9mlAFJZ36vLthog+GNrhxeHFs/wBSaG1yM564E8dF1/Ub/5vJ5kSbZ1o7fku9ovn
-	 rXxeOxF3J7Udza/fOOV0DmShyP8d0kFtIG8JTuo5gUg060YEApfxuL6UBYKMUjSKzF
-	 dbR/1LOJB6mswxKmO3cuG0qVBMpzsxAgYn3rzAcdsqWXBKdv+8kONpoANvl7CvYIRF
-	 v9U6ftuLGLZCA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 089B7CE0B34; Fri, 26 Jul 2024 15:40:59 -0700 (PDT)
-Date: Fri, 26 Jul 2024 15:40:59 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 20/20] rcu: Use kthread preferred affinity for RCU
- exp kworkers
-Message-ID: <7734a2b6-2cc9-4133-adbe-ac34fabebc7a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-21-frederic@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6nJ4ZUXMYbdlWTNuM7K+JtzDaegZdT1Ae+iz66SxGwDvLcgMsRLFs+zvQtKq1bihinkFmQZ9Lt31euNi3r14z7+DU8plQboO117A3T9SBOxXDpysXNdI84oYXvIvl2MzYgmbk5u1n99CLU2dRa4AF3XJBsZau+uYibMI5mmMm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A1eLqX/o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYynmnwN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A1eLqX/o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYynmnwN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 25F8221B17;
+	Fri, 26 Jul 2024 22:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722033952;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
+	b=A1eLqX/o3M7AFIEpMfRvh9UI16KN1MarYEfSLxUe0RcDFUcJJTMzohG8/Enihr7MMxtUYm
+	fHpQKSb1thuoBT46Frp0arz9Rhw/cNoJsgJ7SfaIpM4cKz59OTUHO71Eoq5vg/ZKF2awYF
+	uqTQchb3NbuddeY6BjyQxGCicc6THvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722033952;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
+	b=LYynmnwNijUa7IM9Aurpnga1UXlEZyj3zZYcbrjnAkj4RhzIKCV8IErRexqSNbnRzeKkac
+	HzPg1zOUZPJ/i+Cg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722033952;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
+	b=A1eLqX/o3M7AFIEpMfRvh9UI16KN1MarYEfSLxUe0RcDFUcJJTMzohG8/Enihr7MMxtUYm
+	fHpQKSb1thuoBT46Frp0arz9Rhw/cNoJsgJ7SfaIpM4cKz59OTUHO71Eoq5vg/ZKF2awYF
+	uqTQchb3NbuddeY6BjyQxGCicc6THvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722033952;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
+	b=LYynmnwNijUa7IM9Aurpnga1UXlEZyj3zZYcbrjnAkj4RhzIKCV8IErRexqSNbnRzeKkac
+	HzPg1zOUZPJ/i+Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E52A4138A7;
+	Fri, 26 Jul 2024 22:45:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id k1NYNx8npGacGAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 26 Jul 2024 22:45:51 +0000
+Date: Sat, 27 Jul 2024 00:45:42 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, David Sterba <dsterba@suse.cz>,
+	Youling Tang <youling.tang@linux.dev>, kreijack@inwind.it,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <20240726224542.GP17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <ZqJjsg3s7H5cTWlT@infradead.org>
+ <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+ <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+ <ZqOs84hdYkSV_YWd@infradead.org>
+ <20240726152237.GH17473@twin.jikos.cz>
+ <20240726175800.GC131596@mit.edu>
+ <ZqPmPufwqbGOTyGI@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,178 +122,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726215701.19459-21-frederic@kernel.org>
+In-Reply-To: <ZqPmPufwqbGOTyGI@infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[mit.edu,suse.cz,linux.dev,inwind.it,arndb.de,kernel.org,fb.com,toxicpanda.com,suse.com,dilger.ca,vger.kernel.org,lists.sourceforge.net,kylinos.cn];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[inwind.it]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Fri, Jul 26, 2024 at 11:56:56PM +0200, Frederic Weisbecker wrote:
-> Now that kthreads have an infrastructure to handle preferred affinity
-> against CPU hotplug and housekeeping cpumask, convert RCU exp workers to
-> use it instead of handling all the constraints by itself.
+On Fri, Jul 26, 2024 at 11:09:02AM -0700, Christoph Hellwig wrote:
+> On Fri, Jul 26, 2024 at 01:58:00PM -0400, Theodore Ts'o wrote:
+> > Yeah, that's my reaction as well.  This only saves 50 lines of code in
+> > ext4, and that includes unrelated changes such as getting rid of "int
+> > i" and putting the declaration into the for loop --- "for (int i =
+> > ...").  Sure, that saves two lines of code, but yay?
+> > 
+> > If the ordering how the functions gets called is based on the magic
+> > ordering in the Makefile, I'm not sure this actually makes the code
+> > clearer, more robust, and easier to maintain for the long term.
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> So you two object to kernel initcalls for the same reason and would
+> rather go back to calling everything explicitly?
 
-Nice consolidation of troublesome code!
-
-For this one and 17/20:
-
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-
-> ---
->  kernel/rcu/tree.c | 105 +++++++++-------------------------------------
->  1 file changed, 19 insertions(+), 86 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index e038f4abb872..f3e40a1dea65 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -4777,6 +4777,22 @@ rcu_boot_init_percpu_data(int cpu)
->  	rcu_boot_init_nocb_percpu_data(rdp);
->  }
->  
-> +static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
-> +{
-> +	cpumask_var_t affinity;
-> +	int cpu;
-> +
-> +	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
-> +		return;
-> +
-> +	for_each_leaf_node_possible_cpu(rnp, cpu)
-> +		cpumask_set_cpu(cpu, affinity);
-> +
-> +	kthread_affine_preferred(t, affinity);
-> +
-> +	free_cpumask_var(affinity);
-> +}
-> +
->  struct kthread_worker *rcu_exp_gp_kworker;
->  
->  static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
-> @@ -4789,7 +4805,7 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
->  	if (rnp->exp_kworker)
->  		return;
->  
-> -	kworker = kthread_run_worker(0, name, rnp_index);
-> +	kworker = kthread_create_worker(0, name, rnp_index);
->  	if (IS_ERR_OR_NULL(kworker)) {
->  		pr_err("Failed to create par gp kworker on %d/%d\n",
->  		       rnp->grplo, rnp->grphi);
-> @@ -4799,16 +4815,9 @@ static void rcu_spawn_exp_par_gp_kworker(struct rcu_node *rnp)
->  
->  	if (IS_ENABLED(CONFIG_RCU_EXP_KTHREAD))
->  		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
-> -}
->  
-> -static struct task_struct *rcu_exp_par_gp_task(struct rcu_node *rnp)
-> -{
-> -	struct kthread_worker *kworker = READ_ONCE(rnp->exp_kworker);
-> -
-> -	if (!kworker)
-> -		return NULL;
-> -
-> -	return kworker->task;
-> +	rcu_thread_affine_rnp(kworker->task, rnp);
-> +	wake_up_process(kworker->task);
->  }
->  
->  static void __init rcu_start_exp_gp_kworker(void)
-> @@ -4893,79 +4902,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
->  	return 0;
->  }
->  
-> -static void rcu_thread_affine_rnp(struct task_struct *t, struct rcu_node *rnp)
-> -{
-> -	cpumask_var_t affinity;
-> -	int cpu;
-> -
-> -	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
-> -		return;
-> -
-> -	for_each_leaf_node_possible_cpu(rnp, cpu)
-> -		cpumask_set_cpu(cpu, affinity);
-> -
-> -	kthread_affine_preferred(t, affinity);
-> -
-> -	free_cpumask_var(affinity);
-> -}
-> -
-> -/*
-> - * Update kthreads affinity during CPU-hotplug changes.
-> - *
-> - * Set the per-rcu_node kthread's affinity to cover all CPUs that are
-> - * served by the rcu_node in question.  The CPU hotplug lock is still
-> - * held, so the value of rnp->qsmaskinit will be stable.
-> - *
-> - * We don't include outgoingcpu in the affinity set, use -1 if there is
-> - * no outgoing CPU.  If there are no CPUs left in the affinity set,
-> - * this function allows the kthread to execute on any CPU.
-> - *
-> - * Any future concurrent calls are serialized via ->kthread_mutex.
-> - */
-> -static void rcutree_affinity_setting(unsigned int cpu, int outgoingcpu)
-> -{
-> -	cpumask_var_t cm;
-> -	unsigned long mask;
-> -	struct rcu_data *rdp;
-> -	struct rcu_node *rnp;
-> -	struct task_struct *task_exp;
-> -
-> -	rdp = per_cpu_ptr(&rcu_data, cpu);
-> -	rnp = rdp->mynode;
-> -
-> -	task_exp = rcu_exp_par_gp_task(rnp);
-> -
-> -	/*
-> -	 * If CPU is the boot one, this task is created later from early
-> -	 * initcall since kthreadd must be created first.
-> -	 */
-> -	if (!task_exp)
-> -		return;
-> -
-> -	if (!zalloc_cpumask_var(&cm, GFP_KERNEL))
-> -		return;
-> -
-> -	mutex_lock(&rnp->kthread_mutex);
-> -	mask = rcu_rnp_online_cpus(rnp);
-> -	for_each_leaf_node_possible_cpu(rnp, cpu)
-> -		if ((mask & leaf_node_cpu_bit(rnp, cpu)) &&
-> -		    cpu != outgoingcpu)
-> -			cpumask_set_cpu(cpu, cm);
-> -	cpumask_and(cm, cm, housekeeping_cpumask(HK_TYPE_RCU));
-> -	if (cpumask_empty(cm)) {
-> -		cpumask_copy(cm, housekeeping_cpumask(HK_TYPE_RCU));
-> -		if (outgoingcpu >= 0)
-> -			cpumask_clear_cpu(outgoingcpu, cm);
-> -	}
-> -
-> -	if (task_exp)
-> -		set_cpus_allowed_ptr(task_exp, cm);
-> -
-> -	mutex_unlock(&rnp->kthread_mutex);
-> -
-> -	free_cpumask_var(cm);
-> -}
-> -
->  /*
->   * Has the specified (known valid) CPU ever been fully online?
->   */
-> @@ -4994,7 +4930,6 @@ int rcutree_online_cpu(unsigned int cpu)
->  	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
->  		return 0; /* Too early in boot for scheduler work. */
->  	sync_sched_exp_online_cleanup(cpu);
-> -	rcutree_affinity_setting(cpu, -1);
->  
->  	// Stop-machine done, so allow nohz_full to disable tick.
->  	tick_dep_clear(TICK_DEP_BIT_RCU);
-> @@ -5207,8 +5142,6 @@ int rcutree_offline_cpu(unsigned int cpu)
->  	rnp->ffmask &= ~rdp->grpmask;
->  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  
-> -	rcutree_affinity_setting(cpu, cpu);
-> -
->  	// nohz_full CPUs need the tick for stop-machine to work quickly
->  	tick_dep_set(TICK_DEP_BIT_RCU);
->  	return 0;
-> -- 
-> 2.45.2
-> 
+No and not my call to do it for the kernel. Somebody probably had a
+reason use the initcalls, there are probably practical reasons for that.
+Quick grep shows there are thousands of initcalls scattered over the
+whole code base, that does ask for some tricks because updating a single
+file with explicit calls would be a nightmare. Unlike for a subsystem
+inside one directory, like a filesystem.
 
