@@ -1,218 +1,391 @@
-Return-Path: <linux-kernel+bounces-262851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041D793CDD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:56:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D2393CDD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4B01F2312D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5AE1C212A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC615697A;
-	Fri, 26 Jul 2024 05:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C20156C5E;
+	Fri, 26 Jul 2024 05:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1Te7lWn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ti/SR0NI"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65194156678
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D3515666D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721973357; cv=none; b=MMH8tLgpdP5iZgmNeb9lia669BBPAYSuDzYGMOkjN4yvhZaLBFseni138OuqHWIOD5zy5x1ur+Q+P7G1OWbrVx3Ux2UC5YWRRwttDekl/gBS92sehieaY8gsNMuG9N0S/zIfbxDSqu9VAA1L8riyt+Eq98ZVJWSPuPggJHMzt0g=
+	t=1721973383; cv=none; b=clJpVuwJRjS+Xc/mRfJ3HWEaWLCy/YvdFoCokUiBlS/f9C8dMcXUA3UQsi7ntrj2qvARo4aeAN+lY4FDOr6D0t9atw3kNfRUG/8dygBdDD2Uacp7ZHAk4j5aA3miO0oQ/g2a3bLO5bzQ/QJfHN4qjsxl6l20bR9LNIRJmTLCCWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721973357; c=relaxed/simple;
-	bh=fkYfLB7BkpI4W3EQOlvtcDUJr9taWUaCe/cQpnY7uc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2vfwZlY8JbaB1D6A3pRV1/cx1hF5EI1kBlPD+fKcdtzEZaKchc1PoCHFSAqrX7nYuF+FebCufX926SSNWj7b+vl58DxFDZtvHUlEOQcR4YTnhUNgoLaT2BwXm9xAjDScAW6rw2aiKnXFrbbhSeqy9WqJoJ8xaNL8GKA35rG0Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1Te7lWn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721973354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YQThcy6xed9kn8EJsXisAuikWbZtGIN23SlH2PNZkcA=;
-	b=e1Te7lWn/sdLgdUQ1fEX0vdHcLlV0BWzR3f6Uk7ZI/V8Zc6lT1Dh16H7WqZfJ7jQySt8li
-	FlIEY4VQL3DtX+Xh5xtY3JZf3vfrgRp7dArX5E5XEa+FMiQgRq66qYaNkaCV5Isd6CUxDo
-	tK85QSt8yNWc1jMkyFM1XjVJcCy5GCE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-ci8Az4FhN9mxU_eAp8YFAg-1; Fri, 26 Jul 2024 01:55:52 -0400
-X-MC-Unique: ci8Az4FhN9mxU_eAp8YFAg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280d8e685eso1658745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:55:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721973351; x=1722578151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1721973383; c=relaxed/simple;
+	bh=wby3UdPfUnHg/kWGec0p0g7ur2OBINF4cV5flfSvWiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2h/+uY01Ad4u/yuOgqxAr/j+33VchQr9IX7EECuZH8gPV8ygQxh8qlgUH8Lk4Gxtpt/UGTVFHSIHJRl2d7C27hDaahiGCa5E9b6YCy8N3Or0Z+XM/d5wydYu6DEawAAcDZzxJ1QHe5eCZDLQQACYjIWfrY8gSCBfJGyK6xut9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ti/SR0NI; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-492a09d4c42so498957137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721973381; x=1722578181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YQThcy6xed9kn8EJsXisAuikWbZtGIN23SlH2PNZkcA=;
-        b=GIWF2XL2b28bQN+C737L7A6L3s+Wr0GYsdFzYqq6BWcfTJmMT4sAYkFU7EoATBfvLF
-         IGLgIlRABiMAHFy/w+TunT57HSMicRtjpDFUVnSbq9HYvNVk6+xpXEegZewA46MeoZ9n
-         9pckXaQwx6wHMVnZqKADLQQLAcQMoql1HDw2Nzeoe7oO9PpURnXwi27fZTsM6DZE88U7
-         +vTwdlNbLKz4yEjJgvtSPaDkGoJuJl0FwNcVDl43/dsoj6AaVuPqjWYPTk2aoik4fLnj
-         o3ZUU9uz8bWji2G4eNauNUc7H/OyU8hZ4cq2/Z5cwc7qP9ztXOQ305zKEqBnn1LlCvL9
-         K6Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXDNxK2EytwJqcQw32ViwZsJHaKcE5i1mAkoeVU8i9x/stS16lUbwOOEchWviGnBhZir+DcQoljvNgTygtOKLaHth/7HEGPdbLnxGx
-X-Gm-Message-State: AOJu0YzJIfP9bOuMytWYhBN/TtvwC4x3qjKedc2XUb/AE1TiCoSeUVAx
-	irTrf5nZGWsui2DgCSYTNlT96nXTD6t34odLVeFGif1rayNEadXTp9KYXJW+ZloRlW7X6nNiscm
-	aV+8ftbDc4xExQIzob3DxkxslGmgwRaZnTv8NT9p5IlqGzUOqfHB9V6cujnICUg==
-X-Received: by 2002:adf:c08b:0:b0:367:8875:dd4c with SMTP id ffacd0b85a97d-36b31ae2541mr2973083f8f.23.1721973351674;
-        Thu, 25 Jul 2024 22:55:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwUk9Ft0dVUiNjmu7f1QTIXu6q3o+g6VMlVMK1lSks1buGboeYtzHjiLlkzq1mSCBI88a7sA==
-X-Received: by 2002:adf:c08b:0:b0:367:8875:dd4c with SMTP id ffacd0b85a97d-36b31ae2541mr2973059f8f.23.1721973351027;
-        Thu, 25 Jul 2024 22:55:51 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f7:28ce:f21a:7e1e:6a9:f708])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280573edbfsm63673365e9.15.2024.07.25.22.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 22:55:50 -0700 (PDT)
-Date: Fri, 26 Jul 2024 01:55:45 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240726012933-mutt-send-email-mst@kernel.org>
-References: <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
- <20240725100351-mutt-send-email-mst@kernel.org>
- <2a27205bfc61e19355d360f428a98e2338ff68c3.camel@infradead.org>
- <20240725122603-mutt-send-email-mst@kernel.org>
- <0959390cad71b451dc19e5f9396d3f4fdb8fd46f.camel@infradead.org>
- <20240725163843-mutt-send-email-mst@kernel.org>
- <d62925d94a28b4f8e07d14c1639023f3b78b0769.camel@infradead.org>
- <20240725170328-mutt-send-email-mst@kernel.org>
- <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
- <20240726010511-mutt-send-email-mst@kernel.org>
+        bh=VGpoY2/4xuj38ahX+M7aufbGrz4/0fAluE9A3lAurRQ=;
+        b=Ti/SR0NIIdWjE3ZVSWlwyLT5z6cgSYo/yYLXtmfwFrTx4KzmydXkQ0aKz/tBnh41RN
+         VvhGN2XhJsd97bauNQOgyrjd7N7Ez3TyUpYWBLr8d7hGJjVawF1u9nQk+SmS+53Xyq1D
+         k6fZ9vqUAmWXEbQSmV7kh0KCPJd/cJch8c6ODRDoi0/fwxj7e3zNGPGwPzwgDJpFml3q
+         mi2tQm2oj07ww0Vku4gh+anNQz75Zjh+FTkqew6tUSMTc5RVm1UhOzviecRACYq20rPo
+         osjWRJq+eGF6qxNnZnQH392nMJPkq1757Qfg0A6BbhIR1ItKk3X1QC6+7QTByzCsp/pn
+         b6cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721973381; x=1722578181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VGpoY2/4xuj38ahX+M7aufbGrz4/0fAluE9A3lAurRQ=;
+        b=MPG63bX7RQ0O+1JlCY2UP6/cwQMak1jrxibBvVBMRWG9KZGuuANQwP00kVkYtwow4J
+         97WiMMFl14/fg76mplKKFoq3veHqwlBW/HR9uJnaxGhRlbrnOlBK+qHFtW+G8JsqqwqV
+         XwOClHACneW/+dQA/txHpKnP/EvwoV0k40Wi5IbKa0ZIuxxMdzQFfkDg4Mtk2ua0XqHq
+         HgJFrYVYz2xbzRWYOASMK3baoEo+SUI2n9ZUXXhfrPxaUwLssmbC8AML/+3yIYn95Oy1
+         X76OYaO3+wLPTt5mBrtNCyWtvqOMECFsaTnWLhrBBWW1QPmj48crOa4uGPG9PwkZ4eYi
+         E0cw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8jfk1ZcuFgLQUa00z/3ZyTn2EgHjTvOZN6ZBMFznmICYJxwSVk3LF4n82ty1AqlCy6uYmDuIMS24V6bbkoTy0wg3tR3lNLGGOch9V
+X-Gm-Message-State: AOJu0Yz9zMDxRLF4iF2Ro5ndb99XyiaijEpTflBW/vkZ2vSgS3B9f1dz
+	1h2MbrQOXJ0NKOThP993j1/6phlbF6q2M/VCRDMzMmY1volHj+suNnsPZRQcO1PpJmwtNNPUc+U
+	E5t9pGIeCRsoGwbDLAUlotm83nHZf6buN
+X-Google-Smtp-Source: AGHT+IF+HFN7Ty940krUIqBx2EB+g6yBraUBRVlJaZEP6MmECj0uAOPrun8NkhW3iWt1mviqzdPYhB6Sc+9SFMiZ+zk=
+X-Received: by 2002:a05:6102:2ad2:b0:492:9dbe:1741 with SMTP id
+ ada2fe7eead31-493d9b713dcmr6102365137.27.1721973380845; Thu, 25 Jul 2024
+ 22:56:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726010511-mutt-send-email-mst@kernel.org>
+References: <20240711021317.596178-1-yuzhao@google.com> <20240711021317.596178-6-yuzhao@google.com>
+ <CAGsJ_4y0cZwpKmYySdPObXLGaohwOZtKq=kcF4e4tXb22JkNTw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4y0cZwpKmYySdPObXLGaohwOZtKq=kcF4e4tXb22JkNTw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 26 Jul 2024 17:56:10 +1200
+Message-ID: <CAGsJ_4zn46WWmhjsTGES1hH9Un65BiNn+KLUfvE_Espnf0tw9Q@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1 5/5] mm/swap: remove boilerplate
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 01:09:24AM -0400, Michael S. Tsirkin wrote:
-> On Thu, Jul 25, 2024 at 10:29:18PM +0100, David Woodhouse wrote:
-> > > > > Then can't we fix it by interrupting all CPUs right after LM?
-> > > > > 
-> > > > > To me that seems like a cleaner approach - we then compartmentalize
-> > > > > the ABI issue - kernel has its own ABI against userspace,
-> > > > > devices have their own ABI against kernel.
-> > > > > It'd mean we need a way to detect that interrupt was sent,
-> > > > > maybe yet another counter inside that structure.
-> > > > > 
-> > > > > WDYT?
-> > > > > 
-> > > > > By the way the same idea would work for snapshots -
-> > > > > some people wanted to expose that info to userspace, too.
-> > 
-> > Those people included me. I wanted to interrupt all the vCPUs, even the
-> > ones which were in userspace at the moment of migration, and have the
-> > kernel deal with passing it on to userspace via a different ABI.
-> > 
-> > It ends up being complex and intricate, and requiring a lot of new
-> > kernel and userspace support. I gave up on it in the end for snapshots,
-> > and didn't go there again for this.
-> 
-> Maybe become you insist on using ACPI?
-> I see a fairly simple way to do it. For example, with virtio:
-> 
-> one vq per CPU, with a single outstanding buffer,
-> callback copies from the buffer into the userspace
-> visible memory.
-> 
-> Want me to show you the code?
+On Fri, Jul 26, 2024 at 5:48=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Thu, Jul 11, 2024 at 2:15=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote=
+:
+> >
+> > Remove boilerplate by using a macro to choose the corresponding lock
+> > and handler for each folio_batch in cpu_fbatches.
+> >
+> > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > ---
+> >  mm/swap.c | 107 +++++++++++++++++++-----------------------------------
+> >  1 file changed, 37 insertions(+), 70 deletions(-)
+> >
+> > diff --git a/mm/swap.c b/mm/swap.c
+> > index 4a66d2f87f26..342ff4e39ba4 100644
+> > --- a/mm/swap.c
+> > +++ b/mm/swap.c
+> > @@ -220,16 +220,45 @@ static void folio_batch_move_lru(struct folio_bat=
+ch *fbatch, move_fn_t move_fn)
+> >         folios_put(fbatch);
+> >  }
+> >
+> > -static void folio_batch_add_and_move(struct folio_batch *fbatch,
+> > -               struct folio *folio, move_fn_t move_fn)
+> > +static void __folio_batch_add_and_move(struct folio_batch *fbatch,
+> > +               struct folio *folio, move_fn_t move_fn,
+> > +               bool on_lru, bool disable_irq)
+> >  {
+> > +       unsigned long flags;
+> > +
+> > +       folio_get(folio);
+> > +
+> > +       if (on_lru && !folio_test_clear_lru(folio)) {
+> > +               folio_put(folio);
+> > +               return;
+> > +       }
+> > +
+> >         if (folio_batch_add(fbatch, folio) && !folio_test_large(folio) =
+&&
+> >             !lru_cache_disabled())
+> >                 return;
+> >
+> > +       if (disable_irq)
+> > +               local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
+> > +       else
+> > +               local_lock(&cpu_fbatches.lock);
+> > +
+> >         folio_batch_move_lru(fbatch, move_fn);
+> > +
+> > +       if (disable_irq)
+> > +               local_unlock_irqrestore(&cpu_fbatches.lock_irq, flags);
+> > +       else
+> > +               local_unlock(&cpu_fbatches.lock);
+> >  }
+> >
+> > +#define folio_batch_add_and_move(folio, op, on_lru)                   =
+                         \
+> > +       __folio_batch_add_and_move(                                    =
+                         \
+> > +               this_cpu_ptr(&cpu_fbatches.op),                        =
+                         \
+> > +               folio,                                                 =
+                         \
+> > +               op,                                                    =
+                         \
+> > +               on_lru,                                                =
+                         \
+> > +               offsetof(struct cpu_fbatches, op) > offsetof(struct cpu=
+_fbatches, lock_irq)     \
+> > +       )
+>
+> I am running into this BUG, is it relevant?
+>
+> / # [   64.908801] check_preemption_disabled: 1804 callbacks suppressed
+> [   64.908915] BUG: using smp_processor_id() in preemptible [00000000]
+> code: jbd2/vda-8/96
+> [   64.909912] caller is debug_smp_processor_id+0x20/0x30
+> [   64.911743] CPU: 0 UID: 0 PID: 96 Comm: jbd2/vda-8 Not tainted
+> 6.10.0-gef32eccacce2 #59
+> [   64.912373] Hardware name: linux,dummy-virt (DT)
+> [   64.912741] Call trace:
+> [   64.913048]  dump_backtrace+0x9c/0x100
+> [   64.913414]  show_stack+0x20/0x38
+> [   64.913761]  dump_stack_lvl+0xc4/0x150
+> [   64.914197]  dump_stack+0x18/0x28
+> [   64.914557]  check_preemption_disabled+0xd8/0x120
+> [   64.914944]  debug_smp_processor_id+0x20/0x30
+> [   64.915321]  folio_add_lru+0x30/0xa8
+> [   64.915680]  filemap_add_folio+0xe4/0x118
+> [   64.916082]  __filemap_get_folio+0x178/0x450
+> [   64.916455]  __getblk_slow+0xb0/0x310
+> [   64.916816]  bdev_getblk+0x94/0xc0
+> [   64.917169]  jbd2_journal_get_descriptor_buffer+0x6c/0x1b0
+> [   64.917590]  jbd2_journal_commit_transaction+0x7f0/0x1c88
+> [   64.917994]  kjournald2+0xd4/0x278
+> [   64.918344]  kthread+0x11c/0x128
+> [   64.918693]  ret_from_fork+0x10/0x20
+> [   64.928277] BUG: using smp_processor_id() in preemptible [00000000]
+> code: jbd2/vda-8/96
+> [   64.928878] caller is debug_smp_processor_id+0x20/0x30
+> [   64.929381] CPU: 0 UID: 0 PID: 96 Comm: jbd2/vda-8 Not tainted
+> 6.10.0-gef32eccacce2 #59
+> [   64.929886] Hardware name: linux,dummy-virt (DT)
+> [   64.930252] Call trace:
+> [   64.930544]  dump_backtrace+0x9c/0x100
+> [   64.930907]  show_stack+0x20/0x38
+> [   64.931255]  dump_stack_lvl+0xc4/0x150
+> [   64.931616]  dump_stack+0x18/0x28
+> [   64.932022]  check_preemption_disabled+0xd8/0x120
+> [   64.932486]  debug_smp_processor_id+0x20/0x30
+> [   64.933023]  folio_add_lru+0x30/0xa8
+> [   64.933523]  filemap_add_folio+0xe4/0x118
+> [   64.933892]  __filemap_get_folio+0x178/0x450
+> [   64.934265]  __getblk_slow+0xb0/0x310
+> [   64.934626]  bdev_getblk+0x94/0xc0
+> [   64.934977]  jbd2_journal_get_descriptor_buffer+0x6c/0x1b0
+> [   64.935418]  journal_submit_commit_record.part.0.constprop.0+0x48/0x28=
+8
+> [   64.935919]  jbd2_journal_commit_transaction+0x1590/0x1c88
+> [   64.936519]  kjournald2+0xd4/0x278
+> [   64.936908]  kthread+0x11c/0x128
+> [   64.937323]  ret_from_fork+0x10/0x20
 
-Couldn't resist, so I wrote a bit of this code.
-Fundamentally, we keep a copy of the hypervisor abi
-in the device:
+This removes the BUG complaint, but I'm unsure if it's the correct fix:
 
-struct virtclk_info *vci {
-	struct vmclock_abi abi;
-};
+diff --git a/mm/swap.c b/mm/swap.c
+index 342ff4e39ba4..a2781edeceef 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -252,7 +252,7 @@ static void __folio_batch_add_and_move(struct
+folio_batch *fbatch,
 
-each vq will has its own copy:
+ #define folio_batch_add_and_move(folio, op, on_lru)
+                         \
+        __folio_batch_add_and_move(
+                         \
+-               this_cpu_ptr(&cpu_fbatches.op),
+                         \
++               raw_cpu_ptr(&cpu_fbatches.op),
+                         \
+                folio,
+                         \
+                op,
+                         \
+                on_lru,
+                         \
 
-struct virtqueue_info {
-	struct scatterlist sg[];
-	struct vmclock_abi abi;
-}
-
-we add it during probe:
-        sg_init_one(vqi->sg, &vqi->abi, sizeof(vqi->abi));
-	virtqueue_add_inbuf(vq,
-                        vqi->sg, 1,
-                        &vq->vabi,
-                        GFP_ATOMIC);
-
-
-
-We set the affinity for each vq:
-
-       for (i = 0; i < num_online_cpus(); i++)
-               virtqueue_set_affinity(vi->vq[i], i);
-
-(virtio net does it, and it handles cpu hotplug as well)
-
-each vq callback would do:
-
-static void vmclock_cb(struct virtqueue *vq)
-{
-        struct virtclk_info *vci = vq->vdev->priv;
-        struct virtqueue_info *vqi = vq->priv;
-	void *buf;
-        unsigned int len;
-
-	buf = virtqueue_get_buf(vq, &len);
-	if (!buf)
-		return;
-
-	BUG_ON(buf != &vq->abi);
-
-	spin_lock(vci->lock);
-	if (memcmp(&vci->abi, &vqi->abi, sizeof(vqi->abi))) {
-		memcpy(&vci->abi, &vqi->abi, sizeof(vqi->abi));
-	}
-
-	/* Update the userspace visible structure now */
-	.....
-
-	/* Re-add the buffer */
-	virtqueue_add_inbuf(vq,
-                        vqi->sg, 1,
-                        &vqi->abi,
-                        GFP_ATOMIC);
-
-	spin_unlock(vi->lock);
-}
-
-That's it!
-Where's the problem here?
-
--- 
-MST
-
+>
+> > +
+> >  static void lru_move_tail(struct lruvec *lruvec, struct folio *folio)
+> >  {
+> >         if (folio_test_unevictable(folio))
+> > @@ -250,23 +279,11 @@ static void lru_move_tail(struct lruvec *lruvec, =
+struct folio *folio)
+> >   */
+> >  void folio_rotate_reclaimable(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -       unsigned long flags;
+> > -
+> >         if (folio_test_locked(folio) || folio_test_dirty(folio) ||
+> >             folio_test_unevictable(folio))
+> >                 return;
+> >
+> > -       folio_get(folio);
+> > -       if (!folio_test_clear_lru(folio)) {
+> > -               folio_put(folio);
+> > -               return;
+> > -       }
+> > -
+> > -       local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_move_tail);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_move_tail);
+> > -       local_unlock_irqrestore(&cpu_fbatches.lock_irq, flags);
+> > +       folio_batch_add_and_move(folio, lru_move_tail, true);
+> >  }
+> >
+> >  void lru_note_cost(struct lruvec *lruvec, bool file,
+> > @@ -355,21 +372,10 @@ static void folio_activate_drain(int cpu)
+> >
+> >  void folio_activate(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -
+> >         if (folio_test_active(folio) || folio_test_unevictable(folio))
+> >                 return;
+> >
+> > -       folio_get(folio);
+> > -       if (!folio_test_clear_lru(folio)) {
+> > -               folio_put(folio);
+> > -               return;
+> > -       }
+> > -
+> > -       local_lock(&cpu_fbatches.lock);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_activate);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_activate);
+> > -       local_unlock(&cpu_fbatches.lock);
+> > +       folio_batch_add_and_move(folio, lru_activate, true);
+> >  }
+> >
+> >  #else
+> > @@ -513,8 +519,6 @@ EXPORT_SYMBOL(folio_mark_accessed);
+> >   */
+> >  void folio_add_lru(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -
+> >         VM_BUG_ON_FOLIO(folio_test_active(folio) &&
+> >                         folio_test_unevictable(folio), folio);
+> >         VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
+> > @@ -524,11 +528,7 @@ void folio_add_lru(struct folio *folio)
+> >             lru_gen_in_fault() && !(current->flags & PF_MEMALLOC))
+> >                 folio_set_active(folio);
+> >
+> > -       folio_get(folio);
+> > -       local_lock(&cpu_fbatches.lock);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_add);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_add);
+> > -       local_unlock(&cpu_fbatches.lock);
+> > +       folio_batch_add_and_move(folio, lru_add, false);
+> >  }
+> >  EXPORT_SYMBOL(folio_add_lru);
+> >
+> > @@ -702,22 +702,11 @@ void lru_add_drain_cpu(int cpu)
+> >   */
+> >  void deactivate_file_folio(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -
+> >         /* Deactivating an unevictable folio will not accelerate reclai=
+m */
+> >         if (folio_test_unevictable(folio))
+> >                 return;
+> >
+> > -       folio_get(folio);
+> > -       if (!folio_test_clear_lru(folio)) {
+> > -               folio_put(folio);
+> > -               return;
+> > -       }
+> > -
+> > -       local_lock(&cpu_fbatches.lock);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_deactivate_file);
+> > -       local_unlock(&cpu_fbatches.lock);
+> > +       folio_batch_add_and_move(folio, lru_deactivate_file, true);
+> >  }
+> >
+> >  /*
+> > @@ -730,21 +719,10 @@ void deactivate_file_folio(struct folio *folio)
+> >   */
+> >  void folio_deactivate(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -
+> >         if (folio_test_unevictable(folio) || !(folio_test_active(folio)=
+ || lru_gen_enabled()))
+> >                 return;
+> >
+> > -       folio_get(folio);
+> > -       if (!folio_test_clear_lru(folio)) {
+> > -               folio_put(folio);
+> > -               return;
+> > -       }
+> > -
+> > -       local_lock(&cpu_fbatches.lock);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_deactivate);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_deactivate);
+> > -       local_unlock(&cpu_fbatches.lock);
+> > +       folio_batch_add_and_move(folio, lru_deactivate, true);
+> >  }
+> >
+> >  /**
+> > @@ -756,22 +734,11 @@ void folio_deactivate(struct folio *folio)
+> >   */
+> >  void folio_mark_lazyfree(struct folio *folio)
+> >  {
+> > -       struct folio_batch *fbatch;
+> > -
+> >         if (!folio_test_anon(folio) || !folio_test_swapbacked(folio) ||
+> >             folio_test_swapcache(folio) || folio_test_unevictable(folio=
+))
+> >                 return;
+> >
+> > -       folio_get(folio);
+> > -       if (!folio_test_clear_lru(folio)) {
+> > -               folio_put(folio);
+> > -               return;
+> > -       }
+> > -
+> > -       local_lock(&cpu_fbatches.lock);
+> > -       fbatch =3D this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
+> > -       folio_batch_add_and_move(fbatch, folio, lru_lazyfree);
+> > -       local_unlock(&cpu_fbatches.lock);
+> > +       folio_batch_add_and_move(folio, lru_lazyfree, true);
+> >  }
+> >
+> >  void lru_add_drain(void)
+> > --
+> > 2.45.2.803.g4e1b14247a-goog
+> >
+> >
+>
+> Thanks
+> Barry
 
