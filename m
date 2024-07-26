@@ -1,158 +1,153 @@
-Return-Path: <linux-kernel+bounces-263184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA8F93D24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:30:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D40D93D24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956C9281AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EFCEB20EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A7313C83D;
-	Fri, 26 Jul 2024 11:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C64D17A592;
+	Fri, 26 Jul 2024 11:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y+jLGIaP"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="VrfUdBW7"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB83628377
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14061EF01
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721993417; cv=none; b=J6UH9ChYh/KvHC10W8NYZYz5+FcI/60e5mGROBsPSvn7TLhxBOQFBlFh0PEF6qHeV2Fm8f5M3PutRVMpG/0rUZLLP29H5KQGlYt9MXiArOXY7726PuOvPs2ErUXCbJYfXDJvvXyJBNYNJj7kZ/eNRsQBTS3+G8dMW/nZv2ri7qs=
+	t=1721993508; cv=none; b=NhILfMhCx5/WxlfVAeHtHdtqdCL+xIWkFaRGNiwPW1FXncRkJTlJ0gIPgkmKoIi+JiQtKF9imCWatDPRk6+SH5HiUOwtiVKSG1wx63l7k/RztEXe7QccG39sVPeZz3l+At4op4iAa5BGuLu849PL2X6izsQmLEiXrE2zlq0Qcro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721993417; c=relaxed/simple;
-	bh=jZuNH5YnduOs+NIh2LBMhH5sOy0j2IdcWl0ioAMAS+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mc4eD6OaKC4yGGxh8S8XMlJG7rhCLgPfajqQj49efkmrqgiSI+rzlvMy3BswMBV9iOvq/sI5XNIMqKSYoRrJRfMA6c6FAcntFtGtTQbKdhHhGiFDfCPFWCYL434/p7/HRk9UTYjR25YN4OfEclKsKd1hrmrYWU60YWKvgv0Fwmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y+jLGIaP; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc52394c92so5433735ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:30:15 -0700 (PDT)
+	s=arc-20240116; t=1721993508; c=relaxed/simple;
+	bh=6AkwrgRLG5W/CxJyM98Ta25bwmSU/41BBpT0AJ8d5JE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rwhVuP4iqMNNV5fEyMHecO3SsnBCc0IBqf7nrmsI69EiK0ZEDM+x6is3/4/OGeuY6bILJMvVus7ovawQ3p1etdaTKWjpzAtA9+WT/Z0H00rA8TGxv8t38fSyMODcOnO8bKmzjqGU/FeQ3eiFwzHzRjGY9lYTEtVwLWkWF4MEEA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=VrfUdBW7; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c6661bca43so539069eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721993415; x=1722598215; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RndSCR9HYmtlUSyMNNv/4RT5OOPlZlJZmp3kOybopPY=;
-        b=y+jLGIaPGo3jJz+CFukGsgTrdho4ZkiAJFB73bDSdMAeNLyfwB4mDJwJOX7WI03yKu
-         p8M0MQ47VfWcxMPfBoBIRQuJSPDMsTD1HGN26ScLnHqr7b6JpqNwAhMunuMTxk4VHqkQ
-         Qh2S5b/qyDiQWUMm9UWXRT+ab6Pl1uqCN9j42HhcIIE8yW8kl2ai8fUaHMneoCjpnz+a
-         3nGO1NFgHE3LtlcuBbjbgyr3WgsTiuzJ/LM01mPM+Mnc1utGMSp3RCdybl32XPcGBfIN
-         oytLKxWMD7SQ71WP/KFJsEyqbfj/82XImg+UefvkxTuUZmJblsutnDalx79qD9MXqy+N
-         JJ8w==
+        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721993506; x=1722598306; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kmk1JjA2Ls4g+KyqSuHumcBghaFAtTT2atg+wkKZS7s=;
+        b=VrfUdBW7HEijbnLFBEmsUfYgB3xZ5iIVY2FwQBxvrVLDJ6FRHbvIBB8L5P05cz1jwW
+         E4uX2ixiqXbYRh0D6d8kfli5kBJMA1wie84o2Dwla2edGWtQdg3rrXCf92t9K7sQuV4W
+         RFE/ij0mDAdJIfep9CKTbw5aId/YZn16gG8gEA4QfgoeCZUrinAzpOCAPWtgJgXImGXH
+         9Zoi1FZ+/nWag3JOaTyLoEbuEu/f92TfzbuuD7cuzrs0ZNAB+GsMPcjXoypjNuz8pwLr
+         NQ7Y5fNDT2REX1OIsTZTfDjNeJzMuLF+6fSRlMF6EGFR+4g1Jy0utpInplPTRyz1rqsE
+         yoYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721993415; x=1722598215;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RndSCR9HYmtlUSyMNNv/4RT5OOPlZlJZmp3kOybopPY=;
-        b=ggEGIRUpcKUCOnFAf9Nl5kyrRkVv3edAUTTYfoaWempHIG/sjhSR+1ZsYK6B9idA8V
-         uYgl8ErUh6WkxtMpmOrwEAZdVPIUVzLUcMfZHuG6eBf24grbY0PDGua3Hg835lbtg6Ly
-         Z8SjIhXwttqkqwGXVUL2fMY68MVt/5oLftCvTQJWSrRh722SqSPMDYxMm5259nxQQUOz
-         LjtdKTh4VEqXuI4g98e/SahsgkyOvx3L1KvZS0bHUxS0fCIYGq/OwtKcFGqXLL1OhT5Q
-         qu9sFzInGDKOsb8KaT6hzVB8zmH39/e7Kuuovv/QZSn4HtBgHelaMEgbXAVGaaLe4rqT
-         EuCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDlwCExYIF8gROsKXaW2wNGQEd826sPBhPDB1RcCed3WxizuPIFGhf7iE8U9mXU44Lb/EnXE9k6rpR7aguIaPYIsjCwBOojwb81dKU
-X-Gm-Message-State: AOJu0YxpBInQvJmhf7neTR7IRtXE/xgsBKBNy3ahcFmF47CiElzzOSLM
-	FqKaKboha0tGPbWWplDUOGassbS1SjQpF4Rgmd6ipqs3mVjLHboNg9agm38YjQ==
-X-Google-Smtp-Source: AGHT+IFFDs1pJ4blYTtGgWC7JM93sHxQ90BWTwmCih/f3uvHFvkKnEUdPrSg7Zp1i2/tvUTdJ3f9cw==
-X-Received: by 2002:a17:902:dacb:b0:1fd:9d0c:9996 with SMTP id d9443c01a7336-1fed38c7af8mr61791785ad.35.1721993415136;
-        Fri, 26 Jul 2024 04:30:15 -0700 (PDT)
-Received: from thinkpad ([2409:40f4:201d:928a:9e8:14a5:7572:42b6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fda4sm29979565ad.22.2024.07.26.04.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 04:30:14 -0700 (PDT)
-Date: Fri, 26 Jul 2024 17:00:08 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	ahalaney@redhat.com, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <20240726113008.GE2628@thinkpad>
-References: <20240724065048.285838-1-s-vadapalli@ti.com>
- <20240724161916.GG3349@thinkpad>
- <69f8c45c-29b4-4090-8034-8c5a19efa4f8@ti.com>
- <20240725074708.GB2770@thinkpad>
- <5f7328f8-eabc-4a8c-87a3-b27e2f6c0c1f@ti.com>
- <4cb79826-5945-40d5-b52c-22959a5df41a@ti.com>
+        d=1e100.net; s=20230601; t=1721993506; x=1722598306;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kmk1JjA2Ls4g+KyqSuHumcBghaFAtTT2atg+wkKZS7s=;
+        b=YqxxUIOMGPo0ZzmuaOG4ows7smaHiZr2kmNI3t4znOnNN0HjmgZInaKkvEKNjM+PGG
+         FP1EyOMk5Bb+L39tw6No/Kf9x/fG5qkQau+yynWcDzDGGMSi9nofbkEY1MPpFoz103oe
+         tnFx166HzXEYQFMpjHxKej5A0GpW2sDCTB1EDENOcqzPum8aZyKul5EPwCISYOYkQaBI
+         X7T3rmKN1IPVLi1PfqTYpxh3xmDCX6NKsXk2utyUuI8PIdEYLCMjNHdIPAF2YfTxFqMh
+         g+k3swcmZQkQCHQwVACDd2VLFfkZLFEyY5eQJtwMMnu7bq9uTUCDsZrJoeDm2tJUzXCE
+         0q+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9NI8Xq3kotUAzNV+mkWgQN0S0/nIW2boPcjs0TwDhlfJ99KdA8oMRdMX3p0GGtQ3BjGv498qlehodppUBqbAEY9wqWfeKRxf1OkBq
+X-Gm-Message-State: AOJu0Ywm9uYsmk4TeQMOFi2CGG5Ya5IkRRP2QWH3CwbcqTY0occd2l8W
+	fqMkKUD10eDxHYlmj/tPCWQpEqjH//oiNQn1Lev27FF8AvQBDEUiNJSUgqWkCkOsXK5uXTPe8x8
+	dl81YP+IeCLJrzIN2t8LvBOf3g6oh7XJIR/Y6Ww==
+X-Google-Smtp-Source: AGHT+IGvPfPntSm/3Bto2qo4lI9AXdvO3Bew6FS2Yq3n8hvJGd9oEEOgF1uuOwWL92xMEZYtBtPacNHYm21W/2FzE+w=
+X-Received: by 2002:a05:6358:280e:b0:1aa:bad6:2ba7 with SMTP id
+ e5c5f4694b2df-1acfb99ed34mr636036055d.25.1721993505839; Fri, 26 Jul 2024
+ 04:31:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4cb79826-5945-40d5-b52c-22959a5df41a@ti.com>
+References: <TkgKVivuaLFLILPY-n3iZo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=@proton.me>
+ <CAPj87rPwJ-vRTsjM1rWRj1gyjbJM_ryrkTiPRBF3ZF1D7TVDYw@mail.gmail.com> <PGDz1uKmBh2U_yB-ut5xcahPHdmxgrIRAwALnJzsEHFuYssmMhQUz8jbHpEyUDBMjVbmQCjlP3K4gbzw3zZ53HhXUsXufBb5YzptnC58aeQ=@proton.me>
+In-Reply-To: <PGDz1uKmBh2U_yB-ut5xcahPHdmxgrIRAwALnJzsEHFuYssmMhQUz8jbHpEyUDBMjVbmQCjlP3K4gbzw3zZ53HhXUsXufBb5YzptnC58aeQ=@proton.me>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 26 Jul 2024 12:31:34 +0100
+Message-ID: <CAPj87rOM=j0zmuWL9frGKV1xzPbJrk=Q9ip7F_HAPYnbCqPouw@mail.gmail.com>
+Subject: Re: [PATCH v3] rockchip/drm: vop2: add support for gamma LUT
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, 
+	"hjc@rock-chips.com" <hjc@rock-chips.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 03:54:17PM +0530, Siddharth Vadapalli wrote:
-> On Thu, Jul 25, 2024 at 02:01:48PM +0530, Siddharth Vadapalli wrote:
-> > On Thu, Jul 25, 2024 at 01:17:08PM +0530, Manivannan Sadhasivam wrote:
-> > > On Thu, Jul 25, 2024 at 10:50:13AM +0530, Siddharth Vadapalli wrote:
-> > > > On Wed, Jul 24, 2024 at 09:49:16PM +0530, Manivannan Sadhasivam wrote:
-> > > > > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
-> > > > > > Since the configuration of Legacy Interrupts (INTx) is not supported, set
-> > > > > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
-> > > > > >   of_irq_parse_pci: failed with rc=-22
-> > > > > > due to the absence of Legacy Interrupts in the device-tree.
-> > > > > > 
-> > > > > 
-> > > > > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq() will bail out
-> > > > > if 'map_irq' is set to NULL.
-> > > > 
-> > > > While 'swizzle_irq' won't be invoked if 'map_irq' is NULL, having a
-> > > > non-NULL 'swizzle_irq' (pci_common_swizzle in this case) with a NULL
-> > > > 'map_irq' seems inconsistent to me though the code-path may never invoke
-> > > > it. Wouldn't a non-NULL 'swizzle_irq' imply that Legacy Interrupts are
-> > > > supported, while a NULL 'map_irq' indicates that they aren't? Since they
-> > > > are always described in pairs, whether it is in the initial commit that
-> > > > added support for the Cadence PCIe Host controller (used by pci-j721e.c):
-> > > > https://github.com/torvalds/linux/commit/1b79c5284439
-> > > > OR the commit which moved the shared 'map_irq' and 'swizzle_irq' defaults
-> > > > from all the host drivers into the common 'devm_of_pci_bridge_init()'
-> > > > function:
-> > > > https://github.com/torvalds/linux/commit/b64aa11eb2dd
-> > > > I have set both of them to NULL for the sake of consistency.
-> > > > 
-> > > 
-> > > Since both callbacks are populated in the pci/of driver, this consistency won't
-> > > be visible in the controller drivers. From the functionality pov, setting both
-> > > callbacks to NULL is *not* required to disable INTx, right?
-> > 
-> > Yes, setting 'swizzle_irq' to NULL isn't required. The execution sequence
-> > with 'swizzle_irq' set to 'pci_common_swizzle()' is as follows:
-> > 
-> > pci_assign_irq()
-> >   if (pin) {
-> >     if (hbrg->swizzle_irq)
-> >       slot = (*(hbrg->swizzle_irq))(dev, &pin);
-> >         pci_common_swizzle()
-> > 	  while (!pci_is_root_bus(dev->bus)) <= NOT entered
-> > 	..continue execution similar to 'swizzle_irq' being NULL.
-> > 
-> > Having 'swizzle_irq' set to 'pci_common_swizzle()' will only result
-> > in a no-op which could have been avoided by setting it to NULL. So there
-> > is no difference w.r.t. functionality.
-> 
-> Mani,
-> 
-> I prefer setting 'swizzle_irq' to NULL as well unless you have an objection
-> to it. Kindly let me know. I plan to post the v2 for this patch addressing
-> Bjorn's feedback and collecting Andrew's "Tested-by" tag as well.
-> 
+Hi Piotr,
 
-Ok, fine with me.
+On Thu, 25 Jul 2024 at 20:06, Piotr Zalewski <pZ010001011111@proton.me> wrote:
+> I based my patch on how gamma LUT is handled in VOP. There, in atomic
+> enable, gamma LUT write takes places at the end too, after the mutex was
+> already first-time unlocked. I understand the concept of DRM atomic state
+> updates and what you wrote makes sense.
 
-- Mani
+Yeah, no problem - the old VOP1 code is clearly incorrect here. I'm
+glad you can improve VOP2. :)
 
--- 
-மணிவண்ணன் சதாசிவம்
+>  static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
+> @@ -2152,6 +2127,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
+>
+>         vop2_post_config(crtc);
+>
+> +       if (crtc->state->gamma_lut)
+> +               vop2_crtc_gamma_set(vop2, crtc, old_state, &dsp_ctrl);
+
+I think this call should be unconditional, so that we correctly
+program LUT_DIS if there is no LUT set up during enable.
+
+> @@ -2599,8 +2575,17 @@ static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
+>         vop2_setup_alpha(vp);
+>         vop2_setup_dly_for_windows(vop2);
+>
+> -       if (crtc_state->color_mgmt_changed && !crtc_state->active_changed)
+> -               vop2_crtc_gamma_set(vop2, crtc, old_crtc_state);
+> +       if (crtc_state->color_mgmt_changed && !crtc_state->active_changed) {
+> +               u32 dsp_ctrl = vop2_vp_read(vp, RK3568_VP_DSP_CTRL);;
+> +
+> +               vop2_lock(vop2);
+> +
+> +               vop2_crtc_gamma_set(vop2, crtc, old_crtc_state, &dsp_ctrl);
+> +
+> +               vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
+> +               vop2_cfg_done(vp);
+> +               vop2_unlock(vop2);
+> +       }
+
+Calling lock/set/write/done/unlock here seems like an anti-pattern;
+the cfg_done is already written in atomic_flush, so at least that part
+is not necessary.
+
+On platforms like RK3588, it looks like the new LUT can just be
+written directly from atomic_begin without needing to program
+DSP_CTRL, take locks, or synchronise against anything, so that should
+be an easy straight-line path.
+
+On platforms like RK3568, it would probably be better to set
+mode_changed when the colour management configuration changes. That
+will give you a good point to synchronise the cross-VOP dependencies
+(i.e. claim or release the shared LUT when it is being
+enabled/disabled), and also a hint to userspace that it is not going
+to be a seamless transition as the LUT is disabled, programmed, then
+re-enabled.
+
+I think this would end up in a net reduction of LoC as well as a net
+reduction of code weirdness.
+
+Cheers,
+Daniel
 
