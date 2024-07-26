@@ -1,80 +1,59 @@
-Return-Path: <linux-kernel+bounces-262970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A9D93CF49
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:07:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D62693CF4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700FC1C222DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E231C222E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9088D176FBE;
-	Fri, 26 Jul 2024 08:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523AA176ACF;
+	Fri, 26 Jul 2024 08:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YdYkMBfx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0U4Jy2sl"
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6ED524B4;
-	Fri, 26 Jul 2024 08:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E441741FB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721981210; cv=none; b=btJ+aVKWLcgO9jiyXPb5baXw1MmgLhHIKGmMSu8XHMNA0AfmYAvAOPfbNNM5yK+mm42mbCFWcyyW0zvwK2WddFzM2R4V9NW7Dx62k5KVFGsipQUDlnGDRQEaz1ytbO+6dVT2lq3RtmAXl98HxLeSxVirEqMzQbfkYmFejs5bR7E=
+	t=1721981271; cv=none; b=mA0gRBppsSQvFM74hVCFh0KLvVdp7dlWMWt/TULQlZUrEXH9VE46WSeOWyit7jj/xdk6dZcxiGksVuLGkpzBlJBszy62m56fOKnoAh0+588NzX5AMHe7dYpFsVW+cwuHyx4ofkDSoh6x+02In6xYYgQXRRPbkp8yQpbIM4hzzE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721981210; c=relaxed/simple;
-	bh=9XgdxMrvIfkd+SJBRa+5xDEpZzmO8H5H5XS3eZbYEog=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JLp+0bQLgwSWK0H/UW1uU8LiTFPB7MKRsndI6nXMH13SjiSWX1NtAtUR/WZoAWpGK7GpGWwAxETSS2c9sF7E9LW6V2x3thylgrPk7hYbCqczi6+9CviA+5f2Ba7uwHtQ6ZHLWzkTAK+5EUhGzN2fjVgRG+8fLBw7qMsYW27JWTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YdYkMBfx; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721981209; x=1753517209;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=9XgdxMrvIfkd+SJBRa+5xDEpZzmO8H5H5XS3eZbYEog=;
-  b=YdYkMBfxjg1zTEZ3tLlFS5/hrNWYez9jgStxdgrKj0JgtXIFSGZZiSmM
-   rM28SOdMBPNEwe1z6WqfC2hIhSYK4KDAZWe/Rx63IFzglEucfEWoEpzE7
-   jG3s7AdqDNMaDNEcCQ/XJrRqMLzUgSGH+7Rm+d54J3h64mr4dF681EHWW
-   vbR8NCvauZR+ng7SdlEB0Tw9gqGUkN20YgrSsWwOX+yBkV8cQmgfo7bsH
-   NDj+CX4eKlpK6CZbURMMLVBRcubIUT3YtiXCtwkyYU30tPocixVfAgytv
-   UgOQ1/o8IVIoi3NtvDvTISvBeJIGPYoTEAtc+I9s/Z9jV3OprSkZu3pLk
-   g==;
-X-CSE-ConnectionGUID: ZVdS+E5ES/iNrHyYY28vLA==
-X-CSE-MsgGUID: awM6bI6eQuGdB3JWDwxCCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="22679026"
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="22679026"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 01:06:48 -0700
-X-CSE-ConnectionGUID: r1ab+2STRCmEt3ZuWAdtjQ==
-X-CSE-MsgGUID: QzRcKxs0Q0au6gz37wJ4Bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="57984032"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.66])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 01:06:43 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, dianders@chromium.org, hsinyi@google.com,
- airlied@gmail.com, daniel@ffwll.ch, jagan@edgeble.ai,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] drm/panel: jd9365da: Move the sending location
- of the 11/29 command
-In-Reply-To: <CA+6=WdS5QKMVX2euxdeDqCoHrCpWuqB_cu5vzHGUNdUq4NnPZw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240725083245.12253-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240725083245.12253-2-lvzhaoxiong@huaqin.corp-partner.google.com>
- <87o76lzwvr.fsf@intel.com>
- <CA+6=WdS5QKMVX2euxdeDqCoHrCpWuqB_cu5vzHGUNdUq4NnPZw@mail.gmail.com>
-Date: Fri, 26 Jul 2024 11:06:40 +0300
-Message-ID: <87h6cczien.fsf@intel.com>
+	s=arc-20240116; t=1721981271; c=relaxed/simple;
+	bh=eI+e+tli3hU865TCIxyeXDogwsp/X2laaJtuyO9qqZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iWv26gGimrLgthVQALDybQHf4NGSKy5nxnzfkvyxmvjVVkDXe0eu74iN+cQAXlATT6LJ6yH8EHU6GKasNp/JAGD7JYMzh8YA1iqro/dv7VhpWWforGvrifJCeaVb/2HOrO8RBMk4Wdl6J6Q1eQiNCRDbFTuvLSomP501IHb/B9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0U4Jy2sl; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVgND2GvGzN1B;
+	Fri, 26 Jul 2024 10:07:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721981260;
+	bh=1B7FkB9zwPzXkb++z1W4fSaxY9faalW6aoTN3k9G6eg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0U4Jy2slEWPGSBR3Fj22KEMce/LLcWxIK9fCZURM2DV4ZaexrYddYp4pvpQdU6873
+	 UTytPDUlX6zKmUzijq50JXaxyAPrnxbdPNJj57M/SM3HS4zyMfndVfxQ2IldT+xIkD
+	 pIxYHvtd+15jzve9FE9Dc86GFHD7O+41IZhNYkZA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVgNC54Qrzqyd;
+	Fri, 26 Jul 2024 10:07:39 +0200 (CEST)
+Date: Fri, 26 Jul 2024 10:07:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240726.Nohde4vooy3A@digikod.net>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,206 +61,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, 26 Jul 2024, zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.c=
-om> wrote:
-> On Thu, Jul 25, 2024 at 4:41=E2=80=AFPM Jani Nikula <jani.nikula@linux.in=
-tel.com> wrote:
->>
->> On Thu, 25 Jul 2024, Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.googl=
-e.com> wrote:
->> > Move the 11/29 command from enable() to init() function
->>
->> OOC, what is the "11/29" command?
->>
->> BR,
->> Jani.
->
-> hi Jani
-> Sorry, maybe I didn't describe it clearly. The 11/29 commands are sent
-> by these two functions.
->
-> mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->
-> MIPI_DCS_EXIT_SLEEP_MODE =3D 0x11,
-> MIPI_DCS_SET_DISPLAY_ON=3D 0x29,
+On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
+> The patch introduces a new "scoped" attribute to the
+> landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
+> to scope abstract unix sockets from connecting to a process outside of
+> the same landlock domain.
+> 
+> This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
+> enforce this restriction.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> 
+> -------
+> v7:
+>  - Using socket's file credentials for both connected(STREAM) and
+>    non-connected(DGRAM) sockets.
+>  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
+>    ptrace ensures that if a server's domain is accessible from the client's
+>    domain (where the client is more privileged than the server), the client
+>    can connect to the server in all edge cases.
+>  - Removing debug codes.
+> v6:
+>  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
+>    the same domain scoping as ptrace.
+>  - code clean up.
+> v5:
+>  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+>  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
+>    landlock_hierarchy to its respective landlock_ruleset.
+>  - Using curr_ruleset to check if a domain is scoped while walking in the
+>    hierarchy of domains.
+>  - Modifying inline comments.
+> V4:
+>  - Rebased on Günther's Patch:
+>    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+>    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
+>  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
+>  - Using file's FD credentials instead of credentials stored in peer_cred
+>    for datagram sockets. (see discussion in [1])
+>  - Modifying inline comments.
+> V3:
+>  - Improving commit description.
+>  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
+>    purpose, and adding related functions.
+>  - Changing structure of ruleset based on "scoped".
+>  - Removing rcu lock and using unix_sk lock instead.
+>  - Introducing scoping for datagram sockets in unix_may_send.
+> V2:
+>  - Removing wrapper functions
+> 
+> [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
+> -------
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  include/uapi/linux/landlock.h |  29 +++++++++
+>  security/landlock/limits.h    |   3 +
+>  security/landlock/ruleset.c   |   7 ++-
+>  security/landlock/ruleset.h   |  23 ++++++-
+>  security/landlock/syscalls.c  |  14 +++--
+>  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
+>  6 files changed, 181 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 68625e728f43..9cd881673434 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+>  	 * rule explicitly allow them.
+>  	 */
+>  	__u64 handled_access_net;
+> +	/**
+> +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
+> +	 * restricting a Landlock domain from accessing outside
+> +	 * resources(e.g. IPCs).
+> +	 */
+> +	__u64 scoped;
+>  };
+>  
+>  /*
+> @@ -266,4 +272,27 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  /* clang-format on */
+> +
+> +/**
+> + * DOC: scope
+> + *
+> + * .scoped attribute handles a set of restrictions on kernel IPCs through
+> + * the following flags.
 
-Maybe refer to the commands with their names then? Exit sleep mode and
-set display on.
+If you look at the generated documentation (once this doc is properly
+included), you'll see that this line ends in the Network flags section.
 
-BR,
-Jani.
+> + *
+> + * Scope flags
+> + * ~~~~~~~~~~~
+> + *
+> + * These flags enable to restrict a sandboxed process from a set of IPC
+> + * actions. Setting a flag for a ruleset will isolate the Landlock domain
+> + * to forbid connections to resources outside the domain.
+> + *
+> + * IPCs with scoped actions:
 
+There is a formating issue here.
 
-
->
-> BR,
->>
->> >
->> > As mentioned in the patch:
->> > https://lore.kernel.org/all/20240624141926.5250-2-lvzhaoxiong@huaqin.c=
-orp-partner.google.com/
->> >
->> > Our DSI host has different modes in prepare() and enable()
->> > functions. prepare() is in LP mode and enable() is in HS mode.
->> > Since the 11/29 command must also be sent in LP mode,
->> > so we also move 11/29 command to the init() function.
->> >
->> > After moving the 11/29 command to the init() function,
->> > we no longer need additional delay judgment, so we delete
->> > variables "exit_sleep_to_display_on_delay_ms" and
->> > "display_on_delay_ms".
->> >
->> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.co=
-m>
->> > ---
->> >  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 59 ++++++++++---------
->> >  1 file changed, 32 insertions(+), 27 deletions(-)
->> >
->> > diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/driver=
-s/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->> > index 04d315d96bff..ce73e8cb1db5 100644
->> > --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->> > +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->> > @@ -31,8 +31,6 @@ struct jadard_panel_desc {
->> >       bool reset_before_power_off_vcioo;
->> >       unsigned int vcioo_to_lp11_delay_ms;
->> >       unsigned int lp11_to_reset_delay_ms;
->> > -     unsigned int exit_sleep_to_display_on_delay_ms;
->> > -     unsigned int display_on_delay_ms;
->> >       unsigned int backlight_off_to_display_off_delay_ms;
->> >       unsigned int display_off_to_enter_sleep_delay_ms;
->> >       unsigned int enter_sleep_to_reset_down_delay_ms;
->> > @@ -66,26 +64,6 @@ static inline struct jadard *panel_to_jadard(struct=
- drm_panel *panel)
->> >       return container_of(panel, struct jadard, panel);
->> >  }
->> >
->> > -static int jadard_enable(struct drm_panel *panel)
->> > -{
->> > -     struct jadard *jadard =3D panel_to_jadard(panel);
->> > -     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi=
- };
->> > -
->> > -     msleep(120);
->> > -
->> > -     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
->> > -
->> > -     if (jadard->desc->exit_sleep_to_display_on_delay_ms)
->> > -             mipi_dsi_msleep(&dsi_ctx, jadard->desc->exit_sleep_to_di=
-splay_on_delay_ms);
->> > -
->> > -     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->> > -
->> > -     if (jadard->desc->display_on_delay_ms)
->> > -             mipi_dsi_msleep(&dsi_ctx, jadard->desc->display_on_delay=
-_ms);
->> > -
->> > -     return dsi_ctx.accum_err;
->> > -}
->> > -
->> >  static int jadard_disable(struct drm_panel *panel)
->> >  {
->> >       struct jadard *jadard =3D panel_to_jadard(panel);
->> > @@ -202,7 +180,6 @@ static const struct drm_panel_funcs jadard_funcs =
-=3D {
->> >       .disable =3D jadard_disable,
->> >       .unprepare =3D jadard_unprepare,
->> >       .prepare =3D jadard_prepare,
->> > -     .enable =3D jadard_enable,
->> >       .get_modes =3D jadard_get_modes,
->> >       .get_orientation =3D jadard_panel_get_orientation,
->> >  };
->> > @@ -382,6 +359,12 @@ static int radxa_display_8hd_ad002_init_cmds(stru=
-ct jadard *jadard)
->> >
->> >       jd9365da_switch_page(&dsi_ctx, 0x00);
->> >
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->> > +
->> >       return dsi_ctx.accum_err;
->> >  };
->> >
->> > @@ -608,6 +591,12 @@ static int cz101b4001_init_cmds(struct jadard *ja=
-dard)
->> >       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE6, 0x02);
->> >       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE7, 0x0C);
->> >
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->> > +
->> >       return dsi_ctx.accum_err;
->> >  };
->> >
->> > @@ -831,6 +820,16 @@ static int kingdisplay_kd101ne3_init_cmds(struct =
-jadard *jadard)
->> >
->> >       jd9365da_switch_page(&dsi_ctx, 0x00);
->> >
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_msleep(&dsi_ctx, 20);
->> > +
->> >       return dsi_ctx.accum_err;
->> >  };
->> >
->> > @@ -859,8 +858,6 @@ static const struct jadard_panel_desc kingdisplay_=
-kd101ne3_40ti_desc =3D {
->> >       .reset_before_power_off_vcioo =3D true,
->> >       .vcioo_to_lp11_delay_ms =3D 5,
->> >       .lp11_to_reset_delay_ms =3D 10,
->> > -     .exit_sleep_to_display_on_delay_ms =3D 120,
->> > -     .display_on_delay_ms =3D 20,
->> >       .backlight_off_to_display_off_delay_ms =3D 100,
->> >       .display_off_to_enter_sleep_delay_ms =3D 50,
->> >       .enter_sleep_to_reset_down_delay_ms =3D 100,
->> > @@ -1074,6 +1071,16 @@ static int melfas_lmfbx101117480_init_cmds(stru=
-ct jadard *jadard)
->> >       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x02);
->> >       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe7, 0x06);
->> >
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_msleep(&dsi_ctx, 120);
->> > +
->> > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->> > +
->> > +     mipi_dsi_msleep(&dsi_ctx, 20);
->> > +
->> >       return dsi_ctx.accum_err;
->> >  };
->> >
->> > @@ -1102,8 +1109,6 @@ static const struct jadard_panel_desc melfas_lmf=
-bx101117480_desc =3D {
->> >       .reset_before_power_off_vcioo =3D true,
->> >       .vcioo_to_lp11_delay_ms =3D 5,
->> >       .lp11_to_reset_delay_ms =3D 10,
->> > -     .exit_sleep_to_display_on_delay_ms =3D 120,
->> > -     .display_on_delay_ms =3D 20,
->> >       .backlight_off_to_display_off_delay_ms =3D 100,
->> >       .display_off_to_enter_sleep_delay_ms =3D 50,
->> >       .enter_sleep_to_reset_down_delay_ms =3D 100,
->>
->> --
->> Jani Nikula, Intel
-
---=20
-Jani Nikula, Intel
+> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
+> + *   from connecting to an abstract unix socket created by a process
+> + *   outside the related Landlock domain (e.g. a parent domain or a
+> + *   non-sandboxed process).
+> + */
+> +/* clang-format off */
+> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+> +/* clang-format on*/
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
 
