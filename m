@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-263332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4942193D466
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B7193D46C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0056D2838FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF9B1F25848
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3B717C222;
-	Fri, 26 Jul 2024 13:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A124D17C7A6;
+	Fri, 26 Jul 2024 13:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCT95JBi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XXn4RuL8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F326AC1;
-	Fri, 26 Jul 2024 13:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CE61E4A4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001303; cv=none; b=CxG3JIImcLpp3pkUahUK15VjZ7qZgE4ZQebEawvTxF6ZKZAd/Mf+SzRyMEgBQ9r/9zKk9tTz4xiMEKt4vs5QTATpIFPGB/wDcDX892yoEXvJfq7Mtd3QgGCFCYjyDJYxsq1YsAlnd6v+hTkzrbffoMw8YU2mV6AvuhwsuXBklVM=
+	t=1722001426; cv=none; b=twErPhr25rLQN7XCZJ1/m6aJmrFreAOS+O0TuBt8aDFrIbBbO19C7L5DoFWXlULIpcrWYO1bfRtEAEWQx+yLIfrPHz9uhYURW4EvbVst2iW++vGVpcvZZuZZYfdyTKXXc0p2s6ZdrvU9bfG/KR20aOLVi3ZH52FeE6WVBacsA7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001303; c=relaxed/simple;
-	bh=2uwGAT67KdxSGGyx9e1hkXaE47VnHch064J3H/Nv5VY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EdQW/RrGuzxf1Zg5+0ISO0FKbPlrTacZqiB0oIk6x8w0T1mRxsYbUeFum2ZzBYGmhCR2GZ2qcQ0BPM16hKz/XTn/jlhQ/S5jPYIxrvOQUVH5Z8zu/h92vn3yfVEznCsvfdwOpNnAvsKHrG4pqQm9ckuIPtoiNxedOr0NzWAnhUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCT95JBi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89579C32782;
-	Fri, 26 Jul 2024 13:41:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722001303;
-	bh=2uwGAT67KdxSGGyx9e1hkXaE47VnHch064J3H/Nv5VY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qCT95JBiNyMQUnVYinaep8t2WRvwpf7EMBoGMk6ydE4aUQfu+DSocckfOd7DvjCh6
-	 DYg865rP41ytadSnYgRSwrXqDh4os+UkGJzOTfVujNxClEvNUvzHCtesw47CuJeSWy
-	 2dGd4PFcZDyJEZJieIOb21iKp/rAcK/2MqNtc4FlvfMzvJC51t22vzgYxQUAMgm/lp
-	 nJws/mu7KU+XwHWVs0HEsP4vAbYtMmdjhTxdrRFMWXr9LVuef2Z1U1Z+FrlmLD8adX
-	 JerndEIFDi/BF/s+fRKd7Zn+5hw8lsISP9qLoIgC1inNOeGFNDi2x8ZpNBfgZzP4Uc
-	 Q7aq4R2VIDpPQ==
-Date: Fri, 26 Jul 2024 15:41:37 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
- address BARs in EPC
-Message-ID: <ZqOnkTidYLc0EboJ@ryzen.lan>
-References: <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
- <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
- <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
- <20240725053348.GN2317@thinkpad>
- <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
- <ZqJeX9D0ra2g9ifP@ryzen.lan>
- <20240725163652.GD2274@thinkpad>
- <ZqLJIDz1P7H9tIu9@ryzen.lan>
- <9c76b9b4-9983-4389-bacb-ef4a5a8e7043@kernel.org>
- <CAAEEuhp+ZtjrU1986CJE5nmFy97YPdnfd1Myoufr+6TgjRODeA@mail.gmail.com>
+	s=arc-20240116; t=1722001426; c=relaxed/simple;
+	bh=KAnhfb9PFIxJ4vH9zPK0dYM3U9/R6vZ926luCNslwv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o0e7O5jT40oJf7p3xFN0fJFA5x7nVqci5vdDvHB0WTB84js2+ysAPkP/gz19MjRzhUR2BpuVKkVNqP0MD/ZZJreeFmZcc4iVy3NM8sY4kqV/9Osgnsa7RnroKzolu0bf+Q1R8/502sX+x3fGz1aJkrkM2OrUcOkRgs+4iUrKJ9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XXn4RuL8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722001423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=juNuYlyz4PhrIkvVaYyPMDb9Hy1qrKJjotj4l0qAgxk=;
+	b=XXn4RuL8PxtGsGfCJR/hki6AIxvjgujCT5tLyFu+MoBlQdV1IohHdNYKbxbyb5k1MnVar/
+	lXNzEsFpMJhD4g7hj3UGzvK7Q+23WkdzV+o4nPNGx9u/QWFYP0nFy9Cr7CH7bcd6OWx1vV
+	KXX0FA0k2VdKDay00llKo9fnabSCbVo=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-QzNlD-FKPIaUVtEot1x4Ow-1; Fri, 26 Jul 2024 09:43:42 -0400
+X-MC-Unique: QzNlD-FKPIaUVtEot1x4Ow-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cd72aa5328so1035393a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:43:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722001421; x=1722606221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=juNuYlyz4PhrIkvVaYyPMDb9Hy1qrKJjotj4l0qAgxk=;
+        b=hpoIooocOMvbhXu+qCUib9ge11vrOWgKgDMhVrqGvAsVyzQVUf6n5ZeSMm+Qll915E
+         HZJxFYAPyI5cJA7ZFCJw6qAh119kY6ROnS9TrygzM+KNhKTVnoaehQ9/CSDGgGNfBH2a
+         mWOjTH0Hp8JPw2WJB+sZqRAjrpTI/I2DZykPq986izk+UmZ9b210RCaRS2Onn6iUwiB9
+         Zx8//NR1xb09Fvfnz1a4uSZvXzr1OkB8FEgeotohwBhVaoEMT7DcX6PaHuFwYH63kSPC
+         HhI62/mR9DUPlRFfcuw3pHGpwtDnA1d0h/u1TUC3iBsdDfY14xFWu5GtHMlDdu8SQ1uT
+         wqBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8GiQTyIHiI3u7Tprc85/Rcj7ICPNV+vJBg7TjlegcP2pNfY6wvAW0p0GutI3x99Ga4jhdH2ehGSEjGZn56uTGJVspiGWEt0A1BbbM
+X-Gm-Message-State: AOJu0YyDLgemUhmhiAn5DmnJxDtutw22olH9WzmANwNpSPEe+jD1m8Dr
+	jDD7J3c53wl6+GzQp41e3+3Xpb4H226ki6oHhqz1hrIKSCIcJbMvdDugWHB2/H6jN12Xntllptz
+	z+qIW1qh66gx8fQu59aHExJP7s3I5+UVF63EnBENT6z+NpPYkI60g/AbMK2jC2ubT6n07A0WvBV
+	W95ikpiOzbx+DODI+A5ZtBqitnAwv06fOlqTar
+X-Received: by 2002:a17:90b:897:b0:2c9:6cf4:8453 with SMTP id 98e67ed59e1d1-2cf238eb4bdmr6520874a91.31.1722001421096;
+        Fri, 26 Jul 2024 06:43:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHdO39nlrbhfiAjnIjdlLGQtuoRRW91HYiCfm8yhXVNZ/gNueBn2lqUJPAH84e5PpmuO2Q0iUqpiul6WbKRvE=
+X-Received: by 2002:a17:90b:897:b0:2c9:6cf4:8453 with SMTP id
+ 98e67ed59e1d1-2cf238eb4bdmr6520847a91.31.1722001420691; Fri, 26 Jul 2024
+ 06:43:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAEEuhp+ZtjrU1986CJE5nmFy97YPdnfd1Myoufr+6TgjRODeA@mail.gmail.com>
+References: <20240702095401.16278-1-gongruiqi1@huawei.com> <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
+ <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com> <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com>
+In-Reply-To: <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Fri, 26 Jul 2024 15:43:29 +0200
+Message-ID: <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
+Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
+ moving proc to root cgroup
+To: Gong Ruiqi <gongruiqi1@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Wang Weiyang <wangweiyang2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 01:21:32PM +0200, Rick Wertenbroek wrote:
-> 
-> One thing to keep in mind is that 'struct pci_epf_bar 'conf' would be
-> an 'inout' parameter, where 'conf' gets changed in case of a fixed
-> address BAR or fixed 64-bit etc. This means the EPF code needs to
-> check 'conf' after the call. Also, if the caller sets flags and the
-> controller only handles different flags, do we return an error, or
-> configure the BAR with the only possible flags and let the caller
-> check if those flags are ok for the endpoint function ?
-> 
-> This is a bit unclear for me for the moment.
+On Thu, Jul 18, 2024 at 2:34=E2=80=AFPM Gong Ruiqi <gongruiqi1@huawei.com> =
+wrote:
+>
+>
+> On 2024/07/18 0:17, Paul Moore wrote:
+> > On Tue, Jul 16, 2024 at 10:19=E2=80=AFPM Gong Ruiqi <gongruiqi1@huawei.=
+com> wrote:
+> >>
+> >> Ping.
+> >
+> > Dropping the LSM mailing list to cut down on the noise as it isn't a
+> > relevant mailing list.
+> >
+> > Ondrej currently maintains the selinux-testsuite project so I'd prefer
+> > to give him time to review/test/etc. the patch, but I see it has
+> > already been a couple of weeks without response.  If Ondrej doesn't
+> > get to this patch by the end of the Linux v6.11 merge window I'll take
+> > a look then.
+>
+> Thanks for your help!
+>
+> >
+> > Where (what distribution, version, etc.) did you see this problem?
+>
+> The problem occurred when I ran the testsuite on Fedora 40 with v6.6
+> kernel, and it was the only failed testcase.
 
-Indeed, it is quite messy at the moment, which is why we should try
-to do better, and clearly document the cases where the API should
-fail, and when it is okay for the API to set things automatically.
+Sorry for the delay... For some reason the test passes for me even
+with cgroup v2 only and without the patch (also when run from a
+regular user account with sudo). Do you happen to know what
+circumstances are needed for it to fail when the cgroup is not
+switched?
 
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-How the current pci_epf_alloc_space() (which is used to allocate space
-for a BAR) works:
-- Takes a enum pci_barno bar.
-
-- Will modify the epf_bar[bar] array of structs. (For either primary
-  interface array of BARs or secondary interface array of BARs.)
-  Perhaps it would be better if this was an array of pointers instead,
-  so that an EPF driver cannot modify a BAR that has not been allocated,
-  and that the new API allocates a 'struct pci_epf_bar', and sets the
-  pointer. (But perhaps better to leave it like it is to start with.)
-
-- Uses |= to set flags, which means that if an EPF has modified
-  epf_bar[bar].flags before calling pci_epf_alloc_space(), these
-  flags would still be set. (I wouldn't recommend any EPF driver to do so.)
-  It would be much better if we provided 'flags' to the new API, so that
-  the new API can set the flags using = instead of |=.
-
-- Flag PCI_BASE_ADDRESS_MEM_TYPE_64 will automatically get set if the BAR
-  can only be a 64-bit BAR according to epc_features.
-  This is a bit debatable. For some EPF drivers, getting a 64-bit BAR even
-  if you only requested a 32-bit BAR, might be fine. But for some EPF
-  drivers, I can imagine that it is not okay. (Perhaps we need a
-  "bool strict" that gives errors more often instead of implicitly setting
-  flags not that was not requested.
-
-- Will set PCI_BASE_ADDRESS_MEM_TYPE_64 if the requested size is larger
-  than 2 GB. The new API should simply give an error if flag
-  PCI_BASE_ADDRESS_MEM_TYPE_64 is not set when size is larger than 2 GB.
-
-- If the bar is a fixed size BAR according to epc_features, it will set a
-  size larger than the requested size. It will however give an error if the
-  requested size is larger than the fixed size BAR. (Should a possible
-  "bool strict" give an error if you cannot set the exact requested size,
-  or is it usually okay to have a BAR size that is larger than requested?)
-
-
-How the current pci_epc_set_bar() works:
-- Takes 'struct pci_epf_bar *epf_bar'
-
-- This function will give an error if PCI_BASE_ADDRESS_MEM_TYPE_64 is not set
-  when size is larger than 2 GB, or if you try to set BAR5 as a 64-bit BAR.
-
-- Calls epc->ops->set_bar() will should return errors if it cannot satisfy
-  the 'struct pci_epf_bar *epf_bar'.
-
-
-How the epc->ops->set_bar() works:
-- A EPC might have additional restrictions that are controller specific,
-  which isn't/couldn't be described in epc_features. E.g. pcie-designware-ep.c
-  requires a 64-bit BAR to start at a even BAR number. (The PCIe spec allows
-  a 64-bit BAR to start both at an odd or even BAR number.)
-
-
-So it seems right now, alloc_space() might result in a 'struct pci_epf_bar'
-that wasn't exactly what was requested, but set_bar() should always fail if
-an EPC driver cannot fullfil exactly what was requested in the
-'struct pci_epf_bar' (that was returned by alloc_space()).
-
-
-We all agree that this is a good idea, but does anyone actually intend to
-take on the effort of trying to create a new API that is basically
-pci_epf_alloc_space() + pci_epc_set_bar() combined?
-
-Personally, my plan is to respin/improve Damien's "improved PCI endpoint
-memory mapping API" series:
-https://lore.kernel.org/linux-pci/20240330041928.1555578-1-dlemoal@kernel.org/
-
-But I'm also going away on two weeks vacation starting today, so it will
-take a while before I send something out...
-
-
-Kind regards,
-Niklas
 
