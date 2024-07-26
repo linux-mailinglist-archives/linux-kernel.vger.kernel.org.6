@@ -1,166 +1,130 @@
-Return-Path: <linux-kernel+bounces-262982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830FB93CF65
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F2393CF68
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D48B2835A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100A728184A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2B176AA9;
-	Fri, 26 Jul 2024 08:15:31 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7FD176AA9;
+	Fri, 26 Jul 2024 08:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fC/YTSK8"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19EE6BFA5;
-	Fri, 26 Jul 2024 08:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573062B9DB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721981731; cv=none; b=n+/tWVhpdiem9nJDzOASaTKupFvCO3vZOe9Rpj7EEKV9lyDvRbdYZr3xoy3I0MI1By0Sm5BzZuAAgPD5KL8SvHKB6/s0f7n5/cbuli/yMjeRyc7KusFAuZQ21xqiaH69+Ch8oeJlWiBIBJSkZWA58QY6odwI9/hiVpV3rj7YMxE=
+	t=1721981769; cv=none; b=PQ3+V+T4p0BO/SxYjSlQmj7nRfBKAVUl29K7UvXRh5goU2oBitriTImpmNXuo3DnbzJBbBsSnVFBSiO/jk/izOu7I8h4OvCX/OQTZO93ClP+pGwKjHRq1RpH2FCS0jwcRUjiPUhxKUZhWsBNa+EnJChzcXG9MRxZVmjw7HtrehM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721981731; c=relaxed/simple;
-	bh=vpcvxNYgJelihQ1vsEnYcvgA9wSZcn2Etrgjh4jzpUg=;
+	s=arc-20240116; t=1721981769; c=relaxed/simple;
+	bh=S/Hoh4bXg1UZDdZJQBXsz2bQKhdvNuE+/OwIDUSIuQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VRuQQ9Z8DBM3wfteUBnnxaP585LoeWcoNERZB237FbCnaWdGRtT4I/P1mRI7jolE7wIBJ/EgJFebuBuyhxWDcEHced6p598n3A/MFvGvt87IVQStolq4tbkCx12GoNHSFfmCB0DpFRurnD0layPUX1mLrxdWR4lBTrFf25K2Csg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2DE9D1C009A; Fri, 26 Jul 2024 10:15:28 +0200 (CEST)
-Date: Fri, 26 Jul 2024 10:15:27 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 5.15 00/87] 5.15.164-rc1 review
-Message-ID: <ZqNbHyu+9P8s4F30@duo.ucw.cz>
-References: <20240725142738.422724252@linuxfoundation.org>
- <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
- <2024072645-delighted-barbecue-154f@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrTnHKnCKC6xgRPoNaUqj1ih3Zamfgum1eJ68TJRCkWor18OgRoBSccI/vY093naoJKNkCIf6hkVlamc338wwT9mwYywfPIdMBbxx2ifpjpT19ktUEqC+ElpaVZ+GS2VpVMHTz9iadU0d8rF2ktvSfQqGojgO9dHvpJa1VfRkHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fC/YTSK8; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so14595681fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721981765; x=1722586565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TYTI0CSVKI2TXvDPdpXJ4Kmrco4gw3sbLMb/7A/5juI=;
+        b=fC/YTSK8L1YD9K5Oqk1qxjGBzj2TxFC9/AfxfAA2k5Lk4HVsYWWY93nj9VqY2NDJR6
+         4Xx3RkGbXLglJGpnX959nZ8nlBSCfINi1mXXPJGMbsdAvrHhb78dXZg0REtjGGgx9KTR
+         cXdyDjHiuLEoRXUxc0j82qu4rWbjwcoMSoAggzExeebeG8s86apktOvj069x7ahrkdt4
+         MQVXC+8pXIBpXkvW00Kyl7VF8M4k2o6X5IIytWGl9gMgsmKmTfhyaI+I5ATNeUFaauHJ
+         ARIamJjEQFtt8U47MnhsD91k3afWf+vwBZj1elV0WuN3P/EDUO/3qCJSmawH8ESTpD7n
+         UHaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721981765; x=1722586565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYTI0CSVKI2TXvDPdpXJ4Kmrco4gw3sbLMb/7A/5juI=;
+        b=ojFb+Y0h/8ismsWx926ufUIIIQ/JPKQRy1vCmpFVCaJKd+Nvj/SX1hp4QD+o9SVfWw
+         jwQZCeePpxZIw/BsSKSRGLNEVlJcsHc3BKjxrCt+XuaJiHCBaSDMSEeU7TTt5CrWzz1d
+         9PwL4nQwUCd4wKrxAVXyKziHZEs2Xbe32GqpTpel7FN9meNHocLiUz+wUIU70m8EcrPP
+         qYoXCWTXHjNbDvh6KBKp61mxv8vJdnjxgruDd+P/cNKso+Ucsl0j2zzpwnHT4A61hGel
+         u4aVmJMBJ5knIeHDvcCYeM+u3Yo++yPNOLpGk4h53GOY9qhLMhKXe+/6v5vxY9gbRrBb
+         RNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3FHMtpT8JWq94PMS214qNoiwUae1ZPGsN14MxvdV1tI2u/Hw+5PjE+sQ8LbanAC1Xjvj8ZZmt7BxTN10eHo803K+Kl5nJCSHxttIN
+X-Gm-Message-State: AOJu0YwKjBH6D/MN4zbu78BKid7OUnYGglos7mK1PiRmQy8x87M1Ww+D
+	srXlr8F9/kMgBQwoWlOq4Nu/Dg8IrLo2C+0yaKAAI8d8yNXyft8cZUHcnDHgxiA=
+X-Google-Smtp-Source: AGHT+IFARq9FwsB8RjXSIH+GWglIVcZ0UrF3Y3kjl0RxuQLU9iezQhGVz2hdxK4T5dKSzYVooaeGgw==
+X-Received: by 2002:a2e:8812:0:b0:2ef:296d:1de3 with SMTP id 38308e7fff4ca-2f03dabebd2mr35897911fa.0.1721981765244;
+        Fri, 26 Jul 2024 01:16:05 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:3ebe:e31b:885d:414e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad41164sm147206766b.102.2024.07.26.01.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 01:16:04 -0700 (PDT)
+Date: Fri, 26 Jul 2024 10:16:02 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/2] dt-bindings: pwm: Add r8a779h0 support
+Message-ID: <yaavvcimdwatogeiejd4q6s325scnxdspqkl3d7u4x3qgho6sa@jgi2smviz4bz>
+References: <20240725193803.14130-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rU9CAJE2jXtz4tGD"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pynesepz3mktlh7g"
 Content-Disposition: inline
-In-Reply-To: <2024072645-delighted-barbecue-154f@gregkh>
+In-Reply-To: <20240725193803.14130-4-wsa+renesas@sang-engineering.com>
 
 
---rU9CAJE2jXtz4tGD
+--pynesepz3mktlh7g
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri 2024-07-26 08:33:00, Greg Kroah-Hartman wrote:
-> On Thu, Jul 25, 2024 at 10:18:49PM +0530, Naresh Kamboju wrote:
-> > On Thu, 25 Jul 2024 at 20:22, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 5.15.164 release.
-> > > There are 87 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >
-> > > Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/pa=
-tch-5.15.164-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-st=
-able-rc.git linux-5.15.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >=20
-> > The following build errors noticed while building arm configs with tool=
-chains
-> > gcc-12 and clang-18 on stable-rc linux-5.15.y
-> >=20
-> > First seen on today builds 25-July-2024.
-> >=20
-> >   GOOD: b84034c8f228 ("Linux 5.15.163-rc2")
-> >   BAD:  1d0703aa8114 ("Linux 5.15.164-rc1")
-> >=20
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >=20
-> > Build log:
-> > -------
-> > from drivers/net/wireless/ralink/rt2x00/rt2800lib.c:25:
-> > drivers/net/wireless/ralink/rt2x00/rt2800lib.c: In function
-> > 'rt2800_txpower_to_dev':
-> > include/linux/build_bug.h:78:41: error: static assertion failed:
-> > "clamp() low limit (char)(-7) greater than high limit (char)(15)"
-> >    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, ms=
-g)
-> >       |                                         ^~~~~~~~~~~~~~
-> > include/linux/build_bug.h:77:34: note: in expansion of macro '__static_=
-assert'
-> >    77 | #define static_assert(expr, ...) __static_assert(expr,
-> > ##__VA_ARGS__, #expr)
-> >       |                                  ^~~~~~~~~~~~~~~
-> > include/linux/minmax.h:66:17: note: in expansion of macro 'static_asser=
-t'
-> >    66 |
-> > static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),
-> >  \
-> >       |                 ^~~~~~~~~~~~~
-> > include/linux/minmax.h:76:17: note: in expansion of macro '__clamp_once'
-> >    76 |                 __clamp_once(val, lo, hi, __UNIQUE_ID(__val),
-> >          \
-> >       |                 ^~~~~~~~~~~~
-> > include/linux/minmax.h:180:36: note: in expansion of macro '__careful_c=
-lamp'
-> >   180 | #define clamp_t(type, val, lo, hi)
-> > __careful_clamp((type)(val), (type)(lo), (type)(hi))
-> >       |                                    ^~~~~~~~~~~~~~~
-> > drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3993:24: note: in
-> > expansion of macro 'clamp_t'
-> >  3993 |                 return clamp_t(char, txpower, MIN_A_TXPOWER,
-> > MAX_A_TXPOWER);
-> >       |                        ^~~~~~~
-> >=20
+Hello Wolfram,
+
+On Thu, Jul 25, 2024 at 09:38:03PM +0200, Wolfram Sang wrote:
+> Add the bindings for both PWM controllers in this SoC.
 >=20
-> Thanks, I've added a commit that should resolve this now.  I'll push out
-> a -rc2 in a bit.
+> Wolfram Sang (2):
+>   dt-bindings: pwm: renesas,pwm-rcar: Add r8a779h0 support
+>   dt-bindings: pwm: renesas,tpu: Add r8a779h0 support
 
-We see this one, too. -rc2's hit the test farm, we should have results
-in hour or so.
+Looks straight forward. I applied it to my for-nexxt branch at
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+nexxt
+=2E It will migrate to the branch with a single x that is included in next
+after the merge window closes. Still open to accept review tags for it.
 
-BR,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Thanks
+Uwe
 
---rU9CAJE2jXtz4tGD
+--pynesepz3mktlh7g
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqNbHwAKCRAw5/Bqldv6
-8qHXAJ0ZLfUS/Dq1JynMWQsEAH6QLdr23gCgjsBMAkK5IWHz+mtMvV50SqDsVkA=
-=9VD/
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmajWz8ACgkQj4D7WH0S
+/k7iQwf/SaZmhQb38lBOdeLuTyTAHQtHPx1LsLQ1pL2L65kY5d0vkly20vvGKG/J
+fNwcramcSMUtCJy8UhEBvIcMzxAhcBHhvkCAmLeWriVwwDRUZBiw+vzzVrxMYw/+
+h8XvwTZNBNMQ1k1feEQDxeWlGNo2n1HewQ61r/ge3VTWjL9efWAjVslIMs+vfFI5
+KCb5NNigStrQ7+MkXKhRT9p/WlQV+dhkRNrijMBxXUJZ5PnaTmpvF+wnYwXPekbC
+3XXvh4158OywG8Xo7WOUsz+e+GmkhJUsp351dpph/J3y4qjIRApkk1vpQxouMEM+
+KrWAc2L3vOtZB5u4KqST1Qqxzl1T3g==
+=CLxK
 -----END PGP SIGNATURE-----
 
---rU9CAJE2jXtz4tGD--
+--pynesepz3mktlh7g--
 
