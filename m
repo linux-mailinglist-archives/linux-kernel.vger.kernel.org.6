@@ -1,101 +1,81 @@
-Return-Path: <linux-kernel+bounces-263002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E935D93CFB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:37:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B911993CFB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C4E1C22137
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:37:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C64284B01
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193F176246;
-	Fri, 26 Jul 2024 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n0k0tRys";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="97s5uNx0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1C917836A;
+	Fri, 26 Jul 2024 08:38:06 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E912C6B6
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AA92C6B6;
+	Fri, 26 Jul 2024 08:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721983039; cv=none; b=rC9SDP9HOOR0gDnxcEoSZZD5IWbFH+ENVQ40Xi7ITaFrefb8r/0iZRTCT2QuDvXJ+4nywux0GJ7TppK3EXwub2xu1GYTwGu0Iw5wsZ8gaSdshthlctrfLcMh/Cr/neh3DKEvRTTfKu9nvELFdEcQ3eRWgUy4OfNd5q8IZTSkAJc=
+	t=1721983086; cv=none; b=djUFJDeAGWGgCco7xNRKfx+waKSKkxvh+YYw+1JcD2RIr1rn9V5EkPytle0IY+XZzJ4TjpSiWtid2qogaztVO+941oNmxtBzMxUAN6J5DeVI9aR463UejsECCJsplUmf6R9Tttr5uWt8fvywPcKLfHs50A4RbSvIsw7Xjpzw0h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721983039; c=relaxed/simple;
-	bh=PGzE7h0yAGlGgLDyHnAvdDwIrMCPngj1CcskoTOyEX8=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZJ7a25Od2y4JwYBM+uibS2j1kq+3yVmw4t70s1mpL1gMlKTBNf7OxD/Nq5ha01GNP21GtB4Q/RxPGojV3oUMLvezlYA7UQ22SovecJYmLDsIaR2+DVXg7knyBVDNZ8d3J0l4Nc51xU35NGjycTcIvbhu6y94RK6KZ+pEz1JnFzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n0k0tRys; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=97s5uNx0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721983030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rjB/TYJi55yLbuMBfuzCRracLh8CJcvRBtBl120nrT8=;
-	b=n0k0tRysYxtkpCDj8c0WmHCeA7iRkU1B1hgxHf3M7BGPctKyxPGSGKjdR73360ozQlqaWR
-	BelGGOlB4PWfvwNiYgF0Cv5LmK+qM2yQMjMrWiR8I3WNrspXSokM9SIX5DubqbryCphmsx
-	bAXX8bABOZm377vYQHo8JKQZ4ctoM9lqM0lP8naljEKDdQ5oPn6Hf+7mihiwmZxrPtb04A
-	T78OjMIGcdnn9e778NYI6fn4EoFOzv5ut4L8aCWurjj2dT9CZSu9SmPf/2fraAhFuh6Jeq
-	NVUTvxnGxfTKIBksqWx4wK/9k4zMSP9asTyacos9r4omUW7J2IBKJjUl3L3RFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721983030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rjB/TYJi55yLbuMBfuzCRracLh8CJcvRBtBl120nrT8=;
-	b=97s5uNx01f6Ydbv1wzvpKuf3knKBDFfv7rFJw9xvv13DKi5pxh04Uxf+ymO5AutjLJJ6Be
-	kZSZfpSR7o06S7Bg==
-To: "Regzbot (on behalf of Thorsten Leemhuis)" <regressions@leemhuis.info>,
- LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Linux regressions mailing list
- <regressions@lists.linux.dev>
-Subject: Re: Linux regressions report  for mainline [2024-05-12]
-In-Reply-To: <171552254677.1971316.17732013113090096417@leemhuis.info>
-References: <171552254677.1971316.17732013113090096417@leemhuis.info>
-Date: Fri, 26 Jul 2024 10:37:10 +0200
-Message-ID: <87cyn0wnux.ffs@tglx>
+	s=arc-20240116; t=1721983086; c=relaxed/simple;
+	bh=k4wbfYrnJTzMEsDvBUn4TfPEOFP7XubpzrPpTCm0ics=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SHdMFAOwxN7JY/7ju/XttjvL9Emo6oqPw2s/1vO5YbevDL+IJ6ALHdvdyxTf4c9Su7rsbkVUBGHwtwacUHn+36mx619fJRy1OmG0z+EHCedeAHc619YRTTPdoLPY4q9SqjnvW8FadFC1Fgy0MkrK9tIYa+PfJY9kaCKqhL+0yjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WVgy03qkFz2Cl4T;
+	Fri, 26 Jul 2024 16:33:28 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id E6C661404F5;
+	Fri, 26 Jul 2024 16:37:55 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 26 Jul
+ 2024 16:37:55 +0800
+From: yangyun <yangyun50@huawei.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] fuse: add no forget support
+Date: Fri, 26 Jul 2024 16:37:50 +0800
+Message-ID: <20240726083752.302301-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Sun, May 12 2024 at 14:02, Regzbot wrote:
-> x86/topology: system stopped booting
-> ------------------------------------
-> https://linux-regtracking.leemhuis.info/regzbot/regression/lore/3d77cb898=
-57ee43a9c31249f4eab7196013bc4b4.camel@redhat.com/
-> https://lore.kernel.org/lkml/3d77cb89857ee43a9c31249f4eab7196013bc4b4.cam=
-el@redhat.com/
->
-> By Lyude Paul; 24 days ago; 19 activities, latest 2 days ago.
-> Introduced in f0551af02130 (v6.9-rc1)
->
-> Recent activities from: Lyude Paul=C2=A0(3), Thomas Gleixner=C2=A0(2), Ma=
-rio
->   Limonciello=C2=A0(1)
->
-> 2 patch postings are associated with this regression, the latest is this:
-> * Re: Early boot regression from f0551af0213 ("x86/topology: Ignore non-p=
-resent APIC IDs in a present package")
->   https://lore.kernel.org/lkml/87le59vw1y.ffs@tglx/
->   22 days ago, by Thomas Gleixner
+FUSE_FORGET requests are not used in some cases but have an impact on the
+system. So add no forget support.
 
-This one turned out to be a broken ACPI table and the system came back
-after a BIOS upgrade.
+Patch 1 simplifies the queueing process of FUSE_FORGET request when error happens, 
+which Patch 2 depends on.
 
-Thanks,
+Patch 2 does the actual work about the no forget support.  
 
-        tglx
+yangyun (2):
+  fuse: replace fuse_queue_forget with fuse_force_forget if error
+  fuse: add support for no forget requests
+
+ fs/fuse/dev.c             | 25 ++++++++++++++++
+ fs/fuse/dir.c             | 63 +++++++++------------------------------
+ fs/fuse/fuse_i.h          | 26 ++++++++++++++++
+ fs/fuse/inode.c           | 10 +++----
+ fs/fuse/readdir.c         | 37 +++++------------------
+ include/uapi/linux/fuse.h |  3 ++
+ 6 files changed, 81 insertions(+), 83 deletions(-)
+
+-- 
+2.33.0
+
 
