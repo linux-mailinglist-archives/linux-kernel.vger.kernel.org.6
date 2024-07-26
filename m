@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-263452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0415393D60F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E20E693D614
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C8AB22952
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB73B21C1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FFD17BB25;
-	Fri, 26 Jul 2024 15:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3317BB0E;
+	Fri, 26 Jul 2024 15:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="afkN4mU0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L7+zhrTf"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F496168C7;
-	Fri, 26 Jul 2024 15:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E56168C7;
+	Fri, 26 Jul 2024 15:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007606; cv=none; b=izpgob1aDYWEWSWsL2LXHkDVyRSJ1m1PwJdlJDOkvRADnX3UYKqUv9paZXMJYKpa3uRD/VjM6dUqbN6l+cSElKmiXXlEtAXHd7CJKwdhJ8V0mwd+hHbYdR4kUnefTfUr2sKutDbdF3Nwccl1CGnhsWHU/yGe9NJt5Z02eTrGPt8=
+	t=1722007672; cv=none; b=DvKzEM8FaGPTWkjmd3yB5S9cKhIgvSgGlZsCvkYrMR2JzAD3HOa/D8rSx+q2l2yU+fjbzKbS1csBkNsTdMZ3k7kz9Be5b79p2jTQtma9r1GwgAX3eSloyoqydN8qP6vQyUvTm5y0RoR6vb+jOGcbsuAjQhdBbSCfIFzWDYl/jLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007606; c=relaxed/simple;
-	bh=TVmLI1FzU19Gx/05GmHuiemnFRT2SG+84OzQo+aqK44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YnWbI54qB+FdckngZhBPWHnlfd/ZbsKGJRG1QGwd9Dx0xkTLJuOZktWGG9kDyp45nR0F/dJ2e3e8MzGbDIePYUPay6VwLvWSHrq4D9CwhLlVFCgB6ilO+P6tTS+or495nbpLdtic3zw7CmkduH7rkYx4y1GNPIWbSX4Eggxn9WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=afkN4mU0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QC958H010206;
-	Fri, 26 Jul 2024 15:26:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bJqeYw5ghiRxZzInAhN4EHsGauIEswvablSmZO8fyxs=; b=afkN4mU02hfFLh8I
-	i7QyDbFMhKjG2/YNIBF7di6tQKMe03QJU/X51iRNClpqlZDsBtR6oVQLheS7WzQy
-	j01/qUojrIH92uz4oKQ72f9wvwUTVI5FhcbVMbdTMtwNnUsYSY5PL40ftzdh1axH
-	sSV37DWrFEP/ZfrPezyIeEdg6P53rPtwDVvT2nsyIauW3UHxYTcIjCAP3kaeEzsr
-	e/YI1XNlNIUJ3z35u6Q2OeMqR03a8v5LlCsdw/pF/eki4u4JRl1yXWyARw0JWYK2
-	K4o7HY1UchySYRUEcUxm61Is4qSBjiwtJsqXSn5CweH3lauoV9KqTZkE6AxsLcqE
-	mc0f7g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m2191sda-1
+	s=arc-20240116; t=1722007672; c=relaxed/simple;
+	bh=8bTNXc6ovszIgZOR8BUtR+RKoSwDzMh4FD3iphz25Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CGM96HuF1z4ewZc8mPLAt+2PBk7M+Q5VES88BLTvsFRBzSoZ8qbeGL+RQuS3XLqNnG/et1+E5UaFAbFu4MbnQjkClfL8jTDiaYoQx7tMQJoHh72WPIEINyLyPttglcWtSYx/tFRHBcEZH+pPxAb5EtwBKsnrZpXkgNL3OllLYpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L7+zhrTf; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QCUKfv004316;
+	Fri, 26 Jul 2024 15:27:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=pp1; bh=3bEacIXJ2MJjpxAm77pct0R0tpg
+	c+ozmiPAknjEot2A=; b=L7+zhrTfbUt63DlO3S264RlqdR5+WZTKcCKQkGZ6OYa
+	kbVTv7qd9uiMN8zs0FoEGKQB1UMMvSBXtORvlSLpEINhkYk5CgV3L2jku4deDJz2
+	D4ASiDLvurASfZ4HWVzh50EwyvsB1ZS5JvltsseAAK97BTf4XNwHPTH/LhXcVWN5
+	xg8rb+YrLSFtpZt/ntm+G7UC+fDFCZZH1DZFVywTVBciz1iLVfb/azReIqZmqOQ7
+	xM9lehVwcrHJTqXhyFACroefH/o5K1DRuH/3svNpcS6KFWXbCxh7PIkJk65HIfOK
+	ZmOJ2IFhs+kNuAwQHyR78dFVScMKfYjAdEstFiWueZA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mbuj8gec-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:26:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46QFQfM2018218
+	Fri, 26 Jul 2024 15:27:41 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QDKgGB007084;
+	Fri, 26 Jul 2024 15:27:40 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40gx733wnv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:26:41 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
- 2024 08:26:40 -0700
-Message-ID: <a4b39d39-703c-3ea3-4523-58fa65865c0d@quicinc.com>
-Date: Fri, 26 Jul 2024 09:26:40 -0600
+	Fri, 26 Jul 2024 15:27:40 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QFRYjm43712946
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 15:27:36 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B94D820049;
+	Fri, 26 Jul 2024 15:27:34 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D1DD20040;
+	Fri, 26 Jul 2024 15:27:34 +0000 (GMT)
+Received: from osiris (unknown [9.179.0.168])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 26 Jul 2024 15:27:34 +0000 (GMT)
+Date: Fri, 26 Jul 2024 17:27:32 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [GIT PULL] more s390 updates for 6.11 merge window
+Message-ID: <20240726152732.24764-B-hca@linux.ibm.com>
+References: <your-ad-here.call-01722003454-ext-3193@work.hours>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <your-ad-here.call-01722003454-ext-3193@work.hours>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Rxs0Jm2aqqMlDepQN1kkKwvT5etbFYtE
+X-Proofpoint-GUID: Rxs0Jm2aqqMlDepQN1kkKwvT5etbFYtE
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: msm8998-clamshell: enable
- resin/VolDown
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240723-miix630-support-v2-0-7d98f6047a17@linaro.org>
- <20240723-miix630-support-v2-4-7d98f6047a17@linaro.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240723-miix630-support-v2-4-7d98f6047a17@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UZ0MoTsmhuKiNgjcorwonV826ZodcC6C
-X-Proofpoint-GUID: UZ0MoTsmhuKiNgjcorwonV826ZodcC6C
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-26_12,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=536 bulkscore=0 phishscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=566
+ impostorscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ adultscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2407260104
 
-On 7/23/2024 5:28 AM, Dmitry Baryshkov wrote:
-> Let resin device generate the VolumeDown key.
+On Fri, Jul 26, 2024 at 04:17:34PM +0200, Vasily Gorbik wrote:
+> Hello Linus,
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> please pull more s390 updates for 6.11 merge window.
+> 
+> Thank you,
+> Vasily
+> 
+> The following changes since commit 66ebbdfdeb093e097399b1883390079cd4c3022b:
+> 
+>   Merge tag 'irq-msi-2024-07-22' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2024-07-22 14:02:19 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-2
+> 
+> for you to fetch changes up to 6dc2e98d5f1de162d1777aee97e59d75d70d07c5:
+> 
+>   s390: Remove protvirt and kvm config guards for uv code (2024-07-23 16:02:33 +0200)
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+...
+
+>  arch/s390/kernel/alternative.h                  |   0
+...
+>  create mode 100644 arch/s390/kernel/alternative.h
+
+Somehow an unused empty file managed to sneak in and survive reviews.
+We will remove this file with the next pull request again.
 
