@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-263012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5132A93CFCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A434E93CFCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E809CB23069
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55761C21E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9B5674D;
-	Fri, 26 Jul 2024 08:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35036176FAB;
+	Fri, 26 Jul 2024 08:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SwaLNg3i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bO4k0fkB"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846405588B;
-	Fri, 26 Jul 2024 08:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17E729A5
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721983536; cv=none; b=l6887suHxuKEGQnbT53ZmhCWRtKzGz0mzIuJeiRzEkjNYEPtjzsnVB5GfPPTuj9kAvCx7nr3hqyqH2he9kBoJs5kAPnW96SI45Cq8+HPmpXoORKZDnckvX/JjDkNGZHcnEo6f3xMzY2eZ/Iqg4DnVS4IhyWZMl0qG16rHQOaCCw=
+	t=1721983548; cv=none; b=derS04Q9SckBWFr0sx4Ltwd0ZdQiATe38hjXjn56+3tHZzzLgTNBFkb9dHkJzc6VY0FJrzX5VjLc9nfYXN99wkuCpOD5tgTtrclQ5eo/LWaNPNlL4bNcuJl5yFXPqvsCMwrEk8RMoaMSq880PPJUzfa5iIdXyefnZTwaoY0UjJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721983536; c=relaxed/simple;
-	bh=1TeGzKPagOTld8WQwvFUE7lovbJ5dPIYN/BT/ChenqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GfDfJ/r4++T+m12t5IuomoQB8Wh8fjYtQU76lo+zDpUI9I2x+kuLgD2ImJejuPohqPw5S8Uf6ebC0HWDLu1FoW/xrTVCklQgNkbgXR/qpBfhDl/gwa/FtLtaMFVg1FgRB3tNKjEYLzmG3mvO6yUuQS3tskjP/i++ZTJ3J1p62HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SwaLNg3i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71919C4AF0A;
-	Fri, 26 Jul 2024 08:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721983536;
-	bh=1TeGzKPagOTld8WQwvFUE7lovbJ5dPIYN/BT/ChenqI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SwaLNg3il7nq++e16zlmp0ikZzr6PHwACd9HDE74ViE6TQPSx6DbiKrkFiRibdMqD
-	 kXjeuyXe+tS2lcsfJr2j2mo8GZthmDqcr1Zq4F8WLQmjp4/9wRILTNR7m7nkhkwY+N
-	 4VeIGexUn5zbxuBh85ZumfAvq8EqwLtRNEzoJueyj1inxoaoaBEzl7MUIeDGtssIoZ
-	 7tTOeVOzzXhYi9139BE/f+xjo/bTpxQir/6Q1s+DnA7+ZNPv5JvLHC10vvZhYxG0/6
-	 E3c4WrebxxK6bAFkSu7aRou8V+gpwhYmq1VyBKYvjrh8P9pGciPyAPChuqqsnFRpsL
-	 EcxyF1J/uNCPw==
-Date: Fri, 26 Jul 2024 09:45:32 +0100
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: joro@8bytes.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: [GIT PULL] IOMMU fixes for -rc1
-Message-ID: <20240726084532.GB29687@willie-the-truck>
+	s=arc-20240116; t=1721983548; c=relaxed/simple;
+	bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ah6vC9jISSBakaYhLYfFw2USL2f/yMeSkuVCIHMKfI2sg9LnCSNx/FLfiHjNmOOLaXVSApN+Hk5HBp7kNPYrjn6WwK7iDunfvIIdD/VlNdnrJTlp5U6SMqgjFMHh+z47vTJBziypxXzUdgSKHaEdL4iCtDC6LZAW8WVlg3zBwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bO4k0fkB; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C03E33F4A8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1721983538;
+	bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=bO4k0fkBQRe173m3CGMT0PkuDlWQf0DRFORGVfmvJ6cLdIAMdDmlabedI2uoD7LIn
+	 3FVUGPNjv7tIAjP7GLndUsNIxNiAyit4TuL37W3iUNKONaWtNmVqE4JXayJeCj2dXj
+	 l6vutWhxz8LuSVhqnwiEyxMeC0bRScka3j9jZJn4t24hY1FQX9xq0/LkDZqednmL3g
+	 WBu8On4K3XeSgnhf4grrQ1/GAYsHR93E3s4mQKpB4TybMPA/DQeI19CDhRi4BxclGk
+	 t1LCF1d1yOVrHJgIX3kZ5lsy6tfVWL/GES9z5OQW6lfUFb4Yo5U9UdVS0OYHK58niO
+	 wozh72TVF2T8A==
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44df73f9ee2so5783551cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:45:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721983537; x=1722588337;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
+        b=LFxTElfBx0I1cU5eoNJHNoISr2llV8GL0K4CMBik2ofaJYeFg/Q8zLAkJHXhyf5zBb
+         XGvW6NldWYhBpVxkC7VlHhHzWLqonUdiYALuIH1GvHNQFOfWkBeLMMoh5/fbkkPqmwva
+         2NMdzqqIpwNdRmSCda7S/z9ZqPz+qjzuuaC7jAp3NoznbVNAv0Ip1dMtSKXdtHqoE95D
+         K/DrkV9rl3aGNOZQAkYcpSq2LXcNq/m3ts9MLtiXCoEc9HBLLuhlT5Cd3QDmrtWuPJpT
+         ZLBTSFUtY/kpu415zhpRSg+HNkpnEv9lYJd8Ugo/2EpUev42I6ShsqV4vAWkzJvQWgQh
+         pFUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNiN5aHE9tcsAbdFY3UA7xSZ05Mr3izLVV8Xzlw0bnDmP3c0HTibzlIXwbAlqiQcBOKcsYjcgajKndIizVwMeWA9z4AqLlipHQMgs3
+X-Gm-Message-State: AOJu0YzMnivgvH9xUw7g+4KNtnDWhdTC9j6c7/5zgPa+KiRkxmwdSyrR
+	fUHGK9Xl99FJxyuE6rCJCQnMaM163SudCUA9CdbFFhzip/6P4mei7/Au6u165S11JQa5cu7k7b5
+	O049iTxw+3w064rgN0m6VoRALUtFtxkt4zvptdGSrogxrQVu64q8BbtQxsl3KhIhjSH0qQbUGSP
+	tn6KAf0TXmSUwYPlx8X0MrduwCcCwH1TFGBO0EnEBNIapDG+K2rdok
+X-Received: by 2002:a05:622a:11c9:b0:446:5bbd:4802 with SMTP id d75a77b69052e-44fe92731famr52404321cf.56.1721983537665;
+        Fri, 26 Jul 2024 01:45:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEfWGnnFaUTMrdZkP7xOyuSJUp3K4zWzDQyC1gqU+SG7p0SaPT/1zgZF/fTQCd4H5ucjGPzcBLx8KLTXn+dlRM=
+X-Received: by 2002:a05:622a:11c9:b0:446:5bbd:4802 with SMTP id
+ d75a77b69052e-44fe92731famr52404111cf.56.1721983537186; Fri, 26 Jul 2024
+ 01:45:37 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 26 Jul 2024 03:45:36 -0500
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
+References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com>
+ <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com> <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0
+Date: Fri, 26 Jul 2024 03:45:36 -0500
+Message-ID: <CAJM55Z8iF8yV5JK5v6ZtQqS5AaWwCZ7uwhSYb7hdxh0juDFdqg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Document T-Head TH1520
+ AP_SUBSYS controller
+To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, 
+	Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Yangtao Li <frank.li@vivo.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Stephen Boyd wrote:
+> Quoting Drew Fustini (2024-06-23 19:12:31)
+> > Document bindings for the T-Head TH1520 AP sub-system clock controller.
+> >
+> > Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+> > Co-developed-by: Yangtao Li <frank.li@vivo.com>
+> > Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> > ---
+>
+> Applied to clk-next
 
-Please pull this small collection of IOMMU driver fixes for -rc1. The
-summary is in the tag.
+Thanks, but this driver seems a bit incomplete. With this applied the Lichee Pi
+4A no longer boots without the clk_ignore_unused kernel parameter.
 
-We're still resolving a regression with the handling of unexpected page
-faults on SMMUv3, but we're not quite there with a fix yet.
-
-Cheers,
-
-Will
-
---->8
-
-The following changes since commit 8b6c32e831ef4496b51a68ddc5be9bb9e8d2337d:
-
-  Merge branch 'iommu/iommufd/paging-domain-alloc' into iommu/next (2024-07-12 16:57:47 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.11-rc1
-
-for you to fetch changes up to 726d4f528dbc98a84d9ce3c749dfdada3dcdd5ca:
-
-  iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings (2024-07-25 13:08:44 +0100)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v6.11-rc1
-
-- Fix NULL dereference when freeing domain in Unisoc SPRD driver.
-
-- Separate assignment statements with semicolons in AMD page-table code.
-
-- Fix Tegra erratum workaround when the CPU is using 16KiB pages.
-
-----------------------------------------------------------------
-Artem Chernyshev (1):
-      iommu: sprd: Avoid NULL deref in sprd_iommu_hw_en
-
-Ashish Mhetre (1):
-      iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-
-Chen Ni (1):
-      iommu/amd: Convert comma to semicolon
-
- drivers/iommu/amd/io_pgtable.c               | 6 +++---
- drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 2 +-
- drivers/iommu/sprd-iommu.c                   | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+/Emil
 
