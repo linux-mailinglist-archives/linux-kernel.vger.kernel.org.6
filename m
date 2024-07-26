@@ -1,93 +1,164 @@
-Return-Path: <linux-kernel+bounces-263817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14ECA93DAE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F172793DAEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE8A1C22662
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22D51F24033
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5287150981;
-	Fri, 26 Jul 2024 22:57:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8443514A0AE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 22:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0284A154456;
+	Fri, 26 Jul 2024 22:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VRl6Q+mz"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFEC42AAA;
+	Fri, 26 Jul 2024 22:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722034626; cv=none; b=qWSG+3sUQacLuokV1Z3Guct6JApVkQrZZi5xtLjtwjwXoZSQvM7c5+O4UcgvH4oIFzSYSHgAZjT+oNazDLWDa21yJs32R2QlMF3jqBNDv38A7ecmjg7Irl3Cc8NdZxQUcLsW6Zzj5Qv1YYJrWv0XS0Cxfe3pqHyXqDTyg830TDs=
+	t=1722034770; cv=none; b=DEsw8Fbd5ZJhlUvAm7RaqWoCK8urHJCa+mnusuOP9DGMcEJOmLyUVU1Ce4THkkd8rp0/DR2Yq64gfDeXyDR2YCwiovM4e4S13abDkbJaJYcqWr7TBm6VCydf3+enAqL11yvHwlkaIx5euLNqq7XKlCatv8Pt1/M9hhtTFNg5ILg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722034626; c=relaxed/simple;
-	bh=UhWI7TcLxejpJoI+IfqhEmkIioV4bu09QRF+kzi+Euk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Bq0jeNdm+sRGQyqRnhv+A+HwdjgYcod+SzEJYXv3GXKK2QAl5yQy7lqTeI56nTWz5Ix6glPKMxV+SgxKu7e4mkxyFYmlLuJplV7yo/Ez81GaZgaXwtKCjnva2icVpRN8bkY+Uaf0QOviQeJmanpDuqqeppp0EXZCHA9Qnudf0b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39915b8e08dso38098975ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:57:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722034624; x=1722639424;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hfHEsQdhoJOdt0CYCZsm++AlvwlAzWoJHsIj6s9Xdbc=;
-        b=shmw6/kP6hw3MiFiimaSE7FS7aLiXw/Zjsvrhn4XTAMyBpDNH5yQuyeKD2IEWeMKtP
-         tfQmNeBsPVy3UgCrpNL9MR+gqJ+i8iNDv72uIKYihRSly9CXlRNuu1qeXhig+ZK/tao5
-         3TLV/EElXkEC1urAo76O+pbb7RM+YA11vpoWG7Zpda0FT9WoFB1BlOpHdpSqc2ZgTluF
-         wrJfqocnoqZHPJZ7f7movXgfRQ6TY7MgN2yNpileKQJFS0fi9HiGbT6nddgmEIMB24AZ
-         sX7CoKYQpz+69D5ZuSOTxL5v1+DN7UFmXsSF1E891rSI/sMvSDA/JZ9TI56Xjk5fd6RG
-         geVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4hxghvJwZa08SgFeBBwFpDe6O0+Zy4hngvPA+0GfrqXGn4mxgsOcmo5ph7GR55lsLj5i9GqTJzAerpznnjah8mWe2ogj5TMcWUqBg
-X-Gm-Message-State: AOJu0YxtY+So5BpdLqu4Jf3FVvR3BlADYSL0mGTSAE/qwDdgUFWC6Npp
-	YNHK83QrKRPWAjDoQDUKRQLDy8wh/IdzXxSu97AF5npUw4Ac6UQVlIQsSQHlFeeh3YC759/7wle
-	EEp0RlKBI5fUkaSxIhMdStiB8c0ZBJ51EcbDaONs8BFHpCwzWl8ClulY=
-X-Google-Smtp-Source: AGHT+IH1IGReWJjnZICMOV9b++BLUObuYL6w4gT4mDFAVD0lxxD2JZLW2qTvQ0IOykja3TBds2LleQamC0YuWT65jexcIA8WcgEY
+	s=arc-20240116; t=1722034770; c=relaxed/simple;
+	bh=g6i4IxKrQxymu9BrVu4SitK6F7MRamuqgZorYTG+Pmw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HGOk/FXmJFYoU+o6ljuf0Mi7GYwLM/HvycCYrpCNPX/bRphG9WL6DZTkRiZJ+JQ8hNfihVdBiVoBIgv+7U/QTrKrdlrLMyX1wAmJslsdXNz6IhEHOdXK/1vOX+oh/1ckDUqJRzFsKHJRKOYG8hkcScP2zMgTEW0ca7OeZD6U3bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VRl6Q+mz; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C7BA020B7165;
+	Fri, 26 Jul 2024 15:59:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C7BA020B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722034768;
+	bh=Wo4Fp8TkCmVn8yH86WMFCY2WsxtnZocfrfH2vYB+z7M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VRl6Q+mz2n9h+9OGx5PWEpyDLC1OWxflY56xHNQnyn+5WmwekkTVJNNi8kVco/EM6
+	 DwJOCvFgdznYbNiTdIXbVD0HmIAmzYjW8C5obazj4d2I1Fb+VBfNID9SmVF7awhopk
+	 XIIZnXy/HCpf4N6jXHvRENN2Wgdqh5fcgVng8qOA=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: arnd@arndb.de,
+	bhelgaas@google.com,
+	bp@alien8.de,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	decui@microsoft.com,
+	haiyangz@microsoft.com,
+	hpa@zytor.com,
+	kw@linux.com,
+	kys@microsoft.com,
+	lenb@kernel.org,
+	lpieralisi@kernel.org,
+	mingo@redhat.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	tglx@linutronix.de,
+	wei.liu@kernel.org,
+	will@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	x86@kernel.org
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	vdso@hexbites.dev
+Subject: [PATCH v3 0/7] arm64: hyperv: Support Virtual Trust Level Boot
+Date: Fri, 26 Jul 2024 15:59:03 -0700
+Message-Id: <20240726225910.1912537-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1d:b0:397:95c7:6f72 with SMTP id
- e9e14a558f8ab-39aec448e1cmr647105ab.6.1722034623729; Fri, 26 Jul 2024
- 15:57:03 -0700 (PDT)
-Date: Fri, 26 Jul 2024 15:57:03 -0700
-In-Reply-To: <0000000000002b27c60592b00f38@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000009e19c061e2e6e93@google.com>
-Subject: Re: [syzbot] [input?] [usb?] WARNING in implement
-From: syzbot <syzbot+38e7237add3712479d65@syzkaller.appspotmail.com>
-To: andreyknvl@google.com, benjamin.tissoires@redhat.com, bentiss@kernel.org, 
-	jikos@kernel.org, jkosina@suse.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	n.zhandarovich@fintech.ru, rientjes@google.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+This patch set enables the Hyper-V code to boot on ARM64 inside a Virtual Trust
+Level. These levels are a part of the Virtual Secure Mode documented in the
+Top-Level Functional Specification available at
+https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/vsm
 
-commit 4aa2dcfbad538adf7becd0034a3754e1bd01b2b5
-Author: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Date:   Fri May 17 14:19:14 2024 +0000
+[V3]
+    - Employed the SMC recently implemented in the Microsoft Hyper-V hypervisor
+      to detect running on Hyper-V/arm64. No dependence on ACPI/DT is needed
+      anymore although the source code still falls back to ACPI as the new
+      hypervisor might be available only in the Windows Insiders channel just
+      yet.
+    - As a part of the above, refactored detecting the hypervisor via ACPI FADT.
+    - There was a suggestion to explore whether it is feasible or not to express
+      that ACPI must be absent for the VTL mode and present for the regular guests
+      in the Hyper-V Kconfig file.
+      My current conclusion is that this will require refactoring in many places.
+      That becomes especially convoluted on x86_64 due to the MSI and APIC
+      dependencies. I'd ask to let us tackle that in another patch series (or chalk
+      up to nice-have's rather than fires to put out) to separate concerns and
+      decrease chances of breakage.
+    - While refactoring `get_vtl(void)` and the related code, fixed the hypercall
+      output address not to overlap with the input as the Hyper-V TLFS mandates:
+      "The input and output parameter lists cannot overlap or cross page boundaries."
+      See https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/hypercall-interface
+      for more.
+      Some might argue that should've been a topic for a separate patch series;
+      I'd counter that the change is well-contained (one line), has no dependencies,
+      and makes the code legal.
+    - Made the VTL boot code (c)leaner as was suggested.
+    - Set DMA cache coherency for the VMBus.
+    - Updated DT bindings in the VMBus documentation (separated out into a new patch).
+    - Fixed `vmbus_set_irq` to use the API that works both for the ACPI and OF.
+    - Reworked setting up the vPCI MSI IRQ domain in the non-ACPI case. The logic
+      looks a bit fiddly/ad-hoc as I couldn't find the API that would fit the bill.
+      Added comments to explain myself.
 
-    HID: core: remove unnecessary WARN_ON() in implement()
+[V2]
+    https://lore.kernel.org/all/20240514224508.212318-1-romank@linux.microsoft.com/
+    - Decreased number of #ifdef's
+    - Updated the wording in the commit messages to adhere to the guidlines
+    - Sending to the correct set of maintainers and mail lists
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13a010d3980000
-start commit:   b9ddbb0cde2a Merge tag 'parisc-for-6.6-rc5' of git://git.k..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b89b61abf7449972
-dashboard link: https://syzkaller.appspot.com/bug?extid=38e7237add3712479d65
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eebef1680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1375f9ce680000
+[V1]
+    https://lore.kernel.org/all/20240510160602.1311352-1-romank@linux.microsoft.com/
 
-If the result looks correct, please mark the issue as fixed by replying with:
+For validation, I built kernels for the arch'es in question with the small initrd
+embedded into the kernel and booted the Hyper-V VMs off of that.
 
-#syz fix: HID: core: remove unnecessary WARN_ON() in implement()
+Roman Kisel (7):
+  arm64: hyperv: Use SMC to detect hypervisor presence
+  Drivers: hv: Enable VTL mode for arm64
+  Drivers: hv: Provide arch-neutral implementation of get_vtl()
+  arm64: hyperv: Boot in a Virtual Trust Level
+  dt-bindings: bus: Add Hyper-V VMBus cache coherency and IRQs
+  Drivers: hv: vmbus: Get the IRQ number from DT
+  PCI: hv: Get vPCI MSI IRQ domain from DT
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ .../bindings/bus/microsoft,vmbus.yaml         | 11 +++
+ arch/arm64/hyperv/Makefile                    |  1 +
+ arch/arm64/hyperv/hv_vtl.c                    | 13 ++++
+ arch/arm64/hyperv/mshyperv.c                  | 40 +++++++++--
+ arch/arm64/include/asm/mshyperv.h             | 12 ++++
+ arch/x86/hyperv/hv_init.c                     | 34 ---------
+ arch/x86/include/asm/hyperv-tlfs.h            |  7 --
+ drivers/hv/Kconfig                            |  6 +-
+ drivers/hv/hv_common.c                        | 47 +++++++++++-
+ drivers/hv/vmbus_drv.c                        | 72 ++++++++++++++++---
+ drivers/pci/controller/pci-hyperv.c           | 55 +++++++++++++-
+ include/asm-generic/hyperv-tlfs.h             |  7 ++
+ include/asm-generic/mshyperv.h                |  6 ++
+ include/linux/hyperv.h                        |  2 +
+ 14 files changed, 251 insertions(+), 62 deletions(-)
+ create mode 100644 arch/arm64/hyperv/hv_vtl.c
+
+
+base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+-- 
+2.34.1
+
 
