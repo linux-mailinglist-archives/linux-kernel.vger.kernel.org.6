@@ -1,148 +1,224 @@
-Return-Path: <linux-kernel+bounces-263195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695F893D280
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B2E93D282
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3931C211F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECB01F217ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54117A59A;
-	Fri, 26 Jul 2024 11:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5071017A5A5;
+	Fri, 26 Jul 2024 11:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jV8zsQ5U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sJefyCGt"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A61113C661;
-	Fri, 26 Jul 2024 11:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1C2E57E;
+	Fri, 26 Jul 2024 11:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721994219; cv=none; b=tTLwXd+ypaSTYF6BramiBuj++xmTq9c7LkhPbmLFz3XRHgsWPBeCnUSN6jUxoQ4idC8kX8mlgogZ+92djkV970i60j+Zl14absPxpQbACydmJLAqVHqI0EMV0CSjhJGdHPV/JaJztVzxHr29mwV2bXZa6CNKEibmsR6YXMOcVVs=
+	t=1721994354; cv=none; b=sOiWzsytLybGcSm5P/8WVEIDEtCNbJ+e7LKl9SgKanvmv7UVqI76zvz3DUEg579aMr9wJAracOnocXNoelrxve52fHR+louBvaBBb5tb4tjf+qGtL8myPxwr+ZqQfequqzf8/2WVya22D7g2VPeeJUVIyxAm/tGIJwfEe1hMkcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721994219; c=relaxed/simple;
-	bh=WdUjymIP39VlvhkEooBVJPNl6TOuY/bBBImj9JhMh7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MiWubmFCG6Wu93PdhaahzD2zxFOTnoK3W1m4/H8hzs+frRvbmj6G9SB/A5RuguqNIWQr8UvHWeMn4aMBjBYJGYspLd2HEjhrXrIK2dOeQrAd6USJ9lppjG8JcmBgUrvqJc0+KIvb4w9YrPl4A2rdODKbTtEyp8MnimfRv3EHNB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jV8zsQ5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 617B2C32782;
-	Fri, 26 Jul 2024 11:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721994218;
-	bh=WdUjymIP39VlvhkEooBVJPNl6TOuY/bBBImj9JhMh7Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jV8zsQ5U8Y1weOk1EGErPE2uC5RPNyvTmeeDoA7rffNcPctROd1GC3NnRMW8IWQot
-	 cWoXj8gHA/DZiqx9osdHzfZW2TSLQYdw/+2WLJQhMl7DXTDh6bq+/j8VHyk7UtCDrL
-	 SOLBB4e4Cl9Ab0tdacmVBbiQ3VBeuXRIdRz6k53lA7syIrj+3VJmpaGe8gqhi9U37n
-	 zvRveq1gzKmf2zKSZNF6yri74iM8qTYFiU2JEnxsV1Hgx+31K5XFJ/R0FXL6PlATjA
-	 CVMTLwwbTk/7Rudb2Ozr5bYOXnky+CLUCMryzfMjtrukbb2ZFSCHbvR0xACdpggJ5B
-	 +PM5Ur9t1qADA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 26 Jul 2024 13:43:30 +0200
-Subject: [PATCH v2] usb: typec: fsa4480: Check if the chip is really there
+	s=arc-20240116; t=1721994354; c=relaxed/simple;
+	bh=f1XWBUIolOUCVSiexTTD3WDQSs/rWJzHICGPQ+Hpzw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZpKQDmc7Pri14QD3gUm8p6Y7Xg3r69YjQaK2sQhg0KR0H9daWXwduO9FJNtlqPZrk4TZcI10l7W/rpfSyn4AyRN1ecWqyIjmueI3++nrzn9jGxjTjZm0K5Oyxf2nYaoCZdYB7e7dZDF6QA++Bw7toI6RdY7oKzSkWBm0LVTYmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sJefyCGt; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QBRSVG026865;
+	Fri, 26 Jul 2024 11:45:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=Ef5/svIY3R9uRNnWiK+y5aQm4VD
+	iqRXdZ6hHOEQamGU=; b=sJefyCGtxqhdDJSGNQq+ErzNw8IRU2hJS17vtcbIi1Z
+	efBMovOF/e1lRujELWTrf8eun7mRg/cmtiyUb+iCxo1adBjcJM+//EXCybfqaY88
+	1CfferFCbxd/ONhyq+WNbGoyl77+TBxG7ZC9EL09MLxmlWo1tFv6+fmPopS9UJ2L
+	15vU/4edtDSwiVlKjpGvimQavyG5MOVarhX72gXSI8fcC4qfqcg948L/OgBV7J77
+	4PIXWYBZmTEMNF8+DrHJwRISYcHhLZQDayZ1bBi65k4pp75n21Xio5Oaz8NfGzaq
+	jTtawaU4oxnHklgzqOLszozZK1CbyQ1i5Xv3DztvNng==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m2kv942s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:45:17 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46QBjHcd024630;
+	Fri, 26 Jul 2024 11:45:17 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m2kv942n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:45:17 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QAXRXL009131;
+	Fri, 26 Jul 2024 11:45:16 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40gt93upk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:45:16 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QBjCJv53739776
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 11:45:14 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 792D42004B;
+	Fri, 26 Jul 2024 11:45:12 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25ECD20043;
+	Fri, 26 Jul 2024 11:45:10 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.39.192])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 26 Jul 2024 11:45:09 +0000 (GMT)
+Date: Fri, 26 Jul 2024 17:15:07 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>, stable@kernel.org
+Subject: Re: [PATCH 03/20] ext4: fix double brelse() the buffer of the
+ extents path
+Message-ID: <ZqOMQ6cIHd0hZqhY@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-4-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240726-topic-fs4480_check-v2-1-901ca449db15@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOGLo2YC/32NQQrCMBAAv1JyNpINoRhP/kOKpOmmWSxJ2dSil
- P7d2Ad4nIFhNlGQCYu4NptgXKlQThX0qRE+ujSipKGy0EobpUHLJc/kZSjGXNTDR/RP6Z1T0Kr
- QgwJRw94VlD275GNN02uaqpwZA72P072rHKksmT/HeIWf/ftYQYIcrG0tmqEN1t0mSo7zOfMou
- n3fv7VTaQ7KAAAA
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Bjorn Andersson <andersson@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721994216; l=2675;
- i=konradybcio@kernel.org; s=20230215; h=from:subject:message-id;
- bh=8qSJNF5RxEGsCuxH9KnuktPDNpABmmYxSCMU6sObgb8=;
- b=buujFb7m0yC01zQdPPWo22ySybuDNMXLBvkU1Mu0UManl7qLRVVQ1yuhskG0GMvpyznx6GE4e
- eTJLmLfciOTB/twgM1HlLEUNqHsB0nV3vQTt5SF+2HSbdDh2O6qD1EV
-X-Developer-Key: i=konradybcio@kernel.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-4-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OBx4piRDeUaNN9irgZYn8GFJlYeKj_oT
+X-Proofpoint-ORIG-GUID: Z0_GHF2dC9dEkREwX-IROVQ3vvprfsFR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ spamscore=0 malwarescore=0 mlxlogscore=564 mlxscore=0 priorityscore=1501
+ adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407260076
 
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Wed, Jul 10, 2024 at 12:06:37PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> In ext4_ext_try_to_merge_up(), set path[1].p_bh to NULL after it has been
+> released, otherwise it may be released twice.
+> 
+> An example of what triggers this is as follows:
+> 
+>   split2    map    split1
+> |--------|-------|--------|
+> 
+> ext4_ext_map_blocks
+>  ext4_ext_handle_unwritten_extents
+>   ext4_split_convert_extents
+>    // path->p_depth == 0
+>    ext4_split_extent
+>      // 1. do split1
+>      ext4_split_extent_at
+>        ext4_ext_insert_extent
+>          ext4_ext_create_new_leaf
+>            ext4_ext_grow_indepth
+>              le16_add_cpu(&neh->eh_depth, 1)
+>            ext4_find_extent
+>              path->p_depth = 1
+>          ext4_ext_try_to_merge
+>            ext4_ext_try_to_merge_up
+>              path->p_depth = 0
+>              brelse(path[1].p_bh)  ---> not set to NULL here
+>      // 2. update path
+>      ext4_find_extent
+>      // 3. do split2
+>      ext4_split_extent_at
+>        ext4_ext_insert_extent
+>          ext4_ext_create_new_leaf
+>            ext4_ext_grow_indepth
+>              le16_add_cpu(&neh->eh_depth, 1)
+>            ext4_find_extent
+>              path[0].p_bh = NULL;
+>              path->p_depth = 1
+>              read_extent_tree_block  ---> return err
+>              // path[1].p_bh is still the old value
+>  ext4_free_ext_path
+>   ext4_ext_drop_refs
+>    // path->p_depth == 1
+>    brelse(path[1].p_bh)  ---> brelse a buffer twice
 
-Currently, the driver will happily register the switch/mux devices, and
-so long as the i2c master doesn't complain, the user would never know
-there's something wrong.
+Hi Baokun,
 
-Add a device id check (based on [1]) and return -ENODEV if the read
-fails or returns nonsense.
+If i'm not wrong, in this trace, we'll enter ext4_ext_insert_extent() with
+gb_flags having EXT4_GET_BLOCKS_PRE_IO so we won't actually go for a
+merge_up. 
 
-Checking the value on a Qualcomm SM6115P-based Lenovo Tab P11 tablet,
-the ID mentioned in the datasheet does indeed show up:
- fsa4480 1-0042: Found FSA4480 v1.1 (Vendor ID = 0)
+That being said, there seems to be a few places where we follow the
+split-insert pattern and it might be possible that one of those call
+sites might not be passing EXT4_GET_BLOCKS_PRE_IO and we'll the double
+free issue you mentioned. I'll check and update if I see anything.
 
-[1] https://www.onsemi.com/pdf/datasheet/fsa4480-d.pdf
+On a separate note, isn't it a bit weird that we grow the tree indepth
+(which includes allocation, marking buffer dirty etc) only to later
+merge it up again and throwing all the changes we did while growing the
+tree. Surely we could optimize this particular case somehow right?
 
-Fixes: 1dc246320c6b ("usb: typec: mux: Add On Semi fsa4480 driver")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
----
-Changes in v2:
-- Prepend the new defines with FSA4480_ to make them more obvious
-- Link to v1: https://lore.kernel.org/r/20240212-topic-fs4480_check-v1-1-d9969e4d6f9a@linaro.org
----
- drivers/usb/typec/mux/fsa4480.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> 
+> Finally got the following WARRNING when removing the buffer from lru:
+> 
+> ============================================
+> VFS: brelse: Trying to free free buffer
+> WARNING: CPU: 2 PID: 72 at fs/buffer.c:1241 __brelse+0x58/0x90
+> CPU: 2 PID: 72 Comm: kworker/u19:1 Not tainted 6.9.0-dirty #716
+> RIP: 0010:__brelse+0x58/0x90
+> Call Trace:
+>  <TASK>
+>  __find_get_block+0x6e7/0x810
+>  bdev_getblk+0x2b/0x480
+>  __ext4_get_inode_loc+0x48a/0x1240
+>  ext4_get_inode_loc+0xb2/0x150
+>  ext4_reserve_inode_write+0xb7/0x230
+>  __ext4_mark_inode_dirty+0x144/0x6a0
+>  ext4_ext_insert_extent+0x9c8/0x3230
+>  ext4_ext_map_blocks+0xf45/0x2dc0
+>  ext4_map_blocks+0x724/0x1700
+>  ext4_do_writepages+0x12d6/0x2a70
+> [...]
+> ============================================
+> 
+> Fixes: ecb94f5fdf4b ("ext4: collapse a single extent tree block into the inode if possible")
+> Cc: stable@kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/ext4/extents.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 4d589d34b30e..657baf3991c1 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -1888,6 +1888,7 @@ static void ext4_ext_try_to_merge_up(handle_t *handle,
+>  	path[0].p_hdr->eh_max = cpu_to_le16(max_root);
+>  
+>  	brelse(path[1].p_bh);
+> +	path[1].p_bh = NULL;
 
-diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
-index cb7cdf90cb0a..cd235339834b 100644
---- a/drivers/usb/typec/mux/fsa4480.c
-+++ b/drivers/usb/typec/mux/fsa4480.c
-@@ -13,6 +13,10 @@
- #include <linux/usb/typec_dp.h>
- #include <linux/usb/typec_mux.h>
- 
-+#define FSA4480_DEVICE_ID	0x00
-+ #define FSA4480_DEVICE_ID_VENDOR_ID	GENMASK(7, 6)
-+ #define FSA4480_DEVICE_ID_VERSION_ID	GENMASK(5, 3)
-+ #define FSA4480_DEVICE_ID_REV_ID	GENMASK(2, 0)
- #define FSA4480_SWITCH_ENABLE	0x04
- #define FSA4480_SWITCH_SELECT	0x05
- #define FSA4480_SWITCH_STATUS1	0x07
-@@ -251,6 +255,7 @@ static int fsa4480_probe(struct i2c_client *client)
- 	struct typec_switch_desc sw_desc = { };
- 	struct typec_mux_desc mux_desc = { };
- 	struct fsa4480 *fsa;
-+	int val = 0;
- 	int ret;
- 
- 	fsa = devm_kzalloc(dev, sizeof(*fsa), GFP_KERNEL);
-@@ -268,6 +273,15 @@ static int fsa4480_probe(struct i2c_client *client)
- 	if (IS_ERR(fsa->regmap))
- 		return dev_err_probe(dev, PTR_ERR(fsa->regmap), "failed to initialize regmap\n");
- 
-+	ret = regmap_read(fsa->regmap, FSA4480_DEVICE_ID, &val);
-+	if (ret || !val)
-+		return dev_err_probe(dev, -ENODEV, "FSA4480 not found\n");
-+
-+	dev_dbg(dev, "Found FSA4480 v%lu.%lu (Vendor ID = %lu)\n",
-+		FIELD_GET(FSA4480_DEVICE_ID_VERSION_ID, val),
-+		FIELD_GET(FSA4480_DEVICE_ID_REV_ID, val),
-+		FIELD_GET(FSA4480_DEVICE_ID_VENDOR_ID, val));
-+
- 	/* Safe mode */
- 	fsa->cur_enable = FSA4480_ENABLE_DEVICE | FSA4480_ENABLE_USB;
- 	fsa->mode = TYPEC_STATE_SAFE;
+Anyways, I agree that adding this here is the right thing to do:
 
----
-base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
-change-id: 20240212-topic-fs4480_check-caa0160fb101
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Best regards,
--- 
-Konrad Dybcio <konradybcio@kernel.org>
+Thanks,
+Ojaswin
 
+>  	ext4_free_blocks(handle, inode, NULL, blk, 1,
+>  			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
+>  }
+> -- 
+> 2.39.2
+> 
 
