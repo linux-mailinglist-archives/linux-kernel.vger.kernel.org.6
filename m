@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-263599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A7193D81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD9693D825
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD561F235A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE361C228C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDC344C76;
-	Fri, 26 Jul 2024 18:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DB61FED;
+	Fri, 26 Jul 2024 18:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m01kwFZH"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RzgIV18g"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C56338385;
-	Fri, 26 Jul 2024 18:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47038DEE;
+	Fri, 26 Jul 2024 18:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017883; cv=none; b=fiQ/LmxxXupe9pA2rCMwwkuUBYOtRm4IH1Y6B86nDz0QYxzdfYlXmZ7qdwWYJ14kj514mQtV+24rwiXWie9LxJ9nfQzWWnlUq9eNCmZ3MqV2qm4PPFSEkfdXCGVHsXpbP/kPpxOX7hiccfls9fmgyp15/BbU9VDFlLiOGs1aLy0=
+	t=1722017884; cv=none; b=WE39/zfBNPz/kmgK7s8BBmVOhK4VyyNVEwVpTPQ5MbiT7Xe7UCj1UMq0qFoLphT570d7pxWLFXmEAwg3sph2Mm/o6IBi/3bAVjqKA9femV4/s7btxs1LJL2FIC1hg/Hu5HwMa0lnQgD3SjJFkrWm4/N5IhM/V/DBsvdT07vqqBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017883; c=relaxed/simple;
-	bh=cFFBq9xftAOJ8+raON3AZMUJgV5YQctWnS/lEPft84E=;
+	s=arc-20240116; t=1722017884; c=relaxed/simple;
+	bh=Pyq5KT99mvHZELjIb9ex4V6SAyN0u6Ln0t+wD17lvWc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U+dEkFGlIOOOGyOPUt2hQ+7pcAMLhATgEbsXlXic7dBipaCauTCaQB9fga7dZw92lhKjLzUO2wsgxG2kIQvTWfTNnNN1Q4PoUpzEZ3jmvAlpdV1q1g1Wum+1t2NhDHH+tExXolmNTpvZFGFu91h+VDQbsbSFyhuDS9Yx7LrSK4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m01kwFZH; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=HOSgSzD08ZvwP1ggUO5dcnRiHKkyBrDZIuUOs4eC3NDagSD+xZNco4uO1u+z6Bp5nGzJY+hQjy30F2HUBA4YCivvJH8td9to+5qppeufbv4UGwIP9Vh4GlcLTzbWxs0vb5XTRUzl5jC9PhQYLoL0hM5M1lH5SKqK3GCDRDvrxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RzgIV18g; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0577FC000A;
-	Fri, 26 Jul 2024 18:17:58 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB411C000B;
+	Fri, 26 Jul 2024 18:17:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722017879;
+	t=1722017880;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3Eayj+ntAEk18/DRsjd8aPm4OTkARNCkPfWA6i3HBMw=;
-	b=m01kwFZH8OlhF1iaJg8FIvKh749lS2UavKUm42AMknQ0S5TwCAd+CbX2PovnmjtTekR6rM
-	P8lLwHZHsX3zYZHBaKfZ9D3+S/kZ6Z+5Y47CKc5NJh7qgfXPKKuiwIo6bobXfXjkZX5TBC
-	rCSsuVtQ/Mgu6fS0Sf2Z4YfsGWDq/hCpi1rh3JC7DZ9H10Kjm2N/EnnFJLPmz1v9gwNWtl
-	C+GC3hlpt8W4kRXDUTBWFuVg7r0zf8gNUOjvaR0Wm7PGa4SGeMGoIZtPv1dFyRXUpBohL6
-	kH2eE37QGFs+X8gBTsSxIYT0gDGo2vkPj2a8yGrCguftORJEDoVbg7b3iRnoIg==
+	bh=L8BqOp+imFT7RCmJiTvOqUvgDym7zUG3PG+O/IVmdxE=;
+	b=RzgIV18gLAeLOEqwiANRhZCopxKO9YmyJJyevs1sTSbgS55Q9aGhSlG/hMCEWGAJQB6fh+
+	8p8e4/6fSJIKHac24zvNF1heB4MCuYeMm3/UbQpNjAGA4V72LfW93xPIQK7vSEWWJ7+PKN
+	c8y8NtXMJMbbKpDEP0vvn+GQtOTQ03iiqkL3pa6/GSrzTeC4E8Fo8YUV4UqUksKzgVbO1f
+	dx9KPVKGjgQiHKsZ8W6+o7s9C6rwc7S+y6vU5ioTlRIus6tMTRGpcgdKXoTwEguxc77o69
+	4CWjV56xDYBKTT+9q+qWSY84yV2IyASebwOuuhyED7308sGHT2iIV/K8q5Hqug==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 26 Jul 2024 20:17:55 +0200
-Subject: [PATCH v5 07/12] usb: cdns3-ti: add J7200 support with
- reset-on-resume behavior
+Date: Fri, 26 Jul 2024 20:17:56 +0200
+Subject: [PATCH v5 08/12] usb: cdns3: rename hibernated argument of
+ role->resume() to lost_power
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240726-s2r-cdns-v5-7-8664bfb032ac@bootlin.com>
+Message-Id: <20240726-s2r-cdns-v5-8-8664bfb032ac@bootlin.com>
 References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -74,44 +74,78 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Add ti,j7200-usb compatible. Match data indicates the controller resets
-on resume which tells that to the cdns3 core. This in turn silences a
-xHCI warning visible in cases of unexpected resets.
+The cdns_role_driver->resume() callback takes a second boolean argument
+named `hibernated` in its implementations. This is mistaken; the only
+potential caller is:
 
-We also inherit the errata quirk CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE from
-the default `cdns_ti_auxdata` configuration.
+int cdns_resume(struct cdns *cdns)
+{
+	/* ... */
+
+	if (cdns->roles[cdns->role]->resume)
+		cdns->roles[cdns->role]->resume(cdns, cdns_power_is_lost(cdns));
+
+	return 0;
+}
+
+The argument can be true in cases outside of return from hibernation.
+Reflect the true meaning by renaming both arguments to `lost_power`.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/cdns3/cdns3-ti.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/usb/cdns3/cdns3-gadget.c | 4 ++--
+ drivers/usb/cdns3/cdnsp-gadget.c | 2 +-
+ drivers/usb/cdns3/core.h         | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
-index 159814dfc856..65b8b6f4c654 100644
---- a/drivers/usb/cdns3/cdns3-ti.c
-+++ b/drivers/usb/cdns3/cdns3-ti.c
-@@ -258,7 +258,21 @@ static const struct of_dev_auxdata cdns_ti_auxdata[] = {
- 	{},
- };
+diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+index fd1beb10bba7..694aa1457739 100644
+--- a/drivers/usb/cdns3/cdns3-gadget.c
++++ b/drivers/usb/cdns3/cdns3-gadget.c
+@@ -3468,7 +3468,7 @@ __must_hold(&cdns->lock)
+ 	return 0;
+ }
  
-+static struct cdns3_platform_data cdns_ti_j7200_pdata = {
-+	.quirks = CDNS3_RESET_ON_RESUME |
-+		  CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE,   /* Errata i2409 */
-+};
-+
-+static const struct of_dev_auxdata cdns_ti_j7200_auxdata[] = {
-+	{
-+		.compatible = "cdns,usb3",
-+		.platform_data = &cdns_ti_j7200_pdata,
-+	},
-+	{},
-+};
-+
- static const struct of_device_id cdns_ti_of_match[] = {
-+	{ .compatible = "ti,j7200-usb", .data = cdns_ti_j7200_auxdata },
- 	{ .compatible = "ti,j721e-usb", .data = cdns_ti_auxdata },
- 	{ .compatible = "ti,am64-usb", .data = cdns_ti_auxdata },
- 	{},
+-static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
++static int cdns3_gadget_resume(struct cdns *cdns, bool lost_power)
+ {
+ 	struct cdns3_device *priv_dev = cdns->gadget_dev;
+ 
+@@ -3476,7 +3476,7 @@ static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
+ 		return 0;
+ 
+ 	cdns3_gadget_config(priv_dev);
+-	if (hibernated)
++	if (lost_power)
+ 		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
+ 
+ 	return 0;
+diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+index 4a3f0f958256..7d05180442fb 100644
+--- a/drivers/usb/cdns3/cdnsp-gadget.c
++++ b/drivers/usb/cdns3/cdnsp-gadget.c
+@@ -1973,7 +1973,7 @@ static int cdnsp_gadget_suspend(struct cdns *cdns, bool do_wakeup)
+ 	return 0;
+ }
+ 
+-static int cdnsp_gadget_resume(struct cdns *cdns, bool hibernated)
++static int cdnsp_gadget_resume(struct cdns *cdns, bool lost_power)
+ {
+ 	struct cdnsp_device *pdev = cdns->gadget_dev;
+ 	enum usb_device_speed max_speed;
+diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+index 9207bd6365f7..f385d3980545 100644
+--- a/drivers/usb/cdns3/core.h
++++ b/drivers/usb/cdns3/core.h
+@@ -30,7 +30,7 @@ struct cdns_role_driver {
+ 	int (*start)(struct cdns *cdns);
+ 	void (*stop)(struct cdns *cdns);
+ 	int (*suspend)(struct cdns *cdns, bool do_wakeup);
+-	int (*resume)(struct cdns *cdns, bool hibernated);
++	int (*resume)(struct cdns *cdns, bool lost_power);
+ 	const char *name;
+ #define CDNS_ROLE_STATE_INACTIVE	0
+ #define CDNS_ROLE_STATE_ACTIVE		1
 
 -- 
 2.45.2
