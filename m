@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-263465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C6A93D672
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5F593D67F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DFA1F24EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FE31F248C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB3017C21C;
-	Fri, 26 Jul 2024 15:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CB517C22F;
+	Fri, 26 Jul 2024 16:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X3TBhKzR"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SztYG//F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7F5200AF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F7217C21C;
+	Fri, 26 Jul 2024 16:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722009289; cv=none; b=diLLqlHI7Qylz1C8VZuHPMCKCK1xywW6S+9G0zeBf0ftCf5y73w6OM1+JiPgoi+g2WUluMj+werruJjemjCttssFWS8M53nS6h9JM3aBcxV9gS25hCLZ9RR9kK4p4GzblbtOHi4LYBIodwFDzs/RQIFxrkRzBYywqRpSBcg7Za0=
+	t=1722009669; cv=none; b=sHD0nSwFsCElHY0VLZc3U4ltH2nrwQm463A4bpldnNhwvbq9houI6Hk4eAUXZ5cWQQBxnVkkbpTX/lujAFMa8fE0qO+W9MtRyWbTm1o5dM/rZvTf8rugGciVcP/rPY7BVlTybHPh39A4sbIC7AWVKjVOfgJgnuF3q90sjN09WtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722009289; c=relaxed/simple;
-	bh=YTTkDFAXVglN4v44mHQV0lUT6gXOegEaaIGaVD3vLxc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T/wEkHo1nnuoVyZbyFIt77NJbPGA43Xvp7+irQWfT1VJH0w6bklYOBiEFDWmFm+PeT6TdD2FX5l+t5A7pSseUhqW9rJGXlSE0+cD9+4bC3Ao50+qGL57by5UUzQ4SKBrTl/auvTc2aADbG6cz65Sdh+8R1sjt3RaqwNYMOycyEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X3TBhKzR; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722009284; x=1722268484;
-	bh=PNehUS/FjC6MuBbMsm8QCFATrShoDfiQh3B/wLKyLZE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=X3TBhKzR/gJk20IHe/R33SdAJRRsUuYfTYbOV3BaLdgkIMON40Pmz2uUKH5Q3bhE1
-	 ShCehdJHGOE/j0CHP0S5zr22rjv4WZe0jsjBr4XO3ja3YwSsFsynX9ILnwlRnmTUh0
-	 WNaysJNuD7fyoHEpIFEgdP2DIfXpzzpRvnGdcfDaMLXdzTme4XAXlQtFvFICcx6Y3M
-	 6E8K3xf7feIgLNhTjvlwDPh1/o9cBefuISzPNrtLSLbeAw1swWArh0rSn/FwxFoFF9
-	 bj4yeolhSfDE2LaDQ4LP3gzT1PSD4lyLW6a/FQEx9zCPTdzSgF3AYYsb0AM9d6h7Gb
-	 7m2kr+jCz+mlg==
-Date: Fri, 26 Jul 2024 15:54:37 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Jonathan Corbet <corbet@lwn.net>, Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
-Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
-Message-ID: <8641453e-664d-4290-b9bc-4a2567ddc3fe@proton.me>
-In-Reply-To: <ZqO9j1dCiHm3r-pz@Boquns-Mac-mini.home>
-References: <20240710032447.2161189-1-boqun.feng@gmail.com> <CAH5fLgjat2Y6RT957BhdOjJHt7rPs0DvZYC6JZ+pHFiP=yDNgA@mail.gmail.com> <ZqE9dzfNrE3Xg3tV@boqun-archlinux> <bcdd74f3-d0c0-4366-976a-5a935081a704@proton.me> <ZqK1l05zcCwGforV@boqun-archlinux> <beaf1fa3-eebe-443c-bc51-abd9348a411d@proton.me> <ZqOyMbi7xl67UfjY@Boquns-Mac-mini.home> <81ceeca9-8ae5-4a82-9a46-f47767e60f75@proton.me> <ZqO9j1dCiHm3r-pz@Boquns-Mac-mini.home>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: cfe45fe6408aa7bb0816cb7b284ee42f182d9338
+	s=arc-20240116; t=1722009669; c=relaxed/simple;
+	bh=gLb23Bh8XMl/n/xLXzM+SFvWGrvJJ0r90hJ2q9/OMAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTr04Gqe2pbi+yK0gLHUhWNDA0VDRj8bogcjP9pXAhdgP/5mVri9JZTebX9+9QFwYdkh5tvLV0yZDTcnjgxHTLIzLzoORTW3qeosuTnHUkbVrCf8beEGFv1NzaISlShD/l6TFSBbelWYvRkng7P/9BRP1nOLMOjxs2i3u41jtqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SztYG//F; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722009668; x=1753545668;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gLb23Bh8XMl/n/xLXzM+SFvWGrvJJ0r90hJ2q9/OMAk=;
+  b=SztYG//FzlwdPqZeciYhTDThWXJuz1KxJ0wW6c97qnzgpaaN0uqn9TW4
+   GAK2gDgR7/1JRKXRb2OUOEz7uVx5im0jAHc+6IVXUyLpr8NBV/x77mbUz
+   vqOm5gEDbyaojfinA9HiiGyzCbBPgTo4ZVkfbHWFQZw1JgU+qBsODz6Us
+   NAtKpmkA5F+d8EIKtUtcqi+odSm6lmLE3YI1OvysMwYPXZ4PvSMWja8t6
+   FAtn7yr9WW+vMdMjY7Uw/9xrPVse6nrh+qE/q/2+xpgjRO18K7y/F/pzX
+   3ZkgZy0MyYtHkARCqY0Wd14ppD8JC2WT00vaLOLcXqaU+4maJMDLhG7rW
+   Q==;
+X-CSE-ConnectionGUID: Kxw6l7XFTwuMvXVTxROM9Q==
+X-CSE-MsgGUID: kR3s3ZpaTFGFA9bf2RZAfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="12731744"
+X-IronPort-AV: E=Sophos;i="6.09,239,1716274800"; 
+   d="scan'208";a="12731744"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 09:01:07 -0700
+X-CSE-ConnectionGUID: 3v34ztMQS5e9V/+usAAA4w==
+X-CSE-MsgGUID: Q4D1SZ7vTcewG/5kTgQ6cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,239,1716274800"; 
+   d="scan'208";a="53917760"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 09:01:01 -0700
+Message-ID: <137068c0-442b-4aba-8950-67828a15cda2@intel.com>
+Date: Fri, 26 Jul 2024 19:00:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Hendrik Brueckner <brueckner@linux.ibm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
+ <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240715160712.127117-1-adrian.hunter@intel.com>
+ <20240715160712.127117-3-adrian.hunter@intel.com>
+ <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
+ <14cd68b2-eeee-42e3-87a6-c12d3814bd51@intel.com>
+ <20240718115126.GK26750@noisy.programming.kicks-ass.net>
+ <20240718125849.GI28838@noisy.programming.kicks-ass.net>
+ <ef63885b-f762-4398-beff-c695b24304e6@intel.com> <ZqO1gBIYnLiDpQWv@x1>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <ZqO1gBIYnLiDpQWv@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 26.07.24 17:15, Boqun Feng wrote:
-> On Fri, Jul 26, 2024 at 02:42:36PM +0000, Benno Lossin wrote:
->> On 26.07.24 16:26, Boqun Feng wrote:
->>> On Fri, Jul 26, 2024 at 01:43:38PM +0000, Benno Lossin wrote:
->>> [...]
->>>>>>
->>>>>> You can always get a `&T` from `ARef<T>`, since it implements `Deref=
-`.
->>>>>>
->>>>>
->>>>> Yeah, but this is unrelated. I was talking about that API providers c=
-an
->>>>> decide whether they want to only provide a `raw_ptr` -> `ARef<Self>` =
-if
->>>>> they don't need to provide a `raw_ptr` -> `&Self`.
->>>>>
->>>>>>> Overall, I feel like we don't necessarily make a preference between
->>>>>>> `->&Self` and `->ARef<Self>` functions here, since it's up to the u=
-sers'
->>>>>>> design?
->>>>>>
->>>>>> I would argue that there should be a clear preference for functions
->>>>>> returning `&Self` when possible (ie there is a parameter that the
->>>>>
->>>>> If "possible" also means there's going to be `raw_ptr` -> `&Self`
->>>>> function (as the same publicity level) anyway, then agreed. In other
->>>>> words, if the users only need the `raw_ptr` -> `ARef<Self>`
->>>>> functionality, we don't want to force people to provide a `raw_ptr` -=
->
->>>>> `&Self` just because, right?
->>>>
->>>> I see... I am having a hard time coming up with an example where users
->>>> would exclusively want `ARef<Self>` though... What do you have in mind=
-?
->>>> Normally types wrapped by `ARef` have `&self` methods.
->>>>
+On 26/07/24 17:41, Arnaldo Carvalho de Melo wrote:
+> On Thu, Jul 18, 2024 at 06:06:16PM +0300, Adrian Hunter wrote:
+>> On 18/07/24 15:58, Peter Zijlstra wrote:
+>>> On Thu, Jul 18, 2024 at 01:51:26PM +0200, Peter Zijlstra wrote:
 >>>
->>> Having `&self` methods doesn't mean the necessarity of a `raw_ptr` ->
->>> `&Self` function, for example, a `Foo` is wrapped as follow:
+>>>> OK, let me do that and make a few more edits and see if I can stare at
+>>>> that next patch some.
 >>>
->>> =09struct Foo(Opaque<foo>);
->>> =09impl Foo {
->>> =09    pub fn bar(&self) -> Bar { ... }
->>> =09    pub unsafe fn get_foo(ptr: *mut foo) -> ARef<Foo> { ... }
->>> =09}
->>>
->>> in this case, the abstration provider may not want user to get a
->>> `raw_ptr` -> `&Self` function, so no need to have it.
+>>> I pushed out a stack of patches into queue.git perf/core
+>>> Could you please double check I didn't wreck anything?
 >>
->> I don't understand this, why would the abstraction provider do that? The
->=20
-> Because no user really needs to convert a `raw_ptr` to a `&Self` whose
-> lifetime is limited to a scope?
+>> Looks fine, and seems to work OK in a brief test.
+>>
+>> Thank you! :-)
+> 
+> So should I go ahead and pick the tooling patches since the kernel bits
+> are merged?
 
-What if you have this:
-
-    unsafe extern "C" fn called_from_c_via_vtable(foo: *mut bindings::foo) =
-{
-        // SAFETY: ...
-        let foo =3D unsafe { Foo::from_raw(foo) };
-        foo.bar();
-    }
-
-In this case, there is no need to take a refcount on `foo`.
-
-> Why do we provide a function if no one needs and the solely purpose is
-> to just avoid providing another function?
-
-I don't think that there should be a lot of calls to that function
-anyways and thus I don't think there is value in providing two functions
-for almost the same behavior. Since one can be derived by the other, I
-would go for only implementing the first one.
-
->> user can already get a `&Foo` reference, so what's the harm having a
->> function supplying that directly?
->=20
-> Getting a `&Foo` from a `ARef<Foo>` is totally different than getting a
-> `&Foo` from a pointer, right? And it's OK for an abstraction provider to
-> want to avoid that.
->=20
-> Another example that you may not want to provide a `-> &Self` function
-> is:
->  =09struct Foo(Opaque<foo>);
->  =09impl Foo {
->  =09    pub fn bar(&self) -> Bar { ... }
->  =09    pub fn find_foo(idx: u32) -> ARef<Foo> { ... }
->  =09}
->=20
-> in other words, you have a query function (idx -> *mut foo), and I think
-> in this case, you would avoid `find_foo(idx: u32) -> &Foo`, right?
-
-Yes, this is the exception I had in mind with "if possible (ie there is
-a parameter that the lifetime can bind to)" (in this case there wouldn't
-be such a parameter).
-
-> Honestly, this discussion has been going to a rabit hole. I will mention
-> and already mentioned the conversion `&Self` -> `ARef<Self>`. Leaving
-> the preference part blank is fine to me, since if it's a good practice,
-> then everybody will follow, otherwise, we are missing something here.
-> Just trying to not make a descision for the users...
-
-Sure.
-
----
-Cheers,
-Benno
+Not exactly merged.  Probably should wait until it is in tip at least.
 
 
