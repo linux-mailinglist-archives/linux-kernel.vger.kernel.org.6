@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-263166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA2993D1EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874DE93D1EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84F11F2219E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42619282756
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E01179972;
-	Fri, 26 Jul 2024 11:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3547179965;
+	Fri, 26 Jul 2024 11:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzVOd0AQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbRfLKCc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C19713A40C;
-	Fri, 26 Jul 2024 11:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E6214277;
+	Fri, 26 Jul 2024 11:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992584; cv=none; b=YLsxea+yCF+ZS768tONT/8gybmLyjfOhTf7CyW8oACus87DhY047gr9KwU7rnV0tp4dI9li5hw8l8bwd83xR9DTOUC0rQzvHto2fclrELuRTYuwkKk2cCZj1GjimsYdY/AcvwK5VbkdkNV8h66YdriIvLmI3eeZXS0SpC5ZI4F4=
+	t=1721992630; cv=none; b=CeB00D17z4BqzusVSYoOF2YbGK9FEVp0jYzAR31DyBVDcr/ZvCOTiYw/Cb2OwLJn/ydstn3juuF5eq9MwO2mQY3SF44FAM1Z4CRmdmvePh/bKsSOGuDodwiaHDy/n7eIqGJqVNZv/q3F6EjrewAhwtc/St1Ttz1rX3xjkabM98c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992584; c=relaxed/simple;
-	bh=4PCK2sWpDnQVujtjG0OroqQcADHR9De9HxDlVfiJmqw=;
+	s=arc-20240116; t=1721992630; c=relaxed/simple;
+	bh=xz21XeKk6Jh5vorDOFaezBjDi7mGuYx6lx40T8g4h3c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pTNLZGFQ/0G+8VtemK1qaAygEJHcKNRYij7PO+HPHH205Xj7jptW3IUNKuvhp6xcWjRWj2DJlcp9tdIwvvHKDRzMXkwso8na6TNjzUH3tfDHoruzM4VKblx0WwRcIXxj2jUeJLRe7fO9QXHoEWG7wn0pdRTnUsZrskMUhlmpL8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzVOd0AQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9518C32782;
-	Fri, 26 Jul 2024 11:16:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QO4r6gmakbLAFpncRilCm6C3xUeNn/WgGA4rIcicKXCV1HwbehVcVjXOtMLZ4+VrtJWBO/0P6+kN/JrRhkVM0CyaJNpQ+70v8V2mUZqzedCMYWY+nHx95IpFi+ZM0kwwdZMPsSp/2m88qWA7wWPT1QLxcGkS6Rf+ZQ/rSU2RKiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbRfLKCc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999E2C4AF09;
+	Fri, 26 Jul 2024 11:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992583;
-	bh=4PCK2sWpDnQVujtjG0OroqQcADHR9De9HxDlVfiJmqw=;
+	s=k20201202; t=1721992629;
+	bh=xz21XeKk6Jh5vorDOFaezBjDi7mGuYx6lx40T8g4h3c=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=XzVOd0AQYRlKKur8YEeM0seW5HU6gSy2k8Xph54Lt8lP4jH4wuWE4z5ncL6kueATO
-	 9f0OUG4pEE8yIDnCElGn4Xs7Xts+4TaOPRq7+s8AQMJWsTCYMcZI8F8yIvwNDMWyPZ
-	 u0pqygxBUsAJ65j+Z/vgOoOdj4eiTGqJIwY3Ons2al8NnfTxiw1skFHP+kLmXp0eqz
-	 C6U1Cu52K9SZqZmbwt0bnDGvTKhyut9zkiA8R5ReKbLnOqoUEtmdNkdlbT5GAWmQAq
-	 p/cZQv00x+aIG8KfS6I8n0TcWd9MYkcfl8XzJvdh/kkwHWnBAAF7EAgagY1eHfCabo
-	 2hZyZ6Vv+txYA==
-Message-ID: <b7b3cbc2-5f20-4a78-b189-b509acfee3ac@kernel.org>
-Date: Fri, 26 Jul 2024 13:16:13 +0200
+	b=IbRfLKCcUs1m+iV8xkOBqr7dD7BNE3R6uY3g2GTPoa/ISwret+2be6edJQEU7kbQX
+	 rSctWtZLrHYdaiH4qLvPp4LtCNUr61zZlLYpvDkWS3Fwvda8AqFHlxDokEGJ53Uh4M
+	 s57oak1znDytaN3flPaDD6JZtM31nKM0CDsJCJq8v7xSiIB+a06c1Sdn8hDCtS5//p
+	 ZGtAgxg/BM36T91sSXSqMdcPJ1fjqMiBfb+Z/MV6Xm05L5InLAIx3DZWrLwXs0cOhk
+	 siFotPG8oCcLewdvqkfFdLiKjHLiAeuQMburKIdPgfhXmib9fci1xkvi98kjx2BgD/
+	 0UxK6KcF3HXHA==
+Message-ID: <79d13e65-ca4a-461f-9888-9664e204f2ed@kernel.org>
+Date: Fri, 26 Jul 2024 13:16:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/10] arm64: aspeed: Add support for ASPEED AST2700
- BMC SoC
+Subject: Re: [PATCH v1 09/10] arm64: dts: aspeed: Add initial AST2700 EVB
+ device tree
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -63,7 +63,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-8-kevin_chen@aspeedtech.com>
+ <20240726110355.2181563-10-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,53 +109,97 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240726110355.2181563-8-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240726110355.2181563-10-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/07/2024 13:03, Kevin Chen wrote:
 > ---
->  MAINTAINERS                  |  3 +++
->  arch/arm64/Kconfig.platforms | 14 ++++++++++++++
->  2 files changed, 17 insertions(+)
+>  arch/arm64/boot/dts/aspeed/Makefile        |  4 ++
+>  arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 50 ++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+>  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0a3d9e93689..08609430cfe0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2121,7 +2121,10 @@ Q:	https://patchwork.ozlabs.org/project/linux-aspeed/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/bmc.git
->  F:	Documentation/devicetree/bindings/arm/aspeed/
->  F:	arch/arm/boot/dts/aspeed/
-> +F:	arch/arm64/boot/dts/aspeed/
->  F:	arch/arm/mach-aspeed/
-> +F:	include/dt-bindings/clock/aspeed,ast2700-clk.h
-> +F:	include/dt-bindings/reset/aspeed,ast2700-reset.h
->  N:	aspeed
->  
->  ARM/AXM LSI SOC
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 6c6d11536b42..1db7b6f1ee0a 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -40,6 +40,20 @@ config ARCH_APPLE
->  	  This enables support for Apple's in-house ARM SoC family, starting
->  	  with the Apple M1.
->  
-> +config ARCH_ASPEED
-> +	bool "Aspeed SoC family"
-> +	select MACH_ASPEED_G7
-> +	help
-> +	  Say yes if you intend to run on an Aspeed ast2700 or similar
-> +	  seventh generation Aspeed BMCs.
+> diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
+> new file mode 100644
+> index 000000000000..ffe7e15017cc
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/aspeed/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
 > +
-> +config MACH_ASPEED_G7
-> +	bool "Aspeed SoC AST2700"
+> +dtb-$(CONFIG_ARCH_ASPEED) += \
+> +	ast2700-evb.dtb
+> diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+> new file mode 100644
+> index 000000000000..187c458e566b
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+> @@ -0,0 +1,50 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +/dts-v1/;
+> +
+> +#include "aspeed-g7.dtsi"
+> +#include <dt-bindings/gpio/aspeed-gpio.h>
+> +
+> +/ {
+> +	model = "AST2700A1-EVB";
+> +	compatible = "aspeed,ast2700a1-evb", "aspeed,ast2700";
 
-There are no MACHines for arm64. Look at this code. Do you see MACH
-anywhere else? No. Then why Aspeed must be different?
+You have never tested this.
 
-No. Drop.
+Sorry, test your DTS first.
+
+> +
+> +	chosen {
+> +		bootargs = "console=ttyS12,115200n8";
+
+Drop.
+
+> +		stdout-path = &uart12;
+> +	};
+> +
+> +	firmware {
+> +		optee: optee {
+> +			compatible = "linaro,optee-tz";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> +	memory@400000000 {
+> +		device_type = "memory";
+> +		reg = <0x4 0x00000000 0x0 0x40000000>;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		mcu_fw: mcu-firmware@42fe00000 {
+> +			reg = <0x4 0x2fe00000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +
+> +		atf: trusted-firmware-a@430000000 {
+> +			reg = <0x4 0x30000000 0x0 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		optee_core: optee_core@430080000 {
+
+Read DTS coding style.
+
+> +			reg = <0x4 0x30080000 0x0 0x1000000>;
+> +			no-map;
+> +		};
+> +	};
+> +};
+> +
+
+Remove stray blank line.
 
 Best regards,
 Krzysztof
