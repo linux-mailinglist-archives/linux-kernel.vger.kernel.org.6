@@ -1,151 +1,286 @@
-Return-Path: <linux-kernel+bounces-262830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A2493CD74
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:09:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06CF93CD75
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5FE28226E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2704C1F22189
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16866315BA;
-	Fri, 26 Jul 2024 05:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9B39FD7;
+	Fri, 26 Jul 2024 05:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FpWPPULf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBbASsLf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F112B9BE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7AD3987B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721970570; cv=none; b=Fo9Ko7b76QHqgeitQPemsncP2v6gWw1Hp0MymGAoIYGgLoELUKHLMRB3HpyaRj2GV683GC4omX4q+zENKcBF0uHFDUXSRCCqfcAzo0OpRLQL+2v7ZFqrdiTogXR0oJzgzwj8UulTFcMU/QxQBzzE3IIcAuDeEU+OUHB1luqUeM8=
+	t=1721970578; cv=none; b=f5aGCgqDetlPlQkNOLhju73hqIKx2mdhuF5KLiY89Wazc+Xsoqm6kfHZ3MU4KNZhbkxt4WpLlWZQo2oVQsAfmShD5jEVBboZZ/0yKbVQOp/VXeu5E92Zykoaa6Urwq78PyuvnxHd4ZZbvmj5HWqRSsgT+wY5e4g29JDcdtDMQ1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721970570; c=relaxed/simple;
-	bh=mwBiyQNVoMNybA5O6D7Gx2PdVoETiCkHnYn15H6Goyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqAvvLNAWMPtqqaqeBU71bNqNb47DFMEiCRcawocfSnNfcTW48C1eD8IhgiL1nTHXk+Ua5nY5sJ/v1YCC9UKelP9qTUTDDNcMaOfjHWegSApgD47bDoUSOVbPfjq4Lv7pjELba71Zg41+FDxL6/OQcj8kjmTQ8hnSv2QIa6wmjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FpWPPULf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721970568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DbuOgyAkRILEBrf9MJ+4blSFephMiZi+pxSKWGG3nSg=;
-	b=FpWPPULfBm+9iH609S81DU77dt7QeIfHMOznjl0XiJ5f3HlLOE8VCtyJ6ksBapazI599IX
-	Y0A1B7Ow/55ShqjO3liy7D5IPMaw3dGKCdCm2PJH5P0NjOCdSY/06OFW0ykBZEkZBFWBK5
-	IAJS9+LFzb2AxeMldvH5XvFzJu9wyYg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-bpsvHhPrOLilFfipXA0dLA-1; Fri, 26 Jul 2024 01:09:26 -0400
-X-MC-Unique: bpsvHhPrOLilFfipXA0dLA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42807a05413so9011195e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:09:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721970564; x=1722575364;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DbuOgyAkRILEBrf9MJ+4blSFephMiZi+pxSKWGG3nSg=;
-        b=GIXz/bek4EvCmfMIWbJEpwJF1C7cwYitooxDEaaY+ZN03VS6sM/jg2QC5PYqNAZDud
-         JNvbWkfzUhT1UCHJ6HvRvsVuKyYiCSzyOUDAGz0593wYXNKsm3OQ5tp1LmA1ZzkgVG8J
-         5J07xPZutQuF0Jgf51LYeJS9h8K190xXoZ5hGixyJzfDJdMG+Ih4c6Qt+y1ovxJgSBpU
-         NJZApsvQRHHsTU7oQCfAvL5s/a0EuMO2iLqKx+710L3VJloh7LYZ9K2kF10tShahslzO
-         /dZBrROoP532OCnyizVC7gHyG9n6075AQdnEO0onEtqiSmOUF6XXiUjmRKat/rXFfywb
-         jxzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnybAXFn4RHd+g0i6NY/a8xaho/PTBi0Uca+Z05lUrvr4FWD8ylT3FZQiED1bge3lKtEZv+p270ZQI/UDPiAoM2ArLv5im1JiJPeVj
-X-Gm-Message-State: AOJu0Yw664l261WFPTzL6xWlG8Abe5EROpEmkUajpiZgJQXYf22Sx8FM
-	GcxJ602RPVA4NDNLaoMuhwCbn/p96uvBss4K2ad0qlTMFvSykj7+L5q9qtGplthL708sZ+qQayA
-	km0NC9JO6em3noilp5vcYL/x0arFN+TWhUAzDod/x0XK6PkvDnGPSkTdLgmlLE9SbRsOkpEk1
-X-Received: by 2002:a05:600c:1c1f:b0:426:6153:5318 with SMTP id 5b1f17b1804b1-4280570fe50mr29400775e9.19.1721970564592;
-        Thu, 25 Jul 2024 22:09:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLGThAmioKqXVYW1bGCeFOTJCJYjUraPBu1ns0STXkcb4YEMtbOBAAif1jc1w6fYVZOAbSOQ==
-X-Received: by 2002:a05:600c:1c1f:b0:426:6153:5318 with SMTP id 5b1f17b1804b1-4280570fe50mr29400405e9.19.1721970563829;
-        Thu, 25 Jul 2024 22:09:23 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f7:28ce:f21a:7e1e:6a9:f708])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e6871sm105269105e9.30.2024.07.25.22.09.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 22:09:23 -0700 (PDT)
-Date: Fri, 26 Jul 2024 01:09:13 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240726010511-mutt-send-email-mst@kernel.org>
-References: <20240725083215-mutt-send-email-mst@kernel.org>
- <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
- <20240725100351-mutt-send-email-mst@kernel.org>
- <2a27205bfc61e19355d360f428a98e2338ff68c3.camel@infradead.org>
- <20240725122603-mutt-send-email-mst@kernel.org>
- <0959390cad71b451dc19e5f9396d3f4fdb8fd46f.camel@infradead.org>
- <20240725163843-mutt-send-email-mst@kernel.org>
- <d62925d94a28b4f8e07d14c1639023f3b78b0769.camel@infradead.org>
- <20240725170328-mutt-send-email-mst@kernel.org>
- <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
+	s=arc-20240116; t=1721970578; c=relaxed/simple;
+	bh=//iDyBxo+r8RcJtGYYYsaOgOpdscsUiSYG0DkPtUfKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E3Y1A7lcifYm/5i8qZHNsVUCdf0pkF9B9b2aQA6FUW2W0DJ3JFSAHanByNfFRIW8i94yttqQHXXTq6C1+NPuHFKtxWKwiyYHkDvG30Wkxx3t9+rFNS0nksE1XNMlbgR3/C4ySHF0PXp3UfjFgZwJ0HNwTt+p/rAyqJqoY7g/ycI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBbASsLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9500CC4AF0E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721970577;
+	bh=//iDyBxo+r8RcJtGYYYsaOgOpdscsUiSYG0DkPtUfKA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lBbASsLfKOumKuvKadGACr9CNlyibAY/3Q2unPEWxMZ+dB/gVPdKYlQFfXO8+uTQi
+	 aRx+8t5GP7OuBL1VATppTU8aIxSTSYwHv9ay7AeiCH91ulM8kXTGuPiZuOhe0lfHwe
+	 c3EaBMzqwDyY+wRQMU354yLqQIz3epV0vj6gaHP7BK113Ze85+UsscvXxZ/dyNbq4t
+	 z0zZRGBtqVQ62ChWQ4IAhbxDXvAQXFtEEGX2hbBJh5XnYuNH9Yfq2S0Ih/26cXGQ3C
+	 UDD9rIB11xb5B0P2dPxnqYn5xXfLQp6ZSrBZim6jeSUeaZCPnY2OHqBUIs+WM3Lstv
+	 VJVAn0Vie6eMQ==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-66493332ebfso14902137b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:09:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVuKjx69hEigbm3rg/7mFW2qcTFTm/CzftPwcMljdn0vuJv+rjQBlWBU5yoKBFGMPvaItwA83loFci5JDEQsfW0HM4q6wqUcmu5vkbH
+X-Gm-Message-State: AOJu0Yz79tQe6H0f+T7Tleq9XrGHwUSEW1JZ6hgbQZno7JpvYNGnxKkd
+	uGdQy/yFGOXWhy4hZlzuXcuh6BRa0WiS/7lkGA/A0EG6XbwjDjI9I5sQWGm2WkmlBme8OGZGpJE
+	5KQjnUjmP5FPWwKqnFCWMGjyjwE2K0zNbkjotmg==
+X-Google-Smtp-Source: AGHT+IGtpsJrBWSHApI4c7dhatc88pRK9QokLUHgzF6yUg2zLMGGr5C78O75wzHSCmpjANJpmPdIQVcO/8WsPR4cv44=
+X-Received: by 2002:a81:ab51:0:b0:64b:7500:2e9 with SMTP id
+ 00721157ae682-675b3823c7bmr40845767b3.9.1721970576710; Thu, 25 Jul 2024
+ 22:09:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
+ <20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org> <ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
+ <CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
+ <b4b31314-1125-40ee-b784-20abc78bd468@arm.com> <CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
+ <874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com> <a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
+ <87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com> <43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
+ <87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com> <f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
+ <87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com> <4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
+ <CACePvbV9cx6Le1cYgYo2D922E4Com45+XXquMZugog2+w5K_yg@mail.gmail.com>
+ <87plr26kg2.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXC6SwD1mx_s_9yCZpqTXZhRKMetbCcBNPOgT-ZtLmGCA@mail.gmail.com>
+ <87v80s3nvs.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87v80s3nvs.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 25 Jul 2024 22:09:25 -0700
+X-Gmail-Original-Message-ID: <CACePvbWW6YLZe=47+kfuz76J+WWGmfKHvqatGGm=RyRX=D-WeQ@mail.gmail.com>
+Message-ID: <CACePvbWW6YLZe=47+kfuz76J+WWGmfKHvqatGGm=RyRX=D-WeQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from nonfull list
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 10:29:18PM +0100, David Woodhouse wrote:
-> > > > Then can't we fix it by interrupting all CPUs right after LM?
-> > > > 
-> > > > To me that seems like a cleaner approach - we then compartmentalize
-> > > > the ABI issue - kernel has its own ABI against userspace,
-> > > > devices have their own ABI against kernel.
-> > > > It'd mean we need a way to detect that interrupt was sent,
-> > > > maybe yet another counter inside that structure.
-> > > > 
-> > > > WDYT?
-> > > > 
-> > > > By the way the same idea would work for snapshots -
-> > > > some people wanted to expose that info to userspace, too.
-> 
-> Those people included me. I wanted to interrupt all the vCPUs, even the
-> ones which were in userspace at the moment of migration, and have the
-> kernel deal with passing it on to userspace via a different ABI.
-> 
-> It ends up being complex and intricate, and requiring a lot of new
-> kernel and userspace support. I gave up on it in the end for snapshots,
-> and didn't go there again for this.
+On Thu, Jul 25, 2024 at 7:13=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
+> >
+> > The current proposed order also improves things step by step. The only
+> > disagreement here is which patch order we introduce yet another list
+> > in addition to the nonfull one. I just feel that it does not make
+> > sense to invest into new code if that new code is going to be
+> > completely rewrite anyway in the next two patches.
+> >
+> > Unless you mean is we should not do the patch 3 big rewrite and should
+> > continue the scan_swap_map_try_ssd_cluster() way of only doing half of
+> > the allocation job and let scan_swap_map_slots() do the complex retry
+> > on top of try_ssd(). I feel the overall code is more complex and less
+> > maintainable.
+>
+> I haven't look at [3/3], will wait for your next version for that.  So,
+> I cannot say which order is better.  Please consider reviewers' effort
+> too.  Small step patch is easier to be understood and reviewed.
 
-Maybe become you insist on using ACPI?
-I see a fairly simple way to do it. For example, with virtio:
+That is exactly the reason I don't want to introduce too much new code
+depending on the scan_swap_map_slots() behavior, which will be
+abandoned in the big rewrite. Their constraints are very different. I
+want to make the big rewrite patch 3 as small as possible. Using
+incremental follow up patches to improve it.
 
-one vq per CPU, with a single outstanding buffer,
-callback copies from the buffer into the userspace
-visible memory.
+>
+> >> > That is why I want to make this change patch after patch 3. There is
+> >> > also the long test cycle after the modification to make sure the swa=
+p
+> >> > code path is stable. I am not resisting a change of patch orders, it
+> >> > is that patch can't directly be removed before patch 3 before the bi=
+g
+> >> > rewrite.
+> >> >
+> >> >
+> >> >>
+> >> >> > Your original
+> >> >> > suggestion appears like that you want to keep all cluster with or=
+der-N
+> >> >> > on the nonfull list for order-N always unless the number of free =
+swap
+> >> >> > entry is less than 1<<N.
+> >> >>
+> >> >> Well I think that's certainly one of the conditions for removing it=
+. But agree
+> >> >> that if a full scan of the cluster has been performed and no swap e=
+ntries have
+> >> >> been freed since the scan started then it should also be removed fr=
+om the list.
+> >> >
+> >> > Yes, in the later patch of patch, beyond patch 3, we have the almost
+> >> > full cluster that for the cluster has been scan and not able to
+> >> > allocate order N entry.
+> >> >
+> >> >>
+> >> >> >
+> >> >> >>> And, I understand that in some situations it may
+> >> >> >>> be better to share clusters among CPUs.  So my suggestion is,
+> >> >> >>>
+> >> >> >>> - Make swap_cluster_info->order more accurate, don't pretend th=
+at we
+> >> >> >>>   have free swap entries with that order even after we are sure=
+ that we
+> >> >> >>>   haven't.
+> >> >> >>
+> >> >> >> Is this patch pretending that today? I don't think so?
+> >> >> >
+> >> >> > IIUC, in this patch swap_cluster_info->order is still "N" even if=
+ we are
+> >> >> > sure that there are no order-N free swap entry in the cluster.
+> >> >>
+> >> >> Oh I see what you mean. I think you and Chris already discussed thi=
+s? IIRC
+> >> >> Chris's point was that if you move that cluster to N-1, eventually =
+all clusters
+> >> >> are for order-0 and you have no means of allocating high orders unt=
+il a whole
+> >> >> cluster becomes free. That logic certainly makes sense to me, so th=
+ink its
+> >> >> better for swap_cluster_info->order to remain static while the clus=
+ter is
+> >> >> allocated. (I only skimmed that conversation so appologies if I got=
+ the
+> >> >> conclusion wrong!).
+> >> >
+> >> > Yes, that is the original intent, keep the cluster order as much as =
+possible.
+> >> >
+> >> >>
+> >> >> >
+> >> >> >> But I agree that a
+> >> >> >> cluster should only be on the per-order nonfull list if we know =
+there are at
+> >> >> >> least enough free swap entries in that cluster to cover the orde=
+r. Of course
+> >> >> >> that doesn't tell us for sure because they may not be contiguous=
+.
+> >> >> >
+> >> >> > We can check that when free swap entry via checking adjacent swap
+> >> >> > entries.  IMHO, the performance should be acceptable.
+> >> >>
+> >> >> Would you then use the result of that scanning to "promote" a clust=
+er's order?
+> >> >> e.g. swap_cluster_info->order =3D N+1? That would be neat. But this=
+ all feels like
+> >> >> a separate change on top of what Chris is doing here. For high orde=
+rs there
+> >> >> could be quite a bit of scanning required in the worst case for eve=
+ry page that
+> >> >> gets freed.
+> >> >
+> >> > Right, I feel that is a different set of patches. Even this series i=
+s
+> >> > hard enough for review. Those order promotion and demotion is headin=
+g
+> >> > towards a buddy system design. I want to point out that even the bud=
+dy
+> >> > system is not able to handle the case that swapfile is almost full a=
+nd
+> >> > the recently freed swap entries are not contiguous.
+> >> >
+> >> > We can invest in the buddy system, which doesn't handle all the
+> >> > fragmentation issues. Or I prefer to go directly to the discontiguou=
+s
+> >> > swap entry. We pay a price for the indirect mapping of swap entries.
+> >> > But it will solve the fragmentation issue 100%.
+> >>
+> >> It's good if we can solve the fragmentation issue 100%.  Just need to
+> >> pay attention to the cost.
+> >
+> > The cost you mean the development cost or the run time cost (memory and=
+ cpu)?
+>
+> I mean runtime cost.
 
-Want me to show you the code?
+Thanks for the clarification. Agree that we need to pay attention to
+the run time cost. That is given.
 
--- 
-MST
+> >> >> >>> My question is whether it's so important to share the per-cpu c=
+luster
+> >> >> >>> among CPUs?
+> >> >> >>
+> >> >> >> My rationale for sharing is that the preference previously has b=
+een to favour
+> >> >> >> efficient use of swap space; we don't want to fail a request for=
+ allocation of a
+> >> >> >> given order if there are actually slots available just because t=
+hey have been
+> >> >> >> reserved by another CPU. And I'm still asserting that it should =
+be ~zero cost to
+> >> >> >> do this. If I'm wrong about the zero cost, or in practice the sh=
+aring doesn't
+> >> >> >> actually help improve allocation success, then I'm happy to take=
+ the exclusive
+> >> >> >> approach.
+> >> >> >>
+> >> >> >>> I suggest to start with simple design, that is, per-CPU
+> >> >> >>> cluster will not be shared among CPUs in most cases.
+> >> >> >>
+> >> >> >> I'm all for starting simple; I think that's what I already propo=
+sed (exclusive
+> >> >> >> in this patch, then shared in the "big rewrite"). I'm just objec=
+ting to the
+> >> >> >> current half-and-half policy in this patch.
+> >> >> >
+> >> >> > Sounds good to me.  We can start with exclusive solution and eval=
+uate
+> >> >> > whether shared solution is good.
+> >> >>
+> >> >> Yep. And also evaluate the dynamic order inc/dec idea too...
+> >> >
+> >> > It is not able to avoid fragementation 100% of the time. I prefer th=
+e
+> >> > discontinued swap entry as the next step, which guarantees forward
+> >> > progress, we will not be stuck in a situation where we are not able =
+to
+> >> > allocate swap entries due to fragmentation.
+> >>
+> >> If my understanding were correct, the implementation complexity of the
+> >> order promotion/demotion isn't at the same level of that of discontinu=
+ed
+> >> swap entry.
+> >
+> > Discontinued swap entry has higher complexity but higher payout as
+> > well. It can get us to the place where cluster promotion/demotion
+> > can't.
+> >
+> > I also feel that if we implement something towards a buddy system
+> > allocator for swap, we should do a proper buddy allocator
+> > implementation of data structures.
+>
+> I don't think that it's easy to implement a real buddy allocator for
+> swap entries.  So, I avoid to use buddy in my words.
 
+Then such a mix of cluster order promote/demote lose some benefit of
+the buddy system. Because it lacks the proper data structure to
+support buddy allocation. The buddy allocator provides more general
+migration between orders. For the limited usage case of cluster
+promotion/demotion is supported (by luck). We need to evaluate whether
+it is worth the additional complexity.
+
+Chris
 
