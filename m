@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-263075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2585793D0A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:49:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB2C93D0A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8AD1F21210
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC8A1F21802
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714B4176AAC;
-	Fri, 26 Jul 2024 09:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2985176AAC;
+	Fri, 26 Jul 2024 09:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjoHjQId"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2jtsJ/6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BAB1EF01
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52A31EF01
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721987356; cv=none; b=MmNvEehogkgImlz0walo/vfYethB6qOoETvz8XswndUz4BZZBbMF32hf6/cJJ1kyFMBwW/qFgzRPco6tlDFW8TT1N3Uhvyit8cQc1Hi/yMhh3Y5QZ/vI4GwQsMiqB1IDpEynRQdf9uJMAMMDELw3FM9u0Vcsw3ShGP5q08OH70E=
+	t=1721987461; cv=none; b=Xu5bvDMueMjWdS4VQudNRP/zwx8u6J1tNSWjgEjvUUAXbvwAxg5qzA1Lm3U8oh1qpzI9xiPhIDiGjsvUxT5GsMADsD7eSzpGmUYPNO117UDChLDgnhDJrFE8omoMirjVNsvVlddpIMEB/hJVhvR9LfYtnjC1AQGbaD35kt2X5gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721987356; c=relaxed/simple;
-	bh=AAUbx8TeBWYEP6Ic4mOlnbercYp2YYgawpoonj8ove4=;
+	s=arc-20240116; t=1721987461; c=relaxed/simple;
+	bh=kyxWm7vi7Uey+9KCC09pWxJM549AzmLQVR6ZyDB2V3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XD+RPvms9YSav4UDnZmpno9ZnFc6u2QCVeK6Bjz6PPo1bVS0OOlFmUi6KJiPcFuZ4glJ0jZ/zPvChezzAL0HzOQjNXHyzkxFszfcmwDClTGedGgeiHSolzD/+gMuLGxIN1At9O6/Okq2QGH6AddjQwbCFfhfA4Y3a/n0rNeU9sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjoHjQId; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1153C4AF07;
-	Fri, 26 Jul 2024 09:49:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Tzv9NA/zK/adm/lYtNNV6Gua6ow5kJoaBmO5LHjjZWIFI6VIBBTIoyw5CMUJTtSTJERKXd/I4hIPK4AlgwU3u5SOhA1rOCGVHrZ+eqxzOKuv3dYJyXdcMGvjmr9V45w1kY1AO6YoEtfEw1It0jA1y0Lt0enfZ35HIIpIWrzh5Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2jtsJ/6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CB1C32782;
+	Fri, 26 Jul 2024 09:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721987356;
-	bh=AAUbx8TeBWYEP6Ic4mOlnbercYp2YYgawpoonj8ove4=;
+	s=k20201202; t=1721987460;
+	bh=kyxWm7vi7Uey+9KCC09pWxJM549AzmLQVR6ZyDB2V3I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kjoHjQIdBTBZEAtG/lyrrvZLqmM5byKGZsbI6Zd7uTRJ0UYwni2GTBI/WxoMCmTcD
-	 BtM5ypdXPlednu6G3uBePlKYUBcN7nlkG1AD4xVIRHXPoslwQBUr11Lb7PU2WwI2U5
-	 fLB9YWbDuaHgpn3AJkJJZ1qYpXZTeCwGuf8NxfIFBgtUR7A7U1IvIGftfeB5+H9e54
-	 0o3yOKHWXDkxkcZOirZTcRf3B79f9mqT1WZGeL+n9u6U/zArydBfmXnJ/vbwFG2ec5
-	 AkrucdiC15BW8HGM9utv57JMo8xuaGzDwdn+RVJmSmgS26Y1DxNeDxRNlbM5NCRBEu
-	 9d3u5nxhJXz5w==
-Message-ID: <a2138acd-9478-4706-85e8-761438382474@kernel.org>
-Date: Fri, 26 Jul 2024 17:49:11 +0800
+	b=U2jtsJ/6IhszHDVTicPZLDLrsVd5S7ryG1SOYMt/2+gK7dZxtyqzgMEYT1z0V/lSA
+	 a02xwSeG/mHKEd01ch0QPkdiu2rTdMfh1LSx68JJKJ5soSIRII/HYhuJuziiOEi72w
+	 jtsux5x+8VN91ruI/jJEXQu33gCreDTTP5/jSjfqJt21h30IwvfmM+Xx7pnkGUiMUL
+	 9NoF0XMNNVErHuC9d0aQXKkaiiiNBCy0wyRDMqn+h159p38j4KWt2TUtN48+1PXxDV
+	 +FseXsVM9BeDgSOk76xIxoSJgePUObnAAqv/1mn0/R9lHKc2Ad1l6E4AyXFWKp16d2
+	 k1BeQFu6Dtf7g==
+Message-ID: <dc70af85-5357-4787-92fb-6da1b298ca79@kernel.org>
+Date: Fri, 26 Jul 2024 17:50:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] f2fs: fix to use per-inode maxbytes and cleanup
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- niuzhiguo84@gmail.com, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-References: <1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com>
+Subject: Re: [PATCH v3] erofs: support STATX_DIOALIGN
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240718063756.2982763-1-lihongbo22@huawei.com>
+ <20240718083243.2485437-1-hsiangkao@linux.alibaba.com>
+ <f91c15d1-cdd9-4b12-9143-fba6c7bf6565@linux.alibaba.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <f91c15d1-cdd9-4b12-9143-fba6c7bf6565@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/7/26 14:27, Zhiguo Niu wrote:
-> This is a supplement to commit 6d1451bf7f84 ("f2fs: fix to use per-inode maxbytes")
-> for some missed cases, also cleanup redundant code in f2fs_llseek.
+On 2024/7/18 16:35, Gao Xiang wrote:
 > 
-> Cc: Chengguang Xu <cgxu519@mykernel.net>
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> 
+> On 2024/7/18 16:32, Gao Xiang wrote:
+>> From: Hongbo Li via Linux-erofs <linux-erofs@lists.ozlabs.org>
+> 
+> Also I will fix the email address issue
+> (Hongbo Li <lihongbo22@huawei.com>) when applying too.
+> 
+>>
+>> Add support for STATX_DIOALIGN to erofs, so that direct I/O
+>> alignment restrictions are exposed to userspace in a generic
+>> way.
+>>
+>> [Before]
+>> ```
+>> ./statx_test /mnt/erofs/testfile
+>> statx(/mnt/erofs/testfile) = 0
+>> dio mem align:0
+>> dio offset align:0
+>> ```
+>>
+>> [After]
+>> ```
+>> ./statx_test /mnt/erofs/testfile
+>> statx(/mnt/erofs/testfile) = 0
+>> dio mem align:512
+>> dio offset align:512
+>> ```
+>>
+>> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
