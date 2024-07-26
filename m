@@ -1,197 +1,282 @@
-Return-Path: <linux-kernel+bounces-263531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAFA93D759
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CF993D75B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9925BB23DD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BE9283BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E088817C9F1;
-	Fri, 26 Jul 2024 17:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C107617CA03;
+	Fri, 26 Jul 2024 17:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hr9YteXj"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2043.outbound.protection.outlook.com [40.107.236.43])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="Ix/RfOf2"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4928717C7B2;
-	Fri, 26 Jul 2024 17:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722013998; cv=fail; b=W/IsGJ8/LOkRtvbTYTbcTfJrGozVZfOHiqVcv2456Ftg7uQGlWcmuK9KRAh8YBvDdWWFqlOm/OHh4p3V6kdc+KRSsX45CVOm5C50TokQxzH88/3fS8otHMkvq/3VtXubhE41Q+6fTBNVy2V+/5vZe5BEtILy6+5CZyAFcirgpXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722013998; c=relaxed/simple;
-	bh=WPDqcUg5arVdssiJ1SqDP5nAzB/HLVkfvpFMM8qwm/I=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=HWDIFREebh9kQ/bonHGLodwzln5M0zvU8Mf1SfwBHpAPrZyc4CoNssca2c7q7aSFPuPtOoyA8TAXgh0+lWRN394rR48VXZBkzseKN/0UwYds8TZsg6xiXG9CejLv8+pnXmhWhU+VqMOVUoyESP7VV+SPETB5zayZdu/dmcXIKrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hr9YteXj; arc=fail smtp.client-ip=40.107.236.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ck+7o4w1CGg6pYqq9UQBBSgmEqr8NEO6JzU6rf5vbFnXDY1+7oOCGrt3JOcixTue3mWhfRjxeQrEoQdmSwmCgJISe5LwmQ0GYYaWoBNQDDb7ghcjrLFDszgFZWlXOm+8tDCE/wDFnXqoLiV2TAD+jA/2QVO1S4LgYY66ohHy2dxfRjHFvYvknlPA8u2+ygFbfCAR9m5iBK4WfwUTJ7WEXHhJqmKIK99XYe5AmM3W29W8yARfVzde70SV+FTWHG4VkweQ87Lp4kPfvu396RzjtfG9b7oqzCgiyB281/7J9uQUrSjcVrslRSgOMvuWi+bjxxMy5zDY4C5lpRZcPrjauQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qNCM5mTPAPRHyVcp6GiEI6ErtV4WhDkp1OBSOLEEYm4=;
- b=DmAfAv8BVdEp7TF+cEXg7fVX8v7zV7bDAIx8V52LkzM9s+1suYcmq7i1TNo5f/U8ElPW68iyYS1kONipaBnvc5ml8+pWiHkrENw0ReogvmT2kmBHpux8fxK1uU56ra9FHyyr7yYgejkbJl1ltxuLDJ7zaEoBbZdYy/TQoEDDL3hKNOHExL866MUtAFaofWzCPzBoEtXeXccg2wJoJoun+6UHzFFBJ2FTVElyqxxR4nhBLiCBMV68TLgdoz8f5WNXd9JfxzH0LFdOBQUIjaKdFpfqfXRctcnHTvDvgdI8cCbGe642o42XAE+XSA+JJqMkZlDjNNMhpK9qJ4CzRJkYGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qNCM5mTPAPRHyVcp6GiEI6ErtV4WhDkp1OBSOLEEYm4=;
- b=hr9YteXjZJ3Hui8J86wTcvjizFGxS8KWsDMeDytOocAPCrH7sFyz4QP8dpFpOxaxmT285/cu7Ovjdc+rJ20bbU8U/I42Tn38iOwLnFAxosBaXz4JxXwKNcLlrsiVSBjSmpg8P8xQVupUuez5dypgepM8ijOW0y4ny+XH9cJwvOT0AYDqjR0EfmLTiqyiRR+SvGtNNZPpIcPjF2lcrcxqHNfrxWGI/kTyGHnE6Rob0Rqgie1+vasszVPBW4X380U1Fy+OHabhdGEmG1Qne3LcoN4NcBQKvt8xMcOS1rqOdXEbyVjBHAIa2ei8/IqVJEbax0r1O9Z+y0AGrjzTORmcJQ==
-Received: from SJ0PR03CA0331.namprd03.prod.outlook.com (2603:10b6:a03:39c::6)
- by DS7PR12MB6047.namprd12.prod.outlook.com (2603:10b6:8:84::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.32; Fri, 26 Jul
- 2024 17:13:12 +0000
-Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
- (2603:10b6:a03:39c:cafe::7a) by SJ0PR03CA0331.outlook.office365.com
- (2603:10b6:a03:39c::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29 via Frontend
- Transport; Fri, 26 Jul 2024 17:13:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 17:13:11 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
- 2024 10:12:59 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 26 Jul 2024 10:12:59 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 26 Jul 2024 10:12:59 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.15 00/90] 5.15.164-rc2 review
-In-Reply-To: <20240726070557.506802053@linuxfoundation.org>
-References: <20240726070557.506802053@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6943B21364;
+	Fri, 26 Jul 2024 17:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722014022; cv=none; b=OQBcZ50wV63+BwvEsvjSrwZpJzpRk9sXdEtwx25yCDMACMjsIXWn/eDf3ablgqUed8M+LB+uyV9GcgaHkEHC4c7j2O6RgnKem29efnQYimEJlrMh72mmpg7Ryi2VNP5anXjexJkzwK0gSiXguCrz0piAfh8u5GP2RQnvDxGwxvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722014022; c=relaxed/simple;
+	bh=vl8JxRQX1zA0KSqQjsA1Fhr6NVUP7EFeN5wJIXp3UOs=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date; b=p94Mp94ZejGRniyU2h9j2Fc2CK4J8QLkdkgRiYRLpnTsEpOE7qmBF+wPsyFIBjHatsdNitk52LeBvllQ5iMFZoDrjCQVlkmEKSsKBvG3KEPTzGqq5E80+FMqyRPi3OBDsWLeRAvsyQ+H6K0kT822x5kS3jsj0QNVHp+o0z3JH30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=Ix/RfOf2; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1722013999; x=1722618799; i=frank-w@public-files.de;
+	bh=adbeiw8mhZXnVlqswKhVAzGjiOlGpKozbWfNjla6L4w=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Ix/RfOf2Dxisid/T5P8VR4OXu/Mu0DRIcquNwj8+BSDuqIJSxwS1VVGw5D3+qNf6
+	 nhAt0SGcH7A4CpIPEsl1Y9M0bpm6fNnMMP/HcaaPOn5VYNhW9CYDm46CQ8viNAvRs
+	 q9mcNkAPaWAshY4UFS5itYCxW8I6YIRWlLX++et78w+kkBN3JG3TtMVP08ATA6EQn
+	 4reFD/7XJ3zqtBcu9m+qvikGL1OmnQMO2QoORSBIvjSD25oyHXeeA+5LKgTZ3U7Td
+	 0cKPXjugQ0fDR4fol6QZM0LzzHkZoagXGg61O0IuKujHaAbv4MXIM44/3b6vnde/9
+	 upzOH44J/ZzpMbMnKg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.150.223] ([217.61.150.223]) by web-mail.gmx.net
+ (3c-app-gmx-bap12.server.lan [172.19.172.82]) (via HTTP); Fri, 26 Jul 2024
+ 19:13:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <091901e4-434c-48aa-8c5c-7479072c32da@drhqmail203.nvidia.com>
-Date: Fri, 26 Jul 2024 10:12:59 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|DS7PR12MB6047:EE_
-X-MS-Office365-Filtering-Correlation-Id: ede27e50-042c-40b0-74a5-08dcad963a59
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UzZsQUV4cFgvNHYydUVCY2pLS0dES1ZWZG56RkJpMTE4RU4xTDI0WjAwVVZs?=
- =?utf-8?B?RFVoZFJ5NkE0bWtZaXpZUjYvdld5R0JmdmxPNFF4RldBWXVtZ3gzbEtTTkM5?=
- =?utf-8?B?R1hSUm5WN2JlTGp3OHpvL1NCVldiS2JOTG1jMTVROFNsVHJVMGRTV3lBNjdR?=
- =?utf-8?B?eDJGYzd4Z0RzL1JLL1VROHBJSkl6cGdHUnZXd010b25BT2lKaFY3OE9odk40?=
- =?utf-8?B?SHZwdnJudm0ybDNHWURUaDlDOGJ1aitoU1gybEZCNDFEK3ZEVUZIN0Nkd1kr?=
- =?utf-8?B?ekgxNUExVFBsT0dwblJsemp6Y28yNlVOVHp6djh5LzFvUGRFcU9OSHJ1UkR0?=
- =?utf-8?B?alV0bkNYSHhoUlprSVJvQS9CYTAxK3VsU2grWnJ2bE83V3JXdnNPdWg4OGdO?=
- =?utf-8?B?aGJ6TnJpd2wwa3F2SUJTcDhSNWFhZnZLbkYyR205c3BjTXVWbUIwb3FwWm1v?=
- =?utf-8?B?Q1c3QVJxWEl3TEhTNmlRMEd1RGhhNDBsRUh6bWV1L1BLNml6Um5lSk1TTE40?=
- =?utf-8?B?SnJtcUtSaVJab2U0SUg3SEU5RjhZVlg0cWZUVlM4WWtOc3JpNUhoZm5lWjF3?=
- =?utf-8?B?SXRjRytCZ2xzK3FFZVJPZ3BXc2VTdzM4U1dFQUdnNDJ3RzRVMDhLY2t4cUF0?=
- =?utf-8?B?WkdyUnFSYTlzTE1BdnZrK1E5T1FuZnBTTzA3WlVNU285MGEySHVYTnJlMzhX?=
- =?utf-8?B?eHdjSWlwdlBsS3diMHNXSjVFeURXTCtyM2h6V1RvWDRYREg0NXl4Uy9DdHJY?=
- =?utf-8?B?bm1peUFwcmN2WUpTc2VYOVVsQVdkSnhENFFyTkNidSswRGU2TUhzNDI2NnNj?=
- =?utf-8?B?eGRzVVZEQlZDc1hNdU02K0VvUWxnN0k1T0NNWkZwb28rOGRnNEFjd1krSjB1?=
- =?utf-8?B?MERVcVFpc1pudXRwRkdndnZOSjExYkJSMTZ0d0VsVDlrM3ZTVHBRTkdpSWV5?=
- =?utf-8?B?VHdITVhKaXdYTHFFMVlHaU5nK083M01IK1lhaG93NVErN0ZURjRqU3dpc3pY?=
- =?utf-8?B?M3hMOXRFRTBEc0cxWVJFcUhFSTJLY1ByRHpZcnNsbnNBTlNWQWZtSjVoUTJs?=
- =?utf-8?B?akt3THRSSllSaEwweFRMOUdyUDhsbEtxRkQ1cWI1bXN2aGc4VGlwLzI4bHJ3?=
- =?utf-8?B?aHJ0VWxLOUFxRkt1QXRWdW5zeHA3d1ZEZ2VBRjcrL3Y0Vit3RXNzSGFTVWpw?=
- =?utf-8?B?cXltUzJ3dHFuU3haN3FUWW90OTREN2tVdDZSRTg0MkFoZG5USWJ2amZoclZr?=
- =?utf-8?B?RCs3a1FJa3NHSXBnMHRMVnJvbnlBWk9HUDV3dUg2MjJqeFF4dXNud21CaEFo?=
- =?utf-8?B?SlgvUFpWQ3A1eFdhUjZENHNJZlluQ1QwQmxJYzF4UjlwODJpQ1RJOWRHOUph?=
- =?utf-8?B?MHVWWG03eWs3TG4xamw4Zk91NSszaEgrd1dmMWZaSWt6c1QwbUt2YTRsTFA5?=
- =?utf-8?B?b2lXeGpoTHprTXBCamQwS0tPMlBMVDNCRzhsLzNiNk5nZlpGSkFHTVpORjNK?=
- =?utf-8?B?ZUxkN3QxTDYydnlSRjRMRnU2aGVmNDBVUno2aGZ4SjZzc21YdnZHa3lFaXlP?=
- =?utf-8?B?cU5FQlptdHpmamErdDlEK3ljZmpuZVg2TnM3Ty9KR1R3Ym5TS2tPZ3JTQkY2?=
- =?utf-8?B?WVF3RGVienlpSmtWVUtTZ3hsd2FnOGRlKy9FMVM0bFB2VVB3SzZqQTVwOWxT?=
- =?utf-8?B?ck9hNVdzcE13c3BiY2E5d2FuTnBWQTVuTEw3ZWZSSEo4NjI1MHVUWmZYdXBu?=
- =?utf-8?B?NEhvUEIxaE5LYXUya1ArQ0ZOTG5CdHA0NHljN2h1UE1mVkxJNUVSTnZESTlZ?=
- =?utf-8?B?clFXWXJkWS95eTNONEQ5TUx2Ykd0eVAxZVh0RzEybWVoT0dERWpCMHR2LzZq?=
- =?utf-8?B?TW0xZW9hMlZaeVhuOTl1NDRoN0xIUDdUeTVNWC9nM0tZMGc5QWYvL3p3czNL?=
- =?utf-8?Q?Q5umDusYd1XgnDFM0e75xn866YadR0iX?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 17:13:11.4471
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ede27e50-042c-40b0-74a5-08dcad963a59
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6047
+Message-ID: <trinity-c8e0af34-2704-476a-9454-bf5001256eb9-1722013999541@3c-app-gmx-bap12>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Mathias Nyman <mathias.nyman@intel.com>, Chunfeng Yun
+ <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Golle <daniel@makrotopia.org>, John Crispin <john@phrozen.org>
+Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: mt7988 usb broken on 6.10
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 26 Jul 2024 19:13:19 +0200
+Importance: normal
+Sensitivity: Normal
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+X-Provags-ID: V03:K1:3rKMsO/Abw28KhJy7BtxmXg9Ite3PaZNCS5EXwfq70cWabR+1gYuODQOgQsAJsNTiL5TM
+ ENZkaeKRQ4FzS9xwohL3cS03fRGvGnQxd55WBErLZNt6wsPDfP1AhpkZ2NYGHDkzN1lNzNk2pTWJ
+ BQ9lk00eVDUpf1qNLT+YClEEOhHlTeX/P8+6D/C+Cl/j5M+0n2a/LM9UDfTK2AaZYUThwPAhCcm6
+ yhxEH8DaNdn4lsv3c2tovFHtQUbC0hzcvN9dwsYD6tFzUl/DzLPKe7I+R+Bg3ad6uLyoQgnoZs/c
+ Ug=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JnFneIi32xM=;QiickcppS5KUkwD/4RYxSSh7gtn
+ /eTr0X3Zble+hw3aTYnlQxznaXVylljQND7MqOTrnpYFeBIxCo69Hryq81/VPAQuTyjPvTUSK
+ 0s9cbs6CZJSOgnarPia1Q3JIsCxlAIy8qFm2NqEhKm/fTGZbK0z111RuhfZ43DsN4Zgs4eOZy
+ ZiVuSTQcLgvXtNuP92xRWqs39Wn5BRM1LKlWpAZVH+8afdMLDSATSnOibSShcLjB5hIInywvw
+ /WMeZl62T0QSsiPLRedMw4/GaMBYJnC1W52cjsq5eLkC5GUXWoNmpqPwDYgU/T3+2WpEnjaOZ
+ BNvXqHC4OSm0BE0qr2uQMc7S3r3lJ0Wt3L6KHkAisAyX6Njd5fCKwUWFcC2dRjOlv5NfIXO61
+ XD43ImcKpzx/mKVz5ihymk3p4dCnJLD/QkFOVJL3VgRf9IaiWNd9jims9VA3E6fTBYsGeu9Lw
+ ggL7ic8HQh+vHFJH78ZOkVt8jZko+QsjR2ENmkr3hzqZttw/ZGCQr1XSWidtRySmzhVDiKqD6
+ 2VAKTZVna6AUq8ql0iHdiOymv8o8XHCihAFNP9rDNJsZ+hs9nvlmRDEFnrSEze+V7tj7g1h0L
+ c6DnioZXTAJxfy9YgsCmb4Ow7UbUGHqs05Q4KKGtuE8cQJAav4Y+7MKMDmlGqrDAUSSfT9EoE
+ e6E4oxTd4/uCDJj+Nsg4MOYTa7aKVl6PPdeEdz1Rxw==
 
-On Fri, 26 Jul 2024 09:12:44 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.164 release.
-> There are 90 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 28 Jul 2024 07:05:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.164-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi,
 
-All tests passing for Tegra ...
+i've noticed that usb on mt7988 is broken in 6=2E10, was working on 6=2E9 =
+(with some additional patches like
+for pinctrl and dts as this chipset is not completely supported by mainlin=
+e yet)=2E
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    102 tests:	102 pass, 0 fail
+i see this in my dmesg
 
-Linux version:	5.15.164-rc2-g8730ae13275d
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+[    6=2E147068] irq 105: nobody cared (try booting with the "irqpoll" opt=
+ion)                                                                    =20
+[    6=2E153851] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6=2E10=2E0-bpi-=
+r4-main #1                                                                 =
+ =20
+[    6=2E160803] Hardware name: Banana Pi BPI-R4 (DT)                     =
+                                                                        =20
+[    6=2E165409] Call trace:                                              =
+                                                                        =20
+[    6=2E167846]  dump_backtrace+0x94/0x114                               =
+                                                                        =20
+[    6=2E171593]  show_stack+0x18/0x24                                    =
+                                                                        =20
+[    6=2E174898]  dump_stack_lvl+0x74/0x8c                                =
+                                                                        =20
+[    6=2E178553]  dump_stack+0x18/0x24                                    =
+                                                                        =20
+[    6=2E181859]  __report_bad_irq+0x38/0x120                             =
+                                                                        =20
+[    6=2E185775]  note_interrupt+0x308/0x358                              =
+                                                                        =20
+[    6=2E189601]  handle_irq_event+0xd8/0xec                              =
+                                                                        =20
+[    6=2E193427]  handle_fasteoi_irq+0xb0/0x284                           =
+                                                                        =20
+[    6=2E197515]  generic_handle_domain_irq+0x2c/0x44                     =
+                                                                        =20
+[    6=2E202121]  gic_handle_irq+0x4c/0x118                               =
+                                                                        =20
+[    6=2E205861]  call_on_irq_stack+0x24/0x4c                             =
+                                                                        =20
+[    6=2E209774]  do_interrupt_handler+0x80/0x84                          =
+                                                                        =20
+[    6=2E213947]  el1_interrupt+0x34/0x54                                 =
+                                                                        =20
+[    6=2E217514]  el1h_64_irq_handler+0x18/0x24                           =
+                                                                        =20
+[    6=2E221600]  el1h_64_irq+0x68/0x6c                                   =
+                                                                        =20
+[    6=2E224991]  default_idle_call+0x50/0xf0                             =
+                                                                        =20
+[    6=2E228905]  do_idle+0xac/0xfc                                       =
+                                                                        =20
+[    6=2E231952]  cpu_startup_entry+0x38/0x3c                             =
+                                                                        =20
+[    6=2E235865]  kernel_init+0x0/0x1d8                                   =
+                                                                        =20
+[    6=2E239259]  start_kernel+0x4ac/0x710                                =
+                                                                        =20
+[    6=2E242914]  __primary_switched+0x80/0x88                            =
+                                                                        =20
+[    6=2E246916] handlers:                                                =
+                                                                        =20
+[    6=2E249177] [<(____ptrval____)>] usb_hcd_irq                         =
+                                                                        =20
+[    6=2E253443] Disabling IRQ #105
+=2E=2E=2E
+[   45=2E305428] xhci-mtk 11200000=2Eusb: xHCI host not responding to stop=
+ endpoint command                                                       =20
+[   45=2E351865] xhci-mtk 11200000=2Eusb: Host halt failed, -110          =
+                                                                          =
+=20
+[   45=2E357253] xhci-mtk 11200000=2Eusb: xHCI host controller not respond=
+ing, assume dead                                                          =
+=20
+[   45=2E364918] xhci-mtk 11200000=2Eusb: HC died; cleaning up=20
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+maybe anybody can point me to possible rootcause? as this seem to happen s=
+omewhere in interrupt-handling i have no idea where to search
 
-Jon
+this is what i did till now:
+
+# cat /proc/interrupts| grep xhci
+104:          0          0          0          0     GICv3 205 Level     x=
+hci-hcd:usb1
+105:     100201          0          0          0     GICv3 204 Level     x=
+hci-hcd:usb3
+
+mtk xhci driver itself seems unchanged so far
+
+$ git logone drivers/usb/host/xhci-mtk*
+06790c19086f 2024-02-29 xhci: replace real & fake port with pointer to roo=
+t hub port Niklas Neronin=20
+017dbfc05c31 2024-01-04 usb: xhci-mtk: fix a short packet issue of gen1 is=
+oc-in transfer Chunfeng Yun=20
+
+clocks seems also not the cause
+
+$ git logone drivers/clk/mediatek/
+878e845d8db0 2024-06-13 clk: mediatek: mt8183: Only enable runtime PM on m=
+t8183-mfgcfg Pin-yen Lin=20
+619b92b9c8fe 2024-05-18 Merge tag 'clk-for-linus' of git://git=2Ekernel=2E=
+org/pub/scm/linux/kernel/git/clk/linux Linus Torvalds=20
+4c0c087772d7 2024-04-18 clk: mediatek: mt8365-mm: fix DPI0 parent Alexandr=
+e Mergnat=20
+bb7b3c8e7180 2024-03-08 clk: mediatek: pllfh: Don't log error for missing =
+fhctl node N=C3=ADcolas F=2E R=2E A=2E Prado=20
+
+
+also when trying to find any error like pinctrl or similar seems not showi=
+ng any more like above related to usb
+
+root@bpi-r4-v11:~
+# dmesg | grep -i 'err\|fail\|unable'
+[    0=2E000000] CPU features: detected: ARM erratum 858921
+[    0=2E000000] arch_timer: Enabling local workaround for ARM erratum 858=
+921
+[    0=2E044091] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0=2E070823] arch_timer: Enabling local workaround for ARM erratum 858=
+921
+[    0=2E071164] arch_timer: Enabling local workaround for ARM erratum 858=
+921
+[    0=2E071448] arch_timer: Enabling local workaround for ARM erratum 858=
+921
+[    0=2E330245] platform 11280000=2Epcie: Fixed dependency cycle(s) with =
+/soc/pcie@11280000/interrupt-controller
+[    0=2E340164] platform 11290000=2Epcie: Fixed dependency cycle(s) with =
+/soc/pcie@11290000/interrupt-controller
+[    0=2E350045] platform 11300000=2Epcie: Fixed dependency cycle(s) with =
+/soc/pcie@11300000/interrupt-controller
+[    0=2E359926] platform 11310000=2Epcie: Fixed dependency cycle(s) with =
+/soc/pcie@11310000/interrupt-controller
+[    0=2E671440] mtk-xsphy soc:xphy@11e10000: failed to get ref_clk(id-1)
+[    0=2E686306] mtk-socinfo mtk-socinfo=2E0=2Eauto: error -ENOENT: Failed=
+ to get socinfo data
+[    0=2E694258] mtk-socinfo mtk-socinfo=2E0=2Eauto: probe with driver mtk=
+-socinfo failed with error -2
+[    1=2E344755] ubi0 error: ubi_read_volume_table: the layout volume was =
+not found
+[    1=2E352050] ubi0 error: ubi_attach_mtd_dev: failed to attach mtd1, er=
+ror -22
+[    1=2E714508] rtc-pcf8563 2-0051: hctosys: unable to read the hardware =
+clock
+[    1=2E805626] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D52 ar=
+g=3D00000C00; host->error=3D0x00000002
+[    1=2E818727] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D52 ar=
+g=3D80000C08; host->error=3D0x00000002
+[    1=2E835940] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D5 arg=
+=3D00000000; host->error=3D0x00000002
+[    1=2E850219] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D5 arg=
+=3D00000000; host->error=3D0x00000002
+[    1=2E867994] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D5 arg=
+=3D00000000; host->error=3D0x00000002
+[    1=2E877061] mtk-msdc 11230000=2Emmc: msdc_track_cmd_data: cmd=3D5 arg=
+=3D00000000; host->error=3D0x00000002
+[    2=2E005070] GPT: Use GNU Parted to correct GPT errors=2E
+[    2=2E184228] mtk-pcie-gen3 11280000=2Epcie: probe with driver mtk-pcie=
+-gen3 failed with error -110
+[    6=2E185775]  note_interrupt+0x308/0x358
+[    6=2E209774]  do_interrupt_handler+0x80/0x84
+[    6=2E213947]  el1_interrupt+0x34/0x54
+[    6=2E809767] systemd[1]: Failed to look up module alias 'autofs4': Fun=
+ction not implemented
+[    7=2E765542] systemd[1]: Arbitrary Executable File Formats File System=
+ Automount Point was skipped because of a failed condition check (Condit=2E
+[    8=2E099430] systemd[1]: Journal Audit Socket was skipped because of a=
+ failed condition check (ConditionSecurity=3Daudit)=2E
+[    8=2E285821] systemd[1]: Huge Pages File System was skipped because of=
+ a failed condition check (ConditionPathExists=3D/sys/kernel/mm/hugepages)=
+=2E
+[    8=2E455617] systemd[1]: Create List of Static Device Nodes was skippe=
+d because of a failed condition check (ConditionFileNotEmpty=3D/lib/module=
+=2E
+[    8=2E685692] systemd[1]: Repartition Root Disk was skipped because all=
+ trigger condition checks failed=2E
+[   45=2E351865] xhci-mtk 11200000=2Eusb: Host halt failed, -110
+
+because of the pcie interrupt messages i checked my nvme and wifi-card and=
+ look sgood, so it seems no generic interrupt issue
+
+# lspci
+0000:00:00=2E0 PCI bridge: MEDIATEK Corp=2E Device 7988 (rev 01)
+0000:01:00=2E0 Network controller: MEDIATEK Corp=2E Device 7990
+0001:00:00=2E0 PCI bridge: MEDIATEK Corp=2E Device 7988 (rev 01)
+0001:01:00=2E0 Network controller: MEDIATEK Corp=2E Device 7991
+0002:00:00=2E0 PCI bridge: MEDIATEK Corp=2E Device 7988 (rev 01)
+0002:01:00=2E0 Non-Volatile memory controller: ADATA Technology Co=2E, Ltd=
+=2E ADATA XPG GAMMIXS1 1L Media (rev 01)
+
+full source is here:
+
+https://github=2Ecom/frank-w/BPI-Router-Linux/tree/6=2E10-main
+
+regards Frank
 
