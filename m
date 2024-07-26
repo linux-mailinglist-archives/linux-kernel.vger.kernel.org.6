@@ -1,167 +1,241 @@
-Return-Path: <linux-kernel+bounces-263513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7FA93D716
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A822793D701
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1FE1F23070
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352A81F247A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA5117E446;
-	Fri, 26 Jul 2024 16:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="za7UJh5e"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7DD17D35A;
+	Fri, 26 Jul 2024 16:37:36 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4D917E443
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA6917CA0C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722011880; cv=none; b=UUwXdw1wwuFtJ60yIuV9ZpwLRMMiM+EU4XPNrQMkP4xzdJu44oSlqrDXlxZlx5rKXeosmyJj6WBFX0ILZRBsAA623DptXModEM+TOaoSCQZSMm1AaZEZ+caB6A0X82qtVlpMyIEo/W7ave7qL1d2yat95QuNzqD77smug79tzGE=
+	t=1722011856; cv=none; b=tYZ1Rauw4KOE8wG/lUbx92T45XvejVVBLT4ZDLYUMIVyBAxPM2TPk/LWCeOq7Zj5Za3g2+25lShIKULHYCpInpe9Siw98IasMIOYAAT53OkMQ3BlJkBIJUImKoC7QB037xV2xPmWLKnHV/hHx+j7u1txCZeatfJm2pObGm/TH+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722011880; c=relaxed/simple;
-	bh=wJlwKvHnHsmxr8ol1Mky5rqH/81g2E3nBO2+CHtrVdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hS3yCPvM5nY91B3hHywLrBY0ESA0PAKvRwvaXcp1aoVYI7CMZ1/Yp63t1k/5g2FeUhA31FFn4M5DvfsBAx/VV4sUsB/1UPsNkhxzhaPTenygYfjfiU/hSKh68VolcqGbEROX2RG4nZcoiG5hqnM0bFXQgIAmxHfiq8Bawkxc8QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=za7UJh5e; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cb57e25387so901131a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722011878; x=1722616678; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cCBQVSPRYPBIeQ5EoC+hl2LHpusqOR8yThszxhSpMg8=;
-        b=za7UJh5e5Y3eX4YWKOA56x87J3jAN9WbzToyvaj/bw1FEqzyYeHeZvN/dzpHSE1w0I
-         jKYTMSkl50oPUmpW9+oV4GVbgbtNJEgq0oWFI7Jy9k1tESFSwJ78f+NwTTlHwl9OaMTm
-         ZJh06JXzNdUYljZcsC1/Qc9Zxt953dIkQ32xbyR+sz/CHhqSS9oG9CMx4ruoeBLs9K99
-         m1hkrZ5QhwkM06FLGttWuPlfEP3KRszeul5xAVzeZQe6BbCODrCHa0CQSnMllGDmWHj7
-         lA5Qw3W9v1r41Tc9bOencUMeSWekDHc+8cG7MdTKoclxGWN4uaQ67nOHQasdInhKKFAa
-         KgsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722011878; x=1722616678;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cCBQVSPRYPBIeQ5EoC+hl2LHpusqOR8yThszxhSpMg8=;
-        b=UFt8odYx2D7ZEw0XtfCGJmCEXZT+G/PEh4pQxxJ5Hrh+7q5byJAf1MFmELDNoeumed
-         t9CS0jh7DewbQlrW5Wva40XOImupq14Swal2tm0CWPsDPuELsdP+ZfWozZHU5RLj64DS
-         doJFhtTXd6HKMFsMmfAJ+B2VEAigSIED46JTVmz1OvKzWG8+YWruE38e/X3wUeHK4D02
-         yqVfGgYHMLwjwvEI6D7yvltaH8ZHiOD1sYSa4bByA7o2fSWLMmqoDSb9I2sr+fjNErje
-         zzmoCw7tYnkJtNtuGpNXACwTrzFP1bnUNZWjVjvKofwmikkB+sK9rg7j6VoghFZ0Wa0X
-         ibBg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0d8F4RhYepZuCM3d23MG41YZPhCsLSYfnOmkRdwvamcfKbO590l+hehadFEv3KjWnwBC1kORHDRwWTO0rIuWP93hEWlP667uac58e
-X-Gm-Message-State: AOJu0YxdV4H+fBFDTUbiVmgK9I+ukso5/TUomHzJXPxQMVa0rZKyB+mR
-	E2A8PkUfGP1WFNSBCPKULp2DTJfLbqHweGsHEvkxxVeOF+uKx9SV8BYfwx9aY1g=
-X-Google-Smtp-Source: AGHT+IEXYMNp7r6J/EYXhRPF4svQfnFw/pxaQt/HnMEC+56U/jYOIE7D/L1AibRAOg2CvPdeVu0dyA==
-X-Received: by 2002:a17:90a:d98b:b0:2bd:d42b:22dc with SMTP id 98e67ed59e1d1-2cf7e868df4mr14654a91.43.1722011877991;
-        Fri, 26 Jul 2024 09:37:57 -0700 (PDT)
-Received: from jesse-desktop.ba.rivosinc.com (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c55a2dsm3676619a91.7.2024.07.26.09.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 09:37:57 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Xiao Wang <xiao.w.wang@intel.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v7 8/8] RISC-V: hwprobe: Document unaligned vector perf key
-Date: Fri, 26 Jul 2024 12:37:19 -0400
-Message-ID: <20240726163719.1667923-9-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240726163719.1667923-1-jesse@rivosinc.com>
-References: <20240726163719.1667923-1-jesse@rivosinc.com>
+	s=arc-20240116; t=1722011856; c=relaxed/simple;
+	bh=Wu18FSOUqzY+kaBnxBjnAUfxwOwAJXC+OIUtQPJk54I=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Obi3K3udvlrZwDrIAHNqhohA9L1gaht6KosC/SAGjictbf7qOTQxTv4r5esnj4z4BPSvYjeegiuAzOIgZtEHIMbEX1+ZK7SITkXXE7ZPSC/cZQSdy0afMrx876NBkOW+6MLzNhQtiPBAF/Zsll1kFfmi8K28UypXBKjiOmn6DEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVtdf1R4tz6K9LS;
+	Sat, 27 Jul 2024 00:35:02 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id E92F2140B3C;
+	Sat, 27 Jul 2024 00:37:29 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
+ 2024 17:37:29 +0100
+Date: Fri, 26 Jul 2024 17:37:28 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <Terry.Bowman@amd.com>
+CC: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, <linuxarm@huawei.com>,
+	<rafael.j.wysocki@intel.com>, <guohanjun@huawei.com>, <gshan@redhat.com>,
+	<miguel.luis@oracle.com>, <catalin.marinas@arm.com>, "Linux List Kernel
+ Mailing" <linux-kernel@vger.kernel.org>, Linux regressions mailing list
+	<regressions@lists.linux.dev>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>
+Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
+ possible recursive locking detected warning at computer boot.
+Message-ID: <20240726173728.00006769@Huawei.com>
+In-Reply-To: <12255504-a80a-41da-b702-094af6957eef@amd.com>
+References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
+	<20240723112456.000053b3@Huawei.com>
+	<20240723181728.000026b3@huawei.com>
+	<20240725181354.000040bf@huawei.com>
+	<12255504-a80a-41da-b702-094af6957eef@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Document key for reporting the speed of unaligned vector accesses.
-The descriptions are the same as the scalar equivalent values.
+On Fri, 26 Jul 2024 10:07:39 -0500
+Terry Bowman <Terry.Bowman@amd.com> wrote:
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
----
-V1 -> V2:
-  - New patch
-V2 -> V3:
- - Specify access width
-V3 -> V4:
- - Clarify we're talking about byte accesses using vector registers
- - Spell out _VECTOR_ in macros
-V4 -> V5:
- - No changes
-V5 -> V6:
- - No changes
-V6 -> V7:
- - No changes
----
- Documentation/arch/riscv/hwprobe.rst | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> On 7/25/24 12:13, Jonathan Cameron wrote:
+> > On Tue, 23 Jul 2024 18:20:06 +0100
+> > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> >   
+> >> On Tue, 23 Jul 2024 11:24:56 +0100
+> >> Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> >>  
+> >>> On Tue, 23 Jul 2024 00:36:18 +0500
+> >>> Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> wrote:
+> >>>     
+> >>>> Hi,
+> >>>> The first Fedora update to the 6.11 kernel
+> >>>> (kernel-debug-6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64)
+> >>>> brings a new warning: possible recursive locking detected.      
+> >>>
+> >>> Hi Mikhail,
+> >>>
+> >>> Thanks for the report.
+> >>>
+> >>> This is an interesting corner and perhaps reflects a flawed
+> >>> assumption we were making that for this path anything that can happen for an
+> >>> initially present CPU can also happen for a hotplugged one. On the hotplugged
+> >>> path the lock was always held and hence the static_key_enable() would
+> >>> have failed.
+> >>>
+> >>> I'm somewhat stumped on working out why this path couldn't happen
+> >>> for a hotplugged CPU so why this is a new problem?
+> >>>
+> >>> Maybe this is just a case of no one is providing _CPC for CPUs in virtual
+> >>> machines so the path wasn't seen? QEMU doesn't generate ACPI tables with
+> >>> _CPC today, so maybe that's it.
+> >>>
+> >>> So maybe this is has revealed an existing latent  bug.  There have been
+> >>> QEMU patches for _CPC in the past but never merged. I'll hack them
+> >>> into an x86 virtual machine and see if we hit the same bug you have
+> >>> here before and after the series.
+> >>>
+> >>> Either way obviously we need to fix it for the current kernel (and maybe
+> >>> backport the fix if I can verify it's a latent bug).  I'll get a test
+> >>> setup running asap and see if I can replicate.
+> >>>
+> >>> +CC x86 maintainers.    
+> >>
+> >> It will take me a little longer to emulate a suitable setup to hit the
+> >> AMD case on (I have it run on arm64 now, but no similar issue occurs)
+> >>
+> >> Ultimately the problem is occurring in arch_init_invariance_cppc
+> >> I note that the arm64 version of that topology_init_cpu_capacity_cppc
+> >> delays some activity via a work queue specifically to avoid some
+> >> locking issues.
+> >>
+> >> On AMD systems arch_init_invariance_cppc is defined
+> >> as init_freq_invariance_cppc which calls amd_set_max_freq_ratio just
+> >> once (there is a static bool) which in turn calls
+> >> freq_invariance_set_perf_ratio() / freq_invariance_enable()
+> >>
+> >> Until I have a setup to test on I'm not going to draw firm conclusions
+> >> but how much would it matter if we set that static key a bit late
+> >> via a workqueue?  In the meantime go with a default value similar to
+> >> that disable_freq_invariance_work sets (which is done via a workqueue).
+> >>
+> >> The intel equivalent is called via an early_init() so not
+> >> the hotplug path.
+> >>
+> >> Any hints on from people familiar with this code would be most
+> >> welcome.  Whilst git suggests tglx touched these paths most recently that
+> >> was in tidying them up to split the Intel and AMD paths.
+> >>  
+> > 
+> > Hi Mikhail.
+> > 
+> > So the short story, ignoring the journey (which should only be described
+> > with beer in hand), is that I now have an emulated test setup in QEMU
+> > that fakes enough of the previously missing bits to bring up this path
+> > and can trigger the splat you shared.  With the below fix I can get to
+> > something approaching a running system.
+> > 
+> > However, without more work the emulation isn't actually doing any control
+> > of frequency etc so I have no idea if the code actually works after this
+> > patch.
+> > 
+> > If you are in a position to test a patch, could you try the following?
+> > 
+> > One bit I need to check out tomorrow is to make sure this doesn't race with the
+> > workfn that is used to tear down the same static key on error.
+> > 
+> > From 8f7ad4c73954aae74265a3ec50a1d56e0c56050d Mon Sep 17 00:00:00 2001
+> > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Date: Thu, 25 Jul 2024 17:56:00 +0100
+> > Subject: [RFC PATCH] x86/aperfmperf: Push static_branch_enable(&arch_scale_freq_key) onto work queue
+> > 
+> > This to avoid a deadlock reported by lockdep.
+> > 
+> > TODO: Fix up this commit message before posting to actually give
+> > some details and tags etc.
+> > 
+> > Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > ---
+> >  arch/x86/kernel/cpu/aperfmperf.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+> > index b3fa61d45352..41c729d3517c 100644
+> > --- a/arch/x86/kernel/cpu/aperfmperf.c
+> > +++ b/arch/x86/kernel/cpu/aperfmperf.c
+> > @@ -300,15 +300,22 @@ static void register_freq_invariance_syscore_ops(void)
+> >  static inline void register_freq_invariance_syscore_ops(void) {}
+> >  #endif
+> >  
+> > +static void enable_freq_invariance_workfn(struct work_struct *work)
+> > +{
+> > +	static_branch_enable(&arch_scale_freq_key);
+> > +	register_freq_invariance_syscore_ops();
+> > +	pr_info("Estimated ratio of average max frequency by base frequency (times 1024): %llu\n", arch_max_freq_ratio);
+> > +}
+> > +static DECLARE_WORK(enable_freq_invariance_work,
+> > +		    enable_freq_invariance_workfn);
+> > +
+> >  static void freq_invariance_enable(void)
+> >  {
+> >  	if (static_branch_unlikely(&arch_scale_freq_key)) {
+> >  		WARN_ON_ONCE(1);
+> >  		return;
+> >  	}
+> > -	static_branch_enable(&arch_scale_freq_key);
+> > -	register_freq_invariance_syscore_ops();
+> > -	pr_info("Estimated ratio of average max frequency by base frequency (times 1024): %llu\n", arch_max_freq_ratio);
+> > +	schedule_work(&enable_freq_invariance_work);
+> >  }
+> >  
+> >  void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled)  
+> 
+> Hi Jonathan,
+> 
+> I was able to recreate the problem using base d67978318827 with a Ryzen laptop.
 
-diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-index 78acd37b6477..f83a13dc4cbc 100644
---- a/Documentation/arch/riscv/hwprobe.rst
-+++ b/Documentation/arch/riscv/hwprobe.rst
-@@ -238,3 +238,19 @@ The following keys are defined:
- 
- * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
-   represents the size of the Zicboz block in bytes.
-+
-+* :c:macro:`RISCV_HWPROBE_KEY_VECTOR_MISALIGNED_PERF`: An enum value describing the
-+     performance of misaligned vector accesses on the selected set of processors.
-+
-+  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN`: The performance of misaligned
-+    vector accesses is unknown.
-+
-+  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_SLOW`: 32-bit misaligned accesses using vector
-+    registers are slower than the equivalent quantity of byte accesses via vector registers.
-+    Misaligned accesses may be supported directly in hardware, or trapped and emulated by software.
-+
-+  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_FAST`: 32-bit misaligned accesses using vector
-+    registers are faster than the equivalent quantity of byte accesses via vector registers.
-+
-+  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_UNSUPPORTED`: Misaligned vector accesses are
-+    not supported at all and will generate a misaligned address fault.
--- 
-2.45.2
+So that's the original reported tag. 
+
+> 
+> I was unable to recreate the issue using base 72ec37390a71 with the same Ryzen laptop.
+
+Huh? - I see that is yesterday's tree so further through the merge window.
+I wonder what changed - I'll poke the emulation some more and
+see if it disappeared for me too.  
+
+I can't immediately spot any changes in the relevant paths that would
+make this go away...
+
+Thanks for the info though.  Maybe this explains why we saw no reports
+of this in linux-next.
+
+Thanks,
+
+Jonathan
+
+
+> 
+> Ive attached the dmesg logs and dmidecode.
+> 
+> Regards,
+> Terry
+> 
 
 
