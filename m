@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-263794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053DA93DA8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0974F93DA92
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848B41F2127E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54AD0B247E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B153F154454;
-	Fri, 26 Jul 2024 22:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC04156231;
+	Fri, 26 Jul 2024 22:03:01 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE01214A4FB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5814A4D9
 	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 22:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722031379; cv=none; b=QKePmq/nN7M74Of69jow8Baa44ZG0eqQle9/ZtidkGB7RQUKYNpDU+GjeC7bDDd76i1KIN/ZMu69F/cSDDzW3ichmvo262PWRMWfUMLHAiB3P9AyTaAVhbcAS3Y1OPPoir2jzbYuuaisNK4xzyD6HHUrceRL50pXDUK3fXY+kTw=
+	t=1722031379; cv=none; b=bLQKX35tzRuezEyz+ktB5Oqolv7TvsVnUoG1zpszP4IzUmC4QNoZHI3eqoE9ewJnlAew/TyU+ZUUtRCg+K2KdfFikZhiICZc2LWHFbrt9f2xlJ0mFfwxQs5wMxhZjW1fKtkqPQOL2q8vTxrq2iTLks612JFgd5jdu9N+r1xBXqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722031379; c=relaxed/simple;
-	bh=2cdHVqHAzmPhViiTiJfqBs6awqwnWOp3F22KKYxab9c=;
+	bh=YRBDpEfjHAjrzZK3/i0F/BaCWbQtvXY6jTLtlI3OQ3s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=khagnyu/8Uvzw7dwYeRXmfvDyjxvJIK4kRxDb36SBKOnUZb+tEv+1imAAUv27FukFX8a7+xZWDq6HXSODENyuMAyxYVAnoy0EjFtW4l6HY7adY3oghO6c01OQO2kJmNz4FcotnOOD5T5jeSH/ZorL0O63ZioBNgxfsaPUd1rsRQ=
+	 In-Reply-To:To:Cc; b=k3VxYJ+jUzu9hAd9ZnUPnh1zG/FNoxF+R2hcwRPfbIfulXyLOhs8T+lBRFtKD23JPeSBybrjfE/UB6BABSuhkH+sU4ZYFldRks1oeAUpwnNvZlHtvXYMtugHY9zN/fWnh8nq2BuzCbJSZOplWn2rAOyL8ccX1SefUfRxOUFvCvw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sXT1Q-0005Mu-RD; Sat, 27 Jul 2024 00:02:44 +0200
+	id 1sXT1Q-0005Mt-RR; Sat, 27 Jul 2024 00:02:44 +0200
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sXT1P-002Qhy-W7; Sat, 27 Jul 2024 00:02:44 +0200
+	id 1sXT1P-002Qhz-Vl; Sat, 27 Jul 2024 00:02:44 +0200
 Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
 	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sXT1P-00FdLn-2f;
+	id 1sXT1P-00FdLn-2g;
 	Sat, 27 Jul 2024 00:02:43 +0200
 From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Sat, 27 Jul 2024 00:02:41 +0200
-Subject: [PATCH v3 06/10] usb: gadget: uvc: set req_size once when the vb2
- queue is calculated
+Date: Sat, 27 Jul 2024 00:02:42 +0200
+Subject: [PATCH v3 07/10] usb: gadget: uvc: add g_parm and s_parm for frame
+ interval
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240403-uvc_request_length_by_interval-v3-6-4da7033dd488@pengutronix.de>
+Message-Id: <20240403-uvc_request_length_by_interval-v3-7-4da7033dd488@pengutronix.de>
 References: <20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de>
 In-Reply-To: <20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -65,21 +65,21 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Michael Grzeschik <m.grzeschik@pengutronix.de>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3140;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3309;
  i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=2cdHVqHAzmPhViiTiJfqBs6awqwnWOp3F22KKYxab9c=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmpB0CigTP7a6ATBe0DOlEpSLqxJ9bWgeYmgTKv
- EJmPpi3+7uJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZqQdAgAKCRC/aVhE+XH0
- q7QHD/4tayZzs7J42eKo0bexh43q6jOSkDfIuS6Oj7Bu3jg2J6CcpnjRFPIiDYQw9taEX/gqTMs
- nR+8ECMQpYrqH58IcZdXMwzlDvvhP/jVe97rCEoXJAqg7F51JjTkZUzHLIKRkkSyBVasr/fUnMX
- x48VdGSHOelz7bka12DbpnRG9/ACF7LKQHD3o32CS0XvFy3grRjsYUyjpwHL9mFRCRTdomYaw+J
- 9gz1kW0nerQFBL8uLjx3OiFWonlUbas2lZ6bAbqUHXvq5aHKFujYmkSidccLIaLR2TErXd9v722
- JrFIbN7paHpcoKr6XEL2gJRfP0maqKoofAR96SiIEk1qaM6+s4k/v0cbiTxUXF3fSdvDyOtyuGJ
- OdxxD67Ixb+iSdXfuroA973oNwUHQ7t7sC2dRsXYqpaRE9spv28vrONipUv4D3gFD9+HFbchgu4
- 2unklUU3psEIE/O4bqT1NqbzACHFwauXSqWsM+ACe/DBXj0PSQC3VTIistIRKjFeCCtIBXPmMGY
- 6L9wCLcjYTtR9WOPk/PxEPax3tD261rVBVRxopGGk9fJ/Trl+lx9Yte9HygEVVG7mlT7fjG2An3
- To5sXo9vyCozZVGB4mLtBqPcC6PNp76f0dsXq2PYLUxCKuqoAqKd1UVoLIBHTCHQv8ytSvLYdB3
- dDLXJ+6Fg2Oj4zA==
+ bh=YRBDpEfjHAjrzZK3/i0F/BaCWbQtvXY6jTLtlI3OQ3s=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmpB0Cxv5ljIXB2iYi0xExpUg+xJoNwpnxLuSwY
+ 2q1cww3DgiJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZqQdAgAKCRC/aVhE+XH0
+ q3avD/9pwh6zTPF3zkMWim9opCdTN/Tg0gAfeqnRFJ6kZQumSsZri0lifkR4G7fuEbWx2FfYN13
+ Ute37jBOBP1SZYg1jsJtIEkoI/K9NJjG59LySSoadvDZb9Ub1YzqoFPe7jOSs4z13S0ZHbUGyxp
+ Tvu8Rqwi2iqVExUsp3ehUdNeQ0XwBxtM0Urzjaanw5YiYkwVBsXShNCPflH5niMfgQ3M5crjbAc
+ KwSuT33lb4s0lOFLIU0CgYzHYd8l5q/kWghoAKthYte09G91ASeyAWMzL5AMAP+0C0n237kKBWd
+ kRpbarFbVxw1YySgkMypcr+FhVieIViHDl2uBjgonN0YzSGQw+BEzIdDmR81VkZuuHdVRmu9wIA
+ GIGVfZD+iFZTnL3R8rz3gVChH687B4youy1pq9R1OCvMn6W3JXNgZSTbbxtQzamSgkcLIUhZ3xX
+ Ntw1O32b/u+4/QWCg8pfbCKn/EhPfXqETXUbQ0AyyWNhUgfa0Be+EaOiKBy6Ouq+kYEe/wf39WX
+ tQEnKd+NNvIEJ+keYhOd7de94kylUJsNBVLwEA9Ymqc7SQ6kZfXLxR+CnWWzEMunJmFflnO8zGi
+ sDHhNup93CIBgKfUpSZaDthaWqi1o9h1C/cRakONqZBFqwlz+jLsKUrUiqDV7VP2Dh7T25/bZzo
+ Rel+0Byu7FrLTPQ==
 X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
  fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -87,14 +87,9 @@ X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The uvc gadget driver is calculating the req_size on every
-video_enable/alloc_request and is based on the fixed configfs parameters
-maxpacket, maxburst and mult.
-
-As those parameters can not be changed once the gadget is started and
-the same calculation is done already early on the
-vb2_streamon/queue_setup path its save to remove one extra calculation
-and reuse the calculation from uvc_queue_setup for the allocation step.
+The uvc gadget driver is lacking the information which frame interval
+was set by the host. We add this information by implementing the g_parm
+and s_parm callbacks.
 
 Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
@@ -102,83 +97,92 @@ Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 v2 -> v3: -
 v1 -> v2: -
 ---
- drivers/usb/gadget/function/uvc_queue.c |  2 ++
- drivers/usb/gadget/function/uvc_video.c | 15 ++-------------
- 2 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/usb/gadget/function/uvc.h      |  1 +
+ drivers/usb/gadget/function/uvc_v4l2.c | 52 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
-index 7995dd3fef184..2414d78b031f4 100644
---- a/drivers/usb/gadget/function/uvc_queue.c
-+++ b/drivers/usb/gadget/function/uvc_queue.c
-@@ -63,6 +63,8 @@ static int uvc_queue_setup(struct vb2_queue *vq,
- 	 */
- 	nreq = DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
- 	nreq = clamp(nreq, 4U, 64U);
-+
-+	video->req_size = req_size;
- 	video->uvc_num_requests = nreq;
+diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
+index b3a5165ac70ec..f6bc58fb02b84 100644
+--- a/drivers/usb/gadget/function/uvc.h
++++ b/drivers/usb/gadget/function/uvc.h
+@@ -100,6 +100,7 @@ struct uvc_video {
+ 	unsigned int width;
+ 	unsigned int height;
+ 	unsigned int imagesize;
++	unsigned int interval;
+ 	struct mutex mutex;	/* protects frame parameters */
  
- 	return 0;
-diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-index 463777b5db6ff..9d3cfa96b1350 100644
---- a/drivers/usb/gadget/function/uvc_video.c
-+++ b/drivers/usb/gadget/function/uvc_video.c
-@@ -480,7 +480,6 @@ uvc_video_free_requests(struct uvc_video *video)
- 	INIT_LIST_HEAD(&video->ureqs);
- 	INIT_LIST_HEAD(&video->req_free);
- 	INIT_LIST_HEAD(&video->req_ready);
--	video->req_size = 0;
- 	return 0;
+ 	unsigned int uvc_num_requests;
+diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
+index de41519ce9aa0..392fb400aad14 100644
+--- a/drivers/usb/gadget/function/uvc_v4l2.c
++++ b/drivers/usb/gadget/function/uvc_v4l2.c
+@@ -307,6 +307,56 @@ uvc_v4l2_set_format(struct file *file, void *fh, struct v4l2_format *fmt)
+ 	return ret;
  }
  
-@@ -488,16 +487,9 @@ static int
- uvc_video_alloc_requests(struct uvc_video *video)
- {
- 	struct uvc_request *ureq;
--	unsigned int req_size;
- 	unsigned int i;
- 	int ret = -ENOMEM;
- 
--	BUG_ON(video->req_size);
--
--	req_size = video->ep->maxpacket
--		 * max_t(unsigned int, video->ep->maxburst, 1)
--		 * (video->ep->mult);
--
- 	for (i = 0; i < video->uvc_num_requests; i++) {
- 		ureq = kzalloc(sizeof(struct uvc_request), GFP_KERNEL);
- 		if (ureq == NULL)
-@@ -507,7 +499,7 @@ uvc_video_alloc_requests(struct uvc_video *video)
- 
- 		list_add_tail(&ureq->list, &video->ureqs);
- 
--		ureq->req_buffer = kmalloc(req_size, GFP_KERNEL);
-+		ureq->req_buffer = kmalloc(video->req_size, GFP_KERNEL);
- 		if (ureq->req_buffer == NULL)
- 			goto error;
- 
-@@ -525,12 +517,10 @@ uvc_video_alloc_requests(struct uvc_video *video)
- 		list_add_tail(&ureq->req->list, &video->req_free);
- 		/* req_size/PAGE_SIZE + 1 for overruns and + 1 for header */
- 		sg_alloc_table(&ureq->sgt,
--			       DIV_ROUND_UP(req_size - UVCG_REQUEST_HEADER_LEN,
-+			       DIV_ROUND_UP(video->req_size - UVCG_REQUEST_HEADER_LEN,
- 					    PAGE_SIZE) + 2, GFP_KERNEL);
- 	}
- 
--	video->req_size = req_size;
--
- 	return 0;
- 
- error:
-@@ -658,7 +648,6 @@ uvcg_video_disable(struct uvc_video *video)
- 	INIT_LIST_HEAD(&video->ureqs);
- 	INIT_LIST_HEAD(&video->req_free);
- 	INIT_LIST_HEAD(&video->req_ready);
--	video->req_size = 0;
- 	spin_unlock_irqrestore(&video->req_lock, flags);
- 
- 	/*
++static int uvc_v4l2_g_parm(struct file *file, void *fh,
++			    struct v4l2_streamparm *parm)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct uvc_device *uvc = video_get_drvdata(vdev);
++	struct uvc_video *video = &uvc->video;
++	struct v4l2_fract timeperframe;
++
++	if (parm->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
++		return -EINVAL;
++
++	/* Return the actual frame period. */
++	timeperframe.numerator = video->interval;
++	timeperframe.denominator = 10000000;
++	v4l2_simplify_fraction(&timeperframe.numerator,
++		&timeperframe.denominator, 8, 333);
++
++	uvcg_dbg(&uvc->func, "Getting frame interval of %u/%u (%u)\n",
++		timeperframe.numerator, timeperframe.denominator,
++		video->interval);
++
++	parm->parm.output.timeperframe = timeperframe;
++	parm->parm.output.capability = V4L2_CAP_TIMEPERFRAME;
++
++	return 0;
++}
++
++static int uvc_v4l2_s_parm(struct file *file, void *fh,
++			    struct v4l2_streamparm *parm)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct uvc_device *uvc = video_get_drvdata(vdev);
++	struct uvc_video *video = &uvc->video;
++	struct v4l2_fract timeperframe;
++
++	if (parm->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
++		return -EINVAL;
++
++	timeperframe = parm->parm.output.timeperframe;
++
++	video->interval = v4l2_fraction_to_interval(timeperframe.numerator,
++		timeperframe.denominator);
++
++	uvcg_dbg(&uvc->func, "Setting frame interval to %u/%u (%u)\n",
++		timeperframe.numerator, timeperframe.denominator,
++		video->interval);
++
++	return 0;
++}
++
+ static int
+ uvc_v4l2_enum_frameintervals(struct file *file, void *fh,
+ 		struct v4l2_frmivalenum *fival)
+@@ -577,6 +627,8 @@ const struct v4l2_ioctl_ops uvc_v4l2_ioctl_ops = {
+ 	.vidioc_dqbuf = uvc_v4l2_dqbuf,
+ 	.vidioc_streamon = uvc_v4l2_streamon,
+ 	.vidioc_streamoff = uvc_v4l2_streamoff,
++	.vidioc_s_parm = uvc_v4l2_s_parm,
++	.vidioc_g_parm = uvc_v4l2_g_parm,
+ 	.vidioc_subscribe_event = uvc_v4l2_subscribe_event,
+ 	.vidioc_unsubscribe_event = uvc_v4l2_unsubscribe_event,
+ 	.vidioc_default = uvc_v4l2_ioctl_default,
 
 -- 
 2.39.2
