@@ -1,80 +1,92 @@
-Return-Path: <linux-kernel+bounces-263084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B77B93D0C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:02:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D812D93D0D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5795E282A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE471F2177B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0A4176AD8;
-	Fri, 26 Jul 2024 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlM+/qtQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DCF17A58D;
+	Fri, 26 Jul 2024 10:03:55 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E630225AF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2006A179972;
+	Fri, 26 Jul 2024 10:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721988171; cv=none; b=M2AHQa4l8cKHDSlpmpn1845zLEVTpckuQrgyKjcjtILnRVftTV9Ed2UdVreQgkcpiEXPqej+/3zvefuV+8FjdS3OZiHXSClIqJv+DKFc0MkEoH6FSfzJM3+s4iCdwcVmBL5cSgocH5192Sx8PoP3P2pdw6/lFOGT378eftwskoM=
+	t=1721988235; cv=none; b=jKMf50jVJz3Tq8MYuxKQftt+P4eDDbYNzpUWLVEX+NuiNmuGmVGcLx7NRkyiJjwdx1BccHsXp25+cN7hSnI2eeiP8votk5yT005AvVmXKyRTgmu+7Q2iLpFanvd6bzxJlmrNVxN5gHruzrsG6ZrOyv5QV8tmSBQf++vjyftjAMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721988171; c=relaxed/simple;
-	bh=y3T7leRy9u9hWhekWEnrvGtNeI2sgTWgG2gCnKSw2PQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ui8Vf8jrDXgqNL5RxZ5PJeDmY8qMLxBO2QxAsiANP6vbieoZPmMsJGQGGIYjkxLPT0a+nRz9St7E3BQT3sf34H+zN8jQ0SKvB31mPEW+of8VuMqH4xN9NNX1AYkhlNiipS5rYCWch+Gt9r9fVFZ2KMnfEG5Mkz7nUn8jafc2Sww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlM+/qtQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B56C32782;
-	Fri, 26 Jul 2024 10:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721988170;
-	bh=y3T7leRy9u9hWhekWEnrvGtNeI2sgTWgG2gCnKSw2PQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YlM+/qtQGfI8YrQqvKEu3N134dL5tNaJ6MPGalYwca1ppGNZIIEv0FfqunTkVDk0G
-	 z5lAB8Zyjd2QkiQ+G+FJgPfv2p52AHah8r+fzXfVmrXYZ/bHZj3xdxFP/hDjV2M/rB
-	 PKtV+IoQMQu1pEU51ncTh3Paqyz6zDDFqMPLIf0iJQPeQQ8CXYaNybb0Z72MqX/S6G
-	 2J12R5RlVZLEhWe2G9z6AX8vMkx/GbxtseDQD75nN8TFF4WaJ0dBJdI2NgtYoiVf+r
-	 Lr4MwF9DfZ105rauj+gKANFn4Cwl+gDw0JEUFKju/T9k7UbIipEJPUU+slOzpcMdIM
-	 YruHPjmyzSW9Q==
-Message-ID: <0b16f00a-71d5-46f7-adc1-1f48f6e68745@kernel.org>
-Date: Fri, 26 Jul 2024 18:02:46 +0800
+	s=arc-20240116; t=1721988235; c=relaxed/simple;
+	bh=Sr77s+/Ii927lX9PVWg0Bttm8hmTcDMtK+RtZJFMCkk=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=DqVc5rXGu938OTr3HiMr7TPrXbOYuGKIvScPfNuIQYOiwBIofmYhGu6nTyxeSRuPi/tyyv/tOLRup95bNj+TuyHO/der5BjmFsumnNgrrY7AENEtEqyja8mGeYIwAnKZFAbbuvum78ERKw+nfMfoq82ONAqT1fbgUyMNKNsXAKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 8A6203780BDB;
+	Fri, 26 Jul 2024 10:03:50 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <20240726070557.506802053@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240726070557.506802053@linuxfoundation.org>
+Date: Fri, 26 Jul 2024 11:03:50 +0100
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: convert comma to semicolon
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, Chen Ni <nichen@iscas.ac.cn>,
- xiang@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
- dhavale@google.com
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240724020721.2389738-1-nichen@iscas.ac.cn>
- <96238616-071e-43f8-9a14-5d4beab64217@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <96238616-071e-43f8-9a14-5d4beab64217@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <1399f9-66a37480-3-413a9280@15567400>
+Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?5=2E15?= 00/90] 
+ =?utf-8?q?5=2E15=2E164-rc2?= review
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/24 10:45, Gao Xiang wrote:
-> 
-> 
-> On 2024/7/24 10:07, Chen Ni wrote:
->> Replace a comma between expression statements by a semicolon.
->>
->> Fixes: 84a2ceefff99 ("erofs: tidy up stream decompressors")
-> 
-> I think typos are bugfixes, so I will drop this label.
-> 
->> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+On Friday, July 26, 2024 12:42 IST, Greg Kroah-Hartman <gregkh@linuxfou=
+ndation.org> wrote:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> This is the start of the stable review cycle for the 5.15.164 release=
+.
+> There are 90 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, plea=
+se
+> let me know.
+>=20
+> Responses should be made by Sun, 28 Jul 2024 07:05:35 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1=
+5.164-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+.git linux-5.15.y
+> and the diffstat can be found below.
+>=20
+
+KernelCI report for stable-rc/linux-5.15.y for this week.
+
+Date: 2024-07-25
+
+## Build failures:
+No build failures seen for the stable-rc/linux-5.15.y commit head \o/
+
+## Boot failures:
+No **new** boot failures seen for the stable-rc/linux-5.15.y commit hea=
+d \o/
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
 
 Thanks,
+Shreeya Patel
+
 
