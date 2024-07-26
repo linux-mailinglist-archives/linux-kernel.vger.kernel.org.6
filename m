@@ -1,190 +1,261 @@
-Return-Path: <linux-kernel+bounces-262916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A8893CEA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7357693CEAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414F7B226A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28C91F22F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE992176AA8;
-	Fri, 26 Jul 2024 07:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B07176AD6;
+	Fri, 26 Jul 2024 07:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vd/fMQkR"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z17srSh+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9435A176255
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7373176AA6;
+	Fri, 26 Jul 2024 07:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721978095; cv=none; b=Ipp5GvqiWZuQoVlg4P9zpRjX0+HNGI7F9gsQjNDaoxc9n3bXmldNy5M5sPqIbMdgt8qcQAxyN6gf2IeUXSrJ+FHJHVRd1Q8uCqwPExB7bBgFA8GEwpl6P9KwWJqrUuCDxKapaHDeK0wbadV2Juf0/xDGgFpmp6uhJ1jc/UFEs+M=
+	t=1721978111; cv=none; b=iHky6kFKGvCxc+TzkIDGM/faKho8sBEaBXZgQ2s02l8qgpnerUvfJZ16hXdAcTIV8IHiVxxK/8mtrlQRn7CCYOpFewGbqNdSXxHAZSm5ihx6eSqbsDPsFc0yEf4VAVUuQfqojawurZF9IPWsAnKtHQw6y5RJz0ppgl2/xs4bovk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721978095; c=relaxed/simple;
-	bh=7nivHyCbh+KyobyYsDVYBhBS9jn3czeIWAOYJlb8fCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iilijFcECJUKxbV7aeajZfO0WQbckHIeNrFzBJKqcBOksWlbRw6gkdetVVRw+Yd8i9TGQJfVPh2S33Zp5NYlUOOiLk8yUFyLNAPq5KEctw6F+Wy/MLbsWc/xlFGSfU8NnVf6/7q7a2wxq4pPaPrreZ0PBjwXxmdq0pFb9saZeUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vd/fMQkR; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fdc70e695so148311cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:14:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721978092; x=1722582892; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nivHyCbh+KyobyYsDVYBhBS9jn3czeIWAOYJlb8fCM=;
-        b=Vd/fMQkRWBTzc2CbwEyCtzAETjhscZUhwYE8j21LO61jfX5C/Jl2yDM/48QfLBnsRz
-         J2ykwm4GHXt0SV26YQHRVgejyoB8imXwejELMtix6wssc8ijcgNNvDTLGhwuQHz4REyx
-         /Oio/YlVi4DoCr42YR4Ur8LPOVqzcXx7QjX9rCUVTaDcSur6r4SKnxAWAu57amNvCPt4
-         m736JWwzYwI+xElMJLUCroMylY7FfN6KwV8g6CxAYJp997CGBqk9ZGZZ733OhAG0r3Nj
-         k820X4JVe2rB8gyH4W/PwtIXbhEEiVWPQ/Ph+vUN/vMfol0nWmx4S/luELAS8oJaKct0
-         OKxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721978092; x=1722582892;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7nivHyCbh+KyobyYsDVYBhBS9jn3czeIWAOYJlb8fCM=;
-        b=ofQOninWoLDgBZsh88momJXtayc0MJ1Io9VSklFLWHNvVIlZW4AQgQ+l7qtAuNXzWy
-         IA2f8l0+lDmoUcjwWGfrkW6NnCeqTgxMWFY3BYpQ6V4uxkLsXfwmH9OT+Y5cp5uqJcKY
-         A9KxSKz5RTunE99+xkE+0qMwL0u20JRB/PIwdnrxDmO/u9jPmxS3GblcHCwOy+45Fyt9
-         nVMjSOE27FGoTPDl3KWfDbYWr3tNoY3Mo7DFXK29eVkqxxxZ/AjiA1dE12XQLHxFvUAL
-         elE6RH7g65Aztjd7nS5ui4VuCOAIBzEl8NvnzoFaVeSxG8X3SBgSB0T/NopBOpDRRlRH
-         Scvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtf7xlBo0ZT/GpiiSEy+BiYobzwBmvEDSWiHUxhw0nilSyQAEmPNc/lBAjE1Z64iUBiVv+JrihIhbvmQC6yKuMAFf1gAZsbQYgdstH
-X-Gm-Message-State: AOJu0YzOFbIQQsOiYMiqrsxyHVr+X5Ly39TQp7dc0KMmnwXCuj/a93P8
-	O788z4hXtxt7FE9c2K3tGSQS2zsziiq59Z1XNqtapc2bF8QjVxb8SlIPrIWdXqpayezJ4qgJjw/
-	0BCB6VdSre2Vy+mb5jscgad7qWviACcdE+ZIw
-X-Google-Smtp-Source: AGHT+IHsrLxY9ZdyqO525tDx0nWcyk90PA5eQ0nUeQmK7znJDAJF7gOtprtD76fs+N4PCATz5lI8rod3UJ0eTrdUNX0=
-X-Received: by 2002:ac8:7f93:0:b0:447:e497:95d0 with SMTP id
- d75a77b69052e-44ff3e8af82mr2283451cf.17.1721978092268; Fri, 26 Jul 2024
- 00:14:52 -0700 (PDT)
+	s=arc-20240116; t=1721978111; c=relaxed/simple;
+	bh=RJP92SF2WFoPIDG2hG1+hg5Un5h0Inykr9KdpLr/vGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9fo88zcnzQ2SijOJbGYnfdf7SSmWCMbKhh035nXL/fueHzAr5w32RCgeNaS7V8Jd2eWqeaZnkfuMalRMPQkqjSrOqSg8FBWjhYatxCqBSegJPtwJvvegws+ZzU9L1KvTcS5N+sTaHT9bVU+c3Xo+CKnn9rANSueVEBcU33qQsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z17srSh+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721978109; x=1753514109;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RJP92SF2WFoPIDG2hG1+hg5Un5h0Inykr9KdpLr/vGA=;
+  b=Z17srSh+It12XGrUvaok7S660SgPjKIw4VGS5CeT5KAjA55EtUpUpLDs
+   kg5jxwL3c5N17fOQ7rY3midZvhLcwMBHnAXI9FKq7mVL8BiEYL+mwuBQC
+   FqdK6jSu0/rHhjAFGmi3WRxwCrsYZfm/LOMPPBY4KaHbh8WVtnb2w6hNq
+   lXh3m/5g0NM/HvlovveixU9TdsutmAZwb88T2erJjcviR4hGSvfoKygpd
+   z7h0fu6AVF9r/kdQ6naGOCowfke3lO2d6NrUNw733L2jENWQ8bquuuM+S
+   G/urpR8YSs8CoQbpFhNs9BX52hJZqdrt4dMgIFNTU6CJJP74KgmTNpSgh
+   g==;
+X-CSE-ConnectionGUID: 2/M9qSj+Sq2+7GrRwjcUgQ==
+X-CSE-MsgGUID: e4f2+vqST+m6echhxdDeSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="45175954"
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="45175954"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 00:15:08 -0700
+X-CSE-ConnectionGUID: VA/vNtmiRl+7516OPD9unw==
+X-CSE-MsgGUID: PVTpmcntRtu0h49j3OarXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="53196595"
+Received: from taofen1x-mobl1.ccr.corp.intel.com (HELO [10.238.11.85]) ([10.238.11.85])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 00:15:04 -0700
+Message-ID: <f8dfeab2-e5f2-4df6-9406-0aff36afc08a@linux.intel.com>
+Date: Fri, 26 Jul 2024 15:15:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724201354.make.730-kees@kernel.org>
-In-Reply-To: <20240724201354.make.730-kees@kernel.org>
-From: David Gow <davidgow@google.com>
-Date: Fri, 26 Jul 2024 15:14:36 +0800
-Message-ID: <CABVgOSmXqv_+20OKjVAPJoqrP1EvBk+1WUqF4wBsefegxYNiWA@mail.gmail.com>
-Subject: Re: [PATCH v3] Documentation: KUnit: Update filename best practices
-To: Kees Cook <kees@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Rae Moar <rmoar@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000886a44061e214438"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/5] KVM: Introduce KVM_EXIT_COCO exit type
+To: Michael Roth <michael.roth@amd.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com,
+ jroedel@suse.de, thomas.lendacky@amd.com, pgonda@google.com,
+ ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com,
+ liam.merwick@oracle.com, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Peng, Chao P" <chao.p.peng@intel.com>
+References: <20240621134041.3170480-1-michael.roth@amd.com>
+ <20240621134041.3170480-5-michael.roth@amd.com> <ZnwkMyy1kgu0dFdv@google.com>
+ <r3tffokfww4yaytdfunj5kfy2aqqcsxp7sm3ga7wdytgyb3vnz@pfmstnvtuyg2>
+ <Zn8YM-s0TRUk-6T-@google.com>
+ <r7wqzejwpcvmys6jx7qcio2r6wvxfiideniqmwv5tohbohnvzu@6stwuvmnrkpo>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <r7wqzejwpcvmys6jx7qcio2r6wvxfiideniqmwv5tohbohnvzu@6stwuvmnrkpo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---000000000000886a44061e214438
-Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Jul 2024 at 04:14, Kees Cook <kees@kernel.org> wrote:
+
+On 6/29/2024 8:36 AM, Michael Roth wrote:
+> On Fri, Jun 28, 2024 at 01:08:19PM -0700, Sean Christopherson wrote:
+>> On Wed, Jun 26, 2024, Michael Roth wrote:
+>>> On Wed, Jun 26, 2024 at 07:22:43AM -0700, Sean Christopherson wrote:
+>>>> On Fri, Jun 21, 2024, Michael Roth wrote:
+>>>>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>>>>> index ecfa25b505e7..2eea9828d9aa 100644
+>>>>> --- a/Documentation/virt/kvm/api.rst
+>>>>> +++ b/Documentation/virt/kvm/api.rst
+>>>>> @@ -7122,6 +7122,97 @@ Please note that the kernel is allowed to use the kvm_run structure as the
+>>>>>   primary storage for certain register types. Therefore, the kernel may use the
+>>>>>   values in kvm_run even if the corresponding bit in kvm_dirty_regs is not set.
+>>>>>   
+>>>>> +::
+>>>>> +
+>>>>> +		/* KVM_EXIT_COCO */
+>>>>> +		struct kvm_exit_coco {
+>>>>> +		#define KVM_EXIT_COCO_REQ_CERTS			0
+>>>>> +		#define KVM_EXIT_COCO_MAX			1
+>>>>> +			__u8 nr;
+>>>>> +			__u8 pad0[7];
+>>>>> +			union {
+>>>>> +				struct {
+>>>>> +					__u64 gfn;
+>>>>> +					__u32 npages;
+>>>>> +		#define KVM_EXIT_COCO_REQ_CERTS_ERR_INVALID_LEN		1
+>>>>> +		#define KVM_EXIT_COCO_REQ_CERTS_ERR_GENERIC		(1 << 31)
+>>>> Unless I'm mistaken, these error codes are defined by the GHCB, which means the
+>>>> values matter, i.e. aren't arbitrary KVM-defined values.
+>>> They do happen to coincide with the GHCB-defined values:
+>>>
+>>>    /*
+>>>     * The GHCB spec only formally defines INVALID_LEN/BUSY VMM errors, but define
+>>>     * a GENERIC error code such that it won't ever conflict with GHCB-defined
+>>>     * errors if any get added in the future.
+>>>     */
+>>>    #define SNP_GUEST_VMM_ERR_INVALID_LEN   1
+>>>    #define SNP_GUEST_VMM_ERR_BUSY          2
+>>>    #define SNP_GUEST_VMM_ERR_GENERIC       BIT(31)
+>>>
+>>> and not totally by accident. But the KVM_EXIT_COCO_REQ_CERTS_ERR_* are
+>>> defined/documented without any reliance on the GHCB spec and are purely
+>>> KVM-defined. I just didn't really see any reason to pick different
+>>> numerical values since it seems like purposely obfuscating things for
+>> For SNP.  For other vendors, the numbers look bizarre, e.g. why bit 31?  And the
+>> fact that it appears to be a mask is even more odd.
+> That's fair. Values 1 and 2 made sense so just re-use, but that results
+> in a awkward value for _GENERIC that's not really necessary for the KVM
+> side.
 >
-> Based on feedback from Linus[1] and follow-up discussions, change the
-> suggested file naming for KUnit tests.
+>>> no real reason. But the code itself doesn't rely on them being the same
+>>> as the spec defines, so we are free to define these however we'd like as
+>>> far as the KVM API goes.
+>>>> I forget exactly what we discussed in PUCK, but for the error codes, I think KVM
+>>>> should either define it's own values that are completely disconnected from any
+>>>> "harware" spec, or KVM should very explicitly #define all hardware values and have
+>>> I'd gotten the impression that option 1) is what we were sort of leaning
+>>> toward, and that's the approach taken here.
+>>> And if we expose things selectively to keep the ABI small, it's a bit
+>>> awkward too. For instance, KVM_EXIT_COCO_REQ_CERTS_ERR_* basically needs
+>>> a way to indicate success/fail/ENOMEM. Which we have with
+>>> (assuming 0==success):
+>>>
+>>>    #define KVM_EXIT_COCO_REQ_CERTS_ERR_INVALID_LEN         1
+>>>    #define KVM_EXIT_COCO_REQ_CERTS_ERR_GENERIC             (1 << 31)
+>>>
+>>> But the GHCB also defines other values like:
+>>>
+>>>    #define SNP_GUEST_VMM_ERR_BUSY          2
+>>>
+>>> which don't make much sense to handle on the userspace side and doesn't
+>> Why not?  If userspace is waiting on a cert update for whatever reason, why can't
+>> it signal "busy" to the guest?
+> My thinking was that userspace is free to take it's time and doesn't need
+> to report delays back to KVM. But it would reduce the potential for
+> soft-lockups in the guest, so it might make sense to work that into the
+> API.
 >
-> Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
+> But more to original point, there could be something added in the future
+> that really has nothing to do with anything involving KVM<->userspace
+> interaction and so would make no sense to expose to userspace.
+> Unfortunately I picked a bad example. :)
+>
+>>> really have anything to do with the KVM_EXIT_COCO_REQ_CERTS KVM event,
+>>> which is a separate/self-contained thing from the general guest request
+>>> protocol. So would we expose that as ABI or not? If not then we end up
+>>> with this weird splitting of code. And if yes, then we have to sort of
+>>> give userspace a way to discover whenever new error codes are added to
+>>> the GHCB spec, because KVM needs to understand these value too and
+>> Not necessarily.  So long as KVM doesn't need to manipulate guest state, e.g. to
+>> set RBX (or whatever reg it is) for ERR_INVALID_LEN, then KVM doesn't need to
+>> care/know about the error codes.  E.g. userspace could signal VMM_BUSY and KVM
+>> would happily pass that to the guest.
+> But given we already have an exception to that where KVM does need to
+> intervene for certain errors codes like ERR_INVALID_LEN that require
+> modifying guest state, it doesn't seem like a good starting position
+> to have to hope that it doesn't happen again.
+>
+> It just doesn't seem necessary to put ourselves in a situation where
+> we'd need to be concerned by that at all. If the KVM API is a separate
+> and fairly self-contained thing then these decisions are set in stone
+> until we want to change it and not dictated/modified by changes to
+> anything external without our explicit consideration.
+>
+> I know the certs things is GHCB-specific atm, but when the certs used
+> to live inside the kernel the KVM_EXIT_* wasn't needed at all, so
+> that's why I see this as more of a KVM interface thing rather than
+> a GHCB one. And maybe eventually some other CoCo implementation also
+> needs some interface for fetching certificates/blobs from userspace
+> and is able to re-use it still because it's not too SNP-specific
+> and the behavior isn't dictated by the GHCB spec (e.g.
+> ERR_INVALID_LEN might result in some other state needing to be
+> modified in their case rather than what the GHCB dictates.)
 
-Looks good to me. (And it seems like sphinx is okay with it, too,
-which is always nice.)
+TDX GHCI does have a similar PV interface for TDX guest to get quota, i.e.,
+TDG.VP.VMCALL<GetQuote>.  This GetQuote PV interface is designed to invoke
+a request to generate a TD-Quote signing by a service hosting TD-Quoting
+Enclave operating in the host environment for a TD Report passed as a
+parameter by the TD.
+And the request will be forwarded to userspace for handling.
 
-We normally take these changes in via the kunit tree, but if you want
-to try to push it through along with the naming changes, that's fine
-by me.
+So like GHCB, TDX needs to pass a shared buffer to userspace, which is
+specified by GPA and size (4K aligned) and get the error code from
+userspace and forward the error code to guest.
 
-Reviewed-by: David Gow <davidgow@google.com>
+But there are some differences from GHCB interface.
+1. TDG.VP.VMCALL<GetQuote> is a a doorbell-like interface used to queue a
+    request. I.e., it is an asynchronous request.  The error code represents
+    the status of request queuing, *not* the status of TD Quote generation..
+2. Besides the error code returned by userspace for GetQuote interface, the
+    GHCI spec defines a "Status Code" field in the header of the shared 
+buffer.
+    The "Status Code" field is also updated by VMM during the real 
+handling of
+    getting quote (after TDG.VP.VMCALL<GetQuote> returned to guest).
+    After the TDG.VP.VMCALL<GetQuote> returned and back to TD guest, the TD
+    guest can poll the "Status Code" field to check if the processing is
+    in-flight, succeeded or failed.
+    Since the real handling of getting quota is happening in userspace, and
+    it will interact directly with guest, for TDX, it has to expose TDX
+    specific error code to userspace to update the result of quote 
+generation.
 
-Thanks,
--- David
+Currently, TDX is about to add a new TDX specific KVM exit reason, i.e.,
+KVM_EXIT_TDX_GET_QUOTE and its related data structure based on a previous
+discussion. https://lore.kernel.org/kvm/Zg18ul8Q4PGQMWam@google.com/
+For the error code returned by userspace, KVM simply forward the error code
+to guest without further translation or handling.
 
---000000000000886a44061e214438
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I am neutral to have a common KVM exit reason to handle both GHCB for
+REQ_CERTS and GHCI for GET_QUOTE.  But for the error code, can we uses 
+vendor
+specific error codes if KVM cares about the error code returned by userspace
+in vendor specific complete_userspace_io callback?
 
-MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
-BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
-BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
-Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
-FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
-YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
-AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
-DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
-4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
-GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
-kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
-IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIO9CwRQo9z7xrtSefNJ+O+Rt65NDXWrHG5qNq1U4xcFsMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcyNjA3MTQ1MlowaQYJKoZIhvcNAQkPMVww
-WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBgRXkw
-eWkr+SiN3nL/3e6L/bQqhiTQpV1hzH4xWDlbl2cLbjNRRhHkOkpMhJz8DjhV3sUJALDK/v+U8f+b
-VOKNPOoF/soxTyisGXB5QlJO+t4kQpe/zvbVDl6q3MKV9AjmlhmGyIeFEPaVImUDPdaVH421gSk5
-/XdNkR3sCS5EH1kbj25/FU/twxyy2GvLshyHV+FQi3TTaUq/aVZ2zGVhoHNZyk5z9VeSXh2Y4wFO
-fC6tVhOI3Pc94s4rFC3nKQiqjOfWd5DtVACkxcmhkhmCMNoszoUNAjuSLacuYy3iSaQOOn2Lmtte
-oMp8IW9pCO64G8eEBP/Lovi7UfGw9e5O
---000000000000886a44061e214438--
+BTW, here is the plan of 4 hypercalls needing to exit to userspace for
+TDX basic support series:
+TDG.VP.VMCALL<SetupEventNotifyInterrupt>
+- Add a new KVM exit reason KVM_EXIT_TDX_SETUP_EVENT_NOTIFY
+TDG.VP.VMCALL<GetQuote>
+- Add a new KVM exit reason KVM_EXIT_TDX_GET_QUOTE
+TDG.VP.VMCALL<MapGPA>
+- Reuse KVM_EXIT_HYPERCALL with KVM_HC_MAP_GPA_RANGE
+TDG.VP.VMCALL<ReportFatalError>
+- Reuse KVM_EXIT_SYSTEM_EVENT but add a new type
+   KVM_SYSTEM_EVENT_TDX_FATAL_ERROR
+
+
 
