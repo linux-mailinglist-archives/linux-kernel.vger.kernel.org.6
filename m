@@ -1,151 +1,164 @@
-Return-Path: <linux-kernel+bounces-263520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B3793D72B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:47:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D5393D731
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAA1B21194
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44462847E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BAF17C201;
-	Fri, 26 Jul 2024 16:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p3jibGVi"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15117C9EA;
+	Fri, 26 Jul 2024 16:50:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BE811C83
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644C23774;
+	Fri, 26 Jul 2024 16:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012423; cv=none; b=cHVo9cEcDpq4KtVg9CEVwfshaWsOGTmfXaSMevucq+JskImM22WNswxd7tb7vwx5mKcfPmmZLDRF1r1TYDDGPmtNvUBJa3YP0YlnK7BNElvIlA1HWJjQPcCgO1y5vzildn14ut/EWPRNVdPtYfiVuz0v/eCwCoA0wQ8dmW3cySs=
+	t=1722012605; cv=none; b=ZkIemdEoQmDCTD83EC0oTNLzOKtSIhVipwndPAFdaCR6n3FSb67dhUAFEcV9YyC+i6jFhtF1VZ728tuecbiEobxpilGaMsPWIwHqEUg3lLmyoEymK1bYw6AWWZca6cAlivELeJGR5ROx/n4sA8cNtB2vyrQR2hkZdc8reB9bKLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012423; c=relaxed/simple;
-	bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ipW/B8LTdk9aU1vbL9j6lUIUuhvmmNl9dOwrfW/pv/syzwnmGXnqDlmsUQbonrAX4oEc8qAU7lkqqPJaH3WPkHUzA6zDHvMSXM6HNkVI/z/R4hfbnqs7sV50n9cJusC3jUqc2GaF9ZXdpJkzbSqYZkbtqBWZIi3bq8UwPK2vtk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p3jibGVi; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2210902276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722012420; x=1722617220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
-        b=p3jibGVioZDUwtW9wBmlSecmJfEVnPyjHZPJVTivu49bTF0XX341kiD4rpA3yNDwaF
-         qXJ7fUnD5tjtf/YzCuPkxN8q2PhJ/hxas819ws7XLL6C5Ovm9KU23UqS1gPzTJrv7dSc
-         3mKP6T49bp0c8iq1RDeGkcvBVCLozRSsOBOzLN592oNIzDITy/waKVApkSl7R5z+L1x8
-         2IeX8IDVoZOWoN9kQnbioa0/unHKYtYkaRxEHH7qwJAwHfic9zIJVx+gjZXxoH3uE5nU
-         j38sDFBa+y3yueQGtDAFdR0Z6eh9Iuu0R7TSEfeYWNm3MpSpH2lk+sW0IH5aQPRGPaJH
-         tEeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722012420; x=1722617220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
-        b=ntYrmL6yTn0wK1/e3btt8FhKTar/zAFTTNUcOmXb/4OW78OZeXO30qX/lVnFaCTxdD
-         m5y2jjQVypkGJJOQpFylmeao9ZHIPzxhknYmmLvFMdZ9sEh2pDK/Kw/qNTzhFNgT1Q2S
-         l2gFaKA+W4bTESO4BLKN4qLizmvXH4SEza9SEucITYf93X0uOtrSgpmp0EkII/G2reVm
-         KeeBnJxZNet/Iw2gez8W/Z4xiFQZFQp0g6WJnJA4MsGJQWwqUArSoBBrEe5s25uUStfC
-         i+Gn6voyurW+QtYGitTBmtGWD0zWsoYFGIjKjwe//w9wbEv09bsTpWFuJFsJ2DuH4A+b
-         ooww==
-X-Forwarded-Encrypted: i=1; AJvYcCXTnKBrF7EbH/ql0iovV5Wcd2guv46934T5LgkknjS6GiDbEidMjfQhD+uowH36rSzzIId7a3k5WoKL6iA2TezO+b4Q9+lWxa2qb+Bo
-X-Gm-Message-State: AOJu0Yyw20/n12uYYRU7VjbUTAx7p07qGPqjJ7iRfCbMx2xZceNfemgT
-	2+J2rEHBzLarxc2pW2qcMpG87A+n+QXoGT41an5N6T1VsZpFLIA7bF+HU/RHeGvVfQUk+UDYY2d
-	tbIKddnNybnagymYEwx2umOL+dCOTuHnDW+u7
-X-Google-Smtp-Source: AGHT+IHvjARSHS13OyZRvXmxTUtGDoqeMUEoVpKPSZdXCI6sy/VtejyKKxC30+vNfneTHF35XYilujQgIJqHT7UU1to=
-X-Received: by 2002:a05:6902:1028:b0:e03:3598:2989 with SMTP id
- 3f1490d57ef6-e0b545bffe6mr372203276.45.1722012420186; Fri, 26 Jul 2024
- 09:47:00 -0700 (PDT)
+	s=arc-20240116; t=1722012605; c=relaxed/simple;
+	bh=TcPkGrfOB/5scQGj+9p3hEKoE41ONhI5mBWu6d+4ikY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jJwB4aD9BdTfS1WgYlbgUIOjl+d4eOOqbb6FH3LKXAWYaqm0oGomdGfHtSad48wmM/ajubtYSEa2Dqv6gmapBZ34G34NKLV7E4sCM2CvDEagYPjCsL5yhlcHl8E130RzeIi7vH3vXFg+q6rWBSyiaED23rMiQ2a5paJQ2NbJ9s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVtw42Qqrz6K9Lm;
+	Sat, 27 Jul 2024 00:47:32 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A1191404FC;
+	Sat, 27 Jul 2024 00:50:00 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
+ 2024 17:49:59 +0100
+Date: Fri, 26 Jul 2024 17:49:58 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Woodhouse <dwmw2@infradead.org>
+CC: "Michael S. Tsirkin" <mst@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>, Peter Hilber <peter.hilber@opensynergy.com>,
+	<linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-rtc@vger.kernel.org>, "Ridoux,
+ Julien" <ridouxj@amazon.com>, <virtio-dev@lists.linux.dev>, "Luu, Ryan"
+	<rluu@amazon.com>, "Chashper, David" <chashper@amazon.com>, "Mohamed
+ Abuelfotoh, Hazem" <abuehaze@amazon.com>, "Christopher S . Hall"
+	<christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>, "John
+ Stultz" <jstultz@google.com>, <netdev@vger.kernel.org>, Stephen Boyd
+	<sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, qemu-devel <qemu-devel@nongnu.org>, "Simon
+ Horman" <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <20240726174958.00007d10@Huawei.com>
+In-Reply-To: <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
+References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
+	<20240725012730-mutt-send-email-mst@kernel.org>
+	<7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
+	<20240725081502-mutt-send-email-mst@kernel.org>
+	<f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
+	<20240725082828-mutt-send-email-mst@kernel.org>
+	<db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
+	<20240725083215-mutt-send-email-mst@kernel.org>
+	<98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
- <CABdmKX2Hsd7i_Erc2_n8FQqY90mMgX24hkVe+z=y9tCk7sUL6g@mail.gmail.com> <dhq4sgkuyix6le66i6usodzs6pqyturvl7awmzuyfzpgbqg5x7@xxocuq2wmbvd>
-In-Reply-To: <dhq4sgkuyix6le66i6usodzs6pqyturvl7awmzuyfzpgbqg5x7@xxocuq2wmbvd>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Fri, 26 Jul 2024 09:46:47 -0700
-Message-ID: <CABdmKX1LyubDhin5B_PxOrxHKyEsanZnW3yfd7+OyJG6am5ucg@mail.gmail.com>
-Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Greg Thelen <gthelen@google.com>, 
-	Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Jul 26, 2024 at 8:47=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> Hi T.J.
->
-> On Thu, Jul 25, 2024 at 04:12:12PM GMT, T.J. Mercier wrote:
-> > On Mon, Jul 22, 2024 at 3:53=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> > > Linux kernel does not expose memory.current on the root memcg and the=
-re
-> > > are applications which have to traverse all the top level memcgs to
-> > > calculate the total memory charged in the system. This is more expens=
-ive
-> > > (directory traversal and multiple open and reads) and is racy on a bu=
-sy
-> > > machine. As the kernel already have the needed information i.e. root'=
-s
-> > > memory.current, why not expose that?
-> > >
-> > > However root's memory.current will have a different semantics than th=
-e
-> > > non-root's memory.current as the kernel skips the charging for root, =
-so
-> > > maybe it is better to have a different named interface for the root.
-> > > Something like memory.children_usage only for root memcg.
-> > >
-> > > Now there is still a question that why the kernel does not expose
-> > > memory.current for the root. The historical reason was that the memcg
-> > > charging was expensice and to provide the users to bypass the memcg
-> > > charging by letting them run in the root. However do we still want to
-> > > have this exception today? What is stopping us to start charging the
-> > > root memcg as well. Of course the root will not have limits but the
-> > > allocations will go through memcg charging and then the memory.curren=
-t
-> > > of root and non-root will have the same semantics.
-> > >
-> > > This is an RFC to start a discussion on memcg charging for root.
-> >
-> > Hi Shakeel,
-> >
-> > Since the root already has a page_counter I'm not opposed to this new
-> > file as it doesn't increase the page_counter depth for children.
-> > However I don't currently have any use-cases for it that wouldn't be
-> > met by memory.stat in the root.
->
-> I think difference would be getting a single number versus accumulating
-> different fields in memory.stat to get that number (memory used by
-> root's children) which might be a bit error prone.
+On Thu, 25 Jul 2024 14:50:50 +0100
+David Woodhouse <dwmw2@infradead.org> wrote:
 
-Yeah that makes sense, I get how it'd be nicer to do just one read in
-the root instead of digging into all the children. I just meant to say
-that when looking at the root, currently I only care about a
-particular stat (e.g. file_mapped) instead of the whole usage.
+> On Thu, 2024-07-25 at 08:33 -0400, Michael S. Tsirkin wrote:
+> > On Thu, Jul 25, 2024 at 01:31:19PM +0100, David Woodhouse wrote:  
+> > > On Thu, 2024-07-25 at 08:29 -0400, Michael S. Tsirkin wrote:  
+> > > > On Thu, Jul 25, 2024 at 01:27:49PM +0100, David Woodhouse wrote:  
+> > > > > On Thu, 2024-07-25 at 08:17 -0400, Michael S. Tsirkin wrote:  
+> > > > > > On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wrote:  
+> > > > > > > > Do you want to just help complete virtio-rtc then? Would be easier than
+> > > > > > > > trying to keep two specs in sync.  
+> > > > > > > 
+> > > > > > > The ACPI version is much more lightweight and doesn't take up a
+> > > > > > > valuable PCI slot#. (I know, you can do virtio without PCI but that's
+> > > > > > > complex in other ways).
+> > > > > > >   
+> > > > > > 
+> > > > > > Hmm, should we support virtio over ACPI? Just asking.  
+> > > > > 
+> > > > > Given that we support virtio DT bindings, and the ACPI "PRP0001" device
+> > > > > exists with a DSM method which literally returns DT properties,
+> > > > > including such properties as "compatible=virtio,mmio" ... do we
+> > > > > already?
+> > > > > 
+> > > > >   
+> > > > 
+> > > > In a sense, but you are saying that is too complex?
+> > > > Can you elaborate?  
+> > > 
+> > > No, I think it's fine. I encourage the use of the PRP0001 device to
+> > > expose DT devices through ACPI. I was just reminding you of its
+> > > existence.  
+> > 
+> > Confused. You said "I know, you can do virtio without PCI but that's
+> > complex in other ways" as the explanation why you are doing a custom
+> > protocol.  
+> 
+> Ah, apologies, I wasn't thinking that far back in the conversation.
+> 
+> If we wanted to support virtio over ACPI, I think PRP0001 can be made
+> to work and isn't too complex (even though it probably doesn't yet work
+> out of the box).
+> 
+> But for the VMCLOCK thing, yes, the simple ACPI device is a lot simpler
+> than virtio-rtc and much more attractive.
+> 
+> Even if the virtio-rtc specification were official today, and I was
+> able to expose it via PCI, I probably wouldn't do it that way. There's
+> just far more in virtio-rtc than we need; the simple shared memory
+> region is perfectly sufficient for most needs, and especially ours.
+> 
+> I have reworked
+> https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/vmclock
+> to take your other feedback into account.
+> 
+> It's now more flexible about the size handling, and explicitly checking
+> that specific fields are present before using them. 
+> 
+> I think I'm going to add a method on the ACPI device to enable the
+> precise clock information. I haven't done that in the driver yet; it
+> still just consumes the precise clock information if it happens to be
+> present already. The enable method can be added in a compatible fashion
+> (the failure mode is that guests which don't invoke this method when
+> the hypervisor needs them to will see only the disruption signal and
+> not precise time).
+> 
+> For the HID I'm going to use AMZNVCLK. I had used QEMUVCLK in the QEMU
+> patches, but I'll change that to use AMZNVCLK too when I repost the
+> QEMU patch.
 
-> > As far as charging, I've only ever seen kthreads and init in the root.
-> > You have workloads that run there?
->
-> No workloads in root. The charging is only to make the semanctics of
-> root's memory.current same as its descendants.
->
-> Thanks,
-> Shakeel
+That doesn't fit with ACPI _HID definitions.
+Second set 4 characters need to be hex digits as this is an
+ACPI style ID (which I assume this is given AMZN is a valid
+vendor ID.  6.1.5 in ACPI v6.5
+
+Maybe I'm missing something...
+
+J
+
+
 
