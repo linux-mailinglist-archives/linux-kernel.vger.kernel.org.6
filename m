@@ -1,431 +1,435 @@
-Return-Path: <linux-kernel+bounces-263633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4A093D877
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C742293D87C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B431F24057
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4071F21B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE9D3BBF4;
-	Fri, 26 Jul 2024 18:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48F14D8A9;
+	Fri, 26 Jul 2024 18:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dpJ7bFjw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ar6CSLzL"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451513D994
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE443D994
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722019400; cv=none; b=FsKD+j3Q/oRlwDqgi20WBk7K50AiH7M8rwe/WxoTUqb44knefxcT+e8bDXccFR1K+aA2vFWaCQf81gTFHNI3IWuqE67mcRUq8X6GKpYen4mrFAB6KPo2eW2/ZSRjr2dHW6esxlxNwNWCUOljCu9yGFFI3eo1cvxJ1T/C6foP7ZE=
+	t=1722019503; cv=none; b=Jm8dAd16I8urWfoHLyF6R6W1yZlmZoyVubj5u1YtvFJKFtr6pZ+fGgPz8wbsrQDXBpTZQkop2OkifwGEd/VFEIrSSGJo3Rr3UxDbK2mSn91DGaZ+AyOUsqhiGaA6lAgoKd6kKaQO+BwgRkpGLnqYKQPAL5zbccwGYhI5I9GolZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722019400; c=relaxed/simple;
-	bh=XInYtRsO0ig8ZYzFvn+qr6hSi2uJ387yYJHAZojDWZU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KQkQtcgRW4/2HlwtDq3gxiWVwgtfWKA2onkR9j4qjrQ9GPhKt4MnAgHw/LzpJLOaFeMsBPOamyhM6NaboyFMw1DvSyzZjVfXa5tt9znLl8AJrGi6dwaBIC9hsIGF4/wdndC50STfH9mNdOf52/ytVUmF7PncwLBLQ+QSXGJUgVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dpJ7bFjw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722019397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bcNO3jbhugBwlmCnyZwTsF0UWnAb4uSNNdMpqge9mGk=;
-	b=dpJ7bFjwUIyUk1/WgPq3nY9E580rkhHEJnCXKdbp6kannChZEsUQQLUJ/yVf/sR7pO52kP
-	f0wizZIkUjP1GHg51LEgoEPgtmtlPwXXrXGXryqBg9XmUjClvBEZ582Y/ekLX8MihLo8TJ
-	XDAuJvUMMOaNfK/y97tWaS+ItNaRs78=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-irTZXGYmOD-bYGx9X-nDLQ-1; Fri, 26 Jul 2024 14:43:15 -0400
-X-MC-Unique: irTZXGYmOD-bYGx9X-nDLQ-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5a281e55710so465083a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:43:15 -0700 (PDT)
+	s=arc-20240116; t=1722019503; c=relaxed/simple;
+	bh=UCARF7dfq4wjV7ZkKGKjCDksLhqHITlO63pedtrAkxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sRoHh8et/uJ/4E5jS17UWY+BhOf8eCkuqb6MxiKaYmMQm5R9b0ybOeBHpYgxrbBGyElyc2b80R6nM7R6oVouS+Di3usFFB28H5nh8/VqegwUVgS2qdoRVbsGkG8OZSkXPepwgBlH6Obg2Pl6EYq34+cfTH6aTWBj+zrNprYxs7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ar6CSLzL; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65cd720cee2so23813017b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722019500; x=1722624300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JsifxQ0usgY6YlEXog6cF0/Iw3GnVa1z3F0hrXXXxxA=;
+        b=Ar6CSLzLDnKV7iNHOtb/QDIi8+gsCuU+lturC4qg+puXwbCn/UqzN259XlfuMVk7GB
+         Al4or4bgw2eYXFPeTEhRFIj4iDg3tpmccVN+H5e3iRR9XamycB+2vVimxKe4BrRVvGNG
+         nZpIYl0BMCN69CvYMrgZ+kdODXEni4xH1GIaQnMFMV/Bb8eQQl5cJkuXXRLc7cgXX3oX
+         P2sEhjUA1jbR4uErEU48jtjx4qhv5Si1AKm3oPPlheRP67D5Fi1Y1plJAXqu2tR5w8JO
+         Es37eWOldlIq23HoJHvdKVsCmU4ZRNxaIfAhuL1gFV7vuWPD8gCz0DBnwjM2EpIycxQH
+         NdOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722019394; x=1722624194;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bcNO3jbhugBwlmCnyZwTsF0UWnAb4uSNNdMpqge9mGk=;
-        b=C5G1HSqr+BlITaHoTWLD0RefxkIPNrihQT9pXAQW+1PdjnvD35onMdGXXPhlwQDntY
-         oWIreh/bCbL7DROsgBbP8IQALGC4mRt+5HmLHU1Z8gntqbOAjYwAklxgsyLRG0RVKhNh
-         zLyBlz6hD1lDZLee75HFbOiJIgoLbFnVJ66oX57l1WI8ntHRWaYR1I5eYWbsEI2Wk3DU
-         U/HK3e/TH+vZspOjr0t9y5ogU9rQeTDmdCd8tISF5cj4GlolPGxtgLmZMvYRnRhvNMfP
-         HMX/WiwbsIJTxzHodCN7jEam9x8vSBu/4a3AYd2tZv6NXAIUUpSUdV34cZavkKYRUjiC
-         vsDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNXkxpG7thPaikkmeLhDIsPWCw3/OYvN39HEFMbCeAz2C8kGsP/Et6w7OUzHib1O7gdUo4jaER+SoNoZXRxgGruojYd33YABceFJik
-X-Gm-Message-State: AOJu0YxHQ7MHBmpQdc1eKbr3AwT4wpEsSc1J20+AfdFKlHmZw9AcJfOj
-	hbAqf9vNt1e7zPQKQcpSWe1SMhbI9/XZkARf2V0PnhJs6lEQ1KZ+f66YUx4uBN821gauEVrXkjC
-	3VIuupCnJvOq0syczLdQ3NoeewyV87Nw36RyN7QxbS6oSdnc5yS6187m4RRiyVA==
-X-Received: by 2002:a05:6402:2711:b0:5a1:1ce3:9b58 with SMTP id 4fb4d7f45d1cf-5ac2775629cmr2906984a12.0.1722019394284;
-        Fri, 26 Jul 2024 11:43:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFI8/kRV51i8KHNBfGqgH9nsoK9ivieO2uRjEp1YZSEZIQ69c9eUiRlLcZjjUEy6A7Ui5M5hQ==
-X-Received: by 2002:a05:6402:2711:b0:5a1:1ce3:9b58 with SMTP id 4fb4d7f45d1cf-5ac2775629cmr2906973a12.0.1722019393756;
-        Fri, 26 Jul 2024 11:43:13 -0700 (PDT)
-Received: from fedora.fritz.box (200116b82d4f5c00cbecb909b7d5f58c.dip.versatel-1u1.de. [2001:16b8:2d4f:5c00:cbec:b909:b7d5:f58c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0464sm2244168a12.4.2024.07.26.11.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 11:43:13 -0700 (PDT)
-Message-ID: <ee44ea7ac760e73edad3f20b30b4d2fff66c1a85.camel@redhat.com>
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-From: pstanner@redhat.com
-To: Damien Le Moal <dlemoal@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>,  Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 26 Jul 2024 20:43:12 +0200
-In-Reply-To: <6ce4c9f4-7c75-4451-8c6f-fe3d6a3dd913@kernel.org>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	 <6ce4c9f4-7c75-4451-8c6f-fe3d6a3dd913@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+        d=1e100.net; s=20230601; t=1722019500; x=1722624300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JsifxQ0usgY6YlEXog6cF0/Iw3GnVa1z3F0hrXXXxxA=;
+        b=tS8Zp++9GopEqfj4MGWu6jedV2E1D5jyia7SArM2kRX8P3BsdMMdWLLpDnjHTbx/UR
+         2VqFGUqBDynFcIZ29ACUgW6nGytl1IBu6RTXpPW3GXavfnWJLUt9UvTS0EjNRe6WX9Fw
+         JmR0PCiO/gpS/58WrYE/S2XB0bGhDpYEbZzEfjnmO9hPBPpaeDvb7FpleM3YbQv2EZvM
+         7qQXj/sSM0Zt0MAHMVK0WYJ056x6V3Zv0UVQjJjpF0tL6ee5IR6NtfTGrsR/5AFgHCF3
+         cvOqNn+NZl7HWOfemfBsKbS6r1GYUtav3leth7uNKJOFFNQFE4UnF8u6XEbh3Lzmaiga
+         hkEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2y0Y1b3MjU4STsEJZN68TFEmMMJIYCcRNpvqg/hJBGCyOeVHNDjiyYIxJVytKKwPM9urkEzp8WYzw1ZJ0ESCUlk1BzHDl3FwRHAkh
+X-Gm-Message-State: AOJu0YzM/Fynt4ZGpjVUbLKqtHQ2citw753sdouxlOzaHNjjZY7nZ4dG
+	c3ELNiLNK2rw4kDeSrM/T7PTMbprXDkou2Dy/fhnimTY2YRhZGBeIBuKrdP1Y40eGrJ+KzqiXye
+	YvuiJPbFFFRih3N+SWnbJfGUz4ERGU0ivQjeyGA==
+X-Google-Smtp-Source: AGHT+IHq4ersvGmfoLfXX9SWcuVi5VBMy9AFILmzM0TSb1aYeNWYqFT1p+WrpKd1qQdGsqx7KUynlNWAFgt9TRtKk3s=
+X-Received: by 2002:a05:690c:f0c:b0:64b:3e44:e4f4 with SMTP id
+ 00721157ae682-67a05c8b5ecmr8756297b3.7.1722019500486; Fri, 26 Jul 2024
+ 11:45:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CGME20240726110141eucas1p279c474e8737dcf4752808a20219e12d4@eucas1p2.samsung.com>
+ <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-6-m.majewski2@samsung.com>
+In-Reply-To: <20240726110114.1509733-6-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 26 Jul 2024 13:44:49 -0500
+Message-ID: <CAPLW+4nXXaVxawa57JjKj7tpMrwLjCh4dWCM_4KRWV4q9fTbaA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] drivers/thermal/exynos: add initial Exynos850 support
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Anand Moon <linux.amoon@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-07-26 at 09:19 +0900, Damien Le Moal wrote:
-> On 7/25/24 21:07, Philipp Stanner wrote:
-> > pci_intx() is a function that becomes managed if
-> > pcim_enable_device()
-> > has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
-> > pcim_intx()") changed this behavior so that pci_intx() always leads
-> > to
-> > creation of a separate device resource for itself, whereas earlier,
-> > a
-> > shared resource was used for all PCI devres operations.
-> >=20
-> > Unfortunately, pci_intx() seems to be used in some drivers'
-> > remove()
-> > paths; in the managed case this causes a device resource to be
-> > created
-> > on driver detach.
-> >=20
-> > Fix the regression by only redirecting pci_intx() to its managed
-> > twin
-> > pcim_intx() if the pci_command changes.
-> >=20
-> > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-> > Reported-by: Damien Le Moal <dlemoal@kernel.org>
-> > Closes:
-> > https://lore.kernel.org/all/b8f4ba97-84fc-4b7e-ba1a-99de2d9f0118@kernel=
-.org/
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > ---
-> > Alright, I reproduced this with QEMU as Damien described and this
-> > here
-> > fixes the issue on my side. Feedback welcome. Thank you very much,
-> > Damien.
->=20
-> This works ans is cleaner that what I had :)
+On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> This is loosely adapted from an implementation available at
+> https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4=
+.14-linaro/drivers/thermal/samsung/exynos_tmu.c
+> Some differences from that implementation:
+> - unlike that implementation, we do not use the ACPM mechanism, instead
+>   we just access the registers, like we do for other SoCs,
+> - the SoC is supposed to support multiple sensors inside one unit. The
+>   vendor implementation uses one kernel device per sensor, we would
+>   probably prefer to have one device for all sensors, have
+>   #thermal-sensor-cells =3D <1> and so on. We implemented this, but we
+>   could not get the extra sensors to work on our hardware so far. This
+>   might be due to a misconfiguration and we will probably come back to
+>   this, however our implementation only supports a single sensor for
+>   now,
+> - the vendor implementation supports disabling CPU cores as a cooling
+>   device. We did not attempt to port this, and this would not really fit
+>   this driver anyway.
+>
+> Additionally, some differences from the other SoCs supported by this
+> driver:
+> - we do not really constrain the e-fuse information like the other SoCs
+>   do (data->{min,max}_efuse_value). In our tests, those values (as well
+>   as the raw sensor values) were much higher than in the other SoCs, to
+>   the degree that reusing the data->{min,max}_efuse_value from the other
+>   SoCs would cause instant critical temperature reset on boot,
+> - this SoC provides more information in the e-fuse data than other SoCs,
+>   so we read some values inside exynos850_tmu_initialize instead of
+>   hardcoding them in exynos_map_dt_data.
+>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
 
-The fundamental idea is mostly identical to yours =E2=80=93 you likely just
-didn't see it because your attention was directed towards the code in
-devres.c ;)
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->=20
-> Tested-by: Damien Le Moal <dlemoal@kernel.org>
-
-You might wanna ping Bjorn about that in case he didn't see.
-
->=20
-> > It seems that this might yet again be the issue of drivers not
-> > being
-> > aware that pci_intx() might become managed, so they use it in their
-> > unwind path (rightfully so; there probably was no alternative back
-> > then).
->=20
-> At least for the ahci driver with wich I found the issue, what is odd
-> is that
-> there is only a single call to pci_intx()=C2=A0
-
-There is only a single _directly visible_ call :]
-
-> to *enable* intx, and that call is in
-> the probe path. With QEMU, this call is not even done as the qemu
-> AHCI support MSI.
-
-Hmm, MSI...
-
->=20
-> Adding a WARN_ON(!enable) at the beginning of pci_inx(), we can see
-> that what
-> happens is that during device probe, we get this backtrace:
->=20
-> [=C2=A0=C2=A0 34.658988] WARNING: CPU: 0 PID: 999 at drivers/pci/pci.c:44=
-80
-> pci_intx+0x7f/0xc0
-> [=C2=A0=C2=A0 34.660799] Modules linked in: ahci(+) rpcsec_gss_krb5 auth_=
-rpcgss
-> nfsv4
-> dns_resolver nfs lockd grace netfs]
-> [=C2=A0=C2=A0 34.673784] CPU: 0 UID: 0 PID: 999 Comm: modprobe Tainted:
-> G=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 W
-> =C2=A06.10.0+ #1948
-> [=C2=A0=C2=A0 34.675961] Tainted: [W]=3DWARN
-> [=C2=A0=C2=A0 34.676891] Hardware name: QEMU Standard PC (Q35 + ICH9, 200=
-9),
-> BIOS
-> 1.16.3-2.fc40 04/01/2014
-> [=C2=A0=C2=A0 34.679197] RIP: 0010:pci_intx+0x7f/0xc0
-> [=C2=A0=C2=A0 34.680348] Code: b7 d2 be 04 00 00 00 48 89 df e8 0c 84 ff =
-ff 48
-> 8b 44 24 08
-> 65 48 2b 04 25 28 00 00 00 756
-> [=C2=A0=C2=A0 34.685015] RSP: 0018:ffffb60f40e2f7f0 EFLAGS: 00010246
-> [=C2=A0=C2=A0 34.686436] RAX: 0000000000000000 RBX: ffff9dbb81237000 RCX:
-> ffffb60f40e2f64c
-> [=C2=A0=C2=A0 34.688294] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-> ffff9dbb81237000
-> [=C2=A0=C2=A0 34.690120] RBP: 0000000000000000 R08: 0000000000000000 R09:
-> 0000000000000001
-> [=C2=A0=C2=A0 34.691986] R10: ffff9dbb88883538 R11: 0000000000000001 R12:
-> 0000000000000001
-> [=C2=A0=C2=A0 34.693687] R13: ffff9dbb812370c8 R14: ffff9dbb86eeaa00 R15:
-> 0000000000000000
-> [=C2=A0=C2=A0 34.695140] FS:=C2=A0 00007f9d81465740(0000) GS:ffff9dbcf7c0=
-0000(0000)
-> knlGS:0000000000000000
-> [=C2=A0=C2=A0 34.696884] CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080=
-050033
-> [=C2=A0=C2=A0 34.698107] CR2: 00007ffc786ed8b8 CR3: 00000001088da000 CR4:
-> 0000000000350ef0
-> [=C2=A0=C2=A0 34.699562] Call Trace:
-> [=C2=A0=C2=A0 34.700215]=C2=A0 <TASK>
-> [=C2=A0=C2=A0 34.700802]=C2=A0 ? pci_intx+0x7f/0xc0
-> [=C2=A0=C2=A0 34.701607]=C2=A0 ? __warn.cold+0xa5/0x13c
-> [=C2=A0=C2=A0 34.702448]=C2=A0 ? pci_intx+0x7f/0xc0
-> [=C2=A0=C2=A0 34.703257]=C2=A0 ? report_bug+0xff/0x140
-> [=C2=A0=C2=A0 34.704105]=C2=A0 ? handle_bug+0x3a/0x70
-> [=C2=A0=C2=A0 34.704938]=C2=A0 ? exc_invalid_op+0x17/0x70
-> [=C2=A0=C2=A0 34.705826]=C2=A0 ? asm_exc_invalid_op+0x1a/0x20
-> [=C2=A0=C2=A0 34.706593]=C2=A0 ? pci_intx+0x7f/0xc0
-> [=C2=A0=C2=A0 34.707086]=C2=A0 msi_capability_init+0x35a/0x370
-> [=C2=A0=C2=A0 34.707723]=C2=A0 __pci_enable_msi_range+0x187/0x240
-> [=C2=A0=C2=A0 34.708356]=C2=A0 pci_alloc_irq_vectors_affinity+0xc4/0x110
-> [=C2=A0=C2=A0 34.709058]=C2=A0 ahci_init_one+0x6ec/0xcc0 [ahci]
-> [=C2=A0=C2=A0 34.709692]=C2=A0 ? __pm_runtime_resume+0x58/0x90
-> [=C2=A0=C2=A0 34.710311]=C2=A0 local_pci_probe+0x45/0x90
-> [=C2=A0=C2=A0 34.710865]=C2=A0 pci_device_probe+0xbb/0x230
-> [=C2=A0=C2=A0 34.711433]=C2=A0 really_probe+0xcc/0x350
-> [=C2=A0=C2=A0 34.711976]=C2=A0 ? pm_runtime_barrier+0x54/0x90
-> [=C2=A0=C2=A0 34.712569]=C2=A0 ? __pfx___driver_attach+0x10/0x10
-> [=C2=A0=C2=A0 34.713206]=C2=A0 __driver_probe_device+0x78/0x110
-> [=C2=A0=C2=A0 34.713837]=C2=A0 driver_probe_device+0x1f/0xa0
-> [=C2=A0=C2=A0 34.714427]=C2=A0 __driver_attach+0xbe/0x1d0
-> [=C2=A0=C2=A0 34.715001]=C2=A0 bus_for_each_dev+0x92/0xe0
-> [=C2=A0=C2=A0 34.715563]=C2=A0 bus_add_driver+0x115/0x200
-> [=C2=A0=C2=A0 34.716136]=C2=A0 driver_register+0x72/0xd0
-> [=C2=A0=C2=A0 34.716704]=C2=A0 ? __pfx_ahci_pci_driver_init+0x10/0x10 [ah=
-ci]
-> [=C2=A0=C2=A0 34.717457]=C2=A0 do_one_initcall+0x76/0x3a0
-> [=C2=A0=C2=A0 34.718036]=C2=A0 do_init_module+0x60/0x210
-> [=C2=A0=C2=A0 34.718616]=C2=A0 init_module_from_file+0x86/0xc0
-> [=C2=A0=C2=A0 34.719243]=C2=A0 idempotent_init_module+0x127/0x2c0
-> [=C2=A0=C2=A0 34.719913]=C2=A0 __x64_sys_finit_module+0x5e/0xb0
-> [=C2=A0=C2=A0 34.720546]=C2=A0 do_syscall_64+0x7d/0x160
-> [=C2=A0=C2=A0 34.721100]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.721695]=C2=A0 ? do_syscall_64+0x89/0x160
-> [=C2=A0=C2=A0 34.722258]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.722846]=C2=A0 ? do_sys_openat2+0x9c/0xe0
-> [=C2=A0=C2=A0 34.723421]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.724012]=C2=A0 ? syscall_exit_to_user_mode+0x64/0x1f0
-> [=C2=A0=C2=A0 34.724703]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.725293]=C2=A0 ? do_syscall_64+0x89/0x160
-> [=C2=A0=C2=A0 34.725883]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.726467]=C2=A0 ? syscall_exit_to_user_mode+0x64/0x1f0
-> [=C2=A0=C2=A0 34.727159]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.727764]=C2=A0 ? do_syscall_64+0x89/0x160
-> [=C2=A0=C2=A0 34.728341]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.728937]=C2=A0 ? exc_page_fault+0x6c/0x200
-> [=C2=A0=C2=A0 34.729511]=C2=A0 ? srso_return_thunk+0x5/0x5f
-> [=C2=A0=C2=A0 34.730109]=C2=A0 entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [=C2=A0=C2=A0 34.730837] RIP: 0033:0x7f9d80d281dd
-> [=C2=A0=C2=A0 34.731375] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 =
-0f 1e
-> fa 48 89 f8
-> 48 89 f7 48 89 d6 48 89 ca 4d8
-> [=C2=A0=C2=A0 34.733796] RSP: 002b:00007ffc786f0898 EFLAGS: 00000246 ORIG=
-_RAX:
-> 0000000000000139
-> [=C2=A0=C2=A0 34.734894] RAX: ffffffffffffffda RBX: 00005617347f09a0 RCX:
-> 00007f9d80d281dd
-> [=C2=A0=C2=A0 34.735850] RDX: 0000000000000000 RSI: 0000561715fe5e79 RDI:
-> 0000000000000003
-> [=C2=A0=C2=A0 34.736812] RBP: 00007ffc786f0950 R08: 00007f9d80df6b20 R09:
-> 00007ffc786f08e0
-> [=C2=A0=C2=A0 34.737769] R10: 00005617347f13e0 R11: 0000000000000246 R12:
-> 0000561715fe5e79
-> [=C2=A0=C2=A0 34.738725] R13: 0000000000040000 R14: 00005617347f8990 R15:
-> 00005617347f8b20
-> [=C2=A0=C2=A0 34.739695]=C2=A0 </TASK>
-> [=C2=A0=C2=A0 34.740075] ---[ end trace 0000000000000000 ]---
->=20
-> So it is msi_capability_init() that is the problem: that function
-> calls
-> pci_intx_for_msi(dev, 0) which then calls pci_intx(dev, 0), thus
-> creating the
-> intx devres for the device despite the driver code not touching intx
-> at all.
-
-Nope, that is not the problem =E2=80=93 as you correctly point out below, t=
-hat
-device resource should be destroyed again.
-
-> The driver is fine ! It is MSI touching INTX that is messing things
-> up.
-
-Yes, many drivers are more or less innocent in regards with all of
-that. As Christoph rightfully pointed out, an API should never behave
-like that and do _implicit_ magic behind your back. That's the entire
-philosophy of the C Language.
-
->=20
-> That said, I do not see that as an issue in itself. What I fail to
-> understand
-> though is why that intx devres is not deleted on device teardown. I
-> think this
-> may have something to do with the fact that pcim_intx() always does
-> "res->orig_intx =3D !enable;", that is, it assumes that if there is a
-> call to
-> pcim_intx(dev, 0), then it is because intx where enabled already,
-> which I do not
-> think is true for most drivers... So we endup with INTX being wrongly
-> enabled on
-> device teardown by pcim_intx_restore(), and because of that, the intx
-> resource
-> is not deleted ?
-
-Spoiler: The device resources that have initially been created do get
-deleted. Devres works as intended. The issue is that the forces of evil
-invoke pci_intx() through another path, hidden behind an API, through
-another devres callback.
-
-So the device resource never gets deleated because it is *created* on
-driver detach, when devres already ran.
-
->=20
-> Re-enabling intx on teardown is wrong I think, but that still does
-> not explain
-> why that resource is not deleted. I fail to see why.
-
-You came very close to the truth ;)
-
-With some help from my favorite coworker I did some tracing today and
-found this when doing `rmmod ahci`:
-
-=3D> pci_intx
-=3D> pci_msi_shutdown
-=3D> pci_disable_msi
-=3D> devres_release_all
-=3D> device_unbind_cleanup
-=3D> device_release_driver_internal
-=3D> driver_detach
-=3D> bus_remove_driver
-=3D> pci_unregister_driver
-=3D> __do_sys_delete_module
-=3D> do_syscall_64
-=3D> entry_SYSCALL_64_after_hwframe
-
-The SYSCALL is my `rmmod`.
-
-As you can see, pci_intx() is invoked indirectly through
-pci_disable_msi() =E2=80=93 which gets invoked by devres, which is precisel=
-y
-one reason why you could not find the suspicious pci_intx() call in the
-ahci code base.
-
-Now the question is: Who set up that devres callback which indirectly
-calls pci_intx()?
-
-It is indeed MSI, here in msi/msi.c:
-
-static void pcim_msi_release(void *pcidev)
-{
- struct pci_dev *dev =3D pcidev;
-
- dev->is_msi_managed =3D false;
- pci_free_irq_vectors(dev); // <-- calls pci_disable_msi(), which calls pci=
-_intx(), which re-registers yet another devres callback
-}
-
-/*
- * Needs to be separate from pcim_release to prevent an ordering problem
-
-=3D=3D> Oh, here they even had a warning about that interacting with devres=
- somehow...
-
- * vs. msi_device_data_release() in the MSI core code.
- */
-static int pcim_setup_msi_release(struct pci_dev *dev)
-{
- int ret;
-
- if (!pci_is_managed(dev) || dev->is_msi_managed)
- return 0;
-
- ret =3D devm_add_action(&dev->dev, pcim_msi_release, dev);
- if (ret)
- return ret;
-
- dev->is_msi_managed =3D true;
- return 0;
-}
-
-I don't know enough about AHCI to see where exactly it jumps into
-these, but a candidate would be:
- * pci_enable_msi(), called among others in acard-ahci.c
-
-Another path is:
-   1. ahci_init_one() calls
-   2. ahci_init_msi() calls
-   3. pci_alloc_irq_vectors() calls
-   4. pci_alloc_irq_vectors_affinity() calls
-   5. __pci_enable_msi_range() OR __pci_enable_msix_range() call
-   6. pci_setup_msi_context() calls
-   7. pcim_setup_msi_release() which registers the callback to
-      pci_intx()
-
-
-Ha!
-
-I think I earned myself a Friday evening beer now 8-)
-
-
-Now the interesting question will be how the heck we're supposed to
-clean that up.
-
-Another interesting question is: Did that only work by coincidence
-during the last 15 years, or is it by design that the check in
-pci_intx():
-
-if (new !=3D pci_command)
-
-only evaluates to true if we are not in a detach path.
-
-If it were coincidence, it would not have caused faults as it did now
-with my recent work, because the old version did not allocate in
-pci_intx().
-
-But it could certainly have been racy and might run into a UAF since
-the old pci_intx() would have worked on memory that is also managed by
-devres, but has been registered at a different place. I guess that is
-what that comment in the MSI code quoted above is hinting at.
-
-
-Christoph indeed rightfully called it voodoo ^^
-
-
-Cheers,
-P.
-
+> v1 -> v2: rename and reorder some registers, use the correct register
+>   offset for EXYNOS850_TMU_REG_AVG_CON, make the clock required,
+>   additionally do some minor style changes.
+>
+>  drivers/thermal/samsung/exynos_tmu.c | 191 +++++++++++++++++++++++++--
+>  1 file changed, 182 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index 087a09628e23..2618a81fca53 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -117,6 +117,41 @@
+>  #define EXYNOS7_EMUL_DATA_SHIFT                        7
+>  #define EXYNOS7_EMUL_DATA_MASK                 0x1ff
+>
+> +/* Exynos850 specific registers */
+> +#define EXYNOS850_TMU_REG_CURRENT_TEMP0_1      0x40
+> +#define EXYNOS850_TMU_REG_THD_TEMP0_RISE       0x50
+> +#define EXYNOS850_TMU_REG_THD_TEMP0_FALL       0x60
+> +
+> +#define EXYNOS850_TMU_TRIMINFO_SHIFT           4
+> +#define EXYNOS850_TMU_TRIMINFO_OFFSET(n) \
+> +       (EXYNOS_TMU_REG_TRIMINFO + (n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
+> +#define EXYNOS850_TMU_T_TRIM0_SHIFT            18
+> +
+> +#define EXYNOS850_TMU_REG_CONTROL1             0x24
+> +#define EXYNOS850_TMU_LPI_MODE_MASK            1
+> +#define EXYNOS850_TMU_LPI_MODE_SHIFT           10
+> +
+> +#define EXYNOS850_TMU_REG_COUNTER_VALUE0       0x30
+> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK     0xffff
+> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT    0
+> +
+> +#define EXYNOS850_TMU_REG_COUNTER_VALUE1       0x34
+> +#define EXYNOS850_TMU_CLK_SENSE_ON_MASK                0xffff
+> +#define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT       16
+> +
+> +#define EXYNOS850_TMU_REG_AVG_CON              0x38
+> +#define EXYNOS850_TMU_AVG_MODE_MASK            0x7
+> +#define EXYNOS850_TMU_DEM_ENABLE               BIT(4)
+> +
+> +#define EXYNOS850_TMU_REG_TRIM0                        0x3c
+> +#define EXYNOS850_TMU_TRIM0_MASK               0xf
+> +#define EXYNOS850_TMU_VBEI_TRIM_SHIFT          8
+> +#define EXYNOS850_TMU_VREF_TRIM_SHIFT          12
+> +#define EXYNOS850_TMU_BGRI_TRIM_SHIFT          20
+> +
+> +#define EXYNOS850_TMU_TEM1051X_SENSE_VALUE     0x028a
+> +#define EXYNOS850_TMU_TEM1456X_SENSE_VALUE     0x0a28
+> +
+>  #define EXYNOS_FIRST_POINT_TRIM                        25
+>  #define EXYNOS_SECOND_POINT_TRIM               85
+>
+> @@ -134,6 +169,7 @@ enum soc_type {
+>         SOC_ARCH_EXYNOS5420_TRIMINFO,
+>         SOC_ARCH_EXYNOS5433,
+>         SOC_ARCH_EXYNOS7,
+> +       SOC_ARCH_EXYNOS850,
+>  };
+>
+>  /**
+> @@ -232,12 +268,14 @@ static int code_to_temp(struct exynos_tmu_data *dat=
+a, u16 temp_code)
+>
+>  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_i=
+nfo)
+>  {
+> -       u16 tmu_temp_mask =3D
+> -               (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MA=
+SK
+> -                                               : EXYNOS_TMU_TEMP_MASK;
+> -       int tmu_85_shift =3D
+> -               (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_SH=
+IFT
+> -                                               : EXYNOS_TRIMINFO_85_SHIF=
+T;
+> +       u16 tmu_temp_mask =3D (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                            data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
+> +                                   EXYNOS7_TMU_TEMP_MASK :
+> +                                   EXYNOS_TMU_TEMP_MASK;
+> +       int tmu_85_shift =3D (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                           data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
+> +                                  EXYNOS7_TMU_TEMP_SHIFT :
+> +                                  EXYNOS_TRIMINFO_85_SHIFT;
+>
+>         data->temp_error1 =3D trim_info & tmu_temp_mask;
+>         if (!data->temp_error1 ||
+> @@ -587,6 +625,114 @@ static void exynos7_tmu_initialize(struct platform_=
+device *pdev)
+>         sanitize_temp_error(data, trim_info);
+>  }
+>
+> +static void exynos850_tmu_set_low_temp(struct exynos_tmu_data *data, u8 =
+temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_FALL + 1=
+2, 0,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, true);
+> +}
+> +
+> +static void exynos850_tmu_set_high_temp(struct exynos_tmu_data *data, u8=
+ temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 1=
+2, 16,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
+> +}
+> +
+> +static void exynos850_tmu_disable_low(struct exynos_tmu_data *data)
+> +{
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, false);
+> +}
+> +
+> +static void exynos850_tmu_disable_high(struct exynos_tmu_data *data)
+> +{
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
+> +}
+> +
+> +static void exynos850_tmu_set_crit_temp(struct exynos_tmu_data *data, u8=
+ temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 0=
+, 16,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
+> +                             EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
+> +}
+> +
+> +static void exynos850_tmu_initialize(struct platform_device *pdev)
+> +{
+> +       struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
+> +       u32 cal_type, avg_mode, reg, bgri, vref, vbei;
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(0));
+> +       cal_type =3D (reg & EXYNOS5433_TRIMINFO_CALIB_SEL_MASK) >>
+> +                  EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
+> +       data->reference_voltage =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) =
+&
+> +                                 EXYNOS_TMU_REF_VOLTAGE_MASK;
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(1));
+> +       data->gain =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
+> +                    EXYNOS_TMU_BUF_SLOPE_SEL_MASK;
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(2));
+> +       avg_mode =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
+> +                  EXYNOS850_TMU_AVG_MODE_MASK;
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(3));
+> +       bgri =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRI=
+M0_MASK;
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(4));
+> +       vref =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRI=
+M0_MASK;
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(5));
+> +       vbei =3D (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRI=
+M0_MASK;
+> +
+> +       data->cal_type =3D cal_type =3D=3D EXYNOS5433_TRIMINFO_TWO_POINT_=
+TRIMMING ?
+> +                                TYPE_TWO_POINT_TRIMMING :
+> +                                TYPE_ONE_POINT_TRIMMING;
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(0));
+> +       sanitize_temp_error(data, reg);
+> +
+> +       dev_info(&pdev->dev, "Calibration type is %d-point calibration\n"=
+,
+> +                cal_type ? 2 : 1);
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_REG_AVG_CON);
+> +       reg &=3D ~EXYNOS850_TMU_AVG_MODE_MASK;
+> +       reg &=3D ~EXYNOS850_TMU_DEM_ENABLE;
+> +       if (avg_mode) {
+> +               reg |=3D avg_mode;
+> +               reg |=3D EXYNOS850_TMU_DEM_ENABLE;
+> +       }
+> +       writel(reg, data->base + EXYNOS850_TMU_REG_AVG_CON);
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
+> +       reg &=3D ~(EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK
+> +                << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT);
+> +       reg |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
+> +              << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT;
+> +       writel(reg, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
+> +       reg &=3D ~(EXYNOS850_TMU_CLK_SENSE_ON_MASK
+> +                << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT);
+> +       reg |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
+> +              << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT;
+> +       writel(reg, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_REG_TRIM0);
+> +       reg &=3D ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_BGRI_TRIM_SH=
+IFT);
+> +       reg &=3D ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_VREF_TRIM_SH=
+IFT);
+> +       reg &=3D ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_VBEI_TRIM_SH=
+IFT);
+> +       reg |=3D bgri << EXYNOS850_TMU_BGRI_TRIM_SHIFT;
+> +       reg |=3D vref << EXYNOS850_TMU_VREF_TRIM_SHIFT;
+> +       reg |=3D vbei << EXYNOS850_TMU_VBEI_TRIM_SHIFT;
+> +       writel(reg, data->base + EXYNOS850_TMU_REG_TRIM0);
+> +
+> +       reg =3D readl(data->base + EXYNOS850_TMU_REG_CONTROL1);
+> +       reg &=3D ~(EXYNOS850_TMU_LPI_MODE_MASK << EXYNOS850_TMU_LPI_MODE_=
+SHIFT);
+> +       writel(reg, data->base + EXYNOS850_TMU_REG_CONTROL1);
+> +}
+> +
+>  static void exynos4210_tmu_control(struct platform_device *pdev, bool on=
+)
+>  {
+>         struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
+> @@ -676,7 +822,8 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *d=
+ata, unsigned int val,
+>
+>                 val &=3D ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIF=
+T);
+>                 val |=3D (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
+> -               if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
+> +               if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                   data->soc =3D=3D SOC_ARCH_EXYNOS850) {
+>                         val &=3D ~(EXYNOS7_EMUL_DATA_MASK <<
+>                                 EXYNOS7_EMUL_DATA_SHIFT);
+>                         val |=3D (temp_to_code(data, temp) <<
+> @@ -706,7 +853,8 @@ static void exynos4412_tmu_set_emulation(struct exyno=
+s_tmu_data *data,
+>                 emul_con =3D EXYNOS5260_EMUL_CON;
+>         else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433)
+>                 emul_con =3D EXYNOS5433_TMU_EMUL_CON;
+> -       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7)
+> +       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                data->soc =3D=3D SOC_ARCH_EXYNOS850)
+>                 emul_con =3D EXYNOS7_TMU_REG_EMUL_CON;
+>         else
+>                 emul_con =3D EXYNOS_EMUL_CON;
+> @@ -761,6 +909,12 @@ static int exynos7_tmu_read(struct exynos_tmu_data *=
+data)
+>                 EXYNOS7_TMU_TEMP_MASK;
+>  }
+>
+> +static int exynos850_tmu_read(struct exynos_tmu_data *data)
+> +{
+> +       return readw(data->base + EXYNOS850_TMU_REG_CURRENT_TEMP0_1) &
+> +              EXYNOS7_TMU_TEMP_MASK;
+> +}
+> +
+>  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+>  {
+>         struct exynos_tmu_data *data =3D id;
+> @@ -787,7 +941,8 @@ static void exynos4210_tmu_clear_irqs(struct exynos_t=
+mu_data *data)
+>         if (data->soc =3D=3D SOC_ARCH_EXYNOS5260) {
+>                 tmu_intstat =3D EXYNOS5260_TMU_REG_INTSTAT;
+>                 tmu_intclear =3D EXYNOS5260_TMU_REG_INTCLEAR;
+> -       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
+> +       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                  data->soc =3D=3D SOC_ARCH_EXYNOS850) {
+>                 tmu_intstat =3D EXYNOS7_TMU_REG_INTPEND;
+>                 tmu_intclear =3D EXYNOS7_TMU_REG_INTPEND;
+>         } else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433) {
+> @@ -838,6 +993,9 @@ static const struct of_device_id exynos_tmu_match[] =
+=3D {
+>         }, {
+>                 .compatible =3D "samsung,exynos7-tmu",
+>                 .data =3D (const void *)SOC_ARCH_EXYNOS7,
+> +       }, {
+> +               .compatible =3D "samsung,exynos850-tmu",
+> +               .data =3D (const void *)SOC_ARCH_EXYNOS850,
+>         },
+>         { },
+>  };
+> @@ -950,6 +1108,21 @@ static int exynos_map_dt_data(struct platform_devic=
+e *pdev)
+>                 data->min_efuse_value =3D 15;
+>                 data->max_efuse_value =3D 100;
+>                 break;
+> +       case SOC_ARCH_EXYNOS850:
+> +               data->tmu_set_low_temp =3D exynos850_tmu_set_low_temp;
+> +               data->tmu_set_high_temp =3D exynos850_tmu_set_high_temp;
+> +               data->tmu_disable_low =3D exynos850_tmu_disable_low;
+> +               data->tmu_disable_high =3D exynos850_tmu_disable_high;
+> +               data->tmu_set_crit_temp =3D exynos850_tmu_set_crit_temp;
+> +               data->tmu_initialize =3D exynos850_tmu_initialize;
+> +               data->tmu_control =3D exynos4210_tmu_control;
+> +               data->tmu_read =3D exynos850_tmu_read;
+> +               data->tmu_set_emulation =3D exynos4412_tmu_set_emulation;
+> +               data->tmu_clear_irqs =3D exynos4210_tmu_clear_irqs;
+> +               data->efuse_value =3D 55;
+> +               data->min_efuse_value =3D 0;
+> +               data->max_efuse_value =3D 511;
+> +               break;
+>         default:
+>                 dev_err(&pdev->dev, "Platform not supported\n");
+>                 return -EINVAL;
+> --
+> 2.45.1
+>
 
