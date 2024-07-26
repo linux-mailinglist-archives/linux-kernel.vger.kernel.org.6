@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-263602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD9693D825
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAED893D833
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE361C228C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B1A1F21629
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DB61FED;
-	Fri, 26 Jul 2024 18:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD64F14A609;
+	Fri, 26 Jul 2024 18:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RzgIV18g"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YISZNTAS"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47038DEE;
-	Fri, 26 Jul 2024 18:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C763BBC0;
+	Fri, 26 Jul 2024 18:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017884; cv=none; b=WE39/zfBNPz/kmgK7s8BBmVOhK4VyyNVEwVpTPQ5MbiT7Xe7UCj1UMq0qFoLphT570d7pxWLFXmEAwg3sph2Mm/o6IBi/3bAVjqKA9femV4/s7btxs1LJL2FIC1hg/Hu5HwMa0lnQgD3SjJFkrWm4/N5IhM/V/DBsvdT07vqqBk=
+	t=1722017885; cv=none; b=I9iVKhLX3jogwmyLpC1LEQRfBetDGlE93/z19u3s7io/cFMkYxkaA4A+XEMtZhVAjKMBiRb5nYIaglfZGIZhdqD9vNMFIjo0Wc1qmRR4en/HQtOEcdWpe4DTgW1wyyLdJJNRzqf4GFYbVhEcAO+KPz2qL1HLFS3s0Tl6cNkOxfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017884; c=relaxed/simple;
-	bh=Pyq5KT99mvHZELjIb9ex4V6SAyN0u6Ln0t+wD17lvWc=;
+	s=arc-20240116; t=1722017885; c=relaxed/simple;
+	bh=L9WuGK3/+JBnFAYDNw+LiekWRfrj2s7kyJZfovAMN50=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HOSgSzD08ZvwP1ggUO5dcnRiHKkyBrDZIuUOs4eC3NDagSD+xZNco4uO1u+z6Bp5nGzJY+hQjy30F2HUBA4YCivvJH8td9to+5qppeufbv4UGwIP9Vh4GlcLTzbWxs0vb5XTRUzl5jC9PhQYLoL0hM5M1lH5SKqK3GCDRDvrxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RzgIV18g; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=e0J5uBQLjptXmG3f2RvslB4IbQJi+FFqF/9jnCZAnGYxtGSQiay6pUkIHatz1gCwufr3W3HnXdzb8D6Lz9FTK14xwrB6NR/Fy4MK/9shjOjkA5kbbeUvVGeHvuRhJwn9keZr3GEjcXrtUgK4OIKoeHRcexNT5+zLpSjrXoqqz4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YISZNTAS; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB411C000B;
-	Fri, 26 Jul 2024 18:17:59 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 95BDCC0009;
+	Fri, 26 Jul 2024 18:18:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722017880;
+	t=1722017881;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L8BqOp+imFT7RCmJiTvOqUvgDym7zUG3PG+O/IVmdxE=;
-	b=RzgIV18gLAeLOEqwiANRhZCopxKO9YmyJJyevs1sTSbgS55Q9aGhSlG/hMCEWGAJQB6fh+
-	8p8e4/6fSJIKHac24zvNF1heB4MCuYeMm3/UbQpNjAGA4V72LfW93xPIQK7vSEWWJ7+PKN
-	c8y8NtXMJMbbKpDEP0vvn+GQtOTQ03iiqkL3pa6/GSrzTeC4E8Fo8YUV4UqUksKzgVbO1f
-	dx9KPVKGjgQiHKsZ8W6+o7s9C6rwc7S+y6vU5ioTlRIus6tMTRGpcgdKXoTwEguxc77o69
-	4CWjV56xDYBKTT+9q+qWSY84yV2IyASebwOuuhyED7308sGHT2iIV/K8q5Hqug==
+	bh=wZYia7FGurB9of6IzHnVjgaTJVQiLrxPMBa0JK9qcOU=;
+	b=YISZNTASZcu9lL4M+MHFMKTHcQtXdc/AEFh0XrKSLydZP3UUmXSCJOMXkGLnVzUf2h4hhR
+	cRTZwaTCyGUiUPTanbVXyq4AS4ucXZblnM4ZfludQbknbf0L51ZwxGz4T59bNwMbO2/6lI
+	jWsnuAtyyuvG9uIdMk/trfGZWv68HiwENG7boPnhQnpVQ/Sn32GnyA4g9JTOTknZr2/tOp
+	1JCF6C4aLPetxME1h5Bni6uWpgmVUUVZMybB8LsFex272FPRGBQtQHNKZKFEzvPwiwUrZ+
+	1Ssg8B1gwrH4UbjZ9WLnLdGX+TOzw07OXu3ok1zShDm2WaFurfCq3CqaYQECKA==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 26 Jul 2024 20:17:56 +0200
-Subject: [PATCH v5 08/12] usb: cdns3: rename hibernated argument of
- role->resume() to lost_power
+Date: Fri, 26 Jul 2024 20:17:57 +0200
+Subject: [PATCH v5 09/12] xhci: introduce xhci->lost_power flag
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240726-s2r-cdns-v5-8-8664bfb032ac@bootlin.com>
+Message-Id: <20240726-s2r-cdns-v5-9-8664bfb032ac@bootlin.com>
 References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -74,78 +73,72 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-The cdns_role_driver->resume() callback takes a second boolean argument
-named `hibernated` in its implementations. This is mistaken; the only
-potential caller is:
+The XHCI_RESET_ON_RESUME quirk allows wrappers to signal that they
+expect a reset after resume. It is also used by some to enforce a XHCI
+reset on resume (see needs-reset-on-resume DT prop).
 
-int cdns_resume(struct cdns *cdns)
-{
-	/* ... */
+Some wrappers are unsure beforehands if they will reset. Add a mechanism
+to signal *at resume* if power has been lost. Parent devices can set
+this flag, that defaults to the XHCI_RESET_ON_RESUME value.
 
-	if (cdns->roles[cdns->role]->resume)
-		cdns->roles[cdns->role]->resume(cdns, cdns_power_is_lost(cdns));
+The XHCI_RESET_ON_RESUME quirk still triggers a runtime_pm_get() on the
+controller. This is required as we do not know if a suspend will
+trigger a reset, so the best guess is to avoid runtime PM.
 
-	return 0;
-}
-
-The argument can be true in cases outside of return from hibernation.
-Reflect the true meaning by renaming both arguments to `lost_power`.
+Reset the xhci->lost_power value each time in xhci_resume(), making it
+safe for devices to only set lost_power on some resumes.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/cdns3/cdns3-gadget.c | 4 ++--
- drivers/usb/cdns3/cdnsp-gadget.c | 2 +-
- drivers/usb/cdns3/core.h         | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci.c | 8 +++++++-
+ drivers/usb/host/xhci.h | 6 ++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
-index fd1beb10bba7..694aa1457739 100644
---- a/drivers/usb/cdns3/cdns3-gadget.c
-+++ b/drivers/usb/cdns3/cdns3-gadget.c
-@@ -3468,7 +3468,7 @@ __must_hold(&cdns->lock)
- 	return 0;
- }
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 0a8cf6c17f82..2c9b32d339f9 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1029,9 +1029,12 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message_t msg)
  
--static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
-+static int cdns3_gadget_resume(struct cdns *cdns, bool lost_power)
- {
- 	struct cdns3_device *priv_dev = cdns->gadget_dev;
+ 	spin_lock_irq(&xhci->lock);
  
-@@ -3476,7 +3476,7 @@ static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
- 		return 0;
+-	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken_suspend)
++	if (hibernated || xhci->lost_power || xhci->broken_suspend)
+ 		reinit_xhc = true;
  
- 	cdns3_gadget_config(priv_dev);
--	if (hibernated)
-+	if (lost_power)
- 		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
++	/* Reset to default value, parent devices might correct it at next resume. */
++	xhci->lost_power = !!(xhci->quirks & XHCI_RESET_ON_RESUME);
++
+ 	if (!reinit_xhc) {
+ 		/*
+ 		 * Some controllers might lose power during suspend, so wait
+@@ -5228,6 +5231,9 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
+ 	if (get_quirks)
+ 		get_quirks(dev, xhci);
  
- 	return 0;
-diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
-index 4a3f0f958256..7d05180442fb 100644
---- a/drivers/usb/cdns3/cdnsp-gadget.c
-+++ b/drivers/usb/cdns3/cdnsp-gadget.c
-@@ -1973,7 +1973,7 @@ static int cdnsp_gadget_suspend(struct cdns *cdns, bool do_wakeup)
- 	return 0;
- }
- 
--static int cdnsp_gadget_resume(struct cdns *cdns, bool hibernated)
-+static int cdnsp_gadget_resume(struct cdns *cdns, bool lost_power)
- {
- 	struct cdnsp_device *pdev = cdns->gadget_dev;
- 	enum usb_device_speed max_speed;
-diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
-index 9207bd6365f7..f385d3980545 100644
---- a/drivers/usb/cdns3/core.h
-+++ b/drivers/usb/cdns3/core.h
-@@ -30,7 +30,7 @@ struct cdns_role_driver {
- 	int (*start)(struct cdns *cdns);
- 	void (*stop)(struct cdns *cdns);
- 	int (*suspend)(struct cdns *cdns, bool do_wakeup);
--	int (*resume)(struct cdns *cdns, bool hibernated);
-+	int (*resume)(struct cdns *cdns, bool lost_power);
- 	const char *name;
- #define CDNS_ROLE_STATE_INACTIVE	0
- #define CDNS_ROLE_STATE_ACTIVE		1
++	/* Default value, that can be corrected at resume. */
++	xhci->lost_power = !!(xhci->quirks & XHCI_RESET_ON_RESUME);
++
+ 	/* In xhci controllers which follow xhci 1.0 spec gives a spurious
+ 	 * success event after a short transfer. This quirk will ignore such
+ 	 * spurious event.
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index ebd0afd59a60..ec7c6061363f 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1640,6 +1640,12 @@ struct xhci_hcd {
+ 	unsigned		broken_suspend:1;
+ 	/* Indicates that omitting hcd is supported if root hub has no ports */
+ 	unsigned		allow_single_roothub:1;
++	/*
++	 * Signal from upper stacks that we lost power during system-wide
++	 * suspend. Its default value is based on XHCI_RESET_ON_RESUME, meaning
++	 * it is safe for wrappers to not modify lost_power at resume.
++	 */
++	unsigned                lost_power:1;
+ 	/* cached extended protocol port capabilities */
+ 	struct xhci_port_cap	*port_caps;
+ 	unsigned int		num_port_caps;
 
 -- 
 2.45.2
