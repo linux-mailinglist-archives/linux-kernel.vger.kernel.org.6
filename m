@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-263242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2E293D31B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:38:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DCC93D31F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84AF3285D7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0308E1C228ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E6717B43D;
-	Fri, 26 Jul 2024 12:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537A417B501;
+	Fri, 26 Jul 2024 12:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="KW3oWWFV"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThrUPTGu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389F21779AB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355B225D4;
+	Fri, 26 Jul 2024 12:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721997477; cv=none; b=WsbO4LPM/cWAVqIslpAnCSEtiQbVgFqfHFMUVdZpijlNCvMDccKiueBp5JXQyJu3SXk0+N8qXgHh2443nDhA5M0KSSGbyjrw6MFZyv6XgPLgom8LBr3hJno2sGhr4Mijs1SBOzGoQXqjsnKoG9tO6ASjBqPeUP3ec9Q2fhHovCk=
+	t=1721997519; cv=none; b=khFf6Nub767hQ9vPGs9JpOfNqBK2hM7DVBuA4dL2+hFfFfJQOTgnKdE87A6t//8eNWCzawgLduAqP933ynJBSDJlxR5QPHUiQ4TGw+ojgbzZk0foH3H+rmN6B6f9qQyH52txk8L3BGHrAV0by6e+i0aXnj9b9bP4oHWovUAJEKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721997477; c=relaxed/simple;
-	bh=EEq0nyzjqU8eiJpGD8e5EI+vAxzQttlffDZu+gIky+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nW44xAz4cMhPy4cyQUZDX9vpnXRO5ts6FnoL7lIjPJDAGCo0+ar7G0u/9U5r3yDfP7sCyCJhr+865acXecQcSDUPzAGEengc5ik+CLvocadbQmrDzFdUa7NxkGFLpA0rj1xhV5V8jyujgMlf9KKAWFF4vxpg+fHy5x3pm/tIgUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=KW3oWWFV; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f040733086so14747191fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google; t=1721997473; x=1722602273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8CS5FjqHHrfrzcqpVzuA7yQixwEIvcBn/g6hapXBw6M=;
-        b=KW3oWWFVQphK8svsJfWSAnkBHkLepX5WbcuAgQEG+z9KQKYbUic6p+BodO7c/jPiYy
-         qAITGhZgXcaRdFm/wAK/8L7FRWv5dcbPL5oL+H1I4NDG+Qa2FlsKv5PXa/xbnsRiIlyq
-         yPDNd1yZU7LDe0SDMkBTlXxFn7js0uh64+jUDjDJH+LbW8u9rjqRQDiQEr93SOEMi/Rz
-         ta6QRCbpD0fmwxuHiLQbC4FU+P3+QZJ/6UttFFj4JTdPaVzCeng2/7BpEn0lw0w2RIhT
-         3o7z2Zm6KP3benDA3cC2qf8+/ybD22LwZBAZOwaEJJleRvd+OTvvrHpY4KN658okiq88
-         qkkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721997473; x=1722602273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8CS5FjqHHrfrzcqpVzuA7yQixwEIvcBn/g6hapXBw6M=;
-        b=m0X+3cDGWvQwvOhTJI1dMx9mDKjAfRaGIDoT9mOoMM0Cz9ed+Xlyreka0vH1ZZX8Gx
-         OeeKvfmod9diyMXWvNMXk6jk5PZQia4eWPOoJquMX1UhmOyWokpUPSFNi0zCpQPV7x9T
-         Ab7JPXagax+xzvfQwFEM2S7NYvfoknAkirm3IfI9hTYSF7PO8I+jgH6bB/tSAhdk09AC
-         sBBUgGLmdi20mD6pUWASgA8gyNiW163E7WeeG3n6+vOgF92M6WR2QEqkeSY9beN1Qs2w
-         tNlf00XOuNtu2sbDr4Oj8iwflj/4UghqUcMXE9lk/7jOupQ8GyuGyRz5zBKbReSCDXE+
-         QTxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWPahXPYKWc/LEBMQAczdv+lPq9U5NeqLLu7TBL3TT/jNWIkWLbAhneomtNyYheW7Z8MxBiECGx6jDQdLQstU+b8ZC/bn50ad+SN2D
-X-Gm-Message-State: AOJu0YyTAg7f5IYdqTtO0kQ3JspwtoR1DG78Imm1Uahlw9XzcppA4hpK
-	UyWAi6T2gjeJrYG6ex3c2YypsJIkksIlgM8DphsYYfCgGSgDZ4snMJz0Ep5S0vHX0NONIZzf6AA
-	GH+p3VNwjeeME4bokxLSv2h/7KfXUUltY61DM
-X-Google-Smtp-Source: AGHT+IFO/8a7epbXcEUM2QYUUiM0RY38qQiqMPBjU8U6zPWaJzD0n8kxnStqajocVm3AOdSn/6DwrJAsf/eIRXGQwfE=
-X-Received: by 2002:a2e:9b15:0:b0:2ef:286e:ca68 with SMTP id
- 38308e7fff4ca-2f039c9eb88mr40520681fa.23.1721997472896; Fri, 26 Jul 2024
- 05:37:52 -0700 (PDT)
+	s=arc-20240116; t=1721997519; c=relaxed/simple;
+	bh=aIgrrvN0tG/F61Hot3ipl4hWqwfIHUiLpR8AE2P0AqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfHYtoWMOY4e24fcl689xitlW0OhVuSAUo+ckCOocXn+1jBHeyPxUppuZmMq5feJG380uZm3TW/bEnFqA6fvFRbkZe9DjoGl0bSFrM2CfU2DNQv8MU5yVL0tLognv+QSireFBPgRouTPnrBWMUUgpfA4blk9ZIUMTxrhk7LmOLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThrUPTGu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64E5C32782;
+	Fri, 26 Jul 2024 12:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721997519;
+	bh=aIgrrvN0tG/F61Hot3ipl4hWqwfIHUiLpR8AE2P0AqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ThrUPTGuPAHMBQg7kyHhzCBCvGDLEv2ETPUPPthKEfE6g4hPoOvXLEFuZs+YaQaxL
+	 Se4APoYj9m2uA3HcIIKStsZ8kv2Vzb3bRPlk4lgfmcXdMCM+74GHDAP8M7IM+rnwO+
+	 We8lKTRzmQKVzgNJgttnHCkfC8XS30fXbZNM1A1B1q89rLh80jjfNIBJH0nNUVAaP2
+	 A1VoL0y6jaI2WjCPQkh7Rp73g/0ERCjJbFZ3DZGpQaFUrwXN/9pvUij/QHMaitwL2a
+	 3lljmFm39SProHsDlcUzfNA8c2o5rFxVJ7i5D4GsXfKCGoRrT+zhd7bEYwPbp3xL9u
+	 wJ58IXk8+V+bw==
+Date: Fri, 26 Jul 2024 07:38:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v3 5/9] spi: dt-bindings: axi-spi-engine: document
+ spi-offloads
+Message-ID: <20240726123836.GA998909-robh@kernel.org>
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+ <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240713044645.10840-1-khuey@kylehuey.com> <ZpLkR2qOo0wTyfqB@krava>
- <20240715111208.GB14400@noisy.programming.kicks-ass.net> <CAP045ArBNZ559RFrvDTsHj42S4W+BuReHe+XV2tBPSeoHOMMpA@mail.gmail.com>
- <20240715150410.GJ14400@noisy.programming.kicks-ass.net> <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
- <20240715163003.GK14400@noisy.programming.kicks-ass.net> <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
- <ZpYgYaKKbw3FPUpv@krava> <CAEf4BzZWWzio9oPe2_jS=_7CnKuJnugr2h4yd3QY1TqSF0aMXQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzZWWzio9oPe2_jS=_7CnKuJnugr2h4yd3QY1TqSF0aMXQ@mail.gmail.com>
-From: Kyle Huey <me@kylehuey.com>
-Date: Fri, 26 Jul 2024 05:37:40 -0700
-Message-ID: <CAP045ArhO4K2vcrhG_GnJNhx=+7v6WLYKsDj4CvqO7HKzBshXg@mail.gmail.com>
-Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing events
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, khuey@kylehuey.com, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
 
-On Fri, Jul 19, 2024 at 11:26=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Jul 16, 2024 at 12:25=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> w=
-rote:
-> >
-> > On Mon, Jul 15, 2024 at 09:48:58AM -0700, Kyle Huey wrote:
-> > > On Mon, Jul 15, 2024 at 9:30=E2=80=AFAM Peter Zijlstra <peterz@infrad=
-ead.org> wrote:
-> > > >
-> > > > On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote:
-> > > >
-> > > > > I think this would probably work but stealing the bit seems far m=
-ore
-> > > > > complicated than just gating on perf_event_is_tracing().
-> > > >
-> > > > perf_event_is_tracing() is something like 3 branches. It is not a s=
-imple
-> > > > conditional. Combined with that re-load and the wrong return value,=
- this
-> > > > all wants a cleanup.
-> > > >
-> > > > Using that LSB works, it's just that the code aint pretty.
-> > >
-> > > Maybe we could gate on !event->tp_event instead. Somebody who is more
-> > > familiar with this code than me should probably confirm that tp_event
-> > > being non-null and perf_event_is_tracing() being true are equivalent
-> > > though.
-> > >
-> >
-> > it looks like that's the case, AFAICS tracepoint/kprobe/uprobe events
-> > are the only ones having the tp_event pointer set, Masami?
-> >
-> > fwiw I tried to run bpf selftests with that and it's fine
->
-> Why can't we do the most straightforward thing in this case?
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index ab6c4c942f79..cf4645b26c90 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9707,7 +9707,8 @@ static int __perf_event_overflow(struct perf_event =
-*event,
->
->         ret =3D __perf_event_account_interrupt(event, throttle);
->
-> -       if (event->prog && !bpf_overflow_handler(event, data, regs))
-> +       if (event->prog && event->prog->type =3D=3D BPF_PROG_TYPE_PERF_EV=
-ENT &&
-> +           !bpf_overflow_handler(event, data, regs))
->                 return ret;
->
->
-> >
-> > jirka
-> >
+On Mon, Jul 22, 2024 at 04:57:12PM -0500, David Lechner wrote:
+> The AXI SPI Engine has support for hardware offloading capabilities.
+> There can be up to 32 offload instances per SPI controller, so the
+> bindings limit the value accordingly.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> 
+> RFC: I have a few questions about this one...
+> 
+> 1.  The trigger-source properties are borrowed from the leds bindings.
+>     Do we want to promote this to a generic binding that can be used by
+>     any type of device?
 
-Yes, that's effectively equivalent to calling perf_event_is_tracing()
-and would work too. Do you want to land that patch? It needs to go to
-6.10 stable too.
+I would make it specific to spi-offload.
 
-- Kyle
+> 
+> 2.  Some folks are working on adding DMA to TX stream support to the
+>     AXI SPI Engine hardware. I assume that the `dmas` property is like
+>     others where the order/index in the phandle array matters. So this
+>     would mean that for device that only uses 1 out of the 32 offloads
+>     and only uses 1 TX DMA channel, we would have to have 32 <0>s for
+>     each of the possible RX dmas in the array. Any way to do some kind
+>     of mapping to avoid this?
+
+That's why -names exists.
+
+> 
+> 3.  In v2, we discussed about having some sort of data processing unit
+>     between the AXI SPI Engine RX stream interface and the DMA channel
+>     interface on the DMA controller. I haven't included this in the
+>     bindings yet because we don't have a user yet. But it was suggested
+>     that we could use the graph bindings for this. So here is what that
+>     might look like:
+> 
+>     Additional property for the AXI SPI Engine controller bindings:
+> 
+>         out-ports:
+>             $ref: /schemas/graph.yaml#/properties/ports
+>             unevaluatedProperties: false
+>             patternProperties:
+>             "^port@1?[0-9a-f]$":
+>                 $ref: /schemas/graph.yaml#/properties/port
+>                 unevaluatedProperties: false
+> 
+>     And this would be connected to a device node similar to this:
+> 
+>         ip-block@3000 {
+>             // Something similar to, but not exactly like
+>             // http://analogdevicesinc.github.io/hdl/library/util_extract/index.html
+>             compatible = "adi,crc-check";
+>             // clock that runs this IP block
+>             clocks = <&sysclk 15>;
+>             // interrupt raised on bad CRC
+>             interrupts = <&intc 99>;
+>             interrupt-names = "crc";
+>             // output stream with CRC byte removed piped to DMA
+>             dmas = <&adc_dma 0>;
+>             dma-names = "rx";
+> 
+>             port {
+>                 adc_crc_check: endpoint {
+>                     remote-endpoint: <&offload0_rx>;
+>                 };
+>             };
+>         };
+> 
+>     Does this sound reasonable?
+
+Shrug.
+
+Unlike the offload which is internal to the controller driver?, isn't 
+this specific to the device because it needs to be aware of any 
+processing done or not done. Or maybe it wants to configure the 
+processing.
+
+OTOH, maybe this isn't any different than offload?
+
+Rob
 
