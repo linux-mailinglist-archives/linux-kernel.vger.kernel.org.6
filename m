@@ -1,192 +1,191 @@
-Return-Path: <linux-kernel+bounces-263415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F3793D57F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:02:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F68A93D584
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77F71F21746
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D4A1F21746
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9941CD39;
-	Fri, 26 Jul 2024 15:02:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3326BA42;
-	Fri, 26 Jul 2024 15:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D922517BB28;
+	Fri, 26 Jul 2024 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/WdCJLL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5FC7494;
+	Fri, 26 Jul 2024 15:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006119; cv=none; b=Q1Og2T2dyx0ARnxFC8snZsHu8C7/Qyqj9YrWTtOnGeWOA+zMCxG1wRNJjwFVbPCvgkRVxHsznjWxzZoNZ0oMwdMT2hvIvUWXBxnTWOP8vg3+P7elKzFGYMT4JZg2aYuXp87csZhOLqd3e0RQEcvU1xqK/xJTdoU5NJPMgP7kSXo=
+	t=1722006127; cv=none; b=geyLo97fXmLqFS+RE31Utw1NRT0dMi3me/sBaxG6dGo/deUOzx3ezGHx4buPQpJsKNpBKlBwNxOUCVxJwP0UUyDO6Key6fObnosPMl5i3vsl9vnkZocTM+UQsEvSr1Ov674fAHbvbzir7H28/d+KyCWGSNBhUVWg4hureyy2wxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006119; c=relaxed/simple;
-	bh=Rmxlr2zbzrZFAVX6QcKKChdsEGuKdhnNrE/Xh03XGPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gk2QQ6kRFWfuh21XjpX84z2bxeAWmp/vCYRXEw0NTfQ6aLJk0Xiw3Swx5slfeL+gzArzzfmQGkhS4TsvfEC0sF73GblC3ODEVq7BC9tVqYhOD8Ta2XvD1xJ3zoR5Qpi8rDx3ixcFISvldinLkkxsT5hzluHW7Xvd91uLycr1e8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D66521007;
-	Fri, 26 Jul 2024 08:02:22 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBD293F73F;
-	Fri, 26 Jul 2024 08:01:54 -0700 (PDT)
-Date: Fri, 26 Jul 2024 16:01:52 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"etienne.carriere@st.com" <etienne.carriere@st.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
-	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
-	"ptosi@google.com" <ptosi@google.com>,
-	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
-	Etienne Carriere <etienne.carriere@foss.st.com>
-Subject: Re: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
- standalone driver
-Message-ID: <ZqO6YH-OTAFwWv_b@pluto>
-References: <20240710173153.4060457-1-cristian.marussi@arm.com>
- <20240710173153.4060457-7-cristian.marussi@arm.com>
- <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722006127; c=relaxed/simple;
+	bh=nVwWTgdTUodovh/iqkzdCNEo1Majgzgo+6kXKdU3h7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h8zXfz67Y8c3WSekXf7Un5uVdEJjTDT2qG3BYiGbqChm2zqUiPRtTCd98cAf7d4Cb63srqoCfBJRpGwxJdep+doxK9SOcJoPyUy6QzYn5Vd57GMi5vWSTCj6qN3dKiEpwUJCjrUQ1wKK97D+7sXyRJJvvvDCZrH7QrVaydglzuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/WdCJLL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E7E8C32786;
+	Fri, 26 Jul 2024 15:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722006126;
+	bh=nVwWTgdTUodovh/iqkzdCNEo1Majgzgo+6kXKdU3h7Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I/WdCJLLxqzmfyvQnQEfyewqeZdzswsEYRNfxRlINW2IhlKLAslVpSGu6i1NMs2d6
+	 ZwI/sUt6H4mg9IhWfDhSqW+OzsvGwbA5IX8MrXoSexWfvzP1KyNRrJB0mWNAENRG/s
+	 jDiUnRr3U8AZuVEfOxQ3/+xAC2wp+l2OahinaAL5PR6UH4kIyLAeztPQwbE/56Ub9U
+	 AnPt8pHdWIRJx5ZJvixWNDp6e68NYbB8dshsQG6ojOy915j/t2ik3RV5Vf3fot5B7m
+	 8GcotEEHQaE15bhljCKAynGjVSM1K2nEiGzBDIs9uOr4yHVNqPXqWU6W1s/qE5ePh1
+	 y3efdvC9Sk+Tg==
+Date: Fri, 26 Jul 2024 08:02:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: James Chapman <jchapman@katalix.com>
+Cc: syzbot <syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in
+ net_generic
+Message-ID: <20240726080205.33661f4e@kernel.org>
+In-Reply-To: <000000000000f9eeec061e0ffa03@google.com>
+References: <000000000000f9eeec061e0ffa03@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 11, 2024 at 12:57:46PM +0000, Peng Fan wrote:
-> > Subject: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
-> > standalone driver
-> > 
-> > Make SCMI OPTEE transport a standalone driver that can be optionally
-> > loaded as a module.
-> > 
-> > CC: Etienne Carriere <etienne.carriere@foss.st.com>
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > ---
-> > v1 --> v2
-> > - handle platform_driver_register() failures
-> > ---
-> >  drivers/firmware/arm_scmi/Kconfig             |  6 +-
-> >  drivers/firmware/arm_scmi/Makefile            |  2 +-
-> >  drivers/firmware/arm_scmi/common.h            |  3 -
-> >  drivers/firmware/arm_scmi/driver.c            |  3 -
-> >  .../{optee.c => scmi_transport_optee.c}       | 91 ++++++++++---------
-> >  5 files changed, 52 insertions(+), 53 deletions(-)  rename
-> > drivers/firmware/arm_scmi/{optee.c => scmi_transport_optee.c} (90%)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/Kconfig
-> > b/drivers/firmware/arm_scmi/Kconfig
-> > index a4d44ef8bf45..def7e3f09356 100644
-> > --- a/drivers/firmware/arm_scmi/Kconfig
-> > +++ b/drivers/firmware/arm_scmi/Kconfig
-> > @@ -89,8 +89,8 @@ config ARM_SCMI_TRANSPORT_MAILBOX
-> >  	  will be called scmi_transport_mailbox.
-> > 
-> >  config ARM_SCMI_TRANSPORT_OPTEE
-> > -	bool "SCMI transport based on OP-TEE service"
-> > -	depends on OPTEE=y || OPTEE=ARM_SCMI_PROTOCOL
-> > +	tristate "SCMI transport based on OP-TEE service"
-> > +	depends on OPTEE
-> >  	select ARM_SCMI_HAVE_TRANSPORT
-> >  	select ARM_SCMI_HAVE_SHMEM
-> >  	select ARM_SCMI_HAVE_MSG
-> > @@ -100,6 +100,8 @@ config ARM_SCMI_TRANSPORT_OPTEE
-> > 
-> >  	  If you want the ARM SCMI PROTOCOL stack to include
-> > support for a
-> >  	  transport based on OP-TEE SCMI service, answer Y.
-> > +	  This driver can also be built as a module.  If so, the module
-> > +	  will be called scmi_transport_optee.
-> > 
-> >  config ARM_SCMI_TRANSPORT_SMC
-> >  	tristate "SCMI transport based on SMC"
-> > diff --git a/drivers/firmware/arm_scmi/Makefile
-> > b/drivers/firmware/arm_scmi/Makefile
-> > index 6868a47fa4ab..b04119ce972f 100644
-> > --- a/drivers/firmware/arm_scmi/Makefile
-> > +++ b/drivers/firmware/arm_scmi/Makefile
-> > @@ -7,13 +7,13 @@ scmi-driver-
-> > $(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
-> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
-> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
-> >  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
-> > -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
-> > scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o
-> > system.o voltage.o powercap.o  scmi-protocols-y += pinctrl.o  scmi-
-> > module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
-> > 
-> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) +=
-> > scmi_transport_smc.o
-> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) +=
-> > scmi_transport_mailbox.o
-> > +obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) +=
-> > scmi_transport_optee.o
-> > 
-> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
-> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o diff --git
-> > a/drivers/firmware/arm_scmi/common.h
-> > b/drivers/firmware/arm_scmi/common.h
-> > index edb786cde25c..0ce1d804b3fc 100644
-> > --- a/drivers/firmware/arm_scmi/common.h
-> > +++ b/drivers/firmware/arm_scmi/common.h
-> > @@ -289,9 +289,6 @@ int
-> > scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info
-> > *cinfo,  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO  extern const
-> > struct scmi_desc scmi_virtio_desc;  #endif -#ifdef
-> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE -extern const struct
-> > scmi_desc scmi_optee_desc; -#endif
-> > 
-> >  void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr,
-> > void *priv);
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/driver.c
-> > b/drivers/firmware/arm_scmi/driver.c
-> > index b14c5326930a..67b416c7f2f5 100644
-> > --- a/drivers/firmware/arm_scmi/driver.c
-> > +++ b/drivers/firmware/arm_scmi/driver.c
-> > @@ -3251,9 +3251,6 @@ ATTRIBUTE_GROUPS(versions);
-> > 
-> >  /* Each compatible listed below must have descriptor associated with
-> > it */  static const struct of_device_id scmi_of_match[] = { -#ifdef
-> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE
-> > -	{ .compatible = "linaro,scmi-optee", .data =
-> > &scmi_optee_desc },
-> > -#endif
-> >  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
-> >  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
-> > #endif diff --git a/drivers/firmware/arm_scmi/optee.c
-> > b/drivers/firmware/arm_scmi/scmi_transport_optee.c
-> > similarity index 90%
-> > rename from drivers/firmware/arm_scmi/optee.c rename to
-> > drivers/firmware/arm_scmi/scmi_transport_optee.c
-> > index 99f3b0bfb956..7a16c8d3e213 100644
-> > --- a/drivers/firmware/arm_scmi/optee.c
-> > +++ b/drivers/firmware/arm_scmi/scmi_transport_optee.c
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  /*
-> > - * Copyright (C) 2019-2021 Linaro Ltd.
-> > + * Copyright (C) 2019-2024 Linaro Ltd.
+CC: James [L2TP]
+
+On Thu, 25 Jul 2024 03:37:24 -0700 syzbot wrote:
+> Hello,
 > 
-> This should be kept unchanged?
- 
-Yes, as said, it will be fixed in V3.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1625a15e980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6acef9e0a4d1f46c83d4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/fea69a9d153c/disk-c912bf70.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/be06762a72ef/vmlinux-c912bf70.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6c8e58b4215d/Image-c912bf70.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+6acef9e0a4d1f46c83d4@syzkaller.appspotmail.com
+> 
+> Unable to handle kernel paging request at virtual address dfff800000000257
+> KASAN: probably user-memory-access in range [0x00000000000012b8-0x00000000000012bf]
+> Mem abort info:
+>   ESR = 0x0000000096000005
+>   EC = 0x25: DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+>   FSC = 0x05: level 1 translation fault
+> Data abort info:
+>   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [dfff800000000257] address between user and kernel address ranges
+> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 1 PID: 6969 Comm: syz.2.105 Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : net_generic+0xd0/0x250 include/net/netns/generic.h:46
+> lr : rcu_read_lock include/linux/rcupdate.h:782 [inline]
+> lr : net_generic+0x54/0x250 include/net/netns/generic.h:45
+> sp : ffff8000a6c86c10
+> x29: ffff8000a6c86c10 x28: dfff800000000000 x27: 0000000000000802
+> x26: 0000000000000002 x25: 1ffff00014d90d88 x24: dfff800000000000
+> x23: ffff0000ca3fbd70 x22: ffff8000a6c86c40 x21: dfff800000000000
+> x20: 00000000000012b8 x19: 000000000000004e x18: 1ffff00014d90cfe
+> x17: 000000000003099a x16: ffff80008054bde8 x15: 0000000000000001
+> x14: ffff80008f100568 x13: dfff800000000000 x12: 00000000af8628cd
+> x11: 0000000068a0e22d x10: 0000000000ff0100 x9 : 0000000000000000
+> x8 : 0000000000000257 x7 : ffff80008a4326a8 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000002
+> x2 : 0000000000000008 x1 : ffff80008b681f20 x0 : 0000000000000001
+> Call trace:
+>  net_generic+0xd0/0x250 include/net/netns/generic.h:46
+>  l2tp_pernet net/l2tp/l2tp_core.c:125 [inline]
+>  l2tp_tunnel_get+0x90/0x464 net/l2tp/l2tp_core.c:207
+>  l2tp_udp_recv_core net/l2tp/l2tp_core.c:852 [inline]
+>  l2tp_udp_encap_recv+0x314/0xb3c net/l2tp/l2tp_core.c:933
+>  udpv6_queue_rcv_one_skb+0x1870/0x1ad4 net/ipv6/udp.c:727
+>  udpv6_queue_rcv_skb+0x3bc/0x574 net/ipv6/udp.c:789
+>  udp6_unicast_rcv_skb+0x1cc/0x320 net/ipv6/udp.c:929
+>  __udp6_lib_rcv+0xbcc/0x1330 net/ipv6/udp.c:1018
+>  udpv6_rcv+0x88/0x9c net/ipv6/udp.c:1133
+>  ip6_protocol_deliver_rcu+0x988/0x12a4 net/ipv6/ip6_input.c:438
+>  ip6_input_finish+0x164/0x298 net/ipv6/ip6_input.c:483
+>  NF_HOOK+0x328/0x3d4 include/linux/netfilter.h:314
+>  ip6_input+0x90/0xa8 net/ipv6/ip6_input.c:492
+>  dst_input include/net/dst.h:460 [inline]
+>  ip6_rcv_finish+0x1f0/0x21c net/ipv6/ip6_input.c:79
+>  NF_HOOK+0x328/0x3d4 include/linux/netfilter.h:314
+>  ipv6_rcv+0x9c/0xbc net/ipv6/ip6_input.c:310
+>  __netif_receive_skb_one_core net/core/dev.c:5625 [inline]
+>  __netif_receive_skb+0x18c/0x3c8 net/core/dev.c:5739
+>  netif_receive_skb_internal net/core/dev.c:5825 [inline]
+>  netif_receive_skb+0x1f0/0x93c net/core/dev.c:5885
+>  tun_rx_batched+0x568/0x6e4
+>  tun_get_user+0x260c/0x3978 drivers/net/tun.c:2002
+>  tun_chr_write_iter+0xfc/0x204 drivers/net/tun.c:2048
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0x8f8/0xc38 fs/read_write.c:590
+>  ksys_write+0x15c/0x26c fs/read_write.c:643
+>  __do_sys_write fs/read_write.c:655 [inline]
+>  __se_sys_write fs/read_write.c:652 [inline]
+>  __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
+>  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> Code: d2d00015 f2fbfff5 8b080294 d343fe88 (38756908) 
+> ---[ end trace 0000000000000000 ]---
+> ----------------
+> Code disassembly (best guess):
+>    0:	d2d00015 	mov	x21, #0x800000000000        	// #140737488355328
+>    4:	f2fbfff5 	movk	x21, #0xdfff, lsl #48
+>    8:	8b080294 	add	x20, x20, x8
+>    c:	d343fe88 	lsr	x8, x20, #3
+> * 10:	38756908 	ldrb	w8, [x8, x21] <-- trapping instruction
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Thanks,
-Cristian
 
