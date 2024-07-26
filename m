@@ -1,219 +1,200 @@
-Return-Path: <linux-kernel+bounces-263298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7029093D3F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 079EB93D3FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BCE11C2305E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:16:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC651C20944
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A6617BB09;
-	Fri, 26 Jul 2024 13:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7286F17C200;
+	Fri, 26 Jul 2024 13:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="cRaeqQwA"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AUuAhMEQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E98B13A3F7;
-	Fri, 26 Jul 2024 13:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D03817B512
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999772; cv=none; b=SPlwV1I9ifYOhaWYsgCq49jC07PHgX5DfjqgvQkhpElAoSOTau1oIyJIWh6WWd+I2IyLGSPJ9kdalTCYjhtIqS3gnL739Ja8sr5usBIpl+CJmw8MI3lzxc8PIETQfIW4c/dI1kH5XPX8yIZceCdvTv3WUJYapLrfF26ciGGlkxY=
+	t=1721999825; cv=none; b=nw0aDtNZl5gNi3DpaUdU8rn9o9CfctHQD4idA++PXiXmm6xjvFqTsC+aWVg4A6bFZwW5dXfTb5oxfto/IGA7MeEVbvbucyDCkXzkHM7d4wM+VZ1Rir0Jt1MzT+DSRw4mLdiJbcOLEh9dy8IceLbxQx3JJMfi9Ny3isP/1YU0ubU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999772; c=relaxed/simple;
-	bh=7rnOQsXWMQ8UjsklPiSOfWLaziMmc0aWK2YMvDmOO3g=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nRpny21mV70+OCRRnV7r2DOqfcpCFdUuys5w46Jqz3Vn16li3TY1SnupV6nEODQVGxbGuq2ozvohqR8ho82Nfnh5a8RtPDSgPTOYN04xN0E030xk7p6SYC1H87uMOpFwKW6tNoD5+zWDnMyAaUWt6tChyrbnEz7pIsB2EGn5bg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=cRaeqQwA; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46QDFh9R2569478, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1721999743; bh=7rnOQsXWMQ8UjsklPiSOfWLaziMmc0aWK2YMvDmOO3g=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=cRaeqQwAw3ipM5vVy/WSm4u6UNDKSxqlWVe9UR59hyawXmS0q98lr3Q10hiSN1Ez0
-	 bKQ7bcN4BoKNGDI3hrbmYbe1AA9E2ckTOyl7vbcWzLakSeVvTXaS8Qm8jX62vlQFTB
-	 pXCFd5zwVKKWYuEfK/1ahvL2IWimRmEAPYOXPrBt1MZzSjkNeCSN/yHGqEVLRoANtZ
-	 lUkWsyxArHnyvbHMM5vf8uGk/A3b2ZyX2BJPwNe0Bj+txy2jeDFpGVjL9iesYBD/pl
-	 XqkWm+m09wZEUIeEm+/fFAfpH7P6Vl0TY7R25JDjuT/lvk7LJ2cQHJQ1ByjopLlcOK
-	 a9Q6lz2exAsUg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46QDFh9R2569478
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Jul 2024 21:15:43 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 26 Jul 2024 21:15:44 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 26 Jul 2024 21:15:43 +0800
-Received: from RTEXMBS01.realtek.com.tw ([fe80::2c08:7dc1:82be:6c38]) by
- RTEXMBS01.realtek.com.tw ([fe80::2c08:7dc1:82be:6c38%5]) with mapi id
- 15.01.2507.035; Fri, 26 Jul 2024 21:15:43 +0800
-From: Ricky WU <ricky_wu@realtek.com>
-To: Avri Altman <Avri.Altman@wdc.com>,
-        "ulf.hansson@linaro.org"
-	<ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "ricardo@marliere.net"
-	<ricardo@marliere.net>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>
-Subject: RE: [PATCH 0/4] Add support SDUC for Realtek card readers
-Thread-Topic: [PATCH 0/4] Add support SDUC for Realtek card readers
-Thread-Index: AQHa2Z0rVxamUGlCx0OwfDDJuTfD97IIDJgAgAD42gA=
-Date: Fri, 26 Jul 2024 13:15:43 +0000
-Message-ID: <9e73388ac2ca40fbb31ad2c3c7a09ced@realtek.com>
-References: <20240719053314.1636649-1-ricky_wu@realtek.com>
- <DM6PR04MB657501EF884BAAC24446E8A1FCB42@DM6PR04MB6575.namprd04.prod.outlook.com>
-In-Reply-To: <DM6PR04MB657501EF884BAAC24446E8A1FCB42@DM6PR04MB6575.namprd04.prod.outlook.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721999825; c=relaxed/simple;
+	bh=E8TJ6MRlezfed8oV6XYbKMbJ33WOOqUbYyIaqIuvt2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Bj290W57SxVQrZ6+QwplZsvGRuEt1d7UtTY8qhoAOPdVp5N+E+2q/VhMLSw6NONO4qsKfoqx0QwZkzTGBRs12EW9aIqjbDMZrByRVhCEak13pUpQEjLIcfLm0W9tNrfCZ+zknElcxB8PTioigwVTtoV4YIxG4JDMz4fJkw/ZicI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AUuAhMEQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721999823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vllFnlg84B30xrdVTJ9/E1KQIK8lYuMk6An3oA0P1n0=;
+	b=AUuAhMEQQWajiqO3j39rqac6UvRm+UY6U/OqaLRCMlJPgedFLZu8EzlCCPikg6cP3foINz
+	68xtN6jP1fS1CnehTrptOTaOGSujgF0uTvq2chG/rLtdwGrSI4fMOGNmhJKvA/s02SMbdf
+	q+RkQaMYO5/JFa9YcF0IaORlnhzvjfQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-WIpC5ZcoP4W9x2byAkrXRA-1; Fri, 26 Jul 2024 09:17:00 -0400
+X-MC-Unique: WIpC5ZcoP4W9x2byAkrXRA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7a999275f8so80731166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:16:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721999819; x=1722604619;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vllFnlg84B30xrdVTJ9/E1KQIK8lYuMk6An3oA0P1n0=;
+        b=knCOWJJrFJXRZiu5W1NYznV/szXidF5FrigSIABuHEttBgkk1sZ09vAkCt2Ta5I81m
+         OBjEV8iZaN7ItDKu8joVmfGqTwRjG4LJbEwTRUhZBQXVfC1zPb3YrRQE4gqDNdR3+3la
+         XXXv1GHtPMOrD7tB/2dJnDD6jh7MulNYgJj9MWYKhNF658x36ks2Yj06ELc/pij8Fp4A
+         AwRNJNGGM/5f+lBAVDHqEcDMUMH1sFdezpo3b9zbVfPfGS/ScsIO6EVwvLpamy4AZdma
+         sSSHzLvDcInAjuHr2foZL0Gu87Lrt9Ks0uab0RaE6jA2fAK6n7SlRMgsRDHQaEYGPfXy
+         mWXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXem/9YJFbPWqWsvTt5x/oN5p24YtxUeLPH++gLeiBxYdun7mV4EO6VAPlXKzJ9zBDA7JoJ/4Zf4rin7D7sSMMrp9rjlJM8mzsHDqbw
+X-Gm-Message-State: AOJu0YxAXZk43EoITsbv14VGDZ7KLvNJw2p4dFvl7pD5VGERd4Tn1wsu
+	/nKSEtcXUpdowXae9rX/UK+4zeQPpW1kDeDcTqFkgXcjPd+/a/454jfUgZw+mDOEPaGjPp8Fhjo
+	l8m2rg7sc7LM0qBNJJNqnAGcBrIo31tZBECi9KYCzzRqU71HtDkvq4E0y0qIQ4+ZqaF6Gc5kKrz
+	2TPZkXQuUcWi78At0oEHBg1mZ9yw4gSMLSc5tY
+X-Received: by 2002:a50:ab18:0:b0:5a2:6142:24c1 with SMTP id 4fb4d7f45d1cf-5ac6203a20amr5122269a12.5.1721999818737;
+        Fri, 26 Jul 2024 06:16:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNMLKfBY9RgUZNbuxfkLr4bAwXidi3+wYsQGX8RjCIa2lMVc2O1E44vHMrqEn2jQlboMjIf0XHetK/IL3iMXI=
+X-Received: by 2002:a50:ab18:0:b0:5a2:6142:24c1 with SMTP id
+ 4fb4d7f45d1cf-5ac6203a20amr5122229a12.5.1721999818239; Fri, 26 Jul 2024
+ 06:16:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240725013217.1124704-1-lulu@redhat.com> <20240725013217.1124704-2-lulu@redhat.com>
+ <ZqKLd9ZIJ4l5tAL8@LQ3V64L9R2>
+In-Reply-To: <ZqKLd9ZIJ4l5tAL8@LQ3V64L9R2>
+From: Cindy Lu <lulu@redhat.com>
+Date: Fri, 26 Jul 2024 21:16:20 +0800
+Message-ID: <CACLfguUBQ7p8M+aUT5EjKmaBP2tNF6B3_AEhPTqC-66MD0CYcg@mail.gmail.com>
+Subject: Re: [PATH v6 1/3] vdpa: support set mac address from vdpa tool
+To: Joe Damato <jdamato@fastly.com>, Cindy Lu <lulu@redhat.com>, dtatulea@nvidia.com, 
+	mst@redhat.com, jasowang@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ulf, Gregkh and Arnd
+On Fri, 26 Jul 2024 at 01:29, Joe Damato <jdamato@fastly.com> wrote:
+>
+> On Thu, Jul 25, 2024 at 09:31:02AM +0800, Cindy Lu wrote:
+> [...]
+> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> > index 8d391947eb8d..532cf3b52b26 100644
+> > --- a/drivers/vdpa/vdpa.c
+> > +++ b/drivers/vdpa/vdpa.c
+> > @@ -1361,6 +1361,81 @@ static int vdpa_nl_cmd_dev_config_get_doit(struct sk_buff *skb, struct genl_info
+> >       return err;
+> >  }
+> >
+> > +static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
+> > +                                     struct genl_info *info)
+> > +{
+> > +     struct vdpa_dev_set_config set_config = {};
+> > +     const u8 *macaddr;
+> > +     struct vdpa_mgmt_dev *mdev = vdev->mdev;
+> > +     struct nlattr **nl_attrs = info->attrs;
+> > +     int err = -EINVAL;
+>
+> Nit: IIRC networking code prefers reverse-xmas tree style and
+> macaddr above needs to be moved.
+>
+will fix  this
+thanks
+Cindy
 
-Please withdraw this patches.
-I am cooperating with Avri and will have a new patch for SDUC.
-It will more readable, complete and suitable for mmc
-
-Ricky
-
-> -----Original Message-----
-> From: Avri Altman <Avri.Altman@wdc.com>
-> Sent: Friday, July 26, 2024 2:14 PM
-> To: Ricky WU <ricky_wu@realtek.com>; ulf.hansson@linaro.org;
-> linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> ricardo@marliere.net; gregkh@linuxfoundation.org; arnd@arndb.de
-> Subject: RE: [PATCH 0/4] Add support SDUC for Realtek card readers
->=20
->=20
-> External mail.
->=20
->=20
->=20
-> Hi,
-> > Summary:
-> > this patch is for mmc to support SDUC(Secure Digital Ultra Capacity)
-> > and add Realtek Cardreaders to support it
-> >
-> > About SDUC:
-> > SDUC is defined in SD7.0 spec, it support the max capacity is 128TB[1]
-> >
-> > Roughly implemented functions by this patch:
-> > 1.Mutual identification of SDUC in ACMD41 initialization (5.2.1[2])
-> > 2.SDUC card user area capacity calculation (5.2.2[2]) 3.Memory
-> > read/write commands sequence (5.2.3[2]) 4.Erase Commands Sequence
-> > (5.2.4[2])
-> >
-> > patches:
-> > patch#1: Defined functions and modified some type of parameter
-> > patch#2: For mmc to support SDUC
-> > patch#3: Add Realtek sdmmc host to support SDUC
-> > patch#4: Add Realtek card readers to support SDUC
-> I think that the way you organized your code makes it very hard to review=
-.
-> I would like to propose rearranging your code in a more readable form.
-> E.g. something like:
->=20
-> 1) mmc: sd: SDUC Support Recognition:
-> Explain how ACMD21 was extended to support the host-card handshake during
-> initialization.
-> Also, make it clear, e.g. in your commit log that if a SDUC card is inser=
-ted to a
-> non-supporting host, it will never respond to this ACMD21 until eventuall=
-y, the
-> host will timed out and give up.
->=20
-> 2) mmc: sd: Add SD CSD version 3.0
-> Add here the require changes in core/bus.c, core/card.h, and csd ver 3 in
-> mmc_decode_csd().
->=20
-> 3) mmc: sd: Add Extension memory addressing Add in core/sd_ops.c
-> mmc_send_ext_addr() so you'll be able to call it in open-ended rw, erase,=
- etc.
-> Here it's a good place to explain the general idea of the new CMD22.
->=20
-> 4) mmc: core: Add open-ended Ext memory addressing Call
-> mmc_send_ext_addr() for open-ended rw
->=20
-> 5) mmc: host: Always use manual-cmd23 in SDUC
-> 6) mmc: core: Add close-ended Ext memory addressing
-> 7) mmc: host: Add close-ended Ext memory addressing Those 3 patches will
-> facilitate close-ended rw.
-> It should be IMO or any SDHCI and not just for RealTk's.
-> Once the driver is in place, SDUC support doesn't require specific hw
-> characteristics from the host controller.
->=20
-> 8) mmc: core: Add Ext memory addressing for erase
-> 9) mmc: core: Allow mmc erase to carry large addresses Make the require
-> changes to support erase
->=20
-> 10) mmc: core: Adjust ACMD22 to SDUC
-> Make the adjustments in ACMD22.
->=20
-> I also think that there are some specific issues with your implementation=
-, But it
-> would be easier to discuss those once the patches are in a more readable
-> form.
->=20
-> Thanks,
-> Avri
->=20
->=20
-> >
-> > Reference:
-> > [1] SD Specifications Part 1 Physical Layer Specification Version 7.00
-> > [2] SD Specifications SDUC Host Implementation Guideline Version 1.00
-> >
-> > Ricky Wu(4):
-> >  mmc: core: some definitions and type modifications for SDUC
-> >  mmc: core: add SDUC init rw erase flow to mmc
-> >  mmc: rtsx: make Realtek sdmmc to support SDUC
-> >  misc: rtsx: add Realtek card readers to support SDUC
-> >
-> >  drivers/misc/cardreader/rts5227.c |  1 +
-> > drivers/misc/cardreader/rts5228.c |  1 +
-> > drivers/misc/cardreader/rts5249.c |  1 +
-> > drivers/misc/cardreader/rts5260.c |  1 +
-> > drivers/misc/cardreader/rts5261.c |  1 +
-> > drivers/misc/cardreader/rts5264.c |  2 +-
-> >  drivers/mmc/core/block.c          | 13 +++++++--
-> >  drivers/mmc/core/bus.c            |  4 ++-
-> >  drivers/mmc/core/card.h           |  3 ++
-> >  drivers/mmc/core/core.c           | 38 +++++++++++++++++--------
-> >  drivers/mmc/core/core.h           |  6 ++--
-> >  drivers/mmc/core/host.h           |  5 ++++
-> >  drivers/mmc/core/queue.h          |  1 +
-> >  drivers/mmc/core/sd.c             | 47
-> +++++++++++++++++++++++++++++++
-> >  drivers/mmc/host/rtsx_pci_sdmmc.c |  6 ++++
-> >  include/linux/mmc/card.h          |  2 +-
-> >  include/linux/mmc/core.h          |  1 +
-> >  include/linux/mmc/host.h          |  1 +
-> >  include/linux/mmc/sd.h            |  5 ++++
-> >  include/linux/rtsx_pci.h          |  1 +
-> >  20 files changed, 121 insertions(+), 19 deletions(-)
-> >
-> >
-> > --
-> > 2.25.1
+Cindy
+> > +     down_write(&vdev->cf_lock);
+> > +     if (nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
+> > +             set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
+> > +             macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
+> > +
+> > +             if (is_valid_ether_addr(macaddr)) {
+> > +                     ether_addr_copy(set_config.net.mac, macaddr);
+> > +                     memcpy(set_config.net.mac, macaddr, ETH_ALEN);
+> > +                     if (mdev->ops->dev_set_attr) {
+> > +                             err = mdev->ops->dev_set_attr(mdev, vdev,
+> > +                                                           &set_config);
+> > +                     } else {
+> > +                             NL_SET_ERR_MSG_FMT_MOD(
+> > +                                     info->extack,
+> > +                                     "device does not support changing the MAC address");
+> > +                     }
+> > +             } else {
+> > +                     NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> > +                                            "Invalid MAC address");
+> > +             }
+> > +     }
+> > +     up_write(&vdev->cf_lock);
+> > +     return err;
+> > +}
+>
+> Nit: other code in this file has line breaks separating functions.
+> Probably good to add one here?
+>
+>
+> > +static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
+> > +                                      struct genl_info *info)
+>
+> Nit: Does the above pass ./scripts/checkpatch.pl --strict ? I am asking
+> because it seems like the alignment might be off?
+>
+> > +{
+> > +     const char *name;
+> > +     int err = 0;
+> > +     struct device *dev;
+> > +     struct vdpa_device *vdev;
+> > +     u64 classes;
+>
+> Nit: Same as above; I believe networking code is supposed to follow
+> reverse xmas tree order so these variables should be rearranged.
+>
+> > +     if (!info->attrs[VDPA_ATTR_DEV_NAME])
+> > +             return -EINVAL;
+> > +
+> > +     name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
+> > +
+> > +     down_write(&vdpa_dev_lock);
+> > +     dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
+> > +     if (!dev) {
+> > +             NL_SET_ERR_MSG_MOD(info->extack, "device not found");
+> > +             err = -ENODEV;
+> > +             goto dev_err;
+> > +     }
+> > +     vdev = container_of(dev, struct vdpa_device, dev);
+> > +     if (!vdev->mdev) {
+> > +             NL_SET_ERR_MSG_MOD(info->extack, "unmanaged vdpa device");
+> > +             err = -EINVAL;
+> > +             goto mdev_err;
+> > +     }
+> > +     classes = vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
+> > +     if (classes & BIT_ULL(VIRTIO_ID_NET)) {
+> > +             err = vdpa_dev_net_device_attr_set(vdev, info);
+> > +     } else {
+> > +             NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not supported",
+> > +                                    name);
+> > +     }
+> > +
+> > +mdev_err:
+> > +     put_device(dev);
+> > +dev_err:
+> > +     up_write(&vdpa_dev_lock);
+> > +     return err;
+> > +}
+>
+> [...]
+>
 
 
