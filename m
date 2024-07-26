@@ -1,117 +1,492 @@
-Return-Path: <linux-kernel+bounces-263306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AB293D419
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD3993D41E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DC2B244FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:22:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF5AAB20C13
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18B317C7C8;
-	Fri, 26 Jul 2024 13:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1pi4zNZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B8417C232;
+	Fri, 26 Jul 2024 13:22:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F2D17C220;
-	Fri, 26 Jul 2024 13:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116B17A5AB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722000105; cv=none; b=NRK1uH1GuYS6Awz9mc9RL6x7qmW/BMRzIcW9Syi7aEWqDl2Yz/7e0orB65na277uDydiuT8KBF1p9rxmSsbo8PtdlvM2Ba6Qn0xADEWj9tr+uUyJA+n8VjrdRredAqvMYKvixOUrplVfyBfRUnbAUszTo984VhGxHjIEJCDd+Rw=
+	t=1722000153; cv=none; b=haAItF5kYZaMbfhervTsP1DbG2TqU5PcFCZh4J14nXLQPTJBIds3MVd/Z4EBcgZoCwVOrci4OysJoSwJE6m/bVN5S/5AVbdh/4cnzAh1AJ9bZepIcMV+WfREUKD8AQwKWILa1jvoSTOgpFKaafE8ZtLasnqpHeknp+mteCh2qis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722000105; c=relaxed/simple;
-	bh=hRkZNFtwrOf05XyNrDmkh+J3tnB4ZIPfaLmU8WdDarw=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=FrlOGnWV+6IHOHGMFMHo6J8v4PMEnPiWls7m6Dmm2fX2TcUqpjQkpF8MuxDljMgvAsn2gFMFmRFm9E7Eb8/akiwgoviQCTf48fPkvGjGdxZOO2LT21/V9OAI1bPBS/gAZi7S1XKHrYMkTGwZhqGEJkTUNsR0AhuX/6AKuX7qMlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1pi4zNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CEBC32786;
-	Fri, 26 Jul 2024 13:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722000104;
-	bh=hRkZNFtwrOf05XyNrDmkh+J3tnB4ZIPfaLmU8WdDarw=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=I1pi4zNZ/KIVjYz+nhubP2FN7+yyaey1Znec1mFaxZEfuy7yBfPz7cxu/ZOi4Gryp
-	 qQM+zaBzwZrKRJ7121k7vNu3BI+MUxMhPtU+47JMFHaURIyqTr2gS6e8DgJpk9b7sH
-	 qdBH08gsY1PRzZGU9LBkj9H8lFgtllzr5QR+YKBvQ0OTly5NJsBPHVFQXaSuRVgHX5
-	 NqyP82k68zVMLmQGur72itMScYaxkYQ7ozlnE2EXCt4IAX/pCo/8Zk0BWPAT3UMeJt
-	 6F+8zwWnHFCd4mEBHeGTzX0yVF7QOp6ukeNw30k7YSban+qQX2ZN4b414jhOJVTrc/
-	 rl4XG30ObhTAg==
-Date: Fri, 26 Jul 2024 08:21:42 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722000153; c=relaxed/simple;
+	bh=1BOfmzYesUtJf3l7cq07aF7QRLWGcMmAmNhoH90EvdM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BT+GZRan7D1Pf14sweem5JyooaYiOOU6S1dXsjbzVPwDQjiRqIGRN5PDjW59DJuOJyr7DFZinbAWwljKZujzqNpayjWqV6Q0efbNczHc27vledU3TbGa/hl7go52Oljn3yh9wOVQ+c7qNZu/+ft/HstyFcMrNsOWj7Sd7/HuqEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVpKR2Tprz6K5nk;
+	Fri, 26 Jul 2024 21:20:43 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 699F5140A46;
+	Fri, 26 Jul 2024 21:22:27 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
+ 2024 14:22:26 +0100
+Date: Fri, 26 Jul 2024 14:22:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, Alex =?ISO-8859-1?Q?Benn=E9e?=
+	<alex.bennee@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>, Philippe
+ =?ISO-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>, Ani Sinha
+	<anisinha@redhat.com>, Beraldo Leal <bleal@redhat.com>, Dongjiu Geng
+	<gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, Igor Mammedov
+	<imammedo@redhat.com>, Markus Armbruster <armbru@redhat.com>, Peter Maydell
+	<peter.maydell@linaro.org>, Thomas Huth <thuth@redhat.com>, "Wainer dos
+ Santos Moschetta" <wainersm@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v3 7/7] acpi/ghes: extend arm error injection logic
+Message-ID: <20240726142225.00000bdd@Huawei.com>
+In-Reply-To: <89e8a63b5e54409dd9bc4e7f4f4c12290838371b.1721630625.git.mchehab+huawei@kernel.org>
+References: <cover.1721630625.git.mchehab+huawei@kernel.org>
+	<89e8a63b5e54409dd9bc4e7f4f4c12290838371b.1721630625.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: steen.hegelund@microchip.com, Thorsten.Kummermehr@microchip.com, 
- andrew@lunn.ch, linux-kernel@vger.kernel.org, robh+dt@kernel.org, 
- corbet@lwn.net, netdev@vger.kernel.org, Pier.Beruto@onsemi.com, 
- davem@davemloft.net, conor+dt@kernel.org, UNGLinuxDriver@microchip.com, 
- edumazet@google.com, saeedm@nvidia.com, Selvamani.Rajagopal@onsemi.com, 
- Nicolas.Ferre@microchip.com, anthony.l.nguyen@intel.com, 
- devicetree@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com, 
- benjamin.bigler@bernformulastudent.ch, ruanjinjie@huawei.com, 
- krzysztof.kozlowski+dt@linaro.org, linux@bigler.io, horms@kernel.org, 
- vladimir.oltean@nxp.com, linux-doc@vger.kernel.org, 
- horatiu.vultur@microchip.com, Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20240726123907.566348-15-Parthiban.Veerasooran@microchip.com>
-References: <20240726123907.566348-1-Parthiban.Veerasooran@microchip.com>
- <20240726123907.566348-15-Parthiban.Veerasooran@microchip.com>
-Message-Id: <172200010240.1530361.10067496666538570000.robh@kernel.org>
-Subject: Re: [PATCH net-next v5 14/14] dt-bindings: net: add Microchip's
- LAN865X 10BASE-T1S MACPHY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
+On Mon, 22 Jul 2024 08:45:59 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Enrich CPER error injection logic for ARM processor to allow
+> setting values to  from UEFI 2.10 tables N.16 and N.17.
+>=20
+> It should be noticed that, with such change, all arguments are
+> now optional, so, once QMP is negotiated with:
+>=20
+> 	{ "execute": "qmp_capabilities" }
+>=20
+> the simplest way to generate a cache error is to use:
+>=20
+> 	{ "execute": "arm-inject-error" }
+>=20
+> Also, as now PEI is mapped into an array, it is possible to
+> inject multiple errors at the same CPER record with:
+>=20
+> 	{ "execute": "arm-inject-error", "arguments": {
+> 	   "error": [ {"type": [ "cache-error" ]},
+> 		      {"type": [ "tlb-error" ]} ] } }
+>=20
+> This would generate both cache and TLB errors, using default
+> values for other fields.
+>=20
+> As all fields from ARM Processor CPER are now mapped, all
+> types of CPER records can be generated with the new QAPI.
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+If you are happy to smash this into patch 4 then also take ownership
+of the result and change the author as I wrote almost none of the code
+that ended up in the result as only the GHESv2 stuff was mind
+even before you joined this effort - the rest was Shiju's
+
+If you want, I'm fine with a co-developed on the result
+
+Jonathan
 
 
-On Fri, 26 Jul 2024 18:09:07 +0530, Parthiban Veerasooran wrote:
-> The LAN8650/1 combines a Media Access Controller (MAC) and an Ethernet
-> PHY to enable 10BASE-T1S networks. The Ethernet Media Access Controller
-> (MAC) module implements a 10 Mbps half duplex Ethernet MAC, compatible
-> with the IEEE 802.3 standard and a 10BASE-T1S physical layer transceiver
-> integrated into the LAN8650/1. The communication between the Host and the
-> MAC-PHY is specified in the OPEN Alliance 10BASE-T1x MACPHY Serial
-> Interface (TC6).
-> 
-> Reviewed-by: Conor Dooley<conor.dooley@microchip.com>
-> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+
 > ---
->  .../bindings/net/microchip,lan8650.yaml       | 80 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/microchip,lan8650.yaml
-> 
+>  hw/acpi/ghes.c                  | 168 +++++++-------
+>  hw/arm/arm_error_inject.c       | 399 +++++++++++++++++++++++++++++++-
+>  hw/arm/arm_error_inject_stubs.c |  20 +-
+>  include/hw/acpi/ghes.h          |  40 +++-
+>  qapi/arm-error-inject.json      | 250 +++++++++++++++++++-
+>  tests/lcitool/libvirt-ci        |   2 +-
+>  6 files changed, 778 insertions(+), 101 deletions(-)
+>=20
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index ebf1b812aaaa..afd1d098a7e3 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> +    build_append_int_noprefix(table, err.running_state, 4);
+> +
+> +    /* PSCI state: only valid when running state is zero  */
+> +    build_append_int_noprefix(table, err.psci_state, 4);
+> +
+> +    for (i =3D 0; i < err.err_info_num; i++) {
+> +        /* ARM Propcessor error information */
+> +        /* Version */
+> +        build_append_int_noprefix(table, 0, 1);
+> +
+> +        /*  Length */
+> +        build_append_int_noprefix(table, ACPI_GHES_ARM_CPER_PEI_LENGTH, =
+1);
+> +
+> +        /* Validation Bits */
+> +        build_append_int_noprefix(table, err.pei[i].validation, 2);
 
-yamllint warnings/errors:
+Maybe drop some comments when the data being written makes it obvious?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/microchip,lan8650.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/net/microchip,lan865x.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/microchip,lan8650.yaml
+> +
+> +        /* Type */
+> +        build_append_int_noprefix(table, err.pei[i].type, 1);
+> +
+> +        /* Multiple error count */
+> +        build_append_int_noprefix(table, err.pei[i].multiple_error, 2);
+> +
+> +        /* Flags  */
+> +        build_append_int_noprefix(table, err.pei[i].flags, 1);
+> +
+> +        /* Error information  */
+> +        build_append_int_noprefix(table, err.pei[i].error_info, 8);
+> +
+> +        /* Virtual fault address  */
+> +        build_append_int_noprefix(table, err.pei[i].virt_addr, 8);
+> +
+> +        /* Physical fault address  */
+> +        build_append_int_noprefix(table, err.pei[i].phy_addr, 8);
+> +    }
+> +
+> +    for (i =3D 0; i < err.context_info_num; i++) {
+> +        /* ARM Propcessor error context information */
+> +        /* Version */
+> +        build_append_int_noprefix(table, 0, 2);
+> +
+> +        /* Validation type */
+> +        build_append_int_noprefix(table, err.context[i].type, 2);
+> +
+> +        /* Register array size */
+> +        build_append_int_noprefix(table, err.context[i].size * 8, 4);
+> +
+> +        /* Register array (byte 8 of Context info) */
+> +        for (j =3D 0; j < err.context[i].size; j++) {
+> +            build_append_int_noprefix(table, err.context[i].array[j], 8);
+> +        }
+>      }
 
-doc reference errors (make refcheckdocs):
+> diff --git a/hw/arm/arm_error_inject.c b/hw/arm/arm_error_inject.c
+> index 1da97d5d4fdc..67f1c77546b9 100644
+> --- a/hw/arm/arm_error_inject.c
+> +++ b/hw/arm/arm_error_inject.c
+> @@ -10,23 +10,408 @@
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240726123907.566348-15-Parthiban.Veerasooran@microchip.com
+> +
+> +/* Handle ARM Context */
+> +static ArmContext *qmp_arm_context(uint16_t *context_info_num,
+> +                                   uint32_t *context_length,
+> +                                   bool has_context,
+> +                                   ArmProcessorContextList const *contex=
+t_list)
+> +{
+> +    ArmProcessorContextList const *next;
+> +    ArmContext *context =3D NULL;
+> +    uint16_t i, j, num, default_type;
+> +
+> +    default_type =3D get_default_context_type();
+> +
+> +    if (!has_context) {
+> +        *context_info_num =3D 0;
+> +        *context_length =3D 0;
+> +
+> +        return NULL;
+> +    }
+> +
+> +    /* Calculate sizes */
+> +    num =3D 0;
+> +    for (next =3D context_list; next; next =3D next->next) {
+> +        uint32_t n_regs =3D 0;
+> +
+> +        if (next->value->has_q_register) {
+> +            uint64List *reg =3D next->value->q_register;
+> +
+> +            while (reg) {
+> +                n_regs++;
+> +                reg =3D reg->next;
+> +            }
+> +
+> +            if (next->value->has_minimal_size &&
+> +                                        next->value->minimal_size < n_re=
+gs) {
+I'd align just after (
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+> +
+> +static uint8_t *qmp_arm_vendor(uint32_t *vendor_num, bool has_vendor_spe=
+cific,
+> +                               uint8List const *vendor_specific_list)
+> +{
+> +    uint8List const *next =3D vendor_specific_list;
+> +    uint8_t *vendor =3D NULL, *p;
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+vendor always set before use.
 
-pip3 install dtschema --upgrade
+> +
+> +    if (!has_vendor_specific) {
+> +        return NULL;
+> +    }
+> +
+> +    *vendor_num =3D 0;
+> +
+> +    while (next) {
+> +        next =3D next->next;
+> +        (*vendor_num)++;
+> +    }
+> +
+> +    vendor =3D g_malloc(*vendor_num);
+> +
+> +    p =3D vendor;
+> +    next =3D vendor_specific_list;
+> +    while (next) {
+> +        *p =3D next->value;
+> +        next =3D next->next;
+> +        p++;
+> +    }
+> +
+> +    return vendor;
+> +}
+> diff --git a/qapi/arm-error-inject.json b/qapi/arm-error-inject.json
+> index 430e6cea6b60..2a314830fe60 100644
+> --- a/qapi/arm-error-inject.json
+> +++ b/qapi/arm-error-inject.json
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> +
+> +##
+> +# @ArmProcessorErrorInformation:
+> +#
+> +# Contains ARM processor error information (PEI) data according with UEFI
+> +# CPER table N.17.
+> +#
+> +# @validation:
+> +#       Valid validation bits for error-info section.
+> +#       Argument is optional. If not specified, those flags will be enab=
+led:
+> +#       first-error-cap and propagated.
+> +#
+> +# @type:
+> +#       ARM processor error types to inject. Argument is mandatory.
+> +#
+> +# @multiple-error:
+> +#       Indicates whether multiple errors have occurred.
+> +#       Argument is optional. If not specified and @validation not enfor=
+ced,
 
+forced probably rather than enforced.
+
+> +#       this field will be marked as invalid at CPER record..
+. only
+
+Good to mention the odd encoding of 0 =3D single error, 1 =3D multiple (los=
+t count)
+2+ =3D actual count of errors
+
+> +#
+> +# @flags:
+> +#       Indicates flags that describe the error attributes.
+> +#       Argument is optional. If not specified and defaults to
+> +#       first-error and propagated.
+> +#
+> +# @error-info:
+> +#       Error information structure is specific to each error type.
+> +#       Argument is optional, and its value depends on the PEI type(s).
+> +#       If not defined, the default depends on the type:
+> +#       - for cache-error: 0x0091000F;
+> +#       - for tlb-error: 0x0054007F;
+> +#       - for bus-error: 0x80D6460FFF;
+> +#       - for micro-arch-error: 0x78DA03FF;
+> +#       - if multiple types used, this bit is disabled from @validation =
+bits.
+> +#
+> +# @virt-addr:
+> +#       Virtual fault address associated with the error.
+> +#       Argument is optional. If not specified and @validation not enfor=
+ced,
+> +#       this field will be marked as invalid at CPER record..
+> +#
+> +# @phy-addr:
+> +#       Physical fault address associated with the error.
+> +#       Argument is optional. If not specified and @validation not enfor=
+ced,
+> +#       this field will be marked as invalid at CPER record..
+> +#
+> +# Since: 9.1
+> +##
+> +{ 'struct': 'ArmProcessorErrorInformation',
+> +  'data': { '*validation': ['ArmPeiValidationBits'],
+> +            'type': ['ArmProcessorErrorType'],
+> +            '*multiple-error': 'uint16',
+> +            '*flags': ['ArmProcessorFlags'],
+> +            '*error-info': 'uint64',
+> +            '*virt-addr':  'uint64',
+> +            '*phy-addr': 'uint64'}
+> +}
+> +
+> +##
+> +# @ArmProcessorContext:
+> +#
+> +# Provide processor context state specific to the ARM processor architec=
+ture,
+> +# According with UEFI 2.10 CPER table N.21.
+> +# Argument is optional.If not specified, no context will be used.
+                          ^ space
+> +#
+> +# @type:
+> +#       Contains an integer value indicating the type of context state b=
+eing
+> +#       reported.
+> +#       Argument is optional. If not defined, it will be set to be EL1 r=
+egister
+> +#       for the emulation, e. g.:
+> +#       - on arm32: AArch32 EL1 context registers;
+> +#       - on arm64: AArch64 EL1 context registers.
+> +#
+> +# @register:
+> +#       Provides the contents of the actual registers or raw data, depen=
+ding
+> +#       on the context type.
+> +#       Argument is optional. If not defined, it will fill the first reg=
+ister
+> +#       with 0xDEADBEEF, and the other ones with zero.
+We could fill this in with a valid snap shot I think?  It' just a set of CP=
+U registers.
+Obviously content would be pretty random and meaningless given the
+error isn't correlated with particular activity (as we triggered it) but ma=
+ybe would
+useful for testing the parsing?
+
+Perhaps that's a job for the future as we will want to be able to override =
+it
+anyway.
+
+> +#
+> +# @minimal-size:
+> +#       Argument is optional. If provided, define the minimal size of the
+> +#       context register array. The actual size is defined by checking t=
+he
+> +#       number of register values plus the content of this field (if use=
+d),
+> +#       ensuring that each processor context information structure array=
+ is
+> +#       padded with zeros if the size is not a multiple of 16 bytes.
+> +#
+> +# Since: 9.1
+> +##
+> +{ 'struct': 'ArmProcessorContext',
+> +  'data': { '*type': 'uint16',
+> +            '*minimal-size': 'uint32',
+> +            '*register': ['uint64']}
+>  }
+> =20
+>  ##
+>  # @arm-inject-error:
+>  #
+> -# Inject ARM Processor error.
+> +# Inject ARM Processor error with data to be filled accordign with UEFI =
+2.10
+> +# CPER table N.16.
+>  #
+> -# @errortypes: ARM processor error types to inject
+> +# @validation:
+> +#       Valid validation bits for ARM processor CPER.
+> +#       Argument is optional. If not specified, the default is
+> +#       calculated based on having the corresponding arguments filled.
+> +#
+> +# @affinity-level:
+> +#       Error affinity level for errors that can be attributed to a spec=
+ific
+> +#       affinity level.
+> +#       Argument is optional. If not specified and @validation not enfor=
+ced,
+> +#       this field will be marked as invalid at CPER record.
+As below.
+
+> +#
+> +# @mpidr-el1:
+> +#       Processor=E2=80=99s unique ID in the system.
+> +#       Argument is optional. If not specified, it will use the cpu mpidr
+> +#       field from the emulation data. If zero and @validation is not
+> +#       enforced, this field will be marked as invalid at CPER record.
+The zero case is obscure enough I'd be tempted to say that if we want
+to test that then we will override the validation field.
+
+The logic will end up simpler and still allow the same level of corner
+case testing for no valid mpidr (which is really odd if it occurs!)
+
+> +#
+> +# @midr-el1:  Identification info of the chip
+> +#       Argument is optional. If not specified, it will use the cpu mpidr
+> +#       field from the emulation data. If zero and @validation is not
+> +#       enforced, this field will be marked as invalid at CPER record.
+
+Same as above.
+
+> +#
+> +# @running-state:
+> +#       Indicates the running state of the processor.
+> +#       Argument is optional. If not specified and @validation not enfor=
+ced,
+> +#       this field will be marked as invalid at CPER record.
+
+Fun corners of the spec.  Can't allow bit0 of this and psci-state.
+We should perhaps enforce that? I don't think we need to inject completely
+invalid states (just corners of what is valid).
+
+> +#
+> +# @psci-state:
+> +#       Provides PSCI state of the processor, as defined in ARM PSCI doc=
+ument.
+> +#       Argument is optional. If not specified, it will use the cpu power
+> +#       state field from the emulation data.
+Hmm. Do you think validation is meant to cover this? Is it under running-st=
+ate?
+
+> +#
+> +# @context:
+> +#       Contains an array of processor context registers.
+> +#       Argument is optional. If not specified, no context will be added.
+> +#
+> +# @vendor-specific:
+> +#       Contains a byte array of vendor-specific data.
+> +#       Argument is optional. If not specified, no vendor-specific data
+> +#       will be added.
+> +#
+> +# @error:
+> +#       Contains an array of ARM processor error information (PEI) secti=
+ons.
+> +#       Argument is optional. If not specified, defaults to a single
+> +#       Program Error Information record defaulting to type=3Dcache-erro=
+r.
+>  #
+>  # Features:
+>  #
+> @@ -44,6 +262,16 @@
+>  # Since: 9.1
+>  ##
+>  { 'command': 'arm-inject-error',
+> -  'data': { 'errortypes': ['ArmProcessorErrorType'] },
+> +  'data': {
+> +    '*validation': ['ArmProcessorValidationBits'],
+> +    '*affinity-level': 'uint8',
+> +    '*mpidr-el1': 'uint64',
+> +    '*midr-el1': 'uint64',
+> +    '*running-state':  ['ArmProcessorRunningState'],
+> +    '*psci-state': 'uint32',
+> +    '*context': ['ArmProcessorContext'],
+> +    '*vendor-specific': ['uint8'],
+> +    '*error': ['ArmProcessorErrorInformation']
+> +  },
+>    'features': [ 'unstable' ]
+>  }
 
