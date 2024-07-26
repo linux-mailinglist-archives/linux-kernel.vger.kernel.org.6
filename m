@@ -1,293 +1,149 @@
-Return-Path: <linux-kernel+bounces-263426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AD293D5AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:09:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EE193D5AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1621F21059
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DD328227B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A981EA6F;
-	Fri, 26 Jul 2024 15:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A08917C7B5;
+	Fri, 26 Jul 2024 15:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KwiVUXmk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgXBKCVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0967F176FDF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E13D176FDF;
+	Fri, 26 Jul 2024 15:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006522; cv=none; b=nImOQ/s2ey9WBq7lVekY8CRE447sXqJS6ncr5JITe1qwdk+2VFnJk63rZ2FN/YCpTR92hWk7Zk7EpmOkZ8oMK3t2B4usekI5C9HRr/aHWggi8hAaOptBDIdvVfw1JI6ZfvniHxm32BI+mxSUkEm1sY4fHZfnJBgh1nKF0EL/NO0=
+	t=1722006533; cv=none; b=n9sGlok1l86Fw8I18uttT87ExBajPCi4+XEvipJ1U+rvzUBvTYv+yJaVx7SF1bHK3RA/IcHFyO4x+GAGYF05+IbJyGwaAIGbhGgLEdiKg22A5LckRMzKYQpT7nvHrIlOlfV1+kWSEbB+wmxlRpHfmsI2xhjUTIZ2Vk3mVMv+nTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006522; c=relaxed/simple;
-	bh=qm3vU5nlloSg/ckVtbTdCryyu1KFiz5UN+yO3AfyJYo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dTWLyaeDRnPce5yN5OghLejmPd/MdbhjvXG9jCCGH7yLu+NaY+vMOAlN609lkQnkS2LchnraWFL/+7SYwGFyol1jfNWl3s7EwM745+47Y65ba/JqqLnzDgCJ6c461fk4xOl7kj3xVIUnLzXex3prXdRzCrCyO/kk+OaH97je7F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KwiVUXmk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722006520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BGRQZ4wr7LLIP7BKv1iB3m/r2GyqQ2Ga7dGyzSXW5lM=;
-	b=KwiVUXmkmoLXO79o3QhZEkPVzolZNDUdfnOzaiaDjYPIs+fOdFPp1oA580nktpAGMdWn0+
-	9CNBshMSzKnWmLP+Yo6ofFMI0XzDETlUpUV+E4/dRW0xQ5TY3mJ8aaNZsOyId/s97ndzZz
-	4acYpC7NhazCrb0Q+7YnJ5zR+87cUcQ=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-EPXOwc4GN8WPbxkGPr6T2Q-1; Fri, 26 Jul 2024 11:08:38 -0400
-X-MC-Unique: EPXOwc4GN8WPbxkGPr6T2Q-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-79efc85b0b2so53271985a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:08:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722006518; x=1722611318;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BGRQZ4wr7LLIP7BKv1iB3m/r2GyqQ2Ga7dGyzSXW5lM=;
-        b=VE+1dcnRPdHPw8Oph0oTCzaLuEPuoZt0ZBynvxIe161inN3eb2HqJo5KxLb5Lc9yXN
-         SuB2tmLyu76HezKOfjBxYIJhBjYHmzbp19SVcpUv0f1o08pqGCVkRIz9CIsWAOViqxUa
-         F/hAPh5JSt0C/kfoGDdsocCS2iGfEXjxhgn4z9eMnEwssM4qgZ5yWvXU8INbD75uQBB7
-         fI3pI7FuocwG4I3WVsOxH1B0pmnASkP7Imzy+L2FxTocGStEvgr1ApsbVbqX0UX5nMAp
-         SDJgtWCHxYnYo4JaDmND9KWqE/l0vavQLZ0MU9JI7YXXbWLabjePwxGR3NthRqgz9fLf
-         4oLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaIq2mPEnRsh9BZxHrGM5JuLsBGZBN/gbc8gK3rHzVlaA5j/yH6rjl4BklPWTk5JON9r/wJ53WvAkB1cRX/EsD1xwQk5xis/Wd5LMK
-X-Gm-Message-State: AOJu0YyQGSthAeDeq5p3keJgn1MbXbO5Md1o7Zte4fVEuimJYDYQs9yF
-	s0yzCv6iyPkMbSQ3kAEoObwASzgNdLrAF90lMDsGP6mjm4S6Cvxi5GrHvDNaQw1OiJgJG6vTYKm
-	fzUKYtfq8gDprDu/JMu8xlT6lUcUI2vkYOT9BTwvo91EqqbHvn9/DuJrU8nSTmA==
-X-Received: by 2002:a05:620a:4110:b0:79f:a6c:f422 with SMTP id af79cd13be357-7a1e524c7admr2016385a.24.1722006518004;
-        Fri, 26 Jul 2024 08:08:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUiwxqcyDGZfvkFCWqbc+Wgbu8OYxfgn/GiDpD2EKcoW5u8PS9sn5wkGn0rs+kl3OlopLfBA==
-X-Received: by 2002:a05:620a:4110:b0:79f:a6c:f422 with SMTP id af79cd13be357-7a1e524c7admr2013485a.24.1722006517641;
-        Fri, 26 Jul 2024 08:08:37 -0700 (PDT)
-Received: from intellaptop.lan (pool-173-34-154-202.cpe.net.cable.rogers.com. [173.34.154.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b226csm184612385a.40.2024.07.26.08.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:08:37 -0700 (PDT)
-Message-ID: <91c7727f66afa7c1f424fb08958579dfa3dc708c.camel@redhat.com>
-Subject: Re: [PATCH 1/2] KVM: x86: relax canonical checks for some x86
- architectural msrs
-From: mlevitsk@redhat.com
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Sean
- Christopherson <seanjc@google.com>, Borislav Petkov <bp@alien8.de>, Thomas
- Gleixner <tglx@linutronix.de>,  x86@kernel.org,
- linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,  Paolo
- Bonzini <pbonzini@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-Date: Fri, 26 Jul 2024 11:08:36 -0400
-In-Reply-To: <ZqNHGBZyiHKvQKj1@chao-email>
-References: <20240725150110.327601-1-mlevitsk@redhat.com>
-	 <20240725150110.327601-2-mlevitsk@redhat.com> <ZqNHGBZyiHKvQKj1@chao-email>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1722006533; c=relaxed/simple;
+	bh=XI+Hf0XYjSgLaa2AJq97U4XSivTLCanZdMkxib8LvBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMZY8WvHNgZAdk7Ftv4yicE4O6RIcU3UC2KORKFpLHy9BcvdTy1jgPSLslm+xjFHiYUTpEYITxlCbbL1cBbbhjQnM00Q40OcTnaS6M6MmdT57H8k53f5z7fMkyB4bNSApZHnTgT+DXZhQHwFI78X3fvPxFYgfRiAnYmEsbEQ5eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgXBKCVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFF9C32786;
+	Fri, 26 Jul 2024 15:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722006532;
+	bh=XI+Hf0XYjSgLaa2AJq97U4XSivTLCanZdMkxib8LvBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JgXBKCVErMpL7ONZmJBjS51hqCcm7mhFj1Ke+6WG6GFHbitfE2vqyKBfc+IuWjYXE
+	 5KYOBmcqNQNDV1oHVOKasFpZKDGGf/NWdP2zqCda5slduCZ8fBamOJJSsYi3jbRS6D
+	 L6qO9TkBZNt++hXBPNrxkwS1oP+yTjENsYmG0L0ghFwh1PP13eTrOLkv/Sag/Gs1B9
+	 iK+egF1wA9QKQyIUYGPLRASVq1bFmrnz4ha0WZMfj/v12ok14smdp9uHv5h6QmHa7d
+	 G5hs6RNc2i/LdTkoZKd5h3x9qaqjAIpXyhLeDnoke4//bmCtse8wDwAYlq9kt0cuBN
+	 RRIq1d2PnAehg==
+Message-ID: <e73e1a14-dfa0-4a36-bc6e-5d6421553788@kernel.org>
+Date: Fri, 26 Jul 2024 17:08:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] Add initial Exynos850 support to the thermal
+ driver
+To: m.majewski2@samsung.com,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Anand Moon <linux.amoon@gmail.com>
+References: <20240726110114.1509733-1-m.majewski2@samsung.com>
+ <CGME20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a@eucms1p3>
+ <20240726150348eucms1p356a6209b11c81924a1dac027555466cd@eucms1p3>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240726150348eucms1p356a6209b11c81924a1dac027555466cd@eucms1p3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=D0=A3 =D0=BF=D1=82, 2024-07-26 =D1=83 14:50 +0800, Chao Gao =D0=BF=D0=B8=
-=D1=88=D0=B5:
-> On Thu, Jul 25, 2024 at 11:01:09AM -0400, Maxim Levitsky wrote:
-> > Several architectural msrs (e.g MSR_KERNEL_GS_BASE) must contain
-> > a canonical address, and according to Intel PRM, this is enforced
-> > by #GP on a MSR write.
-> >=20
-> > However with the introduction of the LA57 the definition of
-> > what is a canonical address became blurred.
-> >=20
-> > Few tests done on Sapphire Rapids CPU and on Zen4 CPU,
-> > reveal:
-> >=20
-> > 1. These CPUs do allow full 57-bit wide non canonical values
-> > to be written to MSR_GS_BASE, MSR_FS_BASE, MSR_KERNEL_GS_BASE,
-> > regardless of the state of CR4.LA57.
-> > Zen4 in addition to that even allows such writes to
-> > MSR_CSTAR and MSR_LSTAR.
->=20
-> This actually is documented/implied at least in ISE [1]. In Chapter 6.4
-> "CANONICALITY CHECKING FOR DATA ADDRESSES WRITTEN TO CONTROL REGISTERS AN=
-D
-> MSRS"
->=20
-> =C2=A0 In Processors that support LAM continue to require the addresses w=
-ritten to
-> =C2=A0 control registers or MSRs to be 57-bit canonical if the processor =
-_supports_
-> =C2=A0 5-level paging or 48-bit canonical if it supports only 4-level pag=
-ing
->=20
-> [1]: https://cdrdv2.intel.com/v1/dl/getContent/671368
+On 26/07/2024 17:03, Mateusz Majewski wrote:
+> Forgot to mention it in the cover letter, but as discussed in v1 in
+> https://lore.kernel.org/lkml/CAPLW+4nfEjP4FDjRJORyyKk46x4VfFAcMuK88jXUT_LJoP1N_g@mail.gmail.com,
+> this requires support for the TMU clock to run, available in
+> https://lore.kernel.org/lkml/20240723163311.28654-2-semen.protsenko@linaro.org.
+> This series builds fine without this, only it is not possible to write a
+> devicetree source for this without the mentioned series, so as I
+> understand it is ok for this to be in review anyway?
 
-I haven't found this in the actual PRM, but mine is relatively old,
-(from September 2023, I didn't bother to update it because 5 level paging i=
-s
-quite an old feature)
+It's okay. Also okay for merging via thermal tree, after merge window.
+Only DTS will depend on the clock binding patch, which you will have to
+mention in cover letter or patch changelog (---).
 
->=20
-> >=20
-> > 2. These CPUs don't prevent the user from switching back to 4 level
-> > paging with values that will be non canonical in 4 level paging,
-> > and instead just allow the msrs to contain these values.
-> >=20
-> > Since these MSRS are all passed through to the guest, and microcode
-> > allows the non canonical values to get into these msrs,
-> > KVM has to tolerate such values and avoid crashing the guest.
-> >=20
-> > To do so, always allow the host initiated values regardless of
-> > the state of CR4.LA57, instead only gate this by the actual hardware
-> > support for 5 level paging.
-> >=20
-> > To be on the safe side leave the check for guest writes as is.
-> >=20
-> > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> > ---
-> > arch/x86/kvm/x86.c | 31 ++++++++++++++++++++++++++++++-
-> > 1 file changed, 30 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index a6968eadd418..c599deff916e 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -1844,7 +1844,36 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, =
-u32 index, u64 data,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_KERNEL_GS_BASE=
-:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_CSTAR:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_LSTAR:
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (is_noncanonical_address(data, vcpu))
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * Both AMD and Intel cpus tend to allow values which
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * are canonical in the 5 level paging mode but are no=
-t
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * canonical in the 4 level paging mode to be written
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * to the above msrs, regardless of the state of the C=
-R4.LA57.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 *
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * Intel CPUs do honour CR4.LA57 for the MSR_CSTAR/MSR=
-_LSTAR,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * AMD cpus don't even do that.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 *
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * Both CPUs also allow non canonical values to remain=
- in
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * these MSRs if the CPU was in 5 level paging mode an=
-d was
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * switched back to 4 level paging, and tolerate these=
- values
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * both in native MSRs and in vmcs/vmcb fields.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 *
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * To avoid crashing a guest, which manages using one =
-of the above
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * tricks to get non canonical value to one of
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * these MSRs, and later migrates, allow the host init=
-iated
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * writes regardless of the state of CR4.LA57.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 *
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * To be on the safe side, don't allow the guest initi=
-ated
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * writes to bypass the canonical check (e.g be more s=
-trict
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 * than what the actual ucode usually does).
->=20
-> I may think guest-initiated writes should be allowed as well because this=
- is
-> the architectural behavior.
+> 
+> By the way, I am going to have some more time to help with the upstream
+> kernel, and have access to most of the supported SoCs. If you feel that
+> it is appropriate, I would be very happy to become one of the
+> maintainers of this driver :)
 
-Note though that for MSR_CSTAR/MSR_LSTAR I did set #GP, depending on CR.LA5=
-7.
-Ah, I see it, KVM intercepts these msrs on VMX (but not on SVM) and I was u=
-nder=C2=A0
-the impression that it doesn't, that is why I get #GP depending on CR4.LA57=
-....
+If you have time, I think it would be great. +1
 
-I do wonder why we intercept these msrs on VMX and not on SVM.
-
-It all makes sense now, thanks a lot for the explanation!
-
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 */
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (!host_initiated && is_noncanonical_address(data, v=
-cpu))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=
- 1;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (!__is_canonical_address(data,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0boot_c=
-pu_has(X86_FEATURE_LA57) ? 57 : 48))
->=20
-> boot_cpu_has(X86_FEATURE_LA57)=3D1 means LA57 is enabled. Right?
->=20
-> With this change, host-initiated writes must be 48-bit canonical if LA57 =
-isn't
-> enabled on the host, even if it is enabled in the guest. (note that KVM c=
-an
-> expose LA57 to guests even if LA57 is disabled on the host, see
-> kvm_set_cpu_caps()).
-
-
-Sorry about this - we indeed need to use kvm_cpu_cap_has(X86_FEATURE_LA57) =
-because
-it is forced based on host raw CPUID.
-
-I remember I wanted to do exactly this but forgot somehow.
-
-Also I need to update this for nested VMX - these msrs are also checked the=
-re based
-on CR4.LA57.
-
-Thanks for the clarification, and it all makes sense. I'll send v2 with all=
- of this
-when I get back from a vacation (next Wednesday).
-
+Reviews, tests, cleanups and any other non-developer activities are
+welcomed anyway, regardless whether you are listed as maintainer or not.
+Just set yourself a lei filter for specific keywords (e.g. samsung-soc
+list or dfn: for paths) and just review all the code on the lists.
 
 Best regards,
-	Maxim Levitsky
-
-
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-return 1;
->=20
+Krzysztof
 
 
