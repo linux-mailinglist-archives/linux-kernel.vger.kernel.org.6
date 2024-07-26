@@ -1,109 +1,95 @@
-Return-Path: <linux-kernel+bounces-262869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F3B93CE14
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FEA93CE36
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B381C20D54
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15DF4282DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45BD175562;
-	Fri, 26 Jul 2024 06:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0882917623C;
+	Fri, 26 Jul 2024 06:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERsUYtmY"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nYpQ8DI1"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDD02557F;
-	Fri, 26 Jul 2024 06:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94F27E767;
+	Fri, 26 Jul 2024 06:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721974701; cv=none; b=J5wAhzew9NrClrbiKVUFKqIf7HPRfDxvN8JaeIQ6nL3jE3auigcg+8yR0P9XTNtgkiHJyp+XILxLL0F63ZXgYeWgAr/vO/qjPlsCmsdlOOoKXwER/rIyYLUximBnmYMk99ZelvmPpuyeZOju9m0l6QdEIR4laqM6OByMzsvzvpk=
+	t=1721975706; cv=none; b=hoWqz3R+LNIC/fouTqgGsqs9bfbQk7JjHHSZPepN89Apl/fVprpeq8JDk24BJEU9UVMYE/0nu71bgryEcW3x77YRJi/HYoGLH//210rqx6sWLG/mQAqtEGP4Au67vXQBwEjK/tzIeQ54MNm7qGEXmO/sJS2rRQ8X+jBnYfy32Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721974701; c=relaxed/simple;
-	bh=ZXIUgYpqW9FcDD4A0sqXP0ScftGO8Wc+4lYkidVXkpk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=moj6PUj98fiO0d6hMlmy9oG8qkTBawGgFWxLAnprSvzjHhaCZiEVU3971a7Joegkx/iJoM9n+bXI2YlbGNKDd7zgzcYeRldBFgjzl3kiHV+HIAP4ujMqxkeDmjrTaYoh3bK9xGa9YhohbOjCyHmoQXrpTguooUbQIPAnD4WSnic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERsUYtmY; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d7bc07b7so24923685a.0;
-        Thu, 25 Jul 2024 23:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721974698; x=1722579498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IY+VivhMLGx+CDmmORg6086EMcWgTnl4FbE0K8BcNMs=;
-        b=ERsUYtmYvw48qO6oa/mr/YdadUN0LW63G2oRAZRFf82dRdbsY2iLflTjlQcbtUtCwp
-         xVGFy4PlgKAhMudkomya15mvP3wxctppg4V1sJXoYUYiYNM4pHEnA2dMXb23wnrqxAG1
-         lvpUFSX93uJObSecfnyIPP09QlilCOxUVz5mvSvmIzbaH+45Xwg+4Ip5reNZkhWRf9fA
-         VTGGw0XUuUS4zl4Ae6UgJB5x/0wJ1RWg4QjB41ZR8a6+5u9sFPcvzFqteNhKMIE41fxg
-         EFnrNkT/4m+4jQBMCzD2Wott0Z7LUYN9Grkb39LEcEjFu7lLayg18CksRQ3iIWGeka9b
-         TJxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721974698; x=1722579498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IY+VivhMLGx+CDmmORg6086EMcWgTnl4FbE0K8BcNMs=;
-        b=QYoBc7LqRC801pZ19zy0c42cdjX3smnakmCosZpTMWl1s72F9uBIIBlDvYgsZJNhb2
-         qalf1uaGRHv2NaEjGwWi59IUkTSs3+0R7j68jkjKXzPG2Y7+autsReti8yuZ8MIx+hwb
-         ujqupRANedNJEQhYR9NSFdK+dHRHF+TK6C1SVq7tHGnnfF2Yi+TDULeUusPdQDXdSNUd
-         87tX4Mrzyxf25J4Mr49flocLycc8VVQlrHL+5qXtKVEpbywxY1sEPCtYBdmpOT0eo6zO
-         pbToeOn4+8vnJpnd+PCfcf9phTJ9XvknyHeSjjZaBirJZmzjP5ZPhYkCw8edvIrf0LHf
-         kFPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX4WkermcV5HhlBGzY1q+yXK8y3/0k90dkzlSpMp/QPaxJttBgXmWe/Dft84jNmQUnNvAlunQ3TTpgy2uCXe3cYo5pkNpDskKIMifXlGf4pGD3uSpRiVnuOVtpgjqYqcY3iluI4J4pesKf/Q==
-X-Gm-Message-State: AOJu0YzJtEHa/ihtz7srqFGI46dAG8ept0BXnlmQY31yu16NX+yCGiHQ
-	vsEp8sXUcnHjKkv5Yh6lgflB+TIMMXORlISvpjfca7qnBVQw/ZDpBXmB7nnNjI7wI9nErPRxG38
-	4ZH6b1fINz9n7QjdSuTodotRkaW8=
-X-Google-Smtp-Source: AGHT+IEMgqIyemQNZIPGNn3zmpc0yTL+Qy0QT5+Ynrqd1xHnU5wNXIeXtCHJLsHZ42sdus18A3VvZCDuYGLPTkU/tbk=
-X-Received: by 2002:a05:620a:f15:b0:79d:7a40:1bde with SMTP id
- af79cd13be357-7a1d7ef9aa9mr439852485a.45.1721974698478; Thu, 25 Jul 2024
- 23:18:18 -0700 (PDT)
+	s=arc-20240116; t=1721975706; c=relaxed/simple;
+	bh=LQjtAkmKxV9m9StNUoFtssLQCtwn1Jy3zEp5yrqc88Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q6JHv5pUJmjb5AZ/+JD6ZkwIBjsqDo8YL+QeqR0kv/7/upOvbiKYQs8k5ce/aQQbg0ZhPfF+SoTtM5UBjQIrQ/dvMcGlpE21rLcAIr3R0h3FlmuLuHE57/o0KMy3fuswU04b+gvoFnyR4eh7dV5oMLqXlbfkkIaD8hNa6wO94mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nYpQ8DI1; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (unknown [10.101.196.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id A53BD3F904;
+	Fri, 26 Jul 2024 06:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1721975173;
+	bh=A1mPeS6hLTlzr3SyHyP/MD9cQNKLZUbeMVkI9QOlBIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=nYpQ8DI1a+SoLhqjYXL1na6IcPbbzdBGkNvTX9Rov6crr2fGTsregl3eh4fOstbmY
+	 hc35Edh83plUzNpud9nma9im4HS0LfggAhaQ7fLHrzC3AJUQ9y1gDhhwJ1rsKVnrY9
+	 hQ4yh29Tfl0H1o4T4/4uDAe48MU97TblDAJettMCwqVRBNc+/aFekA9mr6kOXcKEWi
+	 u7mTGlOhcYXe3phm+bmnDJVXVwA6d2mFTRDK8BQAPpvl3OENubxU0PQZtbwQ12tEPT
+	 EDraMcgrjghLasINmckw/lnd8JrxBbGGNzA3nphGvV9zmBKatxPgVVzvU4VXRDLvUF
+	 aJfeDqDubxn2w==
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: jacob.jun.pan@linux.intel.com,
+	lenb@kernel.org
+Cc: artem.bityutskiy@linux.intel.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] intel_idle: Add Jasper Lake and Elkhart Lake support
+Date: Fri, 26 Jul 2024 14:26:01 +0800
+Message-ID: <20240726062601.674078-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723105412.3615926-1-dongliang.cui@unisoc.com>
- <CGME20240724130711epcas1p3a6b887e2f40e3430e22d739093485cc6@epcas1p3.samsung.com>
- <ZqD8dWFG5uxmJ6yn@infradead.org> <17d6401dade58$0287e640$0797b2c0$@samsung.com>
-In-Reply-To: <17d6401dade58$0287e640$0797b2c0$@samsung.com>
-From: dongliang cui <cuidongliang390@gmail.com>
-Date: Fri, 26 Jul 2024 14:18:07 +0800
-Message-ID: <CAPqOJe1xp-9snhvz7x+K6-wstLntNLdaYb9X7sLAzrP1EEzYbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: check disk status during buffer write
-To: Sungjong Seo <sj1557.seo@samsung.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Dongliang Cui <dongliang.cui@unisoc.com>, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com, 
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 2:00=E2=80=AFPM Sungjong Seo <sj1557.seo@samsung.co=
-m> wrote:
->
-> > > +static int exfat_block_device_ejected(struct super_block *sb)
-> > > +{
-> > > +   struct backing_dev_info *bdi =3D sb->s_bdi;
-> > > +
-> > > +   return bdi->dev =3D=3D NULL;
-> > > +}
-> >
-> > NAK, file systems have no business looking at this.  What you probably
-> > really want is to implement the ->shutdown method for exfat so it gets
-> > called on device removal.
->
-> Oh! Thank you for your additional comments. I completely missed this part=
-.
-> I agree with what you said. Implementing ->shutdown seems to be the
-> right decision.
->
-Thank you for your suggestions. I'll test it out this way.
+Without proper C-state support, the CPU can take long time to exit to C0
+to handle IRQ and perform DMA.
+
+The data collect via wult shows the latency is similar to Broxton, so
+use the existing table to support C-state on JSL and EHL.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219023
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/idle/intel_idle.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index 9aab7abc2ae9..eb6975a1d083 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -1538,6 +1538,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&idle_cpu_bxt),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&idle_cpu_bxt),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&idle_cpu_dnv),
++	X86_MATCH_VFM(INTEL_ATOM_TREMONT,	&idle_cpu_bxt),
++	X86_MATCH_VFM(INTEL_ATOM_TREMONT_L,	&idle_cpu_bxt),
+ 	X86_MATCH_VFM(INTEL_ATOM_TREMONT_D,	&idle_cpu_snr),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&idle_cpu_grr),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&idle_cpu_srf),
+-- 
+2.43.0
+
 
