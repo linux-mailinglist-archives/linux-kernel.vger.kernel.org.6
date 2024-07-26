@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-263083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CBA93D0C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C1593D0A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19DE1C21148
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0C21F2200D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F47143C5A;
-	Fri, 26 Jul 2024 10:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53AF176AB8;
+	Fri, 26 Jul 2024 09:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="W7LD1c2M"
-Received: from mail-41103.protonmail.ch (mail-41103.protonmail.ch [185.70.41.103])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R53dOJVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685E91791FC;
-	Fri, 26 Jul 2024 10:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.41.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73B214F122;
+	Fri, 26 Jul 2024 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721988032; cv=none; b=ZiDOdsJ2lhx++mlJBwAQqPlfYIoZ4TtPRQn2tHR1WczEy3LDrynX7SbqE6S6Ehi4zY8c3RAQP1ES4H6nYx9Jy//S5pX1681ujsNiB1M3mtr7ea9gzjcZkCrfvrddRd8VuGjgB+8xSUaYBgEYGnZl66I/c1IRv3AtO/gkExvGnwQ=
+	t=1721987668; cv=none; b=IbUsbmqybB+KH8iL+WeSuGc9U/Btgf2LEEArAIRH3BZgTgw3TDBaTI/3DLIFRG+sVkaTHbcnqFKclnZ44VAgs1VNPOqs7N1LAR98tZYfIU9fcH+b+gB2nPKUUv3swlrJ9l5azQFSk+NGs30ECvh+idhysKCjIF7Y2HJoPobqhVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721988032; c=relaxed/simple;
-	bh=Zv4Leq0T7FGOM8/WXnsnpx9DOwRXxIaEyU0CCxFi5Ec=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lw4QVmmNjD6PRr73r+5aD8+1YBV4w5s2Qv/ihnLk0jFFKgngJfTZ9wL2tJrYetyGgoZogKpKxqbjDRNeNXyx/XmSMkGH0oJp+5YpYSxx2FdJDatX/BMvxDIAdrv/v5u2ft78+o4AGR2uKrmL9hjzJQhIzyNoLZfKW1DuyTbnYKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=W7LD1c2M; arc=none smtp.client-ip=185.70.41.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1721987603; x=1722246803;
-	bh=6fHDk1Jf/Gu/4lIQo3Dpo5b6YMyN4d2taB500tn0Ezc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=W7LD1c2MN31wpsLwwZArZR4HNymFEpThuL/urUZOQiQGdvamyJaV3dsunEXZCF56o
-	 1XAQQPbZ/PbYK1hBX5lWB43B3z8B5oeqf9m+N+IcaI0IY6EKsOIkG02WKMshy1Q6XL
-	 4BrnKhmpP1R28ZShQ+ZGGTOdhRBu7pkthX/+RzLx4fcDaynokL9XoEdBPva0Ss+iwl
-	 KKHQS3nAaoKT7kHEqNOS+owJCjhB2sVHnFWm/VcxMYBMqOl7gtIM+UMErjCVVvQB3q
-	 36rR4cm6H0qNVzWkBJvk6ccT5npx9N3+4wHFfqLNSUmqGu0RxwRHmSyPfBVYY1T4Go
-	 izcVmbYUYIvPQ==
-Date: Fri, 26 Jul 2024 09:53:18 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Jari Ruusu <jariruusu@protonmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
-Message-ID: <93RnVgeI76u-tf0ZRdROl_JVVqqx-rtQnV4mOqGR_Rb5OmiWCMXC6MSYfnkTPp_615nKq8H-5nfzNt4I9MXPjUPzXBLp625jtGUJSGPsGBo=@protonmail.com>
-In-Reply-To: <2024072635-dose-ferment-53c8@gregkh>
-References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com> <2024072633-easel-erasure-18fa@gregkh> <vp205FIjWV7QqFTJ2-8mUjk6Y8nw6_9naNa31Puw1AvHK8EinlyR9vPiJdEtUgk0Aqz9xuMd62uJLq0F1ANI5OGyjiYOs3vxd0aFXtnGnJ4=@protonmail.com> <2024072635-dose-ferment-53c8@gregkh>
-Feedback-ID: 22639318:user:proton
-X-Pm-Message-ID: 331e4a19654de68e489b009bca69bf613be00d04
+	s=arc-20240116; t=1721987668; c=relaxed/simple;
+	bh=cvsanhfs1FsZIe9NYPjX15kOQzhPwoX0O9Rx2P3pw0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHrQrL5PeL3BZI1YCFm0Is9EsO5MpZHujEcCudJVYRtJk5n7J+ANDL3twzziK1McjLskhpuN2K+YBEN9EH4KQvXwsBIfs7JR1CX7nkTzCfy3cm8SC7A7pAYCIlMHWkyEOK/0i+JUqn+fILZps8cFYkry8HrAY+7uSL3pWdW0Nyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R53dOJVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EE0C32782;
+	Fri, 26 Jul 2024 09:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721987668;
+	bh=cvsanhfs1FsZIe9NYPjX15kOQzhPwoX0O9Rx2P3pw0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R53dOJVwOKs5vDJUZFEAfi6KdN9fD/wFyJkI/HZpt/VJzLzK7K5ge47zYNNiTwgMs
+	 cfkDjh4aNzV3r6oZi7fJGctrP143t4l/1sE7I9xHVOgmY1R/7PQUK5yfoZROg74pyL
+	 7Jch4sWax5yBYvAic6R7KnqeMLqx/BMWi9igQlWw=
+Date: Fri, 26 Jul 2024 11:54:25 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: CVE-2024-35918: randomize_kstack: Improve entropy diffusion
+Message-ID: <2024072606-outlet-stuffy-259b@gregkh>
+References: <2024051912-CVE-2024-35918-3fed@gregkh>
+ <lsh7xgorp67fplqey6evmukt66tbstbjob34bwyt7wiklkqu3n@6wftjk4z7xja>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <lsh7xgorp67fplqey6evmukt66tbstbjob34bwyt7wiklkqu3n@6wftjk4z7xja>
 
-On Friday, July 26th, 2024 at 11:52, Greg Kroah-Hartman <gregkh@linuxfounda=
-tion.org> wrote:
-> Also the "Fixes:" tag is not in the correct format, please fix that up
-> at the very least.
+On Fri, Jul 26, 2024 at 11:45:59AM +0200, Michal Koutný wrote:
+> Hello.
+> 
+> On Sun, May 19, 2024 at 12:11:12PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > randomize_kstack: Improve entropy diffusion
+> > 
+> > The kstack_offset variable was really only ever using the low bits for
+> > kernel stack offset entropy. Add a ror32() to increase bit diffusion.
+> > 
+> > The Linux kernel CVE team has assigned CVE-2024-35918 to this issue.
+> > 
+> > 
+> > Affected and fixed versions
+> > ===========================
+> > 
+> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 5.15.155 with commit dfb2ce952143
+> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.1.86 with commit e80b4980af26
+> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.6.27 with commit 300a2b9c2b28
+> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.8.6 with commit 6be74b1e21f8
+> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.9 with commit 9c573cd31343
+> 
+> The commit
+> 9c573cd313433 ("randomize_kstack: Improve entropy diffusion") v6.9-rc4~35^2
+> adds ~2 bits of entropy to stack offsets (+the diffusion, x86_64)
+> 
+> The commit
+> 39218ff4c625d ("stack: Optionally randomize kernel stack offset each syscall") v5.13-rc1~184^2~3
+> adds ~8 bit of entropy to stack offsets (there was none before, x86_64)
+> 
+> Why the former commit has a CVE while the latter doesn't? (2 < 8)
+> 
+> I'd expect both to be treated equally or even inversely.
 
-Some older systems still compile kernels with old gcc version.
-These warnings and errors show up when compiling with gcc 4.9.2
+If you wish for a CVE to be assigned to 39218ff4c625d, we will be glad
+to do so, but it was not on our "old list" of GSD entries to backfill in
+CVE entries for, which is why it was not assigned one.
 
- error: "__GCC4_has_attribute___uninitialized__" is not defined [-Werror=3D=
-undef]
+thanks,
 
-Following patch fixes this. Upstream won't need this because =20
-newer kernels are not compilable with gcc 4.9.
-
-Subject: gcc-4.9 warning/error fix for 5.10.223-rc1
-Fixes: fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
-Signed-off-by: Jari Ruusu <jariruusu@protonmail.com>
-
---- ./include/linux/compiler_attributes.h.OLD
-+++ ./include/linux/compiler_attributes.h
-@@ -37,6 +37,7 @@
- # define __GCC4_has_attribute___nonstring__           0
- # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >=3D=
- 8)
- # define __GCC4_has_attribute___no_sanitize_undefined__ (__GNUC_MINOR__ >=
-=3D 9)
-+# define __GCC4_has_attribute___uninitialized__       0
- # define __GCC4_has_attribute___fallthrough__         0
- # define __GCC4_has_attribute___warning__             1
- #endif
-
---
-Jari Ruusu=C2=A0 4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD=C2=A0 ACDF F073 3C=
-80 8132 F189
-
+greg k-h
 
