@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-263583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAC293D7F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08FE93D7F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A607283AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AD61F24A00
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0680317D351;
-	Fri, 26 Jul 2024 18:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443A017D37A;
+	Fri, 26 Jul 2024 18:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2rmbS6b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+rC0nS2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C36917CA0C;
-	Fri, 26 Jul 2024 18:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8808E17D366;
+	Fri, 26 Jul 2024 18:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017251; cv=none; b=Gog0M22z79uOQBGLWdNIXi58tLQR9e3xPlr4J/W9OF/HBYRp4MHlxwWlv+eiJbA6SHJDzS6mg3xgs4URY/ESbNJ099Xt84NrwVi4fpjJFpLaU7X5OW5Qiwfl/g7VFBWbsOoKQo3mVTY+oLrLhF3bKNxIqyF0djAZJNyEQ4We0D4=
+	t=1722017253; cv=none; b=eK2zSR+ccWQrcatTyQErs9qa2LiBqXTErZ13YIAMrFVdnbNCJg2wvFe5BbixbdpbJP0f39L0otd1DsCh2vkt3W+4OdZccAV+EO5FJpLr0t5cdQwFCI1WYB78e8O5XsGdO4UJPK32WBrm9O6mM0peJY4v7qh4nzkdHuw+21ivHl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017251; c=relaxed/simple;
-	bh=JF/b1/6Cha116FFPL0XUll6mcIi5ySTusKOcLsK21+A=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tLmMcP6mBu2X3oVJCo+d4bVAwAamDJQPxwunSoBdaaYj02X8NYs05w/irlWitEGSQt1tnADD70n4jtOiaLcXg/arW7VxdYivXINMxQkusUy4ADkzCSWBB1Elmv/wvmYPin+md5LUwM5A4Bm+34mfGxK9YI/VxZbJlysBBeSz8GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2rmbS6b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3010BC4AF07;
-	Fri, 26 Jul 2024 18:07:31 +0000 (UTC)
+	s=arc-20240116; t=1722017253; c=relaxed/simple;
+	bh=+zVZvqZ3sriL5W4o+oRhLEnsE5uwCnbUL1esfYlj6D8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jAXNTujgATpTfKQshw2gVJ+9iHne83e1outTs2tSezRKt/oVAYDLxaN1bGdIE+V5LaibkJ0q8rprePikUTmZZyDIktl4EF8Z7CXc8XgPsvdKyrik3g9ZufDK+8jUGf15hSFR00ZVqqnrvLkxKwiu46jgxd15satfwCwlKzE3FFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+rC0nS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5D261C32782;
+	Fri, 26 Jul 2024 18:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722017251;
-	bh=JF/b1/6Cha116FFPL0XUll6mcIi5ySTusKOcLsK21+A=;
+	s=k20201202; t=1722017253;
+	bh=+zVZvqZ3sriL5W4o+oRhLEnsE5uwCnbUL1esfYlj6D8=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=U2rmbS6bjTiyXqT0bRILyr6x8hR8EUxvs/23L5Pii69mCMPUtj1Wo3rmzzRJqi9Zv
-	 mjkuoDs2+4vV3CmfaRx1T3C/5LviaIXKxkZuQZmnzlEYKoJ2jfKr1wSAcnC7j7gyqL
-	 pZWaR69df9WuAVLHhnfoN0+ruTvgNlrIhx6GIeoWd16ion3tkx7QQIUockzAMeiRGZ
-	 +sWeEzRPN8rJwcIBu2WwU09fbrZydk/tJF0d1BbHn32qnpvge0O/0AbIMcawRO5QTK
-	 jswMUlq1DMfCewbA/ZF4EHcDksRJt/tLohPZE5SroBzmOZDRmiDElBnKZ35+94A6aw
-	 wLbDEaGdU2CMQ==
+	b=U+rC0nS2CvDwbf1ZIcrUSDiSTuocfFvmHpAAVWqvnA1NkAI6viJBnS0MDe+Qepe5Q
+	 S1ow2htOsJd5RMqmFv1uGWqCwrCPHs7iG9cSHtHA219b1ocYEzUBHl4FtEqi0fyvuI
+	 lCarD4CgmsOUR7NrrLLepdoWQZqwlZjaKPAwOMFq1VVNVdPPVAAMN5frqR8xMZ9buG
+	 HleCnnvWE+g2xy8Rbv7yKeW20KdxpXyfgrkBztW7OgSo8fEcx+nWkc5xsoef2wCp/M
+	 ne+xpFbcx3UBuYzIubBFgh7keGmXupGtzJCJJfgmzEzR4cZwJ1Wpp47/4y2wvRm8V0
+	 Rbq3K+1Hnihcw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 292CFC43443;
-	Fri, 26 Jul 2024 18:07:31 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.11-rc1
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 54AA2C433E9;
+	Fri, 26 Jul 2024 18:07:33 +0000 (UTC)
+Subject: Re: [GIT PULL] sound fixes for 6.11-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240726144215.738251-1-idryomov@gmail.com>
-References: <20240726144215.738251-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240726144215.738251-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.11-rc1
-X-PR-Tracked-Commit-Id: 3ceccb14f5576e02b81cc8b105ab81f224bd87f6
+In-Reply-To: <87ttgchc3w.wl-tiwai@suse.de>
+References: <87ttgchc3w.wl-tiwai@suse.de>
+X-PR-Tracked-List-Id: <linux-sound.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87ttgchc3w.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.11-rc1
+X-PR-Tracked-Commit-Id: e8b96a66ae01d039699bac256c5b6b30b2284170
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6467dfdfc94cfefed728bb1d9eb78493760469e0
-Message-Id: <172201725116.32235.16117757101716699385.pr-tracker-bot@kernel.org>
-Date: Fri, 26 Jul 2024 18:07:31 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: eb966e0c5f238ffeacc15543f1d25fb06a5100c2
+Message-Id: <172201725334.32235.4822343686201388703.pr-tracker-bot@kernel.org>
+Date: Fri, 26 Jul 2024 18:07:33 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 26 Jul 2024 16:42:11 +0200:
+The pull request you sent on Fri, 26 Jul 2024 09:00:03 +0200:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.11-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.11-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6467dfdfc94cfefed728bb1d9eb78493760469e0
+https://git.kernel.org/torvalds/c/eb966e0c5f238ffeacc15543f1d25fb06a5100c2
 
 Thank you!
 
