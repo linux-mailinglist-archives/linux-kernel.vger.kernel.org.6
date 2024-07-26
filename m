@@ -1,166 +1,315 @@
-Return-Path: <linux-kernel+bounces-263293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817B693D3E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C6093D3EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37755287054
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1F11C235EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B02917C225;
-	Fri, 26 Jul 2024 13:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3372117C21F;
+	Fri, 26 Jul 2024 13:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPI3hs3Q"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e49qRVCL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9A01791F2
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E37B17BB27
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999640; cv=none; b=jagpGBKpqsLmZsfn0oeMcSywy4LPwvkWEr8vmAfZ77+RPAGnjdBqfe956tj2Bu96rCoqFhsPgxg5qDKNxA0lH1bcnnSxQfI3fq0+KVPvFMygkkzreKIPIvLuqQ/0cvIhTTMzE26hiRHzioaUNGhHcQ5E4hl69+aonyIogHQwyxE=
+	t=1721999668; cv=none; b=nTAraaO2p4efHHpSqiOAguO2poFD+eLYUIXHZq9xtdpO0ezoN41TLcFxPY/J/sZpxsvfR+NA1SmXQpTPILUjkURF/HP8yz9/UChnGJSSuM/0arLyrxrJxp0aYwrHARvmG39yg1iOV70GPG2HGh0hcb2iB4xqWjsrnPJOKBL4Txg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999640; c=relaxed/simple;
-	bh=tjpx7XT6hKUt3wpwXlT3BRKarZaJsCaSbE3FIg3d2mQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BF0NogMgNruLPdLbHQh6PbwqTIr9/q2Kkk0oNepzE818RfhNaYiOyJhI5rlBmq7TLNaV5QdJXOf0NwPu9vi3XApqjFqoi8IFkhEJ5pI+pWxhEzsOnp67AX/yHvpBrUa5GNIJVYWTv+8u8S3auTu8Tv48A6QywcEzJ4eqUuHkSb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPI3hs3Q; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36865a516f1so1603842f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721999635; x=1722604435; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9azynhyEIv7gjWRDwglaDMiOV6j4zfrdOibDd2jjuA0=;
-        b=MPI3hs3QjzV9+Vli7EY47Mm+C0DlBF1qp6/aE3kQi318wrxkgPXQQ2IFHHjnlg5Grd
-         +w7HFQE9O5fBcZcyyqhZJpds3Efkp/Efv8vv3v7V+S77az7Sy/fH33yPxeV8gZN0EH8e
-         3lxP6F0BbkTSkvyGROwA3are5mWqh2yE0TQyXYON0af4s9keuCpt1oAPNJveFrjC2yKG
-         i1FlrqV93oCoCE8smd7tobex2aVdFCxb+07IlcmrzjvS+fPFACDrRLujCq9Mjrba1XeZ
-         OAWz4lq1gygA1Jlr1ae8whKtX0diazVDRc0WqbS9wvKGmVBPKlzUJyMZuNOwrp/+/2ju
-         jZYg==
+	s=arc-20240116; t=1721999668; c=relaxed/simple;
+	bh=a95bMExzYaPEdeBCic8NLXzB94/hIXhNE0wF8thicvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atSL0a+pxDqGMLxbU9seXExtbVSzxgjg23lDx7pW7xUTCHxuOyp6YAyu+goVXmSiS9WPhpNyrjxPBs91N2xj0fBZiD+HD1/ZfPx0soTrdlUDfb2wKknenX3zRNn+uRuf20eSVTvY1Y4+CI7F1M3EAUuWiNTfmwXp1Hcsd1VYbdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e49qRVCL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721999665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MEiHh5gKYu2aAteljFklWJEd9UWqkmgr0EA7AbaB1O8=;
+	b=e49qRVCL2x0Bm0ZrKbAeJ1isLjVyZ22Ojq7UqXVGgrA9QIjiM25Zf461n6xLxBXyG4x6m9
+	4gPZLap8UzWUysl3f46hAnxQzys/gUGzC5H3A4p7XfwequXkc2eiPH8a8D7NGzgS3+d4Df
+	jmtdSrVp9JZjoYVxwZG1pdkSQZLtaCk=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-BqqpC72wO5u_8mWehMxiMg-1; Fri, 26 Jul 2024 09:14:24 -0400
+X-MC-Unique: BqqpC72wO5u_8mWehMxiMg-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ef2ebe1ec4so12089771fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:14:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721999635; x=1722604435;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9azynhyEIv7gjWRDwglaDMiOV6j4zfrdOibDd2jjuA0=;
-        b=MFOzum+AQyrLqMkHpYoy8DZaHZMo0LS2dkv6Tf5jTtg2qS3EK3zlrclmsnSLsW67dK
-         Y+LoBeeYWxZV+SeEuVIYUJytIWNcVfy9jv444z/hOZfaqqqfQyaA6JuR+nuR0aXI6uUJ
-         fybX17VuZJK7eldGTLSyYBAUfSTmx/ZXesMg+9e2QLFsA1y6fC7QzGK+9gUv0vn+9qc2
-         ZxeYUx/D4QLXzvk6ssXcjDvIgZucnkgLS+fvloCTCiix3LOXCVOKFVv9KxVw2y133Ncm
-         yj7Kr6LeDazYPJZGAwCoc7szBblhEK5kcahSOuWyQJwaNYYGaZAJ0XCGezbaTPG6tIzM
-         yZAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWmhbH2cxqmR89bj04T2wOLN+yNcJk6fN9BoISZ09xRIHObtZzkRfuhE0kxZ2ueEjE9J96u4V6xO3qSRnLcB7Hjqxk2KZL2+Wvuhq
-X-Gm-Message-State: AOJu0YxbKBbZ0fN39xYrfnL4CFrpLUxqmOsJ3cteAQjlQLSXZzkvijd7
-	I0l364MsXweiexRxlTxEfgzcGAHZNhR7Ou6/9HvmTyM0wOjgEO6Qn/t3bgiGzYA=
-X-Google-Smtp-Source: AGHT+IFYFvUqydDA1IhhpeDf3coci+AwNSrGJucxAODHhP4+wvMCDNWfwzzxwPzjvhRpI/Srd3Dybg==
-X-Received: by 2002:a5d:588a:0:b0:367:9903:a91 with SMTP id ffacd0b85a97d-36b363ad791mr5579706f8f.11.1721999635029;
-        Fri, 26 Jul 2024 06:13:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:414f:cfed:daba:4cb? ([2a01:e0a:982:cbb0:414f:cfed:daba:4cb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280574a8a2sm80575835e9.23.2024.07.26.06.13.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 06:13:54 -0700 (PDT)
-Message-ID: <9bdd46a7-c018-4dc9-89e4-20377b5e6570@linaro.org>
-Date: Fri, 26 Jul 2024 15:13:53 +0200
+        d=1e100.net; s=20230601; t=1721999662; x=1722604462;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MEiHh5gKYu2aAteljFklWJEd9UWqkmgr0EA7AbaB1O8=;
+        b=aBdymGyABMMz3cbPAyd8PWqPlC2IlI6vvthzPIgfhKuTEOmMK1vIbkNbpW5B2Uhdf8
+         iJIoNckru+asIGrj8HVjYuSWX7PJan/3RBLUTvdvyYtOfupUH23oQAPw2+DLGnD8Atue
+         jzUPlf7HUw5Xi3LvX0iCYHpqqQCVQQihsiD7OZlwpL5hQDI760u02k6UsjzMKY82dCD8
+         AN4/H64rE4q+BJoKOcsitdi8sE5W3I4pYy5WhjX0kDivt3umCYzISSaapJKmuuAXG+2/
+         CkBiBMCd2w+WYcvbgnzL+2Zyqn/VerHS0s/WqCjDCL0T5KZ7oR+sySfxEDFS5xoY4r9O
+         fKKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpsVHn96coj+KZYmZuwZZdbXaqc9VayJnBh2U97PD6U0vALBcAXfwAkAFV448bJWgNJQZPNyo8uMIJfsZGNw06VMbI8WNSg28Ab6ID
+X-Gm-Message-State: AOJu0Yzy1CxIRR3RmIRaFLPTp9ZeFF8FqRun1Wvy7qCT+Oj7PiucTLrN
+	CVdM9vOjK/IvP/wA7Pvc3GCFYfW908tg5AF/1QWQzsifxoX42clyhxYgGcpWE/YDkdJVgi69+FE
+	NH8j0gkhoJfSOLJFMf6wZZcs3WdAru5gHrAH4yXOlEIH65PvUdwDj+drhl5CWZA==
+X-Received: by 2002:a05:651c:481:b0:2ed:5c34:4082 with SMTP id 38308e7fff4ca-2f039c4e382mr38778921fa.8.1721999662248;
+        Fri, 26 Jul 2024 06:14:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF53rKt2uVwvXPDaQM7yGiiu7wlme1aY9rCv4gUf+mdi8bDRhOJvxRm12JCuaLvhRxpT162Ig==
+X-Received: by 2002:a05:651c:481:b0:2ed:5c34:4082 with SMTP id 38308e7fff4ca-2f039c4e382mr38778391fa.8.1721999661205;
+        Fri, 26 Jul 2024 06:14:21 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1f7:28ce:f21a:7e1e:6a9:f708])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280573fd83sm79169445e9.19.2024.07.26.06.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 06:14:20 -0700 (PDT)
+Date: Fri, 26 Jul 2024 09:14:14 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v2] ptp: Add vDSO-style vmclock support
+Message-ID: <20240726090538-mutt-send-email-mst@kernel.org>
+References: <7b3a2490d467560afd2fe08d4f28c4635919ec48.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/3] MAINTAINERS: Update Konrad Dybcio's email address
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
- <20240726-topic-konrad_email-v1-2-f94665da2919@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240726-topic-konrad_email-v1-2-f94665da2919@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b3a2490d467560afd2fe08d4f28c4635919ec48.camel@infradead.org>
 
-On 26/07/2024 13:18, Konrad Dybcio wrote:
-> Use my @kernel.org address everywhere.
+On Fri, Jul 26, 2024 at 01:28:17PM +0100, David Woodhouse wrote:
+> diff --git a/include/uapi/linux/vmclock-abi.h b/include/uapi/linux/vmclock-abi.h
+> new file mode 100644
+> index 000000000000..7b1b4759363c
+> --- /dev/null
+> +++ b/include/uapi/linux/vmclock-abi.h
+> @@ -0,0 +1,187 @@
+> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
+> +
+> +/*
+> + * This structure provides a vDSO-style clock to VM guests, exposing the
+> + * relationship (or lack thereof) between the CPU clock (TSC, timebase, arch
+> + * counter, etc.) and real time. It is designed to address the problem of
+> + * live migration, which other clock enlightenments do not.
+> + *
+> + * When a guest is live migrated, this affects the clock in two ways.
+> + *
+> + * First, even between identical hosts the actual frequency of the underlying
+> + * counter will change within the tolerances of its specification (typically
+> + * ±50PPM, or 4 seconds a day). This frequency also varies over time on the
+> + * same host, but can be tracked by NTP as it generally varies slowly. With
+> + * live migration there is a step change in the frequency, with no warning.
+> + *
+> + * Second, there may be a step change in the value of the counter itself, as
+> + * its accuracy is limited by the precision of the NTP synchronization on the
+> + * source and destination hosts.
+> + *
+> + * So any calibration (NTP, PTP, etc.) which the guest has done on the source
+> + * host before migration is invalid, and needs to be redone on the new host.
+> + *
+> + * In its most basic mode, this structure provides only an indication to the
+> + * guest that live migration has occurred. This allows the guest to know that
+> + * its clock is invalid and take remedial action. For applications that need
+> + * reliable accurate timestamps (e.g. distributed databases), the structure
+> + * can be mapped all the way to userspace. This allows the application to see
+> + * directly for itself that the clock is disrupted and take appropriate
+> + * action, even when using a vDSO-style method to get the time instead of a
+> + * system call.
+> + *
+> + * In its more advanced mode. this structure can also be used to expose the
+> + * precise relationship of the CPU counter to real time, as calibrated by the
+> + * host. This means that userspace applications can have accurate time
+> + * immediately after live migration, rather than having to pause operations
+> + * and wait for NTP to recover. This mode does, of course, rely on the
+> + * counter being reliable and consistent across CPUs.
+> + *
+> + * Note that this must be true UTC, never with smeared leap seconds. If a
+> + * guest wishes to construct a smeared clock, it can do so. Presenting a
+> + * smeared clock through this interface would be problematic because it
+> + * actually messes with the apparent counter *period*. A linear smearing
+> + * of 1 ms per second would effectively tweak the counter period by 1000PPM
+> + * at the start/end of the smearing period, while a sinusoidal smear would
+> + * basically be impossible to represent.
+> + *
+> + * This structure is offered with the intent that it be adopted into the
+> + * nascent virtio-rtc standard, as a virtio-rtc that does not address the live
+> + * migration problem seems a little less than fit for purpose. For that
+> + * reason, certain fields use precisely the same numeric definitions as in
+> + * the virtio-rtc proposal. The structure can also be exposed through an ACPI
+> + * device with the CID "VMCLOCK", modelled on the "VMGENID" device except for
+> + * the fact that it uses a real _CRS to convey the address of the structure
+> + * (which should be a full page, to allow for mapping directly to userspace).
+> + */
+> +
+> +#ifndef __VMCLOCK_ABI_H__
+> +#define __VMCLOCK_ABI_H__
+> +
+> +#ifdef __KERNEL__
+> +#include <linux/types.h>
+> +#else
+> +#include <stdint.h>
+> +#endif
+> +
+> +struct vmclock_abi {
+> +	/* CONSTANT FIELDS */
+> +	uint32_t magic;
+> +#define VMCLOCK_MAGIC	0x4b4c4356 /* "VCLK" */
+> +	uint32_t size;		/* Size of region containing this structure */
+> +	uint16_t version;	/* 1 */
+> +	uint8_t counter_id; /* Matches VIRTIO_RTC_COUNTER_xxx except INVALID */
+> +#define VMCLOCK_COUNTER_ARM_VCNT	0
+> +#define VMCLOCK_COUNTER_X86_TSC		1
+> +#define VMCLOCK_COUNTER_INVALID		0xff
+> +	uint8_t time_type; /* Matches VIRTIO_RTC_TYPE_xxx */
+> +#define VMCLOCK_TIME_UTC			0	/* Since 1970-01-01 00:00:00z */
+> +#define VMCLOCK_TIME_TAI			1	/* Since 1970-01-01 00:00:00z */
+> +#define VMCLOCK_TIME_MONOTONIC			2	/* Since undefined epoch */
+> +#define VMCLOCK_TIME_INVALID_SMEARED		3	/* Not supported */
+> +#define VMCLOCK_TIME_INVALID_MAYBE_SMEARED	4	/* Not supported */
+> +
+> +	/* NON-CONSTANT FIELDS PROTECTED BY SEQCOUNT LOCK */
+> +	uint32_t seq_count;	/* Low bit means an update is in progress */
+> +	/*
+> +	 * This field changes to another non-repeating value when the CPU
+> +	 * counter is disrupted, for example on live migration. This lets
+> +	 * the guest know that it should discard any calibration it has
+> +	 * performed of the counter against external sources (NTP/PTP/etc.).
+> +	 */
+> +	uint64_t disruption_marker;
+> +	uint64_t flags;
+> +	/* Indicates that the tai_offset_sec field is valid */
+> +#define VMCLOCK_FLAG_TAI_OFFSET_VALID		(1 << 0)
+> +	/*
+> +	 * Optionally used to notify guests of pending maintenance events.
+> +	 * A guest which provides latency-sensitive services may wish to
+> +	 * remove itself from service if an event is coming up. Two flags
+> +	 * indicate the approximate imminence of the event.
+> +	 */
+> +#define VMCLOCK_FLAG_DISRUPTION_SOON		(1 << 1) /* About a day */
+> +#define VMCLOCK_FLAG_DISRUPTION_IMMINENT	(1 << 2) /* About an hour */
+> +#define VMCLOCK_FLAG_PERIOD_ESTERROR_VALID	(1 << 3)
+> +#define VMCLOCK_FLAG_PERIOD_MAXERROR_VALID	(1 << 4)
+> +#define VMCLOCK_FLAG_TIME_ESTERROR_VALID	(1 << 5)
+> +#define VMCLOCK_FLAG_TIME_MAXERROR_VALID	(1 << 6)
+> +	/*
+> +	 * If the MONOTONIC flag is set then (other than leap seconds) it is
+> +	 * guaranteed that the time calculated according this structure at
+> +	 * any given moment shall never appear to be later than the time
+> +	 * calculated via the structure at any *later* moment.
+> +	 *
+> +	 * In particular, a timestamp based on a counter reading taken
+> +	 * immediately after setting the low bit of seq_count (and the
+> +	 * associated memory barrier), using the previously-valid time and
+> +	 * period fields, shall never be later than a timestamp based on
+> +	 * a counter reading taken immediately before *clearing* the low
+> +	 * bit again after the update, using the about-to-be-valid fields.
+> +	 */
+> +#define VMCLOCK_FLAG_TIME_MONOTONIC		(1 << 7)
+> +
+> +	uint8_t pad[2];
+> +	uint8_t clock_status;
+> +#define VMCLOCK_STATUS_UNKNOWN		0
+> +#define VMCLOCK_STATUS_INITIALIZING	1
+> +#define VMCLOCK_STATUS_SYNCHRONIZED	2
+> +#define VMCLOCK_STATUS_FREERUNNING	3
+> +#define VMCLOCK_STATUS_UNRELIABLE	4
+> +
+> +	/*
+> +	 * The time exposed through this device is never smeared. This field
+> +	 * corresponds to the 'subtype' field in virtio-rtc, which indicates
+> +	 * the smearing method. However in this case it provides a *hint* to
+> +	 * the guest operating system, such that *if* the guest OS wants to
+> +	 * provide its users with an alternative clock which does not follow
+> +	 * UTC, it may do so in a fashion consistent with the other systems
+> +	 * in the nearby environment.
+> +	 */
+> +	uint8_t leap_second_smearing_hint; /* Matches VIRTIO_RTC_SUBTYPE_xxx */
+> +#define VMCLOCK_SMEARING_STRICT		0
+> +#define VMCLOCK_SMEARING_NOON_LINEAR	1
+> +#define VMCLOCK_SMEARING_UTC_SLS	2
+> +	int16_t tai_offset_sec;
+> +	uint8_t leap_indicator;
+> +	/*
+> +	 * This field is based on the the VIRTIO_RTC_LEAP_xxx values as
+> +	 * defined in the current draft of virtio-rtc, but since smearing
+> +	 * cannot be used with the shared memory device, some values are
+> +	 * not used.
+> +	 *
+> +	 * The _POST_POS and _POST_NEG values allow the guest to perform
+> +	 * its own smearing during the day or so after a leap second when
+> +	 * such smearing may need to continue being applied for a leap
+> +	 * second which is now theoretically "historical".
+> +	 */
+> +#define VMCLOCK_LEAP_NONE	0x00	/* No known nearby leap second */
+> +#define VMCLOCK_LEAP_PRE_POS	0x01	/* Positive leap second at EOM */
+> +#define VMCLOCK_LEAP_PRE_NEG	0x02	/* Negative leap second at EOM */
+> +#define VMCLOCK_LEAP_POS	0x03	/* Set during 23:59:60 second */
+> +#define VMCLOCK_LEAP_POST_POS	0x04
+> +#define VMCLOCK_LEAP_POST_NEG	0x05
+> +
+> +	/* Bit shift for counter_period_frac_sec and its error rate */
+> +	uint8_t counter_period_shift;
+> +	/*
+> +	 * Paired values of counter and UTC at a given point in time.
+> +	 */
+> +	uint64_t counter_value;
+> +	/*
+> +	 * Counter period, and error margin of same. The unit of these
+> +	 * fields is 1/2^(64 + counter_period_shift) of a second.
+> +	 */
+> +	uint64_t counter_period_frac_sec;
+> +	uint64_t counter_period_esterror_rate_frac_sec;
+> +	uint64_t counter_period_maxerror_rate_frac_sec;
+> +
+> +	/*
+> +	 * Time according to time_type field above.
+> +	 */
+> +	uint64_t time_sec;		/* Seconds since time_type epoch */
+> +	uint64_t time_frac_sec;		/* Units of 1/2^64 of a second */
+> +	uint64_t time_esterror_nanosec;
+> +	uint64_t time_maxerror_nanosec;
+> +};
+> +
+> +#endif /*  __VMCLOCK_ABI_H__ */
+
+For purposes of virtio, should we label all the fields here
+__le?
+
+
+> -- 
+> 2.44.0
 > 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-> ---
->   MAINTAINERS | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9200d953868e..6c7d3951192f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2745,7 +2745,7 @@ F:	include/linux/soc/qcom/
->   
->   ARM/QUALCOMM SUPPORT
->   M:	Bjorn Andersson <andersson@kernel.org>
-> -M:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +M:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
-> @@ -7107,7 +7107,7 @@ F:	drivers/gpu/drm/tiny/panel-mipi-dbi.c
->   DRM DRIVER for Qualcomm Adreno GPUs
->   M:	Rob Clark <robdclark@gmail.com>
->   R:	Sean Paul <sean@poorly.run>
-> -R:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +R:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-arm-msm@vger.kernel.org
->   L:	dri-devel@lists.freedesktop.org
->   L:	freedreno@lists.freedesktop.org
-> @@ -18765,7 +18765,7 @@ F:	include/uapi/drm/qaic_accel.h
->   
->   QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVER
->   M:	Bjorn Andersson <andersson@kernel.org>
-> -M:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +M:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-pm@vger.kernel.org
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
 > 
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+
 
