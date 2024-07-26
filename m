@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-263521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D5393D731
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5811693D734
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44462847E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1951F24906
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15117C9EA;
-	Fri, 26 Jul 2024 16:50:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0E32E620;
+	Fri, 26 Jul 2024 16:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UcE/YCsU"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644C23774;
-	Fri, 26 Jul 2024 16:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E130521364;
+	Fri, 26 Jul 2024 16:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012605; cv=none; b=ZkIemdEoQmDCTD83EC0oTNLzOKtSIhVipwndPAFdaCR6n3FSb67dhUAFEcV9YyC+i6jFhtF1VZ728tuecbiEobxpilGaMsPWIwHqEUg3lLmyoEymK1bYw6AWWZca6cAlivELeJGR5ROx/n4sA8cNtB2vyrQR2hkZdc8reB9bKLM=
+	t=1722012627; cv=none; b=QaZA1Q+sXcHiIkjETmu1PFtTD0AREsRA8x1lh5bmQcZvHvD7V4z3okxcRoU42oUClB/4FzkOtMlYV/12ZEWMdr9MSoMp8XyUTJi7oqpY6yx+9Fc0558wtZS4e5Sd5GqarLqtUy2pgmf8yAEBxoZkf5U1pyS1W+zue/C4Al/NCEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012605; c=relaxed/simple;
-	bh=TcPkGrfOB/5scQGj+9p3hEKoE41ONhI5mBWu6d+4ikY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jJwB4aD9BdTfS1WgYlbgUIOjl+d4eOOqbb6FH3LKXAWYaqm0oGomdGfHtSad48wmM/ajubtYSEa2Dqv6gmapBZ34G34NKLV7E4sCM2CvDEagYPjCsL5yhlcHl8E130RzeIi7vH3vXFg+q6rWBSyiaED23rMiQ2a5paJQ2NbJ9s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVtw42Qqrz6K9Lm;
-	Sat, 27 Jul 2024 00:47:32 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1A1191404FC;
-	Sat, 27 Jul 2024 00:50:00 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
- 2024 17:49:59 +0100
-Date: Fri, 26 Jul 2024 17:49:58 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: David Woodhouse <dwmw2@infradead.org>
-CC: "Michael S. Tsirkin" <mst@redhat.com>, Richard Cochran
-	<richardcochran@gmail.com>, Peter Hilber <peter.hilber@opensynergy.com>,
-	<linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rtc@vger.kernel.org>, "Ridoux,
- Julien" <ridouxj@amazon.com>, <virtio-dev@lists.linux.dev>, "Luu, Ryan"
-	<rluu@amazon.com>, "Chashper, David" <chashper@amazon.com>, "Mohamed
- Abuelfotoh, Hazem" <abuehaze@amazon.com>, "Christopher S . Hall"
-	<christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>, "John
- Stultz" <jstultz@google.com>, <netdev@vger.kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, qemu-devel <qemu-devel@nongnu.org>, "Simon
- Horman" <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240726174958.00007d10@Huawei.com>
-In-Reply-To: <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
-References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org>
-	<20240725012730-mutt-send-email-mst@kernel.org>
-	<7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org>
-	<20240725081502-mutt-send-email-mst@kernel.org>
-	<f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
-	<20240725082828-mutt-send-email-mst@kernel.org>
-	<db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
-	<20240725083215-mutt-send-email-mst@kernel.org>
-	<98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722012627; c=relaxed/simple;
+	bh=rqbgT/0iYp0SyvwyUNh8ElGIQ4w4+Dw0nQzyKcM25qM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SnOTxeirQujVoSg07E4jCHEjUzPwYknywmH3FrAGTCWBxaZM3hRq+ghL7qSeSYwh73H+D2v+07unSvRKIkIvAYH9ebRq7/6dUBiFdltEaEThl6JRLqc7rbO/u31OpeGeg1bVynky3KNlkzCoY/GEau8b6ck4T4WBGksSTQVu3ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UcE/YCsU; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722012626; x=1753548626;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=LunzKZL6emWKetW1H3wwaEoDFwJcR/2MIjOK6DAsJmI=;
+  b=UcE/YCsUtQxG+zGIiJ4nVx+3okKvVaD9+wqpKFoLU4oiAeTg5N38wcMa
+   yv3F7aFbT194t+4YxNJ3/b5RxP/6MAAfXSmwQvl6tatqdRicbczDQl4cL
+   7gOqR2MavUNTEx3Bp+Pe0bfdM2GgS92jvg408XVkJkHxpmit9v5DYSomc
+   c=;
+X-IronPort-AV: E=Sophos;i="6.09,239,1716249600"; 
+   d="scan'208";a="744977504"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 16:50:19 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:41594]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.129:2525] with esmtp (Farcaster)
+ id dd7c83a3-7c90-419d-98f4-4e8089f8113d; Fri, 26 Jul 2024 16:50:18 +0000 (UTC)
+X-Farcaster-Flow-ID: dd7c83a3-7c90-419d-98f4-4e8089f8113d
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 26 Jul 2024 16:50:18 +0000
+Received: from [192.168.9.159] (10.106.83.8) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 26 Jul 2024
+ 16:50:17 +0000
+Message-ID: <4e5c2904-f628-4391-853e-37b7f0e132e8@amazon.com>
+Date: Fri, 26 Jul 2024 17:50:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 14/18] KVM: Add asynchronous userfaults,
+ KVM_READ_USERFAULT
+To: James Houghton <jthoughton@google.com>
+CC: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Sean Christopherson <seanjc@google.com>,
+	Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, Axel Rasmussen
+	<axelrasmussen@google.com>, David Matlack <dmatlack@google.com>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>, <roypat@amazon.co.uk>, <kalyazin@amazon.com>,
+	"Paolo Bonzini" <pbonzini@redhat.com>
+References: <20240710234222.2333120-1-jthoughton@google.com>
+ <20240710234222.2333120-15-jthoughton@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <20240710234222.2333120-15-jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-ClientProxiedBy: EX19D008EUC001.ant.amazon.com (10.252.51.165) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On Thu, 25 Jul 2024 14:50:50 +0100
-David Woodhouse <dwmw2@infradead.org> wrote:
+Hi James,
 
-> On Thu, 2024-07-25 at 08:33 -0400, Michael S. Tsirkin wrote:
-> > On Thu, Jul 25, 2024 at 01:31:19PM +0100, David Woodhouse wrote:  
-> > > On Thu, 2024-07-25 at 08:29 -0400, Michael S. Tsirkin wrote:  
-> > > > On Thu, Jul 25, 2024 at 01:27:49PM +0100, David Woodhouse wrote:  
-> > > > > On Thu, 2024-07-25 at 08:17 -0400, Michael S. Tsirkin wrote:  
-> > > > > > On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wrote:  
-> > > > > > > > Do you want to just help complete virtio-rtc then? Would be easier than
-> > > > > > > > trying to keep two specs in sync.  
-> > > > > > > 
-> > > > > > > The ACPI version is much more lightweight and doesn't take up a
-> > > > > > > valuable PCI slot#. (I know, you can do virtio without PCI but that's
-> > > > > > > complex in other ways).
-> > > > > > >   
-> > > > > > 
-> > > > > > Hmm, should we support virtio over ACPI? Just asking.  
-> > > > > 
-> > > > > Given that we support virtio DT bindings, and the ACPI "PRP0001" device
-> > > > > exists with a DSM method which literally returns DT properties,
-> > > > > including such properties as "compatible=virtio,mmio" ... do we
-> > > > > already?
-> > > > > 
-> > > > >   
-> > > > 
-> > > > In a sense, but you are saying that is too complex?
-> > > > Can you elaborate?  
-> > > 
-> > > No, I think it's fine. I encourage the use of the PRP0001 device to
-> > > expose DT devices through ACPI. I was just reminding you of its
-> > > existence.  
-> > 
-> > Confused. You said "I know, you can do virtio without PCI but that's
-> > complex in other ways" as the explanation why you are doing a custom
-> > protocol.  
-> 
-> Ah, apologies, I wasn't thinking that far back in the conversation.
-> 
-> If we wanted to support virtio over ACPI, I think PRP0001 can be made
-> to work and isn't too complex (even though it probably doesn't yet work
-> out of the box).
-> 
-> But for the VMCLOCK thing, yes, the simple ACPI device is a lot simpler
-> than virtio-rtc and much more attractive.
-> 
-> Even if the virtio-rtc specification were official today, and I was
-> able to expose it via PCI, I probably wouldn't do it that way. There's
-> just far more in virtio-rtc than we need; the simple shared memory
-> region is perfectly sufficient for most needs, and especially ours.
-> 
-> I have reworked
-> https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/vmclock
-> to take your other feedback into account.
-> 
-> It's now more flexible about the size handling, and explicitly checking
-> that specific fields are present before using them. 
-> 
-> I think I'm going to add a method on the ACPI device to enable the
-> precise clock information. I haven't done that in the driver yet; it
-> still just consumes the precise clock information if it happens to be
-> present already. The enable method can be added in a compatible fashion
-> (the failure mode is that guests which don't invoke this method when
-> the hypervisor needs them to will see only the disruption signal and
-> not precise time).
-> 
-> For the HID I'm going to use AMZNVCLK. I had used QEMUVCLK in the QEMU
-> patches, but I'll change that to use AMZNVCLK too when I repost the
-> QEMU patch.
+On 11/07/2024 00:42, James Houghton wrote:
+> It is possible that KVM wants to access a userfault-enabled GFN in a
+> path where it is difficult to return out to userspace with the fault
+> information. For these cases, add a mechanism for KVM to wait for a GFN
+> to not be userfault-enabled.
+In this patch series, an asynchronous notification mechanism is used 
+only in cases "where it is difficult to return out to userspace with the 
+fault information". However, we (AWS) have a use case where we would 
+like to be notified asynchronously about _all_ faults. Firecracker can 
+restore a VM from a memory snapshot where the guest memory is supplied 
+via a Userfaultfd by a process separate from the VMM itself [1]. While 
+it looks technically possible for the VMM process to handle exits via 
+forwarding the faults to the other process, that would require building 
+a complex userspace protocol on top and likely introduce extra latency 
+on the critical path. This also implies that a KVM API 
+(KVM_READ_USERFAULT) is not suitable, because KVM checks that the ioctls 
+are performed specifically by the VMM process [2]:
+	if (kvm->mm != current->mm || kvm->vm_dead)
+		return -EIO;
 
-That doesn't fit with ACPI _HID definitions.
-Second set 4 characters need to be hex digits as this is an
-ACPI style ID (which I assume this is given AMZN is a valid
-vendor ID.  6.1.5 in ACPI v6.5
+ > The implementation of this mechanism is certain to change before KVM
+ > Userfault could possibly be merged.
+How do you envision resolving faults in userspace? Copying the page in 
+(provided that userspace mapping of guest_memfd is supported [3]) and 
+clearing the KVM_MEMORY_ATTRIBUTE_USERFAULT alone do not look 
+sufficient to resolve the fault because an attempt to copy the page 
+directly in userspace will trigger a fault on its own and may lead to a 
+deadlock in the case where the original fault was caused by the VMM. An 
+interface similar to UFFDIO_COPY is needed that would allocate a page, 
+copy the content in and update page tables.
 
-Maybe I'm missing something...
+[1] Firecracker snapshot restore via UserfaultFD: 
+https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md
+[2] KVM ioctl check for the address space: 
+https://elixir.bootlin.com/linux/v6.10.1/source/virt/kvm/kvm_main.c#L5083
+[3] mmap() of guest_memfd: 
+https://lore.kernel.org/kvm/489d1494-626c-40d9-89ec-4afc4cd0624b@redhat.com/T/#mc944a6fdcd20a35f654c2be99f9c91a117c1bed4
 
-J
-
-
+Thanks,
+Nikita
 
