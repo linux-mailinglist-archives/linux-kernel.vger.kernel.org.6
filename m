@@ -1,219 +1,200 @@
-Return-Path: <linux-kernel+bounces-263386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633F893D537
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:39:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F3493D539
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E47B222E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071791C22310
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183A51CD0C;
-	Fri, 26 Jul 2024 14:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C881CD16;
+	Fri, 26 Jul 2024 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOmBZb+h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M75cpE8N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOmBZb+h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M75cpE8N"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JnzaC8Yo"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785451F94A;
-	Fri, 26 Jul 2024 14:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A475C182AE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722004743; cv=none; b=E0UYIMZEmCJO6ssmF0OFpfFLVhCb1NpACQ4Em2s2Ig9zI2wQQvtEASjCMjGPOVV9jaPGW11giZpVyiYvgON7+Su8llLfTjB2m+FU6ObkMiKqpT95c8D+xlDU3Prq8Ys2J7fhmMlLkHJyXdV+6nVX+HR88iWwjIApq7nhGynYejc=
+	t=1722004813; cv=none; b=eGUU76RPSLgYCir9A5Ro+jwsFIOkkGl8HiZ/ljMgBXldVv5iv+uQIUVYNwOWyQOo83Mz5eJ6k83A6BWyynz437gWNQRODZx6dd4t3uiaNlQkW1UNdtVSHJaLWxv9hbgo1qyIKpt9jS7Jxty6s00Ii2gKphphsmZY4EuyAlaKJ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722004743; c=relaxed/simple;
-	bh=UtXz4WTaen1Pzcq/FSdo/p1LGUZ00Lh2i1DDQW0yjRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JgcQlwlcs6kJYhfSR03aPdrQ920H815arz06/tVLCt7ELk/2ca7tDmoJFwxvsHwR3TwZLD7WdtUxYlfYMVJEouWO1a6oVEgU92RcF7Ajen1Dy9uTLSqcNy7+n26wVshHN/RNodScDgiC3UMBFj6QTnG6tNoGt9ymhSndai0JPnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOmBZb+h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M75cpE8N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOmBZb+h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M75cpE8N; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B64A21A6E;
-	Fri, 26 Jul 2024 14:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722004739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
-	b=iOmBZb+hienSXihK6WG7tgPqDXDibywKH3Nju5+E+QJRzn8eaWkASSwSiOMlJCcTpvw/Ma
-	4jJDP53jKNnQxTQHlcUKfALZhw5TePn9EewqqPOkusEXJlx5b9Tm0Tl1axzpJ4pUEpAi6I
-	ZQNEZv/3AjlYcpXntYUY5Igi69zh530=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722004739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
-	b=M75cpE8Nz9F3vaxvJMWlZlAgcJ4cY7pWV4sUHCHsnx8IzKyvQURQBu0M+yp+kvCQ9BnUFV
-	+M15luHTG2hXzaBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iOmBZb+h;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=M75cpE8N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722004739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
-	b=iOmBZb+hienSXihK6WG7tgPqDXDibywKH3Nju5+E+QJRzn8eaWkASSwSiOMlJCcTpvw/Ma
-	4jJDP53jKNnQxTQHlcUKfALZhw5TePn9EewqqPOkusEXJlx5b9Tm0Tl1axzpJ4pUEpAi6I
-	ZQNEZv/3AjlYcpXntYUY5Igi69zh530=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722004739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
-	b=M75cpE8Nz9F3vaxvJMWlZlAgcJ4cY7pWV4sUHCHsnx8IzKyvQURQBu0M+yp+kvCQ9BnUFV
-	+M15luHTG2hXzaBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D20E138A7;
-	Fri, 26 Jul 2024 14:38:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ELRpFgO1o2bcIgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 26 Jul 2024 14:38:59 +0000
-Message-ID: <6ff1f0d8-1483-49ce-a02a-3c4f3d664fa7@suse.cz>
-Date: Fri, 26 Jul 2024 16:38:59 +0200
+	s=arc-20240116; t=1722004813; c=relaxed/simple;
+	bh=ulwwnhc+mAkGKfWxF/MrC5J/i0p/2VPb4E/VhhmcdpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sdb+EMw3S0injwvrBs0WXOhCifCMcvsPfYZahUwAzzDhkHCc7tHY5hQhObB0KzApXhhp9Q0S+FzdQyzn8RAdl7/QhW6esSH1b864VXh989hEynH55ddSAfiYoMYbqRWsUErbJTZYtURrEFjh/8Cz/ox1UYAOf7sCSKzq7T8IgHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JnzaC8Yo; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-81ff6a80cbbso239701241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722004810; x=1722609610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tV65IQg54aPZMNaUSM01ngj5YogaBYHcYLA+LYcxGps=;
+        b=JnzaC8YopaWB7EYnNEtaDjsCbf4BIdOzFvsC2dczybBS3tEpfk5QDb9FIURDN0Wlm8
+         3pMZUXlzT0rl3l7YLYSZ4ekEXwP2QU1IROE7aTCttcl/vstDhU3wO5zNK9i5Nc3/4dGB
+         qJbIGHbfiCHZKOuQWSyb16BEX3yIytL9Ljs0FQBLgoHeYX3qWsQ0ky1lK12b2EoQipf+
+         3VpDZCxamMAHOknskEZIVFxqaaX5nAMG8loek2eU5ezI1YUCbmrxbAShwu7BPNv7h/Z8
+         ilvySLHwNCcHXxMpUOmzThEW6MU7E/9vnFkU9rnSvYcJYpGndMaKvI+tq2iEXcoayz7y
+         UiEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722004810; x=1722609610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tV65IQg54aPZMNaUSM01ngj5YogaBYHcYLA+LYcxGps=;
+        b=hptY5eJ1oNqjNvn2eKaOXqYdRieMz1svzLUK2Dltk4O+ufCpsN3Ol+OFSu1WjjhzRF
+         xHGcTjr2FaNZp5fLu9ZOgMf98LTsvY1NFFZbjeNW+Y/bssNEuLqZ1+dGGibmbBi5izDM
+         7lsF3d4APEXJbfH/ToHlMya6t1bbki/ED8+WNQI3EjnEwcZVS02bX5y4JdOcMc+CraAP
+         Z6+kqHXWFRmguR39zWfpwD4TfQa81zWgDhb6VzAgCbqnGbU+LA7RozigRWcHD9ARqYhm
+         uNl+SwiNOY07XEC5E11b/tb6zJ+//NSrtI4Y+MEcW8ZIW918CTMfbwTvIo77I9RvJOA9
+         IQaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXotvSM5p3nROiGZihUc7QnciIfuu1QOt02nzeFEFX2cxWZSFkphrbA8bb2CSIwxrgtyvWHPxAAy0Hu9dUypIreeaUlZwGfQ/X/D1id
+X-Gm-Message-State: AOJu0YxRd0JtEYFgzYNvvSbJJ4ybhM9RXd+9iFayw4d5mSch1Io1LVLr
+	deA24b/lehWsmzvQXCqKr+gRRlq42SuD1WfQKX7KWErd1tI0tWygklEhFq+SMZyFPSCn1gj+3Nf
+	d6KuPr9ZY/c+0TtHO13+H+x0+Vq5Pog8yvhfr
+X-Google-Smtp-Source: AGHT+IHNPh2FVgbB2r/p8bmQoYBQ59fCoxJ02nk4FCnb5rGKbLefzEPA9Uzesrxeg4pBgpeiiqkRiQzpb/qNkxIFni8=
+X-Received: by 2002:a05:6102:50aa:b0:493:badb:74ef with SMTP id
+ ada2fe7eead31-493d6527a1bmr7693288137.26.1722004810317; Fri, 26 Jul 2024
+ 07:40:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Content-Language: en-US
-To: Danilo Krummrich <dakr@kernel.org>, cl@linux.com, penberg@kernel.org,
- rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
- roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
- hch@infradead.org, kees@kernel.org, ojeda@kernel.org, wedsonaf@gmail.com,
- mhocko@kernel.org, mpe@ellerman.id.au, chandan.babu@oracle.com,
- christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- rust-for-linux@vger.kernel.org
-References: <20240722163111.4766-1-dakr@kernel.org>
- <20240722163111.4766-3-dakr@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240722163111.4766-3-dakr@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 8B64A21A6E
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FREEMAIL_TO(0.00)[kernel.org,linux.com,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,infradead.org,ellerman.id.au,oracle.com,amd.com];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
+References: <202407251053.618edf56-oliver.sang@intel.com> <CANn89i+Bia9PdGhAVfRbbubYo37+g+ej68qp32JmU88tsLLuRQ@mail.gmail.com>
+In-Reply-To: <CANn89i+Bia9PdGhAVfRbbubYo37+g+ej68qp32JmU88tsLLuRQ@mail.gmail.com>
+From: Neal Cardwell <ncardwell@google.com>
+Date: Fri, 26 Jul 2024 10:39:51 -0400
+Message-ID: <CADVnQynLaT0rGcLDBB+T237x6aHx7K74kNPZz4hLFTK7U=CVwA@mail.gmail.com>
+Subject: Re: [linus:master] [tcp] 23e89e8ee7: packetdrill.packetdrill/gtests/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
+To: Eric Dumazet <edumazet@google.com>
+Cc: kernel test robot <oliver.sang@intel.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	netdev@vger.kernel.org, Matthieu Baerts <matttbe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/22/24 6:29 PM, Danilo Krummrich wrote:
-> Besides the obvious (and desired) difference between krealloc() and
-> kvrealloc(), there is some inconsistency in their function signatures
-> and behavior:
-> 
->  - krealloc() frees the memory when the requested size is zero, whereas
->    kvrealloc() simply returns a pointer to the existing allocation.
-> 
->  - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
->    kvrealloc() does not accept a NULL pointer at all and, if passed,
->    would fault instead.
-> 
->  - krealloc() is self-contained, whereas kvrealloc() relies on the caller
->    to provide the size of the previous allocation.
-> 
-> Inconsistent behavior throughout allocation APIs is error prone, hence make
-> kvrealloc() behave like krealloc(), which seems superior in all mentioned
-> aspects.
-> 
-> Besides that, implementing kvrealloc() by making use of krealloc() and
-> vrealloc() provides oppertunities to grow (and shrink) allocations more
-> efficiently. For instance, vrealloc() can be optimized to allocate and
-> map additional pages to grow the allocation or unmap and free unused
-> pages to shrink the allocation.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Thu, Jul 25, 2024 at 4:07=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Thu, Jul 25, 2024 at 6:55=E2=80=AFAM kernel test robot <oliver.sang@in=
+tel.com> wrote:
+> >
+> >
+> >
+> > Hello,
+> >
+> > kernel test robot noticed "packetdrill.packetdrill/gtests/net/tcp/fasto=
+pen/client/simultaneous-fast-open_ipv4-mapped-v6.fail" on:
+> >
+> > commit: 23e89e8ee7be73e21200947885a6d3a109a2c58d ("tcp: Don't drop SYN+=
+ACK for simultaneous connect().")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> >
+> > [test failed on linus/master      68b59730459e5d1fe4e0bbeb04ceb9df0f002=
+270]
+> > [test failed on linux-next/master 73399b58e5e5a1b28a04baf42e321cfcfc663=
+c2f]
+> >
+> > in testcase: packetdrill
+> > version: packetdrill-x86_64-31fbbb7-1_20240226
+> > with following parameters:
+> >
+> >
+> > compiler: gcc-13
+> > test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40G=
+Hz (Coffee Lake) with 32G memory
+> >
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >
+> >
+> > we also noticed other failed cases that can pass on parent.
+> >
+> >
+> > 42ffe242860c401c 23e89e8ee7be73e21200947885a
+> > ---------------- ---------------------------
+> >        fail:runs  %reproduction    fail:runs
+> >            |             |             |
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/client/simultaneous-fast-open_ipv4-mapped-v6.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/client/simultaneous-fast-open_ipv4.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/client/simultaneous-fast-open_ipv6.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4-mapped-v6.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/basic-cookie-not-reqd_ipv4.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/basic-zero-payload_ipv4-mapped-v6.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/basic-zero-payload_ipv4.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4-mapped-v6.fa=
+il
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/opt34/basic-cookie-not-reqd_ipv4.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4-mapped-v6.fail
+> >            :9           67%           6:6     packetdrill.packetdrill/g=
+tests/net/tcp/fastopen/server/opt34/basic-zero-payload_ipv4.fail
+> >
+> >
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202407251053.618edf56-oliver.s=
+ang@intel.com
+> >
+> >
+> >
+> > FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simult=
+aneous-fast-open.pkt (ipv6)]
+> >
+> > ...
+> >
+> > FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simult=
+aneous-fast-open.pkt (ipv4)]
+> >
+> > ...
+> >
+> > FAIL [/lkp/benchmarks/packetdrill/gtests/net/tcp/fastopen/client/simult=
+aneous-fast-open.pkt (ipv4-mapped-v6)]
+> >
+> > ...
+> >
+> >
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20240725/202407251053.618edf56-=
+oliver.sang@intel.com
+> >
+> >
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> >
+>
+> This has been discussed recently in netdev mailing list, one ACK will
+> get more precise information.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+This should be fixed from this packetdrill test update from Matthieu
+Baerts that I just merged:
+  https://github.com/google/packetdrill/pull/87
 
-with same caveat about the __GFP_ZERO comment on kvrealloc_noprof()
+(For our internal versions of the tests, Eric provided an equivalent patch.=
+)
 
+neal
 
