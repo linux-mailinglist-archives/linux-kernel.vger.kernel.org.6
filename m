@@ -1,253 +1,188 @@
-Return-Path: <linux-kernel+bounces-263091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3563F93D0E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F8093D0EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F7B7B20FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 818DFB20E31
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E4F17839F;
-	Fri, 26 Jul 2024 10:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D15178CC5;
+	Fri, 26 Jul 2024 10:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="N/B5MEIH"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d+8QF/5T"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC95B23775
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCBC1C286;
+	Fri, 26 Jul 2024 10:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721988802; cv=none; b=RtvPP1IH8u8XqZarkM0SKB1fgfr2n1Yj7ZgTFubqQXAS133JjOhI5/QK1Ini+Wro3dMhFRBgpYH1SACal6vBxDWpglTyEspNWL0nltPwp21gGDgLl0+d6JjdrDDXNrkeiPAV+yAoVf4G8yEXGeV5HLzSi7A9BzqpGWcwDpSd1mg=
+	t=1721988952; cv=none; b=r2lLovt7iaUf43Q6ENoDFGXiHrV3R3xpUnFPbIKER5ph3z9i4GhNBx/cORZ4jJKp2NiTPvMdjKN+ArDFWDrbcKppgEcZvBqgWKl96ieJSlWYRlonzd2AEVC5gnAj8dZEr6yWwI3cOHGRr7RAQLuXzPCj8HtDl7AZ6Wh4szcAlDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721988802; c=relaxed/simple;
-	bh=ru2fXSjDT+qFoaiJZWkBKhtWH0BG0J1Ftkg79GV8/A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/0j1kp2R1HNVfS+xHW0FRY4ldKPmclgjL+I3bOxmGRG1boG2YVD3Bq7hUNtaCUuXNbEpskcQvBaK5jlqI/KQ2OJXbFeSImYWHDafhmB53+0g8gBZPeD/n2c/jF047+0kfhj+XXaejp42HQBiqwEewyIq07GqQx19niQ3DU/S3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=N/B5MEIH; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-654cf0a069eso18695557b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1721988799; x=1722593599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JoIzlV10QkJm2sDOzopormwa/gqLVMn6MQy6YSu+s8E=;
-        b=N/B5MEIHdUdEbCHQqtFgBB/8oW1vTq+RYs+qjRY7WnSqsJxO1pHcuj0H0YgRAd2zuQ
-         MmVDZ7vPUI3GZ3bVB/6zTdPOkfSl/VrSc20jyW4LtaW/xaA02CBoWOhfjLzLQOpBefDf
-         8/JokhzzCY6pAAt14RzOsS/rYCD+OBf+TlDyJAe+IRt8z/OI9DW+eIP7NrLo+nfIaHI6
-         MJokWxGBXFsDA6x9UW8SnA4xe2FuUPVuKqFX9TpxCwrWawFPeqNX3XvRmGPNFnGvW01D
-         8q1h94n9gTd/USTGJqZQiBbDmfLzSyVo9W/g36i1C7mBepNzZ4TFvcyWSGpptTtli+ZL
-         7biA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721988799; x=1722593599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JoIzlV10QkJm2sDOzopormwa/gqLVMn6MQy6YSu+s8E=;
-        b=gPcINKJ4rOoYQQgAgC5Fyfb/20YAPhBC1jwENrcl7BjIgolYgfxFJ8Znc7RftE4aeR
-         lyQa7sCWAluS7B1GO7RvoeIZXjDWMLobbNhcVm/oD81xm2Uff7SlXJAFNQmGTi2g5B7+
-         q2mv2KuOoy0p1LTZ8I+N7pNutMsuFG3+ZidOixujlB8C3njds+tdT4CogiktjIF+RMTO
-         RKdvEjCHMgU7zJciLEDKI5iIs0oNPGSHjwGWe2MrG3TxR5RNlkTe6VzzCgwH+FuWsS/A
-         y6NQZ6/S9jwpy7EXywHU4Zfz2aW+WAusEy2tqH/A5AcUQBoE7bpIzIyh6KBL3og2jo8E
-         KvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgsGAo7ulPXlHpXfVw0q3siZfHmoqFY8e/7BRpvTL0DghtJUqc/OFVXKQf8MxqEsnH6fQly8/m04gWIYZWGZgy3jsXLB10cT4V2eSP
-X-Gm-Message-State: AOJu0YyZcO4QBkgiGEDQc835jV07Uowrw2l4sRslxAqLvJxF7ndjGWbc
-	pg/BGkEsv6XyK+0Yxn6AErHI91flAK/pEmKGJXglmP5UpmVDjeHUy1BMhz69v9z8bLnS2+Q5GKJ
-	A26oqYxQAbctDLmevTW/RanfqBzSESmVTBGgyfA==
-X-Google-Smtp-Source: AGHT+IHb9wZZglRZTzfdXD29gqYver0a9ZhW9i0uWGsJNu+ZdwQ5bxeBQKpEwDHvdQsFpMVyhPBAsylxhyOhTbevYxw=
-X-Received: by 2002:a0d:fb02:0:b0:65f:c95f:e7c7 with SMTP id
- 00721157ae682-6751082c316mr60048257b3.7.1721988798805; Fri, 26 Jul 2024
- 03:13:18 -0700 (PDT)
+	s=arc-20240116; t=1721988952; c=relaxed/simple;
+	bh=GsrwJej6TWCTSRQ+vLfnhXQEv6mHn1d6GGyajkUrraA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OH90zIbcLGqXHTuP7aXDflGNlj3Uai3f63+BF1wkHPyXaPZetR7tLHlAxdYqBHkUsEQpc2vzqpfr2LvvXeAr1No95BjTqSiTa/h9uPVNLMf+5BzBiemQXUfA0I49oQAwfA0Fz9UCoIjUiNm5uvt5SYynsAX4NQXCe7hSYtwqi68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d+8QF/5T; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46QAFIPC128435;
+	Fri, 26 Jul 2024 05:15:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721988918;
+	bh=7+5UTq5JTc/Qq3k+J69YHkKoUs00J/g0Hh7qYT4IjYM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=d+8QF/5T8zvrUDvo3KMY48lCpWRXwO2TVw9XXDHOZn8PG6hv7SLaT+J7G31wmJHgF
+	 mCBxDJZn1ZMfDk87oQY1XVMv5Oqvbutc5gFbUrKW1Js6rdlDoxXAb5xahZMR5wBTUI
+	 YyWbp3B6JIz9MMzcZfzpMgO53a4keXdJXI81sygs=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46QAFIxj116069
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 26 Jul 2024 05:15:18 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 26
+ Jul 2024 05:15:18 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 26 Jul 2024 05:15:18 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46QAFHfT059409;
+	Fri, 26 Jul 2024 05:15:17 -0500
+Date: Fri, 26 Jul 2024 15:45:16 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lee@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <lpieralisi@kernel.org>, <kw@linux.com>, <bhelgaas@google.com>,
+        <vigneshr@ti.com>, <kishon@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH 3/3] PCI: j721e: Add support for enabling ACSPCIE PAD IO
+ Buffer output
+Message-ID: <cacb88b1-cab6-4e8b-850a-0477d41f6e80@ti.com>
+References: <20240715120936.1150314-4-s-vadapalli@ti.com>
+ <20240725211841.GA859405@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725222822.1784931-1-lyude@redhat.com> <20240725222822.1784931-2-lyude@redhat.com>
-In-Reply-To: <20240725222822.1784931-2-lyude@redhat.com>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Fri, 26 Jul 2024 06:13:07 -0400
-Message-ID: <CALNs47tra0+zdjiBZJgqWBm9v0Q-Osdhj_T_Sh8o00ASzjqWRg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rust: Introduce irq module
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, 
-	Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240725211841.GA859405@bhelgaas>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Jul 25, 2024 at 6:29=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
-:
->
-> This introduces a module for dealing with interrupt-disabled contexts,
-> including the ability to enable and disable interrupts
-> (with_irqs_disabled()) - along with the ability to annotate functions as
-> expecting that IRQs are already disabled on the local CPU.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/helpers.c     | 14 +++++++++
->  rust/kernel/irq.rs | 74 ++++++++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs |  1 +
->  3 files changed, 89 insertions(+)
->  create mode 100644 rust/kernel/irq.rs
->
-> [...]
-> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
-> new file mode 100644
-> index 0000000000000..8a540bd6123f7
-> --- /dev/null
-> +++ b/rust/kernel/irq.rs
-> [...]
-> +/// A guarantee that IRQs are disabled on this CPU
+On Thu, Jul 25, 2024 at 04:18:41PM -0500, Bjorn Helgaas wrote:
 
-Nit: `.` after summary
+Hello Bjorn,
 
-> +///
-> +/// An [`IrqDisabled`] represents a guarantee that interrupts will remai=
-n disabled on the current CPU
-> +/// until the lifetime of the object ends. However, it does not disable =
-or enable interrupts on its
-> +/// own - see [`with_irqs_disabled()`] for that.
-> +///
+> On Mon, Jul 15, 2024 at 05:39:36PM +0530, Siddharth Vadapalli wrote:
+> > The ACSPCIE module is capable of driving the reference clock required by
+> > the PCIe Endpoint device. It is an alternative to on-board and external
+> > reference clock generators. Enabling the output from the ACSPCIE module's
+> > PAD IO Buffers requires clearing the "PAD IO disable" bits of the
+> > ACSPCIE_PROXY_CTRL register in the CTRL_MMR register space.
+> 
+> And I guess this patch actually *does* enable the ACSPCIE PAD IO
+> Buffer output?
+> 
+> This commit log tells me what is *required* to enable the output, but
+> it doesn't actually say whether the patch *does* enable the output.
+> 
+> Similarly, if this patch enables ACSPCIE PAD IO Buffer output, I would
+> make the subject be:
+> 
+>   PCI: j721e: Enable ACSPCIE Refclk output when DT property is present
 
-I don't think lifetime necessarily needs to be discussed here, since
-this doesn't have any  action on drop. A functional description may be
-better, possibly:
+I will update the commit message and the $subject to clearly indicate
+that the patch enables the reference clock output from the ACSPCIE module.
 
-        A token that is only available in contexts where IRQs are disabled.
+> 
+> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > ---
+> >  drivers/pci/controller/cadence/pci-j721e.c | 33 ++++++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> > index 85718246016b..2fa0eff68a8a 100644
+> > --- a/drivers/pci/controller/cadence/pci-j721e.c
+> > +++ b/drivers/pci/controller/cadence/pci-j721e.c
 
-        [`IrqDisabled`] is marker made available when interrupts are
-        not active. Certain functions (such as [`SOMETHING`]) take an
-        `IrqDisabled` in order to indicate that they may only be run in
-        IRQ-free contexts.
+[...]
 
-        This is a marker type; it has no size, and is simply used as a
-        compile-time guarantee that interrupts are disabled where required.
+> > +
+> > +	ret = of_parse_phandle_with_fixed_args(node, "ti,syscon-acspcie-proxy-ctrl",
+> > +					       1, 0, &args);
+> > +	if (!ret) {
+> > +		/* PAD Enable Bits have to be cleared to in order to enable output */
+> 
+> Most of this file fits in 80 columns (printf strings are an exception
+> so they're easier to find with grep).  It'd be nice if your new code
+> and comments fit in 80 columns as well.
 
-        This token can be created by [`with_irqs_disabled`]. See
-        [`with_irqs_disabled`] for examples and further information.
+I will wrap the lines to the 80 character limit.
 
+> 
+> An easy fix for the comment would be:
+> 
+>   /* Clear PAD Enable bits to enable output */
+> 
+> Although it sounds non-sensical to *clear* enable bits to enable
+> something, and the commit log talks about clearing PAD IO *disable*
+> bits, so maybe you meant this instead?
+> 
+>   /* Clear PAD IO disable bits to enable output */
 
-> +/// This object has no cost at runtime (TODO: =E2=80=A6except if whateve=
-r kernel compile-time option that
-> +/// would assert IRQs are enabled or not is enabled - in which case we s=
-hould actually verify that
-> +/// they're enabled).
-> +///
-> +/// # Examples
-> +///
-> +/// If you want to ensure that a function may only be invoked within con=
-texts where interrupts are
-> +/// disabled, you can do so by requiring that a reference to this type b=
-e passed. You can also
-> +/// create this type using unsafe code in order to indicate that it's kn=
-own that interrupts are
-> +/// already disabled on this CPU
-> +///
-> +/// ```
-> +/// use kernel::irq::{IrqDisabled, disable_irqs};
-> +///
-> +/// // Requiring interrupts be disabled to call a function
-> +/// fn dont_interrupt_me(_irq: &IrqDisabled<'_>) { }
-> +///
-> +/// // Disabling interrupts. They'll be re-enabled once this closure com=
-pletes.
-> +/// disable_irqs(|irq| dont_interrupt_me(&irq));
-> +/// ```
+Thank you for the suggestion. This is much better and I will update the
+comment.
 
-I think it would be okay to only have examples in one place, possible
-`with_irqs_disabled` since that seems like it will get more direct use.
-If you would like one here, this one and its docs may need an update
-(takes by reference rather than by value).
+> 
+> If the logical operation here is to enable driving Refclk, I think the
+> function name and error messages might be more informative if they
+> mentioned "refclk" instead of "PAD".
 
-> +pub struct IrqDisabled<'a>(PhantomData<&'a ()>);
+While the Hardware terminology is "PAD", looking at it again, I agree
+that using "refclk" will be a better choice for describing the objective
+of the function, as well as the outcome in case of a failure.
 
-#[derive(Clone, Copy, Debug)]
+> 
+> > +		val = ~(args.args[0]);
+> > +		ret = regmap_update_bits(syscon, 0, mask, val);
+> > +		if (ret)
+> > +			dev_err(dev, "Enabling ACSPCIE PAD output failed: %d\n", ret);
+> > +	} else {
+> > +		dev_err(dev, "ti,syscon-acspcie-proxy-ctrl has invalid parameters\n");
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+> >  {
+> >  	struct device *dev = pcie->cdns_pcie->dev;
+> > @@ -259,6 +284,14 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+> >  		return ret;
+> >  	}
+> >  
+> > +	/* Enable ACSPCIe PAD IO Buffers if the optional property exists */
+> 
+> Is the canonical name "ACSPCIE" or "ACSPCIe"?  You used "ACSPCIE"
+> above?
 
-Since this needs to be duplicatable.
+It is "ACSPCIE" and I have mentioned it that way consistently at all
+places including the dt-bindings patches but have accidentally written
+"ACSPCIe" above. I will fix this.
 
-> +impl<'a> IrqDisabled<'a> {
-> +    /// Create a new [`IrqDisabled`] without disabling interrupts
+Thank you for reviewing this patch.
 
-Nit: `.` after summary
-
-> +    ///
-> +    /// If debug assertions are enabled, this function will check that i=
-nterrupts are disabled.
-> +    /// Otherwise, it has no cost at runtime.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// This function must only be called in contexts where it is alread=
-y known that interrupts have
-> +    /// been disabled for the current CPU, as the user is making a promi=
-se that they will remain
-> +    /// disabled at least until this [`IrqDisabled`] is dropped.
-> +    pub unsafe fn new() -> Self {
-> +        Self(PhantomData)
-> +    }
-> +}
-> +
-> +/// Run the closure `cb` with interrupts disabled on the local CPU.
-> +///
-> +/// Interrupts will be re-enabled once the closure returns. If interrupt=
-s were already disabled on
-> +/// this CPU, this is a no-op.
-
-The wording makes it sound like the entire function is a no-op if IRQs
-are disabled, rather than the act of disabling IRQs. Could you clarify?
-
-Suggested docs addition:
-
-        This creates an [`IrqDisabled`] token, which can be passed to
-        functions that must be run  without interrupts.
-
-        ```
-        fn some_sync_action(_irq: IrqDisabled<'_>) {
-                /* When the token is available, IRQs are known to be disabl=
-ed.
-                   Actions that rely on this can be safely performed. */
-        }
-
-        with_irqs_disabled(|irq_dis| {
-                some_sync_action(irq_dis);
-        })
-        ```
-
-> +#[inline]
-> +pub fn with_irqs_disabled<T, F>(cb: F) -> T
-> +where
-> +    F: FnOnce(IrqDisabled<'_>) -> T,
-> +{
-> +    // SAFETY: FFI call with no special requirements
-> +    let flags =3D unsafe { bindings::local_irq_save() };
-> +
-> +    let ret =3D cb(IrqDisabled(PhantomData));
-> +
-> +    // SAFETY: `flags` comes from our previous call to local_irq_save
-> +    unsafe { bindings::local_irq_restore(flags) };
-> +
-> +    ret
-> +}
-
-Maybe it would be better to put some more extensive module-level docs
-with a couple examples, then for the function / type-level docs just
-link there?
-
-- Trevor
+Regards,
+Siddharth.
 
