@@ -1,104 +1,254 @@
-Return-Path: <linux-kernel+bounces-263286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14E393D3B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:08:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C87093D3BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A062838A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508E61C20C3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACCC17B514;
-	Fri, 26 Jul 2024 13:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1647A17BB3B;
+	Fri, 26 Jul 2024 13:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R1ckrdP6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cdaqgE1e"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F8942070
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7745542070;
+	Fri, 26 Jul 2024 13:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999321; cv=none; b=sX+bJbQi0FtDhbl0G/+0YaSXhOtmINAmhUI8bVu2Ikkp8KLJDC10QjsdQpslipLFDDT8qEjAmJ9I7zoHIL81kT6U6ixMV90k3djPQj/yCV7FJxHaCUix2puzME9AGYD1VZVAt297dnL33RvJXS0ryfYOrZ322TlE1bJuPGqQ6DI=
+	t=1721999327; cv=none; b=iZ89jSjvIH1uHQkZCC/RbcL3m8AnchqDYO1CFAmKdF8Nw3HHkSDLGGfN11qcgZmGrzy2jXBlv/mWieB7vKq6nW67okzz+vwVPcs9Myeo4coB5PybNtIIkqb5oUj+9ZHXFXkN4VwJyUVwEBwcKfa1nO/JMiZamJmZZWUSqSJaark=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999321; c=relaxed/simple;
-	bh=aXvevRCZHpPfmsZwO8nh4sg50c6J5KdgmfHtW/OpZ+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfFJt1gXrBhG+EgCZSrFsQjlJZQm23M7L+xgwpfj9Ertd1RB+pX2jh2ulzYd8FNWBZdt6B6z+5rmImlyP4qd+o7t7P+0/71HNT9I2i44+k6tfFzIU2wns55CraZV36XRMG/i3cJzNTTEGPJ8SgWxfJVnSZ/FAw2CclGu3h/8vKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R1ckrdP6; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1721999327; c=relaxed/simple;
+	bh=YS5UzjgZpsBFTPkafrOxsKMqTZm0wt5ef5kaKAYE60s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NzUHSEMGjoEGxbbbpkFvfaUB5Tc2eS7O6h+5ywhGn0U0ErIzKwYKEzIRXMn+XxTqqCTrOWXcEaQJ3JCsj4299M0Om88r8Gyq3F/w+VoUHNqPfICT+bSemPXc4UhdAfx8JLkq+WngQCl9cCygG43NLBUXJIQP+9vyo7LkvN/pid0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cdaqgE1e; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GpdtUHRk4rArOx4gNacSV7DVCVe6gxiVt/YL9vxhalg=; b=R1ckrdP6XWFVW0lgOZbGWhDMW/
-	0N2PtO5VeFYbqGpS83WDe6aULz6EikLIsIaMk1TxKiCPnT9fZartsVyKOTInTFaJCSUX9QSpYDXo0
-	B7/+Tg7ZDAVUtcxpjKl/XVXJPWthQmsaC9jUfhdJ2rEGcYQB+eXbLuY95yQJpKyeRKIv6yrxFZGC+
-	IwT5TkuBjnaO4TiHJOIXbPPXgTxd0xhNpLUDRsx0sfUPlIanswbJ2vxI/MrWzfC3cFcmGpzDuhY9y
-	JGuPpMBUGbA+YUcFxbuLHXjzD+enDO4IEMMn7+1E0jLxWzE6ytZ29XSlGms4XLLqvPCG7jDVdhZlf
-	nM/CvETQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	bh=YS5UzjgZpsBFTPkafrOxsKMqTZm0wt5ef5kaKAYE60s=; b=cdaqgE1ejxXu9P6/7tajIgb/zh
+	XLn7uc6HDnMmFGWQvoLFl/ko2mLpusIAy1jhr9vnT/ix0dYyqT0RxoJKTQPHxtEwiRTswKf2Dasu8
+	z956Kf1TyMzNBaE6JU/CkydDQax4F76tZPDrOjMVZnAt5IJpjLZYYeYqo+smH3YsPwbofrfrWdBVM
+	38WnbWQvlF87x+D/lnRdCwK3cJ3BmnNzkEsbFd6pTzoBfaTEQBNLG2mipXeD2Nnsv10G65rWS6Fnj
+	K9TDpFaqNj130qOFfnnKnQhm/cOts5uOHIYbG9fNNDmMu2LII37ft1sm/DVa+0KtksT/AmEDUhNZQ
+	4eKnjPjA==;
+Received: from 54-240-197-234.amazon.com ([54.240.197.234] helo=u3832b3a9db3152.ant.amazon.com)
 	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXKgQ-0000000AEnw-2lr9;
-	Fri, 26 Jul 2024 13:08:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9D28430068B; Fri, 26 Jul 2024 15:08:29 +0200 (CEST)
-Date: Fri, 26 Jul 2024 15:08:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Zheng Zucheng <zhengzucheng@huawei.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] sched/cputime: Fix mul_u64_u64_div_u64()
- precision for cputime
-Message-ID: <20240726130829.GN13387@noisy.programming.kicks-ass.net>
-References: <20240725120315.212428-1-zhengzucheng@huawei.com>
- <20240726023235.217771-1-zhengzucheng@huawei.com>
- <20240726104429.GA21542@redhat.com>
- <20240726130401.GB21542@redhat.com>
+	id 1sXKgZ-0000000AEpW-2oYU;
+	Fri, 26 Jul 2024 13:08:39 +0000
+Message-ID: <c5fef494365f738bfe02b6afd54d191260a8233b.camel@infradead.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
+ <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>, 
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
+ David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
+ <abuehaze@amazon.com>,  "Christopher S . Hall"
+ <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>, John
+ Stultz <jstultz@google.com>,  netdev@vger.kernel.org, Stephen Boyd
+ <sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, qemu-devel <qemu-devel@nongnu.org>, Simon
+ Horman <horms@kernel.org>
+Date: Fri, 26 Jul 2024 14:08:38 +0100
+In-Reply-To: <20240726090326-mutt-send-email-mst@kernel.org>
+References: <20240725163843-mutt-send-email-mst@kernel.org>
+	 <d62925d94a28b4f8e07d14c1639023f3b78b0769.camel@infradead.org>
+	 <20240725170328-mutt-send-email-mst@kernel.org>
+	 <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
+	 <20240725174327-mutt-send-email-mst@kernel.org>
+	 <9261e393083bcd151a017a5af3345a1364b3e0f3.camel@infradead.org>
+	 <20240726015613-mutt-send-email-mst@kernel.org>
+	 <2e427b102d8fd899a9a3db2ec17a628beb24bc01.camel@infradead.org>
+	 <20240726084836-mutt-send-email-mst@kernel.org>
+	 <c115fa23a5e297284c14c1f7118ffcc3c9831097.camel@infradead.org>
+	 <20240726090326-mutt-send-email-mst@kernel.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-1JDQ6ost9bAbAF1zsqNb"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726130401.GB21542@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jul 26, 2024 at 03:04:01PM +0200, Oleg Nesterov wrote:
-> On 07/26, Oleg Nesterov wrote:
-> >
-> > On 07/26, Zheng Zucheng wrote:
-> > >
-> > > before call mul_u64_u64_div_u64(),
-> > > stime = 175136586720000, rtime = 135989749728000, utime = 1416780000.
-> >
-> > So stime + utime == 175138003500000
-> >
-> > > after call mul_u64_u64_div_u64(),
-> > > stime = 135989949653530
-> >
-> > Hmm. On x86 mul_u64_u64_div_u64(175136586720000, 135989749728000, 175138003500000)
-> > returns 135989749728000 == rtime, see below.
-> 
-> Seriously, can you re-check your numbers? it would be nice to understand why
-> x86_64 differs...
 
-x86_64 has a custom mul_u64_u64_div_u64() implementation.
+--=-1JDQ6ost9bAbAF1zsqNb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > But perhaps it makes sense to improve the accuracy of mul_u64_u64_div_u64() ?
-> > See the new() function in the code below.
-> 
-> Just in case, the usage of ilog2 can be improved, but this is minor.
+On Fri, 2024-07-26 at 09:04 -0400, Michael S. Tsirkin wrote:
+> On Fri, Jul 26, 2024 at 02:00:25PM +0100, David Woodhouse wrote:
+> > On Fri, 2024-07-26 at 08:52 -0400, Michael S. Tsirkin wrote:
+> > > On Fri, Jul 26, 2024 at 09:35:51AM +0100, David Woodhouse wrote:
+> > > > But for this use case, we only need a memory region that the hyperv=
+isor
+> > > > can update. We don't need any of that complexity of gratuitously
+> > > > interrupting all the vCPUs just to ensure that none of them can be
+> > > > running userspace while one of them does an update for itself,
+> > > > potentially translating from one ABI to another. The hypervisor can
+> > > > just update the user-visible memory in place.
+> > >=20
+> > > Looks like then your userspace is hypervisor specific, and that's a
+> > > problem because it's a one way street - there is no way for hyperviso=
+r
+> > > to know what does userspace need, so no way for hypervisor to know wh=
+ich
+> > > information to provide. No real way to fix bugs.
+> >=20
+> > It's not hypervisor specific, but you're right that as it stands there
+> > is no negotiation of what userspace wants. So the hypervisor provides
+> > what it feels it can provide without significant overhead (which may or
+> > may not include the precise timekeeping, as discussed, but should
+> > always include the disruption signal which is the most important
+> > thing).
+> >=20
+> > The guest *does* know what the hypervisor provides. And when we get to
+> > do this in virtio, we get all the goodness of negotiation as well. The
+> > existence of the simple ACPI model doesn't hurt that at all.
+>=20
+> Maybe it doesn't, at that. E.g. virtio does a copy, acpi doesn't?
+> I'll ponder compatibility over the weekend.
 
-I meant to go look at this, it seems to loop less than your improved
-version, but I'm chasing crashes atm. Perhaps it provides inspiration.
+For clarity, I think I've ditched the idea of a poor-man's negotiation
+through invoking an ACPI method to enable the timekeeping info.
 
-https://codebrowser.dev/llvm/compiler-rt/lib/builtins/udivmodti4.c.html#__udivmodti4
+I think we're better off waiting for virtio, to enable that kind of
+thing.
+
+The guest gets what the hypervisor is prepared to offer "for free".
+
+That isn't a one-way door; we *can* add an optional ACPI method later
+if we really want to. But I'm generally OK with "use virtio if you want
+that".
+
+
+--=-1JDQ6ost9bAbAF1zsqNb
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNzI2MTMwODM4WjAvBgkqhkiG9w0BCQQxIgQg6L7PVCyf
+X0iJiKaVR4cfdPEVVnK1gWA4OtM8yohlNb0wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgB7KVGdA8LG+jf6prusohL+bc2nXVzPwUkn
+P99NwtXHvMNfNDaT5O1ErUU0bMHwl7J5on6Txm1qOEtZb00FpTnkjQQskZXCtXkDcci+6awe3cfy
+HwZPmE8l3nnf1N2VIv6qEJl4eB97/g5PePvFfS55LoidoqMPIxJ+M35eOnfqj1YLi3luC9xUdCef
+yXsID5HpRfztgiyEg9fs1mhG1Td5ht3r7c5/45xxHVGQDiOVjHnynQFc6kZUQKKvq4DoqKmtZ9p6
+nuEdyU9/SPi8eYgDgrIYSKpaeJ7A6e5v7pSGjb+AaLaoROFqaAjHys5ZUn/tnYmWVyiKMruuK8XK
+nSOaj2NXeKADG0y/QegrIRJeNaIO8QQvOorgc+5J2eppPwTQyWkvFOymiIH8JByj5MJ6+6brTL5X
+XuI0+sByW9nsr1UokJd24dwk4qHgAJn+EX1LSSni5uqaw7h9ADmv5jqTND8155LnDk2Eit5LoyV2
+MpKLTNcX+AoMadsLs9D6xAUeDljojzDSHPPjwkpOVT3mcQXqxWoEDf4W7kc/wp8KM9oyaUo3ecoa
+2bP9AJzZmdCRjXmUfNWXjApZhTehvDVixlXa8GJEdRTB2WOru1zlQU5thvJ7spHZc8x874TnZfG4
+7+F5fN1tOxUHKkrz2TCIt7T6WQ3r63+MTM46yf2MaQAAAAAAAA==
+
+
+--=-1JDQ6ost9bAbAF1zsqNb--
 
