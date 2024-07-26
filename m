@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-263918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D528B93DC55
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B5693DC58
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7BD1F2203F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADE52816AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590CF191F91;
-	Fri, 26 Jul 2024 23:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752F91922DC;
+	Fri, 26 Jul 2024 23:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cVV2c+sj"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZoJFHj0w"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F010191F60
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0008B15A87B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722038126; cv=none; b=ih9uxdydSBnlWgcEDbtRaUuKa/4FG0f7v+Bkx1xbeJvvjd76IkVu827IGxojuvsPyH7lAOX0MblSgp8gNqLRqkJn5wLBEGgaXV/e9FqbhnxgSEVd37Fgbc4ZUTfkmxl9uqteQ5KSEbZ2b+fldD58mT/JL1OBiLpYM20Cy36Los8=
+	t=1722038128; cv=none; b=m705bbgWVxfenVMWTLPsJfwCec49ZhdZobWIAs/4ynbbDhe0PzWpluMPYwRlheHRRvjK+MXe0GyFJB00yav+EcJFfuC9d+jXXshQCmmM3Y9bxQlh5mG7HWTq57dtb2hB9q+HqvrHPUzP295bqNJIV18StZ+0roEFktuVsCDjlDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722038126; c=relaxed/simple;
-	bh=rI1deqx8R2FAT3yDZksFCzznTBxsLeNOCK4lgbhIK5U=;
+	s=arc-20240116; t=1722038128; c=relaxed/simple;
+	bh=KB6xn4OZUICEWZrxSAqwnEMQRTZa0ja3Fgai7TvLTDQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l+oVuQz5VMvn88LzuNVp1grbmH5uPYSr2sCxAbuxjc6VkUORnic6l/eCcDB6IAg8kGCIyn8wOO27oudYnXPmc5JnokbEFmR7wzGL+iRqgaCdbPsAFDi0NEFLM/IkJ8gEBTMGCkhNntSa4xxHEmiC862XOlkY24ikQCE87X4g6lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cVV2c+sj; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=rk34DrZnD5pcqnM/xh1F64wWeD4SeXi/I/m840O2P2ikhNxkA0fZmbxhJj8nHTi0fKVmV/7uyrnclyZuKE0Im8QF9YpGtoJJuh1uXhkw0I9cGpD/59uT0egFhotb0XC5IcpZIQ2MFqoMnKbp6rwu5xLvSClfwvEBReF4+78ulfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZoJFHj0w; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fca868b53cso10626635ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:55:24 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0b35859345so399041276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722038124; x=1722642924; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722038126; x=1722642926; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=4JkhtJX/rWB1cBzt9zuFqY6FqfPwx7EIf6/sG5QRcB4=;
-        b=cVV2c+sju13r+c0vZGcTmYBht45CT+HMvoRXfThdc5QZ0nuf0wfpO5L9d352irglET
-         dcAWmJeGiWCvBBekgQYJoRZgIR8JMsnIkGMcPLDZOFQVVNZsi65372160uDokuL77U/e
-         UuOy8NL88Hso/BTODtSwDZHauqQgDg7YfzvvmoYHs99O1vkTEIAO/k7g7uEgcx2c2iLA
-         D7fCnPSn55y8GWTVe/tWQ2uh3zjgIZEppDfyB5+BNAWbdnLfl2xGk0P5ut5UIYRUFoSC
-         o6qnoWgIvZKcTSjQ3RpwEun22AZ3YqDwYQZBw+Pmurv8+EVbjXlwE1G9voJ5KKZVWDml
-         Jbbw==
+        bh=4pm2gWEOx5QJNc32HyFmIStymfHzlyUTPI/gy9LPzsU=;
+        b=ZoJFHj0w7FsYYJx3bhxdk34ldYyiP0vqIANyKmizKcnmj/uT7k4sNz7hi4gq5zY48I
+         em+Rs6DFvn9dxe0L7is1CoHmRK63z7HZAoJ4dv5N9O8KgQ+iZteRxi6oKsOekdI123xS
+         2PV66b398wMEnj/ZhmbfMbuFNRdpY4C1dOtiqSfqcxUOd1jHj4M6irSUKpRE0oxQB1ph
+         a+RmLpSSpNq907+2yRyDgYTYouDBGGetKaDOp6vf5A/ZKXKyDhqwkB1t3jbZzO7zDgb0
+         ILu/FNas9dbFrk9mR0igqZGSLP6WvESlOFwnhSdNCwuDf6/mLaaRwqyt1OsOpKEByxZB
+         Tmeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722038124; x=1722642924;
+        d=1e100.net; s=20230601; t=1722038126; x=1722642926;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4JkhtJX/rWB1cBzt9zuFqY6FqfPwx7EIf6/sG5QRcB4=;
-        b=MRJwGaCsad+ynG+zTyAZ0Ft/E0JXwVdlrV8TtUckG+b1UXZ7oZwXH6/jS7CNG4ZP7V
-         anLKbgQqPQB38u2T718/9CA40d7XylphSXGkGQq7HBdAcsoT80HyzJfG4snWy+ZGsvim
-         UNJhaLpCJZ16Wo+ooETxZc/zKRsZ9aEbVagSRPDa82q5R1qkRKqkhPzTAmSrLPBAqUMg
-         H1a4/iQzqSTsi159Jn3VcUbavhL22Kego1L9NRIDUTDUpBVTCwZpxHM7qfTQOMZKgk2d
-         wJwOI0jTmtDEH3Pgv8w3GEA0C6p8o24hSQ7JpYDm+Ja0v7IkHWEPDbuR0MLXVsErFtDL
-         XkNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCLhsjZSe2giVTxhfCmLKU6IZEJk1tFpO/9ArBZ4V3GnDEoNXN08K7MP1trLJEnv6Uj4kgx++ixkt7VZZWGLWXfKmIbIR1fq8+Tcmf
-X-Gm-Message-State: AOJu0YzA6xBV1T34upyCVRow9QPDAFnFjbzntRF9QNywxd9/ps0KY0Ij
-	xhUWO0YDvXrtyUlwS2IkK45Jw+jAD17O8FJi+LKyDqjuxRwmICgyu41/4bG638bF0p/NQfETuq5
-	kzg==
-X-Google-Smtp-Source: AGHT+IFPQa1UjlYj7+Kv/jUhsXC3P8YtU5HtBxuA0lRTgUmwYvAf/3a7bhqWFsOX8QFlAkrWz2XoripRfzc=
+        bh=4pm2gWEOx5QJNc32HyFmIStymfHzlyUTPI/gy9LPzsU=;
+        b=cEmHwMLqQRYzwtrvh1pI07Ch2clWrYu5zLhfsXXF1Qfx4AST6GEMzSd+cNECJGutEe
+         sx2SbS82pVlhuhyxelEWucT6FHxeDoDjYs4QQ6Ovw8Eqf2nzm7rStwXUjhx1UaGQa3Hy
+         O+OxfWcJ2hVarh4o9gmjk9Or/IyigRpElgT8R7pTwNfmxAqBNSdmD6nWF6yvf3O1nrz+
+         QcsFhHC4RWtQifzJcdE2ZkFH4pSpH11mfQIqZEH7TcAY/Tr+aW8DX39WBis50Xuqkfsw
+         t3XXJf8ah6WcN/zEBYOJnjtAU17hqapJQfJaUJnUq2ehgRuD/M97FxwMJZhw7R2vW6KO
+         UpQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj4Sdo2bqcJbUx2yuektvsrfk+/Poiif0t1z6qzPkZhOjmrujUf9yr4H3pNTcq3vFtZTxB+9pkcuPvT/psvA8RXz9CQczODJjMOdEw
+X-Gm-Message-State: AOJu0Yx912yjA7hp37WZUidMicYRo22r67i+eLGcq09F1FgVdu39cDDw
+	rCZExafgWFspfQCIXCimgQzfFc3Z91m0xmDmvTIcLcZ0uSYumw4c6ew7Pk8WVU0gpxL3DBr3XuO
+	0yQ==
+X-Google-Smtp-Source: AGHT+IGgyahrOCg0Ix+MrKo8QCm20LiC8Zd9dP6asKSX3o/8So/b0NT46HfwZKTclpC/RfFjW09NkNDMj3A=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ea03:b0:1fb:7f2c:5652 with SMTP id
- d9443c01a7336-1ff04893401mr182655ad.7.1722038123783; Fri, 26 Jul 2024
- 16:55:23 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1029:b0:e0b:9b5:8647 with SMTP id
+ 3f1490d57ef6-e0b544ec4ddmr2334276.8.1722038125883; Fri, 26 Jul 2024 16:55:25
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 26 Jul 2024 16:52:29 -0700
+Date: Fri, 26 Jul 2024 16:52:30 -0700
 In-Reply-To: <20240726235234.228822-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240726235234.228822-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240726235234.228822-81-seanjc@google.com>
-Subject: [PATCH v12 80/84] KVM: Make kvm_follow_pfn.refcounted_page a required field
+Message-ID: <20240726235234.228822-82-seanjc@google.com>
+Subject: [PATCH v12 81/84] KVM: x86/mmu: Don't mark "struct page" accessed
+ when zapping SPTEs
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -93,39 +94,78 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Now that the legacy gfn_to_pfn() APIs are gone, and all callers of
-hva_to_pfn() pass in a refcounted_page pointer, make it a required field
-to ensure all future usage in KVM plays nice.
+Don't mark pages/folios as accessed in the primary MMU when zapping SPTEs,
+as doing so relies on kvm_pfn_to_refcounted_page(), and generally speaking
+is unnecessary and wasteful.  KVM participates in page aging via
+mmu_notifiers, so there's no need to push "accessed" updates to the
+primary MMU.
+
+And if KVM zaps a SPTe in response to an mmu_notifier, marking it accessed
+_after_ the primary MMU has decided to zap the page is likely to go
+unnoticed, i.e. odds are good that, if the page is being zapped for
+reclaim, the page will be swapped out regardless of whether or not KVM
+marks the page accessed.
+
+Dropping x86's use of kvm_set_pfn_accessed() also paves the way for
+removing kvm_pfn_to_refcounted_page() and all its users.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/kvm_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kvm/mmu/mmu.c     | 17 -----------------
+ arch/x86/kvm/mmu/tdp_mmu.c |  3 ---
+ 2 files changed, 20 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 5dcf3561b829..030a08d4b21d 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2844,8 +2844,7 @@ static kvm_pfn_t kvm_resolve_pfn(struct kvm_follow_pfn *kfp, struct page *page,
- 		pfn = page_to_pfn(page);
- 	}
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 2a0cfa225c8d..5979eeb916cd 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -546,10 +546,8 @@ static bool mmu_spte_update(u64 *sptep, u64 new_spte)
+  */
+ static u64 mmu_spte_clear_track_bits(struct kvm *kvm, u64 *sptep)
+ {
+-	kvm_pfn_t pfn;
+ 	u64 old_spte = *sptep;
+ 	int level = sptep_to_sp(sptep)->role.level;
+-	struct page *page;
  
--	if (kfp->refcounted_page)
--		*kfp->refcounted_page = page;
-+	*kfp->refcounted_page = page;
+ 	if (!is_shadow_present_pte(old_spte) ||
+ 	    !spte_has_volatile_bits(old_spte))
+@@ -561,21 +559,6 @@ static u64 mmu_spte_clear_track_bits(struct kvm *kvm, u64 *sptep)
+ 		return old_spte;
  
- 	return pfn;
+ 	kvm_update_page_stats(kvm, level, -1);
+-
+-	pfn = spte_to_pfn(old_spte);
+-
+-	/*
+-	 * KVM doesn't hold a reference to any pages mapped into the guest, and
+-	 * instead uses the mmu_notifier to ensure that KVM unmaps any pages
+-	 * before they are reclaimed.  Sanity check that, if the pfn is backed
+-	 * by a refcounted page, the refcount is elevated.
+-	 */
+-	page = kvm_pfn_to_refcounted_page(pfn);
+-	WARN_ON_ONCE(page && !page_count(page));
+-
+-	if (is_accessed_spte(old_spte))
+-		kvm_set_pfn_accessed(pfn);
+-
+ 	return old_spte;
  }
-@@ -3001,6 +3000,9 @@ kvm_pfn_t hva_to_pfn(struct kvm_follow_pfn *kfp)
  
- 	might_sleep();
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index d1de5f28c445..dc153cf92a40 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -861,9 +861,6 @@ static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct kvm_mmu_page *root,
  
-+	if (WARN_ON_ONCE(!kfp->refcounted_page))
-+		return KVM_PFN_ERR_FAULT;
-+
- 	if (hva_to_pfn_fast(kfp, &pfn))
- 		return pfn;
+ 		tdp_mmu_iter_set_spte(kvm, &iter, SHADOW_NONPRESENT_VALUE);
  
+-		if (is_accessed_spte(iter.old_spte))
+-			kvm_set_pfn_accessed(spte_to_pfn(iter.old_spte));
+-
+ 		/*
+ 		 * Zappings SPTEs in invalid roots doesn't require a TLB flush,
+ 		 * see kvm_tdp_mmu_zap_invalidated_roots() for details.
 -- 
 2.46.0.rc1.232.g9752f9e123-goog
 
