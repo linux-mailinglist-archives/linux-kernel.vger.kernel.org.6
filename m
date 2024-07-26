@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-262911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA1A93CE94
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:11:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A4F93CE93
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADE55B22D2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD02818DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1771741F4;
-	Fri, 26 Jul 2024 07:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83041741C3;
+	Fri, 26 Jul 2024 07:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRDQjoMo"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9nBAvWK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDE6381BD
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2268A23D2
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721977867; cv=none; b=saPT2dRiueLTWsDBMbloN5c7rZxHuwGwZQFuJCz5nhi/LvtLSzo+Ob6B+jSXdBr+KcPksABtTfZ5+hQrJWkBmyq3G5T+5Ob4tUmLxBlwB0eXH0X83Z0RhPqgMxViHEWfqoFiChUPqcL4NEX6OoQlH5q9K53IITDCq2bmktulRlE=
+	t=1721977844; cv=none; b=TE0sH53S37abQXZwOZFfnWdMp47F631cS7//Of0hsl9uwNGQAU56urII7NNHmfz4N0ClhC2gm/ZxixtJc/j4+lqrCmrxRdgaeK+QK90f18jUun5ZNk+PsY2rwH+LgRmmljxzF5H/oxIH9NvHrOGBMgUke5NJv1MluMa0YRXdCMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721977867; c=relaxed/simple;
-	bh=OxMTAIrejg/R2mhCdG/fWd4YcnQTd7Yj6WVY/HjlbEM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qHLAQ8YVkcvB2h0C1WZYg0vXt1QDo6n/EQBDGZw9/bGSi+CdVznF+0WxUQgULsmwol5H0FPu6+VXNulM6N9FNTbpDmx4CU/VVdwgfHFzwiD2BVh5E4DuJMAEieRdiknRB6f8vDhVJKb8zKOIDa9EJzTzHpg/sO3HHjN3LLAfkgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRDQjoMo; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d1d818c42so493920b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721977864; x=1722582664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=IRwB2VYbJi/ARjTBQHl2ucJrLiHTbO9zck6Jgublm1s=;
-        b=SRDQjoMoxMtLYrMhxmzAfy5L24BMVqrKufSQ92Zzx+Xen05Ntj1wpudjGQXC38seFj
-         +NnVpzgo3+AbwYovHCplRICS+4xGJRCu5b2301EBNbWAaFWIRjehKGSsIzSmrXlxhGys
-         cTL24kjZ5nhAUy1i2mKr6/4APyfY2vYv0ZYhpWNEXZ+TUlrUzuFWes8B6OlrRFJoHtt4
-         9cCJXXWiDb9hXK38ZqMuP/UTYhJIMrqgC9vWLpuNOVKMC9K5SMrjE7QaRrB7vA1FT3dP
-         NcOsPAuKmnKNdFRjTj2LH41Od+dPK0Dxe2U2xYPsWLjZNjBX0EY9wG0xCzibxh90Pa6j
-         eEag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721977864; x=1722582664;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IRwB2VYbJi/ARjTBQHl2ucJrLiHTbO9zck6Jgublm1s=;
-        b=a+YkA+IpBVUvuJQSQyezIpJWp2lwSxEmD3yY9sikMaLSb1RUWtGJWOpOL32EoPozgI
-         wWKt0q4UmdtmPHc/3dzel/mz1Mn41W04WdMB9owOZFxYySgK+WfRK63izNjB5ykaL4QL
-         Tdi+SOKViFEk1lCguPNvsmqm+pOQ9Be2E1hGwXQ2cn9R+FHjJ51H/3xvnl3amyafk/vv
-         WjPQaz4pqm6tPocr6tdfIQUYCzkemAwR8yUcqKdxRgZDtbMqZPKLuPK0G0FbZW1/wzgW
-         mI67TG95KwBYKU4j2CrjvIC6o/Bof7ktoKzRg3c2LZXsK1T/Ihh56nYmgv5bD9gOMBil
-         BQ/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWveCfWhHM98fa1ITYqtxX+vMNSNeA6RsIAMiXJIZW7zaXc5TNaMqYwQRlKbMqH+er7wY4Lbtkq7m2bTyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2on+Q489OdXtJf1RKO8U0GGXhq0fq9Qc+IWMceelMzkEjtp8
-	SXWLk9mHUCtdARYor5nftdzhB/YR2+E2CBdThJw+1i3G6dP4HlKQ
-X-Google-Smtp-Source: AGHT+IFxKTI0hi7yZlMUCGv6/+Isn9gBEnoyMqF/N6W+HG2hH76+Itzus3wNEOsL8ORitnN3iDdmZw==
-X-Received: by 2002:a05:6a21:3983:b0:1c2:8e96:f767 with SMTP id adf61e73a8af0-1c472aabf13mr6944335637.31.1721977864003;
-        Fri, 26 Jul 2024 00:11:04 -0700 (PDT)
-Received: from SYSOS.. ([115.178.65.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c5668esm2644789a91.1.2024.07.26.00.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 00:11:03 -0700 (PDT)
-Sender: Leesoo Ahn <yisooan.dev@gmail.com>
-From: Leesoo Ahn <lsahn@ooseel.net>
-X-Google-Original-From: Leesoo Ahn <lsahn@wewakecorp.com>
-To: lsahn@ooseel.net
-Cc: Leesoo Ahn <lsahn@wewakecorp.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/sparse: return right away if sparsemap_buf is null
-Date: Fri, 26 Jul 2024 16:10:23 +0900
-Message-Id: <20240726071023.4078055-1-lsahn@wewakecorp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721977844; c=relaxed/simple;
+	bh=ciWz2uZkoogKcZci4bmKXteSuHA0QbYSUNAknuMv7tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IsIiTg+tcIu/gnM+KyNmGjB8Qed380gAtAlp7wijidhCRea/3XXDDr08vFdOUzUXIUctE04+w5kErgNJnHg+Wrwr0lyJyrue/gvHzQRm68X2bgt7uDVcLu3O1hDvpUdXDGT9vVaVIuH+OgoPGKahyB+q9GrZWPUq7U1c9EmLhrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9nBAvWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1AFC4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721977843;
+	bh=ciWz2uZkoogKcZci4bmKXteSuHA0QbYSUNAknuMv7tc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p9nBAvWKCbIXdBVaaA3UIp7yab0WwipTqZ56JG8tKdTCJSD+YZFfB6aiFkyXS0wMk
+	 rXvydHdr4J1YSRGquUi1QkJjgb12bWJ72DUYALIO0ZQtQv6i37tANeLs1ngSU6EXI2
+	 Q391UFbHVIe2cSVdk93ex5eL8UH6JOy85ozCmtQ7eAYy3yJQZuTiI0+liT5eEWFYVf
+	 YNhteZdWlzbDttQkmzuZKJkGVlN5eaN2fbgwYi0oB+CviR3QO32YxUUIG+m1xKZRZX
+	 KcEMhTRJMK5hW4hEY1ZPJPSzBtl4EOk28ECJPsLQ3X00EXE5V6agpXK8p24yg9ETVZ
+	 IdnNwi/Eir7Cw==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6518f8bc182so23678407b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:10:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWpzHyZaMLDxfEtOxaMivMCvB63z5WJBD8G6ZrW2jlTW2OOSyGsN+CcVKxCr5Btydg7LEEvqIQ4/l3A4mfTVETuhfDfHEiVGKLBeQh
+X-Gm-Message-State: AOJu0Yx3K5g6NnYCNkD9HFzJyN6eV65ujxxOnJYymdAJY7BL1S+/arsP
+	ZypbguUel8DUCGOgPbCWEhL5dSSCxxMrDyBwTwDV/rpdMfQmdf5sdKHM3syvNOM9B1JGnAXXGrK
+	LoN3kfVAFPjF0RIbihkaf4tgg9hcdVWTAyGi4/A==
+X-Google-Smtp-Source: AGHT+IF4vpduh+OhPn4JJeY78QAWRgRh79SI7t7KYM5Z3ITYKW7YZ6C1k3uTBAh9px2yVgxs0+J275ejoNxUTxUQyO8=
+X-Received: by 2002:a05:690c:f0f:b0:64b:1eb2:3dd4 with SMTP id
+ 00721157ae682-674dfd748ffmr50854347b3.8.1721977842919; Fri, 26 Jul 2024
+ 00:10:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
+ <20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org> <ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
+ <CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
+ <b4b31314-1125-40ee-b784-20abc78bd468@arm.com> <CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
+ <874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com> <a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
+ <87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com> <43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
+ <87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com> <f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
+ <87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com> <4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
+ <87le1q6jyo.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXu268d2cBmm0a2Azr3=Aum19cSgY+7YijESrBCVK3a9w@mail.gmail.com>
+ <87zfq43o4n.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXZ_DqxwiNPckBPAhxqoDoMRFRzhM24_8TcHQz-LTop_w@mail.gmail.com>
+ <87o76k3dkt.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87o76k3dkt.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 26 Jul 2024 00:10:31 -0700
+X-Gmail-Original-Message-ID: <CACePvbWe9wraG2FjBcX9OmHN5ynB4et9WEHqh6NPSVK5mzJi2A@mail.gmail.com>
+Message-ID: <CACePvbWe9wraG2FjBcX9OmHN5ynB4et9WEHqh6NPSVK5mzJi2A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from nonfull list
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-sparse_buffer_fini(..) takes the following actions even though the value of
-sparsemap_buf is NULL,
-1. calculate size of sparsemap buffer (which is meaningless).
-2. set sparsemap_buf variable to NULL (although it is already NULL).
+On Thu, Jul 25, 2024 at 10:55=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
+ wrote:
+>
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > On Thu, Jul 25, 2024 at 7:07=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >> > If the freeing of swap entry is random distribution. You need 16
+> >> > continuous swap entries free at the same time at aligned 16 base
+> >> > locations. The total number of order 4 free swap space add up togeth=
+er
+> >> > is much lower than the order 0 allocatable swap space.
+> >> > If having one entry free is 50% probability(swapfile half full), the=
+n
+> >> > having 16 swap entries is continually free is (0.5) EXP 16 =3D 1.5 E=
+-5.
+> >> > If the swapfile is 80% full, that number drops to 6.5 E -12.
+> >>
+> >> This depends on workloads.  Quite some workloads will show some degree
+> >> of spatial locality.  For a workload with no spatial locality at all a=
+s
+> >> above, mTHP may be not a good choice at the first place.
+> >
+> > The fragmentation comes from the order 0 entry not from the mTHP. mTHP
+> > have their own valid usage case, and should be separate from how you
+> > use the order 0 entry. That is why I consider this kind of strategy
+> > only works on the lucky case. I would much prefer the strategy that
+> > can guarantee work not depend on luck.
+>
+> It seems that you have some perfect solution.  Will learn it when you
+> post it.
 
-These steps are unnecessary if the variable, sparsemap_buf is NULL.
+No, I don't have perfect solutions. I see puting limit on order 0 swap
+usage and writing out discontinuous swap entries from a folio are more
+deterministic and not depend on luck. Both have their price to pay as
+well.
 
-Refactor the function to return right away if the variable is NULL.
-Hence, it doesn't need to take further actions.
+>
+> >> >> - Order-4 pages need to be swapped out, but no enough order-4 non-f=
+ull
+> >> >>   clusters available.
+> >> >
+> >> > Exactly.
+> >> >
+> >> >>
+> >> >> So, we need a way to migrate non-full clusters among orders to adju=
+st to
+> >> >> the various situations automatically.
+> >> >
+> >> > There is no easy way to migrate swap entries to different locations.
+> >> > That is why I like to have discontiguous swap entries allocation for
+> >> > mTHP.
+> >>
+> >> We suggest to migrate non-full swap clsuters among different lists, no=
+t
+> >> swap entries.
+> >
+> > Then you have the down side of reducing the number of total high order
+> > clusters. By chance it is much easier to fragment the cluster than
+> > anti-fragment a cluster.  The orders of clusters have a natural
+> > tendency to move down rather than move up, given long enough time of
+> > random access. It will likely run out of high order clusters in the
+> > long run if we don't have any separation of orders.
+>
+> As my example above, you may have almost 0 high-order clusters forever.
+> So, your solution only works for very specific use cases.  It's not a
+> general solution.
 
-Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
----
- mm/sparse.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+One simple solution is having an optional limitation of 0 order swap.
+I understand you don't like that option, but there is no other easy
+solution to achieve the same effectiveness, so far. If there is, I
+like to hear it.
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index e4b830091d13..091e4bc2f72c 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -469,9 +469,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
- 
- static void __init sparse_buffer_fini(void)
- {
--	unsigned long size = sparsemap_buf_end - sparsemap_buf;
-+	unsigned long size;
- 
--	if (sparsemap_buf && size > 0)
-+	if (!sparsemap_buf)
-+		return;
-+
-+	size = sparsemap_buf_end - sparsemap_buf;
-+	if (size > 0)
- 		sparse_buffer_free(size);
- 	sparsemap_buf = NULL;
- }
--- 
-2.34.1
+>
+> >> >> But yes, data is needed for any performance related change.
+> >>
+> >> BTW: I think non-full cluster isn't a good name.  Partial cluster is
+> >> much better and follows the same convention as partial slab.
+> >
+> > I am not opposed to it. The only reason I hold off on the rename is
+> > because there are patches from Kairui I am testing depending on it.
+> > Let's finish up the V5 patch with the swap cache reclaim code path
+> > then do the renaming as one batch job. We actually have more than one
+> > list that has the clusters partially full. It helps reduce the repeat
+> > scan of the cluster that is not full but also not able to allocate
+> > swap entries for this order.  Just the name of one of them as
+> > "partial" is not precise either. Because the other lists are also
+> > partially full. We'd better give them precise meaning systematically.
+>
+> I don't think that it's hard to do a search/replace before the next
+> version.
 
+The overhead is on the other internal experimental patches. Again,
+I am not opposed to renaming it. Just want to do it at one batch not
+many times, including other list names.
+
+Chris
 
