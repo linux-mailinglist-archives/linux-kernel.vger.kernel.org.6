@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-263198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59ECE93D28E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A8A93D292
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFAF1F21D68
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB7F2821FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5025117A939;
-	Fri, 26 Jul 2024 11:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763F17B406;
+	Fri, 26 Jul 2024 11:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkeUIeZF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCRHfvik"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87937219EA;
-	Fri, 26 Jul 2024 11:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7AC219EA;
+	Fri, 26 Jul 2024 11:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721994478; cv=none; b=SWMye6zPGuSMeP7AIha0Ao7LP9Y5PoCx4dojMn8Pj1yTbiVL2BXm3NZufI8I1d/lO249Y+YSE8ZEaC7J5cQs6jm8fZS6eDb5oAPRq8Kp4pKgWS33MKjyCdOj74YSHDK8ueYJslaAINgajcfbALFv8PcPhL1P3S3FW1JwmUPmUA0=
+	t=1721994706; cv=none; b=kt1TOxwkRuGM/jHnRqSVGbUbuW0/wmSNrce1apHqPB/rg5hwAIWx8vv+xCErMy6W/N2vOp0VJPAGjjKfLJnzeA4lyGOv+9x7SbbfD7GN9dvduFjW6PDX+ihIroqt9lfDtDMUpwzJHB/oUVHIj6D5HeQfYiVcCxokYt2/26Es5Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721994478; c=relaxed/simple;
-	bh=AJV3jdHmfcDdWezRW7h9NN67//21E0RY2qnfL7YGT+w=;
+	s=arc-20240116; t=1721994706; c=relaxed/simple;
+	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZyWaTKbYUDsQSXgG5vyOSsS33RpfwbAIER+C9vOcMZlwYOIOEBIY4HnopiZNBlJtZ7EEtBh2ikWhNXFTsOP0OV3dpuFWkPfCy1es8WJ4tuTRHMxdi9MXjBV1Kt7B86Gf9EqqZwhjB+QAE81xOpNe8qfHbywxkvKxB8U7guS/qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkeUIeZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0408C32782;
-	Fri, 26 Jul 2024 11:47:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvpWo5jS1uJHIMDtwY4rO65lEJ8DnJiWF9CvidKa+I2AT5m3Bhabr40TZgC2SgEbFe2ps7pJzcQBxffC4Hp5R/PxDABzlmCqdVEdb8CPou3uUz6oyZ8QGSUfLnz2YSNxHsQUWjis6ano75z1EGQ70F+r1tHTIMGCHyjR5pNFMQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCRHfvik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F72C32782;
+	Fri, 26 Jul 2024 11:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721994478;
-	bh=AJV3jdHmfcDdWezRW7h9NN67//21E0RY2qnfL7YGT+w=;
+	s=k20201202; t=1721994705;
+	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NkeUIeZF6AgayX0Jefc70l9RPMO4JUTL7wweyp8SR34bd/IYPsAzNrHkwK4Xuj6pY
-	 RcYhCQUQKsrh0BVCEgaGpQw1hkt255i23v2RR4bDJwA3CB4PYtIqvEfmjNkm40k2b+
-	 9JzDdF4ag7rcnhMoGWEAfiAjnWzwHWhIXgEMqWqlrXuOqaIVidLWCjd4tUdcN9Sclg
-	 RbllQCwDXJxSW11SilNRatypKjLLkQLsZbdeVPSQjSBjrpvL+SXuQTGUVLqMJRkMc0
-	 +EKppelAg6zgPl2U0d03dfThiGfl9ZktOGp1aB4WwSjPTdHQTxkv9/7PB8rNxztUDS
-	 +VyXkflhQEaZg==
-Date: Fri, 26 Jul 2024 06:47:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v3 1/9] spi: dt-bindings: add spi-offload properties
-Message-ID: <20240726114755.GA985744-robh@kernel.org>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
- <20240722-dlech-mainline-spi-engine-offload-2-v3-1-7420e45df69b@baylibre.com>
+	b=nCRHfvik6OhJ4XuyvfAXfpfygxLpx+LvsQSNomgZxDa7kNkq1Usr+cT+KV9CPEj6K
+	 MccRZPyKf7EoCsjHmlATSsB+iuelf4yxm64NGOdYgs6thSOSo34jgVKoJVZA2dJHgF
+	 PkQGoneFVon5z52+WcYm2jLxhQAioEqc7vYECKQs/3AsLCPkLlrsh9TfkOa9ilgMwr
+	 6B5O0OvBg66P3GmqES4hwTdtn67Eb8coovULuG1UCiy/PilpB4AVu0CI7XTCuzDvGJ
+	 URpaNrpVwseFQKXP1/LxwM3oShCLLiI0bnqeRGqgvLVCz0OA1k5LwNrEzQUVf7N1w+
+	 sNcDKfRVg6fhQ==
+Date: Fri, 26 Jul 2024 13:51:40 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240726-beisammen-degen-b70ec88e7ab2@brauner>
+References: <20240725234706.655613-1-song@kernel.org>
+ <20240725234706.655613-3-song@kernel.org>
+ <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
+ <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-1-7420e45df69b@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
 
-On Mon, Jul 22, 2024 at 04:57:08PM -0500, David Lechner wrote:
-> This adds a new provider/consumer property pair to the generic SPI
-> bindings for use with peripherals connected to controllers that support
-> offloading.
+On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
+> Hi Christian, 
 > 
-> Here, offloading means that the controller has the ability to perform
-> SPI transactions without any CPU intervention in some shape or form.
+> > On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> The spi-offloads property will be used to assign controller offload
-> resources to each peripheral that needs them. What these resources are
-> will be defined by each specific controller binding by specifying the
-> value of the #spi-offload-cells property.
+> [...]
 > 
-> SPI peripherals that use multiple offload instances at the same time
-> for different functions can describe the functions using the
-> spi-offload-names property, for example, for a SPI flash memory, this
-> might be "read", "erase" and "write" functions.
+> >> +
+> >> + for (i = 0; i < 10; i++) {
+> >> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
+> >> + if (ret == sizeof(expected_value) &&
+> >> +    !bpf_strncmp(value, ret, expected_value))
+> >> + matches++;
+> >> +
+> >> + prev_dentry = dentry;
+> >> + dentry = bpf_dget_parent(prev_dentry);
+> > 
+> > Why do you need to walk upwards and instead of reading the xattr values
+> > during security_inode_permission()?
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+> In this use case, we would like to add xattr to the directory to cover
+> all files under it. For example, assume we have the following xattrs:
 > 
-> v3 changes:
-> * Added #spi-offload-cells property to the controller binding.
-> * Changed spi-offloads to phandle-array.
-> * Added spi-offload-names property.
+>   /bin  xattr: user.policy_A = value_A
+>   /bin/gcc-6.9/ xattr: user.policy_A = value_B
+>   /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
 > 
-> v2 changes:
+> /bin/gcc-6.9/gcc will use value_C;
+> /bin/gcc-6.9/<other_files> will use value_B;
+> /bin/<other_folder_or_file> will use value_A;
 > 
-> In v1, instead of generic SPI bindings, there were only controller-
-> specific bindings, so this is a new patch.
-> ---
->  Documentation/devicetree/bindings/spi/spi-controller.yaml     |  5 +++++
->  .../devicetree/bindings/spi/spi-peripheral-props.yaml         | 11 +++++++++++
->  2 files changed, 16 insertions(+)
+> By walking upwards from security_file_open(), we can finish the logic 
+> in a single LSM hook:
 > 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> index 093150c0cb87..0af9cce80be9 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> @@ -105,6 +105,11 @@ properties:
->      required:
->        - compatible
->  
-> +  '#spi-offload-cells':
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Number of cells in a SPI offload specifier.
-> +
+>     repeat:
+>         if (dentry have user.policy_A) {
+>             /* make decision based on value */;
+>         } else {
+>             dentry = bpf_dget_parent();
+>             goto repeat;
+>         }
+> 
+> Does this make sense? Or maybe I misunderstood the suggestion?
 
-This is the SPI controller/bus schema, but this is likely not part of 
-the SPI controller. So needs its own schema.
+Imho, what you're doing belongs into inode_permission() not into
+security_file_open(). That's already too late and it's somewhat clear
+from the example you're using that you're essentially doing permission
+checking during path lookup.
 
-Some description around what you think would typically be in these cells 
-would be good.
+Btw, what you're doing is potentially very heavy-handed because you're
+retrieving xattrs for which no VFS cache exists so you might end up
+causing a lot of io.
 
-Rob
+Say you have a 10000 deep directory hierarchy and you open a
+file_at_level_10000. With that dget_parent() logic in the worst case you
+end up walking up the whole hierarchy reading xattr values from disk
+10000 times. You can achieve the same result and cleaner if you do the
+checking in inode_permission() where it belongs and you only cause all
+of that pain once and you abort path lookup correctly.
 
+Also, I'm not even sure this is always correct because you're
+retroactively checking what policy to apply based on the xattr value
+walking up the parent chain. But a rename could happen and then the
+ancestor chain you're checking is different from the current chain or
+there's a bunch of mounts along the way.
+
+Imho, that dget_parent() thing just encourages very badly written bpf
+LSM programs. That's certainly not an interface we want to expose.
+
+> Also, we don't have a bpf_get_inode_xattr() yet. I guess we will need
+> it for the security_inode_permission approach. If we agree that's a 
+
+Yes, that's fine.
+
+You also need to ensure that you're only reading user.* xattrs. I know
+you already do that for bpf_get_file_xattr() but this helper needs the
+same treatment.
+
+And you need to force a drop-out of RCU path lookup btw because you're
+almost definitely going to block when you check the xattr.
+
+> better approach, I more than happy to implement it that way. In fact,
+> I think we will eventually need both bpf_get_inode_xattr() and 
+> bpf_get_dentry_xattr(). 
+
+I'm not sure about that because it's royally annoying in the first place
+that we have to dentry and inode separately in the xattr handlers
+because LSMs sometimes call them from a location when the dentry and
+inode aren't yet fused together. The dentry is the wrong data structure
+to care about here.
 
