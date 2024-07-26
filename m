@@ -1,168 +1,107 @@
-Return-Path: <linux-kernel+bounces-262796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8649D93CCD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:03:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F394393CCD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AFA1C21CEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AF2FB21C2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6D22081;
-	Fri, 26 Jul 2024 03:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DD823774;
+	Fri, 26 Jul 2024 03:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ilsfmeQA"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjvML9KI"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6487680B;
-	Fri, 26 Jul 2024 03:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5525F80B;
+	Fri, 26 Jul 2024 03:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721962996; cv=none; b=djv8bKxzXIaoKX6+tcwBwr6ztARrkRAOL9PcvwzS8tKTlkFrgUN3AEbiSBxNmac91SbWDZZRLe7TuxgxuBN1xer6aX/WcBBrKxzW+TWoI23e8lRuF0gRciw8Gpmq6xiMVLqwcHIRXhe+W/G0IE2q1/jLOFabZHqx7ALMSCWG1XY=
+	t=1721963071; cv=none; b=U0Z/5H7PrmLxWLiKplEcKyopAKLcEyIGEJQ7huqo0KtjSEjqcJe829S5WeMCY5E2UIMJMZhwKjkb1WcAlvr5VKcAFytXcnV0J7s5Gcr4X9BjCUdBT7uhwWEfpkwQPSQNaDrkTvyjO6Pv54eF93Prs6nS1EgvXS8f8Gl3I1q/eg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721962996; c=relaxed/simple;
-	bh=hYOYfZoUkCIvJxsOI3jO84CIaJT5Wy15y1NkflfxNMw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZpQwwk1BahiTHtOpMYrrdmAjoqxFypZ4ULN+D/+wsBMfGRtqdIjHd75hG23DKxLHD3mFfATDfbJlqLzHnXTTT05H7g1VJZfBukeuL3cz+5Q9zu0OSia6T3YY9WJ3yuAqGNTsEmDT0PAq9fMZUkaWsz5Ik6kNOzJuZ4LG4vu4NSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ilsfmeQA; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721962991; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=DEeU61Mv+VNz/k6t7DEYpHVLFckAb60VA3KKLUZPnoE=;
-	b=ilsfmeQAQkn95+2ROcE+51MI+yW8dMx+Axt8ha9qUhlzT60JzASDOpQf2ztjEuodhSkQxt7gqDuR01dZQo9nzF5kvxnGj6BiOQMRRoHlmPfXQkFoX58dIGkkBBFj1gn6bY3i7KzxBkSSFpYNTe7phMzCaQ+4I/i9iURY9jZuC7E=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0WBK7fww_1721962989;
-Received: from 30.97.56.64(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WBK7fww_1721962989)
-          by smtp.aliyun-inc.com;
-          Fri, 26 Jul 2024 11:03:10 +0800
-Message-ID: <707d8937-d4c8-43b3-bc19-70f0038522a9@linux.alibaba.com>
-Date: Fri, 26 Jul 2024 11:03:09 +0800
+	s=arc-20240116; t=1721963071; c=relaxed/simple;
+	bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZpJh8tKUw+irhWPo0Qlomi/c1hitKeulvYCROc5mEeQ3jkZNwKyhMvMoE1Rnpwa8bU3yUYYExhHujFFzg6s0Bh0hbJspwzX5gw42Y4iUEPjKqp/VDqWHHW5cKNxq/X0N/ptdSZ0pjzGweFAiBZ0eCJgwYIFq4Ub/zeMkwflCVP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjvML9KI; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8317511fd45so142926241.1;
+        Thu, 25 Jul 2024 20:04:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721963069; x=1722567869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
+        b=SjvML9KI29L+ZfeFYGgJYMhzEyZpiBuyRtj5OpB4pmlGGh8EALEQwM+JZlHRb6hjgX
+         QoiHppRBSLoyrh/MTyOdr8xAcs0sGdP48Ypg7RT0kSIj9zKGBlt/8R7BO0sbm1oIYeOH
+         yVfKIUZjmOLM2EOd1831RMgLXT7BBm1sp4LhDKWAfh4F8mWvbP2SzArtkpwph+238xU3
+         lI0YR/vrWOfmiKKagC5RPf9rfL319UXGJ9cRLKAHb8L+O6VsjecMbKI6BFANDxesVRrA
+         83uPEZn2ZlNPkZxxOUEgAMgLXudf4tdmu+UBKR3Woc1uF4SdktBTSrCCeBs8/cnOoHSP
+         YdEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721963069; x=1722567869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
+        b=gLSLMD3SErKvbUqSzZICHISXBBlDwRfvJq0OnwZoOROH+IWcSxbVNkd2Hd+s6Y2lrG
+         yCVxIoGyTxOLvadBjG+UchcTtkgjmlBN2faZPJO2jw+ymztsYmkFq4WYGsfqKhGbelnK
+         /i+0YuyTsJjJvE//dKd+z4mOMKPbDz6O+6bE3uMrLvMFVXxkipuu1m6yEL89+mRM+3B9
+         BuG2oNL9im0WJ5KgShzSrDlN5rUdYhqsUJOeVU1bSPXBIWrspJQz7TT3Igj8nfsrQA2Z
+         hSCFVZ8uUY0loFs+KAcl42/zLHya2XlMdW97ERKtMe18dv7+itJHTjp7KGc1M3/0fVNn
+         oLtA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7aJ3h9DkiRj6ghIuDTd360EY3I5Yo1RCTo1iUyUnGPEUe4HcP4KGzryJBK/FX82y65hpcEdpuCZn44iQ5P7LuNIbq3EZs/rYMPMTkHGoOMEsdq0wQtUCwi6sN8zUV3z7yeluvynkZH3Ci4avjAVcDmlN+R5lG+Z6D
+X-Gm-Message-State: AOJu0YyqyNyeWjWNKRi38mSCflksNajg93LrHv/pMV8g7fREUQ+rWD9f
+	NPxuomVtkxm6PxEW0d3EbN5/eDGikyhfJR5g1IYqIbjwy1rVc+8rd/Srp0KhW9yNyjpBvW+4Q6K
+	mZ+o3MDtfr5ARF0CcLe2wWWZLPaM=
+X-Google-Smtp-Source: AGHT+IFFhyXMjhrDnEO+19jgwrk1TFuAn/A0IXjXP28f/riODB+Y1WO91AloV+Vabda/xzpqMFfY7XTxrA6bN4XYvsk=
+X-Received: by 2002:a05:6102:5e8b:b0:492:76e9:961a with SMTP id
+ ada2fe7eead31-493d629ca4bmr4489134137.1.1721963069028; Thu, 25 Jul 2024
+ 20:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>, Peter Xu <peterx@redhat.com>,
- Oscar Salvador <osalvador@suse.de>, stable@vger.kernel.org
-References: <20240725183955.2268884-1-david@redhat.com>
- <20240725183955.2268884-3-david@redhat.com>
- <0067dfe6-b9a6-4e98-9eef-7219299bfe58@linux.alibaba.com>
-In-Reply-To: <0067dfe6-b9a6-4e98-9eef-7219299bfe58@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <0000000000009d1d0a061d91b803@google.com> <20240725214049.2439-1-aha310510@gmail.com>
+ <CACGkMEv2DZhp71-QdckH+9ycerdNd7+F5vFyq3g=qquEsm9rHw@mail.gmail.com>
+In-Reply-To: <CACGkMEv2DZhp71-QdckH+9ycerdNd7+F5vFyq3g=qquEsm9rHw@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Thu, 25 Jul 2024 23:03:51 -0400
+Message-ID: <CAF=yD-LtR--NvYuELb2XGaPAoygyWtJOCM4+Pgr-Pg7TwSB5Sw@mail.gmail.com>
+Subject: Re: [PATCH net] tun: Add missing bpf_net_ctx_clear() in do_xdp_generic()
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jeongjun Park <aha310510@gmail.com>, 
+	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, 
+	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com, 
+	bigeasy@linutronix.de, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 25, 2024 at 10:21=E2=80=AFPM Jason Wang <jasowang@redhat.com> w=
+rote:
+>
+> On Fri, Jul 26, 2024 at 5:41=E2=80=AFAM Jeongjun Park <aha310510@gmail.co=
+m> wrote:
+> >
+> > There are cases where do_xdp_generic returns bpf_net_context without
+> > clearing it. This causes various memory corruptions, so the missing
+> > bpf_net_ctx_clear must be added.
+> >
+> > Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
+> > Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>
+> Acked-by: Jason Wang <jasowang@redhat.com>
 
-
-On 2024/7/26 10:33, Baolin Wang wrote:
-> 
-> 
-> On 2024/7/26 02:39, David Hildenbrand wrote:
->> We recently made GUP's common page table walking code to also walk
->> hugetlb VMAs without most hugetlb special-casing, preparing for the
->> future of having less hugetlb-specific page table walking code in the
->> codebase. Turns out that we missed one page table locking detail: page
->> table locking for hugetlb folios that are not mapped using a single
->> PMD/PUD.
->>
->> Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
->> hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
->> page tables, will perform a pte_offset_map_lock() to grab the PTE table
->> lock.
->>
->> However, hugetlb that concurrently modifies these page tables would
->> actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
->> locks would differ. Something similar can happen right now with hugetlb
->> folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
->>
->> Let's make huge_pte_lockptr() effectively uses the same PT locks as any
->> core-mm page table walker would.
-> 
-> Thanks for raising the issue again. I remember fixing this issue 2 years 
-> ago in commit fac35ba763ed ("mm/hugetlb: fix races when looking up a 
-> CONT-PTE/PMD size hugetlb page"), but it seems to be broken again.
-> 
->> There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
->> folio being mapped using two PTE page tables. While hugetlb wants to take
->> the PMD table lock, core-mm would grab the PTE table lock of one of both
->> PTE page tables. In such corner cases, we have to make sure that both
->> locks match, which is (fortunately!) currently guaranteed for 8xx as it
->> does not support SMP.
->>
->> Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic 
->> follow_page_mask code")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   include/linux/hugetlb.h | 25 ++++++++++++++++++++++---
->>   1 file changed, 22 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->> index c9bf68c239a01..da800e56fe590 100644
->> --- a/include/linux/hugetlb.h
->> +++ b/include/linux/hugetlb.h
->> @@ -944,10 +944,29 @@ static inline bool htlb_allow_alloc_fallback(int 
->> reason)
->>   static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
->>                          struct mm_struct *mm, pte_t *pte)
->>   {
->> -    if (huge_page_size(h) == PMD_SIZE)
->> +    VM_WARN_ON(huge_page_size(h) == PAGE_SIZE);
->> +    VM_WARN_ON(huge_page_size(h) >= P4D_SIZE);
->> +
->> +    /*
->> +     * hugetlb must use the exact same PT locks as core-mm page table
->> +     * walkers would. When modifying a PTE table, hugetlb must take the
->> +     * PTE PT lock, when modifying a PMD table, hugetlb must take the 
->> PMD
->> +     * PT lock etc.
->> +     *
->> +     * The expectation is that any hugetlb folio smaller than a PMD is
->> +     * always mapped into a single PTE table and that any hugetlb folio
->> +     * smaller than a PUD (but at least as big as a PMD) is always 
->> mapped
->> +     * into a single PMD table.
-> 
-> ARM64 also supports cont-PMD size hugetlb, which is 32MiB size with a 4 
-> KiB base page size. This means the PT locks for 32MiB hugetlb may race 
-> again, as we currently only hold one PMD lock for several PMD entries of 
-> a cont-PMD size hugetlb.
-> 
->> +     *
->> +     * If that does not hold for an architecture, then that architecture
->> +     * must disable split PT locks such that all *_lockptr() functions
->> +     * will give us the same result: the per-MM PT lock.
->> +     */
->> +    if (huge_page_size(h) < PMD_SIZE)
->> +        return pte_lockptr(mm, pte);
->> +    else if (huge_page_size(h) < PUD_SIZE)
->>           return pmd_lockptr(mm, (pmd_t *) pte);
-> 
-> IIUC, as I said above, this change doesn't fix the inconsistent lock for 
-> cont-PMD size hugetlb for GUP, and it will also break the lock rule for 
-> unmapping/migrating a cont-PMD size hugetlb (use mm->page_table_lock 
-> before for cont-PMD size hugetlb before).
-
-After more thinking, I realized I confused the PMD table with the PMD 
-entry. Therefore, using the PMD table's lock is safe for cont-PMD size 
-hugetlb. This change looks good to me. Sorry for noise.
-
-Please feel free to add:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> 
->> -    VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
->> -    return &mm->page_table_lock;
->> +    return pud_lockptr(mm, (pud_t *) pte);
->>   }
->>   #ifndef hugepages_supported
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
