@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-263519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7939F93D729
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:45:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B3793D72B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E8C283F20
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:45:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAA1B21194
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D9017C7D2;
-	Fri, 26 Jul 2024 16:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BAF17C201;
+	Fri, 26 Jul 2024 16:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCyVcWvn"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p3jibGVi"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B7B11C83
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BE811C83
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012320; cv=none; b=f0cdrEfMDrwfi/ElgPkXMaCrhyiAY/0RJSeCOmpXcQiwT1kwPigJFKTv36aouybUL4k3QN04qrI86FYwbPZhPEYqJ0z+PtVDmYT9QV6HZd/IdOK2bOrqUD6TCIpv60XDj8MIZWfGjgOwXmPYFqCOH86+XrsIuTlqCY12MEaUQi8=
+	t=1722012423; cv=none; b=cHVo9cEcDpq4KtVg9CEVwfshaWsOGTmfXaSMevucq+JskImM22WNswxd7tb7vwx5mKcfPmmZLDRF1r1TYDDGPmtNvUBJa3YP0YlnK7BNElvIlA1HWJjQPcCgO1y5vzildn14ut/EWPRNVdPtYfiVuz0v/eCwCoA0wQ8dmW3cySs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012320; c=relaxed/simple;
-	bh=XJLgZuR3KviFafgvQJVTyFT3i3vA9AL6Ik6JXASwW1o=;
+	s=arc-20240116; t=1722012423; c=relaxed/simple;
+	bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gyjLitmBo+Z0s1HQhdFdEdr3TU9rp76Hqr6ecYdhI8ElPPFbKov55ZHP0NOmikqoNXv9SYuibvKTAiNPJqU6DdAymKeRPhk4U+PXonkBCNUiothBxgBw+QTLefx0BwGIE/vsAfTawS7uMy0BOH2/6QjrlZsIm8pZsuPDoyLCnzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KCyVcWvn; arc=none smtp.client-ip=209.85.218.48
+	 To:Cc:Content-Type; b=ipW/B8LTdk9aU1vbL9j6lUIUuhvmmNl9dOwrfW/pv/syzwnmGXnqDlmsUQbonrAX4oEc8qAU7lkqqPJaH3WPkHUzA6zDHvMSXM6HNkVI/z/R4hfbnqs7sV50n9cJusC3jUqc2GaF9ZXdpJkzbSqYZkbtqBWZIi3bq8UwPK2vtk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p3jibGVi; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so338819166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:45:18 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2210902276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722012317; x=1722617117; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722012420; x=1722617220; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XJLgZuR3KviFafgvQJVTyFT3i3vA9AL6Ik6JXASwW1o=;
-        b=KCyVcWvnVGyUSwYZnn4xUjfyQxCdBfd/87QnDHAokuzIV4Aztu+TaHAsMg2XoslXOR
-         w2EnhUFbn/dPhsNYOHCOUx8XN2jnL5weLSDllY9YJ9SOMYc4tHKBHDYijCbAuES0Zf9m
-         H4A7zxnTcjIJJu8YH/bnaoAjAqPN5vsbt5UpOhY0XecXf95N9imAB9DTP0VNu+SsC7df
-         1EyZt9vJw2QJb5w6mFfQAOU4m0mOl4+9EoXeaWA/T9WpzVIIwS2Tvr3DQr2/Moe7rU9K
-         SrE5QWTIdh/iCsOueke6yVb47KBki8wGw/SfbS8nM8NJACZzsQXMwLPrVnxhjC3AoQZt
-         hjQA==
+        bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
+        b=p3jibGVioZDUwtW9wBmlSecmJfEVnPyjHZPJVTivu49bTF0XX341kiD4rpA3yNDwaF
+         qXJ7fUnD5tjtf/YzCuPkxN8q2PhJ/hxas819ws7XLL6C5Ovm9KU23UqS1gPzTJrv7dSc
+         3mKP6T49bp0c8iq1RDeGkcvBVCLozRSsOBOzLN592oNIzDITy/waKVApkSl7R5z+L1x8
+         2IeX8IDVoZOWoN9kQnbioa0/unHKYtYkaRxEHH7qwJAwHfic9zIJVx+gjZXxoH3uE5nU
+         j38sDFBa+y3yueQGtDAFdR0Z6eh9Iuu0R7TSEfeYWNm3MpSpH2lk+sW0IH5aQPRGPaJH
+         tEeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722012317; x=1722617117;
+        d=1e100.net; s=20230601; t=1722012420; x=1722617220;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XJLgZuR3KviFafgvQJVTyFT3i3vA9AL6Ik6JXASwW1o=;
-        b=wNXPGtchfv8GUBzboiqzw9680Qn6pAI0A9MhFEYX0vRSDCroFKuwh3Tio5+5OvpA4y
-         MznBo1GO5fJLNEW3/hUygaD6yUKjjgjMjTjQjmpwWx/7xt/DLdSGd18dopnX7zaY5Nc/
-         /Sk85YYJN0WvwN/Gn2hrLe/eAO8ePYuVLPSc4JoFSOoYEoYf1EiuXJSA/NMhmnWYE8Um
-         wFtPBwh4+p4QFzwOavPJby8l3nUIpPuUr5utXSSS00nNW3sY2mEzq6FQSL5uAALw9Q1w
-         YTdIYTbY/mepXmHuAOlNNtmY480RDJ6qnk+scIcuI9yvR6sSJ3kosYRpiRpYzkQUZyyZ
-         swPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVo2z+U1kQjDFTJjShnDVja96MefivxzGTYGQszq8sE6NNnMtynflMh379ngVVf6/YcdyqCVTE8Q97ehhiGsK7Vg4l7nuWUvpccclbY
-X-Gm-Message-State: AOJu0YwExBkWBotTFrvbJh9SvAXz6ABHRz8Bl0ysbrLgS3tsqAlnRNSO
-	xqcV4KgoQ5HPvMvln+0ltO8whqVczYE089YfOoKgTcnbL3JpXzlY3Si/QHKH1liPnbYpE36CWJo
-	7SAZKYZUoOlvDVys3lYPwBBfwLDv1tVyofy21
-X-Google-Smtp-Source: AGHT+IEs6xxkecDHpoDt8aXv2saqRhNdcaqmQyIQMaHfq1aVGzWAr+xECNfHIFDYKnmrMq7rARexHpPAvEgy9LjO4gE=
-X-Received: by 2002:a17:907:9705:b0:a6f:6337:1ad5 with SMTP id
- a640c23a62f3a-a7d3fa3f679mr11658966b.27.1722012316474; Fri, 26 Jul 2024
- 09:45:16 -0700 (PDT)
+        bh=VsX59mPgZtrEie39/GZ8ygIZ9hc+816v+5X04tjRwYI=;
+        b=ntYrmL6yTn0wK1/e3btt8FhKTar/zAFTTNUcOmXb/4OW78OZeXO30qX/lVnFaCTxdD
+         m5y2jjQVypkGJJOQpFylmeao9ZHIPzxhknYmmLvFMdZ9sEh2pDK/Kw/qNTzhFNgT1Q2S
+         l2gFaKA+W4bTESO4BLKN4qLizmvXH4SEza9SEucITYf93X0uOtrSgpmp0EkII/G2reVm
+         KeeBnJxZNet/Iw2gez8W/Z4xiFQZFQp0g6WJnJA4MsGJQWwqUArSoBBrEe5s25uUStfC
+         i+Gn6voyurW+QtYGitTBmtGWD0zWsoYFGIjKjwe//w9wbEv09bsTpWFuJFsJ2DuH4A+b
+         ooww==
+X-Forwarded-Encrypted: i=1; AJvYcCXTnKBrF7EbH/ql0iovV5Wcd2guv46934T5LgkknjS6GiDbEidMjfQhD+uowH36rSzzIId7a3k5WoKL6iA2TezO+b4Q9+lWxa2qb+Bo
+X-Gm-Message-State: AOJu0Yyw20/n12uYYRU7VjbUTAx7p07qGPqjJ7iRfCbMx2xZceNfemgT
+	2+J2rEHBzLarxc2pW2qcMpG87A+n+QXoGT41an5N6T1VsZpFLIA7bF+HU/RHeGvVfQUk+UDYY2d
+	tbIKddnNybnagymYEwx2umOL+dCOTuHnDW+u7
+X-Google-Smtp-Source: AGHT+IHvjARSHS13OyZRvXmxTUtGDoqeMUEoVpKPSZdXCI6sy/VtejyKKxC30+vNfneTHF35XYilujQgIJqHT7UU1to=
+X-Received: by 2002:a05:6902:1028:b0:e03:3598:2989 with SMTP id
+ 3f1490d57ef6-e0b545bffe6mr372203276.45.1722012420186; Fri, 26 Jul 2024
+ 09:47:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
-In-Reply-To: <20240709132041.3625501-1-roypat@amazon.co.uk>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 26 Jul 2024 09:44:40 -0700
-Message-ID: <CAJD7tkbeHVwABajRis0hHx9WLQ+yvnr=8gHQeEQcAi_BW9fAGQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/8] Unmapping guest_memfd from Direct Map
-To: Patrick Roy <roypat@amazon.co.uk>
-Cc: seanjc@google.com, pbonzini@redhat.com, akpm@linux-foundation.org, 
-	dwmw@amazon.co.uk, rppt@kernel.org, david@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, willy@infradead.org, graf@amazon.com, derekmn@amazon.com, 
-	kalyazin@amazon.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, dmatlack@google.com, tabba@google.com, 
-	chao.p.peng@linux.intel.com, xmarcalx@amazon.co.uk
+References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
+ <CABdmKX2Hsd7i_Erc2_n8FQqY90mMgX24hkVe+z=y9tCk7sUL6g@mail.gmail.com> <dhq4sgkuyix6le66i6usodzs6pqyturvl7awmzuyfzpgbqg5x7@xxocuq2wmbvd>
+In-Reply-To: <dhq4sgkuyix6le66i6usodzs6pqyturvl7awmzuyfzpgbqg5x7@xxocuq2wmbvd>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Fri, 26 Jul 2024 09:46:47 -0700
+Message-ID: <CABdmKX1LyubDhin5B_PxOrxHKyEsanZnW3yfd7+OyJG6am5ucg@mail.gmail.com>
+Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Greg Thelen <gthelen@google.com>, 
+	Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024 at 6:21=E2=80=AFAM Patrick Roy <roypat@amazon.co.uk> wr=
-ote:
+On Fri, Jul 26, 2024 at 8:47=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
 >
-> Hey all,
+> Hi T.J.
 >
-> This RFC series is a rough draft adding support for running
-> non-confidential compute VMs in guest_memfd, based on prior discussions
-> with Sean [1]. Our specific usecase for this is the ability to unmap
-> guest memory from the host kernel's direct map, as a mitigation against
-> a large class of speculative execution issues.
+> On Thu, Jul 25, 2024 at 04:12:12PM GMT, T.J. Mercier wrote:
+> > On Mon, Jul 22, 2024 at 3:53=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
+x.dev> wrote:
+> > >
+> > > Linux kernel does not expose memory.current on the root memcg and the=
+re
+> > > are applications which have to traverse all the top level memcgs to
+> > > calculate the total memory charged in the system. This is more expens=
+ive
+> > > (directory traversal and multiple open and reads) and is racy on a bu=
+sy
+> > > machine. As the kernel already have the needed information i.e. root'=
+s
+> > > memory.current, why not expose that?
+> > >
+> > > However root's memory.current will have a different semantics than th=
+e
+> > > non-root's memory.current as the kernel skips the charging for root, =
+so
+> > > maybe it is better to have a different named interface for the root.
+> > > Something like memory.children_usage only for root memcg.
+> > >
+> > > Now there is still a question that why the kernel does not expose
+> > > memory.current for the root. The historical reason was that the memcg
+> > > charging was expensice and to provide the users to bypass the memcg
+> > > charging by letting them run in the root. However do we still want to
+> > > have this exception today? What is stopping us to start charging the
+> > > root memcg as well. Of course the root will not have limits but the
+> > > allocations will go through memcg charging and then the memory.curren=
+t
+> > > of root and non-root will have the same semantics.
+> > >
+> > > This is an RFC to start a discussion on memcg charging for root.
+> >
+> > Hi Shakeel,
+> >
+> > Since the root already has a page_counter I'm not opposed to this new
+> > file as it doesn't increase the page_counter depth for children.
+> > However I don't currently have any use-cases for it that wouldn't be
+> > met by memory.stat in the root.
+>
+> I think difference would be getting a single number versus accumulating
+> different fields in memory.stat to get that number (memory used by
+> root's children) which might be a bit error prone.
 
-Not to sound like a salesman, but did you happen to come across the RFC for=
- ASI?
-https://lore.kernel.org/lkml/20240712-asi-rfc-24-v1-0-144b319a40d8@google.c=
-om/
+Yeah that makes sense, I get how it'd be nicer to do just one read in
+the root instead of digging into all the children. I just meant to say
+that when looking at the root, currently I only care about a
+particular stat (e.g. file_mapped) instead of the whole usage.
 
-The current implementation considers userspace allocations as
-sensitive, so when a VM is running with ASI, the memory of other VMs
-is unmapped from the direct map (i.e. in the restricted address
-space). It also incorporates a mechanism to map this memory on-demand
-when needed (i.e. switch to the unrestricted address space), and
-running mitigations at this point to make sure it isn't exploited.
-
-In theory, it should be a more generic approach because it should
-apply to VMs that do not use guest_memfd as well, and it should be
-extensible to protect other parts of memory (e.g. sensitive kernel
-allocations).
-
-I understand that unmapping guest_memfd memory from the direct map in
-general could still be favorable, and for other reasons beyond
-mitigating speculative execution attacks. Just thought you may be
-interested in looking at ASI.
+> > As far as charging, I've only ever seen kthreads and init in the root.
+> > You have workloads that run there?
+>
+> No workloads in root. The charging is only to make the semanctics of
+> root's memory.current same as its descendants.
+>
+> Thanks,
+> Shakeel
 
