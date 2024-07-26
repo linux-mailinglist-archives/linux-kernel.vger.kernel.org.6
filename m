@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-263497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6753D93D6E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:30:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E6493D6EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F367FB20D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3B5283B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C0617BB27;
-	Fri, 26 Jul 2024 16:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7312E3F2;
+	Fri, 26 Jul 2024 16:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BsFuCv5X"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pLqNP9oO"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7F029429
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671F29445
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722011440; cv=none; b=e5kWjE6WEYFu/x8kup5N8ODHL3wYARyGl2dR00XtuMcmyt6H8ihOCWPJP/+o72oihPazh1d+9nfC3ifdBTjhHrbixWKvmJF0MuW+/mBlCB43vUWQqlZWZdI86ka6J5iWLDkgbv15tjWGRwJrWh8ITqDNmq/o8Cins2qDz2t1heo=
+	t=1722011478; cv=none; b=gPTDVPYMdX0XIWuF69fcUq/LhQAley7un71k5c6LK3+ItdZHdBd24S+He7w9u987nd28CcemGwCca0d6f7uKr4c5ejDlSzV+moY72hEv8puzQUXsb0wy/b73iAY8Yn7Ft3s5b/3d71IwbyHkXUYcAyrl3TGD0iNVFLnB9Df9fBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722011440; c=relaxed/simple;
-	bh=gDMA28RchPVIUSPpy2NsLvmc9SSvbe4A8VDvVnJjpjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSVH0ST2p3I5RRyay0ega4AHFOhpHAYRC7KTIPv1GB6HnXmtAkJebuyBN2yKMVqMLLVr+rjUBEGdOubXJcZ+KmUJWXVgRRERc8o+r4s7HZM9+kX9JfokxK1oaWGeLSKO3MlrF3WMt3VvKLIdqm4L3ZVzag5C8uE9pqtaKvLkn7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BsFuCv5X; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f7faff04dso10208739f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:30:38 -0700 (PDT)
+	s=arc-20240116; t=1722011478; c=relaxed/simple;
+	bh=8ZKGO7h/q2wOxpepELIwwmgWBjk5g+tuIIRCa1+iiJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q5LRC4HgQmqdnMuhe6nLYjEAlIe3hYXx+ivX360qxh2/WKpXQPw+1mayH+7XDWoWjKGKe2K20OYW5cEm6EEavTYlobdjlE4gTeFvoqEsgTjvuvTT7Q4oLib54q/NI/7DdHMT1K3cBWz8TNaZLbVfHhgiYF7y1UmX1C0K1O5xXQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pLqNP9oO; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a8553db90so238398966b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722011438; x=1722616238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ClLEQhQ1iUwEnkwU32KsyDoCIxPM7UfxUV/C4tGu5Q=;
-        b=BsFuCv5X5G1GIa6S5FKQA5oNBgAubuBtt71jqHwbAErJHNbmr8Dvi1REL/V1jsXBkW
-         dXSFNrD5XDpJks3J68SNWlBzQ1qRzRe+fIc8fU8rXz3D2fjL9fnZsQnJGkW/0ISxotwb
-         WyXVx/TQnJnRDmw/fo9Bc9yEL1scgOXa9GLYg=
+        d=google.com; s=20230601; t=1722011475; x=1722616275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vuq4nuc6eH8XAV4Br/RwCNhXFpkg4GgzfdIGIN52r90=;
+        b=pLqNP9oOJ5fyARNbw9x4zookFOtSL9kP/9LpI+X4fShypz09xZWDvOjiOoDjYb3r7n
+         zjPRMzTPIg9jTyJGe4cKhWsKtEGHZYT5ZopUAxBjDQAeCTDKpKeK2DVI6urs90Tf+Iw3
+         MXY3+QJ5h1wIkP9KZdinxWs9eyfmQ9ZACnNkhDcTlka9i1wk0vjCE0Doh/fW7hr+bV5u
+         AsxraU/++qS9aC05m5x6fbYU4LVJuP4lb7EM94rTt86yPUb8zykhkdOD85E+SId3qEIP
+         sOcbPrfCFrH5znFSuePRKDnq4f9iGCHakLZxBFa4nahG5OgNzg/Cmcb37a/SExP2GfWK
+         kegA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722011438; x=1722616238;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ClLEQhQ1iUwEnkwU32KsyDoCIxPM7UfxUV/C4tGu5Q=;
-        b=fKiUm41OcDu8auc3Bd1vMen1GjemdqUM74KVd6KybAwDoXQaIsZ3wbh3dEIqLZufFF
-         Ocy+qo6yTds4e7I2g2hYpvLCmf41utEglK5xsBbbxkpjbNdMjHl4cIRq0hUGeRXpJVKL
-         UB+eci+6NKWqPuuey9YNkN2dkBm/RGe1pks1fkgRAuMm7ORDyh/QRgE7fvmsVgljuKim
-         h4OeN99EiJ64gf8rCiHocXbgOemN/NQwV+PN/xuMtO9N02uBD8ZjjriSPl2hUhARxcMB
-         2GJ7AexSACBIVZalieT/8sjkYoXy/YeRelw3iiCGbDV54yDTrQZ9Y+jtJBGb9/JhDl1J
-         54PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL8J4kzcsYcfZVzm6x4cO3sxGHK907ugqvGkE1/P+NqnNPDkZm9yfQ+qgB1rzJUrkYiDbkauNLJP0pCU6QS5mTOvCNb6Z0Ttc59886
-X-Gm-Message-State: AOJu0YyzCj7fLvJIOZlFF++MqNIvgMMeMPRQdjMO0jhporQbeE+zrsHb
-	WXe6G+/Hygz3tjyJlo6I5yhVkPKOR9nl7hnyLF7mxy4LRTvTXJ5+knxtcj/owgo=
-X-Google-Smtp-Source: AGHT+IGMk/YlWYCQcj9bstzUYlzf1B2Mt+8v4lZOdHBd35dUk3+hk5LwYCW4NHTud/bjyL5DiQEYkw==
-X-Received: by 2002:a5d:9943:0:b0:80a:9c66:3842 with SMTP id ca18e2360f4ac-81f7d035a19mr440179939f.3.1722011438283;
-        Fri, 26 Jul 2024 09:30:38 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fa98dcdsm911843173.49.2024.07.26.09.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 09:30:37 -0700 (PDT)
-Message-ID: <190987c6-d755-4c24-be11-1afb6ade852d@linuxfoundation.org>
-Date: Fri, 26 Jul 2024 10:30:37 -0600
+        d=1e100.net; s=20230601; t=1722011475; x=1722616275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vuq4nuc6eH8XAV4Br/RwCNhXFpkg4GgzfdIGIN52r90=;
+        b=TzMkNvOmBZ1oYf1u+BKEg/4cs8QiKh3Ixs3hgzoUyogCswXk6hqnQCSTHQTSM17/dz
+         GkokO4MJhVeZhzqJede7kVBkFqhZql/HJjvGezQTADdUe4BQ4E+mI3q1m6bFFBRjM6/v
+         kqPkUaFxWTuSLLJkbPqNnxMMqOE/+3MHYW8uCe+i3lwX+EvvJ7wVP95u6tqsZmGsXHQF
+         Z2KB9NVuRImTyyAzW0a9c72cmMpJBFF94vD65PTfnM8Tl4T8qR4f75CS35Qjvu5QYS4e
+         tVfiU15vlfuuJe0xSRtcbzmGd69z/5KqwXHbgu4ZnQJnms1UpEaURz6sQPJrFOuP1u4u
+         Z5DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhGzwJLXrmZrfDAZ+g4k0fKPmuAHPDSJjFRhutNqYHhpWEsB/Mtxaae9H1yDIzfqPJymUByIvDZpzZKMnrKoFHgDiuLeO2UZcXjbK6
+X-Gm-Message-State: AOJu0Yw8TwawX3XaUrfspoNE9XkKg+XbTMIUwXxC2fGDFRBCkSbFIrxk
+	+yoPlRd1SRwkeCToHp1ivim1SEx1c458h2AQ1NgaC5lUydduA3cNvD0fcO37V6O47oV03g8iSPa
+	KxmCI90zLjf/ru0wDSuZVC4N7AV9zpyTr7Ugc
+X-Google-Smtp-Source: AGHT+IEvl52VvZgC94HfxhzNdwQSObujtyit0xKlqftROtM76O8gCSf5kKjxUKwzqZD2swB8DN5QUsX6y7vLAu7xY7U=
+X-Received: by 2002:a17:907:9443:b0:a7a:b620:aa2f with SMTP id
+ a640c23a62f3a-a7d3ff9e068mr2925366b.15.1722011474096; Fri, 26 Jul 2024
+ 09:31:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 00/29] 6.9.12-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240725142731.678993846@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240725142731.678993846@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-3-21cnbao@gmail.com>
+In-Reply-To: <20240726094618.401593-3-21cnbao@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 26 Jul 2024 09:30:38 -0700
+Message-ID: <CAJD7tkbho1a6pwZq82aHBa8BpXijqVopde3k-RnageOtdO32pw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] mm: Introduce mem_cgroup_swapin_uncharge_swap_nr()
+ helper for large folios swap-in
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/25/24 08:37, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.12 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Fri, Jul 26, 2024 at 2:47=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> With large folios swap-in, we might need to uncharge multiple entries
+> all together, it is better to introduce a helper for that.
+>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  include/linux/memcontrol.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 1b79760af685..55958cbce61b 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -684,6 +684,14 @@ int mem_cgroup_swapin_charge_folio(struct folio *fol=
+io, struct mm_struct *mm,
+>                                   gfp_t gfp, swp_entry_t entry);
+>  void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry);
+>
+> +static inline void mem_cgroup_swapin_uncharge_swap_nr(swp_entry_t entry,=
+ int nr)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < nr; i++, entry.val++)
+> +               mem_cgroup_swapin_uncharge_swap(entry);
 
-Compiled and booted on my test system. No dmesg regressions.
+mem_cgroup_swapin_uncharge_swap() calls mem_cgroup_uncharge_swap()
+which already takes in nr_pages, but we currently only pass 1. Would
+it be better if we just make mem_cgroup_swapin_uncharge_swap() take in
+nr_pages as well and pass it along to mem_cgroup_uncharge_swap(),
+instead of calling it in a loop?
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+This would batch the page counter, stats updates, and refcount updates
+in mem_cgroup_uncharge_swap(). You may be able to observe a bit of a
+performance gain with this.
 
-thanks,
--- Shuah
+> +}
+> +
+>  void __mem_cgroup_uncharge(struct folio *folio);
+>
+>  /**
+> @@ -1185,6 +1193,10 @@ static inline void mem_cgroup_swapin_uncharge_swap=
+(swp_entry_t entry)
+>  {
+>  }
+>
+> +static inline void mem_cgroup_swapin_uncharge_swap_nr(swp_entry_t entry,=
+ int nr)
+> +{
+> +}
+> +
+>  static inline void mem_cgroup_uncharge(struct folio *folio)
+>  {
+>  }
+> --
+> 2.34.1
+>
 
