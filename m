@@ -1,66 +1,57 @@
-Return-Path: <linux-kernel+bounces-263754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BC593DA2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:30:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAB493DA2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE8728611F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98FD1C23345
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82294149E16;
-	Fri, 26 Jul 2024 21:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27143149E13;
+	Fri, 26 Jul 2024 21:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LngetdCk"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KnmBAoEq"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FCD748A;
-	Fri, 26 Jul 2024 21:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3825C149E06
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722029394; cv=none; b=j3mZH5itnpnXeI50Mjrk5dxpxQLkBijoZ4u+WSCdTKlw4QnydVVzZH9cGoROJ4X5GiCXif2T+5VBrIkVTOPJ9jQosJ7vp7YPa1AyqRHbh7/1NaLG7eyyGQN26f92o7ci4zDaXGg6psDAHaAxluu+TklLs6RaGRH9ZyK5O1rmZHU=
+	t=1722029416; cv=none; b=Ik6wXXMOR+VieZpx4xoiC98RHMGjfOfB9CYE9eSZfQsQNFQ8z86j59F0Mzm2gWEEvpugmWRByw0o1HACEwFMMijsWiZ1cxBPGFjMPteKyd9PF+WSzoXSUJwCF0XrHL7N78+dmjUO991hp1kQKaXGZVCzbBfF/j+8/wKCG0cFGPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722029394; c=relaxed/simple;
-	bh=v96/KSGBYGKeHUV8VjqZ4HHMfBAyCisN55Q/k8OWemc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGvDILWd/dOxS45y1ErBqKG4j7KhmfP8HoPlIgqESqSlLsGeadnBCrBJ9I+n3olKDKffmedcD+01H+LnsN1hLehaw72zr4FXuS1Y223DmK+/Z98YawALEJP2HsQXCMZO4rUEFD3zsXa1XaSJw4Bph5n8faIGs3+o9S1ec5qqp4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LngetdCk; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 43154C0002;
-	Fri, 26 Jul 2024 21:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722029389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hitksc1k8zJDuSSoX0yIY4W/4pfIXgyE3bly4t52hoE=;
-	b=LngetdCkJslhLHvz9xsXex1d4COAgjbMr9zUWs7jqRjIgSlnINmoE9iLlETh1Tb9b05rQP
-	MjhIwQPXdKysGD8NCwMZIHEpUv8GsRsBzwhTqfUyq1yP0uhyqM4d7jETvH/YmH+m6+Z//x
-	ihYBcCUFIjIdXmqfG7PwDsdbhndxs0csN5jCVAEltvjHRkiLY0fWdeYiLNv3d/xvF7U6Bv
-	A7TGIb7gVCLpwz0Gly/m3K+EY6Em4g2tZRe8bEhQOxN+PU0CvpaR5SYSiELClX4XLhLAbO
-	dPiJUAbUq1Zh2T0kBvyFPkKSsosdv17u1iPwhLepc3443qtLRy0UbF5zSzLi2g==
-Date: Fri, 26 Jul 2024 23:29:49 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Valentin Caron <valentin.caron@foss.st.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>
-Subject: Re: [PATCH v3 0/4] rtc: stm32: add pinctrl interface to handle RTC
- outs
-Message-ID: <20240726212949fc918694@mail.local>
-References: <20240722160022.454226-1-valentin.caron@foss.st.com>
- <CACRpkdbphGF_2P+bezdaYLE4n_1Z5NYjJfcuCh01ysB6QHC=qQ@mail.gmail.com>
+	s=arc-20240116; t=1722029416; c=relaxed/simple;
+	bh=TazJz5DuIy70P9F4AIkG+gYscTAZ4DJnFp342oDsZ3U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OAbeZREq7ZaPOBTqv5gjtkHavOivNuOMWQtZ9W2o/w/TuyD3GqFnvM4gc8lUlckZioWp8jNR/AoT7GhM43x+gyZF9gSGwPQVUZhYddN/uuHQeZkTQX5Yi6F9JfChcs6ylqCbVgduUDN6oaFlW+B+ZGXd7Je+bR4wcwhcAz1nyjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KnmBAoEq; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722029407; x=1722288607;
+	bh=TazJz5DuIy70P9F4AIkG+gYscTAZ4DJnFp342oDsZ3U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=KnmBAoEq774sWlpBt9Vk2FT/I+OIj6TmATo3eR3g9mQOvfRSfSz2WGHIxhL+eTGq9
+	 phSqHCH+u1XvkjYCKUQLHd3He2NJrZ9gzNnrJvQQV0eFVjGbWlv21aIvadO8BBV/z5
+	 wh+HI42Qw3UW0b2omFDSbIYqIMcdqIHXxGUH0G4U4MoqZ6LbWsjRi/01n+qzmnbChj
+	 ghoOJx+w7/JL7cqRdwzO7h69c+4tvwvsr6ZpTmlEaVCFJD/pdBu1YbFWeteSHwJs6x
+	 okW+LJJ2xCvponbQ6uHYCRmsvh/YyUOx8aRLhhUosIlwFfCuRrwz/VVlnJAsplHJNc
+	 aD6eBfAbCviHw==
+Date: Fri, 26 Jul 2024 21:30:00 +0000
+To: Boqun Feng <boqun.feng@gmail.com>, Lyude Paul <lyude@redhat.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rust: Introduce irq module
+Message-ID: <e46d6e12-144f-47fe-9db4-d7d04914f265@proton.me>
+In-Reply-To: <ZqQTXUl4w6LRPqLh@boqun-archlinux>
+References: <20240725222822.1784931-1-lyude@redhat.com> <20240725222822.1784931-2-lyude@redhat.com> <ZqQTXUl4w6LRPqLh@boqun-archlinux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 67cf4481c52eddca5d086a82b0eb77c95d794ba7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,37 +59,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdbphGF_2P+bezdaYLE4n_1Z5NYjJfcuCh01ysB6QHC=qQ@mail.gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: quoted-printable
 
-Hello Linus,
+On 26.07.24 23:21, Boqun Feng wrote:
+> On Thu, Jul 25, 2024 at 06:27:50PM -0400, Lyude Paul wrote:
+> [...]
+>> +pub struct IrqDisabled<'a>(PhantomData<&'a ()>);
+>=20
+> I think you need to make this type !Send and !Sync (because you are
+> going to make it Copy). Otherwise, you will be able to pass the irq
+> disabled token to another thread on a different CPU which doesn't have
+> irq disabled.
 
-On 26/07/2024 22:37:21+0200, Linus Walleij wrote:
-> On Mon, Jul 22, 2024 at 6:02 PM Valentin Caron
-> <valentin.caron@foss.st.com> wrote:
-> 
-> > This series adds a pinctrl/pinmux interface to control STM32 RTC outputs.
-> 
-> Interesting! I think it is the first pin controller outside on
-> drivers/pinctrl in the kernel tree.
+Oh yeah this is a good catch! (although it should not matter at the
+moment, see the end of the note below)
 
-Actually, we have rtc-omap which does this too. I've been pushing for
-more RTC to do this instead of defining custom dt bindings to do what
-boils down to pinmuxing.
+Just a note: it is not because of making it Copy, this problem already
+exists in the current implementation. One could have sent the reference
+to a different thread using a "scoped spawn"-esque function [1]. IIRC we
+currently do not have such a function, but it should be possible to
+later add such a function. (and it is much more accurate to make this
+type not be thread safe)
 
-> 
-> Please include me and the linux-gpio@vger.kernel.org list in
-> subsequent postings, I want to be sure what gets merged here
-> and I only noticed this from the LWN driver patches summary.
+[1]: https://doc.rust-lang.org/std/thread/struct.Scope.html#method.spawn
 
+---
+Cheers,
+Benno
 
-I'll also ensure you get copied on pinctrl related patches.
-
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
