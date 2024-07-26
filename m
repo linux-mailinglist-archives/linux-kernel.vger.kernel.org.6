@@ -1,191 +1,93 @@
-Return-Path: <linux-kernel+bounces-263446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299C693D5FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7978D93D5FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3143E1C21EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:22:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34393286401
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8391A17BB2A;
-	Fri, 26 Jul 2024 15:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q3elkxZE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="947VmE0r";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kqbq+to/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UfWcXsqC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A460917BB1F;
+	Fri, 26 Jul 2024 15:23:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D589418E1E;
-	Fri, 26 Jul 2024 15:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9847157A5B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007363; cv=none; b=ASiskY44UpoM4MyCCFDsuQpprSmB+D0yDilBMOH85+F3EOiGEB3K67OcbyLSAOI/mjkRSPU3sAM93PTsVKlUVZ61pMPfCvkrn9By1IEmP7852nJ7E8IPVWTBjLcsjcFroSKF6v9qx1JUIv9MosgZmu+soRcRQIEUg4z+a0BEzbA=
+	t=1722007384; cv=none; b=BXS0iYfPYk01+zuaDJQvhfnm5AE7LqwXdPEnDid+pkpuPRRhAP5VD+NJ+KlDk4sxGEbIzaoWOw5ux1htFYePq06gvPWbAdOYPCN45mnBcrp4lXnnh+ZUuq80+y7mZw7xMPJ563VVheOJ3Yw2iV9gla8hEV3HQnKP7y87kQj74nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007363; c=relaxed/simple;
-	bh=5ea6J4F3xTYQI+FVtmFYyRykx9btGmI+rnvRxLuvejI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V+vo8voAcEsgT3R7IxDUF/UqOD+GTSM1tRvCYGyP3ZB32/CmrZE3/v7PU97gY5Lg67TvN8pmdnSYIIZ6VA5ZNjzMhw2Kq9YRUmo8gnslezuEYYjBvbaGWKZrw9jX+S4T7uEoQN6ti5i+avvFXvYr5BI/YtUBkfc3LI2GhZvJv2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q3elkxZE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=947VmE0r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kqbq+to/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UfWcXsqC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CC7DE219BF;
-	Fri, 26 Jul 2024 15:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722007360;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nr6jgka+gDBT3QQ7bb9PNkdpnMtXeZV68l1U6OfFaqc=;
-	b=q3elkxZESedwoEe0iUED5lOQbJV9ZRWPQltOdic0NpXAtJY/EiN5gMmIEUiMWY9yppgng5
-	6vHX74SCzYTqbJL/8+DyEy2mSuBbbVz+24XQLb9uAEUi4AUC1Pe9f11DGPMiyjFaWT3w6p
-	Cpc3BoFxDn3frW7nxPk+2nBnWffG11I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722007360;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nr6jgka+gDBT3QQ7bb9PNkdpnMtXeZV68l1U6OfFaqc=;
-	b=947VmE0rAIutWyXfUgWwi60aZCVln6pfnucIC1mlfeI9IcD5vdNjGGIV1jU6UR7rbKu34N
-	JxqUY9Is45qfwpAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722007358;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nr6jgka+gDBT3QQ7bb9PNkdpnMtXeZV68l1U6OfFaqc=;
-	b=Kqbq+to/EyF/FOIb4JQK+wpQDcfHcU09pojkYOkJXt/Nj62vQ62DbUIwyDMnE76fU7JoRl
-	h2/v3chroOC3NZ0Ewi2bHzSOBLy8opglAIvdt7tBQnwQtWM5iDPZvq94Ewf73G7p1w2Q0p
-	uAi9NZ1qkSPCJ9XKF0LjIlxsF5wjiKw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722007358;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nr6jgka+gDBT3QQ7bb9PNkdpnMtXeZV68l1U6OfFaqc=;
-	b=UfWcXsqCQv+u627gdDOwb0Qe5lzmjOGQVAtU2Gfh5f+O7bTWC5rDTkzRE1A+toGuwfcx7G
-	OZMIEwnitR8aabAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9485D1396E;
-	Fri, 26 Jul 2024 15:22:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cGYKJD6/o2bKLgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 26 Jul 2024 15:22:38 +0000
-Date: Fri, 26 Jul 2024 17:22:37 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Youling Tang <youling.tang@linux.dev>, kreijack@inwind.it,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <20240726152237.GH17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
- <ZqEhMCjdFwC3wF4u@infradead.org>
- <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
- <ZqJjsg3s7H5cTWlT@infradead.org>
- <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
- <ZqJwa2-SsIf0aA_l@infradead.org>
- <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
- <ZqKreStOD-eRkKZU@infradead.org>
- <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
- <ZqOs84hdYkSV_YWd@infradead.org>
+	s=arc-20240116; t=1722007384; c=relaxed/simple;
+	bh=qlp7+7AcQXwJaqTb943IHxf/RFYYalN4M2URRp77+tE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=exqRZDSCPhJtoK60qCWItglmhZH7/ttLydyqOk5IIYlDo6Oy8IMvv7AXiCVmzjqKpqxwrRUzyXjHF2qp/AJsG7S780TAt58IgfGPU14hNiivQpK5Z6JBf7Ws9K259dnHVY6kX/oH8PGLBJf7EuvpjG1sdnqQOA11VB3mulOX6kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f66b3d69a8so182549339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:23:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722007382; x=1722612182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrSzqyiMZx4ozjypR+uiSnGPSDS1DfBLU8iYnkXnm8o=;
+        b=C/iKT/JGoye11pXUIgXKgcHFDerBZEytZNUJ5gvaI94dOzsPK7AuZ6iJItqxkMEaKd
+         oSJr5ExN700oEM8n8Lw+fvXdrnR/+Qwez1XG+vtK32hY61aj03Tp/ifKz7zs3mVtQCo1
+         +i8+r1Mfjs5zK3Uw6BfoxqP4d0an+mHJe/+xhlX1VRuXxbz44nlYXyQ0xL9c38uRH1ax
+         Rz1w6qLqmN+gRbEhd2QboVgOUI4oOq8z0dL17RlWHpWKTh/MB42QGxdJFQIyTmMcilxs
+         4Z8IP5LaBTsiiJztPUYRTJJDxXF13RMwGOi5a9bJae+Ry05P3+gWBOsbt324+H2XPR8L
+         e1eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXALISGBzi+woiiwP7eZqmEo5/E1g37H708+y9283ZxLyhk+xqKrgseak6lkuM/jFy5SmmjCN//7CEh0lS8Sn/fuNKHLb016lOzTABt
+X-Gm-Message-State: AOJu0YwT37PaSYxihuF8fSBLoDg3PfSuUrxJZnB2oIRUoztQW+MoUu6z
+	b1uwayvBbA4AgbpNSPlG2e4MYvIZuWueiBlFfwzZ9E87Af8s+Ql+tOIqNUsb8lU7GDiVpiFE/Oo
+	E495rjCkyu9ylYfRy2i2V+fPGQyEpHydYXI3Vb2M2Z0Jk24Js7Rn5lVM=
+X-Google-Smtp-Source: AGHT+IEitdjrvQfgUSlHI9A5b/o7wbVGbHXJfvr5OeY9BfiBEWaDu7+L2Zu4oFY+y+iyX8y9suRRcOHcvVDTWq93/LtY+DN37WYn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqOs84hdYkSV_YWd@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[inwind.it];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,inwind.it,arndb.de,kernel.org,fb.com,toxicpanda.com,suse.com,mit.edu,dilger.ca,vger.kernel.org,lists.sourceforge.net,kylinos.cn];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+X-Received: by 2002:a05:6638:4120:b0:4c0:9a3e:c24d with SMTP id
+ 8926c6da1cb9f-4c29b6da7acmr341864173.0.1722007382122; Fri, 26 Jul 2024
+ 08:23:02 -0700 (PDT)
+Date: Fri, 26 Jul 2024 08:23:02 -0700
+In-Reply-To: <000000000000b90a8e061e21d12f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004ff2dc061e281637@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, frank.li@vivo.com, jack@suse.cz, 
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 07:04:35AM -0700, Christoph Hellwig wrote:
-> On Fri, Jul 26, 2024 at 04:54:59PM +0800, Youling Tang wrote:
-> > Based on this patch, we may need to do these things with this
-> >
-> >
-> > 1. Change the order of *.o in the Makefile (the same order as before the
-> > change)
-> 
-> While we'll need to be careful, we don't need to match the exact
-> order.  Most of the calls simply create slab caches / mempools and
-> similar things and the order for those does not matter at all.
-> 
-> Of course the register_filesytem calls need to be last, and sysfs
-> registration probably should be second to last, but for the vast
-> amount of calls the order does not matter as long as it is unwound
-> in reverse order.
-> 
-> > 2. We need to define module_subinit through the ifdef MODULE
-> > distinction,
-> 
-> Yes.
-> 
-> > When one of the subinit runs in a module fails, it is difficult
-> > to rollback execution of subexit.
-> 
-> By having both section in the same order, you an just walk the
-> exit section backwards from the offset that failed.  Of course that
-> only matters for the modular case as normal initcalls don't get
-> unwound when built-in either.
-> 
-> > 4. The order in which subinit is called is not intuitively known
-> > (although it can be found in the Makefile).
-> 
-> Link order through make file is already a well known concept due to
-> it mattering for built-in code.
+syzbot has bisected this issue to:
 
-All of this sounds overengineered for something that is a simple array
-and two helpers. The code is not finalized so I'll wait for the next
-version but specific file order in makefile and linker tricks seems
-fragile and I'm not sure I want this for btrfs.
+commit b62e71be2110d8b52bf5faf3c3ed7ca1a0c113a5
+Author: Chao Yu <chao@kernel.org>
+Date:   Sun Apr 23 15:49:15 2023 +0000
+
+    f2fs: support errors=remount-ro|continue|panic mountoption
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119745f1980000
+start commit:   1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=139745f1980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=159745f1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
+
+Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
