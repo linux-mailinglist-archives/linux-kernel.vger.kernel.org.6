@@ -1,183 +1,166 @@
-Return-Path: <linux-kernel+bounces-262971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D62693CF4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2D693CF50
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E231C222E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFFA1C21E69
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523AA176ACF;
-	Fri, 26 Jul 2024 08:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522D8176AB0;
+	Fri, 26 Jul 2024 08:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0U4Jy2sl"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bi8mHPw9"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E441741FB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5A3176AAA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721981271; cv=none; b=mA0gRBppsSQvFM74hVCFh0KLvVdp7dlWMWt/TULQlZUrEXH9VE46WSeOWyit7jj/xdk6dZcxiGksVuLGkpzBlJBszy62m56fOKnoAh0+588NzX5AMHe7dYpFsVW+cwuHyx4ofkDSoh6x+02In6xYYgQXRRPbkp8yQpbIM4hzzE0=
+	t=1721981364; cv=none; b=RXtDtzzRpJ4AAn0QPQBAIgqqHAeq1nzWeXEhr0eymLgocSr0NH73iFX8re1d6vIBDd/HqGimWsvi6p9SAbw8Aar80B17DRzJqm0oovvtHH/SrY81vGijkqA27zGeHct8W8eNoJmwCkCCL6i+KimRnMW04CrrwvoZMX6VTgQ7mGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721981271; c=relaxed/simple;
-	bh=eI+e+tli3hU865TCIxyeXDogwsp/X2laaJtuyO9qqZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWv26gGimrLgthVQALDybQHf4NGSKy5nxnzfkvyxmvjVVkDXe0eu74iN+cQAXlATT6LJ6yH8EHU6GKasNp/JAGD7JYMzh8YA1iqro/dv7VhpWWforGvrifJCeaVb/2HOrO8RBMk4Wdl6J6Q1eQiNCRDbFTuvLSomP501IHb/B9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0U4Jy2sl; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVgND2GvGzN1B;
-	Fri, 26 Jul 2024 10:07:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721981260;
-	bh=1B7FkB9zwPzXkb++z1W4fSaxY9faalW6aoTN3k9G6eg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0U4Jy2slEWPGSBR3Fj22KEMce/LLcWxIK9fCZURM2DV4ZaexrYddYp4pvpQdU6873
-	 UTytPDUlX6zKmUzijq50JXaxyAPrnxbdPNJj57M/SM3HS4zyMfndVfxQ2IldT+xIkD
-	 pIxYHvtd+15jzve9FE9Dc86GFHD7O+41IZhNYkZA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVgNC54Qrzqyd;
-	Fri, 26 Jul 2024 10:07:39 +0200 (CEST)
-Date: Fri, 26 Jul 2024 10:07:38 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240726.Nohde4vooy3A@digikod.net>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
- <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1721981364; c=relaxed/simple;
+	bh=0Ev1NJXO/vcewQUS0pvbOAzbbKcLujlVohcdLLZ0JLk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dMctXdrJEESpJM/QCYb6N3fSCF/lgq97+M+Bt7qRVFkVuYo5xO+HN4Kj37Ehh2QSnYCaL7YIagqY4z4/b/TfHDcLKAN4S6aADBmSJl1db06+R461F7wTSsts8ltmhVzpmdIdA6362kVnBU5Zc+46SO2pevPOMQ2JnKiNOnZ7KRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bi8mHPw9; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so13528605e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721981361; x=1722586161; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xq7y9roOuA76DPFVh5KVJ6GTETUZ8LnoKVsLBau2hjs=;
+        b=Bi8mHPw9cTqPhJowHLGnFjY+VjiuM/9v0FT/22h0sFDPCQ5x+/g+HwGp6rnb4UoDLC
+         X/V/zRysNbUUs0kZ5H6G8dPUcwSXxB/Z6/RAyC6q4dhu+kTZpccu273RsHC4mrkVLDV/
+         ySTVkWUSaG3BcEy0ZCKieU6lihXG6VNQZm4Ndbu9yMbje+JIAjU9yTxNYcD8VyOKhs/v
+         2dDqztCcw9Fk6hJ3/VkgoRWCri4trZUzJb6kvuqR1H7enha7IcVsqjfVrnG/OvqSWoX8
+         6y/Zc5XqVkzx8IPYF/hNR3fKL3jy4Z8Lr0xARRZChBPuvfTUwMYs2THvs3fiqh9tizU1
+         vBow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721981361; x=1722586161;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xq7y9roOuA76DPFVh5KVJ6GTETUZ8LnoKVsLBau2hjs=;
+        b=U7iz9h6aySYagYEgD4utMGZYPme6WE7ic5fALFsRwCWrcbJzQkX2751MkO5aU+5RJR
+         jBoIIBKUvoI5yRm3S3hFEOg6T+KrP94oXUwb9+VFtc1cgJLQDkMKi/hjbVFL5Mal4dST
+         du0eZRt8QU0S7gA15A+EUHgIq8ZkjWCqspi/3apF/0ABHlE6UrBFiPt+84cskgemDBTA
+         3QZWmbL6rzpq65iLRfsaS3LS0hD8a49t/VcJWWkLerLhKF0aYTWRiZ7D+VEo2ghlG3o3
+         Nu/77SE+Q72ZHKE4ZMXTNwqtEAdLQwjul11rhzMVhQ42TP/d+PpDCXeX6Eg4KoFzUrQ6
+         7Qww==
+X-Forwarded-Encrypted: i=1; AJvYcCU9CKUc1wXwf01DxdgjHurfR+4gHqm0R3t/9Z9FRFVzUAl92s9bXZm/U5nqpAgiE1G4+OCJNwlxe29Y6V6f2eAax6FIbvziotNCtiT/
+X-Gm-Message-State: AOJu0Yz5ttAbPkMWvmJcacfaQayaRDBdm6JyTUFwedNLRVwgnEfYvmaE
+	7qZHBrb1zb5bjIiTHOe1AbJFPPIy0aeIGt5HPrcUSN82ePKzpuy5c1rBY5NncPFqjKGKcrTxEjV
+	y
+X-Google-Smtp-Source: AGHT+IF6sbu6KhB0zmkRsKlh8Fz7u3qp/6dYVz39nvmDiHL59ImYMBVzaMLY3CXVxWhp/d/nIqvfcg==
+X-Received: by 2002:a05:600c:1554:b0:428:c0a:27ea with SMTP id 5b1f17b1804b1-4280c0a2870mr7311465e9.12.1721981360850;
+        Fri, 26 Jul 2024 01:09:20 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e6883sm105939045e9.37.2024.07.26.01.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 01:09:20 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Fri, 26 Jul 2024 11:09:14 +0300
+Subject: [PATCH] phy: qcom: qmp-pcie: Configure all tables on port B PHY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKlZo2YC/x3NQQ6CMBBG4auQWTsJNirEqxgX0P6VSUpb2gYhh
+ LvbuPw27x2UkQSZns1BCatkCb7iemlIT4P/gMVUk2rVre3UneO086LDzMscOWoBf5MU8OAcl9F
+ lztDBG44hFe5hoWH67jFaqsmYYGX7717v8/wBUxbgnn4AAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2156; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=pmtR+b0rddclf0zEqNoY+i4bslmPX+m1gb/KqQ3y57Y=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmo1msLR5gbarrTnuyIVlBVaZ3+WCr3a6rUf64Q
+ 0EeYTf7fLuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZqNZrAAKCRAbX0TJAJUV
+ VngFD/95++zG/i2Y5GrVxjw9w2aWZENYxMt2QLFYf3IWk5Z1xjeiw31aUha7rk505REpArVOxTr
+ N5aV2Oxb+O4hZVtAZvj+vuwX9s3PcPxKBw2JvGBpljP/NU6p3VyQ8MfAZdGEULU42RUhclMR8EG
+ 50tA8qAw+GxZ5u553sgO0Stm5I9xmDPf3nYxY70etehNq7Ujv55B+/0Zvj/ZZQh4ZV3T06jtrXp
+ 1/QQ1h7tPsfe3r6S5V7v5DTHenRbQFAuPgDNXDaOXweXgbJz91SA2/2r/Bx+CzA+vLvlJhHoMoo
+ kN62c2QqaXRldbB/SwxZ7ECepcAJjcuNFmMgt13qhmX9xy+aJ0qJ18uKJJ/cO2vQoDff6XKA2w2
+ 6pDt5pNQjqzRybHgvhtEQ0q9wnTiu/LSaKtVnYXw4bwlGYRDuLUafvWx9mvtPMx8+ZTEH7rp2uB
+ BghN4ncNGFSYZpxvVR37q2YTHwNvVqi3Myt6Fp5kYidydkG4zfXuO77wxJziD/k3EA/BKTVIIuJ
+ zH8czU55FyO4rbXVFRzefhDPm6nUC5ejZhGWmzPwxOksZbpCZwOtGmuNyiVUOVFl+GFdRhG4K4N
+ poiRSEGbZaCOKZuXnZgSYPkarY+z7Ujzh8m1lrKYiruzILT7TV3oOt7JZe/PgL60JE6alS0t5It
+ B07MYoLFF3DMWaA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
-> The patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
-> to scope abstract unix sockets from connecting to a process outside of
-> the same landlock domain.
-> 
-> This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
-> enforce this restriction.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> -------
-> v7:
->  - Using socket's file credentials for both connected(STREAM) and
->    non-connected(DGRAM) sockets.
->  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
->    ptrace ensures that if a server's domain is accessible from the client's
->    domain (where the client is more privileged than the server), the client
->    can connect to the server in all edge cases.
->  - Removing debug codes.
-> v6:
->  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
->    the same domain scoping as ptrace.
->  - code clean up.
-> v5:
->  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
->  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
->    landlock_hierarchy to its respective landlock_ruleset.
->  - Using curr_ruleset to check if a domain is scoped while walking in the
->    hierarchy of domains.
->  - Modifying inline comments.
-> V4:
->  - Rebased on Günther's Patch:
->    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
->  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
->  - Using file's FD credentials instead of credentials stored in peer_cred
->    for datagram sockets. (see discussion in [1])
->  - Modifying inline comments.
-> V3:
->  - Improving commit description.
->  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
->    purpose, and adding related functions.
->  - Changing structure of ruleset based on "scoped".
->  - Removing rcu lock and using unix_sk lock instead.
->  - Introducing scoping for datagram sockets in unix_may_send.
-> V2:
->  - Removing wrapper functions
-> 
-> [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
-> -------
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
->  include/uapi/linux/landlock.h |  29 +++++++++
->  security/landlock/limits.h    |   3 +
->  security/landlock/ruleset.c   |   7 ++-
->  security/landlock/ruleset.h   |  23 ++++++-
->  security/landlock/syscalls.c  |  14 +++--
->  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
->  6 files changed, 181 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 68625e728f43..9cd881673434 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
->  	 * rule explicitly allow them.
->  	 */
->  	__u64 handled_access_net;
-> +	/**
-> +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
-> +	 * restricting a Landlock domain from accessing outside
-> +	 * resources(e.g. IPCs).
-> +	 */
-> +	__u64 scoped;
->  };
->  
->  /*
-> @@ -266,4 +272,27 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
-> +
-> +/**
-> + * DOC: scope
-> + *
-> + * .scoped attribute handles a set of restrictions on kernel IPCs through
-> + * the following flags.
+From: Qiang Yu <quic_qianyu@quicinc.com>
 
-If you look at the generated documentation (once this doc is properly
-included), you'll see that this line ends in the Network flags section.
+Currently, only the RX and TX tables are written to the second PHY
+(port B) when the 4-lanes mode is configured, but according to Qualcomm
+internal documentation, the pcs, pcs_misc, serdes and ln_shrd tables need
+to be written as well.
 
-> + *
-> + * Scope flags
-> + * ~~~~~~~~~~~
-> + *
-> + * These flags enable to restrict a sandboxed process from a set of IPC
-> + * actions. Setting a flag for a ruleset will isolate the Landlock domain
-> + * to forbid connections to resources outside the domain.
-> + *
-> + * IPCs with scoped actions:
+Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-There is a formating issue here.
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+index 5b36cc7ac78b..fd59ebd32f5f 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+@@ -3660,18 +3660,30 @@ static void qmp_pcie_init_port_b(struct qmp_pcie *qmp, const struct qmp_phy_cfg_
+ {
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 	const struct qmp_pcie_offsets *offs = cfg->offsets;
+-	void __iomem *tx3, *rx3, *tx4, *rx4;
++	void __iomem *tx3, *rx3, *tx4, *rx4, *pcs, *pcs_misc, *ln_shrd, *serdes;
+ 
+ 	tx3 = qmp->port_b + offs->tx;
+ 	rx3 = qmp->port_b + offs->rx;
+ 	tx4 = qmp->port_b + offs->tx2;
+ 	rx4 = qmp->port_b + offs->rx2;
++	serdes = qmp->port_b + offs->serdes;
++	pcs = qmp->port_b + offs->pcs;
++	pcs_misc = qmp->port_b + offs->pcs_misc;
++	ln_shrd = qmp->port_b + offs->ln_shrd;
+ 
+ 	qmp_configure_lane(tx3, tbls->tx, tbls->tx_num, 1);
+ 	qmp_configure_lane(rx3, tbls->rx, tbls->rx_num, 1);
+ 
+ 	qmp_configure_lane(tx4, tbls->tx, tbls->tx_num, 2);
+ 	qmp_configure_lane(rx4, tbls->rx, tbls->rx_num, 2);
++
++	qmp_configure(serdes, tbls->serdes, tbls->serdes_num);
++	qmp_configure(serdes, cfg->serdes_4ln_tbl, cfg->serdes_4ln_num);
++
++	qmp_configure(pcs, tbls->pcs, tbls->pcs_num);
++	qmp_configure(pcs_misc, tbls->pcs_misc, tbls->pcs_misc_num);
++
++	qmp_configure(ln_shrd, tbls->ln_shrd, tbls->ln_shrd_num);
+ }
+ 
+ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_cfg_tbls *tbls)
 
-> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
-> + *   from connecting to an abstract unix socket created by a process
-> + *   outside the related Landlock domain (e.g. a parent domain or a
-> + *   non-sandboxed process).
-> + */
-> +/* clang-format off */
-> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> +/* clang-format on*/
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
+---
+base-commit: 864b1099d16fc7e332c3ad7823058c65f890486c
+change-id: 20240725-phy-qcom-qmp-pcie-write-all-tbls-second-port-8efeced876bf
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
