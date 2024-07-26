@@ -1,245 +1,274 @@
-Return-Path: <linux-kernel+bounces-263635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8161193D882
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:45:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AE693D886
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EB11C2357D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C726C1C2313F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1F73BBC1;
-	Fri, 26 Jul 2024 18:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFC43BBF1;
+	Fri, 26 Jul 2024 18:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SPzIDdh0"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eOYpvaqj"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847C3433DF;
-	Fri, 26 Jul 2024 18:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADF94D8BE;
+	Fri, 26 Jul 2024 18:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722019512; cv=fail; b=UC4QxssB2LqJuBaXYPEbSJjBFTj4j1YlIxw2QZWI/dRGPTFvFdRtPeq+wFCZ8AYFRDxCbXJo0CyffUngOyS/o5phHcOShhyy+ZXuMOWkbyIOZymbg90GAGEavICq3sxwPnDZoORg1uB4dkSf1LXp2ttul8XcMmm7V4FCJnMSxUQ=
+	t=1722019578; cv=fail; b=EzkIqZYS4DFbY2yN5ia/hpY2O7jxY3fqwt8jzd2ltKW12ERJX3qqRxrTQEIJox8pdhQsSidf9I6OdFvqBdCVbghD24CknPUKJVR9jgZeR1yGXDpTQrKAnzoI71kVc8DUcY6dwv5gWRwz/aeYaOdp5ofye5grRDEKHEp5WE7bHK8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722019512; c=relaxed/simple;
-	bh=AYzZBJeO+f2UP8lQZgCtTbdE4sC8VnW6g/w5PwMgJ0Q=;
+	s=arc-20240116; t=1722019578; c=relaxed/simple;
+	bh=1/8rF1m8D/CWWE3YfMllpjQ3R+I5XxPxozPFV++VZBU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QnT4yuCaYtRm9nTuX/MvUYjfVIB5iPTBLUEEf/9d2jO1X9BNyQil+2t3O6pVrG9zXsMtdMWf4JPvmQvct2xzWaZ2a3Rl+04t2e2okPEg6Qj+1Fq6YK4ZXwwCrfOt80AoW0QJQxvrt6WP6cLF0AQLIUYHzQvT9Vcyfj5ITxtErlo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SPzIDdh0; arc=fail smtp.client-ip=40.107.93.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	 In-Reply-To:Content-Type; b=gpYiJKwWZCYhLCvmhXZhmQWCQ6f5hn8E34x9Gp75kEU5TT5f2fLxbZl38hux1ekLBpHVYniRMGFuaAND1XXGV827XoX152Cy4uDteJ580V/kbs+2NyvGeDvKZpXtfOyZqtabg791CnGPk3Euzme3pV3k5t10vwVc1ndj2ZjO8sg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eOYpvaqj; arc=fail smtp.client-ip=40.107.223.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JjSvRAUq/8PPA2CslvLuKUUpKfUPzHmdjyQm6EIjwCYqRzjhs5V17Rnn+Hrb8twSI6o91Rl6uYLkwlbHQOwjkWmV1lXWHskByn4cKwvAT+xT3JVL3QuuUfB3YWp/asflmDs2IaIe1OuTeFEu1ek0H8B/ZP6d0uDPiaGFbDn5rDiMwiucGgN5RBoQL3hZA6kWQvAooyvXC2oCq1l9JlrrdKOkQ7E/OI9NJedgfXoWLH8PjtpaPRdZiAGQggnTaSosOG9meDUarnQ0+U4QdZK1XoXAdd0OgejEiR4xNjSkxpB2vGPtFAmnZUkBwlBm93z7JVCvIAVfmLfUTtRdeB4pvA==
+ b=xkTAH9rlXmDAckcz4L0nRqphDmBdMKBMoXT1Q/eU4SeqpmC+Gef0YK1SAqey5JScB7WLMUDEUUKxEaaVMXceyQ38FleVKKlig63g8II1YrFlij5ZxBBd8lNjxXJfwMK1h6kPiSRLjWE0GzZUt+9taxFrvRSh8WbLnnAxsORg3elKcWuRfX+q3Doxnx8dftTLRVwluJL9PD/h6xriT6fS2PjmgoOyvJ98v5PpCgrngJ4EqjUNEET+4BESLeMqd8ldiOwK0VMsVINvOjxhFnWpLgX3nMsbtbYPbvst22jtgp6qi+H0V/htiL3eH8Qe3s5Snuf1bMzNaMPMerNY0i9uQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g9Azu0YU9Rv9RzatF4DxeJMq+5AvqzQvxgRTAjY1XOE=;
- b=wokuexyHBO4CCC02AXKieA0Nc3j0vmbjfjIqTX6rQ+N/DUBq0q2Q2EgGnlkwsyqL3edqftp4w1uwTbjAFWcH8RP66NPooU9tio7GDO+M60knDOI9B4cUXvJRgY95kiwERs1jq3PM3DSvU2PkAvdKT8N6uNwSxGjyqcFdBbpwKLB1A1UFA8Nma6MkSQDADs4TVDqfI6N3ZPlA+LbOpj4pmhm0YZfzOymBAAbNRrHL/PJ4ejR5C4q/AUEX2rxQHai5DAUHVoN81AxBYxNXnoEze5UFtWF9Jihz+VqQzNvYlCo2lPKRK9Gcbd+L3p0ywxL0GikQO8Ctk32xvrLzWWk0xw==
+ bh=FqTK9JC5+gkBNB8qM7vnF0fB9Q9Rg5qIXzo8emWQH2Q=;
+ b=pgRYYRyTuYWGpcbRX/Bk2+/CytsLEBWUwQ6MFk8VTBen8BhOYPZBphqWXe60W6jQBZ5AUu3Q/sHMxR6EOIJcMGZXpgcJq2hQ3BhHmVKfvN7l2oaJh/4BMSbI+STpZHFfYeH7ST07mWSR1+d0MTOI7U22wLajxeqKFdMAjXTnqaPiHpiUVL+LcZoQS2IKIsBalM5d+GK0kKzaKUAcGHJ8q/l+sp3MZz9UMGcya90ODZuHQSS/t8Yrf+Io+R2dcpGB4JtNl61Q8gvCok1nOuLRNUPNN/U5b0pFHLIvhP6qGjuozR7xexXQqdMqOv1UvKYzJhrfMXaYzlh9WrmC5uWvSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 216.228.117.160) smtp.rcpttodomain=collabora.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g9Azu0YU9Rv9RzatF4DxeJMq+5AvqzQvxgRTAjY1XOE=;
- b=SPzIDdh0gU0yHAIVV/W7l9aWSwqr0R9rxnWwCVmC+zPGmn+FR6cOvkpNSw/uoAYGQpFaD9mRQdCTN0wQnf8YFyQDkUdsb/qHALvG7sVUNWpFUQx+ziF/Z/i+lKbReKOlPQ7mK7q/fI4DZ6QtVFyCSmjtsa9Y2TeKsrefKsQgqkU=
-Received: from MN2PR19CA0026.namprd19.prod.outlook.com (2603:10b6:208:178::39)
- by DS7PR12MB6007.namprd12.prod.outlook.com (2603:10b6:8:7e::13) with
+ bh=FqTK9JC5+gkBNB8qM7vnF0fB9Q9Rg5qIXzo8emWQH2Q=;
+ b=eOYpvaqjusDLpi4RfnXZzf8tyNNxwdybHzg04m//vS6udE/sdvT+HRyuwpSHfJpDdTYwlkpuLz1VgHLKH1ZAki8ObjqMzfqZtS3fSWSkL6JT8PUVp3SYrYMaPEnhwTBRxgxhBlwfVYf7kLRl8cC4X3Bce4dqDLpXZ6+nwXUdfTy0GDY0CQMAQzo1b7xX7imC9moik2JNAViZTVb7WAOZcarv/2CXWpnII6XbE+UXIwaJR/KMq7a9YbCjK/stFBuvQP4PQS9MiK6xtZp6+n8t2Zt0EQ5VUBigUFV6o7oE570Fii2qBg/YVzh8HJm+W1l/xMqbwfi5nyER7U0RSvbZFQ==
+Received: from CH2PR10CA0013.namprd10.prod.outlook.com (2603:10b6:610:4c::23)
+ by MW6PR12MB8867.namprd12.prod.outlook.com (2603:10b6:303:249::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Fri, 26 Jul
- 2024 18:45:05 +0000
-Received: from BL02EPF00021F68.namprd02.prod.outlook.com
- (2603:10b6:208:178:cafe::36) by MN2PR19CA0026.outlook.office365.com
- (2603:10b6:208:178::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28 via Frontend
- Transport; Fri, 26 Jul 2024 18:45:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL02EPF00021F68.mail.protection.outlook.com (10.167.249.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 18:45:04 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 26 Jul
- 2024 13:45:04 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 26 Jul 2024 13:45:03 -0500
-Message-ID: <0b1be7b7-e65b-8d8e-0659-388dec303039@amd.com>
-Date: Fri, 26 Jul 2024 11:45:03 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Fri, 26 Jul
+ 2024 18:46:12 +0000
+Received: from CH2PEPF00000147.namprd02.prod.outlook.com
+ (2603:10b6:610:4c:cafe::cf) by CH2PR10CA0013.outlook.office365.com
+ (2603:10b6:610:4c::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
+ Transport; Fri, 26 Jul 2024 18:46:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF00000147.mail.protection.outlook.com (10.167.244.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 18:46:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
+ 2024 11:45:57 -0700
+Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
+ 2024 11:45:56 -0700
+Message-ID: <f5aeeea3-1b6f-4ace-b346-b6650d6937a4@nvidia.com>
+Date: Fri, 26 Jul 2024 11:45:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] bitmap: Rename module
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, "Rasmus
+ Villemoes" <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<kees@kernel.org>, David Gow <davidgow@google.com>
+CC: <kernel@collabora.com>
+References: <20240726110658.2281070-1-usama.anjum@collabora.com>
+ <20240726110658.2281070-3-usama.anjum@collabora.com>
 Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<kvm-ppc@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Saravana
- Kannan <saravanak@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas
- Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S
-	<kowsjois@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>
-References: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
- <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
- <a6c92c73-13fb-8e9c-29de-1437654c3880@amd.com>
- <20240723162107.GA501469-robh@kernel.org>
- <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com>
- <CAL_JsqJjhaLFm9jiswJTfi4yZFYGKJUdC+HV662RLWEkJjxACw@mail.gmail.com>
- <ac3aeec4-70fc-cd9e-498c-acab0b218d9b@amd.com>
- <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <d20b78cd-ed34-3e5a-0176-c20ee5afd0db@amd.com>
- <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <CAL_JsqJAuVexFAz6gWWuTtX1Go-FnHe6vJapv0znHBERSCtv+Q@mail.gmail.com>
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20240726110658.2281070-3-usama.anjum@collabora.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F68:EE_|DS7PR12MB6007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27ef26d3-52f8-478c-63a7-08dcada31091
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000147:EE_|MW6PR12MB8867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03f5612c-9c4f-459c-776d-08dcada338a8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026;
+	BCL:0;ARA:13230040|7416014|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UkIvQmpQT2lQNzlLNkNJVVpveWtSTjNEYnBIaXVjWmRLVUhiUWpITzg2RDJp?=
- =?utf-8?B?Q2s3WTkwbGRudS9xK3dhV3l2UEs0OW1MOUdDREorMExHa0Q0ejNaaCt4dFZy?=
- =?utf-8?B?SmJuQjFOUG45SXUyV29qRWtna3A4MDcrZ0ZHTnRreTB6ekNCaURyWmJ0YnZy?=
- =?utf-8?B?UmJoc3J5UGZ1TXBmT0NwbVJWOERuWkl4ejlrZHFiODNSSjh5N0pkcnAxUFNl?=
- =?utf-8?B?NUFlejljcFJFdElST1BCNXJkN3ZMb0NnUzFPWlZEUEJSUXpTNERoREcyQWl0?=
- =?utf-8?B?Y1NLeUlCTm5FaUtvMlNiN3VOdjN6WTZFUFlIWENPSDl1NjBhOENhaEtnWGNB?=
- =?utf-8?B?Z2RIdWRsMjF1cjk1MWpxNFgySTV4OWIzaHlxV2xTL1ZVVFhvNGZORlRMQkZI?=
- =?utf-8?B?R3ZieFpaRG8rdG5sT29YQk54bVZpOHg5MDkrUzB5SGRrYk9pVitycVRuTVRr?=
- =?utf-8?B?UmRsbmE5L25DajZYNlZDS0RyOVhsc1ZONVQrTmtBSUpzWDh0OEczUURhU1Rm?=
- =?utf-8?B?aDNnRlFaNHlsN2ZIbHJlZDMybldrSk1tdk5ScUJDMk9RUk5aV3M1dWdmNmxC?=
- =?utf-8?B?MjZ4LzVnZkwweG1vbXUrbnVYakQxKzdrM00wYzhNU3FibE9JdXQvaUkycjhX?=
- =?utf-8?B?clR5azlJL0tMWHUvRFV1ck9FMHorRzNrSDJwVUx4L0FUSnczOVlOV3JXQ0x1?=
- =?utf-8?B?bDM3bnAybFFMZHJBQTl2dkx0M200N2c3aDdpYmJUSU92TjBKRmlZTkxLUSs3?=
- =?utf-8?B?NlNyd2tEMEZvT2Ztb2pxRTc3TzFXVnhRYjliaEk5UWxHd1Y2RDRrVmIrT0s2?=
- =?utf-8?B?UFdMcVQveXJYRytmL0pWQ3BrY0FPdEgxMmxNRzZoY29mYkY0bkk5MlRIVWJt?=
- =?utf-8?B?dllEMHpoRTRHclQ0THlJZFg3dmFweW5ocnd2T3k4Z1BpVno1VkxCNWRRK2d3?=
- =?utf-8?B?SEFwWHBaZHZOVjA1UmpJOEtuMFpXR1ZlS094djIvM3VERVJsTFRGd2NORDl2?=
- =?utf-8?B?Y1NoVnVBdzNwUUxGcVpyaS9XMHk4clFXYzJvOWtXMER6Q2FaTmZQUExxTDlS?=
- =?utf-8?B?Q2FEY1YveEg3MWkzNmhkQkErMVJqVmlEWkR2UUhBenZobWJBay9nQlZIbFh4?=
- =?utf-8?B?eFp2TEJ1TTZBc1N2MHU5b3ovTEl6b29DQUhpOVBtei9GcU1Fd2NUSk96dDJk?=
- =?utf-8?B?OGJwWVh0YjNjV0U1eXF5TDNhSXVLbGNFYVVEYkdDcU8vc1lrcmNEaStPRFk3?=
- =?utf-8?B?cUhlei9qNUwyRVpLdUtVc3lOTzQ5SGp2eUEyallXcTBiTVpvQVp0VVFwUHU4?=
- =?utf-8?B?aXRJVWVkckVRRFZ6N0w4SUtSMkE2dUhxbjhMYy9acm1DalRSSDlVZmtBVnVy?=
- =?utf-8?B?Wm1FZ1FFa1BXeGF1eE1KK1k2SDIrOWowWWdER0ora1hBUEJyUzN4azdwYXpC?=
- =?utf-8?B?dWpYTTNhZm9jRWRHYUkyVm1QaTBua1RrWkF4aWpoNVlDamhqQ0ltNkZGRGtS?=
- =?utf-8?B?K3FHK1ZjNXliRGExclFTTnlhMk1CTjFqSjMraHIrSXArSzdLMk9HM1BySk9w?=
- =?utf-8?B?NkJOeXdVQlkxaW02bU14UzlKNlF4UkxhcnAxQ1NOSE5DeW5VbmhCUWhmc1pZ?=
- =?utf-8?B?ZUY0ZmN1L0M1OUwxb3djY2hMYlV5ZHI3akh5WlBwRDU3c2NkY2dveXVzNTZu?=
- =?utf-8?B?SkM2dGkzbXo5MjZsa05YNm1FZlNIbmM5UTlKeFFRcEdFcEcwRlBXZ255T2h1?=
- =?utf-8?B?WEViMWxacHJHc3IzN3hQN0NRSnVTMnUzMnhNamFXeVV3UTNIY1pIWVZtTFVq?=
- =?utf-8?B?MEhnaEZ6S1FMNGFScU1qWDhoRXIvck1VZWdzY3ZTVVFrYkZWNEV2RERrMmg0?=
- =?utf-8?B?YkV2SjFETjJMdUE1TTNPZnluRFNMak0rblVzRlVxbUNrc1lzTGpGTENtdmE0?=
- =?utf-8?Q?KoEdZ61qaTS6vyl77i5vjULStD4RrfVQ?=
+	=?utf-8?B?ZDBhM2lBZDFKd1ZsTG9GMW02UHUvNjJjWkR1U2tIQjY1WisyUUN1U0h3d0gz?=
+ =?utf-8?B?MExuZXdzLzR1eHkxQWtkbnJlQUNKYUcwanlwMlpZdksyQjZTbXg2RCthZWZN?=
+ =?utf-8?B?ckZ6cU16MVNZVWJrbjdVTjJubmlYcjRZTkxiN3hXMW9mai9JWXBwNVN0UEZT?=
+ =?utf-8?B?Y2ova0JGSmhHUk9acjRiMWlNTUtHQTEvMUFieEJiNlhJNW0vaUNKOVoyN2Q5?=
+ =?utf-8?B?cDdKM2s4eFVjWmxBSVhYNmkwSXUycEdCWHZSR2tDZlZZUGlwa0E1RXpvTy9H?=
+ =?utf-8?B?U1hJRDJMY0tJSzlmZFdST0RtU0J4NW51a0NaZ1R6bjcwUmhGeFRwdEJKUXEr?=
+ =?utf-8?B?VlFPQmJJVUo4ak12MFJTenVOUDhvWXF5N3Z2djNnKzB1YlJFUXBlVXJOTFdQ?=
+ =?utf-8?B?SGFyd3lrS3pHVmkxcmhwbDI4WWFKYjJFR1lpcUtvQUtCY0VmUXZEUHpwQlpW?=
+ =?utf-8?B?R0dmS0lXcUFNLzJDOFZPQnAyZUUyY08rK2ZjbkhXa1ZZcTRvMTJzaXpQeDZK?=
+ =?utf-8?B?L2hmTUUvMDVleU1Ga0lEb3VBRy9yeTFQTnhQa2NyNHhiMXhPcU41dHdVdk1F?=
+ =?utf-8?B?b2pLbTIwbGl4alpkOU5NVzNYK3doN0V1TkVFa01NQVNobEJwWVMzNG16N0lP?=
+ =?utf-8?B?Q1R6Qmx0R002cFN6SEl5QlJmelVDOUx1cFkveU1IY093Uyt1NmZmZDB4V1BE?=
+ =?utf-8?B?enA2aGpYR2pQQjhQWjcvM2g2dXR6OHhGdU9DNUVOOXRFdnVweHBaS3JERlRq?=
+ =?utf-8?B?cGtaOXZHeTZ4d010T3V4U0JkSExNTDJ6L3FVaGtVeDYyalRsRzRTSW5pVnhT?=
+ =?utf-8?B?ZWhXRWR0WHNnN0o0WHRmMXFBeEgxLzFLR0V6OEFBRXhzNzV5MVJPVGhGRzR1?=
+ =?utf-8?B?R0oyUGdyblN1YUt5dWZCaE5CekpKUmVUUGV2d2hLMkV6QURXcThkaDVMSENz?=
+ =?utf-8?B?MEZtNStoa0tuMHRYR2thVkZ0aU9ROTFYMWkyV1NYOUc1a2F2K29QSERNOW9t?=
+ =?utf-8?B?bkxhYUJEWHJEUVY2WXNuUlVTVk9wenByUGtQNTJLaGlLK3FQTUo2bUI1T1FM?=
+ =?utf-8?B?VzB0K1AvVzRWM0kxNmxWRk11MWk4RWY3RTg5T2thblVUbDNySXpOVm1qeUMz?=
+ =?utf-8?B?VDdGL055Mmg1cHNGWXN2dzdwWGQycnZiM3kzazVQVFBncTJEbVN4STlJa2R3?=
+ =?utf-8?B?bkdoZnRaWHI1L21ULy9YYkhOUDRtWGprWlBYWUNPOUtmK0JrUDVFNnY0UmIz?=
+ =?utf-8?B?bW9ZUzZmOHVRbXNMT0pXNHBLYld2Lys0L0tkU2J6MjBQcDh3MUVsL1Q2ck9U?=
+ =?utf-8?B?ZmZUT0xwbHpUQzlYYytYWjNJK0VHNVNpY2JjRm5uREY2WlVqMDZUNDJ0VnFh?=
+ =?utf-8?B?RFo3Q2d4MXRPVHN0c2Jhb21Lc1VZSFZKblVnREkyd0R0ekFUT213MmRKSlhR?=
+ =?utf-8?B?ZUhRRUt6QUlhaTd0NzV0UnN3Nmc5cTl1R0VHWE5sTFhnY1B5M1pLcHlFNEFx?=
+ =?utf-8?B?TDJ5TmZjS3VkNWtrOGhuV3hGSzNENk5RQ0FJQkU3WHQzK0NrTkRIdThtN3lo?=
+ =?utf-8?B?WVNodkFKdlFxalo3WkdYcUx2ZWFkaFRPdVdrMC80UENVQlNoWllFUC95eHhp?=
+ =?utf-8?B?S0krQ2IzQmNIeHFhRnNsY3RCb2tjSHZFQ0NPcXQxMUQwZTV1M3dyMXZqVG50?=
+ =?utf-8?B?SCswNGZoZTRUUXBFeUJJbk16dDloRzZuS1VGR0dKbHZ4UEJmcmRFMzZicGdJ?=
+ =?utf-8?B?VmdhSHh2L0J2cUcrSllHQ0dqckY3TWRtUHlGck4ybEIzSERneG1UODRoNmlI?=
+ =?utf-8?B?bzJaeG1xL0lYKy95T0ljWmc4ODVsK2FJdlY2MnFxUEFZQTdlM25OWjVrZlQv?=
+ =?utf-8?B?MzdmVDRsYkk2dlgwSjR6Ylpjdi9YSWpKTkdkczNqcFBiQSs4SWpDNTBwSXZR?=
+ =?utf-8?Q?wsSJaapyoWb1qCY/7nA3PgWmJhQAVY3O?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 18:45:04.8224
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 18:46:12.0357
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27ef26d3-52f8-478c-63a7-08dcada31091
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03f5612c-9c4f-459c-776d-08dcada338a8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F68.namprd02.prod.outlook.com
+	CH2PEPF00000147.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6007
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8867
+
+On 7/26/24 4:06 AM, Muhammad Usama Anjum wrote:
+> Rename module to bitmap_kunit and rename the configuration option
+> compliant with kunit framework.
+> 
+> Cc: kees@kernel.org
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   MAINTAINERS                           |  2 +-
+>   lib/Kconfig.debug                     | 15 ++++++++-------
+>   lib/Makefile                          |  2 +-
+>   lib/{test_bitmap.c => bitmap_kunit.c} |  0
+>   4 files changed, 10 insertions(+), 9 deletions(-)
+>   rename lib/{test_bitmap.c => bitmap_kunit.c} (100%)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 12b870712da4a..289b727344d64 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3814,13 +3814,13 @@ F:	include/linux/find.h
+>   F:	include/linux/nodemask.h
+>   F:	include/linux/nodemask_types.h
+>   F:	include/vdso/bits.h
+> +F:	lib/bitmap_kunit.c
+>   F:	lib/bitmap-str.c
+>   F:	lib/bitmap.c
+>   F:	lib/cpumask.c
+>   F:	lib/cpumask_kunit.c
+>   F:	lib/find_bit.c
+>   F:	lib/find_bit_benchmark.c
+> -F:	lib/test_bitmap.c
+
+This changes the situation from "works for Linus' tab completion
+case", to "causes a tab completion problem"! :)
+
+I think a tests/ subdir is how we eventually decided to do this [1],
+right?
+
+So:
+
+     lib/tests/bitmap_kunit.c
 
 
-On 7/26/24 10:52, Rob Herring wrote:
-> On Thu, Jul 25, 2024 at 6:06 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
->> Hi Amit,
->>
->>
->> I try to follow the option which add a OF flag. If Rob is ok with this,
->> I would suggest to use it instead of V1 patch
->>
->> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->> index dda6092e6d3a..a401ed0463d9 100644
->> --- a/drivers/of/dynamic.c
->> +++ b/drivers/of/dynamic.c
->> @@ -382,6 +382,11 @@ void of_node_release(struct kobject *kobj)
->>                                  __func__, node);
->>           }
->>
->> +       if (of_node_check_flag(node, OF_CREATED_WITH_CSET)) {
->> +               of_changeset_revert(node->data);
->> +               of_changeset_destroy(node->data);
->> +       }
-> What happens if multiple nodes are created in the changeset?
-Ok. multiple nodes will not work.
->
->> +
->>           if (node->child)
->>                   pr_err("ERROR: %s() unexpected children for %pOF/%s\n",
->>                           __func__, node->parent, node->full_name);
->> @@ -507,6 +512,7 @@ struct device_node *of_changeset_create_node(struct
->> of_changeset *ocs,
->>           np = __of_node_dup(NULL, full_name);
->>           if (!np)
->>                   return NULL;
->> +       of_node_set_flag(np, OF_CREATED_WITH_CSET);
-> This should be set where the data ptr is set.
+[1] https://lore.kernel.org/20240724201354.make.730-kees@kernel.org
 
-Ok. It sounds the fix could be simplified to 3 lines change.
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 51e3dd0ea5ab..0b3ba1e1b18c 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -613,7 +613,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
-         struct device_node *np;
+>   F:	tools/include/linux/bitfield.h
+>   F:	tools/include/linux/bitmap.h
+>   F:	tools/include/linux/bits.h
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index a30c03a661726..6bb02990a73e7 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2420,13 +2420,6 @@ config TEST_PRINTF
+>   config TEST_SCANF
+>   	tristate "Test scanf() family of functions at runtime"
+>   
+> -config TEST_BITMAP
+> -	tristate "Test bitmap_*() family of functions at runtime"
+> -	help
+> -	  Enable this option to test the bitmap functions at boot.
+> -
+> -	  If unsure, say N.
+> -
+>   config TEST_UUID
+>   	tristate "Test functions located in the uuid module at runtime"
+>   
+> @@ -2813,6 +2806,14 @@ config USERCOPY_KUNIT_TEST
+>   	  on the copy_to/from_user infrastructure, making sure basic
+>   	  user/kernel boundary testing is working.
+>   
+> +config BITMAP_KUNIT_TEST
+> +	tristate "KUnit Test for bitmap_*() family of functions"
+> +	depends on KUNIT
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  This builds the "bitmap_kunit" module that runs tests for
+> +	  bitmaps int the kernel making sure that there isn't any bug.
+> +
+>   config TEST_UDELAY
+>   	tristate "udelay test driver"
+>   	help
+> diff --git a/lib/Makefile b/lib/Makefile
+> index 322bb127b4dc6..37e7359a7065e 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -84,7 +84,6 @@ obj-$(CONFIG_TEST_DYNAMIC_DEBUG) += test_dynamic_debug.o
+>   obj-$(CONFIG_TEST_PRINTF) += test_printf.o
+>   obj-$(CONFIG_TEST_SCANF) += test_scanf.o
+>   
+> -obj-$(CONFIG_TEST_BITMAP) += test_bitmap.o
+>   ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_KASAN),yy)
+>   # FIXME: Clang breaks test_bitmap_const_eval when KASAN and GCOV are enabled
+>   GCOV_PROFILE_test_bitmap.o := n
+> @@ -388,6 +387,7 @@ CFLAGS_fortify_kunit.o += $(DISABLE_STRUCTLEAK_PLUGIN)
+>   obj-$(CONFIG_FORTIFY_KUNIT_TEST) += fortify_kunit.o
+>   obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
+>   obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
+> +obj-$(CONFIG_BITMAP_KUNIT_TEST) += bitmap_kunit.o
+>   
+>   obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
+>   
+> diff --git a/lib/test_bitmap.c b/lib/bitmap_kunit.c
+> similarity index 100%
+> rename from lib/test_bitmap.c
+> rename to lib/bitmap_kunit.c
 
-         np = pci_device_to_OF_node(pdev);
--       if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-+       if (!np || !of_node_check_flag(np, OF_CREATED_WITH_CSET))
-                 return;
-         pdev->dev.of_node = NULL;
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
-@@ -672,6 +672,7 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
-         if (ret)
-                 goto out_free_node;
-
-+       of_node_set_flag(np, OF_CREATED_WITH_CSET);
-         np->data = cset;
-         pdev->dev.of_node = np;
-         kfree(name);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index a0bedd038a05..a46317f6626e 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -153,6 +153,7 @@ extern struct device_node *of_stdout;
-  #define OF_POPULATED_BUS       4 /* platform bus created for children */
-  #define OF_OVERLAY             5 /* allocated for an overlay */
-  #define OF_OVERLAY_FREE_CSET   6 /* in overlay cset being freed */
-+#define OF_CREATED_WITH_CSET    7 /* created by of_changeset_create_node */
-
-  #define OF_BAD_ADDR    ((u64)-1)
-
-
-Lizhi
-
->
-> Rob
 
