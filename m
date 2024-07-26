@@ -1,109 +1,219 @@
-Return-Path: <linux-kernel+bounces-263299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D3E93D3F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7029093D3F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015471F24B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BCE11C2305E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FAB17C213;
-	Fri, 26 Jul 2024 13:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A6617BB09;
+	Fri, 26 Jul 2024 13:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UldgrY9h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="cRaeqQwA"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FAB13A3F7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E98B13A3F7;
+	Fri, 26 Jul 2024 13:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999786; cv=none; b=qaGINwhKd5BXillC1pxoxg/DEIZH+wQkQqLcr1cFyo2eGf1ZluoPbFzE4FZqQywlEVOSy+AlUDH8rXr4XYYiDtngzDtF6Mfb7HLD0cW6Jao+xYnHULwRz+qB61W7+fbQNQA2cs5IlZI7XeDX/8FYowah2g2UbGTB0j8UB1eDLK0=
+	t=1721999772; cv=none; b=SPlwV1I9ifYOhaWYsgCq49jC07PHgX5DfjqgvQkhpElAoSOTau1oIyJIWh6WWd+I2IyLGSPJ9kdalTCYjhtIqS3gnL739Ja8sr5usBIpl+CJmw8MI3lzxc8PIETQfIW4c/dI1kH5XPX8yIZceCdvTv3WUJYapLrfF26ciGGlkxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999786; c=relaxed/simple;
-	bh=xmKf9omwUxucT1oeRkAGbgWNHALpXShtwR2JSwaiBgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=G8kjMJLZFFAQHRd0KESXgIjvtu6QSPwmkV1bQLUjbqu9CpuNanp2YVsDPqOVjG+TQYMrCxKTYn0TCgB1fCPUNxNU6LZO8Hdlf8t/T5NbjohNVG6H+rIVdVTKVAKT+nEcAicpsFU72cdI9gpVeDFJHYiog2tUW2UwWvJ1CGveynA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UldgrY9h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721999783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+Xb2FoYdB0d76xIYmgmvNy/BmZ9+wOzI/YfNgYKqlo=;
-	b=UldgrY9h4raN3oKBJQ1WArLmBAH9YOgPrXETU15x6/S0SvEzStRrMT2zqxvR4xCzPwkyfb
-	WzDupIqjHXzhqr5oC0ZsLKl9lPspwVB0JFgtuTPHf4nMy8gckp7WLWZ/NENWZ652zT7jRz
-	bZxoqv8pd5aJl6NmE7q2dRJfjNCdBDs=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-296-EoRgXg6QOyytad3d8_ddmw-1; Fri, 26 Jul 2024 09:16:22 -0400
-X-MC-Unique: EoRgXg6QOyytad3d8_ddmw-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f0276170f9so12456201fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:16:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721999780; x=1722604580;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+Xb2FoYdB0d76xIYmgmvNy/BmZ9+wOzI/YfNgYKqlo=;
-        b=xUvE/tirATUxOAMorw0ILI1o38UzZmc5CSad2SagF3dESqO0J8py2sf6ItW8wlBMg6
-         JFzryhypScMa00Qo3t/JZhjxkNwDyFVIw99ek1sUHFGdTOMof36ZG2vNA08W7O5/k3VO
-         SyUWwiGpEgY/6cLTxP26AgKJcGPd0WksD7mhKZalwbuqx0LRi0suH2ns/oFVZe5vS31g
-         OZf2bmOdGJAyk6TAdu5peDL47Za/KiAYZqpE4EQz24gAK+d40tApqlyJ7olO0KNsni1d
-         zuo8XQpO6LcLtm8gxOYjBXSlAybBT2OnwJnpc3Hn17WhTyzJrvas98ieHRsADGphzNJj
-         gdbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjrBc0gkLnXRRFISIcbiJktJ42k3qUM4x8tRRKFmOuDCynJemsAfFzyH6fGtKE++I0O1iZpqMDkjSfoAoXEusIt+isXBrkDKtjfDgW
-X-Gm-Message-State: AOJu0Yw43rvzFZLsh31ZTwGuNcP+HuRC+aH7aRuZfEHd91tU52xW7HXy
-	tJGV8dONucvOvWXy2XnwVq620u/RZdOYI/l00KOjozdwCq25Cp8zcF2RoRTm0A9F1RoL7XFQgp3
-	Z0nJzqnoKxnWZLSRFhO3v+r/+O6VLr6IKhvZek8PhbLTSr86fows4MkuuoXh0ybzx90L12hd1rt
-	+vi4YRSVuNUYyOhMGoz23NvgazDNeYDq10uPWX
-X-Received: by 2002:a2e:8ec5:0:b0:2ef:22e6:233f with SMTP id 38308e7fff4ca-2f039c9862amr40567681fa.21.1721999780757;
-        Fri, 26 Jul 2024 06:16:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENkd152LdcVGYZFsu1bzI6uLueRTD0erDZebrYWI+gUvt514koc5pNhArM6ncFt9ikhIn1ddo0wjWm/mrfZK0=
-X-Received: by 2002:a2e:8ec5:0:b0:2ef:22e6:233f with SMTP id
- 38308e7fff4ca-2f039c9862amr40567411fa.21.1721999780306; Fri, 26 Jul 2024
- 06:16:20 -0700 (PDT)
+	s=arc-20240116; t=1721999772; c=relaxed/simple;
+	bh=7rnOQsXWMQ8UjsklPiSOfWLaziMmc0aWK2YMvDmOO3g=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nRpny21mV70+OCRRnV7r2DOqfcpCFdUuys5w46Jqz3Vn16li3TY1SnupV6nEODQVGxbGuq2ozvohqR8ho82Nfnh5a8RtPDSgPTOYN04xN0E030xk7p6SYC1H87uMOpFwKW6tNoD5+zWDnMyAaUWt6tChyrbnEz7pIsB2EGn5bg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=cRaeqQwA; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46QDFh9R2569478, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1721999743; bh=7rnOQsXWMQ8UjsklPiSOfWLaziMmc0aWK2YMvDmOO3g=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=cRaeqQwAw3ipM5vVy/WSm4u6UNDKSxqlWVe9UR59hyawXmS0q98lr3Q10hiSN1Ez0
+	 bKQ7bcN4BoKNGDI3hrbmYbe1AA9E2ckTOyl7vbcWzLakSeVvTXaS8Qm8jX62vlQFTB
+	 pXCFd5zwVKKWYuEfK/1ahvL2IWimRmEAPYOXPrBt1MZzSjkNeCSN/yHGqEVLRoANtZ
+	 lUkWsyxArHnyvbHMM5vf8uGk/A3b2ZyX2BJPwNe0Bj+txy2jeDFpGVjL9iesYBD/pl
+	 XqkWm+m09wZEUIeEm+/fFAfpH7P6Vl0TY7R25JDjuT/lvk7LJ2cQHJQ1ByjopLlcOK
+	 a9Q6lz2exAsUg==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46QDFh9R2569478
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 21:15:43 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 26 Jul 2024 21:15:44 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 26 Jul 2024 21:15:43 +0800
+Received: from RTEXMBS01.realtek.com.tw ([fe80::2c08:7dc1:82be:6c38]) by
+ RTEXMBS01.realtek.com.tw ([fe80::2c08:7dc1:82be:6c38%5]) with mapi id
+ 15.01.2507.035; Fri, 26 Jul 2024 21:15:43 +0800
+From: Ricky WU <ricky_wu@realtek.com>
+To: Avri Altman <Avri.Altman@wdc.com>,
+        "ulf.hansson@linaro.org"
+	<ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "ricardo@marliere.net"
+	<ricardo@marliere.net>,
+        "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>
+Subject: RE: [PATCH 0/4] Add support SDUC for Realtek card readers
+Thread-Topic: [PATCH 0/4] Add support SDUC for Realtek card readers
+Thread-Index: AQHa2Z0rVxamUGlCx0OwfDDJuTfD97IIDJgAgAD42gA=
+Date: Fri, 26 Jul 2024 13:15:43 +0000
+Message-ID: <9e73388ac2ca40fbb31ad2c3c7a09ced@realtek.com>
+References: <20240719053314.1636649-1-ricky_wu@realtek.com>
+ <DM6PR04MB657501EF884BAAC24446E8A1FCB42@DM6PR04MB6575.namprd04.prod.outlook.com>
+In-Reply-To: <DM6PR04MB657501EF884BAAC24446E8A1FCB42@DM6PR04MB6575.namprd04.prod.outlook.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725013217.1124704-1-lulu@redhat.com> <ZqKKaLdn3DBr7WrK@LQ3V64L9R2>
-In-Reply-To: <ZqKKaLdn3DBr7WrK@LQ3V64L9R2>
-From: Cindy Lu <lulu@redhat.com>
-Date: Fri, 26 Jul 2024 21:15:41 +0800
-Message-ID: <CACLfguUORsgxmya8v2shsS5mJ3iZpxu6zv-fGsw9ZS2uwFFPWw@mail.gmail.com>
-Subject: Re: [PATH v6 0/3] vdpa: support set mac address from vdpa tool
-To: Joe Damato <jdamato@fastly.com>, Cindy Lu <lulu@redhat.com>, dtatulea@nvidia.com, 
-	mst@redhat.com, jasowang@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 26 Jul 2024 at 01:25, Joe Damato <jdamato@fastly.com> wrote:
->
-> On Thu, Jul 25, 2024 at 09:31:01AM +0800, Cindy Lu wrote:
-> > Add support for setting the MAC address using the VDPA tool.
-> > This feature will allow setting the MAC address using the VDPA tool.
-> > For example, in vdpa_sim_net, the implementation sets the MAC address
-> > to the config space. However, for other drivers, they can implement their
-> > own function, not limited to the config space.
->
-> [...]
->
-> Nit: the subject line has misspelled PATCH as PATH
->
-> I believe net-next is still closed so this code needs to be resent
-> when net-next is open again in a few days.
->
-sure,will fix  this
-thanks
-cindy
+Hi Ulf, Gregkh and Arnd
+
+Please withdraw this patches.
+I am cooperating with Avri and will have a new patch for SDUC.
+It will more readable, complete and suitable for mmc
+
+Ricky
+
+> -----Original Message-----
+> From: Avri Altman <Avri.Altman@wdc.com>
+> Sent: Friday, July 26, 2024 2:14 PM
+> To: Ricky WU <ricky_wu@realtek.com>; ulf.hansson@linaro.org;
+> linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> ricardo@marliere.net; gregkh@linuxfoundation.org; arnd@arndb.de
+> Subject: RE: [PATCH 0/4] Add support SDUC for Realtek card readers
+>=20
+>=20
+> External mail.
+>=20
+>=20
+>=20
+> Hi,
+> > Summary:
+> > this patch is for mmc to support SDUC(Secure Digital Ultra Capacity)
+> > and add Realtek Cardreaders to support it
+> >
+> > About SDUC:
+> > SDUC is defined in SD7.0 spec, it support the max capacity is 128TB[1]
+> >
+> > Roughly implemented functions by this patch:
+> > 1.Mutual identification of SDUC in ACMD41 initialization (5.2.1[2])
+> > 2.SDUC card user area capacity calculation (5.2.2[2]) 3.Memory
+> > read/write commands sequence (5.2.3[2]) 4.Erase Commands Sequence
+> > (5.2.4[2])
+> >
+> > patches:
+> > patch#1: Defined functions and modified some type of parameter
+> > patch#2: For mmc to support SDUC
+> > patch#3: Add Realtek sdmmc host to support SDUC
+> > patch#4: Add Realtek card readers to support SDUC
+> I think that the way you organized your code makes it very hard to review=
+.
+> I would like to propose rearranging your code in a more readable form.
+> E.g. something like:
+>=20
+> 1) mmc: sd: SDUC Support Recognition:
+> Explain how ACMD21 was extended to support the host-card handshake during
+> initialization.
+> Also, make it clear, e.g. in your commit log that if a SDUC card is inser=
+ted to a
+> non-supporting host, it will never respond to this ACMD21 until eventuall=
+y, the
+> host will timed out and give up.
+>=20
+> 2) mmc: sd: Add SD CSD version 3.0
+> Add here the require changes in core/bus.c, core/card.h, and csd ver 3 in
+> mmc_decode_csd().
+>=20
+> 3) mmc: sd: Add Extension memory addressing Add in core/sd_ops.c
+> mmc_send_ext_addr() so you'll be able to call it in open-ended rw, erase,=
+ etc.
+> Here it's a good place to explain the general idea of the new CMD22.
+>=20
+> 4) mmc: core: Add open-ended Ext memory addressing Call
+> mmc_send_ext_addr() for open-ended rw
+>=20
+> 5) mmc: host: Always use manual-cmd23 in SDUC
+> 6) mmc: core: Add close-ended Ext memory addressing
+> 7) mmc: host: Add close-ended Ext memory addressing Those 3 patches will
+> facilitate close-ended rw.
+> It should be IMO or any SDHCI and not just for RealTk's.
+> Once the driver is in place, SDUC support doesn't require specific hw
+> characteristics from the host controller.
+>=20
+> 8) mmc: core: Add Ext memory addressing for erase
+> 9) mmc: core: Allow mmc erase to carry large addresses Make the require
+> changes to support erase
+>=20
+> 10) mmc: core: Adjust ACMD22 to SDUC
+> Make the adjustments in ACMD22.
+>=20
+> I also think that there are some specific issues with your implementation=
+, But it
+> would be easier to discuss those once the patches are in a more readable
+> form.
+>=20
+> Thanks,
+> Avri
+>=20
+>=20
+> >
+> > Reference:
+> > [1] SD Specifications Part 1 Physical Layer Specification Version 7.00
+> > [2] SD Specifications SDUC Host Implementation Guideline Version 1.00
+> >
+> > Ricky Wu(4):
+> >  mmc: core: some definitions and type modifications for SDUC
+> >  mmc: core: add SDUC init rw erase flow to mmc
+> >  mmc: rtsx: make Realtek sdmmc to support SDUC
+> >  misc: rtsx: add Realtek card readers to support SDUC
+> >
+> >  drivers/misc/cardreader/rts5227.c |  1 +
+> > drivers/misc/cardreader/rts5228.c |  1 +
+> > drivers/misc/cardreader/rts5249.c |  1 +
+> > drivers/misc/cardreader/rts5260.c |  1 +
+> > drivers/misc/cardreader/rts5261.c |  1 +
+> > drivers/misc/cardreader/rts5264.c |  2 +-
+> >  drivers/mmc/core/block.c          | 13 +++++++--
+> >  drivers/mmc/core/bus.c            |  4 ++-
+> >  drivers/mmc/core/card.h           |  3 ++
+> >  drivers/mmc/core/core.c           | 38 +++++++++++++++++--------
+> >  drivers/mmc/core/core.h           |  6 ++--
+> >  drivers/mmc/core/host.h           |  5 ++++
+> >  drivers/mmc/core/queue.h          |  1 +
+> >  drivers/mmc/core/sd.c             | 47
+> +++++++++++++++++++++++++++++++
+> >  drivers/mmc/host/rtsx_pci_sdmmc.c |  6 ++++
+> >  include/linux/mmc/card.h          |  2 +-
+> >  include/linux/mmc/core.h          |  1 +
+> >  include/linux/mmc/host.h          |  1 +
+> >  include/linux/mmc/sd.h            |  5 ++++
+> >  include/linux/rtsx_pci.h          |  1 +
+> >  20 files changed, 121 insertions(+), 19 deletions(-)
+> >
+> >
+> > --
+> > 2.25.1
 
 
