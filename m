@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-263175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A3293D234
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7C293D239
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4101F23CC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29651F21BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0239417A581;
-	Fri, 26 Jul 2024 11:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A5917A5A5;
+	Fri, 26 Jul 2024 11:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsqgcODR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJoVgG61"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285AD1B27D;
-	Fri, 26 Jul 2024 11:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5C617A584;
+	Fri, 26 Jul 2024 11:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992939; cv=none; b=hbfLUC0vVkqImsnY14+pA1Olfxeulz9vTcyACWVxDFcODworIvmuf3b9d/aH4Epp4Dz+HWxSjQVplcKwcaZc6KhWdLjoTHoYwHYSzOA2SQiDGi1+3JJiOidg4wpXlgG6onnLETrEPSIdVvM+2FBZaO27jTbeMGsPWPZ36HtKUmc=
+	t=1721993181; cv=none; b=cwtzEJTzPG4H0zPea29EX2CaCDn0WlWblf67MppjwfM6SS19ylfzVSxEgc3K4U9dWye4kOjzAKEYRUPQmjtIRLB/SCKzJ6icgoR96IKUOxfXyFDSHKVf9vNu/ojAyvY7v6qCPiQMQ7BfPaIqgoD+g/Y7tWqOu7KUPz9w0A955dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992939; c=relaxed/simple;
-	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
+	s=arc-20240116; t=1721993181; c=relaxed/simple;
+	bh=88v3/9z4T868/Ez3TdBKIeUtjOglxDeCYcedMsjAw/g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFBEst0eEUqtlSxaBtzTsV658g18L3CEyKZabXgqb3K7g4mSqb2iVt0/0mqYQXMxAK5lC+oOWhFuU1YeKiri5zZAwBHCNX5THWZ5oVyApem2fhvTouDUFxAUMAAVY57Xrx29X2SKZQ1jBPMjS+S6WQLH4iPwsQaqJjDcSxXOkY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsqgcODR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC14C4AF07;
-	Fri, 26 Jul 2024 11:22:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MLHewitMe16vQLLLZqCwa+fA3LyTqGnqrv2ASLiJcYn6uj8qzlIaQ2+MeVS7qwdktNf9TQbB9Cx5MXW49aZJZviZj1tgd3tBD+sBgFigy0reR6hyE9NwDW/wgor1tgQfHomTcRXlmb6CQrplLhxYX4ALBvSHi8kAd2C7NcckSDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJoVgG61; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83355C32782;
+	Fri, 26 Jul 2024 11:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992938;
-	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
+	s=k20201202; t=1721993180;
+	bh=88v3/9z4T868/Ez3TdBKIeUtjOglxDeCYcedMsjAw/g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UsqgcODRr7BEYNATkMPqX37VLaBlKpF4SEU314vb4fXt6TLm27Z7xequ2g6pkWd9R
-	 Q+OZpKbacvzuPoS+kfXbO10nVr9hBkTzWvF5lxiTbJGzOHpXA1ql+CPxVBVSs3rwkk
-	 lTpBGE6U8fZfPzoRtkThJEyqbm865YtBL47aZu24H3r3x9DjKHs2SvzgbmhCnfkg/s
-	 FblC+9OY/19T2OgbG7jWvLaSpPiEw0/y4+PMyv1dn8ETmHZvkoQU8S+g8ELVb8p/3S
-	 VpDFkPfN79UMD+O7lGKonIQVSltQT6D3PF5pUe/LjUQtKp4U5ovcs5PjxYlOwjCjyH
-	 vHf2ssbAfULuw==
-Message-ID: <a783ddc2-6313-419d-936b-0af633c30aad@kernel.org>
-Date: Fri, 26 Jul 2024 13:22:10 +0200
+	b=BJoVgG611Iw9ZXW9nJqIC3dWy8nhr6oM1FkqRqfdFhwv8E5WO7EwgX+0iSKgRDdAf
+	 j0gNN9U3eGRd2Kel9ghMc216SXqfkfoU2Gt0j9rZ3ZNU6Np895HfStxkmjcd1gPDkv
+	 d6l7nkM14Dcqy6LNQCYKdQxKMhLoim/my0JFINAf+pNMtqsBe3a8M+yPEGYkhWjwGu
+	 BRc0VBlOFK7s2hZ/Qs8ruOlND7OZpCesLS7SeuXqWt11UXSSDJDWuIROBiz6gGGmIL
+	 jIFwBwQWqQVRl5b2B/nUxrq2M50gfd9mSaAsEQItD861XiFomP4IiXP6P1dInbnOjS
+	 SR7NxTGC1jMLw==
+Message-ID: <e7536c91-ea81-49df-838d-6627301c81e7@kernel.org>
+Date: Fri, 26 Jul 2024 13:26:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: Batch-update Konrad Dybcio's email
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
- <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
+Subject: Re: [PATCH v5 2/2] ARM: dts: aspeed: catalina: add Meta Catalina BMC
+To: Potin Lai <potin.lai.pt@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Patrick Williams <patrick@stwcx.xyz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
+References: <20240726-potin-catalina-dts-v5-0-8f02305af527@gmail.com>
+ <20240726-potin-catalina-dts-v5-2-8f02305af527@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,21 +105,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
+In-Reply-To: <20240726-potin-catalina-dts-v5-2-8f02305af527@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/07/2024 13:18, Konrad Dybcio wrote:
-> Use my @kernel.org address everywhere.
+On 26/07/2024 12:26, Potin Lai wrote:
+> Add linux device tree entry for Meta(Facebook) Catalina compute-tray
+> BMC using AT2600 SoC.
 > 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> Signed-off-by: Potin Lai <potin.lai@quantatw.com>
 > ---
 
-FWIW:
+Style review:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Rob, will you take it directly?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
