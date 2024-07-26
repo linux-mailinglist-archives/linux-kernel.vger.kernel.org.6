@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-262877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E4293CE2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E8093CE32
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0590D1C217E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A25282A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64997174EFA;
-	Fri, 26 Jul 2024 06:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86812174EC8;
+	Fri, 26 Jul 2024 06:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QImTnMM+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyr4r7RQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D44364DC;
-	Fri, 26 Jul 2024 06:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2210364DC;
+	Fri, 26 Jul 2024 06:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721975558; cv=none; b=AZMpG8HQdc9T7YzywPCgyGLlwKx92IE0/QIh0BxPt5Y83yNKy02LFMPV7EFpEcRkTJqiHoA7UE7tu4Q/QikeoZsu6D7B7YKJ+1J2bn66oM5NcwNNFIEHygGxk896+e1M8EpkWO1ZIY/RVWpKKEI5ufuGy/Wh48sad0ol46DXgBY=
+	t=1721975583; cv=none; b=Oh/5XF4KoizdYDgYQ6EvLF31lNLF/b4yli8xBt9trzQUtNErouDoNfx0ppET4qnZ43/l6N2/dP6gt06ej9cNmzO+bQYbaY5UI/cz6xJM0C4DTJ4vPV4h2wDo+dW+OMpuPvIMJtHllPYwcUk3SL5cOOIUIgpe1XEr9qbw9Ca3PUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721975558; c=relaxed/simple;
-	bh=fX/RmpxpLqVU0ZwFcYrip898jiqaVvWfds9fPGAMYyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cK82dRRGmngXPtNE/EnY0aD9YkCvlnEJaIroXhhQB8pY/4jJeGhniqKQjAlDtoFyrZ/2Bc/I8FNBLlTvVqNgnoZNq7+KUwM3FhQfA7cij1TsmQ5ZMnTuJNQR6NetE+NYH4ODxr1ffZnELCNtT6ft35p3lgNXwmVbezJgAAB1a24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QImTnMM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2B9C4AF0E;
-	Fri, 26 Jul 2024 06:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721975558;
-	bh=fX/RmpxpLqVU0ZwFcYrip898jiqaVvWfds9fPGAMYyY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QImTnMM+6dCkK2RXamL4qdnU4iiNYmwsEXSo1/PZxNqsvwIEVadXwvGm154J3mYWz
-	 pGx08b7FC6O34VQ5+mjvqSt4W2475nQGEfvlITmVI5bICBZZ6dmQcr1aad+S9DG5ju
-	 UU46AsQZzqTZJg78BG6/UAfnTQ40X0vpWvt/GkugvzLD6ALbNd+Lcby/cPqQRflaJU
-	 0yqB34U6AoPZaACrc7DNcMVyLA+MdpFrbSJ+4TcmNL5wNutb2kfGnJLR9gI2BegRAR
-	 iRkHRfO00GqnYA/YGtgGNDaVDV0fzK/KjJrdGJ3hfG0wJX0GW7u+0dMflGzTmgDrxz
-	 oEd+nOKCLwpJQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efa9500e0so1146711e87.3;
-        Thu, 25 Jul 2024 23:32:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLpViAM7QLiAj55BqGUZcqvz3vXDeNNzB/3C/jn6TEdohD23aG19773cIK8E2YfRQQupuPvVz++tJcfDBA9zSGiduqkAvxXfX75P+wycVk9fiySgBUV4TBelGcUSv3X8Ow
-X-Gm-Message-State: AOJu0YzMLkM8oudvkuBTLhzZdJ+k13zh4+fRy35gn16MUdnttkNd7qh1
-	IJZUI3Q25fDoD9SKshevlKIp5WJBkt73MWuViuyd/Wfb9l8I715CXFOh4p3FJY3FSVPJK8ZMbpR
-	bn7RBGxK/pDC3Y7bX8FfG8BzwEi8=
-X-Google-Smtp-Source: AGHT+IEbsWFdlyx5e6tE50U4RUretNlLHmWz33cPn1HP2NFpalZmhFOdO5lLwnhvf0kSGhuYk8rSbcPOUm+F569YkEY=
-X-Received: by 2002:a05:6512:3c8b:b0:52c:e047:5c38 with SMTP id
- 2adb3069b0e04-52fd602ad06mr3047042e87.15.1721975556511; Thu, 25 Jul 2024
- 23:32:36 -0700 (PDT)
+	s=arc-20240116; t=1721975583; c=relaxed/simple;
+	bh=LhmpSFRImNhxYoL4ax/b0424qCJAA3V6P/KQf12ysbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bU7XBAeiTmEPKwunIPqczltxG8vHwBqU+p67PMIRITmNkciD1oxWb1L8oG2o76B0/qx3CBVQFOAz9B4hBwFRRk3/nQVM9PPrM5VOP2ZSKubjbvanJuIn0QEDZ+fT2hqASN+PXJNEgoeSmkJoilLWME5P8hObyHMg/+zhEXpzQaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyr4r7RQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AA7C32782;
+	Fri, 26 Jul 2024 06:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721975583;
+	bh=LhmpSFRImNhxYoL4ax/b0424qCJAA3V6P/KQf12ysbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fyr4r7RQ75gZItslnwo2VMuQpShKw5/zjjrYPOsU2tI+J+5tQYPaSm1pHS1Sp5ZEe
+	 ZjsPiDlLZauPHW6ws5Muqwey2pIwtU0f7hvxVqYZvL2SWMuPKufITFentHFD2r4Pxl
+	 CWWHbN3BVDNjPTm8WXrk13HyreBnwTNfhG+bMR0Q=
+Date: Fri, 26 Jul 2024 08:33:00 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH 5.15 00/87] 5.15.164-rc1 review
+Message-ID: <2024072645-delighted-barbecue-154f@gregkh>
+References: <20240725142738.422724252@linuxfoundation.org>
+ <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
- <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn> <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
- <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
-In-Reply-To: <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 26 Jul 2024 14:32:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
-Message-ID: <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
-Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for kvm_hypercall
-To: maobibo <maobibo@loongson.cn>
-Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn, kernel@xen0n.name, 
-	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	wangyuli@uniontech.com, Wentao Guan <guanwentao@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
 
-On Fri, Jul 26, 2024 at 11:35=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
-e:
->
->
->
-> On 2024/7/26 =E4=B8=8A=E5=8D=8810:55, Huacai Chen wrote:
-> > On Fri, Jul 26, 2024 at 9:49=E2=80=AFAM maobibo <maobibo@loongson.cn> w=
-rote:
-> >>
-> >>
-> >>
-> >> On 2024/7/25 =E4=B8=8B=E5=8D=889:48, Dandan Zhang wrote:
-> >>> The kvm_hypercall set for LoongArch is limited to a1-a5.
-> >>> The mention of a6 in the comment is undefined that needs to be rectif=
-ied.
-> >>>
-> >>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> >>> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
-> >>> ---
-> >>>    arch/loongarch/include/asm/kvm_para.h | 4 ++--
-> >>>    1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/i=
-nclude/asm/kvm_para.h
-> >>> index 335fb86778e2..43ec61589e6c 100644
-> >>> --- a/arch/loongarch/include/asm/kvm_para.h
-> >>> +++ b/arch/loongarch/include/asm/kvm_para.h
-> >>> @@ -39,9 +39,9 @@ struct kvm_steal_time {
-> >>>     * Hypercall interface for KVM hypervisor
-> >>>     *
-> >>>     * a0: function identifier
-> >>> - * a1-a6: args
-> >>> + * a1-a5: args
-> >>>     * Return value will be placed in a0.
-> >>> - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
-> >>> + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
-> >>>     */
-> >>>    static __always_inline long kvm_hypercall0(u64 fid)
-> >>>    {
-> >>>
-> >>
-> >> Dandan,
-> >>
-> >> Nice catch. In future hypercall abi may expand such as the number of
-> >> input register and output register, or async hypercall function if the=
-re
-> >> is really such requirement.
-> >>
-> >> Anyway the modification is deserved and it is enough to use now, thank=
-s
-> >> for doing it.
-> >>
-> >> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-> > Maybe it is better to implement kvm_hypercall6() than remove a6 now?
-> That is one option also. The main reason is that there is no such
-> requirement in near future :(, I prefer to removing the annotation and
-> keeping it clean.
-I don't like removing something and then adding it back again, so if
-kvm_hypercall6() is needed in future, it is better to add it now.
-
-Huacai
->
-> Regards
-> Bibo Mao
+On Thu, Jul 25, 2024 at 10:18:49PM +0530, Naresh Kamboju wrote:
+> On Thu, 25 Jul 2024 at 20:22, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
 > >
-> > Huacai
-> >>
->
->
+> > This is the start of the stable review cycle for the 5.15.164 release.
+> > There are 87 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.164-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> The following build errors noticed while building arm configs with toolchains
+> gcc-12 and clang-18 on stable-rc linux-5.15.y
+> 
+> First seen on today builds 25-July-2024.
+> 
+>   GOOD: b84034c8f228 ("Linux 5.15.163-rc2")
+>   BAD:  1d0703aa8114 ("Linux 5.15.164-rc1")
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Build log:
+> -------
+> from drivers/net/wireless/ralink/rt2x00/rt2800lib.c:25:
+> drivers/net/wireless/ralink/rt2x00/rt2800lib.c: In function
+> 'rt2800_txpower_to_dev':
+> include/linux/build_bug.h:78:41: error: static assertion failed:
+> "clamp() low limit (char)(-7) greater than high limit (char)(15)"
+>    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+>       |                                         ^~~~~~~~~~~~~~
+> include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+>    77 | #define static_assert(expr, ...) __static_assert(expr,
+> ##__VA_ARGS__, #expr)
+>       |                                  ^~~~~~~~~~~~~~~
+> include/linux/minmax.h:66:17: note: in expansion of macro 'static_assert'
+>    66 |
+> static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),
+>  \
+>       |                 ^~~~~~~~~~~~~
+> include/linux/minmax.h:76:17: note: in expansion of macro '__clamp_once'
+>    76 |                 __clamp_once(val, lo, hi, __UNIQUE_ID(__val),
+>          \
+>       |                 ^~~~~~~~~~~~
+> include/linux/minmax.h:180:36: note: in expansion of macro '__careful_clamp'
+>   180 | #define clamp_t(type, val, lo, hi)
+> __careful_clamp((type)(val), (type)(lo), (type)(hi))
+>       |                                    ^~~~~~~~~~~~~~~
+> drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3993:24: note: in
+> expansion of macro 'clamp_t'
+>  3993 |                 return clamp_t(char, txpower, MIN_A_TXPOWER,
+> MAX_A_TXPOWER);
+>       |                        ^~~~~~~
+> 
+
+Thanks, I've added a commit that should resolve this now.  I'll push out
+a -rc2 in a bit.
+
+greg k-h
 
