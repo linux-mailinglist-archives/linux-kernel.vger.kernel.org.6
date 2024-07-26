@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-262770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E150193CC86
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BC093CC8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447DA282327
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F521F22201
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 01:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8510BA4B;
-	Fri, 26 Jul 2024 01:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuuqupEO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F636D;
-	Fri, 26 Jul 2024 01:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5E21B974;
+	Fri, 26 Jul 2024 01:49:19 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1731D1802E;
+	Fri, 26 Jul 2024 01:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721958069; cv=none; b=fXewiY/bNU3L1LaQ69/sx3k2v5neg2r5Tnyc6j/syU43D84lKf6zPi2DPSg3Kz/J7TBIlybchF8WaIfRwPmlOigYhdBa477aNMRFxWLacwfB00qv2LRRtPaSUusbAwUC26GE/feQMMdXQoAWqksml8fuAyY+JkGkjTZtOtY+16s=
+	t=1721958559; cv=none; b=LerwZsfg4KpmIyNecTfNZyiYzhMfbbxu+UipaL4ZBWmfK8u6E3U8Ly68oDvgR4ftLOikfFq2g4afOKlvLCo8di1FD1FGorvruU1oUVGyzECUre2DgRH/BU8lhy9Gsw8aWMRapT0hRLTYPHiWLTFBzzyS1O/cJa00WpJrtpIt3gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721958069; c=relaxed/simple;
-	bh=CSv3N6SE2riangAyu/ePy8t9sKbzcoTU6COThAA8Li8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTzJREO4vn6hym80fuev5hQld2WGOfDEvgR5h6QKKE7dSLoBfotnEP27sA9mQTc4qScuMYgb5Nows9/RDSvPufsfjPTcwTvSzXI9qnDvGksDbEE+z4eWaVVGrea7fN/K4sIcJmhD38L9AeVXKKdTFZz3ErbUsG5ErEut14YTO8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuuqupEO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED54EC116B1;
-	Fri, 26 Jul 2024 01:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721958068;
-	bh=CSv3N6SE2riangAyu/ePy8t9sKbzcoTU6COThAA8Li8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YuuqupEOYHVHEA2SVR+s0dMeL89WEnRGbGAe2FmwFEd9uO6U+i9rd3fRUxLrD2LCx
-	 gS4XnzCColJPZH4vf0iuIMCoJOS0BcwMpo+LXzrHLxSllJumwbdkFK9sxbmikKRv78
-	 Kk1EvDN/ujCNzQ9GmUeUSWvxG9LGKuJF2IGbj5t0elgkYbYgpEPSvsiqexJzaRuodt
-	 hNoI2fV9cEriY118h+9wvzmUCI2hiORcU6vU12sbmAqqvwCpO0qMzal1UVVnf56seG
-	 y/o6CUAjaUqpuGYAXV3ny/fgdoBRJAIDFfTlRj/QGvll9UDwMtdSJUGzjDVgHed7yo
-	 lMF/eof4KnRoQ==
-Date: Thu, 25 Jul 2024 18:41:06 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v3 1/8] perf bpf-filter: Make filters map a single entry
- hashmap
-Message-ID: <ZqL-sv_CSTqNnu-N@google.com>
-References: <20240703223035.2024586-1-namhyung@kernel.org>
- <20240703223035.2024586-2-namhyung@kernel.org>
- <ZqFWwGTvzzLPhtxs@x1>
- <ZqFiC4z_EZtsB4Su@google.com>
- <ZqF0llbjINuvMcwP@x1>
+	s=arc-20240116; t=1721958559; c=relaxed/simple;
+	bh=Ez3oBfDxD1BPnGpNbRVbv/OwV4g5hNpR9bWKDddkO1M=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dANDSDWnowMibVUbaX+Q59Nujax+UoxBvFAca1Hq2mlRgNJ/0GdNdcV4eQgKGciuHclO7cUTOnNbK0BFKT3TgWl8kVZWLgg2wVTnfeBBwUzNelXpsjygqpTHgUJVXQp052pPWW9GQNeAnWDs1xd6jhvrYNxWJvt43bG7xUU05VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8DxyOmZAKNmndsBAA--.6866S3;
+	Fri, 26 Jul 2024 09:49:13 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxLseWAKNmzAYCAA--.12104S3;
+	Fri, 26 Jul 2024 09:49:13 +0800 (CST)
+Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for
+ kvm_hypercall
+To: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn,
+ chenhuacai@kernel.org, kernel@xen0n.name
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, wangyuli@uniontech.com,
+ Wentao Guan <guanwentao@uniontech.com>
+References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
+Date: Fri, 26 Jul 2024 09:49:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZqF0llbjINuvMcwP@x1>
+In-Reply-To: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxLseWAKNmzAYCAA--.12104S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tryxGFy7AFW5tFWkGF1DCFX_yoW8Gry8pF
+	ZxCw1kGF48KrWrC3WUtrZ8ur90gr4kGw12gFWDW3y5CrsrX3saqrWrKr1DuF1DA3yrAFsY
+	qa4ag3W5Za1jy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4
+	CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkU
+	UUUU=
 
-On Wed, Jul 24, 2024 at 06:39:34PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jul 24, 2024 at 01:20:27PM -0700, Namhyung Kim wrote:
-> > On Wed, Jul 24, 2024 at 04:32:16PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Jul 03, 2024 at 03:30:28PM -0700, Namhyung Kim wrote:
-> > > > And the value is now an array.  This is to support multiple filter
-> > > > entries in the map later.
-> > > > 
-> > > > No functional changes intended.
-> > > 
-> > > Hey how can we test this feature these days?
-> > 
-> > There's a 'perf record sample filtering (by BPF) tests'.
-> > 
-> >   $ ./perf test -vv filtering
-> >    95: perf record sample filtering (by BPF) tests:
-> >   --- start ---
-> >   test child forked, pid 1042594
-> >   Checking BPF-filter privilege
-> >   try 'sudo perf record --setup-filter pin' first.
-> >   bpf-filter test [Skipped permission]
-> >   ---- end(-2) ----
-> >    95: perf record sample filtering (by BPF) tests                     : Skip
-> > 
-> > > 
-> > > With this first patch applied:
-> > > 
-> > > root@number:~# perf record -a -W -e cycles:p --filter 'period > 100 || weight > 0' sleep 1
-> > > Error: cpu_atom/cycles/p event does not have PERF_SAMPLE_WEIGHT
-> > >  Hint: please add -W option to perf record
-> > > failed to set filter "BPF" on event cpu_atom/cycles/p with 95 (Operation not supported)
-> > > root@number:~# perf record -a -W -e cpu_core/cycles/p --filter 'period > 100 || weight > 0' sleep 1
-> > > Error: cpu_core/cycles/p event does not have PERF_SAMPLE_WEIGHT
-> > >  Hint: please add -W option to perf record
-> > > failed to set filter "BPF" on event cpu_core/cycles/p with 95 (Operation not supported)
-> > > root@number:~# perf record -a -W -e cpu_atom/cycles/p --filter 'period > 100 || weight > 0' sleep 1
-> > > Error: cpu_atom/cycles/p event does not have PERF_SAMPLE_WEIGHT
-> > >  Hint: please add -W option to perf record
-> > > failed to set filter "BPF" on event cpu_atom/cycles/p with 95 (Operation not supported)
-> > > root@number:~#
-> > 
-> > Do you say it's failing after the first patch?  It looks like the atom
-> 
-> yes
-> 
-> > CPU doesn't support PERF_SAMPLE_WEIGHT and should fail already.
-> 
-> I tried with 'cycles:p', 'cpu_atom/cycles/p' and with
-> 'cpu_core/cycles/p', with and without -W (to use the warning advice)
-> will try again tomorrow.
 
-Let me know if you find anything.  Maybe it didn't set the flag in the
-attr.  Can you run `perf record -W true && perf evlist -v` ?
 
-Thanks,
-Namhyung
+On 2024/7/25 下午9:48, Dandan Zhang wrote:
+> The kvm_hypercall set for LoongArch is limited to a1-a5.
+> The mention of a6 in the comment is undefined that needs to be rectified.
+> 
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+> ---
+>   arch/loongarch/include/asm/kvm_para.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
+> index 335fb86778e2..43ec61589e6c 100644
+> --- a/arch/loongarch/include/asm/kvm_para.h
+> +++ b/arch/loongarch/include/asm/kvm_para.h
+> @@ -39,9 +39,9 @@ struct kvm_steal_time {
+>    * Hypercall interface for KVM hypervisor
+>    *
+>    * a0: function identifier
+> - * a1-a6: args
+> + * a1-a5: args
+>    * Return value will be placed in a0.
+> - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
+> + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
+>    */
+>   static __always_inline long kvm_hypercall0(u64 fid)
+>   {
+> 
+
+Dandan,
+
+Nice catch. In future hypercall abi may expand such as the number of 
+input register and output register, or async hypercall function if there 
+is really such requirement.
+
+Anyway the modification is deserved and it is enough to use now, thanks 
+for doing it.
+
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+
 
