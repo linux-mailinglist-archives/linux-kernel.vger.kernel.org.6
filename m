@@ -1,288 +1,283 @@
-Return-Path: <linux-kernel+bounces-262900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6789093CE7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5298D93CE83
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB25EB229C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:06:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F73B22BF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1E1176259;
-	Fri, 26 Jul 2024 07:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40919176AC7;
+	Fri, 26 Jul 2024 07:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IlQr8PtX"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ankJusx4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14281741E8;
-	Fri, 26 Jul 2024 07:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721977585; cv=fail; b=NwgPHtAbAgRFnYNUf0chxTyrnLuAaEEl1REviulQgbUwk9ZllujBMULF1LJxC4EMvdhO31BTRsmqnIKNStn0p3JUz2HOspbXrJ2wrwXDO95L6xto+Ii7kDN9uTKwifCVCQ5cYCm6ILX/bAidEhMK4HpzXH+QT0nimLOsX+xzsMg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721977585; c=relaxed/simple;
-	bh=deln2h1QSZXLL6Tc8KMJ0coEMqbtDrz8on+7Kv2PdJE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mdjHXwKVgXovTT4X6YzhyX2Bzcr2dXgEIcS1Cnogw55fCRuSWaeamgFcjXrF3qWpHNYhwqBvsLlySFj5mRVFNC9vvZolCOGD361bAYH7sSbZA3ce+1PbxjOVap7ztcC+AsGCn2XY0OjKUovZ0Nl/VxZX9iePPXM/gLy9hAQA/G0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IlQr8PtX; arc=fail smtp.client-ip=40.107.101.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eimu/adX1tSm5YETprCgPn8Xqka3Qc9zEMOA3usEj0l4VmB8dBPgJOKLJ75b/JlFQuY+EYjEXlyuQeDUQ/KDPT6OUu8OAoGPmWZHuyavZgjJs39Da2K6hnphRD9Neep1tb/yZStaPJcUDBPuPr4ntARvS2vlo40/m6f14NQGGUBnP90Nh8xCINXQYVLcUo4226DNMFPegPldaI1pURXePLmw1xmvq/A5TxJjjhJuW6VKzG3UGvD1gpYavEAsdnCD/sMCCVGxGmdpF+pLlo8T/NVmMRsUP1JkBxJZkbyOvogAIdLJYvIiOUA7etdoSDcB4BueBgHRYQL03Lts+/elOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AWMNPnbbIZ4OQsQ8DC6joLsuFC7VHDX4HYE5OCutceM=;
- b=cqCppQIZe90Gc6AKEdnFYNyquqt6SjEFMXpBa+fVjfShDivcC9oBhbottXrA8TddigiPOH6++AWM9qGM7WtDJ69CzBVUL5LuZyxPoeCkc2oAyjqParU7hdLg2Fpo5IxE4xXBjHHQiRr4qhbpnDibpc9H09Nltoj7FD9tJrZEdRlKPgdNouIddd/GL3Os+uOHqkOEvReSNLYkkaQieVX+bzVCL95uOzyVRckeCFQuJYqNfpmB/hc/1t5S/tIC242tn5p0vQbP8YSSxy/kDpkWLPW+hXBa8Sx5ACNVlXIJZyYdgIfTJ/VJf2AqYAMN9xDeR91qNVi8qH4OJoA0wkzCAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AWMNPnbbIZ4OQsQ8DC6joLsuFC7VHDX4HYE5OCutceM=;
- b=IlQr8PtX5RBVlGOm5NtjXu2DXdw9ax0DWERwiA5hxW54bdZtigCTjIz13K5qsW8rBMviWO/HOS7L+HI1o1jOHy4yfB9GqXAnFNZ6MpyLXOPJ/RFgsuLwpIYpS87VuiCY/LUtf5cUC8kuPu2BeyW3OwuU0Y9KRwjX9+QSNRKHBtc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DM4PR12MB5841.namprd12.prod.outlook.com (2603:10b6:8:64::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Fri, 26 Jul
- 2024 07:06:22 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7784.017; Fri, 26 Jul 2024
- 07:06:22 +0000
-Message-ID: <1da9294d-3775-4387-be5f-408592c89bb7@amd.com>
-Date: Fri, 26 Jul 2024 09:06:17 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
- track offsets
-To: Alex Deucher <alexdeucher@gmail.com>,
- Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
- Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
- <CADnq5_NuAL4=hMyc6G0QkbSrjCXa6qFM-bFtt3A7DY6cCmCt9w@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <CADnq5_NuAL4=hMyc6G0QkbSrjCXa6qFM-bFtt3A7DY6cCmCt9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0403.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::9) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F476176AB3;
+	Fri, 26 Jul 2024 07:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721977591; cv=none; b=PqABZ06BOa/1Ub9w5p4DThn1wfnD1ba9SGQ+ccEa0mLd11iVil1P+Cph5YNWztXSmunRfRMsWEPoKWMGIuRTlHVrc9lIwRXYGTeeYiqQp9a4zFG2xT3Wr4HLQFHM7AC/TAd0p0UTUh+BIKgzcuD+DIgA8NQE3Syq+VKpR8LSBrM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721977591; c=relaxed/simple;
+	bh=Lqwb1i+CfA5gQOKZlWuGAXY2HlWpGXs6UaBh25IZNvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3ycOdotuSbihcTaG6+mt9lGNryj8xRmS1a1EjPnzq0F7XKgWCNFwyIcvFnOG7dnXTFMgg6ieI6snlsU6+4Xdqrsq2bGNeV4KTRngu3MiqjygmEOBNY959t+bVwtnFwE1qkfoYuLZDrsur+YV4YdNFrw0qQxhIIkZ3n9UxBukpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ankJusx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A10C32782;
+	Fri, 26 Jul 2024 07:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721977591;
+	bh=Lqwb1i+CfA5gQOKZlWuGAXY2HlWpGXs6UaBh25IZNvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ankJusx48S/pXsosZ/6RjBcJsjPytR6GtltxAVReLRwHkwonqju6FYbv/5PL6ZgSo
+	 KNnYpod3Gn3YtnVtGy9cqzKt6WhNCT4pY5IskfrnBkrsU7pFq0Gnz8r/m7onkYO6bR
+	 7+yt0d+L610eHfLI9BVyCmX8r1HoDIOytOmyxidKWTrQSVa7eBRaqeNTFNUDutByNs
+	 m8AFCiQbMUuVaB9yprLlGB1wrOVRD83J73z1m4QAH1lhTwDR6AG9yp/m7zOvSGVpc7
+	 jqreQfFvu8/qnQvnMip0nlwfial/zWCrpHanvLIRj6z4jACrkCFQ8CXAba3E3QHbIQ
+	 MdpKMNZwkp3kw==
+Date: Fri, 26 Jul 2024 09:06:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
+References: <20240725234706.655613-1-song@kernel.org>
+ <20240725234706.655613-3-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB5841:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80cc2e47-5cbf-4b43-3a52-08dcad417480
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MSt3cVNtTnhQRDcwUXZVaDBGbzVZMVBSZVRmYkMwUmlxb2VkakdpQThLRk4z?=
- =?utf-8?B?c0tKS1hHcmplRkwwWjIrK1hBeDZFWHVDZnUzdk5YR2d6blVWR2pkQUN5SmIw?=
- =?utf-8?B?U0VaMEduK0pnRVR4WjNia1p1eGYyZmRzWEJvdWF5MVZ5Vk8xNkw1VWh3QWYw?=
- =?utf-8?B?NHNXejh6azlRNWpNSWxZL3dNV3lRZ2FMRDdSTGR6WnFxcEdtNFlXV2sycUJ3?=
- =?utf-8?B?d0Z1aEc3a3FIWTNqN1ZQQTJSelh2K2gyU2lyTG13dWdGTzV5UFg5QjdNSWcr?=
- =?utf-8?B?NEpHUGJ5WjloQjUzdUNLT0NzbUVYUGR0eURzVGJjVDRCVEcyVnBPZlRFZjlN?=
- =?utf-8?B?S1duQW5CbmNGQUJDQ1RwVW5nN2RPWnFRcnZlSjJDVlhmemcvUVV5SmowSDZl?=
- =?utf-8?B?c3BmSFlDdmFqTmFST29IZks0ejRGYjFzK1pPN3ViOGF6SStLWmMxYkNacG1p?=
- =?utf-8?B?NHN2R0NQYkJpSnpMclNMQTFhSjBXbS9BSlZRMlF6UVVGclBtMTNIV3UxTnU2?=
- =?utf-8?B?a28ydEFwSWlSWlRMZU9MejhaaWp6c1BCazRSVmszUEVpZG82ME4yY2NkR3BC?=
- =?utf-8?B?azFYN0w5K3NaakFTczhJZ1Y0ZkM2cjl2dmFNU0hyTk1kMU1tdU5IQThTNkhN?=
- =?utf-8?B?Z1MxREU0bDF1V3lONzRLQlRvakJ5THRNaG5DZmIzVWNqVXFUTDBpRDNxSjBt?=
- =?utf-8?B?MzVCSEQ1bGpSbHArMnF2NVhWR2p6RXdsQTRyUG5SS2N5K2FycXczTTRXNlUx?=
- =?utf-8?B?VlpkZnUweFluSGRoVUJ5cmpjc21Ea0NvaVcvdHJPc21pQ2RXQ1E1TjdjbXIv?=
- =?utf-8?B?N3N6WW9XOWovOFBkSzV3QXhBRDk3TFc0VTZDZlFGTy82dTBDbkhmYXRzdzRa?=
- =?utf-8?B?L0Z6UG5YU290RGpOYk9QRWxPOW5nODRVV1o4Wm5pNW8xNGhVa3NsU3k4TWNR?=
- =?utf-8?B?S1JWaXZxVlJoZnNEMDd5SGhuaFE0c3UvbFNOd3diZGUxLzM5Sm9pcGhMQkJz?=
- =?utf-8?B?RW1RR3lkVktSRm1mQmVRT2s5SjdHTnRNMDZUMzFyRWk3K2NBUG1EYkZQdTZH?=
- =?utf-8?B?eTB4TGRKcGpuWWhpcGQyUCtOSjdSelJVc0pnQUhvUm5razFnTmdHRGwzd3BX?=
- =?utf-8?B?YUlLaVFnZHRwdFo0QVJBQ0Y3dWZ1MGhmOEl0M0hBVzYvUmEvT0xLYkR2anJw?=
- =?utf-8?B?OG1jQmQ2UTk2YmwzWVA0ODRHWElXOXF4VTNUZmhIZWhZa25IeWNnWjgvbWds?=
- =?utf-8?B?ZDZxVmNOVnFsdWZFRGc0THcvcW9yU3R4SUVyMmI5Z0EvcFFCTXVwT2VYM01H?=
- =?utf-8?B?cnhzcDRpLzRSZFdtdnZ2OWJFb3BCeUFNZCtZUEpWS3RzS0hqblhPcm9oTFdU?=
- =?utf-8?B?NkJvaVNZb1Z2NkcrNytGek1rUFFMUVExemdxdCtsdGFZNGZRM1ljYS9kYUVa?=
- =?utf-8?B?VXF1TW5jM0UvakxTTzFGSDlHMi9rYnYrNzlNLzJ1RWJqTk11Z0d0OEErTjZV?=
- =?utf-8?B?QUxxQ2EvK0pMdnVraXBlY0d2VTZMOWpyb25vVjJPQmhSa3ZuVGU4SXI1dzdI?=
- =?utf-8?B?a1FjRUFGMDVPdmYveEp0M2t0RE9Jd3hDcE92eXVqRTh5M2NxSzhVTXY0eXVG?=
- =?utf-8?B?d05rME5kSGZqMXhyNFIwTUNGNnVrVnF5anA4Z2U4SThNVG1Ld085RllTTjc1?=
- =?utf-8?B?Q1RuU0Q3cUZtSnprSElGY1FQUk5CR2M1cVNPOUxQcjNrdE5RN2tOT28xaFgr?=
- =?utf-8?B?YXdOMmMyQXZnbWtlVEtiZDRkL0orWlQxeWYrSFJTcmt1S2krM1dnRkgyeTkx?=
- =?utf-8?B?dHhRM05pdEpKVjViaFJYUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bnJmdGc4WUwrS0xQTUtlS2NVY0F6STN4R2NUbytqaTFqZ0IvL0ZqLzVneWk5?=
- =?utf-8?B?MStZVUJuT3ozSGwzeGxvM3g5WUJrd1Yya0xITzlJU1ByZ0xIRWJTTmIxUkVw?=
- =?utf-8?B?bG5GMVVDZW40WnB4cEdVZnUvUEZiV1BxTHJya1BjMUE3R2ZPTVU4OVFDVWZZ?=
- =?utf-8?B?TmlBOEllY25VNEpNZUx0ZFhleDRPbUNFZ2VGRy9xRnFDem91dm4zTVdhVkhK?=
- =?utf-8?B?UVY2aktITE1hVm9GbUdnZUJtbWNwNEJIYWxCMmJUZE1PUkpnT2ZwMXhlcGF5?=
- =?utf-8?B?dVlJQkUwN1VTQ21vd2JKUUQ1VityOCtzaXpUcU5DZHVXd1ZLeEsyTTA2SDBa?=
- =?utf-8?B?UDVPc1BPZ2NYN3Y2NHZHeGpoVHNkNnVUUmEyWFFUcERnaGxCMlZ1YXFGZTZY?=
- =?utf-8?B?bDFjMzNwM2JtQit1SXdpcjZ5dUJrN1M5UU5tUWxoNjNBOTIxcXJ5SmZNYnRt?=
- =?utf-8?B?TG5qcDdpQkF6L1BycE5FYVZNQWZseFNyL29zaUhQeGczSC9mYUNsSzdDd2tT?=
- =?utf-8?B?UmpnYWxtcFMwcituTVRJem1yM1RZWFRpNGl1Q0ljdEswRjBZKysxVXBTdkU1?=
- =?utf-8?B?WjU5dVhEb0NZQmFVUFlIbkVrZm54bkVaYWV2QW9EN05JRUh3NisrMzVScWRI?=
- =?utf-8?B?WS92OUJBa3YyMXpmL1BhUWQyNUJIWjY0Q3NmcXorT09iUTg2K2x1bVIzTFk0?=
- =?utf-8?B?VnpQdWdISUp0QkRiR3lka0J1cFRZOWR4L1BtWlEydnlMRTZ3Nlp4NC9xcUpQ?=
- =?utf-8?B?c2NNNzB1cWxRRGRqVk5tdm9neGs2bmNMMXQ5bXI4ZWJpSXVMY09weU5TS0Jy?=
- =?utf-8?B?YWIwQmFmZlRDaXRWclF2ZWg2c3VnWDhNbnFHV3k1bGlDeDdDVkJ2KzNTR1pU?=
- =?utf-8?B?ZTl2SFdReVNDY1NpdTREQnpBVExqbEM3RFVyMi9SOXdVKzB2VnFacUFxSU90?=
- =?utf-8?B?TE5hN0s1S0RPMHQxcE0yQklmMHFBWmhXRXk1QXZwT0hWSWFQbEh4c0VnajFw?=
- =?utf-8?B?Z0N1a3dGQVQwNnVDdVlHZUVQbmJsV3Rpa1Q2dUVNUTJ1Y1oyYTRCVmMrTHN5?=
- =?utf-8?B?VGVGZ3ZSKzdKQXNuV0pNdXJqdWZudzljYnpCRmtiQkFyQVJ1SFBOdjVaL2s1?=
- =?utf-8?B?N1pQN250eFdDZHpGa2QvMSt2ZERLOENXem9tdHZ4bmNMTnNTREE0MjU2OUo1?=
- =?utf-8?B?Z3g1cG1YazlFNENCeXdRRWtsbW40UGIvaW5ta1B6bFlYM3BIcjF0TTJONlhU?=
- =?utf-8?B?RXU1Z3YvSmI3OHY0RTFxbzh1QmNzcjAxekJ4M3hJWmNRKytWcEVQZVRiM3JU?=
- =?utf-8?B?UTlNT1hvdGtiVW1KYmhOZE8rbkZuRklZNGpXMHlrQWl6SFAwZzZENWM4Z0Z3?=
- =?utf-8?B?QXVkK1ZUejJydG1YQ2xQUmFadG1ndXBVcnZjVTE3T1F2Nm9EbXNxU25xSXZK?=
- =?utf-8?B?emZTOEc4RkF3VXFNL1JjSjgzK2NUdkpKYnpiZEkxV0Z3aEJWOXE3VXc2bkEz?=
- =?utf-8?B?MjY1QnUwQUZoaHZPcURNN3FvVDgrTnc3U0NjUjNUc0JxcU4yclpUNWVKY1BP?=
- =?utf-8?B?aHY0VG5QQklTNjFmaGxXdTV6d284U3lTQU4rbS9SMjd1TXlOY2w4UklHdnlm?=
- =?utf-8?B?d3BrOUpNNlVDdXJXZHN1eVU4b0h4NW80TTNTNWVkN1RmaEx3dmI0VHlDOGU0?=
- =?utf-8?B?S1BEaWVaMEdHVW1XSFpUME9WSVQza2xsVXdEV0NVSE5hR1pWTnBYZXBCK2pz?=
- =?utf-8?B?R3hjYmhqUlBXcThPVk5HWWJmczJKK1gwNEF5cTNJdVFiY2U4eVVMZ2RPUWhC?=
- =?utf-8?B?b3o5bVNhNnZSTHRqSHQrN1VNTUpxQlFQdjI3Mzl1dkxWRXhaYzVKcTk4M1F4?=
- =?utf-8?B?MlJDNGJla2RqMTBxdEg3d0dGL25hY2YvMXRRcndQc25YTGlCVmNWQngyNmJT?=
- =?utf-8?B?c2xIcFhYOEJJakJjcm9CK0k3eklyZ2Rka2N1dlNOV2ZIMjQ4aks3N0wvVUdC?=
- =?utf-8?B?TzBqRUx2QTArUnF5ekV5allFSFpzZUd0YlZ1cU1YQXh6elg4K2hZR0lFa0t3?=
- =?utf-8?B?SExwRkJVU3hqUWxwZVdOVW9GNEtjM0x3bjd6RzhUS0ZRMEhiQUxwazVFdXdQ?=
- =?utf-8?Q?Xza6heF7I4sOtHCetEsbtuOVw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80cc2e47-5cbf-4b43-3a52-08dcad417480
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 07:06:21.9728
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gb7rvFKClmMkIRjdTPEoYdyMDKuPVAlQhXATDNv44sLaN6DEB97ZD9DkWZ1nbus8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5841
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240725234706.655613-3-song@kernel.org>
 
-I strongly suggest to revert that again. See my other mail.
+On Thu, Jul 25, 2024 at 04:47:06PM GMT, Song Liu wrote:
+> 1. Rename fs_kfuncs/xattr to fs_kfuncs/file_xattr and add a call of
+>    bpf_get_dentry_xattr() to the test.
+> 2. Add a new sub test fs_kfuncs/dentry_xattr, which checks 3 levels of
+>    parent directories for xattr. This demonstrate the use case that
+>    a xattr on a directory is used to tag all files in the directory and
+>    sub directories.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  .../selftests/bpf/prog_tests/fs_kfuncs.c      | 61 +++++++++++++++++--
+>  .../selftests/bpf/progs/test_dentry_xattr.c   | 46 ++++++++++++++
+>  .../selftests/bpf/progs/test_get_xattr.c      | 16 ++++-
+>  3 files changed, 117 insertions(+), 6 deletions(-)
+>  create mode 100644 tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> index 37056ba73847..a960cfbe8907 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> @@ -2,17 +2,19 @@
+>  /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
+>  
+>  #include <stdlib.h>
+> +#include <sys/stat.h>
+>  #include <sys/types.h>
+>  #include <sys/xattr.h>
+>  #include <linux/fsverity.h>
+>  #include <unistd.h>
+>  #include <test_progs.h>
+>  #include "test_get_xattr.skel.h"
+> +#include "test_dentry_xattr.skel.h"
+>  #include "test_fsverity.skel.h"
+>  
+>  static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
+>  
+> -static void test_xattr(void)
+> +static void test_file_xattr(void)
+>  {
+>  	struct test_get_xattr *skel = NULL;
+>  	int fd = -1, err;
+> @@ -50,7 +52,8 @@ static void test_xattr(void)
+>  	if (!ASSERT_GE(fd, 0, "open_file"))
+>  		goto out;
+>  
+> -	ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
+> +	ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_file");
+> +	ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_from_dentry");
+>  
+>  out:
+>  	close(fd);
+> @@ -58,6 +61,53 @@ static void test_xattr(void)
+>  	remove(testfile);
+>  }
+>  
+> +static void test_directory_xattr(void)
+> +{
+> +	struct test_dentry_xattr *skel = NULL;
+> +	static const char * const paths[] = {
+> +		"/tmp/a",
+> +		"/tmp/a/b",
+> +		"/tmp/a/b/c",
+> +	};
+> +	const char *file = "/tmp/a/b/c/d";
+> +	int i, j, err, fd;
+> +
+> +	for (i = 0; i < sizeof(paths) / sizeof(char *); i++) {
+> +		err = mkdir(paths[i], 0755);
+> +		if (!ASSERT_OK(err, "mkdir"))
+> +			goto out;
+> +		err = setxattr(paths[i], "user.kfunc", "hello", sizeof("hello"), 0);
+> +		if (!ASSERT_OK(err, "setxattr")) {
+> +			i++;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	skel = test_dentry_xattr__open_and_load();
+> +
+> +	if (!ASSERT_OK_PTR(skel, "test_dentry_xattr__open_and_load"))
+> +		goto out;
+> +
+> +	skel->bss->monitored_pid = getpid();
+> +	err = test_dentry_xattr__attach(skel);
+> +
+> +	if (!ASSERT_OK(err, "test_dentry__xattr__attach"))
+> +		goto out;
+> +
+> +	fd = open(file, O_CREAT | O_RDONLY, 0644);
+> +	if (!ASSERT_GE(fd, 0, "open_file"))
+> +		goto out;
+> +
+> +	ASSERT_EQ(skel->bss->number_of_xattr_found, 3, "number_of_xattr_found");
+> +	close(fd);
+> +out:
+> +	test_dentry_xattr__destroy(skel);
+> +	remove(file);
+> +	for (j = i - 1; j >= 0; j--)
+> +		rmdir(paths[j]);
+> +}
+> +
+> +
+>  #ifndef SHA256_DIGEST_SIZE
+>  #define SHA256_DIGEST_SIZE      32
+>  #endif
+> @@ -134,8 +184,11 @@ static void test_fsverity(void)
+>  
+>  void test_fs_kfuncs(void)
+>  {
+> -	if (test__start_subtest("xattr"))
+> -		test_xattr();
+> +	if (test__start_subtest("file_xattr"))
+> +		test_file_xattr();
+> +
+> +	if (test__start_subtest("dentry_xattr"))
+> +		test_directory_xattr();
+>  
+>  	if (test__start_subtest("fsverity"))
+>  		test_fsverity();
+> diff --git a/tools/testing/selftests/bpf/progs/test_dentry_xattr.c b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+> new file mode 100644
+> index 000000000000..d2e378b2e2d5
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+> @@ -0,0 +1,46 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
+> +
+> +#include "vmlinux.h"
+> +#include <bpf/bpf_tracing.h>
+> +#include "bpf_kfuncs.h"
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +__u32 monitored_pid;
+> +__u32 number_of_xattr_found;
+> +
+> +static const char expected_value[] = "hello";
+> +char value[32];
+> +
+> +SEC("lsm.s/file_open")
+> +int BPF_PROG(test_file_open, struct file *f)
+> +{
+> +	struct bpf_dynptr value_ptr;
+> +	struct dentry *dentry, *prev_dentry;
+> +	__u32 pid, matches = 0;
+> +	int i, ret;
+> +
+> +	pid = bpf_get_current_pid_tgid() >> 32;
+> +	if (pid != monitored_pid)
+> +		return 0;
+> +
+> +	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+> +
+> +	dentry = bpf_file_dentry(f);
+> +
+> +	for (i = 0; i < 10; i++) {
+> +		ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
+> +		if (ret == sizeof(expected_value) &&
+> +		    !bpf_strncmp(value, ret, expected_value))
+> +			matches++;
+> +
+> +		prev_dentry = dentry;
+> +		dentry = bpf_dget_parent(prev_dentry);
 
-Christian.
+Why do you need to walk upwards and instead of reading the xattr values
+during security_inode_permission()?
 
-Am 25.07.24 um 22:59 schrieb Alex Deucher:
-> Applied.  Thanks!
->
-> Alex
->
-> On Thu, Jul 25, 2024 at 2:20 PM Nikita Zhandarovich
-> <n.zhandarovich@fintech.ru> wrote:
->> Several cs track offsets (such as 'track->db_s_read_offset')
->> either are initialized with or plainly take big enough values that,
->> once shifted 8 bits left, may be hit with integer overflow if the
->> resulting values end up going over u32 limit.
->>
->> Some debug prints take this into account (see according dev_warn() in
->> evergreen_cs_track_validate_stencil()), even if the actual
->> calculated value assigned to local 'offset' variable is missing
->> similar proper expansion.
->>
->> Mitigate the problem by casting the type of right operands to the
->> wider type of corresponding left ones in all such cases.
->>
->> Found by Linux Verification Center (linuxtesting.org) with static
->> analysis tool SVACE.
->>
->> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni tiling informations v11")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->> ---
->> P.S. While I am not certain that track->cb_color_bo_offset[id]
->> actually ends up taking values high enough to cause an overflow,
->> nonetheless I thought it prudent to cast it to ulong as well.
->>
->>   drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
->>   1 file changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
->> index 1fe6e0d883c7..d734d221e2da 100644
->> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
->> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
->> @@ -433,7 +433,7 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
->>                  return r;
->>          }
->>
->> -       offset = track->cb_color_bo_offset[id] << 8;
->> +       offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
->>          if (offset & (surf.base_align - 1)) {
->>                  dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not aligned with %ld\n",
->>                           __func__, __LINE__, id, offset, surf.base_align);
->> @@ -455,7 +455,7 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
->>                                  min = surf.nby - 8;
->>                          }
->>                          bsize = radeon_bo_size(track->cb_color_bo[id]);
->> -                       tmp = track->cb_color_bo_offset[id] << 8;
->> +                       tmp = (unsigned long)track->cb_color_bo_offset[id] << 8;
->>                          for (nby = surf.nby; nby > min; nby--) {
->>                                  size = nby * surf.nbx * surf.bpe * surf.nsamples;
->>                                  if ((tmp + size * mslice) <= bsize) {
->> @@ -476,10 +476,10 @@ static int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, unsigned i
->>                          }
->>                  }
->>                  dev_warn(p->dev, "%s:%d cb[%d] bo too small (layer size %d, "
->> -                        "offset %d, max layer %d, bo size %ld, slice %d)\n",
->> +                        "offset %ld, max layer %d, bo size %ld, slice %d)\n",
->>                           __func__, __LINE__, id, surf.layer_size,
->> -                       track->cb_color_bo_offset[id] << 8, mslice,
->> -                       radeon_bo_size(track->cb_color_bo[id]), slice);
->> +                       (unsigned long)track->cb_color_bo_offset[id] << 8,
->> +                       mslice, radeon_bo_size(track->cb_color_bo[id]), slice);
->>                  dev_warn(p->dev, "%s:%d problematic surf: (%d %d) (%d %d %d %d %d %d %d)\n",
->>                           __func__, __LINE__, surf.nbx, surf.nby,
->>                          surf.mode, surf.bpe, surf.nsamples,
->> @@ -608,7 +608,7 @@ static int evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>                  return r;
->>          }
->>
->> -       offset = track->db_s_read_offset << 8;
->> +       offset = (unsigned long)track->db_s_read_offset << 8;
->>          if (offset & (surf.base_align - 1)) {
->>                  dev_warn(p->dev, "%s:%d stencil read bo base %ld not aligned with %ld\n",
->>                           __func__, __LINE__, offset, surf.base_align);
->> @@ -627,7 +627,7 @@ static int evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
->>                  return -EINVAL;
->>          }
->>
->> -       offset = track->db_s_write_offset << 8;
->> +       offset = (unsigned long)track->db_s_write_offset << 8;
->>          if (offset & (surf.base_align - 1)) {
->>                  dev_warn(p->dev, "%s:%d stencil write bo base %ld not aligned with %ld\n",
->>                           __func__, __LINE__, offset, surf.base_align);
->> @@ -706,7 +706,7 @@ static int evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>                  return r;
->>          }
->>
->> -       offset = track->db_z_read_offset << 8;
->> +       offset = (unsigned long)track->db_z_read_offset << 8;
->>          if (offset & (surf.base_align - 1)) {
->>                  dev_warn(p->dev, "%s:%d stencil read bo base %ld not aligned with %ld\n",
->>                           __func__, __LINE__, offset, surf.base_align);
->> @@ -722,7 +722,7 @@ static int evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
->>                  return -EINVAL;
->>          }
->>
->> -       offset = track->db_z_write_offset << 8;
->> +       offset = (unsigned long)track->db_z_write_offset << 8;
->>          if (offset & (surf.base_align - 1)) {
->>                  dev_warn(p->dev, "%s:%d stencil write bo base %ld not aligned with %ld\n",
->>                           __func__, __LINE__, offset, surf.base_align);
-
+> +		bpf_dput(prev_dentry);
+> +	}
+> +
+> +	bpf_dput(dentry);
+> +	number_of_xattr_found = matches;
+> +	return 0;
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> index 7eb2a4e5a3e5..3b0dc6106ca5 100644
+> --- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> +++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> @@ -9,7 +9,8 @@
+>  char _license[] SEC("license") = "GPL";
+>  
+>  __u32 monitored_pid;
+> -__u32 found_xattr;
+> +__u32 found_xattr_from_file;
+> +__u32 found_xattr_from_dentry;
+>  
+>  static const char expected_value[] = "hello";
+>  char value[32];
+> @@ -18,6 +19,7 @@ SEC("lsm.s/file_open")
+>  int BPF_PROG(test_file_open, struct file *f)
+>  {
+>  	struct bpf_dynptr value_ptr;
+> +	struct dentry *dentry;
+>  	__u32 pid;
+>  	int ret;
+>  
+> @@ -32,6 +34,16 @@ int BPF_PROG(test_file_open, struct file *f)
+>  		return 0;
+>  	if (bpf_strncmp(value, ret, expected_value))
+>  		return 0;
+> -	found_xattr = 1;
+> +	found_xattr_from_file = 1;
+> +
+> +	dentry = bpf_file_dentry(f);
+> +	ret = bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
+> +	bpf_dput(dentry);
+> +	if (ret != sizeof(expected_value))
+> +		return 0;
+> +	if (bpf_strncmp(value, ret, expected_value))
+> +		return 0;
+> +	found_xattr_from_dentry = 1;
+> +
+>  	return 0;
+>  }
+> -- 
+> 2.43.0
+> 
 
