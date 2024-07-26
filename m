@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-263145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204C393D1A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:07:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F7D93D1AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4ED283902
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8FB91F22AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9808C17A594;
-	Fri, 26 Jul 2024 11:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="FPQex2ee"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA23E178CDE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5F9179654;
+	Fri, 26 Jul 2024 11:06:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E9E13D8B3
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721991971; cv=none; b=FDuQX6m8yVbJIdEK+tSriqaNtef+tJi9T6gwjzGrZdhzc2H/GjXwngJBhdqKYb7Byoha4naMz44shJTTpEpg4z00kQzPjyjMg6myXgp28XNrBLzXz+PMnlnc8Nm0Ild/3xdC8yH7S+S8QDOhoAhmI7xI5yULsuHroTZXuTJo1Zs=
+	t=1721992002; cv=none; b=Edd09cVYRVe1csV6GNnmtAWsY/x0xIYqFT0dxQUgiB2mvPmg9VGYOQuiTILTkhL9mUHd8SQgAYFYQbjLfBZ8a2vzwYFajdFH39lZh0MfA6klJ/qfwhEoPl+VFF6QYyYmXUJpn3XwiDD5N7onmnCcEQFwQhPxBNOaDBveCwwnYUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721991971; c=relaxed/simple;
-	bh=/sVicTNfY3cet1chvNxxWo/ZPwMTD06+KwNxAx+VxkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5YRy/3mumHBalXdwDz6MTfTTl2e1LoHziHPUgMqyE6r2sHs/Fpc/hRxP/BPyhb171goVeeNuJ6hvCXCFgE490+XAg9xhnk+ek1CUHWau9gxy8twm/dsw0aQAROY25MzR4SVEH5IhVlYCBSCa+NFvUUNxwlZXae8wqAi3aBW2VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=FPQex2ee; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2642cfb2f6aso707399fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1721991969; x=1722596769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hckkNbMLOcuR+z008FLIKbuIPv1ZZE1XmBUhRiJCWk=;
-        b=FPQex2eeu18tf1vDHk9gwkiNQvcSAkeMgXEaIBbI9SZ4F4yVGleDchfICyo0W75sUg
-         wUkqtC15tOIL1mooHiPtQZl6mK4r39ClXOjwBwA0j53iYccc/J/nx6EZ+wljCC0B98W4
-         KIBh2VUIvmJs+XdiVIX4xGLN+v4wQx1meiPXcG3eRAuqeXDm799rDY3sTl1i0u8erkQ8
-         tU9TdJiLamoJWRpGmOoO4mN6VvscmfIgeNbqNx9ilnv01rneMtaqBPsSD/QBat+hv6MK
-         I0HSooFbQAfEEw6K9udUMqwhchcnuPA3xBAiIixFJO6ES+EhuElh2RnlEIYXKA8FAkmf
-         1f0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721991969; x=1722596769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7hckkNbMLOcuR+z008FLIKbuIPv1ZZE1XmBUhRiJCWk=;
-        b=g1X8cNu5HHixa9nObGs5nb81kHl4YG6bvXsNOycT0Fja9JfEr03XRbA31n6EuI1H/Z
-         jifzmnlm1TN9cd4a6AvafvbMY5xF1uU9/noJ+90b43M+u3g+jQXrq+zj8hc7ia+9xWzC
-         E+FT5WmWCX2dybxgLyJY1gF3huthBIA4SckVjNIZNhLXR7/cUxilrA+4Yfz0L+lUaMHE
-         QaVQrdenD/HdsRaS5u0/L27X8erpE9FMvosWVHfmmInTx2XNT6YUtHVmoCNpZn0oKFMD
-         fCN/CVmQt2dB41+4WCahQYkn/bQbcf1ECU5uMNmJ1yA+VZanRWJ+m8TZsxiUyDi5R6oW
-         8r0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVozan3PjmZ2R6aFL3BCzD8Tggp+4hSN45n+PGv/H2bq2Pw2/ScNYv4nfx2zB0TBliXD8lXLWe6CeRTXYx6b30YOLLWcv7KRPNHpwfk
-X-Gm-Message-State: AOJu0YwM4z3XOkkraVOa5b0S4tvf+UTHhMqkjo3nF0hRpx+0xZ0TBWdm
-	B0JvOtLjVu7w9v1iZcyMYcQiu5FUTeuyoThNxY8PfKyQfgiAvV6xjC1AkYLECrgoN8c5pM7V6r+
-	Nd9JWy74mTnYi8yrTBcpyVSeoTjy7slDwvrgQtcEN4x4on514MkU=
-X-Google-Smtp-Source: AGHT+IH9Is6Tym8XF86g8B+5uO9SsdZqfsnltWUtIJEd/+7smiIsMguxwMrcSPqNtyBKCgcvokKKDTSPDuMXdsI3m8U=
-X-Received: by 2002:a0d:cd45:0:b0:651:79ee:d14b with SMTP id
- 00721157ae682-675ba704897mr56298307b3.29.1721991958488; Fri, 26 Jul 2024
- 04:05:58 -0700 (PDT)
+	s=arc-20240116; t=1721992002; c=relaxed/simple;
+	bh=17bnXobuUGYV+ZDnZr+for8NiRa2/Tl/+Qcq38jcL3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a4vlslrHvdVwokLqj1WHk1DC54XtT30NJpijEg0ORD6qTY8bgUbJZc7oqivLf2p9rceQQUPAJLMz+6LWx3npXaY42taqqTDK6sdMyrE2EhOn7u/VeiYm0aBhx0DTbOAIB4RpJDbCgLctYmf/fZBbmSl9umnnAUIwCNWCcaD7pRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12C3D1007;
+	Fri, 26 Jul 2024 04:07:05 -0700 (PDT)
+Received: from [10.57.78.186] (unknown [10.57.78.186])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 322703F73F;
+	Fri, 26 Jul 2024 04:06:38 -0700 (PDT)
+Message-ID: <49070850-04e2-4bce-b182-ccd527a8b3d7@arm.com>
+Date: Fri, 26 Jul 2024 12:06:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725184644.135185-1-ojeda@kernel.org>
-In-Reply-To: <20240725184644.135185-1-ojeda@kernel.org>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Fri, 26 Jul 2024 07:05:47 -0400
-Message-ID: <CALNs47sFD_GqhXNa7v+eC=O96A+SpPm4QtZ3=GbSxZ4zkTm3Zg@mail.gmail.com>
-Subject: Re: [PATCH] rust: macros: indent list item in `module!`'s docs
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: huge_memory: don't start_stop_khugepaged for non-PMD
+ THP
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>, Lance Yang <ioworker0@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Yang Shi <shy828301@gmail.com>,
+ Zi Yan <ziy@nvidia.com>
+References: <20240726082818.260008-1-21cnbao@gmail.com>
+ <aeb0fcb9-7c84-4bc4-b89a-5f0f86478aaf@arm.com>
+ <a9ff9028-a73a-4a80-b38a-266d1e8c20fe@redhat.com>
+ <CAGsJ_4wN0TBnPDj5oeFdPqCZk6XkMaJ0JbLY+fETWn52npwjjg@mail.gmail.com>
+ <fdae26b5-1fe1-4544-b496-2273b2c2b523@arm.com>
+ <CAGsJ_4wmkgNjdjReL55feWFgVonymyS4yyi3426eY0hpTWYAEw@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4wmkgNjdjReL55feWFgVonymyS4yyi3426eY0hpTWYAEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 2:47=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Like commit e516211f615f ("rust: macros: indent list item in `paste!`'s
-> docs"), but for `module!`.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/macros/lib.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-> index 159e75292970..5be0cb9db3ee 100644
-> --- a/rust/macros/lib.rs
-> +++ b/rust/macros/lib.rs
-> @@ -94,7 +94,7 @@
->  ///   - `license`: ASCII string literal of the license of the kernel mod=
-ule (required).
->  ///   - `alias`: array of ASCII string literals of the alias names of th=
-e kernel module.
->  ///   - `firmware`: array of ASCII string literals of the firmware files=
- of
-> -/// the kernel module.
-> +///     the kernel module.
->  #[proc_macro]
->  pub fn module(ts: TokenStream) -> TokenStream {
->      module::module(ts)
->
-> base-commit: b1263411112305acf2af728728591465becb45b0
-> --
-> 2.45.2
+On 26/07/2024 12:00, Barry Song wrote:
+> On Fri, Jul 26, 2024 at 10:45 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 26/07/2024 11:04, Barry Song wrote:
+>>> On Fri, Jul 26, 2024 at 9:48 PM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 26.07.24 11:43, Ryan Roberts wrote:
+>>>>> On 26/07/2024 09:28, Barry Song wrote:
+>>>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>>>
+>>>>>> khugepaged will be automatically started when PMD-sized THP is enabled
+>>>>>> (either of the per-size anon control or the top-level control are set
+>>>>>> to "always" or "madvise"), and it'll be automatically shutdown when
+>>>>>> PMD-sized THP is disabled (when both the per-size anon control and the
+>>>>>> top-level control are "never").
+>>>>>>
+>>>>>> It seems unnecessary to call start_stop_khugepaged() for non-PMD THP,
+>>>>>> as it would only waste CPU time.
+>>>>>>
+>>>>>> Cc: Lance Yang <ioworker0@gmail.com>
+>>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>>>> Cc: Yang Shi <shy828301@gmail.com>
+>>>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>>>>> ---
+>>>>>>   mm/huge_memory.c | 2 +-
+>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>>> index 41460847988c..bd365e35acf7 100644
+>>>>>> --- a/mm/huge_memory.c
+>>>>>> +++ b/mm/huge_memory.c
+>>>>>> @@ -514,7 +514,7 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+>>>>>>      } else
+>>>>>>              ret = -EINVAL;
+>>>>>>
+>>>>>> -    if (ret > 0) {
+>>>>>> +    if (ret > 0 && order == HPAGE_PMD_ORDER) {
+>>>>>>              int err;
+>>>>>>
+>>>>>>              err = start_stop_khugepaged();
+>>>>>
+>>>>> Personally I see this as a bit of a layering violation; its
+>>>>> start_stop_khugepaged() that should decide the policy for when to start and stop
+>>>>> the daemon. thpsize_enabled_store() should just be calling
+>>>>> start_stop_khugepaged() to notify that something potentially pertinent to the a
+>>>>> policy decision has changed.
+>>>>
+>>>
+>>> My impression is that it slightly deviates from the huge page documentation in
+>>> Documentation/admin-guide/mm/transhuge.rst.
+>>>
+>>> khugepaged will be automatically started when PMD-sized THP is enabled
+>>> (either of the per-size anon control or the top-level control are set
+>>> to "always" or "madvise"), and it'll be automatically shutdown when
+>>> PMD-sized THP is disabled (when both the per-size anon control and the
+>>> top-level control are "never").
+>>
+>> But start_stop_khugepaged() doesn't unconditionally start khugepaged, it takes
+>> action based on hugepage_pmd_enabled() which only returns true if there are any
+>> pmd sized THP enabled (currently looking at anon and file, but should also look
+>> at shmem in future; that's a known bug that's been there forever). So I don't
+>> think it is inconsistent with the documentation?
+> 
+> My point is that, as a code reader, if non-PMD sizes are never
+> involved with khugepaged,
+> we can proceed without needing to check the lower-layer code.
+> otherwise it is a bit
+> confusing, especially since start_stop_khugepaged() unconditionally calls
+> set_recommended_min_free_kbytes() for all sizes, regardless of whether
+> they are PMD.
+> 
+> However, I agree with your point that if non-PMD sizes are eventually managed by
+> khugepaged, then this approach is flawed. This is the downside of this change.
 
+Yes, I'd hope that eventually khugepaged will support non-PMD sizes. That's
+something we are hoping to look at later this year. So my personal preference is
+to leave as is.
 
-Not much needing review here, but
+> 
+>>
+>>>
+>>> non-PMD size is not involved in khugepaged, but I agree the policy might change
+>>> in the future.
+>>>
+>>>> Agreed, skimming the subject I was under the impression that we would be
+>>>> fixing something here.
+>>>
+>>> working on another swapin_enabled and reviewing the enabled source code.
+>>> I don't need this startstop for all sizes in that case, so I made a
+>>> quick adjustment
+>>> to this part as well. If neither of you likes it, that's fine with me :-)
+>>>
+>>>>
+>>>> --
+>>>> Cheers,
+>>>>
+>>>> David / dhildenb
+>>>>
+> 
+> Thanks
+> Barry
 
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
-
-:)
 
