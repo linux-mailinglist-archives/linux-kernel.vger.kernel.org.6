@@ -1,241 +1,212 @@
-Return-Path: <linux-kernel+bounces-263051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710D693D058
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B429493D062
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C821C216FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DA328324A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C49E178374;
-	Fri, 26 Jul 2024 09:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB4A176FA2;
+	Fri, 26 Jul 2024 09:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="VeWM65iS"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bFpThItc"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CB652F9E;
-	Fri, 26 Jul 2024 09:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721985600; cv=fail; b=Lqftu4kpOTxxnNUkMyzoM6o3LaKyCnZjkj5BCZY1DOJrzh2iheVHnL6JgNa6rOwzsHIxhF2zkJx+cIafEHTXOyifOy2dkbDpINPjmwpfX+s91ZNxGfvW7TmzlsIByAZg2GBjZ3EuJRuSoOPJfhtb5jCnXBPAlV8Eynhw4p2ZKSg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721985600; c=relaxed/simple;
-	bh=vGioWeue69Jk1jyYsNMnwyG/x/YtebqmZqlNwKf5yW4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=p9itJlD7yjJmWF+DbPWYgaVRQIFaNbt2XCmmXE4c0i8EFCnctAOt9szJ57QdpyyyJg3MTuNZJX7bfm4YrHljVKxyVu5bViuizUGgY9glq1ndsxnDLrq3O58+adpotUwIEDOAJslGQ6VFbGKPKHcKyhhh/A0HM6xTD8LmNdOpU2E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=VeWM65iS; arc=fail smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q7OvBx006783;
-	Fri, 26 Jul 2024 02:19:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from
-	:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=s2048-2021-q4; bh=vGioWeue69Jk1jyYsNMnwyG/x/YtebqmZqlNwKf5yW4
-	=; b=VeWM65iSqyhScBeQjcBuivorra3GXDhubSlemA081+4AyiaSLX9myA13/qg
-	tq+9V9Ac2ZM3kKR1MpLN0xpzRXiHtiZ3B6wVB/SyJDy8RRcABzKTTusmd9v65ouh
-	/g3d7YpBlwWbNAme8XRvoZEoWxS6YW9Tobx3eEjzQqWwJm96goo6TrbtBr3cY6/W
-	JOAcxF/Ut/0vqk6IPYSTMvrofn77Dc+PrIx9z3471ajLmrYCls6zwaIgRuKafkl9
-	YLXraILGchgOZMys1EbM0WF6uIdaOUAhuiWj/dP4hHheDno9022bm6HW6upjhsYy
-	o60sM88e8VXpOm9ucmaHjA+/ZaQ==
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 40m7cr8f4x-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 02:19:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U2hphsAkBL6UBbhAObjVcLCiV9fEPB9/bdutRdmT8VrEQFM9Btgkd2LcoYWcgIe4jEESO5sGeG9Gp53+f/XdA2vxTeNv02agC/YHFgIQZfIgPVwpjuUa5a1EP8ZLsrtOveunvtK25y+Pi+lpdsKkjY+eQ+xxMpYM8UQcmsM1wVKJSib8fp/nE6V2Yh6Rf2YL+Qne84CUCrLm0EYpY0BuzFPd47oRQCzJ60CH3EykgcaTqmWPaOZdxsNNwvmbqgkjPFphYhOi0PIb3oJDrzo76DRtC2lr8HGKU1LIKe1kXjOFE9+XjvHgf0WgiQjgjWBRXcx7e9QXso5qKR2WIzeZiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vGioWeue69Jk1jyYsNMnwyG/x/YtebqmZqlNwKf5yW4=;
- b=Hb0LabMR8F4hRnVR+5LFk47Tnc7HCluSFi2kuMSr079XX+p5qX7nHGZ0nvf3v0BSXyB1KsS7ewxK17eZb5YP3bAj3Ny3YHwUtKnvazKzo3Qmt2ksNVU2DhaqIrDqdWiGap3nRdI/ZGvhsbQPr9Vpj3J/bqstiLbxPsFCaaSaoBg7zD4Kost9obeAju2RXC40yt5vuaSLT0CCLumcvqPYynjrmFJJjtoXolGWqVVcqMzumcugNFzKZK6azdLci6CRY5+BomQ9LWs9Gu8h5u2qSOzVbnGIGC+WIVko+Xx1365RwDU2jBmurXc0lP5HGRIJFAuBYi50ulT2JZdCmpWHhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
- by BLAPR15MB4052.namprd15.prod.outlook.com (2603:10b6:208:276::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Fri, 26 Jul
- 2024 09:19:54 +0000
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610%4]) with mapi id 15.20.7784.020; Fri, 26 Jul 2024
- 09:19:54 +0000
-From: Song Liu <songliubraving@meta.com>
-To: Christian Brauner <brauner@kernel.org>
-CC: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Linux-Fsdevel
-	<linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel
- Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev"
-	<martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Thread-Topic: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Thread-Index: AQHa3u0J3x+q9TWVEkq4VV2cIBgMWrIIlswAgAAlQQA=
-Date: Fri, 26 Jul 2024 09:19:54 +0000
-Message-ID: <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
-References: <20240725234706.655613-1-song@kernel.org>
- <20240725234706.655613-3-song@kernel.org>
- <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
-In-Reply-To: <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3774.600.62)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|BLAPR15MB4052:EE_
-x-ms-office365-filtering-correlation-id: 03dbf38b-b4ce-4d7f-4e29-08dcad541c93
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZFFDV0JPSWEweklCNTNmckNNUm5WMWFXUnByNVl6S0NLdGFVZ2s2cGtMZUNH?=
- =?utf-8?B?dXl3TVRMRFlqU1ZxRHNEbXlUa09vUmRndkFDaGhTaWk3bkpNUkxtZnNPa3do?=
- =?utf-8?B?eFVIZjlvVDE4VHR6a24xenZUV252b0oxTWE4cVVzZUJUTjNVeWNOeEpUOVFU?=
- =?utf-8?B?RWNFOEw4eDhZSnU4T2Eza3R5TUVkQmNVOTQydU1mc1NFVGIzMkU2cEN0a0la?=
- =?utf-8?B?VTl6c25JNHl6QjQ3eGJwdi9RaGF0aVlKWG0zL2d6S083cW9WS0ZkZ0NJOTRa?=
- =?utf-8?B?T3Y3alMxd3JrVE81dHlYZXdlVWNCdncyQ1d5Yno5ejVPaEdYUWRrOE1KVDU4?=
- =?utf-8?B?SVdBSm5iQ29kNlZLTkNwRksvbWowZEhFcmFpQStVeW53ak5UNFZtdzdLd3l5?=
- =?utf-8?B?MkQ5a1dVdExDWVVTUjE5bzl4bmR4TVdhd0E5NmZsT2M0ZXFZUlk5SGJRNTRF?=
- =?utf-8?B?eHcvV3ExOTRVOFIxT2dZM0pyNjBXRFJUR2t6Q0htWEdPdTZPOVJQeHBLb3ZU?=
- =?utf-8?B?UHFkKzlSSXcyRGNjREE0VHk0TVNmWFpUZ2MvZzJWTW1QWVdWOHRvdml3Ly9n?=
- =?utf-8?B?bmU1cW1oRzRPZ1pCOCsxdzljWURHQVpNSmFLKzdUMWV1d0ZiMlduS1N1bmcw?=
- =?utf-8?B?N0pZY2dWdVB6M0lvSEkxU3FEbWFlczVZSDFqM3VKNnk3aGxpZVZQZytKcWt3?=
- =?utf-8?B?NXY5Y1VMS21TaSt0cWsxdTc1RHIzNnUxTjRkc1ZBU2xBSWE0MWpkWmQwUWw3?=
- =?utf-8?B?Q21XWEthekwyU0xTblVDOTJvQlNicU8veVBENVA5OXBKbVl6YlNETEtmYkov?=
- =?utf-8?B?Q3BzeS9LOHdES3Z3akwrdFU0TEV6NlJYdTNVSFNLNWl2TzFzNkFyVFpJYWNo?=
- =?utf-8?B?UkozU2ErR1lmSVpKUGJZQmVhOExLY0hWKzBFSmNQaFgxcDd0a3VEa2VYKzJ0?=
- =?utf-8?B?U3pBT3ZLR2hlTnlHVnhBWlo4QVRBblZ5TVBUd1AyTC8rNFJYYUJnYTF1WDM1?=
- =?utf-8?B?ZTlQZWxQY3JtNnBmK2lsN2laNTJDUy85NENSLzdJT3dqZGNtTHlCWmgvU2ZV?=
- =?utf-8?B?K2g4SDN0eDIxMExCcmR5Q1lQV0tNS2RxQVMySW9Cb1ovWlFjc2gyaVM4Z05j?=
- =?utf-8?B?d21rRDhoOEsrVXJvSldSaUlZbXI3LzZkUUFtY1MyRHhlR1k0MzcwUnQyMHEw?=
- =?utf-8?B?N1JBNWFUZ0ZQeHdHU1AwZnA1REZ0c3F6ZFdRZHoxV1F6WU9JVmJlYURXL1hK?=
- =?utf-8?B?WnEzZTdUWnlKYUxDMWZXNXg0Mi9XeDQ4TVc0YnJ6WW5sU3YvM0pkT3I0Q0Jm?=
- =?utf-8?B?VWpOdTVuVTVMOS95ditGSThOSnliMjdDNCtDOXp1S3Q1ZS9LbU9JUURxMVIr?=
- =?utf-8?B?Q1JBUGJ3cmxwNEFEODRFblpwOGp5dDJBQ2FKUzNjQ05oVm4valU3L1dKSGxM?=
- =?utf-8?B?N0dueERHMWI5TTIwdVJxdGJZb1l6NUhUNVBmL2czdWpUTFhLRUlWRGhva2hY?=
- =?utf-8?B?VUg0NVYrZ3QxaW1jM3Z4QUtEbTVOR3gxQnYyVVNpaVFwbVZLK0wzcmxMRlNj?=
- =?utf-8?B?cFpjbGZqZ1NNOXZxMTQrKzR5cTlrN0dwV3pBeXIzcVhNeGwrVmJpZjNNa0tN?=
- =?utf-8?B?QjR2bTRHSDFXOFBOSUYvVjhKcEpXNWV1bFRzZlBHNGN3a3FpS1hzK3VzWVNm?=
- =?utf-8?B?RSt4WmI0UXB4Nzh4eEtZQUx4YVZkRmprYXQxRjhuT3hLYnRUVTgvK29neXcr?=
- =?utf-8?B?MEJHMDFJYzJHaVI2MkJNWjZBcDFtamFVZ2cvVFMxS1hTV2h6Mi9ldGdqVUc3?=
- =?utf-8?B?a3hubUdKS0tjQ3ZPVHE1MVo3dlVhT2JpdDBaR2pDLzJ5eHpxQitlN2pZczVG?=
- =?utf-8?B?U2xjMjE1RTJrcWZ3bEVtVEJEUmF3K2o2ZFB6Z0liZ05vbVE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NXU3aDM5Y1pGSVIzYTFNWjhaOTdtNUNSbWlFR0NLMWE3d2RYWm1kWlA3OHlr?=
- =?utf-8?B?R21CL2N1QTgxSzcvUmtGMkRqUnp5SGU1RnFVY0w5S2NuMmJKSlllN3IwRFFR?=
- =?utf-8?B?UG9qZStDTFBKNVhDcjdLQUhwcHhqakZiaEpuNlhDQm4rN3c5V3haTFNhM1di?=
- =?utf-8?B?ajM1cDNjcVgyTlU5SWxwUlFWck5seFFLMzlvcU5XZ1VkZHg0U3I5QnZTL3J1?=
- =?utf-8?B?c1lHbWZ4Nm1tVE40eWk2Tkt1VDFNTDRoZHpxaUVoZWh3LytUM040aERQdjRM?=
- =?utf-8?B?UXBScWN2NmFOT3MwN3FVV3h3azF2U3htTTVqZ0Z2NGVIcnBaaCtTRkZ4OW9O?=
- =?utf-8?B?ckhrQU5hZDc3dW1JaW8xZ3c0UGFhNUcvRnVqN2ZuYndVdUVaamdqS1dKeTlZ?=
- =?utf-8?B?cWk1R05xSVprNXFFR2swMksxV2RITDVvVFpuMkM5SzN3aCtNL1RyMk5BeTJE?=
- =?utf-8?B?TkIyZ05GQW85VDRockV4UjlZcFdkZlpzdjJhQkl2elRkMnNETHB6d290SVJl?=
- =?utf-8?B?Rmt4T2JLa0JxVjB0elFhS2F3a0trUnpmNkwwRENXczRmQ0ZRSnlSTDFNaE9Y?=
- =?utf-8?B?WDRMdjZYYkwydTBWU1J4RGl2WFBLOG51ZWZSTGpPdG5hWkxVeVltODVQNE5t?=
- =?utf-8?B?cXFmaU1tRVVMM0FIU2ZJak52alBuK2VhOW14RVpPS21NakNOTk4zbGxuVUE5?=
- =?utf-8?B?TVJZVzNWSE8rSTI0WExMTUlzTEdzWWg2Si9rWTZ0VGlSWmNxTkxWL3pVNVg5?=
- =?utf-8?B?eEIyUDZqLzc0N1MwV1orK2pqb1h6WFdJYzRkOWxHMGdYY2VhZytqQ21SaFNQ?=
- =?utf-8?B?VzVqRHVuR1hmTzJHOUhDQVdYUzIrWGFLSHlUejBadlI5VmdjaHdYYkMxMFEy?=
- =?utf-8?B?bVo2R0d4dHY0L1pUVnNKekpUc0JkeisyTEVUSUthSTBTR1NpaCsvZVpKOGd5?=
- =?utf-8?B?Vk5hY0M0c0EwTmZGOEVCOVB2WFNkK2V4UHBkcEhMazltY2R2YlFpZW5jc0E3?=
- =?utf-8?B?Y0k0TnUrTGkwQ1QrY3JZNmttMDJ1dFpwcy9kUE9ucGFrcWlxenh4TWd2YlVN?=
- =?utf-8?B?MXJueHQ3eER5SXU4RjNlM0RmZnpDemgyUk5BUUZXRHhNTHIwMVJ1R1BSbTly?=
- =?utf-8?B?b0FMc3hnNkIwR2JNeWEzQkV6VUE1RkMrWCttQ0RSd2NadVQ2RFpUaklZY1Nm?=
- =?utf-8?B?ZzFxbzJYdUpaR3BMRGVGVUlGdDI1REFWU2FVTCtXS1JOM1NKeWl0Zk4xTzVt?=
- =?utf-8?B?QjkzT0RGWFVMdVJsWUFKU1BPSCthSER4aXhQR0d5eFlqMHdMUmN5NFNIeXdo?=
- =?utf-8?B?MkJVR2NYeUZNTXdZbjJjTlVmQnh4STRFSHRmcDFQelFpTE4vRFRabnNHbFFi?=
- =?utf-8?B?ZUhQRHpKeS9pTHZ6Y0h6bHFpQ040ZWkzZlZtMm1YV3d6RmFyRW1jUy9wZHhT?=
- =?utf-8?B?eEZucWJZRTdkS2laanRrVklCMzNxNXo0QnMrVVEzc3hRR2RtTFpCZTVVdjJB?=
- =?utf-8?B?MUJnWDBXano1eURFeGxZSVN4Nk1hYThsekxSY1BuRElSMUVDZThiK3VRanBh?=
- =?utf-8?B?WjE4QTBmOXN0VWtsWmlHcHF1eXlXS1JoWFd5SVpiek81cFl4akxoZ0tRWmRI?=
- =?utf-8?B?K0dHYjBmdmtwMjF6TDJxREJESUtpVEVUWVh2dmU0cHBaZVljNWs3T3l6d2tp?=
- =?utf-8?B?MVBPUDEwWGxKNTdlaEZvNWZBVmxWSEx6WDBJeXhZVXREQ2FRTnYzbEU5b3Zs?=
- =?utf-8?B?TE1rTmhWbVVQenJ6Sk9xa3paNko5S2srR2pmS2c0alNzN0hZTGtxUE1GSEo1?=
- =?utf-8?B?K2hoU3ZBb3BNdThDRlNBb2V0UTYwNnRYczVnQzNUejdtRVRJQTZOclJxZXFQ?=
- =?utf-8?B?NmhseWhtLzN1WkxCYzdrd0tzbytiN1NLRGF2NnUyb1ZmNm1TN2VuMytMbGt2?=
- =?utf-8?B?dzNQSUtYUVJnbHZRN2hWcE9HSTdUN0tsekltVzJXZjhHYTljRU1VeVBMMHJQ?=
- =?utf-8?B?SElyMUhJNUtwR2NlM21uTnFXczRRTEZpM0VEVmxPa1FxV0NQck5rNmZ4M3VX?=
- =?utf-8?B?Lys3c1FkdnFBUFV2REZHUHUvSTBYV0tHd0Q2aW9Pb2xnVWFJNWJMOHpscGN3?=
- =?utf-8?B?NVN1Zy95RXBXWE9uUkdoQ2szWGFOaWN6eW1wVWVQblowdUdzZ3lVQWx5QzFG?=
- =?utf-8?B?OGc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D7C6D3A1C372B4438A10A7E620B7B11A@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA275588B;
+	Fri, 26 Jul 2024 09:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721985932; cv=none; b=HpDcOMB+UJXcxDz2xcEvUDfo0WQZrqxAHyS4QTPUYkYZw1ATLvtPAEzBDJYU2bc71gRl+ttg29SVR23uOlexJSdclEqqaj8uqwrK9odWwzd6+ojFEpvO3mrzaWD6ql0JCgTGCCmFlwJjZNDCAyw3jbQuCC9NBpG+PMRIyAkARxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721985932; c=relaxed/simple;
+	bh=OrQmTPC+5WaeE3r43rDzG8WjcZF/OIx5ctwB7au4s2I=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ryDv2OhfOYESyoARPON3bEdEtvSsW8jXW4mwrBtpM56H5O/XQHZG0LIM1LLqxneIRc+LvVVPBLAKwBtOG5UyM5yi3tQ7EUnh+sWYrDs6ODFKWLM2KsUnpmXEWHWuPyCEoAOAm9X8yaXh8MaqhWWyp41qBL/8m8nn5D6Ie6dM6bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bFpThItc; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03dbf38b-b4ce-4d7f-4e29-08dcad541c93
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2024 09:19:54.7701
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LIwQ63s1vA3IZp4+AucO9sgmXvZhMU2AK4lBGNeaeQxvmy46BX/H+sI/871PzYjWLo0bCqM8PMP4LvWC1Q3o/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB4052
-X-Proofpoint-ORIG-GUID: rEoXjoxy1tjtg-bVxlwtpBM_1i9AtChG
-X-Proofpoint-GUID: rEoXjoxy1tjtg-bVxlwtpBM_1i9AtChG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_08,2024-07-25_03,2024-05-17_01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721985921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z4ej9uQlkgaVcGVy1Ohgr+yLkgvgk4zC7swvR0qmFzY=;
+	b=bFpThItclFSiKz0P0CQXuz6U4XPfxRZbQ9DCtClgFw6JctgzGeyDPLaMwYQCaV+duazz2Q
+	T0xj96ENW48yjoEJhVDsD28to17USjGs3kH54ZTTyuulmB40sNVF1PIldcLMt89V1VbF0B
+	r88YZEbZ0wYKW2hjHAgdA0Ou9d3/CEHLWp2gYslfEDbV4+RhXW23d3ylJngd7nfmU2TI3Q
+	Ezr6DN8dAEwlosUX/yKvsmG/pjAZMt7ZmhhKlVnjWBIQXxw5a2am0iPywsTG4Z2f1HzAH5
+	aDzyDfjSjb88/p60PYdRhfaqcdbyTYCgXOXMY1dtHeMowcsSNAMLBvOP/jToVA==
+Date: Fri, 26 Jul 2024 11:25:19 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Qiang Yu <yuq825@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+ lima@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ linux-kernel@vger.kernel.org, Philip Muller <philm@manjaro.org>, Oliver
+ Smith <ollieparanoid@postmarketos.org>, Daniel Smith <danct12@disroot.org>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
+In-Reply-To: <CAKGbVbukwz5naLwe7oW+UU8Ghtz6PmTjZ8k0PNZr2+h1Y20Qzw@mail.gmail.com>
+References: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
+ <CAKGbVbs8VmCXVOHbhkCYEHNJiKWwy10p0SV9J09h2h7xjs7hUg@mail.gmail.com>
+ <CAKGbVbsM4rCprWdp+aGXE-pvCkb6N7weUyG2z4nXqFpv+y=LrA@mail.gmail.com>
+ <20240618-great-hissing-skink-b7950e@houat>
+ <4813a6885648e5368028cd822e8b2381@manjaro.org>
+ <457ae7654dba38fcd8b50e38a1275461@manjaro.org>
+ <2c072cc4bc800a0c52518fa2476ef9dd@manjaro.org>
+ <CAKGbVbsGm7emEPzGuf0Xn5k22Pbjfg9J9ykJHtvDF3SacfDg6A@mail.gmail.com>
+ <74c69c3bb4498099a195ec890e1a7896@manjaro.org>
+ <4498852466ec9b49cc5288c5f091b3ae@manjaro.org>
+ <CAKGbVbucXy+5Sn9U55DY69Lw9bQ+emmN1G4L8DQcUC1wdFSP_Q@mail.gmail.com>
+ <7d1c35d6829f00fa62ea39b6fee656be@manjaro.org>
+ <CAKGbVbukwz5naLwe7oW+UU8Ghtz6PmTjZ8k0PNZr2+h1Y20Qzw@mail.gmail.com>
+Message-ID: <6c24efecbead9b7c58226487adc3065a@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-SGkgQ2hyaXN0aWFuLCANCg0KPiBPbiBKdWwgMjYsIDIwMjQsIGF0IDEyOjA24oCvQU0sIENocmlz
-dGlhbiBCcmF1bmVyIDxicmF1bmVyQGtlcm5lbC5vcmc+IHdyb3RlOg0KDQpbLi4uXQ0KDQo+PiAr
-DQo+PiArIGZvciAoaSA9IDA7IGkgPCAxMDsgaSsrKSB7DQo+PiArIHJldCA9IGJwZl9nZXRfZGVu
-dHJ5X3hhdHRyKGRlbnRyeSwgInVzZXIua2Z1bmMiLCAmdmFsdWVfcHRyKTsNCj4+ICsgaWYgKHJl
-dCA9PSBzaXplb2YoZXhwZWN0ZWRfdmFsdWUpICYmDQo+PiArICAgICFicGZfc3RybmNtcCh2YWx1
-ZSwgcmV0LCBleHBlY3RlZF92YWx1ZSkpDQo+PiArIG1hdGNoZXMrKzsNCj4+ICsNCj4+ICsgcHJl
-dl9kZW50cnkgPSBkZW50cnk7DQo+PiArIGRlbnRyeSA9IGJwZl9kZ2V0X3BhcmVudChwcmV2X2Rl
-bnRyeSk7DQo+IA0KPiBXaHkgZG8geW91IG5lZWQgdG8gd2FsayB1cHdhcmRzIGFuZCBpbnN0ZWFk
-IG9mIHJlYWRpbmcgdGhlIHhhdHRyIHZhbHVlcw0KPiBkdXJpbmcgc2VjdXJpdHlfaW5vZGVfcGVy
-bWlzc2lvbigpPw0KDQpJbiB0aGlzIHVzZSBjYXNlLCB3ZSB3b3VsZCBsaWtlIHRvIGFkZCB4YXR0
-ciB0byB0aGUgZGlyZWN0b3J5IHRvIGNvdmVyDQphbGwgZmlsZXMgdW5kZXIgaXQuIEZvciBleGFt
-cGxlLCBhc3N1bWUgd2UgaGF2ZSB0aGUgZm9sbG93aW5nIHhhdHRyczoNCg0KICAvYmluICB4YXR0
-cjogdXNlci5wb2xpY3lfQSA9IHZhbHVlX0ENCiAgL2Jpbi9nY2MtNi45LyB4YXR0cjogdXNlci5w
-b2xpY3lfQSA9IHZhbHVlX0INCiAgL2Jpbi9nY2MtNi45L2djYyB4YXR0cjogdXNlci5wb2xpY3lf
-QSA9IHZhbHVlX0MNCg0KL2Jpbi9nY2MtNi45L2djYyB3aWxsIHVzZSB2YWx1ZV9DOw0KL2Jpbi9n
-Y2MtNi45LzxvdGhlcl9maWxlcz4gd2lsbCB1c2UgdmFsdWVfQjsNCi9iaW4vPG90aGVyX2ZvbGRl
-cl9vcl9maWxlPiB3aWxsIHVzZSB2YWx1ZV9BOw0KDQpCeSB3YWxraW5nIHVwd2FyZHMgZnJvbSBz
-ZWN1cml0eV9maWxlX29wZW4oKSwgd2UgY2FuIGZpbmlzaCB0aGUgbG9naWMgDQppbiBhIHNpbmds
-ZSBMU00gaG9vazoNCg0KICAgIHJlcGVhdDoNCiAgICAgICAgaWYgKGRlbnRyeSBoYXZlIHVzZXIu
-cG9saWN5X0EpIHsNCiAgICAgICAgICAgIC8qIG1ha2UgZGVjaXNpb24gYmFzZWQgb24gdmFsdWUg
-Ki87DQogICAgICAgIH0gZWxzZSB7DQogICAgICAgICAgICBkZW50cnkgPSBicGZfZGdldF9wYXJl
-bnQoKTsNCiAgICAgICAgICAgIGdvdG8gcmVwZWF0Ow0KICAgICAgICB9DQoNCkRvZXMgdGhpcyBt
-YWtlIHNlbnNlPyBPciBtYXliZSBJIG1pc3VuZGVyc3Rvb2QgdGhlIHN1Z2dlc3Rpb24/DQoNCkFs
-c28sIHdlIGRvbid0IGhhdmUgYSBicGZfZ2V0X2lub2RlX3hhdHRyKCkgeWV0LiBJIGd1ZXNzIHdl
-IHdpbGwgbmVlZA0KaXQgZm9yIHRoZSBzZWN1cml0eV9pbm9kZV9wZXJtaXNzaW9uIGFwcHJvYWNo
-LiBJZiB3ZSBhZ3JlZSB0aGF0J3MgYSANCmJldHRlciBhcHByb2FjaCwgSSBtb3JlIHRoYW4gaGFw
-cHkgdG8gaW1wbGVtZW50IGl0IHRoYXQgd2F5LiBJbiBmYWN0LA0KSSB0aGluayB3ZSB3aWxsIGV2
-ZW50dWFsbHkgbmVlZCBib3RoIGJwZl9nZXRfaW5vZGVfeGF0dHIoKSBhbmQgDQpicGZfZ2V0X2Rl
-bnRyeV94YXR0cigpLiANCg0KVGhhbmtzLA0KU29uZw0KDQoNCj4+ICsgYnBmX2RwdXQocHJldl9k
-ZW50cnkpOw0KPj4gKyB9DQo+PiArDQoNCg0K
+On 2024-07-26 10:54, Qiang Yu wrote:
+> On Fri, Jul 26, 2024 at 4:03 PM Dragan Simic <dsimic@manjaro.org> 
+> wrote:
+>> On 2024-07-26 08:07, Qiang Yu wrote:
+>> > Yeah, I agree weakdep is a better choice here. It solves the confusion
+>> > of softdep which the depend module is optional.
+>> 
+>> Thanks, I'm glad that you agree.
+>> 
+>> > But I prefer using weakdep directly instead of creating an aliasing of
+>> > it which has no actual difference.
+>> 
+>> Just checking, did you have a chance to read what I wrote in my 
+>> earlier
+>> response on the linux-modules mailing list, [7] which includes a 
+>> rather
+>> elaborate explanation of the intent behind MODULE_HARDDEP being
+>> currently
+>> just a proposed alias for MODULE_WEAKDEP?  It also describes why using
+>> this alias might save use some time and effort in the future.
+>> 
+>> [7] 
+>> https://lore.kernel.org/linux-modules/0720a516416a92a8f683053d37ee9481@manjaro.org/
+>> 
+> Yeah, I've seen that mail. But I haven't seen clearly how weakdep will 
+> change
+> in the future which could break our usage here. As an interface exposed 
+> to other
+> users, I expect it should be stable.
+
+Let me clarify, please.
+
+The intent isn't to prevent breakage, but to future-proof our weakdeps
+that are actually harddeps under the hood.  Of course, weakdeps aren't
+expected to become unsuitable for our needs in the future, but we might
+actually need to treat our uses of weakdeps as harddeps at some point,
+so marking them as (currently aliased) harddeps leaves clear "earmarks"
+for us in the future.
+
+The Btrfs example, which I used in my earlier response on linux-modules,
+shows how such "earmarks" can be useful after some time passes.
+
+>> > On Thu, Jul 25, 2024 at 4:21 PM Dragan Simic <dsimic@manjaro.org>
+>> > wrote:
+>> >>
+>> >> Hello Qiang,
+>> >>
+>> >> On 2024-06-26 08:49, Dragan Simic wrote:
+>> >> > On 2024-06-26 03:11, Qiang Yu wrote:
+>> >> >> On Wed, Jun 26, 2024 at 2:15 AM Dragan Simic <dsimic@manjaro.org>
+>> >> >> wrote:
+>> >> >>> Just checking, any further thoughts about this patch?
+>> >> >>>
+>> >> >> I'm OK with this as a temp workaround because it's simple and do no
+>> >> >> harm
+>> >> >> even it's not perfect. If no other better suggestion for short term,
+>> >> >> I'll submit
+>> >> >> this at weekend.
+>> >> >
+>> >> > Thanks.  Just as you described it, it's far from perfect, but it's
+>> >> > still
+>> >> > fine until there's a better solution, such as harddeps.  I'll continue
+>> >> > my
+>> >> > research about the possibility for adding harddeps, which would
+>> >> > hopefully
+>> >> > replace quite a few instances of the softdep (ab)use.
+>> >>
+>> >> Another option has become available for expressing additional module
+>> >> dependencies, weakdeps. [1][2]  Long story short, weakdeps are similar
+>> >> to softdeps, in the sense of telling the initial ramdisk utilities to
+>> >> include additional kernel modules, but weakdeps result in no module
+>> >> loading being performed by userspace.
+>> >>
+>> >> Maybe "weak" isn't the best possible word choice (arguably, "soft"
+>> >> also
+>> >> wasn't the best word choice), but weakdeps should be a better choice
+>> >> for
+>> >> use with Lima and governor_simpleondemand, because weakdeps provide
+>> >> the
+>> >> required information to the utilities used to generate initial
+>> >> ramdisk,
+>> >> while the actual module loading is left to the kernel.
+>> >>
+>> >> The recent addition of weakdeps renders the previously mentioned
+>> >> harddeps
+>> >> obsolete, because weakdeps actually do what we need.  Obviously,
+>> >> "weak"
+>> >> doesn't go along very well with the actual nature of the dependency
+>> >> between
+>> >> Lima and governor_simpleondemand, but it's pretty much just the
+>> >> somewhat
+>> >> unfortunate word choice.
+>> >>
+>> >> The support for weakdeps has been already added to the kmod [3][4] and
+>> >> Dracut [5] userspace utilities.  I'll hopefully add support for
+>> >> weakdeps
+>> >> to mkinitcpio [6] rather soon.
+>> >>
+>> >> Maybe we could actually add MODULE_HARDDEP() as some kind of syntactic
+>> >> sugar, which would currently be an alias for MODULE_WEAKDEP(), so the
+>> >> actual hard module dependencies could be expressed properly, and
+>> >> possibly
+>> >> handled differently in the future, with no need to go back and track
+>> >> all
+>> >> such instances of hard module dependencies.
+>> >>
+>> >> With all this in mind, here's what I'm going to do:
+>> >>
+>> >> 1) Submit a patch that adds MODULE_HARDDEP() as syntactic sugar
+>> >> 2) Implement support for weakdeps in Arch Linux's mkinitcpio [6]
+>> >> 3) Depending on what kind of feedback the MODULE_HARDDEP() patch
+>> >> receives,
+>> >>     I'll submit follow-up patches for Lima and Panfrost, which will
+>> >> swap
+>> >>     uses of MODULE_SOFTDEP() with MODULE_HARDDEP() or MODULE_WEAKDEP()
+>> >>
+>> >> Looking forward to your thoughts.
+>> >>
+>> >> [1]
+>> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/module.h?id=61842868de13aa7fd7391c626e889f4d6f1450bf
+>> >> [2]
+>> >> https://lore.kernel.org/linux-kernel/20240724102349.430078-1-jtornosm@redhat.com/T/#u
+>> >> [3]
+>> >> https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
+>> >> [4]
+>> >> https://github.com/kmod-project/kmod/commit/d06712b51404061eef92cb275b8303814fca86ec
+>> >> [5]
+>> >> https://github.com/dracut-ng/dracut-ng/commit/8517a6be5e20f4a6d87e55fce35ee3e29e2a1150
+>> >> [6] https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio
 
