@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-263751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA95A93DA24
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFC593DA29
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 510FB1F214DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A9F1C23339
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878B5149C41;
-	Fri, 26 Jul 2024 21:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67E1149DEA;
+	Fri, 26 Jul 2024 21:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb7ibLiS"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="NS/ixlHx"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E2B748A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A281748A;
+	Fri, 26 Jul 2024 21:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722029102; cv=none; b=Fb5iUdA4lhuoM9fU2cTAMZtyO7agyz3t0kdomH0giasRHNgzThE+ffS9JxXe/PcNCKwROyg56IlNPz/ednmERLPwLstI7WAx+0dagujj+Ckroh2FrmJJ8UjhzGV7pTCg3Fe+w9paURXfvU4jib9gwdGFOunj/tP0nlLN+UrsJ1k=
+	t=1722029285; cv=none; b=BTuRYOqs+2fDu8tD2w9M3CpzfsJSgzf4VwM9NCA4SsG0acgEL4uADdb9hMfVsgERy+C0Q7teKFXnvfNNM/+2bDGKOOaU0OuEdfvlnX0hOUSBVGis4n3HSjItfM0mJXer5L1EGc+36Gjp3WG5SoE0Uc6H0KlXjR9C6Qjwq8IItYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722029102; c=relaxed/simple;
-	bh=ZIsi9zKUW0swovYksBJ3n4LUFhUgXGOSqxH5Nra2W2s=;
+	s=arc-20240116; t=1722029285; c=relaxed/simple;
+	bh=OrrdlTnH3WEKPN3TEJlkVeUCJlHW+7VcMK+CyiOaVko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqGdtSm2eww6WNojEnYi+ARbK0ABdQ4JyC2OqeuL6IcP6NaVFQv5qudff+8nYsnzY78+Q307k4xLmprTdl13bEt+UoMoGgViS0qk1X66tlfFBk1AjwrFgYCksnKa4Ef9gHqH3C5UdE2Vn3bMY+BmnwKxncdgvpKI3PDXcyQINJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bb7ibLiS; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44f6700addcso5497121cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722029100; x=1722633900; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYAG56EeDuTzWOBxNnhp7lsUOtWcviTpONBZz7FeVRQ=;
-        b=Bb7ibLiSFzUceLHp2D2Ag01lokEGmWSNfsuujjgZlUtvBjoaNRcpyJ3IqCSg1ydeZS
-         fQamDlw9EeHCwWK9qn15/5wSlpprnmDhWAMopLFfFFqHjF6XS88h1O1DIvO5OU/zRHjR
-         SosAG3j3WOLg0fUTXepBFsamATNu6jAG+f3uPxhGVvdMftQC7wP/WipNUgMRe5jhQPrE
-         rjqMgWbqPxf6NYX8Oq6FJ6LRCJ4eFrA72zlXFWy1CUxQ3TyxJZYA5mrWG3tgryLwu3mc
-         R9zcf8femt3UXPpLoapXMHNVzXPtTsagQWEWkjYfbCFTeLT1dwgSgAgdMAaBXJmKpn62
-         51JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722029100; x=1722633900;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RYAG56EeDuTzWOBxNnhp7lsUOtWcviTpONBZz7FeVRQ=;
-        b=C9YQiNjpVv89JX43EOf38y6bbCWon5xrfrR4QNz0WmIK//MwrTMBhrmkTThEqppWVn
-         cYweHC2+v2GV0K6lSjNvUGoCieiDxVyYGBmiegYp4u5YQnCFv8/w8KzS232n8LWRZaFh
-         NqBksRphWDXtiV77KVkIAZWqk+5LqNM2Ce2pP3kBY73HXM/dN/HqUZxlU3wi2xWRA5xB
-         tj1NrQ2Up0wlcsvUoTYvKgEYZtezwqvBhtTfu82B6x31JRm3wUrnImdx5ibpZfUdGNGE
-         PybXKbYW7MeNTpqCxgYq7e0g8XKHUcVeyWyCeo1/04NfRn7uefZQ6mMyaHCKfL5ZliLN
-         rYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHSTVwt52hlJvrCTXMAZSWZy1yKaWwn8vmpxfYxT0MQZ/kJPNftKz48snNmsni114j6gMgklI1zY75PspHWWLpMxh1dSfOGmuYZW1N
-X-Gm-Message-State: AOJu0Yyxz1YyQ81m2yRF6ibEudPTVyj7ZzmIQaW8oc7NiaFaLui1dwEF
-	3Ku1tcMEsSSgzj2C7aqA7zdHAzUQWms6SOqRU+wgIiDyxfXcA469
-X-Google-Smtp-Source: AGHT+IFr+4hy8UwdnPfUekrUnC1wzSXVer2SYhrAwdMapwg5W23k1nkpRSmyOBwEGOQDTUdA8pUfQQ==
-X-Received: by 2002:ac8:588c:0:b0:44f:e92f:ff09 with SMTP id d75a77b69052e-45004db313fmr11613611cf.28.1722029100247;
-        Fri, 26 Jul 2024 14:25:00 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8208549sm16192031cf.59.2024.07.26.14.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 14:24:59 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 344F0120006B;
-	Fri, 26 Jul 2024 17:24:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 26 Jul 2024 17:24:59 -0400
-X-ME-Sender: <xms:KxSkZisOdVsriN7hxFSgKIN9xuYrYb2MO53-sC6ieEouXKn61CzmjA>
-    <xme:KxSkZnfGK71SVsUQ0TW3HMOI6ddvfFM9q_F021vpNjjTD-80IvGKRNO6e3nf0mgv2
-    8MDdlXv9W5gOX8FjA>
-X-ME-Received: <xmr:KxSkZtzCBv9K6twLgAXJVGZQnvZNl9ERAYuVkU7TI50RS-slp14raD12G-o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieehgdduieegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:KxSkZtMLpljWsUWQN3fvlF0uA63y3wkS-NiWjoplm9QOk-7DHT30Fw>
-    <xmx:KxSkZi9fGgpKPMJBPPXf42bldlq9Juf7_miwOb6TtWoXVIT5Kszkrg>
-    <xmx:KxSkZlVd-QCfaixyMfzO5O4JJbhehJ4dkbGnnUx-OfC68rNBpFrYZQ>
-    <xmx:KxSkZresAKdjml2wpnhpeOxba42-6jzjLmPR5syJ-sbrR9eDfkXR4Q>
-    <xmx:KxSkZsfA2qlSbnUT78koJT32m-bhHG1glPBaJebmw_sNbJ9kxJLf0OkV>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 26 Jul 2024 17:24:58 -0400 (EDT)
-Date: Fri, 26 Jul 2024 14:24:28 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lockdep: suggest the fix for "lockdep bfs error:-1" on
- print_bfs_bug
-Message-ID: <ZqQUDI3Ai9GP9hUO@boqun-archlinux>
-References: <ZqKdZZp7TI69DWRE@uudg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/D1WeeA0ECVNuMxgTOuichHP/pTXf0nZjQDjvwi3z8NvUNf61UBirNOw2uEEAqnDN8h/zanqAvsrcnnAP86wpfkmWQp6twly/y9M1eHCtIInqrnZHcjdng8O3SiFASUOQjztuykdpM9+z7Mj0cpEhkZxYtqYmrpNEVmCRG1bEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=NS/ixlHx; arc=none smtp.client-ip=217.72.192.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1722029243; x=1722634043; i=christian@heusel.eu;
+	bh=7cb9FKqiTnmAm4LGtD713mXbbQFUzBHgztfenIYWcFs=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=NS/ixlHxQgNlPBNJpdaCictNQj535JyqyZxV6PfqKrH1mfRDCFYuSKZM2yVgNKS9
+	 D28ag89tIeUkviAkdavPscpp5EFzG4n+wMQTP9WhSGihfhgN+AXqD4NCyEVKBTBoY
+	 9U3Gu86GOaxkRwdtqD2v4MFai0syNRcCAwfWQiaVFj3BVugdgP4IaxChfGVnGpNo6
+	 ua3p/vQRh5yIU7D83EwUdwMJT4yArzmAmD/7Z7ewWP/igTJlLwAcc44MEkA1CNyBf
+	 iL9ztpc9t5YxbQGSRG7ZvoiWCMr1FjPFn0FCbJBinCbcBhpuZL6gISboYsVwTbMgE
+	 9PhxBRBm8pjrlkfXJg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue106
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1M4rHF-1sXBM41NuZ-0030Ij; Fri, 26
+ Jul 2024 23:27:23 +0200
+Date: Fri, 26 Jul 2024 23:27:21 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 00/29] 6.10.2-rc1 review
+Message-ID: <ff7f0e41-537c-4e06-8fba-5a027067a6a8@heusel.eu>
+References: <20240725142731.814288796@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6guo2gbfiwflmbb"
+Content-Disposition: inline
+In-Reply-To: <20240725142731.814288796@linuxfoundation.org>
+X-Provags-ID: V03:K1:u+DcOdoBn801YoG1swHt3jWoqlewT2v3Rp51C4Gn3TFSbo7y8YA
+ RiwlhTjFS/NgIvioR0ijVxc8aF647WDV0i97P0d1lCOlw0BRJ+YlHJQfegMYc1xLQrCUI4i
+ QWV0V2RSZBd5rp6r1aJgg1CHGYieQIuKOmFH2fixtbhqLjij8GP1tGNC101k0Ut+fcjq1CG
+ +TK0XBf/4red6q1zQtmWQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2qsYY1e11Dc=;fgYB+yoosq6hmmwAi9PXEZDvWfL
+ UK6BgD8Fo6iA6T8sEt42ltv26qu0aKZs2s6qJ/r71xl7MxyY3WWHnU4oAfs8el0p/fhic4eTm
+ K6/vEwPcUzP18oydD+a/Y5SSV2AQBsAoAX6DLiwQcfBn+UbgiZi+PLATo2ZwVfGqVdtMiR/R6
+ 5Q3sSBtzjGwT91DaHQOa4N0TWvuSi2iabgTDP9EIfKMnUUZNArkXtUSjFW8qplIgkuRJlHHAi
+ VZ0GdlfPzpvVz1kKO2FSeKE7onhar3B4ygMFSqZOPg2oGlAFPWqDUbxYcd4qRL2IDhb9lH6T2
+ zomfxSTXGo7yQUdF3xS49BkrlXi/B5T+NL/NiY1Dv9agbtnohOcXDLUjIYyGo+CIDdm5qD2bz
+ hcn0YdF6kzlr3EX7DG/TJzZ2J3eodztXGJqQOgOrlFw9sbw6+z8XuLi0FJTxvP1gM/j36XNtd
+ FXiryxz4BceyF8TtFmTNG4oTFPFVSxzNUwO9kXRxLY9K5e85YhthH54N7hDJgWcIm3hnXEo7L
+ 8FjAco4hCbAbMPilgnggn3t22QbSRxK58O8elOyJkTAd73Lu2uwyHdV8wHPrKUI0mlo8ZsXm4
+ mpPdKndz8MwnJWKKEqs153BmT/wAMwLsGZuMImY7Jw8rHud/ou8kPCwgX89IgIVOCLhRZVD2J
+ 6mzSvTpNroFFLknzQzi4sojeX0u82D6Kvzk9k7/i3Anvq6vZGpavWwdIN5qniOulTOmbPm9dX
+ glBnZgMzIUkjbtCgrKgwpLO/0cgU8Nfqw==
+
+
+--d6guo2gbfiwflmbb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZqKdZZp7TI69DWRE@uudg.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 03:45:57PM -0300, Luis Claudio R. Goncalves wrote:
-> When lockdep fails while performing the Breadth-first-search operation
-> due to lack of memory, hint that increasing the value of the configuration
-> switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
-> 
-> Preface the scary bactrace with the suggestion:
-> 
->     [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:
->     [  163.849248] ------------[ cut here ]------------
->     [  163.849250] lockdep bfs error:-1
->     [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c:2091 print_bfs_bug+0x27/0x40
->     ...
-> 
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> ---
->  kernel/locking/lockdep.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 58c88220a478a..1cf6d9fdddc9c 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
->  	/*
->  	 * Breadth-first-search failed, graph got corrupted?
->  	 */
-> +	if (ret  == BFS_EQUEUEFULL)
+On 24/07/25 04:36PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.2 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+>=20
 
-This line has an extra space after "ret", but otherwise it looks fine.
+Tested-by: Christian Heusel <christian@heusel.eu>
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
 
-Regards,
-Boqun
+--d6guo2gbfiwflmbb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n");
-> +
->  	WARN(1, "lockdep bfs error:%d\n", ret);
->  }
->  
-> -- 
-> 2.45.2
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmakFLgACgkQwEfU8yi1
+JYVL4Q//c3u7IM+ekLkSdT+bjoqcNA4/nqR390psXhySqWaO2Qmyebwqf2QuO8UN
+DE2qEVWHmQIBpgUM7lQah8lr41nfioMdMC1J3M9mILRahkVmvvY3URqamGEgvNmy
+SqKeErbxZ8b5HaohINtfaipCEWkHOyamFF2wITbRzRKqpfTIrwnBBedCtiTmsYZN
+R/NhNVY4Qy4L9Ith2AMjGTEPTfNqExnwzlAHDXHtGwitkFOFqtJRPAakOCRwJY6e
+l8kotjvpMRdTj6KouV3MyI/au5srpw6Dp4jbxOdDpkqyuvQXJZsSBzVShJwIWEQn
+PBcMeazXeVaGNK+CankKTLUfLr53AoqfeHobn30q4woP+sh9i/RLR0NUkKOsm+gk
+C64XTJqq+15Pp6kLW3h9yIxe1Yd6HQdTb8azOar/HDbfpM2JM61R15DZSOtbgQVv
+YKOzei1uvuN0bgI/uPvbm/yIhmueIRmCvpd614mPngiRhy72AF9KPpf38t/upRfm
+vv/AzxGVdei4ovd3UtH7q7ZtVN6TVmGnFHIoxwB9JdTAT/w/OUjpOHoJq/J2BdSS
+JdcF3RNCV6YjwTQC6RHzGQCXyR9N3MVduDcCNyPJozOUE0SCL/U1wwmc2dhzqmqr
++FHkfgEX72OG5s7o9R4YZfXFX7hXbzLzi+GkXcWTeGtYjZQfySQ=
+=7Q49
+-----END PGP SIGNATURE-----
+
+--d6guo2gbfiwflmbb--
 
