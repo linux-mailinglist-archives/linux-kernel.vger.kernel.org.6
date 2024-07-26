@@ -1,109 +1,107 @@
-Return-Path: <linux-kernel+bounces-263265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC4493D371
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D9C93D376
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF0E01C22FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD8D1C2303B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809BB17B4EE;
-	Fri, 26 Jul 2024 12:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6755417B516;
+	Fri, 26 Jul 2024 12:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mHIMATIp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i/E6bZ9T"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ko+oh1yW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0B62B9DB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306FB2B9DB;
+	Fri, 26 Jul 2024 12:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721998121; cv=none; b=jqH9mFXwKP01Q2++EpYg2WRH6ExwESaei2owjSWL8M9yrEMVLTENDBqwzNWo8vhFIVN8Wo9d9uiG6CRcVx8stTz5nUGW25lnbyb1Z9ivTZcmGlt11TPCStm/gzrC1kB8k+FRiRJdgwkFPlsVlxelDcUoUhY98W5D4L0jULXPNWY=
+	t=1721998177; cv=none; b=HAuqpP0lE9eLwCFSuNpMNEv4FuRlLLQ/b4xfMDXeyp7bh3RNRS9/Lkf/QqWxn0PPZ3JY/ZsAUHl40FIcr7N0PqQlb3prJC9Jla9fxQilt/jf5JIN3rkC/9FAfLv7iNePbMmQ8CMb9ikddJaSSEFrmgU5CvwEVX2g52EKbONclf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721998121; c=relaxed/simple;
-	bh=wG7DINiILIfbNkkwvhfiokMcruI2DZpylYo6zLZp1oU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Zoz8dcIhWQ9GSOQqlbrIpnsixhNUaqtMox+7kBm/fuHXII6Q4mcyDxAG6qzEwA+fRY0iMkZnBSQNFp9yyps247DjbhhBj46zXHm0amubOlLt7+s1MGbeWqaqhCM5PZ6b5Q8L6ZQMg/9Hr5hETLN7Z6xvE6tCVvnXhL0bfE0vgiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mHIMATIp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i/E6bZ9T; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1FD901380521;
-	Fri, 26 Jul 2024 08:48:38 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 26 Jul 2024 08:48:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721998118; x=1722084518; bh=wG7DINiILI
-	fbNkkwvhfiokMcruI2DZpylYo6zLZp1oU=; b=mHIMATIpQ07LiRYL4a3NxN7hO1
-	ua3QUlfnyxxnzs3Of4CkwRXYK6sLw5TGZX/LI+NjjLl7Ttg/FbG5pxUu8mC3KGdY
-	JWhU7f3cR3x06QoseWX4FybzUiBdmdsEmf710Fm88NUfFcM+owWjIagdUF4W7HnT
-	WlgrCh0chTrT7k1KBac10bsh817d7A86oBC+DWi1HlE7nq8yd/LVQCPIq+ZSxP7r
-	Cic+Ho59T5eAWFp+RdTx3SY0Ilfjn6SFzHxHXj98szIni2gMTjQQB6dds57Itt/i
-	X55DY2u5v2ikf4xojqrWKoGlDu48wEC9rX2PNoAJ2EfH4K+v1Ny+9mZRRKzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721998118; x=1722084518; bh=wG7DINiILIfbNkkwvhfiokMcruI2
-	DZpylYo6zLZp1oU=; b=i/E6bZ9TrbSU62Om7qZ1ZIFIVp74n2m0qCCSRITnG3e0
-	x/Xh3D0pgtndpDm3j3qSCKBG7Q4yNGIVbPdIdSZzTKsxOLKwUyqXeW3LxVThYCUp
-	Pq/7vYd2Gr4LhjGSchzFtV5QT3JNQpkTKBqZLgby05lUIQhAxaSbkGWffvH52ZOM
-	ur37lyVNyyoRoXquyTI/l0j58IhjegkByR0VqlOcNz95k5d7btwuar10G3yIlm/K
-	0DClQ04zT9Y5dN2TA4C5Rx/IdECeiE6mBC6HRrbZ55VofuVMcAB1SvfaDgw3MZMY
-	T1KJDB4OV3RWQOBbuU4w/fOMXRqpxNDHzVqYRWidgQ==
-X-ME-Sender: <xms:JZujZgeseyf9tkcioFBX5O3In3mzaQu_ml8LB3U1aWksiMs178e0Nw>
-    <xme:JZujZiOloNyQCbHp5EPs5oTx_Phb9ogF621PePjnIzFggLNLJL6CmhIWBDoMYfWPn
-    9aTMYkrpBrcc66fV4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieehgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:JpujZhgaaNKxUN2CRVtyhs1ZYB2E9uO38zKxxhdtPdwQykzwKSpFrw>
-    <xmx:JpujZl8YyED7AkcNJzg_y_vB4i5TB92MTVfOAjZqVPVyjtASoSjRrw>
-    <xmx:JpujZst-73Dhll7qTrKExlmpgSNJQa_dKtBmLEp3AnBahrDWMPc4BA>
-    <xmx:JpujZsH67a_TaL8Ct8NZPAcoKlfg1am7qTj-zx6kVqYISuQ5IiIe6Q>
-    <xmx:JpujZuLtYqi4uaooqpCQwciA_Ub9RogK3nzXLICsCcZfw_P8-UuD7iWM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id DF419B6008D; Fri, 26 Jul 2024 08:48:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721998177; c=relaxed/simple;
+	bh=CG58Cw01rwsoyFtR++iSV0HzK97O4jr4VBnptMsETWA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f70B+IuW4F7ClW0V/7s5CvdAo6J2N3+zhIvku6Sqse779aNZpvaU1RnI0OGwSZWMrKcOzo4fxVfsvmkEoCtfJZj4EwRAl3WhGgks/HQspq5r8KB5Ih2ItcNxRiF6jlHH+meeDj/lAlzFzXm/BKeO7RW8JkLxMrVLbddst+fwGX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ko+oh1yW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1721998173;
+	bh=FbjGrZAf4KleDcOMWprQnrXa/ICyg2tclBDC0d6LUpM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ko+oh1yWmHuJ28MuSfSmWMSNvw/3PNVTmZhhgZO3y/QcEE8E5mIEiGRDDVZtk5SA3
+	 DSwzeimB8ywiZbBMODXyn6E3xM1JH0JxV/aLtd1QGSvDmH0yzkKKa9bG8hiA5NgRKC
+	 xgyhcypHpdkzlJONdYHOJh1PbUY+RfLi2lOLNVXFZ2Mtu8zBkRBjE+WI0vLEP3z9P+
+	 nX0VvkHtfXlv+O+hkN8NjHNWCrXdHF7EVn8l3kuxbFtZYJJgzZUSv0ZI3+4XmjYaAj
+	 XXn1CNLfxSLNtpFcC7HVKXAo4pfHsaM5mjhG0xQrBqhT3aKb+lDVY8fI/M6cV8UPKG
+	 FtP423ZOyfizA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WVndS1hY7z4w2M;
+	Fri, 26 Jul 2024 22:49:32 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Amit Machhiwal <amachhiw@linux.ibm.com>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Saravana
+ Kannan <saravanak@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Vaidyanathan Srinivasan
+ <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, Lukas
+ Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+In-Reply-To: <dx32q3sa4oopk3fnm2zyeplotuq6gq3rmnbmaw3mo4q3lgjpe7@gvpgu4rdk4f4>
+References: <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
+ <20240725205537.GA858788@bhelgaas>
+ <dx32q3sa4oopk3fnm2zyeplotuq6gq3rmnbmaw3mo4q3lgjpe7@gvpgu4rdk4f4>
+Date: Fri, 26 Jul 2024 22:49:31 +1000
+Message-ID: <87sevwuxlw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <f8dcfe08-487b-4c90-a1e5-397262d1e77f@app.fastmail.com>
-In-Reply-To: <20240726123322.1165562-2-mpe@ellerman.id.au>
-References: <20240726123322.1165562-1-mpe@ellerman.id.au>
- <20240726123322.1165562-2-mpe@ellerman.id.au>
-Date: Fri, 26 Jul 2024 14:48:17 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: "Jeremy Kerr" <jk@ozlabs.org>, "Geoff Levand" <geoff@infradead.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] MAINTAINERS: Mark powerpc spufs as orphaned
 Content-Type: text/plain
 
-On Fri, Jul 26, 2024, at 14:33, Michael Ellerman wrote:
-> Jeremy is no longer actively maintaining spufs, mark it as orphan.
+Amit Machhiwal <amachhiw@linux.ibm.com> writes:
+> Hi Bjorn,
 >
-> Also drop the dead developerworks link.
+> On 2024/07/25 03:55 PM, Bjorn Helgaas wrote:
+>> On Thu, Jul 25, 2024 at 11:15:39PM +0530, Amit Machhiwal wrote:
+>> > ...
+>> > The crash in question is a critical issue that we would want to have
+>> > a fix for soon. And while this is still being figured out, is it
+>> > okay to go with the fix I proposed in the V1 of this patch?
+>> 
+>> v6.10 has been released already, and it will be a couple months before
+>> the v6.11 release.
+>> 
+>> It looks like the regression is 407d1a51921e, which appeared in v6.6,
+>> almost a year ago, so it's fairly old.
+>> 
+>> What target are you thinking about for the V1 patch?  I guess if we
+>> add it as a v6.11 post-merge window fix, it might get backported to
+>> stable kernels before v6.11?  
 >
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Acked-by: Jeremy Kerr <jk@ozlabs.org>
+> Yes, I think we can go ahead with taking V1 patch for v6.11 post-merge window to
+> fix the current bug and ask Ubuntu to pick it while Lizhi's proposed patch goes
+> under test and review.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Lizhi's proposed patch (v3?) looks pretty small and straight forward.
+It should be possible to get it tested and reviewed and merge it as a
+fix during the v6.11-rc series.
+
+Or if the CONFIG option is completely broken as Rob suggests then it
+should just be forced off in Kconfig.
+
+cheers
 
