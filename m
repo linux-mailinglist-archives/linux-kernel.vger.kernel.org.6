@@ -1,201 +1,263 @@
-Return-Path: <linux-kernel+bounces-262740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0179693CC10
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1B93CC13
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84731C214D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0C728279D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170FA816;
-	Fri, 26 Jul 2024 00:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F782EC7;
+	Fri, 26 Jul 2024 00:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zwA0QrsK"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NxbFhHb1"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B898063C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778DF7F8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721953468; cv=none; b=DoSr/hNllTIWN9Jbl2IL6KfO2fn+Oj3KgzqmM5KpdBhMYB5DPiBTI90Wr4o1s6iWQsV8+zWcjyiQAnfdRkQwrYLTgZv1Z9dP+n//XlwWPTZGD413RflDxmaPkgRCLXXCA/dFhSLDA7/TK+yxKG9662t7x225kfNgJWot4r2/bzM=
+	t=1721953774; cv=none; b=bfrItYQkO0QdStsB6IwB5hlYTYHpNrqLPjGQDbBYsl1QgfSTtrPJzzcsm53BV7/7C3EpTBVJAt0HOb/ogDfuP+lxW8kwNLKJc6pmMgZWaqkVzbCPo2P/BVY+GvYpK+PJSOYEGRdsNHlPnT6hiZf1m+8vs6yoNFehT/zRlY+BhNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721953468; c=relaxed/simple;
-	bh=+8Z7zuHj1HIHyJJJHcyCi1jQAlMEEJC4ALWlLiUTuD8=;
+	s=arc-20240116; t=1721953774; c=relaxed/simple;
+	bh=kviLB+w2lXuUML0TzG8iXmFtCyiR/hwIxPgrFeBKB2w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J5K2KHF1+c3ynYX/3PuGbbtsftl1I3Q2jTaLyxAoEViD6wQZIvVq/BzTJLfchel9CEMvUw40BaYOJFb7nZf8xqa/ol64uVq+mccrIbdsbMFDdPwjGglpOk72+9sl0Dn8wCTJEiUc+n5irSMwOU+upJ54cWu+TGwGocXLqt4Dwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zwA0QrsK; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=JO6Kw7IhY6TuhC7DJyUhbilZFeXzZCpq6FYSGN0CLSa5mGwY15cXiuDfiGKmSAFvrwMpcCgLejRAYXnd7q7YBEDJPxoVE5FPCIrUev+Vp/GdtlnNPO/tvI6/eS1WiZowyT/myj0LS1H2KO9oWzUcwfn/6w9gKoWoMDXNJVjQYFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NxbFhHb1; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fee2bfd28so47091cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:24:26 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fdc70e695so63801cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721953465; x=1722558265; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721953771; x=1722558571; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=77qlRcL4PUP5h8ZRxtqeaydLFX3D5DF3IEwpxS5zrYg=;
-        b=zwA0QrsKgZisgV/If59m2g4BlhIH5pQY70xxy8of0XTsXuQsU/YisntMMgh0RFLSva
-         pvm5K7tD5F4XJyguaR9SYwPZS5+2ZEmmGZUc98G2M7yu0JYrqQb0VQunRxWZfn00PAQ8
-         GA4/SBPyV9dEhAFxTlyi1Buh2yoQRiUsZfkiZ/aXSzNK1YCg8iiqgShDZywK1C7RHUK+
-         w66MuL77oe0u4NzI0wiPoXr+6N+6N0crP25M+LcJe/Zyk+S5bF3jTc+4rs8Wk8wtqs7k
-         Be0fweXeHFAVdZNT1e0zyimhzsKQ0UwRfr1lXvtmtt4qH/Mpck1J0PxJSeXfWD5fYrIL
-         mldg==
+        bh=DbyJs6ojjDUY/aYBbei0H0GJsGGC+U+B84+bho9NthY=;
+        b=NxbFhHb12wnDT1rcGSIK0tAabxi1zIzCVPKIJFFlB6A0QgeHU+mAbfprCf4kmykCyw
+         9J0u6YLicl/LinKjflrsZ+Lcdv/lEvlXaGA8hE/97A4cJI1L7G7R4/XEta3CUfHnEbz3
+         JfhLdYFytj1AYSxqDmLDA+CDR+/LbrYsjZy5zAiZAvOZmfPsuPMbExrW1uk1FEahUZ3g
+         MTDEdz/VCkTlTI6vDi8bf1u39jRvy6GWzdCYHLaLVBT5Kj4vUCtFuV4FxnyBHd6WfG3S
+         n9Oar9+3MHfmtrdVogs4tnchSc+AaF7mtRl4Auh8qokljJ67aZYkAJOZ10g+gVeXf9l2
+         Yd+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721953465; x=1722558265;
+        d=1e100.net; s=20230601; t=1721953771; x=1722558571;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=77qlRcL4PUP5h8ZRxtqeaydLFX3D5DF3IEwpxS5zrYg=;
-        b=M7KXUHXVp2mSliw0YvU3+EkR/oMpmZfseW1nUXc3svs7YyJwTkkl8mt17NbNozliqj
-         clMFQa1Ub0vh+SaKB1KbaemUKM3hlR5+8OVBYj7/4uVI0vasncfvFdoQjurIIzQYZrHs
-         0yuw46pa0AI9qVmtO15RZzC3ww9s5M4MamutkpNS3wuw73HXJtSC7nMZNnCsF4Rc2tJC
-         Vho1syb6ZcN/pSTXEEEWCZCyuufnjxp3LjZfPJ0S33xeAiRa83aNQIGb2Yqyfv8q4zPo
-         g82+uyzlwGVsLv1jt/P6XH00keNF5cAv3RpC7Lsr/QJ77spESqVnc27nQY1OJlzKG2y0
-         m7Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQSh+OYna/qQx1q//cu/lzXPGCvo4erzY1cwxVuzEBmIYdhG3OIOFrHHIZkODeztLZOqW2+pWH/F0OwyrJhB5pQujl7QgRImLfzqLR
-X-Gm-Message-State: AOJu0YyqATE+Ux6n6lntzebKrdhVhzdL35NxWCzRnI/gKFtPBBNDeHBR
-	vKlimcRH0+sTszITMX7nQXDM5JSKXP0Aqj12udlBSMSWbjjoa8WBM5BxJJcApGE04n2sAPVal3Z
-	7t4XQQ+Ih9XfLivcSExzrnb8lY/+I7LKQlpyt46Xn80V66vnwdHUSyGs=
-X-Google-Smtp-Source: AGHT+IFxRpjgJ6wObQXGzkn9wNtJ+JxPuAaUrFwCV1R1K/Oz3SbJ3MmktuoDvJaW8UnM7obg5LRzDolOme3IjG1RkEI=
-X-Received: by 2002:ac8:7e8f:0:b0:447:d78d:773b with SMTP id
- d75a77b69052e-44ff3a6e49amr1570931cf.6.1721953465392; Thu, 25 Jul 2024
- 17:24:25 -0700 (PDT)
+        bh=DbyJs6ojjDUY/aYBbei0H0GJsGGC+U+B84+bho9NthY=;
+        b=qToTnSDCgCqhCwH7PvIvclZErbcvNVpTaoofv/4NmD57Lbkdf96ze8W7Wi41Ry4xQu
+         /jV6jNr+iFLiYbQ5OFDFBTH8uFNTG1fmNFlULvDwDs19X07CjjTTOsN4kFZTMvzC8Hym
+         O5vHEI1LvxIVNsjD/4os5veg17hgQrNyaAEVniYhwHIIE7VPpGClG7U4H62X/tyaN6GH
+         +hvyt4L4FVOE/msagIL+qmS/uBl5EwfcxhumObl3OznLCuTkbyxqxOTIrIb1yURcFa5r
+         BSiwPe78JMbE6Yu9RhEXG4mvBMrbn4kK2SICRBt/ERqLeE0ROVzxtQTcTXWHz0TSNUaW
+         R6ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXCr9GvOayyzNyHHxQlP+hLw9Vw6mNwmw+D56IIH4Bfkob/8qCZzZZYtygqoUyjVQSCigNIZUg0eTDkeuwnxKRnwR0G68dc/zkPMBK
+X-Gm-Message-State: AOJu0YwC03P5REjNvVWRwmnbC6cVrkCytwFOuPFhy/yDRm4Nyvf0iwPR
+	8m+jMSli/rt0woL/X0UuhN/DsyzwC4D+m9f0rYTOYwSVugwyQZ07KCBKWHRrDrjl4XMgbsw8CPv
+	GKXUEspM02kNIwtae000U2sTEUqn4V3WpIbBQ
+X-Google-Smtp-Source: AGHT+IEAKXr1ckGzIAW0Zij5lROUgzcsWDVkCYVl2RWE/gIa1eP8NSl4F+ePaiwMP4UG1WnczScB6df5XE4x/GMY03s=
+X-Received: by 2002:a05:622a:1ba6:b0:447:f5de:bd18 with SMTP id
+ d75a77b69052e-44ff3e5d32amr1488861cf.9.1721953771125; Thu, 25 Jul 2024
+ 17:29:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715192142.3241557-1-peterx@redhat.com> <20240715192142.3241557-9-peterx@redhat.com>
- <CADrL8HVH8ff+_Szrmn4ZCyAkm9gDc2oY4VVo3r+6RN_ms6pbhw@mail.gmail.com> <ZqLUjQb2BjedihOx@x1n>
-In-Reply-To: <ZqLUjQb2BjedihOx@x1n>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-2-jthoughton@google.com> <ZqJ_xANKf3bNcaHM@google.com>
+In-Reply-To: <ZqJ_xANKf3bNcaHM@google.com>
 From: James Houghton <jthoughton@google.com>
-Date: Thu, 25 Jul 2024 17:23:48 -0700
-Message-ID: <CADrL8HWGf9BD5WX_zu7TW9NQXVXUwmaeHU6EGRJkSXyk2zesmg@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] mm/mprotect: fix dax pud handlings
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	linuxppc-dev@lists.ozlabs.org, Matthew Wilcox <willy@infradead.org>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Oscar Salvador <osalvador@suse.de>, 
-	Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Borislav Petkov <bp@alien8.de>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Huang Ying <ying.huang@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>, 
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Hugh Dickins <hughd@google.com>, x86@kernel.org, 
-	Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@redhat.com>
+Date: Thu, 25 Jul 2024 17:28:55 -0700
+Message-ID: <CADrL8HW2mjC=ukNBG6Tww+Y3t6poU0ZM5uQJteTk4e8kj-s2wA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/11] KVM: Add lockless memslot walk to KVM
+To: David Matlack <dmatlack@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 3:41=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+On Thu, Jul 25, 2024 at 9:39=E2=80=AFAM David Matlack <dmatlack@google.com>=
+ wrote:
 >
-> On Thu, Jul 25, 2024 at 11:29:49AM -0700, James Houghton wrote:
-> > > -               pages +=3D change_pmd_range(tlb, vma, pud, addr, next=
-, newprot,
-> > > +
-> > > +               if (pud_leaf(pud)) {
-> > > +                       if ((next - addr !=3D PUD_SIZE) ||
-> > > +                           pgtable_split_needed(vma, cp_flags)) {
-> > > +                               __split_huge_pud(vma, pudp, addr);
-> > > +                               goto again;
+> On 2024-07-24 01:10 AM, James Houghton wrote:
+> > Provide flexibility to the architecture to synchronize as optimally as
+> > they can instead of always taking the MMU lock for writing.
 > >
-> > IIUC, most of the time, we're just going to end up clearing the PUD in
-> > this case. __split_huge_pud() will just clear it, then we goto again
-> > and `continue` to the next pudp. Is that ok?
+> > Architectures that do their own locking must select
+> > CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS.
 > >
-> > (I think it's ok as long as: you never map an anonymous page with a
-> > PUD,
->
-> I think this is true.
->
-> > and that uffd-wp is not usable with non-hugetlb PUD mappings of
-> > user memory (which I think is only DAX?).
->
-> Uffd-wp has the async mode that can even work with dax puds.. even though=
- I
-> don't think anyone should be using it.  Just like I'm more sure that nobo=
-dy
-> is using mprotect() too with dax pud, and it further justifies why nobody
-> cared this much..
->
-> What uffd-wp would do in this case is it'll make pgtable_split_needed()
-> returns true on this PUD, the PUD got wiped out, goto again, then
-> change_prepare() will populate this pud with a pgtable page.  Then it goe=
-s
-> downwards, install PMD pgtable, then probably start installing pte marker=
-s
-> ultimately if it's a wr-protect operation.
-
-Ah, I didn't understand this patch correctly. You're right, you'll
-install PMDs underneath -- I thought we'd just find pud_none() and
-bail out. So this all makes sense, thanks!
-
->
-> > So it seems ok today...?)
->
-> Yes I think it's ok so far, unless you think it's not. :)
->
+> > The immediate application is to allow architectures to implement the
+> > test/clear_young MMU notifiers more cheaply.
 > >
-> > Also, does the comment in pgtable_split_needed() need updating?
+> > Suggested-by: Yu Zhao <yuzhao@google.com>
+> > Signed-off-by: James Houghton <jthoughton@google.com>
 >
-> /*
->  * Return true if we want to split THPs into PTE mappings in change
->  * protection procedure, false otherwise.
->  */
+> Aside from the cleanup suggestion (which should be in separate patches
+> anyway):
 >
-> It looks to me it's ok for now to me? THP can represents PUD in dax, and =
-we
-> indeed want to break THPs (no matter PUD/PMD) finally into PTE mappings.
+> Reviewed-by: David Matlack <dmatlack@google.com>
 
-Oh, heh I was thinking of the other comment:
-
-/*
-* pte markers only resides in pte level, if we need pte markers,
-* we need to split.  We cannot wr-protect shmem thp because file
-* thp is handled differently when split by erasing the pmd so far.
-*/
-
-I guess this is fine too, it just kind of reads as if this function is
-only called for PMDs. *shrug*
+Thanks David!
 
 >
+> > ---
+> >  include/linux/kvm_host.h |  1 +
+> >  virt/kvm/Kconfig         |  3 +++
+> >  virt/kvm/kvm_main.c      | 26 +++++++++++++++++++-------
+> >  3 files changed, 23 insertions(+), 7 deletions(-)
 > >
-> > Somewhat related question: change_huge_pmd() is very careful not to
-> > clear the PMD before writing the new value. Yet change_pmd_range(),
-> > when it calls into __split_huge_pmd(), will totally clear the PMD and
-> > then populate the PTEs underneath (in some cases at least), seemingly
-> > reintroducing the MADV_DONTNEED concern. But your PUD version, because
-> > it never re-populates the PUD (or PMDs/PTEs underneath) does not have
-> > this issue. WDYT?
-
-I guess I'm wrong about this -- your PUD version is the same as the
-PMD version in this respect: both clear the PUD/PMD and then install
-lower page table entries.
-
->
-> Could you elaborate more on the DONTNEED issue you're mentioning here?
-
-In change_huge_pmd(), there is a comment about not clearing the pmd
-before setting the new value. I guess the issue is: if a user is
-MADV_DONTNEEDing some memory and happens to see a cleared PMD, it will
-just move on. But in this case, if change_huge_pmd() temporarily
-cleared a PMD, then MADV_DONTNEED saw it and moved on, and then
-change_huge_pmd() installed a new PMD, the MADV_DONTNEED has basically
-skipped over the PMD, probably not what the user wanted. It seems like
-we have the same issue when a PMD is cleared when we're splitting it.
-
-But yeah, given that your PUD version is apparently no different from
-the PMD version in this respect, maybe this question isn't very
-interesting. :)
-
->
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 689e8be873a7..8cd80f969cff 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -266,6 +266,7 @@ struct kvm_gfn_range {
+> >       gfn_t end;
+> >       union kvm_mmu_notifier_arg arg;
+> >       bool may_block;
+> > +     bool lockless;
+> >  };
+> >  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)=
+;
+> >  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+> > diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> > index b14e14cdbfb9..632334861001 100644
+> > --- a/virt/kvm/Kconfig
+> > +++ b/virt/kvm/Kconfig
+> > @@ -100,6 +100,9 @@ config KVM_GENERIC_MMU_NOTIFIER
+> >         select MMU_NOTIFIER
+> >         bool
 > >
-> > Thanks for this series!
+> > +config KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
+> > +       bool
+> > +
+> >  config KVM_GENERIC_MEMORY_ATTRIBUTES
+> >         depends on KVM_GENERIC_MMU_NOTIFIER
+> >         bool
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index d0788d0a72cc..33f8997a5c29 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -555,6 +555,7 @@ struct kvm_mmu_notifier_range {
+> >       on_lock_fn_t on_lock;
+> >       bool flush_on_ret;
+> >       bool may_block;
+> > +     bool lockless;
+> >  };
+> >
+> >  /*
+> > @@ -609,6 +610,10 @@ static __always_inline kvm_mn_ret_t __kvm_handle_h=
+va_range(struct kvm *kvm,
+> >                        IS_KVM_NULL_FN(range->handler)))
+> >               return r;
+> >
+> > +     /* on_lock will never be called for lockless walks */
+> > +     if (WARN_ON_ONCE(range->lockless && !IS_KVM_NULL_FN(range->on_loc=
+k)))
+> > +             return r;
+> > +
+> >       idx =3D srcu_read_lock(&kvm->srcu);
+> >
+> >       for (i =3D 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
+> > @@ -640,15 +645,18 @@ static __always_inline kvm_mn_ret_t __kvm_handle_=
+hva_range(struct kvm *kvm,
+> >                       gfn_range.start =3D hva_to_gfn_memslot(hva_start,=
+ slot);
+> >                       gfn_range.end =3D hva_to_gfn_memslot(hva_end + PA=
+GE_SIZE - 1, slot);
+> >                       gfn_range.slot =3D slot;
+> > +                     gfn_range.lockless =3D range->lockless;
+> >
+> >                       if (!r.found_memslot) {
+> >                               r.found_memslot =3D true;
+> > -                             KVM_MMU_LOCK(kvm);
+> > -                             if (!IS_KVM_NULL_FN(range->on_lock))
+> > -                                     range->on_lock(kvm);
+> > -
+> > -                             if (IS_KVM_NULL_FN(range->handler))
+> > -                                     goto mmu_unlock;
+> > +                             if (!range->lockless) {
+> > +                                     KVM_MMU_LOCK(kvm);
+> > +                                     if (!IS_KVM_NULL_FN(range->on_loc=
+k))
+> > +                                             range->on_lock(kvm);
+> > +
+> > +                                     if (IS_KVM_NULL_FN(range->handler=
+))
+> > +                                             goto mmu_unlock;
+> > +                             }
+> >                       }
+> >                       r.ret |=3D range->handler(kvm, &gfn_range);
+> >               }
+> > @@ -658,7 +666,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hv=
+a_range(struct kvm *kvm,
+> >               kvm_flush_remote_tlbs(kvm);
+> >
+> >  mmu_unlock:
+> > -     if (r.found_memslot)
+> > +     if (r.found_memslot && !range->lockless)
+> >               KVM_MMU_UNLOCK(kvm);
+> >
+> >       srcu_read_unlock(&kvm->srcu, idx);
+> > @@ -679,6 +687,8 @@ static __always_inline int kvm_handle_hva_range(str=
+uct mmu_notifier *mn,
+> >               .on_lock        =3D (void *)kvm_null_fn,
+> >               .flush_on_ret   =3D true,
+> >               .may_block      =3D false,
+> > +             .lockless       =3D
+> > +                     IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS=
+),
+> >       };
+> >
+> >       return __kvm_handle_hva_range(kvm, &range).ret;
+> > @@ -697,6 +707,8 @@ static __always_inline int kvm_handle_hva_range_no_=
+flush(struct mmu_notifier *mn
+> >               .on_lock        =3D (void *)kvm_null_fn,
+> >               .flush_on_ret   =3D false,
+> >               .may_block      =3D false,
+> > +             .lockless       =3D
+> > +                     IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS=
+),
 >
-> Thanks for reviewing it, James.
+> kvm_handle_hva_range{,_no_flush}() have very generic names but
+> they're intimately tied to the "young" notifiers. Whereas
+> __kvm_handle_hva_range() is the truly generic handler function.
+>
+> This is arguably a pre-existing issue, but adding
+> CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS makes these functions even more
+> intamtely tied to the "young" notifiers.
+>
+> We could rename kvm_handle_hva_range{,_no_flush}() but I think the
+> cleanest thing to do might be to just drop them entirely and move their
+> contents into their callers (there are only 2 callers of these 3
+> functions). That will create a little duplication but IMO will make the
+> code easier to read.
+>
+> And then we can also rename __kvm_handle_hva_range() to
+> kvm_handle_hva_range().
+
+Thanks for the suggestion, I think this is a good idea. I'm curious
+how others feel, as this indeed does duplicate the code some. Perhaps
+it is better just to rename kvm_handle_hva_range() to
+kvm_handle_hva_range_age() or something like that, and something
+similar for _no_flush(). :/
+
+But yeah I think it's fine to just do the manipulation you're
+suggesting. I'll include it in v7 unless others say not to.
 
