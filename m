@@ -1,137 +1,197 @@
-Return-Path: <linux-kernel+bounces-263707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FB893D988
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CDB93D989
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43079B227A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA021F258C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DC461FED;
-	Fri, 26 Jul 2024 20:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DD161FED;
+	Fri, 26 Jul 2024 20:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e976p+he"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eedt70eF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D481F5E6;
-	Fri, 26 Jul 2024 20:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96E1F5E6;
+	Fri, 26 Jul 2024 20:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722024301; cv=none; b=Kq/H0O/SSijiooJVkom0Dww2i7aPnYIYLM88smAlq9S/i4maNh5zAvk1b1/M0PfxL4ev0Ruy7P9VUpG5/yn7lPIEq9Ti0FR3TlKNdTSVpvYYWflnk+35P3S1MYmLhIqS7VcewoQ/210ZEQ6WdC4g7EWZLwMkbEFUCo7Qz/WpmvU=
+	t=1722024347; cv=none; b=NBQ28ww0cJhgIApRi9hbsYMat5VpvcJ+s+mKgm1sUEe30+3Etr6ENGXAti7HUJGNmrynbZSFoNC+1CTI1+4qbHm/9s+W5x26Prmz4qz/7yqTmIbyUPl7x1E7vgNpTHsHxzTz8i7fxFIQ8spAe61uu/BIxwYftiWlLA6sxVD3l30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722024301; c=relaxed/simple;
-	bh=sHIyIkVFEupEjWxKl+pASpe17z/wLOaJYpi0rVW6CZc=;
+	s=arc-20240116; t=1722024347; c=relaxed/simple;
+	bh=AShS2jKtZvO/mkVIxA3nuG1UttT0Q7WGEGmLtVP7i+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPKwzaKQI5naBf0qydjcje5uTcUVEw4uO0JerLSih5FNLVOj2tg+e3M/oUSCyAlSmJ/GkU7f/+UDankJskoT4ITMfnH2lo7G9/+XeD1U+cFELh8wB/LpGtP4V2jLvcUtiOVYymx/Zt+oAsMTfPrTL2LMQeo+BMvXWpG8TwqS91E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e976p+he; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d150e8153so854984b3a.0;
-        Fri, 26 Jul 2024 13:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722024300; x=1722629100; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VDR2eZY5MHlmYwIoRqIyPiGp3vg1WqH7CWNgUfzBoP0=;
-        b=e976p+heVHzNR34LrC3APHljUDI3BF7bniJxwtCQsPP1BRiqWcJbGo6XkbPluo8Eia
-         Koglt90OFdvh1kI/2MqbrNYv67nwnJsH1c3+tZwFBpEoVG8cEoydhKUrvuXib9HypoP6
-         wWyMSYRMaWWmzasOTA4syL2A64vTa/65RpPt9LhWmZKK0+m1L2ujMKQXAE0mwUl1kyWD
-         l64eTIN78fnECCscZ7ngJrdl4xloV/64c2e9H6KjdYGmkus33xoZTSGBaMxE7xl4L910
-         gI/AnTUTjvScH6IzwYT/bYqT2nh7nwdTU6VQx4VGKtMZ/06M/sw/rSLTKc3QLgS/i9GJ
-         G/UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722024300; x=1722629100;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDR2eZY5MHlmYwIoRqIyPiGp3vg1WqH7CWNgUfzBoP0=;
-        b=nW+78nGHEXTaflaaO5y4wd4BPudaCM74elGdNqAAzSHZ+6h7Mvp5OYXkDw+SGz4BP8
-         9/IxcggmLziRuV3/gfC+IwZUJLtahXsLURbIwJa5az5XcLaX/E+YFkl4Rx1wMb9T/cOB
-         UKOnqLKwJee2BNxS8FC9lhSlgd8yh5DeWGBPS9OQ4uM6qTwk9R2mA2H6dz8O92P2BXd3
-         zafj2NEG9c1TBVV/elcRAkuqX9+CvwfA3GGQGkXG/9yiDjre8laSw66hxU43Eg3jmzIc
-         Yx46lQHonXT8JI3bsIrM5UMIOvkky3jUwxTwTokGYf+/4vHjHTVYqHJJPZs7U0rF6skp
-         fOJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4sdX6ediUJ2vvLdu7tVqZwYM8lCfI15M9Frfcke+IzsFvNUfQH6HJW9xxjaSZd46WBtAw44tYAg5kzBwpr3fRbx+bdtKep88mpiNTlZjaUnPjpmSsXxmE17QQGjRZaVDOnpuEy9ziIs8IzEG8h9FLHjwzMv/dxf5I6ESOcnqzQw==
-X-Gm-Message-State: AOJu0Yz2kMoF41NHpNfhbVYIZbbLtIrqhuLMLVmLTQq0DVwmCU0gcOOY
-	yBYAB8vPF2Om/1yCaYEZkcxhRJIAQEHCxXAQKOaJHjnVnGhEHzX4
-X-Google-Smtp-Source: AGHT+IHNyKobZSB2Z0LwzzaaLZhrE0kcunwzzLJqK8cqABikL3rpajppk8xBArSL5bPdOIjnRqDXSg==
-X-Received: by 2002:a05:6a00:a89:b0:70b:5368:a212 with SMTP id d2e1a72fcca58-70ece822e52mr677217b3a.15.1722024299459;
-        Fri, 26 Jul 2024 13:04:59 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f7c744c4sm3179803a12.14.2024.07.26.13.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 13:04:58 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 26 Jul 2024 10:04:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH-cgroup v4] cgroup: Show # of subsystem CSSes in
- cgroup.stat
-Message-ID: <ZqQBaeAH_IfpRTnv@slm.duckdns.org>
-References: <20240711025153.2356213-1-longman@redhat.com>
- <23hhazcy34yercbmsogrljvxatfmy6b7avtqrurcze3354defk@zpekfjpgyp6h>
- <0efbedff-3456-4e6a-8d2d-79b89a18864d@redhat.com>
- <qozzqah5blnsvc73jrhfuldsaxwsoluuewvgpukzgcuud4nqgc@xnctlkgk5yjv>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BeQyuEv02my0fJZbqYpPQIEx6n4EPgdrmXUERecUDOXEtEbHhySMiFEv0w1/o8Pu0Yv6qwnTvP1xGJ+n2eZv08MUe/dyTBh8XnGVOLcqSMraja8wb2c1PdpggR3XXm7Wde2qNb0jtJfFKQ6GPEieYW/sv+4zz6jeRUhz/zpzdZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eedt70eF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 090FFC32782;
+	Fri, 26 Jul 2024 20:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722024347;
+	bh=AShS2jKtZvO/mkVIxA3nuG1UttT0Q7WGEGmLtVP7i+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eedt70eFelGstMsiJ2EuO+cAGBh3kUXY0fq0tkhSUgh2X6WhNh7HrSVBtghbqQosp
+	 SdNFOr9RWSRJ3f+wsKTbzfnf8omPNTyjA/+0HuqN76cVlDMZECrNz4j3JKsddkQo3f
+	 4WTIYj8RjQ7NjdLhLZlfK5+7SZz/mhsHoJS2m3h8lm7qBMhb1vppBhcGcU7eNCzUTH
+	 FoN1gq2kighwUbYi6Krhbq7uAyxl359gFsaCkYGW86WVjRLjQ4rtftE98YqEXiMx2s
+	 A8lE0fS/EKeBTerr0cZbAGqjheExbqKBGMAsNrYzDf3jwDQuVCKj0RkHL7JboVADcA
+	 h5Spuqrn4SNbQ==
+Date: Fri, 26 Jul 2024 22:05:34 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
+	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
+	wedsonaf@gmail.com, mhocko@kernel.org, mpe@ellerman.id.au,
+	chandan.babu@oracle.com, christian.koenig@amd.com, maz@kernel.org,
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: vmalloc: implement vrealloc()
+Message-ID: <ZqQBjjtPXeErPsva@cassiopeiae>
+References: <20240722163111.4766-1-dakr@kernel.org>
+ <20240722163111.4766-2-dakr@kernel.org>
+ <07491799-9753-4fc9-b642-6d7d7d9575aa@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <qozzqah5blnsvc73jrhfuldsaxwsoluuewvgpukzgcuud4nqgc@xnctlkgk5yjv>
+In-Reply-To: <07491799-9753-4fc9-b642-6d7d7d9575aa@suse.cz>
 
-Hello,
-
-On Fri, Jul 26, 2024 at 10:19:05AM +0200, Michal Koutný wrote:
-> On Thu, Jul 25, 2024 at 04:05:42PM GMT, Waiman Long <longman@redhat.com> wrote:
-> > > There's also 'debug' subsys. Have you looked at (extending) that wrt
-> > > dying csses troubleshooting?
-> > > It'd be good to document here why you decided against it.
-> > The config that I used for testing doesn't include CONFIG_CGROUP_DEBUG.
+On Fri, Jul 26, 2024 at 04:37:43PM +0200, Vlastimil Babka wrote:
+> On 7/22/24 6:29 PM, Danilo Krummrich wrote:
+> > Implement vrealloc() analogous to krealloc().
+> > 
+> > Currently, krealloc() requires the caller to pass the size of the
+> > previous memory allocation, which, instead, should be self-contained.
+> > 
+> > We attempt to fix this in a subsequent patch which, in order to do so,
+> > requires vrealloc().
+> > 
+> > Besides that, we need realloc() functions for kernel allocators in Rust
+> > too. With `Vec` or `KVec` respectively, potentially growing (and
+> > shrinking) data structures are rather common.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > 
-> I mean if you enable CONFIG_CGROUP_DEBUG, there is 'debug' controller
-> that exposes files like debug.csses et al.
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> > That is why "debug" doesn't show up in the sample outputs. The CSS #
-> > for the debug subsystem should show up if it is enabled.
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -4037,6 +4037,65 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+> >  }
+> >  EXPORT_SYMBOL(vzalloc_node_noprof);
+> >  
+> > +/**
+> > + * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> > + * @p: object to reallocate memory for
+> > + * @size: the size to reallocate
+> > + * @flags: the flags for the page level allocator
+> > + *
+> > + * The contents of the object pointed to are preserved up to the lesser of the
+> > + * new and old size (__GFP_ZERO flag is effectively ignored).
 > 
-> So these "debugging" numbers could be implemented via debug subsys. So I
-> wondered why it's not done this way. That reasoning is missing in the
-> commit message.
+> Well, technically not correct as we don't shrink. Get 8 pages, kvrealloc to
+> 4 pages, kvrealloc back to 8 and the last 4 are not zeroed. But it's not
+> new, kvrealloc() did the same before patch 2/2.
 
-While this is a bit of implementation detail, it's also something which can
-be pretty relevant in production, so my preference is to show them in
-cgroup.stat. The recursive stats is something not particularly easy to
-collect from the debug controller proper anyway.
+Taking it (too) literal, it's not wrong. The contents of the object pointed to
+are indeed preserved up to the lesser of the new and old size. It's just that
+the rest may be "preserved" as well.
 
-One problem with debug subsys is that it's unclear whether they are safe to
-use and can be depended upon in production. Not that anything it shows
-currently is particularly risky but the contract around the debug controller
-is that it's debug stuff and developers may do silly things with it (e.g.
-doing high complexity iterations and what not).
+I work on implementing shrink and grow for vrealloc(). In the meantime I think
+we could probably just memset() spare memory to zero.
 
-The debug controller, in general, I'm not sure how useful it is. It does
-nothing that drgn scripts can't do and doesn't really have enough extra
-benefits that make it better. We didn't have drgn back when it was added, so
-it's there for historical reasons, but I don't think it's a good idea to
-expand on it.
+nommu would still uses krealloc() though...
 
-Thanks.
+> 
+> But it's also fundamentally not true for krealloc(), or kvrealloc()
+> switching from a kmalloc to valloc. ksize() returns the size of the kmalloc
+> bucket, we don't know what was the exact prior allocation size.
 
--- 
-tejun
+Probably a stupid question, but can't we just zero the full bucket initially and
+make sure to memset() spare memory in the bucket to zero when krealloc() is
+called with new_size < ksize()?
+
+> Worse, we
+> started poisoning the padding in debug configurations, so even a
+> kmalloc(__GFP_ZERO) followed by krealloc(__GFP_ZERO) can give you unexpected
+> poison now...
+
+As in writing magics directly to the spare memory in the bucket? Which would
+then also be copied over to a new buffer in __do_krealloc()?
+
+> 
+> I guess we should just document __GFP_ZERO is not honored at all for
+> realloc, and maybe start even warning :/ Hopefully nobody relies on that.
+
+I think it'd be great to make __GFP_ZERO work in all cases. However, if that's
+really not possible, I'd prefer if we could at least gurantee that
+*realloc(NULL, size, flags | __GFP_ZERO) is a valid call, i.e.
+WARN_ON(p && flags & __GFP_ZERO).
+
+> 
+> > + *
+> > + * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> > + * @p is not a %NULL pointer, the object pointed to is freed.
+> > + *
+> > + * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+> > + *         failure
+> > + */
+> > +void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> > +{
+> > +	size_t old_size = 0;
+> > +	void *n;
+> > +
+> > +	if (!size) {
+> > +		vfree(p);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	if (p) {
+> > +		struct vm_struct *vm;
+> > +
+> > +		vm = find_vm_area(p);
+> > +		if (unlikely(!vm)) {
+> > +			WARN(1, "Trying to vrealloc() nonexistent vm area (%p)\n", p);
+> > +			return NULL;
+> > +		}
+> > +
+> > +		old_size = get_vm_area_size(vm);
+> > +	}
+> > +
+> > +	if (size <= old_size) {
+> > +		/*
+> > +		 * TODO: Shrink the vm_area, i.e. unmap and free unused pages.
+> > +		 * What would be a good heuristic for when to shrink the
+> > +		 * vm_area?
+> > +		 */
+> > +		return (void *)p;
+> > +	}
+> > +
+> > +	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+> > +	n = __vmalloc_noprof(size, flags);
+> > +	if (!n)
+> > +		return NULL;
+> > +
+> > +	if (p) {
+> > +		memcpy(n, p, old_size);
+> > +		vfree(p);
+> > +	}
+> > +
+> > +	return n;
+> > +}
+> > +
+> >  #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+> >  #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
+> >  #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+> 
 
