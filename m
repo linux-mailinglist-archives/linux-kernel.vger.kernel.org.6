@@ -1,223 +1,147 @@
-Return-Path: <linux-kernel+bounces-262960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C7F93CF13
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:52:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B323393CF17
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F281C210A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D726C1C21825
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7F7176AAD;
-	Fri, 26 Jul 2024 07:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZP+sF4Au"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77869176AC3;
+	Fri, 26 Jul 2024 07:54:24 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B348F1741FB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917AD1741E8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721980361; cv=none; b=OAvtKbTLjAjqYk3m74MCbrRsGjeb1EbUYqnSzurJ/RCpPiiV6sVllv0ICJ1iRa0EcGyqnSVrqP+krLuhoHG3g4whbcc+02gT3JUOz1yrfRZwhZaRm4ixKeWbcWQ0DBKpHjuLFiXtZYLhi71i3lYhmvQKrP0+nspnckr3E37Bqs4=
+	t=1721980464; cv=none; b=m2RKO3ahBKSZAcs0db2eT7F8A8triXoyUMEdL6Li4pv31Mi62RK5cma+obUnHTIkmY6kgLweTaeNUqskjLgigGAk0WtuXIIBl9nlxHKLDIh0AEWYgJFnhEHg4IHXZW8+dQZCglg5lSLrjX8ZFAaHQIG08Ov3nChjvFHj/VdRxjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721980361; c=relaxed/simple;
-	bh=sDHNbFFR8u9Ol5TjK73rCYVuwpJnfqzoenZIDSugLOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBA3tR2T0gv4SMNu4kd1qPfmTBs7TrQSzjJraNycIoY2I97x0JlgjPGbqR+nFLLAYZVzwibufbI11iECIz76CvgJVU1Dis5jZTWhcB347Aoa0G1Hyl3xOlnA1Nk8S/5Wa3qTLoA7iKPGmw/5pYqeCPtIkC45phent8J3uPds0cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZP+sF4Au; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3993fddea13so78995ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721980359; x=1722585159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GBMQzLMIUbcFt/VMX67sOZNaoPLY2OiQ1SguXdFhPbs=;
-        b=ZP+sF4AuIHzAur8twvhjrbJ1ETtlUALymrtQjdig+Ha874uLtbzsowwnQLXdjoDAKd
-         NiMFBa+Ee3SlOLKLOsGcM0cf5N8TC150FrpyDYfF5of7LLb9+uPNCXevsOew/jDMSyyc
-         gvjtA/D5OlNp4k41Nq4pdOLgwR66QU8QKrCp0TEcY8U8xAwfqpa0xUZOso62lzlim/3u
-         N6H1DVWXaVMm2EIyldIrCUe8lVF48f6DYorEaTL2E+Az22lDIJkN6LdxxvZ/QnTOoCEW
-         TPVAHFDq6cbc+x6NejP9U7j5oQO4McinFuwPOoyehQoIaPydGHfb/JzveuVPWS0E1Nw8
-         h4VQ==
+	s=arc-20240116; t=1721980464; c=relaxed/simple;
+	bh=ZCM57uE+kaICz9B53NmIJzwrlcJS0QVtr24NFyAUYTg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MIlojGEbgt9F+zZDok4dIe9uVhhDEYVbOcmDKsWT9W+RhJB4ie5Y+YqIxZtmWIjYAQRNpVD1JmMu0ikyd6Nl4xChsIb0AtKGS8uIPsrOl3e4EIaDEIc64qJudZgJIWSS4ff2BtEcPPHDxF+5wTVE+oWlYN93esyR3fPwv9BdGLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39862b50109so19644535ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:54:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721980359; x=1722585159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBMQzLMIUbcFt/VMX67sOZNaoPLY2OiQ1SguXdFhPbs=;
-        b=mqsP/VDH5NfcMHKqlB9/RxG/7/LuZ6ECkN1uoTf8bZib/7YC9DLAAAGdnLth82B4GN
-         X/tWGhKf3iqjX/cgXMHg6aVa33Y9uojPENIRvPsKIm9enVA1v+83JK+LI4TBQZhivLDk
-         bh4v88kVSje371CnxyHt1Hco6GwyDYs+PUoO+PKRycWbQkzftPpKO7Jn6AlnpmP35TyF
-         s2AZEDeQk61nQa78pnC7QjT7biDkVQHAM+fJ/0BlpQbkqa77NXnsjaYaVRQcFLUBp6r2
-         naMzfbjHxfK+hNIrHw2WUhh1f/Or7otJrZKD8dzGXRg//EKo60m88aQnwCRPhpBrvUA3
-         f0kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDvyPHcJZh/RL6uus90CDXkPP1gmBlkls0PMMRFn6/uBdueBD25pEe+zOG+HzbX6UpwPYRRxs6J7O9bwvm8/JOsRtzTFF1cRzC7wFH
-X-Gm-Message-State: AOJu0YxxiGTjnkzWLXxUF/iDi9cdBpkwWbNtXEXxCrtWmL6RnFKLat0y
-	LCF+DAKRqboLWLEwK5ac6zZdtGw6CWPx03nOXk7u+9qJdXwSMtC/PdiYb6ascJTbs5sKW34YbWj
-	202FA2raFxPBjulj7WnR0hMYy2Gx/kJt0NXFk
-X-Google-Smtp-Source: AGHT+IECrbtVj1fH1Dt53KoC7R4VFg5GwNAQTW30EI0t0xukhScR5m6uiL+Eu7e1Dywp20PIeicc0ZaSLp0fsIsUS78=
-X-Received: by 2002:a05:6e02:1a6c:b0:398:a724:24e6 with SMTP id
- e9e14a558f8ab-39a2b3fb060mr1813155ab.20.1721980358585; Fri, 26 Jul 2024
- 00:52:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721980462; x=1722585262;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vnDCOOC3UV8dc6a0qIuJGgDHn4oMM4I2MKMhtLQV5q8=;
+        b=jxP4n/fIxLQ+uM/8ERZTQO4SbOSPQuEVqZXTZWNhZnmdEj1XlcpYChQmRZN9TfGZv+
+         sWizj6BmY/uQWDH+hPIj6YGk4BSMeJmwE9XwfXG8L7aMBTxJ6VOVVZrau1O30aWk3JsV
+         d7tXFba38rbPxvyrx8vPfRjQW95y6dXNTOh2xmf5MSGRl3Y1IF9nS7gauuR/Kyx0gTHf
+         NmLziYl/t9UllWDqNZfZeyNHZmjTcLkk5FpLAQ2D9Bb8yKConhDBXx/kmWLSuogeLRGn
+         hVTMhh4ZUJ2ygs0R7Yr9Ggg8U+J11aEYJsMEX4z6yW2wnkhA8NYyaj9tgVQuhXdRcKCJ
+         O8kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNQ0O+DwRsd7CMtiTjKRxhYGPKCE1S5ZOfzj9PE2pp7L6LSqQpZXAj/HlZ+gJywnZT/P75qR8YU8slTyEEnUcXthaMuPVrvRmkWmBo
+X-Gm-Message-State: AOJu0Yy7Q1p5S1yfheIDbU1+oJ/yVG+zVMnOmtW1nH0Kh0wSiz6yggkg
+	AFNJOUKNqKd3cs9dBqdj+vzphJDejz6tn5DR8F19YYv2TPrj6pqWHW6ERftewuUXBPkpVhhnFdh
+	Q3nJ6WFphC4L8LuZT58R4aknitIm/+sgzrBSvhNrNf6ys8ggmvu/wtG4=
+X-Google-Smtp-Source: AGHT+IGTiaIgqckHaA2GQY4sMfSe0y7Ns330nWXc2INezDOpG2bIu9XyNhnlvPD25B2z0rB2cIya/K7ELlJjF4im0Ag3ixXSpARU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718003025.1486232-1-irogers@google.com> <20240718003025.1486232-4-irogers@google.com>
- <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com> <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
- <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com> <CAP-5=fVMV4ZmGk4-XguqV=LAuif-MgAL+BK=mMAE1tC3f3tbhQ@mail.gmail.com>
- <e8872317-8e18-48aa-9f23-b98af9345bed@linux.intel.com> <CAP-5=fUjEYwdOdmfa5N7b8OOLWDitJKBdeOr8-+UOYWA5+ehkA@mail.gmail.com>
- <775d8f1d-437d-47a3-b4b2-da476e914cf5@linux.intel.com> <CAP-5=fUH+n+f_q1Tc-a3oV3vDV60VGOLANRFWUemDen197rYog@mail.gmail.com>
- <c4b499a5-7d2a-44db-bd0c-c123417337a5@amd.com> <3c3d1cd9-ccb1-495d-a670-9ee504fb0bbe@amd.com>
-In-Reply-To: <3c3d1cd9-ccb1-495d-a670-9ee504fb0bbe@amd.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 26 Jul 2024 00:52:25 -0700
-Message-ID: <CAP-5=fXpacz331M71WR1HZHS0p7t9zqNUqBvMf2EjOxaB9Ayyw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in sysfs
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
-	sandipan.das@amd.com
+X-Received: by 2002:a05:6e02:2184:b0:39a:e800:eec9 with SMTP id
+ e9e14a558f8ab-39ae8010c08mr539575ab.4.1721980461578; Fri, 26 Jul 2024
+ 00:54:21 -0700 (PDT)
+Date: Fri, 26 Jul 2024 00:54:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b90a8e061e21d12f@google.com>
+Subject: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, jack@suse.cz, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 12:10=E2=80=AFAM Dhananjay Ugwekar
-<Dhananjay.Ugwekar@amd.com> wrote:
->
->
->
-> On 7/26/2024 12:36 PM, Dhananjay Ugwekar wrote:
-> > Hello, Ian, Kan,
-> >
-> > On 7/20/2024 3:32 AM, Ian Rogers wrote:
-> >> On Fri, Jul 19, 2024 at 9:35=E2=80=AFAM Liang, Kan <kan.liang@linux.in=
-tel.com> wrote:
-> >>> On 2024-07-19 10:59 a.m., Ian Rogers wrote:
-> >>>> Thanks Kan. I'm not wondering about a case of 2 CPUs, say on CPU0 an=
-d
-> >>>> solely its perf event context, I want to know its core power and
-> >>>> package power as a group so I never record one without the other. Th=
-at
-> >>>> grouping wouldn't be possible with 2 PMUs.
-> >>>
-> >>> For power, to be honest, I don't think it improves anything. It gives
-> >>> users a false image that perf can group these counters.
-> >>> But the truth is that perf cannot. The power counters are all
-> >>> free-running counters. It's impossible to co-schedule them (which
-> >>> requires a global mechanism to disable/enable all counters, e.g.,
-> >>> GLOBAL_CTRL for core PMU). The kernel still has to read the counters =
-one
-> >>> by one while the counters keep running. There are no differences with=
- or
-> >>> without a group for the power events.
-> >>
-> >> Ok, so power should copy cstate with _core, _pkg, etc. I agree the
-> >> difference is small and I like the idea of being consistent.
-> >
-> > So, it seems we want to follow the new PMU addition approach for RAPL
-> > being consistent with Intel cstate driver, should I revive my "power_pe=
-r_core"
-> > PMU thread now?
->
-> The power_per_core PMU thread link for reference,
->
-> https://lore.kernel.org/all/20240711102436.4432-1-Dhananjay.Ugwekar@amd.c=
-om/
+Hello,
 
-I think so. Would it be possible to follow the same naming convention
-as cstate, where there is cstate_pkg and cstate_core? (ie no "_per" in
-the name)
+syzbot found the following issue on:
 
-Thanks,
-Ian
+HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14955423980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
 
-> >
-> > Thanks,
-> > Dhananjay
-> >
-> >  Do we
-> >> want to add "event.cpus" support to the tool anyway for potential
-> >> future uses? This would at least avoid problems with newer kernels and
-> >> older perf tools were we to find a good use for it.
-> >>
-> >>>> My understanding had been that for core PMUs a "perf stat -C" option
-> >>>> would choose the particular CPU to count the event on, for an uncore
-> >>>> PMU the -C option would override the cpumask's "default" value. We
-> >>>> have code to validate this:
-> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next=
-.git/tree/tools/perf/util/evlist.c?h=3Dperf-tools-next#n2522
-> >>>> But it seems now that overriding an uncore PMU's default CPU is
-> >>>> ignored.
-> >>>
-> >>> For the uncore driver, no matter what -C set, it writes the default C=
-PU
-> >>> back.
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
-git/tree/arch/x86/events/intel/uncore.c#n760
-> >>>
-> >>>> If you did:
-> >>>> $ perf stat -C 1 -e data_read -a sleep 0.1
-> >>>> Then the tool thinks data_read is on CPU1 and will set its thread
-> >>>> affinity to CPU1 to avoid IPIs. It seems to fix this we need to just
-> >>>> throw away the -C option.
-> >>> The perf tool can still read the the counter from CPU1 and no IPIs
-> >>> because of the PMU_EV_CAP_READ_ACTIVE_PKG().
-> >>>
-> >>> Not quite sure, but it seems only the open and close may be impacted =
-and
-> >>> silently changed to CPU0.
-> >>
-> >> There's also enable/disable. Andi did the work and there were some
-> >> notable gains but likely more on core events. Ultimately it'd be nice
-> >> to be opening, closing.. everything in parallel given the calls are
-> >> slow and the work is embarrassingly parallel.
-> >> It feels like the cpumasks for uncore could still do with some cleanup
-> >> wrt -C I'm just unsure at the moment what this should be. Tbh, I'm
-> >> tempted to rewrite evlist propagate maps as someone may look at it and
-> >> think I believe in what it is doing. The parallel stuff we should grab
-> >> Riccardo's past work.
-> >>
-> >> Thanks,
-> >> Ian
-> >>
-> >>
-> >>> Thanks,
-> >>> Kan
-> >>>>
-> >>>>>> 2) do the /sys/devices/<pmu>/events/event.(unit|scale|per-pkg|snap=
-shot)
-> >>>>>> files parse correctly and have a corresponding event.
-> >>>>>> 3) keep adding opening events on the PMU to a group to make sure t=
-hat
-> >>>>>> when counters are exhausted the perf_event_open fails (I've seen t=
-his
-> >>>>>> bug on AMD)
-> >>>>>> 4) are the values in the type file unique
-> >>>>>>
-> >>>>>
-> >>>>> The rest sounds good to me.
-> >>>>
-> >>>> Cool. Let me know if you can think of more.
-> >>>>
-> >>>> Thanks,
-> >>>> Ian
-> >>>>
-> >>>>> Thanks,
-> >>>>> Kan
-> >>>>
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e3f4ec8ccf7c/disk-1722389b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f19bcd908282/vmlinux-1722389b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d93604974a98/bzImage-1722389b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e0d10e1258f5/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 58 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Modules linked in:
+CPU: 1 UID: 0 PID: 58 Comm: kworker/1:2 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events destroy_super_work
+RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Code: 74 19 e8 86 d5 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
+RSP: 0018:ffffc9000133fb30 EFLAGS: 00010246
+RAX: 0000000000000002 RBX: 1ffff11005324477 RCX: ffff8880163f5a00
+RDX: 0000000000000000 RSI: ffffffff8c3f9540 RDI: ffff888029922350
+RBP: 0000000000000167 R08: ffffffff82092061 R09: 1ffffffff1cbbbd4
+R10: dffffc0000000000 R11: fffffbfff1cbbbd5 R12: dffffc0000000000
+R13: 1ffff1100532446a R14: ffff888029922350 R15: ffff888029922350
+FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557c167738 CR3: 000000007ada8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
+ destroy_super_work+0xec/0x130 fs/super.c:282
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
