@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-263706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9EF93D984
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:02:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FB893D988
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF51C233C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:02:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43079B227A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170C613A40B;
-	Fri, 26 Jul 2024 20:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DC461FED;
+	Fri, 26 Jul 2024 20:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwSe4L8r"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e976p+he"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED79D383BF;
-	Fri, 26 Jul 2024 20:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D481F5E6;
+	Fri, 26 Jul 2024 20:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722024167; cv=none; b=inq/hvBUI0WiJ+vjEb86udy/iYWLF63rW6lv7ztWITlPNn40iXVBGcd6hIa+JV4KiqJsB/PjGJRBxgGfMlwtOjh/adkkvaPVhuZg3Ze8izMp+sWpVfi9e4nHlV0LkCjK73v7Dhiswff3Kily12O6t9oiLEieN5TE4uw1fFPlOII=
+	t=1722024301; cv=none; b=Kq/H0O/SSijiooJVkom0Dww2i7aPnYIYLM88smAlq9S/i4maNh5zAvk1b1/M0PfxL4ev0Ruy7P9VUpG5/yn7lPIEq9Ti0FR3TlKNdTSVpvYYWflnk+35P3S1MYmLhIqS7VcewoQ/210ZEQ6WdC4g7EWZLwMkbEFUCo7Qz/WpmvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722024167; c=relaxed/simple;
-	bh=GFsF+jKskuhgGnBjr3n4TRAHhLbxgaBJyMzCDsYbsn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bIynP6bkO8irCw0fYF7bYwpyoEUUZJDmCUnuYLFWglXrQgPFO9iFVy8NbOrL83BdcIWSuPzVGextXlhkzHcXxVFHLtR4LF2m0vN2ubmQm3syV0zPjeTHTblviIe3fJVKdBHnmTqfvM3sA/JcDc4OdVrW61+FYJEOYYfpri8mzJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwSe4L8r; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722024301; c=relaxed/simple;
+	bh=sHIyIkVFEupEjWxKl+pASpe17z/wLOaJYpi0rVW6CZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPKwzaKQI5naBf0qydjcje5uTcUVEw4uO0JerLSih5FNLVOj2tg+e3M/oUSCyAlSmJ/GkU7f/+UDankJskoT4ITMfnH2lo7G9/+XeD1U+cFELh8wB/LpGtP4V2jLvcUtiOVYymx/Zt+oAsMTfPrTL2LMQeo+BMvXWpG8TwqS91E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e976p+he; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b79fc76d03so5968966d6.1;
-        Fri, 26 Jul 2024 13:02:45 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d150e8153so854984b3a.0;
+        Fri, 26 Jul 2024 13:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722024165; x=1722628965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1722024300; x=1722629100; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nJxI3RUALg6qvPeKhK5g5YhXu5vNqGOcbCAXjfUdd6M=;
-        b=GwSe4L8rVXH0t51SQtGgecGOktchOgmjsR/Sb2B6lR1dMH6FVxPk/UeMtXIHAsKLnH
-         oVNJ/uGi0sxrMaTUKKvHjpI2zitYBSiRx9PWzxPsJYplhhvlcjZQEBPZtSAHZstfGSc8
-         y1N0oX80COw3xGguWtjISGIkLiEcWy0DPo5Z3Tdbzw9fUjR5yln9umPHDHlU8TSoA+Ng
-         b2FGVFoY+tnYGcifCM5KSfm6sAlsdhQG3ZGCfCIl5WF2M2wxemt3LavfknS0jlWXyA4q
-         TY74mGng8MVBr99TGDLm+y0d2T3jHJJi7C1gUqWidA+c9ViJR8PAYBhZ6ZnC5GQj4+ic
-         nzOA==
+        bh=VDR2eZY5MHlmYwIoRqIyPiGp3vg1WqH7CWNgUfzBoP0=;
+        b=e976p+heVHzNR34LrC3APHljUDI3BF7bniJxwtCQsPP1BRiqWcJbGo6XkbPluo8Eia
+         Koglt90OFdvh1kI/2MqbrNYv67nwnJsH1c3+tZwFBpEoVG8cEoydhKUrvuXib9HypoP6
+         wWyMSYRMaWWmzasOTA4syL2A64vTa/65RpPt9LhWmZKK0+m1L2ujMKQXAE0mwUl1kyWD
+         l64eTIN78fnECCscZ7ngJrdl4xloV/64c2e9H6KjdYGmkus33xoZTSGBaMxE7xl4L910
+         gI/AnTUTjvScH6IzwYT/bYqT2nh7nwdTU6VQx4VGKtMZ/06M/sw/rSLTKc3QLgS/i9GJ
+         G/UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722024165; x=1722628965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1722024300; x=1722629100;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJxI3RUALg6qvPeKhK5g5YhXu5vNqGOcbCAXjfUdd6M=;
-        b=cD8VpRrXQkyq8lJ0Y2196WFkfahLkY2og/3F39hDtKLVkeAin+0VSyLuBRhK2Y3yjX
-         cRDYgKd/6f9cXrWQB7nV9CXcSN1/GcJjIHVoN7lCLQKgF83afpbYUTWrS+IW8ilnObJs
-         Yycb1/PupC3wg9cHA5pIKjN6UlgM4QMPPcEj+aKDLLzkt3HQBAg7IPRP8+frBBuGxI3o
-         M24zYM4GMXv9h5/G0mlh8oBGYBpIccLVkNBAMwMZAo6NBdQCszOhN4CmPsZiAz/3Wp7K
-         0vTog4sX1sM8en4rOJabXpC682IjS3sISiXqzEfsOoTFj8lFBSxNTtTOL91pPmlU09me
-         W2YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/89Ud8YwZi544eyJbofpnqtZOf6oWLfPTwc6vuFQn92M7QUGPGhPcTAJUCghju4wIzWXsGg/OaxQNtDkmqtVYsbfGvsQB614gRW8+U7RSKSP/jA9ndavm0Xw0lYEzCcW759Kv
-X-Gm-Message-State: AOJu0YzQHG6jVzp0xo5lQyiUym89GeBrIKLpq/+sfNnbE7LNDrRsWz8u
-	6pPCgS21wt/NOdzr47bE8wU4JLC/pIwRXfyYX4VmGU3xpFTWcRO/
-X-Google-Smtp-Source: AGHT+IHB6Z+lbg7XWIRMElM0+HtT1YAvNgKpK/ewPBfnsocH6+ThAkHe4XJsJe9r0X4FQZXNDw/HEw==
-X-Received: by 2002:a05:6214:2a47:b0:6b7:b2eb:ae82 with SMTP id 6a1803df08f44-6bb55a44de6mr9274016d6.29.1722024164770;
-        Fri, 26 Jul 2024 13:02:44 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6bb3fa94e63sm19727426d6.76.2024.07.26.13.02.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 13:02:43 -0700 (PDT)
-Message-ID: <d873b5f1-4208-4e9f-9846-965ba27073e2@gmail.com>
-Date: Fri, 26 Jul 2024 13:02:38 -0700
+        bh=VDR2eZY5MHlmYwIoRqIyPiGp3vg1WqH7CWNgUfzBoP0=;
+        b=nW+78nGHEXTaflaaO5y4wd4BPudaCM74elGdNqAAzSHZ+6h7Mvp5OYXkDw+SGz4BP8
+         9/IxcggmLziRuV3/gfC+IwZUJLtahXsLURbIwJa5az5XcLaX/E+YFkl4Rx1wMb9T/cOB
+         UKOnqLKwJee2BNxS8FC9lhSlgd8yh5DeWGBPS9OQ4uM6qTwk9R2mA2H6dz8O92P2BXd3
+         zafj2NEG9c1TBVV/elcRAkuqX9+CvwfA3GGQGkXG/9yiDjre8laSw66hxU43Eg3jmzIc
+         Yx46lQHonXT8JI3bsIrM5UMIOvkky3jUwxTwTokGYf+/4vHjHTVYqHJJPZs7U0rF6skp
+         fOJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4sdX6ediUJ2vvLdu7tVqZwYM8lCfI15M9Frfcke+IzsFvNUfQH6HJW9xxjaSZd46WBtAw44tYAg5kzBwpr3fRbx+bdtKep88mpiNTlZjaUnPjpmSsXxmE17QQGjRZaVDOnpuEy9ziIs8IzEG8h9FLHjwzMv/dxf5I6ESOcnqzQw==
+X-Gm-Message-State: AOJu0Yz2kMoF41NHpNfhbVYIZbbLtIrqhuLMLVmLTQq0DVwmCU0gcOOY
+	yBYAB8vPF2Om/1yCaYEZkcxhRJIAQEHCxXAQKOaJHjnVnGhEHzX4
+X-Google-Smtp-Source: AGHT+IHNyKobZSB2Z0LwzzaaLZhrE0kcunwzzLJqK8cqABikL3rpajppk8xBArSL5bPdOIjnRqDXSg==
+X-Received: by 2002:a05:6a00:a89:b0:70b:5368:a212 with SMTP id d2e1a72fcca58-70ece822e52mr677217b3a.15.1722024299459;
+        Fri, 26 Jul 2024 13:04:59 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f7c744c4sm3179803a12.14.2024.07.26.13.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 13:04:58 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 26 Jul 2024 10:04:57 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH-cgroup v4] cgroup: Show # of subsystem CSSes in
+ cgroup.stat
+Message-ID: <ZqQBaeAH_IfpRTnv@slm.duckdns.org>
+References: <20240711025153.2356213-1-longman@redhat.com>
+ <23hhazcy34yercbmsogrljvxatfmy6b7avtqrurcze3354defk@zpekfjpgyp6h>
+ <0efbedff-3456-4e6a-8d2d-79b89a18864d@redhat.com>
+ <qozzqah5blnsvc73jrhfuldsaxwsoluuewvgpukzgcuud4nqgc@xnctlkgk5yjv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 00/29] 6.9.12-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240725142731.678993846@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240725142731.678993846@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qozzqah5blnsvc73jrhfuldsaxwsoluuewvgpukzgcuud4nqgc@xnctlkgk5yjv>
 
-On 7/25/24 07:37, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.12 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hello,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Fri, Jul 26, 2024 at 10:19:05AM +0200, Michal Koutný wrote:
+> On Thu, Jul 25, 2024 at 04:05:42PM GMT, Waiman Long <longman@redhat.com> wrote:
+> > > There's also 'debug' subsys. Have you looked at (extending) that wrt
+> > > dying csses troubleshooting?
+> > > It'd be good to document here why you decided against it.
+> > The config that I used for testing doesn't include CONFIG_CGROUP_DEBUG.
+> 
+> I mean if you enable CONFIG_CGROUP_DEBUG, there is 'debug' controller
+> that exposes files like debug.csses et al.
+> 
+> > That is why "debug" doesn't show up in the sample outputs. The CSS #
+> > for the debug subsystem should show up if it is enabled.
+> 
+> So these "debugging" numbers could be implemented via debug subsys. So I
+> wondered why it's not done this way. That reasoning is missing in the
+> commit message.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+While this is a bit of implementation detail, it's also something which can
+be pretty relevant in production, so my preference is to show them in
+cgroup.stat. The recursive stats is something not particularly easy to
+collect from the debug controller proper anyway.
+
+One problem with debug subsys is that it's unclear whether they are safe to
+use and can be depended upon in production. Not that anything it shows
+currently is particularly risky but the contract around the debug controller
+is that it's debug stuff and developers may do silly things with it (e.g.
+doing high complexity iterations and what not).
+
+The debug controller, in general, I'm not sure how useful it is. It does
+nothing that drgn scripts can't do and doesn't really have enough extra
+benefits that make it better. We didn't have drgn back when it was added, so
+it's there for historical reasons, but I don't think it's a good idea to
+expand on it.
+
+Thanks.
+
 -- 
-Florian
-
+tejun
 
