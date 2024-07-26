@@ -1,53 +1,50 @@
-Return-Path: <linux-kernel+bounces-262956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDFA93CF0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5584693CF11
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84200B237E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:50:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAEDAB234E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D6176ADD;
-	Fri, 26 Jul 2024 07:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEBB176ABF;
+	Fri, 26 Jul 2024 07:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e20e/rbW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tBBVx19b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB7417625C;
-	Fri, 26 Jul 2024 07:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EBB17622D;
+	Fri, 26 Jul 2024 07:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721980141; cv=none; b=Cl3asWk6A/FxPBCm7XdFSkB1ls5xm0xt38HEwb37cNXZMiE9J28V3+wUU6SIW6a/aKuDCs1F648qDpGosSfhHNIKlY32JQGvvozDE7UPgg3kjF2dJtJK5JeKPS9VR4sJwIDpj9IQuFxLj9JxjE0OfVchkwrSvhiLttmUwQSLuXQ=
+	t=1721980193; cv=none; b=iRssK2GY56FK+kOWeoivtbi3pLN6GkpCeWNvW26XW2NFpdFDql4Iqkv6kk2bucIe+8ba+AxxGg78gGLy2o1Pu5RUISlGww6qKJC/Hh3kRe2JrQWskQI5A1N6sfU7pc6Uwyea3oubTQqqQJnvrvrRTjSEptrjpul5q4vyZYKjb1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721980141; c=relaxed/simple;
-	bh=2MfHuog33syRQOQk+cSfq53QFPYTOF5wtCPCig5gRCM=;
+	s=arc-20240116; t=1721980193; c=relaxed/simple;
+	bh=O9rUFTpLz4JvgDvdUNS3foCZevOXg2iHG6k08D0hF/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=stsxp/JlIRSf6DqS+f3oj+zKesIcpbG4BuZCTBh0r0MQonlgETxBBPc/ZYzsX3GXG7nu1KuUPN3wgUMy0hydawSAoFmunq+6Y+oR6hjCDQhkPCJUmDUrScSjM7MVqWRYSty55xC90Lmxy3E7FvEMfJssV2lE3oP5Qxm+x97TYQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e20e/rbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FB1C32782;
-	Fri, 26 Jul 2024 07:48:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+1RNN35IFt+G1rP0xxsQat2Wsk4BlsGDcx2Qn74iNLCF+PvTYisS5scddlCCcSeKmySSCsyEvjQPdqaXalQFuYrRk16nAQChSO+5dagz37C2b1bw5OjLlUd/UiCIwxBUzNhAtEEFWbGjLB5roPwYhZ/3UK7/Vd6ldG5R06CjMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tBBVx19b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C631C32782;
+	Fri, 26 Jul 2024 07:49:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721980140;
-	bh=2MfHuog33syRQOQk+cSfq53QFPYTOF5wtCPCig5gRCM=;
+	s=korg; t=1721980193;
+	bh=O9rUFTpLz4JvgDvdUNS3foCZevOXg2iHG6k08D0hF/E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e20e/rbW/O/Ay2WfvvEeexBRJxlE5babK/W2K8sEXpinETGu9D2gT8nJOGAPcgj2B
-	 4iBgsIQkIX6i02HPL2pnvltHBYGeW/babtN7eP0fi1WCZyFe1AkZlT+Ks9OOJiPNnA
-	 PwQuHvQxf34hcRzYdK5nRHEgehH7Im+BGsd9Ut7c=
-Date: Fri, 26 Jul 2024 09:48:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: media: omap4iss: add check for
- media_pad_remote_pad_first
-Message-ID: <2024072625-stubborn-garlic-11ae@gregkh>
-References: <20240726072814.3534601-1-nichen@iscas.ac.cn>
+	b=tBBVx19bbejTkzjaavMrBA21rdcP2REQ/Rxtr0zq8XAK/fdWSQlrN3rXmKEG8MwCQ
+	 rjYBWqN1fbtwH3b1W0RRQ+zllGDDv9hjzUh+J+Kbmc3yMpnAmdqJ3B2O/4yiSxG0Qj
+	 OVVJkgJHvD3tY5UQh+4vgT8qBBGRGD1FlFiRQbmU=
+Date: Fri, 26 Jul 2024 09:49:49 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jari Ruusu <jariruusu@protonmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
+Message-ID: <2024072633-easel-erasure-18fa@gregkh>
+References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,32 +53,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726072814.3534601-1-nichen@iscas.ac.cn>
+In-Reply-To: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
 
-On Fri, Jul 26, 2024 at 03:28:14PM +0800, Chen Ni wrote:
-> Add check for the return value of media_pad_remote_pad_first() and
-> return the error if it fails in order to avoid NULL pointer dereference.
+On Fri, Jul 26, 2024 at 07:25:21AM +0000, Jari Ruusu wrote:
+> Some older systems still compile kernels with old gcc version.
 > 
-> Fixes: b2e44430b634 ("media: mc-entity: Rename media_entity_remote_pad() to media_pad_remote_pad_first()")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/staging/media/omap4iss/iss_csi2.c | 3 +++
->  1 file changed, 3 insertions(+)
+> $ grep -B3 "^GNU C" linux-5.10.223-rc1/Documentation/Changes 
+> ====================== ===============  ========================================
+>         Program        Minimal version       Command to check the version
+> ====================== ===============  ========================================
+> GNU C                  4.9              gcc --version
 > 
-> diff --git a/drivers/staging/media/omap4iss/iss_csi2.c b/drivers/staging/media/omap4iss/iss_csi2.c
-> index 0e6c5bd81930..43851bbd0cc3 100644
-> --- a/drivers/staging/media/omap4iss/iss_csi2.c
-> +++ b/drivers/staging/media/omap4iss/iss_csi2.c
-> @@ -539,6 +539,9 @@ static int csi2_configure(struct iss_csi2_device *csi2)
->  		return -EBUSY;
->  
->  	pad = media_pad_remote_pad_first(&csi2->pads[CSI2_PAD_SINK]);
-> +	if (!pad)
-> +		return -EPIPE;
+> These warnings and errors show up when compiling with gcc 4.9.2
+> 
+>   UPD     include/config/kernel.release
+>   UPD     include/generated/uapi/linux/version.h
+>   UPD     include/generated/utsrelease.h
+>   CC      scripts/mod/empty.o
+> In file included from ././include/linux/compiler_types.h:65:0,
+>                  from <command-line>:0:
+> ./include/linux/compiler_attributes.h:29:29: warning: "__GCC4_has_attribute___uninitialized__" is not defined [-Wundef]
+>  # define __has_attribute(x) __GCC4_has_attribute_##x
+>                              ^
+> ./include/linux/compiler_attributes.h:278:5: note: in expansion of macro '__has_attribute'
+>  #if __has_attribute(__uninitialized__)
+>      ^
+> [SNIP]
+>   AR      arch/x86/events/built-in.a
+>   CC      arch/x86/kvm/../../../virt/kvm/kvm_main.o
+> In file included from ././include/linux/compiler_types.h:65:0,
+>                  from <command-line>:0:
+> ./include/linux/compiler_attributes.h:29:29: error: "__GCC4_has_attribute___uninitialized__" is not defined [-Werror=undef]
+>  # define __has_attribute(x) __GCC4_has_attribute_##x
+>                              ^
+> ./include/linux/compiler_attributes.h:278:5: note: in expansion of macro '__has_attribute'
+>  #if __has_attribute(__uninitialized__)
+>      ^
+> cc1: all warnings being treated as errors
+> make[2]: *** [scripts/Makefile.build:286: arch/x86/kvm/../../../virt/kvm/kvm_main.o] Error 1
+> make[1]: *** [scripts/Makefile.build:503: arch/x86/kvm] Error 2
+> make: *** [Makefile:1832: arch/x86] Error 2
+> 
+> Following patch fixes this. Upstream won't need this because
+> newer kernels are not compilable with gcc 4.9
+> 
+> --- ./include/linux/compiler_attributes.h.OLD
+> +++ ./include/linux/compiler_attributes.h
+> @@ -37,6 +37,7 @@
+>  # define __GCC4_has_attribute___nonstring__           0
+>  # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
+>  # define __GCC4_has_attribute___no_sanitize_undefined__ (__GNUC_MINOR__ >= 9)
+> +# define __GCC4_has_attribute___uninitialized__       0
+>  # define __GCC4_has_attribute___fallthrough__         0
+>  # define __GCC4_has_attribute___warning__             1
+>  #endif
+> 
+> Fixes: upstream fd7eea27a3ae "Compiler Attributes: Add __uninitialized macro"
+> Signed-off-by: Jari Ruusu <jariruusu@protonmail.com>
 
-How was this found and tested?
-
-thanks,
+Please submit this in a format in which we can apply it, thanks!
 
 greg k-h
 
