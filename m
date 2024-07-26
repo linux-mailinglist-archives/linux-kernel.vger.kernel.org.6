@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-262734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9A793CBD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:07:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80EB893CBF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455721C21350
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:07:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E7B2B2107E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FAA7F8;
-	Fri, 26 Jul 2024 00:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm7tSlGs"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21C812;
+	Fri, 26 Jul 2024 00:14:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F79E36D;
-	Fri, 26 Jul 2024 00:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10442628;
+	Fri, 26 Jul 2024 00:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721952427; cv=none; b=Q0F1KfuZQBHwAICUgEEGvmoWoJg/AMBHk/rxvGIaQvEs5Vm0R80kmXlDIZTEnG4NVVp/eRCCkWvD4GRCdzyh4M6gm0F1bIJ6Z/WuYwaSZnUswcOqPryzhSy3E4mIvIuKsCjHUEQSzJUVdTCUwbmbn19GZdFPmHoS7yUEgmL/g00=
+	t=1721952899; cv=none; b=BRPhtu+vlMeHoXkoCin1nXoNmBNjnECPTNjpl3o9tlQkUP95/Gd9V/N/SbVtigfNVNk8HjMArzusUVSyPdQPA4e425ZBEDPvz7Nz7Fb4RFXywbkqx8QICyDGDGwXx/EE5tWTSP8p3oXDYStY1zqBpGZaQJVZsTwYA7sbv5QVyzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721952427; c=relaxed/simple;
-	bh=8MdBcCjwOySNAbYQaTV2PkTHCb+RNP4SwIA5eHRLoM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvamVq78kB2vSpCVPcaG9LvxwsF76gMmCiIZ2U2RarMXlWsw+LsCEaEA9M53xM1o0UKpqa6PmHeRm3lAAaOEcIY2IwMQiiBO8Xhhw5xJzZbBbnDZY45TSZJMWaIL4IT+7WmX6ZxqMilkIm7Ua4n6Hm5CRnOGCfwrWIYe49Fxgqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm7tSlGs; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b97097f7fdso824186d6.0;
-        Thu, 25 Jul 2024 17:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721952425; x=1722557225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mhrx66p4k+0HqBnVFIS3fmt62myrp/Me7feWqvjhdI=;
-        b=Nm7tSlGsI6na/kv4xv6g93m/PYV6IXfK99WC3VRGNeyAr+zTN0YhsDrBUIlvIJZ4ZI
-         cTqH6PY/jx3KcvMadWxiXPJdXsYvmjujrKsHWnJUenekEQSx78YwjTpNQCeGVscOW/Cn
-         ZgW8zTFoAK6hX7wS7My/lICyTz3vn0ehnEbxBcx75OL6qQMhNWFyQxPqRWLIhQry7yOY
-         iTQ6mIG5+Y7BoWNNG2H+WnNWxkqQojMEQ099jgrHj+wR/FwqFLm1DqGAlUQCmfmr3lub
-         sNpv90xON2zXgUrtSQ1OnS10hiJWrJRVTxQppDZNvcLpfd8W46jDUnFn0YL5RGxL3R5G
-         yeog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721952425; x=1722557225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9mhrx66p4k+0HqBnVFIS3fmt62myrp/Me7feWqvjhdI=;
-        b=ZE0EBSjBOeECHJswiN+wWU9OQTlEfSaViKL72eKBUqV6s+Cx4h6Xrzcq3fjgFanh2O
-         XIfghyEwzJOQNs6J/7gDzseIfY68RA3NQ8kBP1LE/+a1C8IXDT+ajwINDfZUXRvtQGGt
-         qsXZhXKqyhxUOvoxmH8h2QQ10zVNvGGCwOfs9GumHvy+N4mJGY3b+jbLEiywecUDdF20
-         bPkb93sQPRFBsZhcQ+sI4UETNGXyoFG7LU3opzTo3wfMLikoKaUbZNTUnBTGxk9VXyOW
-         tHX5hJ2uGQMbXRu/hYEi1m1bQV8BnEnKbxayTnqZaAykshXssocAIgdA9uNSX1vDi06I
-         xtaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbacX4CQbkID07CkQYkIBDBFjezORyjMIvei/GXuD+C6ZXN0hd2KYLOzPWVej9Uj0a7MV74u/LwIrb4Nsz46faWB1L6+efqhS8Xlrd1IZH9Q4iqVG18KtowaTp0Gy/1szArqw2jHbMKw==
-X-Gm-Message-State: AOJu0Yzw7/4B7gqKhOEkQz/dBMOP4wZxTPqBeqomLmNQ+lDH6s5qv41Q
-	piryA27WSz13QW8Vvt63/mzx0AJ8AIGyEBsfD/S4I8gypQ71GxOloEs7xv6W
-X-Google-Smtp-Source: AGHT+IGGfUcDRIS2ADeLCH+O/5hJ5jOciW87T8ynnw+FeWzNqY38U4MpJcRIw508BOtTHDbLgyKoBA==
-X-Received: by 2002:a05:6214:da3:b0:6b7:a6eb:c343 with SMTP id 6a1803df08f44-6bb4087082dmr46978076d6.51.1721952425017;
-        Thu, 25 Jul 2024 17:07:05 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fab9639sm11506416d6.103.2024.07.25.17.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 17:07:04 -0700 (PDT)
-Date: Thu, 25 Jul 2024 20:07:01 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: mehdi.djait@bootlin.com, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mehdi Djait <mehdi.djait.k@gmail.com>
-Subject: Re: [PATCH 0/2] Add driver for Sharp Memory LCD
-Message-ID: <vlhicmhpvqkvdbyq2dsgqmofst5a5rjztr3uhp3bwyjhv3kqog@lu5lqtey262n>
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240725074532.65616a26@windsurf>
+	s=arc-20240116; t=1721952899; c=relaxed/simple;
+	bh=ULsy+5juy5A2H2W0D+6nkjJ8aD8NK569vF3qGn+6+oU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oc077u+SVA7YMrYslIkODLDCN+DSiDPZH04J2gTvly4ErJMusprLvpJ9BTnheKNr7AtH6ACM6Morq1BroWvqQyUrjMM0lR8s56m6vliA5qdL2mD7aLkRcK9hpwJSv9pZ2D9Zkijcw6LW1uasZQoSixH7hRvFgVDE50fttw98pFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B22C116B1;
+	Fri, 26 Jul 2024 00:14:56 +0000 (UTC)
+Date: Thu, 25 Jul 2024 20:15:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
+ Mathias Krause <minipli@grsecurity.net>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Florian Fainelli  <florian.fainelli@broadcom.com>, Alexey Makhalov 
+ <alexey.makhalov@broadcom.com>, Vasavi Sirnapalli 
+ <vasavi.sirnapalli@broadcom.com>
+Subject: [PATCH] tracing: Have format file honor EVENT_FILE_FL_FREED
+Message-ID: <20240725201517.3c52e4b0@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725074532.65616a26@windsurf>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 07:45:32AM GMT, Thomas Petazzoni wrote:
-> Hello Alex,
-> 
-> On Wed, 24 Jul 2024 20:47:01 -0400
-> Alex Lanzano <lanzano.alex@gmail.com> wrote:
-> 
-> > This patch series add support for the monochrome Sharp Memory LCD
-> > panels. This series is based off of the work done by Mehdi Djait.
-> 
-> Thanks for resuming the effort on this patch series! Since this patch
-> series is clearly heavily based on Mehdi's work, wouldn't it make sense
-> to preserve Mehdi's authorship for the patches?
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Hi! Thanks for the review. 
+When eventfs was introduced, special care had to be done to coordinate the
+freeing of the file meta data with the files that are exposed to user
+space. The file meta data would have a ref count that is set when the file
+is created and would be decremented and freed after the last user that
+opened the file closed it. When the file meta data was to be freed, it
+would set a flag (EVENT_FILE_FL_FREED) to denote that the file is freed,
+and any new references made (like new opens or reads) would fail as it is
+marked freed. This allowed other meta data to be freed after this flag was
+set (under the event_mutex).
 
-What would be the best way to go about doing this? I'm guessing appending to
-MODULE_AUTHOR and adding a Signed-of-by or Co-Developed-by?
+All the files that were dynamically created in the events directory had a
+pointer to the file meta data and would call event_release() when the last
+reference to the user space file was closed. This would be the time that it
+is safe to free the file meta data.
+
+A short cut was made for the "format" file. It's i_private would point to
+the "call" entry directly and not point to the file's meta data. This is
+because all format files are the same for the same "call", so it was
+thought there was no reason to differentiate them.  The other files
+maintain state (like the "enable", "trigger", etc). But this meant if the
+file were to disappear, the "format" file would be unaware of it.
+
+This fixes two bugs in the same code. One is a race that could be trigger
+via the user_events test (that would create dynamic events and free them),
+and running a loop that would read the user_events format files:
+
+In one console run:
+
+ # cd tools/testing/selftests/user_events
+ # while true; do ./ftrace_test; done
+
+And in another console run:
+
+ # cd /sys/kernel/tracing/
+ # while true; do cat events/user_events/__test_event/format; done 2>/dev/null
+
+With KASAN memory checking, it would trigger a use-after-free bug. This was
+because the format file was not checking the file's meta data flag
+"EVENT_FILE_FL_FREED", so it would access the event that the file meta data
+pointed to after it was freed.
+
+The second bug is that the dynamic "format" file also registered a callback
+to decrement the meta data, but the "data" pointer passed to the callback
+was the event itself. Not the meta data to free. This would either cause a
+memory leak (the meta data never was freed) or a crash as it could have
+incorrectly freed the event itself.
+
+Link: https://lore.kernel.org/all/20240719204701.1605950-1-minipli@grsecurity.net/
+
+Cc: stable@vger.kernel.org
+Reported-by: Mathias Krause <minipli@grsecurity.net>
+Fixes: b63db58e2fa5d ("eventfs/tracing: Add callback for release of an eventfs_inode")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 6ef29eba90ce..852643d957de 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1540,7 +1540,8 @@ enum {
+ 
+ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+-	struct trace_event_call *call = event_file_data(m->private);
++	struct trace_event_file *file = event_file_data(m->private);
++	struct trace_event_call *call = file->event_call;
+ 	struct list_head *common_head = &ftrace_common_fields;
+ 	struct list_head *head = trace_get_fields(call);
+ 	struct list_head *node = v;
+@@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+ 
+ static int f_show(struct seq_file *m, void *v)
+ {
+-	struct trace_event_call *call = event_file_data(m->private);
++	struct trace_event_file *file = event_file_data(m->private);
++	struct trace_event_call *call = file->event_call;
+ 	struct ftrace_event_field *field;
+ 	const char *array_descriptor;
+ 
+@@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
+ 
+ static void *f_start(struct seq_file *m, loff_t *pos)
+ {
++	struct trace_event_file *file;
+ 	void *p = (void *)FORMAT_HEADER;
+ 	loff_t l = 0;
+ 
+ 	/* ->stop() is called even if ->start() fails */
+ 	mutex_lock(&event_mutex);
+-	if (!event_file_data(m->private))
++	file = event_file_data(m->private);
++	if (!file || (file->flags & EVENT_FILE_FL_FREED))
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	while (l < *pos && p)
+@@ -2485,7 +2489,6 @@ static int event_callback(const char *name, umode_t *mode, void **data,
+ 	if (strcmp(name, "format") == 0) {
+ 		*mode = TRACE_MODE_READ;
+ 		*fops = &ftrace_event_format_fops;
+-		*data = call;
+ 		return 1;
+ 	}
+ 
+-- 
+2.43.0
+
 
