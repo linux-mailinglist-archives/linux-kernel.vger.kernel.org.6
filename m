@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-263646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DD793D8A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:53:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7824E93D8AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDDA8B242FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE0A28897B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4499D14A4DB;
-	Fri, 26 Jul 2024 18:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960F915099D;
+	Fri, 26 Jul 2024 18:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GeY3j9Q3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dXTl78dq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2839149C78
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFC6149E1E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722019932; cv=none; b=VBnVEp00v8kx9VZduNlKIFwpSaXVQFWMMpRVbhmcJlWIXw32YqVvdEd83sS3JVsrP2IIFimAbwuci3jNUaeSKbTglcnqHh0N0at2rUwTdIWdo8xwdtXOdPTfimm4RRmcCdSOaIYF2GMfpzLRCxJaetI55wrW9m/fBfAcEeWId2s=
+	t=1722019933; cv=none; b=ANddvwgUKNuzUshfAe4ltf02/Y1H9WUunCGlK7XBIJsEF/Fs5qmIUxmRI1ez9g5tk3+kA/+7hnoejElTCvU/riO8pCz6k1wE4wjKgyFq+rztZOs3Ino/000JLb3qEHYBFJ1DYtMpf8s3w+jesu3s1K6N5bp4Rzh9YdVzEL/B2bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722019932; c=relaxed/simple;
-	bh=1HnlQBL0vOBZ84lrHA6yeyQdIFc95bnX4c16QrKV+Bs=;
+	s=arc-20240116; t=1722019933; c=relaxed/simple;
+	bh=eB5wvMbxqMd2gdO84ZLM6DxbjjXIhV+8XZ9H/PrfdNU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iGzrJYX9VovR30AutXmrDNpTWuS9AsNR6NNdEis6xVwIwBTD0Ow0lDbS8ickEC5pXWlvN8cGR+Rm+tWoxsuMkKoZzBH5V+BWtIICFPHacN6g2KNn2CvsMoVPETFGXUOuv5OFmA6MwyssenF1IKF348P3Fua560RkINHHNHRWJtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GeY3j9Q3; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=s6XlkJbNXliCNIYvOhn0qhfhpWgkPNg3tQpFg9F98Un4E4Hx16ueDq/so3D0qZjSD3d3Y2bOagqcVrH9twrjnjmtgQS8AL8qt5J5a0f06Pd5egoD9IPz+O2B3ZiQFRJtRrwubiinYnDmVNqYqtSADT+f5s4Z7VS3S8mu+t4Us+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dXTl78dq; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722019930;
+	s=mimecast20190719; t=1722019931;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SuhCap/2b9IgG9yLnMTDbfY/3XP60mbxoJ9OrpN+C8M=;
-	b=GeY3j9Q3DPfqcqhe9I76JpgN1xCZ5pzZQ76/XQL9fBNXlr5XU8UeE7csNY13vN1QM4gaRE
-	Q7OM8/ph4r+qKe7Mv2ygzePRu9onFPnDNEQBcCVg/SgzaRaw1digk1zbzjl9zH1vsLIE0R
-	pLL1BW70NN0j/e2ER5HBTb9UY7orttY=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=MqNWXGOZI8rRuyocNScf5f61l7jMBqsk673rmo19d60=;
+	b=dXTl78dqc6wMT3fVnVR+I1thkpbAOomeZ6hLsNf4yxdKO0q4LIDZcwGxTbV9tTtSEl8Hw8
+	u1/NPuK8bnTskS7mtKSTNR95ZfHQZDg361VDlA27U8dz5iP8qZLTcs+60il/1r3ZU2/oaE
+	YfhqkWPOwGgTKTD69C+Wg4rop25XQAM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-FQ18fmSdNFObSzQ2RjgnNg-1; Fri,
- 26 Jul 2024 14:52:05 -0400
-X-MC-Unique: FQ18fmSdNFObSzQ2RjgnNg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-uI72tXPuMCyKMdRNKyBE_g-1; Fri,
+ 26 Jul 2024 14:52:07 -0400
+X-MC-Unique: uI72tXPuMCyKMdRNKyBE_g-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AB8B1955D4D;
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9F731955D47;
 	Fri, 26 Jul 2024 18:52:03 +0000 (UTC)
 Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5AEE43000197;
-	Fri, 26 Jul 2024 18:52:02 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 31D6D3000194;
+	Fri, 26 Jul 2024 18:52:03 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
 Cc: seanjc@google.com,
 	michael.roth@amd.com
-Subject: [PATCH v2 05/14] KVM: rename CONFIG_HAVE_KVM_GMEM_* to CONFIG_HAVE_KVM_ARCH_GMEM_*
-Date: Fri, 26 Jul 2024 14:51:48 -0400
-Message-ID: <20240726185157.72821-6-pbonzini@redhat.com>
+Subject: [PATCH v2 06/14] KVM: guest_memfd: return locked folio from __kvm_gmem_get_pfn
+Date: Fri, 26 Jul 2024 14:51:49 -0400
+Message-ID: <20240726185157.72821-7-pbonzini@redhat.com>
 In-Reply-To: <20240726185157.72821-1-pbonzini@redhat.com>
 References: <20240726185157.72821-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -75,128 +75,59 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add "ARCH" to the symbols; shortly, the "prepare" phase will include both
-the arch-independent step to clear out contents left in the page by the
-host, and the arch-dependent step enabled by CONFIG_HAVE_KVM_GMEM_PREPARE.
-For consistency do the same for CONFIG_HAVE_KVM_GMEM_INVALIDATE as well.
+Allow testing the up-to-date flag in the caller without taking the
+lock again.
 
 Reviewed-by: Michael Roth <michael.roth@amd.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/kvm/Kconfig     | 4 ++--
- arch/x86/kvm/x86.c       | 4 ++--
- include/linux/kvm_host.h | 4 ++--
- virt/kvm/Kconfig         | 4 ++--
- virt/kvm/guest_memfd.c   | 6 +++---
- 5 files changed, 11 insertions(+), 11 deletions(-)
+ virt/kvm/guest_memfd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 4287a8071a3a..472a1537b7a9 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -141,8 +141,8 @@ config KVM_AMD_SEV
- 	depends on CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
- 	select ARCH_HAS_CC_PLATFORM
- 	select KVM_GENERIC_PRIVATE_MEM
--	select HAVE_KVM_GMEM_PREPARE
--	select HAVE_KVM_GMEM_INVALIDATE
-+	select HAVE_KVM_ARCH_GMEM_PREPARE
-+	select HAVE_KVM_ARCH_GMEM_INVALIDATE
- 	help
- 	  Provides support for launching Encrypted VMs (SEV) and Encrypted VMs
- 	  with Encrypted State (SEV-ES) on AMD processors.
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 52778689cef4..4db18924b2f2 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -13644,7 +13644,7 @@ bool kvm_arch_no_poll(struct kvm_vcpu *vcpu)
- }
- EXPORT_SYMBOL_GPL(kvm_arch_no_poll);
- 
--#ifdef CONFIG_HAVE_KVM_GMEM_PREPARE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_PREPARE
- bool kvm_arch_gmem_prepare_needed(struct kvm *kvm)
- {
- 	return kvm->arch.vm_type == KVM_X86_SNP_VM;
-@@ -13656,7 +13656,7 @@ int kvm_arch_gmem_prepare(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn, int max_ord
- }
- #endif
- 
--#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
- void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end)
- {
- 	kvm_x86_call(gmem_invalidate)(start, end);
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 689e8be873a7..344d90771844 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -2445,7 +2445,7 @@ static inline int kvm_gmem_get_pfn(struct kvm *kvm,
- }
- #endif /* CONFIG_KVM_PRIVATE_MEM */
- 
--#ifdef CONFIG_HAVE_KVM_GMEM_PREPARE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_PREPARE
- int kvm_arch_gmem_prepare(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn, int max_order);
- bool kvm_arch_gmem_prepare_needed(struct kvm *kvm);
- #endif
-@@ -2477,7 +2477,7 @@ typedef int (*kvm_gmem_populate_cb)(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
- long kvm_gmem_populate(struct kvm *kvm, gfn_t gfn, void __user *src, long npages,
- 		       kvm_gmem_populate_cb post_populate, void *opaque);
- 
--#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
- void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end);
- #endif
- 
-diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-index b14e14cdbfb9..fd6a3010afa8 100644
---- a/virt/kvm/Kconfig
-+++ b/virt/kvm/Kconfig
-@@ -113,10 +113,10 @@ config KVM_GENERIC_PRIVATE_MEM
-        select KVM_PRIVATE_MEM
-        bool
- 
--config HAVE_KVM_GMEM_PREPARE
-+config HAVE_KVM_ARCH_GMEM_PREPARE
-        bool
-        depends on KVM_PRIVATE_MEM
- 
--config HAVE_KVM_GMEM_INVALIDATE
-+config HAVE_KVM_ARCH_GMEM_INVALIDATE
-        bool
-        depends on KVM_PRIVATE_MEM
 diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 5221b584288f..76139332f2f3 100644
+index 76139332f2f3..9271aba9b7b3 100644
 --- a/virt/kvm/guest_memfd.c
 +++ b/virt/kvm/guest_memfd.c
-@@ -27,7 +27,7 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
- 
- static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct folio *folio)
- {
--#ifdef CONFIG_HAVE_KVM_GMEM_PREPARE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_PREPARE
- 	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
- 	struct kvm_gmem *gmem;
- 
-@@ -353,7 +353,7 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
- 	return MF_DELAYED;
+@@ -59,6 +59,7 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
+ 	return 0;
  }
  
--#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
- static void kvm_gmem_free_folio(struct folio *folio)
++/* Returns a locked folio on success.  */
+ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool prepare)
  {
- 	struct page *page = folio_page(folio, 0);
-@@ -368,7 +368,7 @@ static const struct address_space_operations kvm_gmem_aops = {
- 	.dirty_folio = noop_dirty_folio,
- 	.migrate_folio	= kvm_gmem_migrate_folio,
- 	.error_remove_folio = kvm_gmem_error_folio,
--#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-+#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
- 	.free_folio = kvm_gmem_free_folio,
- #endif
- };
+ 	struct folio *folio;
+@@ -551,6 +552,7 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
+ 	fput(file);
+ }
+ 
++/* Returns a locked folio on success.  */
+ static struct folio *
+ __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 		   gfn_t gfn, kvm_pfn_t *pfn, int *max_order, bool prepare)
+@@ -584,7 +586,6 @@ __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 	if (max_order)
+ 		*max_order = 0;
+ 
+-	folio_unlock(folio);
+ 	return folio;
+ }
+ 
+@@ -602,6 +603,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+ 
++	folio_unlock(folio);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(kvm_gmem_get_pfn);
+@@ -647,6 +649,7 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
+ 			break;
+ 		}
+ 
++		folio_unlock(folio);
+ 		if (!IS_ALIGNED(gfn, (1 << max_order)) ||
+ 		    (npages - i) < (1 << max_order))
+ 			max_order = 0;
 -- 
 2.43.0
 
