@@ -1,284 +1,147 @@
-Return-Path: <linux-kernel+bounces-263124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A646F93D155
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:46:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872E693D154
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13B55B217B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A14FB2181E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6317836A;
-	Fri, 26 Jul 2024 10:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BvVTAn+X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A05D7F8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67F17836D;
+	Fri, 26 Jul 2024 10:45:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3467F8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721990785; cv=none; b=oTQC4a8Io8wJWL5BRT+aoUWYkLFui6TfRcVhHbg6E9mpWe5viAg6ruK8m7jnWuiO/MN8qt0UDeroXQuOV7uGqrqqBa2fTt418AHdsmSFLuYOnHfwgQjnkgReGBU4PHu0lm+I+bTskQGweYrEPLxaQ1PbkOffnoRPsS/U7EqmLMY=
+	t=1721990722; cv=none; b=ouokgB8o/x/2/rgkUJ379trNNHcFXf2FVk04eIXlmoguefCtnZPcetljnKeWSUxPH3A+/JgLxLbvAFHKONC9q5abmeSISngOQnVIARB9XNE5XXeXHTHVHN3L3G2uhmJxD2c51RCwGs7vFIu8e9LPwYf2CyDCpsdIxOsyndb5HZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721990785; c=relaxed/simple;
-	bh=Y/uWYa9WkZyo/qF+wqEDQCaKs7CwOAxvOpcsgt+6F6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCdfc9L0fXZeHv3oRNES5F9fcYFeLBIrHycZa/qex0kUEAtcCqGY0WFgKTHrdw7DPc5qvziU9fuAWRe9EHtEN9QDk9WIwxlPUY6xrIv91Nve5eaHfc1BxIdlEt9lSoGnTsjV2N6YOHH/l93l0m7WjGozNWWifV7tVeWT1kf2t/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BvVTAn+X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721990781;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s2wg5bMEXdXwAAajlrAz7LLcE+418LBbf1n+LXoQgBU=;
-	b=BvVTAn+XuJaiyISKR6TkiX90ETaXwmOe+NlptHOpeIDIKy5x1auxGxzOmxgWms+PXbBbYW
-	hkrzfFPgTGka5xmGBOyMofPwQ2pz2sf2aQfcQLcv4rvDO2EimJHE0S2c2XwyUegNXl4tct
-	jvJUFIuPK9YDDLFYQJF6suLi/Cb9cWw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-220-RIzM5CNAOMqZ2tT4gm2vgA-1; Fri,
- 26 Jul 2024 06:46:18 -0400
-X-MC-Unique: RIzM5CNAOMqZ2tT4gm2vgA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 655361955D47;
-	Fri, 26 Jul 2024 10:46:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.83])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7AAC119560AE;
-	Fri, 26 Jul 2024 10:46:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 26 Jul 2024 12:44:35 +0200 (CEST)
-Date: Fri, 26 Jul 2024 12:44:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zheng Zucheng <zhengzucheng@huawei.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] sched/cputime: Fix mul_u64_u64_div_u64()
- precision for cputime
-Message-ID: <20240726104429.GA21542@redhat.com>
-References: <20240725120315.212428-1-zhengzucheng@huawei.com>
- <20240726023235.217771-1-zhengzucheng@huawei.com>
+	s=arc-20240116; t=1721990722; c=relaxed/simple;
+	bh=jO0E0sieOzH/MBK294S4mRe+gujdtebcb/LZ9lsPU/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVpli4MIQqeW0yv4f1ARRCne2lcZIAnGlaVV515Kd3mSeIfoTe+Q2qr1/+fRG7i/F6wG8emA2EfBbDrjLniFb+odshW3KCg+L+BD5chyrBGERK9XkoUU11QFxK77LeRBQfwURfQleweMrq0pPiZMKLSpXo5X4aGCYKsQr/zLeEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27C911007;
+	Fri, 26 Jul 2024 03:45:44 -0700 (PDT)
+Received: from [10.57.78.186] (unknown [10.57.78.186])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 866A13F73F;
+	Fri, 26 Jul 2024 03:45:16 -0700 (PDT)
+Message-ID: <fdae26b5-1fe1-4544-b496-2273b2c2b523@arm.com>
+Date: Fri, 26 Jul 2024 11:45:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726023235.217771-1-zhengzucheng@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: huge_memory: don't start_stop_khugepaged for non-PMD
+ THP
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Yang Shi <shy828301@gmail.com>,
+ Zi Yan <ziy@nvidia.com>
+References: <20240726082818.260008-1-21cnbao@gmail.com>
+ <aeb0fcb9-7c84-4bc4-b89a-5f0f86478aaf@arm.com>
+ <a9ff9028-a73a-4a80-b38a-266d1e8c20fe@redhat.com>
+ <CAGsJ_4wN0TBnPDj5oeFdPqCZk6XkMaJ0JbLY+fETWn52npwjjg@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4wN0TBnPDj5oeFdPqCZk6XkMaJ0JbLY+fETWn52npwjjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 07/26, Zheng Zucheng wrote:
->
-> before call mul_u64_u64_div_u64(),
-> stime = 175136586720000, rtime = 135989749728000, utime = 1416780000.
+On 26/07/2024 11:04, Barry Song wrote:
+> On Fri, Jul 26, 2024 at 9:48 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 26.07.24 11:43, Ryan Roberts wrote:
+>>> On 26/07/2024 09:28, Barry Song wrote:
+>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>
+>>>> khugepaged will be automatically started when PMD-sized THP is enabled
+>>>> (either of the per-size anon control or the top-level control are set
+>>>> to "always" or "madvise"), and it'll be automatically shutdown when
+>>>> PMD-sized THP is disabled (when both the per-size anon control and the
+>>>> top-level control are "never").
+>>>>
+>>>> It seems unnecessary to call start_stop_khugepaged() for non-PMD THP,
+>>>> as it would only waste CPU time.
+>>>>
+>>>> Cc: Lance Yang <ioworker0@gmail.com>
+>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>> Cc: Yang Shi <shy828301@gmail.com>
+>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>>> ---
+>>>>   mm/huge_memory.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 41460847988c..bd365e35acf7 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -514,7 +514,7 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+>>>>      } else
+>>>>              ret = -EINVAL;
+>>>>
+>>>> -    if (ret > 0) {
+>>>> +    if (ret > 0 && order == HPAGE_PMD_ORDER) {
+>>>>              int err;
+>>>>
+>>>>              err = start_stop_khugepaged();
+>>>
+>>> Personally I see this as a bit of a layering violation; its
+>>> start_stop_khugepaged() that should decide the policy for when to start and stop
+>>> the daemon. thpsize_enabled_store() should just be calling
+>>> start_stop_khugepaged() to notify that something potentially pertinent to the a
+>>> policy decision has changed.
+>>
+> 
+> My impression is that it slightly deviates from the huge page documentation in
+> Documentation/admin-guide/mm/transhuge.rst.
+> 
+> khugepaged will be automatically started when PMD-sized THP is enabled
+> (either of the per-size anon control or the top-level control are set
+> to "always" or "madvise"), and it'll be automatically shutdown when
+> PMD-sized THP is disabled (when both the per-size anon control and the
+> top-level control are "never").
 
-So stime + utime == 175138003500000
+But start_stop_khugepaged() doesn't unconditionally start khugepaged, it takes
+action based on hugepage_pmd_enabled() which only returns true if there are any
+pmd sized THP enabled (currently looking at anon and file, but should also look
+at shmem in future; that's a known bug that's been there forever). So I don't
+think it is inconsistent with the documentation?
 
-> after call mul_u64_u64_div_u64(),
-> stime = 135989949653530
-
-Hmm. On x86 mul_u64_u64_div_u64(175136586720000, 135989749728000, 175138003500000)
-returns 135989749728000 == rtime, see below.
-
-Nevermind...
-
-> --- a/kernel/sched/cputime.c
-> +++ b/kernel/sched/cputime.c
-> @@ -582,6 +582,12 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
->  	}
->  
->  	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
-> +	/*
-> +	 * Because mul_u64_u64_div_u64() can approximate on some
-> +	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
-> +	 */
-> +	if (unlikely(stime > rtime))
-> +		stime = rtime;
-
-Thanks,
-
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-
--------------------------------------------------------------------------------
-But perhaps it makes sense to improve the accuracy of mul_u64_u64_div_u64() ?
-See the new() function in the code below.
-
-Say, with the numbers above I get
-
-	$ ./test 175136586720000 135989749728000 175138003500000
-	old -> 135989749728000	e=1100089950.609375
-	new -> 135988649638050	e=0.609375
-
-Oleg.
-
--------------------------------------------------------------------------------
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-
-typedef unsigned long long u64;
-
-static inline int fls64(u64 x)
-{
-	int bitpos = -1;
-	/*
-	 * AMD64 says BSRQ won't clobber the dest reg if x==0; Intel64 says the
-	 * dest reg is undefined if x==0, but their CPU architect says its
-	 * value is written to set it to the same as before.
-	 */
-	asm("bsrq %1,%q0"
-	    : "+r" (bitpos)
-	    : "rm" (x));
-	return bitpos + 1;
-}
-
-static inline int ilog2(u64 n)
-{
-	return fls64(n) - 1;
-}
-
-#define swap(a, b) \
-	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
-
-static inline u64 div64_u64_rem(u64 dividend, u64 divisor, u64 *remainder)
-{
-	*remainder = dividend % divisor;
-	return dividend / divisor;
-}
-static inline u64 div64_u64(u64 dividend, u64 divisor)
-{
-	return dividend / divisor;
-}
-
-//-----------------------------------------------------------------------------
-
-// current implementation of mul_u64_u64_div_u64
-u64 old(u64 a, u64 b, u64 c)
-{
-	u64 res = 0, div, rem;
-	int shift;
-
-	/* can a * b overflow ? */
-	if (ilog2(a) + ilog2(b) > 62) {
-		/*
-		 * Note that the algorithm after the if block below might lose
-		 * some precision and the result is more exact for b > a. So
-		 * exchange a and b if a is bigger than b.
-		 *
-		 * For example with a = 43980465100800, b = 100000000, c = 1000000000
-		 * the below calculation doesn't modify b at all because div == 0
-		 * and then shift becomes 45 + 26 - 62 = 9 and so the result
-		 * becomes 4398035251080. However with a and b swapped the exact
-		 * result is calculated (i.e. 4398046510080).
-		 */
-		if (a > b)
-			swap(a, b);
-
-		/*
-		 * (b * a) / c is equal to
-		 *
-		 *      (b / c) * a +
-		 *      (b % c) * a / c
-		 *
-		 * if nothing overflows. Can the 1st multiplication
-		 * overflow? Yes, but we do not care: this can only
-		 * happen if the end result can't fit in u64 anyway.
-		 *
-		 * So the code below does
-		 *
-		 *      res = (b / c) * a;
-		 *      b = b % c;
-		 */
-		div = div64_u64_rem(b, c, &rem);
-		res = div * a;
-		b = rem;
-
-		shift = ilog2(a) + ilog2(b) - 62;
-		if (shift > 0) {
-			/* drop precision */
-			b >>= shift;
-			c >>= shift;
-			if (!c)
-				return res;
-		}
-	}
-
-	return res + div64_u64(a * b, c);
-}
-
-u64 new(u64 a, u64 b, u64 c)
-{
-	u64 res = 0, div, rem;
-
-	/* can a * b overflow ? */
-	while (ilog2(a) + ilog2(b) > 62) {
-		if (a > b)
-			swap(b, a);
-
-		if (b >= c) {
-			/*
-			 * (b * a) / c is equal to
-			 *
-			 *	(b / c) * a +
-			 *	(b % c) * a / c
-			 *
-			 * if nothing overflows. Can the 1st multiplication
-			 * overflow? Yes, but we do not care: this can only
-			 * happen if the end result can't fit in u64 anyway.
-			 *
-			 * So the code below does
-			 *
-			 *	res += (b / c) * a;
-			 *	b = b % c;
-			 */
-			div = div64_u64_rem(b, c, &rem);
-			res += div * a;
-			b = rem;
-			continue;
-		}
-
-		/* drop precision */
-		b >>= 1;
-		c >>= 1;
-		if (!c)
-			return res;
-	}
-
-	return res + div64_u64(a * b, c);
-}
-
-int main(int argc, char **argv)
-{
-	u64 a, b, c, ro, rn;
-	double rd;
-
-	assert(argc == 4);
-	a = strtoull(argv[1], NULL, 0);
-	b = strtoull(argv[2], NULL, 0);
-	c = strtoull(argv[3], NULL, 0);
-
-	rd = (((double)a) * b) / c;
-	ro = old(a, b, c);
-	rn = new(a, b, c);
-
-	printf("old -> %lld\te=%f\n", ro, ro - rd);
-	printf("new -> %lld\te=%f\n", rn, rn - rd);
-
-	return 0;
-}
+> 
+> non-PMD size is not involved in khugepaged, but I agree the policy might change
+> in the future.
+> 
+>> Agreed, skimming the subject I was under the impression that we would be
+>> fixing something here.
+> 
+> working on another swapin_enabled and reviewing the enabled source code.
+> I don't need this startstop for all sizes in that case, so I made a
+> quick adjustment
+> to this part as well. If neither of you likes it, that's fine with me :-)
+> 
+>>
+>> --
+>> Cheers,
+>>
+>> David / dhildenb
+>>
+> 
+> Thanks
+> Barry
 
 
