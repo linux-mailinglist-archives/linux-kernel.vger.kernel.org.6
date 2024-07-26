@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-262848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DB393CDCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B4C93CDD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30392822B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3026E2830E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A61C15538C;
-	Fri, 26 Jul 2024 05:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D2F155327;
+	Fri, 26 Jul 2024 05:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LkGSmevw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEmm70sJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8224154C10;
-	Fri, 26 Jul 2024 05:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70401552E4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721973003; cv=none; b=FWp2kA90Jb9XwaYvK+hKimUIgCUJqoHhR5SLJ4V7z2f8XyY7WMzzNpQ0GTxfZ7r4PR1866M945ihAP+M/wtL5Zmtb76SZVlSsDj85glV6u/0434vnkxO84utboGZgGc9L2fNjPvNY41WWCe2GeNILEouSDbvITtczfGEnkopE3A=
+	t=1721973131; cv=none; b=M7M7gryKv07VlyfsyEQd++eNspHTKf6Ta/eVn8V0t3aABurcLemvRRjc5jtNT/QFqg82sD0bvhgUge6ZD+UGwZRtQEKBQD/sdVyjBgK4CewmPOJ6tQUYDEj4cWKeHS846P2818PJq2CxTyPjWBc+KI2e2LzmxqwNOgD65X5YMko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721973003; c=relaxed/simple;
-	bh=1RSV4wLf77v5OYCZydF77u28YwpEi2UycxOjfiDnplk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUrDpts6YhcFeZpeRwcUCq8m5oZWk3mq3s+zJTojHh3C49GeagvfbmJH1BILOP36NCxG3Z3xDb/PpKyGlYP2lJyy0NX1U8vlfOO2+q3k+10I6od74SoxFAkh8PqfDaqK/c9R2qJhn5Yr+9pWVYBuKTZhDzPa9ETMFht+REtLuDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LkGSmevw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q4USqh026158;
-	Fri, 26 Jul 2024 05:49:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=/pL0JuAfruxg3LvJnxZHYB3JtXD
-	cvdoee0Ej2lHdXwk=; b=LkGSmevwhm0aRHK+a9IJNrdqPoCeWWN1eHXuDHS7waf
-	GOcy3/xFTSbTwj69u2JTvZbqSpWKw92YuNTLaFfAEFVJSBEIDFE/JFlyvHCzRfqq
-	ncpROR4EKtzZNoXx+c6+Ijir3OhAifaABsQ3ejG+2iVWZglnNmUcu3pIf23gqDyQ
-	+0S6deZMi73ur/rZ8Ep9pAoNNXF71+TabWMDqssPyEghDm9TXJJhXQ2MhXbbmq0E
-	EHK/EoQeyYQaiCqc80haNKrtJzriNYZ8ND8NxzkbOC0H9kC9eawgKlUVYEa4njtf
-	HV1wrG3F2O5clA9cJxK1vCIz6OaZyul0rOZ0nFnYosw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m3g009m6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 05:49:46 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46Q5nkSE024488;
-	Fri, 26 Jul 2024 05:49:46 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m3g009m3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 05:49:46 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46Q52p6l018513;
-	Fri, 26 Jul 2024 05:49:45 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40kk3hmh6q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 05:49:45 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46Q5ndtG50332122
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Jul 2024 05:49:41 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6BDC720043;
-	Fri, 26 Jul 2024 05:49:39 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 05D0120040;
-	Fri, 26 Jul 2024 05:49:36 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.124.219.245])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 26 Jul 2024 05:49:35 +0000 (GMT)
-Date: Fri, 26 Jul 2024 11:19:31 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Message-ID: <dx32q3sa4oopk3fnm2zyeplotuq6gq3rmnbmaw3mo4q3lgjpe7@gvpgu4rdk4f4>
-Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>, 
-	Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Saravana Kannan <saravanak@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	Lukas Wunner <lukas@wunner.de>
-References: <p6cs4fxzistpyqkc5bv2sb76inrw7fterocdcu3snnyjpqydbr@thxna6v2umrl>
- <20240725205537.GA858788@bhelgaas>
+	s=arc-20240116; t=1721973131; c=relaxed/simple;
+	bh=55MZc/wVm8UcZqrdQXwtWT6wfPW4QnzsGMf95xAMunU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRV73DXEUOAMWDzbhuieXRk8a1Sc02Ft4xN2Yw/q+Z8XTXuSEUyvQKiFY88UVwD6x3oj7or2Y0L52BItr06WD5t14O7iSea2h+3/rqRmnqEIqar/OkQdp96oRcsladccZ3/p7vfwa7PJsmEuszmFII6djVqXCbdJ1TPurvyzjCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEmm70sJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C82C4AF0E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721973131;
+	bh=55MZc/wVm8UcZqrdQXwtWT6wfPW4QnzsGMf95xAMunU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rEmm70sJ6l+2BjQxqwvqmzrFV0qk8hjStgKQlpxHLlUqmvv+OInu91efyqCBNo19j
+	 wKwvT9/J6L66NE5RpNsfAA2MxTKuSSNiW1hZelkXIj0G4ozlCdmBrzBPFYMn9EOinT
+	 245PXIuXwgOTTJ9MIjcq97nOEcjPPXnKq25Cm3ywwyB/PH/oaf6f/elORzeoiXyEGK
+	 5jM5Kq71Y11vaw76bf0KyHt7G8d/x4pbDd6nLW47Si2Wx0tW6zVCPKk+saWS7JtEVY
+	 znaLr7tKLmUXe7sZrBux2JIigvXLU1Uqx4D3VI5QSAq09rM3InDTzVv+pyV1Q4NC1K
+	 xAxEY/3JTEUKw==
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-664ccd158b0so15104177b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:52:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX2r9fINNV9Ssx91zPsM25bOzDKrNoqjSWdCHo1wuvcO+wqOeEMPcfkbkP7AeAfbhudV/EWB6D0X8nNK4BsonTS2/Y2fQOVd78RK7mQ
+X-Gm-Message-State: AOJu0YzMD3g/JxKyMrkzp4ps08TsMOsBJ3ypgh9uUYFa4jNMQyRT6THO
+	YC5ofQ3BjeLXdRSNKCixeUeNkLZtfFXvTpdqWPP6iAot987uULbxg9XWH3L9H2mqWxMPA00k1k8
+	E5ff6HrxSrITJCKW4oFIZKT1HXG7Hp2iRgT4/tQ==
+X-Google-Smtp-Source: AGHT+IGvBUT1tDhncfh91DJY1WlS37LbkBfdz6tgAtI3DjY9RI63TBM0254gjG1YiX6EVVRc4wN1MxoCXIYwlAT/+iI=
+X-Received: by 2002:a0d:d002:0:b0:62f:a250:632b with SMTP id
+ 00721157ae682-67510dee934mr55444067b3.8.1721973130523; Thu, 25 Jul 2024
+ 22:52:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725205537.GA858788@bhelgaas>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: hrWbadeSvvg3pthFD6dbebsK6nYnlI9I
-X-Proofpoint-ORIG-GUID: TUS0qhJ3TBEy9O6kA7xiLL7ZbyW2NSJ5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_02,2024-07-25_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- bulkscore=0 clxscore=1015 mlxlogscore=671 priorityscore=1501
- suspectscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407260036
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org> <87cynbxn8e.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87cynbxn8e.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 25 Jul 2024 22:51:59 -0700
+X-Gmail-Original-Message-ID: <CACePvbX7ozXhFhfcX+Dy3Aq8A7MQm=iRt9LzFacumFansHLRMQ@mail.gmail.com>
+Message-ID: <CACePvbX7ozXhFhfcX+Dy3Aq8A7MQm=iRt9LzFacumFansHLRMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Hugh Dickins <hughd@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+On Wed, Jul 17, 2024 at 10:54=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
+ wrote:
+> > - HDD swap allocation does not need to consider clusters any more.
+>
+> It appears that my comments in the following emails are ignored?
+>
 
-On 2024/07/25 03:55 PM, Bjorn Helgaas wrote:
-> On Thu, Jul 25, 2024 at 11:15:39PM +0530, Amit Machhiwal wrote:
-> > ...
-> > The crash in question is a critical issue that we would want to have
-> > a fix for soon. And while this is still being figured out, is it
-> > okay to go with the fix I proposed in the V1 of this patch?
-> 
-> v6.10 has been released already, and it will be a couple months before
-> the v6.11 release.
-> 
-> It looks like the regression is 407d1a51921e, which appeared in v6.6,
-> almost a year ago, so it's fairly old.
-> 
-> What target are you thinking about for the V1 patch?  I guess if we
-> add it as a v6.11 post-merge window fix, it might get backported to
-> stable kernels before v6.11?  
+Sorry for missing some email catching up.
 
-Yes, I think we can go ahead with taking V1 patch for v6.11 post-merge window to
-fix the current bug and ask Ubuntu to pick it while Lizhi's proposed patch goes
-under test and review.
+> https://lore.kernel.org/linux-mm/87bk3pzr5p.fsf@yhuang6-desk2.ccr.corp.in=
+tel.com/
 
-Thanks,
-Amit
+Will reply to that. BTW, V4 already reverted to the previous SSD
+behavior and allocated a new cluster before nonfull cluster.
+
+> https://lore.kernel.org/linux-mm/874j9hzqr3.fsf@yhuang6-desk2.ccr.corp.in=
+tel.com/
+
+Already replied to the renaming in another email.
+
+Chris
+
+>
+> > changes in v3:
+> > - Using V1 as base.
+> > - Rename "next" to "list" for the list field, suggested by Ying.
+> > - Update comment for the locking rules for cluster fields and list,
+> >   suggested by Ying.
+> > - Allocate from the nonfull list before attempting free list, suggested
+> >   by Kairui.
+> > - Link to v2: https://lore.kernel.org/r/20240614-swap-allocator-v2-0-2a=
+513b4a7f2f@kernel.org
+> >
+> > Changes in v2:
+> > - Abandoned.
+> > - Link to v1: https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47=
+861b423b26@kernel.org
+> >
+> > ---
+> > Chris Li (3):
+> >       mm: swap: swap cluster switch to double link list
+> >       mm: swap: mTHP allocate swap entries from nonfull list
+> >       RFC: mm: swap: seperate SSD allocation from scan_swap_map_slots()
+> >
+> >  include/linux/swap.h |  30 ++--
+> >  mm/swapfile.c        | 490 +++++++++++++++++++++++--------------------=
+--------
+> >  2 files changed, 238 insertions(+), 282 deletions(-)
+> > ---
+> > base-commit: ff3a648ecb9409aff1448cf4f6aa41d78c69a3bc
+> > change-id: 20240523-swap-allocator-1534c480ece4
+> >
+>
+> --
+> Best Regards,
+> Huang, Ying
 
