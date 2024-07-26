@@ -1,78 +1,142 @@
-Return-Path: <linux-kernel+bounces-263588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97B893D7FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC3893D800
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82ECBB22F10
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341832835BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C0E17DE22;
-	Fri, 26 Jul 2024 18:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA3A17BB15;
+	Fri, 26 Jul 2024 18:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oggPMPX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+QyDVFn"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B8417CA10
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D792E633
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017264; cv=none; b=O7F4rROmQJiHEtJTLliZgdo7HDyN3egP5LJ53PG5WJu7Go0H12OFDqUPh80ddA3WaXd8X+WuzVecLimYTYf4wh+p2cGWqguvUocZpreXqNA90G49vMLHbYLOTqzbCkdP0jDkqtrk1do2JHu2hV1wmlotVQnuIPEnWh7Ag/ZuMEs=
+	t=1722017298; cv=none; b=kMMT/WaMbebkMkMhrkYMLRUOcSOBHBN/NVGJkodH/rZui8+EbFsj1LMqghnMBRgdsNRhtc/hnfaBERrD5i67310lDbJRjcUP7mrQe+xuyMQULCkaennTeZJCpk0rR3cNKO7v5w2BVk+A+OYUSFMWn0AFJ2Sy2MGPT0B/Ua9UFw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017264; c=relaxed/simple;
-	bh=SgBSdzLF1DCEMO0g4AFO/kMi9XFz1ly8WKgUglmJLjc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DmvOWEBTOVbXxAMppCSJQA4jb5S+oM2JOW6+QvVzAMAFRHqBr4ev/tDcgr5+a+vq9211K9uBn1WsRwc1NfrS0WbzH0LmLaY/pZBtzoyanRq1wo2yKxQdQ+EkUcK2FqmU2W3iOgCODTeUQ/eKEtha3DvqOv+CHSwglKgcE0rGaCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oggPMPX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 02235C32782;
-	Fri, 26 Jul 2024 18:07:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722017264;
-	bh=SgBSdzLF1DCEMO0g4AFO/kMi9XFz1ly8WKgUglmJLjc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=oggPMPX6t3UoX8Gu8JMW7l/LDNHQarQlgUXa3iReXKBudhBeWqWTh0vUyoQWldWCj
-	 BhtEuJDuZLZVlzphU3LxlAZmcWwJgpQ28Bc2x8+HWR6Suf0j5puQYAMPCnMajfjTFY
-	 ugrNH1/J6SSbuDxRi64KaKbfWJNU9UDWIj964HZj156DEcSWLhb4sx74GQ1NalmGiY
-	 8cjxmwpkwjQ0t2Wu4C6Vh9WjTbNzee5yFjfBrN/z2gcgtWfqBpk3ah6rBtlKJbkC4F
-	 HXJK/MIjLHz3MsPYl3lNP1tnTwigX8JPxf+1D1RQD5362zrNwy/2H3XJ2jPoI9g/uJ
-	 yIF8eeD/D1Y/A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EEC12C43443;
-	Fri, 26 Jul 2024 18:07:43 +0000 (UTC)
-Subject: Re: [GIT PULL] auxdisplay updates for v6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240725084741.2519888-1-geert@linux-m68k.org>
-References: <20240725084741.2519888-1-geert@linux-m68k.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240725084741.2519888-1-geert@linux-m68k.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/auxdisplay-for-v6.11-tag1
-X-PR-Tracked-Commit-Id: 2ccfe94bc3ac980d2d1df9f7a0b2c6d2137abe55
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2f8c4f5062855a83c1f2dbc012c4fa274ce999d4
-Message-Id: <172201726397.32235.2523302156677080560.pr-tracker-bot@kernel.org>
-Date: Fri, 26 Jul 2024 18:07:43 +0000
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+	s=arc-20240116; t=1722017298; c=relaxed/simple;
+	bh=GxmoYIeBXMGpKO1+bZK55byxlD5ApVDBz7Iy5st0gJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uuiSeecZZ77spIJ1L5dw5hsFmfWtuNqe2FvaVR/u2Xt70oHn4Ke+lCJx4vTEQd7HXECrJKretNsQJw8cIODITDlgvwHqoleEYknm9kCt1cC8XQoCM6UPDkYWFODloLZBHylnFVwlDfso+fR9jx5u3FoEDQFQBb02oO/YRyX8Rrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+QyDVFn; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-654cf0a069eso23175867b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722017296; x=1722622096; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
+        b=D+QyDVFnMmZxdzlFjgXelWCHAnLdsGVHFOxt2VFwIJkwtoIXZzhD/jPVg5QLc0c1Hf
+         7cVQ/ThOopBOi1uN0rW5tFccw1G/UnkNjY8Tb69lN+h1BNS6MNDE0sxefbcvUxQUgz9m
+         F/ESNm1sGRL/Qmlz5xtExaUhEiVGWQ4udY/iuRsV9BeyqiW1k+Sur+Z6edhHiw4b4kpA
+         DXvio62XKbwKagkIjgIdfOLYznce+5Erd00GTTCmM1+fYV1bb5Z/8w9husIdHMUtbknT
+         QdBQWE4ZNHHxrvhIwW1JRRUov1de6Uuq+/A0s2Gx+mTevJNWPPSBWc9k3suD7EggcTah
+         dUGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722017296; x=1722622096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
+        b=Kj9aY86MdKfP1qoRDEsUcBOZlnxcRbQisjHcTsMjxG0OIDx6nITTeXVubWb/kLHUU8
+         yeGqk+2eLSPB9EzNK3Xyt7dUswVPRYLhedgN3vmXV7lLoHzGWWEsTEqNMI8mMGG6XHsp
+         EqqiQz8RLrmBLp71d419mschiS76XClDkyMbkxjxMXXqOUviZ2IRbdtSTgDB+jLYNa8x
+         RDQMbEp70tY8PamkC1W9ou2XmHfD/S6+h55gnJbTJFiJjMGKoDFuFjIKjo+cFmUKXfxF
+         s8h8Dvl5HG7H9evYn0snnCIfGBuarmBwPi2MK/cwtOK/jm82bFh6MjXOtdOeckuzdRvo
+         iALQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4LD10f6zZ6RxVKuwEHCAM4Anx+2yz6fsZZWfBU5UnNnyJCnjtsuVjCpRIayWjSjhhsX2V24AAlmEBvUKoaMnw+GMYMOM53b5Z6HWA
+X-Gm-Message-State: AOJu0YzCp28szpxL1y5xj5NufGI5MY+nz4lhxl42LlYAvfGaW/dIHNAl
+	EzX454Vfjs7eODSePPabAQm5xY9oceBfN7vFYFTbGcTiBbxqJWj9YOTGfm5LIU9XZ1a/gDsMtmk
+	lFfp8kflKIZ8SnYJXZ4dJDqiZRRm/+NI6cabBXg==
+X-Google-Smtp-Source: AGHT+IFkESiWao/vWnFp/DsXlGOMMM3aoXRS1ZwQbcgc7JCIUzd6EJnTYt77j/BQJ878gOluPtcgh7p7GqV6PD/zXX0=
+X-Received: by 2002:a05:690c:4a01:b0:64a:e2ab:be33 with SMTP id
+ 00721157ae682-67a073b4271mr7940997b3.22.1722017296429; Fri, 26 Jul 2024
+ 11:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <CGME20240726110136eucas1p2c100992bb710acb5a12bb294401d4aeb@eucas1p2.samsung.com>
+ <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-3-m.majewski2@samsung.com>
+In-Reply-To: <20240726110114.1509733-3-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 26 Jul 2024 13:08:05 -0500
+Message-ID: <CAPLW+4n==hm=tiDOZ14LMw-nWGbu22m2rh7nEJyUR6f0AwzOAg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] drivers/thermal/exynos: use pm_sleep_ptr instead
+ of conditional compilation
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Anand Moon <linux.amoon@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu, 25 Jul 2024 10:47:41 +0200:
+On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> Slightly simpler and nothing is lost if _suspend and _resume functions
+> are built unconditionally.
+>
+> Suggested-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/auxdisplay-for-v6.11-tag1
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2f8c4f5062855a83c1f2dbc012c4fa274ce999d4
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>  drivers/thermal/samsung/exynos_tmu.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index 9b7ca93a72f1..b68e9755c933 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1132,7 +1132,6 @@ static void exynos_tmu_remove(struct platform_devic=
+e *pdev)
+>                 clk_unprepare(data->clk_sec);
+>  }
+>
+> -#ifdef CONFIG_PM_SLEEP
+>  static int exynos_tmu_suspend(struct device *dev)
+>  {
+>         exynos_tmu_control(to_platform_device(dev), false);
+> @@ -1152,15 +1151,11 @@ static int exynos_tmu_resume(struct device *dev)
+>
+>  static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+>                                 exynos_tmu_suspend, exynos_tmu_resume);
+> -#define EXYNOS_TMU_PM  (&exynos_tmu_pm)
+> -#else
+> -#define EXYNOS_TMU_PM  NULL
+> -#endif
+>
+>  static struct platform_driver exynos_tmu_driver =3D {
+>         .driver =3D {
+>                 .name   =3D "exynos-tmu",
+> -               .pm     =3D EXYNOS_TMU_PM,
+> +               .pm     =3D pm_sleep_ptr(&exynos_tmu_pm),
+>                 .of_match_table =3D exynos_tmu_match,
+>         },
+>         .probe =3D exynos_tmu_probe,
+> --
+> 2.45.1
+>
 
