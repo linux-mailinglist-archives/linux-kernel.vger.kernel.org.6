@@ -1,84 +1,54 @@
-Return-Path: <linux-kernel+bounces-263766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8A793DA47
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A239093DA48
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E12282162
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DAF28275B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB18149E15;
-	Fri, 26 Jul 2024 21:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB29B149E15;
+	Fri, 26 Jul 2024 21:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="CMuSz0vD"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1jgHPOL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC5211C83
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228D911C83
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722030965; cv=none; b=dpWxkB5AzQq0S63ejM7EEdztrFlhAVRcK89Aidfyk80LSCIgjYCdNYwn2im6S+XR+jGZI1M/V6f/M/0E/Gclzj2i61W2SLwFIUsiGZhimSoVPxcKt/7LASxfRekocy1LcKLhDfWdbRm/YSd08wCQjFsmFEg7H1y6byCvCOjxWSY=
+	t=1722031027; cv=none; b=aNHSt5+FDiTVyaLkm09rOV3Ugmn+nxdKVSg6gBsgVX+fRJG1CbnXLUe1/+2ab6vmBT8VCDnJ7Ny7jYkyIvrigviKNSJNS3liawFpO7vwb0K4HjXGp8ivKJJeRWmz7PtO9oNE5ZQ/NReELRJ/JVMisdY6Qo1W2ECcYtcRXbFvcEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722030965; c=relaxed/simple;
-	bh=YoJiPshgJkcuazzZoSi0oZDPlQBuO7UcJEB+03ez1JY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TRnozuFteTzBN08MsI6XAnd6CUDx/unfavokPQY8i/w6hRNsNC823WxJuvbZNoDglGf2urGSmfO/duXpOp5l9Km91qU00vOXtxSrS3/O0e+WVRFqbTL3JFh2bE6qyXbFHfSuYeO8lzEeCWFxa33CyWPqri37X3B/lw9VYK7ejSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=CMuSz0vD; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79f19f19059so70510285a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1722030962; x=1722635762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYo20ihtC42TqqCCz+7a2VTWK+V1RqG4C3Nqajh31so=;
-        b=CMuSz0vDZIcLZ/NRl1z7XIesKPKtiJaKvheIiY2tFS7dBW6Txz6DpnRcV0iCUMaNbg
-         nfaf4RonvLSSImuFIwaOTKk9TJiZkKFxMrknao1wqjG+JFnpn8i5zJslJtO+2w/zeoQU
-         8mmcwQ745Wob3Q6xG//lmjWJQ43bU8LMRc90YR8XpbzOoGukbOfk60P2m3EP6yahP+w0
-         jvhxW1sAsbIHriLU1sVcnAGPhwrUAM9V5pdsFn7+7RwN0JMq14BUwRGMrpJZzgk2j4o/
-         gbreM4qG7I9ZqnVJCxzqkB+G/CQUvLJsQgLuoqow+UBQMjeUWxnebcJqG4/IjwnnYBOe
-         yQsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722030962; x=1722635762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vYo20ihtC42TqqCCz+7a2VTWK+V1RqG4C3Nqajh31so=;
-        b=lpU7Qs1rK/B9axksUWqz/AqhN3M578PHCliNSFw5aQqA9ZWGsZBm41L1IY7LQrV/DS
-         8i3NPshFVzsnozV1g8R503L7xkMYoHsDgVYGG/eHgK6GRiiMwRM7SpPVfXFI0vFhsiw1
-         q47vKGeJa5Z1DBfQsTNT43DDpF8Yd6O5k8vX8bdNrm56PPWuAbyJTg0nJt4SW0M1dmeH
-         9+uhac4V6v4Z2W+895dDAPjciYWyZCiXxGkVH7BjI5+MmEtl74MVXOAM5eA2dBdlYQYi
-         ChUgqKxgalYLPcMXBROT8ZnVdoRGLEWBBqVonVogNO9GsQ5tKwwFM9eOdjWyb5b/SHTz
-         72kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwtYD1kSlmTzQHFbmPbNEmk7TbRoMGVs9vrjKcSL1QT24gD3DROo2svQ0PeQj9cgksThbYcxgUHBDUksmRYvGXCaqPYW+v/QPvYiSm
-X-Gm-Message-State: AOJu0YwAyXkl8104J515E/OMdmAqZZgWxgxJ7ipp5/c4vVtjXd+qCkaN
-	yBapTP2VDmzZY7tggvOInTDLRrkeSL3e8IhzdELA8fcP+NetUo2ZE/9fuUV2ms8=
-X-Google-Smtp-Source: AGHT+IFUA/fLnYCWnsDHvFpZtDoWfetBhvPxCxdD6Yap2Sp22Tks1MSFqHnaHQ+QoyS/S2H4JSnUuQ==
-X-Received: by 2002:a05:620a:171e:b0:79f:108e:249d with SMTP id af79cd13be357-7a1e52f046cmr145741285a.60.1722030962254;
-        Fri, 26 Jul 2024 14:56:02 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7398d3asm215044985a.7.2024.07.26.14.56.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 14:56:01 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	ying.huang@intel.com,
-	dave.jiang@intel.com,
-	Jonathan.Cameron@huawei.com,
-	horenchuang@bytedance.com,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	dan.j.williams@intel.com,
-	lenb@kernel.org
-Subject: [PATCH] acpi/hmat,mm/memtier: always register hmat adist calculation callback
-Date: Fri, 26 Jul 2024 17:55:48 -0400
-Message-ID: <20240726215548.10653-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722031027; c=relaxed/simple;
+	bh=uXtmgKTUoeAnH/3ADOjmYVhHYhUOaMLgNVg+kgAEqjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5i4k5bzNE9atdOZAtlIUfjO+ca8LnHl3oVcv9/vzAgjied0cIewy/vY7roqIDPZZIEM0E6Kw756FV5LqAFWltuoxtEvHHWaNKr+gtN5n2/7n/DJpaQ3DG8ssC7przr3qWoEFHAP3njqt69oE2Ka2/CMGXdeHvGmsgxsEHMVclY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1jgHPOL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AD6C32782;
+	Fri, 26 Jul 2024 21:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722031026;
+	bh=uXtmgKTUoeAnH/3ADOjmYVhHYhUOaMLgNVg+kgAEqjE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=H1jgHPOLwbT31nBZ+6xxPQ3EjCol1J/yJtvqwTdXLBLe0qmMeLzG+lTiZm1+Vp7xu
+	 LUUQyr42yOylZwIa5onxFkCptoETs3ZoJhth0LblYUU84LLsw8/vG0B444Zm8ZkD5e
+	 H8avFUeVsGf+OCEAPZTrVHZy/t+oIRvyGpjU7Sq78gMeieWbjlv8ByhnWB3IjIveU5
+	 oh7K79MPMRf40Nq744hMAqMteAFgSeAX1Supixw+CHbBAsp4t4xNfXxNdw5lWpJx+h
+	 On89haRAMkJdcC3UqoygDIpoCBexcWJMQ1VkjPQtEdOcchdGVlgwRp88FeYIXzh9Yk
+	 vcGdyVdKJR79A==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 00/20] kthread: Introduce preferred affinity
+Date: Fri, 26 Jul 2024 23:56:36 +0200
+Message-ID: <20240726215701.19459-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,63 +57,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the event that hmat data is not available for the DRAM tier,
-or if it is invalid (bandwidth or latency is 0), we can still register
-a callback to calculate the abstract distance for non-cpu nodes
-and simply assign it a different tier manually.
+Affining kthreads follow either of three existing different patterns:
 
-In the case where DRAM HMAT values are missing or not sane we
-manually assign adist=(MEMTIER_ADISTANCE_DRAM + MEMTIER_CHUNK_SIZE).
+1) Per-CPU kthreads must stay affine to a single CPU and never execute
+   relevant code on any other CPU. This is currently handled by smpboot
+   code which takes care of CPU-hotplug operations.
 
-If the HMAT data for the non-cpu tier is invalid (e.g. bw = 0), we
-cannot reasonable determine where to place the tier, so it will default
-to MEMTIER_ADISTANCE_DRAM (which is the existing behavior).
+2) Kthreads that _have_ to be affine to a specific set of CPUs and can't
+   run anywhere else. The affinity is set through kthread_bind_mask()
+   and the subsystem takes care by itself to handle CPU-hotplug operations.
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/acpi/numa/hmat.c |  6 ++++--
- mm/memory-tiers.c        | 10 ++++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+3) Kthreads that have a _preferred_ affinity but that can run anywhere
+   without breaking correctness. Userspace can overwrite the affinity.
+   It is set manually like any other task and CPU-hotplug is supposed
+   to be handled by the relevant subsystem so that the task is properly
+   reaffined whenever a given CPU from the preferred affinity comes up
+   or down. Also care must be taken so that the preferred affinity
+   doesn't cross housekeeping cpumask boundaries.
 
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index 2c8ccc91ebe6..1642d2bd83b5 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -1080,8 +1080,10 @@ static __init int hmat_init(void)
- 	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
- 		goto out_put;
- 
--	if (!hmat_set_default_dram_perf())
--		register_mt_adistance_algorithm(&hmat_adist_nb);
-+	if (hmat_set_default_dram_perf())
-+		pr_notice("Failed to set default dram perf\n");
-+
-+	register_mt_adistance_algorithm(&hmat_adist_nb);
- 
- 	return 0;
- out_put:
-diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-index 6632102bd5c9..43bd508938ae 100644
---- a/mm/memory-tiers.c
-+++ b/mm/memory-tiers.c
-@@ -765,8 +765,14 @@ int mt_perf_to_adistance(struct access_coordinate *perf, int *adist)
- 	    perf->read_bandwidth + perf->write_bandwidth == 0)
- 		return -EINVAL;
- 
--	if (default_dram_perf_ref_nid == NUMA_NO_NODE)
--		return -ENOENT;
-+	/*
-+	 * If the DRAM tier did not have valid HMAT data, we can instead just
-+	 * assume that the non-cpu numa nodes are 1 tier below cpu nodes
-+	 */
-+	if (default_dram_perf_ref_nid == NUMA_NO_NODE) {
-+		*adist = MEMTIER_ADISTANCE_DRAM + MEMTIER_CHUNK_SIZE;
-+		return 0;
-+	}
- 
- 	/*
- 	 * The abstract distance of a memory node is in direct proportion to
+Currently the preferred affinity pattern has at least 4 identified
+users, with more or less success when it comes to handle CPU-hotplug
+operations and housekeeping cpumask.
+
+This is a infrastructure proposal to handle this (after cleanups from 01
+to 10).
+
+Frederic Weisbecker (20):
+  arm/bL_switcher: Use kthread_run_on_cpu()
+  x86/resctrl: Use kthread_run_on_cpu()
+  firmware: stratix10-svc: Use kthread_run_on_cpu()
+  scsi: bnx2fc: Use kthread_create_on_cpu()
+  scsi: bnx2i: Use kthread_create_on_cpu()
+  scsi: qedi: Use kthread_create_on_cpu()
+  soc/qman: test: Use kthread_run_on_cpu()
+  kallsyms: Use kthread_run_on_cpu()
+  lib: test_objpool: Use kthread_run_on_cpu()
+  net: pktgen: Use kthread_create_on_node()
+  kthread: Make sure kthread hasn't started while binding it
+  kthread: Implement preferred affinity
+  mm: Make Kcompactd use kthread's preferred affinity
+  mm: Allocate kcompactd on its node
+  mm: Make kswapd use kthread's preferred affinity
+  mm: Allocate kswapd on its node
+  rcu: Use kthread preferred affinity for RCU boost
+  kthread: Unify kthread_create_on_cpu() and
+    kthread_create_worker_on_cpu() automatic format
+  treewide: Introduce kthread_run_worker[_on_cpu]()
+  rcu: Use kthread preferred affinity for RCU exp kworkers
+
+ arch/arm/common/bL_switcher.c                 |  10 +-
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  28 +--
+ arch/x86/kvm/i8254.c                          |   2 +-
+ crypto/crypto_engine.c                        |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c                |   2 +-
+ drivers/firmware/stratix10-svc.c              |   9 +-
+ drivers/gpu/drm/drm_vblank_work.c             |   2 +-
+ .../drm/i915/gem/selftests/i915_gem_context.c |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_execlists.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_hangcheck.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_slpc.c       |   2 +-
+ drivers/gpu/drm/i915/selftests/i915_request.c |   8 +-
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot.c  |   2 +-
+ drivers/gpu/drm/msm/msm_atomic.c              |   2 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 |   2 +-
+ drivers/gpu/drm/msm/msm_kms.c                 |   2 +-
+ .../platform/chips-media/wave5/wave5-vpu.c    |   2 +-
+ drivers/net/dsa/mv88e6xxx/chip.c              |   2 +-
+ drivers/net/ethernet/intel/ice/ice_dpll.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_gnss.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ptp.c      |   2 +-
+ drivers/platform/chrome/cros_ec_spi.c         |   2 +-
+ drivers/ptp/ptp_clock.c                       |   2 +-
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |   7 +-
+ drivers/scsi/bnx2i/bnx2i_init.c               |   7 +-
+ drivers/scsi/qedi/qedi_main.c                 |   6 +-
+ drivers/soc/fsl/qbman/qman_test_stash.c       |   6 +-
+ drivers/spi/spi.c                             |   2 +-
+ drivers/usb/typec/tcpm/tcpm.c                 |   2 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c              |   2 +-
+ drivers/watchdog/watchdog_dev.c               |   2 +-
+ fs/erofs/zdata.c                              |   2 +-
+ include/linux/cpuhotplug.h                    |   1 +
+ include/linux/kthread.h                       |  56 +++++-
+ kernel/kallsyms_selftest.c                    |   4 +-
+ kernel/kthread.c                              | 162 +++++++++++++++---
+ kernel/rcu/tree.c                             |  94 ++--------
+ kernel/rcu/tree_plugin.h                      |  11 +-
+ kernel/workqueue.c                            |   2 +-
+ lib/test_objpool.c                            |  19 +-
+ mm/compaction.c                               |  43 +----
+ mm/vmscan.c                                   |   8 +-
+ net/core/pktgen.c                             |   7 +-
+ net/dsa/tag_ksz.c                             |   2 +-
+ net/dsa/tag_ocelot_8021q.c                    |   2 +-
+ net/dsa/tag_sja1105.c                         |   2 +-
+ 46 files changed, 284 insertions(+), 258 deletions(-)
+
 -- 
-2.43.0
+2.45.2
 
 
