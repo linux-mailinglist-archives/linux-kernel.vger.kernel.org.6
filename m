@@ -1,208 +1,246 @@
-Return-Path: <linux-kernel+bounces-263420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1139093D597
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2949793D579
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FF71C2312A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD121F2330B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299D617BB2B;
-	Fri, 26 Jul 2024 15:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D617967C;
+	Fri, 26 Jul 2024 14:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJmf91YZ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRXO0Utw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F7D7494;
-	Fri, 26 Jul 2024 15:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE21DDF5;
+	Fri, 26 Jul 2024 14:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006377; cv=none; b=jkgFTGHbX5qYvyS4Aip7dsdHG9zVPtomg8KIvm8MY8I9Sp2+gSsLHXWN1zSU/7QMxjWInYoLYCV2NuDnlsAoIkR09TsF0dP0y+TSVUAw5U8MJ/Q3FAeMKEwjGj97BY1D3hxWUZh+DGWwoA01MNz6fs+KLgnu4iTeZ2vHwzHi9hU=
+	t=1722005894; cv=none; b=WqqbaVuX1/lp4V+M3Va94Y4PD8GIijUbFgLgM6TAyTnCRj9FJFp4cY3U6wSRKDdrMbZkOS6sc1he9MR50VpzkKrIvzfJzMYkA5kw1jiBlfdTK5m5yvcobHN6LJvPg1eWf8H6zEv3QFPezCOGx73mrC4M2GymtiEqGiKEqcpcmsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006377; c=relaxed/simple;
-	bh=zNegDs7IixATjoGPAa30JjWGOk+4DNZnIDt30qizHp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N6H1M3V3qxnejtoeQTuZGbo/1UwtQuY8HM5o+vRbo76aW2EuCVVWsA6qW6fgQOKyfA2z5ffht4yAP9c7ijlQ82hwFabMJarDhmirWnP3xZZtPip5c20+h+EDcMCAdKELXfk8BVkltRtYhUnN9c7BjD4jwKyrCvbOHKbOSgCzmrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJmf91YZ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso882291b3a.1;
-        Fri, 26 Jul 2024 08:06:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722006375; x=1722611175; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VrbZNbmJ7JMtH+xNH73DHYvvEhCGE7dQA589fsSrmM=;
-        b=cJmf91YZ8vq0RdMO3Z6DQ0ukzUJT6Ms+qgprLw0br8kASJh6JAWv+W6/a6LojEpoL1
-         Z86PcLelcfpqSj+oAa69Srah2gO/9NOnzPkxtmzcvHIunKnp2MKgh4x+ToK/XPloIFEs
-         vK76f3dgm3M91BOAqLlwKw0kRPfLQi5s1R6bg5a05xCyFBew8diNlXz37IC8glAyeSwu
-         JObd0YJjBWfB7kekylIbvA1Fin8OmS0MKjSffj2rct+OncZWB/LlXL59rlKaUSTn76l1
-         v2tnu8AMpOFPYZ9wkoyXk1G3u/rokjwgwSl10dd94nsXzKzZrcTYW1lxiaV+xW4H7rRB
-         1RVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722006375; x=1722611175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5VrbZNbmJ7JMtH+xNH73DHYvvEhCGE7dQA589fsSrmM=;
-        b=gOLjy4huOcDKUm9u6ANgRSVAeEUB9Z01jv+YyA0bH2wXAc6bqGLfHKQTr63yk3t7O4
-         JhBDa1ivvyA5VtBww3BG8nUDeNuNTSyrauyrUu3U8K5DvjyJCtlwClbC+NHK5/qf4MPw
-         sUivSY9HpjOvFy5yZoB63talGNIPC6MsyUKqe+4dklynLmBxj2+wPu3ycleuCinEaMvk
-         pF9pp3qrqfZ6EfxfXtJDHU9OTbmZW/6n4Xx7DZ/q8u6k+0NrYZHUZQMTp0nJ8AjX9UmB
-         MWlEDKUxkcUkvRvA31PK4tNlUHVRSsVe8pF1nVuOxl1+lDhNuAS2yYOjyLpYRSK+bN7P
-         B85g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjU9L/VtbRy1qdKO4shoMK7ifxLHp1tFUcHju4e25nXfk8YmN1WvEwRrqh5Q19tYOVNREzY4K5Cc5QI8GBBd5B9Ff7tjx1CvgTvttVJp2yRHVsuBrCynOLrd1mVeKaMHDTiKxfTdzeHbtAD0U=
-X-Gm-Message-State: AOJu0Yz56mTPcjkRu6bM6tqMMi6nqROzTKFCp6jMainDcDP/6Iiup04X
-	u69qYnyg87xBKoLwqK7LYIB9BvvDYHniFByXjdlil7Z9f0RHZIB/
-X-Google-Smtp-Source: AGHT+IH0QfbgwfW0oSDbSO/JNs7TLWJD2TXmUuRaCnguOGKxIMZlk5QVHAXdKAQE953U85VOygHVSw==
-X-Received: by 2002:a05:6a20:c88d:b0:1c2:8ece:97ae with SMTP id adf61e73a8af0-1c47b2d72c5mr6389057637.34.1722006375078;
-        Fri, 26 Jul 2024 08:06:15 -0700 (PDT)
-Received: from kousik.local ([2405:201:c006:380f:8948:e4a2:69fb:4168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7aa9b184139sm2357653a12.75.2024.07.26.08.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:06:14 -0700 (PDT)
-From: Kousik Sanagavarapu <five231003@gmail.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kousik Sanagavarapu <five231003@gmail.com>
-Subject: [PATCH v3 2/2] dt-bindings: watchdog: ti,davinci-wdt: convert to dtschema
-Date: Fri, 26 Jul 2024 20:27:50 +0530
-Message-ID: <20240726150537.6873-3-five231003@gmail.com>
-X-Mailer: git-send-email 2.45.2.827.g557ae147e6.dirty
-In-Reply-To: <20240726150537.6873-1-five231003@gmail.com>
-References: <20240726150537.6873-1-five231003@gmail.com>
+	s=arc-20240116; t=1722005894; c=relaxed/simple;
+	bh=NPnM9e8k0C+8kTKyPn/tkANgPWrPcrT63X9TENF5JJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ouyhi29aFKOBBF1icfBpc91Dbuh5DN6yRXVIA+8eFyz03LcECbxMKH6dls73/REjDAE+Zje296Jrw9LlryRy8I4uFfKCgHmj6LubCAlzFpld6sSfg82gsT/hHy3KtqyfcScZMSrq0xlkAnZgoaucCA4hoW2fSqHWuCNCp7UbT88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRXO0Utw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F97BC4AF07;
+	Fri, 26 Jul 2024 14:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722005894;
+	bh=NPnM9e8k0C+8kTKyPn/tkANgPWrPcrT63X9TENF5JJQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IRXO0Utws2Gt4FdbvFH6LlWzVUhxqLClibgS+lxPs6FKX1i0CvtSdxCUGu2IL+b1N
+	 EMIJDcFr62oOX6VYKEdqplsuUktJYlN4lvJfBcNBuXJtofVGl4IMq7xxPIVkk4XKb2
+	 oR+DrzFDQJ3xduLDNViJY7fjtufJi85z2tcBaPgcfhRDHdx4NrdjoiesvY3oltT7bE
+	 yFHBceHrklAcTEpeWupP4rZAFq8EkKNZPrH8sP5Ab3Ia2EUVT2l/H0IdnbF6SmUBtm
+	 j82nvCw48qOcF3QqjE4ehE/iMT/57Q8Eq2Cu23gdYwGg2sX0yLZGGklprulMPfJ5Gl
+	 KBD14de8kKu6w==
+Message-ID: <3bc186e8-40fc-4c92-affa-0e0b6cf25153@kernel.org>
+Date: Fri, 26 Jul 2024 16:58:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
+ required list on SM8650
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das
+ <quic_tdas@quicinc.com>, Satya Priya Kakitapalli
+ <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
+References: <20240720052818.26441-1-quic_jkona@quicinc.com>
+ <497c9438-5bb3-42d9-9df9-661235a556d2@kernel.org>
+ <14f57121-46f1-4dbe-92fd-e840705b771b@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <14f57121-46f1-4dbe-92fd-e840705b771b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert txt bindings of TI's DaVinci/Keystone Watchdog Timer Controller
-to dtschema to allow for validation.
+On 26/07/2024 16:30, Jagadeesh Kona wrote:
+> 
+> 
+> On 7/24/2024 1:38 PM, Krzysztof Kozlowski wrote:
+>> On 20/07/2024 07:28, Jagadeesh Kona wrote:
+>>> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
+>>> sufficient for clock controllers to operate and there is no need to specify
+>>> the required-opps. Hence remove the required-opps property from the list of
+>>> required properties for SM8650 camcc and videocc bindings.
+>>>
+>>> This fixes:
+>>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
+>>> 'required-opps' is a required property
+>>>
+>>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
+>>> 'required-opps' is a required property
+>>>
+>>> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
+>>> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> ---
+>>> Changes in V2:
+>>>   - Made required: conditional and dropped required-opps from it only for SM8650 platform
+>>>   - Dropped Krzysztof Acked-by tag due to above changes
+>>>   - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/#r
+>>>
+>>> .../bindings/clock/qcom,sm8450-camcc.yaml     | 26 +++++++++++++------
+>>>   .../bindings/clock/qcom,sm8450-videocc.yaml   | 25 +++++++++++++-----
+>>>   2 files changed, 36 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>>> index f58edfc10f4c..8698c801ed11 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>>> @@ -21,9 +21,6 @@ description: |
+>>>       include/dt-bindings/clock/qcom,sm8650-camcc.h
+>>>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
+>>>   
+>>> -allOf:
+>>> -  - $ref: qcom,gcc.yaml#
+>>> -
+>>>   properties:
+>>>     compatible:
+>>>       enum:
+>>> @@ -53,11 +50,24 @@ properties:
+>>>     reg:
+>>>       maxItems: 1
+>>>   
+>>> -required:
+>>
+>> You cannot remove required block.
+>>
+>>> -  - compatible
+>>> -  - clocks
+>>> -  - power-domains
+>>> -  - required-opps
+>>> +allOf:
+>>> +  - $ref: qcom,gcc.yaml#
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: qcom,sm8650-camcc
+>>> +    then:
+>>> +      required:
+>>> +        - compatible
+>>> +        - clocks
+>>> +        - power-domains
+>>> +    else:
+>>> +      required:
+>>> +        - compatible
+>>> +        - clocks
+>>> +        - power-domains
+>>> +        - required-opps
+>>>   
+>>>   unevaluatedProperties: false
+>>>   
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>> index b2792b4bb554..2e5a061f33d6 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>> @@ -40,15 +40,26 @@ properties:
+>>>       description:
+>>>         A phandle to an OPP node describing required MMCX performance point.
+>>>   
+>>> -required:
+>>
+>> No, you cannot remove required block.
+>>
+>> To clarify: there is almost no single binding using your style. Even if
+>> there is one, then 99 others are using it differently. Do not implement
+>> things entirely different than everyone else. This is the same for C
+>> code you send upstream. No difference here...
+>>
+> 
+> Thanks Krzysztof for the explanation.
+> 
+> Hi Dmitry,
+> 
+> As we discussed during SM8650 camcc and videocc changes, the MMCX rail's 
+> minimum voltage level from cmd-db is adequate for these clock 
+> controllers to operate on SM8650. So, we removed the 'required-opps' 
+> property from their DT nodes.
 
-While at it,
+Not sure with whom you discuss. With Dmitry or me. Anyway, I said
+nothing about required-opps, but the "required:" block.
 
-- Change the order of the compatibles.
-- Add "power-domains", which is a phandle to the associated power
-  domain.
+> 
+> Although 'required-opps' will remain in the properties list, it’s not 
+> mandatory to be present in 'required:' list, as it is dependent on 
+> cmd-db minimum level. So, can I please go ahead and update these 
+> bindings to remove 'required-opps' from the 'required:' list, as done in 
+> v1 of this series.
+> 
+> It seems unconventional to make 'required:' conditional based on the 
+> platform type.
+> 
 
-w.r.t. to the txt binding to stay in sync with existing DTS.
+Obviously. But nothing stops you - and there are plenty of examples - of
+requiring one particular property based on the variant.
 
-Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
----
- .../bindings/watchdog/davinci-wdt.txt         | 24 --------
- .../bindings/watchdog/ti,davinci-wdt.yaml     | 55 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 24 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/watchdog/davinci-wdt.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml
-
-diff --git a/Documentation/devicetree/bindings/watchdog/davinci-wdt.txt b/Documentation/devicetree/bindings/watchdog/davinci-wdt.txt
-deleted file mode 100644
-index aa10b8ec36e2..000000000000
---- a/Documentation/devicetree/bindings/watchdog/davinci-wdt.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--Texas Instruments DaVinci/Keystone Watchdog Timer (WDT) Controller
--
--Required properties:
--- compatible : Should be "ti,davinci-wdt", "ti,keystone-wdt"
--- reg : Should contain WDT registers location and length
--
--Optional properties:
--- timeout-sec : Contains the watchdog timeout in seconds
--- clocks : the clock feeding the watchdog timer.
--	   Needed if platform uses clocks.
--	   See clock-bindings.txt
--
--Documentation:
--Davinci DM646x - https://www.ti.com/lit/ug/spruer5b/spruer5b.pdf
--Keystone - https://www.ti.com/lit/ug/sprugv5a/sprugv5a.pdf
--
--Examples:
--
--wdt: wdt@2320000 {
--	compatible = "ti,davinci-wdt";
--	reg = <0x02320000 0x80>;
--	timeout-sec = <30>;
--	clocks = <&clkwdtimer0>;
--};
-diff --git a/Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml b/Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml
-new file mode 100644
-index 000000000000..3c78f60f5f48
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/ti,davinci-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI DaVinci/Keystone Watchdog Timer Controller
-+
-+maintainers:
-+  - Kousik Sanagavarapu <five231003@gmail.com>
-+
-+description: |
-+  TI's Watchdog Timer Controller for DaVinci and Keystone Processors.
-+
-+  Datasheets
-+
-+    Davinci DM646x - https://www.ti.com/lit/ug/spruer5b/spruer5b.pdf
-+    Keystone - https://www.ti.com/lit/ug/sprugv5a/sprugv5a.pdf
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: ti,keystone-wdt
-+          - const: ti,davinci-wdt
-+      - items:
-+          - const: ti,davinci-wdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    wdt: watchdog@22f0080 {
-+        compatible = "ti,keystone-wdt", "ti,davinci-wdt";
-+        reg = <0x022f0080 0x80>;
-+        clocks = <&clkwdtimer0>;
-+    };
-+
-+...
--- 
-2.45.2.827.g557ae147e6.dirty
+Best regards,
+Krzysztof
 
 
