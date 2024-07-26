@@ -1,250 +1,338 @@
-Return-Path: <linux-kernel+bounces-263345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3934C93D4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CE893D4C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6908E1C23950
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:00:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E7F1C232AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A734C9B;
-	Fri, 26 Jul 2024 14:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB210A19;
+	Fri, 26 Jul 2024 14:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DjVPC6t+"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Knbz2aAZ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D0A812;
-	Fri, 26 Jul 2024 14:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722002446; cv=fail; b=BSA9GuGbm2p/uwpBzBSlFIF8a1bkkPMrnAhyZZQE+B9x05V9g4v2CIAeNHBjCYwkzXANIb+fK9Z5JD9eZMnc0IElOZEXSn2tqkqdti1zHMkWRD6Q7LvR1ykhDT73HfcVzctP0pAjZPq1xybizM7gNBtUjkqF3FCll5wW447Zvs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722002446; c=relaxed/simple;
-	bh=vBfxJL/8Y7LtkhoSY3wZ+l/KeimagLDc1YeAkq2NQ2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uyubCro5jd1WgSA5q4ZaXtUwYoRkmbfjQIgDwAZCg4NVHPhlRDqLO5JrwtC/e3EMNiYLNLbGuZ7czohuY/gi3jl2TnMTH2GrFpPqb56HB1bYqt/PLhm/mdh+xabdmAe/jlDNih3ep3giP0dGA3cmP195/TSJ7pqGFDO6AcUJf4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DjVPC6t+; arc=fail smtp.client-ip=40.107.93.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NT3oYHYuuRvPkHvrrUa7VAh/1vjij+6mHnH+il7XGZd8n7n49GT6QoNR6mv7yuie/GUfdOlsvrjRRLPJDnye1YMiyveRhmsqA0vzMnAPpH366er1Kz0hHYhTevdNIs3ZIps3CPX5CIg+7HwRJpXbh2birNIKG8xEriKx32HuZOVFfggTZIsBbiGXCu8qQOMh/vKUt1VDlfTggDUzCtR3GH+QnaBOfTSVQ9MA8q4Gm+PlsP3qCgGy83qJ7/037k5JUukWjuhI0k1O/55WS8myr/e8RlnP1xskPo1nlGe9AFrjNM+NPi5rRtm9qIGvqKHacD4dRol67/F3PBygx+E5GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a7qalojOFv2KIiSD56fx/NnxhMbo4+6A/fSLFIF7uk0=;
- b=TqEgx/zyl8/lgXya8Mg8iRaD7kNW/Txdu12p+hP4vvFLgHJXu26KvOm/aLwNIzUeQZkyMqMHzojLRsvJRdDu6aywVClbzIGI+fvuesfnxfSXVSqdiG5gdN8+nnaOxEHAGumSkvmaCNP4NPd7J9mu8IIbCCn9nQ4n/eTzBu9VI9nhVSH/B/fpFj7msyurZhfjhsanRmSmDn7O9Lnm1K4F8xOvIm5bD2sbMRkHgEEEn28Ruf22YKXqMQKu0lDrIHp2Ttm5NC2EXG1ZwVii0M1sL0HdcBaBu7yOs7GrRqceRSgKae6aik/UBcuzkDCSXR9UCctB1yeFb+Ayvm0dzICuuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7qalojOFv2KIiSD56fx/NnxhMbo4+6A/fSLFIF7uk0=;
- b=DjVPC6t+GGI3Ioc7aW4/ZuKbjBejlB90AlQY0PC60GHt6AZvm+Emf+QezXu7odjjU81ROk9axK0D14UovRuB0PfDUHz49R6vpv3Hv2WhGmCYNLsAuxXCRkU5tIRVma2Blf4cMP8F1NzYBo7naFaMlSvVRT5UxTE0h+DUgmS/mko=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com (2603:10b6:408:40::20)
- by MW5PR12MB5651.namprd12.prod.outlook.com (2603:10b6:303:19f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Fri, 26 Jul
- 2024 14:00:41 +0000
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3]) by BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3%6]) with mapi id 15.20.7784.020; Fri, 26 Jul 2024
- 14:00:38 +0000
-Date: Fri, 26 Jul 2024 10:00:30 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH 4/9] x86/mce: Move machine_check_poll() status checks to
- helper functions
-Message-ID: <20240726140030.GA193170@yaz-khff2.amd.com>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-5-yazen.ghannam@amd.com>
- <20240603173727.GOZl3_V9eVbm0184Wi@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603173727.GOZl3_V9eVbm0184Wi@fat_crate.local>
-X-ClientProxiedBy: BN9PR03CA0524.namprd03.prod.outlook.com
- (2603:10b6:408:131::19) To BN8PR12MB3108.namprd12.prod.outlook.com
- (2603:10b6:408:40::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4504BA53
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722002689; cv=none; b=ZLGS9D3Bx1CPbZivXK1uNEVIx/dcp2gUyNa9n2LJ31pGmt7XaqVHL8sNFtFRhkhiWCB6rB+9eyz2sqqJEifiAoeplBXxKUHk9ikbw4C+aGjjYNFZP0VmJzmZRdu/xRA8EisTgAdqA/o2U8coFLtT32PY87qdQQ4LwEtdryi+ntc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722002689; c=relaxed/simple;
+	bh=VvskMjEUgtoQdGVqCnbSHZQ+8PzbiDCVycbLh+XPygM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AOEpm5wtO4FfipEE5X0ARgmnzTXp/8okCzACaDJup2H7AxS5rDb+QWFc1ee9cCOxz7gvRV3NKnaaQ9Iya+radCKsIcnTxRE5bXJI9VTYcyM0JtN9zNYiIYpZZ2bECUARIfoflVbQRFLL6z4bo/v16uTgiFC9YswmEAGnvgUrsIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Knbz2aAZ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso844869a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:04:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722002687; x=1722607487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qZtkUciy53SlA3q1C2mBesNLpAodaomgS3oD4UCQoBY=;
+        b=Knbz2aAZTjY8I3glMuoakkvVsjCo0O3m+dQrwKygvOzIu5dgo1hdUiZXkEzPbQ3ZmQ
+         pHwnMdjbDIv7/VZiATm4+otIMjFI851iPhK/8TrL++oygm2YbDF3MjeHfAMfyLbmieh/
+         Awcjb1njpcEr3Bjze8Bp3ORowKDIfRIOZSauZGF9sXeGrxa+VU6/qzcg0e8+B7SSh3Ij
+         APY/fhWtqMQWGzGtkLdURnLmVTzHrADrfKaH0v84pTApUg/RCcyRCxArdvjCo93zjQDR
+         1zXXqGKvaV9NV1vTMXMWuc3aWyzEdWG0alHSOmRchfq3vUsN+2K1XK8gFFVms5VN+MnN
+         psdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722002687; x=1722607487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qZtkUciy53SlA3q1C2mBesNLpAodaomgS3oD4UCQoBY=;
+        b=h//lWej+AlNmJ/T5sXKoq6/pNsCl4m/YU/lvYURbTyxk/9sd/DU06WdI7d/htpdk10
+         W2xvwYoR77EIMlDP6oiFeh9HsI4Ii/PQJ1MV77IIEsJtYIb67Etewv2vUZIqIdBBBoHF
+         riD9KpdllqoBLsSYH3WYkQtg+L6JbJZRbqIibR4oVXv5vMQ3jpRsfResRnDMnoFN6/dG
+         Udxiohxr5dCTLjBuZXHydtMsf+x128ZBkxtDhzZUKzFAfhAsmyWNiBPTaZ5UxzQOQp/Z
+         M9I9bjIJ0zSAmqP4ggqUXlA7vmAjeMuPTGdXYZbqQHTfD3SUDOqrFyaeCWWFwza8Dqy5
+         QCcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUENbJt5XV6Us7grhE7vkAWQX7iNSSnae8oaY0aP1Sjw/ZhlDvPEdP2ykXiJM7EIpHDBCGb8AQMQpQXY+yb3i6RtiE2LOV42hu2YsjY
+X-Gm-Message-State: AOJu0YzDgHkJ0hWlAbqAXv5s9uAa1LcDr3O8Pwda1wJtzRDDkTGZZ6iW
+	ysL7hvVztfTkSJylqUxDrZT1nLvbOr/nChZCl0czr9S4BoE8m38/y+wXQq+M/i9DnloEqCzNEqD
+	ZUyUWDjJPgfmssyTF/3GexjmU61w=
+X-Google-Smtp-Source: AGHT+IEQKLKHLh9iUylwXZrOlh4LpZAvjxsgcGtt4pKukArrozDytrxIsOXJTlQFPEWoZrVPyd4xxPLBpuHK0Qol0F8=
+X-Received: by 2002:a17:90b:1c87:b0:2cb:50fa:b01e with SMTP id
+ 98e67ed59e1d1-2cf2ebb7c91mr5372574a91.41.1722002686719; Fri, 26 Jul 2024
+ 07:04:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3108:EE_|MW5PR12MB5651:EE_
-X-MS-Office365-Filtering-Correlation-Id: b35ef19e-6c0f-40a7-b20d-08dcad7b53e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8XDUM1oxaEagClL43aSEAVGX+YNm8D21tPMojppxOFlVfy6pl1ALXrMwXKMZ?=
- =?us-ascii?Q?55hozk0yUCSHSlorVBePesIz3ka4ObeyRPaQ9vjR7dv6O29meOuLR7p2hOZJ?=
- =?us-ascii?Q?JoiCuVKIIuwuouhVwR8czTpQN/BVeHOq5wljZUfWodS3QwpFfKdv1GVXz4GS?=
- =?us-ascii?Q?2+pgIO+qUaab+8H9iHFIiZmLwvaXDFSrIGaJHedHLhEu26ta9+S6SCECnwRj?=
- =?us-ascii?Q?j8LB+taykdWgPE36nylaAxH21tS1Wx8Oy5qHo0TJJW7cmzbP7BcROpG/NjNP?=
- =?us-ascii?Q?wqG8I/uSqm1nlClmnUbR1vTbLX6fMQ8SdORxzRXCN/6RVjrnTzbJNxftUJvB?=
- =?us-ascii?Q?q5Z9hoDqOO9NR+bwPtnY4kNJWndbiifH8UTeMDSGEKWvVSqDZzzhDv9e63mk?=
- =?us-ascii?Q?LZazx8F6LHa2hKFxFibnKX+q7CXJQxcL16YihFjv95dgf2nTqTKTnjbDPFk1?=
- =?us-ascii?Q?V+QoUWkSnN1YpFdKEfJBy+5MSoDbdcXD1WYeSfRA3IJS/oJKKWkMPbugEOiW?=
- =?us-ascii?Q?2eKOir+OSS8ByHo9T/t08BbZxg/BndhARJ6NfaOwOCOUFeIgWuYY5m+5HJVY?=
- =?us-ascii?Q?yTog8iO5OxY2jSwwSc7fk/Z5vqLz4yOS2iZKA8M7WJPr0iW58dePdzTrXY/K?=
- =?us-ascii?Q?qwwQ/DS0mOIm6a5kpd9/BKTlflcw7XQh+8LDlvFwRS8DWnyywnEiXgaQPpcv?=
- =?us-ascii?Q?C6ofhw4pZEoRf1CxItD3OsSVfPPQKwNrK/P08mm8rzgV4cbM/pfeqGTYW3L5?=
- =?us-ascii?Q?Na6NrLznm5TtaG7Fc3VAh8+MLIe/PoUUaawWCarIEoOh7tEnn7htxGgOx/lw?=
- =?us-ascii?Q?IQYmR8WKu6oGOqZb/8+bSrx2cLCi9d2HDPs8cvjhLsO7y2xToFsbWIj5TnxK?=
- =?us-ascii?Q?Ta1srWEnBVuyHZga5IsjHfxJmfZ7l+ASxnZulOTLC37XOS0VzeVt3nDPUQu9?=
- =?us-ascii?Q?oMuRqGLJoIeP1eLpIs/0uvpRY58oIiBvOfjgYtg4K0XtPtFgxRX0shnCDNP/?=
- =?us-ascii?Q?Mxgcl35MlmTGwvL39d4a1dvZKeDjjI8vhWiZuBdMoPxqiGwIx09hJW/A41Tf?=
- =?us-ascii?Q?Zv/q5UEDQ1d7JqdGwgl7+YH9jyLXs3J+ISdCKDtOYtUvKFlgBiTBy3xEOc5H?=
- =?us-ascii?Q?fwKCRIogIX/4cL6nlCwgXbel6TeF32tX4LcC5uvqirK2xfpNC/v2HIxffKPO?=
- =?us-ascii?Q?XqxvCQsmaEOK//y9ftpfO0W2D2RTTQR8TAIoTTehdFGLUL/cMgl9BEwggNvz?=
- =?us-ascii?Q?VrwvTSBBNmsI6DIQGh5N1vwPvZn0Az/cY5Db09Tn8pJaASUXeZodprvjfKtq?=
- =?us-ascii?Q?oe5M8I8kC+TOhLkl0uQWWttHiv8ATK3W1JSQW/bpK6QjUw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3108.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7+iGVD3xwtGL8B8ixtGh1NWdSXYOcgdDIP/ch1OzbDqN7Hb+iEimCVMmfX2s?=
- =?us-ascii?Q?C/Y0PvkTJVIU/SpWzQqvZ4OTrbYXuJCS5m5guzsSGqy17asAiH/hHAEqAo+9?=
- =?us-ascii?Q?NiqIZQGWMIG+c6VKC40+tgRrkuLfE5UliiFKv4IQUzzZBqVFCimClahabuFX?=
- =?us-ascii?Q?wOwuDqSdI804/PO3JfcuXNU8QthhUmipNV1URq8aNXOFTcw5blgFabdC/8ih?=
- =?us-ascii?Q?fA3bvCIDNuGrEdUiHlByhl5CYLdWikQkc9517f2QOqNScFqRd0holvKAzlG/?=
- =?us-ascii?Q?EXtFiILuCDa5RGy7E72MFbjlkyvFubmwRjpv2i52jriqsAhadbU3C1UkZcB2?=
- =?us-ascii?Q?uAIJLLHv4mZDdVuNyNS24yjssSEMJbreFN8WHrvRyFLsxs7BD5/e9+aWrzGw?=
- =?us-ascii?Q?OTWv2H5w8kN9SIwf/UR/izBnF3cTN0heakpifi60zoCsZtnfAngEHn5tK+DZ?=
- =?us-ascii?Q?1zUjUdB0T3E227iX7uHTVEH0c4djnK2SVXpcLhToDlPi+DC3NjcFuTrXcBqc?=
- =?us-ascii?Q?exzP6eHdakP9klh0HR18N71P9ip/SBiVObltwBCVRzdUsvOESMrLm+OxJjCR?=
- =?us-ascii?Q?TxctUjAoAvcZNRhv9z/riZHg6JvqK0qmlDoLj2HU0fXGglmNGVOknFVd9a/H?=
- =?us-ascii?Q?siwd7fPr2kPF3Yg01MYviyjSF2yQ4KRZE68VdFiu9JuJEwfo4Er0SqgFLkIj?=
- =?us-ascii?Q?uz5v4FfF43el5NrP3LXIiMzeXfQzXoWBhEoGIQocqiC+5H/32v9EqyoQcEh0?=
- =?us-ascii?Q?rAnhRHluSd7WJZJRV1R/rjjlDIDqlC8E3Wd/Psiql5R6Va1v3vKzx2orrD93?=
- =?us-ascii?Q?Dx+KTdP6hcspY5j7Z3PLOgO+3qck+e6e7XxoW06d2SG7UuthhuCE4wZ9Hcbi?=
- =?us-ascii?Q?hQAOQNTnJCA2I70KZTCJkUi9Rqv43tdbFg1PsVwBp+EKIn+nZ5hz4GFBzUi3?=
- =?us-ascii?Q?NDDncMZrC4ACHTZpAHfgYLoo/1XW6/GxKwwAX2r8bgthBAn1f7i+tYQdc/9l?=
- =?us-ascii?Q?p/i8ELea4Z+7ewB/oOOOmcJgI+qq9jCJEFWBhzzcoKcqsxASDJMuwS8VqLXl?=
- =?us-ascii?Q?NPyR8KtGtbqVsAGXyVj/on2tFI+MH7AqDvQ4edSt9mDsjhGtUDJVNn1mRyat?=
- =?us-ascii?Q?UBrGATeqcjkeuV//3R74uZ1DKN+0bs9+zNTOTQXMnG9EjaXm6wUiysx4HQGP?=
- =?us-ascii?Q?Y0mxPAI3i6ncLLCk59Xoq7UCA7pi5FqnVKb6e8ZYylXqN5yJid9YUeqJW277?=
- =?us-ascii?Q?5oUhalLzuGals1jUAkErDVfaGlfefr5v5bAm6B/FqJp55GcQqAUNbEVKgJBG?=
- =?us-ascii?Q?LqFfsxHgRzP5q4vjyvVH6sHeRJV5ckyRWRSJt9TgS4o3E0Gzxyv/PCKZsHvr?=
- =?us-ascii?Q?HSaVAeScICEAC98gjFdCbHB2fwIXOLskjk6QLppbXM3Y1S/eevUYNI7nSLZB?=
- =?us-ascii?Q?vPYOlu9Z6rJvPRaE7Z7f1iSJuxd85mKrgVpGIcuc68IRusHIa9aClWH5RYNJ?=
- =?us-ascii?Q?rdwJU56apryIkNZATfcE/zoRxysBo+VftZGJ1c9rEkrS7SWUieiO/NmZZG4b?=
- =?us-ascii?Q?LuY4T7hCvs5f0s05BiB5nJtIFJtkfxlHtqJ2aE4C?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b35ef19e-6c0f-40a7-b20d-08dcad7b53e0
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3108.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 14:00:38.1511
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aprOvQu+FW5m2jcqzMdQ1QyK9tGzR8fC8HZYm/fAG/ZWacL9ti8CWWc1zLsXKUP9r3QBMdbyc1xKQHodhCnkew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5651
+References: <20240726094728.1161-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20240726094728.1161-1-jiapeng.chong@linux.alibaba.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 26 Jul 2024 10:04:35 -0400
+Message-ID: <CADnq5_MbocNRzAP6-2gR+CNofo-eFFM7GGsUFGUjQzKz7Q8qDg@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amd/display: Use ARRAY_SIZE for array length
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 03, 2024 at 07:37:27PM +0200, Borislav Petkov wrote:
-> On Thu, May 23, 2024 at 10:56:36AM -0500, Yazen Ghannam wrote:
-> > @@ -709,48 +747,9 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
-> >  		if (!mca_cfg.cmci_disabled)
-> >  			mce_track_storm(&m);
-> >  
-> > -		/* If this entry is not valid, ignore it */
-> > -		if (!(m.status & MCI_STATUS_VAL))
-> > +		if (!log_poll_error(flags, &m))
-> >  			continue;
-> >  
-> > -		/*
-> > -		 * If we are logging everything (at CPU online) or this
-> > -		 * is a corrected error, then we must log it.
-> > -		 */
-> > -		if ((flags & MCP_UC) || !(m.status & MCI_STATUS_UC))
-> > -			goto log_it;
-> > -
-> > -		/*
-> > -		 * Newer Intel systems that support software error
-> > -		 * recovery need to make additional checks. Other
-> > -		 * CPUs should skip over uncorrected errors, but log
-> > -		 * everything else.
-> > -		 */
-> 
-> You lost that comment.
-> 
+Applied.  Thanks!
 
-Sorry, will keep it.
-
-> > -		if (!mca_cfg.ser) {
-> > -			if (m.status & MCI_STATUS_UC)
-> > -				continue;
-> > -			goto log_it;
-> > -		}
-> > -
-> > -		/* Log "not enabled" (speculative) errors */
-> > -		if (!(m.status & MCI_STATUS_EN))
-> > -			goto log_it;
-> > -
-> > -		/*
-> > -		 * Log UCNA (SDM: 15.6.3 "UCR Error Classification")
-> > -		 * UC == 1 && PCC == 0 && S == 0
-> > -		 */
-> > -		if (!(m.status & MCI_STATUS_PCC) && !(m.status & MCI_STATUS_S))
-> > -			goto log_it;
-> > -
-> > -		/*
-> > -		 * Skip anything else. Presumption is that our read of this
-> > -		 * bank is racing with a machine check. Leave the log alone
-> > -		 * for do_machine_check() to deal with it.
-> > -		 */
-> > -		continue;
-> > -
-> > -log_it:
-> >  		if (flags & MCP_DONTLOG)
-> >  			goto clear_it;
-> 
-> Btw, the code looks really weird now:
-> 
->                 if (!log_poll_error(flags, &m))
->                         continue;
-> 
->                 if (flags & MCP_DONTLOG)
->                         goto clear_it;
-> 
-> i.e.,
-> 
-> 1. Should I log it?
-> 
-> 2. Should I not log it?
-> 
-> Oh well, it was like that before logically so...
+On Fri, Jul 26, 2024 at 5:55=E2=80=AFAM Jiapeng Chong
+<jiapeng.chong@linux.alibaba.com> wrote:
 >
-
-We can rename the new function and add comments. What do you think of
-the change below?
-
-Thanks,
-Yazen
-
-@@ -797,9 +797,11 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
-		if (!mca_cfg.cmci_disabled)
-			mce_track_storm(&m);
-
--               if (!log_poll_error(flags, &m, &status_reg))
-+               /* Verify that the error should be logged based on hardware conditions. */
-+               if (!loggable_poll_error(flags, &m, &status_reg))
-			continue;
-
-+               /* Clear a loggable error, e.g., one leftover from boot time. */
-		if (flags & MCP_DONTLOG)
-			goto clear_it;
-
-
+> Use of macro ARRAY_SIZE to calculate array size minimizes
+> the redundant code and improves code reusability.
+>
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1552:57-58=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1561:57-58=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1573:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1578:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1592:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1597:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1611:50-51=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1616:50-51=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1630:50-51=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1635:50-51=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1649:60-61=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1663:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1677:52-53=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1691:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1705:53-54=
+: WARNING: Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1719:54-55=
+: WARNING: Use ARRAY_SIZE.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9580
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  .../display/dc/spl/dc_spl_scl_easf_filters.c  | 63 ++++++-------------
+>  1 file changed, 20 insertions(+), 43 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c=
+ b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
+> index 09bf82f7d468..e847af94419a 100644
+> --- a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
+> +++ b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
+> @@ -1530,14 +1530,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_v=
+alue(struct spl_fixed31_32 rati
+>         value =3D lookup_table_index_ptr->reg_value;
+>
+>         while (count < num_entries) {
+> -
+>                 lookup_table_index_ptr =3D (lookup_table_base_ptr + count=
+);
+>                 if (lookup_table_index_ptr->numer < 0)
+>                         break;
+>
+>                 if (ratio.value < spl_fixpt_from_fraction(
+> -                       lookup_table_index_ptr->numer,
+> -                       lookup_table_index_ptr->denom).value) {
+> +                   lookup_table_index_ptr->numer,
+> +                   lookup_table_index_ptr->denom).value) {
+>                         value =3D lookup_table_index_ptr->reg_value;
+>                         break;
+>                 }
+> @@ -1548,21 +1547,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_v=
+alue(struct spl_fixed31_32 rati
+>  }
+>  uint32_t spl_get_v_bf3_mode(struct spl_fixed31_32 ratio)
+>  {
+> -       uint32_t value;
+> -       unsigned int num_entries =3D sizeof(easf_v_bf3_mode_lookup) /
+> -               sizeof(struct scale_ratio_to_reg_value_lookup);
+> -       value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+> -               easf_v_bf3_mode_lookup, num_entries);
+> -       return value;
+> +       unsigned int num_entries =3D ARRAY_SIZE(easf_v_bf3_mode_lookup);
+> +       return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_v_bf3_mo=
+de_lookup, num_entries);
+>  }
+>  uint32_t spl_get_h_bf3_mode(struct spl_fixed31_32 ratio)
+>  {
+> -       uint32_t value;
+> -       unsigned int num_entries =3D sizeof(easf_h_bf3_mode_lookup) /
+> -               sizeof(struct scale_ratio_to_reg_value_lookup);
+> -       value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+> -               easf_h_bf3_mode_lookup, num_entries);
+> -       return value;
+> +       unsigned int num_entries =3D ARRAY_SIZE(easf_h_bf3_mode_lookup);
+> +       return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_h_bf3_mo=
+de_lookup, num_entries);
+>  }
+>  uint32_t spl_get_reducer_gain6(int taps, struct spl_fixed31_32 ratio)
+>  {
+> @@ -1570,13 +1561,11 @@ uint32_t spl_get_reducer_gain6(int taps, struct s=
+pl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 4) {
+> -               num_entries =3D sizeof(easf_reducer_gain6_4tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain6_4tap_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_reducer_gain6_4tap_lookup, num_entries);
+>         } else if (taps =3D=3D 6) {
+> -               num_entries =3D sizeof(easf_reducer_gain6_6tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain6_6tap_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_reducer_gain6_6tap_lookup, num_entries);
+>         } else
+> @@ -1589,13 +1578,11 @@ uint32_t spl_get_reducer_gain4(int taps, struct s=
+pl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 4) {
+> -               num_entries =3D sizeof(easf_reducer_gain4_4tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain4_4tap_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_reducer_gain4_4tap_lookup, num_entries);
+>         } else if (taps =3D=3D 6) {
+> -               num_entries =3D sizeof(easf_reducer_gain4_6tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain4_6tap_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_reducer_gain4_6tap_lookup, num_entries);
+>         } else
+> @@ -1608,13 +1595,11 @@ uint32_t spl_get_gainRing6(int taps, struct spl_f=
+ixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 4) {
+> -               num_entries =3D sizeof(easf_gain_ring6_4tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_gain_ring6_4tap_lookup);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_gain_ring6_4tap_lookup, num_entries);
+>         } else if (taps =3D=3D 6) {
+> -               num_entries =3D sizeof(easf_gain_ring6_6tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_gain_ring6_6tap_lookup);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_gain_ring6_6tap_lookup, num_entries);
+>         } else
+> @@ -1627,13 +1612,11 @@ uint32_t spl_get_gainRing4(int taps, struct spl_f=
+ixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 4) {
+> -               num_entries =3D sizeof(easf_gain_ring4_4tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_gain_ring4_4tap_lookup);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_gain_ring4_4tap_lookup, num_entries);
+>         } else if (taps =3D=3D 6) {
+> -               num_entries =3D sizeof(easf_gain_ring4_6tap_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_gain_ring4_6tap_lookup);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_gain_ring4_6tap_lookup, num_entries);
+>         } else
+> @@ -1646,8 +1629,7 @@ uint32_t spl_get_3tap_dntilt_uptilt_offset(int taps=
+, struct spl_fixed31_32 ratio
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_dntilt_uptilt_offset_loo=
+kup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_dntilt_uptilt_offset=
+_lookup);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_dntilt_uptilt_offset_lookup, num_entrie=
+s);
+>         } else
+> @@ -1660,8 +1642,7 @@ uint32_t spl_get_3tap_uptilt_maxval(int taps, struc=
+t spl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_uptilt_maxval_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt_maxval_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_uptilt_maxval_lookup, num_entries);
+>         } else
+> @@ -1674,8 +1655,7 @@ uint32_t spl_get_3tap_dntilt_slope(int taps, struct=
+ spl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_dntilt_slope_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_dntilt_slope_lookup)=
+;
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_dntilt_slope_lookup, num_entries);
+>         } else
+> @@ -1688,8 +1668,7 @@ uint32_t spl_get_3tap_uptilt1_slope(int taps, struc=
+t spl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_uptilt1_slope_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt1_slope_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_uptilt1_slope_lookup, num_entries);
+>         } else
+> @@ -1702,8 +1681,7 @@ uint32_t spl_get_3tap_uptilt2_slope(int taps, struc=
+t spl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_uptilt2_slope_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt2_slope_lookup=
+);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_uptilt2_slope_lookup, num_entries);
+>         } else
+> @@ -1716,8 +1694,7 @@ uint32_t spl_get_3tap_uptilt2_offset(int taps, stru=
+ct spl_fixed31_32 ratio)
+>         unsigned int num_entries;
+>
+>         if (taps =3D=3D 3) {
+> -               num_entries =3D sizeof(easf_3tap_uptilt2_offset_lookup) /
+> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
+> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt2_offset_looku=
+p);
+>                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
+>                         easf_3tap_uptilt2_offset_lookup, num_entries);
+>         } else
+> --
+> 2.32.0.3.g01195cf9f
+>
 
