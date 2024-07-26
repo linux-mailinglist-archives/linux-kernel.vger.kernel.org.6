@@ -1,152 +1,196 @@
-Return-Path: <linux-kernel+bounces-263536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6336193D763
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:14:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF47F93D766
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903171C229EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C4E1F24A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F368A17CA1E;
-	Fri, 26 Jul 2024 17:14:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF26117D364;
+	Fri, 26 Jul 2024 17:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lCEjZ9uf"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E7417CA03
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722014071; cv=none; b=glEoul3C+jyHpDZxuGDjYSdml5BAAv1yeN26ySJ1LaqU9kqHF2CsJfLSudXFOZ0xMJf5dOe/e5WSWisiCwoX7qrYbcdUQoYaESmcXKeLQy8KUsW0jSH0tUJzWSKf3+4V3d/s9TLHMQDmFffkSBDNhcTjtXcme4Z7EnMN8f9lMYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722014071; c=relaxed/simple;
-	bh=1iGbDt4EkzLIsr2JyeJ2+d3KlNlzECwQg/iOY5Y/eNM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=do1z5bcPv32s3nMssFht0pfEIOIFbnnjxJX5VSIaBfelCZp4HMVTQGDf5vyAQlyOw3bgz2VHHd/tyGHZpXgswf279kh62emrQ1Gv8NfmoP4UJ/Z9dix6ru0ZsA5ZaMiF9yaZNuUP8msnrC4LwVddPFc5RpbdSJVJZlDqGBQXhXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVvSS6m1pz6K5xW;
-	Sat, 27 Jul 2024 01:12:08 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id C88321404FC;
-	Sat, 27 Jul 2024 01:14:25 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
- 2024 18:14:25 +0100
-Date: Fri, 26 Jul 2024 18:14:24 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, <linuxarm@huawei.com>,
-	<rafael.j.wysocki@intel.com>, <guohanjun@huawei.com>, <gshan@redhat.com>,
-	<miguel.luis@oracle.com>, <catalin.marinas@arm.com>, Linux List Kernel
- Mailing <linux-kernel@vger.kernel.org>, Linux regressions mailing list
-	<regressions@lists.linux.dev>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Bowman, Terry"
-	<Terry.bowman@amd.com>, Shameerali Kolothum Thodi
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
- possible recursive locking detected warning at computer boot.
-Message-ID: <20240726181424.000039a4@Huawei.com>
-In-Reply-To: <87le1ounl2.ffs@tglx>
-References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
-	<20240723112456.000053b3@Huawei.com>
-	<20240723181728.000026b3@huawei.com>
-	<20240725181354.000040bf@huawei.com>
-	<87le1ounl2.ffs@tglx>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377BA17D34C;
+	Fri, 26 Jul 2024 17:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722014077; cv=fail; b=ihfMjqNH71+k2vkvp+TrbZzNBfPnc48V13KJyQZwx4pmCYndxLM9dM2P4MYajDSY0SSKZJ8SleO7jF1YUsaQAm7LiMXIH+LgjxLq9Gvb/CjbeQNNHt3MHB/7UG6wFcqln6YzFXoHPokGfeiuyCYwoBvx9pTpoo9QI8aXJ/2kpqE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722014077; c=relaxed/simple;
+	bh=JgonWANmBKNq4Zobs8w8evCLg33/BXJCwfDZtBUMoP8=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=K/TpmQ2veh284DbOxIkWlixFToADUK4vX0Ie/AuWNcsY+m4J2LAH0jQdtqkl4GZFQoLgGvYjt1smU1dgIk4vKxVjPRUQWoHbDq8oxWnwN9ELQ11IcpYEbbP4NOeqVEWxBxOHa3Yn8PbDVU2luHzVnOhveXjISkYku4ABjlrEwrU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lCEjZ9uf; arc=fail smtp.client-ip=40.107.237.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gvc5ynittfiCL0TrtKFCip6c8LuJEG7toIgWChQZToHv4UsYqG4QIjFeHA62VR2MPJ25kA5UQKUvFuSbnXyzg7lNitCeftQCoBoxuDIW7aPnIEaCcjquI8zF4UK3nPG+bz5Aa2txX264JgAZalstkhslbgkO60aNyrWIsUz4lwGM1OBKrlVHPRfWnhXtJPjY5n0WcmvMIsyJLAbcw7FAr/WdWM3qAhH5VLIWL5qYPeTjy66z7DuyWE9p2jEhSSY0wdRvtPTVvzPTJzA7jzUznNKXTSoXLahdphEC5YT/srRN0pU7pb2tIN3LWlINBTpmC7eUWBDa1ATcFVpHz61PsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e/dnQ70uL+DgNgeBGkx+cvjebm+1m4ZKf9c75pIzJs0=;
+ b=S5xBAB/QO+yVKTex9bjajXbLvS9S2J85G7gIcvGMBR+qEP/cV9vMYFzgj1wqpSRSVqAb/rxmm8fxdfNydmUVQE/+DVCYL8+FWDCjW7CGK5gP32l2OUswzVdPhrP9c/IwNzsZQczebWX5fkkSFFmb9d9S6LdnXu6aHmw9dJ/KN0ulXULkidGS9drP/cXwFHX2L+0kNTmaE1KLingYz3DvfrzPHQaLvqPTWjy5tTQcAPaXfY8CeVzQ2MG7iW5T2IoAMmbfrDfXcbtGrA5ztjdmycH7gF1ry2sLCdbiux6ginan5TN5EP//AOAJDRCfUUrBbeOCWj+ZxieIyiiuL/NmRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e/dnQ70uL+DgNgeBGkx+cvjebm+1m4ZKf9c75pIzJs0=;
+ b=lCEjZ9ufqXmoaYa/Jx57hOuMN9bJkS6XcIIWdivFudbhAV8vntsiORZzGvUFOBcZJYqWcC/FISDbjc0No0mr8aEgfyvA+OpGJ/AXK0QIpV1ZAmbRi7RNKgoKdQSq+mwhhwJ4IvHahpttz7C7b8UswxxW6646RCb0FB76GODJK5XjDwjhEKwLheetf7cBMlZHa0GICpvdZ1yLWPqIbYw6DwsATK5samdhWrk+Gbjm5eP7TyhGNnRGYFYJTmTPFsb1j6ZhEtXqO5Xf07B4CCeGdTpvEQBf4CBObmO5C/fB9rlBtBL7r3ac88uxO84GWcgUlZ7SZFH8Nitw2/VCFGp05Q==
+Received: from MW4P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::9) by
+ CY5PR12MB6228.namprd12.prod.outlook.com (2603:10b6:930:20::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.28; Fri, 26 Jul 2024 17:14:32 +0000
+Received: from MWH0EPF000971E7.namprd02.prod.outlook.com
+ (2603:10b6:303:8b:cafe::7c) by MW4P221CA0004.outlook.office365.com
+ (2603:10b6:303:8b::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
+ Transport; Fri, 26 Jul 2024 17:14:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000971E7.mail.protection.outlook.com (10.167.243.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 17:14:32 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
+ 2024 10:14:30 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 26 Jul 2024 10:14:29 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 26 Jul 2024 10:14:29 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 00/16] 6.6.43-rc1 review
+In-Reply-To: <20240725142728.905379352@linuxfoundation.org>
+References: <20240725142728.905379352@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Message-ID: <49315694-da12-4493-a496-ab47fee63b46@drhqmail202.nvidia.com>
+Date: Fri, 26 Jul 2024 10:14:29 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E7:EE_|CY5PR12MB6228:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85323be1-24d6-45f7-cc83-08dcad966a75
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U2NnaXByektHTkVCVEhaSzV0OHBSb1dBQ0V0MFExa2tYdlpKTm1OdDZDWXFI?=
+ =?utf-8?B?bEpqckJhYVVQb3VmVkt0VS9sd3NPZUFydEpyN2s4Y1N0M29DZUQ2ckoyV1M4?=
+ =?utf-8?B?VGMxVWowQkNzeUNvdTNSdXdsclpLRGRBRzN5U0VKbVlDZUc0VUVrVHJJaWcw?=
+ =?utf-8?B?T1dIckd4QnNWU1VIMytQeGh2R2Y5c3VDNnZuL2pXRHVCdVo0aEhrY2JWMjRN?=
+ =?utf-8?B?aUMzOHZrUlJic0kySGwvVHJxdWxjVlh5RVhFQ1MwSDNwdXlkbmJiZTI0V3Rt?=
+ =?utf-8?B?Y0xId3lWbU1OaTU4b3NISFBua3hNTWhpdU5wZExDNUxoeGF5aFJUWEZFNTBU?=
+ =?utf-8?B?TnY5S1hjSW42WVRsMTRjdXZXZG9zQS9NTi9qajdaWXNaSGNEWjRheEl0Znht?=
+ =?utf-8?B?ZmcwblVSWWR6bW9VVmdjV2pmR1lnL1FkV0ZUQytZMTFlRzE4MjZTbWVRNnNY?=
+ =?utf-8?B?NGI4eHRHOXFQcmVhT2MwMW8wN2lCQmUzcmNEYWYzRnRNWW1sYm8wOGRSbGRj?=
+ =?utf-8?B?TWFMclVoM2Z1WHR1ZFl3alBGVVNiV0tBWmlMTlpsZDdpV28xVWlaMjdtVEM3?=
+ =?utf-8?B?STE1bWlQYWNkSlpGdlZUbkp6TlpvY3ZqNUZBUTNHdlZVRU95N3ZtQUJFb1d0?=
+ =?utf-8?B?ZDVDMEpYWE9VUjZmQ3o2NEFsYy9Dbno5a0NVS1o3NGQ2QWhNb2RCOWFyUU10?=
+ =?utf-8?B?Nmg5L2EzQWgwMzl0T2RNSDVnTk9hOG9FTzRFb2xaWUJaQlJWZFZ2M0ZIRGR4?=
+ =?utf-8?B?bW1sSmVrNEdjYUROckhpSmttU00wbG8xTEdzVWF3ejk4VGd4R0F4S2xrNVdN?=
+ =?utf-8?B?bEJOMm51b0VFR1hHVkR5QzZsYnBxQytud3Z6bkZaZEhZbUxoUlhrejAzNHFR?=
+ =?utf-8?B?SmpJL0UvYkg3U0JpVmowMTNzRERrQUxWbVJITEVsMWRHdm14YkJPbVAxNnp4?=
+ =?utf-8?B?MVNJOTNvMTRZWmJLSUU2Z1JRSUtpdEdVSEgvT3BOcm9YcUhxOUtNWVFvOVpB?=
+ =?utf-8?B?MTdqMEdKNXBhY2IrUzB2RzFrRDI4aC8wcmRNWEJzcnNjdzcwYmtlQkErTFFq?=
+ =?utf-8?B?d2JJUi9hdithNjNEVGVtbGx6djQ0a09BbmlDbE81bHZlNW9RU2I3amcrVzJV?=
+ =?utf-8?B?Q09aVDI5aVJVK0Q3a3E5MEtpUkx4WnpWWG11NWFIZi9DZVlybTZQQ09hK2hG?=
+ =?utf-8?B?TWRiTXRobG94c1JNSlRtUmRGbXlZTXFIRm9EUVVWaXhpQ2hwa3FIZWRpKzMx?=
+ =?utf-8?B?RlBTcE1YUFk1d3A1Tnk4akpYa1FJdTFkbGRNN1VycHoydGVuUTlQQ01mUzdU?=
+ =?utf-8?B?VlRoVjFadnYyZllUUDNpeEVvSHRpR2t0VXk4aUZRZTJlVldXY1E3d1p6cDZq?=
+ =?utf-8?B?RGVDaWxXdndEU3dSSGUzeGNIRXMwQzU3R0IrZjNveHJUUTJ0Szl1Q1FOR2RV?=
+ =?utf-8?B?cmJ1b3VCZ3pUMEpiYmdUZTRmZm82Rm4wL1JhaXM0dUxGa3JRcldWUFg4TFJp?=
+ =?utf-8?B?REpLcTd5dWxEN0gyNHRJbzFPZ1paeTRLSmlpYVF4alRvWFU3VDRzK1BXZTZN?=
+ =?utf-8?B?UlBKOU9uOXhuYS9Xb1psc21kTFNzTVVBRzJFWHp3WHFnd25LZjBxZmc3QVdB?=
+ =?utf-8?B?eFlwR1VyM0xwODRaTjBmQ0hmbERvZ0RVVE9XRitSNGtzVThLejBNL2p6aVhs?=
+ =?utf-8?B?Z0o4N3I4bzlSaU5kZG9tTEEyR2pPYVZQQW9CdDBWdTZSbUEvTE42YzUwME92?=
+ =?utf-8?B?Y1pkUWFQa1F0bDlXUzlQUkZ0TW9PQThUcUdGc0VnK21KNFJ6WnFlRmt0VFNv?=
+ =?utf-8?B?WEZUT09hWjhJTHBTM2sxeWpjRHY3dW5ZWGgyR29nNzh4S3paTk9mRE9pTzUz?=
+ =?utf-8?B?N1BOcmNKTFpKQ29sZ1BrZTFhUXRiaGVoVVVDU1pFWXpDUGFPTmFOQ1FuVzhq?=
+ =?utf-8?Q?Kh7/ElVLxx+cUctWyqftiBfItTX4095Z?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 17:14:32.1791
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85323be1-24d6-45f7-cc83-08dcad966a75
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E7.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6228
 
-On Fri, 26 Jul 2024 18:26:01 +0200
-Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> On Thu, Jul 25 2024 at 18:13, Jonathan Cameron wrote:
-> > On Tue, 23 Jul 2024 18:20:06 +0100
-> > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> >  
-> >> > This is an interesting corner and perhaps reflects a flawed
-> >> > assumption we were making that for this path anything that can happen for an
-> >> > initially present CPU can also happen for a hotplugged one. On the hotplugged
-> >> > path the lock was always held and hence the static_key_enable() would
-> >> > have failed.  
+On Thu, 25 Jul 2024 16:37:13 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.43 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> No. The original code invoked this without cpus read locked via:
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
 > 
-> acpi_processor_driver.probe()
->    __acpi_processor_start()
->        ....
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.43-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> and the cpu hotplug callback finds it already set up, so it won't reach
-> the static_key_enable() anymore.
+> thanks,
 > 
-> > One bit I need to check out tomorrow is to make sure this doesn't race with the
-> > workfn that is used to tear down the same static key on error.  
-> 
-> There is a simpler solution for that. See the uncompiled below.
+> greg k-h
 
-Thanks.  FWIW I got pretty much the same suggestion from Shameer this
-morning when he saw the workfn solution on list. Classic case of me
-missing the simple solution because I was down in the weeds.
+All tests passing for Tegra ...
 
-I'm absolutely fine with this fix.
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-Mikhail, please could you test Thomas' proposal so we are absolutely sure
-nothing else is hiding.
+Linux version:	6.6.43-rc1-ge83c10183573
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Tglx's solution is much less likely to cause problems than what I proposed because
-it avoids changing the ordering.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Jonathan
-
-
-
-
-> 
-> Thanks,
-> 
->         tglx
-> ---
-> diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-> index b3fa61d45352..0b69bfbf345d 100644
-> --- a/arch/x86/kernel/cpu/aperfmperf.c
-> +++ b/arch/x86/kernel/cpu/aperfmperf.c
-> @@ -306,7 +306,7 @@ static void freq_invariance_enable(void)
->  		WARN_ON_ONCE(1);
->  		return;
->  	}
-> -	static_branch_enable(&arch_scale_freq_key);
-> +	static_branch_enable_cpuslocked(&arch_scale_freq_key);
->  	register_freq_invariance_syscore_ops();
->  	pr_info("Estimated ratio of average max frequency by base frequency (times 1024): %llu\n", arch_max_freq_ratio);
->  }
-> @@ -323,8 +323,10 @@ static void __init bp_init_freq_invariance(void)
->  	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
->  		return;
->  
-> -	if (intel_set_max_freq_ratio())
-> +	if (intel_set_max_freq_ratio()) {
-> +		guard(cpus_read_lock)();
->  		freq_invariance_enable();
-> +	}
->  }
->  
->  static void disable_freq_invariance_workfn(struct work_struct *work)
-> 
-> 
-
+Jon
 
