@@ -1,104 +1,210 @@
-Return-Path: <linux-kernel+bounces-263433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5AD93D5C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6613793D5C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6B3283BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E4A1C23545
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F136517BB1E;
-	Fri, 26 Jul 2024 15:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S5IEiqBY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF2FC1F;
-	Fri, 26 Jul 2024 15:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C38178CC8;
+	Fri, 26 Jul 2024 15:14:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AF91EA6F;
+	Fri, 26 Jul 2024 15:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006886; cv=none; b=eLOYOEnpIdwBRfrcjY/fS2KLYkpLa+mSLsXZvXu7zLgpYRATo58HWwfPRTNGlSh7ELrKS26rW2EaVEGXaYhvOQm2gvf6r63e4O3BDnkOYwaBE+oNkA2I1pUJWq7nyBn9aVh5eNa0lTRB22MvymH4fTBLdJ7PlDDfur79N9EZa7o=
+	t=1722006877; cv=none; b=C1nOYgkYSmJM/mQLYXd0AmU9AKN+9otGzmfSM+9FGi0ErQF/V2YcyN99jtqLQl8aDkHSRhaw1+lqW0Cau/uJa3YV/+FDcbfupDbi8GjuNtRkxDzyDDnkGFh44okUT5VfMQdLxiGz5Yt0axBlN8yyIxAX+QrgNyS0vbxKvP1BZI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006886; c=relaxed/simple;
-	bh=5LVNVgJYxLKeFXaN2Sf8hg9qpW2jGfxaxTMWDzN5Rgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oVWuPQtPGA95DnCqvbO4NpPeMCC0NdpGPj6XIern4z8TQ8tGwBeTGhD5GjQ8+RP2fkEXzu1imtbBQd/Rth6iIeYir8qd/yReRC+GOYyxw4i2DOZjmXBkdLiLX9BGR1XIKJ40WOYc299LEXrojKCph1oPr2Ps2X/q8chkIWbUfrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S5IEiqBY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QBPASk019951;
-	Fri, 26 Jul 2024 15:14:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oLF8JeJASjno619fXeYlFDhDT3LWhRVwe2maAaLrMr4=; b=S5IEiqBYlKfZLvmQ
-	lTj8GPL14R5VD1TuRlKAO+1CqaPv4fd2NZvtZbcEpUBnU1017M5N4heVcBCIp9el
-	Q6ZJQYGlGyvPytmR5YGogwkSG7NI9WH6JpSTCsI0sqOdZDqRmyZ2fIX3NXiHwYDp
-	tHt1a443CuaRpuiC7/Ewh/kwpRs4QGnPKcbxAy8kNvSn5OFTHNkR7dx6QZIKVJ65
-	DOEaFgzp062NU/0yCqX7vZbIpKKW0RxT2RBYoet4RjP3O66zeX5MliFR+gJXJzDC
-	O7OgAlceudPh29m/CuJFeTyUEx8pHhbm7t2nQrFv5TBzeB5SnsONojXn5NTqGKNm
-	IO5jxg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m1s91uva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:14:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46QFEUe3003825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:14:30 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
- 2024 08:14:30 -0700
-Message-ID: <70a510e7-51f1-05f6-343a-27d40577b54c@quicinc.com>
-Date: Fri, 26 Jul 2024 09:14:29 -0600
+	s=arc-20240116; t=1722006877; c=relaxed/simple;
+	bh=Xh55UptQAeIB5r4FSAoqi6SxFLRUWkIF5Nc69lddWKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2ZS91jjnD6F4Cam/toAoF4gu4I7TVD1MxEn0p2RPPyyYvbwach31VfSkczvNCPtNt/QWW7R88UnShigtiIdKpXU+kryVlGvxMIqW3N4Ij+3bULjVIuy3Mwq2EV6qmJtiXrtzpU2TtVfJI+pHm6IK054Wy7dTeAIOiCDkzD7sjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 704FA1007;
+	Fri, 26 Jul 2024 08:14:59 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A66513F73F;
+	Fri, 26 Jul 2024 08:14:31 -0700 (PDT)
+Date: Fri, 26 Jul 2024 16:14:29 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Etienne CARRIERE <etienne.carriere@st.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
+	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+	"ptosi@google.com" <ptosi@google.com>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH 0/8] Make SCMI transport as standalone drivers
+Message-ID: <ZqO9VdIh7sXLSqhY@pluto>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <PAXPR04MB84592E272D5C16813529815588A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <Zo_qly7DOJkb05B_@pluto>
+ <PAXPR10MB4687398182E577AD00B447FBFDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] accel/qaic: Remove the description of
- DRM_IOCTL_QAIC_PART_DEV
-Content-Language: en-US
-To: Zenghui Yu <yuzenghui@huawei.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_carlv@quicinc.com>, <quic_pkanojiy@quicinc.com>,
-        <ogabbay@kernel.org>, <corbet@lwn.net>, <wanghaibin.wang@huawei.com>
-References: <20240716073036.453-1-yuzenghui@huawei.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240716073036.453-1-yuzenghui@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9jJjmmN6kN0xHNxvbIHT-2YD5fFukusf
-X-Proofpoint-GUID: 9jJjmmN6kN0xHNxvbIHT-2YD5fFukusf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_12,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=759
- suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 phishscore=0 clxscore=1011 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407260103
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR10MB4687398182E577AD00B447FBFDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 
-On 7/16/2024 1:30 AM, Zenghui Yu wrote:
-> The partition device ioctl was removed during the development of the
-> initial version of qaic driver. Remove its description from the
-> documentation to avoid confusing readers.
+On Tue, Jul 23, 2024 at 01:36:55PM +0000, Etienne CARRIERE wrote:
+> Hi Cristian, Peng,
 > 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Hi Etienne,
+
+Thanks for giving this a go on your setup.
+
+> On Thursday, July 11, 2024, Cristian Marussi worte:
+> > On Thu, Jul 11, 2024 at 01:26:16PM +0000, Peng Fan wrote:
+> > > > Subject: [PATCH 0/8] Make SCMI transport as standalone drivers
+> > >
+> > > You may need use V2 here :)
+> > 
+> > ...oh damn :P
+> > 
+> > > >
+> > > > Hi all,
+> > > >
+> > > > Till now the SCMI transport layer was being built embedded into in the
+> > > > core SCMI stack.
+> > > >
+> > > > Some of these transports, despite being currently part of the main
+> > > > SCMI module, are indeed also registered with different subsystems like
+> > > > optee or virtio, and actively probed also by those: this led to a few
+> > > > awkward and convoluted tricks to properly handle such interactions at
+> > > > boot time in the SCMI stack.
+> > > >
+> > > > Moreover some partner expressed the desire to be able to fully
+> > > > modularize the transports components.
+> > > >
+> > > > This series aim to make all such transports as standalone drivers that
+> > > > can be optionally loaded as modules.
+> > > >
+> > > > In order to do this, at first some new mechanism is introduced to
+> > > > support this new capability while maintaining, in parallel, the old
+> > > > legacy embedded transports; then each transport, one by one, is
+> > > > transitioned to be a standalone driver and finally the old legacy
+> > > > support for embedded transport is removed.
+> > > >
+> > > > Patch [1/8] is a mostly unrelated (but much needed) clean-up from
+> > > > Peng, which I included in this series to avoid conflicts at merge.
+> > > >
+> > > > Patch [2/8] simply collects the existing datagram manipulation helpers
+> > > > in a pair of function pointers structures, in preparation for later reworks.
+> > > >
+> > > > Patch [3/8] adds the bulk of the new logic to the core SCMI stack and
+> > > > then each existing transport is transitioned to be a standalone driver in
+> > > > patches 4,5,6,7 while shuffling around the compatibles. (no DT change
+> > > > is needed of curse for backward compatibility) While doing this I kept
+> > > > the module authorship in line with the main
+> > > > author(S) as spitted out by git-blame.
+> > > >
+> > > > Finally patch [8/8] removes all the legacy dead code from the core
+> > > > SCMI stack.
+> > > >
+> > > > No new symbol EXPORT has been added.
+> > > >
+> > > > The new transport drivers have been tested, as built-in and LKM, as
+> > > > follows:
+> > > >
+> > > > - mailbox on JUNO
+> > > > - virtio on emulation
+> > > > - optee on QEMU/optee using Linaro setup
+> > > >
+> > > > Exercised using the regular SCMI drivers stack and the SCMI ACS suite,
+> > > > testing commands, replies, delayed responses and notification.
+> > > >
+> > > > Multiple virtual SCMI instances support has been tested too.
+> > > >
+> > > > SMC has NOT been tested/exercised at run-time, only compile-tested.
+> > > > (due to lack of hardware)
+> > > >
+> > > > Note that in this new setup, all the probe deferral and retries between
+> > > > the SCMI core stack and the transports has been removed, since no
+> > > > more needed.
+> > > >
+> > > > Moreover the new drivers have been tested also with a fully
+> > > > modularized SCMI stack, i.e.:
+> > > >
+> > > >   scmi-core.ko + scmi-module.ko + scmi_transport_*.ko [ + vendor
+> > > > modules ]
+> > > >
+> > > > ToBeDone:
+> > > >  - completely remove any dependency at build time at the Kconfig level
+> > > > between
+> > > >    the SCMI core and the transport drivers: so that the transports will be
+> > > >    dependent only on the related subsystems (optee/virtio/mailbox/smc)
+> > > >    (easy to be done but maybe it is not worth...)
+> > > >  - integrate per-platform transport configuration capabilities
+> > > >    (max_rx_timeout_ms & friends..)
+> > > >
+> > > > Based on sudeep/for-next/scmi/updates.
+> > > >
+> > > > Any feedback, and especially testing (:D) is welcome.
+> > > >
+> > >
+> > > For the v2 patchset:
+> > > Tested-by: Peng Fan <peng.fan@nxp.com>  #i.MX95-19x19-EVK
+> > >
+> > 
+> > Thanks a lot for the review and testing,
+> > 
+> > Cristian
+> 
+> 
+> I've tested this v2 on stm32mp157c-scmi.dts. Using built-in modules
+> works perfectly.  I've tweaked my platform setup to test the .ko and
+> modprobe part. It works ok for the probe part but I faced kernel oops
+> when unloading scmi-module after transport is loaded, used, then unoaded.
+> The issue I saw is around calls to info->desc->ops->chan_free in
+> scmi_cleanup_channels(). I wonder if there are some ops that were not
+> unregistered when transport driver is unloaded.
+> 
+
+You are right, I could reproduce your oops in my QEMU/optee setup.
+
+There was a bug in chan_free for optee that pre-dated this series....it
+is exposed when unloading the scmi-module....I'll post a fix for this
+as the initial patch of this series V3.
+
+Moreover even once that was fixed, there was another bug in the
+optee_remove of this new transport driver since I was calling the
+platform_driver_unregister() too late (after the check for channel
+empty)...as a result when you unload the scmi_transport_optee BEFORE the
+scmi-module (which is another valid unload sequence option) the core
+SCMI stack was NOT unbound like for the other transports.
+
+Last but not least, I spotted another issue for all of these transport
+drivers (and related WARN) when finally unloading the scmi-core module
+(the last one to go) due to a missing device_release...this was easily
+fixed just by using other platform drivers core helpers...so I
+refactored more the DEFINE_SCMI_TRANSPORT_DRIVER macros internals...
+
+Next week, on top of -rc1, I'll post a v3 with all the fixes I
+mentioned.
+
+Thanks,
+Cristian
 
