@@ -1,177 +1,253 @@
-Return-Path: <linux-kernel+bounces-263117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F1A93D144
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8233B93D147
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3851F2198B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4169F282064
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033A1178CDE;
-	Fri, 26 Jul 2024 10:41:42 +0000 (UTC)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16871178CFD;
+	Fri, 26 Jul 2024 10:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nCt27bn+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53322B9C4;
-	Fri, 26 Jul 2024 10:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E1C178372;
+	Fri, 26 Jul 2024 10:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721990501; cv=none; b=fq4+5WJ4L1M6qFqpZAx8Sov+XCq47fDjEWLtNfqfTst5B5wR0T6d6pISgnIRZPmbePWmYhBAM8+ug21b8y0w2S50xzgFJOIhuxcd/a8SU5S5dINUWglXDO/H6KloejKNC8jO0L30eHkGX0wt7S4VxtFWOy0qgZZ41wG+m5nKkfM=
+	t=1721990514; cv=none; b=m+mE5wvzI++go5sKKE2zxw7nQ67gaVl9EWKKPHxs6PjSKbZsWY+6YP0ns6pSoe9nd3N0DvsfeOwRV90XDvmkv/uE3brSCcoYdmMTUTMgjloO5ONuGlPYzfMmxrZXVgv5UOYgQUnj411VBEH5S/qBcnxKxfin1EFEzaiS6IUdUIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721990501; c=relaxed/simple;
-	bh=EMIqymkkmsp2yIFmkqP9X5hm4EP09YGY3VbxMo/iihM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TAKsbkRfh+hZJLHtXMh+g8VzRrvA2zksCIx40vaAGLynvCDmlrIB6pFXlsm/nRQ52r3VX98qxkmj+JCbOaZ9jaLoiAY8hGS+1f/aR0W3W1V6qla8R3RgoK6UaOdH5tNKYW9cV9Ktv+u+gOjAr4UdJ86GEbJBzUpPNGyjKJrl5Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz10t1721990475two4uu
-X-QQ-Originating-IP: k2c1s9b73anA3oC7JtVpWn6Qej+uxjEfiRTb1KSKUL4=
-Received: from john-PC ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 26 Jul 2024 18:41:07 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13043270550837116636
-Date: Fri, 26 Jul 2024 18:41:05 +0800
-From: Qiang Ma <maqianga@uniontech.com>
-To: dmitry.torokhov@gmail.com, hdegoede@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: atkbd - fix LED state at suspend/resume
-Message-ID: <035AC89B9E0E2BE4+20240726184105.6b90f00b@john-PC>
-In-Reply-To: <20240726102730.24836-1-maqianga@uniontech.com>
-References: <20240726102730.24836-1-maqianga@uniontech.com>
-Organization: UOS
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721990514; c=relaxed/simple;
+	bh=A6AZIIZg8RUq7EFqa50vxGkOTJ+a1AC/uuxwAeOc2Wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M4pcfNBnMGBIc1Z3/8OPqrV73+/7418OCBAzw5tF3A1oxhINwFPQasH19FGaKJPfupRraJp6AV+88O4cUn8huoeBQJNzTlApU/Tp81LUuxgUiOY1Lz6DxeaDIB/lpGRiomq5yeFU18CrJMBzd1qB+cHgl9htUxJY5uHmcXMIKZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nCt27bn+; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721990512; x=1753526512;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=A6AZIIZg8RUq7EFqa50vxGkOTJ+a1AC/uuxwAeOc2Wc=;
+  b=nCt27bn+axmQGg0PMjM7CRTB+/ejJev9Mw2JFdQSOR/B8TS71VJ66lTx
+   2LEdmKet8fCnY9+u2OjBUvB7NizMxuyQNMwgP2w1nevsyfYzbD8IfUAZh
+   lqbV0xbSZDd495Q5gpBZ7vNXgSc/Kw10Ber3sZTihg/bzayIvPZ8U2C4p
+   YIN1nT2AKd7jfUYlcpq2DmBk/mUvLDAX8Op1omuG83m0UWh3oyXAZu2pz
+   5XYGaHNyJ5ecsBI9CC9e1AAXIfTWMxhxpmI82u6tN2o60gwaJh/OjZH6n
+   m0r8JRkcW4oSxhCcBB/WAOJY8xUVWWYyPgYxNf7oPUtCA9AjoGWI7z+v0
+   g==;
+X-CSE-ConnectionGUID: ZFr7obQfSdmDCySv5W9vAw==
+X-CSE-MsgGUID: /NXq4GxfTky93CqoiA1JdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="30375127"
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="30375127"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 03:41:51 -0700
+X-CSE-ConnectionGUID: AVtxKsHaT62o79HbIPIrrg==
+X-CSE-MsgGUID: 3UNh5Qs2Q1aTTnj2OTuafA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="53315847"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Jul 2024 03:41:47 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXIOO-000ozw-38;
+	Fri, 26 Jul 2024 10:41:44 +0000
+Date: Fri, 26 Jul 2024 18:41:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, vassilisamir@gmail.com,
+	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to
+ new configuration
+Message-ID: <202407261832.zSKjAoTj-lkp@intel.com>
+References: <20240725231039.614536-8-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725231039.614536-8-vassilisamir@gmail.com>
 
-On Fri, 26 Jul 2024 18:27:30 +0800
-Qiang Ma <maqianga@uniontech.com> wrote:
+Hi Vasileios,
 
-Sorry, add the correct email address: linux-input@vger.kernel.org
+kernel test robot noticed the following build errors:
 
-> After we turn on the keyboard CAPSL LED and let the system suspend,
-> the keyboard LED is not off, and the kernel log is as follows:
-> 
-> [  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
-> [  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> [  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
-> [  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> 
-> The log shows that after the command 0xed is sent, the data
-> sent is 0x04 instead of 0x00.
-> 
-> Solution:
-> Add a bitmap variable ledon in the atkbd structure, and then set ledon
-> according to code-value in the event, in the atkbd_set_leds function,
-> first look at the value of lenon, if it is 0, there is no need to
-> look at the value of dev->led, otherwise, Need to look at dev->led
-> to determine the keyboard LED on/off.
-> 
-> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
-> ---
->  drivers/input/keyboard/atkbd.c | 35
-> +++++++++++++++++++++++++--------- 1 file changed, 26 insertions(+),
-> 9 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/atkbd.c
-> b/drivers/input/keyboard/atkbd.c index 7f67f9f2946b..27d8f375929e
-> 100644 --- a/drivers/input/keyboard/atkbd.c
-> +++ b/drivers/input/keyboard/atkbd.c
-> @@ -237,6 +237,8 @@ struct atkbd {
->  	struct mutex mutex;
->  
->  	struct vivaldi_data vdata;
-> +
-> +	unsigned long ledon[BITS_TO_LONGS(LED_CNT)];
->  };
->  
->  /*
-> @@ -604,24 +606,34 @@ static int atkbd_set_repeat_rate(struct atkbd
-> *atkbd) return ps2_command(&atkbd->ps2dev, &param, ATKBD_CMD_SETREP);
->  }
->  
-> +#define ATKBD_DO_LED_TOGGLE(dev, atkbd, type, v, bits,
-> on)		\
-> +({
-> \
-> +	unsigned char __tmp =
-> 0;					\
-> +	if (test_bit(LED_##type,
-> atkbd->on))				\
-> +		__tmp = test_bit(LED_##type, dev->bits) ? v :
-> 0;	\
-> +
-> else								\
-> +		__tmp =
-> 0;						\
-> +
-> __tmp;
-> \ +}) +
->  static int atkbd_set_leds(struct atkbd *atkbd)
->  {
->  	struct input_dev *dev = atkbd->dev;
-> -	unsigned char param[2];
-> +	unsigned char param[2] = {0};
->  
-> -	param[0] = (test_bit(LED_SCROLLL, dev->led) ? 1 : 0)
-> -		 | (test_bit(LED_NUML,    dev->led) ? 2 : 0)
-> -		 | (test_bit(LED_CAPSL,   dev->led) ? 4 : 0);
-> +	param[0] = ATKBD_DO_LED_TOGGLE(dev, atkbd, SCROLLL, 1, led,
-> ledon)
-> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, NUML,    2, led,
-> ledon)
-> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, CAPSL,   4, led,
-> ledon); if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_SETLEDS))
->  		return -1;
->  
->  	if (atkbd->extra) {
->  		param[0] = 0;
-> -		param[1] = (test_bit(LED_COMPOSE, dev->led) ? 0x01 :
-> 0)
-> -			 | (test_bit(LED_SLEEP,   dev->led) ? 0x02 :
-> 0)
-> -			 | (test_bit(LED_SUSPEND, dev->led) ? 0x04 :
-> 0)
-> -			 | (test_bit(LED_MISC,    dev->led) ? 0x10 :
-> 0)
-> -			 | (test_bit(LED_MUTE,    dev->led) ? 0x20 :
-> 0);
-> +		param[1] = ATKBD_DO_LED_TOGGLE(dev, atkbd, COMPOSE,
-> 0x01, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SLEEP,
-> 0x02, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SUSPEND,
-> 0x04, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MISC,
-> 0x10, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MUTE,
-> 0x20, led, ledon); if (ps2_command(&atkbd->ps2dev, param,
-> ATKBD_CMD_EX_SETLEDS)) return -1;
->  	}
-> @@ -695,6 +707,11 @@ static int atkbd_event(struct input_dev *dev,
->  	switch (type) {
->  
->  	case EV_LED:
-> +		if (value)
-> +			__set_bit(code, atkbd->ledon);
-> +		else
-> +			__clear_bit(code, atkbd->ledon);
-> +
->  		atkbd_schedule_event_work(atkbd,
-> ATKBD_LED_EVENT_BIT); return 0;
->  
+[auto build test ERROR on 47ee461357f9da5a35d5f43527b7804a6a5744cb]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Vasileios-Amoiridis/iio-pressure-bmp280-Use-bulk-read-for-humidity-calibration-data/20240726-071712
+base:   47ee461357f9da5a35d5f43527b7804a6a5744cb
+patch link:    https://lore.kernel.org/r/20240725231039.614536-8-vassilisamir%40gmail.com
+patch subject: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to new configuration
+config: i386-buildonly-randconfig-005-20240726 (https://download.01.org/0day-ci/archive/20240726/202407261832.zSKjAoTj-lkp@intel.com/config)
+compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240726/202407261832.zSKjAoTj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407261832.zSKjAoTj-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iio/pressure/bmp280-core.c:3146:12: error: initializer element is not constant
+     .id_reg = bmp180_chip_info.id_reg,
+               ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3146:12: note: (near initialization for 'bmp085_chip_info.id_reg')
+   drivers/iio/pressure/bmp280-core.c:3147:13: error: initializer element is not constant
+     .chip_id = bmp180_chip_info.chip_id,
+                ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3147:13: note: (near initialization for 'bmp085_chip_info.chip_id')
+   drivers/iio/pressure/bmp280-core.c:3148:17: error: initializer element is not constant
+     .num_chip_id = bmp180_chip_info.num_chip_id,
+                    ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3148:17: note: (near initialization for 'bmp085_chip_info.num_chip_id')
+   drivers/iio/pressure/bmp280-core.c:3149:19: error: initializer element is not constant
+     .regmap_config = bmp180_chip_info.regmap_config,
+                      ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3149:19: note: (near initialization for 'bmp085_chip_info.regmap_config')
+   drivers/iio/pressure/bmp280-core.c:3150:19: error: initializer element is not constant
+     .start_up_time = bmp180_chip_info.start_up_time,
+                      ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3150:19: note: (near initialization for 'bmp085_chip_info.start_up_time')
+   drivers/iio/pressure/bmp280-core.c:3151:14: error: initializer element is not constant
+     .channels = bmp180_chip_info.channels,
+                 ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3151:14: note: (near initialization for 'bmp085_chip_info.channels')
+   drivers/iio/pressure/bmp280-core.c:3152:18: error: initializer element is not constant
+     .num_channels = bmp180_chip_info.num_channels,
+                     ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3152:18: note: (near initialization for 'bmp085_chip_info.num_channels')
+   drivers/iio/pressure/bmp280-core.c:3153:22: error: initializer element is not constant
+     .avail_scan_masks = bmp180_chip_info.avail_scan_masks,
+                         ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3153:22: note: (near initialization for 'bmp085_chip_info.avail_scan_masks')
+   drivers/iio/pressure/bmp280-core.c:3155:29: error: initializer element is not constant
+     .oversampling_temp_avail = bmp180_chip_info.oversampling_temp_avail,
+                                ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3155:29: note: (near initialization for 'bmp085_chip_info.oversampling_temp_avail')
+   drivers/iio/pressure/bmp280-core.c:3157:3: error: initializer element is not constant
+      bmp180_chip_info.num_oversampling_temp_avail,
+      ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3157:3: note: (near initialization for 'bmp085_chip_info.num_oversampling_temp_avail')
+   drivers/iio/pressure/bmp280-core.c:3158:31: error: initializer element is not constant
+     .oversampling_temp_default = bmp180_chip_info.oversampling_temp_default,
+                                  ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3158:31: note: (near initialization for 'bmp085_chip_info.oversampling_temp_default')
+   drivers/iio/pressure/bmp280-core.c:3160:30: error: initializer element is not constant
+     .oversampling_press_avail = bmp180_chip_info.oversampling_press_avail,
+                                 ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3160:30: note: (near initialization for 'bmp085_chip_info.oversampling_press_avail')
+   drivers/iio/pressure/bmp280-core.c:3162:3: error: initializer element is not constant
+      bmp180_chip_info.num_oversampling_press_avail,
+      ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3162:3: note: (near initialization for 'bmp085_chip_info.num_oversampling_press_avail')
+   drivers/iio/pressure/bmp280-core.c:3164:3: error: initializer element is not constant
+      bmp180_chip_info.oversampling_press_default,
+      ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3164:3: note: (near initialization for 'bmp085_chip_info.oversampling_press_default')
+   drivers/iio/pressure/bmp280-core.c:3166:17: error: initializer element is not constant
+     .temp_coeffs = bmp180_chip_info.temp_coeffs,
+                    ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3166:17: note: (near initialization for 'bmp085_chip_info.temp_coeffs')
+   drivers/iio/pressure/bmp280-core.c:3167:22: error: initializer element is not constant
+     .temp_coeffs_type = bmp180_chip_info.temp_coeffs_type,
+                         ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3167:22: note: (near initialization for 'bmp085_chip_info.temp_coeffs_type')
+   drivers/iio/pressure/bmp280-core.c:3168:18: error: initializer element is not constant
+     .press_coeffs = bmp180_chip_info.press_coeffs,
+                     ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3168:18: note: (near initialization for 'bmp085_chip_info.press_coeffs')
+   drivers/iio/pressure/bmp280-core.c:3169:23: error: initializer element is not constant
+     .press_coeffs_type = bmp180_chip_info.press_coeffs_type,
+                          ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3169:23: note: (near initialization for 'bmp085_chip_info.press_coeffs_type')
+   drivers/iio/pressure/bmp280-core.c:3171:17: error: initializer element is not constant
+     .chip_config = bmp180_chip_info.chip_config,
+                    ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3171:17: note: (near initialization for 'bmp085_chip_info.chip_config')
+   drivers/iio/pressure/bmp280-core.c:3172:15: error: initializer element is not constant
+     .read_temp = bmp180_chip_info.read_temp,
+                  ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3172:15: note: (near initialization for 'bmp085_chip_info.read_temp')
+   drivers/iio/pressure/bmp280-core.c:3173:16: error: initializer element is not constant
+     .read_press = bmp180_chip_info.read_press,
+                   ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3173:16: note: (near initialization for 'bmp085_chip_info.read_press')
+   drivers/iio/pressure/bmp280-core.c:3174:16: error: initializer element is not constant
+     .read_calib = bmp180_chip_info.read_calib,
+                   ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3174:16: note: (near initialization for 'bmp085_chip_info.read_calib')
+   drivers/iio/pressure/bmp280-core.c:3175:14: error: initializer element is not constant
+     .set_mode = bmp180_chip_info.set_mode,
+                 ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3175:14: note: (near initialization for 'bmp085_chip_info.set_mode')
+   drivers/iio/pressure/bmp280-core.c:3176:15: error: initializer element is not constant
+     .wait_conv = bmp180_chip_info.wait_conv,
+                  ^~~~~~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:3176:15: note: (near initialization for 'bmp085_chip_info.wait_conv')
+
+
+vim +3146 drivers/iio/pressure/bmp280-core.c
+
+  3144	
+  3145	const struct bmp280_chip_info bmp085_chip_info = {
+> 3146		.id_reg = bmp180_chip_info.id_reg,
+  3147		.chip_id = bmp180_chip_info.chip_id,
+  3148		.num_chip_id = bmp180_chip_info.num_chip_id,
+  3149		.regmap_config = bmp180_chip_info.regmap_config,
+  3150		.start_up_time = bmp180_chip_info.start_up_time,
+  3151		.channels = bmp180_chip_info.channels,
+  3152		.num_channels = bmp180_chip_info.num_channels,
+  3153		.avail_scan_masks = bmp180_chip_info.avail_scan_masks,
+  3154	
+  3155		.oversampling_temp_avail = bmp180_chip_info.oversampling_temp_avail,
+  3156		.num_oversampling_temp_avail =
+  3157			bmp180_chip_info.num_oversampling_temp_avail,
+  3158		.oversampling_temp_default = bmp180_chip_info.oversampling_temp_default,
+  3159	
+  3160		.oversampling_press_avail = bmp180_chip_info.oversampling_press_avail,
+  3161		.num_oversampling_press_avail =
+  3162			bmp180_chip_info.num_oversampling_press_avail,
+  3163		.oversampling_press_default =
+  3164			bmp180_chip_info.oversampling_press_default,
+  3165	
+  3166		.temp_coeffs = bmp180_chip_info.temp_coeffs,
+  3167		.temp_coeffs_type = bmp180_chip_info.temp_coeffs_type,
+  3168		.press_coeffs = bmp180_chip_info.press_coeffs,
+  3169		.press_coeffs_type = bmp180_chip_info.press_coeffs_type,
+  3170	
+  3171		.chip_config = bmp180_chip_info.chip_config,
+  3172		.read_temp = bmp180_chip_info.read_temp,
+  3173		.read_press = bmp180_chip_info.read_press,
+  3174		.read_calib = bmp180_chip_info.read_calib,
+  3175		.set_mode = bmp180_chip_info.set_mode,
+  3176		.wait_conv = bmp180_chip_info.wait_conv,
+  3177	
+  3178		.trigger_probe = bmp085_trigger_probe,
+  3179		.trigger_handler = bmp180_trigger_handler,
+  3180	};
+  3181	EXPORT_SYMBOL_NS(bmp085_chip_info, IIO_BMP280);
+  3182	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
