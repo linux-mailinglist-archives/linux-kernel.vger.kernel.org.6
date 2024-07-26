@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-263549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F68493D791
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F3F93D796
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC6AB2157A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B55283A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6650017C7DE;
-	Fri, 26 Jul 2024 17:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE5E17CA0E;
+	Fri, 26 Jul 2024 17:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="StZ9xlzD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WJDA2CTK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7IWXKut"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28628101F7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAB217C7C9;
+	Fri, 26 Jul 2024 17:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722014831; cv=none; b=Q/l9GlE7GsetvfSujbF99ZjiVFZg1ejj8/MYXmKELQJuB0ZYJRH7SAuVOnJMZ0gL1a0hoZ0EPWD4iB27eVJAf5klzDJ3HNLpR9qfEApap8W5piWSW/1/mV9hiX2jLLc4HAZ/zdBj+HUiF7rlcwu9LQOLQ9EAb+Jw+fhko4bB+jI=
+	t=1722014878; cv=none; b=fz99hHwBf5qS5kBFeyJJS/OcGS0cw+vVvXEi/twjzgxih8MhOSjBf910cXVgiB0X6LYZWm5zuVDLZzoDPgoZ6MIUgq4RzcGFFx71xjW9OS3f0KcKLvBmRTBw8+26bf4DhCTNJKvUGJXvFLeIWnLT16vDloI6ZSpHIGwp+8403ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722014831; c=relaxed/simple;
-	bh=FI+LnyAiyIHoblLH8gWwLVdWKrKuCN/cAEzg+klPyL4=;
-	h=From:To:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=Bk6xN1WSK4F4b+yw0zr+eqovHE25k+ble7TgxwQZowKT5BhZV3xYAoD39kOlId59cAe0hXK7gFoo4O8139Y23UZ5xvca9BhvKGdTJem9Lus6cgvsFbx8AysGRj+yfDL1BA/gRl+pJzS139HCr4SsYl2k7TX8YVbIYuhKlNoBNuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=StZ9xlzD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WJDA2CTK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722014827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Rz5NWKXgvOfmx9WgfuBLP0CmPfH1kfe4PExx5Va8Yjc=;
-	b=StZ9xlzDzhgkymU2a2BKeTSjIMOsQcg0EyNwh9T2hUkrHNz2cHaCFoT9xwkDNksAmqzb+V
-	DLLd+bY8R8XiKHIiAYQ8Q6wJqRPG21+PHGFoeY+P7v7GsdpW75Vdzg5K8hAtp5v9/w+ih7
-	RxEAz5ZPHN25gPUgGiZosz2WTu08Pe3WjpT8cWDotTm4L9GQ3cw3bO5uYbHtM0ME5RPWSc
-	6SthtdhXBE2ZbrfYtkcC5QRuDAm3ZWCzhRqZzOQpwoGLfJg2VpkBxAHLQs3YKXf3vZj8zD
-	68/fDEFLARyiThDQ6k6PgoTYxGs2NqrVWvB9XPsuCNbjjXcXWLgg6qS7MDJo4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722014827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Rz5NWKXgvOfmx9WgfuBLP0CmPfH1kfe4PExx5Va8Yjc=;
-	b=WJDA2CTKz1153tslQi/EEb6KpBKYlVT4TwI0q0V7/Jge2OKX1duDbj/QvbQEcEpT7if/bu
-	sFfZU6gJY8QwIWAQ==
-To: Pete Swain <swine@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] FIXUP: genirq: defuse spurious-irq timebomb
-In-Reply-To: <87jzhxvyfw.ffs@tglx>
-Date: Fri, 26 Jul 2024 19:27:06 +0200
-Message-ID: <87h6ccukr9.ffs@tglx>
+	s=arc-20240116; t=1722014878; c=relaxed/simple;
+	bh=RYD/owF2suu5o1Lgl86+/OAfmjGR1ZR4NG8RC5CHgac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ECA+EEwIkIWEUX4ZORCSc5YGuxMpx18O1cqsg/nZLROpoqS3xuhhk6HkWyWYU7IJFZ2CK1OJc7wMo06yWdGx9DaaLYaBDbjM6hzRFy+kZ0oSBRCihUIs2SZvJDDPYmhZ9fhZF5uBtNV3UumB9tS2yszi2lIrSjWZFLIF1cQms1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7IWXKut; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b95b710e2cso5091106d6.2;
+        Fri, 26 Jul 2024 10:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722014876; x=1722619676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r97e3GXSwTloPUuX/mhN3eyxcRY/5guMC/hNOxlJdh4=;
+        b=a7IWXKut6/Th9lU8F9nOjQnO3KWbVUv04ENVGH/vZZYe05F55KewwD1/1p5Jcr3SDK
+         MfoN18XsFrT8+dOkj+1oiTJCZ4Nv9fFfmDbL/eQIWmEuBJ4vKkghbtCA8qQzePp5Wq/v
+         20PM0mUqdiV3pKMr1Lkplw0vsBu5Qt4RHDgZDPktPYwWUYtAi85/avT6qI2rtsdbHgka
+         4Y7hpcI+HaMW2bkUzjgVVeW7rDvj+DYy/qU/iCzZpnTkaAQcGHP0QpS7xCaLVRonpmke
+         m1mDXCS6gzgLNgh1sC3jVmUWzzhErq4hjx2oQHSimiShVtv562RYywqQzcKefFJFA3Mq
+         6F7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722014876; x=1722619676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r97e3GXSwTloPUuX/mhN3eyxcRY/5guMC/hNOxlJdh4=;
+        b=I7u3WB4RnL/SY5b0qkaFH0FQssQ4SOW21UKQUArUBABO1BScR/eNyCc/Q8eU2TUuek
+         A5XhSpsoDgSNsM3iDyvxH7wLmd2ysRtdYeB9xpk7AFla5+Y7sVrF0cSUSUBfHo0aXJDP
+         2I5KHhW0Dj2YABBQi7/2Tw1tuN8wL9fx+fcGlE8qbyuD1UEWMxG793Rp11Yet04lZoxi
+         vpzf/Q1nM2XF4nfgF26sXKYzSKtMnbrHz4B8wtISmCJXnSH/tyf857VFMsUq5yk3l1qc
+         euCeG+chyiPJovgjab/o3vQ9SOTmjGLHeQng3I3vCrmvi69eKXc5g/NlRDf1syldk+3c
+         tKLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj/L6ourArws5tuQ14F+R4zEsymc8PpZO5RRv2i3MwtkWm3DflnSQRz58tMs/w9YEiKVjbrb6YPHhJio0cyEbOonfLVkPM4OI1JkNsAqeyCTcOd6MftcwpK/tu83pxjFNkpbId
+X-Gm-Message-State: AOJu0YyNx0zbjLx41JtLzsbBiEqQemG0vvm5//6T2jx5T/taEmvaV7rn
+	g306PSy8udOF0FQWfp/hXFlVvb46ZFxPgccp/AD0M19EuzVABaJ+
+X-Google-Smtp-Source: AGHT+IE852chFyJktcaioJZzEk32NHvwXvQIS9moHkEEfKOOvbmZFSRHXicbAYVpS0MTx0JcBRGtnw==
+X-Received: by 2002:a05:6214:27e5:b0:6ae:ba6:2136 with SMTP id 6a1803df08f44-6bb55ace834mr5973436d6.36.1722014875777;
+        Fri, 26 Jul 2024 10:27:55 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6bb3f9407c3sm18505046d6.71.2024.07.26.10.27.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 10:27:55 -0700 (PDT)
+Message-ID: <a17a952f-87c7-4ac9-983f-692c61dd73cf@gmail.com>
+Date: Fri, 26 Jul 2024 10:27:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240725142733.262322603@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240725142733.262322603@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Pete!
+On 7/25/24 07:36, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.223 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.223-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Sorry for the delay.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-On Sun, Jul 07 2024 at 20:39, Thomas Gleixner wrote:
-> On Fri, Jun 14 2024 at 21:42, Pete Swain wrote:
->> The flapping-irq detector still has a timebomb.
->>
->> A pathological workload, or test script,
->> can arm the spurious-irq timebomb described in
->>   4f27c00bf80f ("Improve behaviour of spurious IRQ detect")
->>
->> This leads to irqs being moved the much slower polled mode,
->> despite the actual unhandled-irq rate being well under the
->> 99.9k/100k threshold that the code appears to check.
->>
->> How?
->>   - Queued completion handler, like nvme, servicing events
->>     as they appear in the queue, even if the irq corresponding
->>     to the event has not yet been seen.
->>
->>   - queues frequently empty, so seeing "spurious" irqs
->>     whenever the last events of a threaded handler's
->>       while (events_queued()) process_them();
->>     ends with those events' irqs posted while thread was scanning.
->>     In this case the while() has consumed last event(s),
->>     so next handler says IRQ_NONE.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-I'm still trying to understand the larger picture here. So what I decode
-from your changelog is:
-
-The threaded handler can drain the events. While doing so the
-non-threaded handler returns WAKE_THREAD and because the threaded
-handler does not return these hard interrupts are accounted as spurious.
-
->>   - In each run of "unhandled" irqs, exactly one IRQ_NONE response
->>     is promoted from IRQ_NONE to IRQ_HANDLED, by note_interrupt()'s
->>     SPURIOUS_DEFERRED logic.
->>
->>   - Any 2+ unhandled-irq runs will increment irqs_unhandled.
->>     The time_after() check in note_interrupt() resets irqs_unhandled
->>     to 1 after an idle period, but if irqs are never spaced more
->>     than HZ/10 apart, irqs_unhandled keeps growing.
->>
->>   - During processing of long completion queues, the non-threaded
->>     handlers will return IRQ_WAKE_THREAD, for potentially thousands
->>     of per-event irqs. These bypass note_interrupt()'s irq_count++ logic,
->>     so do not count as handled, and do not invoke the flapping-irq
->>     logic.
-
-They cannot count as handled because they are not handling
-anything. They only wake the thread and the thread handler is the one
-which needs to decide whether it had something to handle or not.
-
->>   - When the _counted_ irq_count reaches the 100k threshold,
->>     it's possible for irqs_unhandled > 99.9k to force a move
->>     to polling mode, even though many millions of _WAKE_THREAD
->>     irqs have been handled without being counted.
->>
->> Solution: include IRQ_WAKE_THREAD events in irq_count.
->> Only when IRQ_NONE responses outweigh (IRQ_HANDLED + IRQ_WAKE_THREAD)
->> by the old 99:1 ratio will an irq be moved to polling mode.
->
-> Nice detective work. Though I'm not entirely sure whether that's the
-> correct approach as it might misjudge the situation where
-> IRQ_WAKE_THREAD is issued but the thread does not make progress at all.
-
-Ok. That won't happen because the SPURIOUS_DEFERRED bit stays set as
-before.
-
-Now looking deeper what your patch does. Contrary to the current code
-the very first hard interrupt of a particular queue is accounted in
-desc->irq_count.
-
-Everything else stays the same:
-
-  - SPURIOUS_DEFERRED is sticky unless the hard interrupt handler returns
-    IRQ_HANDLED, which is not the case in the NVME scenario. So the
-    !SPURIOUS_DEFERRED code path is only taken once.
-
-  - Any consecutive hard interrupt which returns IRQ_WAKE_THREAD where
-    threads_handled == threads_handled_last is accounted as IRQ_NONE as
-    before.
-
-  - Any consecutive hard interrupt which returns IRQ_NONE is accounted
-    as IRQ_NONE as before.
-
-I might be missing something of course, but I don't see what this change
-fixes at all.
-
-Thanks,
-
-        tglx
 
