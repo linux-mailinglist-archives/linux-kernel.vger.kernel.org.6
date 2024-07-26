@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-263595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C756593D813
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EE693D815
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCFF1F2363F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5101F2310E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C5D17C236;
-	Fri, 26 Jul 2024 18:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxg7YK7i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E2D38DEE;
+	Fri, 26 Jul 2024 18:15:59 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6A42D611
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207A4430;
+	Fri, 26 Jul 2024 18:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017686; cv=none; b=Fw5lXc49iQfeuMaKO/HZ+920qLFWUIcBolyUsz8QdoB66WnXac7qlevJXQFq1NcgtppxV+51S+O92PWptHeJXWtF89u7tKSHpJgSQYIzdAMvH8kW0ymlOCLX7rzXr91MqYmTVCGTyoNtTEoSvhc+Wz9ymBGGKvntg0cbuVyfaUQ=
+	t=1722017758; cv=none; b=n83RcwIcAOYKFvm143F5N23//7Wi0BJmD3qx3ut7i0kaQfVOORIhpOwkWWPYXM2yuyYI2j5mtp7eqSj1RG+bURtOj7vmjZgLMCnKi0t4G+vxsge2XqnyDrXtm/4z3enwtRepAz4JJ6yBRP5eAl3b+EYFKfy04B09vqvX39xOiyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017686; c=relaxed/simple;
-	bh=fXbrlGhMSm+MxbrzFbGyM5lDz8shybjYiKyqW7PfKcg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E1hckCVhMLSlveOOGPRizp2QLiMBl2zvejxOQe7dX5hAThOAFSdq6NvxgjQhpURg6OKNuP3AY8rcAU9Qeun8zBroJ5u2MDVzvFEOlm920hRcRJsO5zP94WQ61SPeTPlFRSdL4dIIZI+r4uet/0C84tKRVod+8v3H/pdgwS/l7/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxg7YK7i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5874C32782;
-	Fri, 26 Jul 2024 18:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722017686;
-	bh=fXbrlGhMSm+MxbrzFbGyM5lDz8shybjYiKyqW7PfKcg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Wxg7YK7iZv/1oD68uFODQ8mxN4U52WYBEpTV/4L6C/4GzF9MNX/qHZ9dhnkaT/Clz
-	 QASq6chz8vuiaOtDpEAlmd5B6aRM7qK4KGDNrz+IwSFlQO54GhdOQR1OZzv5RW2yCA
-	 PqGp7Gj5XMjZBELbNnUUkyaOQ5aKhVFFEz3mvjGsqAVMnodw7B3BPpDLxmuVvLAHkG
-	 vJtHObnvWqaU/OgHpd59xHdbnVqjEfNTBIXygOiAA/d8FHpkYYFFSAwKCSXmGkoF9g
-	 ZVlJ6+OKKUYKHMeumGcoRr8POVRWAh8xI2+qzg+ZDPubUbCzWW0SSdhOdupMBB1Ifx
-	 B0F8DlbAi3W3Q==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-In-Reply-To: <20240726-regulator-restrict-rzg2l-v1-1-640e508896e2@kernel.org>
-References: <20240726-regulator-restrict-rzg2l-v1-1-640e508896e2@kernel.org>
-Subject: Re: [PATCH] regulator: Further restrict RZG2L USB VBCTRL regulator
- dependencies
-Message-Id: <172201768463.94264.240372570015709112.b4-ty@kernel.org>
-Date: Fri, 26 Jul 2024 19:14:44 +0100
+	s=arc-20240116; t=1722017758; c=relaxed/simple;
+	bh=S6mpg8rek3pnX8Buy2j2lUHHorbEBJ7uWlmp+RNgnvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6BsVfZfWaELIYNnfnmXiBSTJ/at1EhTOr3P9VB/hN5wPLuRkb7FcGDxnUgxl2Ict6J4ryXLSpXyVmCu3czFrDzcHXVTfs/6o2PogtWm2tgEK3PZWAe8XEpIvzFBOrZB7KxkxKcBXuFzk+iL3YAT4uJFaANnOwJnWUSb6eG3Lko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 7E6541C009B; Fri, 26 Jul 2024 20:15:54 +0200 (CEST)
+Date: Fri, 26 Jul 2024 20:15:54 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.15 00/90] 5.15.164-rc2 review
+Message-ID: <ZqPn2mMguPnSRjAI@duo.ucw.cz>
+References: <20240726070557.506802053@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6Gk/BcIWScRv/fnK"
+Content-Disposition: inline
+In-Reply-To: <20240726070557.506802053@linuxfoundation.org>
 
-On Fri, 26 Jul 2024 14:49:41 +0100, Mark Brown wrote:
-> Since the regulator can't be used without the USB controller also
-> tighten the dependency to match, as well as the default.
-> 
-> 
 
-Applied to
+--6Gk/BcIWScRv/fnK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Hi!
 
-Thanks!
+> This is the start of the stable review cycle for the 5.15.164 release.
+> There are 90 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-[1/1] regulator: Further restrict RZG2L USB VBCTRL regulator dependencies
-      commit: e975d955c07cbc2cd6a83a5d8235d8373441fdb9
+CIP testing did not find any problems here:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.15.y
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Linux 5.4.281-rc2 (6b3558150cc1) -- no problems detected.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.4.y
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Linux 6.6.43-rc1 -- no problems detected.
 
-Thanks,
-Mark
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
 
+Linux 6.9.12-rc1 (692f6ed6607e) -- no problems detected.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.9.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--6Gk/BcIWScRv/fnK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqPn2gAKCRAw5/Bqldv6
+8tZ5AKCY+JhBZ5ZmvQEc7yt5gEIFltj/lwCguBJLlFZxbN929Tmw0UHP9X1rPyE=
+=sP8p
+-----END PGP SIGNATURE-----
+
+--6Gk/BcIWScRv/fnK--
 
