@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-263010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D5093CFC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:45:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F38493CFC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42A21C2231F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57031C22210
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9993A13D255;
-	Fri, 26 Jul 2024 08:45:17 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7E92E64B;
-	Fri, 26 Jul 2024 08:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC174070;
+	Fri, 26 Jul 2024 08:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R3HXmDR6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="36/yyFSj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6HHdttb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="raVTTpIt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E654405
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721983517; cv=none; b=sCzK+o0+dbrSfJeILzcyWLJBZr/h5ovzIoA9CjlPXoa5IIvFh5I5St0sZqmrQIds4Muc5mqw9SgKSpB9VwgH1oHzms0Fuj9hjtqxB1xwD0PPEO2DwqaKcq2SwTn3E+7eQnG9Waml5T8XbITi+xHCOpPcrXIAwKidiXmeShXmcy4=
+	t=1721983526; cv=none; b=VtdvBBoCyZ+Usfc0iv5D9GBEHtiY1rTbCYOUXIsG2A9cYwwGlHE6ZNGOpt72gBJbpZJ3xeT9G4ImDEMdXN46uCENFJFmafYBPvS6ik3pWvQ4vj1Vxpxw+szTgZbluJK70/tSyfcophFhWGrhJANaO07jhzXOaTPSLdPlwxTk7zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721983517; c=relaxed/simple;
-	bh=u9BrJxc04mZK3G3ncToJZjpU9o3nT694f4gHbI3vLps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUH89kl1RdJBhNg+jvsn7L4OpiI7BJuEv6Mag9tXwiFP/1Kq/vOFmqmaPZOvK0L3GXkAQu1qLblXy+xYAImS1lhfBiTmmTrAqIv7TdWjGhxczmDflF5VnVa7mfPHtN4dlc+Me78tvLM3gNvY+HnaYZ7EB+6UUnWN6hTklYMTlj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrACX92wAYqNmsjUCAg--.25306S2;
-	Fri, 26 Jul 2024 16:44:48 +0800 (CST)
-Received: from [10.12.164.29] (unknown [10.12.164.29])
-	by gateway (Coremail) with SMTP id _____wDn0Nb9YaNmiJMFAA--.5993S2;
-	Fri, 26 Jul 2024 16:44:47 +0800 (CST)
-Message-ID: <221f644f-c085-4873-93e2-4918375b1747@hust.edu.cn>
-Date: Fri, 26 Jul 2024 16:44:44 +0800
+	s=arc-20240116; t=1721983526; c=relaxed/simple;
+	bh=iQ5IhtZgLm+rkc5eoGm9hIH3ZDzmZomFvTPndZ9kpjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIv2bZfWxLHY9uEYlQJKvjl2Sv4nnIxg32RvHKwi/EXB+uip0oT68mOph+9BRCftaYVsYYndfjDpMTza97nAgo802sjBIfLs59pK7mvgt6NCmTF66CkUBQtDkjs2gMaxXJ8KnX+lUuOFX74SZVMdZqWU+EUN9JrQCDonsgjs+Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R3HXmDR6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=36/yyFSj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6HHdttb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=raVTTpIt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E12D921B83;
+	Fri, 26 Jul 2024 08:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721983522; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qEjuQevZqyO6CweEJ3yMgcImI5q9b4HueNFxukrWBY=;
+	b=R3HXmDR6ZntbVRxRffgSFTTFCjpeC/kN3PMIin3QZEPiOgPU2l6rr/y51TE9rGobZloSv+
+	asMgT8ANa4gqphYS7JOE9GB8WoML0BXBhx49x8H1mxaYUNPjc42IUnz8hRQiiFE8cJBnja
+	jYA4GXkqSJeMCrwMNVMKkZPs5Wbxc3A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721983522;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qEjuQevZqyO6CweEJ3yMgcImI5q9b4HueNFxukrWBY=;
+	b=36/yyFSjmKBVMEURwThxikMOX33AYH0q1VmW2fUFK6ymNOB4KUO497LGddWPbAXBwfMshn
+	vZUEuTFhvFKr3bBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=H6HHdttb;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=raVTTpIt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721983520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qEjuQevZqyO6CweEJ3yMgcImI5q9b4HueNFxukrWBY=;
+	b=H6HHdttbDtoV35snBjAs3Wrj/CV9s8nCVWIORdmuBBR7nuaCmw9NnX/sAwS5w01oyI8bgc
+	/pAyd5PXUt6Gubw6G98G7eN53401/ztCSYzax8fwfkvhx2XN7p8xhMvhoJtYkmSa30zHY5
+	7HEDdzj/czcr/jwW2Efr9YDXoZt9hPQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721983520;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qEjuQevZqyO6CweEJ3yMgcImI5q9b4HueNFxukrWBY=;
+	b=raVTTpIto06gD02x/iPJvqEW5wYTU5i5JtCrDGqjhlDcFcJ2n/plQF9R7ERv2+bEh7zyPG
+	OUvIWi+zCrfRbVBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C3D03138A7;
+	Fri, 26 Jul 2024 08:45:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S71pLiBio2YjOQAAD6G6ig
+	(envelope-from <chrubis@suse.cz>); Fri, 26 Jul 2024 08:45:20 +0000
+Date: Fri, 26 Jul 2024 10:44:56 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: linux-kernel@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
+	Li Wang <liwang@redhat.com>, Xiao Yang <yangx.jy@fujitsu.com>,
+	Yang Xu <xuyang2018.jy@fujitsu.com>,
+	Andrea Cervesato <andrea.cervesato@suse.de>, ltp@lists.linux.it,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Petr Vorel <petr.vorel@gmail.com>
+Subject: Re: [PATCH 1/1] MAINTAINERS: Update LTP members and web
+Message-ID: <ZqNiCJXCIUzn-KmP@yuki>
+References: <20240726072009.1021599-1-pvorel@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: update dev-tools/kcsan.rst url about KTSAN
-To: Marco Elver <elver@google.com>
-Cc: Haoyang Liu <tttturtleruss@hust.edu.cn>,
- Dmitry Vyukov <dvyukov@google.com>, Jonathan Corbet <corbet@lwn.net>,
- hust-os-kernel-patches@googlegroups.com, kasan-dev@googlegroups.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725174632.23803-1-tttturtleruss@hust.edu.cn>
- <a6285062-4e36-431e-b902-48f4bee620e0@hust.edu.cn>
- <CANpmjNOiMFUM8KxV8Gj_LTSbC_qLYSh+34Ma8gC1LFCgjtPRsA@mail.gmail.com>
-Content-Language: en-US
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <CANpmjNOiMFUM8KxV8Gj_LTSbC_qLYSh+34Ma8gC1LFCgjtPRsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:HgEQrACX92wAYqNmsjUCAg--.25306S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1kGFWrWFWfAry3uF45Jrb_yoW8Zw1xpa
-	yfuFyIkr4ktr17K3yIgw10yFW0yFZxtr1Ut3WUG3WFvrsIvFnaqrW29w4FgFyUZrWrCFW2
-	vF1jva4Fv3W5AaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQYb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl6s0DM28EF7xvwVC2
-	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUXV
-	WUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
-	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
-	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
-	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0EksPUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726072009.1021599-1-pvorel@suse.cz>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	URIBL_BLOCKED(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,fujitsu.com,suse.de,lists.linux.it,linux-foundation.org,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.31
+X-Rspamd-Queue-Id: E12D921B83
 
+Hi!
+Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
 
-On 7/26/24 16:38, Marco Elver wrote:
-> On Fri, 26 Jul 2024 at 03:36, Dongliang Mu <dzm91@hust.edu.cn> wrote:
->>
->> On 2024/7/26 01:46, Haoyang Liu wrote:
->>> The KTSAN doc has moved to
->>> https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md.
->>> Update the url in kcsan.rst accordingly.
->>>
->>> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->> Although the old link is still accessible, I agree to use the newer one.
->>
->> If this patch is merged, you need to change your Chinese version to
->> catch up.
->>
->> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
->>
->>> ---
->>>    Documentation/dev-tools/kcsan.rst | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/dev-tools/kcsan.rst b/Documentation/dev-tools/kcsan.rst
->>> index 02143f060b22..d81c42d1063e 100644
->>> --- a/Documentation/dev-tools/kcsan.rst
->>> +++ b/Documentation/dev-tools/kcsan.rst
->>> @@ -361,7 +361,8 @@ Alternatives Considered
->>>    -----------------------
->>>
->>>    An alternative data race detection approach for the kernel can be found in the
->>> -`Kernel Thread Sanitizer (KTSAN) <https://github.com/google/ktsan/wiki>`_.
->>> +`Kernel Thread Sanitizer (KTSAN)
->>> +<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>`_.
->>>    KTSAN is a happens-before data race detector, which explicitly establishes the
->>>    happens-before order between memory operations, which can then be used to
->>>    determine data races as defined in `Data Races`_.
-> Acked-by: Marco Elver <elver@google.com>
->
-> Do you have a tree to take your other patch ("docs/zh_CN: Add
-> dev-tools/kcsan Chinese translation") through? If so, I would suggest
-
-Thanks Marco.
-
-That patch will be merged to lwn tree maintained by Jon if all issues 
-are resolved.
-
-> that you ask that maintainer to take both patches, this and the
-> Chinese translation patch. (Otherwise, I will queue this patch to be
-> remembered but it'll be a while until it reaches mainline.)
-
+-- 
+Cyril Hrubis
+chrubis@suse.cz
 
