@@ -1,59 +1,70 @@
-Return-Path: <linux-kernel+bounces-262878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E8093CE32
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C2E93CE34
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A25282A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA26282B6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86812174EC8;
-	Fri, 26 Jul 2024 06:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB2174EFA;
+	Fri, 26 Jul 2024 06:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyr4r7RQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b="LmyYzhqd"
+Received: from outgoing2021.csail.mit.edu (outgoing2021.csail.mit.edu [128.30.2.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2210364DC;
-	Fri, 26 Jul 2024 06:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0688364DC;
+	Fri, 26 Jul 2024 06:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.30.2.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721975583; cv=none; b=Oh/5XF4KoizdYDgYQ6EvLF31lNLF/b4yli8xBt9trzQUtNErouDoNfx0ppET4qnZ43/l6N2/dP6gt06ej9cNmzO+bQYbaY5UI/cz6xJM0C4DTJ4vPV4h2wDo+dW+OMpuPvIMJtHllPYwcUk3SL5cOOIUIgpe1XEr9qbw9Ca3PUg=
+	t=1721975705; cv=none; b=Cmb9rR12GLA6VA7ZJNwEVo18NgU1dUzHS18ptQ0dCzv7kQutf1TgE/QsODOzP3TkkeYh5ovA8Y74q4dj6jnxcx1IhYla1gUjF8xYzHmoNkhFwc0XfDZrlLyNUIXYnxkamUGrPa1EELpAfioREJhzSBdk5UIMlgeuyYCCfuCl08U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721975583; c=relaxed/simple;
-	bh=LhmpSFRImNhxYoL4ax/b0424qCJAA3V6P/KQf12ysbo=;
+	s=arc-20240116; t=1721975705; c=relaxed/simple;
+	bh=PZfSsz3ulJHFXIi/lJFlfTJ3zWld9zetH28g4ZxlSck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bU7XBAeiTmEPKwunIPqczltxG8vHwBqU+p67PMIRITmNkciD1oxWb1L8oG2o76B0/qx3CBVQFOAz9B4hBwFRRk3/nQVM9PPrM5VOP2ZSKubjbvanJuIn0QEDZ+fT2hqASN+PXJNEgoeSmkJoilLWME5P8hObyHMg/+zhEXpzQaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyr4r7RQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AA7C32782;
-	Fri, 26 Jul 2024 06:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721975583;
-	bh=LhmpSFRImNhxYoL4ax/b0424qCJAA3V6P/KQf12ysbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyr4r7RQ75gZItslnwo2VMuQpShKw5/zjjrYPOsU2tI+J+5tQYPaSm1pHS1Sp5ZEe
-	 ZjsPiDlLZauPHW6ws5Muqwey2pIwtU0f7hvxVqYZvL2SWMuPKufITFentHFD2r4Pxl
-	 CWWHbN3BVDNjPTm8WXrk13HyreBnwTNfhG+bMR0Q=
-Date: Fri, 26 Jul 2024 08:33:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 5.15 00/87] 5.15.164-rc1 review
-Message-ID: <2024072645-delighted-barbecue-154f@gregkh>
-References: <20240725142738.422724252@linuxfoundation.org>
- <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCXf6jkbJoGYut4wpH/GAplPb1oA146nxBHZFxBzOTuUstyjK/0mqFoKYTAQ4jHvbylYPzC2CsnQEFbA+uswUWtyRnPDRpn84bj8dlV+mYjF+N9xHMJjsDgJbcaJDSZcrsECSa3DXOuc8UdpousoDLfOYxZvJ9EjSzH9B+HMiT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu; spf=pass smtp.mailfrom=csail.mit.edu; dkim=pass (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b=LmyYzhqd; arc=none smtp.client-ip=128.30.2.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csail.mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=outgoing.csail.mit.edu; s=test20231205; h=In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/9kziFIezmJwmyR7yuupUk0XJgkW6rjlPdbESAqvOlE=; t=1721975703; x=1722839703; 
+	b=LmyYzhqdZIVirmIVediROdSKUU8w2ffuegr0re9hIn/uBLIwOTSjNgPIyD8GZDv6d0bPRFr2qfL
+	aeFqsH36I7hmqxlHVo/Zivuc5Vnt0sdye5GyOHHclCBkROOe0e6C1Ir4R59k3vEz5UYierRoFONas
+	RCT3zQrW4QvrsZ1vbQ5ZEXjBTfuuI5qG+EfqN0b5Y7Vn/1hWL+GVDKgWGdZrRGtC+IiiTv0iV6xts
+	Y9HYPd6BPdg/Nak7JrSlI6XsHKnaxyBWu9UO1NBvZTF9tFpQ25ebPhfyfgHsfnq7olXVHyN1+xrW0
+	CiGFj0UfGqKUKxNrHmxjvO4EC+DSMKLXQD5g==;
+Received: from [172.179.10.40] (helo=csail.mit.edu)
+	by outgoing2021.csail.mit.edu with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <srivatsa@csail.mit.edu>)
+	id 1sXEXc-007RmA-56;
+	Fri, 26 Jul 2024 02:35:00 -0400
+Date: Fri, 26 Jul 2024 06:34:53 +0000
+From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	KY Srinivasan <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Saurabh Singh Sengar <ssengar@microsoft.com>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Message-ID: <ZqNDjUALdN2Qtop6@csail.mit.edu>
+References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
+ <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
+ <20240725153519.GA21016@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SA1PR21MB1317797B68A7AFCD8D75650ABFB42@SA1PR21MB1317.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,75 +73,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvCyg1hXaci_j-RB4YgATb458ZqRjJSye4qub9zYrmL_A@mail.gmail.com>
+In-Reply-To: <SA1PR21MB1317797B68A7AFCD8D75650ABFB42@SA1PR21MB1317.namprd21.prod.outlook.com>
 
-On Thu, Jul 25, 2024 at 10:18:49PM +0530, Naresh Kamboju wrote:
-> On Thu, 25 Jul 2024 at 20:22, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.15.164 release.
-> > There are 87 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.164-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Fri, Jul 26, 2024 at 12:01:33AM +0000, Dexuan Cui wrote:
+> > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+> > Sent: Thursday, July 25, 2024 8:35 AM
+> > Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
 > 
-> The following build errors noticed while building arm configs with toolchains
-> gcc-12 and clang-18 on stable-rc linux-5.15.y
+> Without the patch, I think the current CPU uses IPIs to let the other
+> CPUs, one by one,  run the function calls, and synchronously waits
+> for the function calls to finish.
 > 
-> First seen on today builds 25-July-2024.
+> IMO the patch is not "Deferring per cpu tasks". "Defer" means "let it
+> happen later". Here it schedules work items to different CPUs, and
+> the work items immediately start to run on these CPUs.
 > 
->   GOOD: b84034c8f228 ("Linux 5.15.163-rc2")
->   BAD:  1d0703aa8114 ("Linux 5.15.164-rc1")
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build log:
-> -------
-> from drivers/net/wireless/ralink/rt2x00/rt2800lib.c:25:
-> drivers/net/wireless/ralink/rt2x00/rt2800lib.c: In function
-> 'rt2800_txpower_to_dev':
-> include/linux/build_bug.h:78:41: error: static assertion failed:
-> "clamp() low limit (char)(-7) greater than high limit (char)(15)"
->    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
->       |                                         ^~~~~~~~~~~~~~
-> include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
->    77 | #define static_assert(expr, ...) __static_assert(expr,
-> ##__VA_ARGS__, #expr)
->       |                                  ^~~~~~~~~~~~~~~
-> include/linux/minmax.h:66:17: note: in expansion of macro 'static_assert'
->    66 |
-> static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),
->  \
->       |                 ^~~~~~~~~~~~~
-> include/linux/minmax.h:76:17: note: in expansion of macro '__clamp_once'
->    76 |                 __clamp_once(val, lo, hi, __UNIQUE_ID(__val),
->          \
->       |                 ^~~~~~~~~~~~
-> include/linux/minmax.h:180:36: note: in expansion of macro '__careful_clamp'
->   180 | #define clamp_t(type, val, lo, hi)
-> __careful_clamp((type)(val), (type)(lo), (type)(hi))
->       |                                    ^~~~~~~~~~~~~~~
-> drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3993:24: note: in
-> expansion of macro 'clamp_t'
->  3993 |                 return clamp_t(char, txpower, MIN_A_TXPOWER,
-> MAX_A_TXPOWER);
->       |                        ^~~~~~~
+> I would suggest a more accurate subject:
+> Drivers: hv: vmbus: Run hv_synic_init() concurrently
 > 
 
-Thanks, I've added a commit that should resolve this now.  I'll push out
-a -rc2 in a bit.
+It would be great to call out the "why" as well in the title,
+something like:
 
-greg k-h
+Drivers: hv: vmbus: Speed-up booting by running hv_synic_init() concurrently
+
+Regards,
+Srivatsa
+Microsoft Linux Systems Group
 
