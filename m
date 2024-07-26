@@ -1,236 +1,130 @@
-Return-Path: <linux-kernel+bounces-263663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900E893D8D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:04:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6F893D8D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDD2878CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:04:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3061C21D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8E044C61;
-	Fri, 26 Jul 2024 19:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5DB25624;
+	Fri, 26 Jul 2024 19:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N1sE3DcK"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UCaCcooA"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B012B9B6
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 19:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3A2481B7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 19:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722020643; cv=none; b=FxQL8gw1vFZJSj7xCuZbaMorf2K/AkHU/GCLLwgsGnZjw/4Z51R+ELPkD1UWdE5qopXUH9Hs6G33Gnn/ttMd0MoaULj+4GJILXjcCrD/i8RLFjVe0+LvrLNFMkWf4NUcgrMuDk7zMOLViQRBdCtRMDCHYOz3CT8q8oeV2T7pjXk=
+	t=1722020662; cv=none; b=mPrCOOqLAXX7MsEjr78eOPxJbNa621++ni2imbqXPNPEnivVEXA3FoTJpMK02/MhYfC1KadK3HsQyvoHEU0/j0LD38xhEtJ3D+jlbsKJUyEVw9jDPBMkRWHg0CK0YcRqz68svZ2B4iZumAuiXTCN6FvL+EpDvwdbg69kECCN0k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722020643; c=relaxed/simple;
-	bh=oyfeVLsyHJ/YHSE7tbJBTGik/zHBAkueBSeDd+2wK04=;
+	s=arc-20240116; t=1722020662; c=relaxed/simple;
+	bh=xYFuuot4DpQ3JXmw6W+JjQRTFtIKxSNiP41inmJwMbw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5xcNRh981kAX7qztdUQpfVGOixR0VAObvDQFVuipKtPHnhSNe9TWhpDCXTTyCDWONjhSWVxA3byO8XVcgAjXJFlTBUBlLxoBcl++oXcz7sAgR60zBeE7E2NQNSiX1OqlCcVShzbsb06r6IY6vtoWy77LmHLVw14jpLYnniCr30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N1sE3DcK; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so19438911fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:04:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=p4G4v3w2i/3JmxyWVxruwO+55dYOsgxBAogV49DNi5eMZi2oLFTGIWZYG9c/VxaiqPA5mPdrjLG6OLwA02/5YkjMB6Pihfb/mTtAp332XPu6AkQmH6XtJMnO/32A1+r4LTFvUV61v5guI8kuSlCT0gStx68UY2aXqy/TZBMualo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UCaCcooA; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368526b1333so3456f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722020639; x=1722625439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iVsj/EPBAdEVAmOQw/UxLNzRq43K0AOsy8TSUWSEC04=;
-        b=N1sE3DcKYgxDhNW8uPVXApdju9VSrV/E9xtefNByJiHyNNpNRG60mzbVUiKaF2lUIT
-         lGUIe2NOgpGMT8kskfRQFkeRPpl79xg7JsZ8yLshKfCUKZAp3B8yVaTcI2ZG2tdoCiXi
-         5hjwjXEW0oDKRVTiN/qhLZ49L9O/H6oijNSFU=
+        d=google.com; s=20230601; t=1722020659; x=1722625459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xYFuuot4DpQ3JXmw6W+JjQRTFtIKxSNiP41inmJwMbw=;
+        b=UCaCcooAMM0AqHLu1hHPLQKbFakgbWYI4rgMKVWtRSXibVmNqGy/vcrBxU6Q4e3SmN
+         jww59C2VO84GItB+tsvV6vOWrjTpj1xQKDk6jqOqNyFMe9oqExOPZkBgU0m9gsQ0go9I
+         4l0S072y9yFdBYJGWARlRp58EmCn2zkVwM6BBDBBQKR6NnUJ2yjXSnPo6OuBo2+ui0fl
+         qcEGO0pDnwjkIa1bAKmEw5gJWlIaF1uu5VgiJzE8esbeC5atIo6qtrQKm5BaFFOa3KMY
+         2gWsFW2b+SnXVuT0/xcAWzskLlsMfquQDhNQ4j5KFQuIWwF+neSNEjgcnYMgc/te42xm
+         7cpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722020639; x=1722625439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iVsj/EPBAdEVAmOQw/UxLNzRq43K0AOsy8TSUWSEC04=;
-        b=ufi2GYgHfgYzLLM8wg1Jith7AG/q6vKYPZuo7/aThMeA/DojfA1hsdV2ygm37Uy6pJ
-         VoPTcArRafGtJmUjo+Dip52rFI3VfpYwfEScuCDW1Um5r5dwYJRAGgVrUdQidoBpQuj7
-         BnONmi0fSPjANzQNlzTQ4YQC2oux5OOFzckT579jOyuT7sJuJ5PJdDcwQtmft3z5nza8
-         PN7mC5yMpdc+AtMiAk1Re3DIvc0cc/ltJxG6ilMuZQIVsQIrp5/5n156+4piI68Hc/kT
-         FZknbbyLh9LfZger6zJzFDRzutLh5pLcvWB3tFy7EBGy0UJ8opRFzDyPMhdgyra8XO/K
-         VdQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/HRuHh1lV5j9mfzApuQ42PippB1apfZ93HgCRwOggiGgIGX+44ngN/VNv8ngpV0MHpbXgWXZyz4QssGbxcMYTQrwZKjV8R0rYXxkQ
-X-Gm-Message-State: AOJu0YxZvEjwyxp/xcU1jJ3e7MG8x4tnV9BNrjpErD7izCoqFTNvsE8m
-	B31cLlrWyI/x5P+bQgBvDvjegJikvX6JAAMqoDZKMGrRSEzn76MorbIndBhki6PNdTUw0Rq1I8a
-	ZaFVAjU5jOEB8JO79mPB2s6p506hbH5lSx0m7
-X-Google-Smtp-Source: AGHT+IG1SXb+U8D0H/6OcgG13Ysiov3i2X5eAtAiX7hq+n5L2EXtDWoZNsiSqYa0Hlb2Cytz//WWpadVFPxw1yW8i+w=
-X-Received: by 2002:a2e:8508:0:b0:2ed:275d:aa44 with SMTP id
- 38308e7fff4ca-2f12edd67f5mr3536061fa.28.1722020638629; Fri, 26 Jul 2024
- 12:03:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722020659; x=1722625459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xYFuuot4DpQ3JXmw6W+JjQRTFtIKxSNiP41inmJwMbw=;
+        b=ndtxyvoubsg5JkvSMJOiwXqXgWOoqXokxAGVMqXK0l7/zmoPzddL1u3bwK/P6oRihJ
+         7g1sLyJO3ZSjALftpdI2zYZbHKaYWnvHkLgk/vbaG1qLbQXUJHFhh2x2kTzHjsQzChwO
+         pYmLUPJKMyKdpXsFz3H3pkVLCXT/Aufjkm8ugclicCuXkPNIFuUqPGVhZCZ/pTCIhsIl
+         wTEbXS1vcxQHdurcwD0ld0vWlsSkIQy/SpYW03kFpLv6EtriJDa/+fQnN0+5RouA1i6H
+         Q0C+k4XhEuwkWXzbaGcJNoGimp2NgVgFe9CcJ318i57Rn0MIUgLSdNmF0HO/ba3la/mn
+         4L8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+7JqnJjKqB9DtPP17EkeThQpNeYzrAoBhTa6NTEMjU9voPg9iv/1EKG3pwjKCfItht1OjDN4Fjd5QjhKRgA6EWdVDTbpd0Z3a1SNn
+X-Gm-Message-State: AOJu0Yxl9r4t9KiJ8+VS4ZmjacEChJuuWF26txBneMlp4N3xHaMuuSfg
+	GZwQgVrrULLJWxG/tF0XfWRli9+r1U8TsKP/br1cx40fRpGKtV9m40APpVqXh18wGT4qvdez7p3
+	BqY13AKW2cbnu8bokXrlUq69fiDdFhvKLSny7
+X-Google-Smtp-Source: AGHT+IGraFaJZI/vS7GrHlj76pQFsxGjJcZravrRHHY5P9k1QKBepfjho9WjF6LoZFZWRcHCO/+oR9tNGGFrpgwCYKc=
+X-Received: by 2002:a5d:5267:0:b0:367:8e63:4da4 with SMTP id
+ ffacd0b85a97d-36b5d7cfa4amr360487f8f.14.1722020659116; Fri, 26 Jul 2024
+ 12:04:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-9-james.quinlan@broadcom.com> <20240725044812.GI2317@thinkpad>
-In-Reply-To: <20240725044812.GI2317@thinkpad>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Fri, 26 Jul 2024 15:03:46 -0400
-Message-ID: <CA+-6iNxpWZY2n7dscc=79q3ix7S=cjWy1uHfyiA68HD3Mzoxew@mail.gmail.com>
-Subject: Re: [PATCH v4 08/12] PCI: brcmstb: Don't conflate the reset rescal
- with phy ctrl
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000007d7c8f061e2b2ce4"
-
---0000000000007d7c8f061e2b2ce4
+References: <20240723-vma-v1-1-32ad5a0118ee@google.com> <3bf6bfdc-84af-442a-acec-a58f023d1164@proton.me>
+ <CAH5fLgjfiE6xNpKVBAgXu=eFyE65k+RxWqNt10J+44pK-mJgTw@mail.gmail.com> <b7e8b816-a3c1-454c-bf97-516bf78c697c@proton.me>
+In-Reply-To: <b7e8b816-a3c1-454c-bf97-516bf78c697c@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 26 Jul 2024 21:04:07 +0200
+Message-ID: <CAH5fLgjF-_CKsgKm1OkSFMBt_HScO0o0fJBnaQY6W7fm1yPFiA@mail.gmail.com>
+Subject: Re: [PATCH] rust: mm: add abstractions for mm_struct and vm_area_struct
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 12:48=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Fri, Jul 26, 2024 at 3:37=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
 >
-> On Tue, Jul 16, 2024 at 05:31:23PM -0400, Jim Quinlan wrote:
-> > We've been assuming that if an SOC has a "rescal" reset controller that=
- we
-> > should automatically invoke brcm_phy_cntl(...).  This will not be true =
-in
-> > future SOCs, so we create a bool "has_phy" and adjust the cfg_data
-> > appropriately (we need to give 7216 its own cfg_data structure instead =
-of
-> > sharing one).
+> On 26.07.24 10:32, Alice Ryhl wrote:
+> > On Fri, Jul 26, 2024 at 10:11=E2=80=AFAM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+> >>
+> >> On 23.07.24 16:32, Alice Ryhl wrote:
+> >>> This is a follow-up to the page abstractions [1] that were recently
+> >>> merged in 6.11. Rust Binder will need these abstractions to manipulat=
+e
+> >>> the vma in its implementation of the mmap fop on the Binder file.
+> >>>
+> >>> The ARef wrapper is not used for mm_struct because there are several
+> >>> different types of refcounts.
+> >>
+> >> I am confused, why can't you use the `ARef` wrapper for the different
+> >> types that you create below?
 > >
+> > Well, maybe I can, but it means we have several wrapper structs of
+> > Opaque<mm_struct>. Would it not be confusing? Could you suggest a
+> > naming scheme for the structs I should have?
 >
-> In all commit messages, use imperative tone as per kernel documentation:
+> I don't know of a good way to avoid that, IMO your current
+> implementation has the same issue (multiple wrappers). So I don't think
+> it's that bad to have multiple wrappers for one C struct.
+> We could also use generics to solve this, right? I am not sure about the
+> ergonomics/looks, so for example:
+> - ARef<Mm<Grab>>
+> - ARef<Mm<Get>>
+> - ARef<Mm<Async>>
 >
-> "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-> instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-> to do frotz", as if you are giving orders to the codebase to change
-> its behaviour."
-
-ack
-
+> I think it looks fine, then you also only have one struct wrapper.
 >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 17 ++++++++++++++---
-> >  1 file changed, 14 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index dfb404748ad8..8ab5a8ca05b4 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -222,6 +222,7 @@ enum pcie_type {
-> >  struct pcie_cfg_data {
-> >       const int *offsets;
-> >       const enum pcie_type type;
-> > +     const bool has_phy;
->
-> 'has_phy' means the controller supports PHY and the new SoC doesn't have =
-a PHY
-> for the controller?
+> BTW what does "mm" stand for? Memory management?
 
-Well they all have a phy but in this case parts of it are exposed to
-SW.  Perhaps "has_phy_cntl" would suffice?
+mm stands for memory management. Basically, an mm_struct keeps track
+of the address space of a process, as far as I understand.
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
-
---0000000000007d7c8f061e2b2ce4
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIQbgYJKoZIhvcNAQcCoIIQXzCCEFsCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3FMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
-MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
-rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
-aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
-e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
-cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
-MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
-KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
-/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
-TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
-YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
-CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
-BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
-jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
-9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
-/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
-jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
-AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
-dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
-MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
-IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
-SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
-XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
-J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
-nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBU0wggQ1oAMCAQICDEjuN1Vuw+TT9V/ygzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE3MTNaFw0yNTA5MTAxMjE3MTNaMIGO
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xFDASBgNVBAMTC0ppbSBRdWlubGFuMSkwJwYJKoZIhvcNAQkB
-FhpqYW1lcy5xdWlubGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
-ggEBAKtQZbH0dDsCEixB9shqHxmN7R0Tywh2HUGagri/LzbKgXsvGH/LjKUjwFOQwFe4EIVds/0S
-hNqJNn6Z/DzcMdIAfbMJ7juijAJCzZSg8m164K+7ipfhk7SFmnv71spEVlo7tr41/DT2HvUCo93M
-7Hu+D3IWHBqIg9YYs3tZzxhxXKtJW6SH7jKRz1Y94pEYplGQLM+uuPCZaARbh+i0auVCQNnxgfQ/
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB8AvYQ58aHjpB1NmermQfsftTGQEGP
-GYsvc8OLp4vipzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MjYxOTAzNTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAkIs2MP34YqZyQuPLSfbCec7itwaoXxwrjcd8KoM7PM5v3k9b
-sRg3EyvGvsN+JKiO1LdtlBA0m3XmDW9FshAeiY16EwIWeV+mzAJ4K0il3Ez23VJpFolU4H5Lvc2w
-H2zNC8C3DHia8NiywC7MpYBBczZMoTSBAE0QAl1jSCCEiJhDcZ5tDOHyTt71JVIwiQCZ0BR1avaM
-TcSglJB8xSWGPTTJ/KYcMwYex4buhiMZSserXvoT4PFIoPcRJiwN//NN1f2OavbKNqM4cG0C0CcS
-aihxWRnD+kA7JdmOhzDV6FqaOotxtj3T5Vp3cuvh5p2jiQriwF84lCljowuH80gTXA==
---0000000000007d7c8f061e2b2ce4--
+Alice
 
