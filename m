@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-263297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495F093D3F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D3E93D3F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82C81F24603
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015471F24B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0183717BB08;
-	Fri, 26 Jul 2024 13:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FAB17C213;
+	Fri, 26 Jul 2024 13:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ghjrTmDd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EF47Fbnm"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UldgrY9h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FA526AC1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FAB13A3F7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999727; cv=none; b=lxxAoEffQSHnebQzcaW4gm82q+KauWpj1kGihS/Jow7mHGNPGGFRtcRkAwtRkROfG2saSlLNXqRhKWhrY+6aoOvug6CWclIRAhoHFoXIN5bSLXB1CCIpSkxZ57dcJbGc8uP1mI0+3KHtv6EeJ4VZAwexrXJVlFwxS9iz6R4WdVA=
+	t=1721999786; cv=none; b=qaGINwhKd5BXillC1pxoxg/DEIZH+wQkQqLcr1cFyo2eGf1ZluoPbFzE4FZqQywlEVOSy+AlUDH8rXr4XYYiDtngzDtF6Mfb7HLD0cW6Jao+xYnHULwRz+qB61W7+fbQNQA2cs5IlZI7XeDX/8FYowah2g2UbGTB0j8UB1eDLK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999727; c=relaxed/simple;
-	bh=KBkSItQ5W9vXjTLB0wNp3OSgw/qYTIPXnusMwnKylWU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=arsIJubQgOLMvj2sDEMRR7YQ/8C9dbctniu2zxyWCXryRh/wJ2KLoFsnlTi5htZ3A+ycmMlIId09uPtPI/+7IuvO+WQ70JbgPBeVGvwINWnh++x0nV1cNECex9dGtCgIwr8dmvW7ah/ucAvjt6ucpBoeyza9oGdWKEwrETIWzqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ghjrTmDd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EF47Fbnm; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 50449114011D;
-	Fri, 26 Jul 2024 09:15:23 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 26 Jul 2024 09:15:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721999723; x=1722086123; bh=vmerSIvbbd
-	JwhSoqOIXC2+RNPWABTiKzG+1CMpROaZc=; b=ghjrTmDdPDJjPGtsBL3GmDFdm2
-	ZSBHeCrIQTA8d5RP5V/BWeM0BoUG41sbDKwyY7tmNlEx+73N936TJ9LuA+S/bR3m
-	zrdmQFpRDJVVGosH+az8iD6LVLyRPAzkzQPBflA2nbFs1cQ57CMMAhWDK+tPz9d3
-	H6bs+8aRAkn++KkCLIdVHEbgf/BXflmJ9lh6a9AL4g12NAODKMIXyA+za0cZmHsx
-	JHQhlvTtF8wOk8SKaB6oo3bPPPI+L+HEh91YxjwonpY+6iC9uBsrpoB9AQcT9/yv
-	o8JkiMpYSZIwrdjgc5stCOFVf9qH8PazJzkATwTdV6OuDcq8qYL7M6abBf5Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721999723; x=1722086123; bh=vmerSIvbbdJwhSoqOIXC2+RNPWAB
-	TiKzG+1CMpROaZc=; b=EF47FbnmLU+CJUubr/cPrjx4zEz1IOVRC4/g1UvlMAmq
-	ZMd2zO3DP4DrRxlX35r4KyLsNy9iKiwVBRAHXB978/jGdMGgUeMWqc/xL1b8rulH
-	Xn1W1B3IzOyf1g7fotJLffVtgt7Z64QvMH/8mpgWrn57aWAe0D1fCgBjNP74RoX2
-	fyuGgeek9KBwPq6lS7r7eYIXE2UWIk4NJQnvFBWVHPUe+WrKuHA5EmnfNqkWd9VA
-	nhjeLdwTFQUTRErtjhX9VjyrWV2831Qafhfv1qtiWw7Svw01sPYENmnozNx4Z2de
-	UPA4EkbhuqDkch2HS6moVtxi4i1vPMyDMsBjnjroCQ==
-X-ME-Sender: <xms:aqGjZncmek0d6DlX5rmfDs2Hcc7wlLiF6sd-quL8SMEpCzGM5GXXMA>
-    <xme:aqGjZtNmO6ulIS3ch5Fvozb5Oq717545zCUQKC3Nu8_K28teDcgief867jgrfaJCf
-    ZjdyQyiNMosqCejiDQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieehgdeigecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:a6GjZgiykAIw5yRnIFqQsaa_mngBGf75_Xm0KqCEWbw5sZnXN4--UA>
-    <xmx:a6GjZo9p0mtK0c5J0yrdyvtgk5e7n1iW6mzNkfbTbUnNBC6xEyX3_A>
-    <xmx:a6GjZjswhYF-bomv4LRH6KedP5n9FyT3TSFva15cojTBjlSW6H6yrw>
-    <xmx:a6GjZnEnVfADJzgstmkdjBLpRwGGk-eQJ82n-kLFgbylj2GerKMNcQ>
-    <xmx:a6GjZtICG5hmWnk3HExbAcf9xtu_I0y6rsYQsTfl-dm5M_gBXD6P---B>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D829FB6008D; Fri, 26 Jul 2024 09:15:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721999786; c=relaxed/simple;
+	bh=xmKf9omwUxucT1oeRkAGbgWNHALpXShtwR2JSwaiBgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=G8kjMJLZFFAQHRd0KESXgIjvtu6QSPwmkV1bQLUjbqu9CpuNanp2YVsDPqOVjG+TQYMrCxKTYn0TCgB1fCPUNxNU6LZO8Hdlf8t/T5NbjohNVG6H+rIVdVTKVAKT+nEcAicpsFU72cdI9gpVeDFJHYiog2tUW2UwWvJ1CGveynA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UldgrY9h; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721999783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r+Xb2FoYdB0d76xIYmgmvNy/BmZ9+wOzI/YfNgYKqlo=;
+	b=UldgrY9h4raN3oKBJQ1WArLmBAH9YOgPrXETU15x6/S0SvEzStRrMT2zqxvR4xCzPwkyfb
+	WzDupIqjHXzhqr5oC0ZsLKl9lPspwVB0JFgtuTPHf4nMy8gckp7WLWZ/NENWZ652zT7jRz
+	bZxoqv8pd5aJl6NmE7q2dRJfjNCdBDs=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-EoRgXg6QOyytad3d8_ddmw-1; Fri, 26 Jul 2024 09:16:22 -0400
+X-MC-Unique: EoRgXg6QOyytad3d8_ddmw-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f0276170f9so12456201fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:16:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721999780; x=1722604580;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r+Xb2FoYdB0d76xIYmgmvNy/BmZ9+wOzI/YfNgYKqlo=;
+        b=xUvE/tirATUxOAMorw0ILI1o38UzZmc5CSad2SagF3dESqO0J8py2sf6ItW8wlBMg6
+         JFzryhypScMa00Qo3t/JZhjxkNwDyFVIw99ek1sUHFGdTOMof36ZG2vNA08W7O5/k3VO
+         SyUWwiGpEgY/6cLTxP26AgKJcGPd0WksD7mhKZalwbuqx0LRi0suH2ns/oFVZe5vS31g
+         OZf2bmOdGJAyk6TAdu5peDL47Za/KiAYZqpE4EQz24gAK+d40tApqlyJ7olO0KNsni1d
+         zuo8XQpO6LcLtm8gxOYjBXSlAybBT2OnwJnpc3Hn17WhTyzJrvas98ieHRsADGphzNJj
+         gdbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjrBc0gkLnXRRFISIcbiJktJ42k3qUM4x8tRRKFmOuDCynJemsAfFzyH6fGtKE++I0O1iZpqMDkjSfoAoXEusIt+isXBrkDKtjfDgW
+X-Gm-Message-State: AOJu0Yw43rvzFZLsh31ZTwGuNcP+HuRC+aH7aRuZfEHd91tU52xW7HXy
+	tJGV8dONucvOvWXy2XnwVq620u/RZdOYI/l00KOjozdwCq25Cp8zcF2RoRTm0A9F1RoL7XFQgp3
+	Z0nJzqnoKxnWZLSRFhO3v+r/+O6VLr6IKhvZek8PhbLTSr86fows4MkuuoXh0ybzx90L12hd1rt
+	+vi4YRSVuNUYyOhMGoz23NvgazDNeYDq10uPWX
+X-Received: by 2002:a2e:8ec5:0:b0:2ef:22e6:233f with SMTP id 38308e7fff4ca-2f039c9862amr40567681fa.21.1721999780757;
+        Fri, 26 Jul 2024 06:16:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENkd152LdcVGYZFsu1bzI6uLueRTD0erDZebrYWI+gUvt514koc5pNhArM6ncFt9ikhIn1ddo0wjWm/mrfZK0=
+X-Received: by 2002:a2e:8ec5:0:b0:2ef:22e6:233f with SMTP id
+ 38308e7fff4ca-2f039c9862amr40567411fa.21.1721999780306; Fri, 26 Jul 2024
+ 06:16:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <60581044-df82-40ad-b94c-56468007a93e@app.fastmail.com>
-In-Reply-To: <20240726123322.1165562-1-mpe@ellerman.id.au>
-References: <20240726123322.1165562-1-mpe@ellerman.id.au>
-Date: Fri, 26 Jul 2024 15:15:02 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: "Geoff Levand" <geoff@infradead.org>, "Jeremy Kerr" <jk@ozlabs.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] MAINTAINERS: Mark powerpc Cell as orphaned
-Content-Type: text/plain
+References: <20240725013217.1124704-1-lulu@redhat.com> <ZqKKaLdn3DBr7WrK@LQ3V64L9R2>
+In-Reply-To: <ZqKKaLdn3DBr7WrK@LQ3V64L9R2>
+From: Cindy Lu <lulu@redhat.com>
+Date: Fri, 26 Jul 2024 21:15:41 +0800
+Message-ID: <CACLfguUORsgxmya8v2shsS5mJ3iZpxu6zv-fGsw9ZS2uwFFPWw@mail.gmail.com>
+Subject: Re: [PATH v6 0/3] vdpa: support set mac address from vdpa tool
+To: Joe Damato <jdamato@fastly.com>, Cindy Lu <lulu@redhat.com>, dtatulea@nvidia.com, 
+	mst@redhat.com, jasowang@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024, at 14:33, Michael Ellerman wrote:
-> Arnd is no longer actively maintaining Cell, mark it as orphan.
+On Fri, 26 Jul 2024 at 01:25, Joe Damato <jdamato@fastly.com> wrote:
 >
-> Also drop the dead developerworks link.
+> On Thu, Jul 25, 2024 at 09:31:01AM +0800, Cindy Lu wrote:
+> > Add support for setting the MAC address using the VDPA tool.
+> > This feature will allow setting the MAC address using the VDPA tool.
+> > For example, in vdpa_sim_net, the implementation sets the MAC address
+> > to the config space. However, for other drivers, they can implement their
+> > own function, not limited to the config space.
 >
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> [...]
+>
+> Nit: the subject line has misspelled PATCH as PATH
+>
+> I believe net-next is still closed so this code needs to be resent
+> when net-next is open again in a few days.
+>
+sure,will fix  this
+thanks
+cindy
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-The platform contains two separate bits, so we need to
-decide what to do with each one of them in the long run:
-
-CONFIG_PPC_IBM_CELL_BLADE is clearly dead, they were sold
-from 2006 to 2012 and never that popular aside from a
-handful of supercomputers that were all dismantled a
-long time ago. Unless there is a user that wants to
-keep maintaining these, we can probably remove all this
-code soon, e.g. after the next LTS kernel.
-
-CONFIG_SPU_FS is shared with the PS3 platform, which is
-still used and maintained. The bit I don't know is how
-common it is to actually still use spufs on the PS3.
-Support for spu programs was removed in gcc-9.1 and
-gdb-8.3, so none of the major distros even ship old
-enough toolchains any more, but existing applications
-and older toolchains should still work for people
-that have them and want to run new kernels.
-
-Geoff, are you using spufs on ps3, and if so, should
-we move arch/powerpc/platforms/cell/spu* to the PS3
-entry in the MAINTAINERS file? I don't think there
-is any advantage in actually moving the files to
-platforms/ps3 if we delete the cell blade support.
-
-     Arnd
 
