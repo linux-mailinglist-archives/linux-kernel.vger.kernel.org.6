@@ -1,142 +1,246 @@
-Return-Path: <linux-kernel+bounces-263522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5811693D734
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5314493D737
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1951F24906
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 946F3B20E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0E32E620;
-	Fri, 26 Jul 2024 16:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EE017C7B2;
+	Fri, 26 Jul 2024 16:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UcE/YCsU"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yLFVFyUk"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E130521364;
-	Fri, 26 Jul 2024 16:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D4B7494
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012627; cv=none; b=QaZA1Q+sXcHiIkjETmu1PFtTD0AREsRA8x1lh5bmQcZvHvD7V4z3okxcRoU42oUClB/4FzkOtMlYV/12ZEWMdr9MSoMp8XyUTJi7oqpY6yx+9Fc0558wtZS4e5Sd5GqarLqtUy2pgmf8yAEBxoZkf5U1pyS1W+zue/C4Al/NCEs=
+	t=1722012668; cv=none; b=UyTJaRzU8sLdTtl5tfwz5geSaaMzhBOBPSqxqAS1EN/DT9UOHT3qOQgVlRK+1dZpcYhFlPOYj3v2XROWKzCZU83oLrOBBdDGFeIZRGnbQaEkD+cqPM3zJ+vpOSiaTxHyqOsbgEjy8fJv5BV1qLM+/gXWSC66x6BzY5lANRD/k3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012627; c=relaxed/simple;
-	bh=rqbgT/0iYp0SyvwyUNh8ElGIQ4w4+Dw0nQzyKcM25qM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SnOTxeirQujVoSg07E4jCHEjUzPwYknywmH3FrAGTCWBxaZM3hRq+ghL7qSeSYwh73H+D2v+07unSvRKIkIvAYH9ebRq7/6dUBiFdltEaEThl6JRLqc7rbO/u31OpeGeg1bVynky3KNlkzCoY/GEau8b6ck4T4WBGksSTQVu3ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UcE/YCsU; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1722012668; c=relaxed/simple;
+	bh=4BxA0+YU8HmhWtQ4ARHeqW0BfBOAZJ5OD2VLt2P+zSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IrHA5ql0Voh6RnvlpAZXqkh8WNm6xx/okYqnN4HCXLeFlWOfpiTdBua+ro3xxCvC2P6N5iBY9VCiK4XumS9rV2NgGeESqSAV3O93p4w6VRz3M+Dq8/r1XFNWu1TJSDlDKEunasviCN3ip9mKORK4c4OoMT7M1rtgMqzAdvf10SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yLFVFyUk; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0354459844so2152563276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722012626; x=1753548626;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=LunzKZL6emWKetW1H3wwaEoDFwJcR/2MIjOK6DAsJmI=;
-  b=UcE/YCsUtQxG+zGIiJ4nVx+3okKvVaD9+wqpKFoLU4oiAeTg5N38wcMa
-   yv3F7aFbT194t+4YxNJ3/b5RxP/6MAAfXSmwQvl6tatqdRicbczDQl4cL
-   7gOqR2MavUNTEx3Bp+Pe0bfdM2GgS92jvg408XVkJkHxpmit9v5DYSomc
-   c=;
-X-IronPort-AV: E=Sophos;i="6.09,239,1716249600"; 
-   d="scan'208";a="744977504"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 16:50:19 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:41594]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.129:2525] with esmtp (Farcaster)
- id dd7c83a3-7c90-419d-98f4-4e8089f8113d; Fri, 26 Jul 2024 16:50:18 +0000 (UTC)
-X-Farcaster-Flow-ID: dd7c83a3-7c90-419d-98f4-4e8089f8113d
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 26 Jul 2024 16:50:18 +0000
-Received: from [192.168.9.159] (10.106.83.8) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 26 Jul 2024
- 16:50:17 +0000
-Message-ID: <4e5c2904-f628-4391-853e-37b7f0e132e8@amazon.com>
-Date: Fri, 26 Jul 2024 17:50:15 +0100
+        d=google.com; s=20230601; t=1722012663; x=1722617463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4BxA0+YU8HmhWtQ4ARHeqW0BfBOAZJ5OD2VLt2P+zSs=;
+        b=yLFVFyUkdo4CFzedVg3bboZogbvjLmFwt/SNYKBjgzsxDn8mM3ijYz2m7+2RI7qAKk
+         +vnjPOK2/OQPeFjtcWzVu7AjHU0AgSXW4mD1Y2MCqfhujLyTvII5NYsJIT5vkUNxRWWz
+         pQfcY/8yi00P7HyKCOtefqKYYpKls1msBs+8KxKrsvM4DQtD4EWhXEifQgtsGakfX68Z
+         ndJ4HhtjxXeqhefICj83SQMsOWm6ekYHK267yWsAY0HopKY7doaLbdmUUYwvP1ZyfzW+
+         G6I8ph5yox1BW2PLUCTQbjTI7uY6RGnWxTVlJdugXoQwW8rrE7rtcp5vZahNBD2JaCKf
+         re9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722012663; x=1722617463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4BxA0+YU8HmhWtQ4ARHeqW0BfBOAZJ5OD2VLt2P+zSs=;
+        b=EMSUFg4V5lc3yfvRGSg8RdZoLTBA8t2dvObfqEeG6r1x0gYXp0q+QOPMqAa6Tgdbml
+         UCIq1cYltAhwVYFSwIWgns5JH/sq0s/a76dz9c7JqXzB8MSIB6mT0rrVc7oLyDWc8pCy
+         UEY8b4kFo8wwIOCo3DWrAfr66Mud2n2TQ1wyEa+4ohJiu8SKMm7DsAD7wFM4GvDJ9bDm
+         7oeI9DFdruExnmZLRuf96qTnVXCR2X9bLA7/rR8un7Gjm/3/0vuUjEpDWg+QKdqgFuzT
+         ME3Y+kNdMdpGG41o58TaZZG5QU1sKGLxh89qv/hYgfNelnCAm+49AiQYnmLoCVDC99My
+         Mm+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuW6s2e5YhPwqUKEjz+L4YKagRP/4zHXyGaY4RGKAAgUGiTZimqu/WpHrchZLQBUI8UtEgLLGGR46zUMWzNp2J32YkfEKDdh8LwOBU
+X-Gm-Message-State: AOJu0Yy8siEim4Naww667Cp6mEKTqzVnrxai5vVcEWPCUWoX+kxH/MJp
+	Dc2/sgjv6KmRQwtwIXK/xhvPoNaA+GI9mm73HjoHyPyFYI8+6tFCrJ9QosFsT2KIyzNMzC/4Bj+
+	YQWAZjLqOdQ6Pn3ovB6UgSUYNHTIDVIVsMz+k7ZowxxxzAl673lev
+X-Google-Smtp-Source: AGHT+IHWxj7f6PtHUxoxIKBx/m3q3z5LDExloc7S9hOF5q1/D5McAnn+zGMWjLhVQoAOHESdBoLl/CjGrncZPmFt6Ck=
+X-Received: by 2002:a05:6902:2402:b0:e0b:4844:f927 with SMTP id
+ 3f1490d57ef6-e0b545f4ddcmr417745276.49.1722012662490; Fri, 26 Jul 2024
+ 09:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 14/18] KVM: Add asynchronous userfaults,
- KVM_READ_USERFAULT
-To: James Houghton <jthoughton@google.com>
-CC: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Sean Christopherson <seanjc@google.com>,
-	Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, Axel Rasmussen
-	<axelrasmussen@google.com>, David Matlack <dmatlack@google.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, <roypat@amazon.co.uk>, <kalyazin@amazon.com>,
-	"Paolo Bonzini" <pbonzini@redhat.com>
-References: <20240710234222.2333120-1-jthoughton@google.com>
- <20240710234222.2333120-15-jthoughton@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <20240710234222.2333120-15-jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D008EUC001.ant.amazon.com (10.252.51.165) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+References: <20240722225306.1494878-1-shakeel.butt@linux.dev>
+ <CAJD7tkaR3s6fzRZWdvMvfSRBRaozSj7d2pH5HUjtbuOW+RROFA@mail.gmail.com>
+ <lhlfj2keag2ciurt7v76d4nhyk5k5czrkvuocbgxkeep6zgwgo@ifjthvn5osvr> <CAJD7tkaW8bkwpUChJPc-Bw1epfrLySVhgr8528yZg5eCg3d=JA@mail.gmail.com>
+In-Reply-To: <CAJD7tkaW8bkwpUChJPc-Bw1epfrLySVhgr8528yZg5eCg3d=JA@mail.gmail.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Fri, 26 Jul 2024 09:50:49 -0700
+Message-ID: <CABdmKX0XtaBCF-Dwv2rJBUTjj1NXOus9CL9k2ubaJRSGM35vTg@mail.gmail.com>
+Subject: Re: [RFC PATCH] memcg: expose children memory usage for root
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Greg Thelen <gthelen@google.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Fri, Jul 26, 2024 at 9:26=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> On Fri, Jul 26, 2024 at 8:48=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.=
+dev> wrote:
+> >
+> > On Thu, Jul 25, 2024 at 04:20:45PM GMT, Yosry Ahmed wrote:
+> > > On Mon, Jul 22, 2024 at 3:53=E2=80=AFPM Shakeel Butt <shakeel.butt@li=
+nux.dev> wrote:
+> > > >
+> > > > Linux kernel does not expose memory.current on the root memcg and t=
+here
+> > > > are applications which have to traverse all the top level memcgs to
+> > > > calculate the total memory charged in the system. This is more expe=
+nsive
+> > > > (directory traversal and multiple open and reads) and is racy on a =
+busy
+> > > > machine. As the kernel already have the needed information i.e. roo=
+t's
+> > > > memory.current, why not expose that?
+> > > >
+> > > > However root's memory.current will have a different semantics than =
+the
+> > > > non-root's memory.current as the kernel skips the charging for root=
+, so
+> > > > maybe it is better to have a different named interface for the root=
+.
+> > > > Something like memory.children_usage only for root memcg.
+> > > >
+> > > > Now there is still a question that why the kernel does not expose
+> > > > memory.current for the root. The historical reason was that the mem=
+cg
+> > > > charging was expensice and to provide the users to bypass the memcg
+> > > > charging by letting them run in the root. However do we still want =
+to
+> > > > have this exception today? What is stopping us to start charging th=
+e
+> > > > root memcg as well. Of course the root will not have limits but the
+> > > > allocations will go through memcg charging and then the memory.curr=
+ent
+> > > > of root and non-root will have the same semantics.
+> > > >
+> > > > This is an RFC to start a discussion on memcg charging for root.
+> > >
+> > > I vaguely remember when running some netperf tests (tcp_rr?) in a
+> > > cgroup that the performance decreases considerably with every level
+> > > down the hierarchy. I am assuming that charging was a part of the
+> > > reason. If that's the case, charging the root will be similar to
+> > > moving all workloads one level down the hierarchy in terms of chargin=
+g
+> > > overhead.
+> >
+> > No, the workloads running in non-root memcgs will not see any
+> > difference. Only the workloads running in root will see charging
+> > overhead.
+>
+> Oh yeah we already charge the root's page counters hierarchically in
+> the upstream kernel, we just do not charge them if the origin of the
+> charge is the root itself.
+>
+> We also have workloads that iterate top-level memcgs to calculate the
+> total charged memory, so memory.children_usage for the root memcg
+> would help.
+>
+> As for memory.current, do you have any data about how much memory is
+> charged to the root itself?
 
-On 11/07/2024 00:42, James Houghton wrote:
-> It is possible that KVM wants to access a userfault-enabled GFN in a
-> path where it is difficult to return out to userspace with the fault
-> information. For these cases, add a mechanism for KVM to wait for a GFN
-> to not be userfault-enabled.
-In this patch series, an asynchronous notification mechanism is used 
-only in cases "where it is difficult to return out to userspace with the 
-fault information". However, we (AWS) have a use case where we would 
-like to be notified asynchronously about _all_ faults. Firecracker can 
-restore a VM from a memory snapshot where the guest memory is supplied 
-via a Userfaultfd by a process separate from the VMM itself [1]. While 
-it looks technically possible for the VMM process to handle exits via 
-forwarding the faults to the other process, that would require building 
-a complex userspace protocol on top and likely introduce extra latency 
-on the critical path. This also implies that a KVM API 
-(KVM_READ_USERFAULT) is not suitable, because KVM checks that the ioctls 
-are performed specifically by the VMM process [2]:
-	if (kvm->mm != current->mm || kvm->vm_dead)
-		return -EIO;
+Yeah I wonder if we'd be able to see any significant regressions for
+stuff that lives there today if we were to start charging it. I can
+try running a test with Android next week. I guess try_charge() is the
+main thing that would need to change to allow root charges?
 
- > The implementation of this mechanism is certain to change before KVM
- > Userfault could possibly be merged.
-How do you envision resolving faults in userspace? Copying the page in 
-(provided that userspace mapping of guest_memfd is supported [3]) and 
-clearing the KVM_MEMORY_ATTRIBUTE_USERFAULT alone do not look 
-sufficient to resolve the fault because an attempt to copy the page 
-directly in userspace will trigger a fault on its own and may lead to a 
-deadlock in the case where the original fault was caused by the VMM. An 
-interface similar to UFFDIO_COPY is needed that would allocate a page, 
-copy the content in and update page tables.
+> We think of the memory charged to the root
+> as system overhead, while the memory charged to top-level memcgs
+> isn't.
+>
+> So basically total_memory - root::memory.children_usage would be a
+> fast way to get a rough estimation of system overhead. The same would
+> not apply for total_memory - root::memory.current if I understand
+> correctly.
+>
 
-[1] Firecracker snapshot restore via UserfaultFD: 
-https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md
-[2] KVM ioctl check for the address space: 
-https://elixir.bootlin.com/linux/v6.10.1/source/virt/kvm/kvm_main.c#L5083
-[3] mmap() of guest_memfd: 
-https://lore.kernel.org/kvm/489d1494-626c-40d9-89ec-4afc4cd0624b@redhat.com/T/#mc944a6fdcd20a35f654c2be99f9c91a117c1bed4
-
-Thanks,
-Nikita
+On Fri, Jul 26, 2024 at 9:26=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> On Fri, Jul 26, 2024 at 8:48=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.=
+dev> wrote:
+> >
+> > On Thu, Jul 25, 2024 at 04:20:45PM GMT, Yosry Ahmed wrote:
+> > > On Mon, Jul 22, 2024 at 3:53=E2=80=AFPM Shakeel Butt <shakeel.butt@li=
+nux.dev> wrote:
+> > > >
+> > > > Linux kernel does not expose memory.current on the root memcg and t=
+here
+> > > > are applications which have to traverse all the top level memcgs to
+> > > > calculate the total memory charged in the system. This is more expe=
+nsive
+> > > > (directory traversal and multiple open and reads) and is racy on a =
+busy
+> > > > machine. As the kernel already have the needed information i.e. roo=
+t's
+> > > > memory.current, why not expose that?
+> > > >
+> > > > However root's memory.current will have a different semantics than =
+the
+> > > > non-root's memory.current as the kernel skips the charging for root=
+, so
+> > > > maybe it is better to have a different named interface for the root=
+.
+> > > > Something like memory.children_usage only for root memcg.
+> > > >
+> > > > Now there is still a question that why the kernel does not expose
+> > > > memory.current for the root. The historical reason was that the mem=
+cg
+> > > > charging was expensice and to provide the users to bypass the memcg
+> > > > charging by letting them run in the root. However do we still want =
+to
+> > > > have this exception today? What is stopping us to start charging th=
+e
+> > > > root memcg as well. Of course the root will not have limits but the
+> > > > allocations will go through memcg charging and then the memory.curr=
+ent
+> > > > of root and non-root will have the same semantics.
+> > > >
+> > > > This is an RFC to start a discussion on memcg charging for root.
+> > >
+> > > I vaguely remember when running some netperf tests (tcp_rr?) in a
+> > > cgroup that the performance decreases considerably with every level
+> > > down the hierarchy. I am assuming that charging was a part of the
+> > > reason. If that's the case, charging the root will be similar to
+> > > moving all workloads one level down the hierarchy in terms of chargin=
+g
+> > > overhead.
+> >
+> > No, the workloads running in non-root memcgs will not see any
+> > difference. Only the workloads running in root will see charging
+> > overhead.
+>
+> Oh yeah we already charge the root's page counters hierarchically in
+> the upstream kernel, we just do not charge them if the origin of the
+> charge is the root itself.
+>
+> We also have workloads that iterate top-level memcgs to calculate the
+> total charged memory, so memory.children_usage for the root memcg
+> would help.
+>
+> As for memory.current, do you have any data about how much memory is
+> charged to the root itself? We think of the memory charged to the root
+> as system overhead, while the memory charged to top-level memcgs
+> isn't.
+>
+> So basically total_memory - root::memory.children_usage would be a
+> fast way to get a rough estimation of system overhead. The same would
+> not apply for total_memory - root::memory.current if I understand
+> correctly.
+>
 
