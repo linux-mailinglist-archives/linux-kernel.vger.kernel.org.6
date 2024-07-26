@@ -1,143 +1,101 @@
-Return-Path: <linux-kernel+bounces-263081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DD193D0B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:59:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8820A93D0C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3F11F21285
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CCA0B21F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6A9178367;
-	Fri, 26 Jul 2024 09:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LR7UVo3x"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59400178CEA;
+	Fri, 26 Jul 2024 10:00:29 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781EF219EA;
-	Fri, 26 Jul 2024 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696FE178CC5;
+	Fri, 26 Jul 2024 10:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721987935; cv=none; b=OkR12ohLslmQN6NlG1LTyMqDZiIE1YwVYQvE1MwjJXWJUN+MuGC2L4YNWMjs/crrudsjLSEbjTApaW9SFns3PCNaU5Eoqu5kA1TGX4vkfcpH6zy+OJ852hLcJhTmjaVDGROwZ6QNryoLifnBHG73YxZtk9G9tuqIX18RkitA6bY=
+	t=1721988028; cv=none; b=a6leQzghac2e0vVgZbtP2n82mMitmrQBfDk6du964ljcJ9ATkm1iU/0ck29zaHrPL0evGwOWyTsdW6c8AdhRkZreiAXo4XGFoobd2YqESpvir+f/2YSxA/P4IwXqmIzTMHM1RvkX1jtlpefVJmAfXZY2v2OK9hz9gnvDU5EgBt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721987935; c=relaxed/simple;
-	bh=vg1PntK5Lod8y2cnuGY39Zcfd0NNF11adISfpZOYRnI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HEYTHZJmQETNzRD4iSLWpwQbcASbkDJKMfqCu/I9cXFsHZ0sJpdNqJ8PQ0C2Uu+OoAXrqelGJ/MYMm20QMXkWhlgiGI7CUQNmU0hhT3oDmvRF3+Hn4zHoNKK996VcyVRMiY9RGqhlup0v7DRhARVVnZgJlztOf5vmcEaK6SiNBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LR7UVo3x; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q17xCd029060;
-	Fri, 26 Jul 2024 09:58:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=zuSPGiZp1o6HTCgJWF23Xe
-	CNBluhDf6cqAI6WZ2/42M=; b=LR7UVo3xMG+xstVkO0n8QDRup9nqaja7c8gNbc
-	A2zBl3BoRv3AI0yJDE6FKxVasfICbhd8g86xTtZ+OnDHiwGZtvV87jDCwdSmZbs1
-	zy55nQ/eN+ALESMgU2bU/7DbGIJr545/xlMa3L7wbSSKXt7g4j6nPUqPLyvfRV5G
-	OUi+Fpn53Am/knDQ/OELcIl87QB0v6xx4BLu5loyehpHDHTCSSUyYeZ/b863QwzG
-	ktPvS3wBVREG25OdZj2hzY4Aevxur5h3f3d/OIUmE97HIrHr5Wi+QE8Ayg3XtM/O
-	6eN64EvmboAq5rSF3rmbIhB/awO38O/VK+AIr8uMbWKNFZvg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m1v192eu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 09:58:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46Q9wmZv002557
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 09:58:48 GMT
-Received: from chejiang-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 26 Jul 2024 02:58:47 -0700
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] Bluetooth: hci_qca: Drop unused event during BT on
-Date: Fri, 26 Jul 2024 17:58:28 +0800
-Message-ID: <20240726095828.2707111-1-quic_chejiang@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721988028; c=relaxed/simple;
+	bh=pmWoo3yBA/llgzDMtc0lskqiXHynYbPAWMHKegfYnYw=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=BLnBUpoEB+hFiPNhMjR0+3IFWE1XLnw99b2SsKQoxeCCkF158A2tI/QXjjZKRmOxBqp2AGxfABU8KLbq/+4d55h/M2s22/wU0hglBudRzUjiOpoRlM9d+i0V0svH7UrvocyCm6x83b23eNNMgWUKQCa1sLxit5GvQGWBAB8gkZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 5E9D33780BDB;
+	Fri, 26 Jul 2024 10:00:25 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <2024072635-dose-ferment-53c8@gregkh>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
+ <2024072633-easel-erasure-18fa@gregkh>
+ <vp205FIjWV7QqFTJ2-8mUjk6Y8nw6_9naNa31Puw1AvHK8EinlyR9vPiJdEtUgk0Aqz9xuMd62uJLq0F1ANI5OGyjiYOs3vxd0aFXtnGnJ4=@protonmail.com> <2024072635-dose-ferment-53c8@gregkh>
+Date: Fri, 26 Jul 2024 11:00:25 +0100
+Cc: "Jari Ruusu" <jariruusu@protonmail.com>, =?utf-8?q?linux-kernel=40vger=2Ekernel=2Eorg?= <linux-kernel@vger.kernel.org>, =?utf-8?q?stable=40vger=2Ekernel=2Eorg?= <stable@vger.kernel.org>, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: r-qx43OTYXFLTOrBxb8P8CEqSaHoF34p
-X-Proofpoint-GUID: r-qx43OTYXFLTOrBxb8P8CEqSaHoF34p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_08,2024-07-25_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 adultscore=0 spamscore=0
- malwarescore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407260065
+Message-ID: <1399f9-66a37380-1-413a9280@15567367>
+Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?5=2E10?= 00/59] 
+ =?utf-8?q?5=2E10=2E223-rc1?= review
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-For the WCN6750/WCN6855/WCN7850, the vendor command for a baudrate
-change is not sent as synchronous HCI command, controller sends the
-corresponding vendor event with the new baudrate. It needs to be
-dropped, otherwise it may be misinterpreted as response to a later
-command.
+On Friday, July 26, 2024 14:22 IST, Greg Kroah-Hartman <gregkh@linuxfou=
+ndation.org> wrote:
 
-Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
----
- drivers/bluetooth/hci_qca.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+> On Fri, Jul 26, 2024 at 08:21:47AM +0000, Jari Ruusu wrote:
+> > On Friday, July 26th, 2024 at 10:49, Greg Kroah-Hartman <gregkh@lin=
+uxfoundation.org> wrote:
+> > > On Fri, Jul 26, 2024 at 07:25:21AM +0000, Jari Ruusu wrote:
+> > > > Fixes: upstream fd7eea27a3ae "Compiler Attributes: Add =5F=5Fun=
+initialized macro"
+> > > > Signed-off-by: Jari Ruusu jariruusu@protonmail.com
+> > >=20
+> > > Please submit this in a format in which we can apply it, thanks!
+> >=20
+> > Protonmail seems to involuntarily inject mime-poop to outgoing mail=
+s.
+> > Sorry about that. For the time being, the best I can do is to re-se=
+nd
+> > the patch as gzipped attachment.
+>=20
+> For obvious reasons, we can't take that either :(
+>=20
+> Also the "Fixes:" tag is not in the correct format, please fix that u=
+p
+> at the very least.
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index ca6466676902..f497d601e035 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1206,7 +1206,15 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 		 * vendor command).
- 		 */
- 
--		if (hdr->evt == HCI_EV_VENDOR)
-+		/* For the WCN6750/WCN6855/WCN7850, like the WCN3990, the
-+		 * vendor command for a baudrate change command isn't sent as
-+		 * synchronous HCI command, the controller sends the corresponding
-+		 * command complete event with the new baudrate. The event is
-+		 * received and properly decoded after changing the baudrate of
-+		 * the host port. It needs to be dropped.
-+		 */
-+
-+		if (hdr->evt == HCI_EV_VENDOR || hdr->evt == HCI_EV_CMD_COMPLETE)
- 			complete(&qca->drop_ev_comp);
- 
- 		kfree_skb(skb);
-@@ -1497,6 +1505,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 
- 		switch (soc_type) {
- 		case QCA_WCN3990:
-+		case QCA_WCN6750:
-+		case QCA_WCN6855:
-+		case QCA_WCN7850:
- 			reinit_completion(&qca->drop_ev_comp);
- 			set_bit(QCA_DROP_VENDOR_EVENT, &qca->flags);
- 			break;
-@@ -1531,6 +1542,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 
- 		switch (soc_type) {
- 		case QCA_WCN3990:
-+		case QCA_WCN6750:
-+		case QCA_WCN6855:
-+		case QCA_WCN7850:
- 			/* Wait for the controller to send the vendor event
- 			 * for the baudrate change command.
- 			 */
--- 
-2.25.1
+KernelCI report for stable-rc/linux-5.10.y for this week.
+Date: 2024-07-25
+
+## Build failures:
+No build failures seen for the stable-rc/linux-5.10.y commit head \o/
+
+## Boot failures:
+No **new** boot failures seen for the stable-rc/linux-5.10.y commit hea=
+d \o/
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+Shreeya Patel
 
 
