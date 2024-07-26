@@ -1,269 +1,199 @@
-Return-Path: <linux-kernel+bounces-263313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4412C93D434
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:33:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161DC93D438
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C590E1F22904
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60FF9B23658
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBE17C20A;
-	Fri, 26 Jul 2024 13:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7849176AAE;
+	Fri, 26 Jul 2024 13:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTvhlzUx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbJq1pUe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B7E176AAE;
-	Fri, 26 Jul 2024 13:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31DC17BB09;
+	Fri, 26 Jul 2024 13:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722000824; cv=none; b=Z4WiQ54Za7627aD4p3g3Acrc1J5w958GETBcHIkcGQkqS4VoCB/jATnHqyC41lVb+6I3p/hddVA6QtzHYkL8ZuyXygiFYKzPfxbcMIOIO09K2yfeDMpYYBlAR4S0AwvxUl+b/+bWoW6gNYuolM73NGHQcvrMnsaM7A0stUJm8Jk=
+	t=1722000849; cv=none; b=IfdNF3hjEU+JHSmklrg7rTjVgxcB5dKnWS0SeISlGOwNYu1ftU7i5zMke2NpThLWhM2rB8QRjToZ1pmys9W6EsOtlXqCg89Z04Ol+KLU9nfcbl3ai9pI6FSeFwfRYaZ1D+lYj4ChJqxFmGqyTsuFTiwDjlzg2R0oT2OcWVhgi30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722000824; c=relaxed/simple;
-	bh=1PYTiId4BuPOHiUxSn1neJSHlnqAUMLX8ggbJ7DCGb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmRIkvQvNPAA85ci68WDWvdp8pkwb8iFIPUgWKrAkC9gdbofkBpweiPsU7wl+oT+nchkEqGO+xid+wRAXIJy05Eylo+6Jbo1UwJggxIAA+l9fo26qTLVfV99oWSyYn1NoMTGcsghUGIKrJf5waOkBF8TKLVXZad47k0t0pJXTFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTvhlzUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEC9C32782;
-	Fri, 26 Jul 2024 13:33:43 +0000 (UTC)
+	s=arc-20240116; t=1722000849; c=relaxed/simple;
+	bh=gwnxVuoN7LswP7v77zQc6e/qC4v2vnpedCk7vhQDPIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IJqedqhiMJeZ8MlvhH0835orv1XapKmA+u6IbNoqsu36rzSvWT4KO9MLmmx8jM6fUN8tmIgAgCChJ0jd+aqhQutz6Tk9o5F1feAJ3AfKO5Alw4Z/EtEcwItAw208zNhswG7bN791Do6LKW7/QcTpmvVGxIqOzf64yk9SS1EtvjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbJq1pUe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59867C32786;
+	Fri, 26 Jul 2024 13:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722000823;
-	bh=1PYTiId4BuPOHiUxSn1neJSHlnqAUMLX8ggbJ7DCGb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fTvhlzUxzfOziu+NWn6gJWcl8rt1a2JqwLIwKXLzMSBDWKB9U+BKxFFSVxvrihqNn
-	 8ELIXeQe2L9TMu+ymz62gN/yLewI2oFvQtMdg/Vmnckv0M3VBoJybUeWBxnyj0jDJR
-	 djORyFROf2lsVVN1dFdEATbcHDHLlnkA5kVDjxI1WSBCMaALED9Z2WN6Q+sCTjzaXa
-	 TM/bJA8VBNfGXg7+Zv8JrZE7CdVWIJTaEHumVB/t2CJvrxz83k+3c4UabUZ3F5d5ki
-	 ee14a19Vf4YZnjmuO1z2f5W98+yhp1Exz0ggDw3OgTkDF8bhvRRNV0Jun5umNARbTn
-	 JfULlMmfoKv+w==
-Date: Fri, 26 Jul 2024 10:33:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org
-Cc: Guilherme Amadio <amadio@gentoo.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: perf tools build clash with capstone
-Message-ID: <ZqOltPk9VQGgJZAA@x1>
-References: <ZqFz1eKplFvhOx16@x1>
+	s=k20201202; t=1722000848;
+	bh=gwnxVuoN7LswP7v77zQc6e/qC4v2vnpedCk7vhQDPIM=;
+	h=Date:Subject:To:List-Id:Cc:References:From:In-Reply-To:From;
+	b=PbJq1pUetzKP6lj7XNFrYOOTl5lJv8br/1+1uE2CMP2Dj8alrSuV8IrdinHcb3a5h
+	 tECFC8hIiT8kDDA1+LpOCFLotvRRYutUJ2QaJKoBY8Lnqm5+7Nga/aQBFXS7n6bpfG
+	 ABrv0ztX4nsnr7r50pBScYtkab+tyMaxk96umPr/v1SL4js/+gcgu5HQ56f1xHcAaB
+	 nMBE/NNEgqln/udZJJ9yoXM+kFoDEq9GBkJNEHWiMltY0kE2Ac0JLgJ1/24pnQ0hp7
+	 ZUX/KEtcx0QENKkfZVeeEHezJ6B6stnDg3BLvMMzxxmHPuP3P+O9MpmsZk5gB5U4Un
+	 0Dfswh17+Ej6A==
+Message-ID: <241ceb9b-b29f-41fd-8987-2feba2e5e08e@kernel.org>
+Date: Fri, 26 Jul 2024 15:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqFz1eKplFvhOx16@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/10] Introduce ASPEED AST27XX BMC SoC
+To: Kevin Chen <kevin_chen@aspeedtech.com>
+Cc: soc@kernel.org, m.szyprowski@samsung.com, nfraprado@collabora.com,
+ olof@lixom.net, will@kernel.org, mturquette@baylibre.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ andrew@codeconstruct.com.au, catalin.marinas@arm.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, u-kumar1@ti.com, arnd@arndb.de, joel@jms.id.au,
+ quic_bjorande@quicinc.com, lee@kernel.org, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, neil.armstrong@linaro.org,
+ linux-aspeed@lists.ozlabs.org, dmitry.baryshkov@linaro.org,
+ shawnguo@kernel.org, geert+renesas@glider.be,
+ "Rob Herring (Arm)" <robh@kernel.org>
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+ <172199921352.1507193.4411331020670815695.robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <172199921352.1507193.4411331020670815695.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 06:36:25PM -0300, Arnaldo Carvalho de Melo wrote:
-> Still investigating, but seems just a namespace clash, haven't yet
-> pinpointed the cset where this problem was introduced.
-
-So this happens with fedora:40 as well, the current "fix" is to avoid
-including util/sort.h from util/disasm.c to avoid the clash, I added
-this to the "perf annotate: Add support to capture and parse raw
-instruction in powerpc using dso__data_read_offset utility" patch since
-all we need is the sort_order extern for that hack with "sym" +
-"powerpc", that we need to get rid off at some point anyway.
-
-- Arnaldo
-
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index 0aac35c5f1bcfda9..bab15cce612f8ff0 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -25,7 +25,6 @@
- #include "srcline.h"
- #include "symbol.h"
- #include "util.h"
--#include "sort.h"
- 
- static regex_t	 file_lineno;
- 
-@ -1855,6 +1854,8 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 	 * not required in case of powerpc.
- 	 */
- 	if (arch__is(args->arch, "powerpc")) {
-+		extern const char *sort_order;
-+
- 		if (sort_order && !strstr(sort_order, "sym")) {
- 			err = symbol__disassemble_raw(symfs_filename, sym, args);
- 			if (err == 0)
- 
-
- 
-> Probably alpine:3.19/archlinux:base are the first where capstone devel
-> files are available.
+On 26/07/2024 15:09, Rob Herring (Arm) wrote:
 > 
-> perfbuilder@number:~$ export BUILD_TARBALL=http://192.168.86.42/perf/perf-6.10.0.tar.xz
-> perfbuilder@number:~$ time dm
->    1   101.28 almalinux:8                   : Ok   gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-22) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8.10.0+3757+fc27b834) flex 2.6.1
->    2   100.50 almalinux:9                   : Ok   gcc (GCC) 11.4.1 20231218 (Red Hat 11.4.1-3) , clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9) flex 2.6.4
->    3   119.65 alpine:3.15                   : Ok   gcc (Alpine 10.3.1_git20211027) 10.3.1 20211027 , Alpine clang version 12.0.1 flex 2.6.4
->    4   117.18 alpine:3.16                   : Ok   gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219 , Alpine clang version 13.0.1 flex 2.6.4
->    5    99.97 alpine:3.17                   : Ok   gcc (Alpine 12.2.1_git20220924-r4) 12.2.1 20220924 , Alpine clang version 15.0.7 flex 2.6.4
->    6    92.95 alpine:3.18                   : Ok   gcc (Alpine 12.2.1_git20220924-r10) 12.2.1 20220924 , Alpine clang version 16.0.6 flex 2.6.4
->    7    13.59 alpine:3.19                   : FAIL gcc version 13.2.1 20231014 (Alpine 13.2.1_git20231014) 
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     make[3]: *** [/git/perf-6.10.0/tools/build/Makefile.build:158: util] Error 2
->       CC      /tmp/build/perf/util/event.o
->       CC      /tmp/build/perf/builtin-script.o
->       CC      /tmp/build/perf/util/evlist.o
->       CC      /tmp/build/perf/arch/x86/util/env.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from util/print_insn.h:23,
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/arch/x86/util/dwarf-regs.o
->       CC      /tmp/build/perf/util/sideband_evlist.o
->       CC      /tmp/build/perf/arch/x86/util/unwind-libunwind.o
->       CC      /tmp/build/perf/builtin-kvm.o
->       CC      /tmp/build/perf/builtin-inject.o
->     make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
->     make[4]: *** Waiting for unfinished jobs....
->       CC      /tmp/build/perf/builtin-mem.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/builtin-data.o
->       CC      /tmp/build/perf/bench/breakpoint.o
->       CC      /tmp/build/perf/tests/evsel-roundtrip-name.o
->       CC      /tmp/build/perf/arch/x86/util/auxtrace.o
->       CC      /tmp/build/perf/tests/evsel-tp-sched.o
->    8    13.68 alpine:3.20                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     make[3]: *** [/git/perf-6.10.0/tools/build/Makefile.build:158: util] Error 2
->       CC      /tmp/build/perf/bench/breakpoint.o
->       CC      /tmp/build/perf/tests/hists_link.o
->       CC      /tmp/build/perf/builtin-kvm.o
->       CC      /tmp/build/perf/util/env.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from util/print_insn.h:23,
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/builtin-inject.o
->       CC      /tmp/build/perf/arch/x86/util/intel-pt.o
->       CC      /tmp/build/perf/util/event.o
->     make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
->     make[4]: *** Waiting for unfinished jobs....
->    9    13.56 alpine:edge                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/builtin-script.o
->       CC      /tmp/build/perf/tests/hists_output.o
->       CC      /tmp/build/perf/tests/hists_cumulate.o
->       CC      /tmp/build/perf/bench/epoll-ctl.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from util/print_insn.h:23,
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/util/sideband_evlist.o
->       CC      /tmp/build/perf/builtin-kvm.o
->       CC      /tmp/build/perf/arch/x86/util/auxtrace.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/tests/python-use.o
->       CC      /tmp/build/perf/util/evsel.o
->     make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
->     make[4]: *** Waiting for unfinished jobs....
->       CC      /tmp/build/perf/builtin-inject.o
->   10    12.00 amazonlinux:2                 : FAIL gcc version 7.3.1 20180712 (Red Hat 7.3.1-17) (GCC) 
->   11    87.71 amazonlinux:2023              : Ok   gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2) , clang version 15.0.7 (Amazon Linux 15.0.7-3.amzn2023.0.1) flex 2.6.4
->   12    86.71 amazonlinux:devel             : Ok   gcc (GCC) 11.3.1 20221121 (Red Hat 11.3.1-4) , clang version 15.0.6 (Amazon Linux 15.0.6-3.amzn2023.0.2) flex 2.6.4
->   13    18.34 archlinux:base                : FAIL gcc version 13.2.1 20230801 (GCC) 
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from util/print_insn.h:23,
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/util/copyfile.o
->       CC      /tmp/build/perf/ui/browsers/scripts.o
->       CC      /tmp/build/perf/bench/epoll-wait.o
->       CC      /tmp/build/perf/arch/x86/util/mem-events.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
->                      from builtin-script.c:38:
->     /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/builtin-data.o
->       CC      /tmp/build/perf/ui/browsers/header.o
->       CC      /tmp/build/perf/builtin-version.o
->       CC      /tmp/build/perf/builtin-c2c.o
->       CC      /tmp/build/perf/arch/x86/util/evsel.o
->     --
->       CC      /tmp/build/perf/arch/x86/util/intel-pt.o
->       CC      /tmp/build/perf/util/sideband_evlist.o
->       CC      /tmp/build/perf/util/evsel.o
->       CC      /tmp/build/perf/arch/x86/util/intel-bts.o
->     In file included from /usr/include/capstone/capstone.h:325,
->                      from util/print_insn.h:23,
->                      from util/disasm.c:29:
->     /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
->        94 | typedef enum bpf_insn {
->           |              ^~~~~~~~
->       CC      /tmp/build/perf/tests/pmu-events.o
->       CC      /tmp/build/perf/util/evsel_fprintf.o
->       CC      /tmp/build/perf/bench/kallsyms-parse.o
->       CC      /tmp/build/perf/bench/find-bit-bench.o
->       CC      /tmp/build/perf/tests/hists_common.o
->   14   103.85 centos:stream                 : Ok   gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-21) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8+767+9fa966b8) flex 2.6.1
->   15    98.52 clearlinux:latest             : Ok   gcc (Clear Linux OS for Intel Architecture) 14.1.1 20240717 releases/gcc-14.1.0-275-g3a963d441a , clang version 17.0.6 flex 2.6.4
+> On Fri, 26 Jul 2024 19:03:45 +0800, Kevin Chen wrote:
+>> This patchset adds initial support for the ASPEED.
+>> AST27XX Board Management controller (BMC) SoC family.
+>>
+>> AST2700 is ASPEED's 8th-generation server management processor.
+>> Featuring a quad-core ARM Cortex A35 64-bit processor and two
+>> independent ARM Cortex M4 processors
+>>
+>> This patchset adds minimal architecture and drivers such as:
+>> Clocksource, Clock and Reset
+>>
+>> This patchset was tested on the ASPEED AST2700 evaluation board.
+>>
+>> Kevin Chen (10):
+>>   dt-binding: mfd: aspeed,ast2x00-scu: Add binding for ASPEED AST2700
+>>     SCU
+>>   dt-binding: clk: ast2700: Add binding for Aspeed AST27xx Clock
+>>   clk: ast2700: add clock controller
+>>   dt-bindings: reset: ast2700: Add binding for ASPEED AST2700 Reset
+>>   dt-bindings: arm: aspeed: Add maintainer
+>>   dt-bindings: arm: aspeed: Add aspeed,ast2700-evb compatible string
+>>   arm64: aspeed: Add support for ASPEED AST2700 BMC SoC
+>>   arm64: dts: aspeed: Add initial AST27XX device tree
+>>   arm64: dts: aspeed: Add initial AST2700 EVB device tree
+>>   arm64: defconfig: Add ASPEED AST2700 family support
+>>
+>>  .../bindings/arm/aspeed/aspeed.yaml           |    6 +
+>>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    3 +
+>>  MAINTAINERS                                   |    3 +
+>>  arch/arm64/Kconfig.platforms                  |   14 +
+>>  arch/arm64/boot/dts/Makefile                  |    1 +
+>>  arch/arm64/boot/dts/aspeed/Makefile           |    4 +
+>>  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     |  217 +++
+>>  arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |   50 +
+>>  arch/arm64/configs/defconfig                  |    1 +
+>>  drivers/clk/Makefile                          |    1 +
+>>  drivers/clk/clk-ast2700.c                     | 1166 +++++++++++++++++
+>>  .../dt-bindings/clock/aspeed,ast2700-clk.h    |  180 +++
+>>  .../dt-bindings/reset/aspeed,ast2700-reset.h  |  126 ++
+>>  13 files changed, 1772 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+>>  create mode 100644 drivers/clk/clk-ast2700.c
+>>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+>>
+>> --
+>> 2.34.1
+>>
+>>
+>>
+> 
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y aspeed/ast2700-evb.dtb' for 20240726110355.2181563-1-kevin_chen@aspeedtech.com:
+
+Kevin,
+Just to clarify. Looking at the patches it was quite obvious you did not
+test it with dtbs_check. For a new arm64 platform without any legacy,
+having 0 warnings is a must.
+
+Consider Documentation/process/maintainer-soc-clean-dts.rst being
+implied for this platform.
+
+Best regards,
+Krzysztof
+
 
