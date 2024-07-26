@@ -1,135 +1,188 @@
-Return-Path: <linux-kernel+bounces-263620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D7993D856
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A7793D85B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06FFC1C22662
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46CE31C2332B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E08A38DEE;
-	Fri, 26 Jul 2024 18:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557A043AB0;
+	Fri, 26 Jul 2024 18:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xrSKK7uk"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k7Io4BRC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA7411C83
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E64739879;
+	Fri, 26 Jul 2024 18:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722018506; cv=none; b=JjPjLqyr/rLuvzfcE7eTP023nh+s5jWmW0Ti9YnROq+DJXXionw6Hllk1pz0HcwbUpT3/GVEZgynLbsg7sUc90ryL15fw2fZswIQPewZYZLDfpj8wITMnE2xMVDRJHYr9TXxOvKUzhuPjY16Y5yrqVbpHxGPP7hsStTGn+qkdNA=
+	t=1722018596; cv=none; b=Mp/IluttCpDvizQBCfId9wvFwTBuwdzBpbSVZTOex+8WzfMEmriRBBozuxpHZIX/TXkeVTy+H/9q/jLMRESCgW87vQXaK2IatMuPnQkvoAwZnMsHMkXFRh65dcC5uwvTzEtPjLVQgJEhbKFe3nDweanRt5CzIhlr/3DULCEGxU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722018506; c=relaxed/simple;
-	bh=/hCmtFduoZjXr8wWkO90G+e2CChiWzFqbkWEwH9Pngw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAmrOXrMeLZzGiu/waDBo821kgLl8IsXnHcau9kzKYcfZ41kbHK9RwgVHjdUN1g+oSQhceuBYPFhRt5uRcAiH4dwib4/YanHoGV40NQz4Gpg5IcrOoTkhbG3aqorclovUXPBMpn9fnxxa2PmT/DYrkMrFyVG4hcfRM77DmRoEgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xrSKK7uk; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6512866fa87so23393557b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722018503; x=1722623303; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ar5LSSW/uWQjcFvb9wqwW1qn7+87e4drkqRv4fjdD+M=;
-        b=xrSKK7uk+sf2Y8AqvxVCdkRpQ7f+kQT8uq3IcR2w261Q6GUJHm/TsPHyiNqEP4wgwK
-         eIQGo7jMaXvzsHDZktMyFAaZfLjujZ7E79EmoWo9sH7GHziUry9bwWNa6zbGsj8XsqO7
-         2TN+b1nyN4g+ZNNidcGKhiQNOXste9PbZNy8QjXp9Tm6NWNS2qPi3SRu75Iw7Prc4S9y
-         Qbvj0MbqSuL0lnN4UT3v6RuK9BG7sjK3v4nLenAo7IwsOkJx1+6xZ5FZrfXXbMNEYUaE
-         Wa5DKg0coI5dWAu5dpUu/pni0/C/od+XwZSDGsoMGI+a69YqTIHcj/vkGq2eOkqgT50q
-         +EqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722018503; x=1722623303;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ar5LSSW/uWQjcFvb9wqwW1qn7+87e4drkqRv4fjdD+M=;
-        b=Mt7RB9ixanwKak3KWYw0pjvjXrgr/itGcw5aDWn4S01Iopo7Ogv8FBD08HOwkam9Te
-         42mRb1MEUYypLJj41SjvONCjuvI664pv5WXoz8k0E8Iz1ap1bnjmH7o1O4OD30XSTh5F
-         XYhg6pwlB5jaBLTTA92zH7jXRphuDLywi2fc03JMwdM/USCzmkTtMLfIv352RSClb4rG
-         L0PAdHd5dHV71mlpV7ZNOfPvlCOxGD6kp6KGum4NSHOS0ibrqVAVMMVU4tzJgxPZ/abl
-         kFuOGTw29yQ6J8ZpXdxEFw5eaPfthT4omhH2WY191D44vmp0W7OVO+S83ksxTz+k88fX
-         PyPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQabdGlg0xjd+eHQ0+hirlAJwXZXkuVEtgZz6pNO45enfNCCHuuiYRpH964Gy5M+mOzsaoRTvbeh/CrxvM9Q0g7Wxnykofi86PZ0cO
-X-Gm-Message-State: AOJu0YyzCLp3287vMXaM1j62XSE4ryAGv0hc1RYDHTV9bllQExFqnwGp
-	HazQbZyMqU4GSUIovz7fABWPPhxgkWnZ8GATJbbgC6N6bJvL2Rh5w3RM9/hvYDODI8pCwOvvXbJ
-	I//uW1VlC8BAama6Rvga+yONXg/cNZRHDLAOJqw==
-X-Google-Smtp-Source: AGHT+IHato9JiGqKZuTQ6+mFoYDwEL2j8h3hjQq7YdUcOaEIWebF9rgyOekGPj+j55VxlIaNZlt7JqiObKs/Wop42TU=
-X-Received: by 2002:a05:690c:dd1:b0:644:b209:4de1 with SMTP id
- 00721157ae682-67a050f3e25mr8147617b3.2.1722018503391; Fri, 26 Jul 2024
- 11:28:23 -0700 (PDT)
+	s=arc-20240116; t=1722018596; c=relaxed/simple;
+	bh=PZyG589zZ1RF4v7wI64IEAe5dRLqrmXnoHxqLhuExaE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=EHQq2PiCZqdcdtcGGX1qGOTWUJqq9g0GmD/Tb6VrXb46KLUywU/ewx5iIShddQtEhrl3e8s5uRVzNlfpDxSc7wYMwEnWaJ+IleXkx9KGSIhRLzELKwEx7WLxzlFVhIhatwYaA4oDgDi3OIfFtZAql5lJX9a+eKqQncQreI6rr2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k7Io4BRC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=BHfyk4lid0LBsgW6Qbi96iERQ2QA5oUayAU6ZwaA/x4=; b=k7Io4BRCAEY+B/E02cjwN2TFVm
+	+XHmCVyNg8Y/B/1ka63hMSeyuetois+YaavQDKjEOStsB/3GlrSkaLnkcLeud3Sda/9pPA3vMjuQ4
+	Fi/K0ZTyQip2ElONaLATr7HDwSfL905Y2MdZG5E0BS8HcRUSXQJhE4s0yXdFXCQ5Vb+aClxHP2P5v
+	3GImoefAgGKngWdw6A4bIhx1CO2ZBKanZZ+kWgZLi66ksDuxO3IeaRG8Ac0immDTdSA6ul8wY2Ofq
+	mrMv04ta0ABbpXgLBgqzgD6D0Kt+GE6htuFWvKmbGvfL8NDSXRUMWdT/Hn9Lxtc/K1sOAWS2Lewfu
+	RlWsRviA==;
+Received: from [2a00:23ee:1008:2bab:d45e:a5c6:d63:3c97] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXPhG-00000004HMP-3wSJ;
+	Fri, 26 Jul 2024 18:29:43 +0000
+Date: Fri, 26 Jul 2024 19:28:28 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: "Michael S. Tsirkin" <mst@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
+ "Chashper, David" <chashper@amazon.com>,
+ "Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+ "Christopher S . Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240726174958.00007d10@Huawei.com>
+References: <14d1626bc9ddae9d8ad19d3c508538d10f5a8e44.camel@infradead.org> <20240725012730-mutt-send-email-mst@kernel.org> <7de7da1122e61f8c64bbaab04a35af93fafac454.camel@infradead.org> <20240725081502-mutt-send-email-mst@kernel.org> <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org> <20240725082828-mutt-send-email-mst@kernel.org> <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org> <20240725083215-mutt-send-email-mst@kernel.org> <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org> <20240726174958.00007d10@Huawei.com>
+Message-ID: <811E8A25-3DBC-452D-B594-F9B7B0B61335@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240726110139eucas1p24eb41978fdad0d37a95c2c829180a203@eucas1p2.samsung.com>
- <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-5-m.majewski2@samsung.com>
-In-Reply-To: <20240726110114.1509733-5-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jul 2024 13:28:12 -0500
-Message-ID: <CAPLW+4mL=sh+n_Wq30yTPuTb9UNKNX2YcgdyObdnoqwhHie8eg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] dt-bindings: thermal: samsung,exynos: add
- exynos850-tmu string
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Anand Moon <linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
+On 26 July 2024 17:49:58 BST, Jonathan Cameron <Jonathan=2ECameron@Huawei=
+=2Ecom> wrote:
+>On Thu, 25 Jul 2024 14:50:50 +0100
+>David Woodhouse <dwmw2@infradead=2Eorg> wrote:
 >
-> Like most of the SoCs, it requires 1 clock and 1 register.
+>> On Thu, 2024-07-25 at 08:33 -0400, Michael S=2E Tsirkin wrote:
+>> > On Thu, Jul 25, 2024 at 01:31:19PM +0100, David Woodhouse wrote: =20
+>> > > On Thu, 2024-07-25 at 08:29 -0400, Michael S=2E Tsirkin wrote: =20
+>> > > > On Thu, Jul 25, 2024 at 01:27:49PM +0100, David Woodhouse wrote: =
+=20
+>> > > > > On Thu, 2024-07-25 at 08:17 -0400, Michael S=2E Tsirkin wrote: =
+=20
+>> > > > > > On Thu, Jul 25, 2024 at 10:56:05AM +0100, David Woodhouse wro=
+te: =20
+>> > > > > > > > Do you want to just help complete virtio-rtc then? Would =
+be easier than
+>> > > > > > > > trying to keep two specs in sync=2E =20
+>> > > > > > >=20
+>> > > > > > > The ACPI version is much more lightweight and doesn't take =
+up a
+>> > > > > > > valuable PCI slot#=2E (I know, you can do virtio without PC=
+I but that's
+>> > > > > > > complex in other ways)=2E
+>> > > > > > >  =20
+>> > > > > >=20
+>> > > > > > Hmm, should we support virtio over ACPI? Just asking=2E =20
+>> > > > >=20
+>> > > > > Given that we support virtio DT bindings, and the ACPI "PRP0001=
+" device
+>> > > > > exists with a DSM method which literally returns DT properties,
+>> > > > > including such properties as "compatible=3Dvirtio,mmio" =2E=2E=
+=2E do we
+>> > > > > already?
+>> > > > >=20
+>> > > > >  =20
+>> > > >=20
+>> > > > In a sense, but you are saying that is too complex?
+>> > > > Can you elaborate? =20
+>> > >=20
+>> > > No, I think it's fine=2E I encourage the use of the PRP0001 device =
+to
+>> > > expose DT devices through ACPI=2E I was just reminding you of its
+>> > > existence=2E =20
+>> >=20
+>> > Confused=2E You said "I know, you can do virtio without PCI but that'=
+s
+>> > complex in other ways" as the explanation why you are doing a custom
+>> > protocol=2E =20
+>>=20
+>> Ah, apologies, I wasn't thinking that far back in the conversation=2E
+>>=20
+>> If we wanted to support virtio over ACPI, I think PRP0001 can be made
+>> to work and isn't too complex (even though it probably doesn't yet work
+>> out of the box)=2E
+>>=20
+>> But for the VMCLOCK thing, yes, the simple ACPI device is a lot simpler
+>> than virtio-rtc and much more attractive=2E
+>>=20
+>> Even if the virtio-rtc specification were official today, and I was
+>> able to expose it via PCI, I probably wouldn't do it that way=2E There'=
+s
+>> just far more in virtio-rtc than we need; the simple shared memory
+>> region is perfectly sufficient for most needs, and especially ours=2E
+>>=20
+>> I have reworked
+>> https://git=2Einfradead=2Eorg/users/dwmw2/linux=2Egit/shortlog/refs/hea=
+ds/vmclock
+>> to take your other feedback into account=2E
+>>=20
+>> It's now more flexible about the size handling, and explicitly checking
+>> that specific fields are present before using them=2E=20
+>>=20
+>> I think I'm going to add a method on the ACPI device to enable the
+>> precise clock information=2E I haven't done that in the driver yet; it
+>> still just consumes the precise clock information if it happens to be
+>> present already=2E The enable method can be added in a compatible fashi=
+on
+>> (the failure mode is that guests which don't invoke this method when
+>> the hypervisor needs them to will see only the disruption signal and
+>> not precise time)=2E
+>>=20
+>> For the HID I'm going to use AMZNVCLK=2E I had used QEMUVCLK in the QEM=
+U
+>> patches, but I'll change that to use AMZNVCLK too when I repost the
+>> QEMU patch=2E
 >
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
+>That doesn't fit with ACPI _HID definitions=2E
+>Second set 4 characters need to be hex digits as this is an
+>ACPI style ID (which I assume this is given AMZN is a valid
+>vendor ID=2E  6=2E1=2E5 in ACPI v6=2E5
+>
+>Maybe I'm missing something=2E=2E=2E
+>
+>J
+>
+>
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> v1 -> v2: make the clock required in Exynos850.
->
->  .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml     | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-the=
-rmal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-therma=
-l.yaml
-> index 29a08b0729ee..b8c0bb7f4263 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> @@ -27,6 +27,7 @@ properties:
->        - samsung,exynos5420-tmu-ext-triminfo
->        - samsung,exynos5433-tmu
->        - samsung,exynos7-tmu
-> +      - samsung,exynos850-tmu
->
->    clocks:
->      minItems: 1
-> @@ -131,6 +132,7 @@ allOf:
->                - samsung,exynos5250-tmu
->                - samsung,exynos5260-tmu
->                - samsung,exynos5420-tmu
-> +              - samsung,exynos850-tmu
->      then:
->        properties:
->          clocks:
-> --
-> 2.45.1
->
+
+Hm, is the same not true for QEMUVGID and AMZNVGID, which I was using as a=
+n example?
+
+QEMU seemed to get to 0002, and AFAICT the VMGENID patches were initially =
+posted using QEMU0003, but what's actually in QEMU now is QEMUVGID=2E So I =
+presumed that was now the preferred option=2E
 
