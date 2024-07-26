@@ -1,208 +1,271 @@
-Return-Path: <linux-kernel+bounces-263042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EB493D040
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:15:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F014E93D047
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E673D1C2137F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EFB628322A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B432139D19;
-	Fri, 26 Jul 2024 09:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D630C178395;
+	Fri, 26 Jul 2024 09:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fN2lxhqZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3nLcaOh"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA031B27D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CA178372
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721985320; cv=none; b=EXe55gZNPmK+E7BWrL8LJBD6/F75JnaG1Is+pL9peqCyqgTB0dcfSMg3UC+oegQr4uOovJGJKwTpjyvFV/f3zVNOXj1nW9/rIWufYUuU1rBiLszg+9zFq748MvvUl5+jFVQtreFbSzzeg8eT0Mc9wWD5AWIDruvNKlFqFoSJi9E=
+	t=1721985351; cv=none; b=AXO9y/qS6jGL1GIGtUC480KXCZUB6HMGAF6sY0G4zG3FAbgV/8C7tDsayoULSxkGkxC0bm83dQ64dhlHQcNH1cstDxc7unV6D4AAfVWXLLU51e9Zdrl3jxbkQPvQULIEBbRMcVzwSMNYesT9EDLtxw5juPapPDbodzFUsOLDRF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721985320; c=relaxed/simple;
-	bh=+3KipAdMkz7ouFwoVTO6+S2BvdR0gdeKjK0jxXgcjbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/E+CJV3QLViKbw2D4QMcbfIt5Y7TulPA0StGIKGMcxPRSiZ+VYErXTCS+HmOAPw0JjLm/5wINkcRvu52Et08iLp+IxHC2d8/9u/a1mOfrLIWK4CEkd9ZbvRXjZNUusXLKdQ5TAYNq4AG9T9D6rssKiK/GNsryPYYsK1HPkSg+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fN2lxhqZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 656DEC32782;
-	Fri, 26 Jul 2024 09:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721985319;
-	bh=+3KipAdMkz7ouFwoVTO6+S2BvdR0gdeKjK0jxXgcjbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fN2lxhqZMltcJSpjkLy8AERAvzZJgDp0ep4xz254tTsfSMyjfu7ENe9LwQHyt1W/p
-	 8EL2Q0+You1AWHiueEniRGZhfcY9UYLYOSavjINOgPsWq5/204CxiqqyMtF8OIwbOw
-	 F52zp7CY9SwKONNwAAa/HqolPUevOu02vsbyYzSXzB5nU6U6Q01ejsr+qwIKW7UXnX
-	 QDnBExtTi2/0WuBQs+OBTe//7SNU5CLv2alPzgW+WbCWVqKUsqdTaLkmFjupJYZC9i
-	 VTm3I5okaeD0hhuIeqQg6O/UHCa9irDtt4i8l8xX5Vjq2c/acPzRwXUb7OrCNoALkg
-	 o0lErYRwnOLyg==
-Date: Fri, 26 Jul 2024 11:15:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
-	Tejas Vipin <tejasvipin76@gmail.com>, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/mipi-dsi: Change multi functions to use quiet
- member of mipi_dsi_multi_context
-Message-ID: <20240726-cerise-civet-of-reverence-ebeb9d@houat>
-References: <20240724122447.284165-1-tejasvipin76@gmail.com>
- <20240724122447.284165-3-tejasvipin76@gmail.com>
- <877cdakdq9.fsf@intel.com>
- <20240725-psychedelic-benevolent-muskrat-c7fd57@houat>
- <CAD=FV=WbXdnM4or3Ae+nYoQW1Sce0jP6FWtCHShsALuEFNhiww@mail.gmail.com>
+	s=arc-20240116; t=1721985351; c=relaxed/simple;
+	bh=TxnDTTrU1XLBDXUhBaE7WpCNYMdSalx+CqrjnL6Qq0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gLvhq0byxHgulUXK70n0D0Xf//8baVhzmy8FYdYNfsR5pymjvuD55KIog/brYVpXcJBCejhoxDifubb8hqGVqEzH/EzZASphOZ18BT2dAlnRz8jyUgcCu3GRzIXn/VZc31UcaSCx1GCD5QN6wohlBoDdcxoJEkd/BrEi9wurksE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3nLcaOh; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-826fee202d3so179913241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721985348; x=1722590148; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MHUp/YEibHMgEvyjOywFC1rVXXKb5KCbG4vI6T8V30Y=;
+        b=M3nLcaOhVNQ+QNZaF8bZiV2u18V47LpoXxT3OyCunHzLwfJ+so0dJbm5c3102+S2gd
+         X3eMIRGg+9jr3IW3wWDyUCnEEFcNY+zZfTXT5OojVb/YGvCfrF93h61uVyMHSw1drOTR
+         Av//EfWpnu98LgUL1iTbDsLGTGZNIbZQA3ZGgwL2Q9UXYFmKdXMqeQxTH1TPl4obuef+
+         diMDI9miaKnvWm6uCQUMd/rG5kDIgDSEsudcu2FZZeg6n8MIoYi52cNamCbIAcopOWBs
+         jkKX/NEWCrPkTPX4qdbY2OkQ5AtBbs9avQZ7zpKszDKdvH+0ABj89+G0D2UMqpAc41Dy
+         V6Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721985348; x=1722590148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MHUp/YEibHMgEvyjOywFC1rVXXKb5KCbG4vI6T8V30Y=;
+        b=LTl3aGyoDQUl7GWaq8DUZXtsDmkA/f5jmdWdT7ae6jk/ve0PaI79yWfnKFfFm5lRDb
+         Tk9rx0mdW9iYDm48JKO/1QdGmhL3qEM2dy5AcEfJaXLmGu6AAgzCn8NEjSf6pW3T8OwT
+         gQapCboZTLDRozF5WZYiGx0EYOJMEZQoMz3hDQczUIw5LoO7hxg5fK0EN6c1H9oZG5Mi
+         OQMbsm8PJmi2ySYeUO3qztMwGSo+z5qHXH6EXd3raxlK6TGnlGhL34R7baRKCL9/CjJF
+         epkMWjqtzaEVz0SKYz9eFqPjGq51xvGjnI6sTLhnCxIV38PQPWQ4ML5/ulNNKF7HSUTu
+         FlPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/LKoctd8xfouVTEBtcma2NwwHo8tnfdhADRWku75rV7+nCFXIeOze16rhbZTrKphpXfyk1A1fQvu3gAcI8ypJviRdpJICn9KPuE1a
+X-Gm-Message-State: AOJu0Yw2CzWaBDBET4Md/7NteLQNawanRMF6zSiSJc4TCTgo0tPA+0yh
+	c86Sae09EBGbesaY+vtwnHaeXRz/wSQObxlCLUzmPVEfTHbBqqL+QIlCmYz2JqKLOYgAsCuKkKQ
+	BY6XnTY5xlC/9/JfLIoi0o2re1W8=
+X-Google-Smtp-Source: AGHT+IFyu/OD7RMD2Zd6YdOZ7bBTZ3lTg4KPjPn3NrIv7gG22SyGWtP5Oz15hh8AuJkZ0SkOhlkwF8Fwq7t0qb/lt78=
+X-Received: by 2002:a05:6102:4b14:b0:48f:e4b0:81b4 with SMTP id
+ ada2fe7eead31-493d99f776dmr5997687137.7.1721985348084; Fri, 26 Jul 2024
+ 02:15:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="brdy5362wmxxqwhw"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WbXdnM4or3Ae+nYoQW1Sce0jP6FWtCHShsALuEFNhiww@mail.gmail.com>
-
-
---brdy5362wmxxqwhw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240725035318.471-1-hailong.liu@oppo.com> <ZqI5V+5E3RNhuSwx@MiWiFi-R3L-srv>
+ <20240725164003.ft6huabwa5dqoy2g@oppo.com> <ZqMKZ67YhzhbqYg9@MiWiFi-R3L-srv>
+ <20240726040052.hs2gvpktrnlbvhsq@oppo.com> <20240726050356.ludmpxfee6erlxxt@oppo.com>
+ <CAGsJ_4xOauOwkHO5MTKHBP=fpeoNiP_9VJ31G4gBECFvLG4y0g@mail.gmail.com> <ZqNgY1T/VuWQvtfL@MiWiFi-R3L-srv>
+In-Reply-To: <ZqNgY1T/VuWQvtfL@MiWiFi-R3L-srv>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 26 Jul 2024 21:15:36 +1200
+Message-ID: <CAGsJ_4x6QLExJZ4=oOnVteEqm74rJBuCMwgkvjJuj4BsLtXFFw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] mm/vmalloc: fix incorrect __vmap_pages_range_noflush()
+ if vm_area_alloc_pages() from high order fallback to order0
+To: Baoquan He <bhe@redhat.com>
+Cc: Hailong Liu <hailong.liu@oppo.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Wilcox <willy@infradead.org>, Tangquan Zheng <zhengtangquan@oppo.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Thu, Jul 25, 2024 at 10:12:46AM GMT, Doug Anderson wrote:
-> On Thu, Jul 25, 2024 at 1:28=E2=80=AFAM Maxime Ripard <mripard@kernel.org=
-> wrote:
-> >
-> > On Wed, Jul 24, 2024 at 06:32:14PM GMT, Jani Nikula wrote:
-> > > On Wed, 24 Jul 2024, Tejas Vipin <tejasvipin76@gmail.com> wrote:
-> > > > Changes all the multi functions to check if the current context req=
-uires
-> > > > errors to be printed or not using the quiet member.
-> > > >
-> > > > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> > > > ---
-> > > >  drivers/gpu/drm/drm_mipi_dsi.c | 20 ++++++++++++++++++++
-> > > >  1 file changed, 20 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_m=
-ipi_dsi.c
-> > > > index a471c46f5ca6..cbb77342d201 100644
-> > > > --- a/drivers/gpu/drm/drm_mipi_dsi.c
-> > > > +++ b/drivers/gpu/drm/drm_mipi_dsi.c
-> > > > @@ -814,6 +814,8 @@ void mipi_dsi_generic_write_multi(struct mipi_d=
-si_multi_context *ctx,
-> > > >     ret =3D mipi_dsi_generic_write(dsi, payload, size);
-> > > >     if (ret < 0) {
-> > > >             ctx->accum_err =3D ret;
-> > > > +           if (ctx->quiet)
-> > > > +                   return;
-> > > >             dev_err(dev, "sending generic data %*ph failed: %d\n",
-> > > >                     (int)size, payload, ctx->accum_err);
-> > >
-> > > A maintainability nitpick. Imagine someone wishing to add some more
-> > > error handling here. Or something else after the block.
-> > >
-> > > IMO the dev_err() should be wrapped in if (!ctx->quiet) instead of
-> > > adding an early return.
-> > >
-> > > Ditto everywhere.
-> >
-> > I'm not even sure why we need that parameter in the first place.
-> >
-> > Like, what's the expected use of that parameter? Is it supposed to be
-> > set in users of that function?
-> >
-> > If so, wouldn't it prevent any sort of meaningful debugging if some
-> > drivers set it and some don't?
-> >
-> > It looks to me like you're reimplementing drm.debug.
->=20
-> I can explain how we got here and maybe you can explain how it should
-> be designed differently.
->=20
-> 1. The majority of MIPI panels drivers just have a pile of commands
-> that need to be sent during panel init time. Each time you send a
-> command it technically can fail but it's very unlikely. In order to
-> make things debuggable in the unlikely case of failure, you want a
-> printout about which command failed. In order to avoid massive numbers
-> of printouts in each driver you want the printout in the core. This is
-> the impetus behind the "_multi" functions that were introduced
-> recently and I think most people who have looked at converted drivers
-> are pretty pleased. The functions are readable/non-bloated but still
-> check for errors and print messages in the right place.
+On Fri, Jul 26, 2024 at 8:38=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
 >
-> 2. As Tejas was adding more "_multi" variants things were starting to
-> feel a bit awkward. Dmitry proposed [1] that maybe the answer was that
-> we should work to get rid of the non-multi variants and then we don't
-> need these awkward wrappers.
+> On 07/26/24 at 05:29pm, Barry Song wrote:
+> > On Fri, Jul 26, 2024 at 5:04=E2=80=AFPM Hailong Liu <hailong.liu@oppo.c=
+om> wrote:
+> > >
+> > > On Fri, 26. Jul 12:00, Hailong Liu wrote:
+> > > > On Fri, 26. Jul 10:31, Baoquan He wrote:
+> > > > [...]
+> > > > > > The logic of this patch is somewhat similar to my first one. If=
+ high order
+> > > > > > allocation fails, it will go normal mapping.
+> > > > > >
+> > > > > > However I also save the fallback position. The ones before this=
+ position are
+> > > > > > used for huge mapping, the ones >=3D position for normal mappin=
+g as Barry said.
+> > > > > > "support the combination of PMD and PTE mapping". this  will ta=
+ke some
+> > > > > > times as it needs to address the corner cases and do some tests=
+.
+> > > > >
+> > > > > Hmm, we may not need to worry about the imperfect mapping. Curren=
+tly
+> > > > > there are two places setting VM_ALLOW_HUGE_VMAP: __kvmalloc_node_=
+noprof()
+> > > > > and vmalloc_huge().
+> > > > >
+> > > > > For vmalloc_huge(), it's called in below three interfaces which a=
+re all
+> > > > > invoked during boot. Basically they can succeed to get required c=
+ontiguous
+> > > > > physical memory. I guess that's why Tangquan only spot this issue=
+ on kvmalloc
+> > > > > invocation when the required size exceeds e.g 2M. For kvmalloc_no=
+de(),
+> > > > > we have told that in the code comment above __kvmalloc_node_nopro=
+f(),
+> > > > > it's a best effort behaviour.
+> > > > >
+> > > > Take a __vmalloc_node_range(2.1M, VM_ALLOW_HUGE_VMAP) as a example.
+> > > > because the align requirement of huge. the real size is 4M.
+> > > > if allocation first order-9 successfully and the next failed. becua=
+se the
+> > > > fallback, the layout out pages would be like order9 - 512 * order0
+> > > > order9 support huge mapping, but order0 not.
+> > > > with the patch above, would call vmap_small_pages_range_noflush() a=
+nd do normal
+> > > > mapping, the huge mapping would not exist.
+> > > >
+> > > > >  mm/mm_init.c <<alloc_large_system_hash>>
+> > > > >  table =3D vmalloc_huge(size, gfp_flags);
+> > > > >  net/ipv4/inet_hashtables.c <<inet_pernet_hashinfo_alloc>>
+> > > > >  new_hashinfo->ehash =3D vmalloc_huge(ehash_entries * sizeof(stru=
+ct inet_ehash_bucket),
+> > > > >  net/ipv4/udp.c <<udp_pernet_table_alloc>>
+> > > > >  udptable->hash =3D vmalloc_huge(hash_entries * 2 * sizeof(struct=
+ udp_hslot)
+> > > > >
+> > > > > Maybe we should add code comment or document to notice people tha=
+t the
+> > > > > contiguous physical pages are not guaranteed for vmalloc_huge() i=
+f you
+> > > > > use it after boot.
+> > > > >
+> > > > > >
+> > > > > > IMO, the draft can fix the current issue, it also does not have=
+ significant side
+> > > > > > effects. Barry, what do you think about this patch? If you thin=
+k it's okay,
+> > > > > > I will split this patch into two: one to remove the VM_ALLOW_HU=
+GE_VMAP and the
+> > > > > > other to address the current mapping issue.
+> > > > > >
+> > > > > > --
+> > > > > > help you, help me,
+> > > > > > Hailong.
+> > > > > >
+> > > > >
+> > > > >
+> > > I check the code, the issue only happen in gfp_mask with __GFP_NOFAIL=
+ and
+> > > fallback to order 0, actuaally without this commit
+> > > e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
+> > > if __vmalloc_area_node allocation failed, it will goto fail and try o=
+rder-0.
+> > >
+> > > fail:
+> > >         if (shift > PAGE_SHIFT) {
+> > >                 shift =3D PAGE_SHIFT;
+> > >                 align =3D real_align;
+> > >                 size =3D real_size;
+> > >                 goto again;
+> > >         }
+> > >
+> > > So do we really need fallback to order-0 if nofail?
+> >
+> > Good catch, this is what I missed. I feel we can revert Michal's fix.
+> > And just remove __GFP_NOFAIL bit when we are still allocating
+> > by high-order. When "goto again" happens, we will allocate by
+> > order-0, in this case, we keep the __GFP_NOFAIL.
+>
+> With Michal's patch, the fallback will be able to satisfy the allocation
+> for nofail case because it fallback to 0-order plus __GFP_NOFAIL. The
 
-Makes sense to me so far
+My point is that vm_area_alloc_pages() is an internal function and
+just an implementation
+detail. As long as its caller, __vmalloc_area_node(), can support
+NOFAIL, it's fine.
+Therefore, we can skip NOFAIL support for high-order allocations in
+vm_area_alloc_pages()
+and limit GFP_NOFAIL support to order-0.
 
-> 3. The issue with telling everyone to use the "_multi" variants is
-> that they print the error message for you. While this is the correct
-> default behavior and the correct behavior for the vast majority of
-> users, I can imagine there being a legitimate case where a driver
-> might not want error messages printed.
+Good news is that __vmalloc_node_range_noprof() has already a way to fallba=
+ck
+to order-0
 
-That's the part I disagree with actually. I don't think that message
-printing is a driver's decision, but a context one. Users might want to
-increase / decrease the log levels, but drivers shouldn't and just
-provide a consistent behaviour there.
+fail:
+        if (shift > PAGE_SHIFT) {
+                shift =3D PAGE_SHIFT;
+                align =3D real_align;
+                size =3D real_size;
+                goto again;
+        }
 
-> I don't personally know of a case, but in my experience there's always
-> some case where you're dealing with weird hardware and the driver
-> knows that a command has a high chance of failure. Maybe the driver
-> will retry or maybe it'll detect /handle the error, but the idea is
-> that the driver wouldn't want a printout.
+So, we can definitely utilize this fallback instead of implementing it
+within vm_area_alloc_pages(),
+which would alter the page_order of vm_area and create inconsistency,
+crashing the system
+due to memory corruption.
 
-Then we'll address it when the time comes and we're sure what we're
-actually trying to fix. And even that theoretical scenario might just
-disappear when the printk threaded printing work is done.
+With higher-level fallback in __vmalloc_node_range_noprof(), we won't
+need an unusual fix-up
+for vm_area as you're proposing. The page_order of vm_area will
+consistently stay the same.
 
-> Said another way: I think of the errors of these MIPI initialization
-> functions a lot like errors allocating memory. By default kmalloc()
-> reports an error so all drivers calling kmalloc() don't need to print,
-> but if your driver specifically knows that an allocation failure is
-> likely and it knows how to handle it then it can pass a flag to tell
-> the core kernel not to print.
->=20
->=20
-> So I guess options are:
->=20
-> a) Accept what Tejas is doing here as reasonable.
+If there is any way to improvement, we may also add:
 
-I don't think it's unreasonable, however I do think it's an API that has
-no current users and will just lead to inconsistencies in the drivers,
-without any benefit at the moment.
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index caf032f0bd69..03d8148d7a02 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3806,7 +3806,7 @@ void *__vmalloc_node_range_noprof(unsigned long
+size, unsigned long align,
+                warn_alloc(gfp_mask, NULL,
+                        "vmalloc error: size %lu, vm_struct allocation
+failed%s",
+                        real_size, (nofail) ? ". Retrying." : "");
+-               if (nofail) {
++               if (nofail && shift =3D=3D PAGE_SHIFT) {
+                        schedule_timeout_uninterruptible(1);
+                        goto again;
+                }
 
-> b) Don't accept what Tejas is doing here and always keep the "_multi"
-> functions as wrappers.
->=20
-> c) Declare that, since there are no known cases where we want to
-> suppress the error printouts, that suppressing the error printouts is
-> a "tomorrow" problem. We transition everyone to _multi but don't
-> provide a way to suppress the printouts.
+There's no need to keep retrying for __get_vm_area_node() until success,
+as we will succeed when we fall back to order-0.
 
-That's my preferred solution.
+> 'if (shift > PAGE_SHIFT)' conditional checking and handling may be
+> problemtic since it could jump to fail becuase vmap_pages_range()
+> invocation failed, or partially allocate huge parges and break down,
+> then it will ignore the already allocated pages, and do all the thing aga=
+in.
+>
+> The only thing 'if (shift > PAGE_SHIFT)' checking and handling makes
+> sense is it fallback to the real_size and real_align. BUT we need handle
+> the fail separately, e.g
+> 1)__get_vm_area_node() failed;
+> 2)vm_area_alloc_pages() failed when shift > PAGE_SHIFT and non-nofail;
+> 3)vmap_pages_range() failed;
+>
+> Honestly, I didn't see where the nofail is mishandled, could you point
+> it out specifically? I could miss it.
+>
+> Thanks
+> Baoquan
+>
 
-Maxime
-
---brdy5362wmxxqwhw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZqNpHAAKCRAnX84Zoj2+
-dlvFAX44yEW+u4GoCcKUC7TqYWqzzB3Aax+bdjws1zuvZVj8u4gTbQUAzshPV6z5
-oimFS/gBgMY5MhscZDqIk+IguVW40pD1pI4nnug0O54UOzjmNvezWyWsuxx9moZy
-zwYBFtCqIw==
-=YWm7
------END PGP SIGNATURE-----
-
---brdy5362wmxxqwhw--
+Thanks
+Barry
 
