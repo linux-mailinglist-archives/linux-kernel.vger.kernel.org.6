@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-262923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D30393CEBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC3593CEC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8BF1C2133A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B46D1C2162F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83C548EE;
-	Fri, 26 Jul 2024 07:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FD217557E;
+	Fri, 26 Jul 2024 07:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JENxbB/M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B9ePZyfN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JENxbB/M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B9ePZyfN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Pr1g6gD1"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA8923D2
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F303A2A;
+	Fri, 26 Jul 2024 07:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721978432; cv=none; b=Y5aUFdqGu2J4ucvxfEH7RX6d3AmTGi51OPwd50Uw0BZYWf6NlSPHL/CT1VAZIynhLvuY60gC6apYXuRb59WhJ6cqXkxqX+DHtYiqgXoRCJfqdidvO48xaugiGWIixagUw/mHW91Z9lIGsKXN9Js1NTawCqkQMyroKsq18w3JqiI=
+	t=1721978542; cv=none; b=doRDqSftePnU9TQ8ffyvZh/R2tOH6Z9yoYUTwL+gW/ccZkFyH96RrOUyZTY7fQzIW9dYEKTi67lQ3VheXIeuNPGgRRs6YZACtM00EEnaImVmYpzQ4iyLn2MhjZynkJ9lx2AN5hjS3aSi/zJmO8PErp8oTXJ6CJl6Xm0FJEDrxkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721978432; c=relaxed/simple;
-	bh=3cSuLKpE/DMHGp7izyzBHI/ahbST+ml4yDAQmeRQlS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q20MHaMdqqBdyLoAXnWdiDMbXztRAicA00ny05LRD8c5TC+2RUEaYGENQG8PqCjQ/+TwYW52z068NjNgZb4MWfuHdIg6Qrz8XlF5MWGfd93Rp6L8jYnmfPJemlvYgZmWXI//pJBGn+GpCmPY9OuHQiR1d+7lDhDw++eYbgecvO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JENxbB/M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B9ePZyfN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JENxbB/M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B9ePZyfN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1721978542; c=relaxed/simple;
+	bh=2JbLD6jaW6x6BA/sR9/SQ6vyPM670m1NlSV5gm2q91A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixbyGm43r0/dB/F/IiWjoeFVI7BvyeaEdAKQrrWIdb57F+c6qGyhSpjT9N00XsLrU1JfD3/8XGZkGZZms+S8eDBWBU0RaLiroYKFgxlbxIXBHshNpecyZymWu3jn/WS9wspTL/YIyo2tSWODDg4vNO2KozdZLXWZsM91OpzjonQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Pr1g6gD1; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [10.101.195.16] (unknown [10.101.195.16])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 21F0621A52;
-	Fri, 26 Jul 2024 07:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721978429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l4aoEm5lf95gxMPPAT4dKt3MyZiPjHCL44jorGbcuts=;
-	b=JENxbB/MHuGcZnjfNogE6CaeJVl9k9BqXrFTQOuSQ87iV8RN2yEy6vbN76mdv3zdX32hwX
-	Byx1tquuzgLWSkB9gnGuFLsq+ARh51ncb4Tc8X/JwoTcIbi32qK6andzkJcXbs7sylIRpJ
-	qw6R9ReEmEuJ1m6jyKJH6JU8W+9OOEc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721978429;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l4aoEm5lf95gxMPPAT4dKt3MyZiPjHCL44jorGbcuts=;
-	b=B9ePZyfNgO7ipdi209M7WR9gXGA2rggSeCUYjZXuXDK7GlUg18ax5HnwMqzm8PegJo8lzJ
-	PaGvMBiyAjg+TADA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="JENxbB/M";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B9ePZyfN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721978429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l4aoEm5lf95gxMPPAT4dKt3MyZiPjHCL44jorGbcuts=;
-	b=JENxbB/MHuGcZnjfNogE6CaeJVl9k9BqXrFTQOuSQ87iV8RN2yEy6vbN76mdv3zdX32hwX
-	Byx1tquuzgLWSkB9gnGuFLsq+ARh51ncb4Tc8X/JwoTcIbi32qK6andzkJcXbs7sylIRpJ
-	qw6R9ReEmEuJ1m6jyKJH6JU8W+9OOEc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721978429;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l4aoEm5lf95gxMPPAT4dKt3MyZiPjHCL44jorGbcuts=;
-	b=B9ePZyfNgO7ipdi209M7WR9gXGA2rggSeCUYjZXuXDK7GlUg18ax5HnwMqzm8PegJo8lzJ
-	PaGvMBiyAjg+TADA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBE581396E;
-	Fri, 26 Jul 2024 07:20:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5rLdLDxOo2abHgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Fri, 26 Jul 2024 07:20:28 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: linux-kernel@vger.kernel.org
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Cyril Hrubis <chrubis@suse.cz>,
-	Jan Stancek <jstancek@redhat.com>,
-	Li Wang <liwang@redhat.com>,
-	Xiao Yang <yangx.jy@fujitsu.com>,
-	Yang Xu <xuyang2018.jy@fujitsu.com>,
-	Andrea Cervesato <andrea.cervesato@suse.de>,
-	ltp@lists.linux.it,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Petr Vorel <petr.vorel@gmail.com>
-Subject: [PATCH 1/1] MAINTAINERS: Update LTP members and web
-Date: Fri, 26 Jul 2024 09:20:09 +0200
-Message-ID: <20240726072009.1021599-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.45.2
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D663E41098;
+	Fri, 26 Jul 2024 07:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1721978537;
+	bh=8Hhfqs0Ybtcs3cAp4OwCwvCol+GXkHQnr9pfIzKwbCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=Pr1g6gD1ca9giDUyersdFNyzxGiqFa/p+R9OgVSjcUFyHwi0PIVK+Cw0l8rhhvDlW
+	 AkISOaKPfthwAQF8R0jo0vFNePaU4Vjx8Hw5JeJz57tG2vbCesW0jpISNHWfjIBJ3z
+	 DIXq8m0iJhHUTNzFdv7hKRqm+ojq27LkuV2lM3nohP5veCJfc8FXOxg+QHpDiKinHF
+	 HdUu7szzt0ZDjfSs3KhcdH7Or6BNCZHkwJ5UuCA42GSHsc8z9PKV302vk7WZCNPC/F
+	 pvd0bhfaV4Qf2JQ+DGc9riZgVBqmZiU4SSFgTmTv/8DGCrlnPjdcjMlZpOtEGUsjQj
+	 t+B18PpzGyaQQ==
+Message-ID: <db2d9152-7c33-4fbc-8ca5-d70ab9f7598d@canonical.com>
+Date: Fri, 26 Jul 2024 15:22:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] PCI: ASPM: Allow OS to configure ASPM where BIOS is
+ incapable of
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>, bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+ ilpo.jarvinen@linux.intel.com, david.e.box@linux.intel.com,
+ AceLan Kao <acelan.kao@canonical.com>
+References: <20240530085227.91168-1-kai.heng.feng@canonical.com>
+Content-Language: en-US
+From: Hui Wang <hui.wang@canonical.com>
+In-Reply-To: <20240530085227.91168-1-kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 21F0621A52
-X-Spam-Score: -1.31
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,redhat.com,fujitsu.com,suse.de,lists.linux.it,linux-foundation.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 
-LTP project uses now readthedocs.org instance instead of GitHub wiki.
+I tested the patchset on a Dell machine (the testing result is positive).
 
-LTP maintainers are listed in alphabetical order.
+Without the patchset, the ASPM is disabled on the NVME controller:
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
-Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
----
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+         LnkCtl:    ASPM Disabled; RCB 64 bytes, Disabled- CommClk+
+             ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0a3d9e93689..fa514177125b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13322,14 +13322,16 @@ F:	Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
- F:	drivers/i2c/muxes/i2c-mux-ltc4306.c
- 
- LTP (Linux Test Project)
-+M:	Andrea Cervesato <andrea.cervesato@suse.com>
- M:	Cyril Hrubis <chrubis@suse.cz>
- M:	Jan Stancek <jstancek@redhat.com>
- M:	Petr Vorel <pvorel@suse.cz>
- M:	Li Wang <liwang@redhat.com>
- M:	Yang Xu <xuyang2018.jy@fujitsu.com>
-+M:	Xiao Yang <yangx.jy@fujitsu.com>
- L:	ltp@lists.linux.it (subscribers-only)
- S:	Maintained
--W:	http://linux-test-project.github.io/
-+W:	https://linux-test-project.readthedocs.io/
- T:	git https://github.com/linux-test-project/ltp.git
- 
- LTR390 AMBIENT/UV LIGHT SENSOR DRIVER
--- 
-2.45.2
+After applying the patchset, the ASPM is enabled on the NVME controller:
 
+          LnkCtl:    ASPM L1 Enabled; RCB 64 bytes, Disabled- CommClk+
+             ExtSynch- ClockPM+ AutWidDis- BWInt- AutBWInt-
+
+
+Regards,
+
+Hui.
+
+
+On 5/30/24 16:52, Kai-Heng Feng wrote:
+> Since commit f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM
+> and LTR"), ASPM is configured for NVMe devices enabled in VMD domain.
+>
+> However, that doesn't cover the case when FADT has ACPI_FADT_NO_ASPM
+> set.
+>
+> So add a new attribute to bypass aspm_disabled so OS can configure ASPM.
+>
+> Fixes: f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM and LTR")
+> Link: https://lore.kernel.org/linux-pm/218aa81f-9c6-5929-578d-8dc15f83dd48@panix.com/
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>   drivers/pci/pcie/aspm.c | 8 ++++++--
+>   include/linux/pci.h     | 1 +
+>   2 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index cee2365e54b8..e719605857b1 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1416,8 +1416,12 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+>   	 * the _OSC method), we can't honor that request.
+>   	 */
+>   	if (aspm_disabled) {
+> -		pci_warn(pdev, "can't override BIOS ASPM; OS doesn't have ASPM control\n");
+> -		return -EPERM;
+> +		if (aspm_support_enabled && pdev->aspm_os_control)
+> +			pci_info(pdev, "BIOS can't program ASPM, let OS control it\n");
+> +		else {
+> +			pci_warn(pdev, "can't override BIOS ASPM; OS doesn't have ASPM control\n");
+> +			return -EPERM;
+> +		}
+>   	}
+>   
+>   	if (!locked)
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index fb004fd4e889..58cbd4bea320 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -467,6 +467,7 @@ struct pci_dev {
+>   	unsigned int	no_command_memory:1;	/* No PCI_COMMAND_MEMORY */
+>   	unsigned int	rom_bar_overlap:1;	/* ROM BAR disable broken */
+>   	unsigned int	rom_attr_enabled:1;	/* Display of ROM attribute enabled? */
+> +	unsigned int	aspm_os_control:1;	/* Display of ROM attribute enabled? */
+>   	pci_dev_flags_t dev_flags;
+>   	atomic_t	enable_cnt;	/* pci_enable_device has been called */
+>   
 
