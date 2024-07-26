@@ -1,262 +1,134 @@
-Return-Path: <linux-kernel+bounces-262992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D4293CF98
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:25:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03CA93CFA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E074F1F224EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:25:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39E5DB216D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC02D176FB3;
-	Fri, 26 Jul 2024 08:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8267176FCF;
+	Fri, 26 Jul 2024 08:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="RXWvlyzu"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kx33rf1t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91F176ABA
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7EA176AB6;
+	Fri, 26 Jul 2024 08:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721982310; cv=none; b=aI07nWUVplF+VNdJSKwgQb22JLNt4i4P/mUMktpK8rhwhQGzo+If1AV9ia9u2+BuuaN74KMCECtjIThKhyvR3STKRwqDMWSxvOYMZSbsvBw/y+jBMlULV6WDt1pXLh1PMgilxCTB3OyGmj+Y8ar7l8D1bBrNyK0a8HKlWqFey8I=
+	t=1721982394; cv=none; b=PPDmVzuPNsgQ+Z6KbHPeHx7y+W6As63CtA2s2nU4OxqrPiItdpmuhGDFtxkpvh9BWckjhXqs/gBo/otPluJhCus/WBreaCHjGxI2eYcP8uiIbck3H3zB1HbcuAa7df82VZJ0Hq6A2JGm2WDJNfLNRYbA3RhIx3O6jcRL9yYXvJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721982310; c=relaxed/simple;
-	bh=jbjIlEsz/rUHNNmvK3K3tBZC2zL1xHqph3zcFTj8ugs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+yfN6rwNCuraeb/ciJ5TTKpWmy7ABn/0wvPrVxrmdtNgZ6vpjHgTnseDpmjazAarGuqZL+0Tm+Oy9luJOvHMzTRyzCvD2fWpWw0R2dInuAKvKrF+2zgmMSpiEqBFm4br8jqip91bLi8mKAvl13c7k8rQoetCFxPCYSxrIl+oyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=RXWvlyzu; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aac70e30dso160020766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=grsecurity.net; s=grsec; t=1721982307; x=1722587107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaNgKcqQ131GMelXGkTt/N9gIuFIqTNTFxN3e5+3Ods=;
-        b=RXWvlyzu/TgFPc1QIKy7lBfTvy0G5VIC8l5KV6AFhp/kDgCsOwNsrgZVFjFlRUwyKz
-         vKEGlsQ04r5S4ANQtl6dzBe6bIzSjXvYeK6j8zGUD0GiHCXO3uzX80xnHUQi1Ya3aIT4
-         xjGpRbfMgIr87Zd0Baue9RrrFNdaCzT7lkYMaMmLw+sXLGND7LcBi7ByhBbQ7noeEc/G
-         4VozIXEtx0sHIhwIOfmhvH5fjOMW+mxy6hAuD47sV7bwuCAOpBBGCXlrni7f1xwQzAnp
-         9ygS7qc3rpZLuzo40eStw4/zdt7jmV/Kv8NLP942pIO9INUX925SG6O9okz6yJFescHh
-         Wukg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721982307; x=1722587107;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HaNgKcqQ131GMelXGkTt/N9gIuFIqTNTFxN3e5+3Ods=;
-        b=tViRRyus/8jre7L217D/lDNNKiaDWM7gQURpxmHkfCFAv+QK9gMJkL49VeFFQK1LwW
-         0+jA8GuTrk9FFFJ5M5g+36Gz+TIdxvfpIvl/g78Np0O0m3gzqApyujk6+Fnr1hr547rJ
-         vl4pFHygDCoqenIF+VEsPLOwNbphSdb88zbo6NYPBmowoGcSL79eHXQCLoJeTjBHcFhK
-         otB7Wu9p++bma/WRKuOBFygkq052p4hOOosqLkRDGZji+P6vOI5SR2ERLXahB9tka/m/
-         3yHEAj9T7KdEjW6AIY8SCGho7NzLOu/caGuKCW0eBx5z8P/gK5KwFM8eXRMaJ6AmJBMu
-         M23g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHLZUgaluSwIU+5FTuJ5oAOa876+z1MohclRzAV3/CCHRPHzw3tmowp0/JW4x1GbqA5VXFGdh4TmiWC9gRyn/QfYL+efE6obtM9mO6
-X-Gm-Message-State: AOJu0YxeMAdBUDXYJYqWaL71ypF7QhYJJLv+7YRBKnMeqGvMHXTc4kzB
-	iJnzCaoKsWisFlqWG0Tq2Q+9ldWdQErrZHGZJepwvQTmogzRZztPZOCSEr2zdyE=
-X-Google-Smtp-Source: AGHT+IFD5ZWCc4dCfBtA9ZCYaVf+brFxoknqOvdwuFJtVkY3bhxwenyjYOSPAWlDJgICSvm+vFoTug==
-X-Received: by 2002:a17:907:7244:b0:a7a:a2b7:93ff with SMTP id a640c23a62f3a-a7acb933074mr341973066b.57.1721982307120;
-        Fri, 26 Jul 2024 01:25:07 -0700 (PDT)
-Received: from ?IPV6:2003:f6:af24:a900:7e45:2c14:7bcc:f1b? (p200300f6af24a9007e452c147bcc0f1b.dip0.t-ipconnect.de. [2003:f6:af24:a900:7e45:2c14:7bcc:f1b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de12sm148075666b.51.2024.07.26.01.25.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 01:25:06 -0700 (PDT)
-Message-ID: <920258cb-d2d5-4065-874a-df5a36c6a563@grsecurity.net>
-Date: Fri, 26 Jul 2024 10:25:05 +0200
+	s=arc-20240116; t=1721982394; c=relaxed/simple;
+	bh=l2IZLVVoqB72++NC/Bg6lOylPdP7F1zVWUXAP+Xhg28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c+9NhJ/tsH83mIn0Vc5C8u4g2DaI361NrMXdPs1qCeSTxxuNhVZd3CCOFaTs2ZCmYVoZQBcMPBkplQI0MKMMEir/5F+azVxppk8UIjoOvR2S+MlMS2z2yFBOJco3MYTXvWY2sRsd7g+40tB3/3HN7POU8NlZn9BZFDvswggH/Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kx33rf1t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q19p9b027639;
+	Fri, 26 Jul 2024 08:26:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VxqvS5G/n0dALMTSTAsgqDdimLM3GriAm5TKGP1RhUM=; b=Kx33rf1tFlJV0Y0O
+	88tkdDE4lpApEQg04iwPU6f9boAspybi8eMKIafyz6hyZ4+AZ4BxTX8Z2f/07lMf
+	7qrLdLX+NOeN0cTj3qLNfjcBdxIQynYiq7zptF78peIoDUYhpvJ3LzStyI/bdO+M
+	tfgUrqBJbL1Xd9btI/jWoD4OIyRjdkvA4fc0zEsNntjnrGpoA18aYV2eT3rHrsLy
+	y4DPqfFSY/Wv1WOjgouuSrXnl6L2fg213gWtLVh+BAKsVix1gbRFYyN0+QOsgSSb
+	XY7P+dZgFcn52UJdpo77+A54HXMtqk1eBKli0cFNUwkWbFlUNuNaH2jn9G0zclvs
+	O/eV3w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m1vygtu7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 08:26:00 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46Q8Pxtv016137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 08:25:59 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
+ 2024 01:25:53 -0700
+Message-ID: <7ecfe568-6897-6dc5-fda7-50d6424298d9@quicinc.com>
+Date: Fri, 26 Jul 2024 13:55:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: tracing: user events UAF crash report
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ajay Kaher <ajay.kaher@broadcom.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
- <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Vasavi Sirnapalli <vasavi.sirnapalli@broadcom.com>,
- Alexey Makhalov <alexey.makhalov@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Beau Belgrave <beaub@linux.microsoft.com>
-References: <20240719204701.1605950-1-minipli@grsecurity.net>
- <CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
- <5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
- <CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
- <CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
- <CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
- <20240725131021.788374d0@gandalf.local.home>
- <20240725131632.64cab267@gandalf.local.home>
- <cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
- <20240725150517.3184e078@gandalf.local.home>
- <0d1a8c46-43a7-42d6-bcbf-647a5a68c3c5@grsecurity.net>
- <20240725161519.35fd3bd6@gandalf.local.home>
- <1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
- <20240725171459.598d9500@gandalf.local.home>
- <a7d66736-80d3-4f3d-9cca-ec46e019b4cb@grsecurity.net>
- <20240725190632.2755cb70@gandalf.local.home>
-Content-Language: en-US, de-DE
-From: Mathias Krause <minipli@grsecurity.net>
-Autocrypt: addr=minipli@grsecurity.net; keydata=
- xsDNBF4u6F8BDAC1kCIyATzlCiDBMrbHoxLywJSUJT9pTbH9MIQIUW8K1m2Ney7a0MTKWQXp
- 64/YTQNzekOmta1eZFQ3jqv+iSzfPR/xrDrOKSPrw710nVLC8WL993DrCfG9tm4z3faBPHjp
- zfXBIOuVxObXqhFGvH12vUAAgbPvCp9wwynS1QD6RNUNjnnAxh3SNMxLJbMofyyq5bWK/FVX
- 897HLrg9bs12d9b48DkzAQYxcRUNfL9VZlKq1fRbMY9jAhXTV6lcgKxGEJAVqXqOxN8DgZdU
- aj7sMH8GKf3zqYLDvndTDgqqmQe/RF/hAYO+pg7yY1UXpXRlVWcWP7swp8OnfwcJ+PiuNc7E
- gyK2QEY3z5luqFfyQ7308bsawvQcFjiwg+0aPgWawJ422WG8bILV5ylC8y6xqYUeSKv/KTM1
- 4zq2vq3Wow63Cd/qyWo6S4IVaEdfdGKVkUFn6FihJD/GxnDJkYJThwBYJpFAqJLj7FtDEiFz
- LXAkv0VBedKwHeBaOAVH6QEAEQEAAc0nTWF0aGlhcyBLcmF1c2UgPG1pbmlwbGlAZ3JzZWN1
- cml0eS5uZXQ+wsERBBMBCgA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEd7J359B9
- wKgGsB94J4hPxYYBGYYFAmBbH/cCGQEACgkQJ4hPxYYBGYaX/gv/WYhaehD88XjpEO+yC6x7
- bNWQbk7ea+m82fU2x/x6A9L4DN/BXIxqlONzk3ehvW3wt1hcHeF43q1M/z6IthtxSRi059RO
- SarzX3xfXC1pc5YMgCozgE0VRkxH4KXcijLyFFjanXe0HzlnmpIJB6zTT2jgI70q0FvbRpgc
- rs3VKSFb+yud17KSSN/ir1W2LZPK6er6actK03L92A+jaw+F8fJ9kJZfhWDbXNtEE0+94bMa
- cdDWTaZfy6XJviO3ymVe3vBnSDakVE0HwLyIKvfAEok+YzuSYm1Nbd2T0UxgSUZHYlrUUH0y
- tVxjEFyA+iJRSdm0rbAvzpwau5FOgxRQDa9GXH6ie6/ke2EuZc3STNS6EBciJm1qJ7xb2DTf
- SNyOiWdvop+eQZoznJJte931pxkRaGwV+JXDM10jGTfyV7KT9751xdn6b6QjQANTgNnGP3qs
- TO5oU3KukRHgDcivzp6CWb0X/WtKy0Y/54bTJvI0e5KsAz/0iwH19IB0vpYLzsDNBF4u6F8B
- DADwcu4TPgD5aRHLuyGtNUdhP9fqhXxUBA7MMeQIY1kLYshkleBpuOpgTO/ikkQiFdg13yIv
- q69q/feicsjaveIEe7hUI9lbWcB9HKgVXW3SCLXBMjhCGCNLsWQsw26gRxDy62UXRCTCT3iR
- qHP82dxPdNwXuOFG7IzoGBMm3vZbBeKn0pYYWz2MbTeyRHn+ZubNHqM0cv5gh0FWsQxrg1ss
- pnhcd+qgoynfuWAhrPD2YtNB7s1Vyfk3OzmL7DkSDI4+SzS56cnl9Q4mmnsVh9eyae74pv5w
- kJXy3grazD1lLp+Fq60Iilc09FtWKOg/2JlGD6ZreSnECLrawMPTnHQZEIBHx/VLsoyCFMmO
- 5P6gU0a9sQWG3F2MLwjnQ5yDPS4IRvLB0aCu+zRfx6mz1zYbcVToVxQqWsz2HTqlP2ZE5cdy
- BGrQZUkKkNH7oQYXAQyZh42WJo6UFesaRAPc3KCOCFAsDXz19cc9l6uvHnSo/OAazf/RKtTE
- 0xGB6mQN34UAEQEAAcLA9gQYAQoAIAIbDBYhBHeyd+fQfcCoBrAfeCeIT8WGARmGBQJeORkW
- AAoJECeIT8WGARmGXtgL/jM4NXaPxaIptPG6XnVWxhAocjk4GyoUx14nhqxHmFi84DmHUpMz
- 8P0AEACQ8eJb3MwfkGIiauoBLGMX2NroXcBQTi8gwT/4u4Gsmtv6P27Isn0hrY7hu7AfgvnK
- owfBV796EQo4i26ZgfSPng6w7hzCR+6V2ypdzdW8xXZlvA1D+gLHr1VGFA/ZCXvVcN1lQvIo
- S9yXo17bgy+/Xxi2YZGXf9AZ9C+g/EvPgmKrUPuKi7ATNqloBaN7S2UBJH6nhv618bsPgPqR
- SV11brVF8s5yMiG67WsogYl/gC2XCj5qDVjQhs1uGgSc9LLVdiKHaTMuft5gSR9hS5sMb/cL
- zz3lozuC5nsm1nIbY62mR25Kikx7N6uL7TAZQWazURzVRe1xq2MqcF+18JTDdjzn53PEbg7L
- VeNDGqQ5lJk+rATW2VAy8zasP2/aqCPmSjlCogC6vgCot9mj+lmMkRUxspxCHDEms13K41tH
- RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
-In-Reply-To: <20240725190632.2755cb70@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+ <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+ <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kPAXfV9b_el9nMT0CcWuqcQetQs7sefF
+X-Proofpoint-GUID: kPAXfV9b_el9nMT0CcWuqcQetQs7sefF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_07,2024-07-25_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxlogscore=969 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407260054
 
-On 26.07.24 01:06, Steven Rostedt wrote:
-> On Thu, 25 Jul 2024 23:32:30 +0200
-> Mathias Krause <minipli@grsecurity.net> wrote:
-> 
->> That was for a single run of
->> tools/testing/selftests/user_events/ftrace_test with the read loop of
->> /sys/kernel/tracing/events/user_events/__test_event/format in a
->> different shell.
->>
->>>
->>> destroy_user_event() which is under event_mutex calls
->>> user_event_set_call_visible() with false, that will then call:
->>>
->>> trace_remove_event_call() -> probe_remove_event_call() ->
->>>  __trace_remove_event_call() -> event_remove() ->
->>>  remove_event_from_tracers()
->>>
->>> Where remove_event_from_tracers() loops over all the instances and will set
->>> each of the file pointers flags associated to the event: EVENT_FILE_FL_FREED
->>>
->>> Then it returns back to destroy_user_event() that would free the event.
->>>
->>> The f_start() that was in your crash, with the new patch, should take the
->>> event_mutex before referencing the event that was freed. And with that flag
->>> being set, it should exit out.  
->>
->> Looking at the very first report:
->>
->> [   76.306946] BUG: KASAN: slab-use-after-free in f_start+0x36e/0x3d0
->>
->> That's what faddr2line gives me:
->>
->> f_start+0x36e/0x3d0:
->> f_start at kernel/trace/trace_events.c:1637 (discriminator 1)
->>
->> Which is:
->> 1635     mutex_lock(&event_mutex);
->> 1636     file = event_file_data(m->private);
->> 1637     if (!file || (file->flags & EVENT_FILE_FL_FREED))
->> 1638         return ERR_PTR(-ENODEV);
-> 
-> BAH! I finally figured it out.
-> 
-> I was able to reproduce it and this does stop the UAF from happening.
-> 
-> The issue was, as a short cut, I had the "format" file's i_private point to
-> the "call" entry directly, and not go via the "file". This is because the
-> all format files are the same for the same "call", so no reason to
-> differentiate them.  The other files maintain state (like the "enable",
-> "trigger", etc). But this means if the file were to disappear, the "format"
-> file would be unaware of it.
-> 
-> This should fix it for you. It fixed it for me.
 
-Heureka, it did!
+>>>>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+>>>>>      using simple rcg2 ops, could you please clarify that?
+>>>> As per the HW design recommendation, RCG needs to be parked at a safe
+>>>> clock source(XO) in the disable path, shared_ops is used to achieve the
+>>>> same.
+>>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+>>
+>> Yes, it applies to SM8150.
+> Should the same logic be applied to other chipsets supported upstream?
+> If this is the case, which chipsets?
 
-Thanks, Steve!
 
-> 
-> -- Steve
-> 
-> 
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 6ef29eba90ce..852643d957de 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -1540,7 +1540,8 @@ enum {
->  
->  static void *f_next(struct seq_file *m, void *v, loff_t *pos)
->  {
-> -	struct trace_event_call *call = event_file_data(m->private);
-> +	struct trace_event_file *file = event_file_data(m->private);
-> +	struct trace_event_call *call = file->event_call;
->  	struct list_head *common_head = &ftrace_common_fields;
->  	struct list_head *head = trace_get_fields(call);
->  	struct list_head *node = v;
-> @@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
->  
->  static int f_show(struct seq_file *m, void *v)
->  {
-> -	struct trace_event_call *call = event_file_data(m->private);
-> +	struct trace_event_file *file = event_file_data(m->private);
-> +	struct trace_event_call *call = file->event_call;
->  	struct ftrace_event_field *field;
->  	const char *array_descriptor;
->  
-> @@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
->  
->  static void *f_start(struct seq_file *m, loff_t *pos)
->  {
-> +	struct trace_event_file *file;
->  	void *p = (void *)FORMAT_HEADER;
->  	loff_t l = 0;
->  
->  	/* ->stop() is called even if ->start() fails */
->  	mutex_lock(&event_mutex);
-> -	if (!event_file_data(m->private))
-> +	file = event_file_data(m->private);
-> +	if (!file || (file->flags & EVENT_FILE_FL_FREED))
->  		return ERR_PTR(-ENODEV);
->  
->  	while (l < *pos && p)
-> @@ -2485,7 +2489,6 @@ static int event_callback(const char *name, umode_t *mode, void **data,
->  	if (strcmp(name, "format") == 0) {
->  		*mode = TRACE_MODE_READ;
->  		*fops = &ftrace_event_format_fops;
-> -		*data = call;
->  		return 1;
->  	}
->  
+I will evaluate for what all chipsets it is applicable and post a series 
+to fix it.
 
-Will ack the patch you send.
 
-Thanks again,
-Mathias
 
