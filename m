@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-263338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D5F93D497
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:50:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE9393D49C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1631F21C45
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B841C227D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF3317B4FF;
-	Fri, 26 Jul 2024 13:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77674178388;
+	Fri, 26 Jul 2024 13:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nlOsVcbG"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="19sF2YN9"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C41E533;
-	Fri, 26 Jul 2024 13:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3921E51F
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001840; cv=none; b=b8xfNHlpTo6Ex527NKV9eFQh1M+OUmZsgg4UJ724vw5183IkHY+bCLcqPqKjfu/E6tqdXoR5t1mbGPzQLmHNPTUxxPos7Gv2IXxFFqRqXpoDu1gmqee+feTe/+vmQof3zEeC//+9xJ9+awGh8oLKV9nf1h1xjE8WX5h5MVtWQhk=
+	t=1722001927; cv=none; b=Gyxm8efLk8/P54XEQlssCAdIKjvqeD0n9agh8bmpQWAgmXg6MT/02h/EaBVFOVSvueMyP6nuSA+m1XbsTqKJyiJz6bVO+NR6f4OXpQmlLpfH6uIsPIpEI3j5kn4GfqC3tT0dhHH4ir8R9H+ncxrC+WAFsDCg+p60ZSnVNy/9x94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001840; c=relaxed/simple;
-	bh=Iyax8yzW+8JlNwyoV0RroXKbzsmNZ93yFf8MATkzhX0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nFlZUE7dqyUDtrJhUybEvQhO8ESA0QCXNex+ViDne8j6vRk7JxeuJCcCGXkC0vaqf3dJf5/EwAmlNVXEsCJghHTTVZGpZWuUMAWReQYgLIUmB0IdGWa45DU0ROpbSPidE4AtAs9LPScj4WVy6ZHRH3osCgbYQ3U8drnOQ1ew2r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nlOsVcbG; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722001837;
-	bh=Iyax8yzW+8JlNwyoV0RroXKbzsmNZ93yFf8MATkzhX0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nlOsVcbG+Hg7At42isUuQKbEt1q8tAyo+u2TyBkCjkh3zucN+INueuJ/TS70VRUrW
-	 lL0w7t8Akb56vv6Y7uQI1pNamPwiXa4V0Jdf1CpmljKgtf61pnzl+UOq412+/JJ8Bx
-	 NhXhSITZorALMfJgzmKpBiVoesezRH4MZ2pFQbjyeQ6Be/VsPMRWaFA05rWYtWAyCH
-	 IONr+S1s0/4V56gqF7k5c0d+7LvGaDzZEavnmtiVDX2CsHtFRf75RzoS3W3HBPTrNO
-	 GAtCQRckfWwnHxWV+Lph59hTgP1Oxy5dZHe+4JCmaHEqB53d96S8JrOJDEbo4cpHmb
-	 jwfXeUlFcZS3A==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C754B37804CE;
-	Fri, 26 Jul 2024 13:50:36 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: kernelci@lists.linux.dev
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Testing Quality Call notes - 2024-07-25
-Date: Fri, 26 Jul 2024 15:51:01 +0200
-Message-Id: <20240726135101.45018-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1722001927; c=relaxed/simple;
+	bh=p9LZjl6KaOwjvJF0IXHnTDzGnQo35y0H2Buy/T1CPjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G1/0iarOghzAbyI2WafmLNC+E2UV6QJlGdpZWfiQU4ILb6c2UAIp0ng5JOP5qXVMaC/dzUak+BjChKfQ+dSo0VDCWACLZrD8tT/0vgeacNyFu3XiAWkx+c0RpDrBTpIAoJk7xN4SaTHqoqOpiUG/MdkAKxbzC2XkDCX6AypJJxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=19sF2YN9; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so10440a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722001924; x=1722606724; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bzST+WgYB+YniWsc5gywqmeeedMARG6ljFEX5tmeU7g=;
+        b=19sF2YN9yZLPGUPy9HX5DAXVX2/8sQ/KSs5EUiuCaJetnQtPThcQC4SCKSqJ1naF1d
+         tkc6iyq0CeL1yVJJ81RSHWo834uCoz9MVp9Hn7LVe16fLrVBxrNBbA1ry53e5tFBe2Zm
+         CiGz4FgilLyKGGPNCnFt1ir59pxI6ZHH/nmSNFTjYq6ObGlkKGzIFNvjAHJYizw3IabK
+         q30Jz97RAlOHegMQbpsxGmsdiIBHeu9z6kS0lV97MBYmM9gVkcyPSSXYc6c7n9syEmxJ
+         34FfmiUiIPk+y3bILH87dlHtkXrGYmnZlkYZ5fMjkTyKtyXdKWxyw8pF1+VPKJGx+ljp
+         7O0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722001924; x=1722606724;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bzST+WgYB+YniWsc5gywqmeeedMARG6ljFEX5tmeU7g=;
+        b=IdQrkoGUo4f84ebnB6puXdcyF82Dm4EXa8XrraOX5AlQgIliA42Rsiuwlod2xw24rG
+         k3QQA5pNg/kO5nV960CqBs4oOA1AUUXwoBmd5J5CbU0E2PF0VUc96XXK0ShH897nzY+l
+         Xj8kXUiRnt38Q28qR09YU1D29xZJn8IKDgo6z1IiCIf70wrl5UJ4bOUyLIRPkN3wTniW
+         e44ptkd7JaYPrnnC2dkgggWhpbLcJDh/c62fnrUaYIWmSyC8nRjjZBkAYIzSypxeOYJg
+         B4ZmmQ7qt2oE3E4Ci+aD6KrTonAhYqowzZ60cTp7rZWRkP7iGZUca9mKQqxo7UcZRFRs
+         vw/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQOXoQg1lF34+TTJ7IvsXpyyUxLQ5sOJodWRF5f6EQp5DHDTPN0UJ94v9wSRtlQxnfD4Pjjpe4PB21uwLmmQjunh+qbdvHtbmFLBcT
+X-Gm-Message-State: AOJu0Yz+Z0CMm55FKV5fL9QJVJ7DPHlq7cs+4hTlD6jpJzg4H1UjX4Jz
+	bdAuPhablBtz5Wpdc7N+GXXCj9uUX8ucBqGj+7F6+V3QcRZMVNi73ATie4/2UI6cUP+zpi8bKbN
+	7nS3V1tW9nbBnG8Ooj4b+eXORdVETHyeCLwkc
+X-Google-Smtp-Source: AGHT+IG3nG1xboIr8vSlksNa3ilwXQsXcvozmDP5icTpDxOIkFTcoQ9u5/IcNIPgYSZ/R0o7yKwC4+p03zInZGQO4b8=
+X-Received: by 2002:a05:6402:354f:b0:58b:15e4:d786 with SMTP id
+ 4fb4d7f45d1cf-5af44348136mr79918a12.5.1722001923695; Fri, 26 Jul 2024
+ 06:52:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com>
+ <20240725-kasan-tsbrcu-v3-1-51c92f8f1101@google.com> <CA+fCnZe-x+JOUN1P-H-i0_3ys+XgpZBKU_zi06XBRfmN+OzO+w@mail.gmail.com>
+In-Reply-To: <CA+fCnZe-x+JOUN1P-H-i0_3ys+XgpZBKU_zi06XBRfmN+OzO+w@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 26 Jul 2024 15:51:25 +0200
+Message-ID: <CAG48ez0hAN-bJtQtbTiNa15qkHQ+67hy95Aybgw24LyNWbuU0g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] kasan: catch invalid free before SLUB
+ reinitializes the object
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Jul 26, 2024 at 2:43=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
+com> wrote:
+> On Thu, Jul 25, 2024 at 5:32=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> >
+> > Currently, when KASAN is combined with init-on-free behavior, the
+> > initialization happens before KASAN's "invalid free" checks.
+> >
+> > More importantly, a subsequent commit will want to use the object metad=
+ata
+> > region to store an rcu_head, and we should let KASAN check that the obj=
+ect
+> > pointer is valid before that. (Otherwise that change will make the exis=
+ting
+> > testcase kmem_cache_invalid_free fail.)
+>
+> This is not the case since v3, right?
 
-KernelCI is hosting a bi-weekly call on Thursday to discuss improvements 
-to existing upstream tests, the development of new tests to increase 
-kernel testing coverage, and the enablement of these tests in KernelCI. 
-In recent months, we at Collabora have focused on various kernel areas,
-assessing the tests already available upstream and contributing patches 
-to make them easily runnable in CIs.
+Oh, you're right, this text is now wrong.
 
-Below is a list of the tests we've been working on and their latest 
-status updates, as discussed in the last meeting held on 2024-07-25:
+> Do we still need this patch?
 
-*USB/PCI devices kselftest*
+I just tried removing this patch from the series; without it, the
+kmem_cache_invalid_free kunit test fails because the kmem_cache_free()
+no longer synchronously notices that the pointer is misaligned. I
+guess I could change the testcase like this to make the tests pass
+without this patch, but I'd like to hear from you or another KASAN
+person whether you think that's a reasonable change:
 
-- Upstream test to detect unprobed devices on discoverable buses: 
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dacf1d7a78bf8a131346c47bfba7fe1f3ff44beb 
-- Test location changed 
-  (https://lore.kernel.org/all/20240705-dev-err-log-selftest-v2-1-163b9cd7b3c1@collabora.com/), 
-  updated KernelCI PRs accordingly: 
-  https://github.com/kernelci/kernelci-core/pull/2577 and https://github.com/kernelci/kernelci-pipeline/pull/642
-- Will need to figure out how to structure the files to ensure 
-  scalability. A YAML schema would be useful too.
+diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+index cba782a4b072..f44b0dcb0e84 100644
+--- a/mm/kasan/kasan_test.c
++++ b/mm/kasan/kasan_test.c
+@@ -981,14 +981,21 @@ static void kmem_cache_invalid_free(struct kunit *tes=
+t)
+        if (!p) {
+                kunit_err(test, "Allocation failed: %s\n", __func__);
+                kmem_cache_destroy(cache);
+                return;
+        }
 
-*Error log test*
+-       /* Trigger invalid free, the object doesn't get freed. */
+-       KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_free(cache, p + 1));
++       /*
++        * Trigger invalid free, the object doesn't get freed.
++        * Note that the invalid free detection may happen asynchronously
++        * under CONFIG_SLUB_RCU_DEBUG.
++        */
++       KUNIT_EXPECT_KASAN_FAIL(test, ({
++               kmem_cache_free(cache, p + 1);
++               rcu_barrier();
++       }));
 
-- Proposing new kselftest to report device log errors: 
-  https://lore.kernel.org/all/20240423-dev-err-log-selftest-v1-0-690c1741d68b@collabora.com/
-- Now merged upstream
-
-*Missing devices kselftest*
-
-- Proposing new kselftest to report devices that go missing in the system: 
-  https://lore.kernel.org/all/20240724-kselftest-dev-exist-v1-1-9bc21aa761b5@collabora.com/#r
-- The test checks the number of devices present against a reference file, 
-  generated by the program at a previous point on a known-good kernel, 
-  and reports any missing device.
-- Helps identifying missing kernel configs or broken driver features
-
-*Suspend/resume in cpufreq kselftest*
-
-- Enabling suspend/resume test within the cpufreq kselftest in KernelCI
-- Sent v2 for patch adding RTC wakeup alarm in the cpufreq kselftest: 
-  https://lore.kernel.org/lkml/20240715192634.19272-1-shreeya.patel@collabora.com/
-- The test now uses rtcwake, as suggested by Rafael J. Wysocki in the 
-  first review. There's no easy way to declare the dependency in the 
-  kselftest itself.
-- Patch got acked by the cpufreq kselftest author Viresh Kumar
-
-*Boot time test*
-
-- Sent first RFC:
-  https://lore.kernel.org/all/20240725110622.96301-1-laura.nao@collabora.com/T/#ma568382acdc81af65c30fe3823a7be3e49f98108
-
-*TAP conformance in kselftests*
-
-- Ongoing discussion upstream on TAP headers: 
-  https://lore.kernel.org/all/87fbfba4-8d4d-44ff-9fe5-e101cce3d6cb@collabora.com
-- Working to convert test modules used by kselftests into kunit. Cleanup 
-  patches sent:
-  https://lore.kernel.org/all/20240725110817.659099-1-usama.anjum@collabora.com 
-  and https://lore.kernel.org/all/20240725121212.808206-1-usama.anjum@collabora.com
-
-Please reply to this thread if you'd like to join the call or discuss 
-any of the topics further. We look forward to collaborating with the 
-community to improve upstream tests and expand coverage to more areas 
-of interest within the kernel.
-
-Best regards,
-
-Laura Nao
+Being able to get rid of this patch would be a nice simplification, so
+if you think asynchronous invalid-free detection for TYPESAFE_BY_RCU
+slabs is fine, I'll happily throw it out.
 
