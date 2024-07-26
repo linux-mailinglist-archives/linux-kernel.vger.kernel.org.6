@@ -1,131 +1,187 @@
-Return-Path: <linux-kernel+bounces-263275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017D993D394
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA8393D397
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D5B1C2353E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:55:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75ECB285B5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD4917BB0B;
-	Fri, 26 Jul 2024 12:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="YZdNMN0d"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B5F17B512;
+	Fri, 26 Jul 2024 12:58:34 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD9717B511;
-	Fri, 26 Jul 2024 12:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7422E2E3E8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721998541; cv=none; b=hmfMr6FDfKFUwfdrIfoS/fXMwzmU3hDHwCshuoABsg5K8EP3VoE6h9wcA74GYs1noOe7rZiNPAxSQOqsp51VNYKVkCC+8Ho4AcdF4HVSj1NlGX154mrJ3ZmJkJGHqLR//XLbzO8mRrYYs3qy0coHcnOyT2gN3uSl/n48mc+1de8=
+	t=1721998714; cv=none; b=eks65D6N6CqG4iqIhLUQa9kcVcaFrQmJkgv9KL7blNymmGDwG3XY6D8C3EZBjYZ8zAAoNOTJoQFECYf+Hcxvnlyn3IWCvabDfSaqWOHORjd7jr0UmS7u3EyxY1LzEvCabxz/y0JxldXrbBr8pk7LtAvlMJ6qC2t+W3+fJDI/v3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721998541; c=relaxed/simple;
-	bh=yzOx6oM1nG1syyzmhuVhnMa728h4vx7kNlsuELDiy+4=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=ioOUnjYtBbhCYXTftSW1mD4Uvsls6E1fCVBR5o7hEv53uUoTgIc3NQBO6e6x1247GNsVqiCpCNCywSXJANGpP9qwGiH+AqH4qJdSLmnPBHVmY1WkVdsLwepSWh57Z0nPqoakBMrO1bIuwXtfJhYZ40g/UzwXLFajEHvEqfKNPmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=YZdNMN0d; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id A8D4D3C3;
-	Fri, 26 Jul 2024 14:55:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1721998530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=yzOx6oM1nG1syyzmhuVhnMa728h4vx7kNlsuELDiy+4=;
-	b=YZdNMN0dE0uA7FnFXFdQTZc+gmQ70zEsvC94v1Q86rzibdNqDnJL5nrE5j8IB/b+AFTBzz
-	Dt4IzhB9GH0pF8coLguAkhMykHFlDxsb7IQC+qSUYMRZcp5e5A77Zwq5byUEB5RusCBMwr
-	7nlQc4/EIUzYkfbtqzGPcbrGikt6KKZioI14gpIIONVciaCFyrxrt33p0iZf5x4gZyx7YU
-	U9OhZkBEgbYpE+W5LeXEPVV77ZZltUaVXsCYdDgDQq2CdX7+I45vXmnPFxI0vBpvf2FPAa
-	fZ6T9AmMoYOvGazPddd7C7Lge7dhToJFuw15hwDu68RIEENxFamVE+FGrITgFg==
-Content-Type: multipart/signed;
- boundary=3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Fri, 26 Jul 2024 14:55:28 +0200
-Message-Id: <D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc>
-Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
- spi-nor
-Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
- <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
- <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
- <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
-From: "Michael Walle" <michael@walle.cc>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus"
- <tudor.ambarus@linaro.org>, "broonie@kernel.org" <broonie@kernel.org>,
- "pratyush@kernel.org" <pratyush@kernel.org>, "miquel.raynal@bootlin.com"
- <miquel.raynal@bootlin.com>, "richard@nod.at" <richard@nod.at>,
- "vigneshr@ti.com" <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
- <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
- "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
- "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
- "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
- <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
-X-Mailer: aerc 0.16.0
-References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
- <BN7PR12MB2802BEDFB821A1748185794CDC8AA@BN7PR12MB2802.namprd12.prod.outlook.com> <f5a47024-514a-4846-bc16-08cf0f9af912@linaro.org> <BN7PR12MB2802BB3DA682D9C13EF7DE08DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com> <5a6f6764-6779-42b0-b6c6-3f638b85ef78@linaro.org> <BN7PR12MB28029EB1A7D09882878499A2DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com> <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org> <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org> <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org> <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org> <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com> <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org> <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
- <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com> <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
-In-Reply-To: <
- <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1721998714; c=relaxed/simple;
+	bh=kQSU1lhDhLBj6wRkET5kINFcVfR/CaXSYVaZHjwzhsk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=urZOAO4gDP3qh/0S+uzEKA5cGhN7ssLGVL+7zit8lrqhVBuZa8rp5I9fJcOWCEDbL9qPSf9AwDKc2AJLJqVySEaCERld59gO0IcBTLIlW+sP3cJ5lbshyIydVe6vy2jbggJihhD2gExwMKIccyet7rpx0Jlt3JiUd1mrTUSLdVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-138-dErO4UU2Os2Sn7zB_sImjg-1; Fri, 26 Jul 2024 13:58:23 +0100
+X-MC-Unique: dErO4UU2Os2Sn7zB_sImjg-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 26 Jul
+ 2024 13:57:43 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 26 Jul 2024 13:57:43 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Lorenzo Stoakes' <lorenzo.stoakes@oracle.com>, Linus Torvalds
+	<torvalds@linuxfoundation.org>
+CC: Arnd Bergmann <arnd@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik
+	<mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH 4/7] minmax: Simplify signedness check
+Thread-Topic: [PATCH 4/7] minmax: Simplify signedness check
+Thread-Index: Adrd1i0k/JcX2h1sSAO9D37F5HIFAAALj27TABqyPTAANETWLQAFsOCg
+Date: Fri, 26 Jul 2024 12:57:43 +0000
+Message-ID: <f2ee5fe686f7440ab1e5469a6e560064@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
+ <ef130c0a-b82f-472f-8c53-f7ef4c236c44@app.fastmail.com>
+ <CAHk-=wh_+muDANgpjC6_31QMh4OnKEOgbZiD_MymHxAHRZRyqg@mail.gmail.com>
+ <5a129d04e0b84b48ba6c5189a047ac8f@AcuMS.aculab.com>
+ <CAHk-=whLcr11D28vu2NotZYn3GNH6BCTK57Zw4d4v7eut39z=g@mail.gmail.com>
+ <d48ce3b3-9173-4309-aae6-96be42327f97@lucifer.local>
+In-Reply-To: <d48ce3b3-9173-4309-aae6-96be42327f97@lucifer.local>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+From: Lorenzo Stoakes
+> Sent: 26 July 2024 10:44
+>=20
+> On Thu, Jul 25, 2024 at 10:02:45AM GMT, Linus Torvalds wrote:
+> > On Thu, 25 Jul 2024 at 02:01, David Laight <David.Laight@aculab.com> wr=
+ote:
+> > >
+> > > The condition is '>=3D 0' so it doesn't matter if it is '1' or '0'.
+> >
+> > Yes, but that's because the whole conditional is so inexplicably comple=
+x.
+> >
+> > But the explanation is:
+> >
+> > > That gives a 'comparison of unsigned type against 0 is always true' w=
+arning.
+> > > (The compiler generates that for code in the unused branches of both
+> > > __builtin_choose_expr() and _Generic().)
+> > > Moving the comparison to the outer level stops all such compiler warn=
+ings.
+> >
+> > Christ. This whole series is a nightmare of "add complexity to deal
+> > with stupid issues".
+> >
+> > But the kernel test robot clearly found even more issues.
+> >
+> > I think we need to just go back to the old code. It was stupid and
+> > limited and caused us to have to be more careful about types than was
+> > strictly necessary.
+>=20
+> The problem is simply reverting reveals that seemingly a _ton_ of code ha=
+s
+> come to rely on the relaxed conditions.
+>=20
+> When I went to gather the numbers for my initial report I had to manually
+> fix up every case which was rather painful, and that was just a defconfig=
+ +
+> a few extra options. allmodconfig is likely to be a hellscape.
+>=20
+> I've not dug deep into the ins + outs of this, so forgive me for being
+> vague (Arnd has a far clearer understanding) - but it seems that the
+> majority of the complexity comes from having to absolutely ensure all thi=
+s
+> works for compile-time constant values.
 
-> Based on the inputs/suggestions from Tudor, i am planning to add a new=20
-> layer between the SPI-NOR and MTD layers to support stacked and parallel=
-=20
-> configurations. This new layer will be part of the spi-nor and located in=
-=20
-> mtd/spi-nor/
+The problems arise due to some odd uses, not just the requirement for compi=
+le-time
+constants for on-stack array sizes.
 
-Will AMD submit to maintain this layer? What happens if the
-maintainer will leave AMD? TBH, personally, I don't like to
-maintain such a niche feature.
-I'd really like to see some use cases and performance reports for
-this, like actual boards (and no evaluation boards don't count). Why
-wouldn't someone just use an octal flash?
+The test robot report is for a test between pointers.
+I thought there was one in the build I do - and it doesn't usually generate=
+ a warning.
+This one is related to the different between a 'compile time constant' and
+a 'constant integer expression'.
+This is due to is_unsigned_type(t) being (t)-1 > 0 but (type *)x not being
+'constant enough' unless 'x' is zero.
+Fixable by something like:
+=09(__if_constexpr((t)-1, (t)-1, 1) > 0)
+But that requires two expansions of the type.
+Now the type could be that of the unique temporary - but that would make it
+all more complicated.
 
-And as already mentioned there is also mtdcat, which seems to
-duplicate some features?
+There are fewer min/max of pointers than when constants are needed.
+So requiring them be min_ptr() wouldn't be a massive change.
 
--michael
+> Arnd had a look through and determined there weren't _too_ many cases whe=
+re
+> we need this (for instance array sizes).
+>=20
+> So I wonder whether we can't just vastly simplify this stuff (and reducin=
+g
+> the macro expansion hell) for the usual case, and implement something lik=
+e
+> cmin()/cmax() or whatever for the true-constant cases?
 
---3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc
-Content-Type: application/pgp-signature; name="signature.asc"
+I did do that in a patch set from much earlier in the year.
+But Linus said they'd need to be MIN() and MAX() and that requires changes
+to a few places where those are already defined.
 
------BEGIN PGP SIGNATURE-----
+> > But it was also about a million times simpler, and didn't cause build
+> > time regressions.
 
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZqOcwREcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+OcUAX9IjhR2BCZQ3HqidzuFStguMrN9iUIuss1D
-/ACvRq7kf2Zbxhm0mck1AjUfrnZR1eABf0SfkJW5GxxyiY5HbWtKSnCVoTuXKQTM
-LqmzqtPHKs+pr9bhbYutKEnQZiOlOyW93g==
-=jfd2
------END PGP SIGNATURE-----
+Just bugs because people did min_t(short, 65536, 128) and didn't expect zer=
+o.
 
---3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc--
+It has to be said that the chances of a min(negative_value, unsigned_consta=
+nt)
+appearing are pretty slim.
+All these tests are there to trap that case.
+
+There is always the option of disabling the tests for 'normal' build, but
+leaving them there for (say) the W=3D1 builds.
+Then it won't matter as much if the tests slow down the build a little.
+
+I think I have tried a W=3D1 build - but there are too many warnings/errors
+from other places to get anywhere.
+A lot are for 'unsigned_var >=3D 0' in paths that get optimised away.
+The compiler doesn't help!
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
