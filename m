@@ -1,253 +1,118 @@
-Return-Path: <linux-kernel+bounces-263458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB64893D637
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF4593D63F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFA2832A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC521F23A59
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD9B17BB2F;
-	Fri, 26 Jul 2024 15:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDB017BB0E;
+	Fri, 26 Jul 2024 15:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AZvx9TJS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="CyS4mZsU"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6A610A1C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1542225D9
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722008213; cv=none; b=rTTWxnIQWSVtZaxRFUsCdDwqjcUuTG30nxDPNnYpJStyIYFA0GK/KAbDTTnzRn51O/Od/MMXLDxt9VAWmXMu+3heS+/AQ6kF0vJ56g5CmzetL582F0RdTDxojUYcsg7NUVfe4fx89Vvkzb/sf0zQhvFZau+n9wRE197IsRoJbnQ=
+	t=1722008352; cv=none; b=QB2bvR9BpbLK7uOx1tdcRrMClqmS7SdTCrM2liSZ7m6cPL0bzXOXYJtWIa7f0b0Yq+h5M5ac6NrqeQZtCAjiHvDExvLXZnDUsZbNIZNWboQ/yK4bVY8Evr4jtsBS6L7YavHeJtCMYsipa9bJZOhJ2ituMNL2Ew0Cbkf9+ztNJys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722008213; c=relaxed/simple;
-	bh=B6k/HbuSyIZzsB/1yH65Wtc85rwXagMs6JgyjDCqazc=;
+	s=arc-20240116; t=1722008352; c=relaxed/simple;
+	bh=sAxssKMAFh3wj5z5ValFCN6FM/9YkEQtjr/NLO/YYSs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WP0AYdU1uhbGQeiq5m47AYoTzIdlWBQoxWwlXU97DMR8ovolE8q6bFYGMTRqny7OTgbK8vAL+L0+EuZnn2ATSdzEoUG5Rjs0aiYGdPezyRRlStDNWi44fQDJeMlZ7RxvAfjjjjq985D0tLSxtcro7BOi7UU+4LecupxCF5ptMPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AZvx9TJS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722008210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QLm/qsKSuQtpspS0vF8FpFK8gPeNztN29mDRZKXEolM=;
-	b=AZvx9TJS94dugqMCrxV307n/1hV7UMaqMqLjrEX2u0+aDfUgktQzQfdlixyGR9mqKFr//P
-	+BWHWqvd5rTSM7D767zlPkrLJ5v81+BxbqCYhAd8tFn8pfTKkVWuhmxB7X6HfrSeK1Boar
-	sMVKpu8k4OZ+QPiTS9Tqw+NYwmbvrcM=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-RP3Evc5bN9m_flf787gm_Q-1; Fri, 26 Jul 2024 11:36:49 -0400
-X-MC-Unique: RP3Evc5bN9m_flf787gm_Q-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7678caf7dso2370326d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:36:49 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHRoUs+eiU6qrJS9vBIdOpwXyreNOz9Weyz/ZyMh83uly6FQFqXTVADnI+jP1010KwLUQ/fP3PxZBZhRshEQZDv0b+LUvQ27AKYqQQtGzGppTmhg9tfW+9T/p5MrgNBzJPVjFOnuttw4bW/Edzlb8jswR3fTJckO6a3HtT1H37Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=CyS4mZsU; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0b111b59dfso2049904276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722008350; x=1722613150; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
+        b=CyS4mZsUSsAwsdUHGH8xFvPPUav6Fwkud9F66gIwpri9iJU9rKyp7Qi4E57bq+IWt0
+         kozKLraGGHwePKoYj2+uTMblV9NpD3GmPo8SHXnSJSE+AETSvyWZnBs6L0HW2a0WqLpt
+         QtwmwEujFycIaK2fedOIoIO3d1GMuotGmgYrrfoj8b5RfLjuhZAsVz+yTZmbA91Ef2sl
+         0TwveTdU/S8IK4RdLxPwaBbwP/9PERHyQzbdPDDGXCXwqBQaMZjOSZN6DEHaXxi+GUwh
+         W6f88tcbsvDAkvVpSmi4IyTzBvVO8VqRcZvr4JjcSzQQCT4PcYh0rinmcz/8QRNx+AzP
+         UV2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722008209; x=1722613009;
+        d=1e100.net; s=20230601; t=1722008350; x=1722613150;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QLm/qsKSuQtpspS0vF8FpFK8gPeNztN29mDRZKXEolM=;
-        b=dwp/SRCLmhMlyq7oqcQ9Q2tpCFK4QhCPa3eEHhG/MsHvWxIWpO6gLZbLKz14mcXJCJ
-         QSUaoCgkunyx7IupWUYSV0pTOSosv1B+96WiolfHx5PzivlzHeedCrDUTAf3rsjz/TkU
-         XVHBtzg0wdpotj9VDfWsybjfxvmKlTDHmxJHS8aptlG3G9U0DGLuDLLkDmth4f448T1t
-         J+nR18x/R9B//fpsbAMvMT5yZN69FPtjYDHFCrxhgd8dNAcmrlpidiGjPk+6Woz9yVSU
-         o5Ho2v4ZXCgOB49ogdOZ4AeModPJtOPZt0w+xmEvL8JenNktBidDpCvqvAqeyHOUkzVZ
-         Scpw==
-X-Gm-Message-State: AOJu0YxiraxHmRJR+lzuVEfYUtQMSecR3CWg17fzdq6+t+sSc5r3boG9
-	OQCKaLuBesTFeK0XO6y40eRFnAup9vNcO65Goj++1aE7XxBg7UVACdGEp5Ed6wIYzFDhLIVA7dB
-	czWjNrZA9kuNYtRPbi0ousMPMPXNg6Rp0MJVKEBkIml57G8SsaszIlTh5DmzofQ==
-X-Received: by 2002:a05:620a:d96:b0:79f:84f:80b1 with SMTP id af79cd13be357-7a1d69ac9e2mr416724985a.7.1722008208796;
-        Fri, 26 Jul 2024 08:36:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHby0Zf7xeNrsERVjSP+2iorPmfENAqa3QKQZu/PoiXRWD/Ql4rXBzNMgzPl0Vq6g21JDLeA==
-X-Received: by 2002:a05:620a:d96:b0:79f:84f:80b1 with SMTP id af79cd13be357-7a1d69ac9e2mr416722885a.7.1722008208271;
-        Fri, 26 Jul 2024 08:36:48 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7435577sm188127485a.96.2024.07.26.08.36.47
+        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
+        b=M4sQ1SzjFGc8EAhU09+zKN/oI934I91OgSfZ+ZmLZYcxJnbdUlRxMXHvutIoD+0b1N
+         MEanpbm89ykI3wb7bAgYyRKvdKiRF9ZIpn7enpuNhI7uKHnXaVgdNt5xvU5C0Oha46Zu
+         HMfo7VkfBoHM6W2IS+Rv2vRfY82vF8pTJlHSJzW4xPVP8FSH7gks6ZvXveN/7rPaVKWF
+         egs1YxbRG7Tcy/4+cOz5ngITOBLcnxawSBrmCsr+1fQZ+b6LHQjvzFZRiGmDH9UixoI4
+         fiUBv9xtYe9t+FqYATkedGMRU0z82ZrQPvlYmyqA+1fK+F39jH0hdTv4Br9kbmH2tTID
+         o5Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoTJHht8F/Qdfcrb7b57p+ls0Jdf/+BdKH4C+ORSU0tNKuvdjjeheFvUFNlMciodAYCTZN5Ax9sHt8OtFqd8T0l5FODN2OV0lWgRfc
+X-Gm-Message-State: AOJu0YxmE9jwmr6bOl0SNx/YEMOf/yQAlS7oaJDsBRlxWW8D+QwxBZmw
+	Fnx8ukscAT45ymKfALf3xFLnDWD99EQHaxivORroDq6j7oWgnf+dtPWKBZgIF7A=
+X-Google-Smtp-Source: AGHT+IE1ay+RcFkuxSAz/JO5WDaqi3NilkGfwMA1C1SFVbQCUE+iQOkQRIuXWxsp7iwhJQggkvZn/w==
+X-Received: by 2002:a05:6902:1501:b0:e0b:286b:1399 with SMTP id 3f1490d57ef6-e0b544b6080mr149742276.29.1722008349708;
+        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2960b4f6sm787385276.0.2024.07.26.08.39.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:36:47 -0700 (PDT)
-Date: Fri, 26 Jul 2024 11:36:45 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
-Message-ID: <ZqPCjd35OdNRrcfl@x1n>
-References: <20240725183955.2268884-1-david@redhat.com>
- <20240725183955.2268884-2-david@redhat.com>
+        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
+Date: Fri, 26 Jul 2024 11:39:08 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: yangyun <yangyun50@huawei.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fuse: replace fuse_queue_forget with
+ fuse_force_forget if error
+Message-ID: <20240726153908.GD3432726@perftesting>
+References: <20240726083752.302301-1-yangyun50@huawei.com>
+ <20240726083752.302301-2-yangyun50@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725183955.2268884-2-david@redhat.com>
+In-Reply-To: <20240726083752.302301-2-yangyun50@huawei.com>
 
-On Thu, Jul 25, 2024 at 08:39:54PM +0200, David Hildenbrand wrote:
-> pte_lockptr() is the only *_lockptr() function that doesn't consume
-> what would be expected: it consumes a pmd_t pointer instead of a pte_t
-> pointer.
+On Fri, Jul 26, 2024 at 04:37:51PM +0800, yangyun wrote:
+> Most usecases for 'fuse_queue_forget' in the code are about reverting
+> the lookup count when error happens, except 'fuse_evict_inode' and
+> 'fuse_cleanup_submount_lookup'. Even if there are no errors, it
+> still needs alloc 'struct fuse_forget_link'. It is useless, which
+> contributes to performance degradation and code mess to some extent.
 > 
-> Let's change that. The two callers in pgtable-generic.c are easily
-> adjusted. Adjust khugepaged.c:retract_page_tables() to simply do a
-> pte_offset_map_nolock() to obtain the lock, even though we won't actually
-> be traversing the page table.
+> 'fuse_force_forget' does not need allocate 'struct fuse_forget_link'in
+> advance, and is only used by readdirplus before this patch for the reason
+> that we do not know how many 'fuse_forget_link' structures will be
+> allocated when error happens.
 > 
-> This makes the code more similar to the other variants and avoids other
-> hacks to make the new pte_lockptr() version happy. pte_lockptr() users
-> reside now only in  pgtable-generic.c.
-> 
-> Maybe, using pte_offset_map_nolock() is the right thing to do because
-> the PTE table could have been removed in the meantime? At least it sounds
-> more future proof if we ever have other means of page table reclaim.
+> Signed-off-by: yangyun <yangyun50@huawei.com>
 
-I think it can't change, because anyone who wants to race against this
-should try to take the pmd lock first (which was held already)?
+Forcing file systems to have their forget suddenly be synchronous in a lot of
+cases is going to be a perf regression for them.
 
-I wonder an open coded "ptlock_ptr(page_ptdesc(pmd_page(*pmd)))" would be
-nicer here, but only if my understanding is correct.
+In some of these cases a synchronous forget is probably ok, as you say a lot of
+them are error cases.  However d_revalidate() isn't.  That's us trying to figure
+out if what we have in cache matches the file systems view of the inode, and if
+it doesn't we're going to do a re-lookup, so we don't necessarily care for a
+synchronous forget in this case.  Think of an NFS fuse client where the file got
+renamed on the backend and now we're telling the kernel this is the inode we
+have.  Forcing us to do a synchronous response now is going to be much more
+performance impacting than it was pre-this patch.
 
-Thanks,
+A better approach would be to make the allocation optional based on the
+->no_forget flag.  Thanks,
 
-> 
-> It's not quite clear if holding the PTE table lock is really required:
-> what if someone else obtains the lock just after we unlock it? But we'll
-> leave that as is for now, maybe there are good reasons.
-> 
-> This is a preparation for adapting hugetlb page table locking logic to
-> take the same locks as core-mm page table walkers would.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  include/linux/mm.h   |  7 ++++---
->  mm/khugepaged.c      | 21 +++++++++++++++------
->  mm/pgtable-generic.c |  4 ++--
->  3 files changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2c6ccf088c7be..0472a5090b180 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2873,9 +2873,10 @@ static inline spinlock_t *ptlock_ptr(struct ptdesc *ptdesc)
->  }
->  #endif /* ALLOC_SPLIT_PTLOCKS */
->  
-> -static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
-> +static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pte_t *pte)
->  {
-> -	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
-> +	/* PTE page tables don't currently exceed a single page. */
-> +	return ptlock_ptr(virt_to_ptdesc(pte));
->  }
->  
->  static inline bool ptlock_init(struct ptdesc *ptdesc)
-> @@ -2898,7 +2899,7 @@ static inline bool ptlock_init(struct ptdesc *ptdesc)
->  /*
->   * We use mm->page_table_lock to guard all pagetable pages of the mm.
->   */
-> -static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
-> +static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pte_t *pte)
->  {
->  	return &mm->page_table_lock;
->  }
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index cdd1d8655a76b..f3b3db1046155 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1697,12 +1697,13 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->  	i_mmap_lock_read(mapping);
->  	vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->  		struct mmu_notifier_range range;
-> +		bool retracted = false;
->  		struct mm_struct *mm;
->  		unsigned long addr;
->  		pmd_t *pmd, pgt_pmd;
->  		spinlock_t *pml;
->  		spinlock_t *ptl;
-> -		bool skipped_uffd = false;
-> +		pte_t *pte;
->  
->  		/*
->  		 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
-> @@ -1739,9 +1740,17 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->  		mmu_notifier_invalidate_range_start(&range);
->  
->  		pml = pmd_lock(mm, pmd);
-> -		ptl = pte_lockptr(mm, pmd);
-> +
-> +		/*
-> +		 * No need to check the PTE table content, but we'll grab the
-> +		 * PTE table lock while we zap it.
-> +		 */
-> +		pte = pte_offset_map_nolock(mm, pmd, addr, &ptl);
-> +		if (!pte)
-> +			goto unlock_pmd;
->  		if (ptl != pml)
->  			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
-> +		pte_unmap(pte);
->  
->  		/*
->  		 * Huge page lock is still held, so normally the page table
-> @@ -1752,20 +1761,20 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->  		 * repeating the anon_vma check protects from one category,
->  		 * and repeating the userfaultfd_wp() check from another.
->  		 */
-> -		if (unlikely(vma->anon_vma || userfaultfd_wp(vma))) {
-> -			skipped_uffd = true;
-> -		} else {
-> +		if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
->  			pgt_pmd = pmdp_collapse_flush(vma, addr, pmd);
->  			pmdp_get_lockless_sync();
-> +			retracted = true;
->  		}
->  
->  		if (ptl != pml)
->  			spin_unlock(ptl);
-> +unlock_pmd:
->  		spin_unlock(pml);
->  
->  		mmu_notifier_invalidate_range_end(&range);
->  
-> -		if (!skipped_uffd) {
-> +		if (retracted) {
->  			mm_dec_nr_ptes(mm);
->  			page_table_check_pte_clear_range(mm, addr, pgt_pmd);
->  			pte_free_defer(mm, pmd_pgtable(pgt_pmd));
-> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-> index a78a4adf711ac..13a7705df3f87 100644
-> --- a/mm/pgtable-generic.c
-> +++ b/mm/pgtable-generic.c
-> @@ -313,7 +313,7 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
->  
->  	pte = __pte_offset_map(pmd, addr, &pmdval);
->  	if (likely(pte))
-> -		*ptlp = pte_lockptr(mm, &pmdval);
-> +		*ptlp = pte_lockptr(mm, pte);
->  	return pte;
->  }
->  
-> @@ -371,7 +371,7 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
->  	pte = __pte_offset_map(pmd, addr, &pmdval);
->  	if (unlikely(!pte))
->  		return pte;
-> -	ptl = pte_lockptr(mm, &pmdval);
-> +	ptl = pte_lockptr(mm, pte);
->  	spin_lock(ptl);
->  	if (likely(pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
->  		*ptlp = ptl;
-> -- 
-> 2.45.2
-> 
-
--- 
-Peter Xu
-
+Josef
 
