@@ -1,230 +1,158 @@
-Return-Path: <linux-kernel+bounces-263548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7D193D790
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F68493D791
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A879B20B3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:25:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC6AB2157A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B824317C9F3;
-	Fri, 26 Jul 2024 17:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6650017C7DE;
+	Fri, 26 Jul 2024 17:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s+ncizsm"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="StZ9xlzD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WJDA2CTK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68501101F7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28628101F7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722014702; cv=none; b=u8HOFAiLw2qwJKvgnTSb7HE1avHNW/bVQl3ngX/OakrGDPwoVdXywWsLZFYFLtETOsGgD9K1uXesDZAq96FFKemxjjlByj8K9s8Y5GbGpSdUzOG2HMu/KrC8XsuDZthsp3m6Oge/5ZmbcjSz3P25qBnzphxERQx5aARPuIs2DfA=
+	t=1722014831; cv=none; b=Q/l9GlE7GsetvfSujbF99ZjiVFZg1ejj8/MYXmKELQJuB0ZYJRH7SAuVOnJMZ0gL1a0hoZ0EPWD4iB27eVJAf5klzDJ3HNLpR9qfEApap8W5piWSW/1/mV9hiX2jLLc4HAZ/zdBj+HUiF7rlcwu9LQOLQ9EAb+Jw+fhko4bB+jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722014702; c=relaxed/simple;
-	bh=d7hmh8N3pCoBMuGhW4AGc5lKX1lHGbyxUOtclkpgj3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WhmR3rsyyV2UoD+7sx+9usgtQNe18Syk3LYkD5zfACO4H60PgcKUeJ3+KAF7hkErFk/GzkaZFb3h3pT0AiUvtCqREQAv9XgkOKt5IUy99PuoCIhJmpYQWbav0g0y8lE1AblbH5zVe5HdQnLH0U3g3rFxeuAhorCSUeDQRC/I/+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s+ncizsm; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-810177d1760so286605241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722014699; x=1722619499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HdUkZWObe4rGQcZr0zoGLyHGASv5SV+Kk6yoIF1//6Y=;
-        b=s+ncizsmcak0Nj0PlP5UChMh6zXUO0QUzONNIi+fri19X0KQbMQk5V37jQ5PWLbwd7
-         xOcvamxvPg3de7+0uxNSJKYt/66MOpYyRtoT67PlbXmafzi4HYeKWThrnfDvoA/tPGiB
-         sZHeBaVmpP7lfpNtN+kgXX0N8Kkc0zPeThg/i90FpswhRyBIVLpVv/sO06dyJjctr7Kk
-         uwwG6it1xEBXQ56hfdcGOqegHPpHSuYp8+rqbKOkP0H58CcPpMYaJzLQerxH+vFdqwhc
-         tzYIySPdOhq7pRB2Dr6rwBFkX718CGboUGn9FIbMOfYBeN8EZe7MHiLj6f9rEYKdlcDe
-         5Wvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722014699; x=1722619499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HdUkZWObe4rGQcZr0zoGLyHGASv5SV+Kk6yoIF1//6Y=;
-        b=pfW0LBCUt4lL8xdJRAp8MfpGpalFBoyPsVp9ObE+hh+wNZfqlsdUOA6oH8IaKGfH21
-         strSjRSJ5+st+yK+EGGGX/sGGWsD+IBwt+KpXpSwdnSYe7bAhTIzBNlNUNEHUlw+vayQ
-         1GL3UaMuNOvm/0/E75guA/BJeYab7k/+CbV8IHUjJwY3dfv4qnUz86H26E7tpVVMmQaS
-         c//8m1d0Q0qPt2J8T0a8ZgJC++oRn0NPcTv5mob6Dz8mCcdW7JD4x+bkL/A5j8kiuQXt
-         /IIZ+EbtFBt0OxR4EyFgtQWislY5XxZi6NK7KCOCrkQOFnXbPINjAWZuaBAi9kwtKF7n
-         oFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXURtUsI0cdFluUFGKqnMtZyV7G+r+kJmZQ9T1cFsGcnSDv3FOF6URlwzcM6lN9wtLL8j7xDFPdeh8quT2UahpX1wddhHYdKrcu4q5d
-X-Gm-Message-State: AOJu0YzfEUmmFVaBTTHQu9PVNU8/ywdX/+4lQJcdmZC2/TzycLbsTzh8
-	Z7nXvv0yO7pnkUCSsvbNLB36osZGEk0mjNpt3slPOyfcn9O1VWX1KgdfJ64HxG0DjVcKQnlVKFW
-	XI9h0ME8yvQglmD5bnxaSGNgecSAKPo7b9XchYg==
-X-Google-Smtp-Source: AGHT+IFzKTWdLke9VjtZ/BV1OfWRdeakqeYLX7uvkByln9g609wuH+wARm2BvbhZPXdMPfmEOJAlrQ7NDRhJQzV3tyc=
-X-Received: by 2002:a05:6102:f11:b0:493:ddd1:d7fc with SMTP id
- ada2fe7eead31-493fa19c7fbmr461627137.11.1722014699180; Fri, 26 Jul 2024
- 10:24:59 -0700 (PDT)
+	s=arc-20240116; t=1722014831; c=relaxed/simple;
+	bh=FI+LnyAiyIHoblLH8gWwLVdWKrKuCN/cAEzg+klPyL4=;
+	h=From:To:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=Bk6xN1WSK4F4b+yw0zr+eqovHE25k+ble7TgxwQZowKT5BhZV3xYAoD39kOlId59cAe0hXK7gFoo4O8139Y23UZ5xvca9BhvKGdTJem9Lus6cgvsFbx8AysGRj+yfDL1BA/gRl+pJzS139HCr4SsYl2k7TX8YVbIYuhKlNoBNuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=StZ9xlzD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WJDA2CTK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722014827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Rz5NWKXgvOfmx9WgfuBLP0CmPfH1kfe4PExx5Va8Yjc=;
+	b=StZ9xlzDzhgkymU2a2BKeTSjIMOsQcg0EyNwh9T2hUkrHNz2cHaCFoT9xwkDNksAmqzb+V
+	DLLd+bY8R8XiKHIiAYQ8Q6wJqRPG21+PHGFoeY+P7v7GsdpW75Vdzg5K8hAtp5v9/w+ih7
+	RxEAz5ZPHN25gPUgGiZosz2WTu08Pe3WjpT8cWDotTm4L9GQ3cw3bO5uYbHtM0ME5RPWSc
+	6SthtdhXBE2ZbrfYtkcC5QRuDAm3ZWCzhRqZzOQpwoGLfJg2VpkBxAHLQs3YKXf3vZj8zD
+	68/fDEFLARyiThDQ6k6PgoTYxGs2NqrVWvB9XPsuCNbjjXcXWLgg6qS7MDJo4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722014827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Rz5NWKXgvOfmx9WgfuBLP0CmPfH1kfe4PExx5Va8Yjc=;
+	b=WJDA2CTKz1153tslQi/EEb6KpBKYlVT4TwI0q0V7/Jge2OKX1duDbj/QvbQEcEpT7if/bu
+	sFfZU6gJY8QwIWAQ==
+To: Pete Swain <swine@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] FIXUP: genirq: defuse spurious-irq timebomb
+In-Reply-To: <87jzhxvyfw.ffs@tglx>
+Date: Fri, 26 Jul 2024 19:27:06 +0200
+Message-ID: <87h6ccukr9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726070548.312552217@linuxfoundation.org>
-In-Reply-To: <20240726070548.312552217@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 26 Jul 2024 22:54:48 +0530
-Message-ID: <CA+G9fYvGWZH=u5=FB9TYbeg3QDEUDZJMC_AutFQ95H2vr82fSg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/44] 5.4.281-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, 26 Jul 2024 at 12:43, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Pete!
+
+Sorry for the delay.
+
+On Sun, Jul 07 2024 at 20:39, Thomas Gleixner wrote:
+> On Fri, Jun 14 2024 at 21:42, Pete Swain wrote:
+>> The flapping-irq detector still has a timebomb.
+>>
+>> A pathological workload, or test script,
+>> can arm the spurious-irq timebomb described in
+>>   4f27c00bf80f ("Improve behaviour of spurious IRQ detect")
+>>
+>> This leads to irqs being moved the much slower polled mode,
+>> despite the actual unhandled-irq rate being well under the
+>> 99.9k/100k threshold that the code appears to check.
+>>
+>> How?
+>>   - Queued completion handler, like nvme, servicing events
+>>     as they appear in the queue, even if the irq corresponding
+>>     to the event has not yet been seen.
+>>
+>>   - queues frequently empty, so seeing "spurious" irqs
+>>     whenever the last events of a threaded handler's
+>>       while (events_queued()) process_them();
+>>     ends with those events' irqs posted while thread was scanning.
+>>     In this case the while() has consumed last event(s),
+>>     so next handler says IRQ_NONE.
+
+I'm still trying to understand the larger picture here. So what I decode
+from your changelog is:
+
+The threaded handler can drain the events. While doing so the
+non-threaded handler returns WAKE_THREAD and because the threaded
+handler does not return these hard interrupts are accounted as spurious.
+
+>>   - In each run of "unhandled" irqs, exactly one IRQ_NONE response
+>>     is promoted from IRQ_NONE to IRQ_HANDLED, by note_interrupt()'s
+>>     SPURIOUS_DEFERRED logic.
+>>
+>>   - Any 2+ unhandled-irq runs will increment irqs_unhandled.
+>>     The time_after() check in note_interrupt() resets irqs_unhandled
+>>     to 1 after an idle period, but if irqs are never spaced more
+>>     than HZ/10 apart, irqs_unhandled keeps growing.
+>>
+>>   - During processing of long completion queues, the non-threaded
+>>     handlers will return IRQ_WAKE_THREAD, for potentially thousands
+>>     of per-event irqs. These bypass note_interrupt()'s irq_count++ logic,
+>>     so do not count as handled, and do not invoke the flapping-irq
+>>     logic.
+
+They cannot count as handled because they are not handling
+anything. They only wake the thread and the thread handler is the one
+which needs to decide whether it had something to handle or not.
+
+>>   - When the _counted_ irq_count reaches the 100k threshold,
+>>     it's possible for irqs_unhandled > 99.9k to force a move
+>>     to polling mode, even though many millions of _WAKE_THREAD
+>>     irqs have been handled without being counted.
+>>
+>> Solution: include IRQ_WAKE_THREAD events in irq_count.
+>> Only when IRQ_NONE responses outweigh (IRQ_HANDLED + IRQ_WAKE_THREAD)
+>> by the old 99:1 ratio will an irq be moved to polling mode.
 >
-> This is the start of the stable review cycle for the 5.4.281 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 28 Jul 2024 07:05:34 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.281-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Nice detective work. Though I'm not entirely sure whether that's the
+> correct approach as it might misjudge the situation where
+> IRQ_WAKE_THREAD is issued but the thread does not make progress at all.
 
+Ok. That won't happen because the SPURIOUS_DEFERRED bit stays set as
+before.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Now looking deeper what your patch does. Contrary to the current code
+the very first hard interrupt of a particular queue is accounted in
+desc->irq_count.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Everything else stays the same:
 
-## Build
-* kernel: 5.4.281-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 6b3558150cc145a5ebe7f22d20a01e58d3d88a10
-* git describe: v5.4.280-45-g6b3558150cc1
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
-80-45-g6b3558150cc1
+  - SPURIOUS_DEFERRED is sticky unless the hard interrupt handler returns
+    IRQ_HANDLED, which is not the case in the NVME scenario. So the
+    !SPURIOUS_DEFERRED code path is only taken once.
 
-## Test Regressions (compared to v5.4.279-80-g4fb5a81f1046)
+  - Any consecutive hard interrupt which returns IRQ_WAKE_THREAD where
+    threads_handled == threads_handled_last is accounted as IRQ_NONE as
+    before.
 
-## Metric Regressions (compared to v5.4.279-80-g4fb5a81f1046)
+  - Any consecutive hard interrupt which returns IRQ_NONE is accounted
+    as IRQ_NONE as before.
 
-## Test Fixes (compared to v5.4.279-80-g4fb5a81f1046)
+I might be missing something of course, but I don't see what this change
+fixes at all.
 
-## Metric Fixes (compared to v5.4.279-80-g4fb5a81f1046)
+Thanks,
 
-## Test result summary
-total: 95233, pass: 76674, fail: 1631, skip: 16868, xfail: 60
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 133 total, 133 passed, 0 failed
-* arm64: 33 total, 31 passed, 2 failed
-* i386: 21 total, 15 passed, 6 failed
-* mips: 25 total, 25 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 30 total, 30 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 29 total, 29 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+        tglx
 
