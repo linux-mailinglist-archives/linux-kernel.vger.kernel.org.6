@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-263291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CC193D3D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D2793D3EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102101F24203
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDC11C234E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382A417BB19;
-	Fri, 26 Jul 2024 13:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D2F17BB3A;
+	Fri, 26 Jul 2024 13:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsEh3Y7Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="ig8CGHxq"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA5E23A8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAB01791F2
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999573; cv=none; b=Qj6gISXntMLH54f8CPJ72lt+NDrrI4xcry6bjHF2wrbcHYJZeqU3Xz4agSs2uKXTUP3Kho19fUb0yTVIOSogIHBncq0x1OspxIjBwAEoIDHlmYAxgFNJL5H4C5WRcBAYh/2+yfhXQv4coIa+S27wWFg1daIk+pIOpElvnbCEpo0=
+	t=1721999648; cv=none; b=rp6N5Ab+Y31FtwpYHGUUudNKhIHR8FqxUP/4rcPBL3+6lwdGD5hcOfp0nIgaFAM/vVSmfAXgVbU7EagQppc7eqtiMCQ0bvfh6/zmRDx+J71q/oSviAFFuxezildtEpRdbWou8UoX8uDS8yrt7ChWYUJD1/N57JzEwQbHDrJvaeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999573; c=relaxed/simple;
-	bh=+n9W4ZMWC0TWR+Gs0AP+tbxvG9OWgAbubrC48+1vsOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gmMg31u5D7STkvH7F8sLJE4HcXbzdBA1ZitGTgCIhJ7HEQwOHPO8L5+BaAfVIrzlxdEQ7aZaR/w/tI8UZ5CCtfI95EtxsDZjmsznADDfAVSEozJtmQ9PGgzNPqCmAXvI4o8X1VtiDd19gHUzIGc39NQNq63YWyqixje5k4j63Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsEh3Y7Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98CEBC32782;
-	Fri, 26 Jul 2024 13:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721999573;
-	bh=+n9W4ZMWC0TWR+Gs0AP+tbxvG9OWgAbubrC48+1vsOU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dsEh3Y7Q2WFszkhItk13QYdg5EtkAi8s2j4elndyJuZEZucV6Y+ERHP5QUamZ3J38
-	 NgQssw0GxnXPbXpSlWvNOUxB40U3Nvy84ZAAA9erz8ecmg39+e2GCgcW5urWvybyQC
-	 3d4VD1mFh8M3Uez9SWHjvjoqRFq2rc1Hy1ghmo7kbU7UpJk+zL6TMjAlNBI+u7EHDV
-	 7R72EPJSuhxTDp33AVp28fqDFxutJj6qCCVS7zg65cDmkGCj9jnzSfazeWin0wIIpQ
-	 1HKrASjAnJrV4RbFBVAcMbbAH1kN0KopXujps4ZcE4FF/zkrQkmgZqTERZiFqATKPN
-	 5Be6bC3M/K0Lg==
-Date: Fri, 26 Jul 2024 21:12:43 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Huang Xiaojia <huangxiaojia2@huawei.com>,
-	Chen Ni <nichen@iscas.ac.cn>, Chao Yu <chao@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] erofs more updates for 6.11-rc1
-Message-ID: <ZqOgy0Xh2hPy4Ojm@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Huang Xiaojia <huangxiaojia2@huawei.com>,
-	Chen Ni <nichen@iscas.ac.cn>, Chao Yu <chao@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
+	s=arc-20240116; t=1721999648; c=relaxed/simple;
+	bh=zKRonel3dcABAYymNbSFeeIxfDkMMBCHYpk+c9VI+ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QLjGQlRg4jjca8FEOZACnnqwifZ+s2VD3lxxGHo7ZH4OyhX4zdiE0oWOwEbwBSd0UUNyKHsn6/oHOv2sug1zhB6jyfIt+G9GJ6jZLk+BDZQECZE53VsX0lHcsRZwXFOgioHUwHGSx7EWFuqFen9aDmFHR892+EDZHjxuZg5GS/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=ig8CGHxq; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a94478a4eso292231366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1721999644; x=1722604444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jXvHPyArhhjIiorN2yza9XJ2TO3FtK4S2TKnt6WqquQ=;
+        b=ig8CGHxq7KA7KCDuTmNEFh+hvPHVEjHSQA4V89IWc/L/mHmzH1oO1G5MKrGZ7Ge28q
+         luOStIAwUWmXeePrnud+AyVYjpqlN03lIGSO6hXdhJQoYTUYA/XLpfbAbmgPCVPsxy9t
+         ebjFtCjOzdAXYzVoVtcnZTDaPLdBUWWf92Kss1XeTSr++xvleTeC9N0I9Ers4SJRt/Tm
+         vot/VAxlxBnhF47bGnkY9LipQjsY4B59FnReo7aVAwyFILPZ40lc+4JGOulwvSOK2MEF
+         +zTxYN8WnEhEvbk1psHA3WJ+538mvIXEa/a1vRC/kJoNLDq6H1OCSsTQ8B0xZuqsS7Hj
+         MZNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721999644; x=1722604444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jXvHPyArhhjIiorN2yza9XJ2TO3FtK4S2TKnt6WqquQ=;
+        b=evuJe++E+fn7pRizgMiE3gcE2n8idPwya/oapkLN14j8BY5lsEa6/a8f2ZNerGvGjA
+         NekhhX4TaZcvbvkIb4pZ2Je7Zv0cMqupHQHkDhq/edtRQMSnj/6w8vukqzJBHBvI4yDz
+         0YAiiVql+24YKzq3acGn/RU8r/seXhvHG4yyEVKPhRGjqma4yYLOR+rZwsvno71Dcnt1
+         IG0zpzvlVHEfKZSt9HyK0KcfLudWjZC5toS4+AqfDmcak8wgc4G70ZPP94YH9+iMFEEE
+         yzW5RT0zw7kmZ9wvFtmBeLSnboNzj+mbDr26XfR5mBqMokU5Bf+NGjn2tt+RHXiBL4rC
+         xvWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/f6eHfCriRrkIay0mpOfTwZKKlBS58eZCzhFf5H1b96etUrouHREyrw0bA8iqloG8rNkS86zrG9j427yEwN0K48r6LqUbTQHQ5bPj
+X-Gm-Message-State: AOJu0Yz/RY1BNb23hMHVOOCEg84rqXQ/XRPoliDP2cl5m5waDLauXAng
+	wR4PZ+4r3ZeKzingN0DHCeswGgnXhFtbiT23ljNythHhq/g3AFLAXOuRdcrFFyM=
+X-Google-Smtp-Source: AGHT+IG0Nli3WfDVUKwHoHrSXGJEPJa8EUIBOFiGNkEt4JJV+jZjXHa4eTmpvqc3vrhYSG+9tGp+cw==
+X-Received: by 2002:a17:906:a887:b0:a72:5967:b34 with SMTP id a640c23a62f3a-a7ac4691c06mr484862466b.22.1721999644387;
+        Fri, 26 Jul 2024 06:14:04 -0700 (PDT)
+Received: from debian.fritz.box. (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb9a12sm173319366b.213.2024.07.26.06.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 06:14:03 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: jglisse@redhat.com,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] lib: test_hmm: Use min() to improve dmirror_exclusive()
+Date: Fri, 26 Jul 2024 15:12:46 +0200
+Message-Id: <20240726131245.161695-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Use min() to simplify the dmirror_exclusive() function and improve its
+readability.
 
-Could you consider these extra patches for 6.11-rc1?
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ lib/test_hmm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Two patches add STATX_DIOALIGN and FS_IOC_GETFSSYSFSPATH support and
-another one gets rid of the remaining page->index in the codebase
-according to [1].  I tend to resolve them in this cycle since those
-improvements are actually straight-forward.
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index ee20e1f9bae9..056f2e411d7b 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -799,10 +799,7 @@ static int dmirror_exclusive(struct dmirror *dmirror,
+ 		unsigned long mapped = 0;
+ 		int i;
+ 
+-		if (end < addr + (ARRAY_SIZE(pages) << PAGE_SHIFT))
+-			next = end;
+-		else
+-			next = addr + (ARRAY_SIZE(pages) << PAGE_SHIFT);
++		next = min(end, addr + (ARRAY_SIZE(pages) << PAGE_SHIFT));
+ 
+ 		ret = make_device_exclusive_range(mm, addr, next, pages, NULL);
+ 		/*
+-- 
+2.39.2
 
-The remaining fix addresses a LZ4 decompression race introduced in
-v6.10 found by regular stress tests.
-
-All commits have been in -next except for Chao's new reviewed-bys,
-so I re-pushed them again.  No potential merge conflict is observed.
-
-[1] https://lore.kernel.org/r/Zp8fgUSIBGQ1TN0D@casper.infradead.org
-
-Thanks,
-Gao Xiang
-
-The following changes since commit a3c10bed330b7ab401254a0c91098a03b04f1448:
-
-  erofs: silence uninitialized variable warning in z_erofs_scan_folio() (2024-07-13 12:47:34 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.11-rc1-2
-
-for you to fetch changes up to 14e9283fb22d0d259820a5f05c6059678bab9ac5:
-
-  erofs: convert comma to semicolon (2024-07-26 18:48:12 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
- - Support STATX_DIOALIGN and FS_IOC_GETFSSYSFSPATH;
-
- - Fix a race of LZ4 decompression due to recent refactoring;
-
- - Another multi-page folio adaption in erofs_bread().
-
-----------------------------------------------------------------
-Chen Ni (1):
-      erofs: convert comma to semicolon
-
-Gao Xiang (2):
-      erofs: fix race in z_erofs_get_gbuf()
-      erofs: support multi-page folios for erofs_bread()
-
-Hongbo Li (1):
-      erofs: support STATX_DIOALIGN
-
-Huang Xiaojia (1):
-      erofs: add support for FS_IOC_GETFSSYSFSPATH
-
- fs/erofs/data.c              | 30 ++++++++++++------------------
- fs/erofs/decompressor_lzma.c |  2 +-
- fs/erofs/inode.c             | 19 +++++++++++++++++--
- fs/erofs/super.c             | 16 ++++++++++++++++
- fs/erofs/zutil.c             |  3 +++
- 5 files changed, 49 insertions(+), 21 deletions(-)
 
