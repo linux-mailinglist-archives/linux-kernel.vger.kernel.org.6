@@ -1,130 +1,219 @@
-Return-Path: <linux-kernel+bounces-263385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5197793D536
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F893D537
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837481C218AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E47B222E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AA51CF8A;
-	Fri, 26 Jul 2024 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183A51CD0C;
+	Fri, 26 Jul 2024 14:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8/+n+5l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOmBZb+h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M75cpE8N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOmBZb+h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M75cpE8N"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AE01CD00;
-	Fri, 26 Jul 2024 14:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785451F94A;
+	Fri, 26 Jul 2024 14:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722004728; cv=none; b=N2muw5BKjpVkCejQPj6smvJ56lIexwkpIqwzFqfgFLvtH+RFhoG7/wIlS9zckS+1XP/GRYZwYt4lBR4fIIybo4hCrPa1iqqvL9ZK8Jy6N0w+oPBfibigXxf+VVvFBXFXSykQaYCiOYA54QpkrIR4OvHt7cN3GuR/sH93CcgZicg=
+	t=1722004743; cv=none; b=E0UYIMZEmCJO6ssmF0OFpfFLVhCb1NpACQ4Em2s2Ig9zI2wQQvtEASjCMjGPOVV9jaPGW11giZpVyiYvgON7+Su8llLfTjB2m+FU6ObkMiKqpT95c8D+xlDU3Prq8Ys2J7fhmMlLkHJyXdV+6nVX+HR88iWwjIApq7nhGynYejc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722004728; c=relaxed/simple;
-	bh=dcbxhpAsjmvB2T/aiYNawl3wYu/ZKvggNrrBJFqTcRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HpoUhqR+nb0DrTvT67u3aTsDX7G8SjmEyBfPnrXYmdqjDpYFEk2QNMALehZgJ82wwopr7TQYJv/T1pR4t00lpa2koM7zGq8h0pAYj+kqWuk0fsoZgAWCClvNsQJ9EsY6k2+GTdGmGn3S/mmZBmAnVXAKnnlBqXnGHMe2sWfKJ0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8/+n+5l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFEAC32782;
-	Fri, 26 Jul 2024 14:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722004727;
-	bh=dcbxhpAsjmvB2T/aiYNawl3wYu/ZKvggNrrBJFqTcRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V8/+n+5ldkmpeZRfp9Je6DgvqWmDQzO33ZCoi3FVVzYDTH0Y1NVEgTQCW8vIfOhX0
-	 ajPhKKyLYllk9iY5p0K33TcUlHyJhHSFXlgBvESJlcHYqP5L17sf1CqDgVQX3fIokI
-	 Gpok6SxrlTdTNiLST52qLrxigSgh9i+nYFcNnCMe0G7YFXCTOY9cGdGgPEt8HzsJYl
-	 VDEH5PuW9TKv3aNoIuJw30OhSIBSYMS8PrQ2J++9WesRFtsOIp2dP42R1/GA4QyjDr
-	 ie+ABPoXAzj0SnnZv5MpkKHYFd0Y1g7zB3xj3t18ROH9xJXj+eQg0V79wUJjuKcSvy
-	 jYayeml7lRe8A==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sXM5s-000000007Tn-19Er;
-	Fri, 26 Jul 2024 16:38:53 +0200
-Date: Fri, 26 Jul 2024 16:38:52 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: Re: [PATCH] phy: qcom: qmp-pcie: Configure all tables on port B PHY
-Message-ID: <ZqO0_HyMl77yIGK-@hovoldconsulting.com>
-References: <20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org>
+	s=arc-20240116; t=1722004743; c=relaxed/simple;
+	bh=UtXz4WTaen1Pzcq/FSdo/p1LGUZ00Lh2i1DDQW0yjRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JgcQlwlcs6kJYhfSR03aPdrQ920H815arz06/tVLCt7ELk/2ca7tDmoJFwxvsHwR3TwZLD7WdtUxYlfYMVJEouWO1a6oVEgU92RcF7Ajen1Dy9uTLSqcNy7+n26wVshHN/RNodScDgiC3UMBFj6QTnG6tNoGt9ymhSndai0JPnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOmBZb+h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M75cpE8N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOmBZb+h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M75cpE8N; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B64A21A6E;
+	Fri, 26 Jul 2024 14:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722004739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
+	b=iOmBZb+hienSXihK6WG7tgPqDXDibywKH3Nju5+E+QJRzn8eaWkASSwSiOMlJCcTpvw/Ma
+	4jJDP53jKNnQxTQHlcUKfALZhw5TePn9EewqqPOkusEXJlx5b9Tm0Tl1axzpJ4pUEpAi6I
+	ZQNEZv/3AjlYcpXntYUY5Igi69zh530=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722004739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
+	b=M75cpE8Nz9F3vaxvJMWlZlAgcJ4cY7pWV4sUHCHsnx8IzKyvQURQBu0M+yp+kvCQ9BnUFV
+	+M15luHTG2hXzaBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iOmBZb+h;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=M75cpE8N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722004739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
+	b=iOmBZb+hienSXihK6WG7tgPqDXDibywKH3Nju5+E+QJRzn8eaWkASSwSiOMlJCcTpvw/Ma
+	4jJDP53jKNnQxTQHlcUKfALZhw5TePn9EewqqPOkusEXJlx5b9Tm0Tl1axzpJ4pUEpAi6I
+	ZQNEZv/3AjlYcpXntYUY5Igi69zh530=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722004739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2NriU7HmuC3T/mq0xwJ/B+pA1O1DYQGmxmvikHh2lhk=;
+	b=M75cpE8Nz9F3vaxvJMWlZlAgcJ4cY7pWV4sUHCHsnx8IzKyvQURQBu0M+yp+kvCQ9BnUFV
+	+M15luHTG2hXzaBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D20E138A7;
+	Fri, 26 Jul 2024 14:38:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ELRpFgO1o2bcIgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 26 Jul 2024 14:38:59 +0000
+Message-ID: <6ff1f0d8-1483-49ce-a02a-3c4f3d664fa7@suse.cz>
+Date: Fri, 26 Jul 2024 16:38:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
+Content-Language: en-US
+To: Danilo Krummrich <dakr@kernel.org>, cl@linux.com, penberg@kernel.org,
+ rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+ roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
+ hch@infradead.org, kees@kernel.org, ojeda@kernel.org, wedsonaf@gmail.com,
+ mhocko@kernel.org, mpe@ellerman.id.au, chandan.babu@oracle.com,
+ christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ rust-for-linux@vger.kernel.org
+References: <20240722163111.4766-1-dakr@kernel.org>
+ <20240722163111.4766-3-dakr@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240722163111.4766-3-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 8B64A21A6E
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FREEMAIL_TO(0.00)[kernel.org,linux.com,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,infradead.org,ellerman.id.au,oracle.com,amd.com];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
-On Fri, Jul 26, 2024 at 11:09:14AM +0300, Abel Vesa wrote:
-> From: Qiang Yu <quic_qianyu@quicinc.com>
+On 7/22/24 6:29 PM, Danilo Krummrich wrote:
+> Besides the obvious (and desired) difference between krealloc() and
+> kvrealloc(), there is some inconsistency in their function signatures
+> and behavior:
 > 
-> Currently, only the RX and TX tables are written to the second PHY
-> (port B) when the 4-lanes mode is configured, but according to Qualcomm
-> internal documentation, the pcs, pcs_misc, serdes and ln_shrd tables need
-> to be written as well.
+>  - krealloc() frees the memory when the requested size is zero, whereas
+>    kvrealloc() simply returns a pointer to the existing allocation.
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+>  - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
+>    kvrealloc() does not accept a NULL pointer at all and, if passed,
+>    would fault instead.
 > 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 5b36cc7ac78b..fd59ebd32f5f 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -3660,18 +3660,30 @@ static void qmp_pcie_init_port_b(struct qmp_pcie *qmp, const struct qmp_phy_cfg_
->  {
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
->  	const struct qmp_pcie_offsets *offs = cfg->offsets;
-> -	void __iomem *tx3, *rx3, *tx4, *rx4;
-> +	void __iomem *tx3, *rx3, *tx4, *rx4, *pcs, *pcs_misc, *ln_shrd, *serdes;
+>  - krealloc() is self-contained, whereas kvrealloc() relies on the caller
+>    to provide the size of the previous allocation.
+> 
+> Inconsistent behavior throughout allocation APIs is error prone, hence make
+> kvrealloc() behave like krealloc(), which seems superior in all mentioned
+> aspects.
+> 
+> Besides that, implementing kvrealloc() by making use of krealloc() and
+> vrealloc() provides oppertunities to grow (and shrink) allocations more
+> efficiently. For instance, vrealloc() can be optimized to allocate and
+> map additional pages to grow the allocation or unmap and free unused
+> pages to shrink the allocation.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Please order these as serdes, tx/rx, pcs, pcs_misc, ln_shrd so that it
-matches the order port_a is programmed (even if the hardware doesn't
-care about this).
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
->  
->  	tx3 = qmp->port_b + offs->tx;
->  	rx3 = qmp->port_b + offs->rx;
->  	tx4 = qmp->port_b + offs->tx2;
->  	rx4 = qmp->port_b + offs->rx2;
-> +	serdes = qmp->port_b + offs->serdes;
+with same caveat about the __GFP_ZERO comment on kvrealloc_noprof()
 
-And use the same order here (move serdes above tx3).
-
-> +	pcs = qmp->port_b + offs->pcs;
-> +	pcs_misc = qmp->port_b + offs->pcs_misc;
-> +	ln_shrd = qmp->port_b + offs->ln_shrd;
-
->  	qmp_configure_lane(tx3, tbls->tx, tbls->tx_num, 1);
->  	qmp_configure_lane(rx3, tbls->rx, tbls->rx_num, 1);
->  
->  	qmp_configure_lane(tx4, tbls->tx, tbls->tx_num, 2);
->  	qmp_configure_lane(rx4, tbls->rx, tbls->rx_num, 2);
-> +
-> +	qmp_configure(serdes, tbls->serdes, tbls->serdes_num);
-> +	qmp_configure(serdes, cfg->serdes_4ln_tbl, cfg->serdes_4ln_num);
-
-And here (e.g. move serdes above tx3).
-
-> +
-> +	qmp_configure(pcs, tbls->pcs, tbls->pcs_num);
-> +	qmp_configure(pcs_misc, tbls->pcs_misc, tbls->pcs_misc_num);
-> +
-> +	qmp_configure(ln_shrd, tbls->ln_shrd, tbls->ln_shrd_num);
->  }
-
-Johan
 
