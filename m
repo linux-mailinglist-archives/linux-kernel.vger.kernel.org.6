@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-263637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AE693D886
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053A593D889
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C726C1C2313F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF71F2827D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFC43BBF1;
-	Fri, 26 Jul 2024 18:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E3D44C76;
+	Fri, 26 Jul 2024 18:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eOYpvaqj"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VVTIzdZg"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADF94D8BE;
-	Fri, 26 Jul 2024 18:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722019578; cv=fail; b=EzkIqZYS4DFbY2yN5ia/hpY2O7jxY3fqwt8jzd2ltKW12ERJX3qqRxrTQEIJox8pdhQsSidf9I6OdFvqBdCVbghD24CknPUKJVR9jgZeR1yGXDpTQrKAnzoI71kVc8DUcY6dwv5gWRwz/aeYaOdp5ofye5grRDEKHEp5WE7bHK8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722019578; c=relaxed/simple;
-	bh=1/8rF1m8D/CWWE3YfMllpjQ3R+I5XxPxozPFV++VZBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gpYiJKwWZCYhLCvmhXZhmQWCQ6f5hn8E34x9Gp75kEU5TT5f2fLxbZl38hux1ekLBpHVYniRMGFuaAND1XXGV827XoX152Cy4uDteJ580V/kbs+2NyvGeDvKZpXtfOyZqtabg791CnGPk3Euzme3pV3k5t10vwVc1ndj2ZjO8sg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eOYpvaqj; arc=fail smtp.client-ip=40.107.223.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xkTAH9rlXmDAckcz4L0nRqphDmBdMKBMoXT1Q/eU4SeqpmC+Gef0YK1SAqey5JScB7WLMUDEUUKxEaaVMXceyQ38FleVKKlig63g8II1YrFlij5ZxBBd8lNjxXJfwMK1h6kPiSRLjWE0GzZUt+9taxFrvRSh8WbLnnAxsORg3elKcWuRfX+q3Doxnx8dftTLRVwluJL9PD/h6xriT6fS2PjmgoOyvJ98v5PpCgrngJ4EqjUNEET+4BESLeMqd8ldiOwK0VMsVINvOjxhFnWpLgX3nMsbtbYPbvst22jtgp6qi+H0V/htiL3eH8Qe3s5Snuf1bMzNaMPMerNY0i9uQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FqTK9JC5+gkBNB8qM7vnF0fB9Q9Rg5qIXzo8emWQH2Q=;
- b=pgRYYRyTuYWGpcbRX/Bk2+/CytsLEBWUwQ6MFk8VTBen8BhOYPZBphqWXe60W6jQBZ5AUu3Q/sHMxR6EOIJcMGZXpgcJq2hQ3BhHmVKfvN7l2oaJh/4BMSbI+STpZHFfYeH7ST07mWSR1+d0MTOI7U22wLajxeqKFdMAjXTnqaPiHpiUVL+LcZoQS2IKIsBalM5d+GK0kKzaKUAcGHJ8q/l+sp3MZz9UMGcya90ODZuHQSS/t8Yrf+Io+R2dcpGB4JtNl61Q8gvCok1nOuLRNUPNN/U5b0pFHLIvhP6qGjuozR7xexXQqdMqOv1UvKYzJhrfMXaYzlh9WrmC5uWvSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=collabora.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FqTK9JC5+gkBNB8qM7vnF0fB9Q9Rg5qIXzo8emWQH2Q=;
- b=eOYpvaqjusDLpi4RfnXZzf8tyNNxwdybHzg04m//vS6udE/sdvT+HRyuwpSHfJpDdTYwlkpuLz1VgHLKH1ZAki8ObjqMzfqZtS3fSWSkL6JT8PUVp3SYrYMaPEnhwTBRxgxhBlwfVYf7kLRl8cC4X3Bce4dqDLpXZ6+nwXUdfTy0GDY0CQMAQzo1b7xX7imC9moik2JNAViZTVb7WAOZcarv/2CXWpnII6XbE+UXIwaJR/KMq7a9YbCjK/stFBuvQP4PQS9MiK6xtZp6+n8t2Zt0EQ5VUBigUFV6o7oE570Fii2qBg/YVzh8HJm+W1l/xMqbwfi5nyER7U0RSvbZFQ==
-Received: from CH2PR10CA0013.namprd10.prod.outlook.com (2603:10b6:610:4c::23)
- by MW6PR12MB8867.namprd12.prod.outlook.com (2603:10b6:303:249::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Fri, 26 Jul
- 2024 18:46:12 +0000
-Received: from CH2PEPF00000147.namprd02.prod.outlook.com
- (2603:10b6:610:4c:cafe::cf) by CH2PR10CA0013.outlook.office365.com
- (2603:10b6:610:4c::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Fri, 26 Jul 2024 18:46:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000147.mail.protection.outlook.com (10.167.244.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 18:46:12 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
- 2024 11:45:57 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 26 Jul
- 2024 11:45:56 -0700
-Message-ID: <f5aeeea3-1b6f-4ace-b346-b6650d6937a4@nvidia.com>
-Date: Fri, 26 Jul 2024 11:45:55 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432DC3032A;
+	Fri, 26 Jul 2024 18:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722019611; cv=none; b=M/vKn1UKiVu0rN95xI2FTcwxip5pVEDyA9Y9KZrqKtgKXNRMWtDV7zknmXLpar0tiDYTEcENrJzLfKVXCjtYIhcuEFMnyMv39Ak3psoi3wuuM9+tVTX2hlmUjf2SDS0HYHvHXOAwBcto3Hypwp8pwxVfRt9ki3TzDyRWj45EGqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722019611; c=relaxed/simple;
+	bh=J+xl3Z+UAWgFBCGwIgsGabOuk/jS6OeF3g7UKaL7Ncg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ELm7/sayFsNIrlGbWr6vRb2Tws5JezZp51KDpVyOScmHVruY4MlBuDWoVmwd4EHWsR3hkJ8qwPqsSO60qqE3PSL4dE67yw8v2JXdju+RyeL4XMRAhrToWi8O0+SN77Fo0eoBKH+JqatQtkGf5L6owWWCCdUoJ6zNr+VtMnr2xpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VVTIzdZg; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1722019587; x=1722624387; i=w_armin@gmx.de;
+	bh=yqAr4ZDzpG0PehiJt9d0a8FTYMRJn1THifPggGv6zkY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VVTIzdZg2i5UFmH8ao/0AzfCbbCEVnrPo50MNA/a316JXSglvts6gi0Vi4soXvzf
+	 +FBh9maqKN3SGhY4y7HTwvIESK+aWiuKs4jQduuAJ10/BH4zpo+1rhus6WqnBmJ6H
+	 lMIp6vacaQKgmDfzjj8bp0C8FkDtjDV9NtvA7kOfo6NqvponakHyXUrtjB8g2Vm2g
+	 EH+48sN4AVC1GQYFRei+ukoZpL1gI5V2r8owPSKxNT8OIj06q17P2SrQRBgROvLDU
+	 ynq2emhgF6maigyii+IQ9Mi6DwU/Exo8jhJz2BFRDcUUKZxt0yJOxSfjWXbgxiDlW
+	 xdwuzHM7Nu426sr6hA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MGQnF-1sW0nW0p1p-004HwH; Fri, 26
+ Jul 2024 20:46:27 +0200
+Message-ID: <5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de>
+Date: Fri, 26 Jul 2024 20:46:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,192 +56,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] bitmap: Rename module
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, "Rasmus
- Villemoes" <linux@rasmusvillemoes.dk>, Shuah Khan <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<kees@kernel.org>, David Gow <davidgow@google.com>
-CC: <kernel@collabora.com>
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <20240726110658.2281070-3-usama.anjum@collabora.com>
+Subject: Re: [PATCH v2 1/2] platform/x86:dell-laptop: Add knobs to change
+ battery charge settings
+From: Armin Wolf <W_Armin@gmx.de>
+To: Andres Salomon <dilinger@queued.net>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+References: <20240723220502.77cb0401@5400>
+ <20240724203403.zcrx2lshbla3o2gp@pali> <20240724204523.xb6rp7ba6yqi5klt@pali>
+ <20240724182318.66578a48@5400> <20240724230158.nsmxdgagfpanjtzi@pali>
+ <20240725162457.34b480e1@5400> <20240725221511.mqb4tlam2r7yheoi@pali>
+ <45c7c4c3-2f99-4ca0-9c85-a96a03ccfae8@gmx.de>
+ <20240726000409.ejnvqkzco664q3zb@pali> <20240726002538.558a4a97@5400>
+ <8fde7bae-b4e3-458e-8edc-22199f8bc7e2@gmx.de>
 Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240726110658.2281070-3-usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000147:EE_|MW6PR12MB8867:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03f5612c-9c4f-459c-776d-08dcada338a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZDBhM2lBZDFKd1ZsTG9GMW02UHUvNjJjWkR1U2tIQjY1WisyUUN1U0h3d0gz?=
- =?utf-8?B?MExuZXdzLzR1eHkxQWtkbnJlQUNKYUcwanlwMlpZdksyQjZTbXg2RCthZWZN?=
- =?utf-8?B?ckZ6cU16MVNZVWJrbjdVTjJubmlYcjRZTkxiN3hXMW9mai9JWXBwNVN0UEZT?=
- =?utf-8?B?Y2ova0JGSmhHUk9acjRiMWlNTUtHQTEvMUFieEJiNlhJNW0vaUNKOVoyN2Q5?=
- =?utf-8?B?cDdKM2s4eFVjWmxBSVhYNmkwSXUycEdCWHZSR2tDZlZZUGlwa0E1RXpvTy9H?=
- =?utf-8?B?U1hJRDJMY0tJSzlmZFdST0RtU0J4NW51a0NaZ1R6bjcwUmhGeFRwdEJKUXEr?=
- =?utf-8?B?VlFPQmJJVUo4ak12MFJTenVOUDhvWXF5N3Z2djNnKzB1YlJFUXBlVXJOTFdQ?=
- =?utf-8?B?SGFyd3lrS3pHVmkxcmhwbDI4WWFKYjJFR1lpcUtvQUtCY0VmUXZEUHpwQlpW?=
- =?utf-8?B?R0dmS0lXcUFNLzJDOFZPQnAyZUUyY08rK2ZjbkhXa1ZZcTRvMTJzaXpQeDZK?=
- =?utf-8?B?L2hmTUUvMDVleU1Ga0lEb3VBRy9yeTFQTnhQa2NyNHhiMXhPcU41dHdVdk1F?=
- =?utf-8?B?b2pLbTIwbGl4alpkOU5NVzNYK3doN0V1TkVFa01NQVNobEJwWVMzNG16N0lP?=
- =?utf-8?B?Q1R6Qmx0R002cFN6SEl5QlJmelVDOUx1cFkveU1IY093Uyt1NmZmZDB4V1BE?=
- =?utf-8?B?enA2aGpYR2pQQjhQWjcvM2g2dXR6OHhGdU9DNUVOOXRFdnVweHBaS3JERlRq?=
- =?utf-8?B?cGtaOXZHeTZ4d010T3V4U0JkSExNTDJ6L3FVaGtVeDYyalRsRzRTSW5pVnhT?=
- =?utf-8?B?ZWhXRWR0WHNnN0o0WHRmMXFBeEgxLzFLR0V6OEFBRXhzNzV5MVJPVGhGRzR1?=
- =?utf-8?B?R0oyUGdyblN1YUt5dWZCaE5CekpKUmVUUGV2d2hLMkV6QURXcThkaDVMSENz?=
- =?utf-8?B?MEZtNStoa0tuMHRYR2thVkZ0aU9ROTFYMWkyV1NYOUc1a2F2K29QSERNOW9t?=
- =?utf-8?B?bkxhYUJEWHJEUVY2WXNuUlVTVk9wenByUGtQNTJLaGlLK3FQTUo2bUI1T1FM?=
- =?utf-8?B?VzB0K1AvVzRWM0kxNmxWRk11MWk4RWY3RTg5T2thblVUbDNySXpOVm1qeUMz?=
- =?utf-8?B?VDdGL055Mmg1cHNGWXN2dzdwWGQycnZiM3kzazVQVFBncTJEbVN4STlJa2R3?=
- =?utf-8?B?bkdoZnRaWHI1L21ULy9YYkhOUDRtWGprWlBYWUNPOUtmK0JrUDVFNnY0UmIz?=
- =?utf-8?B?bW9ZUzZmOHVRbXNMT0pXNHBLYld2Lys0L0tkU2J6MjBQcDh3MUVsL1Q2ck9U?=
- =?utf-8?B?ZmZUT0xwbHpUQzlYYytYWjNJK0VHNVNpY2JjRm5uREY2WlVqMDZUNDJ0VnFh?=
- =?utf-8?B?RFo3Q2d4MXRPVHN0c2Jhb21Lc1VZSFZKblVnREkyd0R0ekFUT213MmRKSlhR?=
- =?utf-8?B?ZUhRRUt6QUlhaTd0NzV0UnN3Nmc5cTl1R0VHWE5sTFhnY1B5M1pLcHlFNEFx?=
- =?utf-8?B?TDJ5TmZjS3VkNWtrOGhuV3hGSzNENk5RQ0FJQkU3WHQzK0NrTkRIdThtN3lo?=
- =?utf-8?B?WVNodkFKdlFxalo3WkdYcUx2ZWFkaFRPdVdrMC80UENVQlNoWllFUC95eHhp?=
- =?utf-8?B?S0krQ2IzQmNIeHFhRnNsY3RCb2tjSHZFQ0NPcXQxMUQwZTV1M3dyMXZqVG50?=
- =?utf-8?B?SCswNGZoZTRUUXBFeUJJbk16dDloRzZuS1VGR0dKbHZ4UEJmcmRFMzZicGdJ?=
- =?utf-8?B?VmdhSHh2L0J2cUcrSllHQ0dqckY3TWRtUHlGck4ybEIzSERneG1UODRoNmlI?=
- =?utf-8?B?bzJaeG1xL0lYKy95T0ljWmc4ODVsK2FJdlY2MnFxUEFZQTdlM25OWjVrZlQv?=
- =?utf-8?B?MzdmVDRsYkk2dlgwSjR6Ylpjdi9YSWpKTkdkczNqcFBiQSs4SWpDNTBwSXZR?=
- =?utf-8?Q?wsSJaapyoWb1qCY/7nA3PgWmJhQAVY3O?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 18:46:12.0357
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03f5612c-9c4f-459c-776d-08dcada338a8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000147.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8867
+In-Reply-To: <8fde7bae-b4e3-458e-8edc-22199f8bc7e2@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:V6J7qks7S2KQ74PO4KqnJExjptza6K7Ks/KjKXHnYQF52fz5RwY
+ 8Sb8exKUQd+LoM48tX9gx/e28cp9VPV5rLLxIleKJDXzS8joDXw1vpuRJ/RggrRf0zlSGYE
+ dsk+XEMAH3qDNBX1DRV/++fz8ga9OqtjcArVr4Zd6dP3DsCDvnA3vV8YXyFGrj6i5C2BY2G
+ ufLSkBUqRuh8ThHf3e+vw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Mml7q4va/a0=;LCIsKFskO+aL7dbmNFWqI9FnaSH
+ U5XI7c7+ymEz10n+ElPomXhPKNgV+sw/smj2wzGogZRHrYxouMaBAlqbqJKsNe2NJ437aEXd9
+ itA8PjOaaC2YVg5yilzQvceE0TA/156z5mWxiKE9nGKDLLNUF33Ss1RgK1apYTIpsQ9nziO6h
+ oNxxIsg+w4eFcFx9v1sjetQj/HI2pkWGWkfxZduvBccbUwby1TKJ1vMTWpNykeOaGdRo/Tllp
+ WLYrvgW6fTLbOpVaYEpvJbVI2/jmwN53spM4m8YjI/CaSzT2k533BDH+lrbsBIAGaCC+cwWA+
+ 2/c6FFGtRWwKZh3cQGS+Z3GB6NwGfk5IGmxxrNuCZ8bPLyijAA4RY2jl92iOqSAmhomz/Cwuw
+ mUCleqEVuu+aQATyW/uWZnJHec08D7um0M8E0RAf0Vabz/qyvySwD2Yb1ivCVRuS+cuc2uxFe
+ YXRoxxk/xuUVwjes6x5n3SYZJmSIC5XFAWLLvffGP2Xbbr4UwnPXHEPmtdLHVexjxXhwIIF7m
+ ID4SgXNTT7MhfMEebm/E709Tb65LtuAU7NKnXyfBwKgJPvQ7QYDMZRPUNrqtAM9venceNew0e
+ iuS9//zr0YSHvV3/3GYTqZpB5j3QcUkC7WQhyMYkdsAuublZOcYJvYHbke3N9EWfRzgeHUHhu
+ B+9m9emvMtzYrB22G7iwX1GyI24LSSHx43m1zo8hlgFg4MnQg3O+cPhVW7c045nhZybie4KH6
+ za7MQjf5akzAwhWPCSuDJuxyJadoy+BA67574Jm1F2yCNzygdxJ/PFArn3W/C5bB+sOaIggyW
+ mlFp+QyYpXMNbtstLdPZEXOQ==
 
-On 7/26/24 4:06 AM, Muhammad Usama Anjum wrote:
-> Rename module to bitmap_kunit and rename the configuration option
-> compliant with kunit framework.
-> 
-> Cc: kees@kernel.org
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->   MAINTAINERS                           |  2 +-
->   lib/Kconfig.debug                     | 15 ++++++++-------
->   lib/Makefile                          |  2 +-
->   lib/{test_bitmap.c => bitmap_kunit.c} |  0
->   4 files changed, 10 insertions(+), 9 deletions(-)
->   rename lib/{test_bitmap.c => bitmap_kunit.c} (100%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 12b870712da4a..289b727344d64 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3814,13 +3814,13 @@ F:	include/linux/find.h
->   F:	include/linux/nodemask.h
->   F:	include/linux/nodemask_types.h
->   F:	include/vdso/bits.h
-> +F:	lib/bitmap_kunit.c
->   F:	lib/bitmap-str.c
->   F:	lib/bitmap.c
->   F:	lib/cpumask.c
->   F:	lib/cpumask_kunit.c
->   F:	lib/find_bit.c
->   F:	lib/find_bit_benchmark.c
-> -F:	lib/test_bitmap.c
+Am 26.07.24 um 20:42 schrieb Armin Wolf:
 
-This changes the situation from "works for Linus' tab completion
-case", to "causes a tab completion problem"! :)
+> Am 26.07.24 um 06:25 schrieb Andres Salomon:
+>
+>> On Fri, 26 Jul 2024 02:04:09 +0200
+>> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>>
+>>> On Friday 26 July 2024 01:48:50 Armin Wolf wrote:
+>>>> Am 26.07.24 um 00:15 schrieb Pali Roh=C3=A1r:
+>>>>
+>>>>> On Thursday 25 July 2024 16:24:57 Andres Salomon wrote:
+>>>>>> On Thu, 25 Jul 2024 01:01:58 +0200
+>>>>>> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>>>>>>
+>>>>>>> On Wednesday 24 July 2024 18:23:18 Andres Salomon wrote:
+>> [...]
+>>>>>>> The issue here is: how to tell kernel that the particular
+>>>>>>> dell_battery_hook has to be bound with the primary battery?
+>>>>>>>
+>>>>>> So from userspace, we've got the expectation that multiple batterie=
+s
+>>>>>> would show up as /sys/class/power_supply/BAT0,
+>>>>>> /sys/class/power_supply/BAT1,
+>>>>>> and so on.
+>>>>> Yes, I hope so.
+>>>>>
+>>>>>> The current BAT0 entry shows things like 'capacity' even without
+>>>>>> this
+>>>>>> patch, and we're just piggybacking off of that to add charge_type
+>>>>>> and
+>>>>>> other entries. So there shouldn't be any confusion there, agreed?
+>>>>> I have not looked at the battery_hook_register() code yet (seems
+>>>>> that I
+>>>>> would have to properly read it and understand it). But does it
+>>>>> mean that
+>>>>> battery_hook_register() is adding hook just for "BAT0"?
+>>>>>
+>>>>> What I mean: cannot that hook be registered to "BAT1" too? Because i=
+f
+>>>>> yes then we should prevent it. Otherwise this hook which is for "Del=
+l
+>>>>> Primary Battery" could be registered also for secondary battery
+>>>>> "BAT1".
+>>>>> (I hope that now it is more clear what I mean).
+>>>> Hi,
+>>>>
+>>>> the battery hook is being registered to all ACPI batteries present
+>>>> on a given system,
+>>>> so you need to do some manual filtering when .add_battery() is called=
+.
+>>> Ok. So it means that the filtering based on the primary battery in
+>>> add_battery callback is needed.
+>>>
+>> Thanks for the explanations. Seems simple enough to fix that, as some o=
+f
+>> the other drivers are checking battery->desc->name for "BAT0".
+>>
+>>
+>> One thing that I keep coming back to, and was reinforced as I looked at
+>> include/linux/power_supply.h; the generic power supply charge_type has
+>> values that are very close to Dells, but with different names. I could
+>> shoehorn them in, though, with the following mappings:
+>>
+>> POWER_SUPPLY_CHARGE_TYPE_FAST,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 =3D> "express" (aka ExpressCharge)
+>> POWER_SUPPLY_CHARGE_TYPE_STANDARD,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "standa=
+rd"
+>> POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "adapti=
+ve"
+>> POWER_SUPPLY_CHARGE_TYPE_CUSTOM,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+=3D> "custom"
+>> POWER_SUPPLY_CHARGE_TYPE_LONGLIFE,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "primar=
+ily_ac"
+>>
+>> The main difference is that Primarily AC is described and documented as
+>> slightly different than Long Life, but I suspect the result is roughly
+>> the same thing. And the naming "Fast" and "Long Life" wouldn't match th=
+e
+>> BIOS naming of "ExpressCharge" and "Primarily AC".
+>>
+>> Until now I've opted to match the BIOS naming, but I'm curious what
+>> others
+>> think before I send V3 of the patches.
+>
+> I agree that POWER_SUPPLY_CHARGE_TYPE_FAST should be mapped the
+> ExpressCharge,
+> but i think that "primarily_ac" should become a official power supply
+> charging mode.
+>
+> The reason is that for example the wilco-charger driver also supports
+> such a charging mode
+> (currently reported as POWER_SUPPLY_CHARGE_TYPE_TRICKLE) and the
+> charging mode seems to be
+> both sufficiently different from
+> POWER_SUPPLY_CHARGE_TYPE_LONGLIFE/POWER_SUPPLY_CHARGE_TYPE_TRICKLE
+> and sufficiently generic to be supported by a wide array of devices.
+>
+> Thanks,
+> Armin Wolf
+>
+I just read the documentation regarding the charge_type sysfs attribute an=
+d it states that:
 
-I think a tests/ subdir is how we eventually decided to do this [1],
-right?
+Trickle:
+	Extends battery lifespan, intended for users who
+	primarily use their Chromebook while connected to AC.
 
-So:
+So i think that "primarily_ac" should be mapped to POWER_SUPPLY_CHARGE_TYP=
+E_TRICKLE.
 
-     lib/tests/bitmap_kunit.c
-
-
-[1] https://lore.kernel.org/20240724201354.make.730-kees@kernel.org
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-
->   F:	tools/include/linux/bitfield.h
->   F:	tools/include/linux/bitmap.h
->   F:	tools/include/linux/bits.h
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index a30c03a661726..6bb02990a73e7 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2420,13 +2420,6 @@ config TEST_PRINTF
->   config TEST_SCANF
->   	tristate "Test scanf() family of functions at runtime"
->   
-> -config TEST_BITMAP
-> -	tristate "Test bitmap_*() family of functions at runtime"
-> -	help
-> -	  Enable this option to test the bitmap functions at boot.
-> -
-> -	  If unsure, say N.
-> -
->   config TEST_UUID
->   	tristate "Test functions located in the uuid module at runtime"
->   
-> @@ -2813,6 +2806,14 @@ config USERCOPY_KUNIT_TEST
->   	  on the copy_to/from_user infrastructure, making sure basic
->   	  user/kernel boundary testing is working.
->   
-> +config BITMAP_KUNIT_TEST
-> +	tristate "KUnit Test for bitmap_*() family of functions"
-> +	depends on KUNIT
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  This builds the "bitmap_kunit" module that runs tests for
-> +	  bitmaps int the kernel making sure that there isn't any bug.
-> +
->   config TEST_UDELAY
->   	tristate "udelay test driver"
->   	help
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 322bb127b4dc6..37e7359a7065e 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -84,7 +84,6 @@ obj-$(CONFIG_TEST_DYNAMIC_DEBUG) += test_dynamic_debug.o
->   obj-$(CONFIG_TEST_PRINTF) += test_printf.o
->   obj-$(CONFIG_TEST_SCANF) += test_scanf.o
->   
-> -obj-$(CONFIG_TEST_BITMAP) += test_bitmap.o
->   ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_KASAN),yy)
->   # FIXME: Clang breaks test_bitmap_const_eval when KASAN and GCOV are enabled
->   GCOV_PROFILE_test_bitmap.o := n
-> @@ -388,6 +387,7 @@ CFLAGS_fortify_kunit.o += $(DISABLE_STRUCTLEAK_PLUGIN)
->   obj-$(CONFIG_FORTIFY_KUNIT_TEST) += fortify_kunit.o
->   obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
->   obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
-> +obj-$(CONFIG_BITMAP_KUNIT_TEST) += bitmap_kunit.o
->   
->   obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
->   
-> diff --git a/lib/test_bitmap.c b/lib/bitmap_kunit.c
-> similarity index 100%
-> rename from lib/test_bitmap.c
-> rename to lib/bitmap_kunit.c
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Thanks,
+Armin Wolf
 
 
