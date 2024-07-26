@@ -1,100 +1,262 @@
-Return-Path: <linux-kernel+bounces-262991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804D693CF7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:22:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D4293CF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2BB20F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:22:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E074F1F224EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0989017624F;
-	Fri, 26 Jul 2024 08:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC02D176FB3;
+	Fri, 26 Jul 2024 08:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="kd7v8zvS"
-Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="RXWvlyzu"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E84176AA9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91F176ABA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721982120; cv=none; b=dMtsyUBoBLNOTVOw7qfVfi87zTxLx0RH6GU3ccDWWgZ2TUEgQbsvfYWtHc4VrtfRgKZB1anHspt1A0rmXBCyEmJm+tcZoe25d407gITz5i4u+FDr6fxjClxaEHpyeTaVvnI+1aw9sMli8moIa5l+o/CmHXW33PYbtai7SeAOWTU=
+	t=1721982310; cv=none; b=aI07nWUVplF+VNdJSKwgQb22JLNt4i4P/mUMktpK8rhwhQGzo+If1AV9ia9u2+BuuaN74KMCECtjIThKhyvR3STKRwqDMWSxvOYMZSbsvBw/y+jBMlULV6WDt1pXLh1PMgilxCTB3OyGmj+Y8ar7l8D1bBrNyK0a8HKlWqFey8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721982120; c=relaxed/simple;
-	bh=lcLXhIITqFgsUuQseBCejR6CqPby/KcEvX7k5t46WJY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FtbphsAEwaBKFi0idOSnXO3G4pO+6ejkVBvS1BlOCBcuMdrwR2jRVfed8mZnirqf6U1ZXBrXwpbAyY+iCQTR2qOSDGVmEZVOIrPNjkKxY6SaHDoGyOtSVeEvXgI3z7HOdYM+Y5PSv6H0NjgRtPq56YHXMagx923+Y24qCF9cUSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=kd7v8zvS; arc=none smtp.client-ip=185.70.43.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1721982110; x=1722241310;
-	bh=lcLXhIITqFgsUuQseBCejR6CqPby/KcEvX7k5t46WJY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kd7v8zvSsnc76pSQmwDG74YBKhhNDyfEXb6var4nMveM/CK+i944qKBGh8zEZrHOD
-	 6PUnzCjba2jBAHF/S4JcKo5kTBCcbnSh6eWldHDMD8nElgrzW8IZjwI9sW6gS8AaSz
-	 OIKCMqZFE4DosmKvCHgUUxG2/dhAcEQUhWqhCo/Ew09fSNa68Gs4Mcndd24i1Wa7vs
-	 2lDcOzw/6n/BpHdNW7iaOlVsna6uC7azOdR/VowucIsOaIBWvYDGAlfQIMgBUnKJ01
-	 7sMKTl29auDb2fpp/t/oQVR2+4tP3S92P6coj6YhMcNNMUgU50z5G4EnqWguvmO7yD
-	 zhJcr6a3HqBmg==
-Date: Fri, 26 Jul 2024 08:21:47 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Jari Ruusu <jariruusu@protonmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
-Message-ID: <vp205FIjWV7QqFTJ2-8mUjk6Y8nw6_9naNa31Puw1AvHK8EinlyR9vPiJdEtUgk0Aqz9xuMd62uJLq0F1ANI5OGyjiYOs3vxd0aFXtnGnJ4=@protonmail.com>
-In-Reply-To: <2024072633-easel-erasure-18fa@gregkh>
-References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com> <2024072633-easel-erasure-18fa@gregkh>
-Feedback-ID: 22639318:user:proton
-X-Pm-Message-ID: 3a4083b4d5a76ccb4769dc73b5aae8b590891950
+	s=arc-20240116; t=1721982310; c=relaxed/simple;
+	bh=jbjIlEsz/rUHNNmvK3K3tBZC2zL1xHqph3zcFTj8ugs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s+yfN6rwNCuraeb/ciJ5TTKpWmy7ABn/0wvPrVxrmdtNgZ6vpjHgTnseDpmjazAarGuqZL+0Tm+Oy9luJOvHMzTRyzCvD2fWpWw0R2dInuAKvKrF+2zgmMSpiEqBFm4br8jqip91bLi8mKAvl13c7k8rQoetCFxPCYSxrIl+oyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=RXWvlyzu; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aac70e30dso160020766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1721982307; x=1722587107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HaNgKcqQ131GMelXGkTt/N9gIuFIqTNTFxN3e5+3Ods=;
+        b=RXWvlyzu/TgFPc1QIKy7lBfTvy0G5VIC8l5KV6AFhp/kDgCsOwNsrgZVFjFlRUwyKz
+         vKEGlsQ04r5S4ANQtl6dzBe6bIzSjXvYeK6j8zGUD0GiHCXO3uzX80xnHUQi1Ya3aIT4
+         xjGpRbfMgIr87Zd0Baue9RrrFNdaCzT7lkYMaMmLw+sXLGND7LcBi7ByhBbQ7noeEc/G
+         4VozIXEtx0sHIhwIOfmhvH5fjOMW+mxy6hAuD47sV7bwuCAOpBBGCXlrni7f1xwQzAnp
+         9ygS7qc3rpZLuzo40eStw4/zdt7jmV/Kv8NLP942pIO9INUX925SG6O9okz6yJFescHh
+         Wukg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721982307; x=1722587107;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HaNgKcqQ131GMelXGkTt/N9gIuFIqTNTFxN3e5+3Ods=;
+        b=tViRRyus/8jre7L217D/lDNNKiaDWM7gQURpxmHkfCFAv+QK9gMJkL49VeFFQK1LwW
+         0+jA8GuTrk9FFFJ5M5g+36Gz+TIdxvfpIvl/g78Np0O0m3gzqApyujk6+Fnr1hr547rJ
+         vl4pFHygDCoqenIF+VEsPLOwNbphSdb88zbo6NYPBmowoGcSL79eHXQCLoJeTjBHcFhK
+         otB7Wu9p++bma/WRKuOBFygkq052p4hOOosqLkRDGZji+P6vOI5SR2ERLXahB9tka/m/
+         3yHEAj9T7KdEjW6AIY8SCGho7NzLOu/caGuKCW0eBx5z8P/gK5KwFM8eXRMaJ6AmJBMu
+         M23g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHLZUgaluSwIU+5FTuJ5oAOa876+z1MohclRzAV3/CCHRPHzw3tmowp0/JW4x1GbqA5VXFGdh4TmiWC9gRyn/QfYL+efE6obtM9mO6
+X-Gm-Message-State: AOJu0YxeMAdBUDXYJYqWaL71ypF7QhYJJLv+7YRBKnMeqGvMHXTc4kzB
+	iJnzCaoKsWisFlqWG0Tq2Q+9ldWdQErrZHGZJepwvQTmogzRZztPZOCSEr2zdyE=
+X-Google-Smtp-Source: AGHT+IFD5ZWCc4dCfBtA9ZCYaVf+brFxoknqOvdwuFJtVkY3bhxwenyjYOSPAWlDJgICSvm+vFoTug==
+X-Received: by 2002:a17:907:7244:b0:a7a:a2b7:93ff with SMTP id a640c23a62f3a-a7acb933074mr341973066b.57.1721982307120;
+        Fri, 26 Jul 2024 01:25:07 -0700 (PDT)
+Received: from ?IPV6:2003:f6:af24:a900:7e45:2c14:7bcc:f1b? (p200300f6af24a9007e452c147bcc0f1b.dip0.t-ipconnect.de. [2003:f6:af24:a900:7e45:2c14:7bcc:f1b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de12sm148075666b.51.2024.07.26.01.25.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 01:25:06 -0700 (PDT)
+Message-ID: <920258cb-d2d5-4065-874a-df5a36c6a563@grsecurity.net>
+Date: Fri, 26 Jul 2024 10:25:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="b1_muHcFkLmeSPF6z1PDHiFsETa5Jyzfpm1ucSoHvstyBg"
+User-Agent: Mozilla Thunderbird
+Subject: Re: tracing: user events UAF crash report
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ajay Kaher <ajay.kaher@broadcom.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Vasavi Sirnapalli <vasavi.sirnapalli@broadcom.com>,
+ Alexey Makhalov <alexey.makhalov@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+ <CAD2QZ9bDcQ46jOAc_Hxy6sG5-N5RPxw4zPuLK6R+M_GhxZR+=g@mail.gmail.com>
+ <5083301c-6dc9-45c9-8106-da683ac6bfbb@grsecurity.net>
+ <CAD2QZ9ZxZ+mjfju2JMw3fPATNNWkqT1p97QxXgeGo54AFzQ-Cw@mail.gmail.com>
+ <CAD2QZ9bTrQ1p3zTZOXe6Gk4Xq8kjYSziAYAdbTrvRSZzAGPY9A@mail.gmail.com>
+ <CAD2QZ9YAzq3jq8CyAcoG9YuMD9XWHbk3jKxAmszuSkJ3mtGoGw@mail.gmail.com>
+ <20240725131021.788374d0@gandalf.local.home>
+ <20240725131632.64cab267@gandalf.local.home>
+ <cff51d4b-80eb-4587-b4ad-bfe7d7361b19@grsecurity.net>
+ <20240725150517.3184e078@gandalf.local.home>
+ <0d1a8c46-43a7-42d6-bcbf-647a5a68c3c5@grsecurity.net>
+ <20240725161519.35fd3bd6@gandalf.local.home>
+ <1b1b09fa-0064-429c-9f78-385119c5e691@grsecurity.net>
+ <20240725171459.598d9500@gandalf.local.home>
+ <a7d66736-80d3-4f3d-9cca-ec46e019b4cb@grsecurity.net>
+ <20240725190632.2755cb70@gandalf.local.home>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ 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
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <20240725190632.2755cb70@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is a multi-part message in MIME format.
+On 26.07.24 01:06, Steven Rostedt wrote:
+> On Thu, 25 Jul 2024 23:32:30 +0200
+> Mathias Krause <minipli@grsecurity.net> wrote:
+> 
+>> That was for a single run of
+>> tools/testing/selftests/user_events/ftrace_test with the read loop of
+>> /sys/kernel/tracing/events/user_events/__test_event/format in a
+>> different shell.
+>>
+>>>
+>>> destroy_user_event() which is under event_mutex calls
+>>> user_event_set_call_visible() with false, that will then call:
+>>>
+>>> trace_remove_event_call() -> probe_remove_event_call() ->
+>>>  __trace_remove_event_call() -> event_remove() ->
+>>>  remove_event_from_tracers()
+>>>
+>>> Where remove_event_from_tracers() loops over all the instances and will set
+>>> each of the file pointers flags associated to the event: EVENT_FILE_FL_FREED
+>>>
+>>> Then it returns back to destroy_user_event() that would free the event.
+>>>
+>>> The f_start() that was in your crash, with the new patch, should take the
+>>> event_mutex before referencing the event that was freed. And with that flag
+>>> being set, it should exit out.  
+>>
+>> Looking at the very first report:
+>>
+>> [   76.306946] BUG: KASAN: slab-use-after-free in f_start+0x36e/0x3d0
+>>
+>> That's what faddr2line gives me:
+>>
+>> f_start+0x36e/0x3d0:
+>> f_start at kernel/trace/trace_events.c:1637 (discriminator 1)
+>>
+>> Which is:
+>> 1635     mutex_lock(&event_mutex);
+>> 1636     file = event_file_data(m->private);
+>> 1637     if (!file || (file->flags & EVENT_FILE_FL_FREED))
+>> 1638         return ERR_PTR(-ENODEV);
+> 
+> BAH! I finally figured it out.
+> 
+> I was able to reproduce it and this does stop the UAF from happening.
+> 
+> The issue was, as a short cut, I had the "format" file's i_private point to
+> the "call" entry directly, and not go via the "file". This is because the
+> all format files are the same for the same "call", so no reason to
+> differentiate them.  The other files maintain state (like the "enable",
+> "trigger", etc). But this means if the file were to disappear, the "format"
+> file would be unaware of it.
+> 
+> This should fix it for you. It fixed it for me.
 
---b1_muHcFkLmeSPF6z1PDHiFsETa5Jyzfpm1ucSoHvstyBg
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Heureka, it did!
 
-On Friday, July 26th, 2024 at 10:49, Greg Kroah-Hartman <gregkh@linuxfounda=
-tion.org> wrote:
-> On Fri, Jul 26, 2024 at 07:25:21AM +0000, Jari Ruusu wrote:
-> > Fixes: upstream fd7eea27a3ae "Compiler Attributes: Add __uninitialized =
-macro"
-> > Signed-off-by: Jari Ruusu jariruusu@protonmail.com
->=20
-> Please submit this in a format in which we can apply it, thanks!
+Thanks, Steve!
 
-Protonmail seems to involuntarily inject mime-poop to outgoing mails.
-Sorry about that. For the time being, the best I can do is to re-send
-the patch as gzipped attachment.
+> 
+> -- Steve
+> 
+> 
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index 6ef29eba90ce..852643d957de 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -1540,7 +1540,8 @@ enum {
+>  
+>  static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+>  {
+> -	struct trace_event_call *call = event_file_data(m->private);
+> +	struct trace_event_file *file = event_file_data(m->private);
+> +	struct trace_event_call *call = file->event_call;
+>  	struct list_head *common_head = &ftrace_common_fields;
+>  	struct list_head *head = trace_get_fields(call);
+>  	struct list_head *node = v;
+> @@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+>  
+>  static int f_show(struct seq_file *m, void *v)
+>  {
+> -	struct trace_event_call *call = event_file_data(m->private);
+> +	struct trace_event_file *file = event_file_data(m->private);
+> +	struct trace_event_call *call = file->event_call;
+>  	struct ftrace_event_field *field;
+>  	const char *array_descriptor;
+>  
+> @@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
+>  
+>  static void *f_start(struct seq_file *m, loff_t *pos)
+>  {
+> +	struct trace_event_file *file;
+>  	void *p = (void *)FORMAT_HEADER;
+>  	loff_t l = 0;
+>  
+>  	/* ->stop() is called even if ->start() fails */
+>  	mutex_lock(&event_mutex);
+> -	if (!event_file_data(m->private))
+> +	file = event_file_data(m->private);
+> +	if (!file || (file->flags & EVENT_FILE_FL_FREED))
+>  		return ERR_PTR(-ENODEV);
+>  
+>  	while (l < *pos && p)
+> @@ -2485,7 +2489,6 @@ static int event_callback(const char *name, umode_t *mode, void **data,
+>  	if (strcmp(name, "format") == 0) {
+>  		*mode = TRACE_MODE_READ;
+>  		*fops = &ftrace_event_format_fops;
+> -		*data = call;
+>  		return 1;
+>  	}
+>  
 
---
-Jari Ruusu=C2=A0 4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD=C2=A0 ACDF F073 3C=
-80 8132 F189
+Will ack the patch you send.
 
---b1_muHcFkLmeSPF6z1PDHiFsETa5Jyzfpm1ucSoHvstyBg
-Content-Type: application/gzip; name=gcc4-fix-for-5.10.223-rc1.diff.gz
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=gcc4-fix-for-5.10.223-rc1.diff.gz
-
-H4sICK9Jo2YCA2djYzQtZml4LWZvci01LjEwLjIyMy1yYzEuZGlmZgCVkM1qAkEQhO/zFA25KJPd
-NRiiHpSFFUSICkLOzcSZdRvGXpkfDHl6RwQNEsimDw0FVR9UZVkGeUG8s1GbwhLHr2LXHo5kjUMV
-gqPPGIzPm3zzPhdSym5uUZaQDUfPbyDTH0FZCngCbWpiA4iLqnrFRvl7BhG5ZZ8U7xHhfoMuQfSK
-KdC3QaW1M94nRC+51x8VrpbrzTbp2RTG/f/BIl+9+nfcpC/kX7jIdIEpm3j6VqxDqVpZGxrXxn3z
-Y48OwZNy/DgiwEsKGtZUizNAQ5o08gEAAA==
-
---b1_muHcFkLmeSPF6z1PDHiFsETa5Jyzfpm1ucSoHvstyBg--
-
+Thanks again,
+Mathias
 
