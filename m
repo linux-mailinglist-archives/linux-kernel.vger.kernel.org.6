@@ -1,111 +1,149 @@
-Return-Path: <linux-kernel+bounces-263222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB4893D2DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:16:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE16F93D2E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0193F1C22046
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:16:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28B76B22817
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD23A3D;
-	Fri, 26 Jul 2024 12:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F03517B4EC;
+	Fri, 26 Jul 2024 12:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCdlv0Iu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ZY2okx7U"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477E179957
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A35178399;
+	Fri, 26 Jul 2024 12:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721996150; cv=none; b=LThLv/LhtaMRFZeH5mQv6M5MRHWs3IRIRVjhN4kkCv4YM9GWPhN22yFlzjlZSPg3xJH1DMgx1MT7TENx1lZDTKQ+ylFbkp+nz241YbHZVK9EWCcFibVQI2y+v4fR0rT+E2iKzKqeCnnJ2lqHkAP5IUOaUQmGp7rY2LwY36UHU10=
+	t=1721996190; cv=none; b=W6iDIxBKur/U6e12Wa9WczvBJVuLbDIukbzFfnM7NKYGDTR9mnV3926RV51/5pSJE1liiy1v3QOzfELCbAgai94zUUjEFWZPtuiTxP7E5fmf4/8DRlOp/U4N6PBO7jBzXIDT2zX2U7RmRuA34yb4JLSPIN/UrLbj0kahp8qHr1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721996150; c=relaxed/simple;
-	bh=zpYoC0bKWO/E8vU/OfmKM5HXzkjJBLVwbnPHaL9Kgtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SiggbyUlFt/OUTzZMTKnexTLDEJyTQgwIMwbl5k7snF960XPq+mgNWI/CoDRnNdwDb4PkYxT/ILRr6XhXOPmrucO9IYiPpSH+aLeMjihQfOVauIn2iv1wKzWoIY2YMBzPhPtrnDDbb61WZhbBIoBA0QEXntNNw4G2EH8wkwJjpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCdlv0Iu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721996148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Ia6UsEbsS9+W6Fb8WCpi2quyjabb0b4//2sWiMCJBA=;
-	b=NCdlv0Iu6UnnB4SggiudQXLZTnmY438xjgugAWJ6U4jkYlNn8OkPuUzCBOGAmUg+qstTa7
-	aHz8cFu0ANgRP/N1brztH3Qfi/pRc5AT4JiT2dzywPDKGU8P64+nJlYE1dNAFiEFXmy8+s
-	4ppLsjbJs0A4S7P+8sHnJiZudj/N95o=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-rheZr8p8M5O7cxbTjh0r_w-1; Fri,
- 26 Jul 2024 08:15:42 -0400
-X-MC-Unique: rheZr8p8M5O7cxbTjh0r_w-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E10A1955D4E;
-	Fri, 26 Jul 2024 12:15:39 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.105])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C75801955D42;
-	Fri, 26 Jul 2024 12:15:32 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: andrew@lunn.ch
-Cc: UNGLinuxDriver@microchip.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	f.fainelli@gmail.com,
-	gregkh@linuxfoundation.org,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	lucas.demarchi@intel.com,
-	masahiroy@kernel.org,
-	mcgrof@kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
-Date: Fri, 26 Jul 2024 14:15:26 +0200
-Message-ID: <20240726121530.193547-1-jtornosm@redhat.com>
-In-Reply-To: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
-References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
+	s=arc-20240116; t=1721996190; c=relaxed/simple;
+	bh=EKxhdOOgldYUX3epbyf3o7zi1yBmGlOkw9vISam+8w8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qPVmMdThK96c5BIBUZqlimOLarrgs3QIJJz4tQmiLHGj+kWk2q80q55snLGc7fTKyUnK+SZm0u3mtAKaRti+0sVEkVnVq5no3yCtLi8dvKpdR/xsCKGJYXEGlodX+IIHKhhuhXahk8kmEtePWXI/39U0qS0mYO/nJ+o8vjWH/Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ZY2okx7U; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3elkBGi780aPe4wVl1oeACPtRruuFHebc1c5YmjLFR8=; b=ZY2okx7UiwE08BLIgwev1B7z16
+	6nFn+G4nQqcjtwPVRJwV1EYxbJTWN1kCyuunm5Uy3eRrKeAdqNlDxQFY1ZppHnRURMiY9vSJrPL5P
+	ABjkv8BJ/WVySNLVl/Ax2nN/wMS/pdCSmRPTKHBDTIu7YX/PtPXSddv7rjH++zTiVAEw=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:62774 helo=[192.168.0.218])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1sXJrl-00AkNV-Ep; Fri, 26 Jul 2024 14:16:09 +0200
+Message-ID: <3e38bf09-734d-4cbf-a0a5-b01cd1998037@emfend.at>
+Date: Fri, 26 Jul 2024 14:16:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: imx-mipi-csis: avoid logging while holding
+ spinlock
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>, Martin Kepplinger
+ <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240723060909.534584-1-matthias.fend@emfend.at>
+ <20240726104255.GH14252@pendragon.ideasonboard.com>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend@emfend.at>
+In-Reply-To: <20240726104255.GH14252@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-Hello Andrew,
+Hi Laurent,
 
-> What this does appear to do is differentiate between 'pre' which will
-> load the kernel module before it is requested. Since there is no 'pre'
-> for this, it seems pointless whacking this mole.
-Precisely, we need to fix the lan78xx case with micrel phy (and other
-possible phy modules) too, due to the commented issue generating initramfs
-in order to include the phy module. 
+Am 26.07.2024 um 12:42 schrieb Laurent Pinchart:
+> Hi Matthias,
+> 
+> Thank you for the patch.
+> 
+> On Tue, Jul 23, 2024 at 08:09:08AM +0200, Matthias Fend wrote:
+>> Refactor mipi_csis_log_counters() to prevent calling dev_info() while
+>> IRQs are disabled. This reduces crucial IRQs off time to a bare minimum.
+> 
+> Should we add
+> 
+> Cc: stable@vger.kernel.org
+> 
+> to get this backported to stable kernels ?
 
-> What to me make more sense it to look at all the existing 'pre'
-> drivers and determine if they can be converted to use this macro.
-Of course, now that we have the possibility we can do this with other cases
-that have been already detected (and fixed with a softdep pre) and others
-still not detected (if anyone apart from lan78xx).
 
-Thanks
+Hard for me to tell. Since this problem only occurs when you explicitly 
+trigger the debug output from this driver, it probably only affects very 
+few end users. So I'm not sure if a backport would be worth it.
 
-Best regards
-José Ignacio
+> 
+>> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+>> ---
+>>   drivers/media/platform/nxp/imx-mipi-csis.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+>> index f49b06978f14..0c34d316ed29 100644
+>> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+>> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+>> @@ -857,18 +857,21 @@ static void mipi_csis_log_counters(struct mipi_csis_device *csis, bool non_error
+>>   {
+>>   	unsigned int num_events = non_errors ? MIPI_CSIS_NUM_EVENTS
+>>   				: MIPI_CSIS_NUM_EVENTS - 8;
+>> +	unsigned int counters[MIPI_CSIS_NUM_EVENTS];
+>>   	unsigned long flags;
+>>   	unsigned int i;
+>>   
+>>   	spin_lock_irqsave(&csis->slock, flags);
+>> +	for (i = 0; i < num_events; ++i)
+>> +		counters[i] =  csis->events[i].counter;
+>> +	spin_unlock_irqrestore(&csis->slock, flags);
+>>   
+>>   	for (i = 0; i < num_events; ++i) {
+>> -		if (csis->events[i].counter > 0 || csis->debug.enable)
+>> +		if (counters[i] > 0 || csis->debug.enable)
+>>   			dev_info(csis->dev, "%s events: %d\n",
+>>   				 csis->events[i].name,
+>> -				 csis->events[i].counter);
+>> +				 counters[i]);
+> 
+> The last two lines now fit in a single line. No need for a v2, I'll
+> rewrap the code myself, and add the Cc line if you think that's a good
+> idea.
 
+Thanks! Regarding Cc, I would like to leave it up to you; you have the 
+necessary experience and overview to judge that.
+
+~Matthias
+
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+>>   	}
+>> -	spin_unlock_irqrestore(&csis->slock, flags);
+>>   }
+>>   
+>>   static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
+> 
 
