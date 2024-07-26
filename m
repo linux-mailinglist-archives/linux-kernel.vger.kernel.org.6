@@ -1,447 +1,291 @@
-Return-Path: <linux-kernel+bounces-262884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A1E93CE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:47:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80A293CE49
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF031F219F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182E21C20C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33B0157E7D;
-	Fri, 26 Jul 2024 06:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00716176AA9;
+	Fri, 26 Jul 2024 06:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhPPgWeJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LY5o4Siv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807C62C9A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721976430; cv=none; b=b9UOma5R5qssD7h8NemEPdd4QX8xLPcQxzIsAHPtrJaV/pj/wG+G6XzR6kavpWhhseQffBojlmhvkY5SU1yHxcNoQ3agBA1yIpFEG0h5Dvwv6NbxwSowmqiVDpqvtx8izCAsKCRxg7vO9D60ihyaEEdPygqBvpJ3bHR1jF8vmCc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721976430; c=relaxed/simple;
-	bh=9pXYPaOveSQt7Odg0mAmxCf3mC1BuqHy2sAFcm+ZhGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovFNA4KSOe8GN/IA4CfVRWHFveccZ0zlHoAvb3iKxsqnAtxqCY2fagYoRB3QkcJ48J1TwvOnNgF4EOgYZ/9npxjmnS582JQzYC2KAbv/5RO/OpnKrTryYUbFHa6IcLmiYQAXbugbU95KDWXM9036l2fWlOLGNPYFVveQv0tSlNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhPPgWeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232A9C4AF0B
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721976430;
-	bh=9pXYPaOveSQt7Odg0mAmxCf3mC1BuqHy2sAFcm+ZhGU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mhPPgWeJ+z5vdItQCKyK0EvxkSbxzeWoebci+neP736B7g7uPnmJoyQcjg6aAwuij
-	 x+M/d0AHbs2g8cV0TddtUe3Dp0kxNDYT7pa86oanK4kbMwvkSxW2qnrSVI0vh9/zpF
-	 dT1Mbjxcaf/k3M0yTZE/hpKf2KCq1QlqTwvcozG0G8yYcY6HZjGHNtHxvwe1+ufk3m
-	 +0ws2VEoY7XieYyScdb7FGPN9lL7Kq8jLNsptd/uVOJT6ZnSSuvtkpqFlCJ8npyogs
-	 VvCOHhz6nKCDBU6ZLeWNuDWljsTUOiVwXrKRBHWf12aHXkMdaE35yBVGNyILHPUV6n
-	 UiZEV5mmtcqeg==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-66493332ebfso15399097b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:47:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXyRxS3vMKXy/dK2PukSep3r3+bYjwBgbOTw7YAlz74eK/sKDK+ldCz5TyuNZkYiuzzKv34L2wXan0j+eJ/Tegst1KTA7ywRfKTT73Z
-X-Gm-Message-State: AOJu0YxWPL1JxryU7BrXtI9b1hlDT5tXMjt8R5BjE54Rc4cyK9O5b7yx
-	7MQadFn845h6eajWnfkLB4pGoZRxMzcn64IuGSDX0Ubeju2ZdxvIUYzfa+saNK4XdtXQI7HpAhj
-	TKHt9LhWQvVXGtO2TsDb5UaUeuFi8i4i7qWQsbg==
-X-Google-Smtp-Source: AGHT+IFWA2OVNxnIvFOlSfx4eVyaM3NAVZ1dMpqErLlVWjyyv5VJaMFRMVu4v3TeFiBHQ/tOHu/K6fRIC8hzmIzgG+c=
-X-Received: by 2002:a0d:fc05:0:b0:63c:416f:182d with SMTP id
- 00721157ae682-675b43ae3b8mr51802387b3.12.1721976429296; Thu, 25 Jul 2024
- 23:47:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4D6548EE;
+	Fri, 26 Jul 2024 06:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721976617; cv=fail; b=kBlROlsAuW/LJ847paWVpqwtcMYzGUzCfF642l8IRDFFr2x3yskbkRUAnzMnHDxG+RBtw7tW2nMDzgdoj4rTfgj+XxmbX42fE+1vShkBEixsM9A+4gjJ2JBEQa4U/7pDUrFdulgDjJslnt83RBviGVybYA0ZTc291pUxHEtombo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721976617; c=relaxed/simple;
+	bh=iWv8oi8WMadlJwekjaDcsyiISwCX7mr0FGo6lnwe7iw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FxQk0NvhpFFf6SPu7Bny1QBWvbIwl/EZDILzytu0NWRXbMJyag+AsiTOgUhBBl4IWKAxkv/3zOg629aL0z+nLIUEP+ql0/RmlNs8I5MNKtfK6xiFF1oEq7J8aIQcORDVxgknmczEMvp1rhZtdEuUF9WWI2eMOF1lcjb7H3NGAwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LY5o4Siv; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721976616; x=1753512616;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=iWv8oi8WMadlJwekjaDcsyiISwCX7mr0FGo6lnwe7iw=;
+  b=LY5o4SivHBOVQgq0IjUniF3f6IVaDdzsT7foYmro3bU4AWeXWR+UL+Rh
+   UJVdE3njQrCn8W7VY+SwhT8BSZu6JUb0YPT7qbtmYpNQh2gqFqGlKF7vt
+   kRxnXBPRGEkz9T0AT+t04wAsCG4fwjaoW3bd8zzs94FnKQNA8lHLHkPPv
+   2oZIi/KwDa1hlC4tKCrNPefwpLlbgM9LNi6eVFU+ZFWqT2BJ9JbuYDbDa
+   LEoimmZOmRkDx9FDe6IzfBX1lMLA/oxRS+n1Lo7tplhuyAGenXyV+Fyo0
+   6LMarsMH6BnckT/2HTR+wBhiXhDZ1UYkqK2h0AiPAaB+WjK4/8g4p5EJx
+   w==;
+X-CSE-ConnectionGUID: 3i1X8ZhVSUihDZBacYRMVA==
+X-CSE-MsgGUID: IHZa8BmpQQGd91+TuX51bA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="30909835"
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="30909835"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 23:50:16 -0700
+X-CSE-ConnectionGUID: JLxdTKXnQeS4nFjG1+4tag==
+X-CSE-MsgGUID: ll9SYQB0TNGoXCWpcnvL7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
+   d="scan'208";a="52841720"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jul 2024 23:50:14 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 25 Jul 2024 23:50:14 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 25 Jul 2024 23:50:14 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 25 Jul 2024 23:50:14 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 25 Jul 2024 23:50:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y2Tio2qx8HU+0PXWqduwOpp+fR6tUFfh8+jelAr0tw54RqHo5gluicU2Q9n562CrZnNeana/6kfkH3lUSLJVS7/AwIRReIcMoaEOxWUMahscuYp6lpaZ0VpUVKAeJ+1KIVtvy1De13ev+A4B40g2/rxtRrcYFVbhS560cewlb68Krp0/NovNXK3U/XUZ9YEa0fn40b8KmwV9+f/tyhcacNaL7XqOiX/N+FlBBSol/36PmQTd3H84Qq6O73Bp2+DUrreJ2pDsDHUjsi/bA3zY/DZpnhRVShyw8AcqC9/CNEdY+RxJy+6dPochQiC/oCdzCH+uGGSNGPvBa7Yd9CMICQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6rND2hOjbakXltQpIdKwRUeDRYxRVqY9h6RmZumJaHk=;
+ b=EtgmfTTN1ICB+z0fDsh6b+FhIl/FRvIx9IEk3gL1+ZbNmk7hKyoZAmlPEcFeT6nvRoTMexrVRmWMQ9C6wZHAXf28+3LLyXGRqvZa+5u/xeg//5jL2z383ak6vrkZCkZZ0xmcV2Rl+vSfBjILRHjyldg6Ydp7Wzein0FQHFOby/FVG9H5ovevpzjLXUCW5YPlBSuCgytz8tU06AqBus39FnNpe8fUogts5diM72WPQKlczjX9v7XFPHMqHJB6IMRJ8GncVBJAYDjN6PrzpOydqfBCcAi1o9+a9Nec/IBWykw5TyaTrcv3zpapTKhL5eAroskM1z7pujM5a18GWVqLgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by PH7PR11MB8503.namprd11.prod.outlook.com (2603:10b6:510:30d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Fri, 26 Jul
+ 2024 06:50:12 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.7784.016; Fri, 26 Jul 2024
+ 06:50:12 +0000
+Date: Fri, 26 Jul 2024 14:50:00 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+CC: <kvm@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, "Sean
+ Christopherson" <seanjc@google.com>, Borislav Petkov <bp@alien8.de>, "Thomas
+ Gleixner" <tglx@linutronix.de>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, Paolo Bonzini
+	<pbonzini@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH 1/2] KVM: x86: relax canonical checks for some x86
+ architectural msrs
+Message-ID: <ZqNHGBZyiHKvQKj1@chao-email>
+References: <20240725150110.327601-1-mlevitsk@redhat.com>
+ <20240725150110.327601-2-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240725150110.327601-2-mlevitsk@redhat.com>
+X-ClientProxiedBy: SGXP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::31)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619-swap-allocator-v3-0-e973a3102444@kernel.org>
- <87v8242vng.fsf@yhuang6-desk2.ccr.corp.intel.com> <CANeU7Qno3o-nDjYP7Pf5ZTB9Oh_zOGU0Sv_kV+aT=Z0j_tdKjg@mail.gmail.com>
- <87bk3pzr5p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87bk3pzr5p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 25 Jul 2024 23:46:57 -0700
-X-Gmail-Original-Message-ID: <CACePvbXGBNC9WzzL4s2uB2UciOkV6nb4bKKkc5TBZP6QuHS_aQ@mail.gmail.com>
-Message-ID: <CACePvbXGBNC9WzzL4s2uB2UciOkV6nb4bKKkc5TBZP6QuHS_aQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mm: swap: mTHP swap allocator base on swap cluster order
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH7PR11MB8503:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c98dcc9-9128-4c2c-7d1f-08dcad3f322d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4qk7kG85gZg2SuEof0O4FnfjtsQYxoEDM0eIWGHS0+atNPzR715BOC/v+PIg?=
+ =?us-ascii?Q?6VfKwnBUNNMSPxbQaPj472IWKnbEzrIwchS8Lqa8Z4ixZu5XvQIbi5x2pYE+?=
+ =?us-ascii?Q?ZfNAcJ2nhNhU1ALmgyT6k2RjLknfqbluOSDycT+Y55t+zoUTJiyfkknR+cYe?=
+ =?us-ascii?Q?yO8ohzV0VA0qTjOxJ0cFqhJeDLRZl6ZrBXg3u/uRqcfojNn+GEAH1Pvwpl/c?=
+ =?us-ascii?Q?RTkN8xBsvcT4pxGhokkRnvlXtmWvzwtV3NliCRmhem3v+V4jCy2FWkb019fr?=
+ =?us-ascii?Q?kngjzfu07laMI2LoBVnY20MUv381CLeBHae34yTsKgvTBrXPyMw57dkLxkQ2?=
+ =?us-ascii?Q?Nx7saf56kR+8GhB/rVZUFC24AW8hfDrGcVHahADSL6iVmVEqt5we46L3Rr/m?=
+ =?us-ascii?Q?uczV2my+SP5+MYVMpEmuRLW++LDTo6fDjx7yV+3Y10ZOY24noCldCFHvAJbr?=
+ =?us-ascii?Q?XutwS5k5YFIBndE1D00ciyRwUO+MUjimiIdM4el1vsDDKs2eq/embgWBNA4X?=
+ =?us-ascii?Q?AZ3bzVZcOYD3foGPMwhKmQzUyIrtg6ixgjrdnK3RU+y7d3hNO2w1+vvrSrq4?=
+ =?us-ascii?Q?Tx6uxA378/eShlcccJyH7P5kTC2HJPk2sor2Y5iQjwawNvnGYmPaR2u0JnJr?=
+ =?us-ascii?Q?B6IFIe3HiqEPpIlp79XkMOK379/8WGi/sLZezuQ92VLbRikUBGQ7ZbCsxuJd?=
+ =?us-ascii?Q?tZ1Abytfc3j9T7z5uEupt7HR5zP8H6GWiwbzo8f4pz42ZmRLkYrf4DO0ANI/?=
+ =?us-ascii?Q?K6npca4z7dYCCYS27OMC2X0daLmc5/uAmCbkta56PfNOrfA3rpEvUbaMU5BE?=
+ =?us-ascii?Q?X9eEo9QV/OCeEqg6mgE0IwWUFOiEXiXPz2KDBiMQT06zgY7d9gUSRj08ZRTM?=
+ =?us-ascii?Q?sGezvvjdmrVHGUoa+goI0edATWgHuGFcE8e9UhsgZtzvNpZI2gLf1KMLXwDT?=
+ =?us-ascii?Q?ERFWulTL4WfPyPLOoG1xw7U8b1jgVPD26LWY5wu3nfyHmnXdk8lt2CcL1yBX?=
+ =?us-ascii?Q?QveOctaKKva4stjp+Dfpw51v6n8qReaoRffqNezoE+qizFiMCUM7+kCP04rS?=
+ =?us-ascii?Q?E+s4HRMLqWAbXQ9jhi4vPeLCsKNjcWasozG+V/oeHFjbOXVgalLmg73v68nC?=
+ =?us-ascii?Q?WAZ9kqRZM2T08/l169aZgXvJ0e7HzjrIxPEevMIq+6wQvywi1IjopizcsZ4J?=
+ =?us-ascii?Q?39wPqKxNBjGdF0be4gjijMquc6aRHXqFlRRtUkgWNYg5cBPPyqEJDT/HNNlU?=
+ =?us-ascii?Q?t+QozpMTlyd8XNmBqM32XHgYQSkeyV74jHHYHQqVYHriXz2hYU/anaXtOQ8N?=
+ =?us-ascii?Q?l5ZGyvENDAM0yN6bxltV+/cQ9f7EWlQd5CI8syI0bPihjpJRsNpyZokKx/hr?=
+ =?us-ascii?Q?u86TbGo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?58FnQRs3pkCjHPfD36jQmr4wnV2grJSty7hcqMvoRaWw29nKrXuiTdh+JO6Y?=
+ =?us-ascii?Q?mD7oHErK+idbwCY10uOSB2wMxTj3tsz0d+f6swSiKhkt4qqiYj0dHiYIdwIF?=
+ =?us-ascii?Q?rXWfVHQyXfGM6b1JSooy7Old+sQP0cMBa8DRIAm7uA3gc48ES5F0JFenwBGG?=
+ =?us-ascii?Q?RwVFTlRnv1uHaF45Kxr76IxC5KhA3l7RS6g6t+uTKAFzCePpATPsdFrOqPz8?=
+ =?us-ascii?Q?SprDFFzgjRTjPsrVn/kalaqhgQZM58Y5ufSleoLcQlQJMJwmOw5mr4SttI08?=
+ =?us-ascii?Q?3GoQ7uadOcm3jKbqWo5kgoFDBqE2n5MEmOS4B2wb/SZJohOglvwHGmQGQzDq?=
+ =?us-ascii?Q?fGDw4uZLcm48XJdvmAVJTYAfzY/yNtWT7431jnsBFiLNk2sZ0V0OGUFbth92?=
+ =?us-ascii?Q?Py0zeIMVT5khZQaOxJ4xnk6n3hQLscgLytBfB6bwk+m1telsu1rUtdrunGI2?=
+ =?us-ascii?Q?oR4FpT2fVXwFVa6+U5I8RfiBxEzJ06GW2fuF+ZMt1laR9TYU7v7M2lo5YG6K?=
+ =?us-ascii?Q?0OTAyXQ/TOEfmtLx7nZmPzhT1PZq1psZJMHOS7jneJ0vRzzsdfYJJq3NOu4Z?=
+ =?us-ascii?Q?OVkGzkcsiMzF2oMhraZDnj+M0ILEei8/pvUvuOKmuB68ozry8qxGTV4RhAZt?=
+ =?us-ascii?Q?g9fUGvCvuQFdr7dG5+FLKVaNTT7Q51po24oyxrA/9cXXLOmSHpYQH4enT1oD?=
+ =?us-ascii?Q?eWs1VuI/iaAtBN6D7z++7AG6bwSaBYO98LooZRoiIr2fCwUKgv00aHQut4yU?=
+ =?us-ascii?Q?T9Gw5jUi5lo70mZu2A7otEQkJ4WTahmXfNNqOnHXjxiMYWeCI+nsVKGBD8BS?=
+ =?us-ascii?Q?24x0205rY571Mp5y3WmZN9Pye3gK2hPeOFy/YONklVuFId82+Py/O/eCE72B?=
+ =?us-ascii?Q?NofuGgrb/8H4TCkQYwt0pnKVCLzCgfCIbXfc965/1VrVq4Q7cquT/5TAJpx/?=
+ =?us-ascii?Q?Jt4+wNSTpvmu3h9AG43vJCZAlM1C7O39iYydnlhr+jqu+/9aEdKXsh3a/tZO?=
+ =?us-ascii?Q?DaSSIgnpyXfesCjn2LiI8DLEJBsvur3w39vAT4dnlHzez+8oFdqQqe7xT30i?=
+ =?us-ascii?Q?NilrrjVKJJ3C7YvhLM+itpoC+v4RsJZCIieiFLP9MMnqxOIFILDydvhBAz1K?=
+ =?us-ascii?Q?fxh9UW5RnvtbxGb6x2dfb2rQ+3hoj6k0qAdxf1GNKU5lB+fptiW/0xdHWBbC?=
+ =?us-ascii?Q?3pCB+1V/+urEkQnnupk68/3Ts8R2vFeBYF83PTVXiXgTAs/S6jNGWJvvd54H?=
+ =?us-ascii?Q?i7+oIEs2RtkNROQlBrzL0dsXUR71zS0ya3xor5fUFozeVH42/fptrzbgM1Zm?=
+ =?us-ascii?Q?uYG7u6snQNXotkvN4qta25PO0h4N3/eHvVLnNA0RGsNDMZ2HEq5CNG1HieQQ?=
+ =?us-ascii?Q?GWocylY8niv5QrXDthaTUZPxBHVkuGK71An7ZpCAkc740oB9wlLMYyMhnzVX?=
+ =?us-ascii?Q?AawyQ1AZfH0f2E7bXpDdsr0Gtv8ygv/aYm/sdf32vaOMD1vmIfawpY1loCFt?=
+ =?us-ascii?Q?OaQxLQpuZB3U947O6SRp/COhR4CELb659HBL3oviEbStE6kWAxsVDF7WWKIo?=
+ =?us-ascii?Q?h11Tp9CIXHUVBsZ7nyd8NEzPVGB2Q9oMVKoaHdDL?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c98dcc9-9128-4c2c-7d1f-08dcad3f322d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 06:50:11.9514
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XoPm/XK7KjAF/dbUSXgCDCOyQVF2v2qFUZ3+UQzvz43N4IQezPt3SXwFjFFQ/JpdAN9ebLWUdOdvZhIwPwt01w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8503
+X-OriginatorOrg: intel.com
 
-On Mon, Jun 24, 2024 at 7:36=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
+On Thu, Jul 25, 2024 at 11:01:09AM -0400, Maxim Levitsky wrote:
+>Several architectural msrs (e.g MSR_KERNEL_GS_BASE) must contain
+>a canonical address, and according to Intel PRM, this is enforced
+>by #GP on a MSR write.
 >
-> Chris Li <chrisl@kernel.org> writes:
+>However with the introduction of the LA57 the definition of
+>what is a canonical address became blurred.
 >
-> > On Wed, Jun 19, 2024 at 7:32=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> >>
-> >> Chris Li <chrisl@kernel.org> writes:
-> >>
-> >> > This is the short term solutiolns "swap cluster order" listed
-> >> > in my "Swap Abstraction" discussion slice 8 in the recent
-> >> > LSF/MM conference.
-> >> >
-> >> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
-> >> > orders" is introduced, it only allocates the mTHP swap entries
-> >> > from new empty cluster list.  It has a fragmentation issue
-> >> > reported by Barry.
-> >> >
-> >> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdS=
-Mp+Ah+NSgNQ@mail.gmail.com/
-> >> >
-> >> > The reason is that all the empty cluster has been exhausted while
-> >> > there are planty of free swap entries to in the cluster that is
-> >> > not 100% free.
-> >> >
-> >> > Remember the swap allocation order in the cluster.
-> >> > Keep track of the per order non full cluster list for later allocati=
-on.
-> >> >
-> >> > User impact: For users that allocate and free mix order mTHP swappin=
-g,
-> >> > It greatly improves the success rate of the mTHP swap allocation aft=
-er the
-> >> > initial phase.
-> >> >
-> >> > Barry provides a test program to show the effect:
-> >> > https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmai=
-l.com/
-> >> >
-> >> > Without:
-> >> > $ mthp-swapout
-> >> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 5: swpout inc: 110, swpout fallback inc: 117, Fallback per=
-centage: 51.54%
-> >> > Iteration 6: swpout inc: 0, swpout fallback inc: 230, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 7: swpout inc: 0, swpout fallback inc: 229, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 8: swpout inc: 0, swpout fallback inc: 223, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 9: swpout inc: 0, swpout fallback inc: 224, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 10: swpout inc: 0, swpout fallback inc: 216, Fallback perc=
-entage: 100.00%
-> >> > Iteration 11: swpout inc: 0, swpout fallback inc: 212, Fallback perc=
-entage: 100.00%
-> >> > Iteration 12: swpout inc: 0, swpout fallback inc: 224, Fallback perc=
-entage: 100.00%
-> >> > Iteration 13: swpout inc: 0, swpout fallback inc: 214, Fallback perc=
-entage: 100.00%
-> >> >
-> >> > $ mthp-swapout -s
-> >> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 5: swpout inc: 33, swpout fallback inc: 197, Fallback perc=
-entage: 85.65%
-> >> > Iteration 6: swpout inc: 0, swpout fallback inc: 229, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 7: swpout inc: 0, swpout fallback inc: 223, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 8: swpout inc: 0, swpout fallback inc: 219, Fallback perce=
-ntage: 100.00%
-> >> > Iteration 9: swpout inc: 0, swpout fallback inc: 212, Fallback perce=
-ntage: 100.00%
-> >> >
-> >> > With:
-> >> > $ mthp-swapout
-> >> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 5: swpout inc: 227, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 6: swpout inc: 230, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > ...
-> >> > Iteration 94: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 95: swpout inc: 221, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 96: swpout inc: 229, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 97: swpout inc: 219, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 98: swpout inc: 222, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 100: swpout inc: 224, swpout fallback inc: 0, Fallback per=
-centage: 0.00%
-> >> >
-> >> > $ mthp-swapout -s
-> >> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 5: swpout inc: 230, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 6: swpout inc: 229, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 7: swpout inc: 223, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > Iteration 8: swpout inc: 219, swpout fallback inc: 0, Fallback perce=
-ntage: 0.00%
-> >> > ...
-> >> > Iteration 94: swpout inc: 223, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 95: swpout inc: 212, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 96: swpout inc: 220, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 97: swpout inc: 220, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 98: swpout inc: 216, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback perc=
-entage: 0.00%
-> >> > Iteration 100: swpout inc: 225, swpout fallback inc: 0, Fallback per=
-centage: 0.00%
-> >>
-> >> Unfortunately, the data is gotten using a special designed test progra=
-m
-> >> which always swap-in pages with swapped-out size.  I don't know whethe=
-r
-> >> such workloads exist in reality.  Otherwise, you need to wait for mTHP
-> >
-> > The test program is designed to simulate mTHP swap behavior using
-> > zsmalloc and 64KB buffer.
-> > If we insist on only designing for existing workloads, then zsmalloc
-> > using 64KB buffer usage will never be able to run, exactly due the
-> > kernel has high failure rate allocating swap entries for 64KB. There
-> > is a bit of a chick and egg problem there, such a usage can not exist
-> > because the kernel can't support it yet. Kernel can't add patches to
-> > support it because such simulation tests are not "real".
-> >
-> > We need to break this cycle to support something new.
-> >
-> >> swap-in to be merged firstly, and people reach consensus that we shoul=
-d
-> >> always swap-in pages with swapped-out size.
-> >
-> > We don't have to be always. We can identify the situation that makes
-> > sense. For the zram/zsmalloc 64K buffer usage case, swap out as the
-> > same swap in size makes sense.
-> > I think we have agreement on such zsmalloc 64K usage cases we do want
-> > to support.
-> >
-> >>
-> >> Alternately, we can make some design adjustment to make the patchset
-> >> work in current situation (mTHP swap-out, normal page swap-in).
-> >>
-> >> - One non-full cluster list for each order (same as current design)
-> >>
-> >> - When one swap entry is freed, check whether one "order+1" swap entry
-> >>   becomes free, if so, move the cluster to "order+1" non-full cluster
-> >>   list.
-> >
-> > In the intended zsmalloc usage case, there is no order+1 swap entry
-> > request.
+>Few tests done on Sapphire Rapids CPU and on Zen4 CPU,
+>reveal:
 >
-> This my main concern about this series.  Only the Android use cases are
-> considered.  The general use cases are just ignored.  Is it hard to
-> consider or test a normal swap partition on your development machine?
+>1. These CPUs do allow full 57-bit wide non canonical values
+>to be written to MSR_GS_BASE, MSR_FS_BASE, MSR_KERNEL_GS_BASE,
+>regardless of the state of CR4.LA57.
+>Zen4 in addition to that even allows such writes to
+>MSR_CSTAR and MSR_LSTAR.
 
-Please see the V4 cover letter. The V4 already has the SSD, zram and
-HDD stress testing.
-Of course I want to make sure the allocator works well with Barry's
-mthp test case as well.
+This actually is documented/implied at least in ISE [1]. In Chapter 6.4
+"CANONICALITY CHECKING FOR DATA ADDRESSES WRITTEN TO CONTROL REGISTERS AND
+MSRS"
 
-> > Moving the cluster to "order+1" will make less cluster available for "o=
-rder".
-> > For that usage case it is negative gain.
->
-> The "order+1" cluster can be used to allocate "order" cluster when
-> existing "order" cluster is used up.
->
-> And in this way, we can protect clusters with more free spaces so that
-> they may become free.
->
-> >> - When allocate swap entry with "order", get cluster from free, "order=
-",
-> >>   "order+1", ... non-full cluster list.  If all are empty, fallback to
-> >
-> > I don't see that it is useful for the zsmalloc 64K buffer usage case.
-> > There will be order 0 and order 4 and nothing else.
-> >
-> > How about let's keep it simple for now. If we identify some workload
-> > this algorithm can help. We can do that as a follow up step.
->
-> The simple design isn't flexible enough for your workloads too.  For
-> example,
->
-> - Initially, almost only order-0 pages are swapped out, most non-full
->   clusters are order-0.
->
-> - Later, quite some order-0 swap entries are freed so that there are
->   quite some order-4 swap entries available.
->
-> - Order-4 pages need to be swapped out, but no enough order-4 non-full
->   clusters available.
->
-> So, we need a way to migrate non-full clusters among orders to adjust to
-> the situations automatically.
+  In Processors that support LAM continue to require the addresses written to
+  control registers or MSRs to be 57-bit canonical if the processor _supports_
+  5-level paging or 48-bit canonical if it supports only 4-level paging
 
-Depends on how lucky it is to form the order-4 cluster naturally. The
-odds of forming the order-4 cluster naturally in random swap
-allocation/ free case is very low. I have the number in my other email
-thread.
-Anyway, if we convince this payout for the complexity it introduces,
-we can do that as follow up steps. Try to keep things simple at first
-for the review benefit.
+[1]: https://cdrdv2.intel.com/v1/dl/getContent/671368
 
 >
-> >>   order 0.
-> >>
-> >> Do you think that this works?
-> >>
-> >> > Reported-by: Barry Song <21cnbao@gmail.com>
-> >> > Signed-off-by: Chris Li <chrisl@kernel.org>
-> >> > ---
-> >> > Changes in v3:
-> >> > - Using V1 as base.
-> >> > - Rename "next" to "list" for the list field, suggested by Ying.
-> >> > - Update comment for the locking rules for cluster fields and list,
-> >> >   suggested by Ying.
-> >> > - Allocate from the nonfull list before attempting free list, sugges=
-ted
-> >> >   by Kairui.
-> >>
-> >> Haven't looked into this.  It appears that this breaks the original
-> >> discard behavior which helps performance of some SSD, please refer to
-> >
-> > Can you clarify by "discard" you mean SSD discard command or just the
-> > way swap allocator recycles free clusters?
+>2. These CPUs don't prevent the user from switching back to 4 level
+>paging with values that will be non canonical in 4 level paging,
+>and instead just allow the msrs to contain these values.
 >
-> The SSD discard command, like in the following URL,
+>Since these MSRS are all passed through to the guest, and microcode
+>allows the non canonical values to get into these msrs,
+>KVM has to tolerate such values and avoid crashing the guest.
 >
-> https://en.wikipedia.org/wiki/Trim_(computing)
-
-Thanks. I know what an SSD discard command is. Want to understand why
-that behavior is preferred.
-
-So the reasoning to prefer a new free block rather than a recent
-particle free cluster is to let the previous written cluster have a
-higher chance to issue the discard command?
-
-This preferred new block behavior is actually not friendly to SSD from
-a wearing point of view.
-Take this example:
-Let say the data need to allocate and free from swap. At any given
-time the swap usage is 1G. The swap SSD drive is 16G.
-Let say the allocation and free are at random 4K page locations. There
-is totally 64G swap data needed to write to swap, but at any given
-time there is only 1G data occupite on swapfile.
-
-a) If you always prefer new free blocks. Then the swap data will
-eventually write at all 16G drives then random write to full 16G.
-Chance of forming a free cluster so a discard command can be issued is
-very low. (15/16)**512 =3D 4.4E-15. From SSD point of view, it does not
-know most of the data written to 16G drive is not used. When a page is
-free on a swapfile, SSD drive doesn't know about it. It sees 4K random
-writes to all 16G of the drive, total 64G data written.
-
-b) If you always prefer a non full cluster first over a new cluster.
-The 64G data will concentrate random writing to the first 1G of drive
-location. Total 64G data written.
-
-I consider b) are more friendly to SSD than a). Because concentrate
-the write into the first 1G location. The SSD can know the data
-overwritten in those 1G has internally obsolete, so it can internally
-GC the those overwritten data without a discard command. Where a)
-random 4K writes to the whole drive without much discard at all. Full
-SSD doing random writes is a bad combination from a wearing point of
-view.
-
-Just my 2 cents. Anyway I revert the V4 to use free cluster before
-nonfull cluster just to behave the same as previously.
-
-> >> commit 2a8f94493432 ("swap: change block allocation algorithm for SSD"=
-).
-> >
-> > I did read that change log. Help me understand in more detail which
-> > discard behavior you have in mind. A lot of low end micro SD cards
-> > have proper FTL wear leveling now, ssd even better on that.
+>To do so, always allow the host initiated values regardless of
+>the state of CR4.LA57, instead only gate this by the actual hardware
+>support for 5 level paging.
 >
-> It's not FTL, it's discard/trim for SSD as above.
-
-Thanks for the clarification.
-
+>To be on the safe side leave the check for guest writes as is.
 >
-> >> And as pointed out by Ryan, this may reduce the opportunity of the
-> >> sequential block device writing during swap-out, which may hurt
-> >> performance of SSD too.
-> >
-> > Only at the initial phase. If the swap IO continues, after the first
-> > pass fills up the swap file, the write will be random on the swapfile
-> > anyway. Because the swapfile only issues 2M discards commands when all
-> > 512 4K pages are free. The discarded area will be much smaller than
-> > the free area on swapfile. That combined with the random write page on
-> > the whole swap file. It might produce a worse internal write
-> > amplification for SSD, compared to only writing a subset of the
-> > swapfile area. I would love to hear from someone who understands SSD
-> > internals to confirm or deny my theory.
+>Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+>---
+> arch/x86/kvm/x86.c | 31 ++++++++++++++++++++++++++++++-
+> 1 file changed, 30 insertions(+), 1 deletion(-)
 >
-> It depends on workloads.  Some workloads will have more severe
-> fragmentation than others.  For example, on quite some machines, the
-> swap devices will be far from being full to avoid possible OOM.
+>diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>index a6968eadd418..c599deff916e 100644
+>--- a/arch/x86/kvm/x86.c
+>+++ b/arch/x86/kvm/x86.c
+>@@ -1844,7 +1844,36 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+> 	case MSR_KERNEL_GS_BASE:
+> 	case MSR_CSTAR:
+> 	case MSR_LSTAR:
+>-		if (is_noncanonical_address(data, vcpu))
+>+
+>+		/*
+>+		 * Both AMD and Intel cpus tend to allow values which
+>+		 * are canonical in the 5 level paging mode but are not
+>+		 * canonical in the 4 level paging mode to be written
+>+		 * to the above msrs, regardless of the state of the CR4.LA57.
+>+		 *
+>+		 * Intel CPUs do honour CR4.LA57 for the MSR_CSTAR/MSR_LSTAR,
+>+		 * AMD cpus don't even do that.
+>+		 *
+>+		 * Both CPUs also allow non canonical values to remain in
+>+		 * these MSRs if the CPU was in 5 level paging mode and was
+>+		 * switched back to 4 level paging, and tolerate these values
+>+		 * both in native MSRs and in vmcs/vmcb fields.
+>+		 *
+>+		 * To avoid crashing a guest, which manages using one of the above
+>+		 * tricks to get non canonical value to one of
+>+		 * these MSRs, and later migrates, allow the host initiated
+>+		 * writes regardless of the state of CR4.LA57.
+>+		 *
+>+		 * To be on the safe side, don't allow the guest initiated
+>+		 * writes to bypass the canonical check (e.g be more strict
+>+		 * than what the actual ucode usually does).
 
-I suspect most of the SSD swap on client devices nowadays are only as
-backup just in case it needs to be swapped.
-There is not much SSD swap IO during normal use. The zram and zswap
-are more actively used in the data center and Android phone case, from
-swap IO ops point of view.
+I may think guest-initiated writes should be allowed as well because this is
+the architectural behavior.
 
->
-> > Even let's assume the SSD wants a free block over a nonfull cluster
-> > first. Zswap and zram swap are not subject to SSD property. We might
-> > want to have a kernel option to select using  nonfree clusters over
-> > the free one for zram and zswap (ghost swapfile). That will help
-> > contain the fragmented swap area.
->
-> I suspect that it will help fragmentation avoidance much.  Please prove
-> its effectiveness with data firstly.  It can be a further optimization
-> patch in the series.
+>+		 */
+>+
+>+		if (!host_initiated && is_noncanonical_address(data, vcpu))
+>+			return 1;
+>+
+>+		if (!__is_canonical_address(data,
+>+			boot_cpu_has(X86_FEATURE_LA57) ? 57 : 48))
 
-Take the above 1GB data written in a 16GB drive example. a) will
-fragment the whole 16GB drive.
-b) will concentrate on the first 1GB location that was used.
+boot_cpu_has(X86_FEATURE_LA57)=1 means LA57 is enabled. Right?
 
->
-> Even if we really need it, we can try to do it without a kernel option.
-> For example, detect whether we are using zram and enable it for zram
-> automatically (through a general flag).
+With this change, host-initiated writes must be 48-bit canonical if LA57 isn't
+enabled on the host, even if it is enabled in the guest. (note that KVM can
+expose LA57 to guests even if LA57 is disabled on the host, see
+kvm_set_cpu_caps()).
 
-zswap you need to have an option to choose from because it can write
-to the real swappfile as well.
-Do you optimize the swap allocator for the zswap or physical swapfile.
-
-Chris
+> 			return 1;
 
