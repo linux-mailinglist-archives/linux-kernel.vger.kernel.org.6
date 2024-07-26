@@ -1,91 +1,133 @@
-Return-Path: <linux-kernel+bounces-263732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DF693D9D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:36:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D96893D9D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DFF0B20BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88481F2467E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4C6149C61;
-	Fri, 26 Jul 2024 20:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC9D149C45;
+	Fri, 26 Jul 2024 20:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TSLCSA+L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eua+zY1A"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2Gx+H08"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC658222
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2881494CD
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722026151; cv=none; b=k9alo9JBrloPLBK9T6bha2eo48KBN4HiydqLXUGC9vKusR4WsILxnxXBnVjYCOky6Bo0sFtO/UTJ631keDzkjjtd++213CDsYKp0netoIH4m+yYoAmqRf7BaXaU/j5C3VJexoNcKy6VKhV2AIcLvQL4y8pyMK59hEY72UXfCFX8=
+	t=1722026175; cv=none; b=bBOn6CZCOgiwlAkV1+VLwNNVFSLJMqQ6/QveTJKOOQhCMxSamw8e6XDkrj0NXG9U147Cj3fgIMcf8zScpIC54M3nCbYAaLH0AfNckJ2ixZkH2s8f/SoFvPoZrJrZlvsdFa0dbI+vk+d7gvfjObozsgAp8LXpVvN+UW86mmnY9A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722026151; c=relaxed/simple;
-	bh=5cpj2T9MtM9S7w9oSBvF5nG7t0RJZ5T+iBjdV5pBSKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lCuqSY+fVM+llC7VawEiIvpCaCDuB6cNfEq+OKHCl9kxTT2QSkukPk/4e4fZySXszYE4Gu49RVPSdRAfXUg2GHEz1i02dNmJwgTkoCrNWisaZT2z0AlXJ8Rib9zq2Bc2LnuzKsMQMejKZA/1WnA8jKsRRDc8n1kTf0sXFdv1Tr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TSLCSA+L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Eua+zY1A; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722026148;
+	s=arc-20240116; t=1722026175; c=relaxed/simple;
+	bh=1yGabOCDYzM1SvBWjFVdPbv5wXNwEiSrRlUjdMYFRN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uFUwZcOtmJmbT18iu5nk9iYbR1mfktqBKfFTdSM7iNuF+tK7JW4xwRS/C+QHqFHNgqzxG4NGBZ4NVQR8c0KM92A7Vky0+9Nyj395WtO6PiT4UXsfmDRCUpryRPdvZNqa80mWpKyUEfv9QU96oENgvwt3cisFgXfzrhGTuvcIXk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2Gx+H08; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722026172;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5cpj2T9MtM9S7w9oSBvF5nG7t0RJZ5T+iBjdV5pBSKI=;
-	b=TSLCSA+L8V3f8j3JQkqAWLfQonkWLNv2+TxZ2gHd4CYTtAujuSmAlcaGTCMXldIjWrYVGe
-	7GJ/zA25xrNEx/lpEIalCvsUkLdrO+uMyfkCaHCHB1TmX8kxmbYIKq9vhBXHuZaI1uTpdq
-	/ut7JWE3s1vYmuemRY3eJHD0RzQ/E3sE2RJMu7ldxy+iQ6NcDMcDtmiYfe0cikftwlPffp
-	+rNYfBtZ219858RknWYg90fRqRWzOFg7wQEXbM21aRTw8X9BwuJBqS5nw5TIr3mJ7gTKqE
-	BVoeRqqcFLTQ84Hu/ujckPGlPvngNzv1mORXnUpJTolqx9EIhvt4fthb3sPTFQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722026148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cpj2T9MtM9S7w9oSBvF5nG7t0RJZ5T+iBjdV5pBSKI=;
-	b=Eua+zY1AGjRPvpL8yzeoNGIK25gltDuAfOj1VGMuGVjukXe4Ldgy1D6bvdv4cy3EyyeWIA
-	SNcLktBMpluamJDw==
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, linuxarm@huawei.com,
- rafael.j.wysocki@intel.com, guohanjun@huawei.com, gshan@redhat.com,
- miguel.luis@oracle.com, catalin.marinas@arm.com, Linux List Kernel
- Mailing <linux-kernel@vger.kernel.org>, Linux regressions mailing list
- <regressions@lists.linux.dev>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Bowman, Terry"
- <Terry.bowman@amd.com>, Shameerali Kolothum Thodi
- <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
- possible recursive locking detected warning at computer boot.
-In-Reply-To: <20240726190119.00002557@Huawei.com>
-References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
- <20240723112456.000053b3@Huawei.com> <20240723181728.000026b3@huawei.com>
- <20240725181354.000040bf@huawei.com> <87le1ounl2.ffs@tglx>
- <20240726181424.000039a4@Huawei.com> <20240726190119.00002557@Huawei.com>
-Date: Fri, 26 Jul 2024 22:35:47 +0200
-Message-ID: <878qxnvql8.ffs@tglx>
+	bh=Wm2UfiHnnlWhAZuLpVrEtIHN1JiWm1rRJEOIDoqpyDI=;
+	b=e2Gx+H08Tz0la3GYGMvmyRWmr6ksFKjzn9NRnLgjsSfIw1aGt+ipg+w03zrNxfHG4kagZw
+	4FwnJQ1fgRihD10VjRES5Y7ClKInuz6Iclgg+cDwVsGDJoBccdWTkGx54Q7cXDS3FX0WLL
+	faI+aGpKOBRZhVhrXjad0G0V8iJFFN4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-v_DfzpV-PtmoRShQskjrvQ-1; Fri,
+ 26 Jul 2024 16:36:08 -0400
+X-MC-Unique: v_DfzpV-PtmoRShQskjrvQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B467D1955D52;
+	Fri, 26 Jul 2024 20:36:05 +0000 (UTC)
+Received: from [10.2.16.80] (unknown [10.2.16.80])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7B2EF1955D45;
+	Fri, 26 Jul 2024 20:36:02 +0000 (UTC)
+Message-ID: <463d8e53-0cac-419e-bd2a-584eb1c0725e@redhat.com>
+Date: Fri, 26 Jul 2024 16:36:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup v4] cgroup: Show # of subsystem CSSes in
+ cgroup.stat
+To: Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240711025153.2356213-1-longman@redhat.com>
+ <23hhazcy34yercbmsogrljvxatfmy6b7avtqrurcze3354defk@zpekfjpgyp6h>
+ <0efbedff-3456-4e6a-8d2d-79b89a18864d@redhat.com>
+ <qozzqah5blnsvc73jrhfuldsaxwsoluuewvgpukzgcuud4nqgc@xnctlkgk5yjv>
+ <ZqQBaeAH_IfpRTnv@slm.duckdns.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZqQBaeAH_IfpRTnv@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Jul 26 2024 at 19:01, Jonathan Cameron wrote:
-> I tested it on an emulated setup with your changes on top of
-> mainline as of today and the issue is resolved.
+On 7/26/24 16:04, Tejun Heo wrote:
+> Hello,
 >
-> Would you mind posting a formal patch? Or I can do it on Monday if that's
-> easier for you.
+> On Fri, Jul 26, 2024 at 10:19:05AM +0200, Michal Koutný wrote:
+>> On Thu, Jul 25, 2024 at 04:05:42PM GMT, Waiman Long <longman@redhat.com> wrote:
+>>>> There's also 'debug' subsys. Have you looked at (extending) that wrt
+>>>> dying csses troubleshooting?
+>>>> It'd be good to document here why you decided against it.
+>>> The config that I used for testing doesn't include CONFIG_CGROUP_DEBUG.
+>> I mean if you enable CONFIG_CGROUP_DEBUG, there is 'debug' controller
+>> that exposes files like debug.csses et al.
+>>
+>>> That is why "debug" doesn't show up in the sample outputs. The CSS #
+>>> for the debug subsystem should show up if it is enabled.
+>> So these "debugging" numbers could be implemented via debug subsys. So I
+>> wondered why it's not done this way. That reasoning is missing in the
+>> commit message.
+> While this is a bit of implementation detail, it's also something which can
+> be pretty relevant in production, so my preference is to show them in
+> cgroup.stat. The recursive stats is something not particularly easy to
+> collect from the debug controller proper anyway.
+>
+> One problem with debug subsys is that it's unclear whether they are safe to
+> use and can be depended upon in production. Not that anything it shows
+> currently is particularly risky but the contract around the debug controller
+> is that it's debug stuff and developers may do silly things with it (e.g.
+> doing high complexity iterations and what not).
+>
+> The debug controller, in general, I'm not sure how useful it is. It does
+> nothing that drgn scripts can't do and doesn't really have enough extra
+> benefits that make it better. We didn't have drgn back when it was added, so
+> it's there for historical reasons, but I don't think it's a good idea to
+> expand on it.
 
-Go for it. I have enough stuff on my plate to deal with :)
+I totally agree.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+For RHEL, CONFIG_CGROUP_DEBUG isn't enabled in the production kernel, 
+but is enabled in the debug kernel. I believe it may be similar in other 
+distros. So we can't really reliably depend on using the debug 
+controller to get this information which can be useful to monitor cgroup 
+behavior in a production kernel.
+
+Cheers,
+Longman
+
 
