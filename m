@@ -1,234 +1,168 @@
-Return-Path: <linux-kernel+bounces-263570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553FE93D7CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EE693D7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B96C0B20EBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1EA1C2303B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E6F42AAD;
-	Fri, 26 Jul 2024 17:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EE517B42F;
+	Fri, 26 Jul 2024 17:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSDSl3Rp"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rJNUHUYa"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298E238DC3
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3D118AEA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722016118; cv=none; b=TcR9NVS8ZHvPKIakdlIDer1nCVs2aQUXS3c4qSwjgRdJR+Ozj/3S7aiNpYFZjoZdVfxLDi9Xkr5XPd/aImlMZA+IznAbRVAPouASxcIHpHAn/4PBZMkqiZgbc6VRFs4dmIfK8RiFzg1SmsQalBLlJFDVhVNQKE9fOEcBmRaSnZI=
+	t=1722016132; cv=none; b=kVNqUBReyhHYxSzlOmnvunyVxp88DfmrwoZmBD+EPpzjIf2wOZsbvqalxbVSVUK1z2J9+EUtmTbLAebHNjHzX33bM7KUdgTp7jp2zcWr/KkDXoyfb5k5GolNI1CJ37Hmmw1PIJ3snzRq7GHncGCbq85zrZN3sUFK3D3+cHvLvJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722016118; c=relaxed/simple;
-	bh=otPRFuTabGDQ7DAsdpT0OWXU/0cXxSp4T04CdGaalzo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ikxj6HOPFXLc/rW4EiCnv0tfrOODG4WJhBbvQSJkso+I9AsHEbg2rKp7ZfFv069wQCiPn6xsc2SzZp/V/Zt/ibOuzPe1h7oL+Ik5sYEv3UtxgkP37tU1GLOK1RmC6/0fvYjmKKK5sp27XnJ1k/F5fft/GPgrmOGSzELEGR+qd5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSDSl3Rp; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4928d2f45e2so794708137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:48:35 -0700 (PDT)
+	s=arc-20240116; t=1722016132; c=relaxed/simple;
+	bh=LsNP2SFjdlnJJoZbylk7xJQW6tlfVVYv7IzSXcPYXZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoVjvSKYs+fek7iTz+7rw9RW3GGfvsrOczFqbS3JfYk9oK/MosSZ2EywmMNrZnMm9/vy5/2/CslthIhEAAWKW0q83OuNsVDwSku9nY2Y+bPf8FtZxlCa8tdZi3F/uFL5GhhGQ2jREcl649wHSYBIKW+vDfgty16bC/IAVxtIMI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rJNUHUYa; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b6199ef089so5545666d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722016115; x=1722620915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=spa65CuiZdVRxM1p2T1rZfFElb+ut95jd1snNIKOAkk=;
-        b=qSDSl3RpPj8roVgsn1EoqemIlk9ObuWpUId/lb7aoQBVgZzlVfJeNPEFDJf/Ohvwmw
-         SiWleJVty7B6SBFbiqOOHCUOGVySG5m57gPRnAXxiNxJNyNjIt7dmEJbRDY3mDCK0Svk
-         bnteSH+lDDPdp1OuJjrPWBFeZVjFrPobEBoebqtfePknNQna9wgSlBTbu8Aub8bckRaF
-         E6Omw0HTWgcZ5qwd5VRXvmW4o4BkxCTQKEGQt+T/JV6jAFJVI36nWCncQ0JrOllLNxmx
-         rHIzojVGb0lwfxxTJDb5sAeUddO+OSz7in5TSZGHOtQ2O24TnPOR+qhNhVQgbU2lxniI
-         z//w==
+        d=rowland.harvard.edu; s=google; t=1722016129; x=1722620929; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=da6akh8WgUAwxLGmzRI7X6vZ0MUewp6RMFPFkDcDnow=;
+        b=rJNUHUYaJJBCdmiI0D0tdmCxIFZCO6iSnYEfKVkXs6fmiySkPrwpT3n1tA9ikTjtL5
+         EtR07RX9h4Wtot2PHsevxSgw2pE4jJSz8yrVaaznOQWHRyiDa0KzV8shnLqPxzyhDuGx
+         V1Kvok5NpuKOjyXlCP81TAzlByaHhBzMZQa7eJMJvpB/6Mui9WUPWvTZN82kCQ9JQhqX
+         UGgL0BcaW9inC9brlvUsAat2IWlsR8qX4pYdaJD1mNMnfBDhdTTMfUWgFugKDrpPBPge
+         b+Qe+PHRHbANhlZ4qkC7F9waDLlvPIy2McmbkJtgqNAuOL1XSPPq7xUMKwl17CfUPZIC
+         N5hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722016115; x=1722620915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=spa65CuiZdVRxM1p2T1rZfFElb+ut95jd1snNIKOAkk=;
-        b=UYJ0BA3ExU/l0ZQdVmTTRcLl1mXB44AtSosVBUTCIUj/YJcS9Zx7lSxMI8wIb6jYWy
-         ODpCda04BaXpZHK1KNp7ly4PE5h/s8txeRKNYMhAOccV5YikRqmoCH9kG/B3O4+e2KUP
-         W8oSUG28kKmW+I+NESczjuzL5p7+T/mEKESST1xZJCHuGBdBfLBRrnecchbmsR4CfCpx
-         pr802VGpnY6m/0kYuiSsnc89A68vaaX6D4AplTBsbV418x4CZwjFlNEfn7nGMtn1RxlB
-         uGVn/7ak9NNBeqcH6QsYsNfGJ/YrZy6HiUz+gwcxhSa422jESJH/KXhEK8pyw6byAXt7
-         ZLJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpP7Qo6loKbyaKwq1cmBybYDzMv0yZtoi5ypcJjf2rXxylq76RP8MlbmoVktu3hmV+0fDbrIUCfUvudRK45P0GNP2VLPtRo2PzvER3
-X-Gm-Message-State: AOJu0Yz1HThTmr8UOzMlrRPkkznXQN1dUy6aXmn/qY72qL57ocK/tmFN
-	FZs5PbAx0RGl+HnueMyRN9TjVCv2gUUKJ2AIh++AVO9AA64hctNQd2yAh4DOLL0gNTGwc3seHNJ
-	WPFzSWe9JmiC8hTfDNuIvRatpfSn8s0hwhgdh8g==
-X-Google-Smtp-Source: AGHT+IFRdvMqwnaaR8cmizGpd3HnNZS5sihGiiwBkO1giU7j3tM3LeR+KNWh/P3+PouzbuRNKJYHM9i+w74yRiGMJL4=
-X-Received: by 2002:a05:6102:442b:b0:48f:e683:7b46 with SMTP id
- ada2fe7eead31-493fa15eadcmr656628137.3.1722016114971; Fri, 26 Jul 2024
- 10:48:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722016129; x=1722620929;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=da6akh8WgUAwxLGmzRI7X6vZ0MUewp6RMFPFkDcDnow=;
+        b=hFc33P+EupAJDx4PjbIabDUL23mfQVF8d4uerajqeMIM6G3B0WbfQukDjisk0cJ9JS
+         2zc/dtv7ahiolVDfGtlbXvOlzd/9hTbjTQ8Qg/SPgvifLYxEmoRm/TgbKgMsKVNvq+Xl
+         qTVxk8+hcmzyWcLfUctaFknu2MHRu2rVhAS34fbfl3V2SgZWJ1/onCU6LyqGwP+7Ej9o
+         CRVJn2xMGmyixiiYkUC4tQMyBUcm4oAEREgAnxkWGVhtKL1bT1Bkgs0rod2RyMZSQA+V
+         BcbcbugDAojFrbKfZPLVbEtPCAdiopmfVXz1UoeHZuSS+dcvjoW7Pr2RYuzoPFvjiCgs
+         ojRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpwon3gscIl3GWYk7KKMxKET1XNCFrXto80joLEGTiw1GoVDWBuVI2XxF9FZFP0rvAge8XgAzRBOicurzg5HNhBcsTwQy0lF5x9ree
+X-Gm-Message-State: AOJu0Yyw7pAlqpWTui5lhyG24d2+D3+TCmfrMLNxFQkqqfEM8hflfa1m
+	Xa2SUi2UC0LqrezdSICGPLjvUKIGlJ+Hc1Wsgq99b/10s1BDqS76cU43tk2xdg==
+X-Google-Smtp-Source: AGHT+IFfcNDT9741//3LSkOUXP5XWBykUNvYG3uMXN61dzAYodF3R9u9EGGDouuQOm0bccgd0Y35Ag==
+X-Received: by 2002:a05:6214:27ef:b0:6b5:752e:a33a with SMTP id 6a1803df08f44-6bb55acfeccmr4441856d6.57.1722016129227;
+        Fri, 26 Jul 2024 10:48:49 -0700 (PDT)
+Received: from rowland.harvard.edu (nat-65-112-8-58.harvard-secure.wrls.harvard.edu. [65.112.8.58])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8d82a1sm18699516d6.8.2024.07.26.10.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 10:48:48 -0700 (PDT)
+Date: Fri, 26 Jul 2024 13:48:45 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
+ recovery time
+Message-ID: <8e300b0b-91f8-4003-a1b9-0f22869ae6e1@rowland.harvard.edu>
+References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
+ <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
+ <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
+ <3d3416cd-167f-4c50-972b-0eb376a13fdf@rowland.harvard.edu>
+ <cee9630e-781e-49b1-82c5-9066552f71b1@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725142731.814288796@linuxfoundation.org>
-In-Reply-To: <20240725142731.814288796@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 26 Jul 2024 23:18:23 +0530
-Message-ID: <CA+G9fYt-NsFzBhULi-JqQLXSKO123pAvrLTyGqx2eXeLyFJ3yQ@mail.gmail.com>
-Subject: Re: [PATCH 6.10 00/29] 6.10.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cee9630e-781e-49b1-82c5-9066552f71b1@molgen.mpg.de>
 
-On Thu, 25 Jul 2024 at 20:09, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.10.2 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.10.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Jul 24, 2024 at 11:00:42PM +0200, Paul Menzel wrote:
+> Dear Alan,
+> 
+> 
+> Am 24.07.24 um 20:52 schrieb Alan Stern:
+> > On Wed, Jul 24, 2024 at 08:14:34PM +0200, Paul Menzel wrote:
+> 
+> […]
+> 
+> > > Am 24.07.24 um 16:10 schrieb Alan Stern:
+> > > > On Wed, Jul 24, 2024 at 01:15:23PM +0200, Paul Menzel wrote:
+> > > > > This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
+> > > > > ("[PATCH] USB: relax usbcore reset timings") from 2005.
+> > > > > 
+> > > > > This adds unneeded 40 ms during resume from suspend on a majority of
+> > > > 
+> > > > Wrong.  It adds 40 ms to the recovery time from a port reset -- see the
+> > > > commit's title.  Suspend and resume do not in general involve port
+> > > > resets (although sometimes they do).
+> > > 
+> > > It looks like on my system the ports are reset:
+> > > 
+> > > ```
+> > > $ grep suspend-240501-063619/hub_port_reset abreu_mem_ftrace.txt
+> > >   6416.257589 |   3)  kworker-9023  |               | hub_port_reset [usbcore]() {
+> > >   6416.387182 |   2)  kworker-9023  |   129593.0 us |                  } /* hub_port_reset [usbcore] */
+> > 
+> > > ```
+> > 
+> > It depends on the hardware and the kind of suspend.
+> 
+> It is ACPI S3 suspend. Can I find out, why the ports are reset? Not
+> resetting the ports would be even better to reduce the resume time.
 
+It's probably an xHCI thing -- the hardware may stop providing power to 
+the ports during S3 suspend, or something like that.  The xHCI people 
+may have a better idea of what's going on.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+> > > > > devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, BIOS
+> > > > > 2.21.0 06/02/2022 with
+> > > > 
+> > > > > The commit messages unfortunately does not list the devices needing this.
+> > > > > Should they surface again, these should be added to the quirk list for
+> > > > > USB_QUIRK_HUB_SLOW_RESET.
+> > > > 
+> > > > This quirk applies to hubs that need extra time when one of their ports
+> > > > gets reset.  However, it seems likely that the patch you are reverting
+> > > > was meant to help the device attached to the port, not the hub itself.
+> > > > Which would mean that the adding hubs to the quirk list won't help
+> > > > unless every hub is added -- in which case there's no point reverting
+> > > > the patch.
+> > > > 
+> > > > Furthermore, should any of these bad hubs or devices still be in use,
+> > > > your change would cause them to stop working reliably.  It would be a
+> > > > regression.
+> > > > 
+> > > > A better approach would be to add a sysfs boolean attribute to the hub
+> > > > driver to enable the 40-ms reset-recovery delay, and make it default to
+> > > > True.  Then people who don't need the delay could disable it from
+> > > > userspace, say by a udev rule.
+> > > 
+> > > How would you name it?
+> > 
+> > You could call it "long_reset_recovery".  Anything like that would be
+> > okay.
+> 
+> Would it be useful to makes it an integer instead of a boolean, and allow to
+> configure the delay: `extra_reset_recovery_delay_ms`?
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Sure, why not?  Just so long as the default value matches the current 
+behavior.
 
-## Build
-* kernel: 6.10.2-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: bdc32598d900724563b4f84ff564b8b2273bf298
-* git describe: v6.10.1-30-gbdc32598d900
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.10.y/build/v6.10=
-.1-30-gbdc32598d900
-
-## Test Regressions (compared to v6.10.1)
-
-## Metric Regressions (compared to v6.10.1)
-
-## Test Fixes (compared to v6.10.1)
-
-## Metric Fixes (compared to v6.10.1)
-
-## Test result summary
-total: 257000, pass: 223352, fail: 5079, skip: 28035, xfail: 534
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 127 total, 127 passed, 0 failed
-* arm64: 36 total, 36 passed, 0 failed
-* i386: 27 total, 27 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 31 total, 31 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Alan Stern
 
