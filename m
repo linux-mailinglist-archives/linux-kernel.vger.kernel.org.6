@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-263186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DCF93D25F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FB793D261
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FC62823F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925A628217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA8717A936;
-	Fri, 26 Jul 2024 11:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE76317A920;
+	Fri, 26 Jul 2024 11:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IvRSYAnp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gg6Z/0X8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7CC7F8;
-	Fri, 26 Jul 2024 11:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA18B7F8;
+	Fri, 26 Jul 2024 11:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721993654; cv=none; b=BBDj8OruTcCou/BScJD44dbaiMb61sDvg2J+5fqZx7QImgz6XesRv4CbSSqGUK+9gRkxhQXPLAFamck/ZwmVJEhtz5z1DaQi+I8ki1HYiDQVCif1v0UywC0eFjbs1zTPUzttr5SqNUGek1kVnTCEtcZrbaLLTYlg8lcLEs/myng=
+	t=1721993739; cv=none; b=DqQD+CuAJn+SY8Q/rWImYvqHe0YVQjDU3g/yKl2tfAMM7IUWrxHINEhvPtw7P7AKqZMena+CLpXnHMLwI61MRXL6r5t9yIrQgTA9xF81ut1IQPumN87DOE9NX7ZgLGmq2YH4EtWJwtpdwHY0O5tFT2q+/qZ/rcKWZB5vokdkVJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721993654; c=relaxed/simple;
-	bh=1cRpYPxf85bkcRfqqP1AT7S2oZoufzjEuuHjzgV4GsE=;
+	s=arc-20240116; t=1721993739; c=relaxed/simple;
+	bh=LD7TLNNtkKxXJ3/zNuhaoPP6BcdevAO+oUiI7KQbCT8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqEt0ZFp2KhttcKFbGLb17447muP88pbOKevWI0Z2NnfkmwcegQhSNM955jd6ByNcDL7hvG4V/kfOQ7CAFgmcCKIgmZjeW7ZS9GqMTIAoGH36OwOWeNEZxDP8GZ3LUlBdmKOcZ8FHe8tXfQnIUjX5KaDd/KL2PbDIYdL/TPUeqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IvRSYAnp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iezH6AS31tgQgsC5xLAziXWjf3bE7mEiNYrYCGpV9Kw=; b=IvRSYAnpdtILfbrnAPIsR4SC7o
-	zJE9R5VU1ldWIuIBTQRxgGP1UYPWkyguwbWnPU2Ft+1IeZZ3yPA3+kI+zcgoZjjsPAt+jnPYMSwvt
-	scuHNMS3O5drahcGL1zS9RUn3GnK7aEyu+DkK02rILb/7aK3o8mVXZqja7SYgvBZNu5M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sXJCq-003GxT-2m; Fri, 26 Jul 2024 13:33:52 +0200
-Date: Fri, 26 Jul 2024 13:33:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
-	UNGLinuxDriver@microchip.com, davem@davemloft.net,
-	edumazet@google.com, gregkh@linuxfoundation.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	mcgrof@kernel.org, netdev@vger.kernel.org,
-	woojung.huh@microchip.com, Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-Message-ID: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
-References: <20240724145458.440023-1-jtornosm@redhat.com>
- <20240724161020.442958-1-jtornosm@redhat.com>
- <8a267e73-1acc-480f-a9b3-6c4517ba317a@lunn.ch>
- <v6uovbn7ld3vlym65twtcvximgudddgvvhsh6heicbprcs5ii3@nernzyc5vu3i>
- <32be761b-cebc-48e4-a36f-bbf90654df82@gmail.com>
- <ybluy4bqgow5qurzfame6kxx2sflsh5trmnlyaifrlurasid3e@73kpadpk5d3p>
- <d3d97260-f840-4ea8-b964-64e36448bf96@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vE/nfPizXwcPMo0xeqNRSw4K2/N/NK20wLRqux0dHkILTwovx33pBUeEuch1HnZbxPOv5heEP1MgpKc0lfr6BgRx9wbxOAPH1JVLoX5fMejDOjbvsbnYBxcyTZAEDQ0o9GwS4w1OGSrTrLrIW90niJgb8GYA6C0B1tB644gBMcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gg6Z/0X8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2908C32782;
+	Fri, 26 Jul 2024 11:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721993738;
+	bh=LD7TLNNtkKxXJ3/zNuhaoPP6BcdevAO+oUiI7KQbCT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gg6Z/0X8RWUhY9ZNZWcD3pKnQDZ7h3u57s34tltr04mJZiKU6UuLQqGJ3moIUg9sa
+	 8sYfM9oSR+Fht176j0W1bQyfbWX8IBkp/SOppMGNfiT4jA8MbZ2YKihvQ2SYN76r78
+	 lFRTbmZDSp4LTFTC2mDpf8A1Y63swOeQTWcB9kBMR7Wl4XRLB160oJkcLGLtSsmGmY
+	 DBTpStJSKuU+wQ8n+jagrvnZaRMXGtux31pzgAgqAQNHLtfApmxkLurgtb42CMsjEe
+	 g5EGEKBu0l21Qy4mhfKhJcviQ01+O1ODYm0SkeYiyj1sZeoS9hZ80WLyG7FWfJ1+Bt
+	 noMtj70/0CYiA==
+Date: Fri, 26 Jul 2024 12:35:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
+Message-ID: <1b75abb2-6ef7-4d58-8d47-e169dc2cf7ba@sirena.org.uk>
+References: <20240725142733.262322603@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T44G+3X3pqKmie04"
+Content-Disposition: inline
+In-Reply-To: <20240725142733.262322603@linuxfoundation.org>
+X-Cookie: It is your destiny.
+
+
+--T44G+3X3pqKmie04
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d3d97260-f840-4ea8-b964-64e36448bf96@redhat.com>
 
-On Thu, Jul 25, 2024 at 11:53:54AM +0200, Paolo Abeni wrote:
-> On 7/25/24 08:50, Lucas De Marchi wrote:
-> > if you are saying that the build system should automatically convert
-> > this:
-> > 
-> > 	config USB_LAN78XX
-> > 		tristate "Microchip LAN78XX Based USB Ethernet Adapters"
-> > 		select MII
-> > 		select PHYLIB
-> > 		select MICROCHIP_PHY
-> > 		select FIXED_PHY
-> > 		select CRC32
-> > 
-> > into (for my config):
-> > 
-> > 	MODULE_WEAKDEP("mii");
-> > 	MODULE_WEAKDEP("microchip");
-> > 
-> > then humn... why is CONFIG_MICREL (being added in this patch) not there?
-> > It seems even if we automatically derive that information it wouldn't
-> > fix the problem Jose is trying to solve.
-> 
-> I hoped that the 'weak dependency' towards mii and microchip could be
-> inferred greping for 'request_module()' in the relevant code, but apparently
-> it's not the case.
+On Thu, Jul 25, 2024 at 04:36:50PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.223 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Nope. The module is not explicitly loaded by this driver. The PHY core
-will look at ID registers in the PHY to determine what it is, and then
-load a module which says it drives that ID.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-There are also pin compatible PHYs, so it is possible a different
-version of the LAN78xx USB dongle could need a different PHY
-driver. So you might need multiple of these week dependencies.
+--T44G+3X3pqKmie04
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And there are many boards using for example the FEC, with many
-different PHYs in use, since Freescale was never really a PHY vendor,
-its not really paired with a Freescale PHY.
+-----BEGIN PGP SIGNATURE-----
 
-As i said, whacker a mole.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmajigEACgkQJNaLcl1U
+h9Aqsgf+PpE3UYFYkYdkLzEyhr5OO0Xuw3tWjM5JZ1G/gZtuZMV5GT7+pdGOnTQd
+PsVH43ZLmIYgOId5hKKehxFkI3YRx/2vizxh9jkDlsEgHz/dub5FnBIM7BiYjf16
+KPSZHmv+qy5zYMRMQhXIfXHDM3RGFCgWRFmJYjPyG+P3Wq7/xq2sEnYjsmg93Hvj
+KDOppzHgsvhs0c9iv2Ro3PJXVurAxihynre/QMa+IN+/zp0m2V3/io/0o9oB5wR1
+RD9M3QXYdmq/8ba7B0wK1fEwwocXMo/vyNnRfvidym4eoaVtnnPN+/bwEEI4meS4
+4sMwoUA6JDkha6LdNX61DArP/ybasQ==
+=vMJH
+-----END PGP SIGNATURE-----
 
-So you cannot use this to determine what PHY driver goes into the
-initramfs.
-
-What this does appear to do is differentiate between 'pre' which will
-load the kernel module before it is requested. Since there is no 'pre'
-for this, it seems pointless whacking this mole.
-
-What to me make more sense it to look at all the existing 'pre'
-drivers and determine if they can be converted to use this macro.
-
-	Andrew
-
+--T44G+3X3pqKmie04--
 
