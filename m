@@ -1,171 +1,131 @@
-Return-Path: <linux-kernel+bounces-263221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E83A93D2DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3D293D2D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6127C1C20B78
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F671F21A66
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8024717B424;
-	Fri, 26 Jul 2024 12:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IgWxLRHh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5EE17B42C;
+	Fri, 26 Jul 2024 12:09:41 +0000 (UTC)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0F5A3D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29A8A3D;
+	Fri, 26 Jul 2024 12:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721995973; cv=none; b=Ida4rIL8ai2b/C/FUK3QIYaBJaIFoFlMVNZuR1k8TTteKkDkBfa82Bxc9UdmSAD9nnLr2iEVBhsq9H0UQr5drzf2oh8Pc6AHtA+C9utOiiUHfJfJ7msYXbIm7XVYcv5GpzXHm9n+7VAr1+NWu4c6yMh40QfhJiqHpjxMmCnqZ/8=
+	t=1721995780; cv=none; b=nwpyqKIRyfgVVsGF8N5Osgblez4OG7+rBjr3m21yYR5imqDcfNx0yztufMGONTFi/TL4TLF7i5gZ3dAD6HYBEglKpTJ3IOCZRGBzfWf9tm4wTEhN2bTXvLS5O2yYbtvA5gM+SvIzRHfQrs0EEp98tQdmjla994gSGJVxyG9/nAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721995973; c=relaxed/simple;
-	bh=1V3Q8m2BDWrSOvFIrv+eaYaMr31bu9+TIuLv1aOf2B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cft6UQ+HlIBLOWVXyZxqmtZPJPj9zG+XAqO1LrNPkkFTpkXJ4Syvg6zcC2BrC4hYqtIvTOYQnLkHIJO666VfIIJ7HH8xrBuvoWF4r1QXGKCplhf1wLBUs0Au2IcmxDEUuLgnVU+zMTqfOPGibQzZ2EOGMxxSixzma2cH9tlsvPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IgWxLRHh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721995971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G49wnXhK4V+Mtn67JRjCTM1wPv3gdFz2Zvo47NHWeDM=;
-	b=IgWxLRHh7EYNUNNFWhHZ0EiNly6q8IVkOAjWg3vxUjEayCLUw3cGP+EcuMNjaM0HExCO9e
-	x7UoWvOi7V5PcP6QA0vwFoNaT3TShbL3LgZK6N9gjYrqHHFNiAKiO5ATymYwo7qnSumSVc
-	iOL6AhWjQPEpkFR7pxAmNYF6Oqjw8mk=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-96-chzEthTqOU2hnoe7_NGY8Q-1; Fri, 26 Jul 2024 08:08:49 -0400
-X-MC-Unique: chzEthTqOU2hnoe7_NGY8Q-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36873a449dfso1540647f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:08:49 -0700 (PDT)
+	s=arc-20240116; t=1721995780; c=relaxed/simple;
+	bh=bnda64iSGU0m6KI9KDID0lLqIBqN6jiSVGUS9ihm/JI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=feeerBUz57s9ZIaZfVKh19WTDpQ6kcOq4zJsaCq1LxNLeszrKwpI2K1sR0hBwWEBBAaRSGjugKPj3sqMIjQIyzBYhmxmkZVqknCWmocKyxwQS9E9t58pQPEaA5EFnvY6TQoXOMc5eBjgnBv8Kh2Vt61NyU5jDAnmLLJDPPVGxHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso12774091fa.1;
+        Fri, 26 Jul 2024 05:09:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721995728; x=1722600528;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G49wnXhK4V+Mtn67JRjCTM1wPv3gdFz2Zvo47NHWeDM=;
-        b=wFxWupIjdNanzgc09Xy+AFQYtxT1M+50k3oOX/jy+dVPKd7vE1LEo5COMirJ0ngMhx
-         22Be6G/2dJlhGe0Nbi26iMcyw2Q2oc+rZ2HpW/vUfvOQB0aMMucrGt/nb776GK2sb4bj
-         nqA/uzkXmJH8BRjKKdzXm96f1mp3ZEk36HFcux3qGkIWY4HLL+80PKBn1X9Vl63U3tEe
-         24YMG8BZ6qjOBzLSXx6s3CrqvQBlSkr0QdevdmM0t7smiSzjDmpO8To78ElDricQw6Py
-         tFnlg+JhZ4qWfxmerVagzgHrZ2iuBQSa8AneW15fWktAfw7MVSfYKYewtVUVnrAlGEVW
-         0z4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhO3HtsCT1yhASHRBwF8x4wBcjjLmkcooyOY7TB4vmZVNFsWgu5mNjMPPH0aLx6qHE5HAiPb9EpqhqE5pwnPyDw4o2XnFEcNJqpMlq
-X-Gm-Message-State: AOJu0Yz3xgz3aLaderujmbuXhYPHnNPkL/6R6dwqyngBG2Fkt8ZBanjj
-	JnAKaqAa6dqvNSzzHaHL2eu8WuYogU25tlu068JfV4DNfkXDEwVRtPrHJheslg1uWNglbY87ReT
-	4vUY+uBG1I8CKb0U01GjLjWp6aHC0oA90CntVtyHkTxGsuMM3Y9UA4GOd69emXA==
-X-Received: by 2002:adf:fb06:0:b0:367:8e52:3bb9 with SMTP id ffacd0b85a97d-36b31b9bc3bmr3729520f8f.22.1721995728601;
-        Fri, 26 Jul 2024 05:08:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXysXoL6x/l3VkhBTjVJCucf84OgO3Zqnf/K3uT/C4Tj/moS7/0oNuQuztJERVeTbIIEja1Q==
-X-Received: by 2002:adf:fb06:0:b0:367:8e52:3bb9 with SMTP id ffacd0b85a97d-36b31b9bc3bmr3729492f8f.22.1721995728107;
-        Fri, 26 Jul 2024 05:08:48 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c713:a600:7ca0:23b3:d48a:97c7? (p200300cbc713a6007ca023b3d48a97c7.dip0.t-ipconnect.de. [2003:cb:c713:a600:7ca0:23b3:d48a:97c7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686f72esm4958150f8f.112.2024.07.26.05.08.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 05:08:47 -0700 (PDT)
-Message-ID: <8ae021d6-0b15-4be7-bc1a-2d5f82cfbef4@redhat.com>
-Date: Fri, 26 Jul 2024 14:08:46 +0200
+        d=1e100.net; s=20230601; t=1721995777; x=1722600577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6MGhkO10DAFXXxWz/b8Cy8KqtLa3ot91CZL6+UeC3sM=;
+        b=j34lwHha6bTZ4sQe9xhDbWo07coJ5SmYsb6HJj963ZhECaNDGw4CwI3I2tHIAXdWaS
+         VQ4DjUMGBH7h+p1vpP5ivX+Tv7N4UQfIhA180L4vOSPzhP0R/l4650Vm6gc5ukL6PIRP
+         ikBLeylESNRNojEfoYDxyidmuwasWVzb3a3uNj/ZHdg7qiVkpLisoW1VdHttQR/jdLmS
+         gZ3vGNRAcnnhLxHco+jhKGCfOdmUt5f0JWDqRkUf1lMOxdG3yeybvONwUBqORgZ0+iAz
+         +rAiG4dMX5zMxKb7fPjTzdcj/Y8LBWCT7Ne5d7Q8/LqNoioFupRtzY52jzrMAYPVzLLw
+         8jiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAJ8w+NSiIM2iCaWF7fuyhXj9hpiqB+2XP9vUJxZA50GArD8YZbe00AcxPG07mIUDkX+EvEn0Ssi6O/lzUTOX9o+Zfq58kdKSSweiLhhNieyaU9OVVE2/4cv3EcK2Jl7hvldWO++32
+X-Gm-Message-State: AOJu0YyjO7FhQfYigVOXdYedSn2KtGop0UNLSV9sbhAAwknsRiTnbcVG
+	YjQuL0ok34SF2xcDd9VeUTcgi1sNQCovSxOvpkTSSTEHkFE6RJGn
+X-Google-Smtp-Source: AGHT+IFjWITrc1duUxyZEVURki42n1i/s79zMtzH8JRb44wpFw+niqIwLT/ZeSzb4wAjOgCN3Wwgzg==
+X-Received: by 2002:ac2:4ece:0:b0:52e:9beb:a2e2 with SMTP id 2adb3069b0e04-52fd602a7c3mr2704369e87.19.1721995776593;
+        Fri, 26 Jul 2024 05:09:36 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b038asm1857206a12.14.2024.07.26.05.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 05:09:36 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Akinobu Mita <akinobu.mita@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: kuba@kernel.org,
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] docs: fault-injection: document cache-filter feature for failslab
+Date: Fri, 26 Jul 2024 05:09:30 -0700
+Message-ID: <20240726120930.3231333-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Capitalize letters for readability
-To: Andrew Morton <akpm@linux-foundation.org>,
- Steven Davis <goldside000@outlook.com>
-Cc: chengming.zhou@linux.dev, hannes@cmpxchg.org, hch@infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
- urezki@gmail.com, yosryahmed@google.com
-References: <20240725132124.b0d317ba1d9e7d1651b71a65@linux-foundation.org>
- <PH7P223MB1039AA3BC1E999EE54B1230AF7AB2@PH7P223MB1039.NAMP223.PROD.OUTLOOK.COM>
- <20240725142718.b320d59cf52f250392a9a47c@linux-foundation.org>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240725142718.b320d59cf52f250392a9a47c@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25.07.24 23:27, Andrew Morton wrote:
-> On Thu, 25 Jul 2024 16:49:51 -0400 Steven Davis <goldside000@outlook.com> wrote:
-> 
->>> But I do think such a change is too trivial to justify churning the
->>> code around.
->>
->> So how do we proceed? I could move onto another patch, or, as you said,
->> change everything and add a checkpatch rule.
-> 
-> Let's not bother with this, unless others feel more strongly than I.
+The failslab fault injection mechanism has an undocumented capability
+that provides significant utility in testing and debugging. This feature,
+introduced in commit 4c13dd3b48fcb ("failslab: add ability to filter slab
+caches"), allows for targeted error injection into specific slab caches.
 
-I don't think it's worth the churn. I'll note that
+However, it was inadvertently left undocumented at the time of its
+implementation.
 
-"mm: Capitalize letters for readability"
+Add documentation for the cache-filter feature in the failslab mode
+description. Also, providing a practical example demonstrating how to
+use cache-filter to inject failures specifically when allocating socket
+buffers (skbs).
 
-is inconsistent with most other MM commits where would have instead
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ .../fault-injection/fault-injection.rst       | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-"mm: capitalize letters for readability"
-
-:P
-
+diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
+index 70380a2a01b4..07c24710bd21 100644
+--- a/Documentation/fault-injection/fault-injection.rst
++++ b/Documentation/fault-injection/fault-injection.rst
+@@ -141,6 +141,14 @@ configuration of fault-injection capabilities.
+ 	default is 'Y', setting it to 'N' will also inject failures into
+ 	highmem/user allocations (__GFP_HIGHMEM allocations).
+ 
++- /sys/kernel/debug/failslab/cache-filter
++	Format: { 'Y' | 'N' }
++
++        default is 'N', setting it to 'Y' will only inject failures when
++        objects are requests from certain caches.
++
++        Select the cache by writing '1' to /sys/kernel/slab/<cache>/failslab:
++
+ - /sys/kernel/debug/failslab/ignore-gfp-wait:
+ - /sys/kernel/debug/fail_page_alloc/ignore-gfp-wait:
+ 
+@@ -459,6 +467,18 @@ Application Examples
+     losetup -d $DEVICE
+     rm testfile.img
+ 
++------------------------------------------------------------------------------
++
++- Inject only skbuff allocation failures ::
++
++    # mark skbuff_head_cache as faulty
++    echo 1 > /sys/kernel/slab/skbuff_head_cache/failslab
++    # Turn on cache filter (off by default)
++    echo 1 > /sys/kernel/debug/failslab/cache-filter
++    # Turn on fault injection
++    echo 1 > /sys/kernel/debug/failslab/times
++    echo 1 > /sys/kernel/debug/failslab/probability
++
+ 
+ Tool to run command with failslab or fail_page_alloc
+ ----------------------------------------------------
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
