@@ -1,161 +1,199 @@
-Return-Path: <linux-kernel+bounces-263199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A8A93D292
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:51:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D0493D294
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB7F2821FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F86D282525
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763F17B406;
-	Fri, 26 Jul 2024 11:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB6817A93B;
+	Fri, 26 Jul 2024 11:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCRHfvik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iSJ1Elfe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7AC219EA;
-	Fri, 26 Jul 2024 11:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DA436D;
+	Fri, 26 Jul 2024 11:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721994706; cv=none; b=kt1TOxwkRuGM/jHnRqSVGbUbuW0/wmSNrce1apHqPB/rg5hwAIWx8vv+xCErMy6W/N2vOp0VJPAGjjKfLJnzeA4lyGOv+9x7SbbfD7GN9dvduFjW6PDX+ihIroqt9lfDtDMUpwzJHB/oUVHIj6D5HeQfYiVcCxokYt2/26Es5Jg=
+	t=1721994959; cv=none; b=FcF/hosqVKA9gpF+GC1ovdDWk8U2ufsMYASVdiXyArLHaZnJU//NyjEOSrtCkg6yrAVwR2BehIabSDh5Ru49s3hY/e8P5gH4PuUEVtJShCuxYp3JfwReYQmBe/uTZxBf67U8BqwJPiW4nChKTS9d6KvfvmnQJ7i6kyUF6a/JYJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721994706; c=relaxed/simple;
-	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
+	s=arc-20240116; t=1721994959; c=relaxed/simple;
+	bh=LxJyFpy2Vd55m1XjGr5Bnk3WOJ0YlbAyn9P1cJr+FyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvpWo5jS1uJHIMDtwY4rO65lEJ8DnJiWF9CvidKa+I2AT5m3Bhabr40TZgC2SgEbFe2ps7pJzcQBxffC4Hp5R/PxDABzlmCqdVEdb8CPou3uUz6oyZ8QGSUfLnz2YSNxHsQUWjis6ano75z1EGQ70F+r1tHTIMGCHyjR5pNFMQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCRHfvik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F72C32782;
-	Fri, 26 Jul 2024 11:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721994705;
-	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCRHfvik6OhJ4XuyvfAXfpfygxLpx+LvsQSNomgZxDa7kNkq1Usr+cT+KV9CPEj6K
-	 MccRZPyKf7EoCsjHmlATSsB+iuelf4yxm64NGOdYgs6thSOSo34jgVKoJVZA2dJHgF
-	 PkQGoneFVon5z52+WcYm2jLxhQAioEqc7vYECKQs/3AsLCPkLlrsh9TfkOa9ilgMwr
-	 6B5O0OvBg66P3GmqES4hwTdtn67Eb8coovULuG1UCiy/PilpB4AVu0CI7XTCuzDvGJ
-	 URpaNrpVwseFQKXP1/LxwM3oShCLLiI0bnqeRGqgvLVCz0OA1k5LwNrEzQUVf7N1w+
-	 sNcDKfRVg6fhQ==
-Date: Fri, 26 Jul 2024 13:51:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Message-ID: <20240726-beisammen-degen-b70ec88e7ab2@brauner>
-References: <20240725234706.655613-1-song@kernel.org>
- <20240725234706.655613-3-song@kernel.org>
- <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
- <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcPCHjVeG88VfnPWo4My6w0I5ACuK3n8D30hUVgBc9ny/uAzQvgvUdXk6nbFcSwk0F9KxgZFz0U4kJJTGRdggohyILOuh1iTK40E8cmpw2ZnIneafy4J/wlD4uHi70Nx3gK+iMZUKUZelHy3ORJ6by6+xuieokTJAoLfUp/rASM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iSJ1Elfe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QAnilW002229;
+	Fri, 26 Jul 2024 11:55:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=36TlYcUNpE5WbV1wHmFqQ6fpemO
+	PzThdqCiXNOj1cMg=; b=iSJ1Elfeq+iCunDocBTih1rLjOD7ssiex4+UtOrptXG
+	RYnta7ImA/C41bF/d4h2M7pyvZ74SJkpdm+WJ03JCKIGqiGpvU8IqIcgGz+nbYnb
+	pjhneFhH0QYpRpoUH/nG4UzjYuhlKI6NJHcO5Gnh6ZCCX1S5PPf7R5oszfAU/OUs
+	KeTSYtok3HpuooG/s3NawKHpXxyvnyyh76Z7ARkmH2CTPmKFUMlLoSD3DIZDr3rn
+	V/sf1uk+dYqHJ6z4BdpJWPvBfXa1HdL7OY9Zs8r8CPO8aVXd+EV+BS4R2f/JSQAO
+	MGPoEVR7inP/PgW7VrAEJx61HYKZdFZY0mFMV0wphqQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m58c8vsm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:55:34 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46QBtXVr015892;
+	Fri, 26 Jul 2024 11:55:33 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m58c8vrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:55:33 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QAuTXw005870;
+	Fri, 26 Jul 2024 11:53:17 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40gy2ptrny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 11:53:17 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QBrDrE20185436
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 11:53:15 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A7DEE2005A;
+	Fri, 26 Jul 2024 11:53:13 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E791520043;
+	Fri, 26 Jul 2024 11:53:10 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.39.192])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 26 Jul 2024 11:53:10 +0000 (GMT)
+Date: Fri, 26 Jul 2024 17:23:08 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 04/20] ext4: add new ext4_ext_path_brelse() helper
+Message-ID: <ZqOOJPTgMc0UBZ2M@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-5-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
+In-Reply-To: <20240710040654.1714672-5-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QqosKd6lPLIcolhD3-VPl83WjhEgL82O
+X-Proofpoint-GUID: DapLPMzwnZSt2JCILIjHImUHdv-YJ2nM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_09,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 mlxscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ mlxlogscore=614 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407260079
 
-On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
-> Hi Christian, 
+On Wed, Jul 10, 2024 at 12:06:38PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> > On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
+> Add ext4_ext_path_brelse() helper function to reduce duplicate code
+> and ensure that path->p_bh is set to NULL after it is released.
 > 
-> [...]
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+Hi Baokun,
+
+The helper looks good, feel free to add:
+
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+> ---
+>  fs/ext4/extents.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 > 
-> >> +
-> >> + for (i = 0; i < 10; i++) {
-> >> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
-> >> + if (ret == sizeof(expected_value) &&
-> >> +    !bpf_strncmp(value, ret, expected_value))
-> >> + matches++;
-> >> +
-> >> + prev_dentry = dentry;
-> >> + dentry = bpf_dget_parent(prev_dentry);
-> > 
-> > Why do you need to walk upwards and instead of reading the xattr values
-> > during security_inode_permission()?
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 657baf3991c1..6e5b5baf3aa6 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -106,6 +106,12 @@ static int ext4_ext_trunc_restart_fn(struct inode *inode, int *dropped)
+>  	return 0;
+>  }
+>  
+> +static inline void ext4_ext_path_brelse(struct ext4_ext_path *path)
+> +{
+> +	brelse(path->p_bh);
+> +	path->p_bh = NULL;
+> +}
+> +
+>  static void ext4_ext_drop_refs(struct ext4_ext_path *path)
+>  {
+>  	int depth, i;
+> @@ -113,10 +119,8 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
+>  	if (!path)
+>  		return;
+>  	depth = path->p_depth;
+> -	for (i = 0; i <= depth; i++, path++) {
+> -		brelse(path->p_bh);
+> -		path->p_bh = NULL;
+> -	}
+> +	for (i = 0; i <= depth; i++, path++)
+> +		ext4_ext_path_brelse(path);
+>  }
+>  
+>  void ext4_free_ext_path(struct ext4_ext_path *path)
+> @@ -635,8 +639,7 @@ int ext4_ext_precache(struct inode *inode)
+>  		 */
+>  		if ((i == depth) ||
+>  		    path[i].p_idx > EXT_LAST_INDEX(path[i].p_hdr)) {
+> -			brelse(path[i].p_bh);
+> -			path[i].p_bh = NULL;
+> +			ext4_ext_path_brelse(path + i);
+>  			i--;
+>  			continue;
+>  		}
+> @@ -1887,8 +1890,7 @@ static void ext4_ext_try_to_merge_up(handle_t *handle,
+>  		(path[1].p_ext - EXT_FIRST_EXTENT(path[1].p_hdr));
+>  	path[0].p_hdr->eh_max = cpu_to_le16(max_root);
+>  
+> -	brelse(path[1].p_bh);
+> -	path[1].p_bh = NULL;
+> +	ext4_ext_path_brelse(path + 1);
+>  	ext4_free_blocks(handle, inode, NULL, blk, 1,
+>  			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
+>  }
+> @@ -2956,8 +2958,7 @@ int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
+>  			err = ext4_ext_rm_leaf(handle, inode, path,
+>  					       &partial, start, end);
+>  			/* root level has p_bh == NULL, brelse() eats this */
+> -			brelse(path[i].p_bh);
+> -			path[i].p_bh = NULL;
+> +			ext4_ext_path_brelse(path + i);
+>  			i--;
+>  			continue;
+>  		}
+> @@ -3019,8 +3020,7 @@ int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
+>  				err = ext4_ext_rm_idx(handle, inode, path, i);
+>  			}
+>  			/* root level has p_bh == NULL, brelse() eats this */
+> -			brelse(path[i].p_bh);
+> -			path[i].p_bh = NULL;
+> +			ext4_ext_path_brelse(path + i);
+>  			i--;
+>  			ext_debug(inode, "return to level %d\n", i);
+>  		}
+> -- 
+> 2.39.2
 > 
-> In this use case, we would like to add xattr to the directory to cover
-> all files under it. For example, assume we have the following xattrs:
-> 
->   /bin  xattr: user.policy_A = value_A
->   /bin/gcc-6.9/ xattr: user.policy_A = value_B
->   /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
-> 
-> /bin/gcc-6.9/gcc will use value_C;
-> /bin/gcc-6.9/<other_files> will use value_B;
-> /bin/<other_folder_or_file> will use value_A;
-> 
-> By walking upwards from security_file_open(), we can finish the logic 
-> in a single LSM hook:
-> 
->     repeat:
->         if (dentry have user.policy_A) {
->             /* make decision based on value */;
->         } else {
->             dentry = bpf_dget_parent();
->             goto repeat;
->         }
-> 
-> Does this make sense? Or maybe I misunderstood the suggestion?
-
-Imho, what you're doing belongs into inode_permission() not into
-security_file_open(). That's already too late and it's somewhat clear
-from the example you're using that you're essentially doing permission
-checking during path lookup.
-
-Btw, what you're doing is potentially very heavy-handed because you're
-retrieving xattrs for which no VFS cache exists so you might end up
-causing a lot of io.
-
-Say you have a 10000 deep directory hierarchy and you open a
-file_at_level_10000. With that dget_parent() logic in the worst case you
-end up walking up the whole hierarchy reading xattr values from disk
-10000 times. You can achieve the same result and cleaner if you do the
-checking in inode_permission() where it belongs and you only cause all
-of that pain once and you abort path lookup correctly.
-
-Also, I'm not even sure this is always correct because you're
-retroactively checking what policy to apply based on the xattr value
-walking up the parent chain. But a rename could happen and then the
-ancestor chain you're checking is different from the current chain or
-there's a bunch of mounts along the way.
-
-Imho, that dget_parent() thing just encourages very badly written bpf
-LSM programs. That's certainly not an interface we want to expose.
-
-> Also, we don't have a bpf_get_inode_xattr() yet. I guess we will need
-> it for the security_inode_permission approach. If we agree that's a 
-
-Yes, that's fine.
-
-You also need to ensure that you're only reading user.* xattrs. I know
-you already do that for bpf_get_file_xattr() but this helper needs the
-same treatment.
-
-And you need to force a drop-out of RCU path lookup btw because you're
-almost definitely going to block when you check the xattr.
-
-> better approach, I more than happy to implement it that way. In fact,
-> I think we will eventually need both bpf_get_inode_xattr() and 
-> bpf_get_dentry_xattr(). 
-
-I'm not sure about that because it's royally annoying in the first place
-that we have to dentry and inode separately in the xattr handlers
-because LSMs sometimes call them from a location when the dentry and
-inode aren't yet fused together. The dentry is the wrong data structure
-to care about here.
 
