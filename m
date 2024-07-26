@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-262933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C793CED1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F24393CED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4208F1F223FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304831F229A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEBC176252;
-	Fri, 26 Jul 2024 07:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F004E176ABF;
+	Fri, 26 Jul 2024 07:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="jBtQzH9q"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="x/NiMpts"
+Received: from mail-40140.protonmail.ch (mail-40140.protonmail.ch [185.70.40.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCDD13C80A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A159175570;
+	Fri, 26 Jul 2024 07:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721978705; cv=none; b=qkH6LdBxCpVNCwvpdsSqWkYdDCOfnACWh7MzNRbaPLdVOV0ipjjR3tccMwjFusHrHTe7qHPZrtg3TVe0B1z0Zi+oWIfQYMQ1lVgESHnJeH1mGjII+e2MESYDBcDIIbQqttwzhruPI/hJEXfwq2/ITYN9LCmkWLmPzN3Wdw4NnmQ=
+	t=1721978738; cv=none; b=m/ouTBlZY61JapwfuNcc+LSAgQ/KbpxALi3B6NY9OZs+F1IGfHHw0+7bSgP0T9s/n26wUpIKpDz8WiqCCtmHqBHzUZTu0nJDTUzAaElx3f4/4HuIoSYS2uqidNyw3k2fk8nsM2SWnbU+U4lwHANekjgIIoEpJfublfU7HS6/49c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721978705; c=relaxed/simple;
-	bh=avcZ0XeDvxhFCHHWnLz/cvRXaQLXwQeaSCVLcihXW2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b2BniqjBSdEK18CAH7LhN7aWVU+an//GhEiDLmxs69ZwT9+uIhSwwVKfd83pJGo8/sQY+g7L4fL+NwtBGSGIjMu8hnoo/E2rU2mbA5FA4o5lxViXbWfYbXizicyjK+hThycpcK6OMk7LJffu5tHa5lFQKYOlFpUZ4I62KB/FxtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=jBtQzH9q; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79f014a53b7so22997985a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1721978702; x=1722583502; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=avcZ0XeDvxhFCHHWnLz/cvRXaQLXwQeaSCVLcihXW2k=;
-        b=jBtQzH9qBQ/uzJ2ypN90yc1MitrrF079QCQG49QFPrM5fXo2lLunbWaR7as9dyywqg
-         YD2luWJsbr81ndqzYoaKOHZ1LI6E048HPInDdqdliu5A7t+quzxTlu5QwsABxTBgczmx
-         +RVJdgwVDc8vBrdUhDBaPFMycprRFqlaQUfBORd2ZN5jTwZbmDHKG0GX/kAjcCLixnHU
-         Jm9wsZYHYWTKpKXj82O13ZlT+flesW0u48hX1azRZpm0N7fJ9pAhkfXFu6vUTgsL4Gf+
-         eXHXsZO5WXtyJNtB8knyl7aWO+dVV0s9Z4VLFDgWLjnmXn2710jkbBCm2pzwLTfr8Mf2
-         PfuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721978702; x=1722583502;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=avcZ0XeDvxhFCHHWnLz/cvRXaQLXwQeaSCVLcihXW2k=;
-        b=FfbmMU4DIznPesRGNsLyxhh4F53dvtFhFfsKuQ7Q02yt1LhydwSy+v8xNffa6P5t2T
-         km+Kb9MkzWtpW9k+vUTPc6+qeVzQVmg8wQ1PlesSPb68Bh2d9DXBbxbCkad9TCAzd8Du
-         /CcwlMWROaQKs7onGNzmNz1cGOpvdbGihnDNEkcojBld8RDGX60eUV4Lliw/fN+m6BMc
-         ihTZwPzghYSZwRU0m8vOMyyoAZWuTLmSaKhZHjF7xjSELPJ/lzGYHT9JWNHwwKG0Lmvs
-         NY72TmZ0jxYPGMwkdXy2i4nao1av8Kp5P1nGeBmk3y5mL61EG9x8vSq4KI4NBwwwyu0K
-         QUEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCicoAGslCdVTbek6ISXq7Wm5lN9bW7IEmTOdlQuhWGQ6ejyDGZ6BjPMDUFlXHLESl7m2579qhitOX9+smJs1PVLsxHrEDgvsgUDFw
-X-Gm-Message-State: AOJu0YxX1Z7Ee4P33dXKNk+v35/tyCgIpu0yqzSEHFtsaY1N1UpXZb19
-	poKq7auiFmGCItjBtcpzCJm+7s4tiJqNa8tONiEBhvcDfQO2yAgms6bS/LKg/pYG6WLRIUm1Dw8
-	PL/GDN15ms3Fh2q+5+srw9OC6N9o2Ahf7SoDGqA==
-X-Google-Smtp-Source: AGHT+IEQMpCGcCv6MJDs37LwNfhYJ/aHQOmhySiSwOE4b8vVqH4/XnV6OaZWgrzn4PNCU6z/pjfP9qGkBv6/dQosuiY=
-X-Received: by 2002:a05:620a:1a15:b0:79f:c9e:6269 with SMTP id
- af79cd13be357-7a1d7e8463cmr446035485a.37.1721978702356; Fri, 26 Jul 2024
- 00:25:02 -0700 (PDT)
+	s=arc-20240116; t=1721978738; c=relaxed/simple;
+	bh=2chJYvRP+8+f9KuL68diOk2F/ADBS8HJYKbGAf5uXKM=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lDsHmqXVFyhvWKR9mt0HzZex5wapHJHrTgaDk1/YWteEIVU92dl88+3aqO/Oz4v+VrhWQbCGqnZuGJvfJb+WGJfvBRgbkotrjoDj+taM5O+2Yt6dH0AAmpMT8B9TkYWED9+vftZ5xV4A4uFEWBEU3+f1CL1BVdbCrdZYXs4B3rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=x/NiMpts; arc=none smtp.client-ip=185.70.40.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1721978728; x=1722237928;
+	bh=7EHBeSctJfRaCXRzEB8omHaT6kFi5fQzZHGUvWENIEs=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=x/NiMptsiDiZt6XNMGDQUSSI8qa6Q/hK042w8sltVxsoklr/kc6L8LbmEU+pws0zE
+	 i46A708TthqmWGuH81pF0Mepsr00Eb8/LnUDpPlVD4m4ZuxJ/gv2IMMzurjJ34nLbF
+	 aFdNCiGCfLPd7A/dhU3XzUxEgI3odlh6Z7ypEtCFeNIYWB9We9hefLvp94mYmDkA+U
+	 ruvCcYCMj4UP7uvDN15IN3YWefUsgbBulh5iLFpoRwkZVYJMZtbtd6VN9CrNBzJuwo
+	 ICqn8kDv29B1bafZ4+/tz1nGLc2boxeIreBUL8cIEPW+BsHcaAayJWhgk0tV21fjSW
+	 VIOZlRYbkhUww==
+Date: Fri, 26 Jul 2024 07:25:21 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Jari Ruusu <jariruusu@protonmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
+Message-ID: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
+Feedback-ID: 22639318:user:proton
+X-Pm-Message-ID: b9f24cc3b1d8734e160a8521738b6d029ee8f775
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724101015.523535-1-vignesh.raman@collabora.com> <20240724101015.523535-3-vignesh.raman@collabora.com>
-In-Reply-To: <20240724101015.523535-3-vignesh.raman@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Fri, 26 Jul 2024 08:24:50 +0100
-Message-ID: <CAPj87rMfs+_EMyJT1PoLTXmrosDiqQy_N4VYSA+M3R5q4sit5Q@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] drm/ci: mediatek: add tests for mediatek display driver
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, 
-	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	deborah.brouwer@collabora.com, robdclark@gmail.com, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vignesh,
+Some older systems still compile kernels with old gcc version.
 
-On Wed, 24 Jul 2024 at 11:11, Vignesh Raman <vignesh.raman@collabora.com> wrote:
-> +dumb_buffer@create-clear,Fail
-> +dumb_buffer@create-valid-dumb,Fail
-> +dumb_buffer@invalid-bpp,Fail
-> +dumb_buffer@map-invalid-size,Fail
-> +dumb_buffer@map-uaf,Fail
-> +dumb_buffer@map-valid,Fail
-> +fbdev@eof,Fail
-> +fbdev@read,Fail
-> +fbdev@unaligned-read,Fail
+$ grep -B3 "^GNU C" linux-5.10.223-rc1/Documentation/Changes=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+        Program        Minimal version       Command to check the version
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+GNU C                  4.9              gcc --version
 
-Please skip dumb_buffer and fbdev tests for all GPU-only drivers,
-because those are testing display functionality.
+These warnings and errors show up when compiling with gcc 4.9.2
 
-Cheers,
-Daniel
+  UPD     include/config/kernel.release
+  UPD     include/generated/uapi/linux/version.h
+  UPD     include/generated/utsrelease.h
+  CC      scripts/mod/empty.o
+In file included from ././include/linux/compiler_types.h:65:0,
+                 from <command-line>:0:
+./include/linux/compiler_attributes.h:29:29: warning: "__GCC4_has_attribute=
+___uninitialized__" is not defined [-Wundef]
+ # define __has_attribute(x) __GCC4_has_attribute_##x
+                             ^
+./include/linux/compiler_attributes.h:278:5: note: in expansion of macro '_=
+_has_attribute'
+ #if __has_attribute(__uninitialized__)
+     ^
+[SNIP]
+  AR      arch/x86/events/built-in.a
+  CC      arch/x86/kvm/../../../virt/kvm/kvm_main.o
+In file included from ././include/linux/compiler_types.h:65:0,
+                 from <command-line>:0:
+./include/linux/compiler_attributes.h:29:29: error: "__GCC4_has_attribute__=
+_uninitialized__" is not defined [-Werror=3Dundef]
+ # define __has_attribute(x) __GCC4_has_attribute_##x
+                             ^
+./include/linux/compiler_attributes.h:278:5: note: in expansion of macro '_=
+_has_attribute'
+ #if __has_attribute(__uninitialized__)
+     ^
+cc1: all warnings being treated as errors
+make[2]: *** [scripts/Makefile.build:286: arch/x86/kvm/../../../virt/kvm/kv=
+m_main.o] Error 1
+make[1]: *** [scripts/Makefile.build:503: arch/x86/kvm] Error 2
+make: *** [Makefile:1832: arch/x86] Error 2
+
+Following patch fixes this. Upstream won't need this because
+newer kernels are not compilable with gcc 4.9
+
+--- ./include/linux/compiler_attributes.h.OLD
++++ ./include/linux/compiler_attributes.h
+@@ -37,6 +37,7 @@
+ # define __GCC4_has_attribute___nonstring__           0
+ # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >=3D=
+ 8)
+ # define __GCC4_has_attribute___no_sanitize_undefined__ (__GNUC_MINOR__ >=
+=3D 9)
++# define __GCC4_has_attribute___uninitialized__       0
+ # define __GCC4_has_attribute___fallthrough__         0
+ # define __GCC4_has_attribute___warning__             1
+ #endif
+
+Fixes: upstream fd7eea27a3ae "Compiler Attributes: Add __uninitialized macr=
+o"
+Signed-off-by: Jari Ruusu <jariruusu@protonmail.com>
+
+--
+Jari Ruusu=C2=A0 4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD=C2=A0 ACDF F073 3C=
+80 8132 F189
+
 
