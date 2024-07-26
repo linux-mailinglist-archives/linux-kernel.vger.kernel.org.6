@@ -1,162 +1,161 @@
-Return-Path: <linux-kernel+bounces-263261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78BA93D365
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708EF93D366
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 936031F24A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26DBC1F24E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E157D17B503;
-	Fri, 26 Jul 2024 12:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6JWWmqN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E0A17836A;
+	Fri, 26 Jul 2024 12:46:53 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2409D2B9DB;
-	Fri, 26 Jul 2024 12:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05C17B40C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721997983; cv=none; b=sR0DFBLZ4YaVhphB0fPbziqtU7ph/Z2xnGW9gIZ+XXTyiVr+4ECcLOSzNADdjSDaOiOtm8JJyd8xtTosfB5C/9c3kXorcKHXK6t97QFXLoVXpiJhmjlmMnDhLpqJY5TPHjTBHjROonp8A5iyzeFWJq7W+78AIIsDLnRvkP4zJ74=
+	t=1721998012; cv=none; b=KLlRiZiHT0+/e54QLmhcCWFgyKEgCsLyrzac8fuaYmuOf/rWx9V2bOg3ws840witjjizelOCJX12DomSkPAhJSTFCp1gTvkd03Wab5YQ5rtvRzPK4xtT4xzr7afdsrp54PuiSyDbo+sfNnnMiyhVGQ4IaKvLv3y8lcsGv3ZVh/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721997983; c=relaxed/simple;
-	bh=W/Q2VBfV6fDJKX1ZqjaPGWunIuWzmZLmn5Xdx9gGl9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZONLmSvsi7qyvaNPOP/uWREWE50+4vAuyS4QfsQ+ltvfKXdG9VqdQalulzUf0UEfnd3miDMWeIjQ9lz5wCPS+Uv4Oq7dYzoORefNoVQvTDrmgVSJAeIQuOd7CdKXdfSj96YRZd44BSR+flFZYPN2cemTvGo3Qz5LjMZWWDAlGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6JWWmqN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C305C32782;
-	Fri, 26 Jul 2024 12:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721997982;
-	bh=W/Q2VBfV6fDJKX1ZqjaPGWunIuWzmZLmn5Xdx9gGl9E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X6JWWmqNDjQZFjceAzCkRiSONsAsE3Tg7Zf14UcXGzGPLbCuZb/voxqmqhSdNB2KW
-	 28Q2deAt/nv7UhAMDxRW/001hCpTvaq8PJa34heqWUrubWI05IFtmi4x88UqaGcFwl
-	 Eq6/JOsP9uU82t8+IjX/H7vJVwXFCBZO8hpcvVNu2GnHJEQmLWeCKMBz2m8JKreyWG
-	 eO71PArpdCTKob+fuDLNMkhuLoOpHhtytZvXErtCUZWIBzBJ+FVx+0B3yJAHEjAh5H
-	 YuAHDcL0eTHWgjeXJsRIPYB8PTeI+0TimyWQeHzGtWOBCAMMnAGR06WXC9vTdr7xBQ
-	 izjouJkBN+qhg==
-Date: Fri, 26 Jul 2024 13:46:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	William Qiu <william.qiu@starfivetech.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] riscv: dts: starfive: remove non-existant spi device
- from jh7110-common.dtsi
-Message-ID: <20240726-likewise-satin-81a7a4a3885c@spud>
-References: <20240716-majesty-antler-d9bedc7fd0af@wendy>
- <CAJM55Z9FAH-uiNmXDELM0gkYjHue+g8JQgOryxOCv4OXJ9f5EA@mail.gmail.com>
+	s=arc-20240116; t=1721998012; c=relaxed/simple;
+	bh=USy3Y7HETaGwYFyoTkroQ+T2pnga4792AMGxJ3PZCQQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DPCFxUbWFPw62OLG998C2CfYgCqofdVXbO9SzMvWlUEmtAgr1J4kLv0gatrzHPJZqwpJXGF/2XI0GcAEArMPlXlCWmikI80MUvTSzOMLBgBOwcy6frhcd5ZFVcMNuqIFwdDcRUumtfK+hGm+EpR4UP3jsFUxe+VLJ/8TK+M3Yzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVnXJ0JGsz6K5nd;
+	Fri, 26 Jul 2024 20:45:04 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0F4EB14065B;
+	Fri, 26 Jul 2024 20:46:48 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
+ 2024 13:46:47 +0100
+Date: Fri, 26 Jul 2024 13:46:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Markus Armbruster <armbru@redhat.com>
+CC: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Shiju Jose
+	<shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+	<anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric Blake
+	<eblake@redhat.com>, Igor Mammedov <imammedo@redhat.com>, Michael Roth
+	<michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
+	<peter.maydell@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v3 4/7] acpi/ghes: Add a logic to handle block addresses
+ and FW first ARM processor error injection
+Message-ID: <20240726134646.000046e3@Huawei.com>
+In-Reply-To: <87bk2lreeb.fsf@pond.sub.org>
+References: <cover.1721630625.git.mchehab+huawei@kernel.org>
+	<6a3542a7d8acfbf88c906ec6f6dc5a697257b461.1721630625.git.mchehab+huawei@kernel.org>
+	<87bk2lreeb.fsf@pond.sub.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oZLvSg5CtS81Y1Gm"
-Content-Disposition: inline
-In-Reply-To: <CAJM55Z9FAH-uiNmXDELM0gkYjHue+g8JQgOryxOCv4OXJ9f5EA@mail.gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
+A few quick replies from me.
+I'm sure Mauro will add more info.
 
---oZLvSg5CtS81Y1Gm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > +           'tlb-error',
+> > +           'bus-error',
+> > +           'micro-arch-error']
+> > +}
+> > +
+> > +##
+> > +# @arm-inject-error:
+> > +#
+> > +# Inject ARM Processor error.
+> > +#
+> > +# @errortypes: ARM processor error types to inject
+> > +#
+> > +# Features:
+> > +#
+> > +# @unstable: This command is experimental.
+> > +#
+> > +# Since: 9.1
+> > +##
+> > +{ 'command': 'arm-inject-error',
+> > +  'data': { 'errortypes': ['ArmProcessorErrorType'] },  
+> 
+> Please separate words with dashes: 'error-types'.
+> 
+> > +  'features': [ 'unstable' ]
+> > +}  
+> 
+> Is this used only with TARGET_ARM?
+> 
+> Why is being able to inject multiple error types at once useful?
 
-On Fri, Jul 26, 2024 at 08:29:39AM -0400, Emil Renner Berthing wrote:
-> Conor Dooley wrote:
-> > There is no rohm,dh2228fv on any of supported JH7110 boards - in fact
-> > the dh2228fv almost certainly does not exist as it is not a valid Rohm
-> > part number. Likely a typo by Maxime when adding the device originally,
-> > and should have been bh2228fv, but these boards do not have a bh2228fv
-> > either! Remove it from jh7110-common.dtsi - pretending to have a device
-> > so that the spidev driver will be bound by Linux is not acceptable.
->=20
-> This patch is correct, but as you mention the fake device was most likely=
- added
-> in order to use spidev from userspace with random devices added on the ex=
-posed
-> pins. In case someone actually makes use of this wouldn't this be a regre=
-ssion?
-> What is the right way to support this?
+It pokes a weird corner of the specification that I think previously 
+tripped up Linux.
 
-Unfortunately, there's no "right way" that's supported for for this
-particular case. If people want to use spidev for their device, they
-should either document it in the bindings, add the compatible to the
-spidev driver and use an overlay to add the device to the dts or they
-can r bind the spidev driver to the device from userspace.
+> 
+> I'd expect at least some of these errors to come with additional
+> information.  For instance, I imagine a bus error is associated with
+> some address.
 
-The other thing, which doesn't exist yet, is a connector binding. The
-folks are Beagle are currently working on creating a connector binding
-for the Mikrobus connector - but that's rather far from complete at the
-moment.
+Absolutely agree that in sane case you wouldn't have multiple errors
+but we want to hit the insane ones :(
 
-Cheers,
-Conor.
+There is only prevision for one set of data in the record despite
+it providing a bitmap for the type of error.
 
-> > Fixes: 74fb20c8f05d ("riscv: dts: starfive: Add spi node and pins confi=
-guration")
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> > CC: Emil Renner Berthing <kernel@esmil.dk>
-> > CC: Conor Dooley <conor@kernel.org>
-> > CC: Rob Herring <robh@kernel.org>
-> > CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > CC: Paul Walmsley <paul.walmsley@sifive.com>
-> > CC: Palmer Dabbelt <palmer@dabbelt.com>
-> > CC: Albert Ou <aou@eecs.berkeley.edu>
-> > CC: William Qiu <william.qiu@starfivetech.com>
-> > CC: linux-riscv@lists.infradead.org
-> > CC: devicetree@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > ---
-> >  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 6 ------
-> >  1 file changed, 6 deletions(-)
-> >
-> > diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/ris=
-cv/boot/dts/starfive/jh7110-common.dtsi
-> > index 8ff6ea64f048..395436ec0f97 100644
-> > --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> > +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> > @@ -346,12 +346,6 @@ &spi0 {
-> >  	pinctrl-names =3D "default";
-> >  	pinctrl-0 =3D <&spi0_pins>;
-> >  	status =3D "okay";
-> > -
-> > -	spi_dev0: spi@0 {
-> > -		compatible =3D "rohm,dh2228fv";
-> > -		reg =3D <0>;
-> > -		spi-max-frequency =3D <10000000>;
-> > -	};
-> >  };
-> >
-> >  &sysgpio {
-> > --
-> > 2.43.2
-> >
+> 
+> If we encode the the error to inject as an enum value, adding more will
+> be hard.
+> 
+> If we wrap the enum in a struct
+> 
+>     { 'struct': 'ArmProcessorError',
+>       'data': { 'type': 'ArmProcessorErrorType' } }
+> 
+> we can later extend it like
+> 
+>     { 'union': 'ArmProcessorError',
+>       'base: { 'type': 'ArmProcessorErrorType' }
+>       'data': {
+>           'bus-error': 'ArmProcessorBusErrorData' } }
+> 
+>     { 'struct': 'ArmProcessorBusErrorData',
+>       'data': ... }
+> 
+> > diff --git a/qapi/meson.build b/qapi/meson.build
+> > index e7bc54e5d047..5927932c4be3 100644
+> > --- a/qapi/meson.build
+> > +++ b/qapi/meson.build
+> > @@ -22,6 +22,7 @@ if have_system or have_tools or have_ga
+> >  endif
+> >  
+> >  qapi_all_modules = [
+> > +  'arm-error-inject',
+> >    'authz',
+> >    'block',
+> >    'block-core',
+> > diff --git a/qapi/qapi-schema.json b/qapi/qapi-schema.json
+> > index b1581988e4eb..479a22de7e43 100644
+> > --- a/qapi/qapi-schema.json
+> > +++ b/qapi/qapi-schema.json
+> > @@ -81,3 +81,4 @@
+> >  { 'include': 'vfio.json' }
+> >  { 'include': 'cryptodev.json' }
+> >  { 'include': 'cxl.json' }
+> > +{ 'include': 'arm-error-inject.json' }  
+> 
+> 
 
---oZLvSg5CtS81Y1Gm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqOamgAKCRB4tDGHoIJi
-0gFPAQDTaqVqm80i5t4bOVDsRiIvq4FlwJU27Ol3l7bXNjFl9QD+NFzwpkuQtaMR
-7Td5Zj+cKPezLGcIubKy+fQhQ4oUcAc=
-=33EL
------END PGP SIGNATURE-----
-
---oZLvSg5CtS81Y1Gm--
 
