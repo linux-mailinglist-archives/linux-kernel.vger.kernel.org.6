@@ -1,224 +1,103 @@
-Return-Path: <linux-kernel+bounces-263803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0604C93DAA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A370093DAAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B52A1F2366A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D161A1C2234D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A352E14D29B;
-	Fri, 26 Jul 2024 22:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EC714E2E2;
+	Fri, 26 Jul 2024 22:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ac8iGGH/"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYcPziJA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE9638396;
-	Fri, 26 Jul 2024 22:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51895149DEF;
+	Fri, 26 Jul 2024 22:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722032495; cv=none; b=Fcm+aVPvrzkE+5YmCO3nD7V/c2c+dv9zhg7fbzaJNagixY5MUWCwEsdQxBQwp3sqiWfmbm9jgQB4O5pP0FmYeEG5LneTyu21wNlDZ8gWVVD4cL9W3Tr81z0EA6o02KuMU9mIgac87DMMKST6rzFw32Tb53uO5HFRy7/85ytvBZk=
+	t=1722032507; cv=none; b=W16yIDfPrD4kdUpjCA3mrQoOeXTC5Jr6rj0fnPGxgAWpu55oNQ4E1RyswEg+1M4AyVAUoKONx7dCX/ybQW+hbX5EMbuH5eFINSqKxc/7EdCh1GWtpslBqzeOCaHuQIAapczmiaTrk+XiM9n0JYYFtYtu7myU4G5bneCzgAKRGTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722032495; c=relaxed/simple;
-	bh=q/n6PcUaVriZ5zKOypNdR0dyEftojKdvFe83CfyZmBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lwdcFs+jlQt4jBFRf7B6FGSISGxce7ugRlGTXQC2j7u+YnNfPkpv/b3gfc0wqeIfS81uK//l142TVPtcgjdPBoFQ/Pr7cQS8i4IswwZi4xvLiShLlg3JYpwFQ9O8x2vdXGcWtcl1M4+qQhFu4TpDMVSsz2D17Y62SqwGhub3tec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ac8iGGH/; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id XTAQsjdCkkc2vXTAQs9rLV; Sat, 27 Jul 2024 00:12:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722031924;
-	bh=fqthNsWy0oH2Iy/PS67VSQTwdel4fdgwtHMQu+8NrBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Ac8iGGH/X4G8xAezKh9iyzgS3yqpgtHDctEn2nwG4hZHl4z64/jLsMWakClqt9hJR
-	 YoeQEY5COqLGx3qOeRtrInaGO3kvvUVvs+JyyVjw7AL4YLUQr2TG9ReisOAg8jZWRv
-	 8cqHMtrRTS0QguWmPZ6O+JyuPiMesS2xldgRY/dDJuhIRbfrNlUGbdxXv+pT5FYfqo
-	 eLCXzprqtCwXGqCYlgqMdwia23UuhO8mGR8QyxQ8EocjegdtFLtAjSkmAechDE1jWi
-	 38854Vwg2TgYlk5aQ67RnM7wj/0ESw5RFKcA7DrCJ4lThbfmoVepI3hjm0PFoj912p
-	 DJkwYT1G9tsrQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 27 Jul 2024 00:12:04 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <0c759c38-eebb-4889-b748-3fd5925d0690@wanadoo.fr>
-Date: Sat, 27 Jul 2024 00:12:01 +0200
+	s=arc-20240116; t=1722032507; c=relaxed/simple;
+	bh=sdQCLSxH2SZWba0zwiskrjW/AKOsVQ4oOsTR42AxIpA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=u9tVFDqrBqKaTY+JoJ7lfPGRAKDwkNXgDWkC8TnTliDRE0Fo+k/7Ji8m3gLtAzwS9DQ+lc4mYBS8NFpPO6L6mo83mqhqqHQUE1rXryg08kotW1kafRt13+StZeEB8n5d3AdUbSEh7Qqbwd/H7XVAOlpJD5WxISGll6MMP+g30TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYcPziJA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C092FC32782;
+	Fri, 26 Jul 2024 22:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722032506;
+	bh=sdQCLSxH2SZWba0zwiskrjW/AKOsVQ4oOsTR42AxIpA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qYcPziJAIqn+i+6SiIwlNUSR6tpl2/6m9Czqsk9Rx592FeNev+M3hE87g2zPYasJg
+	 6KYrXi+ou6/IZ74k+yKDX45CZjIehQnBZZ6L1ZuPUdMZxEqOHEuzmowFR3ugIXmrIm
+	 +q+DuQESSSgjAnEpnGwArxI4pKLOaEq7i/GIbzUm/d1WgZFBIF8C0roOt6pb3JO/CT
+	 T+d6IFfTuPubF1yR/MuRZzwh2Z3HQ8IJeK1rUBRHcPZm1vaQvW+v3RKHxsUc9EhOg2
+	 sA/lnGkZI2q2XDpbcZfEYJx82CFa6cyttI/Jhv9Pz7VihrWyhC1Sv3wgyzBFWt1p8F
+	 8Btv1HeQQGnog==
+Message-ID: <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/tiny: Add driver for Sharp Memory LCD
-To: lanzano.alex@gmail.com
-Cc: airlied@gmail.com, christophe.jaillet@wanadoo.fr, conor+dt@kernel.org,
- daniel@ffwll.ch, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- mehdi.djait@bootlin.com, mripard@kernel.org, robh@kernel.org,
- tzimmermann@suse.de
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240726194456.1336484-1-lanzano.alex@gmail.com>
- <20240726194456.1336484-3-lanzano.alex@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240726194456.1336484-3-lanzano.alex@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240718-prozac-specks-6b5fd8b83e3e@spud>
+References: <20240715110251.261844-1-heiko@sntech.de> <20240715110251.261844-2-heiko@sntech.de> <20240716-deceiving-saucy-851fb2303c1f@spud> <3178118.zE8UqtGg2D@diego> <20240718-prozac-specks-6b5fd8b83e3e@spud>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for voltage-controlled-oscillators
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+To: Conor Dooley <conor@kernel.org>, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Date: Fri, 26 Jul 2024 15:21:44 -0700
+User-Agent: alot/0.10
 
-Le 26/07/2024 à 21:44, Alex Lanzano a écrit :
-> Add support for the monochrome Sharp Memory LCDs.
-> 
-> Signed-off-by: Alex Lanzano <lanzano.alex-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Co-developed-by: Mehdi Djait <mehdi.djait-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Mehdi Djait <mehdi.djait-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-> ---
->   MAINTAINERS                         |   7 +
->   drivers/gpu/drm/tiny/Kconfig        |  20 +
->   drivers/gpu/drm/tiny/Makefile       |   1 +
->   drivers/gpu/drm/tiny/sharp-memory.c | 726 ++++++++++++++++++++++++++++
->   4 files changed, 754 insertions(+)
->   create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
-> 
+Quoting Conor Dooley (2024-07-18 08:59:50)
+>=20
+> FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
+> "vdd-supply" are pretty generic and I think the latter is missing from
+> the vast majority of real* "fixed-clocks". I would expect that devices
+> where the datasheet would call
+>=20
+> * Real because there's plenty of "fixed-clocks" (both in and out of tree)
+> that are used to work around the lack of a clock-controller driver for an
+> SoC.
 
-Hi,
+I agree!
 
-below some other tiny comments, hoping it helps.
+>=20
+> > I think generic power-sequences
+> >   were the topic back then, though that might have changed over time?
+> > - There are places that describe "fixed-clock" as
+> >   "basic fixed-rate clock that cannot gate" [1]
+>=20
+> I think that that is something that could be changed, it's "just" a
+> comment in some code! Sounds like Stephen disagrees though :)
 
-Also "./scripts/checkpatch.pl --strict" gives some hints, should some be 
-of interest.
+It's more about making a clear break from the fixed-clock binding so
+that the extra properties are required.
 
-> +static int sharp_memory_probe(struct spi_device *spi)
-> +{
-> +	int ret;
-> +	struct device *dev;
-> +	struct sharp_memory_device *smd;
-> +	enum sharp_memory_model model;
-> +	struct drm_device *drm;
-> +	const char *vcom_mode_str;
-> +
-> +	ret = spi_setup(spi);
-> +	if (ret < 0)
-> +		return dev_err_probe(&spi->dev, ret, "Failed to setup spi device\n");
-> +
-> +	dev = &spi->dev;
+>=20
+> > - Stephen also suggested a separate binding [2]
+>=20
+> I liked your "gated-oscillator" suggestion in another reply, but
+> "gated-fixed-clock" might be a better "thematic" fit since this is a
+> special case of fixed-clocks?
+>=20
 
-6 times below, &spi->dev could be replaced by dev, to slightly simplify 
-things.
-
-> +	if (!dev->coherent_dma_mask) {
-> +		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to set dma mask\n");
-> +	}
-> +
-> +	smd = devm_drm_dev_alloc(&spi->dev, &sharp_memory_drm_driver,
-> +				 struct sharp_memory_device, drm);
-
-Missing error handling.
-
-> +
-> +	spi_set_drvdata(spi, smd);
-> +
-> +	smd->spi = spi;
-> +	drm = &smd->drm;
-> +	ret = drmm_mode_config_init(drm);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
-> +
-> +	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-> +	if (smd->enable_gpio == NULL)
-
-Nitpick: if (!smd->enable_gpio)
-
-> +		dev_warn(&spi->dev, "Enable gpio not defined\n");
-> +
-> +	/*
-> +	 * VCOM is a signal that prevents DC bias from being built up in
-> +	 * the panel resulting in pixels being forever stuck in one state.
-> +	 *
-> +	 * This driver supports three different methods to generate this
-> +	 * signal depending on EXTMODE pin:
-> +	 *
-> +	 * software (EXTMODE = L) - This mode uses a kthread to
-> +	 * periodically send a "maintain display" message to the display,
-> +	 * toggling the vcom bit on and off with each message
-> +	 *
-> +	 * external (EXTMODE = H) - This mode relies on an external
-> +	 * clock to generate the signal on the EXTCOMM pin
-> +	 *
-> +	 * pwm (EXTMODE = H) - This mode uses a pwm device to generate
-> +	 * the signal on the EXTCOMM pin
-> +	 *
-> +	 */
-> +	smd->vcom = 0;
-
-Nitpick: devm_drm_dev_alloc() already zeroes the allocated memory. So 
-this is useless. Unless you think it gives some useful hint, it could be 
-removed.
-
-> +	if (device_property_read_string(&spi->dev, "vcom-mode", &vcom_mode_str))
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Unable to find vcom-mode node in device tree\n");
-> +
-> +	if (!strcmp("software", vcom_mode_str)) {
-> +		smd->vcom_mode = SHARP_MEMORY_SOFTWARE_VCOM;
-
-...
-
-> +	smd->pitch = (SHARP_ADDR_PERIOD + smd->mode->hdisplay + SHARP_DUMMY_PERIOD) / 8;
-> +	smd->tx_buffer_size = (SHARP_MODE_PERIOD +
-> +			       (SHARP_ADDR_PERIOD + (smd->mode->hdisplay) + SHARP_DUMMY_PERIOD) *
-> +			       smd->mode->vdisplay) / 8;
-> +
-> +	smd->tx_buffer = devm_kzalloc(&spi->dev, smd->tx_buffer_size, GFP_KERNEL);
-> +	if (!smd->tx_buffer)
-> +		return dev_err_probe(&spi->dev, -ENOMEM, "Unable to alloc tx buffer\n");
-
-There is no need to log a message for memory allocation failure.
-return -ENOMEM; should be just fine IMHO.
-
-> +
-> +	mutex_init(&smd->tx_mutex);
-> +
-> +	drm->mode_config.min_width = smd->mode->hdisplay;
-> +	drm->mode_config.max_width = smd->mode->hdisplay;
-> +	drm->mode_config.min_height = smd->mode->vdisplay;
-> +	drm->mode_config.max_height = smd->mode->vdisplay;
-> +
-> +	ret = sharp_memory_pipe_init(drm, smd,
-> +				     sharp_memory_formats,
-
-Nitpick: you could save 1 LoC if this is put at the end of the previous 
-line.
-
-> +				     ARRAY_SIZE(sharp_memory_formats),
-> +				     NULL);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to initialize display pipeline.\n");
-> +
-> +	drm_plane_enable_fb_damage_clips(&smd->plane);
-> +	drm_mode_config_reset(drm);
-> +
-> +	ret = drm_dev_register(drm, 0);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register drm device.\n");
-> +
-> +	drm_fbdev_dma_setup(drm, 0);
-> +
-> +	return 0;
-> +}
-
-...
-
-CJ
-
-
+It looks to me like we've arrived at the hardest problem in computer
+science, i.e. naming. Any of these names is fine. I'd look to see what
+those parts on mouser are called and use that to drive the compatible
+name decision if you can't decide. The description section in the
+binding could be verbose and link to some parts/pdfs if that helps too.
+In the past I've seen EEs call these things clock buffers. I'm not a
+classically trained EE myself but it usually helps to use similar names
+from the schematic in DT because DT authors are sorta translating
+schematics to DT.
 
