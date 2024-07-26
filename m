@@ -1,208 +1,133 @@
-Return-Path: <linux-kernel+bounces-263670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9F293D8E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:17:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6319293D8EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE441F21890
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:17:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C10B230D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209DB17E9;
-	Fri, 26 Jul 2024 19:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C354D8B6;
+	Fri, 26 Jul 2024 19:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="seZDzk5Q"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="40whssOM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2URE3Hg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0405E24205
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 19:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7AA24205;
+	Fri, 26 Jul 2024 19:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722021426; cv=none; b=MBWEc0qb9YrHNZG5ruxN5SuiV7ykQ2I6JFczuihGlcxk97ZHqL81N70Kb659NzMRSLiuzzPuyqfqxY4c213Ezg3+Sf0LSi4vnP2xq0Mbhv1X1bpA2VhwMoOW/eBTTfAJnLpPueYhdHHBH5rddf++CERv82LQjA0Mdks8RKAPq0c=
+	t=1722021434; cv=none; b=mXAQpAl04rUF3tyZ4QHe9qFDBdLKja+d0TRnpRlNZnpoxUiAnwmsZqyC0XdND5BuKSoOxML30Y0VV+4rk9PX5h9Qj5dZhOUGySL+xzq5SToeHVAt2VreSyRWwAreUIkh+i8kX3YbKpadhmie2CYjnPxAJOk6WdOP4bxLDiloqGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722021426; c=relaxed/simple;
-	bh=5I8TDqT8gwa2dtnPuQk5EvL4jvANgXjxbb41CCLtgfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WoPJ3FBGaOhI0xYdoHL2zONzA2BsLGGXNcrnNZTuCVUM6PAddYeeBjnkx4IqSd/m9MPgKP7SHpqz/PiuLPP+iT8q+u65w5NGbMUy9XdvgkxlTN7yXtEr5RJuUQUm4QCBEfR104MNCLvxg6iLtoRONyWsTjIwg2MsNz+3JG1qlS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=seZDzk5Q; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25e397c51b2so945143fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:17:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722021422; x=1722626222; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3s23lfRVw0JnayyoCgMBNHWTryj42pWvQjo3hMq56bk=;
-        b=seZDzk5QEYJEn+rhgG7ZqGLmZ1VLd+OSyifyjRdvVoyNN9CR24m5o/kyYl4vR7my2A
-         WZdenMVABzYTijtMximZLpBzMCjPqeNyfN6y8b1oUyWSmWkUXBuvnakNTtKfAVEqZZTR
-         4aJD1bZLvBMfaJvrRGxNySvFkBldy/SlyHQKu1VPOSsk4AAmOliZ20tP09CwWRUo4nph
-         GEHeJRe+EXM6+N/F8OYWfX/M6vQNvMRo51lr7AI4ld+lf7evRkGLelAegKAeJpziSHHr
-         cLneiekC72yQOevvpiztnBnHRvPyMVc0NGLLdhwE1f92fsiBtGzI6Vu2z5SymTlQHGZ+
-         CXnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722021422; x=1722626222;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3s23lfRVw0JnayyoCgMBNHWTryj42pWvQjo3hMq56bk=;
-        b=l2tKN3HtkmcteFHdwbnlELE87otuRxo7ZMCifsJnb/VuO6CQnxCAgXG8aTN3S2m53B
-         vj6ARPVH1zaApoLlXYR4thYJcf+w88ZQVdXTXgXKRdS/gdVIrITnwb+WwcWh8OSo6Ejg
-         qZ4xAak/8WFAIY6sSznmLq0BQ0UWPowKJZlpipwHc/wu8EDcQjdikVe/Qmq9LM/NieAf
-         bK8leriIfyhIkIydFmikKyABoqD2lkMViCM6b9qE+XoZ1SZOP6YycldjBGgqtPO3V6AT
-         KM3/Wwv4htdOFj4r2nbVlBASSAzAr+qZU2o2Ygks/TtTjNTvQU5YtK1ni3q+7NEkviqp
-         sIJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ2Fda3uR0j3vCLqS74NA+XVl68fh/y3W3yyLRF08O+bAeKpcayBdo7P3xCr9ybAtLZTzltIZHtPcXspsUFR6NHG3UrwIGTZUHBq1+
-X-Gm-Message-State: AOJu0YwYeSQ/237VPMKhXuHieRKRuLQISHN53febhjPvSmTxFJu0jzY0
-	UeXn6KSEMDbtiQx7Xf4pFbScGZZ/iuInrynE/ddG7Ov49eNSfxcKdPe0dB9Zsjo=
-X-Google-Smtp-Source: AGHT+IF0XA11UwhvqRFdKSWATudhXYz0A2IBpB+/45I1DC8giR/lZ3nfNRSAdGnI4vV3UyV7cO8xrw==
-X-Received: by 2002:a05:6870:b48a:b0:262:32b0:dede with SMTP id 586e51a60fabf-267d4d16709mr992436fac.7.1722021422012;
-        Fri, 26 Jul 2024 12:17:02 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2653e640030sm775424fac.16.2024.07.26.12.17.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 12:17:01 -0700 (PDT)
-Message-ID: <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
-Date: Fri, 26 Jul 2024 14:17:00 -0500
+	s=arc-20240116; t=1722021434; c=relaxed/simple;
+	bh=OE8MEKsVTtFrnP50pHVinj/nPKl7CKeQdrUpdUGPmMQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=SP8ZihuSaQ7R1orueZyyvyG5IohkpRLRdphXWEu0rmjAW4ofbMK5ib9xTj5EmAeot4TFAH7Ka7qlxLtRJTW0C16BKk+9zXsgmBJ31leFxLOy5CXuUSlImjni/DB7AMcohuZ7YsQUKZhsHUjyxqySpDKkZZ672u2DFWcT6ic2e9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=40whssOM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2URE3Hg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 26 Jul 2024 19:17:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722021431;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lhrAtTTu8DHRd5jfPalDcxDj16nhVoMkPMFW+VWrNTc=;
+	b=40whssOMY39Ia+uldZhW+5FRgvIg6hwTCsh8hUt8UurWVOAmqRrQcGnXBtFoBcH7266DsD
+	W6CFhv+UrXHXuKUB6KCCkgV8945KKT6ZxIXuimi3OeUbxuN20Naq4x+X7MHqDaNBwE5/jD
+	AYB+NYNtKj+3gDsj07BhJXLRrie4VQmxN8xpJblw805LaNz0TluO0mYI3TzmQUXM3frYVr
+	kaJr0b6BqJKOVm71+oTeV/Io5jVkfFRc3RWcr3t4eP5ffOdzPJ4AVMO7vMxRBLi3BVwHjV
+	ns8NwxnPbfdA5NQffz5BTLaaQH/MlHq74PylQqxJH267znlPCJydhlwLx2VkLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722021431;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lhrAtTTu8DHRd5jfPalDcxDj16nhVoMkPMFW+VWrNTc=;
+	b=N2URE3HgObZGW/BjIHSHPbBDl1/diTG+ZMcvlf1yrLdCfI/cXCgwf3tSo/basWgLiAY99q
+	FX5zO2L5y3ve1uCQ==
+From: "tip-bot2 for Huacai Chen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/loongarch-cpu: Fix return value of
+ lpic_gsi_to_irq()
+Cc: Miao Wang <shankerwangmiao@gmail.com>,
+ Huacai Chen <chenhuacai@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,  <stable@vger.kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240723064508.35560-1-chenhuacai@loongson.cn>
+References: <20240723064508.35560-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 5/9] spi: dt-bindings: axi-spi-engine: document
- spi-offloads
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
- <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
- <20240726123836.GA998909-robh@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240726123836.GA998909-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <172202143044.2215.9209897857096931802.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 7/26/24 7:38 AM, Rob Herring wrote:
-> On Mon, Jul 22, 2024 at 04:57:12PM -0500, David Lechner wrote:
->> The AXI SPI Engine has support for hardware offloading capabilities.
->> There can be up to 32 offload instances per SPI controller, so the
->> bindings limit the value accordingly.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>
->> RFC: I have a few questions about this one...
->>
->> 1.  The trigger-source properties are borrowed from the leds bindings.
->>     Do we want to promote this to a generic binding that can be used by
->>     any type of device?
-> 
-> I would make it specific to spi-offload.
+The following commit has been merged into the irq/urgent branch of tip:
 
-OK
+Commit-ID:     81a91abab1307d7725fa4620952c0767beae7753
+Gitweb:        https://git.kernel.org/tip/81a91abab1307d7725fa4620952c0767beae7753
+Author:        Huacai Chen <chenhuacai@loongson.cn>
+AuthorDate:    Tue, 23 Jul 2024 14:45:08 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 26 Jul 2024 21:08:42 +02:00
 
-Meanwhile, we are working on some other ADCs (without SPI offload) and
-finding that they are using basically the same sorts of triggers. And
-on the driver side of things in this series, I'm getting feedback that
-we should have some sort of generic trigger device rather than using,
-e.g. a clk directly. If we need this same sort of trigger abstraction
-for both SPI offloads and IIO device, it does seems like we might want
-to consider something like a new trigger subsystem.
+irqchip/loongarch-cpu: Fix return value of lpic_gsi_to_irq()
 
-> 
->>
->> 2.  Some folks are working on adding DMA to TX stream support to the
->>     AXI SPI Engine hardware. I assume that the `dmas` property is like
->>     others where the order/index in the phandle array matters. So this
->>     would mean that for device that only uses 1 out of the 32 offloads
->>     and only uses 1 TX DMA channel, we would have to have 32 <0>s for
->>     each of the possible RX dmas in the array. Any way to do some kind
->>     of mapping to avoid this?
-> 
-> That's why -names exists.
+lpic_gsi_to_irq() should return a valid Linux interrupt number if
+acpi_register_gsi() succeeds, and return 0 otherwise. But lpic_gsi_to_irq()
+converts a negative return value of acpi_register_gsi() to a positive value
+silently.
 
-OK
+Convert the return value explicitly.
 
-> 
->>
->> 3.  In v2, we discussed about having some sort of data processing unit
->>     between the AXI SPI Engine RX stream interface and the DMA channel
->>     interface on the DMA controller. I haven't included this in the
->>     bindings yet because we don't have a user yet. But it was suggested
->>     that we could use the graph bindings for this. So here is what that
->>     might look like:
->>
->>     Additional property for the AXI SPI Engine controller bindings:
->>
->>         out-ports:
->>             $ref: /schemas/graph.yaml#/properties/ports
->>             unevaluatedProperties: false
->>             patternProperties:
->>             "^port@1?[0-9a-f]$":
->>                 $ref: /schemas/graph.yaml#/properties/port
->>                 unevaluatedProperties: false
->>
->>     And this would be connected to a device node similar to this:
->>
->>         ip-block@3000 {
->>             // Something similar to, but not exactly like
->>             // http://analogdevicesinc.github.io/hdl/library/util_extract/index.html
->>             compatible = "adi,crc-check";
->>             // clock that runs this IP block
->>             clocks = <&sysclk 15>;
->>             // interrupt raised on bad CRC
->>             interrupts = <&intc 99>;
->>             interrupt-names = "crc";
->>             // output stream with CRC byte removed piped to DMA
->>             dmas = <&adc_dma 0>;
->>             dma-names = "rx";
->>
->>             port {
->>                 adc_crc_check: endpoint {
->>                     remote-endpoint: <&offload0_rx>;
->>                 };
->>             };
->>         };
->>
->>     Does this sound reasonable?
-> 
-> Shrug.
-> 
-> Unlike the offload which is internal to the controller driver?
+Fixes: e8bba72b396c ("irqchip / ACPI: Introduce ACPI_IRQ_MODEL_LPIC for LoongArch")
+Reported-by: Miao Wang <shankerwangmiao@gmail.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20240723064508.35560-1-chenhuacai@loongson.cn
+---
+ drivers/irqchip/irq-loongarch-cpu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Correct. And in the case of the AXI SPI Engine, the offload is
-part of the controller IP block in hardware as well.
-
-> isn't 
-> this specific to the device because it needs to be aware of any 
-> processing done or not done. Or maybe it wants to configure the 
-> processing.
-
-Yes, the SPI peripheral driver would be the one needing to know
-what sort of data processing unit it is connected to so it knows
-how to configure the chip and how to interpret the received data
-or other signals from the data processing unit.
-
-> 
-> OTOH, maybe this isn't any different than offload?
-
-Also true since the SPI peripheral needs to know what kind of
-capabilities that the offload itself has.
-
-> 
-> Rob
-
+diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loongarch-cpu.c
+index 9d8f2c4..b35903a 100644
+--- a/drivers/irqchip/irq-loongarch-cpu.c
++++ b/drivers/irqchip/irq-loongarch-cpu.c
+@@ -18,11 +18,13 @@ struct fwnode_handle *cpuintc_handle;
+ 
+ static u32 lpic_gsi_to_irq(u32 gsi)
+ {
++	int irq = 0;
++
+ 	/* Only pch irqdomain transferring is required for LoongArch. */
+ 	if (gsi >= GSI_MIN_PCH_IRQ && gsi <= GSI_MAX_PCH_IRQ)
+-		return acpi_register_gsi(NULL, gsi, ACPI_LEVEL_SENSITIVE, ACPI_ACTIVE_HIGH);
++		irq = acpi_register_gsi(NULL, gsi, ACPI_LEVEL_SENSITIVE, ACPI_ACTIVE_HIGH);
+ 
+-	return 0;
++	return (irq > 0) ? irq : 0;
+ }
+ 
+ static struct fwnode_handle *lpic_get_gsi_domain_id(u32 gsi)
 
