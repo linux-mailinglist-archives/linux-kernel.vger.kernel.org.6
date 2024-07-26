@@ -1,112 +1,250 @@
-Return-Path: <linux-kernel+bounces-262817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7502F93CD18
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C1B93CD1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F3E282F6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:52:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7377F2832DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA0B282E5;
-	Fri, 26 Jul 2024 03:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681AC2557F;
+	Fri, 26 Jul 2024 03:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="JoEuYOPd"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFe5TXeG"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E140D2582
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0392582
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721965950; cv=none; b=Ep3aFNqOgMKUYFgRplAPCECwrJsrTZwsZZMo6A8CdE0zok+xpU9WTogBBkkGZ3bANj3owA3kAYRLEHke7SaN/YeUas1eI9SR+zK9Bp7EkIejzSzpztdVqxtHJW2rG6/jv6pbwpRcuZEVaTP96k1Qj25tL2nYJ/aYE7mjUvuQVB4=
+	t=1721966012; cv=none; b=ZNIBeh6I4Hql8K8Qghp7qJiKZx1bkXoamohTFPvtwhDTB7kaaCkhxeqw6imVqkinBDDJQRp25dydStXqxMzDCB9LUPNyTCcihnKVrSLjfRcE8fLt9+aum25fZXWZNHAy/Fna9H/XinUmFVbgeFA59B6x+/DHrva86/jg2P3Q+SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721965950; c=relaxed/simple;
-	bh=bMf9YP8OrOfa827DQXIBqNaiNhmnzAgz4ckgyPunonE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6t8GSnXiC5pfam26sOEqAsS5RYucP4XRxxeKhTa/9dqlEqJTy9VLmrjiDLf3q/UkRC+eB5Ny+8Huz3becUyKi2pZdSPMCRDqCyzhHgQCZLv/+FoK666BN5i6l95ex2U+fOld+PIujyBTCOHHmtOebHlZ7zaN6T9TQ7kSBN/T3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=JoEuYOPd; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso487018b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:52:28 -0700 (PDT)
+	s=arc-20240116; t=1721966012; c=relaxed/simple;
+	bh=oH/b7ppMMzl/PU0MvsebN8GrF8GR2ohDfLcVxcCM8js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KQ+kI4sstqGy9/7bmRktuFzLWUHsU2DSPq0OEBnERrvDV9YYbCxPPfqFeZDavr0HkgoATYecF1/w6n2GsSCkQd4l56rpE1XeiU8OwDYmqmooi6Mk08P3WJaW7ISfI9qoZ8YcNObTAPm56HUNGQy3lMyrGgtiKACglvwvGQX0HB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFe5TXeG; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-831a5b7d250so63284241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1721965948; x=1722570748; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YMMjoSAK7IYa048PDOKabvStWi4pCjyCqdhBNgqeLE8=;
-        b=JoEuYOPdbmgWSiOLHNA76vUgzuq7WOQlfYqhHl69slVvS8GXVki3SrYk8GdX6pJaso
-         25hLZeIdv7Pt/LEvlpjNPKQF6k4084axNfs2jsP/MXwWPCvAhCElHpQwdKYHBnqcZtPB
-         oQtGgto+8Gz2sNr5tNjk8C3EGIwD4q/ji2gtGoMGYYcWW8jbvbNYxVh5j+7aegCEFXd3
-         8uFnXy9EA2pLiD39A1c1511yRsAGwI/DSNY5KIBQVuPbqn8KcDSD9jUdNI/PnfQZmPhQ
-         ZTSwh2LxzKMOHuxABHBcaWh2SIUAcnIF9w92opw7rbJiWHlifzrDMLQOwTOOkA2D0bqG
-         oZzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721965948; x=1722570748;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721966010; x=1722570810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YMMjoSAK7IYa048PDOKabvStWi4pCjyCqdhBNgqeLE8=;
-        b=rHNcK75/a+Umvk1OSz1fABnOwuN9PePAep8wkCbpY3iLMlSjQXDGvGz6fdTcIEuNkf
-         wWwoQBdDQhHmoQwWt3N52bixD1nIjmfy4p05sHGgtCKRgX4e8jrC5nUzddNEgiKObzJ2
-         fWFDqh3MmrpJY3YEx8qr0gyuSxHUWBQgL2nSKbxG9/XIFzi3aw3PyPXcqa+fmLstSJv7
-         Dtz77tzojtIiipc59zkBRAnPgbf+13s/qmazGTVT5pwduRefoZgEs9W8xCyXy7EOCiaH
-         SNk8XA9gMe/B2I64Q43NovkFpjHfK7b7Pfj9lvW+dXgVFqHaaj7SnYzI6koGiIejpOI7
-         VWVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc73d/LfXwyMr64qZdGN0r7nzLXlkMYB6eZ1E1+sCDTLeJLHpJ7mH6TF16YQeIhrHsxHLb4iDbQVVfhVAz4qq+kiT+4IU2/RrxqWMb
-X-Gm-Message-State: AOJu0YxpSl7nC5tFS2ciOP+NLehD6zKo+kzoRaYUXUKTe6WeACG4+GVB
-	BXtGO/7E131kA1Av+jgrkj6JodRKbeNI0G6l3D6ZJ4Kp/P26r2kpH3bX/M8FwDw=
-X-Google-Smtp-Source: AGHT+IE1UrodZkcO9IjOZvKHUjR+vdMhcCL5thros1OpINm+KvmZgxt8vZDmV2QGFum74/oMFOgFLA==
-X-Received: by 2002:a05:6a00:4fcb:b0:70d:191b:5537 with SMTP id d2e1a72fcca58-70eaa89b96fmr6197079b3a.4.1721965948227;
-        Thu, 25 Jul 2024 20:52:28 -0700 (PDT)
-Received: from x1 ([2601:1c2:1802:170:f62e:7a83:ff8d:7ad6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8122e8sm1831703b3a.139.2024.07.25.20.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 20:52:27 -0700 (PDT)
-Date: Thu, 25 Jul 2024 20:52:25 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/1] Add basic SPI support on TH1520
-Message-ID: <ZqMdeTrV5GE0TVUV@x1>
-References: <20240705093503.215787-1-kanakshilledar@gmail.com>
+        bh=BPyzrMlqeQRZ17+Ka9dRzkWQ9c9VHRZOmAi9r7+q1LM=;
+        b=HFe5TXeGWv4wWX8Kz5YaWCOoVGuV1W0GMlPEgtsASx39G6N4Tm90NejnOH1APi85Eh
+         KWBh3BTQGukuEbJINAo9PTQL//c9nhjY6ksZlOUo2XTVqjVGZcs+E9LVDuYmXWnJAj0W
+         mtj2JajoHxSq+whquoyJp7YXL4NyPDBSpfdK/YNEa+QKyZJcgsQ6gr+ScIzoMusYVb2+
+         8h8jQQMlQpAoPuiJgtw2h6icK8exQnwscB7I5/ShsCp8RDMIBE9Q+vTB9jxYVOvzKqW4
+         mx4EOo2/aDkm3B2QSlpC+EL+BMXaOO5HbZ65rwHMGpwIOhCyYNaD72x81zDs4pef9PDL
+         PWaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721966010; x=1722570810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BPyzrMlqeQRZ17+Ka9dRzkWQ9c9VHRZOmAi9r7+q1LM=;
+        b=Xnc1OEeBDbxKh+8wSHvnO7BAGaHVpMZw8T3ZvkZMrrrTliiCbZkM+VLJBO2V2IEp7X
+         XZXlFHkevgIvgl2gZv/iEXP5fa6ZskIw2DVN1gSUqD+jjdLwNAfalMCOd3b/7T8a5mYd
+         FQaxLSRUgU/a2mX8eLa2zfuh3ugnEiXcNP/7hRmn4RRWf0PBZgtPE+iyRF2r6Ha/KYnK
+         LB64G7jzr33Ht1itszvmpWisTZOrBh7D6DnHoDKpJzgh5nAtZi7FesjIjFFTpso2eBwb
+         avQVZjD5z2rabHaKH0PK9QoYsCxRBhuNRGITBwIdWvpW+kxi8H4GkbLFKLXbPRfJ4i9C
+         byGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsHUiMxLF2ALkNoJDepHnNMRQclcs63UG1p5x/xmeO2cXOA+NPPuWeZOICGaOk2t2VKuxbd5LibNw9BGpRiWZ8YuZh/pyMy47F497Q
+X-Gm-Message-State: AOJu0YzymF/qNvtdccqcBIyJkYbUC8ri4qHX/VLHCuTnNUWDFx3d9XEw
+	rqfVfgfVrNoID5uENmBf36K9RfSJ8Vdab92R9lmzLUk7t00QO1Dyg41/VdjFO8/3EPz+4rcieBw
+	hBeMdDoLg/7bEnyaB9d7v7/20QLY=
+X-Google-Smtp-Source: AGHT+IENuHk+XYdmaKndbm1NyrRpo5lo+VKYKMgky8xiysVwKKilSKKOWdgqRnmVE6SDf3NzSrBUj++y55g8ri9HiVo=
+X-Received: by 2002:a05:6102:6cb:b0:493:ddd1:d7fc with SMTP id
+ ada2fe7eead31-493dfe5cb87mr3497359137.11.1721966009587; Thu, 25 Jul 2024
+ 20:53:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705093503.215787-1-kanakshilledar@gmail.com>
+References: <20240725035318.471-1-hailong.liu@oppo.com> <ZqI5V+5E3RNhuSwx@MiWiFi-R3L-srv>
+ <20240725164003.ft6huabwa5dqoy2g@oppo.com> <ZqMKZ67YhzhbqYg9@MiWiFi-R3L-srv>
+In-Reply-To: <ZqMKZ67YhzhbqYg9@MiWiFi-R3L-srv>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 26 Jul 2024 15:53:18 +1200
+Message-ID: <CAGsJ_4z0AYTVoCJjTyZsku24kPfOTnu1KCms_NPevdNKW+6sdg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] mm/vmalloc: fix incorrect __vmap_pages_range_noflush()
+ if vm_area_alloc_pages() from high order fallback to order0
+To: Baoquan He <bhe@redhat.com>
+Cc: Hailong Liu <hailong.liu@oppo.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Wilcox <willy@infradead.org>, Tangquan Zheng <zhengtangquan@oppo.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 05, 2024 at 03:04:58PM +0530, Kanak Shilledar wrote:
-> Implemented basic SPI support for TH1520 SoC. There are two SPIs reserved
-> on the LicheePi4A, one on the SPI Flash pads that are blanked out on the
-> back, and one on the pins. I implemented the one connected to the pad.
-> 
-> It is using a fixed clock of 396MHz. The address and clock frequency was
-> referenced from the TH1520 System Reference Manual [1].
-> 
-> [...]
+On Fri, Jul 26, 2024 at 2:31=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 07/26/24 at 12:40am, Hailong Liu wrote:
+> > On Thu, 25. Jul 19:39, Baoquan He wrote:
+> > > On 07/25/24 at 11:53am, hailong.liu@oppo.com wrote:
+> > > > From: "Hailong.Liu" <hailong.liu@oppo.com>
+> > > >
+> > > > The scenario where the issue occurs is as follows:
+> > > > CONFIG: vmap_allow_huge =3D true && 2M is for PMD_SIZE
+> > > > kvmalloc(2M, __GFP_NOFAIL|GFP_XXX)
+> > > >     __vmalloc_node_range(vm_flags=3DVM_ALLOW_HUGE_VMAP)
+> > > >         vm_area_alloc_pages(order=3D9) --->allocs order9 failed and=
+ fallback to order0
+> > > >                                         and phys_addr is aligned wi=
+th PMD_SIZE
+> > > >             vmap_pages_range
+> > > >                 vmap_pages_range_noflush
+> > > >                     __vmap_pages_range_noflush(page_shift =3D 21) -=
+---> incorrect vmap *huge* here
+> > > >
+> > > > In fact, as long as page_shift is not equal to PAGE_SHIFT, there
+> > > > might be issues with the __vmap_pages_range_noflush().
+> > > >
+> > > > The patch also remove VM_ALLOW_HUGE_VMAP in kvmalloc_node(), There
+> > > > are several reasons for this:
+> > > > - This increases memory footprint because ALIGNMENT.
+> > > > - This increases the likelihood of kvmalloc allocation failures.
+> > > > - Without this it fixes the origin issue of kvmalloc with __GFP_NOF=
+AIL may return NULL.
+> > > > Besides if drivers want to vmap huge, user vmalloc_huge instead.
+> > >
+> > > Seem there are two issues you are folding into one patch:
+> > Got it. I will separate in the next version.
+> >
+> > >
+> > > one is the wrong informatin passed into __vmap_pages_range_noflush();
+> > > the other is you want to take off VM_ALLOW_HUGE_VMAP on kvmalloc().
+> > >
+> > > About the 1st one, do you think below draft is OK to you?
+> > >
+> > > Pass out the fall back order and adjust the order and shift for later
+> > > usage, mainly for vmap_pages_range().
+> > >
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index 260897b21b11..5ee9ae518f3d 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -3508,9 +3508,9 @@ EXPORT_SYMBOL_GPL(vmap_pfn);
+> > >
+> > >  static inline unsigned int
+> > >  vm_area_alloc_pages(gfp_t gfp, int nid,
+> > > -           unsigned int order, unsigned int nr_pages, struct page **=
+pages)
+> > > +           unsigned int *page_order, unsigned int nr_pages, struct p=
+age **pages)
+> > >  {
+> > > -   unsigned int nr_allocated =3D 0;
+> > > +   unsigned int nr_allocated =3D 0, order =3D *page_order;
+> > >     gfp_t alloc_gfp =3D gfp;
+> > >     bool nofail =3D gfp & __GFP_NOFAIL;
+> > >     struct page *page;
+> > > @@ -3611,6 +3611,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> > >             cond_resched();
+> > >             nr_allocated +=3D 1U << order;
+> > >     }
+> > > +   *page_order =3D order;
+> > >
+> > >     return nr_allocated;
+> > >  }
+> > > @@ -3654,7 +3655,7 @@ static void *__vmalloc_area_node(struct vm_stru=
+ct *area, gfp_t gfp_mask,
+> > >     page_order =3D vm_area_page_order(area);
+> > >
+> > >     area->nr_pages =3D vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
+> > > -           node, page_order, nr_small_pages, area->pages);
+> > > +           node, &page_order, nr_small_pages, area->pages);
+> > >
+> > >     atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+> > >     if (gfp_mask & __GFP_ACCOUNT) {
+> > > @@ -3686,6 +3687,10 @@ static void *__vmalloc_area_node(struct vm_str=
+uct *area, gfp_t gfp_mask,
+> > >             goto fail;
+> > >     }
+> > >
+> > > +
+> > > +   set_vm_area_page_order(area, page_order);
+> > > +   page_shift =3D page_order + PAGE_SHIFT;
+> > > +
+> > >     /*
+> > >      * page tables allocations ignore external gfp mask, enforce it
+> > >      * by the scope API
+> > >
+> > The logic of this patch is somewhat similar to my first one. If high or=
+der
+> > allocation fails, it will go normal mapping.
+> >
+> > However I also save the fallback position. The ones before this positio=
+n are
+> > used for huge mapping, the ones >=3D position for normal mapping as Bar=
+ry said.
+> > "support the combination of PMD and PTE mapping". this  will take some
+> > times as it needs to address the corner cases and do some tests.
+>
+> Hmm, we may not need to worry about the imperfect mapping. Currently
+> there are two places setting VM_ALLOW_HUGE_VMAP: __kvmalloc_node_noprof()
+> and vmalloc_huge().
+>
+> For vmalloc_huge(), it's called in below three interfaces which are all
+> invoked during boot. Basically they can succeed to get required contiguou=
+s
+> physical memory. I guess that's why Tangquan only spot this issue on kvma=
+lloc
+> invocation when the required size exceeds e.g 2M. For kvmalloc_node(),
+> we have told that in the code comment above __kvmalloc_node_noprof(),
+> it's a best effort behaviour.
+>
+>  mm/mm_init.c <<alloc_large_system_hash>>
+>  table =3D vmalloc_huge(size, gfp_flags);
+>  net/ipv4/inet_hashtables.c <<inet_pernet_hashinfo_alloc>>
+>  new_hashinfo->ehash =3D vmalloc_huge(ehash_entries * sizeof(struct inet_=
+ehash_bucket),
+>  net/ipv4/udp.c <<udp_pernet_table_alloc>>
+>  udptable->hash =3D vmalloc_huge(hash_entries * 2 * sizeof(struct udp_hsl=
+ot)
+>
+> Maybe we should add code comment or document to notice people that the
+> contiguous physical pages are not guaranteed for vmalloc_huge() if you
+> use it after boot.
 
-Applied to thead-dt-for-next, thanks!
+Currently, the issue goes beyond just 'contiguous physical pages are
+not guaranteed.'
+The problem includes the likelihood of failure when trying to allocate
+2MB of contiguous
+memory. That's why I suggest we allow fallback to order-0 for
+non-nofail allocations with
+your proposed changes.
 
-[1/1] riscv: dts: thead: add basic spi node
-      commit: 0f351f8c4f4ee87b729cc366917e67e3eee2d3db
+The only difference is that for non-nofail allocations, if we fall
+back to order-0 and still
+fail, the process will break. In the case of nofail, we always succeed
+on the final
+allocation.
 
-Best regards,
--- 
-Drew Fustini <drew@pdp7.com>
+>
+> >
+> > IMO, the draft can fix the current issue, it also does not have signifi=
+cant side
+> > effects. Barry, what do you think about this patch? If you think it's o=
+kay,
+> > I will split this patch into two: one to remove the VM_ALLOW_HUGE_VMAP =
+and the
+> > other to address the current mapping issue.
+> >
+> > --
+> > help you, help me,
+> > Hailong.
+> >
 
-Link: https://github.com/pdp7/linux/commit/0f351f8c4f4ee87b729cc366917e67e3eee2d3db
+Thanks
+Barry
 
