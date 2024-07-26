@@ -1,107 +1,169 @@
-Return-Path: <linux-kernel+bounces-262797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F394393CCD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:04:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7536C93CCD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AF2FB21C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31C3E2830B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DD823774;
-	Fri, 26 Jul 2024 03:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F5822F1C;
+	Fri, 26 Jul 2024 03:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjvML9KI"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="DBkVFoXt"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5525F80B;
-	Fri, 26 Jul 2024 03:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25211BC49
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721963071; cv=none; b=U0Z/5H7PrmLxWLiKplEcKyopAKLcEyIGEJQ7huqo0KtjSEjqcJe829S5WeMCY5E2UIMJMZhwKjkb1WcAlvr5VKcAFytXcnV0J7s5Gcr4X9BjCUdBT7uhwWEfpkwQPSQNaDrkTvyjO6Pv54eF93Prs6nS1EgvXS8f8Gl3I1q/eg0=
+	t=1721963162; cv=none; b=gihD6LTFLSIN9EzQieuccWdyrlLLQ7Uq3PRy5uM7G/3/lc63YmCPoXB+6jHD4p75eOF3Vi+7POGbypYz6zoRJkB7m6Hx2SzoTxHTJpuPnfAhzRgBR/bro3Hdbl57Mo7GMxZDijuxEUqoD5E7djxO3WrYhiya0TMrjpCj+eA9iNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721963071; c=relaxed/simple;
-	bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpJh8tKUw+irhWPo0Qlomi/c1hitKeulvYCROc5mEeQ3jkZNwKyhMvMoE1Rnpwa8bU3yUYYExhHujFFzg6s0Bh0hbJspwzX5gw42Y4iUEPjKqp/VDqWHHW5cKNxq/X0N/ptdSZ0pjzGweFAiBZ0eCJgwYIFq4Ub/zeMkwflCVP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjvML9KI; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8317511fd45so142926241.1;
-        Thu, 25 Jul 2024 20:04:30 -0700 (PDT)
+	s=arc-20240116; t=1721963162; c=relaxed/simple;
+	bh=quLpI2hmZVxke/lF3DDSHfy9b3cBQdbVSjdUv4HeYak=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CbVdCpmbb2Yx+YCPzB2JgXrrEZtPaUzQXZJN3Erx8FlMWcUpq3JhsktkW4EkhZO7XzhBx1LarTf4NK3FGBTSLdseni3l9PAD1vZ/pBILuMu76mMSt0l8kg8r28pAEsSgMQrLdbOO/pkIjlFq++NSn5N9iuOUx/UpCQ8JPYja79U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=DBkVFoXt; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a10b293432so391319a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:06:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721963069; x=1722567869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=shopee.com; s=shopee.com; t=1721963160; x=1722567960; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
-        b=SjvML9KI29L+ZfeFYGgJYMhzEyZpiBuyRtj5OpB4pmlGGh8EALEQwM+JZlHRb6hjgX
-         QoiHppRBSLoyrh/MTyOdr8xAcs0sGdP48Ypg7RT0kSIj9zKGBlt/8R7BO0sbm1oIYeOH
-         yVfKIUZjmOLM2EOd1831RMgLXT7BBm1sp4LhDKWAfh4F8mWvbP2SzArtkpwph+238xU3
-         lI0YR/vrWOfmiKKagC5RPf9rfL319UXGJ9cRLKAHb8L+O6VsjecMbKI6BFANDxesVRrA
-         83uPEZn2ZlNPkZxxOUEgAMgLXudf4tdmu+UBKR3Woc1uF4SdktBTSrCCeBs8/cnOoHSP
-         YdEQ==
+        bh=0zMy6Wm4Xr4VmqiEPea2U7nMauV7O2Gfn+WgAXgyr3U=;
+        b=DBkVFoXtO/VB9UG5jdoMKGqAjuOKUt2cJ1yjOm8MyeeHTTTCea7IjrEy9eePHng4ut
+         K/a+Z4qCiVJPn+7FLwmScnrpbbVphPrSN0PrbcorQcvRz1QxMmbBC2OSAY8R8iOil1tz
+         GFFxnbhw+VNaV0mVjr0lxUW1aamLvmEMF+B5hMkvKGw2ktO5kZOctwxP+DOIBD2m9XGL
+         a7GMwgTpV17b1iGVyR7yWTYS8Wc8Q+5po7K1P8lbWnNw8eQ8HV5A/hDLw7pF7qBfF9yY
+         HHXzMfgvCHI7D79apr4fDKbdMRqNy5KAMsqSIHoRL6CLT5F6pM6Id9mdRjZDa+tea4AE
+         S4NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721963069; x=1722567869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721963160; x=1722567960;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=awyum7uYEbOYA9xUJvq86opnRgKll/wMBwoEm3AIOCI=;
-        b=gLSLMD3SErKvbUqSzZICHISXBBlDwRfvJq0OnwZoOROH+IWcSxbVNkd2Hd+s6Y2lrG
-         yCVxIoGyTxOLvadBjG+UchcTtkgjmlBN2faZPJO2jw+ymztsYmkFq4WYGsfqKhGbelnK
-         /i+0YuyTsJjJvE//dKd+z4mOMKPbDz6O+6bE3uMrLvMFVXxkipuu1m6yEL89+mRM+3B9
-         BuG2oNL9im0WJ5KgShzSrDlN5rUdYhqsUJOeVU1bSPXBIWrspJQz7TT3Igj8nfsrQA2Z
-         hSCFVZ8uUY0loFs+KAcl42/zLHya2XlMdW97ERKtMe18dv7+itJHTjp7KGc1M3/0fVNn
-         oLtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7aJ3h9DkiRj6ghIuDTd360EY3I5Yo1RCTo1iUyUnGPEUe4HcP4KGzryJBK/FX82y65hpcEdpuCZn44iQ5P7LuNIbq3EZs/rYMPMTkHGoOMEsdq0wQtUCwi6sN8zUV3z7yeluvynkZH3Ci4avjAVcDmlN+R5lG+Z6D
-X-Gm-Message-State: AOJu0YyqyNyeWjWNKRi38mSCflksNajg93LrHv/pMV8g7fREUQ+rWD9f
-	NPxuomVtkxm6PxEW0d3EbN5/eDGikyhfJR5g1IYqIbjwy1rVc+8rd/Srp0KhW9yNyjpBvW+4Q6K
-	mZ+o3MDtfr5ARF0CcLe2wWWZLPaM=
-X-Google-Smtp-Source: AGHT+IFFhyXMjhrDnEO+19jgwrk1TFuAn/A0IXjXP28f/riODB+Y1WO91AloV+Vabda/xzpqMFfY7XTxrA6bN4XYvsk=
-X-Received: by 2002:a05:6102:5e8b:b0:492:76e9:961a with SMTP id
- ada2fe7eead31-493d629ca4bmr4489134137.1.1721963069028; Thu, 25 Jul 2024
- 20:04:29 -0700 (PDT)
+        bh=0zMy6Wm4Xr4VmqiEPea2U7nMauV7O2Gfn+WgAXgyr3U=;
+        b=rMRT3kKQFRvW5/IugsCBW0EXiQaaVk5gjqZFTWWJD7yq9L8/ixhAuL9fXlrzOwaPvD
+         nwSUnBCR5ygdVtPkUNmKIDPcnRaFgCjRxY4yp1NTXbyd+saT+IrkIyj6jaMXLrFZjCEj
+         onG+9zed0GYP9ytOhT1zGulIGXIq7v5FUfM5faI7JrigxgCxNOFwQZAvYzGzDvx/G1GM
+         uXgMv8pKU0tD+ebIzfVxn8QTdkyTqq2RvYI4j4XPrxHslZWtqk3O/izqEMUIKrEyyao+
+         B51S851pgS1ryfOzTXXjoZwU5Bcjl1VckmOVWCKNcSRcDEiI0G+MTx2AO0TAhDtKld0y
+         4cTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzcoCqNtdgqTtRpoORNSySHCMaJrJMfaeO2S4dX5k+28fsDwa11t6Coymhme/vR0VIkRWnvop89BA66tF2yZAPoVdOFYUnxvA/dZ/B
+X-Gm-Message-State: AOJu0YxUQYlTRJ2ADYC/gP2iL7wkTlqmqfpZuHQPpJDW7lSbnZjEVFt1
+	jHBuEWJ57yTuB2VCkBAv0G9t9YQW4bnnI0SuWKg0YwTnSP/tWVs6zIumq0N7NS8=
+X-Google-Smtp-Source: AGHT+IGpxwOy71N55NwgyOQ41ABsR85yT6e4HPAsYRwjPO/GciuqVW0ATMQ5DpYETORlfje8rrIXtg==
+X-Received: by 2002:a17:90b:4b09:b0:2c4:ee14:94a2 with SMTP id 98e67ed59e1d1-2cf238ccadamr5760863a91.27.1721963160112;
+        Thu, 25 Jul 2024 20:06:00 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cd8f7692f0sm3435117a91.1.2024.07.25.20.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 20:05:59 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: jack@suse.cz
+Cc: axboe@kernel.dk,
+	brauner@kernel.org,
+	tj@kernel.org,
+	viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH v2] fs: don't flush in-flight wb switches for superblocks without cgroup writeback
+Date: Fri, 26 Jul 2024 11:05:25 +0800
+Message-Id: <20240726030525.180330-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240725084232.bj7apjqqowae575c@quack3>
+References: <20240725084232.bj7apjqqowae575c@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000009d1d0a061d91b803@google.com> <20240725214049.2439-1-aha310510@gmail.com>
- <CACGkMEv2DZhp71-QdckH+9ycerdNd7+F5vFyq3g=qquEsm9rHw@mail.gmail.com>
-In-Reply-To: <CACGkMEv2DZhp71-QdckH+9ycerdNd7+F5vFyq3g=qquEsm9rHw@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Thu, 25 Jul 2024 23:03:51 -0400
-Message-ID: <CAF=yD-LtR--NvYuELb2XGaPAoygyWtJOCM4+Pgr-Pg7TwSB5Sw@mail.gmail.com>
-Subject: Re: [PATCH net] tun: Add missing bpf_net_ctx_clear() in do_xdp_generic()
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jeongjun Park <aha310510@gmail.com>, 
-	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, 
-	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com, 
-	bigeasy@linutronix.de, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 25, 2024 at 10:21=E2=80=AFPM Jason Wang <jasowang@redhat.com> w=
-rote:
->
-> On Fri, Jul 26, 2024 at 5:41=E2=80=AFAM Jeongjun Park <aha310510@gmail.co=
-m> wrote:
-> >
-> > There are cases where do_xdp_generic returns bpf_net_context without
-> > clearing it. This causes various memory corruptions, so the missing
-> > bpf_net_ctx_clear must be added.
-> >
-> > Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
-> > Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->
-> Acked-by: Jason Wang <jasowang@redhat.com>
+When deactivating any type of superblock, it had to wait for the in-flight
+wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
+which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
+If there are too much dirty data in the superblock, the waiting time may increase
+significantly.
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+For superblocks without cgroup writeback such as tmpfs, they have nothing to
+do with the wb swithes, so the flushing can be avoided.
+
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+Suggested-by: Jan Kara <jack@suse.cz>
+---
+Changes since v1:
+- do the check in cgroup_writeback_umount().
+- check the capabilities of bdi.
+---
+ fs/fs-writeback.c         | 6 +++++-
+ fs/super.c                | 2 +-
+ include/linux/writeback.h | 4 ++--
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 92a5b8283528..09facd4356d9 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1140,8 +1140,12 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
+  * rare occurrences and synchronize_rcu() can take a while, perform
+  * flushing iff wb switches are in flight.
+  */
+-void cgroup_writeback_umount(void)
++void cgroup_writeback_umount(struct super_block *sb)
+ {
++
++	if (!(sb->s_bdi->capabilities & BDI_CAP_WRITEBACK))
++		return;
++
+ 	/*
+ 	 * SB_ACTIVE should be reliably cleared before checking
+ 	 * isw_nr_in_flight, see generic_shutdown_super().
+diff --git a/fs/super.c b/fs/super.c
+index 095ba793e10c..acc16450da0e 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -621,7 +621,7 @@ void generic_shutdown_super(struct super_block *sb)
+ 		sync_filesystem(sb);
+ 		sb->s_flags &= ~SB_ACTIVE;
+ 
+-		cgroup_writeback_umount();
++		cgroup_writeback_umount(sb);
+ 
+ 		/* Evict all inodes with zero refcount. */
+ 		evict_inodes(sb);
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 112d806ddbe4..d78d3dce4ede 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -217,7 +217,7 @@ void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
+ 			      size_t bytes);
+ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
+ 			   enum wb_reason reason, struct wb_completion *done);
+-void cgroup_writeback_umount(void);
++void cgroup_writeback_umount(struct super_block *sb);
+ bool cleanup_offline_cgwb(struct bdi_writeback *wb);
+ 
+ /**
+@@ -324,7 +324,7 @@ static inline void wbc_account_cgroup_owner(struct writeback_control *wbc,
+ {
+ }
+ 
+-static inline void cgroup_writeback_umount(void)
++static inline void cgroup_writeback_umount(struct super_block *sb)
+ {
+ }
+ 
+-- 
+2.25.1
+
 
