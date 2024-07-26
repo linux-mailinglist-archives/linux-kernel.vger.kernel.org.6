@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-263699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7ED93D96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E9593D973
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 486B1B23190
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7031C23362
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A1C14A08D;
-	Fri, 26 Jul 2024 20:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A67014F9ED;
+	Fri, 26 Jul 2024 20:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UnJcUbJr"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vE8wLO46"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9760C13FD66
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B26F14A08B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722024004; cv=none; b=Uy9BfEmy1wKiUxpY73RxxxzL9TjeHgPNGyJdrMiWq18RrpTMRx4x57mtXb/1+tGcOO1zv9Yw6jYGavBHGGzrRv4dx7husSk0Dq58RcexUl1RmsQKxV66xExKnlTbJT/9JQEJONdu00jKNnz4KMmnGeP6FgB9yqH5awBs08EM2eQ=
+	t=1722024007; cv=none; b=VYAB/G2Imwo+w0AgLIivggaS3CbgnKvXDFi0XSJT28VPnh9Wt/U3+lsfWJm6602/jFIN9iIuMbDqBPQFTl+ZDDM/6WZR/54NP5x3v5EBjwXrGF7TLjzqPbhbM92brqlZmbjCcSS124qRvXzQuNwDVOa6Hf/Q2anwsPtXP2afbHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722024004; c=relaxed/simple;
-	bh=X0Lb8mIRnjkJhheZaa1C9/ChMOXWk5LNcIzDjYItBcU=;
+	s=arc-20240116; t=1722024007; c=relaxed/simple;
+	bh=EbgGe2gsLdH2biBweP1nqPyr3Zg50Y1HA4LdIiHtm3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p73zmL4OyMNMnFfZtPSMFyNzVu10tKDjoAzfoSHONqLUpGmDqf53pr9oU+kr806IE3aLyNNEiQ2HEBk0Nj8N7+TiyP4x3iz+icjze8xyQ9sjks31njbSl9QGT8cG6lYFjbbOnDvKUcDs3185DX5YQ+RADsCf4UTrgXmIhnNBMW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UnJcUbJr; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=n+iM/fcweCgBl8Aaqz6pOo7iK2wI/Bz4eUUxnBVyKiVzLv56NJAjtY4pl4qv1crBJJj4AOiKcnh+rqU20vaJkQ4eNzkU6wO6/pydkTzUQGwL4vjcPfVhiWUcIpfSo9l2l+jnPGMDlzU+doRSTRDMbcdTXI+A+V165/WNizMXOWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vE8wLO46; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so1601979a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:00:02 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5afa207b8bfso706827a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722024001; x=1722628801; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722024003; x=1722628803; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RujnloDbg8cFq7uk55+LRxz/Crsv4ySF/ZqdPlHzEpI=;
-        b=UnJcUbJrDG9Cq804yVbehwjGAd++KrMBOQzz716Pwcnv2sym3XrA7RBcmayl3k23cg
-         vMQhICD4s+3vEUxb9aUAyDpJrAkQVB8rdJgqUGaYZmVyjxg6W74kTpM8c/ysgNJmK2bW
-         95aGCuNTw6nVqAFvvfRHF44wWPcd/ejbxP0XEDWNzYS3HrLt0s3YjajH3NPktFKkGINP
-         xejpMzWqF+zG/Wdz3P8g6AoXkGdbWurp+mRQM2tRWa8Po1K3/fER+akwyvplj1C6K1qg
-         5kD14gKfLDLB1JKgcfk5+CtiYDCj/++PoUAHuI7r4Dh+9hTGnwfyESrVP3WezvKWGqoI
-         fgtg==
+        bh=POgjzXRrZKTYuk9IJwxX6t4KWtvdb6O1DoH7Fypmtpc=;
+        b=vE8wLO46tz42t4+EsgXj+WRE4wNMAzeRXioKCIhmj+m/AiV3tN3sLLwv84HFS1+HM/
+         kMoguvHy4wsBHXuGaxgFnH9TwN5JzbqUcYcG09nuxFCQHPI0dt1Rr56yCiQZKkIl57Fe
+         F38W+bZg2IuT6eXoRhTQkOYCp4QleVN4TpiYzjr5jrLN7WyU1/lv9RRAet9EPo6kb00t
+         dpBZWeidfzzi7vGPOGPYkUthyQJlGpar+eJxmjYvnqzEGwdfOM+JDUYwR6XuOrX20Swl
+         inSB/U5ESurF9zn6DOG+aHUv7Buwfqjcz1Irta7IOBORcDIN3IIJ6IbzCbbJqdew4kB5
+         gRzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722024001; x=1722628801;
+        d=1e100.net; s=20230601; t=1722024003; x=1722628803;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RujnloDbg8cFq7uk55+LRxz/Crsv4ySF/ZqdPlHzEpI=;
-        b=HqJE/BamBVmX3lu2G7VpNB55glzINsrvY7zGzXiGNo39V3AIO5KSyVEMdcmDx1m+kG
-         itlMoO3Un8BfesQDaATHsi418mFYqS1+71y30d6qkC43tQUdIv23QJxdGJWI1U0MeLkb
-         r0RxOH4PYKVgKOrjH7NAWfrWeg8FhQIN97KDu4eW7cEVMe3abuPySLOy/h/fJGybkcGa
-         bbQUAwAUJ/OW5fv8iR2ADyg6hfrl/PvwWPUNhL9UzuOm4uTJw/qqZGMfm5+reXc3D3Ky
-         L/FLQcDpssZr7MEmrzpRYMKY7JgNvb4MNYNmLcWUfcFdvhEVL/XEj1WrgJl8j2vcsbrX
-         cymw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+sH22fL+KoZ9eJ2+hjjTINS5ax7fUDqPNa+Of6MOLWHP5F3+HBuHEitKWOg3FrH/4vYnr0t9d4i6/U1RzgVDak5z0oFa5TtjBYS/n
-X-Gm-Message-State: AOJu0Yw2M5MIgU7yYkRyE5t3MCFkBBFBSCICkCGCD47AXF78I0emHEbB
-	NeMqh4NBCiXYBut8pXG/RqVQamEFmdj5jzDqb8fcBk/cQDKR3/j/C/iPbcv8yGI=
-X-Google-Smtp-Source: AGHT+IGLTeby7IgSps+WCZxoecp8rEY41Qs9z/KH8R39SBVZDRYsG+VUFkY5AJGG2wUOq14cKvVarA==
-X-Received: by 2002:a17:907:7f88:b0:a7d:2772:6d5f with SMTP id a640c23a62f3a-a7d3fa3f8bemr56915366b.23.1722024000997;
-        Fri, 26 Jul 2024 13:00:00 -0700 (PDT)
+        bh=POgjzXRrZKTYuk9IJwxX6t4KWtvdb6O1DoH7Fypmtpc=;
+        b=DW3DKIILo0Ev5Vq0uLvbQxM5LC6XSH6EfsnYYO+vgkwn21U0ICprI+G5rcRNamXprC
+         d2ciKpRBowyWAnoUoUmyagaVEwmcbG8TGLO3dk3YhEy8Iq1EGfzH3i7GrY4Jz3QBNYDk
+         wuIYIrj10VBedWmFcga3BWUOV/XQtpgm0IV5jIJEwfRxiDg40nPH2qdFNV8LYt8Ny79E
+         imctL8dExLPU0JF4ZCV1a9exFKsGBSHE1Z5oqR+VeOLP2PgvtidCPpM402yf2UHRr3l3
+         pTt8WECm+mTpTf1tLtFR0PbiNSwpZdk1crba2+/uIqYuLpFseOzoSSoI3rSKRYNp9P9F
+         oL5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZgYLyTokjiDUZ4MLhtc/hbX5cTx3CZqkyHxrJ40q2P5gOQar9MahOffGtHQXWTbgeO/8eiEv0uG7Ws5gvbu84dBJOk7QYBLSeWIID
+X-Gm-Message-State: AOJu0Yzwl4/KpE9eSWFBrxI1lKqBD4e4dk+d35gxYFnb2wuRYaiA2+gS
+	Qy67InUkM81vX5Ti/KBmHOTCgS3BLMv1dGeH56zTx98XwUXRsC+fcQMMehwWvuw=
+X-Google-Smtp-Source: AGHT+IFTEGZPICz8oxt3K4AgX4DGGbn/vDQD5wGVMFK8bcxJxs67PXzAxqfUJbBP4LD3EEqv+kU6xA==
+X-Received: by 2002:a17:907:2da7:b0:a7a:ab1a:2d65 with SMTP id a640c23a62f3a-a7d40160769mr43935566b.67.1722024003367;
+        Fri, 26 Jul 2024 13:00:03 -0700 (PDT)
 Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad90e1esm209999166b.151.2024.07.26.13.00.00
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad90e1esm209999166b.151.2024.07.26.13.00.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 13:00:00 -0700 (PDT)
+        Fri, 26 Jul 2024 13:00:02 -0700 (PDT)
 From: Markus Schneider-Pargmann <msp@baylibre.com>
 To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
@@ -85,9 +85,9 @@ Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
 	linux-can@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] can: m_can: Remove coalesing disable in isr during suspend
-Date: Fri, 26 Jul 2024 21:59:39 +0200
-Message-ID: <20240726195944.2414812-3-msp@baylibre.com>
+Subject: [PATCH 3/7] can: m_can: Remove m_can_rx_peripheral indirection
+Date: Fri, 26 Jul 2024 21:59:40 +0200
+Message-ID: <20240726195944.2414812-4-msp@baylibre.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240726195944.2414812-1-msp@baylibre.com>
 References: <20240726195944.2414812-1-msp@baylibre.com>
@@ -99,32 +99,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We don't need to disable coalescing when the interrupt handler executes
-while the chip is suspended. The coalescing is already reset during
-suspend.
+m_can_rx_peripheral() is a wrapper around m_can_rx_handler() that calls
+m_can_disable_all_interrupts() on error. The same handling for the same
+error path is done in m_can_isr() as well.
 
-Fixes: 07f25091ca02 ("can: m_can: Implement receive coalescing")
+So remove m_can_rx_peripheral() and do the call from m_can_isr()
+directly.
+
 Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- drivers/net/can/m_can/m_can.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/can/m_can/m_can.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
 diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 9d7d551e3534..fd600ab93218 100644
+index fd600ab93218..42ed7f0fea78 100644
 --- a/drivers/net/can/m_can/m_can.c
 +++ b/drivers/net/can/m_can/m_can.c
-@@ -1223,10 +1223,8 @@ static irqreturn_t m_can_isr(int irq, void *dev_id)
- 	struct m_can_classdev *cdev = netdev_priv(dev);
- 	u32 ir;
+@@ -1037,22 +1037,6 @@ static int m_can_rx_handler(struct net_device *dev, int quota, u32 irqstatus)
+ 	return work_done;
+ }
  
--	if (pm_runtime_suspended(cdev->dev)) {
--		m_can_coalescing_disable(cdev);
-+	if (pm_runtime_suspended(cdev->dev))
- 		return IRQ_NONE;
--	}
+-static int m_can_rx_peripheral(struct net_device *dev, u32 irqstatus)
+-{
+-	struct m_can_classdev *cdev = netdev_priv(dev);
+-	int work_done;
+-
+-	work_done = m_can_rx_handler(dev, NAPI_POLL_WEIGHT, irqstatus);
+-
+-	/* Don't re-enable interrupts if the driver had a fatal error
+-	 * (e.g., FIFO read failure).
+-	 */
+-	if (work_done < 0)
+-		m_can_disable_all_interrupts(cdev);
+-
+-	return work_done;
+-}
+-
+ static int m_can_poll(struct napi_struct *napi, int quota)
+ {
+ 	struct net_device *dev = napi->dev;
+@@ -1250,7 +1234,7 @@ static irqreturn_t m_can_isr(int irq, void *dev_id)
+ 		} else {
+ 			int pkts;
  
- 	ir = m_can_read(cdev, M_CAN_IR);
- 	m_can_coalescing_update(cdev, ir);
+-			pkts = m_can_rx_peripheral(dev, ir);
++			pkts = m_can_rx_handler(dev, NAPI_POLL_WEIGHT, ir);
+ 			if (pkts < 0)
+ 				goto out_fail;
+ 		}
 -- 
 2.45.2
 
