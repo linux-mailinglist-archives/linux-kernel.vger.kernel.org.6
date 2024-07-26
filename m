@@ -1,263 +1,272 @@
-Return-Path: <linux-kernel+bounces-262741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1B93CC13
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A00C93CC18
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0C728279D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3251C2149F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F782EC7;
-	Fri, 26 Jul 2024 00:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF96EC7;
+	Fri, 26 Jul 2024 00:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NxbFhHb1"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb3SCh3N"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778DF7F8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7419B;
+	Fri, 26 Jul 2024 00:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721953774; cv=none; b=bfrItYQkO0QdStsB6IwB5hlYTYHpNrqLPjGQDbBYsl1QgfSTtrPJzzcsm53BV7/7C3EpTBVJAt0HOb/ogDfuP+lxW8kwNLKJc6pmMgZWaqkVzbCPo2P/BVY+GvYpK+PJSOYEGRdsNHlPnT6hiZf1m+8vs6yoNFehT/zRlY+BhNE=
+	t=1721954030; cv=none; b=PMk6O4uzXG6b/eoq3TDKqzSSWroz87vyu0azlURTBI+HAgZrk4DQnlnP7VaR/2Wjy8HV78TeqkzKjE3ucVW7PqZ0RSIKg7q5/kqv0tj9YwZ+wSP+48fyBmTBopfR29BqhDprtFzP5EtIRwm7UKo/wQLjytUeC7e6KwRhkn1TrGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721953774; c=relaxed/simple;
-	bh=kviLB+w2lXuUML0TzG8iXmFtCyiR/hwIxPgrFeBKB2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JO6Kw7IhY6TuhC7DJyUhbilZFeXzZCpq6FYSGN0CLSa5mGwY15cXiuDfiGKmSAFvrwMpcCgLejRAYXnd7q7YBEDJPxoVE5FPCIrUev+Vp/GdtlnNPO/tvI6/eS1WiZowyT/myj0LS1H2KO9oWzUcwfn/6w9gKoWoMDXNJVjQYFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NxbFhHb1; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fdc70e695so63801cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 17:29:32 -0700 (PDT)
+	s=arc-20240116; t=1721954030; c=relaxed/simple;
+	bh=3JWQJxgRjgnRDkV+J163/giXHdA9KJEk2gKFlONUNB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4Tg14XdPJBFmvBiJrW7yIF3hvJvFU09tsL3lEeJDD8I+2O4ivQZU3pexy1ybAuszN2gKGsyNcRSs3Dw0zEkCVgqD4uD4jSPCDLOKe4ZfR0LNU8yqFKP37BhjIkiztYqME/5eLQ1tvVS7bYtRLj4+vdprnP8G16Zn7paLDzCJfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb3SCh3N; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-67682149265so10467877b3.2;
+        Thu, 25 Jul 2024 17:33:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721953771; x=1722558571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DbyJs6ojjDUY/aYBbei0H0GJsGGC+U+B84+bho9NthY=;
-        b=NxbFhHb12wnDT1rcGSIK0tAabxi1zIzCVPKIJFFlB6A0QgeHU+mAbfprCf4kmykCyw
-         9J0u6YLicl/LinKjflrsZ+Lcdv/lEvlXaGA8hE/97A4cJI1L7G7R4/XEta3CUfHnEbz3
-         JfhLdYFytj1AYSxqDmLDA+CDR+/LbrYsjZy5zAiZAvOZmfPsuPMbExrW1uk1FEahUZ3g
-         MTDEdz/VCkTlTI6vDi8bf1u39jRvy6GWzdCYHLaLVBT5Kj4vUCtFuV4FxnyBHd6WfG3S
-         n9Oar9+3MHfmtrdVogs4tnchSc+AaF7mtRl4Auh8qokljJ67aZYkAJOZ10g+gVeXf9l2
-         Yd+A==
+        d=gmail.com; s=20230601; t=1721954027; x=1722558827; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PGbRMFqNjqE2FGzKnJAnVl6N0locpudqp71TjSFPoRA=;
+        b=fb3SCh3NkQmZMDiIwnW6nhNcnjLbjJU6YbVskaX4HPoSFV/GAgSPEipxMCiwyC9oy6
+         63lSy5p1km9JWH4/7qmHXTj87A7aGTkyhMkgeeWOhHF2HFrM4+IAvmjfTgTw0noe/ny1
+         nXHBuY1nUKOdI3c3WHPuo2L7+B8ICjqglMYgst7ueU5dcvVtEtaR5WmQwLROWvbtLPYy
+         uodEWP3RYCTd7R43SmAxtov8qF2bSoaQg4XESUKWgjFe958Ddwsotm5pBw6VODZbGfAB
+         CA6pz4riF1vH9f1WaplsrFk8+OmffEfmFHcVJrVNh6fuYzQ5QMXFtwvTkDCDwSZd//ao
+         Flkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721953771; x=1722558571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DbyJs6ojjDUY/aYBbei0H0GJsGGC+U+B84+bho9NthY=;
-        b=qToTnSDCgCqhCwH7PvIvclZErbcvNVpTaoofv/4NmD57Lbkdf96ze8W7Wi41Ry4xQu
-         /jV6jNr+iFLiYbQ5OFDFBTH8uFNTG1fmNFlULvDwDs19X07CjjTTOsN4kFZTMvzC8Hym
-         O5vHEI1LvxIVNsjD/4os5veg17hgQrNyaAEVniYhwHIIE7VPpGClG7U4H62X/tyaN6GH
-         +hvyt4L4FVOE/msagIL+qmS/uBl5EwfcxhumObl3OznLCuTkbyxqxOTIrIb1yURcFa5r
-         BSiwPe78JMbE6Yu9RhEXG4mvBMrbn4kK2SICRBt/ERqLeE0ROVzxtQTcTXWHz0TSNUaW
-         R6ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXCr9GvOayyzNyHHxQlP+hLw9Vw6mNwmw+D56IIH4Bfkob/8qCZzZZYtygqoUyjVQSCigNIZUg0eTDkeuwnxKRnwR0G68dc/zkPMBK
-X-Gm-Message-State: AOJu0YwC03P5REjNvVWRwmnbC6cVrkCytwFOuPFhy/yDRm4Nyvf0iwPR
-	8m+jMSli/rt0woL/X0UuhN/DsyzwC4D+m9f0rYTOYwSVugwyQZ07KCBKWHRrDrjl4XMgbsw8CPv
-	GKXUEspM02kNIwtae000U2sTEUqn4V3WpIbBQ
-X-Google-Smtp-Source: AGHT+IEAKXr1ckGzIAW0Zij5lROUgzcsWDVkCYVl2RWE/gIa1eP8NSl4F+ePaiwMP4UG1WnczScB6df5XE4x/GMY03s=
-X-Received: by 2002:a05:622a:1ba6:b0:447:f5de:bd18 with SMTP id
- d75a77b69052e-44ff3e5d32amr1488861cf.9.1721953771125; Thu, 25 Jul 2024
- 17:29:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721954027; x=1722558827;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PGbRMFqNjqE2FGzKnJAnVl6N0locpudqp71TjSFPoRA=;
+        b=eTrrC20tLSe1PQMmVVF2vnah/oLjGyGuF5VvOS1dN8qrOOoWXTR+WoYw89YUsAFkfp
+         nwHxx0XtQRy1nu2i7YtbvBbR3+GGznoOH/jib/U/Qil2+y2fY2e+oqzo4g4if46fR2Q6
+         u7aHWutGr+WvbDehB5DMXw5VjWVwPfRd/GGB4epZfMCmTOYvZWDrsoO48wI6FF+l0hFt
+         v5vhimkf8NfxDRx9FVqT7GSK2jpDqd69+xJwGS0EGUJkceqcyrVF/bW3PMz872wS1T82
+         ElkFUlzvJE4RcK+vDrRZtZ0guRNX11gtF2KWg7nIkIUEzcoLCFeOtvIOnpP1d165fBvB
+         2AvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVykLn+PM0vrVeMFIMIcycvBQuyCjOxn79e0FsGXv76mPzHhlVMqIQuPF+5k751+8lf7y8ITryawji/JknXlh6jDMRs+a/dzigAftz31ZMqLfPkyiumE2QAu/j51tXJmZjzbX0cnKRTtw==
+X-Gm-Message-State: AOJu0YxKEqnekWfV9YmmXjD9h9jGsQiPHSWkOL86sITCxPhl1N6FKPpT
+	zWvln1Tlit8kjbEECojx0LGLUF14hmGN+OprmmtHJ4dMgi7VoZy9crFYT1Lw
+X-Google-Smtp-Source: AGHT+IGvyKLluKIWk4xhy3Z+igBHGE1XI2dKeVygogOJaSS0FOIYI1CJKYYr8IK+0PZw+U7Unncn8Q==
+X-Received: by 2002:a81:bf4e:0:b0:648:3fb2:753b with SMTP id 00721157ae682-67512028191mr51762717b3.24.1721954027486;
+        Thu, 25 Jul 2024 17:33:47 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3faea19bsm11714666d6.121.2024.07.25.17.33.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 17:33:46 -0700 (PDT)
+Date: Thu, 25 Jul 2024 20:33:44 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mehdi.djait@bootlin.com, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: display: Add Sharp Memory LCD bindings
+Message-ID: <7l5jyzk4ojxtmihsnuz355x2qk632vgxdspgllxljhpzxzdhcb@aq5xyd64d2kb>
+References: <20240725004734.644986-1-lanzano.alex@gmail.com>
+ <20240725004734.644986-2-lanzano.alex@gmail.com>
+ <c7bf08aa-e7a0-4b60-b9fe-b43215ce3fb9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-2-jthoughton@google.com> <ZqJ_xANKf3bNcaHM@google.com>
-In-Reply-To: <ZqJ_xANKf3bNcaHM@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Thu, 25 Jul 2024 17:28:55 -0700
-Message-ID: <CADrL8HW2mjC=ukNBG6Tww+Y3t6poU0ZM5uQJteTk4e8kj-s2wA@mail.gmail.com>
-Subject: Re: [PATCH v6 01/11] KVM: Add lockless memslot walk to KVM
-To: David Matlack <dmatlack@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7bf08aa-e7a0-4b60-b9fe-b43215ce3fb9@kernel.org>
 
-On Thu, Jul 25, 2024 at 9:39=E2=80=AFAM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On 2024-07-24 01:10 AM, James Houghton wrote:
-> > Provide flexibility to the architecture to synchronize as optimally as
-> > they can instead of always taking the MMU lock for writing.
-> >
-> > Architectures that do their own locking must select
-> > CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS.
-> >
-> > The immediate application is to allow architectures to implement the
-> > test/clear_young MMU notifiers more cheaply.
-> >
-> > Suggested-by: Yu Zhao <yuzhao@google.com>
-> > Signed-off-by: James Houghton <jthoughton@google.com>
->
-> Aside from the cleanup suggestion (which should be in separate patches
-> anyway):
->
-> Reviewed-by: David Matlack <dmatlack@google.com>
+Thank you for the review! I will address these comments in V2
 
-Thanks David!
-
->
+On Thu, Jul 25, 2024 at 08:17:01AM GMT, Krzysztof Kozlowski wrote:
+> On 25/07/2024 02:47, Alex Lanzano wrote:
+> > Add device tree bindings for the monochrome Sharp Memory LCD
+> > 
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
 > > ---
-> >  include/linux/kvm_host.h |  1 +
-> >  virt/kvm/Kconfig         |  3 +++
-> >  virt/kvm/kvm_main.c      | 26 +++++++++++++++++++-------
-> >  3 files changed, 23 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 689e8be873a7..8cd80f969cff 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -266,6 +266,7 @@ struct kvm_gfn_range {
-> >       gfn_t end;
-> >       union kvm_mmu_notifier_arg arg;
-> >       bool may_block;
-> > +     bool lockless;
-> >  };
-> >  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)=
-;
-> >  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
-> > diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-> > index b14e14cdbfb9..632334861001 100644
-> > --- a/virt/kvm/Kconfig
-> > +++ b/virt/kvm/Kconfig
-> > @@ -100,6 +100,9 @@ config KVM_GENERIC_MMU_NOTIFIER
-> >         select MMU_NOTIFIER
-> >         bool
-> >
-> > +config KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
-> > +       bool
+> >  .../bindings/display/sharp,sharp-memory.yaml  | 97 +++++++++++++++++++
+> >  include/dt-bindings/display/sharp-memory.h    |  9 ++
+> >  2 files changed, 106 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
+> >  create mode 100644 include/dt-bindings/display/sharp-memory.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml b/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
+> > new file mode 100644
+> > index 000000000000..a79edd97c857
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/sharp,sharp-memory.yaml
+> 
+> Filename based on compatible, so e.g. sharp,ls010b7dh04.yaml.
+> 
+> > @@ -0,0 +1,97 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/sharp,sharp-memory.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> >  config KVM_GENERIC_MEMORY_ATTRIBUTES
-> >         depends on KVM_GENERIC_MMU_NOTIFIER
-> >         bool
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index d0788d0a72cc..33f8997a5c29 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -555,6 +555,7 @@ struct kvm_mmu_notifier_range {
-> >       on_lock_fn_t on_lock;
-> >       bool flush_on_ret;
-> >       bool may_block;
-> > +     bool lockless;
-> >  };
-> >
-> >  /*
-> > @@ -609,6 +610,10 @@ static __always_inline kvm_mn_ret_t __kvm_handle_h=
-va_range(struct kvm *kvm,
-> >                        IS_KVM_NULL_FN(range->handler)))
-> >               return r;
-> >
-> > +     /* on_lock will never be called for lockless walks */
-> > +     if (WARN_ON_ONCE(range->lockless && !IS_KVM_NULL_FN(range->on_loc=
-k)))
-> > +             return r;
+> > +title: Sharp Memory LCD panels
 > > +
-> >       idx =3D srcu_read_lock(&kvm->srcu);
-> >
-> >       for (i =3D 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-> > @@ -640,15 +645,18 @@ static __always_inline kvm_mn_ret_t __kvm_handle_=
-hva_range(struct kvm *kvm,
-> >                       gfn_range.start =3D hva_to_gfn_memslot(hva_start,=
- slot);
-> >                       gfn_range.end =3D hva_to_gfn_memslot(hva_end + PA=
-GE_SIZE - 1, slot);
-> >                       gfn_range.slot =3D slot;
-> > +                     gfn_range.lockless =3D range->lockless;
-> >
-> >                       if (!r.found_memslot) {
-> >                               r.found_memslot =3D true;
-> > -                             KVM_MMU_LOCK(kvm);
-> > -                             if (!IS_KVM_NULL_FN(range->on_lock))
-> > -                                     range->on_lock(kvm);
-> > -
-> > -                             if (IS_KVM_NULL_FN(range->handler))
-> > -                                     goto mmu_unlock;
-> > +                             if (!range->lockless) {
-> > +                                     KVM_MMU_LOCK(kvm);
-> > +                                     if (!IS_KVM_NULL_FN(range->on_loc=
-k))
-> > +                                             range->on_lock(kvm);
+> > +maintainers:
+> > +  - Alex Lanzano <lanzano.alex@gmail.com>
 > > +
-> > +                                     if (IS_KVM_NULL_FN(range->handler=
-))
-> > +                                             goto mmu_unlock;
-> > +                             }
-> >                       }
-> >                       r.ret |=3D range->handler(kvm, &gfn_range);
-> >               }
-> > @@ -658,7 +666,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hv=
-a_range(struct kvm *kvm,
-> >               kvm_flush_remote_tlbs(kvm);
-> >
-> >  mmu_unlock:
-> > -     if (r.found_memslot)
-> > +     if (r.found_memslot && !range->lockless)
-> >               KVM_MMU_UNLOCK(kvm);
-> >
-> >       srcu_read_unlock(&kvm->srcu, idx);
-> > @@ -679,6 +687,8 @@ static __always_inline int kvm_handle_hva_range(str=
-uct mmu_notifier *mn,
-> >               .on_lock        =3D (void *)kvm_null_fn,
-> >               .flush_on_ret   =3D true,
-> >               .may_block      =3D false,
-> > +             .lockless       =3D
-> > +                     IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS=
-),
-> >       };
-> >
-> >       return __kvm_handle_hva_range(kvm, &range).ret;
-> > @@ -697,6 +707,8 @@ static __always_inline int kvm_handle_hva_range_no_=
-flush(struct mmu_notifier *mn
-> >               .on_lock        =3D (void *)kvm_null_fn,
-> >               .flush_on_ret   =3D false,
-> >               .may_block      =3D false,
-> > +             .lockless       =3D
-> > +                     IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS=
-),
->
-> kvm_handle_hva_range{,_no_flush}() have very generic names but
-> they're intimately tied to the "young" notifiers. Whereas
-> __kvm_handle_hva_range() is the truly generic handler function.
->
-> This is arguably a pre-existing issue, but adding
-> CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS makes these functions even more
-> intamtely tied to the "young" notifiers.
->
-> We could rename kvm_handle_hva_range{,_no_flush}() but I think the
-> cleanest thing to do might be to just drop them entirely and move their
-> contents into their callers (there are only 2 callers of these 3
-> functions). That will create a little duplication but IMO will make the
-> code easier to read.
->
-> And then we can also rename __kvm_handle_hva_range() to
-> kvm_handle_hva_range().
+> > +description:
+> > +  This binding is for the Sharp Memory LCD monochrome displays.
+> 
+> Do not say that binding is a binding... instead describe hardware.
+> 
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sharp,ls010b7dh04
+> > +      - sharp,ls011b7dh03
+> > +      - sharp,ls012b7dd01
+> > +      - sharp,ls013b7dh03
+> > +      - sharp,ls013b7dh05
+> > +      - sharp,ls018b7dh02
+> > +      - sharp,ls027b7dh01
+> > +      - sharp,ls027b7dh01a
+> > +      - sharp,ls032b7dd02
+> > +      - sharp,ls044q7dh01
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  spi-cs-high: true
+> 
+> You can drop it.
+> 
+> > +
+> > +  spi-max-frequency:
+> > +    maximum: 2000000
+> > +
+> > +  vcom-mode:
+> 
+> Missing vendor prefix.
+> 
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: |
+> > +      VCOM is a signal that prevents DC bias from being built up in
+> > +      the panel resulting in pixels being forever stuck in one state.
+> > +      vcom-mode can be set to one of three modes
+> > +
+> > +      SHARP_MEMORY_SOFTWARE_VCOM - This method uses a kthread to periodically send a
+> > +      "maintain display" message to the display, toggling the vcom
+> > +      bit on and off with each message
+> 
+> You described Linux, this is not suitable for bindings.
+> 
+> > +
+> > +      SHARP_MEMORY_EXTERNAL_VCOM - This method relies on an external clock to generate
+> > +      the signal on the EXTCOMM pin
+> > +
+> > +      SHARP_MEMORY_PWM_VCOM - This method uses a pwm device to generate the signal
+> > +      on the EXTCOMM pin
+> 
+> I don't see why do you even need this property. Just choose the best
+> option based on available connections/pins.
+> 
 
-Thanks for the suggestion, I think this is a good idea. I'm curious
-how others feel, as this indeed does duplicate the code some. Perhaps
-it is better just to rename kvm_handle_hva_range() to
-kvm_handle_hva_range_age() or something like that, and something
-similar for _no_flush(). :/
+I wanted to cover most of the hardware configurations I've seen with these
+displays. This property simplifies the driver implementation and allows the user
+to explicitly state how the VCOM signal will be generated on their platform.
 
-But yeah I think it's fine to just do the manipulation you're
-suggesting. I'll include it in v7 unless others say not to.
+> > +
+> > +    enum: [ 0, 1, 2 ]
+> 
+> Here 0/1/2 but above something entirely else. Just use strings.
+> 
+> > +
+> > +  enable-gpios:
+> > +    maxItems: 1
+> > +    description: Enables display
+> 
+> Drop description and maxItems. :true is enough
+> 
+> > +
+> > +  pwms:
+> > +    maxItems: 1
+> > +    description: External VCOM signal
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - spi-cs-high
+> > +  - vcom-mode
+> > +
+> 
+> allOf:
+> 
+> and missing ref to spi peripheral props
+> 
+> > +if:
+> > +  properties:
+> > +    vcom-mode:
+> > +      # SHARP_MEMORY_PWM_VCOM
+> > +      enum: [2]
+> > +then:
+> > +  required:
+> > +    - pwms
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/display/sharp-memory.h>
+> > +
+> > +    spi {
+> > +            #address-cells = <1>;
+> > +            #size-cells = <0>;
+> 
+> Mess indentation.
+> 
+> Use 4 spaces for example indentation.
+> 
+> > +
+> > +            display@0{
+> > +                    compatible = "sharp,ls013b7dh03";
+> > +                    reg = <0>;
+> > +                    spi-cs-high;
+> > +                    spi-max-frequency = <1000000>;
+> > +                    vcom-mode = <SHARP_MEMORY_SOFTWARE_VCOM>;
+> > +            };
+> > +    };
+> > +...
+> > diff --git a/include/dt-bindings/display/sharp-memory.h b/include/dt-bindings/display/sharp-memory.h
+> > new file mode 100644
+> > index 000000000000..dea14c7bd7ec
+> > --- /dev/null
+> > +++ b/include/dt-bindings/display/sharp-memory.h
+> > @@ -0,0 +1,9 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +#ifndef _DT_BINDINGS_SHARP_MEMORY
+> > +#define _DT_BINDINGS_SHARP_MEMORY
+> > +
+> > +#define SHARP_MEMORY_SOFTWARE_VCOM	0
+> > +#define SHARP_MEMORY_EXTERNAL_VCOM	1
+> > +#define SHARP_MEMORY_PWM_VCOM		2
+> 
+> Nope, drop the binding.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Alex
 
