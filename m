@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-263140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE7F93D19B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4222E93D19E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE593282958
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1E41C20FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6CF17A932;
-	Fri, 26 Jul 2024 11:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ABE17B417;
+	Fri, 26 Jul 2024 11:05:19 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DAD17A5AA;
-	Fri, 26 Jul 2024 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042017A92F;
+	Fri, 26 Jul 2024 11:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721991917; cv=none; b=IucRFxITUB1rIV/o3VjkRtZl0KnoNfDzWE6TS/zyhemoC3yclLub6+gfK9EFzSaffO3wZ3M2lNntU2v2sLzF0Jzws8lq1HTJsnZr3baSkzlHRQlJmb75PQZlG1jX2UW6aZ94N02HlQdOnA+2zcez+8LWLbGA7lJRJt7Nev6TEFk=
+	t=1721991919; cv=none; b=g+AO2yOmq/xCr1PsD4Z7ugjLhtEzSkkMQGb0gmyc2OakZEvDW6Fgo6BzMoDWQKUnbc0zgnahBXPPVdlBuuhuyTTZW8k+XCScJxHubfWsPIxsULx7tdGWNiQWfiwyQ0g8+RN+5mN4AwzNpNZcCQxih4DeEhh9s7a5BnREmT+wm2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721991917; c=relaxed/simple;
-	bh=cme7oJn9iUT7d60crBis97v411aBVAM/HX893B8bYLg=;
+	s=arc-20240116; t=1721991919; c=relaxed/simple;
+	bh=hK/mqPXY9PkH/19nKOwDvOwZyEG7y65SoZIcF4CHMDo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GgnL3XNRpa6JSKlpkzbyiYS0pYMdJm7dlAcZL5fUD3EN1vrYcmRu/kl764siLez/ZN21KxmR7KdpYglqQhqSWU10jd2sm6RgrIsKPpCnPCztEqPEGxtY+L9ZbEzTvhqCBPD2+3puDoqJ1NvqKrb0/M8hBWuInh0WPVJLdZKxx+c=
+	 MIME-Version:Content-Type; b=gxwNptSwN2XrIkkLStUUAaFCvuZNFjw1ipl75V1xCQH+HffkDQyxY8xCXqWPXVOIjC7dLBIX4bTH1Y/jzTS3w1p8k0WydQZ2gZ/LaIYgnpm6Ywzh/0pW4CoF0aMFvLTihaJaxaZAE0vtRDTIbYTzt2uIFNOUTtM0g4ij/zszJME=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -47,9 +47,9 @@ To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<kevin_chen@aspeedtech.com>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v1 07/10] arm64: aspeed: Add support for ASPEED AST2700 BMC SoC
-Date: Fri, 26 Jul 2024 19:03:52 +0800
-Message-ID: <20240726110355.2181563-8-kevin_chen@aspeedtech.com>
+Subject: [PATCH v1 08/10] arm64: dts: aspeed: Add initial AST27XX device tree
+Date: Fri, 26 Jul 2024 19:03:53 +0800
+Message-ID: <20240726110355.2181563-9-kevin_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
 References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
@@ -63,50 +63,243 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
 ---
- MAINTAINERS                  |  3 +++
- arch/arm64/Kconfig.platforms | 14 ++++++++++++++
- 2 files changed, 17 insertions(+)
+ arch/arm64/boot/dts/Makefile              |   1 +
+ arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi | 217 ++++++++++++++++++++++
+ 2 files changed, 218 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0a3d9e93689..08609430cfe0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2121,7 +2121,10 @@ Q:	https://patchwork.ozlabs.org/project/linux-aspeed/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/bmc.git
- F:	Documentation/devicetree/bindings/arm/aspeed/
- F:	arch/arm/boot/dts/aspeed/
-+F:	arch/arm64/boot/dts/aspeed/
- F:	arch/arm/mach-aspeed/
-+F:	include/dt-bindings/clock/aspeed,ast2700-clk.h
-+F:	include/dt-bindings/reset/aspeed,ast2700-reset.h
- N:	aspeed
- 
- ARM/AXM LSI SOC
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6c6d11536b42..1db7b6f1ee0a 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -40,6 +40,20 @@ config ARCH_APPLE
- 	  This enables support for Apple's in-house ARM SoC family, starting
- 	  with the Apple M1.
- 
-+config ARCH_ASPEED
-+	bool "Aspeed SoC family"
-+	select MACH_ASPEED_G7
-+	help
-+	  Say yes if you intend to run on an Aspeed ast2700 or similar
-+	  seventh generation Aspeed BMCs.
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index 21cd3a87f385..c909c19dc5dd 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -34,3 +34,4 @@ subdir-y += tesla
+ subdir-y += ti
+ subdir-y += toshiba
+ subdir-y += xilinx
++subdir-y += aspeed
+diff --git a/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+new file mode 100644
+index 000000000000..858ab95251e4
+--- /dev/null
++++ b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+@@ -0,0 +1,217 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <dt-bindings/clock/aspeed,ast2700-clk.h>
++#include <dt-bindings/reset/aspeed,ast2700-reset.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/aspeed-scu-ic.h>
 +
-+config MACH_ASPEED_G7
-+	bool "Aspeed SoC AST2700"
-+	help
-+	  Say yes if you intend to run on an Aspeed ast2700
-+	  seventh generation Aspeed BMCs.
-+	  Aspeed ast2700 BMC based on the Cortex A35.
++/ {
++	model = "Aspeed BMC";
++	compatible = "aspeed,ast2700";
++	#address-cells = <2>;
++	#size-cells = <2>;
++	interrupt-parent = <&gic>;
 +
- menuconfig ARCH_BCM
- 	bool "Broadcom SoC Support"
- 
++	aliases {
++		serial12 = &uart12;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a35";
++			enable-method = "psci";
++			device_type = "cpu";
++			reg = <0>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0x8000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&l2>;
++		};
++
++		cpu@1 {
++			compatible = "arm,cortex-a35";
++			enable-method = "psci";
++			device_type = "cpu";
++			reg = <1>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0x8000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&l2>;
++		};
++
++		cpu@2 {
++			compatible = "arm,cortex-a35";
++			enable-method = "psci";
++			device_type = "cpu";
++			reg = <2>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0x8000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&l2>;
++		};
++
++		cpu@3 {
++			compatible = "arm,cortex-a35";
++			enable-method = "psci";
++			device_type = "cpu";
++			reg = <3>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0x8000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>;
++			next-level-cache = <&l2>;
++		};
++
++		l2: l2-cache0 {
++			compatible = "cache";
++			cache-size = <0x80000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++	};
++
++	pmu {
++		compatible = "arm,cortex-a35-pmu";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	gic: interrupt-controller@12200000 {
++		compatible = "arm,gic-v3";
++		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		interrupt-parent = <&gic>;
++		#redistributor-regions = <1>;
++		reg =	<0 0x12200000 0 0x10000>,		//GICD
++			<0 0x12280000 0 0x80000>,		//GICR
++			<0 0x40440000 0 0x1000>;		//GICC
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++	};
++
++	soc0: soc@10000000 {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		soc0_sram: sram@10000000 {
++			compatible = "mmio-sram";
++			reg = <0x0 0x10000000 0x0 0x20000>;	/* 128KiB SRAM on soc0 */
++			ranges = <0x0 0x0 0x0 0x10000000 0x0 0x20000>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			no-memory-wc;
++
++			exported@0 {
++				reg = <0 0x0 0 0x20000>;
++				export;
++			};
++		};
++
++		syscon0: syscon@12c02000 {
++			compatible = "aspeed,ast2700-scu0", "syscon", "simple-mfd";
++			reg = <0x0 0x12c02000 0x0 0x1000>;
++			ranges = <0x0 0x0 0 0x12c02000 0 0x1000>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++
++			silicon-id@0 {
++				compatible = "aspeed,ast2700-silicon-id", "aspeed,silicon-id";
++				reg = <0 0x0 0 0x4>;
++			};
++
++			scu_ic0: interrupt-controller@1D0 {
++				#interrupt-cells = <1>;
++				compatible = "aspeed,ast2700-scu-ic0";
++				reg = <0 0x1d0 0 0xc>;
++				interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
++
++			scu_ic1: interrupt-controller@1E0 {
++				#interrupt-cells = <1>;
++				compatible = "aspeed,ast2700-scu-ic1";
++				reg = <0 0x1e0 0 0xc>;
++				interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++			};
++
++			soc0_rst: reset-controller@200 {
++				reg = <0 0x200 0 0x40>;
++			};
++
++			soc0_clk: clock-controller@240 {
++				reg = <0 0x240 0 0x1c0>;
++			};
++		};
++
++	};
++
++	soc1: soc@14000000 {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		syscon1: syscon@14c02000 {
++			compatible = "aspeed,ast2700-scu1", "syscon", "simple-mfd";
++			reg = <0x0 0x14c02000 0x0 0x1000>;
++			ranges = <0x0 0x0 0x0 0x14c02000 0x0 0x1000>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++
++			soc1_rst: reset-controller@200 {
++				#reset-cells = <1>;
++			};
++
++			soc1_clk: clock-controller@240 {
++				reg = <0 0x240 0 0x1c0>;
++			};
++		};
++
++		uart12: serial@14c33b00 {
++			compatible = "ns16550a";
++			reg = <0x0 0x14c33b00 0x0 0x100>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&syscon1 SCU1_CLK_GATE_UART12CLK>;
++			no-loopback-test;
++			pinctrl-names = "default";
++		};
++	};
++};
++
 -- 
 2.34.1
 
