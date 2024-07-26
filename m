@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-262944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD7993CEF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:41:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F65A93CEF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83573283469
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED93A283281
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C797176AB2;
-	Fri, 26 Jul 2024 07:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CCD176AC0;
+	Fri, 26 Jul 2024 07:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDvVAhnX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="syX+nY1j"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F76176257
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEF1176ABA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721979667; cv=none; b=T1WXmdosRJ9hSwG92lAZUKYNnz+GX264qCpIn8Ana297fV6iORyoAEt2+5uXlMWPCkR85UCbAy6qeEmt5B8YUqbxETcoraAqs8qr3JCwa7FJGaGYOrCb/FYOBMjkToIkp1tXyUZLQAs0DmKJ/0p0K4sVqCbFIOm4K0TEXwzmorw=
+	t=1721979683; cv=none; b=dwJ2y9tTP/7AWX5cMN4YlJj1dzVJTRWuTReff5fjL+qGz4Wa5lmIWBZrqjSCD+cKWg2xbwRqKWefcx//tTOzblZh3FnEX2mRku5mJU4lRZi8bnoolwXGZS0S8eqNv5qqZ/7g4Dv4TydGEcahTtTDpYsUKzkn01WAd1SURDEbkX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721979667; c=relaxed/simple;
-	bh=5596s8iq4z7p649mxvF5CGRs/LiwySptkSSEAsg7RRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2RZjGxZW01QkKlDfLKigDZuxCChpuIPa95o9o+nbU59t0nzPc85YjcRqe6lBRr9TQadrp3ZUrxzwIW6mEyitV8blTxwDYt33wThLk05e4XGP49SghOYiuNkYy89RKGbCPHUdrHZHVlu0a9Z8mU7f3udZHOTZmi10txx26YkTTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDvVAhnX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0939FC32782;
-	Fri, 26 Jul 2024 07:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721979666;
-	bh=5596s8iq4z7p649mxvF5CGRs/LiwySptkSSEAsg7RRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BDvVAhnXdyiJksmxo0SiL/UXK+exX+SGTT5kr6lNZcfjcSDqmmkzrot/+W6Gz9k9b
-	 LgcwuD0F+92YFYzCfQuXwW0INJmGYKE6Wd8OWLlExRwSBBgGUbUWYzTKKpxLX4Hlt3
-	 3Vrk8CJ2Hl8+Vs3g9AvlAFgwyBkkzAWXzWh5CRfEshzbYX36oVSieUkLT7TSOYH1xX
-	 yUIVll0yJG0TbG3PltVD06Xy0MOs1O/P5OxKX5WxP16u6oU6KdR4cxROGImduYXYbt
-	 oiI8y7pcFICNV5Np7yfwAhctTIazH/6kUFx0mX5kbxZ08okbW5JWKX5x0fEf8qKg5e
-	 IXCmWw+K3alAg==
-Date: Fri, 26 Jul 2024 09:41:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Kernel hackers <linux-kernel@vger.kernel.org>, 
-	Patrick Rohr <prohr@google.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: UML/hostfs - mount failure at tip of tree
-Message-ID: <20240726-burggraben-zugluft-351cfa07d2de@brauner>
-References: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
- <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
- <b84a6ef8-7c3b-4c04-81d3-859692d91137@huawei.com>
- <CAHk-=wjH5uKPB6xrWoB8WkBMuLEJO2UsidKE1wV8XSXjAUFO8Q@mail.gmail.com>
- <CANP3RGdgnXOXjnAFe6irf2JwrPsStTLvihKkowpY2ggSgNw7KA@mail.gmail.com>
- <CANP3RGd7AQXPYQVrhjbgEN608Jo7hDUh7nc8VQ62gGQqW0iXMg@mail.gmail.com>
- <4a8ae74e-2f90-4da8-9511-325ca6f67aa6@huawei.com>
+	s=arc-20240116; t=1721979683; c=relaxed/simple;
+	bh=MqAset8Nc45mgIXZhKbsEINkaYQKExHjMptHz97Z1lM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzBN0IpEpIh+ojsvp4WkgV15Dd0di+K584p+MDt45HC79cXNRjKV6QhvbVrCqyD7XYSTIv7Y45uEd+0h/O/WzsqgmjF510yAyEEgnK4k1Pt7J3GsW09Uj6gvlDFeNHyzoIwqtywSiScPmAn59bWVvJ9EXevm2y0U1gwT0yjXNYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=syX+nY1j; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-426526d30aaso13235115e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721979680; x=1722584480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dGuZ9gW9s8hbzxTk97NuO72bufoRV/MO+7ZPtq4qR3Y=;
+        b=syX+nY1jfdqJpL6/N19Zi2CS4agtdhyklacLKJVOLPYapfnGoc+7V1ZFYDP1VveEOJ
+         gTdoWUGtnAiyQIzs6y4AeAeaUOdFjb4U1v9NUNYTYod9ydoqgn8mMVupA/BAcDgMUtpZ
+         NM53rELibsqPx5wCqcBE212OhIISuxTyrn1Y+YzgYDNcux1NZqK+rZZFYigd6WDBn1Mi
+         fOsoBxJ8o5Yvfa7RIm55bJQsMKG/bcvM+YzzLYqEUB+rN4+M/xt4DXu45HZLAkAMOtdW
+         9jrQRm1CyOHeVN27umsfzCT9QXyNX4KWNoxYfkObiJJ0P5jPcCGnJSg4Jml9Xc2o77/x
+         ykGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721979680; x=1722584480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dGuZ9gW9s8hbzxTk97NuO72bufoRV/MO+7ZPtq4qR3Y=;
+        b=TFuRhcQVwgt/sqRota9fjt0tfe6oEc26wYNU4lMJS8ca/c2xMyWbVo5clGsCToegU3
+         5XASe+LIG7UygmZZsXQmHa6RWbjnFJfhwH5khEpT+wNwfNZCTTKg7/4szXApOMp5mVSY
+         dJ77iFdN6ovwSNTQcjWxKOL+/0tb0jvqc6jk7S9tJJN2rTp3mP5Pk31s1d9ouANxQMeA
+         LERSGGeHWKvy5Bj9aX86daOVM6ONS3Koq2beNZ0cyIK3jP/1RJ0moXPz4NtlvklXUBGu
+         L9DhbNjaKyUCvNjLrcH0A98B1p+Jx0SByumepIj3NF+P+B5nNxKpSG0JFgSM9vI10LBN
+         XRUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2KQbJXEO8k7IzZ9zcHdJLtMTxfTh20+BzESKBeTjDpG8+kNHT77dydpv9Os9r3Y/yIGQiWZoxVaN7hLy+jn8uNXIego8Hv7kLZula
+X-Gm-Message-State: AOJu0Yy2Jk9YSRXRYuja0BfFmPbe7V8zUsk033vuRBOwPvarn+97o+mZ
+	2p+vxqiMkumz311PwZr6GJ+M2XPwtSkjqIG4Xa8LFV/Q3r7PNV1nbXrH9T3M05Q7bCelZqtIneC
+	4O1C1YIxTGa8F52tQq9LNA9BlFHLo5hxL6Mxy
+X-Google-Smtp-Source: AGHT+IGVZMl8k8xJUMNdGuAqO6mUXeTU9uHBwsDRosmfkRv3V8tmsmQD2SxE1zeG5jOc3UIamFGu5cu1XFJeRldXWMY=
+X-Received: by 2002:adf:f642:0:b0:368:4e38:790c with SMTP id
+ ffacd0b85a97d-36b319deb2dmr3199790f8f.14.1721979679422; Fri, 26 Jul 2024
+ 00:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a8ae74e-2f90-4da8-9511-325ca6f67aa6@huawei.com>
+References: <20240725183325.122827-1-ojeda@kernel.org> <20240725183325.122827-6-ojeda@kernel.org>
+In-Reply-To: <20240725183325.122827-6-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 26 Jul 2024 09:41:05 +0200
+Message-ID: <CAH5fLgi9xN2igQK4Y8ZCU+iPVMH2RaWGQ7OO2OV-XROJba_2fw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] objtool/rust: list `noreturn` Rust functions
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 05:49:16PM GMT, Hongbo Li wrote:
-> 
-> 
-> On 2024/7/24 11:59, Maciej Żenczykowski wrote:
-> > On Tue, Jul 23, 2024 at 7:55 PM Maciej Żenczykowski <maze@google.com> wrote:
-> > > 
-> > > On Tue, Jul 23, 2024 at 7:22 PM Linus Torvalds
-> > > <torvalds@linux-foundation.org> wrote:
-> > > > 
-> > > > On Tue, 23 Jul 2024 at 18:35, Hongbo Li <lihongbo22@huawei.com> wrote:
-> > > > > 
-> > > > > I apologize for causing this issue. I am currently tracking it down.  If
-> > > > > reverting this can solve the problem, you can revert it first.
-> > > > 
-> > > > I don't get the feeling that this is _so_ urgent that it needs to be
-> > > > reverted immediately - let's give it at least a few days and see if
-> > > > you (or somebody else) figures out the bug.
-> > > > 
-> > > > Maciej - if you can verify that folio conversion fix suggestion of
-> > > > mine (or alternatively report that it doesn't help and I was barking
-> > > > up the wrong tree), that would be great.
-> > > 
-> > > That appears to fix the folio patch indeed (ie. I no longer need to revert it).
-> > > 
-> > > The tests are still super unhappy, but I've yet to fix our tests very
-> > > broken netlink parser for changes that released in 6.10, so that may
-> > > be unrelated ;-)
-> > 
-> > +++ fs/hostfs/hostfs_kern.c:
-> >   static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
-> >   {
-> >          struct hostfs_fs_info *fsi = sb->s_fs_info;
-> > -       const char *host_root = fc->source;
-> > +       const char *host_root = "/";
-> > 
-> This doesn't work in case where the host directory is designated (such as
-> mount -t hostfs hostfs -o /home /host).
-> 
-> I can fix this by the following patch, the root cause of this issue is the
-> incorrect parsing of the host directory. The original mount path will use
-> `parse_monolithic` to parse the host directory. For the new mount api, it
-> use `parse_param` directly. So we should call `fsconfig(fd,
-> FSCONFIG_SET_STRING, "hostfs", "xxx", 0)` to mount the hostfs(I think may be
-> we should add hostfs as the key for host directory.). This may need
-> Christian's reviews.:
+On Thu, Jul 25, 2024 at 8:35=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Rust functions may be `noreturn` (i.e. diverging) by returning the
+> "never" type, `!`, e.g.
+>
+>     fn f() -> ! {
+>         loop {}
+>     }
+>
+> Thus list the known `noreturn` functions to avoid such warnings.
+>
+> Without this, `objtool` would complain if enabled for Rust, e.g.:
+>
+>     rust/core.o: warning: objtool:
+>     _R...9panic_fmt() falls through to next function _R...18panic_nounwin=
+d_fmt()
+>
+>     rust/alloc.o: warning: objtool:
+>     .text: unexpected end of section
+>
+> In order to do so, we cannot match symbols' names exactly, for two
+> reasons:
+>
+>   - Rust mangling scheme [1] contains disambiguators [2] which we
+>     cannot predict (e.g. they may vary depending on the compiler version)=
+.
+>
+>     One possibility to solve this would be to parse v0 and ignore/zero
+>     those before comparison.
+>
+>   - Some of the diverging functions come from `core`, i.e. the Rust
+>     standard library, which may change with each compiler version
+>     since they are implementation details (e.g. `panic_internals`).
+>
+> Thus, to workaround both issues, only part of the symbols are matched,
+> instead of using the `NORETURN` macro in `noreturns.h`.
+>
+> Ideally, just like for the C side, we should have a better solution. For
+> instance, the compiler could give us the list via something like:
+>
+>     $ rustc --emit=3Dnoreturns ...
+>
+> Link: https://rust-lang.github.io/rfcs/2603-rust-symbol-name-mangling-v0.=
+html [1]
+> Link: https://doc.rust-lang.org/rustc/symbol-mangling/v0.html#disambiguat=
+or [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-I see you sent the patch. I looked at it yesterday but didn't really dig
-into it. Let me go do that now. I'll have a pr ready for Linus latest
-tomorrow.
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
