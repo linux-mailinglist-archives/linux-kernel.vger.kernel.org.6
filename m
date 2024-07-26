@@ -1,260 +1,212 @@
-Return-Path: <linux-kernel+bounces-263367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6359693D4F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0798193D4F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83F4B22FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFFCA28796A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D693DDC7;
-	Fri, 26 Jul 2024 14:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91ABFC0E;
+	Fri, 26 Jul 2024 14:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s2y8zC8D"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSWKFfta"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD271B86CF;
-	Fri, 26 Jul 2024 14:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D753217C64;
+	Fri, 26 Jul 2024 14:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722003472; cv=none; b=TOr5EPhpWufEzKv8Z2a50LZV71lcM+rlp3jRReyD/E6hRa5AofXKGCsbhyeL0zJfIUZ0Ven3+A99xk/NY/or+Fh88E1mwtN8cPAYHnmqQUlBmZdzaNLM/8JTsOmHqtJzslZTCf2YShLjg4Zg57vzpP7TOsmd7uRLCvGAlse+DDs=
+	t=1722003484; cv=none; b=l00xRFxmt6+d2HuZrsdl8aG5GuyKgJl8kdEXdVG7meNif6QGqctITjb40TThh7nztnO4wdDcLpjl2Jw5nF8QEyLruUegbXbbsVkTZjqgKUpeTBpJ3OWWi1tLxCpEyWfTpndTxd6fKta9Ikt5xmW7t2fF8D1wkVD+JyMpeoGQGGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722003472; c=relaxed/simple;
-	bh=m94Gnu0+cQ/UnRtKqw0/DwecjPO8FUz7R3pX9OR8GkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=kUoq866AbxVbdtq/KOwti32neDen2pbRN2V8Hnn07d8qu0eWa0do13Jm+2fHyhCTbJSp9HDJFvJMYUn/UZVrF7CFXEgkEQdDwdoPmF+CcikZL+yTglJFpR7jy5+/Q5HmXh1YLPChZLHuQRwJY6VFv/NfAr8i+islSH+L9rOY3E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s2y8zC8D; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q9MAYb012066;
-	Fri, 26 Jul 2024 14:17:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
-	 bh=JN8gM5hqSOOU4zsShpolyYk8YQiJS54LpmLTQIvjPtg=; b=s2y8zC8DQwoH
-	7Y4HVIrpOFwDg8hh2n4aQYIXljB7ekc3CVfEFTrflnycVlSLI+xtPkDXuruynYZ6
-	/OUZlA0yaU/ZCLIR5qdWc//+erraZ51mL1msei6lfLZjPSjXjAN93+DdC+cuxLf1
-	y82JxJu/KXl4ddQ5k9ahe0nmEQQtPN1OJ+ND60qWZtPfNfZc2pOU0ijMzzmpsHeJ
-	ZcnxUiVlvNWNuS5y7Y99EcYsAxKRC2Ci/WwNSDy2adTVsSFfyHBT05GFtVaY4aSg
-	qxfKthyr6oJ63HPsrRYuKcRRuTPzfahkzggN1bWSSfrEQN7xx6mXmvq7Wm0jaVV1
-	/AzHHMF3nw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m2kv1p76-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 14:17:42 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QEAF1s007105;
-	Fri, 26 Jul 2024 14:17:42 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40gy2pue3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 14:17:41 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QEHaXb48759280
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Jul 2024 14:17:38 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 20FFD20043;
-	Fri, 26 Jul 2024 14:17:36 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B446D20040;
-	Fri, 26 Jul 2024 14:17:35 +0000 (GMT)
-Received: from localhost (unknown [9.171.57.197])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 26 Jul 2024 14:17:35 +0000 (GMT)
-Date: Fri, 26 Jul 2024 16:17:34 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.11 merge window
-Message-ID: <your-ad-here.call-01722003454-ext-3193@work.hours>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xLlS1AqWO2kchdTP9WCVLDwnLFeDZqiu
-X-Proofpoint-ORIG-GUID: xLlS1AqWO2kchdTP9WCVLDwnLFeDZqiu
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1722003484; c=relaxed/simple;
+	bh=GEuaYMdifYZj2qLr1Mq99LFYCiUGknXwcHjv8sE9EFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYhKA3BcQkXD5hNjhEM0iouvvAZAs6fpM0WbVg6hPNSv/EXZqFND+PMJeLy939Ejl2CZiy7ayxpjEjI3bRF7+8aHvlFnadVx3zfaP86X0MjiXLuifkjYAGw7idOEOS78WrH1+/S/7wjhfxQW2RNmmfkLm2P3jVLYCxgVc13wBfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSWKFfta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEBCC32782;
+	Fri, 26 Jul 2024 14:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722003484;
+	bh=GEuaYMdifYZj2qLr1Mq99LFYCiUGknXwcHjv8sE9EFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FSWKFftauRsaLRxZmdLfuuVG2ePLQOFeHnnI6QJWpy+1ZehwCup3TY6FvOnsIjI2u
+	 Yue3izIg8qvGX07TSDEQWnotMFQHxwd2NeuPbYxZlD372ZImq6WpdP4szqiSlzsgIr
+	 17K9R8Yq4RNUN5Rnoyn55sQWLjSmvnPbD3lOBcmzKII2nfB5JQeHJLsFPgLS9k/pKw
+	 PNvc23TGdfHzoe8XlSpbFTYFeDPeta+TRSNDZJrCq6axAqqOo4vIJv/wC9TDLkoQ2G
+	 630fSxQ40MougIhHfpuzAAfovjMqXOJwZNBf3amTUjtMg8HII8kQrWJpLQT7wNhqjH
+	 HJWZoOFzxnIAw==
+Date: Fri, 26 Jul 2024 11:18:01 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
+	gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
+	leo.yan@linux.dev, anshuman.khandual@arm.com,
+	James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf
+ sessions
+Message-ID: <ZqOwGWcYosGe9ru4@x1>
+References: <20240722101202.26915-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_11,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407260091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722101202.26915-1-james.clark@linaro.org>
 
-Hello Linus,
+On Mon, Jul 22, 2024 at 11:11:42AM +0100, James Clark wrote:
+> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
+> as long as there are fewer than that many ETMs connected to each sink.
 
-please pull more s390 updates for 6.11 merge window.
+Hey, may I take the tools part, i.e. patches 0-7 and someone on the ARM
+kernel team pick the driver bits?
 
-Thank you,
-Vasily
-
-The following changes since commit 66ebbdfdeb093e097399b1883390079cd4c3022b:
-
-  Merge tag 'irq-msi-2024-07-22' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2024-07-22 14:02:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-2
-
-for you to fetch changes up to 6dc2e98d5f1de162d1777aee97e59d75d70d07c5:
-
-  s390: Remove protvirt and kvm config guards for uv code (2024-07-23 16:02:33 +0200)
-
-----------------------------------------------------------------
-more s390 updates for 6.11 merge window
-
-- Fix KMSAN build breakage caused by the conflict between s390 and
-  mm-stable trees
-
-- Add KMSAN page markers for ptdump
-
-- Add runtime constant support
-
-- Fix __pa/__va for modules under non-GPL licenses by exporting necessary
-  vm_layout struct with EXPORT_SYMBOL to prevent linkage problems
-
-- Fix an endless loop in the CF_DIAG event stop in the CPU Measurement
-  Counter Facility code when the counter set size is zero
-
-- Remove the PROTECTED_VIRTUALIZATION_GUEST config option and enable
-  its functionality by default
-
-- Support allocation of multiple MSI interrupts per device and improve
-  logging of architecture-specific limitations
-
-- Add support for lowcore relocation as a debugging feature to catch
-  all null ptr dereferences in the kernel address space, improving
-  detection beyond the current implementation's limited write access
-  protection
-
-- Clean up and rework CPU alternatives to allow for callbacks and early
-  patching for the lowcore relocation
-
-----------------------------------------------------------------
-Alexander Gordeev (1):
-      s390/boot: Do not assume the decompressor range is reserved
-
-Gerd Bayer (2):
-      s390/pci: Refactor arch_setup_msi_irqs()
-      s390/pci: Allow allocation of more than 1 MSI interrupt
-
-Heiko Carstens (11):
-      s390: Add runtime constant support
-      s390/alternatives: Use consistent naming
-      s390/alternatives: Merge both alternative header files
-      s390/alternatives: Move text sync functions
-      s390/uaccess: Make s390_kernel_write() usable for decompressor
-      s390/alternatives: Rework to allow for callbacks
-      s390/nospec: Push down alternative handling
-      s390/alternatives: Remove alternative facility list
-      s390/nmi: Simplify ptregs setup
-      s390/entry: Move SIE indicator flag to thread info
-      s390/atomic_ops: Disable flag outputs constraint for GCC versions below 14.2.0
-
-Ilya Leoshkevich (2):
-      s390/kmsan: Fix merge conflict with get_lowcore() introduction
-      s390/ptdump: Add KMSAN page markers
-
-Janosch Frank (1):
-      s390: Remove protvirt and kvm config guards for uv code
-
-Sven Schnelle (20):
-      s390/smp: Handle restart interrupt on ipl cpu
-      s390/smp: Switch pcpu_devices to percpu
-      s390: Move CIF flags to struct pcpu
-      s390/alternatives: Remove noaltinstr option
-      s390/alternatives: Allow early alternative patching in decompressor
-      s390: Add infrastructure to patch lowcore accesses
-      s390/head64: Make startup code ready for lowcore relocation
-      s390/entry: Make __sie64a() ready for lowcore relocation
-      s390/entry: Add base register to MBEAR macro
-      s390/entry: Add base register to SIEEXIT macro
-      s390/entry: Add base register to CHECK_VMAP_STACK/CHECK_STACK macro
-      s390/entry: Make pgm_check_handler() ready for lowcore relocation
-      s390/entry: Make int handlers ready for lowcore relocation
-      s390/entry: Make mchk_int_handler() ready for lowcore relocation
-      s390/entry: Make restart_int_handler() ready for lowcore relocation
-      s390/entry: Make __switch_to() ready for lowcore relocation
-      s390/entry: Make ret_from_fork() ready for lowcore relocation
-      s390/entry: Make system_call() ready for lowcore relocation
-      s390/kdump: Make kdump ready for lowcore relocation
-      s390/boot: Add cmdline option to relocate lowcore
-
-Thomas Richter (1):
-      s390/cpum_cf: Fix endless loop in CF_DIAG event stop
-
-Vasily Gorbik (1):
-      s390/setup: Fix __pa/__va for modules under non-GPL licenses
-
- Documentation/admin-guide/kernel-parameters.txt |   3 -
- arch/s390/Kconfig                               |  11 --
- arch/s390/boot/Makefile                         |   3 +-
- arch/s390/boot/alternative.c                    |   3 +
- arch/s390/boot/boot.h                           |   4 +
- arch/s390/boot/ipl_parm.c                       |   3 +
- arch/s390/boot/startup.c                        |  14 +-
- arch/s390/boot/uv.c                             |   8 -
- arch/s390/boot/uv.h                             |  13 --
- arch/s390/boot/vmem.c                           |  11 +-
- arch/s390/configs/debug_defconfig               |   1 -
- arch/s390/configs/defconfig                     |   1 -
- arch/s390/include/asm/abs_lowcore.h             |   8 +
- arch/s390/include/asm/alternative-asm.h         |  57 ------
- arch/s390/include/asm/alternative.h             | 154 +++++++++++++--
- arch/s390/include/asm/atomic_ops.h              |   3 +-
- arch/s390/include/asm/facility.h                |   1 -
- arch/s390/include/asm/kmsan.h                   |   6 +-
- arch/s390/include/asm/lowcore.h                 |  32 ++-
- arch/s390/include/asm/nospec-branch.h           |   9 +
- arch/s390/include/asm/page.h                    |   2 -
- arch/s390/include/asm/processor.h               |  30 ++-
- arch/s390/include/asm/runtime-const.h           |  77 ++++++++
- arch/s390/include/asm/smp.h                     |   1 -
- arch/s390/include/asm/spinlock.h                |   2 +-
- arch/s390/include/asm/thread_info.h             |   1 +
- arch/s390/include/asm/uaccess.h                 |   9 +-
- arch/s390/include/asm/uv.h                      |  32 ---
- arch/s390/kernel/Makefile                       |   3 +-
- arch/s390/kernel/abs_lowcore.c                  |   1 +
- arch/s390/kernel/alternative.c                  |  75 +++----
- arch/s390/kernel/alternative.h                  |   0
- arch/s390/kernel/asm-offsets.c                  |   5 +-
- arch/s390/kernel/early.c                        |   9 +-
- arch/s390/kernel/entry.S                        | 251 +++++++++++++-----------
- arch/s390/kernel/head64.S                       |   8 +-
- arch/s390/kernel/ipl.c                          |   2 +-
- arch/s390/kernel/machine_kexec.c                |   2 +-
- arch/s390/kernel/nospec-branch.c                |  16 +-
- arch/s390/kernel/nospec-sysfs.c                 |   2 +-
- arch/s390/kernel/perf_cpum_cf.c                 |  14 +-
- arch/s390/kernel/processor.c                    |  20 +-
- arch/s390/kernel/reipl.S                        |  26 ++-
- arch/s390/kernel/setup.c                        |   7 +-
- arch/s390/kernel/smp.c                          | 141 ++++++-------
- arch/s390/kernel/uv.c                           |  35 ++--
- arch/s390/kernel/vmlinux.lds.S                  |   5 +
- arch/s390/lib/spinlock.c                        |   4 +-
- arch/s390/mm/dump_pagetables.c                  |  30 +++
- arch/s390/mm/maccess.c                          |   4 +-
- arch/s390/pci/pci_irq.c                         | 110 +++++++----
- drivers/s390/char/Kconfig                       |   2 +-
- 52 files changed, 746 insertions(+), 525 deletions(-)
- create mode 100644 arch/s390/boot/alternative.c
- delete mode 100644 arch/s390/include/asm/alternative-asm.h
- create mode 100644 arch/s390/include/asm/runtime-const.h
- create mode 100644 arch/s390/kernel/alternative.h
+- Arnaldo
+ 
+> Each sink owns its own trace ID map, and any Perf session connecting to
+> that sink will allocate from it, even if the sink is currently in use by
+> other users. This is similar to the existing behavior where the dynamic
+> trace IDs are constant as long as there is any concurrent Perf session
+> active. It's not completely optimal because slightly more IDs will be
+> used than necessary, but the optimal solution involves tracking the PIDs
+> of each session and allocating ID maps based on the session owner. This
+> is difficult to do with the combination of per-thread and per-cpu modes
+> and some scheduling issues. The complexity of this isn't likely to worth
+> it because even with multiple users they'd just see a difference in the
+> ordering of ID allocations rather than hitting any limits (unless the
+> hardware does have too many ETMs connected to one sink).
+> 
+> Per-thread mode works but only until there are any overlapping IDs, at
+> which point Perf will error out. Both per-thread mode and sysfs mode are
+> left to future changes, but both can be added on top of this initial
+> implementation and only sysfs mode requires further driver changes.
+> 
+> The HW_ID version field hasn't been bumped in order to not break Perf
+> which already has an error condition for other values of that field.
+> Instead a new minor version has been added which signifies that there
+> are new fields but the old fields are backwards compatible.
+> 
+> Changes since v5:
+>   
+>   * Hide queue number printout behind -v option
+>   * Style change in cs_etm__process_aux_output_hw_id()
+>   * Move new format enum to an earlier commit to reduce churn
+> 
+> Changes since v4:
+> 
+>   * Fix compilation failure when TRACE_ID_DEBUG is set
+>   * Expand comment about not freeing individual trace IDs in
+>     free_event_data()
+> 
+> Changes since v3:
+> 
+>   * Fix issue where trace IDs were overwritten by possibly invalid ones
+>     by Perf in unformatted mode. Now the HW_IDs are also used for
+>     unformatted mode unless the kernel didn't emit any.
+>   * Add a commit to check the OpenCSD version.
+>   * Add a commit to not save invalid IDs in the Perf header.
+>   * Replace cs_etm_queue's formatted and formatted_set members with a
+>     single enum which is easier to use.
+>   * Drop CORESIGHT_TRACE_ID_UNUSED_FLAG as it's no longer needed.
+>   * Add a commit to print the queue number in the raw dump.
+>   * Don't assert on the number of unformatted decoders if decoders == 0.
+> 
+> 
+> Changes since v2:
+> 
+>   * Rebase on coresight-next 6.10-rc2 (b9b25c8496).
+>   * Fix double free of csdev if device registration fails.
+>   * Fix leak of coresight_trace_id_perf_start() if trace ID allocation
+>     fails.
+>   * Don't resend HW_ID for sink changes in per-thread mode. The existing
+>     CPU field on AUX records can be used to track this instead.
+>   * Tidy function doc for coresight_trace_id_release_all()
+>   * Drop first two commits now that they are in coresight-next
+>   * Add a commit to make the trace ID spinlock local to the map
+> 
+> Changes since V1:
+> 
+>  * Rename coresight_device.perf_id_map to perf_sink_id_map.
+>  * Instead of outputting a HW_ID for each reachable ETM, output
+>    the sink ID and continue to output only the HW_ID once for
+>    each mapping.
+>  * Keep the first two Perf patches so that it applies cleanly
+>    on coresight-next, although they have been applied on perf-tools-next
+>  * Add new *_map() functions to the trace ID public API instead of
+>    modifying existing ones.
+>  * Collapse "coresight: Pass trace ID map into source enable" into
+>    "coresight: Use per-sink trace ID maps for Perf sessions" because the
+>    first commit relied on the default map being accessible which is no
+>    longer necessary due to the previous bullet point.
+> 
+> 
+> James Clark (17):
+>   perf: cs-etm: Create decoders after both AUX and HW_ID search passes
+>   perf: cs-etm: Allocate queues for all CPUs
+>   perf: cs-etm: Move traceid_list to each queue
+>   perf: cs-etm: Create decoders based on the trace ID mappings
+>   perf: cs-etm: Only save valid trace IDs into files
+>   perf: cs-etm: Support version 0.1 of HW_ID packets
+>   perf: cs-etm: Print queue number in raw trace dump
+>   perf: cs-etm: Add runtime version check for OpenCSD
+>   coresight: Remove unused ETM Perf stubs
+>   coresight: Clarify comments around the PID of the sink owner
+>   coresight: Move struct coresight_trace_id_map to common header
+>   coresight: Expose map arguments in trace ID API
+>   coresight: Make CPU id map a property of a trace ID map
+>   coresight: Use per-sink trace ID maps for Perf sessions
+>   coresight: Remove pending trace ID release mechanism
+>   coresight: Emit sink ID in the HW_ID packets
+>   coresight: Make trace ID map spinlock local to the map
+> 
+>  drivers/hwtracing/coresight/coresight-core.c  |  37 +-
+>  drivers/hwtracing/coresight/coresight-dummy.c |   3 +-
+>  .../hwtracing/coresight/coresight-etm-perf.c  |  43 +-
+>  .../hwtracing/coresight/coresight-etm-perf.h  |  18 -
+>  .../coresight/coresight-etm3x-core.c          |   9 +-
+>  .../coresight/coresight-etm4x-core.c          |   9 +-
+>  drivers/hwtracing/coresight/coresight-priv.h  |   1 +
+>  drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
+>  drivers/hwtracing/coresight/coresight-sysfs.c |   3 +-
+>  .../hwtracing/coresight/coresight-tmc-etr.c   |   5 +-
+>  drivers/hwtracing/coresight/coresight-tmc.h   |   5 +-
+>  drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
+>  .../hwtracing/coresight/coresight-trace-id.c  | 138 ++--
+>  .../hwtracing/coresight/coresight-trace-id.h  |  70 +-
+>  include/linux/coresight-pmu.h                 |  17 +-
+>  include/linux/coresight.h                     |  21 +-
+>  tools/build/feature/test-libopencsd.c         |   4 +-
+>  tools/include/linux/coresight-pmu.h           |  17 +-
+>  tools/perf/Makefile.config                    |   2 +-
+>  tools/perf/arch/arm/util/cs-etm.c             |  11 +-
+>  .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  49 +-
+>  .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   3 +-
+>  .../util/cs-etm-decoder/cs-etm-min-version.h  |  13 +
+>  tools/perf/util/cs-etm.c                      | 629 +++++++++++-------
+>  tools/perf/util/cs-etm.h                      |  12 +-
+>  25 files changed, 650 insertions(+), 475 deletions(-)
+>  create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
+> 
+> -- 
+> 2.34.1
 
