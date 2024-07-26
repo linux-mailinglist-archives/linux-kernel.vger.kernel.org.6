@@ -1,215 +1,175 @@
-Return-Path: <linux-kernel+bounces-263374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CA393D515
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:26:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B883C93D52E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3CB1F24B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F409285BAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9E4168C7;
-	Fri, 26 Jul 2024 14:26:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3B1101E2;
-	Fri, 26 Jul 2024 14:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E465218EAB;
+	Fri, 26 Jul 2024 14:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T95WVML+"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5B3812;
+	Fri, 26 Jul 2024 14:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722003971; cv=none; b=Hk0K5QSUKTd2iONqO0O/YCDuZen9qrJuTZSyYCX7n7+4mupYileTzqYp+Hry+RH8Lm8esgzIemKuI2sycH/ekklL2OlomRVHIa2nShf936ENyPrMDoTyN0v5bfzeLgAUeTkvCGwbEWCYleWjZqPGN6C/S5gio4BP59ljfgkNZDI=
+	t=1722004586; cv=none; b=TTQCdaFviDi9aSrUIrFVeom34oEjpZUC3CC4dd4Beek5apJX7r587GnOUBBFCBQxAfE6Xm0AhvSncQKFsw59r1vljFOsBWGE3hMXyATJsTRxuXZNWGHCs+LZ8m6ABCTOskE/YCiGPMWSpJ3MwnYAI5qKLUtHaeOX1zjFz4omZ/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722003971; c=relaxed/simple;
-	bh=0yQOfSEe0mMjYbQZjqTYHwDiX48cbJukCpsISMhUjac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Db7pZ2YPfSrqxBcYr0KMMFgwXRzcMArfxbn0mFKOZ6h9hm6D0ZFXK8fgsosEDos7Gx5CWDpyZSPsJo1SFYSmKb1JDQ8pCh0l31RpIkVnu9yEK/+HRWZlATiB68LSxYPeYUBcSQMP4idUvpL8Rdfsvyias/5GOJW766+sbyiCVqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B9B01007;
-	Fri, 26 Jul 2024 07:26:34 -0700 (PDT)
-Received: from [10.57.94.37] (unknown [10.57.94.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5F413F5A1;
-	Fri, 26 Jul 2024 07:26:05 -0700 (PDT)
-Message-ID: <6476a228-847b-4804-9229-c11a881663c7@arm.com>
-Date: Fri, 26 Jul 2024 15:26:04 +0100
+	s=arc-20240116; t=1722004586; c=relaxed/simple;
+	bh=4Dd5AoHU0SMLTCIF6OFvhFgmGSeR8YEhVFZWnBmhg+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJBG5YCYGuHiaJX669+Xm1RpbwMtFElyn/EojpLeeuPF75SPES/Guq7ZKAd8iPhdO3BJuVYYyjs/NqE+ZjTQotY3ITLPxUAmN0QrJqlFnt5FbscYHpERVLMYiJ07hKc0rwXb6u2sBCWSktqiPGvuXVauYslcQKkQhWCX3plxzvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T95WVML+; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d5aeaa9751so717269eaf.1;
+        Fri, 26 Jul 2024 07:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722004584; x=1722609384; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bh29toBTVf8xzVna8B6Q5StEADLpjsmJZZuQq5lxN00=;
+        b=T95WVML+574zogKm1EW134Pt36kAd5gMmqIVMsUxvh6Wyp5KlPIM7qW9a3GlUAcPh0
+         DirzIB2TvmGqE38UPRbUTY+0nPhbc7HVvGEsO58zvtH62MunqEHu/0AKOP5gkQlZG27e
+         SikbnRocmFcyQfUdTOoVNpM7y/oz2qrBjjKIbyIFEzOPek14ayyPOH5vo30g9K2mwHDQ
+         faAYyIrNmZRBBVb4anUUcm6uGtrKqhHdd9XZC05rzH0wg8q26tp+dx6bOj9REtrW+UGh
+         THEXyGj4PIP7vmfbUEenwtQu3rGHRsfZlFDA6JyDb7LpHk0zhp+QURFZjpvnqchiQMlD
+         Vuug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722004584; x=1722609384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bh29toBTVf8xzVna8B6Q5StEADLpjsmJZZuQq5lxN00=;
+        b=eVlr2SfycXPSZld25Bx5/icpDsjZoCCbZfKR4A5Ahv4VHPrLidHbkwRFCjxQWLj79z
+         jEy8scBMa5zGL7zPIUSUMIaSIQi/zzujcY3cVGKilMoJHZT2FkoWNzhH8gTLF0gsL/8o
+         50oJJehxthVF+S0+B2bk6QebRy6VkopAd6tO0hSmbWiEVOuMI1QWlGZm+YpO3fwybFsk
+         ADHBiranILymTZVu1N/CEM8R5jMustbn/1P3xXyaC67wosOYoPZ/is/mEYFp/kEdbu6u
+         zW7tiuwlPLa1nFLndY6MtnYw8fv8Y3mzSDqFoa1lVkrHCUvegwV1M9EONILlBmgEzWK+
+         bA2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXG04UG/YFzxpBLjua+FfGoxSWpqcX/vfpyFhzreTGd05mSgV5NAbqcVDUSKG9EhFgYwmBBGXyQZOVmejbtnfj0ds4NcDkvO1wENg0iaC7TlLLP08VBnoOahiBfSMX8FRjwhN5Lj/R9+zXjJrxsuvjZrpTCYyIk75HWklB7mEL8W7bekODRuPo=
+X-Gm-Message-State: AOJu0Yysq7ziKyKXYHL5GscxXYiW1n5wkbfRs4RphqApNQak6ADsDyaf
+	8KaOIbC6gYOUZFhhP8jYLchbFfAbmPKXiPim/DarzYx79SnK1aG7
+X-Google-Smtp-Source: AGHT+IHVj3Io/Se1zpac5kyA9nJZOi+gzcUQgfuFUuJLo90pSUL7UIAfe8asXAwD7BCwOyP/S7L5+g==
+X-Received: by 2002:a05:6358:5694:b0:1aa:b152:c7c5 with SMTP id e5c5f4694b2df-1acf8869d74mr828174255d.12.1722004583487;
+        Fri, 26 Jul 2024 07:36:23 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fae6efbsm17093786d6.127.2024.07.26.07.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 07:36:22 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 90E1F1200043;
+	Fri, 26 Jul 2024 10:26:59 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 26 Jul 2024 10:26:59 -0400
+X-ME-Sender: <xms:M7KjZkeOGYZvyelOvx8VcU1lkk5PYPBY-5k6d6-8pUfcPbeb3x4oIw>
+    <xme:M7KjZmN6HxKVdkYP-gSDvy0QJeCa1DAs2t-0AKaT6K8eyrU5bvHeNyxgFnP7JVNb_
+    nnbdMmvchs1SrZsVw>
+X-ME-Received: <xmr:M7KjZlhmAKTW-7_-oOVMIRx4Wio9MohUChHlg460imFEooyHTD7KwCxlsw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieehgdejkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudff
+    iedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
+    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
+    hmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:M7KjZp8PIh6YY1wlXJPAB2tvnGcwDSBf9fyefcxsLVgRcNeDZhv9gQ>
+    <xmx:M7KjZgtFYfP5H5TFVZXuR9_9GmKqfS2IxLH-6-ZMrffBEjradqsnnw>
+    <xmx:M7KjZgHkfLU5AJXNK4ySQrqXcDMyRLqB1z_qWXS80QgU9QTSOI1CXA>
+    <xmx:M7KjZvOLj_ycMtsy9ALWX-66yAqsPXmEC52r8USklAgd3fMSP_2f7Q>
+    <xmx:M7KjZlO1j0dZVK4FelT0oimbWkHNCU9mMJ0ql8IWv80F7qv5kSqVRr6G>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 26 Jul 2024 10:26:59 -0400 (EDT)
+Date: Fri, 26 Jul 2024 07:26:57 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
+Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
+Message-ID: <ZqOyMbi7xl67UfjY@Boquns-Mac-mini.home>
+References: <20240710032447.2161189-1-boqun.feng@gmail.com>
+ <CAH5fLgjat2Y6RT957BhdOjJHt7rPs0DvZYC6JZ+pHFiP=yDNgA@mail.gmail.com>
+ <ZqE9dzfNrE3Xg3tV@boqun-archlinux>
+ <bcdd74f3-d0c0-4366-976a-5a935081a704@proton.me>
+ <ZqK1l05zcCwGforV@boqun-archlinux>
+ <beaf1fa3-eebe-443c-bc51-abd9348a411d@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-Content-Language: en-GB
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- James Clark <james.clark@linaro.org>
-Cc: coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
- mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com,
- James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240722101202.26915-1-james.clark@linaro.org>
- <ZqOwGWcYosGe9ru4@x1>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <ZqOwGWcYosGe9ru4@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <beaf1fa3-eebe-443c-bc51-abd9348a411d@proton.me>
 
-Hi Arnaldo
-
-On 26/07/2024 15:18, Arnaldo Carvalho de Melo wrote:
-> On Mon, Jul 22, 2024 at 11:11:42AM +0100, James Clark wrote:
->> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
->> as long as there are fewer than that many ETMs connected to each sink.
+On Fri, Jul 26, 2024 at 01:43:38PM +0000, Benno Lossin wrote:
+[...]
+> >>
+> >> You can always get a `&T` from `ARef<T>`, since it implements `Deref`.
+> >>
+> > 
+> > Yeah, but this is unrelated. I was talking about that API providers can
+> > decide whether they want to only provide a `raw_ptr` -> `ARef<Self>` if
+> > they don't need to provide a `raw_ptr` -> `&Self`.
+> > 
+> >>> Overall, I feel like we don't necessarily make a preference between
+> >>> `->&Self` and `->ARef<Self>` functions here, since it's up to the users'
+> >>> design?
+> >>
+> >> I would argue that there should be a clear preference for functions
+> >> returning `&Self` when possible (ie there is a parameter that the
+> > 
+> > If "possible" also means there's going to be `raw_ptr` -> `&Self`
+> > function (as the same publicity level) anyway, then agreed. In other
+> > words, if the users only need the `raw_ptr` -> `ARef<Self>`
+> > functionality, we don't want to force people to provide a `raw_ptr` ->
+> > `&Self` just because, right?
 > 
-> Hey, may I take the tools part, i.e. patches 0-7 and someone on the ARM
-> kernel team pick the driver bits?
-
-I plan to pick the kernel driver bits for v6.12
-
-Kind regards
-Suzuki
-
+> I see... I am having a hard time coming up with an example where users
+> would exclusively want `ARef<Self>` though... What do you have in mind?
+> Normally types wrapped by `ARef` have `&self` methods.
 > 
-> - Arnaldo
->   
->> Each sink owns its own trace ID map, and any Perf session connecting to
->> that sink will allocate from it, even if the sink is currently in use by
->> other users. This is similar to the existing behavior where the dynamic
->> trace IDs are constant as long as there is any concurrent Perf session
->> active. It's not completely optimal because slightly more IDs will be
->> used than necessary, but the optimal solution involves tracking the PIDs
->> of each session and allocating ID maps based on the session owner. This
->> is difficult to do with the combination of per-thread and per-cpu modes
->> and some scheduling issues. The complexity of this isn't likely to worth
->> it because even with multiple users they'd just see a difference in the
->> ordering of ID allocations rather than hitting any limits (unless the
->> hardware does have too many ETMs connected to one sink).
->>
->> Per-thread mode works but only until there are any overlapping IDs, at
->> which point Perf will error out. Both per-thread mode and sysfs mode are
->> left to future changes, but both can be added on top of this initial
->> implementation and only sysfs mode requires further driver changes.
->>
->> The HW_ID version field hasn't been bumped in order to not break Perf
->> which already has an error condition for other values of that field.
->> Instead a new minor version has been added which signifies that there
->> are new fields but the old fields are backwards compatible.
->>
->> Changes since v5:
->>    
->>    * Hide queue number printout behind -v option
->>    * Style change in cs_etm__process_aux_output_hw_id()
->>    * Move new format enum to an earlier commit to reduce churn
->>
->> Changes since v4:
->>
->>    * Fix compilation failure when TRACE_ID_DEBUG is set
->>    * Expand comment about not freeing individual trace IDs in
->>      free_event_data()
->>
->> Changes since v3:
->>
->>    * Fix issue where trace IDs were overwritten by possibly invalid ones
->>      by Perf in unformatted mode. Now the HW_IDs are also used for
->>      unformatted mode unless the kernel didn't emit any.
->>    * Add a commit to check the OpenCSD version.
->>    * Add a commit to not save invalid IDs in the Perf header.
->>    * Replace cs_etm_queue's formatted and formatted_set members with a
->>      single enum which is easier to use.
->>    * Drop CORESIGHT_TRACE_ID_UNUSED_FLAG as it's no longer needed.
->>    * Add a commit to print the queue number in the raw dump.
->>    * Don't assert on the number of unformatted decoders if decoders == 0.
->>
->>
->> Changes since v2:
->>
->>    * Rebase on coresight-next 6.10-rc2 (b9b25c8496).
->>    * Fix double free of csdev if device registration fails.
->>    * Fix leak of coresight_trace_id_perf_start() if trace ID allocation
->>      fails.
->>    * Don't resend HW_ID for sink changes in per-thread mode. The existing
->>      CPU field on AUX records can be used to track this instead.
->>    * Tidy function doc for coresight_trace_id_release_all()
->>    * Drop first two commits now that they are in coresight-next
->>    * Add a commit to make the trace ID spinlock local to the map
->>
->> Changes since V1:
->>
->>   * Rename coresight_device.perf_id_map to perf_sink_id_map.
->>   * Instead of outputting a HW_ID for each reachable ETM, output
->>     the sink ID and continue to output only the HW_ID once for
->>     each mapping.
->>   * Keep the first two Perf patches so that it applies cleanly
->>     on coresight-next, although they have been applied on perf-tools-next
->>   * Add new *_map() functions to the trace ID public API instead of
->>     modifying existing ones.
->>   * Collapse "coresight: Pass trace ID map into source enable" into
->>     "coresight: Use per-sink trace ID maps for Perf sessions" because the
->>     first commit relied on the default map being accessible which is no
->>     longer necessary due to the previous bullet point.
->>
->>
->> James Clark (17):
->>    perf: cs-etm: Create decoders after both AUX and HW_ID search passes
->>    perf: cs-etm: Allocate queues for all CPUs
->>    perf: cs-etm: Move traceid_list to each queue
->>    perf: cs-etm: Create decoders based on the trace ID mappings
->>    perf: cs-etm: Only save valid trace IDs into files
->>    perf: cs-etm: Support version 0.1 of HW_ID packets
->>    perf: cs-etm: Print queue number in raw trace dump
->>    perf: cs-etm: Add runtime version check for OpenCSD
->>    coresight: Remove unused ETM Perf stubs
->>    coresight: Clarify comments around the PID of the sink owner
->>    coresight: Move struct coresight_trace_id_map to common header
->>    coresight: Expose map arguments in trace ID API
->>    coresight: Make CPU id map a property of a trace ID map
->>    coresight: Use per-sink trace ID maps for Perf sessions
->>    coresight: Remove pending trace ID release mechanism
->>    coresight: Emit sink ID in the HW_ID packets
->>    coresight: Make trace ID map spinlock local to the map
->>
->>   drivers/hwtracing/coresight/coresight-core.c  |  37 +-
->>   drivers/hwtracing/coresight/coresight-dummy.c |   3 +-
->>   .../hwtracing/coresight/coresight-etm-perf.c  |  43 +-
->>   .../hwtracing/coresight/coresight-etm-perf.h  |  18 -
->>   .../coresight/coresight-etm3x-core.c          |   9 +-
->>   .../coresight/coresight-etm4x-core.c          |   9 +-
->>   drivers/hwtracing/coresight/coresight-priv.h  |   1 +
->>   drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
->>   drivers/hwtracing/coresight/coresight-sysfs.c |   3 +-
->>   .../hwtracing/coresight/coresight-tmc-etr.c   |   5 +-
->>   drivers/hwtracing/coresight/coresight-tmc.h   |   5 +-
->>   drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
->>   .../hwtracing/coresight/coresight-trace-id.c  | 138 ++--
->>   .../hwtracing/coresight/coresight-trace-id.h  |  70 +-
->>   include/linux/coresight-pmu.h                 |  17 +-
->>   include/linux/coresight.h                     |  21 +-
->>   tools/build/feature/test-libopencsd.c         |   4 +-
->>   tools/include/linux/coresight-pmu.h           |  17 +-
->>   tools/perf/Makefile.config                    |   2 +-
->>   tools/perf/arch/arm/util/cs-etm.c             |  11 +-
->>   .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  49 +-
->>   .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   3 +-
->>   .../util/cs-etm-decoder/cs-etm-min-version.h  |  13 +
->>   tools/perf/util/cs-etm.c                      | 629 +++++++++++-------
->>   tools/perf/util/cs-etm.h                      |  12 +-
->>   25 files changed, 650 insertions(+), 475 deletions(-)
->>   create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
->>
->> -- 
->> 2.34.1
 
+Having `&self` methods doesn't mean the necessarity of a `raw_ptr` ->
+`&Self` function, for example, a `Foo` is wrapped as follow:
+
+	struct Foo(Opaque<foo>);
+	impl Foo {
+	    pub fn bar(&self) -> Bar { ... }
+	    pub unsafe fn get_foo(ptr: *mut foo) -> ARef<Foo> { ... }
+	}
+
+in this case, the abstration provider may not want user to get a
+`raw_ptr` -> `&Self` function, so no need to have it.
+
+Regards,
+Boqun
+
+> Cheers,
+> Benno
+> 
 
