@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-263077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C1593D0A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:54:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4663293D0AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0C21F2200D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:54:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB82DB21EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53AF176AB8;
-	Fri, 26 Jul 2024 09:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A2F176FDF;
+	Fri, 26 Jul 2024 09:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R53dOJVw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtaaSgdx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73B214F122;
-	Fri, 26 Jul 2024 09:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8968219EA;
+	Fri, 26 Jul 2024 09:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721987668; cv=none; b=IbUsbmqybB+KH8iL+WeSuGc9U/Btgf2LEEArAIRH3BZgTgw3TDBaTI/3DLIFRG+sVkaTHbcnqFKclnZ44VAgs1VNPOqs7N1LAR98tZYfIU9fcH+b+gB2nPKUUv3swlrJ9l5azQFSk+NGs30ECvh+idhysKCjIF7Y2HJoPobqhVQ=
+	t=1721987791; cv=none; b=AtIhnhVykHLcl/GcTlF6POWPlgHPW9f/Bf497MptLTeRfDIzOqMvvKzkNHOpdQ2hpeNWRd2IUT6jtl/fjhA6cLsrPw6rOPI/xPBaJoZPxjabHmKlk/Wgeej/+nBGHabwN73H7rzP8Pzc7sSiUAxeW82ClmD/UxHKgW1wMZdXsDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721987668; c=relaxed/simple;
-	bh=cvsanhfs1FsZIe9NYPjX15kOQzhPwoX0O9Rx2P3pw0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHrQrL5PeL3BZI1YCFm0Is9EsO5MpZHujEcCudJVYRtJk5n7J+ANDL3twzziK1McjLskhpuN2K+YBEN9EH4KQvXwsBIfs7JR1CX7nkTzCfy3cm8SC7A7pAYCIlMHWkyEOK/0i+JUqn+fILZps8cFYkry8HrAY+7uSL3pWdW0Nyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R53dOJVw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EE0C32782;
-	Fri, 26 Jul 2024 09:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721987668;
-	bh=cvsanhfs1FsZIe9NYPjX15kOQzhPwoX0O9Rx2P3pw0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R53dOJVwOKs5vDJUZFEAfi6KdN9fD/wFyJkI/HZpt/VJzLzK7K5ge47zYNNiTwgMs
-	 cfkDjh4aNzV3r6oZi7fJGctrP143t4l/1sE7I9xHVOgmY1R/7PQUK5yfoZROg74pyL
-	 7Jch4sWax5yBYvAic6R7KnqeMLqx/BMWi9igQlWw=
-Date: Fri, 26 Jul 2024 11:54:25 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: CVE-2024-35918: randomize_kstack: Improve entropy diffusion
-Message-ID: <2024072606-outlet-stuffy-259b@gregkh>
-References: <2024051912-CVE-2024-35918-3fed@gregkh>
- <lsh7xgorp67fplqey6evmukt66tbstbjob34bwyt7wiklkqu3n@6wftjk4z7xja>
+	s=arc-20240116; t=1721987791; c=relaxed/simple;
+	bh=fhyq/g+G0TEX3v1BnRO3G8NSctBsT3B907kuzzS/knE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qh4zKygeyElET3wfcSXbzHApgbtO7llfjtWbpQ2gQ4xItPmK7iRug25oULvz0kzSTrDbXYuygLp5MxzR/1ajvTUly+imh8vk57w5U9UovHb3a4XxU57Cgw5zZm79jfV27uXrZmgiQg41rOkMu7HnCZHkxJwcoTr4kRk2NMJO4b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtaaSgdx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD58FC4AF07;
+	Fri, 26 Jul 2024 09:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721987790;
+	bh=fhyq/g+G0TEX3v1BnRO3G8NSctBsT3B907kuzzS/knE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YtaaSgdxYwvRUqPGGDe8gXs3l4Aa3M1Yoa+znwWiql7hZSnY7ML+5FncQHzDxr5PT
+	 3uDLhSby+W7L4Zz1VQGarYZzyVXXcZFYpFBtWOeNhomW5GJ1hPGDSj7po63JN3cT12
+	 1pgFXnSOjr+BcwIBNiGGJVcfDFLIMXARMobTTe7ZibNQdI2eh1z6jBu651tP2TI8Oq
+	 JXI9oE56UiB21sa+HHKOnQeKTp5pmnzi1Ym0s7bqozTKq43WR/kwWIV9OOYvAPwoQn
+	 gkwvFRldGXJlcQXaoCHno5PskOV+vinQiO6DKmX/Q7vcQrVMtErf6fjcLRKXKbJz+c
+	 pJ+QlM7HNxtvQ==
+Message-ID: <dcc063ac-3597-41a4-a10e-6f4e9585f96f@kernel.org>
+Date: Fri, 26 Jul 2024 17:56:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <lsh7xgorp67fplqey6evmukt66tbstbjob34bwyt7wiklkqu3n@6wftjk4z7xja>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: fix race in z_erofs_get_gbuf()
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+ Chunhai Guo <guochunhai@vivo.com>
+References: <20240722035110.3456740-1-hsiangkao@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240722035110.3456740-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 11:45:59AM +0200, Michal Koutný wrote:
-> Hello.
+On 2024/7/22 11:51, Gao Xiang wrote:
+> In z_erofs_get_gbuf(), the current task may be migrated to another
+> CPU between `z_erofs_gbuf_id()` and `spin_lock(&gbuf->lock)`.
 > 
-> On Sun, May 19, 2024 at 12:11:12PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > randomize_kstack: Improve entropy diffusion
-> > 
-> > The kstack_offset variable was really only ever using the low bits for
-> > kernel stack offset entropy. Add a ror32() to increase bit diffusion.
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-35918 to this issue.
-> > 
-> > 
-> > Affected and fixed versions
-> > ===========================
-> > 
-> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 5.15.155 with commit dfb2ce952143
-> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.1.86 with commit e80b4980af26
-> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.6.27 with commit 300a2b9c2b28
-> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.8.6 with commit 6be74b1e21f8
-> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.9 with commit 9c573cd31343
+> Therefore, z_erofs_put_gbuf() will trigger the following issue
+> which was found by stress test:
 > 
-> The commit
-> 9c573cd313433 ("randomize_kstack: Improve entropy diffusion") v6.9-rc4~35^2
-> adds ~2 bits of entropy to stack offsets (+the diffusion, x86_64)
+> <2>[772156.434168] kernel BUG at fs/erofs/zutil.c:58!
+> ..
+> <4>[772156.435007]
+> <4>[772156.439237] CPU: 0 PID: 3078 Comm: stress Kdump: loaded Tainted: G            E      6.10.0-rc7+ #2
+> <4>[772156.439239] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS 1.0.0 01/01/2017
+> <4>[772156.439241] pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> <4>[772156.439243] pc : z_erofs_put_gbuf+0x64/0x70 [erofs]
+> <4>[772156.439252] lr : z_erofs_lz4_decompress+0x600/0x6a0 [erofs]
+> ..
+> <6>[772156.445958] stress (3127): drop_caches: 1
+> <4>[772156.446120] Call trace:
+> <4>[772156.446121]  z_erofs_put_gbuf+0x64/0x70 [erofs]
+> <4>[772156.446761]  z_erofs_lz4_decompress+0x600/0x6a0 [erofs]
+> <4>[772156.446897]  z_erofs_decompress_queue+0x740/0xa10 [erofs]
+> <4>[772156.447036]  z_erofs_runqueue+0x428/0x8c0 [erofs]
+> <4>[772156.447160]  z_erofs_readahead+0x224/0x390 [erofs]
+> ..
 > 
-> The commit
-> 39218ff4c625d ("stack: Optionally randomize kernel stack offset each syscall") v5.13-rc1~184^2~3
-> adds ~8 bit of entropy to stack offsets (there was none before, x86_64)
-> 
-> Why the former commit has a CVE while the latter doesn't? (2 < 8)
-> 
-> I'd expect both to be treated equally or even inversely.
+> Fixes: f36f3010f676 ("erofs: rename per-CPU buffers to global buffer pool and make it configurable")
+> Cc: <stable@vger.kernel.org> # 6.10+
+> Cc: Chunhai Guo <guochunhai@vivo.com>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-If you wish for a CVE to be assigned to 39218ff4c625d, we will be glad
-to do so, but it was not on our "old list" of GSD entries to backfill in
-CVE entries for, which is why it was not assigned one.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-thanks,
-
-greg k-h
+Thanks,
 
