@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-263610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C6A93D83D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:20:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F3793D83E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FAD1C22560
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1E55B2441A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE95153808;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00C115380A;
 	Fri, 26 Jul 2024 18:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kfbw/Q+Q"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A5/P1Rgq"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C667347D;
-	Fri, 26 Jul 2024 18:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7751E493;
+	Fri, 26 Jul 2024 18:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017888; cv=none; b=Kh5z4IkcHyoknRacLuDnlGKQi5pOJ5D2XjhoHEwIPdwZGTj4KbcUdupIXqEqjoHAGvPMYdSqVUxxBxfKAEO5paVafmdnN/HPfkxrQXh2akfmwhTYNwV1V3zyaBXEFJpC5IxvoYaR5aPXLcVCke5wIY5WSbb9WwtLsBBPFZ1xCQ4=
+	t=1722017887; cv=none; b=aXXlg8s3YuqTBRVHaLOMiziJP6E5aAHFcSTnkm4B7oZCbZJZ8DRRF4n8Pj9tfQ/93smgoCgdsOvfjcLiB7fyEpu+zVOgu1Xc4Z6SoZ+0y8iA0+ityrft8roY73fSdCU3tHce2dpmz8bo/013qPVI723EsZV6dNv78wq8yQ/MVfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017888; c=relaxed/simple;
-	bh=95rG1YZ2UtrC8XMcpAiWyTjy7YQj9bjkJ0w9oWd8hII=;
+	s=arc-20240116; t=1722017887; c=relaxed/simple;
+	bh=ahpHSbsY5snByWpT+psWqdNXneHz5eR2UhTXSOpSJuo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cEoZmYfJlASzWpKwzeB/l1yllSEo5cGwIOmqVih2ITIR1yOzgYpPKH2v5l6xC3jnzbyTyE/HtsVryKmj4D2mlq4kcB0DIicMDe8SiPkrKGIlmlEccqxBDfLuwsNfVR5WhKrYX7AFr+lLAQ8semeYDl3zd+gUpWrsqWteIb+Oa7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kfbw/Q+Q; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=WrTwSsQiw4djyqoXwD5XFQrbeLB4j+njwfLRHXEJLLG45asIt64Q97fUWqwocvBX90JOrGnJKe9FcR2PY8Q/ZOluoBTkSX7XIFy2L1WadZB1TkoXZPry/4a3AMHKMynaHbtvCnUmjkWy83JddcnWAyzqBuAdyNbZsvCNP8eruOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A5/P1Rgq; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 43B4CC000E;
-	Fri, 26 Jul 2024 18:18:02 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1148BC0011;
+	Fri, 26 Jul 2024 18:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1722017883;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ih+kvx1EySeuO8rTTlNvuYdd21gOB8JWUrmwahT1dOc=;
-	b=kfbw/Q+QBan9UTaP6HuJ77llt2vFWlvZpOKS3Av1JequqWPDFAHbb2QOk8eZazcs4Hv+03
-	R4xPpHj6knTcAUImEbRK6i8YNuqymlar61qVlryTH+DMasExG35Zv2WALwLZnqUzbxwP++
-	OJKRhGH4Mvr3lvIBxyhpglPe13jxK/Rvirs4rviwk2iVoiZNfwa/AR8py6n4kL5tpuc2Hs
-	R608HRMzfXRiNujGDZbh4k3UaUQTAkcHdtU1g73dVG/YVFLb/eNt/XuC4Yb6S8Uv0sTX5t
-	R7QThnoWYn/qXLSF2/kUexkcCiSmmywqI3Pb+BYTGJOnwbodqZqtBVN19urgZw==
+	bh=nzzwZRIMf3Tzxd7N00x3LQAknBs3IrccO6DEWuel4oQ=;
+	b=A5/P1RgqlIFjF5ttDIOfjWKIeVVj56YVzB3p0s8T2Il7RtaZRahYcaiLSXMpgmmAhPAvLD
+	ip7/SUDvfi30x5DYnHTyAtxyq+wu9Y+a4XlTiCVwrbqegCSy/TrUp5AcM0KIyJ/BcVIZuw
+	ndNENrH4uTdyp0HPps44ihMR6udGO01j/2yzFI8+F3ir+NWplXrlfr4AVwPQqc86b7pupI
+	COXVA5z8Wzy3yOmsns9q2fKRxz2PXIuPmCUqLqWv1OR56LyGuOm0rlFT7jo4RiMR/pon9L
+	Hr6Tq92iXBSQirjgIm3lHBq3wrt3/G2+w1uu748soK3HONgIEcJDrNtd2/c0KA==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 26 Jul 2024 20:17:59 +0200
-Subject: [PATCH v5 11/12] arm64: dts: ti: k3-j7200: use J7200-specific USB
- compatible
+Date: Fri, 26 Jul 2024 20:18:00 +0200
+Subject: [PATCH v5 12/12] arm64: dts: ti: k3-am64: add USB fallback
+ compatible to J721E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240726-s2r-cdns-v5-11-8664bfb032ac@bootlin.com>
+Message-Id: <20240726-s2r-cdns-v5-12-8664bfb032ac@bootlin.com>
 References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -74,28 +74,28 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-On our platform, suspend-to-idle or suspend-to-RAM turn the controller
-off. This compatible triggers reset-on-resume behavior to reconfigure
-the hardware.
+USB on AM64 is the same peripheral as on J721E. It has a specific
+compatible for potential integration details. Express this
+relationship, matching what the dt-bindings indicate.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- arch/arm64/boot/dts/ti/k3-j7200-main.dtsi | 2 +-
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-index 9386bf3ef9f6..6b8e8672b386 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-@@ -766,7 +766,7 @@ pcie1_rc: pcie@2910000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
+index f8370dd03350..02c8ed93730f 100644
+--- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
+@@ -759,7 +759,7 @@ timesync_router: pinctrl@a40000 {
  	};
  
- 	usbss0: cdns-usb@4104000 {
--		compatible = "ti,j721e-usb";
-+		compatible = "ti,j7200-usb", "ti,j721e-usb";
- 		reg = <0x00 0x4104000 0x00 0x100>;
- 		dma-coherent;
- 		power-domains = <&k3_pds 288 TI_SCI_PD_EXCLUSIVE>;
+ 	usbss0: cdns-usb@f900000 {
+-		compatible = "ti,am64-usb";
++		compatible = "ti,am64-usb", "ti,j721e-usb";
+ 		reg = <0x00 0xf900000 0x00 0x100>;
+ 		power-domains = <&k3_pds 161 TI_SCI_PD_EXCLUSIVE>;
+ 		clocks = <&k3_clks 161 9>, <&k3_clks 161 1>;
 
 -- 
 2.45.2
