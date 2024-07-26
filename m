@@ -1,460 +1,227 @@
-Return-Path: <linux-kernel+bounces-262776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA00F93CCA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 04:02:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B92793CC9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 04:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2920B210BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6717B1C2127B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCC81B948;
-	Fri, 26 Jul 2024 02:01:50 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D378848C;
-	Fri, 26 Jul 2024 02:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721959309; cv=none; b=DvI5cJf0NTGfP1l9pgfUe6bqFs5X5Kh8d/kvdMgYh/oBmAGenwqR4HxXLejTAI6lXM2e9eT/pFMJvkGosTdSJgeUD7TCL6EZwdi+elDd9IPzZn/+Hzau/zTgUEiXuJJlowESxFct8joogqCvOI+OPYLY9AwoXhQyxZE3RgPx9gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721959309; c=relaxed/simple;
-	bh=HlZvK3T/1BN2V8F89HA9tdBbiZ56z8WWCK+dOZkDKUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C20pc3L/kVSjwwpI4vwmTQSf5Tm5CzyHLcBTc6YI4+u4MNHL+bPDd9kfYhoRwTOr4SfP8uzJq3tWKGsBajEoUEYgQSzxC+AwHzJwCj3/rb/duGfgXNR1JrsZM8oJVBn4vJ0tHMXpdpK+CmqzCSIOykQBWJ3/mtqSPOsWjMfh3GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with SMTP id HwEQrACXn89LA6NmxRpTAA--.57314S2;
-	Fri, 26 Jul 2024 10:00:43 +0800 (CST)
-Received: from [10.12.168.59] (unknown [10.12.168.59])
-	by gateway (Coremail) with SMTP id _____wDX33NGA6NmsDFyAA--.4800S2;
-	Fri, 26 Jul 2024 10:00:39 +0800 (CST)
-Message-ID: <388c36f1-972a-495a-95ef-3c4b1a34ece7@hust.edu.cn>
-Date: Fri, 26 Jul 2024 10:00:38 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E731BF2A;
+	Fri, 26 Jul 2024 02:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NQk6YLk2"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBA9848C;
+	Fri, 26 Jul 2024 02:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721959250; cv=fail; b=dvNzWsc+7hRjufM2W+XrSwgMsSMg8u2XNxT4mwlkYm0TgqPoW338s1hB78XqRu5vVxoKQMfvedtf5n4068wUvSMsV5jmT4EI/E0IR79Nq5U68A65cbxWqofkVldu26R9v9rVx5Zur+nkr0n5VdGUuTZ3CoJZK68K+DqHoMF4eL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721959250; c=relaxed/simple;
+	bh=ciKzR0IHV1DJwA7mUekKLX/iXnuEl4q60AQrOVQ3M4s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sa2ADSTCD/cVhrkLQ0a9b9IHuOX3La0uQ5xtAQYxrhQi/l30jskfgdiJPxJkFmie4JQhXrB20XW1B36oadXJpG3LTNlmHNoHKIY4MfkP1r8Nu6n/f6R8owHSX26SPgO5TnLoQ19yhxVsY09lRNqjT8Cm8cVVcJicqUvNI3P5/S0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NQk6YLk2; arc=fail smtp.client-ip=52.101.66.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XsSilVizM5Sfi/eXqP9xnUUaSIS3dXt786/4uxnmT6DdfvM/+VPt/KkHqcNZEsBFKyubHw6vUGdhMA2qWqb9qVvPP52oVsPOmFzfqmnyTjHAn0cw4oUqW2zyX7bw7ZjfwWpKpt6p8KRfCBFxhg94jx9zmvGQpSRq2aeKBIrrhYPG04Flc89QDt24ER+PxA9GKAILHNcKLdRsMKtCpLPrqEJO+CgOKDVRLyrvqHXPo/5fOCZp6H5MzqLqv76OzdS7/Nwvo1m6gjjKWzH9KXe+HqAX9qQ9vV87HdQd4sXNiwK0SrWHx7NNnsq6aNSG6WJ+AxWYjTqH3LHJT+X64hXj7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ciKzR0IHV1DJwA7mUekKLX/iXnuEl4q60AQrOVQ3M4s=;
+ b=M6XDE3EtnEnvvBj8kAIMjiX3mqIeb9BNFWc1w9cGpu1p+lPZDYtnjs7CqNWD2O16BCU+3fR3otX7NuJeVc27IfZ9pacFf9h09MRGfTMEpcsxZx7UOA0gjfgYZoG0avlbaWVizmapAJQqH0u9VSFaw9ANqS3H/sx5Muk7M7szOKdf0neoo4ZRPRPYBA1IEG+86/aohbl/6fyPc0u/2ygIvhHv6OhqEwp0RX0MlSVliN2sn/mBDIyl0o0HRtzYatDnc97J7SurUgaGbf7Q5nPdq+/BIQk0z88yuEdy7ZL9rTsAqO+akA1Jq1uKpB22YfHH/MWSUh0JC8FZhgHl7AWXNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ciKzR0IHV1DJwA7mUekKLX/iXnuEl4q60AQrOVQ3M4s=;
+ b=NQk6YLk2KhIQ9QtKF1OWYux6rpdTNoJSLL4lA/tYBVCXVultzVLV7xOUG9v/9pEwb6pY87CMSF9ThAWk5zAInKif4O6lbiuLeZY4IQPxb3cGDhlbsyO7Z0axzqjwcI8V09IGRmoVagvjpFjN+ytCluxvfu6piDrdeT55b9Y5X8ukIk0vpymlth5+LrDy1fzP1P3VtEAVdZ6KJTgaCQ7fvOamq8aul2YOUOiadwuGQ5h4YyS/2d/+PS0nZuUAVliUWY/L6+NvKsBTPEh8P+HwduQjrH8ZRTadqnKBeM3yuR2Gv8+ZNOPXcFP0q8dCePgkurePBB1AVAwJ20OvqcTOpA==
+Received: from DU2PR04MB8677.eurprd04.prod.outlook.com (2603:10a6:10:2dc::14)
+ by AM9PR04MB8764.eurprd04.prod.outlook.com (2603:10a6:20b:40b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.27; Fri, 26 Jul
+ 2024 02:00:44 +0000
+Received: from DU2PR04MB8677.eurprd04.prod.outlook.com
+ ([fe80::6b10:a2e8:fdf0:6bdd]) by DU2PR04MB8677.eurprd04.prod.outlook.com
+ ([fe80::6b10:a2e8:fdf0:6bdd%4]) with mapi id 15.20.7784.017; Fri, 26 Jul 2024
+ 02:00:44 +0000
+From: Hongxing Zhu <hongxing.zhu@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "l.stach@pengutronix.de"
+	<l.stach@pengutronix.de>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH v3 0/4] Add dbi2 and atu for i.MX8M PCIe EP
+Thread-Topic: [PATCH v3 0/4] Add dbi2 and atu for i.MX8M PCIe EP
+Thread-Index: AQHa3mfZhk0kkn8q9kyUgCwxMMJRXbIH6dqAgABXATA=
+Date: Fri, 26 Jul 2024 02:00:44 +0000
+Message-ID:
+ <DU2PR04MB8677563C58588898A602E5FB8CB42@DU2PR04MB8677.eurprd04.prod.outlook.com>
+References: <1721892916-5782-1-git-send-email-hongxing.zhu@nxp.com>
+ <20240725204341.GA858380@bhelgaas>
+In-Reply-To: <20240725204341.GA858380@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU2PR04MB8677:EE_|AM9PR04MB8764:EE_
+x-ms-office365-filtering-correlation-id: 6e69f378-7eaa-499a-5402-08dcad16c29a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?TnZxUElyK2g4VHMxR011c3BHeGNTdmJYSk85VVV0SXBRSDZ5MVZqZ25OM1NH?=
+ =?gb2312?B?QjZ2OUpMdVp1cWpyd2xTRlBtT0lsbURDWFRwUSsxdU83ZmZCdUpKM2swRFNC?=
+ =?gb2312?B?cjJmdHYyY0Vjalo4WnByZE9vdlVoSUdieXFub1lLSDdQeGl5cUVUNE5CaW1o?=
+ =?gb2312?B?eWFiTlRSMm1wNzFTV3JmU1oybnlpeUpKeVVwZElndi9PZDdSYThaR0FxSHJ3?=
+ =?gb2312?B?eXVraWlXYmNDMUhVeXVFeUxNV1RmVmNLWEt2VVpvYjA0ZWVIdkdmSFNCbnBJ?=
+ =?gb2312?B?MUx4dUh1dG9sVDEvekx0MUxpOURDVHVreVVNOStOby93L1FOUXprSXY2QkxS?=
+ =?gb2312?B?WjdCMDlvdndnbTZUYkRsRnhSUXNOZnl1UkN1TkY5Mmt6UFRoMXV6ajhpM2NG?=
+ =?gb2312?B?aDdRdmFMMHI1QnJMeTMxVTdBREh2TWZTcHhucFUzbkVCWEhSVkVKMVZZYXJm?=
+ =?gb2312?B?OUtCeE1odURIVXF6SXordWlnYWlCY09qdzNPTDdEOFlPQ25VdDAzSEJoQ2VK?=
+ =?gb2312?B?cmZieGFZbm9ESGhqdWlEUDgrNUhlSWZxU0FTVDlRUnFmUGlyaEwzM0FSTEgw?=
+ =?gb2312?B?TkVSdHQ5MlJVRkxjUjl5dWU5TVJzdjNtTjFqdElBV1BKWVpyUHIwVU00QzRE?=
+ =?gb2312?B?dkVucXYvTkFNN0pwK3o3dmFLQUhZWlIwSDg0QVR6dkx5cjVieDZobnJoUFl0?=
+ =?gb2312?B?RnJrSDh4ZWY0WFAyelRDYTRoYmJFNVhSMmF4S0VXRFVHTnZiQTBQL2Vjb3VX?=
+ =?gb2312?B?NFR0dHE1cTVVSGVENHZFaS9HZnlITDNCdHJZa01naHZjMFZHY3ozeGJvZ21h?=
+ =?gb2312?B?cWZNRjlpbERrb3JkcHBPcGk0bDQzRDVYcTEwVE1iMk4ybUx5dnVCb3doTVpw?=
+ =?gb2312?B?dHo4WFRocHRSU2NTcnRrRFRybkpUbU5WLytpbHF5OHpmRlNMNW5Cdmt6WUVJ?=
+ =?gb2312?B?aUZoNFY1VFlLZ1lPdk5Qd3pIUU9GNFlKQXA4VTVjVnA4R0tzYS82NU4rcFFO?=
+ =?gb2312?B?a0xtV2FrZCtSVEFEeHNJd1dsVTVraERvTVc2UCt5VTU5MWNpSytWQVRqSm5O?=
+ =?gb2312?B?V2JxOXRML2QrT2lZaW8yOW1kN0NXdzIvTllkNFVZTExPLytDRzN4aVZRaG9a?=
+ =?gb2312?B?RFZYV2hzaWl3VFIzUWFXL1piZThHWWc5MHBOSWp2ZUZHd2VPREZsVHVjZXBk?=
+ =?gb2312?B?YTd0TzZEMU1wSzF4N28wdlp2Y2ZaT2JVcHR3Zm1UTGtaRmxtZ2xYemNHZzRy?=
+ =?gb2312?B?anh2REtBOHF5SHBoVGlCSGNxRTlGKzIzVU50Lyt2MFlRVUQxR1U1M1F6Q1h4?=
+ =?gb2312?B?VWRuNWJ6amFXdjhGMGRoWjRHUkhGVysxbGdYSVMzZnRZWVhCY01oRWwvbVZj?=
+ =?gb2312?B?ckJwejUrN2cwbk5qM2pFVVZ6aDdxWHVEcDdwb0VFSEcxb1ozSnJPVTZESmZS?=
+ =?gb2312?B?d1RvbXRBb2JvM0FVdVFmS3hOcmxoMmJrQ1VHWDk5aGhEZXhNQVBybjVyT1Qx?=
+ =?gb2312?B?VlZSNXJwdzRibTY4V3NDZU0rQWsxU29UYnJMWlJNVEJOeHduTHFBc1N4YzQx?=
+ =?gb2312?B?ZmRTR2JNc2d1V09YMWU3ZEVadmp3SDZWWncvQ3V2TzFDNzUyN25FcEtRMEpG?=
+ =?gb2312?B?OFhqUGhlbkFmMzJSaVJVbHdXOE1FcGZMZkYrRkpGdWxlWE9iUG1GSUg2R3lx?=
+ =?gb2312?B?WENDbHlNcVBNS0QxTWx1TVZNWElmL2kwMTNFSEZkVUhscWg5RGdvK25XbjhD?=
+ =?gb2312?B?NmFYUUduNk9WcUN4TzVwR2lTU0JHU1h6TnJpQVN3Wnd1RiszdlErS1ZGdzFh?=
+ =?gb2312?B?WkVUci9IQ2x6MGxOSnZuU0M1bnNaNVY3REMxOTIvdXc0RzlVRkpZSEJzZStu?=
+ =?gb2312?B?TCt4bkhjbGVaR2Y2YUxOM3M3M081Yk4vVUxoRTdENTZlbVE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8677.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?M3dYV25OaUFtQU5wb2UwTDlYTW9tZ3BCUG9JSExIemQrUkFZM3RMYVowSTRx?=
+ =?gb2312?B?Q2dsT0xneWtld3F5ZFl0R25OYjh0cmdJZVo5VFZMazZHd0prNVJPQmlEWXRz?=
+ =?gb2312?B?aXYrWlU5b1AySFNld2RYRFhJZ1Aveml4d3lYTTVDVjI4N01meHgrKzJFcHR3?=
+ =?gb2312?B?V2luWGNGV2QxV2xCSlRVUWFYa3dxb2x6NWhKckJPOUVjcTc3aWhxODRZNHVW?=
+ =?gb2312?B?YWt4U3dkV2ZRc2thLzhPcmRFRnhyS2NOc3NoTkFSbEF3b2p0dlZlbWRWM2Zp?=
+ =?gb2312?B?MisrblBkbFE0Nm0yWVZ3cEdLalkvcUJuSzAvVWsxSEhLRHNORVlnamtkSXdF?=
+ =?gb2312?B?cFFpaTZmT3hVaWRMQ2wxQS84YmdHTS94aU4xQllMR1ZsNkRTdXFsMDJ5Y1Uw?=
+ =?gb2312?B?YzlYaUtRQnRtOW5IYTd0MTFkYkdtRDBkMWJaVjlqWHo0d0VJcHd5LzIyZnF5?=
+ =?gb2312?B?eFFDc2RJellUNldmKy9LSDVzNXlvY1pUaW13K01Zak1OdFFrRXlhOTgyYkh3?=
+ =?gb2312?B?YVVya1kyd3dtamJxeVRZZlFDYTBXdEl0ZGVUUnRqeEZTeVZIS2NUQjVnczlB?=
+ =?gb2312?B?M1Yrclp0T1lxbHRjZmxMRmVEUTgrRVRpMUFRS1ozNnIyM2poL0NLV3I3OTAw?=
+ =?gb2312?B?QkhFUGF1SkZreWt0TzhYdzhaWmhkK2plRFBpT0tzdS9RTStQbUFnejN4bHdz?=
+ =?gb2312?B?QWpFaU5Nc1JmOTM4ZFVLNDU1TEVsa1EyZGRuM2NLc0tHaDVsL2xVZEFmeTFX?=
+ =?gb2312?B?QVhpK2N4SDlUODRCR0UxVHlKWVZDbkhwNmpjT2E3c2k3Nmk4azlScnZuTHMx?=
+ =?gb2312?B?eTlRc2RVUkFNWnZETmNLd3RxZE1NTGVzK0pWdEpjdU0xL2VhQzZYUWRNbVdm?=
+ =?gb2312?B?OFhISE9LNjh6aTg0RUVyRlVhV2pwWUc4QktjbjRNNzlpREs2UHNEVGt5cGJa?=
+ =?gb2312?B?VFNmTXdFWW1wS1hjakpuT0ovSFdjTlNzSzhMRytiUHlWZEZIa25KeC9yK0cv?=
+ =?gb2312?B?c0JnRlRRMmNGSmhjVUZsRmFlemdpaFllSk9heVRKaWRqMmtGL1h3MHdyREtZ?=
+ =?gb2312?B?cnhCNXlNR3Q1TVdoVDNCcmpkL0dnQXRZVUlYZTZTQ2pkb1hyVFJsbGIzaklv?=
+ =?gb2312?B?M3NsVDg4MThVQXpJcTJLZEpRWkRjRGsyOU9panowd0VCa3dZVG50V1hqQ3lv?=
+ =?gb2312?B?SjZQOGJRKzVocmoyMVVkZi9ibjQ1eUdmeitrOWdZWEU1M0F0eWViK3MvVTVk?=
+ =?gb2312?B?QTM1MW5qOWFRMER3VGR0VC9LQzNPYllCaW8yMFd3QjFabWZWUVhqZSszYkFt?=
+ =?gb2312?B?Qko3WjYvRjk4cnpXeFhUMit1c25jVjEvQzFKcHJKOHJSMG1ZeUlwTHdvTEFq?=
+ =?gb2312?B?bFR0aHRXNkg0UitDVWZYUDdMMWdRUXdZdThxMEJsZlUrY2xkVUg3RjlKODBL?=
+ =?gb2312?B?bUtCR0JnK2E2YUxmRGMvWXh5ZTMydmxRcytDNEtva0RqWTByWmd4Q3FvcVJE?=
+ =?gb2312?B?VHZPdnZ4SDFNSFdCOVFKTzFMUXBKYThlZjlkbm1xM3JSSGxxV2ljcGtWYnJE?=
+ =?gb2312?B?aTRoWm1JWW1Xa2NLcVBKM2crK3ZQQjVGUkRuNHFhemYxOUFKSUZ1MEEvZEZ1?=
+ =?gb2312?B?dXZpaUJiQW53NzM3bzB1S29IYXBrYWR2TkRlNHYzeEZlSXk5NVRBRXc1b1J2?=
+ =?gb2312?B?QXlVeDhjdWJDU0M0dE5MZDYvRlJIb2RlcVl1cllCZmJ3L1YwcmlOQmZPcTRH?=
+ =?gb2312?B?U3BCdW0vbHoxQm1BVnc5Skg4NlRNZ3ArNnloN3Y0V3BObzcrdjBSejl1RHBB?=
+ =?gb2312?B?ZkRqVDNNUUtKM2ppNDVIL2RMOGtQOHlTZ2hieUtiN0x4WFJmbTVzNllURjFm?=
+ =?gb2312?B?MlZIWXl1YUp4ZWw2QkNGc05GcTZ3MG43MGlkMXAvUUswSCs4NVJlY0VlOUxF?=
+ =?gb2312?B?dllObjd1M3FieXJhc0h2Ny9pL25SZnpocVdsbTYrWjlINVh1K2JwKzQ5NjdC?=
+ =?gb2312?B?YVB2aU1rb3lVdmkwNXE3eVlLalJSMTVyRFBZUWFTRERlaThHUEhVSkM3c3B2?=
+ =?gb2312?B?K2pidnZKR0RGWDVFbFdxN2VyRUdYS1NHM2F5SjJiY0oxdlVpVUNmRk5SRDlO?=
+ =?gb2312?Q?EuF7det6BlJ5tLuPjoqwCD3sR?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: Haoyang Liu <tttturtleruss@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240724041515.320311-1-tttturtleruss@hust.edu.cn>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <20240724041515.320311-1-tttturtleruss@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrACXn89LA6NmxRpTAA--.57314S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvAXoWfWw17Cr4fWrW3Aw15Xw4Dtwb_yoW8uryfCo
-	Z0ka15Crs5Cw15Jw15C3yDJa45K3WqkFnxAanxKrnrWryUKrnYy3W8Jr43tr4fC3y5G3W3
-	K3W7XFW7W3WDZas8n29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUOk7k0a2IF6w4xM7kC6x804xWl1xkIjI8I6I8E6xAIw20EY4v2
-	0xvaj40_Wr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7
-	IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xv
-	wVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxV
-	WUAVWUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY
-	07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI
-	0_Gr1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4U
-	JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42
-	xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0GFAJUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8677.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e69f378-7eaa-499a-5402-08dcad16c29a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2024 02:00:44.5313
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VESiuyeTtcUpXXRh8vdMdTOLSvwsxljxShoAdGcULrT5w7yePfA4dTTtX1qMiL9sV+62i7QIeTX5BF7JR7xcFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8764
 
-
-On 2024/7/24 12:15, Haoyang Liu wrote:
-> Translate dev-tools/kcsan commit 31f605a308e6
-> ("kcsan, compiler_types: Introduce __data_racy type qualifier")
-> into Chinese and add it in dev-tools/zh_CN/index.rst
->
-> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
-> ---
-> v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
->
->   .../translations/zh_CN/dev-tools/index.rst    |   2 +-
->   .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
->   2 files changed, 322 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
->
-> diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
-> index c540e4a7d5db..6a8c637c0be1 100644
-> --- a/Documentation/translations/zh_CN/dev-tools/index.rst
-> +++ b/Documentation/translations/zh_CN/dev-tools/index.rst
-> @@ -21,6 +21,7 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
->      testing-overview
->      sparse
->      kcov
-> +   kcsan
->      gcov
->      kasan
->      ubsan
-> @@ -32,7 +33,6 @@ Todolist:
->    - checkpatch
->    - coccinelle
->    - kmsan
-> - - kcsan
->    - kfence
->    - kgdb
->    - kselftest
-> diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> new file mode 100644
-> index 000000000000..fab8ee381903
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> @@ -0,0 +1,321 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/dev-tools/kcsan.rst
-> +:Translator: 刘浩阳 Haoyang Liu <tttturtleruss@hust.edu.cn>
-> +
-> +内核并发消毒剂 （KCSAN）
-> +===========================
-> +
-> +内核并发消毒剂（KCSAN）是一个动态竞争检测器，依赖编译时插桩，并且使用基于观察
-> +点的采样方法来检测竞争。KCSAN 的主要目的是检测 `数据竞争`_。
-> +
-> +使用
-> +----
-> +
-> +KCSAN 受 GCC 和 Clang 支持。使用 GCC 需要版本 11 或更高，使用 Clang 也需要
-> +版本 11 或更高。
-> +
-> +为了启用 KCSAN，用如下参数配置内核::
-> +
-> +    CONFIG_KCSAN = y
-> +
-> +KCSAN 提供了几个其他的配置选项来自定义行为（见 ``lib/Kconfig.kcsan`` 中的各自的
-> +帮助文档以获取更多信息）。
-> +
-> +错误报告
-> +~~~~~~~~~~
-> +
-> +一个典型数据竞争的报告如下所示::
-> +
-> +    ==================================================================
-> +    BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
-> +
-> +    write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
-> +     test_kernel_write+0x1d/0x30
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
-> +     test_kernel_read+0x10/0x20
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    value changed: 0x00000000000009a6 -> 0x00000000000009b2
-> +
-> +    Reported by Kernel Concurrency Sanitizer on:
-> +    CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
-> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
-> +    ==================================================================
-> +
-> +报告的头部提供了一个关于竞争中涉及到的函数的简短总结。随后是竞争中的两个线程的
-> +访问类型和堆栈信息。如果 KCSAN 发现了一个值的变化，那么那个值的旧值和新值会在
-> +“value changed”这一行单独显示。
-> +
-> +另一个不太常见的数据竞争类型的报告如下所示::
-> +
-> +    ==================================================================
-> +    BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
-> +
-> +    race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes by task 515 on cpu 2:
-> +     test_kernel_rmw_array+0x71/0xd0
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    value changed: 0x0000000000002328 -> 0x0000000000002329
-> +
-> +    Reported by Kernel Concurrency Sanitizer on:
-> +    CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
-> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
-> +    ==================================================================
-> +
-> +这个报告是当另一个竞争线程不可能被发现，但是可以从观测的内存地址的值改变而推断
-> +出来的时候生成的。这类报告总是会带有“value changed”行。这类报告的出现通常是因
-> +为在竞争线程中没有插桩，也可能是因为其他原因，比如 DMA 访问。这类报告只会在
-> +设置了内核参数 ``CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=y`` 时才会出现，而这
-> +个参数是默认启用的。
-> +
-> +选择性分析
-> +~~~~~~~~~~~~~
-> +
-> +对于一些特定的访问，函数，编译单元或者整个子系统，可能需要警用数据竞争检测。
-警用->禁用
-> +对于静态黑名单，有如下可用的参数：
-> +
-> +* KCSAN 支持使用 ``data_race(expr)`` 注解，这个注解告诉 KCSAN 任何由访问
-> +  ``expr`` 所引起的数据竞争都应该被忽略，其产生的行为后果被认为是安全的。请查阅
-> +  `"Marking Shared-Memory Accesses" in the LKMM`_ 获得更多信息。
-> +
-> +* 与 ``data_race(...)`` 相似，可以使用类型限定符 ``__data_racy`` 来标记一个变量
-> +  ，所有访问该变量而导致的数据竞争都是故意为之并且应该被 KCSAN 忽略::
-> +
-> +    struct foo {
-> +        ...
-> +        int __data_racy stats_counter;
-> +        ...
-> +    };
-> +
-> +* 使用函数属性 ``__no_kcsan`` 可以对整个函数禁用数据竞争检测::
-> +
-> +    __no_kcsan
-> +    void foo(void) {
-> +        ...
-> +
-> +  为了动态限制该为哪些函数生成报告，查阅 `Debug 文件系统接口`_ 黑名单/白名单特性。
-> +
-> +* 为特定的编译单元禁用数据竞争检测，将下列参数加入到 ``Makefile`` 中::
-> +
-> +    KCSAN_SANITIZE_file.o := n
-> +
-> +* 为 ``Makefile`` 中的所有编译单元禁用数据竞争检测，将下列参数添加到相应的
-> +  ``Makefile`` 中::
-> +
-> +    KCSAN_SANITIZE := n
-> +
-> +.. _"Marking Shared-Memory Accesses" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
-> +
-> +此外，可以根据偏好设置 KCSAN 显示或隐藏整个类别的数据竞争。可以使用如下
-
-此外，KCSAN 可根据偏好设置显示或隐藏整个类别的数据竞争。
-
-This translation seems more suitable in Chinese.
-
-> +Kconfig 参数进行更改:
-> +
-> +* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: 如果启用了该参数并且通过观测点观测
-> +  到一个有冲突的写操作，但是对应的内存地址中存储的值没有改变，则不会报告这起数据
-> +  竞争。
-> +
-> +* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: 假设默认情况下，不超过字大小的简
-> +  单对齐写入操作是原子的。假设这些写入操作不会受到不安全的编译器优化影响，从而导
-> +  致数据竞争。该选项使 KCSAN 不报告仅由不超过字大小的简单对齐写入操作引起
-> +  的冲突所导致的数据竞争。
-> +
-> +* ``CONFIG_KCSAN_PERMISSIVE``: 启用额外的宽松规则来忽略某些常见类型的数据竞争。
-> +  与上面的规则不同，这条规则更加复杂，涉及到值改变模式，访问类型和地址。这个
-> +  选项依赖编译选项 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=y``。请查看
-> +  ``kernel/kcsan/permissive.h`` 获取更多细节。对于只侧重于特定子系统而不是整个
-> +  内核报告的测试者和维护者，建议禁用该选项。
-> +
-> +要使用尽可能严格的规则，选择 ``CONFIG_KCSAN_STRICT=y``，这将配置 KCSAN 尽可
-> +能紧密地遵循 Linux 内核内存一致性模型（LKMM）。
-> +
-> +Debug 文件系统接口
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +文件 ``/sys/kernel/debug/kcsan`` 提供了如下接口：
-> +
-> +* 读 ``/sys/kernel/debug/kcsan`` 返回不同的运行时统计数据。
-> +
-> +* 将 ``on`` 或 ``off`` 写入 ``/sys/kernel/debug/kcsan`` 允许打开或关闭 KCSAN。
-> +
-> +* 将 ``!some_func_name`` 写入 ``/sys/kernel/debug/kcsan`` 会将
-> +  ``some_func_name`` 添加到报告过滤列表中，这将（默认）禁止报告任意一个顶层栈帧
-> +  在该列表中的数据竞争。
-> +
-> +* 将 ``blacklist`` 或 ``whitelist`` 写入 ``/sys/kernel/debug/kcsan`` 会改变报告
-> +  过滤行为。例如，黑名单的特性可以用来过滤掉经常发生的数据竞争。白名单特性可以帮
-> +  助复现和修复测试。
-> +
-> +性能调优
-> +~~~~~~~~~~~~~
-> +
-> +影响 KCSAN 整体的性能和 bug 检测能力的核心参数是作为内核命令行参数公开的，其默认
-> +值也可以通过相应的 Kconfig 选项更改。
-> +
-> +* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): 在另一个观测点设置之前每
-> +  个 CPU 要跳过的内存操作次数。更加频繁的设置观测点将增加观察到竞争情况的可能性
-> +  。这个参数对系统整体的性能和竞争检测能力影响最显著。
-> +
-> +* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): 对于任务，观测点设置之
-> +  后暂停执行的微秒延迟。值越大，检测到竞争情况的可能性越高。
-> +
-> +* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): 对于中断，
-> +  观测点设置之后暂停执行的微秒延迟。中断对于延迟的要求更加严格，其延迟通常应该小
-> +  于为任务选择的延迟。
-> +
-> +它们可以通过 ``/sys/module/kcsan/parameters/`` 在运行时进行调整。
-> +
-> +数据竞争
-> +--------
-> +
-> +在一次执行中，如果两个内存访问存在 *冲突*，在不同的线程中并发执行，并且至少
-> +有一个访问是 *简单访问*，则它们就形成了 *数据竞争*。如果它们访问了同一个内存地址并且
-> +至少有一个是写操作，则称它们存在 *冲突*。有关更详细的讨论和定义，见
-> +`"Plain Accesses and Data Races" in the LKMM`_。
-> +
-> +.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt#n1922
-> +
-> +与 Linux 内核内存一致性模型（LKMM）的关系
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +LKMM 定义了各种内存操作的传播和排序规则，让开发者可以推理并发代码。最终这允许确
-> +定并发代码可能的执行情况并判断这些代码是否存在数据竞争。
-> +
-> +KCSAN 可以识别 *被标记的原子操作* （ ``READ_ONCE``, ``WRITE_ONCE`` , ``atomic_*``
-> +等），以及内存屏障所隐含的一部分顺序保证。启用 ``CONFIG_KCSAN_WEAK_MEMORY=y``
-> +配置，KCSAN 会对加载或存储缓冲区进行建模，并可以检测遗漏的
-> +``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``，以及所有的
-> +具有等效隐含内存屏障的 ``atomic_*`` 操作。
-> +
-> +请注意，KCSAN 不会报告所有由于缺失内存顺序而导致的数据竞争，特别是在需要内存屏障
-> +来禁止后续内存操作在屏障之前重新排序的情况下。因此，开发人员应该仔细考虑那些未
-> +被检查的内存顺序要求。
-> +
-> +数据竞争以外的竞争检测
-> +---------------------------
-> +
-> +对于有着复杂并发设计的代码，竞争状况不总是表现为数据竞争。如果并发操作引起了意‘
-> +料之外的系统行为，则认为发生了竞争状况。另一方面，数据竞争是在 C 语言层面定义
-> +的。下面的宏定义可以用来检测非数据竞争的漏洞并发代码的属性。
-> +
-> +.. kernel-doc:: include/linux/kcsan-checks.h
-> +    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
-> +                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
-> +                ASSERT_EXCLUSIVE_BITS
-> +
-> +实现细节
-> +-----------
-> +
-> +KCSAN 需要观测两个并发访问。特别重要的是，我们想要（a）增加观测到竞争的机会（尤
-> +其是很少发生的竞争），以及（b）能够实际观测到这些竞争。我们可以通过（a）注入
-> +不同的延迟，以及（b）使用地址观测点（或断点）来实现。
-> +
-> +如果我们在设置了地址观察点的情况下故意延迟一个内存访问，然后观察到观察点被触发
-> +，那么两个对同一地址的访问就发生了竞争。使用硬件观察点，这是 `DataCollider
-> +<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf>`_ 中采用
-> +的方法。与 DataCollider 不同，KCSAN 不使用硬件观察点，而是依赖于编译器插装和“软
-> +观测点”。
-> +
-> +在 KCSAN 中，观察点是通过一种高效的编码实现的，该编码将访问类型、大小和地址存储
-> +在一个长整型变量中；使用“软观察点”的好处是具有可移植性和更大的灵活性。然后，
-> +KCSAN依赖于编译器对普通访问的插桩。对于每个插桩的普通访问：
-> +
-> +1. 检测是否存在一个复合的观测点，如果存在，并且至少有一个操作是写操作，则我们发
-> +   现了一个竞争访问。
-> +
-> +2. 如果不存在匹配的观察点，则定期的设置一个观测点并随机延迟一小段时间。
-定期的->定期地
-> +
-> +3. 在延迟前检查数据值，并在延迟后重新检查数据值；如果值不匹配，我们推测存在一个
-> +   未知来源的竞争状况。
-> +
-> +为了检测普通访问和标记访问之间的数据竞争，KCSAN 也对标记访问进行标记，但仅用于
-> +检查是否存在观察点；即 KCSAN 不会在标记访问上设置观察点。通过不在标记操作上设
-> +置观察点，如果对一个变量的所有并发访问都被正确标记，KCSAN 将永远不会触发观察点
-> +，因此也不会报告这些访问。
-> +
-> +弱内存建模
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +KSCAN 检测由于缺失内存屏障的数据检测的方法是居于对访问重新排序的建模（使用参数
-居于->基于
-> +``CONFIG_KCSAN_WEAK_MEMORY=y``）。每个设置了观察点的普通内存访问也会被选择在其
-> +函数范围内进行模拟重新排序（最多一个正在进行的访问）。
-> +
-> +一旦某个访问被选择用于重新排序，它将在函数范围内与每个其他访问进行检查。如果遇
-> +到适当的内存屏障，该访问将不再被考虑进行模拟重新排序。
-> +
-> +当内存操作的结果应该由屏障排序时，KCSAN 可以检测到仅由于缺失屏障而导致的冲突的
-> +数据竞争。考虑下面的例子::
-> +
-> +    int x, flag;
-> +    void T1(void)
-> +    {
-> +        x = 1;                  // data race!
-> +        WRITE_ONCE(flag, 1);    // correct: smp_store_release(&flag, 1)
-> +    }
-> +    void T2(void)
-> +    {
-> +        while (!READ_ONCE(flag));   // correct: smp_load_acquire(&flag)
-> +        ... = x;                    // data race!
-> +    }
-> +
-> +当启用了弱内存建模，KCSAN 将考虑对 ``T1`` 中的 ``x`` 进行模拟重新排序。在写入
-> +``flag`` 之后，x再次被检查是否有并发访问：因为 ``T2`` 可以在写入
-> +``flag`` 之后继续进行，因此检测到数据竞争。如果遇到了正确的屏障， ``x`` 在正确
-> +释放 ``flag`` 后将不会被考虑重新排序，因此不会检测到数据竞争。
-> +
-> +在复杂性上的权衡以及实际的限制意味着只能检测到一部分由于缺失内存屏障而导致的数
-> +据竞争。由于当前可用的编译器支持，KCSAN 的实现仅限于建模“缓冲”（延迟访问）的
-> +效果，因为运行时不能“预取”访问。同时要注意，观测点只设置在普通访问上，这是唯
-> +一一个 KCSAN 会模拟重新排序的访问类型。这意味着标记访问的重新排序不会被建模。
-> +
-> +上述情况的一个后果是获取操作不需要屏障插桩（不需要预取）。此外，引入地址或控制
-> +依赖的标记访问不需要特殊处理（标记访问不能重新排序，后续依赖的访问不能被预取）
-> +。
-> +
-> +关键属性
-> +~~~~~~~~~~~~~~
-> +
-> +1. **内存开销**：整体的内存开销只有几 MiB，取决于配置。当前的实现是使用一个小长
-> +   整型数组来编码观测点信息，几乎可以忽略不计。
-> +
-> +2. **性能开销**：KCSAN 的运行时旨在性能开销最小化，使用一个高效的观测点编码，在
-> +   快速路径中不需要获取任何锁。在拥有 8 个 CPU 的系统上的内核启动来说：
-> +
-> +   - 使用默认 KCSAN 配置时，性能下降 5 倍；
-> +   - 仅因运行时快速路径开销导致性能下降 2.8 倍（设置非常大的
-> +     ``KCSAN_SKIP_WATCH`` 并取消设置 ``KCSAN_SKIP_WATCH_RANDOMIZE``）。
-> +
-> +3. **注解开销**：KCSAN 运行时之外需要的注释很少。因此，随着内核的发展维护的开
-> +   销也很小。
-> +
-> +4. **检测设备的竞争写入**：由于设置观测点时会检查数据值，设备的竞争写入也可以
-> +   被检测到。
-> +
-> +5. **内存排序**：KCSAN 只了解一部分 LKMM 排序规则；这可能会导致漏报数据竞争（
-> +   假阴性）。
-> +
-> +6. **分析准确率**： 对于观察到的执行，由于使用采样策略，分析是 * 不健全 * 的
-> +   （可能有假阴性），但期望得到完整的分析（没有假阳性）。
-> +
-> +考虑的替代方案
-> +-------------------
-> +
-> +一个内核数据竞争检测的替代方法是 `Kernel Thread Sanitizer (KTSAN)
-> +<https://github.com/google/ktsan/wiki>`_。KTSAN 是一个先行发生的数据竞争检测器
-
-先行发生这个翻译有点奇怪奇怪
-
-The fact is that, KTSAN is designed with happens-before relationship. So 
-I suggest
-
-KTSAN 是一个基于先行发生关系（happens-before）设计的数据竞争检测器
-
-We could add its English term when it first appears.
-
-> +，它显式建立内存操作之间的先行发生顺序，这可以用来确定
-先行发生顺序，这里可以意译“先后发生顺序”
-> +`数据竞争`_ 中定义的数据竞争。
-> +
-> +为了建立正确的先行发生关系，KTSAN 必须了解 LKMM 的所有排序规则和同步原语。不幸
-> +的是，任何遗漏都会导致大量的假阳性，这在包含众多自定义同步机制的内核上下文中特
-> +别有害。为了跟踪前因后果关系，KTSAN 的实现需要为每个内存位置提供元数据（影子内
-> +存），这意味着每页内存对应 4 页影子内存，在大型系统上可能会带来数十 GiB 的开销
-> +。
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCam9ybiBIZWxnYWFzIDxoZWxn
+YWFzQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IDIwMjTE6jfUwjI2yNUgNDo0NA0KPiBUbzogSG9uZ3hp
+bmcgWmh1IDxob25neGluZy56aHVAbnhwLmNvbT4NCj4gQ2M6IHJvYmhAa2VybmVsLm9yZzsga3J6
+aytkdEBrZXJuZWwub3JnOyBjb25vcitkdEBrZXJuZWwub3JnOw0KPiBzaGF3bmd1b0BrZXJuZWwu
+b3JnOyBsLnN0YWNoQHBlbmd1dHJvbml4LmRlOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsN
+Cj4gbGludXgtcGNpQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
+YWRlYWQub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBrZXJuZWxAcGVuZ3V0
+cm9uaXguZGU7IGlteEBsaXN0cy5saW51eC5kZXYNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAw
+LzRdIEFkZCBkYmkyIGFuZCBhdHUgZm9yIGkuTVg4TSBQQ0llIEVQDQo+IA0KPiBPbiBUaHUsIEp1
+bCAyNSwgMjAyNCBhdCAwMzozNToxMlBNICswODAwLCBSaWNoYXJkIFpodSB3cm90ZToNCj4gPiB2
+MyBjaGFuZ2VzOg0KPiA+IC0gUmVmaW5lIHRoZSBjb21taXQgZGVzY3JpcHRpb25zLg0KPiA+DQo+
+ID4gdjIgY2hhbmdlczoNCj4gPiBUaGFua3MgZm9yIENvbm9yJ3MgY29tbWVudHMuDQo+ID4gLSBQ
+bGFjZSB0aGUgbmV3IGFkZGVkIHByb3BlcnRpZXMgYXQgdGhlIGVuZC4NCj4gPg0KPiA+IElkZWFs
+bHksIGRiaTIgYW5kIGF0dSBiYXNlIGFkZHJlc3NlcyBzaG91bGQgYmUgZmV0Y2hlZCBmcm9tIERU
+Lg0KPiA+IEFkZCBkYmkyIGFuZCBhdHUgYmFzZSBhZGRyZXNzZXMgZm9yIGkuTVg4TSBQQ0llIEVQ
+IGhlcmUuDQo+ID4NCj4gPiBbUEFUQ0ggdjMgMS80XSBkdC1iaW5kaW5nczogaW14NnEtcGNpZTog
+QWRkIHJlZy1uYW1lICJkYmkyIiBhbmQgImF0dSINCj4gPiBbUEFUQ0ggdjMgMi80XSBkdHM6IGFy
+bTY0OiBpbXg4bXE6IEFkZCBkYmkyIGFuZCBhdHUgcmVnIGZvciBpLk1YOE1RDQo+ID4gW1BBVENI
+IHYzIDMvNF0gZHRzOiBhcm02NDogaW14OG1wOiBBZGQgZGJpMiBhbmQgYXR1IHJlZyBmb3IgaS5N
+WDhNUA0KPiA+IFtQQVRDSCB2MyA0LzRdIGR0czogYXJtNjQ6IGlteDhtbTogQWRkIGRiaTIgYW5k
+IGF0dSByZWcgZm9yIGkuTVg4TU0NCj4gPg0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9wY2kvZnNsLGlteDZxLXBjaWUtZXAueWFtbCB8IDEzDQo+ICsrKysrKysrKy0tLS0N
+Cj4gPiBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0uZHRzaSAgICAgICAgICAg
+ICAgICAgICAgfCAgOA0KPiArKysrKy0tLQ0KPiA+IGFyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNj
+YWxlL2lteDhtcC5kdHNpICAgICAgICAgICAgICAgICAgICB8ICA3DQo+ICsrKysrLS0NCj4gPiBh
+cmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXEuZHRzaSAgICAgICAgICAgICAgICAg
+ICAgfCAgOA0KPiArKysrKy0tLQ0KPiA+IDQgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygr
+KSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBGb3IgYWxsIHRoZSBwYXRjaGVzIGluIHRoaXMgc2Vy
+aWVzLCBjYW4geW91IHBsZWFzZToNCj4gDQo+ICAgLSBTZXBhcmF0ZSBwYXJhZ3JhcGhzIHdpdGgg
+YmxhbmsgbGluZXMgc28gd2Uga25vdyB3aGVyZSB0aGV5IGVuZC4NCj4gDQo+ICAgLSBXcmFwIGNv
+bW1pdCBsb2cgdG8gZmlsbCA3NSBjb2x1bW5zLg0KSGkgQmpvcm46DQpTdXJlLg0KSG93IGFib3V0
+IHRvIGNoYW5nZSB0aGUgY29tbWl0IG1lc3NhZ2UgdG8gdGhlIGZvbGxvd2luZyBmb3JtYXQ/DQoi
+DQpBZGQgcmVnLW5hbWU6ICJkYmkyIiwgImF0dSIgZm9yIGkuTVg4TSBQQ0llIEVuZHBvaW50Lg0K
+DQpGb3IgaS5NWDhNIFBDSWUgRVAsIHRoZSBkYmkyIGFuZCBhdHUgYWRkcmVzc2VzIGFyZSBwcmUt
+ZGVmaW5lZCBpbiB0aGUNCmRyaXZlci4gVGhpcyBtZXRob2QgaXMgbm90IGdvb2QuDQoNCkluIGNv
+bW1pdCBiN2Q2N2M2MTMwZWUgKCJQQ0k6IGlteDY6IEFkZCBpTVg5NSBFbmRwb2ludCAoRVApIHN1
+cHBvcnQiKSwNCkZyYW5rIHN1Z2dlc3RzIHRvIGZldGNoIHRoZSBkYmkyIGFuZCBhdHUgZnJvbSBE
+VCBkaXJlY3RseS4gVGhpcyBjb21taXQgaXMNCnByZXBhcmF0aW9uIHRvIGRvIHRoYXQgZm9yIGku
+TVg4TSBQQ0llIEVQLg0KDQpUaGVzZSBjaGFuZ2VzIHdvdWxkbid0IGJyZWFrIGRyaXZlciBmdW5j
+dGlvbi4gV2hlbiAiZGJpMiIgYW5kICJhdHUiDQpwcm9wZXJ0aWVzIGFyZSBwcmVzZW50LCBpLk1Y
+IFBDSWUgZHJpdmVyIHdvdWxkIGZldGNoIHRoZSBhY2NvcmRpbmcgYmFzZQ0KYWRkcmVzc2VzIGZy
+b20gRFQgZGlyZWN0bHkuIElmIG9ubHkgdHdvIHJlZyBwcm9wZXJ0aWVzIGFyZSBwcm92aWRlZCwg
+aS5NWA0KUENJZSBkcml2ZXIgd291bGQgZmFsbHMgYmFjayB0byB0aGUgb2xkIG1ldGhvZC4NCiIN
+ClRoYW5rcyBmb3IgeW91ciBjb21tZW50cy4NCg0KQmVzdCBSZWdhcmRzDQpSaWNoYXJkIFpodQ0K
+DQo=
 
