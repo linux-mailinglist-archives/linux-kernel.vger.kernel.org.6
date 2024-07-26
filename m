@@ -1,239 +1,136 @@
-Return-Path: <linux-kernel+bounces-263215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F9293D2C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:03:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCAD393D2B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D421C21950
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B686B20A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432D317CA13;
-	Fri, 26 Jul 2024 12:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9CC17B42A;
+	Fri, 26 Jul 2024 12:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="WhYRX2zo"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HuZlufqB"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5882217C9FE;
-	Fri, 26 Jul 2024 12:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6201617BB07
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721995257; cv=none; b=QaBGSelU0ZKhsxjGW0AevPcjLH4jjV+6Ke+/bWm96VnDLWNAyv9QKPDxyqQrpkrXxlRDtwA7cQyTkzVe0rzOD5KkhOysZxUYto/EhlXupZWGBxX4ExI+Ox7LC006Gs0EC4ib+6eentKg9XuFhddKafTyQQfhqMrNUxTyV49Otkk=
+	t=1721995239; cv=none; b=YJMh0Mw5MZF+8fE0vJ2Sb8q5Nt9XQARemrXPifwi1IJwUgsbjW5otzEMDmvvUyt2s9hFuhG42gAw5jcp4/DccY/CAXwUOyqo6rWmaIaqM2DuCH2UtwvY1JVy1p5ODMJcMBohRk1gK0bup3q42JF+uJ3lL9vZaF3jdjAWrkOnwLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721995257; c=relaxed/simple;
-	bh=qK0flnnBrvtZBNAuPWWTpJbzjHU8TUWV20LrGnfhcPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F2J7JkIMYOrxCY64ANIsPMKJ3T/qPaxpunnVM3gbcwOc4TgceVKu3YqtpniyOdUoN5ZuOGZC3xDOXmdmUxE5zSa61RymjD9az3va3QolTLpg883rVkjk+sGLVoiCzVimMjI9DkvsqKTubjueyu9aNKzFdZVEui2NF/eAo2P+V7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=WhYRX2zo; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WVmYH3fHRz9tCK;
-	Fri, 26 Jul 2024 14:00:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1721995251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F5f9Z6yQ2HFDvQ0pXyKnZ1CF8pk601QiTcma43W9nDA=;
-	b=WhYRX2zoWCyU64ct7fWgdmTh0apq/E/Lo9f4nPIwy1jVr1lBXETBOP9sCtAyvGXLYY64Kf
-	ACFyhbhl58Pq/6UVIJUEUMxXpZOaxv2wxOOOQJBt0wjTLAccoVhwQBdBsAPOlqxrkW1F4B
-	OKmo+ew6Nbny60i6utNWuB8Wy/rj1DZg6+kNImhyghxzGAscWxe9ZxcYh2lFTNDSu+Pos6
-	lTphduaqav0l2aMCgBJe7ubQ5wiv1VTqkOeIg2c+WYTYF4oF5G/C1DESw7UkFVJoO3ak8H
-	54roaIrREc2n52i6R/5gl84b4437MmrABkWiUEonTikoaixiAkTo2AXmyKbGWQ==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	willy@infradead.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	brauner@kernel.org,
-	akpm@linux-foundation.org
-Cc: yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org,
-	hare@suse.de,
-	p.raghav@samsung.com,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	ryan.roberts@arm.com,
-	hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v11 10/10] xfs: enable block size larger than page size support
-Date: Fri, 26 Jul 2024 13:59:56 +0200
-Message-ID: <20240726115956.643538-11-kernel@pankajraghav.com>
-In-Reply-To: <20240726115956.643538-1-kernel@pankajraghav.com>
-References: <20240726115956.643538-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1721995239; c=relaxed/simple;
+	bh=t3NW53ZkPecb65g7j6b0wRbYmlTbwnDzeBcUWc6cKiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKNjwA04dAr5usjluhGzPGPTT7x5DkGj2wiE8b5VeQ78CYFdTKtkc09dQCTcNyjWm2OfdvZ5btR+SwsxQRtnY19yfgpEHL8Am/A01+kKQqanEd+crlr4EwcN7vSvKjDn9zASrbH/nJI/NEsp9HdWmmqsD4YTNnD7mNh74HSqKqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HuZlufqB; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8036ce66164so43030739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721995236; x=1722600036; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EPFRRW8AIlKuxP8Q7EZWY4b5/1cZ7kF3YNc7kBeCMNA=;
+        b=HuZlufqBGFtw5tz/HtAUy969P3ORfDrEf4aXeT6Lbmre3BuoKNM/hpUGZGKgpVNw2y
+         wklD9Bqi6jEGxv+g0qcBqbgAanr0FXJH/9i3Q9Dq4WJxDJHJIyvjEH84BZdOE8FCB0QJ
+         U9LyRQT74gisK1+hEEjRnxFkEzbG8jfyRCKoKGVlnyJstNkjY9Xda3YV+VVWfJHUS+my
+         4RlpQFpt4ClhjjBZ+O1no0SsOOJrZFDrMVMUMbdowyyZC4kXSKAUEWgt7UummJRyZpit
+         nelCah4mh/Pt4qomvrJCBNNKp2RUKibjW0mhO34WR3nMqn+knFzuggwpdrdBjGO84MHF
+         24gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721995236; x=1722600036;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPFRRW8AIlKuxP8Q7EZWY4b5/1cZ7kF3YNc7kBeCMNA=;
+        b=uRENcWC3BrNHO3y4fwRqFDnF6hZ6w9ozyaU95G1qY2QACKoSTjKcoXau85A6VTZMFI
+         23yy2oToW7+Q8HIajtam30Pr5v7Hrwx2uH+bEsAOIVsIiqOTQgPbXrvyif0XPE1129L7
+         s2jFfl4uwJRzrkYBI0Qy/rYZ3M1tnxtm+DKeUeqDypeA0Oex4MRZvToe94y8lgP+ZKhF
+         ngK3xM/3ZIs7fsdZ6I5i2UaMgETWgMJ704Yxf/O0juY2Q3tR95kIoAclhbf5QHH/oiUn
+         mihvf7+QrwOv1vfBMxhyZMzgbfN+c6R6Dzp6DXc9O00uBL3PUuMlgv6C3ilO6J39yXJF
+         Z5XA==
+X-Forwarded-Encrypted: i=1; AJvYcCVF4R+wgN4tgvEwZ5pGv4Jy0bWGlNK5LWycwCq5AGF2uJga2gbnrTaPhCTUTrEMUIbjcVdqx8FxcfyY3EUUtrXGT8hhDXPQLEUuUow9
+X-Gm-Message-State: AOJu0YwBqBl7czRUhr7/D6kqV6UIkxPWRNA28ExVcHaAAz8/nYe/8WQM
+	n+qdhc1q6ejqraCshtBHiO4SX69K0SXY7nW5z5QsDHhcddZdwQw4f35bgWYO7Q==
+X-Google-Smtp-Source: AGHT+IGF1Vy8+vSXqTOa6id6FOH6iP3wriAe5OvwBBfxhoWQnfblL/Mji+X+LUi4afRVv7DXfGZn1w==
+X-Received: by 2002:a05:6602:6d8e:b0:803:85ba:3cf9 with SMTP id ca18e2360f4ac-81f7e43ed89mr685325739f.10.1721995235684;
+        Fri, 26 Jul 2024 05:00:35 -0700 (PDT)
+Received: from thinkpad ([2409:40f4:201d:928a:9e8:14a5:7572:42b6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead72bd1esm2623180b3a.96.2024.07.26.05.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 05:00:35 -0700 (PDT)
+Date: Fri, 26 Jul 2024 17:30:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom: Disable ASPM L0s on x1e801800
+Message-ID: <20240726120029.GH2628@thinkpad>
+References: <20240726-x1e80100-pcie-disable-l0s-v1-1-8291e133a534@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4WVmYH3fHRz9tCK
+In-Reply-To: <20240726-x1e80100-pcie-disable-l0s-v1-1-8291e133a534@linaro.org>
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Fri, Jul 26, 2024 at 09:54:13AM +0300, Abel Vesa wrote:
+> Confirmed by Qualcomm that the L0s should be disabled on this platform
+> as well. So use the sc8280xp config instead.
+> 
 
-Page cache now has the ability to have a minimum order when allocating
-a folio which is a prerequisite to add support for block size > page
-size.
+What are the implications of not disabling L0s? Is it not supported on this
+platform or the PHY sequence doesn't support L0s?
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
- fs/xfs/libxfs/xfs_shared.h |  3 +++
- fs/xfs/xfs_icache.c        |  6 ++++--
- fs/xfs/xfs_mount.c         |  1 -
- fs/xfs/xfs_super.c         | 28 ++++++++++++++++++++--------
- include/linux/pagemap.h    | 13 +++++++++++++
- 6 files changed, 45 insertions(+), 11 deletions(-)
+Please add these info in commit message.
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 0af5b7a33d055..1921b689888b8 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -3033,6 +3033,11 @@ xfs_ialloc_setup_geometry(
- 		igeo->ialloc_align = mp->m_dalign;
- 	else
- 		igeo->ialloc_align = 0;
-+
-+	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-+		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-+	else
-+		igeo->min_folio_order = 0;
- }
- 
- /* Compute the location of the root directory inode that is laid out by mkfs. */
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index 2f7413afbf46c..33b84a3a83ff6 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -224,6 +224,9 @@ struct xfs_ino_geometry {
- 	/* precomputed value for di_flags2 */
- 	uint64_t	new_diflags2;
- 
-+	/* minimum folio order of a page cache allocation */
-+	unsigned int	min_folio_order;
-+
- };
- 
- #endif /* __XFS_SHARED_H__ */
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index cf629302d48e7..0fcf235e50235 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -88,7 +88,8 @@ xfs_inode_alloc(
- 
- 	/* VFS doesn't initialise i_mode! */
- 	VFS_I(ip)->i_mode = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -325,7 +326,8 @@ xfs_reinit_inode(
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
- 	inode->i_state = state;
--	mapping_set_large_folios(inode->i_mapping);
-+	mapping_set_folio_min_order(inode->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 	return error;
- }
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 3949f720b5354..c6933440f8066 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
- {
- 	uint64_t		max_bytes;
- 
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7f..b2f5a1706c59d 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1638,16 +1638,28 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
- 	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
-+		size_t max_folio_size = mapping_max_folio_size_supported();
-+
-+		if (!xfs_has_crc(mp)) {
-+			xfs_warn(mp,
-+"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
- 				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		if (mp->m_sb.sb_blocksize > max_folio_size) {
-+			xfs_warn(mp,
-+"block size (%u bytes) not supported; Only block size (%ld) or less is supported",
-+			mp->m_sb.sb_blocksize, max_folio_size);
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		xfs_warn(mp,
-+"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-+			mp->m_sb.sb_blocksize);
- 	}
- 
- 	/* Ensure this filesystem fits in the page cache limits */
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 3a876d6801a90..61a7649d86e57 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -373,6 +373,19 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
- #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
- 
-+/*
-+ * mapping_max_folio_size_supported() - Check the max folio size supported
-+ *
-+ * The filesystem should call this function at mount time if there is a
-+ * requirement on the folio mapping size in the page cache.
-+ */
-+static inline size_t mapping_max_folio_size_supported(void)
-+{
-+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-+		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
-+	return PAGE_SIZE;
-+}
-+
- /*
-  * mapping_set_folio_order_range() - Set the orders supported by a file.
-  * @mapping: The address space of the file.
+- Mani
+
+> Fixes: 6d0c39324c5f ("PCI: qcom: Add X1E80100 PCIe support")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..04fe624b49c1 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1739,7 +1739,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
+>  	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
+>  	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
+> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
+> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_sc8280xp },
+>  	{ }
+>  };
+>  
+> 
+> ---
+> base-commit: 864b1099d16fc7e332c3ad7823058c65f890486c
+> change-id: 20240725-x1e80100-pcie-disable-l0s-548a2f316eec
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
+
 -- 
-2.44.1
-
+மணிவண்ணன் சதாசிவம்
 
