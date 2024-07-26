@@ -1,288 +1,255 @@
-Return-Path: <linux-kernel+bounces-262731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E256B93CBB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489C393CBB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC7AB21894
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15941F21F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02687F8;
-	Fri, 26 Jul 2024 00:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C291F37E;
+	Fri, 26 Jul 2024 00:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWkYQAAd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frFM9cYu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0EF18E;
-	Fri, 26 Jul 2024 00:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721952254; cv=none; b=qcWpRYfgWFQTag5mOIUu90FjY/HMbRAZD0ddvQbpd9sg1AMQzd5GNhn/Ca2kKqT5BADV0e9m/Ap2P1dsVAoaOzHC2K9cAYauNbgPhSy/iImQbMQTTeEDM2jesTCTSu6N7XH/7DpERdHtsdDkm0OCYvzQjxJcCjAhuqgQl92pp+I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721952254; c=relaxed/simple;
-	bh=ZgTfIkmvyFYTDDSZxgVyN0+nuijRqdtCKl/730nnYmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdS/o0Jnry9iCnvyje5CumT9QnkZ4AQATZ3lfwnd4ulOTl0M+KRkDroBAXJjNuN7w9D4e18dUgSCXYPGn7UmzDHiT4Ugcjfk6RVFdB0GufhD9r//CbVoG5SzWST9USHSFKdoZjKWlpcIDbIZdv1vMzOtacfDPOMC+oRxAEyU36o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWkYQAAd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A625C116B1;
-	Fri, 26 Jul 2024 00:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721952254;
-	bh=ZgTfIkmvyFYTDDSZxgVyN0+nuijRqdtCKl/730nnYmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWkYQAAdpNnpmeHfOg3zTfxjzzBbi2yA6y3EE3CPnso7A2MqfuD1qhHHrz2+rXrG8
-	 9qamQG9fnhhzg/8+z5DxSjZrxCGvnqJIdhjmgZEG5NxFiBAdAJETmyjyLp8sKTV264
-	 gPQNcBWVvQEiTVrQ9fKyDkXZzRuW2yd5eJ3883b62kuL9Y2wCUm7rhMdlucW5oZPvF
-	 JMgYJBJx6Td/ogq7LcWFTr2m1sYq+kxV3icvWx4jsh9eVxXZ3uCQ4qXMuFCI6lxajV
-	 HbF1nSz/gsvhqYzMrJ/oz0AK59QqNcZePHZ29XVUIN9HUhlF72Fo8YVZQVIAZZmBiz
-	 fTWJmIrwZlJJw==
-Received: by pali.im (Postfix)
-	id 229BA67E; Fri, 26 Jul 2024 02:04:10 +0200 (CEST)
-Date: Fri, 26 Jul 2024 02:04:09 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: Andres Salomon <dilinger@queued.net>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v2 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-Message-ID: <20240726000409.ejnvqkzco664q3zb@pali>
-References: <20240723220502.77cb0401@5400>
- <20240724203403.zcrx2lshbla3o2gp@pali>
- <20240724204523.xb6rp7ba6yqi5klt@pali>
- <20240724182318.66578a48@5400>
- <20240724230158.nsmxdgagfpanjtzi@pali>
- <20240725162457.34b480e1@5400>
- <20240725221511.mqb4tlam2r7yheoi@pali>
- <45c7c4c3-2f99-4ca0-9c85-a96a03ccfae8@gmx.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031E21C17
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721952268; cv=fail; b=V4woAmm0EJwM6EHGw4HimHSz9lu/I37qICWLRC2w77WwFH6etuxktgEdXT/H8qYRZp0iiBgypuS9hqz/vtUDtXKayoS+X2glzqnaz/t9bwZYzfHKHYMjSKFB4ew06f9cCKrqcKUHAFUGwT5BlvkUx9AHsqVdd4QNtDOWizc0tW4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721952268; c=relaxed/simple;
+	bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OW3kFoJCQmpHDZe5JFYBSRZuVEjBdTEBvcd629dxn29zUFr+t2vAQsyD31pGoDpAxxGIDkeLQkUhosdDM/9c34tnkCmxeZMy0vXZbPrCnBf44dkfjtPqClmuK9bvQQSVw0JzBMkyME88Od+SMDB3NKAiOpCzUZ9q2TdTYjbjWVA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frFM9cYu; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721952267; x=1753488267;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
+  b=frFM9cYuwXvEGRH/RQMxz9jNiwEUjaPPPM+qbmrInykm3Vo1lrLRs6Nk
+   5TWkEqgs9TpV+/k2pc6/a40cJyA66xkR7f3uXP+aTtyMSXVMCfTzUC/ZY
+   j8um52VYrZulN8INRdPzqbRUMnMU5MoOTg64JCNEBFMmn8cixH4gh9Nvt
+   6OpRpJ0ySZ06KaPFFpkhvHmTez0aaIWjwys3Nyi9D2qNOGQjOv2AbQXus
+   wcDEhxbW6QUcDgUKAaAPFbBWZCq7XgwScduVuGj8KrFExmYqWNAnmxCqn
+   8RggfrcGduC/OgISukaCSULBn8FpZH621TLsS4TgxIpiBCNgm24eQWvKt
+   Q==;
+X-CSE-ConnectionGUID: n0sU7i+4SJWxGXClbpDRvQ==
+X-CSE-MsgGUID: WHDafE6uQgG9mIKXScXgwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="19336791"
+X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
+   d="scan'208";a="19336791"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 17:04:26 -0700
+X-CSE-ConnectionGUID: 7FoT8p0pT2aHGdgXtVRUUg==
+X-CSE-MsgGUID: /vWROZuxT2ivvNL8qj1ypg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
+   d="scan'208";a="53159884"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jul 2024 17:04:26 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 25 Jul 2024 17:04:26 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 25 Jul 2024 17:04:25 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 25 Jul 2024 17:04:25 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 25 Jul 2024 17:04:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qqT/xga5XkB9vpmtoZ3aK8KfqAAnoAdIhl5O8/FiXEpkgU52t5EPVy76gbZLacIjTkGG2CmOov1LRC8otrKqaWKndSdP/YSh67tx0Kd/ZEvNvtIA7YsRF74zqG0fEEljli/aNHsOQ8NfKVg3SEpjbL269LKSAjuBatzRHGq2P9zS57qHxjoF/y9PjlcbG5u5QcGVlBb96WGt3umX0qXnzk8qB6epE0+MAWJ+ygXQfhv3r6KxTDHe1RO/uP5jZAoSX6wkoj8pyJ5waQqwhHPgNRSVRwdLiIKvyRgNW+SUqg93GDrOfiOYTeNHLwfppnEszrzKRA9QbIEmGakwEH0SPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
+ b=cnGx7T1pDgw1JYepYnhIlNw5HSBVGguDzDWh/L/R8Rq8rKQVmoOL6v+jizD51NoBY7MrAilCXkmhpakmww9GuWo+1YnFYQLF5m3KPgWjoRgKa1z4No/ILLuIHFyp7am3V1lYDtmEEQ5+YxnpjyBMRtHHuDgnP8wR4eCD90nYon0MFwUk55KdO5s74c3t+fwQ4fYFQ9Go5Q0LmXIuoDJ0NotqFVMNbF55Uh7uWGYfD5Lkwu4aWR9KMZ5QGPr9U00q5NXpWZwgY2IQnpKkvHBpSP7HBD1RsL2IjSTtEpu4wMR3gi8v77jjTWeW1FFYzkS9gDZGBbq3nUdN433Lprx9lQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by CH0PR11MB5313.namprd11.prod.outlook.com (2603:10b6:610:bc::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Fri, 26 Jul
+ 2024 00:04:23 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7784.020; Fri, 26 Jul 2024
+ 00:04:23 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Will Deacon <will@kernel.org>, Kunkun Jiang <jiangkunkun@huawei.com>, "Lu
+ Baolu" <baolu.lu@linux.intel.com>, Robin Murphy <robin.murphy@arm.com>,
+	"Joerg Roedel" <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
+	"Michael Shavit" <mshavit@google.com>, Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "tangnianyao@huawei.com"
+	<tangnianyao@huawei.com>
+Subject: RE: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Thread-Topic: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Thread-Index: AQHa3WrLSmtjtahFz0iDm1P9QVDPxrIFm1CAgAARIYCAACxwAIABM47wgABdf4CAALlloA==
+Date: Fri, 26 Jul 2024 00:04:23 +0000
+Message-ID: <BN9PR11MB52762E34518C3249C4B6A7688CB42@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
+ <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+ <20240724102417.GA27376@willie-the-truck> <20240724130320.GO14050@ziepe.ca>
+ <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240725125845.GA3030761@ziepe.ca>
+In-Reply-To: <20240725125845.GA3030761@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|CH0PR11MB5313:EE_
+x-ms-office365-filtering-correlation-id: 89d59745-2efc-4f58-eb3f-08dcad0681b7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?OUJZUE5hSDRHZ2piRDFmUktndEg5N2lFNHVkUlFyUmpSekhIcFV5dEdpMjVq?=
+ =?utf-8?B?YmxYaDNSd1VFNUhGN1hmRXdTMDRjb29wWng4aFYyTHhmQ1JValhLVWl0eXh5?=
+ =?utf-8?B?REpBRGpnQzhCajJQcFJKSjdING1wSGVrazllR3VKQ1FNRUJiZ25qbGJ3c2Er?=
+ =?utf-8?B?M2JnbXpFM2FvWEo2eWxIVFIxNUdoai8rdk5GV3VZOGJmbi9UYVRybW9QYndD?=
+ =?utf-8?B?M1pyYWNBZ1VzZmtNR0dkR1Jwc2NRMGtiYWdzQlprL2hhRmQzMjJqNW9EWE9j?=
+ =?utf-8?B?b2lWakM5ckpRRXRBdXVBaDF5SGh0eEg3bTFNWGh1bTdXTlA3c0tGN2puNlE3?=
+ =?utf-8?B?cW5vRmRnNlljd21kTkhZcFliMnVpT0JHR1V3eC80ZFd1L2UzUmVqWERqMmFX?=
+ =?utf-8?B?RzFyOFB4TDJkVk1tOTdVeVB1ODdOL3dUdWZVREV2NzRla1VxUXB1NWV3WFQx?=
+ =?utf-8?B?dWtzdjZrcTJHTWVxSm5NV2pKT2lNVXFPMEpNRHdXRTVwQ3ZqUExoMHQvRlJR?=
+ =?utf-8?B?bU5KWGJVQ084R1laUDAzWG0wZUJEOHFiVVdlQmkwbWVuOGdZc2VyOGtXMXVz?=
+ =?utf-8?B?dkFsODcxWjBiQW9TR1pCWnNISXZpM2d0b044STRkN09IZXNkSFZmWHJzQzdY?=
+ =?utf-8?B?MCtRSDRLUnZGeDJhZXlTckNqYWpNTG9xWW5wNkpES054QzBlNURteGZUUHpz?=
+ =?utf-8?B?LzVmQnp3VHFMR0hQR3NBWEFYS2hrMnJRdSt2aEhCaWhyMlVBTXdyYS9WZkRC?=
+ =?utf-8?B?VThmUVZTRW1YNXFTbXNmZlV3Ry8zcU9idXZ6S0FHSFpBamJ4Skc5LzR3TlVo?=
+ =?utf-8?B?NW41NjRGUm8rUEhoZW15NUQvWk9iL0VHMHdnSFdYRkZDaUMvWktndDdzNU5v?=
+ =?utf-8?B?QU1GYXovYTFUUDdjNDhVVXNkQzJRdWVQRWNJTE8vZGFhT093UmkvUmQ5cXd6?=
+ =?utf-8?B?SVgxallhT0RUWXVqRkMrSHNjWENPTE9sRVRmSVE3YnZ0cVZ5UVYxVGo1L1JU?=
+ =?utf-8?B?Tm5XR1ZsVVR0OW1uMCtWSXkzMWlnd2NObzB6czhReEdTWkhTUXlUZ09RZE9y?=
+ =?utf-8?B?UllyNXVoNThHeDBQUVJRUlNacEZOZWhQR2g0SXZuMTU5NHNhNm1VeE1UdzVw?=
+ =?utf-8?B?SFlOUEVLMHZtNTl2b2JUUlRiMFR5OVJXdW5MVi8vRGRJbHZwRC9VMXpiMGdq?=
+ =?utf-8?B?cW90RG5FVzZReWNSU3c4RXFzK3NsWnVkNjRyai9JSlYrRm82ODNHUDhNWnIz?=
+ =?utf-8?B?RE81ckNJRTZQMXpCWDRaZVNuVzUwQjhJaURaNWVBZXJ5Z092NE43QW8yTGky?=
+ =?utf-8?B?NHNOM2lyaTNlTnZzNkhvWS82eVEyYWZmQXlFU05nZ0VKSWNybnlVb3M3NktL?=
+ =?utf-8?B?Z2thWnVEaVdiTmRDdEg2VmpYa1l1SHNNbkl3UURzSTZNL3czTlZGRjljZWFs?=
+ =?utf-8?B?ZjBaelpWOStnRzNNUWRWUlZDQmlPUnUvdWFiL20xQlpGUVFrTlQyT2lhdkVM?=
+ =?utf-8?B?bU1tVUlZYUJtS3BMOFRMbWtYWlcyaFZlZG41T1Y0T29UWUpGU2U1VHE4Qkpn?=
+ =?utf-8?B?T29zeTMwZDRBWEFuNUFhOTVnZGZkWVlCeGl1WmsvdXRKQmsxVk9Qbjh1Y2tu?=
+ =?utf-8?B?K3ByZXNjOGpBUGhxVTMwOUZGdzhvem1yanU2RXd4SHo4N2Ztd3JFVGFPSjY4?=
+ =?utf-8?B?MVlucXhGTkk2VmVBVGlJbCtlQWVQN0lHMFpEM2NqWFZ4djJMNkM3MC9kZXZ3?=
+ =?utf-8?B?MWZ4RmxlUVNTS2xVR0FKbTdkOTA3Qk13NCt2b0ErZHBwdE5OaTIxbURLdWla?=
+ =?utf-8?B?VXpXVWJXaklodjduZ29pQTFUQkFlNEl6ZXU4b1FWVUhXcVE3anFET3lqZmdy?=
+ =?utf-8?B?NXgzb05mOEovSk8xTVQremVTd3B2SC9BSUJvSzd2WnRqYVE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ODZsSzdpV2U3K1BncHpBREpCVzUrNGpjU0kvM1BwR1FhTlkyWXdPVkZ0dFBK?=
+ =?utf-8?B?YW5pem5nRHBEL2pFVzA1Z0NDTXZqNTRrUDFUSzJiRUpFRUJOTlkvWE9OSW5O?=
+ =?utf-8?B?Vm5CNzl5VDJJWmIzL3lLdTFNYkVhSmVtQllTZVZvMkdMNXhQL0djOVlMQmZC?=
+ =?utf-8?B?WFBqd0E0cm52MDNBYlVqZDZ2cWx6TUlsTzBtcHFWTHdaZlJTN3V4SndkNWR3?=
+ =?utf-8?B?QkwwRGg3ajNLclB3SFpIYVZPR1dGbWhLd29nRFhnbnlOSWVGTGRLYnB5VkMx?=
+ =?utf-8?B?ZVRtNkFMOXRsZk91ekp1OG1kcEtXaGh5UUNESE9icWdTdU9ScDNGWDJsZTJH?=
+ =?utf-8?B?OWgyYzBONzZXU1ZaaW1adGYyZ0J4T2NlQjhySllWVmsyNSt2RFViSE03SWky?=
+ =?utf-8?B?SG80T3VJNjJQTVo4dlV4UmRhWjdhSnFDTDVpUnBmejBDMTg4dCs5Z01UTzg2?=
+ =?utf-8?B?UEhBK2prckVVRTdVTzZqbi9qWGwzRHJCTDJiNUMyWUhibm5tNkI4ZXg0c0ZX?=
+ =?utf-8?B?UEkxb0xPVmhldXNaWDZrbFRnYzhNRHBtNU4xNXp4NGxreVJBU2V1K1NVaWFJ?=
+ =?utf-8?B?TVU1N3o4MVNUTlhiQWUwT29Pbm9tU2pHWEZQRElvTFIrUHpPRElqWDRyOXcz?=
+ =?utf-8?B?SWFYVnREN2Focmg5aU1NQnRnT254VWlTZWkxRzd4Zmg3dExGbWRrYmloRDlr?=
+ =?utf-8?B?NjlFZ1pJUkZvUmc4aXFHVjVsZGJHSHB0Y3hQczhiekQrcUNjOVFMTytnWUtE?=
+ =?utf-8?B?K3V6MWtKd3p4dmJMdDgrSUNLVzVnUUFFZ0lyM1JwL1BLdVh3VmZpTWQrNzJa?=
+ =?utf-8?B?d3h3UzVQaTczWllxQ2hzL2FmdFJHZE1NSWxYWk8zT3hjQzZXS0lRSC9VVnl5?=
+ =?utf-8?B?WWhFZVg0WlNzSTZQbnBiNXBidnBTa2VsSCs2a3VGNFYwNHBCY0ZqcDhuYTFr?=
+ =?utf-8?B?SDBwZ2czRnpxVmlRLzBJaDFLSTJvSXRaS2dFbFdyQ3B3em1BVFFTTkdVVmdi?=
+ =?utf-8?B?WHk2cFlLa0JKTkMycG1iVU5FWHFxcExmU01JaG43NDB6QU4rYXh3aFYvODVN?=
+ =?utf-8?B?ZW5hMFdoY2IyQitScFYwRkNxUzNKS1lSSDlKN3JrMWEzTW95ZzBhREFSL1po?=
+ =?utf-8?B?NGtWNDdsZUZ5OCs4VkZvaWphV3krcjBCaXFhUlNvOTA1UW9QUVVVWFJuUVRl?=
+ =?utf-8?B?TGg4YnNHOXBwTGh0SWNxNU40SnBLdEkxbHVDdWpBMDZMVnFaZGphcCtSMmlG?=
+ =?utf-8?B?S1lmOWg3WHBsZVN3dkFTeVFYVUZWa0Z1dWMyaVArWDNLNUk5cUlPb3k4Y3ZJ?=
+ =?utf-8?B?d0RYOEtnNkw5REE1dGNLQzVYT3c2T0pENHVtWmlMY3U3Z0dtNDRsckFWL1BO?=
+ =?utf-8?B?ZUU2QW9yTXlBK1E0akZBbU9VU1BULzlLdVRFWnNRWjFKdkJPUWdTL2cxYTF1?=
+ =?utf-8?B?Si9NR0I5eE5IcmJ2MWF4NnNmNFBXTlEyWWwrZE5kV05EU28za01RRFlZVFF0?=
+ =?utf-8?B?OHFBMnpIYzVsdzdFb216ZmFxYnI3dXJiTEs2UkV5YXp4ejBQQmJYUS9JQ01H?=
+ =?utf-8?B?TGgxMWFNdVhablBZSzNETWRUR0Rhc29ZV3cra3FGUFM5YktjWHFWOVBzVW8w?=
+ =?utf-8?B?RzdsRU4ybXczYU9RdmZRZDZtY2lXRWlIMHhHaGtnUkpjc0hjUGV2VDFNYUlI?=
+ =?utf-8?B?TVhpVlRLMlRRV2N4anZwTFJ2bVd2bllTREV3WU55S0NjOEpJNWFUc3NvRisz?=
+ =?utf-8?B?V3kvMEU2bWJyRFNGWmMydXAwMUFOTTFJWWNmMHhUbFIyZUdJTzJubUtVSkE0?=
+ =?utf-8?B?NXBUYktud2dqMkwxN3ptVjltcXdMeFBCNThIdWxRWTFDSFpGNHlSY3l6ZmZm?=
+ =?utf-8?B?SXBYdm9sblBtU01oaWowTGRiQ2RzRDB4TUZkc1UxWFlkNEh3MHI2ajg4N2hC?=
+ =?utf-8?B?cTVERkVpNXg0cGZzVDdlbktDUVMvOXlna3pQQlBWcjdleHRlblNhWHRUcmhp?=
+ =?utf-8?B?bHFpc2VWTjJmSU1hTG5sampuR2hkOU02TjNEdlJVRTZWY1NlZC9FY1F4SHJX?=
+ =?utf-8?B?cXBNTjk0Q0thWUk1REpPSEFObE1sMUQ5S0ZNVE82M2ZldzVOZDFoaGZWcFhD?=
+ =?utf-8?Q?qGuFElgENVKhb3t5HwSG/GxTY?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45c7c4c3-2f99-4ca0-9c85-a96a03ccfae8@gmx.de>
-User-Agent: NeoMutt/20180716
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89d59745-2efc-4f58-eb3f-08dcad0681b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2024 00:04:23.7316
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ozpfReym1TVAmn3vSLuEXTT6ivK55eZaDt3MT3zX7WIuV+sAkX/XYV4MI+Au6FM8ZWXCi2cyAUJfoNdohHNi0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5313
+X-OriginatorOrg: intel.com
 
-On Friday 26 July 2024 01:48:50 Armin Wolf wrote:
-> Am 26.07.24 um 00:15 schrieb Pali Rohár:
-> 
-> > On Thursday 25 July 2024 16:24:57 Andres Salomon wrote:
-> > > On Thu, 25 Jul 2024 01:01:58 +0200
-> > > Pali Rohár <pali@kernel.org> wrote:
-> > > 
-> > > > On Wednesday 24 July 2024 18:23:18 Andres Salomon wrote:
-> > > > > On Wed, 24 Jul 2024 22:45:23 +0200
-> > > > > Pali Rohár <pali@kernel.org> wrote:
-> > > > > 
-> > > > > > On Wednesday 24 July 2024 22:34:03 Pali Rohár wrote:
-> > > > > > > Hello, the driver change looks good. I have just few minor comments for
-> > > > > > > this change below.
-> > > > > > > 
-> > > > > > > Anyway, if there is somebody on the list with Dell laptop with 2 or 3
-> > > > > > > batteries, see below, it would be nice to check how such laptop would
-> > > > > > > behave with this patch. It does not seem that patch should cause
-> > > > > > > regression but always it is better to do testing if it is possible.
-> > > > > > > 
-> > > > > > > On Tuesday 23 July 2024 22:05:02 Andres Salomon wrote:
-> > > > > [...]
-> > > > > > And because CLASS_TOKEN_WRITE is being repeated, what about defining
-> > > > > > something like this?
-> > > > > > 
-> > > > > >      static inline int dell_set_token_value(struct calling_interface_buffer *buffer, u16 class, u16 tokenid, u32 value)
-> > > > > >      {
-> > > > > >          dell_send_request_for_tokenid(buffer, class, CLASS_TOKEN_WRITE, tokenid, value);
-> > > > > >      }
-> > > > > > 
-> > > > > > Just an idea. Do you think that it could be useful in second patch?
-> > > > > > 
-> > > > > Let me implement the other changes first and then take a look.
-> > > > Ok.
-> > > > 
-> > > For the helper function, I noticed that all of the CLASS_TOKEN_WRITEs
-> > > also have SELECT_TOKEN_STD except for one (dell_send_intensity). So I
-> > > think it makes sense to have the helper function also do that as well.
-> > > Eg,
-> > > 
-> > > static inline int dell_set_std_token_value(struct calling_interface_buffer *buffer, u16 tokenid, u32 value)
-> > > {
-> > > 	dell_send_request_for_tokenid(buffer, SELECT_TOKEN_STD, CLASS_TOKEN_WRITE, tokenid, value);
-> > > }
-> > > 
-> > > I agree with your renaming to dell_send_request_for_tokenid, btw.
-> > > 
-> > > 
-> > > > > > > > +static int dell_battery_read(const int type)
-> > > > > > > > +{
-> > > > > > > > +	struct calling_interface_buffer buffer;
-> > > > > > > > +	int err;
-> > > > > > > > +
-> > > > > > > > +	err = dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_READ,
-> > > > > > > > +			SELECT_TOKEN_STD, type, 0);
-> > > > > > > > +	if (err)
-> > > > > > > > +		return err;
-> > > > > > > > +
-> > > > > > > > +	return buffer.output[1];
-> > > > > > > buffer.output[1] is of type u32. So theoretically it can contain value
-> > > > > > > above 2^31. For safety it would be better to check if the output[1]
-> > > > > > > value fits into INT_MAX and if not then return something like -ERANGE
-> > > > > > > (or some other better errno code).
-> > > 
-> > > I ended up returning -EIO here, with the logic that if we're getting
-> > > some nonsense value from SMBIOS, it could either be junk in the stored
-> > > values or communication corruption.
-> > > 
-> > > Likewise, I used -EIO for the checks in charge_control_start_threshold_show
-> > > and charge_control_end_threshold_show when SMBIOS returns values > 100%.
-> > > 
-> > > 
-> > > 
-> > > > > 
-> > > > > > > 
-> > > > > > > > +	if (end < 0)
-> > > > > > > > +		end = CHARGE_END_MAX;
-> > > > > > > > +	if ((end - start) < CHARGE_MIN_DIFF)
-> > > > > > > nit: I'm not sure what is the correct coding style for kernel drivers
-> > > > > > > but I thought that parenthesis around (end - start) are not being
-> > > > > > > written.
-> > > > > > > 
-> > > I think it makes the comparison much easier to read. I'd prefer to
-> > > keep it, unless the coding style specifically forbids it.
-> > As I said I'm really not sure. So if nobody would complain then you can
-> > let it as is.
-> > 
-> > You can use ./scripts/checkpatch.pl application which is in git tree,
-> > which does basic checks for code style. It cannot prove if something is
-> > really correct but it can prove if something is incorrect.
-> > 
-> > > 
-> > > 
-> > > > > > > > +
-> > > > > > > > +static u32 __init battery_get_supported_modes(void)
-> > > > > > > > +{
-> > > > > > > > +	u32 modes = 0;
-> > > > > > > > +	int i;
-> > > > > > > > +
-> > > > > > > > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > > > > > > > +		if (dell_smbios_find_token(battery_modes[i].token))
-> > > > > > > > +			modes |= BIT(i);
-> > > > > > > > +	}
-> > > > > > > > +
-> > > > > > > > +	return modes;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > > +static void __init dell_battery_init(struct device *dev)
-> > > > > > > > +{
-> > > > > > > > +	battery_supported_modes = battery_get_supported_modes();
-> > > > > > > > +
-> > > > > > > > +	if (battery_supported_modes != 0)
-> > > > > > > > +		battery_hook_register(&dell_battery_hook);
-> > > > > > > Anyway, how is this battery_hook_register() suppose to work on systems
-> > > > > > > with multiple batteries? The provided API is only for the primary
-> > > > > > > battery, but on older Dell laptop it was possible to connect up to
-> > > > > > > 3 batteries. Would not this case some issues?
-> > > > > This interface is _only_ for controlling charging of the primary battery.
-> > > > > In theory, it should hopefully ignore any other batteries, which would
-> > > > > need to have their settings changed in the BIOS or with a special tool or
-> > > > > whatever.
-> > > > That is OK. But where it is specified that the hook is being registered
-> > > > only for the primary battery? Because from the usage it looks like that
-> > > > the hook is applied either for all batteries present in the system or
-> > > > for some one arbitrary chosen battery.
-> > > > 
-> > > > > However, I'm basing that assumption on the SMBIOS interface. These tokens
-> > > > > are marked "Primary Battery". There are separate tokens marked "Battery
-> > > > > Slice", which from my understanding was an older type of battery that
-> > > >  From SMBIOS perspective it is clear, each battery seems to have its own
-> > > > tokens.
-> > > > 
-> > > > The issue here is: how to tell kernel that the particular
-> > > > dell_battery_hook has to be bound with the primary battery?
-> > > > 
-> > > So from userspace, we've got the expectation that multiple batteries
-> > > would show up as /sys/class/power_supply/BAT0, /sys/class/power_supply/BAT1,
-> > > and so on.
-> > Yes, I hope so.
-> > 
-> > > The current BAT0 entry shows things like 'capacity' even without this
-> > > patch, and we're just piggybacking off of that to add charge_type and
-> > > other entries. So there shouldn't be any confusion there, agreed?
-> > I have not looked at the battery_hook_register() code yet (seems that I
-> > would have to properly read it and understand it). But does it mean that
-> > battery_hook_register() is adding hook just for "BAT0"?
-> > 
-> > What I mean: cannot that hook be registered to "BAT1" too? Because if
-> > yes then we should prevent it. Otherwise this hook which is for "Dell
-> > Primary Battery" could be registered also for secondary battery "BAT1".
-> > (I hope that now it is more clear what I mean).
-> 
-> Hi,
-> 
-> the battery hook is being registered to all ACPI batteries present on a given system,
-> so you need to do some manual filtering when .add_battery() is called.
-
-Ok. So it means that the filtering based on the primary battery in
-add_battery callback is needed.
-
-> As a side note: i suspect that "newer" Dell machines use a different interface for controlling
-> battery charging, since the Dell Power Manager software on my machine seems to provide some
-> additional features not found in this token-based interface.
-
-Dell has released documentation of some other API, see the end of this file
-https://github.com/dell/libsmbios/blob/master/src/bin/smbios-battery-ctl
-
-> Unfortunately i am not sure if reverse-engineering the Dell software is legal, does the kernel
-> community have some helping guides in this area? If it is legal, then i would happily volunteer
-> to do the reverse-engineering.
-
-That is questionable. Some kernel drivers were written from reverse
-engineered data in past.
-
-Note that in some countries is reverse engineering legal if it is done
-for interoperability purposes (which this one could match).
-
-> Otherwise maybe someone at Dell can provide some clarifications if a different interface for controlling
-> battery charging exists and how to use it?
-
-Try to send an off-list/private email to Dell.Client.Kernel@dell.com
-with details for what you are asking. Maybe they would have access to
-some new documentation.
-
-> Thanks,
-> Armin Wolf
-> 
-> > > In the kernel, we're registering the acpi_battery_hook as "Dell Primary
-> > > Battery Extension". The functions set up by that acpi_battery_hook are
-> > > the only ones using battery_support_modes. We could make it more explicit
-> > > by:
-> > > 1) renaming it to primary_battery_modes, along with
-> > > dell_primary_battery_{init,exit} and/or
-> > > 2) allocating the mode mask and strings dynamically, and storing that
-> > > inside of the dev kobject.
-> > > 
-> > > However, #2 seems overly complicated for what we're doing. In the
-> > > circumstances that we want to add support for secondary batteries,
-> > > we're going to need to query separate tokens, add another
-> > > acpi_battery_hook, and also add a second mask. Whether that's a global
-> > > variable or kept inside pdev seems like more of a style issue than
-> > > anything else.
-> > > 
-> > > #1 is easy enough to change, if you think that's necessary.
-> > I think that "Dell Primary Battery Extension" is OK. All SMBIOS code is
-> > currently primary-battery only.
-> > 
-> > The only my point is to prevent this &dell_battery_hook to be registered
-> > for non-primary battery.
-> > 
+PiBGcm9tOiBKYXNvbiBHdW50aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gU2VudDogVGh1cnNkYXks
+IEp1bHkgMjUsIDIwMjQgODo1OSBQTQ0KPiANCj4gT24gVGh1LCBKdWwgMjUsIDIwMjQgYXQgMDc6
+MzU6MDBBTSArMDAwMCwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4gPiBGcm9tOiBKYXNvbiBHdW50
+aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gPiA+IFNlbnQ6IFdlZG5lc2RheSwgSnVseSAyNCwgMjAy
+NCA5OjAzIFBNDQo+ID4gPiArICogYW5kIHRoZSBmYXVsdCByZW1haW5zIG93bmVkIGJ5IHRoZSBj
+YWxsZXIuIFRoZSBjYWxsZXIgc2hvdWxkIGxvZyB0aGUNCj4gRE1BDQo+ID4gPiArICogcHJvdGVj
+dGlvbiBmYWlsdXJlIGFuZCByZXNvbHZlIHRoZSBmYXVsdC4gT3RoZXJ3aXNlIG9uIHN1Y2Nlc3Mg
+dGhlIGZhdWx0DQo+IGlzDQo+ID4gPiArICogYWx3YXlzIGNvbXBsZXRlZCBldmVudHVhbGx5Lg0K
+PiA+DQo+ID4gQWJvdXQgInJlc29sdmUgdGhlIGZhdWx0IiwgSSBkaWRuJ3QgZmluZCBzdWNoIGxv
+Z2ljIGZyb20gc21tdSBzaWRlIGluDQo+ID4gYXJtX3NtbXVfZXZ0cV90aHJlYWQoKS4gSXQganVz
+dCBsb2dzIHRoZSBldmVudC4gSXMgaXQgYXNraW5nIGZvciBuZXcNCj4gPiBjaGFuZ2UgaW4gc21t
+dSBkcml2ZXIgb3IgcmVmbGVjdGluZyB0aGUgY3VycmVudCBmYWN0IHdoaWNoIGlmIG1pc3NpbmcN
+Cj4gPiBsZWFkcyB0byB0aGUgc2FpZCBzdGFsbCBwcm9ibGVtPw0KPiANCj4gSXQgd2FzIHJlbW92
+ZWQgaW4gYjU1NGUzOTZlNTFjICgiaW9tbXU6IE1ha2UgaW9wZl9ncm91cF9yZXNwb25zZSgpDQo+
+IHJldHVybiB2b2lkIikNCj4gDQo+ICAgICAgICAgcmV0ID0gaW9tbXVfcmVwb3J0X2RldmljZV9m
+YXVsdChtYXN0ZXItPmRldiwgJmZhdWx0X2V2dCk7DQo+IC0gICAgICAgaWYgKHJldCAmJiBmbHQt
+PnR5cGUgPT0gSU9NTVVfRkFVTFRfUEFHRV9SRVEpIHsNCj4gLSAgICAgICAgICAgICAgIC8qIE5v
+Ym9keSBjYXJlZCwgYWJvcnQgdGhlIGFjY2VzcyAqLw0KPiAtICAgICAgICAgICAgICAgc3RydWN0
+IGlvbW11X3BhZ2VfcmVzcG9uc2UgcmVzcCA9IHsNCj4gLSAgICAgICAgICAgICAgICAgICAgICAg
+LnBhc2lkICAgICAgICAgID0gZmx0LT5wcm0ucGFzaWQsDQo+IC0gICAgICAgICAgICAgICAgICAg
+ICAgIC5ncnBpZCAgICAgICAgICA9IGZsdC0+cHJtLmdycGlkLA0KPiAtICAgICAgICAgICAgICAg
+ICAgICAgICAuY29kZSAgICAgICAgICAgPSBJT01NVV9QQUdFX1JFU1BfRkFJTFVSRSwNCj4gLSAg
+ICAgICAgICAgICAgIH07DQo+IC0gICAgICAgICAgICAgICBhcm1fc21tdV9wYWdlX3Jlc3BvbnNl
+KG1hc3Rlci0+ZGV2LCAmZmF1bHRfZXZ0LCAmcmVzcCk7DQo+IC0gICAgICAgfQ0KPiAtDQo+IA0K
+PiBQYXJ0IG9mIHRoZSBvYnNlcnZhdGlvbiBnb2luZyBpbnRvIGI1NTRlMzk2ZTUxYyB3YXMgdGhh
+dCBhbGwgZHJpdmVycw0KPiBoYXZlIHNvbWV0aGluZyBsaWtlIHRoZSBhYm92ZSwgYW5kIHdlIGNh
+biBwdWxsIGl0IGludG8gdGhlIGNvcmUgY29kZS4NCj4gDQo+IFNvIHBlcmhhcHMgd2Ugc2hvdWxk
+IHN0aWxsIGFsd2F5cyBhYm9ydCB0aGUgcmVxdWVzdCBmcm9tDQo+IGlvbW11X3JlcG9ydF9kZXZp
+Y2VfZmF1bHQoKSBpbnN0ZWFkIG9mIHJlcXVpcmluZyBib2lsZXJwbGF0ZSBsaWtlDQo+IGFib3Zl
+IGluIGRyaXZlcnMuIFRoYXQgZG9lcyBzb21lIGJldHRlci4NCj4gDQo+IFRoZSByZXR1cm4gY29k
+ZSBvbmx5IGluZGljYXRlcyBpZiB0aGUgZXZlbnQgc2hvdWxkIGJlIGxvZ2dlZC4NCj4gDQoNClll
+cywgdGhpcyBtYWtlcyBtb3JlIHNlbnNlLiBPdGhlcndpc2Ugd2UgbmVlZCBhbHNvIHB1bGwgYmFj
+aw0KdGhvc2UgcmVtb3ZlZCBsaW5lcyBpbiBkcml2ZXJzIGZvciBmYXVsdCByZXNvbHZpbmcuDQo=
 
