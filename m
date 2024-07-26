@@ -1,183 +1,78 @@
-Return-Path: <linux-kernel+bounces-263626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA68A93D868
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:36:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B0F93D86B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C511C23445
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964001C2353F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED034500E;
-	Fri, 26 Jul 2024 18:36:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D813D69;
+	Fri, 26 Jul 2024 18:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vi9Furx7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E5D383A1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D513BBCB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722018989; cv=none; b=BcUps2kuJTGepty1Q0bGYvlSnyvgRmXWRwxiFzfO9TrOZJJeiIF1EQnNBSXbCXX2rRPdFlIUgLJAqXh8OZQXb+yiHUW9PxnhwsSqYpbxOrCW2zqMUhDhEDjYiNLpriGDjszzS9nryF4iFCzJsSca9Cw/9qrC4dD7dVYR+MGzMiY=
+	t=1722019110; cv=none; b=GEt5wNE0D17jXLiQLxZ+0t1aT2As1qF5GSeTy9nPgZqddRs2SxTPzmXv66yvCZ+L6dim+LclVa0d7KTtBON1mHbqP5UEOjy3k7/5Pa+kPiQOSrwXwV/JzX7DcPToO1wdyoYVD/nivCGrEgGGLqIGO0gGkHCN4jn4CcxcSoUi9+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722018989; c=relaxed/simple;
-	bh=WKH5BgxiUJ5hc/0TawnXFMva1YrvHmK2+4/SJPVa7WU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l2NiQhdIPWoivnDpzok4Msp4c4my+b4RplnXJWJc1DgBDFdmPtK0r8RWUsdlCgQuCcQDdqMFczDOTea+WJPcN1gbRfnah/UoNtjMow4gCvgirlMx8C8zHm6NkERE8VNS43wZYy9vvWpxOo4Up0cCJZNGcP9UPYv4U9+mswRUMNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81d1b92b559so191203839f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:36:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722018987; x=1722623787;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXUTmDkvfShi+Ru3wRXvmBuP0y61Ox5D+M6fEe2yMgI=;
-        b=Lojk9AX9X09HpSo2CEHQu+nwxiOshBkyTHKKrm+HRaB0QOmoKdsrZqkINQAPfmMnCi
-         YqC5biyQ+6cnHOJJuXXrMMZrOewFVlMiOlylO+xM+gFz0nzelD2Po9obyTCx8NWGsPXV
-         Qvp9vLhKHh54z7OEZaPDIQuXoXdgElb18Seon1FguA4dSYkpEOKzdnqF45PQhNyu9O2h
-         SOHjULeI2KrXS7QmxZXQez6XSOiNb4dQSAP2qpYK/Co2HlHP1LTdwi5tu7WAw+tYZ85y
-         9IfztReNNmofgrHCbHtd652ABKPwe3lzF+32UOqB+N2TNDPcZg0BXIIOcq4EjI246Dy5
-         ZMlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWp//xzpC8okxcABLCAincIHltGYATF6TExiHsTfG3aEq7MWp51jxi+zOw4gL1+X/+uLbyqsuU6Ec0V/hJbwi27wryHYvMHizZvwfq
-X-Gm-Message-State: AOJu0YwL95WQfBpnv5DGKEH6B8iPe5NLYjgwnU4sjz6X5VjWwH89/jJX
-	pbM65iJb1sQ9dtWPLFy0RtmsxLVdfxmmX4KokBFrPnj7ZF6F5T7Qzt3uxJUugOX3SyiMdEtaYKT
-	GsZk8YCqC0lzuRlECi2f1ej0e0qdGYdtBhnH9BinOamjpmLHuATNprCM=
-X-Google-Smtp-Source: AGHT+IGwsxfxkMPSYzW7wzlc5uNtrSeS/NDGHEL7SNU2t10tgEi57ZzRunHzntq1JXhj6Hz/Qqa3bTFpiuBJB+/kmq6Qb7T9q/lX
+	s=arc-20240116; t=1722019110; c=relaxed/simple;
+	bh=xT8o0jActOY7IiurUCAv9FxLZTNeJvdHnNoF8V2JCvk=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=bUk66Z+JQCVC/Shd5eJFSzaL41BhK+EKP4Si7piqX5ecjU/uSlTw9Rscex/tXfaxWP1Vk6gVDyYcLi2BncPtz8waTkOLFq+0EQ4aWWs0QXPSR/C0G5SIJSLkzsj7gXmSFVg9dtrcj8SYHYVnUgQVsJ9iEPcURaJUl0L1ndzaLp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vi9Furx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C844C32782;
+	Fri, 26 Jul 2024 18:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722019109;
+	bh=xT8o0jActOY7IiurUCAv9FxLZTNeJvdHnNoF8V2JCvk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vi9Furx72zjNGpq0zoPNeg3PxeotnWihip7F06vbPr8i/4f+mxw6LAgH/K0y5NknK
+	 4+Blg2WBwdM4L2KSsFMh8/nxgHCQH+gEZmiWNgmxVNIW5a3O0n6EXFmsKgQ4Y8ai0o
+	 lyooHqnGzNfciIZp9h6T9Pa56bPEbx3tlXE0ChdB4B59v4yApDQp9RdSkDLa55qXkS
+	 /9HcU8e1aBVh7pmtkCGcaoosveWadWee1HeQLVE2cWdrIIEiFVsu3MNiqnOFnK7p92
+	 eAWSHvnnrK0cS/0hYLgYFHAJ4qgMMcUSm4SdW0J0HMoDSlHbA1yDCyMIxZovPbs1PH
+	 tAC3/nxUMqkcA==
+Message-ID: <ba78d28fa3c92baae955e331c2f7a3f9.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regmap fixes for v6.11-merge-window
+Date: Fri, 26 Jul 2024 19:38:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:981d:b0:4c2:7179:ce03 with SMTP id
- 8926c6da1cb9f-4c63e6639d9mr4551173.2.1722018987365; Fri, 26 Jul 2024 11:36:27
- -0700 (PDT)
-Date: Fri, 26 Jul 2024 11:36:27 -0700
-In-Reply-To: <0000000000004da3b0061808451e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000009e6b5061e2aca90@google.com>
-Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
-From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jiri@resnulli.us, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+The following changes since commit c2bb8198fee88a428513f8d023c627ecd13aa694:
 
-HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a8dabd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=381b8eb3d35e3ad9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e99275980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137c299d980000
+  regmap: kunit: Add test cases for regmap_multi_reg_(read,write}() (2024-07-11 12:45:55 +0100)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1722389b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3ad0b42d0812/vmlinux-1722389b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67a851e0e5f8/bzImage-1722389b.xz
+are available in the Git repository at:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-fix-v6.11-merge-window
 
-netlink: 'syz-executor122': attribute type 10 has an invalid length.
-dummy0: left promiscuous mode
-dummy0: entered promiscuous mode
-============================================
-WARNING: possible recursive locking detected
-6.10.0-syzkaller-12562-g1722389b0d86 #0 Not tainted
---------------------------------------------
-syz-executor122/5360 is trying to acquire lock:
-ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
-ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
+for you to fetch changes up to 542440fd7b30983cae23e32bd22f69a076ec7ef4:
 
-but task is already holding lock:
-ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+  regmap: maple: work around gcc-14.1 false-positive warning (2024-07-22 13:04:04 +0100)
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+----------------------------------------------------------------
+regmap: Fix for v6.11
 
-       CPU0
-       ----
-  lock(team->team_lock_key);
-  lock(team->team_lock_key);
+Arnd sent a workaround for a false positive warning which was showing up
+with GCC 14.1.
 
- *** DEADLOCK ***
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      regmap: maple: work around gcc-14.1 false-positive warning
 
- May be due to missing lock nesting notation
-
-2 locks held by syz-executor122/5360:
- #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fa1e9a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
- #1: ffff88802c258d40 (team->team_lock_key){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5360 Comm: syz-executor122 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_deadlock kernel/locking/lockdep.c:3061 [inline]
- validate_chain kernel/locking/lockdep.c:3855 [inline]
- __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- team_port_change_check drivers/net/team/team_core.c:2950 [inline]
- team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
- dev_change_flags+0x10c/0x160 net/core/dev.c:8914
- vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- dev_open net/core/dev.c:1515 [inline]
- dev_open+0x144/0x160 net/core/dev.c:1503
- team_port_add drivers/net/team/team_core.c:1216 [inline]
- team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
- do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
- do_setlink+0xcaf/0x3ff0 net/core/rtnetlink.c:2907
- __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
- rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
- rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
- __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f424ca7e7b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd8c496978 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f424ca7e7b9
-RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffd8c4969a0
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/base/regmap/regcache-maple.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
