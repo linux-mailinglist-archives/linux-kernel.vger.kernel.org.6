@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-263590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E7193D808
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:09:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FF493D80E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C305F1F21D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EC7DB22537
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434117D34E;
-	Fri, 26 Jul 2024 18:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A405417C9E2;
+	Fri, 26 Jul 2024 18:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oArlGx+H"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Q/tiFX50"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE8917A580;
-	Fri, 26 Jul 2024 18:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A552D2E633;
+	Fri, 26 Jul 2024 18:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017352; cv=none; b=cYEjYbJZOHsy7BDbQ0JHfSXVOea2pqBnUaRJTivQ/iPXN+CGL6HXsjxxi7uyBzbXvzHEUOpltCsIvXxYIWr+/tmuwCW/myhLTyWOaHUOG5fVY3gG4+Z/pRYZFsQ43dv63q+EvSfGfWm79jUW2/Bd99zJ9YYG14x6DexS/Ze1qmI=
+	t=1722017578; cv=none; b=pCUB/rjesTtjPbtQO0NfCTxwxS6Sx38OheEcCCunU5z35ARiszNb1I/h4NdB5OM9yujgLee11H4D4lshkDX3qziPlD1IrD/yhRBfCQcrkbPgAPGfKvuwWskvWf81eD3ukYbGgMPeFNUUQsMSo+sbKaZDg8EwFfsa5hNKrm/3nGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017352; c=relaxed/simple;
-	bh=QwKVfIJx6b6w9eytozal7rkLHjdJGPTRw1tI+tPnJqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFb7021O/AvY6lrOp3UjunxQ1ABWd6IQAMhj20+TLe3DWWCfSTyFi2ncvIyUFl+YfUsWyihtkpIDtD1zv8ib2bA/J4N2txMPlarhFroOi+DeldLMWdK67Svrs16UJuNAZ3y+4JOzwtXN6mcEosetZXfNGdrMumLPI3L8vIwpBwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oArlGx+H; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5Y+bBdbxxKC2hf51b7J1S8qThB2b/5XgdfKw1OYTUmk=; b=oArlGx+Huj22K57mLVmHcbr0Xl
-	MiQWzuEi4Bl7fRZsVt+B9ZKIiRlk60bv4A1VwbYD2R+Rij6yZOAmguXQjSY/MHCs+c5GLg+B3THb3
-	3L32kWuUMtGuW5OmDt0vugl+4K77MJTbYl21N3h8WQHlnLaDt19jUm/cZTwsI/giT5Mdk2ZVaQSEi
-	dAPaioHkwR/mfs6CveVJ30rbYPtXcU+9XwlzNWTKLLmrSaqNALfDlg5Bho5b/WSTNBGtSdnkr8Fxd
-	Kg9ecy0O4QzGYhFP4PuJgMaBPF/t2ijbsQYxLefX5IusHSMB6Z92ApoMggnQ+t2OmX4XcWnwFI/4X
-	MPHP0EfA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXPNG-00000004cOz-4BYF;
-	Fri, 26 Jul 2024 18:09:02 +0000
-Date: Fri, 26 Jul 2024 11:09:02 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: David Sterba <dsterba@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	Youling Tang <youling.tang@linux.dev>, kreijack@inwind.it,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <ZqPmPufwqbGOTyGI@infradead.org>
-References: <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
- <ZqJjsg3s7H5cTWlT@infradead.org>
- <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
- <ZqJwa2-SsIf0aA_l@infradead.org>
- <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
- <ZqKreStOD-eRkKZU@infradead.org>
- <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
- <ZqOs84hdYkSV_YWd@infradead.org>
- <20240726152237.GH17473@twin.jikos.cz>
- <20240726175800.GC131596@mit.edu>
+	s=arc-20240116; t=1722017578; c=relaxed/simple;
+	bh=nFUGd7+L7sl/3I9FtSEOYJlOLSgdubB3hGLVG47KEYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DWgVdK/5zM2BcD7dy6MWO2L+O2hRy9bkOc/+UvwMjLFUp9EFihdRckY0hCp8Ac0bNNkhxIjbLV6b5Vq1g5TbIcw0vLc4syvsnzDdCcobZ49c1/kMvzeZmrvGCVMObBCXgcklkPEdiri8m2tmLjxLBqsmvtCSZLhHJFLnClv/KRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Q/tiFX50; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=VLtBi/dJDi2LQ/y5ivzxuNTExu4QiDsYE//pYYFE1Bg=; b=Q/tiFX50GjPQfOA1Y+1anpUHdp
+	79+GvYG7MB5/vcBXtLzC8FW+wMGjxVxey53x183MOY2B7BcuhmyoBbDjgXgwz7eFgz8vHJY5rln6+
+	5rqYSgdKNPeWRGsqyzjog/UUs8K0sG2idtwZAAgQwkNwE7Fd2uHiGuKYM4RDseiZCKF2Xu46uDQsl
+	/U1vf0XRRj9w+PI4XnP+Ag4q+KE48JCgawM9Rjo83ffNse8SsZcp7odTkjFp9oA9+h8W2n55bTe5X
+	LUozUQ/rJsESxc+IlRGfyHogSAuFXPx+OOPIsbsd6VwYhIV0jWNDldEs+tQJT08o1Gw6WnjfF0P2s
+	105NIEog==;
+Received: from 179-125-71-226-dinamico.pombonet.net.br ([179.125.71.226] helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sXPQu-002SbZ-IR; Fri, 26 Jul 2024 20:12:49 +0200
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: chrome-platform@lists.linux.dev
+Cc: Guenter Roeck <groeck@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Subject: [PATCH] platform/chrome: cros_ec_typec: add remove driver hook
+Date: Fri, 26 Jul 2024 15:12:35 -0300
+Message-Id: <20240726181235.920335-1-cascardo@igalia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726175800.GC131596@mit.edu>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 26, 2024 at 01:58:00PM -0400, Theodore Ts'o wrote:
-> Yeah, that's my reaction as well.  This only saves 50 lines of code in
-> ext4, and that includes unrelated changes such as getting rid of "int
-> i" and putting the declaration into the for loop --- "for (int i =
-> ...").  Sure, that saves two lines of code, but yay?
-> 
-> If the ordering how the functions gets called is based on the magic
-> ordering in the Makefile, I'm not sure this actually makes the code
-> clearer, more robust, and easier to maintain for the long term.
+This allows the driver to be unbound and bound again. Otherwise, when
+unbinding the driver, there will be leftover sysfs entries.
 
-So you two object to kernel initcalls for the same reason and would
-rather go back to calling everything explicitly?
+When rebinding the driver, it also ends up touching freed memory when
+adding to the notifier chain as the old one was not removed and ends up
+being traversed.
+
+Add a remove_new driver hook, which removes the notifier from the chain and
+unregisters the typec ports.
+
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+---
+ drivers/platform/chrome/cros_ec_typec.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+index 4d305876ec08..c7781aea0b88 100644
+--- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -1285,6 +1285,15 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static void cros_typec_remove(struct platform_device *pdev)
++{
++	struct cros_typec_data *typec = platform_get_drvdata(pdev);
++
++	cros_usbpd_unregister_notify(&typec->nb);
++	cancel_work_sync(&typec->port_work);
++	cros_unregister_ports(typec);
++}
++
+ static int __maybe_unused cros_typec_suspend(struct device *dev)
+ {
+ 	struct cros_typec_data *typec = dev_get_drvdata(dev);
+@@ -1316,6 +1325,7 @@ static struct platform_driver cros_typec_driver = {
+ 		.pm = &cros_typec_pm_ops,
+ 	},
+ 	.probe = cros_typec_probe,
++	.remove_new = cros_typec_remove,
+ };
+ 
+ module_platform_driver(cros_typec_driver);
+-- 
+2.34.1
 
 
