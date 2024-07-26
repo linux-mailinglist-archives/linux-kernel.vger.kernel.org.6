@@ -1,255 +1,281 @@
-Return-Path: <linux-kernel+bounces-262732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489C393CBB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129E693CBC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 02:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15941F21F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB15282B32
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 00:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C291F37E;
-	Fri, 26 Jul 2024 00:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D4864C;
+	Fri, 26 Jul 2024 00:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frFM9cYu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSLoK9LN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031E21C17
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721952268; cv=fail; b=V4woAmm0EJwM6EHGw4HimHSz9lu/I37qICWLRC2w77WwFH6etuxktgEdXT/H8qYRZp0iiBgypuS9hqz/vtUDtXKayoS+X2glzqnaz/t9bwZYzfHKHYMjSKFB4ew06f9cCKrqcKUHAFUGwT5BlvkUx9AHsqVdd4QNtDOWizc0tW4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721952268; c=relaxed/simple;
-	bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OW3kFoJCQmpHDZe5JFYBSRZuVEjBdTEBvcd629dxn29zUFr+t2vAQsyD31pGoDpAxxGIDkeLQkUhosdDM/9c34tnkCmxeZMy0vXZbPrCnBf44dkfjtPqClmuK9bvQQSVw0JzBMkyME88Od+SMDB3NKAiOpCzUZ9q2TdTYjbjWVA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frFM9cYu; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721952267; x=1753488267;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
-  b=frFM9cYuwXvEGRH/RQMxz9jNiwEUjaPPPM+qbmrInykm3Vo1lrLRs6Nk
-   5TWkEqgs9TpV+/k2pc6/a40cJyA66xkR7f3uXP+aTtyMSXVMCfTzUC/ZY
-   j8um52VYrZulN8INRdPzqbRUMnMU5MoOTg64JCNEBFMmn8cixH4gh9Nvt
-   6OpRpJ0ySZ06KaPFFpkhvHmTez0aaIWjwys3Nyi9D2qNOGQjOv2AbQXus
-   wcDEhxbW6QUcDgUKAaAPFbBWZCq7XgwScduVuGj8KrFExmYqWNAnmxCqn
-   8RggfrcGduC/OgISukaCSULBn8FpZH621TLsS4TgxIpiBCNgm24eQWvKt
-   Q==;
-X-CSE-ConnectionGUID: n0sU7i+4SJWxGXClbpDRvQ==
-X-CSE-MsgGUID: WHDafE6uQgG9mIKXScXgwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="19336791"
-X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
-   d="scan'208";a="19336791"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2024 17:04:26 -0700
-X-CSE-ConnectionGUID: 7FoT8p0pT2aHGdgXtVRUUg==
-X-CSE-MsgGUID: /vWROZuxT2ivvNL8qj1ypg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,237,1716274800"; 
-   d="scan'208";a="53159884"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jul 2024 17:04:26 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 25 Jul 2024 17:04:26 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 25 Jul 2024 17:04:25 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 25 Jul 2024 17:04:25 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 25 Jul 2024 17:04:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qqT/xga5XkB9vpmtoZ3aK8KfqAAnoAdIhl5O8/FiXEpkgU52t5EPVy76gbZLacIjTkGG2CmOov1LRC8otrKqaWKndSdP/YSh67tx0Kd/ZEvNvtIA7YsRF74zqG0fEEljli/aNHsOQ8NfKVg3SEpjbL269LKSAjuBatzRHGq2P9zS57qHxjoF/y9PjlcbG5u5QcGVlBb96WGt3umX0qXnzk8qB6epE0+MAWJ+ygXQfhv3r6KxTDHe1RO/uP5jZAoSX6wkoj8pyJ5waQqwhHPgNRSVRwdLiIKvyRgNW+SUqg93GDrOfiOYTeNHLwfppnEszrzKRA9QbIEmGakwEH0SPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FXVIKJ4h5qiE8vZ+IAOisDfuNVxbhy7a2D4ajGsq9MU=;
- b=cnGx7T1pDgw1JYepYnhIlNw5HSBVGguDzDWh/L/R8Rq8rKQVmoOL6v+jizD51NoBY7MrAilCXkmhpakmww9GuWo+1YnFYQLF5m3KPgWjoRgKa1z4No/ILLuIHFyp7am3V1lYDtmEEQ5+YxnpjyBMRtHHuDgnP8wR4eCD90nYon0MFwUk55KdO5s74c3t+fwQ4fYFQ9Go5Q0LmXIuoDJ0NotqFVMNbF55Uh7uWGYfD5Lkwu4aWR9KMZ5QGPr9U00q5NXpWZwgY2IQnpKkvHBpSP7HBD1RsL2IjSTtEpu4wMR3gi8v77jjTWeW1FFYzkS9gDZGBbq3nUdN433Lprx9lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by CH0PR11MB5313.namprd11.prod.outlook.com (2603:10b6:610:bc::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Fri, 26 Jul
- 2024 00:04:23 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7784.020; Fri, 26 Jul 2024
- 00:04:23 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Will Deacon <will@kernel.org>, Kunkun Jiang <jiangkunkun@huawei.com>, "Lu
- Baolu" <baolu.lu@linux.intel.com>, Robin Murphy <robin.murphy@arm.com>,
-	"Joerg Roedel" <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
-	"Michael Shavit" <mshavit@google.com>, Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "tangnianyao@huawei.com"
-	<tangnianyao@huawei.com>
-Subject: RE: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Thread-Topic: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Thread-Index: AQHa3WrLSmtjtahFz0iDm1P9QVDPxrIFm1CAgAARIYCAACxwAIABM47wgABdf4CAALlloA==
-Date: Fri, 26 Jul 2024 00:04:23 +0000
-Message-ID: <BN9PR11MB52762E34518C3249C4B6A7688CB42@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
- <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
- <20240724102417.GA27376@willie-the-truck> <20240724130320.GO14050@ziepe.ca>
- <BN9PR11MB52762A8455449C6A432DA0BB8CAB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240725125845.GA3030761@ziepe.ca>
-In-Reply-To: <20240725125845.GA3030761@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|CH0PR11MB5313:EE_
-x-ms-office365-filtering-correlation-id: 89d59745-2efc-4f58-eb3f-08dcad0681b7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?OUJZUE5hSDRHZ2piRDFmUktndEg5N2lFNHVkUlFyUmpSekhIcFV5dEdpMjVq?=
- =?utf-8?B?YmxYaDNSd1VFNUhGN1hmRXdTMDRjb29wWng4aFYyTHhmQ1JValhLVWl0eXh5?=
- =?utf-8?B?REpBRGpnQzhCajJQcFJKSjdING1wSGVrazllR3VKQ1FNRUJiZ25qbGJ3c2Er?=
- =?utf-8?B?M2JnbXpFM2FvWEo2eWxIVFIxNUdoai8rdk5GV3VZOGJmbi9UYVRybW9QYndD?=
- =?utf-8?B?M1pyYWNBZ1VzZmtNR0dkR1Jwc2NRMGtiYWdzQlprL2hhRmQzMjJqNW9EWE9j?=
- =?utf-8?B?b2lWakM5ckpRRXRBdXVBaDF5SGh0eEg3bTFNWGh1bTdXTlA3c0tGN2puNlE3?=
- =?utf-8?B?cW5vRmRnNlljd21kTkhZcFliMnVpT0JHR1V3eC80ZFd1L2UzUmVqWERqMmFX?=
- =?utf-8?B?RzFyOFB4TDJkVk1tOTdVeVB1ODdOL3dUdWZVREV2NzRla1VxUXB1NWV3WFQx?=
- =?utf-8?B?dWtzdjZrcTJHTWVxSm5NV2pKT2lNVXFPMEpNRHdXRTVwQ3ZqUExoMHQvRlJR?=
- =?utf-8?B?bU5KWGJVQ084R1laUDAzWG0wZUJEOHFiVVdlQmkwbWVuOGdZc2VyOGtXMXVz?=
- =?utf-8?B?dkFsODcxWjBiQW9TR1pCWnNISXZpM2d0b044STRkN09IZXNkSFZmWHJzQzdY?=
- =?utf-8?B?MCtRSDRLUnZGeDJhZXlTckNqYWpNTG9xWW5wNkpES054QzBlNURteGZUUHpz?=
- =?utf-8?B?LzVmQnp3VHFMR0hQR3NBWEFYS2hrMnJRdSt2aEhCaWhyMlVBTXdyYS9WZkRC?=
- =?utf-8?B?VThmUVZTRW1YNXFTbXNmZlV3Ry8zcU9idXZ6S0FHSFpBamJ4Skc5LzR3TlVo?=
- =?utf-8?B?NW41NjRGUm8rUEhoZW15NUQvWk9iL0VHMHdnSFdYRkZDaUMvWktndDdzNU5v?=
- =?utf-8?B?QU1GYXovYTFUUDdjNDhVVXNkQzJRdWVQRWNJTE8vZGFhT093UmkvUmQ5cXd6?=
- =?utf-8?B?SVgxallhT0RUWXVqRkMrSHNjWENPTE9sRVRmSVE3YnZ0cVZ5UVYxVGo1L1JU?=
- =?utf-8?B?Tm5XR1ZsVVR0OW1uMCtWSXkzMWlnd2NObzB6czhReEdTWkhTUXlUZ09RZE9y?=
- =?utf-8?B?UllyNXVoNThHeDBQUVJRUlNacEZOZWhQR2g0SXZuMTU5NHNhNm1VeE1UdzVw?=
- =?utf-8?B?SFlOUEVLMHZtNTl2b2JUUlRiMFR5OVJXdW5MVi8vRGRJbHZwRC9VMXpiMGdq?=
- =?utf-8?B?cW90RG5FVzZReWNSU3c4RXFzK3NsWnVkNjRyai9JSlYrRm82ODNHUDhNWnIz?=
- =?utf-8?B?RE81ckNJRTZQMXpCWDRaZVNuVzUwQjhJaURaNWVBZXJ5Z092NE43QW8yTGky?=
- =?utf-8?B?NHNOM2lyaTNlTnZzNkhvWS82eVEyYWZmQXlFU05nZ0VKSWNybnlVb3M3NktL?=
- =?utf-8?B?Z2thWnVEaVdiTmRDdEg2VmpYa1l1SHNNbkl3UURzSTZNL3czTlZGRjljZWFs?=
- =?utf-8?B?ZjBaelpWOStnRzNNUWRWUlZDQmlPUnUvdWFiL20xQlpGUVFrTlQyT2lhdkVM?=
- =?utf-8?B?bU1tVUlZYUJtS3BMOFRMbWtYWlcyaFZlZG41T1Y0T29UWUpGU2U1VHE4Qkpn?=
- =?utf-8?B?T29zeTMwZDRBWEFuNUFhOTVnZGZkWVlCeGl1WmsvdXRKQmsxVk9Qbjh1Y2tu?=
- =?utf-8?B?K3ByZXNjOGpBUGhxVTMwOUZGdzhvem1yanU2RXd4SHo4N2Ztd3JFVGFPSjY4?=
- =?utf-8?B?MVlucXhGTkk2VmVBVGlJbCtlQWVQN0lHMFpEM2NqWFZ4djJMNkM3MC9kZXZ3?=
- =?utf-8?B?MWZ4RmxlUVNTS2xVR0FKbTdkOTA3Qk13NCt2b0ErZHBwdE5OaTIxbURLdWla?=
- =?utf-8?B?VXpXVWJXaklodjduZ29pQTFUQkFlNEl6ZXU4b1FWVUhXcVE3anFET3lqZmdy?=
- =?utf-8?B?NXgzb05mOEovSk8xTVQremVTd3B2SC9BSUJvSzd2WnRqYVE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ODZsSzdpV2U3K1BncHpBREpCVzUrNGpjU0kvM1BwR1FhTlkyWXdPVkZ0dFBK?=
- =?utf-8?B?YW5pem5nRHBEL2pFVzA1Z0NDTXZqNTRrUDFUSzJiRUpFRUJOTlkvWE9OSW5O?=
- =?utf-8?B?Vm5CNzl5VDJJWmIzL3lLdTFNYkVhSmVtQllTZVZvMkdMNXhQL0djOVlMQmZC?=
- =?utf-8?B?WFBqd0E0cm52MDNBYlVqZDZ2cWx6TUlsTzBtcHFWTHdaZlJTN3V4SndkNWR3?=
- =?utf-8?B?QkwwRGg3ajNLclB3SFpIYVZPR1dGbWhLd29nRFhnbnlOSWVGTGRLYnB5VkMx?=
- =?utf-8?B?ZVRtNkFMOXRsZk91ekp1OG1kcEtXaGh5UUNESE9icWdTdU9ScDNGWDJsZTJH?=
- =?utf-8?B?OWgyYzBONzZXU1ZaaW1adGYyZ0J4T2NlQjhySllWVmsyNSt2RFViSE03SWky?=
- =?utf-8?B?SG80T3VJNjJQTVo4dlV4UmRhWjdhSnFDTDVpUnBmejBDMTg4dCs5Z01UTzg2?=
- =?utf-8?B?UEhBK2prckVVRTdVTzZqbi9qWGwzRHJCTDJiNUMyWUhibm5tNkI4ZXg0c0ZX?=
- =?utf-8?B?UEkxb0xPVmhldXNaWDZrbFRnYzhNRHBtNU4xNXp4NGxreVJBU2V1K1NVaWFJ?=
- =?utf-8?B?TVU1N3o4MVNUTlhiQWUwT29Pbm9tU2pHWEZQRElvTFIrUHpPRElqWDRyOXcz?=
- =?utf-8?B?SWFYVnREN2Focmg5aU1NQnRnT254VWlTZWkxRzd4Zmg3dExGbWRrYmloRDlr?=
- =?utf-8?B?NjlFZ1pJUkZvUmc4aXFHVjVsZGJHSHB0Y3hQczhiekQrcUNjOVFMTytnWUtE?=
- =?utf-8?B?K3V6MWtKd3p4dmJMdDgrSUNLVzVnUUFFZ0lyM1JwL1BLdVh3VmZpTWQrNzJa?=
- =?utf-8?B?d3h3UzVQaTczWllxQ2hzL2FmdFJHZE1NSWxYWk8zT3hjQzZXS0lRSC9VVnl5?=
- =?utf-8?B?WWhFZVg0WlNzSTZQbnBiNXBidnBTa2VsSCs2a3VGNFYwNHBCY0ZqcDhuYTFr?=
- =?utf-8?B?SDBwZ2czRnpxVmlRLzBJaDFLSTJvSXRaS2dFbFdyQ3B3em1BVFFTTkdVVmdi?=
- =?utf-8?B?WHk2cFlLa0JKTkMycG1iVU5FWHFxcExmU01JaG43NDB6QU4rYXh3aFYvODVN?=
- =?utf-8?B?ZW5hMFdoY2IyQitScFYwRkNxUzNKS1lSSDlKN3JrMWEzTW95ZzBhREFSL1po?=
- =?utf-8?B?NGtWNDdsZUZ5OCs4VkZvaWphV3krcjBCaXFhUlNvOTA1UW9QUVVVWFJuUVRl?=
- =?utf-8?B?TGg4YnNHOXBwTGh0SWNxNU40SnBLdEkxbHVDdWpBMDZMVnFaZGphcCtSMmlG?=
- =?utf-8?B?S1lmOWg3WHBsZVN3dkFTeVFYVUZWa0Z1dWMyaVArWDNLNUk5cUlPb3k4Y3ZJ?=
- =?utf-8?B?d0RYOEtnNkw5REE1dGNLQzVYT3c2T0pENHVtWmlMY3U3Z0dtNDRsckFWL1BO?=
- =?utf-8?B?ZUU2QW9yTXlBK1E0akZBbU9VU1BULzlLdVRFWnNRWjFKdkJPUWdTL2cxYTF1?=
- =?utf-8?B?Si9NR0I5eE5IcmJ2MWF4NnNmNFBXTlEyWWwrZE5kV05EU28za01RRFlZVFF0?=
- =?utf-8?B?OHFBMnpIYzVsdzdFb216ZmFxYnI3dXJiTEs2UkV5YXp4ejBQQmJYUS9JQ01H?=
- =?utf-8?B?TGgxMWFNdVhablBZSzNETWRUR0Rhc29ZV3cra3FGUFM5YktjWHFWOVBzVW8w?=
- =?utf-8?B?RzdsRU4ybXczYU9RdmZRZDZtY2lXRWlIMHhHaGtnUkpjc0hjUGV2VDFNYUlI?=
- =?utf-8?B?TVhpVlRLMlRRV2N4anZwTFJ2bVd2bllTREV3WU55S0NjOEpJNWFUc3NvRisz?=
- =?utf-8?B?V3kvMEU2bWJyRFNGWmMydXAwMUFOTTFJWWNmMHhUbFIyZUdJTzJubUtVSkE0?=
- =?utf-8?B?NXBUYktud2dqMkwxN3ptVjltcXdMeFBCNThIdWxRWTFDSFpGNHlSY3l6ZmZm?=
- =?utf-8?B?SXBYdm9sblBtU01oaWowTGRiQ2RzRDB4TUZkc1UxWFlkNEh3MHI2ajg4N2hC?=
- =?utf-8?B?cTVERkVpNXg0cGZzVDdlbktDUVMvOXlna3pQQlBWcjdleHRlblNhWHRUcmhp?=
- =?utf-8?B?bHFpc2VWTjJmSU1hTG5sampuR2hkOU02TjNEdlJVRTZWY1NlZC9FY1F4SHJX?=
- =?utf-8?B?cXBNTjk0Q0thWUk1REpPSEFObE1sMUQ5S0ZNVE82M2ZldzVOZDFoaGZWcFhD?=
- =?utf-8?Q?qGuFElgENVKhb3t5HwSG/GxTY?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B3F19B;
+	Fri, 26 Jul 2024 00:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721952355; cv=none; b=B/nA3wVdrW6XkjzqtBk4iL2SweoEXetC3nSg+p1PLQ6MQoBMbSPObFeedtzZZdv35CfHWzg5zW8jYBur2uQPD7IyDuQqou/Ky43KZCodizIcRFiwLQQCe4qi/SIVWq8pfv0NrZkYCSgy35+m2qIg20VfI220kFd1RqSmFmnaikE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721952355; c=relaxed/simple;
+	bh=ngBxGapSaWUVKf21KUVW3P6wC6BuZwT+K9U3vA4roq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxfcNekxUD4sJngQVh5jXB0g8G5ctaDc2Ihl6Xhi/L4aZ/xr4Pyp0DCOx2EEAlDvusDe41UvT36Kdvv832Vt12Pzigx74HthYw2HIwMz2MuwLcFvLJqhDLH8UuxMqPzTXiBgjmk+XP7jrybbYKWU7UH+YC+QCkpzgkPdsfmpF5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSLoK9LN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5480AC116B1;
+	Fri, 26 Jul 2024 00:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721952354;
+	bh=ngBxGapSaWUVKf21KUVW3P6wC6BuZwT+K9U3vA4roq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eSLoK9LNJi0CIwhr8ANGt7wCFA45jxTutpKiAZPKCnrmvr2Bfbt2s1LbRZBHcwua8
+	 BF5yPWucdX32+3AjKqmIh3LlaHVFkVjw1yiBDAw/CG5U22eZCzPsT99GC4w+0VGGi5
+	 GCzZU87Dj/hP5dRKjKPWNcr4wEI2Bx6WoxObvTHj7uoP1FE6qpdEUFBB890zRCeBIC
+	 6hR6/Lw4BUJoTF/q1htHLLlmlCwVhptEzId/qCp5G17FHQahTN65RSQ0sueo89EPwY
+	 2JiGUujnjYXUsNk25Cx4ibbEnSTpEOykruRDGuyEz/rICU3erQ7ikG87o7Ty3XVqL0
+	 0bHfSu3IrX6eQ==
+Date: Thu, 25 Jul 2024 17:05:52 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCH v1 2/2] perf script: Fix for `perf script +F metric` with
+ leader sampling
+Message-ID: <ZqLoYL-kAVO-tCbo@google.com>
+References: <20240720074552.1915993-1-irogers@google.com>
+ <20240720074552.1915993-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89d59745-2efc-4f58-eb3f-08dcad0681b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2024 00:04:23.7316
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ozpfReym1TVAmn3vSLuEXTT6ivK55eZaDt3MT3zX7WIuV+sAkX/XYV4MI+Au6FM8ZWXCi2cyAUJfoNdohHNi0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5313
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240720074552.1915993-2-irogers@google.com>
 
-PiBGcm9tOiBKYXNvbiBHdW50aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gU2VudDogVGh1cnNkYXks
-IEp1bHkgMjUsIDIwMjQgODo1OSBQTQ0KPiANCj4gT24gVGh1LCBKdWwgMjUsIDIwMjQgYXQgMDc6
-MzU6MDBBTSArMDAwMCwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4gPiBGcm9tOiBKYXNvbiBHdW50
-aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gPiA+IFNlbnQ6IFdlZG5lc2RheSwgSnVseSAyNCwgMjAy
-NCA5OjAzIFBNDQo+ID4gPiArICogYW5kIHRoZSBmYXVsdCByZW1haW5zIG93bmVkIGJ5IHRoZSBj
-YWxsZXIuIFRoZSBjYWxsZXIgc2hvdWxkIGxvZyB0aGUNCj4gRE1BDQo+ID4gPiArICogcHJvdGVj
-dGlvbiBmYWlsdXJlIGFuZCByZXNvbHZlIHRoZSBmYXVsdC4gT3RoZXJ3aXNlIG9uIHN1Y2Nlc3Mg
-dGhlIGZhdWx0DQo+IGlzDQo+ID4gPiArICogYWx3YXlzIGNvbXBsZXRlZCBldmVudHVhbGx5Lg0K
-PiA+DQo+ID4gQWJvdXQgInJlc29sdmUgdGhlIGZhdWx0IiwgSSBkaWRuJ3QgZmluZCBzdWNoIGxv
-Z2ljIGZyb20gc21tdSBzaWRlIGluDQo+ID4gYXJtX3NtbXVfZXZ0cV90aHJlYWQoKS4gSXQganVz
-dCBsb2dzIHRoZSBldmVudC4gSXMgaXQgYXNraW5nIGZvciBuZXcNCj4gPiBjaGFuZ2UgaW4gc21t
-dSBkcml2ZXIgb3IgcmVmbGVjdGluZyB0aGUgY3VycmVudCBmYWN0IHdoaWNoIGlmIG1pc3NpbmcN
-Cj4gPiBsZWFkcyB0byB0aGUgc2FpZCBzdGFsbCBwcm9ibGVtPw0KPiANCj4gSXQgd2FzIHJlbW92
-ZWQgaW4gYjU1NGUzOTZlNTFjICgiaW9tbXU6IE1ha2UgaW9wZl9ncm91cF9yZXNwb25zZSgpDQo+
-IHJldHVybiB2b2lkIikNCj4gDQo+ICAgICAgICAgcmV0ID0gaW9tbXVfcmVwb3J0X2RldmljZV9m
-YXVsdChtYXN0ZXItPmRldiwgJmZhdWx0X2V2dCk7DQo+IC0gICAgICAgaWYgKHJldCAmJiBmbHQt
-PnR5cGUgPT0gSU9NTVVfRkFVTFRfUEFHRV9SRVEpIHsNCj4gLSAgICAgICAgICAgICAgIC8qIE5v
-Ym9keSBjYXJlZCwgYWJvcnQgdGhlIGFjY2VzcyAqLw0KPiAtICAgICAgICAgICAgICAgc3RydWN0
-IGlvbW11X3BhZ2VfcmVzcG9uc2UgcmVzcCA9IHsNCj4gLSAgICAgICAgICAgICAgICAgICAgICAg
-LnBhc2lkICAgICAgICAgID0gZmx0LT5wcm0ucGFzaWQsDQo+IC0gICAgICAgICAgICAgICAgICAg
-ICAgIC5ncnBpZCAgICAgICAgICA9IGZsdC0+cHJtLmdycGlkLA0KPiAtICAgICAgICAgICAgICAg
-ICAgICAgICAuY29kZSAgICAgICAgICAgPSBJT01NVV9QQUdFX1JFU1BfRkFJTFVSRSwNCj4gLSAg
-ICAgICAgICAgICAgIH07DQo+IC0gICAgICAgICAgICAgICBhcm1fc21tdV9wYWdlX3Jlc3BvbnNl
-KG1hc3Rlci0+ZGV2LCAmZmF1bHRfZXZ0LCAmcmVzcCk7DQo+IC0gICAgICAgfQ0KPiAtDQo+IA0K
-PiBQYXJ0IG9mIHRoZSBvYnNlcnZhdGlvbiBnb2luZyBpbnRvIGI1NTRlMzk2ZTUxYyB3YXMgdGhh
-dCBhbGwgZHJpdmVycw0KPiBoYXZlIHNvbWV0aGluZyBsaWtlIHRoZSBhYm92ZSwgYW5kIHdlIGNh
-biBwdWxsIGl0IGludG8gdGhlIGNvcmUgY29kZS4NCj4gDQo+IFNvIHBlcmhhcHMgd2Ugc2hvdWxk
-IHN0aWxsIGFsd2F5cyBhYm9ydCB0aGUgcmVxdWVzdCBmcm9tDQo+IGlvbW11X3JlcG9ydF9kZXZp
-Y2VfZmF1bHQoKSBpbnN0ZWFkIG9mIHJlcXVpcmluZyBib2lsZXJwbGF0ZSBsaWtlDQo+IGFib3Zl
-IGluIGRyaXZlcnMuIFRoYXQgZG9lcyBzb21lIGJldHRlci4NCj4gDQo+IFRoZSByZXR1cm4gY29k
-ZSBvbmx5IGluZGljYXRlcyBpZiB0aGUgZXZlbnQgc2hvdWxkIGJlIGxvZ2dlZC4NCj4gDQoNClll
-cywgdGhpcyBtYWtlcyBtb3JlIHNlbnNlLiBPdGhlcndpc2Ugd2UgbmVlZCBhbHNvIHB1bGwgYmFj
-aw0KdGhvc2UgcmVtb3ZlZCBsaW5lcyBpbiBkcml2ZXJzIGZvciBmYXVsdCByZXNvbHZpbmcuDQo=
+Hi Ian,
+
+On Sat, Jul 20, 2024 at 12:45:52AM -0700, Ian Rogers wrote:
+> Andi Kleen reported a regression where `perf script +F metric` would
+> crash. With this change the output is:
+> 
+> ```
+> $ perf record -a -e '{cycles,instructions}:S' perf bench mem memcpy
+> 
+>       21.229620 GB/sec
+> 
+>       15.751008 GB/sec
+> 
+>       16.009221 GB/sec
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 1.945 MB perf.data (294 samples) ]
+> $ perf --no-pager script -F +metric
+>             perf 1912464 [000] 814503.473101:       6325       cycles:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
+>             perf 1912464 [000] 814503.473101:   metric:    0.06  insn per cycle
+>             perf 1912464 [000] 814503.473101:        351 instructions:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
+>             perf 1912464 [000] 814503.473101:   metric:    0.03  insn per cycle
+> ...
+> ```
+> 
+> The change fixes perf script to update counts and thereby aggregate
+> values which then get consumed by unchanged metric logic in the shadow
+> stat output. Note, it would be preferential to switch to json metrics.
+> 
+> Reported-by: Andi Kleen <ak@linux.intel.com>
+> Closes: https://lore.kernel.org/linux-perf-users/20240713155443.1665378-1-ak@linux.intel.com/
+> Fixes: 37cc8ad77cf8 ("perf metric: Directly use counts rather than saved_value")'
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> The code isn't well tested nor does it support non-leader sampling
+> reading of counts based on periods that seemed to present in the
+> previous code. Sending out for the sake of discussion. Andi's changes
+> added a test and that should certainly be added.
+
+You don't need to handle leader sampling specially since it's already
+done by evlist__deliver_sample().  It will call tool->sample() for each
+event (with sample->period is set) when leader sampling is enabled.
+
+> ---
+>  tools/perf/builtin-script.c | 114 +++++++++++++++++++++++++++++-------
+>  1 file changed, 93 insertions(+), 21 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index c16224b1fef3..752d6219fb08 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -63,6 +63,7 @@
+>  #include "util/util.h"
+>  #include "util/cgroup.h"
+>  #include "perf.h"
+> +#include <internal/threadmap.h>
+>  
+>  #include <linux/ctype.h>
+>  #ifdef HAVE_LIBTRACEEVENT
+> @@ -334,16 +335,8 @@ struct evsel_script {
+>         char *filename;
+>         FILE *fp;
+>         u64  samples;
+> -       /* For metric output */
+> -       u64  val;
+> -       int  gnum;
+>  };
+>  
+> -static inline struct evsel_script *evsel_script(struct evsel *evsel)
+> -{
+> -	return (struct evsel_script *)evsel->priv;
+> -}
+> -
+>  static struct evsel_script *evsel_script__new(struct evsel *evsel, struct perf_data *data)
+>  {
+>  	struct evsel_script *es = zalloc(sizeof(*es));
+> @@ -2107,6 +2100,12 @@ static void script_new_line(struct perf_stat_config *config __maybe_unused,
+>  	fputs("\tmetric: ", mctx->fp);
+>  }
+>  
+> +static struct aggr_cpu_id perf_script__get_cpu(struct perf_stat_config *config __maybe_unused,
+> +					struct perf_cpu cpu)
+> +{
+> +	return aggr_cpu_id__cpu(cpu, /*data=*/NULL);
+> +}
+> +
+>  static void perf_sample__fprint_metric(struct perf_script *script,
+>  				       struct thread *thread,
+>  				       struct evsel *evsel,
+> @@ -2126,23 +2125,96 @@ static void perf_sample__fprint_metric(struct perf_script *script,
+>  		.force_header = false,
+>  	};
+>  	struct evsel *ev2;
+> -	u64 val;
+> +	struct perf_cpu sample_cpu = { .cpu = sample->cpu, };
+> +	int thread_idx, cpu_map_idx;
+> +	u64 read_format = evsel->core.attr.read_format;
+> +	int aggr_idx;
+>  
+> +	/* Only support leader sampling with a group of read events. */
+> +	if ((read_format & PERF_FORMAT_GROUP) == 0)
+> +		return;
+> +
+> +	/* Lazy initialization of stats values. */
+>  	if (!evsel->stats)
+>  		evlist__alloc_stats(&stat_config, script->session->evlist, /*alloc_raw=*/false);
+> -	if (evsel_script(leader)->gnum++ == 0)
+> -		perf_stat__reset_shadow_stats();
+> -	val = sample->period * evsel->scale;
+> -	evsel_script(evsel)->val = val;
+> -	if (evsel_script(leader)->gnum == leader->core.nr_members) {
+> -		for_each_group_member (ev2, leader) {
+> -			perf_stat__print_shadow_stats(&stat_config, ev2,
+> -						      evsel_script(ev2)->val,
+> -						      sample->cpu,
+> -						      &ctx,
+> -						      NULL);
+> +	if (!stat_config.aggr_map) {
+> +		int nr_aggr;
+> +
+> +		stat_config.aggr_get_id = perf_script__get_cpu;
+
+To support per-thread mode, I think we should check thread_map of the
+evlist if it has actual PID.  And use the thread map index as an aggr
+idx.
+
+Thanks,
+Namhyung
+
+
+> +		stat_config.aggr_map =
+> +			cpu_aggr_map__new(evsel->evlist->core.user_requested_cpus,
+> +					aggr_cpu_id__cpu,
+> +					/*data=*/NULL,
+> +					/*needs_sort=*/false);
+> +		if (!stat_config.aggr_map) {
+> +			pr_err("cannot allocate aggr map\n");
+> +			return;
+> +		}
+> +		nr_aggr = stat_config.aggr_map->nrd;
+> +		if (evlist__alloc_aggr_stats(evsel->evlist, nr_aggr) < 0) {
+> +			pr_err("cannot allocate aggr counts\n");
+> +			return;
+>  		}
+> -		evsel_script(leader)->gnum = 0;
+> +	}
+> +
+> +	/* Add group counts from sample into appropriate evsel counts by id. */
+> +	for_each_group_evsel(ev2, leader) {
+> +		struct perf_thread_map *threads = perf_evsel__threads(&ev2->core);
+> +		struct perf_cpu_map *cpus = evsel__cpus(ev2);
+> +		int id_num = 0;
+> +		bool match = false;
+> +
+> +		perf_cpu_map__for_each_idx(cpu_map_idx, cpus) {
+> +			for (thread_idx = 0; thread_idx < threads->nr; thread_idx++) {
+> +				struct sample_read_value *value = sample->read.group.values;
+> +				u64 id = ev2->core.id[id_num++];
+> +
+> +				sample_read_group__for_each(value, sample->read.group.nr,
+> +							    read_format) {
+> +					struct perf_counts_values *counts;
+> +
+> +					if (value->id != id)
+> +						continue;
+> +
+> +					counts = perf_counts(ev2->counts, cpu_map_idx, thread_idx);
+> +					counts->val += value->value;
+> +					/*
+> +					 * Ensure the enabled/running time isn't
+> +					 * 0, which implies an error.
+> +					 */
+> +					counts->ena += sample->read.time_enabled ?: sample->period;
+> +					counts->run += sample->read.time_running ?: sample->period;
+> +					match = true;
+> +				}
+> +			}
+> +		}
+> +		if (match) {
+> +			/* Update the aggreate count in ev2. */
+> +			perf_stat_process_counter(&stat_config, ev2);
+> +		}
+> +	}
+> +
+> +	/* Find the appropriate indices for dumping of this sample. */
+> +	thread_idx = perf_thread_map__idx(perf_evsel__threads(&evsel->core),
+> +					thread__pid(thread));
+> +	cpu_map_idx = perf_cpu_map__idx(evsel__cpus(evsel), sample_cpu);
+> +	if (thread_idx == -1 || cpu_map_idx == -1)
+> +		return;
+> +
+> +	cpu_aggr_map__for_each_idx(aggr_idx, stat_config.aggr_map) {
+> +		if (stat_config.aggr_map->map[aggr_idx].cpu.cpu == sample_cpu.cpu)
+> +			break;
+> +	}
+> +	/* Iterate all events and the leader of the group, trying to print stats. */
+> +	for_each_group_evsel(ev2, leader) {
+> +		struct perf_counts_values *counts =
+> +			perf_counts(ev2->counts, cpu_map_idx, thread_idx);
+> +
+> +		if (!counts)
+> +			continue;
+> +
+> +		perf_stat__print_shadow_stats(&stat_config, ev2, counts->val * ev2->scale,
+> +					      aggr_idx, &ctx, NULL);
+>  	}
+>  }
+>  
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
+> 
 
