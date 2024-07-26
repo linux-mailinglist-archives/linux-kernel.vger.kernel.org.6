@@ -1,113 +1,337 @@
-Return-Path: <linux-kernel+bounces-263463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C768993D669
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:50:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E4F93D66F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7315C1F24B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D107285122
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32E2178CFA;
-	Fri, 26 Jul 2024 15:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0A217A594;
+	Fri, 26 Jul 2024 15:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jKbyNKNP"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WzPZmniF"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476B1171D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F1101F7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722008999; cv=none; b=T5IYGKbh5GvLZlTqS18vUuXuswNlsHf/50xO4NtWQ3hZoIyayJpN0OaY/3p0RfU9bGkBMLs2Bz6AiP3quep0LFW5BQYv/D/fNzDGWPhYsV3QW7V1eMu/O2k8EbsVpEbpCKd2TA4sWGQYKgXefz5OIX0zTrRzSxTmaaVrD79aP/w=
+	t=1722009086; cv=none; b=POoEZCltLKZRCKqn1D4XDOpbbDqJ4oagBEEKzirFDv32qwEVbVeSAnrfLOAo7OYf5lItNCOmsq0ZwAXuVH3Y4hjd0uBGVi21Dor5kLQBk1ktmganwBowRrlOsOud96g4BgpSq75j9gMfTPAg2zG+1XPuZYQ6we4u06PoEF5Ulbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722008999; c=relaxed/simple;
-	bh=ZVjNmYH0CFCMOJu5tLroppDvKSB8ERbSbPAQ70CYN6Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LOTyD59ZsK4h1SpDVtSxABc0B33LqUOaaX/s2LblAGVERPy6txuBp6ErgThYXjZEhsx8q38/vkn2ULf8vB5uFnNgeecQ68X3TwrETu1SdC1RBBGPpeQxfNXZE3ZHj9vmVGBncSMNJbGl21uztnlp/Ot88IWhVfp0n2Z8KmEzO7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jKbyNKNP; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3123433a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:49:57 -0700 (PDT)
+	s=arc-20240116; t=1722009086; c=relaxed/simple;
+	bh=64CT6rHOF4yikfO4hoj2HxheQZouAn1v+thLXn+EAPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9ZydrihFk8BLomvCdZ3GZ/W3g4PWKwKsAFK5TU0kiig8/Jk526RbhXHgSM+IkfHSk99OW/ngcmtt5GD8GUuf+XXRRQo/mZmJGTkaR2jMtEprBCeA3bjV2xpmlLWuUboHzmSdgKGM3RrLPhWNXq2Zn6klB569aeQ9wzv9mTgRSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WzPZmniF; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7bcd0so2899174a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:51:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722008996; x=1722613796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJmIU/xMtXs5ILphdbN0nBg+cHcFFdfHSxNrMLT9xnY=;
-        b=jKbyNKNPrr/t9THq+bUAF2SjvrEyejvR9GYHE+ij/WmN07v97qXtKYTB1+4+komHWS
-         g5YtLHZQHAQhmhXTtZjcM9xjEOp5K0cUfLNgKTzwIw9MgLe6jlnEHXTqkj9r+SAwO8dV
-         BpH0ehvjpRhaiveFxQFsJmXYnJXtMmgTiP5wyJzvtdF10CwcLdJj4rmnK4m9Gl1kOX95
-         4nFtmPYOPQUK1PfUbrniKlmbwcaLViwQ9fd9qiCNLSvNTG3L2Yiuw0pzdrhdQpq4lktF
-         dlR7oPTQCz9bwxy/MtYCga5jq8mfl8/bnuhnWPPmPtGszFu2epPi2VAQn6lQzPkLTWMo
-         1QEw==
+        d=suse.com; s=google; t=1722009082; x=1722613882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TupnoGkpxOend/KHBEomu6OJY+OhuErmLwCpXobNuTs=;
+        b=WzPZmniF+8f3kBUGMIl5Q2gofcu3xp8VCuAfIdyKHMf/4c/KEfBGXUGRjL96oy2YbX
+         wlxxyE+5w3OiabKGOeGv0jzZBkMULeSRifg7sY53vasQbZr0ChCiTHsKdDMzjloB54jl
+         2NOLjrxTcj3YUk0s+EaSL6sQ8W8AiFnv2ApUViWxzdXy8O19DA65d+VqbR3ae6DEJYSx
+         a0H7+w69yxLP3w7vv7UmGbtg+shQKVB12zwliv/CPJze3kkf+CHXFlJsSRU27Wlxtvp4
+         ymUrj+Cp+eAngfaTHpD+rXPZ/ZNuELmKLYGMAv0NAo0I0flGf5awXkaEE4A/ShCBWlBP
+         RVdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722008996; x=1722613796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OJmIU/xMtXs5ILphdbN0nBg+cHcFFdfHSxNrMLT9xnY=;
-        b=B5OZuvU4Vg/9vWZ4k/CDiKG3nj6I4bE8pFCoZB+OWeLinnC3ew4/6woS6OVrJVSoJy
-         UC9BdQCyjGF27N5v/5LPcZJt+ZUvxd20mi8MBZOdCBtgdRUWaGSrLHNFUnQpvSRkMx91
-         /FJM673VSQdWVYxe82pEGAl0r04RxvYiJysJmNnt6m1mQe/YJ0GowGqvwjHmDn9hKJEN
-         vf3Jv/JNX4gCxyFPRZMnBebj2MWOI8IWpgT9JrOggq2jAuYohxho4UYpQulyzW0ghABS
-         CIcKf3b4PAZtjhv+XaHFEEgy9ssa9hmBW2PshooEQYu+2gXdhU/RxAvHZfH6Hk/d27oo
-         8cdQ==
-X-Gm-Message-State: AOJu0Yygt6FQcsZ9Q3xP4Mm9ndsU4ePwfLxv+aN7zr9KhTa4Sh2YWJ3q
-	5Mji+I2Ta1G2e5Zi0shpQyRWhAO9atu3YnaNeXKofxQs3X5P1+m7bdbZHTtDOMY=
-X-Google-Smtp-Source: AGHT+IHE6mKmIoUGO6LEog/bMeOJtuAahkq+yuppNC31XhzC/J7PHLxbb6EKh1Hx9zcgz32g8K5ICg==
-X-Received: by 2002:a17:907:7204:b0:a7a:9144:e23b with SMTP id a640c23a62f3a-a7acb3fb925mr369040266b.19.1722008995552;
-        Fri, 26 Jul 2024 08:49:55 -0700 (PDT)
-Received: from debian.fritz.box. (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de6fsm191156266b.63.2024.07.26.08.49.54
+        d=1e100.net; s=20230601; t=1722009082; x=1722613882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TupnoGkpxOend/KHBEomu6OJY+OhuErmLwCpXobNuTs=;
+        b=gA/0Mt6r1KzGA1QnpL14HTNDgccVMWj/Eur6CJzNDuHVrc8ZC/j86utxwbKzl+39iY
+         RLY3GdwydBXXZa8eU2YF1aOdXpy9kbD8/UKcSTPKxeunqCDqh23vrvLnQhWBlxWzhjPA
+         Hd8xesHh+kBTIh9q81x7BSmrUSFxW/dkpcW3oJ5UjavKYSKHZoNl8gjiAMCnWqksprbK
+         e08FoEZvuFJLdVwRCm3Ji4gFOzBhv7uZ8/VCZhzkKZxdYYLloS+oCIi7dSw0/YhdzH0x
+         uGaZg+LPU3fHAdAtY46lUUdflB0E4dgxaznBenWQjm0pDuNKhIqpiZ0aFgjvzzrIUot8
+         lsrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYzs4/UL3DGpOfSc+LiunDINiKzAbrRsOhlwCD+dXdg6XMUGnlH5ZzKL3GZwpLMviLMSoRpKEJG42JO5EbcwEBSxe1E0TKN/qHOA/W
+X-Gm-Message-State: AOJu0YzwxP0KnkD9KRQ/zACB6qiiUVNwkBMpI/yYhrOgAo+cxSkMr3ug
+	WQyDMUiXx5tCvaDvWpTEy9CvNOV8hN+TiRt00nh4v2h5iT4O7SIbAJWhu9Fk8UA=
+X-Google-Smtp-Source: AGHT+IG5kFhWuns/LlJYfK8ShY+/hH0FlPFSy7c4GChO/ZTwWW6+XRfesF5QeUc1bzV1W1gnZ33csA==
+X-Received: by 2002:a50:d746:0:b0:5a1:e7e6:ce37 with SMTP id 4fb4d7f45d1cf-5ac2c0cfca5mr4183715a12.26.1722009082557;
+        Fri, 26 Jul 2024 08:51:22 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac655996fasm2041378a12.84.2024.07.26.08.51.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:49:55 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] lib: checksum: Use ARRAY_SIZE() to improve assert_setup_correct()
-Date: Fri, 26 Jul 2024 17:49:46 +0200
-Message-Id: <20240726154946.230928-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 26 Jul 2024 08:51:22 -0700 (PDT)
+Date: Fri, 26 Jul 2024 17:51:20 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 07/19] printk: Add helpers for flush type logic
+Message-ID: <ZqPF-GjhCUlR1fQv@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-8-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722171939.3349410-8-john.ogness@linutronix.de>
 
-Use ARRAY_SIZE() to simplify the assert_setup_correct() function and
-improve its readability.
+On Mon 2024-07-22 19:25:27, John Ogness wrote:
+> There are many call sites where console flushing occur.
+> Depending on the system state and types of consoles, the flush
+> methods to use are different. A flush call site generally must
+> consider:
+> 
+> 	@have_boot_console
+> 	@have_nbcon_console
+> 	@have_legacy_console
+> 	@legacy_allow_panic_sync
+> 	is_printk_preferred()
+> 
+> and take into account the current CPU state:
+> 
+> 	NBCON_PRIO_NORMAL
+> 	NBCON_PRIO_EMERGENCY
+> 	NBCON_PRIO_PANIC
+> 
+> in order to decide if it should:
+> 
+> 	flush nbcon directly via atomic_write() callback
+> 	flush legacy directly via console_unlock
+> 	flush legacy via offload to irq_work
+> 
+> All of these call sites use their own logic to make this
+> decision, which is complicated and error prone. Especially
+> later when two more flush methods will be introduced:
+> 
+> 	flush nbcon via offload to kthread
+> 	flush legacy via offload to kthread
+> 
+> Introduce a new internal struct console_flush_type that
+> specifies the flush method(s) that are available for a
+> particular call site to use.
+> 
+> Introduce helper functions to fill out console_flush_type to
+> be used for emergency and non-emergency call sites.
+> 
+> In many system states it is acceptable to flush legacy directly
+> via console_unlock or via offload to irq_work. For this reason
+> the non-emergency helper provides an argument @prefer_offload
+> for the caller to specify which method it is interested in
+> performing. (The helper functions will never allow both.)
+> 
+> Replace the logic of all flushing call sites to use the new
+> helpers. Note that this cleans up various corner cases where
+> is_printk_preferred() and @have_boot_console were not being
+> considerered before.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- lib/checksum_kunit.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2330,9 +2331,13 @@ static bool legacy_allow_panic_sync;
+>   */
+>  void printk_legacy_allow_panic_sync(void)
+>  {
+> +	struct console_flush_type ft;
+> +
+>  	legacy_allow_panic_sync = true;
+>  
+> -	if (printing_via_unlock && !in_nmi()) {
+> +	printk_get_console_flush_type(&ft, false);
+> +
+> +	if (ft.legacy_direct && !in_nmi()) {
 
-diff --git a/lib/checksum_kunit.c b/lib/checksum_kunit.c
-index 4e4d081a1d3b..be04aa42125c 100644
---- a/lib/checksum_kunit.c
-+++ b/lib/checksum_kunit.c
-@@ -468,12 +468,9 @@ static __wsum to_wsum(u32 x)
- 
- static void assert_setup_correct(struct kunit *test)
- {
--	CHECK_EQ(sizeof(random_buf) / sizeof(random_buf[0]), MAX_LEN);
--	CHECK_EQ(sizeof(expected_results) / sizeof(expected_results[0]),
--		 MAX_LEN);
--	CHECK_EQ(sizeof(init_sums_no_overflow) /
--			 sizeof(init_sums_no_overflow[0]),
--		 MAX_LEN);
-+	CHECK_EQ(ARRAY_SIZE(random_buf), MAX_LEN);
-+	CHECK_EQ(ARRAY_SIZE(expected_results), MAX_LEN);
-+	CHECK_EQ(ARRAY_SIZE(init_sums_no_overflow), MAX_LEN);
- }
- 
- /*
--- 
-2.39.2
+in_nmi() check is not needed any longer. It is already done in
+is_printk_deferred() in printk_get_console_flush_type().
 
+>  		if (console_trylock())
+>  			console_unlock();
+>  	}
+> @@ -2342,7 +2347,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  			    const struct dev_printk_info *dev_info,
+>  			    const char *fmt, va_list args)
+>  {
+> -	bool do_trylock_unlock = printing_via_unlock;
+> +	struct console_flush_type ft;
+> +	bool defer_legacy = false;
+>  	int printed_len;
+>  
+>  	/* Suppress unimportant messages after panic happens */
+> @@ -2360,41 +2366,19 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  	if (level == LOGLEVEL_SCHED) {
+>  		level = LOGLEVEL_DEFAULT;
+>  		/* If called from the scheduler, we can not call up(). */
+> -		do_trylock_unlock = false;
+> +		defer_legacy = true;
+>  	}
+>  
+>  	printk_delay(level);
+>  
+>  	printed_len = vprintk_store(facility, level, dev_info, fmt, args);
+>  
+> -	if (have_nbcon_console && !have_boot_console) {
+> -		bool is_panic_context = this_cpu_in_panic();
+> +	printk_get_console_flush_type(&ft, false);
+
+We could pass "defer_legacy" here. It won't be needed to check it
+later then.
+
+> -		/*
+> -		 * In panic, the legacy consoles are not allowed to print from
+> -		 * the printk calling context unless explicitly allowed. This
+> -		 * gives the safe nbcon consoles a chance to print out all the
+> -		 * panic messages first. This restriction only applies if
+> -		 * there are nbcon consoles registered.
+> -		 */
+> -		if (is_panic_context)
+> -			do_trylock_unlock &= legacy_allow_panic_sync;
+> +	if (ft.nbcon_atomic)
+> +		nbcon_atomic_flush_pending();
+>  
+> -		/*
+> -		 * There are situations where nbcon atomic printing should
+> -		 * happen in the printk() caller context:
+> -		 *
+> -		 * - When this CPU is in panic.
+> -		 *
+> -		 * Note that if boot consoles are registered, the console
+> -		 * lock/unlock dance must be relied upon instead because nbcon
+> -		 * consoles cannot print simultaneously with boot consoles.
+> -		 */
+> -		if (is_panic_context)
+> -			nbcon_atomic_flush_pending();
+
+Just for record. If I get it correctly than this actually fixes a bug.
+The original code called nbcon_atomic_flush_pending() only in panic().
+The nbcon consoles were not flushed when there were only nbcon consoles
+(printing_via_unlock == false).
+
+I think that we did not notice it because it probably got fixed by
+later patches adding the printk kthreads.
+
+> -	}
+> -
+> -	if (do_trylock_unlock) {
+> +	if (!defer_legacy && ft.legacy_direct) {
+
+@defer_legacy should not be needed if we passed it to
+printk_get_console_flush_type().
+
+>  		/*
+>  		 * The caller may be holding system-critical or
+>  		 * timing-sensitive locks. Disable preemption during
+> @@ -2409,22 +2393,17 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  		 * semaphore. The release will print out buffers. With the
+>  		 * spinning variant, this context tries to take over the
+>  		 * printing from another printing context.
+> -		 *
+> -		 * Skip it in EMERGENCY priority. The console will be
+> -		 * explicitly flushed when exiting the emergency section.
+>  		 */
+> -		if (nbcon_get_default_prio() != NBCON_PRIO_EMERGENCY) {
+> -			if (console_trylock_spinning())
+> -				console_unlock();
+> -		}
+> +		if (console_trylock_spinning())
+> +			console_unlock();
+>  
+>  		preempt_enable();
+>  	}
+>  
+> -	if (do_trylock_unlock)
+> -		wake_up_klogd();
+> -	else
+> +	if ((defer_legacy && ft.legacy_direct) || ft.legacy_offload)
+
+ditto.
+
+>  		defer_console_output();
+> +	else
+> +		wake_up_klogd();
+>  
+>  	return printed_len;
+>  }
+> @@ -2728,10 +2707,15 @@ void resume_console(void)
+>   */
+>  static int console_cpu_notify(unsigned int cpu)
+>  {
+> -	if (!cpuhp_tasks_frozen && printing_via_unlock) {
+> -		/* If trylock fails, someone else is doing the printing */
+> -		if (console_trylock())
+> -			console_unlock();
+> +	struct console_flush_type ft;
+> +
+> +	if (!cpuhp_tasks_frozen) {
+> +		printk_get_console_flush_type(&ft, false);
+> +
+> +		if (ft.legacy_direct) {
+> +			if (console_trylock())
+> +				console_unlock();
+> +		}
+
+One might be curious why we do not flush nbcon consoles here.
+I guess that it will be less important after introducing
+the kthreads.
+
+Could it be called before the kthreads are started?
+
+Anyway, this looks like a common pattern. Maybe, we could hide
+it into some helper and be in the safe side:
+
+/* Try to flush consoles directly when needed. */
+void try_console_flush()
+{
+	struct console_flush_type ft;
+
+	printk_get_console_flush_type(&ft, false);
+
+	if (ft.nbcon_atomic)
+		nbcon_atomic_flush_pending();
+
+	if (ft.legacy_direct)
+		console_flush_all(false, &next_seq, &handover);
+}
+
+>  	}
+>  	return 0;
+>  }
+
+Otherwise, it looks good.
+
+Heh, I wondered several times if it was worth it. The struct
+console_flush_type and printk_get_console_flush_type()
+sometimes looked like an overkill. But I see many advantages:
+
+  + As the commit message says, the decision how to flush the messages
+    depend on many variables. And it is nice to have it in one place.
+
+  + The logic will get even more complicated after adding the
+    kthreads.
+
+  + printk_get_console_flush_type() allows to change the behavior
+    in many situations in one place.
+
+  + printk_get_console_flush_type() allows to easily find all
+    locations where we decide how to flush the messages. It helps
+    to check affected code paths.
+
+So, I think that it is worth it in the end.
+
+Note that I did not check the emergency code paths because
+they are going to be reworked as discussed in the printk pull
+request for 6.11, see
+https://lore.kernel.org/r/ZqJKbcLgTeYRkDd6@pathway.suse.cz
+
+Best Regards,
+Petr
 
