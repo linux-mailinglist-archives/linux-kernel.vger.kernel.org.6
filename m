@@ -1,78 +1,118 @@
-Return-Path: <linux-kernel+bounces-263409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A0293D573
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1324D93D574
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4D0FB2156D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443FC1C2326B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B4617838B;
-	Fri, 26 Jul 2024 14:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbQv/VTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50B71DDD1;
-	Fri, 26 Jul 2024 14:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061A81EB31;
+	Fri, 26 Jul 2024 14:57:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6581CF9B;
+	Fri, 26 Jul 2024 14:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722005856; cv=none; b=YXdhUwAqVaByw97GpZXMk/vr2BZNGMT8JyLvLGh0D4Xio9XgyKuQ3w4ATerfgv20FwiZe2qkOLrM+4XzkpOEDSL9pBBMnROb60P78RhGm0FXgVQFgIWpf614PCy68aS3tw0MhvATyfrdEwhCs5gwi6BM5NpuaOI3HBXLdaAFtc4=
+	t=1722005867; cv=none; b=EcGOcg2+Z/OYHrbgaRIXAYfmR5hgcRXToSLX6XLUryZ7E1okcyS9/rHxXDKDMJLo8EEhCC8q8y3g5I0WWmJ9oPYUICxmnkMnmmddJPnR+hiE7mJMluKosxZb9sueyPtJuVBIuJc7XPbA/DeL4saw8sbc2UfDE827o0PwshjclYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722005856; c=relaxed/simple;
-	bh=/4o8fEC+h2Ivu0V3GzkZo3pkL5aHvQjMhbi9PQkddjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npq97nmO/PTv5yEC8dgOmncZF0xiCn//gBNC6xRxBL9dX6ZDfwBn5KBraHHdWGYJl07ctokdVbb6opc/cqqbMca1dVKRWwPDtlKdc9jfJL9iBXrusHJFFTDnbzTpRgSrkwHCDe4adWRi++57MSK7Vv/d16WJd6TisQf3nfvq9nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbQv/VTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F00C32782;
-	Fri, 26 Jul 2024 14:57:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722005856;
-	bh=/4o8fEC+h2Ivu0V3GzkZo3pkL5aHvQjMhbi9PQkddjQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bbQv/VTJsSXXBfWn9d5jNmlUpQJhLulrIk6kPSLeu/HTYZd54QX5J1L7YSXoEtomX
-	 FPUJCq6HKj70Mall6mhVmoKP03yxk2rFfrbMTgY8Wp7Le//atStwk2cfJ5uiDWqXqF
-	 hNg8JqEavXLaRPHNweCzSWbG51aIU1FPgvL9PM6Sq+3GL5xaGxDD0wiwc+A2G3bITB
-	 ltyTUMTUofGQtb/DwyvVAhj+1OpxMWN48bY3CNpBFw9K2s66dye0K8SHRmDztvr9Xh
-	 7ToydHEq1rKp/363PkJya2vJLVtRx0FU8IlBDsdglb96Sk0Avycy0RPpb9C0/kGOS6
-	 A0daiYqt03Xww==
-Date: Fri, 26 Jul 2024 07:57:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
- <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
- David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
- <abuehaze@amazon.com>, "Christopher S . Hall"
- <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>, John
- Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
- netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
- <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
- <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH v2] ptp: Add vDSO-style vmclock support
-Message-ID: <20240726075734.1ee6a57c@kernel.org>
-In-Reply-To: <7b3a2490d467560afd2fe08d4f28c4635919ec48.camel@infradead.org>
-References: <7b3a2490d467560afd2fe08d4f28c4635919ec48.camel@infradead.org>
+	s=arc-20240116; t=1722005867; c=relaxed/simple;
+	bh=Ije9quJA/JaId1T0emmMsYoqzpKKW6KuyzOpfB856Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OR6TyoSt3raumI9FQLzVbqGbP2DFyvu4Z/igTDZf4cJRPzrepXZqVFckj357QTlUVQVVzJyKYGBLAk4q/Cre1gSh/Z+YdOOrMRo4qpCGkeDCNLNALUUh/MclO3HWdlqKjL2ULzN/7RGSnhmi/NZU/g0OOZaa938RkhdOHoj91Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01A431007;
+	Fri, 26 Jul 2024 07:58:11 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34DC93F73F;
+	Fri, 26 Jul 2024 07:57:43 -0700 (PDT)
+Date: Fri, 26 Jul 2024 15:57:40 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Etienne CARRIERE <etienne.carriere@st.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
+	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+	"ptosi@google.com" <ptosi@google.com>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet handling
+ helpers
+Message-ID: <ZqO5ZOxruAP1FOEW@pluto>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <20240710173153.4060457-3-cristian.marussi@arm.com>
+ <PAXPR04MB8459E1ED6375ECE89C8471AE88A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <PAXPR10MB4687B2FCCA6E59CAEF769713FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR10MB4687B2FCCA6E59CAEF769713FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 
-On Fri, 26 Jul 2024 13:28:17 +0100 David Woodhouse wrote:
-> +`       status = acpi_walk_resources(adev->handle, METHOD_NAME__CRS,
+On Tue, Jul 23, 2024 at 01:41:19PM +0000, Etienne CARRIERE wrote:
+> Hi,
+> 
+> On Thursday, July 11, 2024, Peng Fan wrote:
+> > > Subject: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet
+> > > handling helpers
+> > >
+> > > Introduce a pair of structures initialized to contain all the existing
+> > > packet handling helpers, both for transports based on shared memory
+> > > and messages.
+> > >
+> > > No functional change.
+> > >
+> > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > > ---
+> > > v1 --> v2
+> > > - fixed commit message
+> > > ---
+> > ......
+> > 
+> > > d33a704e5814..f4ba38afe0bb 100644
+> > > --- a/drivers/firmware/arm_scmi/msg.c
+> > > +++ b/drivers/firmware/arm_scmi/msg.c
+> > > @@ -4,8 +4,8 @@
+> > >   *
+> > >   * Derived from shm.c.
+> > >   *
+> > > - * Copyright (C) 2019-2021 ARM Ltd.
+> > > - * Copyright (C) 2020-2021 OpenSynergy GmbH
+> > > + * Copyright (C) 2019-2024 ARM Ltd.
+> > > + * Copyright (C) 2020-2024 OpenSynergy GmbH
+> > 
+> > Nitpick: OpenSynergy year should be kept unchanged?
+> 
 
-   ^ watch out for ticks!
+Hi Etienne, Peng
+
+> I agree. Copyright dates on original non-Arm contributors should
+> not be changed, here and in patch 5/8, 6/8 and 7/8.
+> 
+
+Agreed. Thanks for the clarification, I was not sure how to handle such
+old copyrigths....I have fixed alreay all of these Copy for V3.
+
+Thanks,
+Cristian
 
