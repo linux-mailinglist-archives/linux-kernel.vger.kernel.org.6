@@ -1,338 +1,119 @@
-Return-Path: <linux-kernel+bounces-263347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CE893D4C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C16EA93D4BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E7F1C232AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09151C22407
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB210A19;
-	Fri, 26 Jul 2024 14:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCFA9461;
+	Fri, 26 Jul 2024 14:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Knbz2aAZ"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="suO6XDt/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4504BA53
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83C17E9;
+	Fri, 26 Jul 2024 14:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722002689; cv=none; b=ZLGS9D3Bx1CPbZivXK1uNEVIx/dcp2gUyNa9n2LJ31pGmt7XaqVHL8sNFtFRhkhiWCB6rB+9eyz2sqqJEifiAoeplBXxKUHk9ikbw4C+aGjjYNFZP0VmJzmZRdu/xRA8EisTgAdqA/o2U8coFLtT32PY87qdQQ4LwEtdryi+ntc=
+	t=1722002685; cv=none; b=hPO/9VmdudtCLujDq77WcWnCJpkr2gbaU766woI612CX94DS4HGXljxEQT9zyguWoqQpMt9FQgIvHChnI0+jwCxXf8GP9aP0q6HxyxjdIQz/lx3lp1vN+EKKZjXjaudArjAV+1PYl3zwQvq1S/bws2jXADSKzXImbLUFGCXzQMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722002689; c=relaxed/simple;
-	bh=VvskMjEUgtoQdGVqCnbSHZQ+8PzbiDCVycbLh+XPygM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AOEpm5wtO4FfipEE5X0ARgmnzTXp/8okCzACaDJup2H7AxS5rDb+QWFc1ee9cCOxz7gvRV3NKnaaQ9Iya+radCKsIcnTxRE5bXJI9VTYcyM0JtN9zNYiIYpZZ2bECUARIfoflVbQRFLL6z4bo/v16uTgiFC9YswmEAGnvgUrsIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Knbz2aAZ; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso844869a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722002687; x=1722607487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZtkUciy53SlA3q1C2mBesNLpAodaomgS3oD4UCQoBY=;
-        b=Knbz2aAZTjY8I3glMuoakkvVsjCo0O3m+dQrwKygvOzIu5dgo1hdUiZXkEzPbQ3ZmQ
-         pHwnMdjbDIv7/VZiATm4+otIMjFI851iPhK/8TrL++oygm2YbDF3MjeHfAMfyLbmieh/
-         Awcjb1njpcEr3Bjze8Bp3ORowKDIfRIOZSauZGF9sXeGrxa+VU6/qzcg0e8+B7SSh3Ij
-         APY/fhWtqMQWGzGtkLdURnLmVTzHrADrfKaH0v84pTApUg/RCcyRCxArdvjCo93zjQDR
-         1zXXqGKvaV9NV1vTMXMWuc3aWyzEdWG0alHSOmRchfq3vUsN+2K1XK8gFFVms5VN+MnN
-         psdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722002687; x=1722607487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qZtkUciy53SlA3q1C2mBesNLpAodaomgS3oD4UCQoBY=;
-        b=h//lWej+AlNmJ/T5sXKoq6/pNsCl4m/YU/lvYURbTyxk/9sd/DU06WdI7d/htpdk10
-         W2xvwYoR77EIMlDP6oiFeh9HsI4Ii/PQJ1MV77IIEsJtYIb67Etewv2vUZIqIdBBBoHF
-         riD9KpdllqoBLsSYH3WYkQtg+L6JbJZRbqIibR4oVXv5vMQ3jpRsfResRnDMnoFN6/dG
-         Udxiohxr5dCTLjBuZXHydtMsf+x128ZBkxtDhzZUKzFAfhAsmyWNiBPTaZ5UxzQOQp/Z
-         M9I9bjIJ0zSAmqP4ggqUXlA7vmAjeMuPTGdXYZbqQHTfD3SUDOqrFyaeCWWFwza8Dqy5
-         QCcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUENbJt5XV6Us7grhE7vkAWQX7iNSSnae8oaY0aP1Sjw/ZhlDvPEdP2ykXiJM7EIpHDBCGb8AQMQpQXY+yb3i6RtiE2LOV42hu2YsjY
-X-Gm-Message-State: AOJu0YzDgHkJ0hWlAbqAXv5s9uAa1LcDr3O8Pwda1wJtzRDDkTGZZ6iW
-	ysL7hvVztfTkSJylqUxDrZT1nLvbOr/nChZCl0czr9S4BoE8m38/y+wXQq+M/i9DnloEqCzNEqD
-	ZUyUWDjJPgfmssyTF/3GexjmU61w=
-X-Google-Smtp-Source: AGHT+IEQKLKHLh9iUylwXZrOlh4LpZAvjxsgcGtt4pKukArrozDytrxIsOXJTlQFPEWoZrVPyd4xxPLBpuHK0Qol0F8=
-X-Received: by 2002:a17:90b:1c87:b0:2cb:50fa:b01e with SMTP id
- 98e67ed59e1d1-2cf2ebb7c91mr5372574a91.41.1722002686719; Fri, 26 Jul 2024
- 07:04:46 -0700 (PDT)
+	s=arc-20240116; t=1722002685; c=relaxed/simple;
+	bh=mGYkfLMx5xSppW42+VBC/lCfQ+1IfuC5w0WSpPyM+GY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tj8qRdaJ4Wuc1qxUrLFEs9Oyaq2Nf6ZfnW4MT9F1/+dolvWvKAcjf5uVkG9N52QYeEPq98l79a/tUgWxDKiPYEgGOI19xcJ2zIWXmjaPJtm4JfmGqJ6xjz1UgGoRGIxWF8ybZOpGDaZyS3b4TYZcmpojBi4MX15Cw7RkwE5f8Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=suO6XDt/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vOWFGTk3bX2JnJgg72QTxHrQdHDuBA3HzMoxxCzGYMQ=; b=suO6XDt/eOV0jFSI7gqQoOPT+2
+	jp85W3VnB5jiIuQJdG/Mnu7EQ1Oq1C/+uCdtOIwnS17Vr3IZ1iAbq4ju03OfuES452pMKdNqYazou
+	PA78iP23EoVIA/ZnT09UKBzTQpyZTd7hwcaE5p5ScLMA0tQdS+4LwquQK2PLSnezYVY5Ei8uMSCSp
+	n06A1WG9iOXmrW6R/RPhxBcaCj+/vliP1+8mmQ8uPvaIi/8uZ0ANGycblbWJWuvb9DD4mc1l3d1Cm
+	uO2hRGid65D/hCPtXAmwVlyU4vppYFOUrBEuFCDoZWe9NGliRHJWJ1+NKqYfsKmJSLG+I8Q6vICI6
+	d1Jalw7A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXLYh-000000045IF-3eRS;
+	Fri, 26 Jul 2024 14:04:35 +0000
+Date: Fri, 26 Jul 2024 07:04:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>, kreijack@inwind.it,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <ZqOs84hdYkSV_YWd@infradead.org>
+References: <Zp-_RDk5n5431yyh@infradead.org>
+ <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
+ <ZqEhMCjdFwC3wF4u@infradead.org>
+ <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+ <ZqJjsg3s7H5cTWlT@infradead.org>
+ <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+ <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094728.1161-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20240726094728.1161-1-jiapeng.chong@linux.alibaba.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 26 Jul 2024 10:04:35 -0400
-Message-ID: <CADnq5_MbocNRzAP6-2gR+CNofo-eFFM7GGsUFGUjQzKz7Q8qDg@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: Use ARRAY_SIZE for array length
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Applied.  Thanks!
+On Fri, Jul 26, 2024 at 04:54:59PM +0800, Youling Tang wrote:
+> Based on this patch, we may need to do these things with this
+>
+>
+> 1. Change the order of *.o in the Makefile (the same order as before the
+> change)
 
-On Fri, Jul 26, 2024 at 5:55=E2=80=AFAM Jiapeng Chong
-<jiapeng.chong@linux.alibaba.com> wrote:
->
-> Use of macro ARRAY_SIZE to calculate array size minimizes
-> the redundant code and improves code reusability.
->
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1552:57-58=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1561:57-58=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1573:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1578:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1592:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1597:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1611:50-51=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1616:50-51=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1630:50-51=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1635:50-51=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1649:60-61=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1663:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1677:52-53=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1691:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1705:53-54=
-: WARNING: Use ARRAY_SIZE.
-> ./drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c:1719:54-55=
-: WARNING: Use ARRAY_SIZE.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9580
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  .../display/dc/spl/dc_spl_scl_easf_filters.c  | 63 ++++++-------------
->  1 file changed, 20 insertions(+), 43 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c=
- b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
-> index 09bf82f7d468..e847af94419a 100644
-> --- a/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
-> +++ b/drivers/gpu/drm/amd/display/dc/spl/dc_spl_scl_easf_filters.c
-> @@ -1530,14 +1530,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_v=
-alue(struct spl_fixed31_32 rati
->         value =3D lookup_table_index_ptr->reg_value;
->
->         while (count < num_entries) {
-> -
->                 lookup_table_index_ptr =3D (lookup_table_base_ptr + count=
-);
->                 if (lookup_table_index_ptr->numer < 0)
->                         break;
->
->                 if (ratio.value < spl_fixpt_from_fraction(
-> -                       lookup_table_index_ptr->numer,
-> -                       lookup_table_index_ptr->denom).value) {
-> +                   lookup_table_index_ptr->numer,
-> +                   lookup_table_index_ptr->denom).value) {
->                         value =3D lookup_table_index_ptr->reg_value;
->                         break;
->                 }
-> @@ -1548,21 +1547,13 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_v=
-alue(struct spl_fixed31_32 rati
->  }
->  uint32_t spl_get_v_bf3_mode(struct spl_fixed31_32 ratio)
->  {
-> -       uint32_t value;
-> -       unsigned int num_entries =3D sizeof(easf_v_bf3_mode_lookup) /
-> -               sizeof(struct scale_ratio_to_reg_value_lookup);
-> -       value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
-> -               easf_v_bf3_mode_lookup, num_entries);
-> -       return value;
-> +       unsigned int num_entries =3D ARRAY_SIZE(easf_v_bf3_mode_lookup);
-> +       return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_v_bf3_mo=
-de_lookup, num_entries);
->  }
->  uint32_t spl_get_h_bf3_mode(struct spl_fixed31_32 ratio)
->  {
-> -       uint32_t value;
-> -       unsigned int num_entries =3D sizeof(easf_h_bf3_mode_lookup) /
-> -               sizeof(struct scale_ratio_to_reg_value_lookup);
-> -       value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
-> -               easf_h_bf3_mode_lookup, num_entries);
-> -       return value;
-> +       unsigned int num_entries =3D ARRAY_SIZE(easf_h_bf3_mode_lookup);
-> +       return spl_easf_get_scale_ratio_to_reg_value(ratio, easf_h_bf3_mo=
-de_lookup, num_entries);
->  }
->  uint32_t spl_get_reducer_gain6(int taps, struct spl_fixed31_32 ratio)
->  {
-> @@ -1570,13 +1561,11 @@ uint32_t spl_get_reducer_gain6(int taps, struct s=
-pl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 4) {
-> -               num_entries =3D sizeof(easf_reducer_gain6_4tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain6_4tap_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_reducer_gain6_4tap_lookup, num_entries);
->         } else if (taps =3D=3D 6) {
-> -               num_entries =3D sizeof(easf_reducer_gain6_6tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain6_6tap_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_reducer_gain6_6tap_lookup, num_entries);
->         } else
-> @@ -1589,13 +1578,11 @@ uint32_t spl_get_reducer_gain4(int taps, struct s=
-pl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 4) {
-> -               num_entries =3D sizeof(easf_reducer_gain4_4tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain4_4tap_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_reducer_gain4_4tap_lookup, num_entries);
->         } else if (taps =3D=3D 6) {
-> -               num_entries =3D sizeof(easf_reducer_gain4_6tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_reducer_gain4_6tap_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_reducer_gain4_6tap_lookup, num_entries);
->         } else
-> @@ -1608,13 +1595,11 @@ uint32_t spl_get_gainRing6(int taps, struct spl_f=
-ixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 4) {
-> -               num_entries =3D sizeof(easf_gain_ring6_4tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_gain_ring6_4tap_lookup);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_gain_ring6_4tap_lookup, num_entries);
->         } else if (taps =3D=3D 6) {
-> -               num_entries =3D sizeof(easf_gain_ring6_6tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_gain_ring6_6tap_lookup);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_gain_ring6_6tap_lookup, num_entries);
->         } else
-> @@ -1627,13 +1612,11 @@ uint32_t spl_get_gainRing4(int taps, struct spl_f=
-ixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 4) {
-> -               num_entries =3D sizeof(easf_gain_ring4_4tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_gain_ring4_4tap_lookup);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_gain_ring4_4tap_lookup, num_entries);
->         } else if (taps =3D=3D 6) {
-> -               num_entries =3D sizeof(easf_gain_ring4_6tap_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_gain_ring4_6tap_lookup);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_gain_ring4_6tap_lookup, num_entries);
->         } else
-> @@ -1646,8 +1629,7 @@ uint32_t spl_get_3tap_dntilt_uptilt_offset(int taps=
-, struct spl_fixed31_32 ratio
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_dntilt_uptilt_offset_loo=
-kup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_dntilt_uptilt_offset=
-_lookup);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_dntilt_uptilt_offset_lookup, num_entrie=
-s);
->         } else
-> @@ -1660,8 +1642,7 @@ uint32_t spl_get_3tap_uptilt_maxval(int taps, struc=
-t spl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_uptilt_maxval_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt_maxval_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_uptilt_maxval_lookup, num_entries);
->         } else
-> @@ -1674,8 +1655,7 @@ uint32_t spl_get_3tap_dntilt_slope(int taps, struct=
- spl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_dntilt_slope_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_dntilt_slope_lookup)=
-;
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_dntilt_slope_lookup, num_entries);
->         } else
-> @@ -1688,8 +1668,7 @@ uint32_t spl_get_3tap_uptilt1_slope(int taps, struc=
-t spl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_uptilt1_slope_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt1_slope_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_uptilt1_slope_lookup, num_entries);
->         } else
-> @@ -1702,8 +1681,7 @@ uint32_t spl_get_3tap_uptilt2_slope(int taps, struc=
-t spl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_uptilt2_slope_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt2_slope_lookup=
-);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_uptilt2_slope_lookup, num_entries);
->         } else
-> @@ -1716,8 +1694,7 @@ uint32_t spl_get_3tap_uptilt2_offset(int taps, stru=
-ct spl_fixed31_32 ratio)
->         unsigned int num_entries;
->
->         if (taps =3D=3D 3) {
-> -               num_entries =3D sizeof(easf_3tap_uptilt2_offset_lookup) /
-> -                       sizeof(struct scale_ratio_to_reg_value_lookup);
-> +               num_entries =3D ARRAY_SIZE(easf_3tap_uptilt2_offset_looku=
-p);
->                 value =3D spl_easf_get_scale_ratio_to_reg_value(ratio,
->                         easf_3tap_uptilt2_offset_lookup, num_entries);
->         } else
-> --
-> 2.32.0.3.g01195cf9f
->
+While we'll need to be careful, we don't need to match the exact
+order.  Most of the calls simply create slab caches / mempools and
+similar things and the order for those does not matter at all.
+
+Of course the register_filesytem calls need to be last, and sysfs
+registration probably should be second to last, but for the vast
+amount of calls the order does not matter as long as it is unwound
+in reverse order.
+
+> 2. We need to define module_subinit through the ifdef MODULE
+> distinction,
+
+Yes.
+
+> When one of the subinit runs in a module fails, it is difficult
+> to rollback execution of subexit.
+
+By having both section in the same order, you an just walk the
+exit section backwards from the offset that failed.  Of course that
+only matters for the modular case as normal initcalls don't get
+unwound when built-in either.
+
+> 4. The order in which subinit is called is not intuitively known
+> (although it can be found in the Makefile).
+
+Link order through make file is already a well known concept due to
+it mattering for built-in code.
+
 
