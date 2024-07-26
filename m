@@ -1,136 +1,294 @@
-Return-Path: <linux-kernel+bounces-262812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00D093CD07
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF19D93CD0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653021F2217C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341B12811A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F912557F;
-	Fri, 26 Jul 2024 03:35:11 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE96123B0;
-	Fri, 26 Jul 2024 03:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360A0249F9;
+	Fri, 26 Jul 2024 03:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DDB5bZoQ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBF523A8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721964910; cv=none; b=S0lR98RkPgkUbhgBXg1eEfqy/p1/T8E6p+exlonb4DXWzMINKvxXeA/sThxTzDFNl30dy0LuOE3d5uXnSIxe8f53MX+MkAY7kyA2KEAjwfULfEdM+fEYgAPQpzYdOdpDkw01CaX1AXYXKo+x96KMOGsOcq2zkKXRq/tui8JqQV4=
+	t=1721965288; cv=none; b=OcrUkN/ifn29Njhv3senFlXKDdw0dX7Cl//YXFvG/Z1DEWdJODXaV4xrfil1axISBWfWmOS88zFmV+eOdA6SXKX8xQLMv7JBVt1U0lHoOcY0ethnormgUkbsfHsRvrviITtmE66Dsteh0XWBvFzua4x+QVjrzoSZG2jDVmJLAak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721964910; c=relaxed/simple;
-	bh=A9aJNiurICviezCurKvMzRiVwN9W5WJ3FN+2sqPkURg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=P6+jDwNiA5PTi6RE0gQcguHYP38cCJISOVQPE1q2+NfcapZ3OXPgtpmHgEUCUeBvkDrVMBYWTN0vGyx+Awv6vCsb06O625FGb0m6vl5r/KqanvUsAPyyR78OSQOPMsbo5HVPeGDMgP22SDxrF9tqdYyYCQWNtPE7GDYgSe1Nqng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Ax2eliGaNmA+YBAA--.6996S3;
-	Fri, 26 Jul 2024 11:34:58 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxHsdgGaNmISMCAA--.12641S3;
-	Fri, 26 Jul 2024 11:34:58 +0800 (CST)
-Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for
- kvm_hypercall
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn,
- kernel@xen0n.name, kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, wangyuli@uniontech.com,
- Wentao Guan <guanwentao@uniontech.com>
-References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
- <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
- <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
-Date: Fri, 26 Jul 2024 11:34:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1721965288; c=relaxed/simple;
+	bh=wCS3Hy/e0dLKUiWGy1+j3YEr9DmU8aazVoY75JCORDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Inq+Y1TcvXcfnVW/VazgALaDN/rbGK2asH93OI9zOzDwvKL0EnPVlMOdqBsP4qlpEDLbIGCv6gjxypeEiXQtk3s84tngjz55rqhUwe8ZV/m0iFFCHGj6o/sbH2rPab5J91wWulE4FZbSOzyrhJ5XEjAuzaDpROEpH2VAK+18LzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DDB5bZoQ; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fdc70e695so103971cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:41:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721965285; x=1722570085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=euKB/T8zKRxrtVe4gbmh5YI7hQsM3NOu+4vovgHj2AU=;
+        b=DDB5bZoQMW4OvQewHcNQE0qNfrh/PSOs0nbfe2jwG5JAUTR41NL1YJ+oOyYG7T8y0B
+         PiiDDvprs08BYc7QPnkm4YWkgt6U3LAOYLmKwdd9TH2HfpBRXdRL2wkzCZenwf2vcp4V
+         Z9Fg7kSq4Ysuis0rXN5KfEGJ+MMk4AvnSdm8b1ipYAyVcXy46nKcfCEw90N/xpcIHU9M
+         Z9oNAE1Lwgd7iMgihoITsrALSAVPdUa8tV1utH/0sG1wHjBt2FkyscjAHzUTt6XXztXF
+         xetoTscg6dqKBy2BsfpTiM4zbLtdD7a/7txhAQOduCLxmfXZC0FJqT3Ar1PLhire2jiM
+         Fz4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721965285; x=1722570085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=euKB/T8zKRxrtVe4gbmh5YI7hQsM3NOu+4vovgHj2AU=;
+        b=ZTnD7OoZRIvkM0oEN/nEnWaX28skpgPukW3Sz5Jupfsr+2FDVFYV3amxC1Je86Dre3
+         IWiiM+9N8UmjkLblhkcAetaLCmUbPd+O6x6QxmlTEM1y4DigsTCfs1ZFw3jnauWAp03o
+         OkqyNKpImD1Wp1g0Tep8PbfvKYc8kdzj2WgRuMGoqS0mJnRhJ0GdYMIW2MJRHBGPg3Lu
+         vqWVKQYxe+YphtrEoNrdMYasij9mVhuGNCHRkYCqcVKbVsxEzoWBHM6TB2FpkcO3x3Pv
+         7Srj1ib0nZ1mG55oLMChzp2Ofo548hWRZNnasheM4G1bDX7m8TChYb02GAAhkxBq8WxL
+         O6bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNtmvZtDGRMyut1RQdQFsP6YjbI7TFVyt/XlGJDYf+JhD9qKIBNsiffQkaIhxaSPhUxkRCGM1k2WAPlvhinsJalpG5ZU/F5rkyFn2L
+X-Gm-Message-State: AOJu0YxseRDpb2qErf2VKG4h8FSXpKmjkVMjESBDj6xeFL7VHsyWpfKQ
+	qGKPV8Zw5EA9pPyLFvMYx7+Nl1clcFYeQn+lQjgMvdwJT6F0fPkTKcvYRjfenR5Hru4hDMed446
+	XgqJbECnXUcngfdOJgvXOHXJaMdgBQ+xP8dKH
+X-Google-Smtp-Source: AGHT+IE0idwatz1SKv1sOPZFsNQVdu62wT0beJFu7EFJFlRThFe6li0Jh/tYwhJ8QoTNI9AUgOpA5KY/UgU4p+rTOAg=
+X-Received: by 2002:ac8:7d0a:0:b0:444:ccc5:f4c0 with SMTP id
+ d75a77b69052e-44ff3e86da8mr1619811cf.15.1721965285354; Thu, 25 Jul 2024
+ 20:41:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxHsdgGaNmISMCAA--.12641S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ur47Zw1UCFy5XrWxtw45XFc_yoW8Cr4rpF
-	ZxA3WvkF48Kr1fC34xtrs8uryagrZ7Gw12gF98W345CrsFvwn3tr48tF1DuF1kAw1rJF4F
-	qFya93WfZFyUA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-	vfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
+References: <20240726015723.1329937-1-namhyung@kernel.org>
+In-Reply-To: <20240726015723.1329937-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 25 Jul 2024 20:41:14 -0700
+Message-ID: <CAP-5=fVK3g-8oMoBUAHSR=sufQrU_Xed22Xf0Eu6JGbhDu9e5w@mail.gmail.com>
+Subject: Re: [PATCH v2] perf annotate: Cache debuginfo for data type profiling
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 25, 2024 at 6:57=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> In find_data_type(), it creates and deletes a debug info whenver it
+> tries to find data type for a sample.  This is inefficient and it most
+> likely accesses the same binary again and again.
+>
+> Let's add a single entry cache the debug info structure for the last DSO.
+> Depending on sample data, it usually gives me 2~3x (and sometimes more)
+> speed ups.
+>
+> Note that this will introduce a little difference in the output due to
+> the order of checking stack operations.  It used to check the stack ops
+> before checking the availability of debug info but I moved it after the
+> symbol check.  So it'll report stack operations in DSOs without debug
+> info as unknown.  But I think it's ok and better to have the checking
+> near the caching logic.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+> v2) add an assertion for the single-threaded case.
+>
+>  tools/perf/util/annotate-data.c | 15 ++------------
+>  tools/perf/util/annotate-data.h |  2 +-
+>  tools/perf/util/annotate.c      | 35 +++++++++++++++++++++++++++++++++
+>  tools/perf/util/annotate.h      |  2 ++
+>  tools/perf/util/session.c       |  2 ++
+>  5 files changed, 42 insertions(+), 14 deletions(-)
+>
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-d=
+ata.c
+> index 734acdd8c4b7..f125ac5f0bda 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -1345,16 +1345,9 @@ static int find_data_type_die(struct data_loc_info=
+ *dloc, Dwarf_Die *type_die)
+>   */
+>  struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
+>  {
+> -       struct annotated_data_type *result =3D NULL;
+>         struct dso *dso =3D map__dso(dloc->ms->map);
+>         Dwarf_Die type_die;
+>
+> -       dloc->di =3D debuginfo__new(dso__long_name(dso));
+> -       if (dloc->di =3D=3D NULL) {
+> -               pr_debug_dtp("cannot get the debug info\n");
+> -               return NULL;
+> -       }
+> -
+>         /*
+>          * The type offset is the same as instruction offset by default.
+>          * But when finding a global variable, the offset won't be valid.
+> @@ -1364,13 +1357,9 @@ struct annotated_data_type *find_data_type(struct =
+data_loc_info *dloc)
+>         dloc->fbreg =3D -1;
+>
+>         if (find_data_type_die(dloc, &type_die) < 0)
+> -               goto out;
+> -
+> -       result =3D dso__findnew_data_type(dso, &type_die);
+> +               return NULL;
+>
+> -out:
+> -       debuginfo__delete(dloc->di);
+> -       return result;
+> +       return dso__findnew_data_type(dso, &type_die);
+>  }
+>
+>  static int alloc_data_type_histograms(struct annotated_data_type *adt, i=
+nt nr_entries)
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-d=
+ata.h
+> index 992b7ce4bd11..37a1a3b68e0b 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -123,9 +123,9 @@ struct data_loc_info {
+>         u64 var_addr;
+>         u8 cpumode;
+>         struct annotated_op_loc *op;
+> +       struct debuginfo *di;
+>
+>         /* These are used internally */
+> -       struct debuginfo *di;
+>         int fbreg;
+>         bool fb_cfa;
+>
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index a2ee4074f768..2ef119539336 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -25,6 +25,7 @@
+>  #include "srcline.h"
+>  #include "units.h"
+>  #include "debug.h"
+> +#include "debuginfo.h"
+>  #include "annotate.h"
+>  #include "annotate-data.h"
+>  #include "evsel.h"
+> @@ -2326,6 +2327,20 @@ u64 annotate_calc_pcrel(struct map_symbol *ms, u64=
+ ip, int offset,
+>         return map__rip_2objdump(ms->map, addr);
+>  }
+>
+> +static struct debuginfo_cache {
+> +       struct dso *dso;
+> +       struct debuginfo *dbg;
+> +} di_cache;
+> +
+> +void debuginfo_cache__delete(void)
+> +{
+> +       dso__put(di_cache.dso);
+> +       di_cache.dso =3D NULL;
+> +
+> +       debuginfo__delete(di_cache.dbg);
+> +       di_cache.dbg =3D NULL;
+> +}
+> +
+>  /**
+>   * hist_entry__get_data_type - find data type for given hist entry
+>   * @he: hist entry
+> @@ -2360,6 +2375,25 @@ struct annotated_data_type *hist_entry__get_data_t=
+ype(struct hist_entry *he)
+>                 return NULL;
+>         }
+>
+> +       /*
+> +        * It needs to protect di_cache as well as data_types and global_=
+vars in
+> +        * DSO when enabling multi-threading.
 
+Perhaps:
 
-On 2024/7/26 上午10:55, Huacai Chen wrote:
-> On Fri, Jul 26, 2024 at 9:49 AM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/7/25 下午9:48, Dandan Zhang wrote:
->>> The kvm_hypercall set for LoongArch is limited to a1-a5.
->>> The mention of a6 in the comment is undefined that needs to be rectified.
->>>
->>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
->>> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
->>> ---
->>>    arch/loongarch/include/asm/kvm_para.h | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
->>> index 335fb86778e2..43ec61589e6c 100644
->>> --- a/arch/loongarch/include/asm/kvm_para.h
->>> +++ b/arch/loongarch/include/asm/kvm_para.h
->>> @@ -39,9 +39,9 @@ struct kvm_steal_time {
->>>     * Hypercall interface for KVM hypervisor
->>>     *
->>>     * a0: function identifier
->>> - * a1-a6: args
->>> + * a1-a5: args
->>>     * Return value will be placed in a0.
->>> - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
->>> + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
->>>     */
->>>    static __always_inline long kvm_hypercall0(u64 fid)
->>>    {
->>>
->>
->> Dandan,
->>
->> Nice catch. In future hypercall abi may expand such as the number of
->> input register and output register, or async hypercall function if there
->> is really such requirement.
->>
->> Anyway the modification is deserved and it is enough to use now, thanks
->> for doing it.
->>
->> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-> Maybe it is better to implement kvm_hypercall6() than remove a6 now?
-That is one option also. The main reason is that there is no such 
-requirement in near future :(, I prefer to removing the annotation and 
-keeping it clean.
+/*
+ * di_cache holds a pair of values, but code below assumes
+di_cache.dso can be compared/updated and di_cache.dbg can be
+read/updated independently from each other. That assumption only holds
+in single threaded code.
+ */
 
-Regards
-Bibo Mao
-> 
-> Huacai
->>
+Thanks,
+Ian
 
+> +        */
+> +       assert(perf_singlethreaded);
+> +
+> +       if (map__dso(ms->map) !=3D di_cache.dso) {
+> +               dso__put(di_cache.dso);
+> +               di_cache.dso =3D dso__get(map__dso(ms->map));
+> +
+> +               debuginfo__delete(di_cache.dbg);
+> +               di_cache.dbg =3D debuginfo__new(dso__long_name(di_cache.d=
+so));
+> +       }
+> +
+> +       if (di_cache.dbg =3D=3D NULL) {
+> +               ann_data_stat.no_dbginfo++;
+> +               return NULL;
+> +       }
+> +
+>         /* Make sure it has the disasm of the function */
+>         if (symbol__annotate(ms, evsel, &arch) < 0) {
+>                 ann_data_stat.no_insn++;
+> @@ -2404,6 +2438,7 @@ struct annotated_data_type *hist_entry__get_data_ty=
+pe(struct hist_entry *he)
+>                         .ip =3D ms->sym->start + dl->al.offset,
+>                         .cpumode =3D he->cpumode,
+>                         .op =3D op_loc,
+> +                       .di =3D di_cache.dbg,
+>                 };
+>
+>                 if (!op_loc->mem_ref && op_loc->segment =3D=3D INSN_SEG_N=
+ONE)
+> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> index 9ba772f46270..27d9540604ef 100644
+> --- a/tools/perf/util/annotate.h
+> +++ b/tools/perf/util/annotate.h
+> @@ -543,4 +543,6 @@ struct annotated_basic_block {
+>  int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
+>                               struct list_head *head);
+>
+> +void debuginfo_cache__delete(void);
+> +
+>  #endif /* __PERF_ANNOTATE_H */
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 5596bed1b8c8..f9072e003367 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -36,6 +36,7 @@
+>  #include "util.h"
+>  #include "arch/common.h"
+>  #include "units.h"
+> +#include "annotate.h"
+>  #include <internal/lib.h>
+>
+>  #ifdef HAVE_ZSTD_SUPPORT
+> @@ -304,6 +305,7 @@ void perf_session__delete(struct perf_session *sessio=
+n)
+>                 return;
+>         auxtrace__free(session);
+>         auxtrace_index__free(&session->auxtrace_index);
+> +       debuginfo_cache__delete();
+>         perf_session__destroy_kernel_maps(session);
+>         perf_decomp__release_events(session->decomp_data.decomp);
+>         perf_env__exit(&session->header.env);
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
