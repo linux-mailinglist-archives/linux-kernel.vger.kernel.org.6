@@ -1,138 +1,389 @@
-Return-Path: <linux-kernel+bounces-263451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64A493D60C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B949A93D612
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0E21F23012
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F88F286FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020D7168C7;
-	Fri, 26 Jul 2024 15:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F8217BB2D;
+	Fri, 26 Jul 2024 15:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iaPCpA4S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l7OLWBbe"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D11178393
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0417B404;
+	Fri, 26 Jul 2024 15:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007589; cv=none; b=ZkEU2OBc1Lqzl7rLJfWM9i9RMS4jMiqY1ZlbedUjA5u8q9lrche4rAypCv0GcrGoMFaS7Sz/8jC9/5Xn4U9e5LllhW5NP++JdKw/2aU1pWbQOH2Vl9yoqBfaPmKYbJRYM+WhNR9lwqVPudHWUrR3mRLmEtOZ59Ac7FegnUckQD0=
+	t=1722007626; cv=none; b=kP0pPaZJKtdke7BBV4TsRjWnBpar8qpTcsLG14fxNWFeZAH34vJ5sfp/oEP7bzvjDN+0XnQ2dRjS5k9kkH6wq80QysxMG/S71w9byu+xe+K2ZNjCKnDuMh1cCj3dZRBjjU37wNFXWUULQu5bEHHU/Ksq5v+B8d5CaRz2tbn59co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007589; c=relaxed/simple;
-	bh=RbHU4UP1JY5wKgN+Oh9cKQ22ngJhE4XdAkK8ZKK+P04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=deHmsBkP8GYhew/Kod1K5Gz6xUmDGyEpqblyoLNCZc7aqFzecI/UHC8LtLgFTf3OP6CHCZvE9ZIra9tOtYIDSXzoAH18W0fU9pMdwOXWC7UkI1k8/ShGm5VLSsi+CjfjEHlRSHLTC6dp2IzMpWIxSYY3hS9gz+RUlfiVoFRxS4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iaPCpA4S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722007586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HQNYIPK7LP0OA8/oIlZfnEndy7+rTzNkw4e6NMHkIEk=;
-	b=iaPCpA4SF/U/RO8TSNxCWAHJqzuIFKx1meYyNaQjXw7EKCMYJky7VtzK/X9swveIzofFEu
-	xbcexK2jZJyX8im10zJ5j/+ZBbQbZuBDwbNdb0KtPuyKhDaf8ayPyiu9vwbikq9I7UTsUt
-	X/aTFKMoxasaMKJT9VJh7FKMNksSj0M=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-483-cZWn8De6Oqmug_wFhW2xHg-1; Fri, 26 Jul 2024 11:26:24 -0400
-X-MC-Unique: cZWn8De6Oqmug_wFhW2xHg-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b7a0e7b823so1406846d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:26:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722007584; x=1722612384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQNYIPK7LP0OA8/oIlZfnEndy7+rTzNkw4e6NMHkIEk=;
-        b=ZPo3N6fz5L6HrcpsJIjw0vIsmpKA8rzuyo8Ln1DJeId0lNJ3O9uIjLYZK4vXlH6fCU
-         hoGepn1jAaXH8kIHTk/hu11PTiWotom2lb0+NgMWi3zaTflztOyn2E8rs++K1VnDKKBt
-         DOQ7XTeaz/b6LMTFxNK2sSuZgJvjnr0KUw+2EIIIpeNdsJXm/KapI5Bztq5RWOC1JPG2
-         HLjOu8TsRKqB9TWeZ4JznyFn+e9sYPrqv5a9w5rRlxSnT5PF8nlA5CunCy2OWR0emCHg
-         2+Crek0KmUTT+8vdfsAD1Ka0UW9s/JByhKAhvnbUU23ifsiEDxxngSTEy63pPdqW6uIq
-         hHyg==
-X-Gm-Message-State: AOJu0YyJyGmo8dwueojaXc4OmpBLzxKDoLXyaiP7P2lg5eFC06p4Pznc
-	Vcr6ewpUk9igtLXBUxrndchNydyn18e3v0EFXoHzpLiYWpeITQ7CpB+HrnMaVKM7I2bP0RQsJA4
-	/RRTNUX+ijdIfms1wfZHROFRYBvdHTpNriDQ/PAF4s9Iceem5A7r9UYA7ZNQMrw==
-X-Received: by 2002:a05:6214:d4f:b0:6b5:ddc3:f610 with SMTP id 6a1803df08f44-6bb3e2d368amr41051816d6.6.1722007584077;
-        Fri, 26 Jul 2024 08:26:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCcOtmcKwMx6TXZjWFNTwpesdryp7ZSGGDThfHjU5YW3rn/SrGkp+RZ71WQrrnKaPTgZEnHg==
-X-Received: by 2002:a05:6214:d4f:b0:6b5:ddc3:f610 with SMTP id 6a1803df08f44-6bb3e2d368amr41051676d6.6.1722007583704;
-        Fri, 26 Jul 2024 08:26:23 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fb0bf4asm17526386d6.139.2024.07.26.08.26.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:26:23 -0700 (PDT)
-Date: Fri, 26 Jul 2024 11:26:20 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, stable@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-Message-ID: <ZqPAHDBDOtABrk_3@x1n>
-References: <20240725183955.2268884-1-david@redhat.com>
- <20240725183955.2268884-3-david@redhat.com>
+	s=arc-20240116; t=1722007626; c=relaxed/simple;
+	bh=E2hqZT7pEbmG5Bxqcb8qWIaQEqch6WgC3UILfeH7gLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N1lDOJtrHjAfRzhkCdvEo29Z+XKOjgTF52V1vj06T/Iu29VNl3QROI9cRdac/48kSlsYsdCp9dcuEyjqmUUfAu2hoMspzkod60j6hkc+6uRLJm/mg1Rzg3IDrwxIkYDPI/ZNOu9w91dLph0dI/GzvX7WJYpcwxSRu0bGpRug0oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l7OLWBbe; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722007621;
+	bh=E2hqZT7pEbmG5Bxqcb8qWIaQEqch6WgC3UILfeH7gLA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l7OLWBbeAgG9sz17DdR7VWQS01BKtnbaeicriI/MgeVbTqbFIxaVlnt6wSuJq7Amr
+	 eBmd3x6j39846oRu8F3NP4dEfASl4Z4bKJD1+Rth8tRiYJ2BpnhY7Mrhl15k6uIY3c
+	 AZfThuVIaJT7vXoI0wLXBNhw1fArvSTRsfH36KVfpkYpcsusNwSQHCP/GdKtyn8lni
+	 yHM4OgI+ALcTWtVhsHpK3GYjV5uIftUDet0Wdz+vfHcG9/QdZOmnQ0uxzdb7aR+gNb
+	 WGf4df2YoVkpfPZ9OFxasCv7+DzVSthHy4LS+UhnCD5MhE41Jk4aqvs4/U7meo4V/E
+	 am63/++bliYFg==
+Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 70E073780C6C;
+	Fri, 26 Jul 2024 15:26:58 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+Date: Fri, 26 Jul 2024 11:26:35 -0400
+Message-ID: <6070053.DvuYhMxLoT@arisu>
+Organization: Collabora
+In-Reply-To: <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
+References:
+ <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <4356151.ejJDZkT8p0@arisu> <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240725183955.2268884-3-david@redhat.com>
+Content-Type: multipart/signed; boundary="nextPart6335455.lOV4Wx5bFT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Thu, Jul 25, 2024 at 08:39:55PM +0200, David Hildenbrand wrote:
-> We recently made GUP's common page table walking code to also walk
-> hugetlb VMAs without most hugetlb special-casing, preparing for the
-> future of having less hugetlb-specific page table walking code in the
-> codebase. Turns out that we missed one page table locking detail: page
-> table locking for hugetlb folios that are not mapped using a single
-> PMD/PUD.
+--nextPart6335455.lOV4Wx5bFT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Date: Fri, 26 Jul 2024 11:26:35 -0400
+Message-ID: <6070053.DvuYhMxLoT@arisu>
+Organization: Collabora
+In-Reply-To: <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
+MIME-Version: 1.0
+
+Hi Jonas !
+
+On Thursday, June 27, 2024 6:39:36 P.M. EDT Jonas Karlman wrote:
+> Hi Datlev,
 > 
-> Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
-> hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
-> page tables, will perform a pte_offset_map_lock() to grab the PTE table
-> lock.
+> On 2024-06-27 22:56, Detlev Casanova wrote:
+> > Hi Jonas,
+> > 
+> > On Monday, June 24, 2024 5:16:33 A.M. EDT Jonas Karlman wrote:
+> >> Hi Detlev and Alex,
+> >> 
+> >> On 2024-06-20 15:31, Detlev Casanova wrote:
+> >>> Hi Jonas, Alex,
+> >>> 
+> >>> On Wednesday, June 19, 2024 2:06:40 P.M. EDT Jonas Karlman wrote:
+> >>>> Hi Alex,
+> >>>> 
+> >>>> On 2024-06-19 19:19, Alex Bee wrote:
+> >>>>> Am 19.06.24 um 17:28 schrieb Jonas Karlman:
+> >>>>>> Hi Detlev,
+> >>>>>> 
+> >>>>>> On 2024-06-19 16:57, Detlev Casanova wrote:
+> >>>>>>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> >>>>>>> 
+> >>>>>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> >>>>>>> ---
+> >>>>>>> 
+> >>>>>>>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50
+> >>>>>>>   +++++++++++++++++++++++
+> >>>>>>>   1 file changed, 50 insertions(+)
+> >>>>>>> 
+> >>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>>>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
+> >>>>>>> 6ac5ac8b48ab..7690632f57f1 100644
+> >>>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>>>> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
+> >>>>>>> 
+> >>>>>>>   		ranges = <0x0 0x0 0xff001000 0xef000>;
+> >>>>>>>   		#address-cells = <1>;
+> >>>>>>>   		#size-cells = <1>;
+> >>>>>>> 
+> >>>>>>> +
+> >>>>>>> +		vdec0_sram: rkvdec-sram@0 {
+> >>>>>>> +			reg = <0x0 0x78000>;
+> >>>>>>> +			pool;
+> >>>>>>> +		};
+> >>>>>>> +
+> >>>>>>> +		vdec1_sram: rkvdec-sram@1 {
+> >>>>>>> +			reg = <0x78000 0x77000>;
+> >>>>>>> +			pool;
+> >>>>>>> +		};
+> >>>>>>> 
+> >>>>>>>   	};
+> >>>>>>>   	
+> >>>>>>>   	pinctrl: pinctrl {
+> >>>>>>> 
+> >>>>>>> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
+> >>>>>>> 
+> >>>>>>>   			#interrupt-cells = <2>;
+> >>>>>>>   		
+> >>>>>>>   		};
+> >>>>>>>   	
+> >>>>>>>   	};
+> >>>>>>> 
+> >>>>>>> +
+> >>>>>>> +	vdec0: video-decoder@fdc38100 {
+> >>>>>>> +		compatible = "rockchip,rk3588-vdec";
+> >>>>>>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+> >>>>>>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>>>>>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
+> >>> 
+> >>> <&cru
+> >>> 
+> >>>>>>> CLK_RKVDEC0_CA>, +			 <&cru
+> >>> 
+> >>> CLK_RKVDEC0_CORE>, <&cru
+> >>> 
+> >>>>>>> CLK_RKVDEC0_HEVC_CA>;
+> >>>>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+> >>> 
+> >>> "hevc_cabac";
+> >>> 
+> >>>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
+> >>> 
+> >>> CLK_RKVDEC0_CORE>,
+> >>> 
+> >>>>>>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
+> >>> 
+> >>> CLK_RKVDEC0_HEVC_CA>;
+> >>> 
+> >>>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+> >>>>>>> +				       <600000000>, <1000000000>;
+> >>>>>>> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>,
+> >>> 
+> >>> <&cru
+> >>> 
+> >>>>>>> SRST_RKVDEC0_CA>, +			 <&cru
+> >>> 
+> >>> SRST_RKVDEC0_CORE>, <&cru
+> >>> 
+> >>>>>>> SRST_RKVDEC0_HEVC_CA>;
+> >>>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> >>>>>>> +			      "rst_core", "rst_hevc_cabac";
+> >>>>>>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> >>>>>>> +		sram = <&vdec0_sram>;
+> >>>>>>> +		status = "okay";
+> >>>>>>> +	};
+> >>>>>>> +
+> >>>>>>> +	vdec1: video-decoder@fdc40100 {
+> >>>>>>> +		compatible = "rockchip,rk3588-vdec";
+> >>>>>>> +		reg = <0x0 0xfdc40100 0x0 0x500>;
+> >>>>>>> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>>>>>> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>,
+> >>> 
+> >>> <&cru
+> >>> 
+> >>>>>>> CLK_RKVDEC1_CA>, +			 <&cru
+> >>> 
+> >>> CLK_RKVDEC1_CORE>, <&cru
+> >>> 
+> >>>>>>> CLK_RKVDEC1_HEVC_CA>;
+> >>>>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+> >>> 
+> >>> "hevc_cabac";
+> >>> 
+> >>>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru
+> >>> 
+> >>> CLK_RKVDEC1_CORE>,
+> >>> 
+> >>>>>>> +				  <&cru CLK_RKVDEC1_CA>, <&cru
+> >>> 
+> >>> CLK_RKVDEC1_HEVC_CA>;
+> >>> 
+> >>>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+> >>>>>>> +				       <600000000>, <1000000000>;
+> >>>>>>> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>,
+> >>> 
+> >>> <&cru
+> >>> 
+> >>>>>>> SRST_RKVDEC1_CA>, +			 <&cru
+> >>> 
+> >>> SRST_RKVDEC1_CORE>, <&cru
+> >>> 
+> >>>>>>> SRST_RKVDEC1_HEVC_CA>;
+> >>>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> >>>>>>> +			      "rst_core", "rst_hevc_cabac";
+> >>>>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+> >>>>>>> +		sram = <&vdec1_sram>;
+> >>>>>>> +		status = "okay";
+> >>>>>>> +	};
+> >>>>>> 
+> >>>>>> This is still missing the iommus, please add the iommus, they should
+> >>>>>> be
+> >>>>>> 
+> >>>>>> supported/same as the one used for e.g. VOP2:
+> >>>>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> >>>>>> 
+> >>>>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
+> >>>>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
+> >>>>>> special on RK3588.
+> >>>>>> 
+> >>>>>> Please add the iommus :-)
+> >>>>> 
+> >>>>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
+> >>>>> applied for vdec's iommus. Since it's rightly frowned upon adding such
+> >>>>> boolean-quirk-properties to upstream devicetrees, we'd at least need
+> >>>>> additional (fallback-) compatibles, even if it works with the iommu
+> >>>>> driver
+> >>>>> as is (what I doubt, but haven't tested). We need to be able to apply
+> >>>>> those
+> >>>>> quirks later without changing the devicetree (as usual) and I'm sure
+> >>>>> RK
+> >>>>> devs haven't added these quirks for the personal amusement.
+> >>>> 
+> >>>> Based on what I investigated the hw should work similar, and the quirks
+> >>>> mostly seem related to optimizations and sw quirks, like do not zap
+> >>>> each
+> >>>> line, keep it alive even when pm runtime say it is not in use and other
+> >>>> quirks that seem to be more of sw nature on how to best utilize the hw.
+> >>> 
+> >>> I did some testing with the IOMMU but unfortunately, I'm only getting
+> >>> page
+> >>> fault errors. This may be something I'm doing wrong, but it clearly
+> >>> needs
+> >>> more investigation.
+> >> 
+> >> I re-tested and the addition of sram seem to now cause page faults, the
+> >> sram also need to be mapped in the iommu.
+> >> 
+> >> However, doing more testing revealed that use of iommu present the same
+> >> issue as seen with hevc on rk3399, after a fail fluster tests continue
+> >> to fail until a reset.
+> >> 
+> >> Seeing how this issue was very similar I re-tested on rk3399 without
+> >> iommu and cma=1G and could observe that there was no longer any need to
+> >> reset after a failed test. Interestingly the score also went up from
+> >> 135 to 137/147.
+> >> 
+> >> Digging some more revealed that the iommu also is reset during the
+> >> internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
+> >> and paging in disabled state.
+> >> 
+> >> Ensuring that the iommu was reconfigured after a failure fixed the issue
+> >> observed on rk3399 and I now also get 137/147 hevc fluster score using
+> >> the iommu.
+> >> 
+> >> Will send out a rkvdec hevc v2 series after some more testing.
+> >> 
+> >> Guessing there is a similar need to reconfigure iommu on rk3588, and my
+> >> initial tests also showed promising result, however more tests are
+> >> needed.
+> > 
+> > I did some testing with the IOMMU. The good news is that it now works with
+> > the SRAM.
 > 
-> However, hugetlb that concurrently modifies these page tables would
-> actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
-> locks would differ. Something similar can happen right now with hugetlb
-> folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
+> Great, I did not look into SRAM at all, just replaced sram prop with iommus
+> for my tests, so great that you found a way to make it work with the iommu
+> :-)
+> > I am also able to hack the iommu driver to force a reset in case of an
+> > error in the decoder. I'm not sure how to implement that with the IOMMU
+> > kernel API though.
 > 
-> Let's make huge_pte_lockptr() effectively uses the same PT locks as any
-> core-mm page table walker would.
+> I am planning on sending something along the way of this as an RFC:
 > 
-> There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
-> folio being mapped using two PTE page tables. While hugetlb wants to take
-> the PMD table lock, core-mm would grab the PTE table lock of one of both
-> PTE page tables. In such corner cases, we have to make sure that both
-> locks match, which is (fortunately!) currently guaranteed for 8xx as it
-> does not support SMP.
-
-Do you mean "does not support SPLIT_PMD_PTLOCK" here instead of SMP?
-
+> https://github.com/Kwiboo/linux-rockchip/compare/6da640232631...bf332524d880
 > 
-> Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic follow_page_mask code")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> If we re-configure and re-enable the iommu just before next decoding run
+> after a decoding has failed seem to resolve any issue I have seen, have
+> mainly been tested with rkvdec and HEVC on RK3399/RK3328. On RK3588 this
+> also seemed to work, at least when I tested earlier this week.
+> 
+> > Another issue is that resetting the iommu will drop all buffer addresses
+> > of
+> > other decoding contexts that may be running in parallel.
+> 
+> I do not think we need/should reset the iommu, we just need to deal with
+> the fact that the rkvdec will reset and disable use of the mmu when it
+> reset itself.
+> 
+> > I *think* that the downstream mpp remaps the buffers in the iommu for each
+> > frame, but I'm not sure about that either.
+> 
+> As long as a frame can be decoded correctly, the mmu config seem to continue
+> to be valid and next frame can be decoded.
+> 
+> > So running fluster with `-j 1` gives me the expected 129/135 passed tests,
+> > but `-j 8` will start failing all tests after the first fail (well, first
+> > fail because of decoder error).
+> 
+> This was the main issue blocking rkvdec hevc, just re-confgure the mmu
+> after a frame fails to decode seem to resolve this issue.
+> 
+> Biggest issue at the moment is how to properly signal iommu subsystem that
+> it should re-configure, I may have abused the flush_iotlb_all ops, since
+> that seemed closest existing hook.
+> 
+> Will send an RFC to linux-iommu to collect input on how to best signal
+> iommu subsystem that the mmu has been reset by an external event and now
+> need to be re-configured.
 
-Patch looks all right to me:
+Do you mind if I go ahead and send your iommu flush_iotlb_all patch upstream to 
+start the discussion ? I'd love for this patch set to move along and that's 
+kind of a blocker right now.
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+Detlev.
 
-Thanks!
 
--- 
-Peter Xu
+
+--nextPart6335455.lOV4Wx5bFT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmajwCsACgkQ5EFKUk4x
+7barIQf/fKNHI8sImF3xc2IxLOUmuaNQoDlcEgIggAg8Y+Bz4tmGhZ28kxCI5zWo
+HovilM1SYHBOB6oVQjDUzBMJn5R9Nm/1BZ9e+ad1n1GDgCQBReGnKllQ82R6EQUS
+lkyYoOBMHCgyYb95f65X4Y6T7wzGhelbz0VMEBzFDfNERlV7ovhqWgm0MIR7FBRv
+VxPVn0V5VnQuMa3xl96VYNoe/w69IH429ir+PC0I653QPcljD6HXEiUUhKIErmme
+p685s5g8caxxJKeVKmYoTeXmcFDBeaNkj/OOfaK0MYKY9uWfXha6a+nmVQnZy2MI
+Vdqi+URH948nZlkyyrxZS6adU17mWQ==
+=Pq0j
+-----END PGP SIGNATURE-----
+
+--nextPart6335455.lOV4Wx5bFT--
+
+
 
 
