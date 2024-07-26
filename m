@@ -1,80 +1,58 @@
-Return-Path: <linux-kernel+bounces-263191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0AD93D277
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:38:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E2793D278
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431801F21B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A49281E93
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDAF17B406;
-	Fri, 26 Jul 2024 11:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003B417A936;
+	Fri, 26 Jul 2024 11:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bSj/g0AY"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgglUKL4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5639417A5A5
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4094213C661;
+	Fri, 26 Jul 2024 11:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721993875; cv=none; b=QzrT3baPl4jn7qu1Yb4lK7PEo8gJ7HCrLCbb1zj6tiSUt/o4KuPewisO32y7ONr+nOe05xrehH6kORmKIJXamqUsKOW1DVCP34Cxo4MeTsp74YUpUWmevi+TcMIHPDbBGHa2wFXyp95tHksUJ+5lsGhgPb1ju04RmD8AehFZxBg=
+	t=1721993949; cv=none; b=AIf84g1MXrz8Pg4TOFmUvJ+PW6Ahs8gUsLERym6zBCTZu2VE5GJAPkcJD/qIQYrkjhydYz2Nlp5NB471jnXcCtGaZ+N5r/CVmU+sWaiY7JTbKensJEAP5AJVBNvt3aNvDnxdH/diPwTTIsAXsle8AB8mZTE38/p95j1Cx5x2sjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721993875; c=relaxed/simple;
-	bh=ExfHMLI2TgNPOYKj5cXqTFRcFOTs5IC9WGRu70w5g9E=;
+	s=arc-20240116; t=1721993949; c=relaxed/simple;
+	bh=L28HDqLuspdoX5XmE49vLAZY5+6UVZN4anSGw6I9yuc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pI4fglCxnSG9dFvMgiwU1vf2c/6oc6qEE41gYKGdDG/yPp7bBPb1RH4pLtLTB3e7kCzhidccjXIe4bfGflLaPzbGxXLVsFzM7e61jjz839JK/LLU8omh7M/ksb/HpUWZbgpx2/U/X+v+7/p4sVv3nmhKgvRdHF7Ot3TTzICvJPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bSj/g0AY; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-369c609d0c7so1423486f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 04:37:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721993872; x=1722598672; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ExfHMLI2TgNPOYKj5cXqTFRcFOTs5IC9WGRu70w5g9E=;
-        b=bSj/g0AYnhVVvYelDVrBnPQMMaTGfhacpstVTSk/np6q/Jt5Yde1F1Q/CioU5Br/ej
-         sL3EW/7uYnSqRlNqCx1LrUy+1a6Em1Y2emb+nolXJ9e8WOtfdnfBa5vjR64qpzOOXznw
-         HnzYLcGILgBrffChEwLAXatQWBil50SCxMJt+j3DV7kflkh8+2buj1caf15fpwLKkWTU
-         tdW6PRc/tbvvyl/zF0U89HzOYpY9TYiYMOusCErCPJbLgoxpgtO3hztgsggNOydEskGT
-         /7d9NuPlmmoJl4KKsepR+JVBblpjYtWgl2ReFrzmRa/+N6kE60zkrAyXj3/lmqIoXDeu
-         tsZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721993872; x=1722598672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ExfHMLI2TgNPOYKj5cXqTFRcFOTs5IC9WGRu70w5g9E=;
-        b=wEpNNdEj50MW0VW5x6pmwFz73MXqzOcajhCQrVfwXr4cW4CGp8cacFEVC0inUUktSu
-         qMzzcJDslukq3ES+5cAZ9X0u59naek/5O7Bbi3uzuMG+lxTmw3VbA3LHuIKGQxoPkVsO
-         pHnV2M0geegw+GjUkGG+kFOfjok3LDeqFNWGD2HE4ENvHj9v116stFJ1EVnL8lhWLGe4
-         KY3/L/g4bpmqxoVpHmBuUTK0TGxXLPDtQ7AGG78s25/+mqn8eJmxfTgvOIpNBJei/8YF
-         8hRr0eVizZSz/ujPwpMHj+M3CE8RbWNGjmR1HboDAs6tau2c9SKc47GKhngErjOXJQlk
-         UWvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeAnN4EMl+s4C2M287/3w1fPmNKcjZMLGE9WYNP+ON74LMyLcHhIq5bPt/zuKQKDhxfWuaW0WlvAqFd16+mQtUXfeFjio9/yMW5NKh
-X-Gm-Message-State: AOJu0YwFkUeyj268sS00khCz0l6tXhUAlVrs/SKLSXfjBiXIem+L9uzp
-	pUjWXf/8vrxcgj+KaLYDd81b+2zOSNOfFLnWEYEKfCz25/gIvxcPd0tjU5y0CvM=
-X-Google-Smtp-Source: AGHT+IHdWw2pVQH8kASCXAATrmJ7gIo8btdjDdqr/6bnqXkZzgw4ckBkodg21ePi4f48pqReEEeT5A==
-X-Received: by 2002:a5d:4ac8:0:b0:368:65c7:5ffc with SMTP id ffacd0b85a97d-36b36746978mr4013560f8f.60.1721993871556;
-        Fri, 26 Jul 2024 04:37:51 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8b0b16sm2511568b3a.214.2024.07.26.04.37.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 04:37:50 -0700 (PDT)
-Date: Fri, 26 Jul 2024 13:37:41 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, adityakali@google.com, sergeh@kernel.org, bpf@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] cgroup/cpuset: reduce redundant comparisons for
- generating shecd domains
-Message-ID: <cfpvrcplrjeb7r4zscfjnmeahpi5c5c3kxtql2jyrj4hdp2l2x@25sfleq3wjph>
-References: <20240726085946.2243526-1-chenridong@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyx4IGL8HpWy5ho60N6OuJOvVLCvuYMPlZ9qw5nFsQY8pTtAKr87wVqtraZCdM7NntpdLvTw1Ue7aNubPGPAW76SadzcA1S7a8rMGct0pShuG7fxK68k2h4kg0UCIrF3IMaiErRQp/qKlk+7zzs1XgHuW424m+NVM8OFWTbj9cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgglUKL4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D39E8C32782;
+	Fri, 26 Jul 2024 11:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721993948;
+	bh=L28HDqLuspdoX5XmE49vLAZY5+6UVZN4anSGw6I9yuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AgglUKL46Sb871WDW4NyoTmt26igipX0PNg3JjAy4tmeTvQoEDZTzI5zsQpI7nPTW
+	 1gubEyB99Larr7smFIkZiS+XZCk6h612GbIiFx9UBHtYxhPL9QBxVV3i7TLliodvJS
+	 k8SArUGluRJWdDIGTPPMU86yCSv8J/frFejKLORtMmCble/hdvuMiL/ibNLMtS07zh
+	 f/myNKGqHL9XKoucX1YkTcWJVMICbOHsM0TYBJMOX8bum2/TnzqfpDAOFGTJPU3qMM
+	 tGD4QSZWKpJgJGiTXEY3/adIj2tMzfcQE37cS4wLkMH3ZecLJp55N6ZJUWZs7iDy+I
+	 umW/oEvTaaQTw==
+Date: Fri, 26 Jul 2024 12:39:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.6 00/16] 6.6.43-rc1 review
+Message-ID: <e9f41f04-47cb-48e7-bc1a-b3de793930ca@sirena.org.uk>
+References: <20240725142728.905379352@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,39 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6ghhowve2r26dtea"
+	protocol="application/pgp-signature"; boundary="GhImBUIWkY6FcqNz"
 Content-Disposition: inline
-In-Reply-To: <20240726085946.2243526-1-chenridong@huawei.com>
+In-Reply-To: <20240725142728.905379352@linuxfoundation.org>
+X-Cookie: It is your destiny.
 
 
---6ghhowve2r26dtea
+--GhImBUIWkY6FcqNz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello.
+On Thu, Jul 25, 2024 at 04:37:13PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.43 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On Fri, Jul 26, 2024 at 08:59:46AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
-> In the generate_sched_domains function, it's unnecessary to start the
-> second for loop with zero, which leads redundant comparisons.
-> Simply start with i+1, as that is sufficient.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Please see
-https://lore.kernel.org/r/20240704062444.262211-1-xavier_qy@163.com
-
-Your patch is likely obsoleted with that.
-
-Michal
-
---6ghhowve2r26dtea
+--GhImBUIWkY6FcqNz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZqOKgwAKCRAt3Wney77B
-SRWBAQC+A+Q9nPwvco9Ln6s8LxO+3tSjDhjSEOsaWoonrtA7PQD9He75pJCfM8xd
-ec+QLkkFF9X0yjt37k3pEKPCxm/Tbgw=
-=YliG
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmajitQACgkQJNaLcl1U
+h9DExQf7BgAYWYxr+k9ol+qIWkwM+fSN+rkPdvq6X4UzAoevT1kBuvkhl3jLK5z5
+7RdGFfOHctRlbHWjO13QHumx31ioEZuSDbbZoUWNjC4cNo9edQ3kic9BZDSVRNfh
+AcbigLB6hQ2JpaNCjtb7mQ1cGKm9V5d+jWpCP5RJTU7thQ2cnhz7ySohHMXx/czq
+mmFsrzXowP7+E5tm44QudlfkkKMHQ/04eGuE/oHvE1+KfV59JQK8WmUqjjyYYGuo
+MyNAzGIafAYMu0J2sKZOji7xGf7iM1Ziawg30UYs/qxiB8yjHKbuCJBSTsu1pZyQ
+AO0nP6xkCnOJI9e1OLRwc/mVU+zL+A==
+=8Y0/
 -----END PGP SIGNATURE-----
 
---6ghhowve2r26dtea--
+--GhImBUIWkY6FcqNz--
 
