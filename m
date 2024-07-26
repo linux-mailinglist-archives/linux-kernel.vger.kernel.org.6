@@ -1,172 +1,129 @@
-Return-Path: <linux-kernel+bounces-263762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB1D93DA3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9541293DA40
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245C81F246B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16E21C23323
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A072914A08E;
-	Fri, 26 Jul 2024 21:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5FF13CA99;
+	Fri, 26 Jul 2024 21:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LduuHISb"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ioyu23W2"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9111C83;
-	Fri, 26 Jul 2024 21:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CF363CB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722030089; cv=none; b=WXf2p34lNqnd3aI+e2mLYw2EGwOQhcmj1AZkq0Mvo9y74hMWoKuft3U8A466q49zeoBap8U8xo9J5hnDpe6qn5zeRF8Rg2qpmF3B1c/Szw1H46Eum6y1qbGvDG2YdOa6RhVxldu2Tlm/OrtdDJIVd6nI50DbL0rbfbeza0mSSVM=
+	t=1722030408; cv=none; b=AYIDsYIdknm0muVqHp4MVtjMYG1H0ILg5bydTsVWkcI0RWU2S6zQFcdwKTw4TlZfjivLptCWaNNdDJbbn3m6VPuA2TF8AIS0YfQR7TG12r3K7dqopBSPcrakp3k8Hk2q6rX3WeBsqZGkRjDHQBZp6USNpRUmywa5f2iS9mFZaPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722030089; c=relaxed/simple;
-	bh=KflkFDmEqXqpbaBRjC6/jLBVdsSA4DBaVaH/HMeyBOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ryp07mgTm/YDbKXz/Vdzj9MScFJh01iYm3BHzs5Y1u2AIMFifl9f7AEGCZ4hGgECKBIL5s2SxGBpTyJeWdR4+I6pjixvm0YKmb7D3Zv1JC74b5MhvzbwqjWXQwBVyHmV9hEsdvwhsBI9iBMhffR/341EVfPJpMKcQKdgDAgUZic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LduuHISb; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-79f19f19059so70010485a.0;
-        Fri, 26 Jul 2024 14:41:28 -0700 (PDT)
+	s=arc-20240116; t=1722030408; c=relaxed/simple;
+	bh=aCrfOtfi/A5BgDXHf+U8FweC4947+vdxNXBMOV7QZ2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W/X8NJHuqnlIW8JAipVh5xzEBebK7QmvEa/BbugZY3pkoY8WM+MR5UR2/6XKu/1WjKtq7LE53RGIOhT0jXWLVyz4uHjnLgc/nvMUz2yeY7r9vZwpcL0/pqmEjJshYTW+u14qIDXLzqVRXusbtJnugXLXjTrSDtK+8dqxNPFk1fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ioyu23W2; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d2357df99so18098b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722030087; x=1722634887; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zeQ2uA4KQaQ5BFYzBQC3DI/Kd0HVQEyWRWUcs7oTDN4=;
-        b=LduuHISbxzkdCQ/oimO+3ZEbVsRFsLMrnvpnk+f/y5HtCNy6SpA1rdRyJBcX6BQE9X
-         fPxiCWvz1OXANqDV0JB7x5wGze5HB9GHiwQC972Brf01NRgv2FZydJuli5vVPs94VZnt
-         LeKsAEhcqo+ezRpzTqd2UEt3F4D4EitKM7FxOwAt5JhkhCCzfn7aXzEAuA78+twpum7I
-         6H/SLvIzbjeuOZvhkEG3RwK2e1Rc5s9cq9GqEqqu+VPBfdU4WKgBPcsl2mhPXmFBI2Ra
-         +c+9ZXAvxHu4AGQ00QnSItnjeELIEV829Ge3cqFFomYjoSOjgEC0xtnHjBeiw+LZ1Y/1
-         CQSQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722030403; x=1722635203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TlhKPvCXZ2wElRTCBv/YFUrEL+eyae5eBT+lyjEKXCI=;
+        b=ioyu23W2mgoEx/NZk+wGSb+1uNBKx/5VqXV80x6OYvlgW/iVVhz5YnT0rCmBsCUHq9
+         hSbq/YQkHm7iuiKve+IWMF6qJvGScIPddZptS+0x3+Ar2tGtR9qMkDAvHs6RK7daJZSE
+         4wD/JKD5KOAHaAY5S3ZqcPlg8EIg/KVpUK4WeVEksRiejH4UhAjKigkRaNgSsF+X881w
+         tZDwDpVC9hh7DmGe5pPqWEBOt5lmFpIYxlOcxSbO5aEsKQKKzsTFS+wYpQI1TYYuIf95
+         ITVTS+XGTGfL6nLY6vxFL7w1vqDrukSaSlG9K3NjXmPKQiVJcBjYFl/hkg/pIr13MyWd
+         V8Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722030087; x=1722634887;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zeQ2uA4KQaQ5BFYzBQC3DI/Kd0HVQEyWRWUcs7oTDN4=;
-        b=vNoN5JlLMYzaJTabhQnYumlATpHpeK5MOOh9ahqO74tdczi9xUavAnrpCiJe2B1NbC
-         j3Gbg0ixSTeLdRnf4HzI5rISzLXlTGyirdvwPOXtIfJOGZdl2QJcj9mBa1bt/ZA67itM
-         DPpKcWJ+sCNgEa3emTV4g9m6rQP6odVPJGQMUMvYZeiwV5sjwFCnlOnol/AKxH+1SaPH
-         U1p9MmVtOByEGD2Z+iecXbiAY1TIKLem8wvRAK/w+4NIox92s7wxJBXWJ28Mb5C2XFva
-         /Qdw+1D26M7H65aKadozFClW2Rxkh/wB7Pq2VuVlKNKS228qAJZnyNl9f7UcI2A7gjAx
-         oBgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmaCBBAFvODRnFUpQk1Ss6zpx6Y9d+LYvnnenojxtfBGNiN4+7/uA7rxDCVhRrcx0oJ3PZWWAcyxEmUgwTZ4AulSzTIms1xJS84GR1ZGXyMjI4FBuUbEgT9TlVFf+cwP2YmUXFBxKPM2qlhcs=
-X-Gm-Message-State: AOJu0YzkKXp4Xf+Du0Q4TfqVkmGylNPaFNYNSzhu0Ie7IvBfnAQ3OhZV
-	6dodAsHfm/zcw0X6KZWXMbL+pod4cXkIXCvFVVNbOHpkX/XeNF+L
-X-Google-Smtp-Source: AGHT+IFUtU9EuixsWuONM5tPmh1qxpsrsQEsvRyap3iWVEMhlQg6pEqF2eNnGN5F3TkJZ4TdviwHnQ==
-X-Received: by 2002:a05:6214:248e:b0:6b7:a4c0:9694 with SMTP id 6a1803df08f44-6bb5599f04fmr14682216d6.4.1722030087314;
-        Fri, 26 Jul 2024 14:41:27 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f943a30sm20277756d6.74.2024.07.26.14.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 14:41:26 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 841D71200069;
-	Fri, 26 Jul 2024 17:41:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 26 Jul 2024 17:41:25 -0400
-X-ME-Sender: <xms:BRikZmdWObPjR5RWDg4HN7zHRfEU-quc0zMwv5dltX8VD4Ky3HyJMg>
-    <xme:BRikZgNw9BM38hdeT1xH2lRfXEoSJ5T_B5W7qfvZtgSrDr9OwTiTAaLl4PgDBs8am
-    8lilugu3IQyRygN7g>
-X-ME-Received: <xmr:BRikZni72u_PtmrSRTKSrFv5cUa9ZdVi86BBhVjBB0YwwBA5Y3DbMCnvsaZxXQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieeigddtvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepjeeihfdtuedvgedvtddufffggeefhefgtdeivdevveelvefhkeehffdtkeei
-    hedvnecuffhomhgrihhnpehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghu
-    thhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqh
-    hunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgt
-    phhtthhopedt
-X-ME-Proxy: <xmx:BRikZj8OE8ya2k4VEEv5QWLUK3nCwaj-kkuE0wt3tmYksmDIbCKG8g>
-    <xmx:BRikZitvQQP1wC_D96S9n32ryASNIEWqkJhC0_E_84mG6-aJ9DkeGQ>
-    <xmx:BRikZqGTR3O7o_AydiN8oxikzTq7Xz74Kzy7BGfJhkO8aygVv8528w>
-    <xmx:BRikZhMTJo16aHgo6918PKVZ3uxKu-jAfJGertZZWdBDrp1YedpnCA>
-    <xmx:BRikZvP9jWYbQA_qhl_EakHQOEJYFHdVrFj1CHTpRyIAYkmy3Ivow8o2>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 26 Jul 2024 17:41:25 -0400 (EDT)
-Date: Fri, 26 Jul 2024 14:40:54 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Aakash Sen Sharma <aakashsensharma@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: Introduce irq module
-Message-ID: <ZqQX5hPb3yha2opu@boqun-archlinux>
-References: <20240725222822.1784931-1-lyude@redhat.com>
- <20240725222822.1784931-2-lyude@redhat.com>
- <ZqQTXUl4w6LRPqLh@boqun-archlinux>
- <e46d6e12-144f-47fe-9db4-d7d04914f265@proton.me>
+        d=1e100.net; s=20230601; t=1722030403; x=1722635203;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlhKPvCXZ2wElRTCBv/YFUrEL+eyae5eBT+lyjEKXCI=;
+        b=BMGBnVdYtFJN1QZQX5Fzt5117uSKSJrc6LYd1p8Eda8iCUDkpiv5veQCkWJJ5qapTo
+         pUuK3lfYTB8os5/1EliJcFFeTyA4GOV19zOyvBcGXY6ZnFZCDletr7MM6NzMXAPJyBFV
+         +so+3fZ6CqE17X0tVlyFwKsCM9lHibfkOoTZy7p048Bpw0Pjsn6pjDArGOuwTRhvNJZW
+         k3U8QD7w54ssAXyhPU/+XHOlCu4zbXKM5tjCFzujE/FjWW7S/oIv28PEtTaOsScnSliD
+         m0MI+8sMjIUR71weRNmbf26HXqCJ6TU5zLULEhFXK0GTzPNpsCQBrfAqlvdxB+jdJF7h
+         FOuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKTinpl96I6RDj8TnIIaSfwhdUjW3ZiiH7irwvxPBI61yIMa4ZjJTsqHwdsQ1BPEW/LHrIH++bn7jpjZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNJyhUUqO2u2V0lpmNEKeIwY62Ig++ih3IK5OKzWw2nzsYBnBT
+	7fbrpLVpI0xNSaYsVqliH7GJJp0ABGhUG6Qf0ScS5dnUJRIpJWQk0ou7a7w8jpQ=
+X-Google-Smtp-Source: AGHT+IHGwtBo/qH3tT7DlAHVbb8azYkmAsAKECyqzxQ8mGgtGWJBjAW/jHuwtZ8+veNJkacFfDZIzA==
+X-Received: by 2002:a05:6a00:8592:b0:706:aadc:b0a7 with SMTP id d2e1a72fcca58-70eac9a15c0mr4737841b3a.1.1722030403481;
+        Fri, 26 Jul 2024 14:46:43 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f884997bsm2825761a12.43.2024.07.26.14.46.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 14:46:42 -0700 (PDT)
+Message-ID: <d73c9de5-7f18-41dc-870f-575ec59d50a1@kernel.dk>
+Date: Fri, 26 Jul 2024 15:46:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e46d6e12-144f-47fe-9db4-d7d04914f265@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+To: Linus Torvalds <torvalds@linuxfoundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Laight <David.Laight@aculab.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Christoph Hellwig <hch@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
+ "Jason@zx2c4.com" <Jason@zx2c4.com>,
+ "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
+ Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
+ <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
+ <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
+ <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
+ <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 09:30:00PM +0000, Benno Lossin wrote:
-> On 26.07.24 23:21, Boqun Feng wrote:
-> > On Thu, Jul 25, 2024 at 06:27:50PM -0400, Lyude Paul wrote:
-> > [...]
-> >> +pub struct IrqDisabled<'a>(PhantomData<&'a ()>);
-> > 
-> > I think you need to make this type !Send and !Sync (because you are
-> > going to make it Copy). Otherwise, you will be able to pass the irq
-> > disabled token to another thread on a different CPU which doesn't have
-> > irq disabled.
+On 7/26/24 3:36 PM, Linus Torvalds wrote:
+> Now, fixing that, and you end up with
 > 
-> Oh yeah this is a good catch! (although it should not matter at the
-> moment, see the end of the note below)
+>   Longest line is 61861 (82kB)
 > 
-> Just a note: it is not because of making it Copy, this problem already
-> exists in the current implementation. One could have sent the reference
-
-Ah, you're right. I was thinking ahead, i.e. dont_interrupt_me() takes a
-`IrqDisabled` instead of a `&IrqDisabled`. But it comes along with the
-deal of making `IrqDisabled` `Copy` ;-)
-
-> to a different thread using a "scoped spawn"-esque function [1]. IIRC we
-> currently do not have such a function, but it should be possible to
-> later add such a function. (and it is much more accurate to make this
-
-Yes, scoped spawned timers and works will be very useful, because they
-can use stacks for the data structures.
-
-Regards,
-Boqun
-
-> type not be thread safe)
+> so it's now "only" 82kB in size, and that actually comes from
+> <linux/bio.h>, which has this:
 > 
-> [1]: https://doc.rust-lang.org/std/thread/struct.Scope.html#method.spawn
+>    static inline unsigned bio_segments(struct bio *bio)
+>    {
+>    ...
+>         bio_for_each_segment(bv, bio, iter)
+>                 segs++;
 > 
-> ---
-> Cheers,
-> Benno
+> which looks very tame indeed, but it turns out that
+> "bio_for_each_segment()" expands to 82kB of code.
 > 
+> Jens? Maybe time to look into this?
+
+Eek yes, that looks horrible. I'll take a look.
+
+-- 
+Jens Axboe
+
 
