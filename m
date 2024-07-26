@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel+bounces-263734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9180E93D9D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:37:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A57293D9DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 22:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6072832FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB861C232A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2467F149C40;
-	Fri, 26 Jul 2024 20:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C2114A09C;
+	Fri, 26 Jul 2024 20:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG7OQNdK"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6UlP8A6"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200EA1428E5;
-	Fri, 26 Jul 2024 20:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAC614A08D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722026250; cv=none; b=WQJhZviH5cti0593jXzl6/zJIvgePa67kx1f4HKUtSpa6YH5nDA0WA6wmfjMhUnYfyUhr1/YOHQEaTGRcjUf5eHcYn7VZMVt0HnSKi16iupWNO1ZqAW+We8vysOqtLvzejf+Dd8+OYaO+tZTFuQ7xV57cOqK9IWS3K9zBfi18h0=
+	t=1722026256; cv=none; b=Xb2ed1g5FhnL6yvKwPyav+ynvlJWUJ4KCx/+2BnE4eCzK9skhRFL6DTWGfQupSzRjidRAx7MfIS6tPybtUvoybeKh2HSU5oLAPkEEFueRtYaY1HYdBxAfb98FZ7fTwWIDlBcOcV7MtbQGPplQfi1Dc5B0SYBqqywnWA99KTEd6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722026250; c=relaxed/simple;
-	bh=uWBUHLN++fFLVc8VGhHcKdEKbNwcnzqj1Ef+6lusonk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gOYQV2eOcPwYG3Zf9+9TJV6pCAerzOQtfDHCxN7as8zWLgfRu+aepvqc1FGgPHx/LCAKhl84JuDwGfzY4IC7mJcCbkMdtEcNWnhN6MDwQgBc/cWsuh+z8/mM+8PHF4tjILTeItDd+rbu0U8UwwyIrJZFwWL1bxK6YauLgF4Ya34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG7OQNdK; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0885b4f1d5so98466276.1;
-        Fri, 26 Jul 2024 13:37:28 -0700 (PDT)
+	s=arc-20240116; t=1722026256; c=relaxed/simple;
+	bh=VpFGnpRR5hkWzh8gvesZMOzSfdyh684K/16SG0UCRpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jNqlALcXtXjZGSNoMNOwFd8p2eJjWMfKUANwAH9JWVkE0WzUhQkFD4p1M2pVVWCjLhz/MzgLtuMeuwm3EcuTeb3uzWPw3bUbohBGIyJBNzIa54zxmvtNGg+q8ap+q6qWZw/TeO6/pgLXaZOAX1lN7c8l+ofjCcRuYkJBV6yaxZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U6UlP8A6; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so20154791fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722026248; x=1722631048; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7kWEZ6NgVlVpoQaTTvdw2+TWHYVF29fS2zjyGtUPgyo=;
-        b=bG7OQNdKgmj/85amsoshdM1q+wCbrWQDgdF+2rpWdspScP5n0aI7sFVZU8+/QHZtbb
-         GcjS+ervJ1jDoO7evpwZvYbiCYc9D/UryfTdzZ42FZoMEDbwnK0Za96kP9HqClryGRV4
-         AgAFMmK6vdq717LhlITgorJjHCDV5EXzjzUqT/1rdAVbrq9z9vZ9EinsGUdWke04B9lW
-         gZ63WSoYb1oo7CzB9iaNe5VnAZGDT/C9uzYBchXe4X/G1kUrNXLe1sIo7HR0OwsgeFLL
-         PxdmSz8q3WBPndWjNCHNjnPpdZNPgzd37H+fw0yzKx0w+NBOB2DU7uMdrQcIasAUefPY
-         6Bbg==
+        d=linaro.org; s=google; t=1722026253; x=1722631053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=657P5JeC8SjYcUxgWCTWkbvBvs/fWchllBX/2A8VqhE=;
+        b=U6UlP8A6jqlkui3uZh6xk5RE5GUgU0wW0VLnTMiXsGjQ1eJk0HwMzl/YUWKEz/VAZw
+         dtLKq9FLjDsDIxk9SyicT7SQ1BtLXq5Bsnaky6fTwN3MiridOQSKKATk6WtpWOcTUBPl
+         c8e4sLWuAEXoQhgEjmRXoPIw41gHB2GpLrJYAEjnvMGdR1zzBj4JS619zRVW0f8IUHCN
+         qz2glptWV0H8Fk/e/mHA0Ibm71gDUWJJPG05XoOAQg5wKGSFPb+7QDpiqRF8Eodcy5lQ
+         JptP5hERs1VZYD7iFgm1VTYyYBjUu7Nw8d58x9KfH0lkXl9PjojVcmUE1Gk9zIO7XyCf
+         OijA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722026248; x=1722631048;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7kWEZ6NgVlVpoQaTTvdw2+TWHYVF29fS2zjyGtUPgyo=;
-        b=B37ma9fniIV+vxM+fgxfuiGoEpxSccQXkCwhU3npYEwSn54kXBg25hJP7og22jio4V
-         7+eMNxhQdLHnsnuUnD+AGuKvMgDrMmz2+DElxzelwwAA1pU9Ue9nrOj1eIYXfTYQMN+m
-         U9zEYlsNXCT4AcXqBB6vVC20rX3XEhoo+3XPb8PUWGguPjFczqIS4YvZ1N1s7IyMk7uX
-         mOTNXMc0EcPuFro4OSsFhrMqzF8MpgDg8e3FLg79oO1XJOVYnI/CP4JDqlcCmcfsSNV/
-         o82B+gE6xfthaa5R3J4Jk/z4dr2f5RCjegTU+iFvB6Q7UfMoH6eo2XMGyeyOZvvjKV9k
-         onAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWp9zkz9QQFmEL8jkJ3NE9laLzz0cPHKBiL5WxE+RbrCAgPnVJHTwgRWffDPpGE803+kQ0n/B3+D2CfCH0uglrE2FeCmLV+fkFFciBMrkbLK8SUAT06nfJ+hKQgHUMo8wYpn/t
-X-Gm-Message-State: AOJu0YwMYmv73MUXMJkNolctY2ORa1lu6z1sZ78QprCkiV6xvQEiYr5J
-	srdgH7T8iis1565e/Sjz+qHHEinVQqoY+cU3XPwPuINmVc+Guuhe
-X-Google-Smtp-Source: AGHT+IFNhaodW351fInS0gTk9F/KiQFTbb1U/E7OYRCsIfxlD9sQtsc+29bcqRAo49m8kr1HhU3rbg==
-X-Received: by 2002:a05:6902:1029:b0:e08:7950:5d2c with SMTP id 3f1490d57ef6-e0b545e3cb5mr1178338276.49.1722026247972;
-        Fri, 26 Jul 2024 13:37:27 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a1d73b2036sm210087885a.38.2024.07.26.13.37.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 13:37:26 -0700 (PDT)
-Message-ID: <29df5bc5-6515-4fe2-a248-1f3d66a6581a@gmail.com>
-Date: Fri, 26 Jul 2024 13:37:20 -0700
+        d=1e100.net; s=20230601; t=1722026253; x=1722631053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=657P5JeC8SjYcUxgWCTWkbvBvs/fWchllBX/2A8VqhE=;
+        b=oLNO5I8+9c/lXLE5jMLsJEaDtxve+b9dmt+AOMBYE1Baex+nCcbrqY9lEWdqzfuU8M
+         DkCOEIGWOtegXkv5SO0Hbnyt2h4iHm11gdMQ0Q8yOvvV9oaGWsWejfvx9MmO0A5LJLoo
+         /Juo6PzQZDGyIN71HjWgWvG0GldwsVHiFSPhU2rsjzKYoW6GF1BeGz1Un4oG/KxSDNaF
+         L/nOzQ1O/r2D9gkseIs+Sm+725jVC5SfzoOJm0fJ3QHNsGEokDFsYqemHNzRmMcj5sU9
+         pqA3NDXAaauLnaqvhFYz7//iu0uOVj4ceGUhdCMEkPY++/fuLKLTuKtDWlILQIMoF9co
+         qZ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhMxLyMCCrXIGUys04nfsJKy054pgYYSFeya/5bGLAAxFQpM8udU4WjTaNzrQWGnJT9l8mPvNMWphILv6kEdnzKOfBrk3oi6yFjmHJ
+X-Gm-Message-State: AOJu0Yytlexvh4XdoSlcrimPfb/daIwDkTHqyskmCeOLKhr4nNV9VaR8
+	aUrXcuu+X0dTCUMu9wc+VweDz6HWG+yAMTanEicQzXH8lkAfoG9ADYvuPnykByFgNr6WknGWDLp
+	97or5tyNnTg8/rbjg2ZWTPP2O+Mlc+OMoyz94ow==
+X-Google-Smtp-Source: AGHT+IHJKjb7DhnOe6IE0tF8j9C9EWdehdE6mzT6mGSHyOSD6devxjVA8ebqqDI8599aitXQ59+ccERwN/3nlh8FY+w=
+X-Received: by 2002:a05:6512:246:b0:52c:d967:79c6 with SMTP id
+ 2adb3069b0e04-5309b270bd5mr545733e87.20.1722026252672; Fri, 26 Jul 2024
+ 13:37:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 00/29] 6.10.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240725142731.814288796@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240725142731.814288796@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240722160022.454226-1-valentin.caron@foss.st.com>
+In-Reply-To: <20240722160022.454226-1-valentin.caron@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 26 Jul 2024 22:37:21 +0200
+Message-ID: <CACRpkdbphGF_2P+bezdaYLE4n_1Z5NYjJfcuCh01ysB6QHC=qQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] rtc: stm32: add pinctrl interface to handle RTC outs
+To: Valentin Caron <valentin.caron@foss.st.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Amelie Delaunay <amelie.delaunay@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/25/24 07:36, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.2 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Valentin,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Mon, Jul 22, 2024 at 6:02=E2=80=AFPM Valentin Caron
+<valentin.caron@foss.st.com> wrote:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> This series adds a pinctrl/pinmux interface to control STM32 RTC outputs.
 
+Interesting! I think it is the first pin controller outside on
+drivers/pinctrl in the kernel tree.
+
+Please include me and the linux-gpio@vger.kernel.org list in
+subsequent postings, I want to be sure what gets merged here
+and I only noticed this from the LWN driver patches summary.
+
+> As device-trees will be upstreamed separately, here is an example:
+>
+> stm32-pinctrl {
+>     rtc_rsvd_pins_a: rtc-rsvd-0 {
+>         pins {
+>             pinmux =3D <STM32_PINMUX('B', 2, AF1)>, /* OUT2 */
+>                      <STM32_PINMUX('I', 8, ANALOG)>; /* OUT2_RMP */
+>         };
+>     };
+> };
+>
+> stm32-rtc {
+>     pinctrl-0 =3D <&rtc_rsvd_pins_a &rtc_alarma_pins_a>;
+
+So the first one is a generic pin control setting and the second
+one is a hog for the pins defined by the device itself.
+
+It's clever, and works. Nice work!
+
+(There should probably be a comment in the device tree to say
+what is going on so people reading it are not confused.)
+
+>     /* Enable by foo-device */
+>     rtc_lsco_pins_a: rtc-lsco-0 {
+>         pins =3D "out2_rmp";
+>         function =3D "lsco";
+>     };
+>
+>     /* Enable by stm32-rtc hog */
+>     rtc_alarma_pins_a: rtc-alarma-0 {
+>         pins =3D "out2";
+>         function =3D "alarm-a";
+>     };
+
+Yours,
+Linus Walleij
 
