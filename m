@@ -1,294 +1,234 @@
-Return-Path: <linux-kernel+bounces-262813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF19D93CD0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:41:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5792393CD0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341B12811A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC8C1C20FB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 03:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360A0249F9;
-	Fri, 26 Jul 2024 03:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD3324B26;
+	Fri, 26 Jul 2024 03:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DDB5bZoQ"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTYfQd/d"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBF523A8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D859ED8;
+	Fri, 26 Jul 2024 03:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721965288; cv=none; b=OcrUkN/ifn29Njhv3senFlXKDdw0dX7Cl//YXFvG/Z1DEWdJODXaV4xrfil1axISBWfWmOS88zFmV+eOdA6SXKX8xQLMv7JBVt1U0lHoOcY0ethnormgUkbsfHsRvrviITtmE66Dsteh0XWBvFzua4x+QVjrzoSZG2jDVmJLAak=
+	t=1721965354; cv=none; b=mHe40cyDKdPP1ZsFpabS2T9zV2eTvVXUyGKrUJsxrJkVf0y+4yq70xPHpHT+98ntQqOxSkpgIM4/1MAI0IaEjheoIzMzTkF1c8nbI7QyyjXsGwnLlVF6MSqWoxxUvMZMcVb+AzQ2LqflYqGzyn9G3+HZpzdtD5fiDw0I0ksfU6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721965288; c=relaxed/simple;
-	bh=wCS3Hy/e0dLKUiWGy1+j3YEr9DmU8aazVoY75JCORDM=;
+	s=arc-20240116; t=1721965354; c=relaxed/simple;
+	bh=7wMNObpjfTSN51lD4C+CqYqPfzylmmrtRYUnxMbdCxE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Inq+Y1TcvXcfnVW/VazgALaDN/rbGK2asH93OI9zOzDwvKL0EnPVlMOdqBsP4qlpEDLbIGCv6gjxypeEiXQtk3s84tngjz55rqhUwe8ZV/m0iFFCHGj6o/sbH2rPab5J91wWulE4FZbSOzyrhJ5XEjAuzaDpROEpH2VAK+18LzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DDB5bZoQ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fdc70e695so103971cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 20:41:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=DjCkSu3DXZFi09szu3PMkdDPkd79DeDngLEBUJv+BLplvL/jxyuYjcIpCinIbtMSsA5KkdojU/Ur7BlBdRom9CSYomgPf7kttAyNAHEbP+mu09Ip8g3ebz5NnD66sxnbHYvsVm7MOOlFAft/OTWCcJATQO6TFhotGP+yYgnHot0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTYfQd/d; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3970f9331deso5621885ab.2;
+        Thu, 25 Jul 2024 20:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721965285; x=1722570085; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721965352; x=1722570152; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=euKB/T8zKRxrtVe4gbmh5YI7hQsM3NOu+4vovgHj2AU=;
-        b=DDB5bZoQMW4OvQewHcNQE0qNfrh/PSOs0nbfe2jwG5JAUTR41NL1YJ+oOyYG7T8y0B
-         PiiDDvprs08BYc7QPnkm4YWkgt6U3LAOYLmKwdd9TH2HfpBRXdRL2wkzCZenwf2vcp4V
-         Z9Fg7kSq4Ysuis0rXN5KfEGJ+MMk4AvnSdm8b1ipYAyVcXy46nKcfCEw90N/xpcIHU9M
-         Z9oNAE1Lwgd7iMgihoITsrALSAVPdUa8tV1utH/0sG1wHjBt2FkyscjAHzUTt6XXztXF
-         xetoTscg6dqKBy2BsfpTiM4zbLtdD7a/7txhAQOduCLxmfXZC0FJqT3Ar1PLhire2jiM
-         Fz4g==
+        bh=A7PkbKxzE54lmr0LCOjwbWnHM/YynvOstwGccHNVI58=;
+        b=dTYfQd/dKS/btj3LeaF7/mMj9UI9gVA4mT96ZnTgCcBOVt7zbolDHgFy1qjz4HJyxx
+         SEO7OfzZunaYPf0KFuuEgrqpA8lpESJEOK2A96geyqzI+eEh9GCc1abILJA2iAgSBaX1
+         fWTGFDWwyUWFzowFAxE+vgNqEdsPvfQwPSHLDF/NuAD1LActGukYJ9GJoV/xIn/zamgr
+         fQXSy54DroyEz1pXfT02CTTPnOkold5NgWbblJNwbMr1XahKdM6MHQ1qHmBwTWivMKwN
+         wnK7eWOLWQHBLHoPDm5tG1OfpAaP2/anlWHEA2sJI4ffFUD3UpkE1CF+sPKkzZYQSu9v
+         QQUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721965285; x=1722570085;
+        d=1e100.net; s=20230601; t=1721965352; x=1722570152;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=euKB/T8zKRxrtVe4gbmh5YI7hQsM3NOu+4vovgHj2AU=;
-        b=ZTnD7OoZRIvkM0oEN/nEnWaX28skpgPukW3Sz5Jupfsr+2FDVFYV3amxC1Je86Dre3
-         IWiiM+9N8UmjkLblhkcAetaLCmUbPd+O6x6QxmlTEM1y4DigsTCfs1ZFw3jnauWAp03o
-         OkqyNKpImD1Wp1g0Tep8PbfvKYc8kdzj2WgRuMGoqS0mJnRhJ0GdYMIW2MJRHBGPg3Lu
-         vqWVKQYxe+YphtrEoNrdMYasij9mVhuGNCHRkYCqcVKbVsxEzoWBHM6TB2FpkcO3x3Pv
-         7Srj1ib0nZ1mG55oLMChzp2Ofo548hWRZNnasheM4G1bDX7m8TChYb02GAAhkxBq8WxL
-         O6bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNtmvZtDGRMyut1RQdQFsP6YjbI7TFVyt/XlGJDYf+JhD9qKIBNsiffQkaIhxaSPhUxkRCGM1k2WAPlvhinsJalpG5ZU/F5rkyFn2L
-X-Gm-Message-State: AOJu0YxseRDpb2qErf2VKG4h8FSXpKmjkVMjESBDj6xeFL7VHsyWpfKQ
-	qGKPV8Zw5EA9pPyLFvMYx7+Nl1clcFYeQn+lQjgMvdwJT6F0fPkTKcvYRjfenR5Hru4hDMed446
-	XgqJbECnXUcngfdOJgvXOHXJaMdgBQ+xP8dKH
-X-Google-Smtp-Source: AGHT+IE0idwatz1SKv1sOPZFsNQVdu62wT0beJFu7EFJFlRThFe6li0Jh/tYwhJ8QoTNI9AUgOpA5KY/UgU4p+rTOAg=
-X-Received: by 2002:ac8:7d0a:0:b0:444:ccc5:f4c0 with SMTP id
- d75a77b69052e-44ff3e86da8mr1619811cf.15.1721965285354; Thu, 25 Jul 2024
- 20:41:25 -0700 (PDT)
+        bh=A7PkbKxzE54lmr0LCOjwbWnHM/YynvOstwGccHNVI58=;
+        b=qGKjccqjI2ufLviBsyxbv5qwNT9rs/PQR1fm0HUl+gUIL3PGLNhbKrVy4HpwCHT2LJ
+         z9IsGNFgBJJ1CJXc0pswcaZIMtWtmEepMyypnh0jEKx03/HFC0lCxEb2S4R3xAMVElty
+         6s1KX2JfEf4v4PQr/3yGSRwYWnGRaIMIafLOEnnkKoMP/rZdOZlxZ5+3stF6xmqCDv9/
+         zbX/HJ3ez80B9tCKEqgTb+WnsSof5rFH9jF2JOD728RfotyhDu4fcjEpP0dzp3hRz/qz
+         jO92rcprNRePkW2JEWAeyzMacmCBZM9ldrPV1EEY0AF8K3D52vjzU9JqEuvJJCcm3nVH
+         mcEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgGV7ZPgJUDEeN7W3KDl7F2tTpPHprLFlSU27l58eYHhx+2wRPPS+z9Qx+LTeSLB5tNNpo/7Wd6hsrSGEt1JfWc/hA9PS83M+LCiUqP6EURRQcmaBAP5F4lJ7/ShY0C/9mg9dhY3QRCQ==
+X-Gm-Message-State: AOJu0YxeJQJk7yHcfdo4MAbRiOdC3TKJdJmnfiaKq05mklvxFNE/Urav
+	8g9DZp2jOF2e/U3Fd/FYL5cSWa5aRLU97PIEeWCcIgbDqnAnb3cPQoUa+bofSWnregh1bYTyxMA
+	JHUu2h9bJTbKqh+nKJsi1aonPNKA=
+X-Google-Smtp-Source: AGHT+IHIAh3YmIenNsZW01plMaPsQ64x57/5R+OeUm2N86CIaUA0Fwx/iH/fj2NwDe6TP3ufKDGf/j6BRC/KV+Fam5U=
+X-Received: by 2002:a05:6e02:1a6d:b0:39a:e776:6ce with SMTP id
+ e9e14a558f8ab-39ae776082bmr5803265ab.22.1721965352359; Thu, 25 Jul 2024
+ 20:42:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726015723.1329937-1-namhyung@kernel.org>
-In-Reply-To: <20240726015723.1329937-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 25 Jul 2024 20:41:14 -0700
-Message-ID: <CAP-5=fVK3g-8oMoBUAHSR=sufQrU_Xed22Xf0Eu6JGbhDu9e5w@mail.gmail.com>
-Subject: Re: [PATCH v2] perf annotate: Cache debuginfo for data type profiling
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+References: <1721897948-6306-1-git-send-email-shengjiu.wang@nxp.com>
+ <1721897948-6306-2-git-send-email-shengjiu.wang@nxp.com> <e4ab2fc9-eac4-4ab7-9346-d4129fd778e6@linaro.org>
+In-Reply-To: <e4ab2fc9-eac4-4ab7-9346-d4129fd778e6@linaro.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 26 Jul 2024 11:42:21 +0800
+Message-ID: <CAA+D8ANj0oond9bT0tv7DhBRpoXTEB95zMLALrLLZZZsw7sC=Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: imx93-11x11-evk: add bt-sco sound card support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-imx@nxp.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 6:57=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+On Thu, Jul 25, 2024 at 7:32=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> In find_data_type(), it creates and deletes a debug info whenver it
-> tries to find data type for a sample.  This is inefficient and it most
-> likely accesses the same binary again and again.
+> On 25/07/2024 10:59, Shengjiu Wang wrote:
+> > Add bt-sco sound card, which is used by BT HFP case.
+> > It supports wb profile as default
 >
-> Let's add a single entry cache the debug info structure for the last DSO.
-> Depending on sample data, it usually gives me 2~3x (and sometimes more)
-> speed ups.
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
 >
-> Note that this will introduce a little difference in the output due to
-> the order of checking stack operations.  It used to check the stack ops
-> before checking the availability of debug info but I moved it after the
-> symbol check.  So it'll report stack operations in DSOs without debug
-> info as unknown.  But I think it's ok and better to have the checking
-> near the caching logic.
->
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
-> v2) add an assertion for the single-threaded case.
->
->  tools/perf/util/annotate-data.c | 15 ++------------
->  tools/perf/util/annotate-data.h |  2 +-
->  tools/perf/util/annotate.c      | 35 +++++++++++++++++++++++++++++++++
->  tools/perf/util/annotate.h      |  2 ++
->  tools/perf/util/session.c       |  2 ++
->  5 files changed, 42 insertions(+), 14 deletions(-)
->
-> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-d=
-ata.c
-> index 734acdd8c4b7..f125ac5f0bda 100644
-> --- a/tools/perf/util/annotate-data.c
-> +++ b/tools/perf/util/annotate-data.c
-> @@ -1345,16 +1345,9 @@ static int find_data_type_die(struct data_loc_info=
- *dloc, Dwarf_Die *type_die)
->   */
->  struct annotated_data_type *find_data_type(struct data_loc_info *dloc)
->  {
-> -       struct annotated_data_type *result =3D NULL;
->         struct dso *dso =3D map__dso(dloc->ms->map);
->         Dwarf_Die type_die;
->
-> -       dloc->di =3D debuginfo__new(dso__long_name(dso));
-> -       if (dloc->di =3D=3D NULL) {
-> -               pr_debug_dtp("cannot get the debug info\n");
-> -               return NULL;
-> -       }
-> -
->         /*
->          * The type offset is the same as instruction offset by default.
->          * But when finding a global variable, the offset won't be valid.
-> @@ -1364,13 +1357,9 @@ struct annotated_data_type *find_data_type(struct =
-data_loc_info *dloc)
->         dloc->fbreg =3D -1;
->
->         if (find_data_type_die(dloc, &type_die) < 0)
-> -               goto out;
-> -
-> -       result =3D dso__findnew_data_type(dso, &type_die);
-> +               return NULL;
->
-> -out:
-> -       debuginfo__delete(dloc->di);
-> -       return result;
-> +       return dso__findnew_data_type(dso, &type_die);
->  }
->
->  static int alloc_data_type_histograms(struct annotated_data_type *adt, i=
-nt nr_entries)
-> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-d=
-ata.h
-> index 992b7ce4bd11..37a1a3b68e0b 100644
-> --- a/tools/perf/util/annotate-data.h
-> +++ b/tools/perf/util/annotate-data.h
-> @@ -123,9 +123,9 @@ struct data_loc_info {
->         u64 var_addr;
->         u8 cpumode;
->         struct annotated_op_loc *op;
-> +       struct debuginfo *di;
->
->         /* These are used internally */
-> -       struct debuginfo *di;
->         int fbreg;
->         bool fb_cfa;
->
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index a2ee4074f768..2ef119539336 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -25,6 +25,7 @@
->  #include "srcline.h"
->  #include "units.h"
->  #include "debug.h"
-> +#include "debuginfo.h"
->  #include "annotate.h"
->  #include "annotate-data.h"
->  #include "evsel.h"
-> @@ -2326,6 +2327,20 @@ u64 annotate_calc_pcrel(struct map_symbol *ms, u64=
- ip, int offset,
->         return map__rip_2objdump(ms->map, addr);
->  }
->
-> +static struct debuginfo_cache {
-> +       struct dso *dso;
-> +       struct debuginfo *dbg;
-> +} di_cache;
-> +
-> +void debuginfo_cache__delete(void)
-> +{
-> +       dso__put(di_cache.dso);
-> +       di_cache.dso =3D NULL;
-> +
-> +       debuginfo__delete(di_cache.dbg);
-> +       di_cache.dbg =3D NULL;
-> +}
-> +
->  /**
->   * hist_entry__get_data_type - find data type for given hist entry
->   * @he: hist entry
-> @@ -2360,6 +2375,25 @@ struct annotated_data_type *hist_entry__get_data_t=
-ype(struct hist_entry *he)
->                 return NULL;
->         }
->
-> +       /*
-> +        * It needs to protect di_cache as well as data_types and global_=
-vars in
-> +        * DSO when enabling multi-threading.
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> </form letter>
 
-Perhaps:
+Sorry,  I don't get the point. I used the scripts/get_maintainer.pl to get
+the list of people.   Anything wrong?
 
-/*
- * di_cache holds a pair of values, but code below assumes
-di_cache.dso can be compared/updated and di_cache.dbg can be
-read/updated independently from each other. That assumption only holds
-in single threaded code.
- */
+>
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  .../boot/dts/freescale/imx93-11x11-evk.dts    | 54 +++++++++++++++++++
+> >  1 file changed, 54 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/a=
+rm64/boot/dts/freescale/imx93-11x11-evk.dts
+> > index a15987f49e8d..7ed75fb287df 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> > @@ -80,6 +80,30 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+> >               off-on-delay-us =3D <12000>;
+> >               enable-active-high;
+> >       };
+> > +
+> > +     bt_sco_codec: bt_sco_codec {
+>
+> No underscores, generic node names. Please follow DTS coding style.
 
-Thanks,
-Ian
+Ok, will update it.
+>
+> > +             #sound-dai-cells =3D <1>;
+>
+> Order properties and nodes according to DTS coding style.
 
-> +        */
-> +       assert(perf_singlethreaded);
-> +
-> +       if (map__dso(ms->map) !=3D di_cache.dso) {
-> +               dso__put(di_cache.dso);
-> +               di_cache.dso =3D dso__get(map__dso(ms->map));
-> +
-> +               debuginfo__delete(di_cache.dbg);
-> +               di_cache.dbg =3D debuginfo__new(dso__long_name(di_cache.d=
-so));
-> +       }
-> +
-> +       if (di_cache.dbg =3D=3D NULL) {
-> +               ann_data_stat.no_dbginfo++;
-> +               return NULL;
-> +       }
-> +
->         /* Make sure it has the disasm of the function */
->         if (symbol__annotate(ms, evsel, &arch) < 0) {
->                 ann_data_stat.no_insn++;
-> @@ -2404,6 +2438,7 @@ struct annotated_data_type *hist_entry__get_data_ty=
-pe(struct hist_entry *he)
->                         .ip =3D ms->sym->start + dl->al.offset,
->                         .cpumode =3D he->cpumode,
->                         .op =3D op_loc,
-> +                       .di =3D di_cache.dbg,
->                 };
+ok, will update it.
+
 >
->                 if (!op_loc->mem_ref && op_loc->segment =3D=3D INSN_SEG_N=
-ONE)
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index 9ba772f46270..27d9540604ef 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -543,4 +543,6 @@ struct annotated_basic_block {
->  int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
->                               struct list_head *head);
+> > +             compatible =3D "linux,bt-sco";
+> > +     };
+> > +
+> > +     sound-bt-sco {
 >
-> +void debuginfo_cache__delete(void);
-> +
->  #endif /* __PERF_ANNOTATE_H */
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 5596bed1b8c8..f9072e003367 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -36,6 +36,7 @@
->  #include "util.h"
->  #include "arch/common.h"
->  #include "units.h"
-> +#include "annotate.h"
->  #include <internal/lib.h>
+> Why this is not "sound"?
 >
->  #ifdef HAVE_ZSTD_SUPPORT
-> @@ -304,6 +305,7 @@ void perf_session__delete(struct perf_session *sessio=
-n)
->                 return;
->         auxtrace__free(session);
->         auxtrace_index__free(&session->auxtrace_index);
-> +       debuginfo_cache__delete();
->         perf_session__destroy_kernel_maps(session);
->         perf_decomp__release_events(session->decomp_data.decomp);
->         perf_env__exit(&session->header.env);
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
+> How many sound cards do you have there?
+
+We will have 4 sound cards.
+
+>
+> > +             compatible =3D "simple-audio-card";
+> > +             simple-audio-card,name =3D "bt-sco-audio";
+> > +             simple-audio-card,format =3D "dsp_a";
+> > +             simple-audio-card,bitclock-inversion;
+> > +             simple-audio-card,frame-master =3D <&btcpu>;
+> > +             simple-audio-card,bitclock-master =3D <&btcpu>;
+> > +
+> > +             btcpu: simple-audio-card,cpu {
+> > +                     sound-dai =3D <&sai1>;
+> > +                     dai-tdm-slot-num =3D <2>;
+> > +                     dai-tdm-slot-width =3D <16>;
+> > +             };
+> > +
+> > +             simple-audio-card,codec {
+> > +                     sound-dai =3D <&bt_sco_codec 1>;
+> > +             };
+> > +     };
+> >  };
+> >
+> >  &adc1 {
+> > @@ -345,6 +369,18 @@ &mu2 {
+> >       status =3D "okay";
+> >  };
+> >
+> > +&sai1 {
+> > +     #sound-dai-cells =3D <0>;
+> > +     pinctrl-names =3D "default", "sleep";
+> > +     pinctrl-0 =3D <&pinctrl_sai1>;
+> > +     pinctrl-1 =3D <&pinctrl_sai1_sleep>;
+> > +     assigned-clocks =3D <&clk IMX93_CLK_SAI1>;
+> > +     assigned-clock-parents =3D <&clk IMX93_CLK_AUDIO_PLL>;
+> > +     assigned-clock-rates =3D <12288000>;
+> > +     fsl,sai-mclk-direction-output;
+> > +     status =3D "okay";
+> > +};
+> > +
+> >  &usbotg1 {
+> >       dr_mode =3D "otg";
+> >       hnp-disable;
+> > @@ -528,6 +564,24 @@ MX93_PAD_CCM_CLKO2__GPIO3_IO27                   0=
+x31e
+> >               >;
+> >       };
+> >
+> > +     pinctrl_sai1: sai1grp {
+> > +             fsl,pins =3D <
+> > +                     MX93_PAD_SAI1_TXC__SAI1_TX_BCLK                 0=
+x31e
+> > +                     MX93_PAD_SAI1_TXFS__SAI1_TX_SYNC                0=
+x31e
+> > +                     MX93_PAD_SAI1_TXD0__SAI1_TX_DATA00              0=
+x31e
+> > +                     MX93_PAD_SAI1_RXD0__SAI1_RX_DATA00              0=
+x31e
+> > +             >;
+> > +     };
+> > +
+> > +     pinctrl_sai1_sleep: sai1grpsleep {
+>
+> Does not look like tested. Srsly, NXP, start doing basic tests before
+> posting your code.
+
+Did the test. but maybe my test method is not correct,  will double check.
+
+Best regards
+Shengjiu wang
+>
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=3D1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sou=
+rces-with-the-devicetree-schema/
+> for instructions).
+>
+>
+> Best regards,
+> Krzysztof
 >
 
