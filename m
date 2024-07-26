@@ -1,246 +1,212 @@
-Return-Path: <linux-kernel+bounces-263411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2949793D579
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:58:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B8B93D57D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD121F2330B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 830151C2324E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D617967C;
-	Fri, 26 Jul 2024 14:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRXO0Utw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE21DDF5;
-	Fri, 26 Jul 2024 14:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C3322F1E;
+	Fri, 26 Jul 2024 14:59:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA881CD06;
+	Fri, 26 Jul 2024 14:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722005894; cv=none; b=WqqbaVuX1/lp4V+M3Va94Y4PD8GIijUbFgLgM6TAyTnCRj9FJFp4cY3U6wSRKDdrMbZkOS6sc1he9MR50VpzkKrIvzfJzMYkA5kw1jiBlfdTK5m5yvcobHN6LJvPg1eWf8H6zEv3QFPezCOGx73mrC4M2GymtiEqGiKEqcpcmsM=
+	t=1722005995; cv=none; b=kwJJIG8Y88OWypmGTm39J8YBL+13iVgUePdWXIblT76JdA+JL7GJkWFml2gS5V4nFiLmnOKOY9WnowIn7ZNHFnNJHu+T1gpZyGTUx61z1wh6HMBX3WzohUgs/6wfz98DtwqHKWLKNXzwfXy5Y7C8F80IwVs6MFtKBVocsJh0sEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722005894; c=relaxed/simple;
-	bh=NPnM9e8k0C+8kTKyPn/tkANgPWrPcrT63X9TENF5JJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ouyhi29aFKOBBF1icfBpc91Dbuh5DN6yRXVIA+8eFyz03LcECbxMKH6dls73/REjDAE+Zje296Jrw9LlryRy8I4uFfKCgHmj6LubCAlzFpld6sSfg82gsT/hHy3KtqyfcScZMSrq0xlkAnZgoaucCA4hoW2fSqHWuCNCp7UbT88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRXO0Utw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F97BC4AF07;
-	Fri, 26 Jul 2024 14:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722005894;
-	bh=NPnM9e8k0C+8kTKyPn/tkANgPWrPcrT63X9TENF5JJQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IRXO0Utws2Gt4FdbvFH6LlWzVUhxqLClibgS+lxPs6FKX1i0CvtSdxCUGu2IL+b1N
-	 EMIJDcFr62oOX6VYKEdqplsuUktJYlN4lvJfBcNBuXJtofVGl4IMq7xxPIVkk4XKb2
-	 oR+DrzFDQJ3xduLDNViJY7fjtufJi85z2tcBaPgcfhRDHdx4NrdjoiesvY3oltT7bE
-	 yFHBceHrklAcTEpeWupP4rZAFq8EkKNZPrH8sP5Ab3Ia2EUVT2l/H0IdnbF6SmUBtm
-	 j82nvCw48qOcF3QqjE4ehE/iMT/57Q8Eq2Cu23gdYwGg2sX0yLZGGklprulMPfJ5Gl
-	 KBD14de8kKu6w==
-Message-ID: <3bc186e8-40fc-4c92-affa-0e0b6cf25153@kernel.org>
-Date: Fri, 26 Jul 2024 16:58:05 +0200
+	s=arc-20240116; t=1722005995; c=relaxed/simple;
+	bh=Z+IXqHPvu0QjnxMwJZmPnfBlEEwxqkA0soVAPOmSrXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfAyomb3p4dpKmziPXs3ddDa+kHSLGr4M+oFhorlhckh+OYLiy6reaYmiGgG25BYWKzWUKOsFLDATrESHmVHH0uQL1SujaBz0LJ1pp8xkPyC8IgcLaJktFW6a4B5XXLHE2i02tQfOTvEIORWLE8p2ekyDeg7DL6C5u361y4WuCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91CD41007;
+	Fri, 26 Jul 2024 08:00:18 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E02BE3F73F;
+	Fri, 26 Jul 2024 07:59:50 -0700 (PDT)
+Date: Fri, 26 Jul 2024 15:59:44 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Etienne CARRIERE <etienne.carriere@st.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"peng.fan@oss.nxp.com" <peng.fan@oss.nxp.com>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
+	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+	"ptosi@google.com" <ptosi@google.com>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH v2 3/8] firmware: arm_scmi: Add support for standalone
+ transport drivers
+Message-ID: <ZqO54KACyHUUYEXj@pluto>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <20240710173153.4060457-4-cristian.marussi@arm.com>
+ <PAXPR10MB4687B74810CA8EDB5BFC4781FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das
- <quic_tdas@quicinc.com>, Satya Priya Kakitapalli
- <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
-References: <20240720052818.26441-1-quic_jkona@quicinc.com>
- <497c9438-5bb3-42d9-9df9-661235a556d2@kernel.org>
- <14f57121-46f1-4dbe-92fd-e840705b771b@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <14f57121-46f1-4dbe-92fd-e840705b771b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR10MB4687B74810CA8EDB5BFC4781FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
 
-On 26/07/2024 16:30, Jagadeesh Kona wrote:
+On Tue, Jul 23, 2024 at 01:39:41PM +0000, Etienne CARRIERE wrote:
+> Hi Cristian,
 > 
+> Few nitpicking comments.
 > 
-> On 7/24/2024 1:38 PM, Krzysztof Kozlowski wrote:
->> On 20/07/2024 07:28, Jagadeesh Kona wrote:
->>> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
->>> sufficient for clock controllers to operate and there is no need to specify
->>> the required-opps. Hence remove the required-opps property from the list of
->>> required properties for SM8650 camcc and videocc bindings.
->>>
->>> This fixes:
->>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
->>> 'required-opps' is a required property
->>>
->>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
->>> 'required-opps' is a required property
->>>
->>> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
->>> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> ---
->>> Changes in V2:
->>>   - Made required: conditional and dropped required-opps from it only for SM8650 platform
->>>   - Dropped Krzysztof Acked-by tag due to above changes
->>>   - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/#r
->>>
->>> .../bindings/clock/qcom,sm8450-camcc.yaml     | 26 +++++++++++++------
->>>   .../bindings/clock/qcom,sm8450-videocc.yaml   | 25 +++++++++++++-----
->>>   2 files changed, 36 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>> index f58edfc10f4c..8698c801ed11 100644
->>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>> @@ -21,9 +21,6 @@ description: |
->>>       include/dt-bindings/clock/qcom,sm8650-camcc.h
->>>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
->>>   
->>> -allOf:
->>> -  - $ref: qcom,gcc.yaml#
->>> -
->>>   properties:
->>>     compatible:
->>>       enum:
->>> @@ -53,11 +50,24 @@ properties:
->>>     reg:
->>>       maxItems: 1
->>>   
->>> -required:
->>
->> You cannot remove required block.
->>
->>> -  - compatible
->>> -  - clocks
->>> -  - power-domains
->>> -  - required-opps
->>> +allOf:
->>> +  - $ref: qcom,gcc.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: qcom,sm8650-camcc
->>> +    then:
->>> +      required:
->>> +        - compatible
->>> +        - clocks
->>> +        - power-domains
->>> +    else:
->>> +      required:
->>> +        - compatible
->>> +        - clocks
->>> +        - power-domains
->>> +        - required-opps
->>>   
->>>   unevaluatedProperties: false
->>>   
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>> index b2792b4bb554..2e5a061f33d6 100644
->>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>> @@ -40,15 +40,26 @@ properties:
->>>       description:
->>>         A phandle to an OPP node describing required MMCX performance point.
->>>   
->>> -required:
->>
->> No, you cannot remove required block.
->>
->> To clarify: there is almost no single binding using your style. Even if
->> there is one, then 99 others are using it differently. Do not implement
->> things entirely different than everyone else. This is the same for C
->> code you send upstream. No difference here...
->>
+> On Wednesday, July 10, 2024, Cristian Marussi wrote:  
+> > Extend the core SCMI stack with structures and methods to allow for
+> > transports to be split out as standalone drivers, while still supporting
+> > old style transports, defined as built into the SCMI core stack.
+> > 
+> > No functional change.
+> > 
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > NOTE: old style transport support will be removed later in this series.
+> > 
+> > v1 --> v2
+> > - fixed comit message
+> > ---
+> >  drivers/firmware/arm_scmi/common.h | 84 ++++++++++++++++++++++++++++++
+> >  drivers/firmware/arm_scmi/driver.c | 44 +++++++++++++++-
+> >  drivers/firmware/arm_scmi/msg.c    |  5 ++
+> >  drivers/firmware/arm_scmi/shmem.c  |  5 ++
+> >  4 files changed, 136 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+> > index 8e5751aaa600..4af06810eb39 100644
+> > --- a/drivers/firmware/arm_scmi/common.h
+> > +++ b/drivers/firmware/arm_scmi/common.h
+> > @@ -349,6 +349,8 @@ struct scmi_shared_mem_operations {
+> >                                       bool tx, struct resource *res);
+> >  };
+> >  
+> > +const struct scmi_shared_mem_operations *scmi_shared_mem_operations_get(void);
+> > +
+> >  /* declarations for message passing transports */
+> >  struct scmi_msg_payld;
+> >  
+> > @@ -376,6 +378,88 @@ struct scmi_message_operations {
+> >                                     size_t max_len, struct scmi_xfer *xfer);
+> >  };
+> >  
+> > +const struct scmi_message_operations *scmi_message_operations_get(void);
+> > +
+> > +/**
+> > + * struct scmi_transport_core_operations  - Transpoert core operations
+> > + *
+> > + * @bad_message_trace: An helper to report a malformed/unexpected message
+> > + * @rx_callback: Callback to report received messages
+> > + * @shmem: Datagram operations for shared memory based transports
+> > + * @msg: Datagram operations for message based transports
+> > + */
+> > +struct scmi_transport_core_operations {
+> > +       void (*bad_message_trace)(struct scmi_chan_info *cinfo,
+> > +                                 u32 msg_hdr, enum scmi_bad_msg err);
+> > +       void (*rx_callback)(struct scmi_chan_info *cinfo, u32 msg_hdr,
+> > +                           void *priv);
+> > +       const struct scmi_shared_mem_operations *shmem;
+> > +       const struct scmi_message_operations *msg;
+> > +};
+> > +
+> > +/**
+> > + * struct scmi_transport  - A structure representing a configured transport
+> > + *
+> > + * @supplier: Device representimng the transport and acting as a supplier for
 > 
-> Thanks Krzysztof for the explanation.
-> 
-> Hi Dmitry,
-> 
-> As we discussed during SM8650 camcc and videocc changes, the MMCX rail's 
-> minimum voltage level from cmd-db is adequate for these clock 
-> controllers to operate on SM8650. So, we removed the 'required-opps' 
-> property from their DT nodes.
-
-Not sure with whom you discuss. With Dmitry or me. Anyway, I said
-nothing about required-opps, but the "required:" block.
-
-> 
-> Although 'required-opps' will remain in the properties list, itâ€™s not 
-> mandatory to be present in 'required:' list, as it is dependent on 
-> cmd-db minimum level. So, can I please go ahead and update these 
-> bindings to remove 'required-opps' from the 'required:' list, as done in 
-> v1 of this series.
-> 
-> It seems unconventional to make 'required:' conditional based on the 
-> platform type.
+> typo: s/representimng/representing/
 > 
 
-Obviously. But nothing stops you - and there are plenty of examples - of
-requiring one particular property based on the variant.
+Fixed in V3. (...still to be posted)
 
-Best regards,
-Krzysztof
+> > + *           the core SCMI stack
+> > + * @desc: Transport descriptor
+> > + * @core_ops: A pointer to a pointer used by the core SCMI stack to make the
+> > + *           core transport operations accessible to the transports.
+> > + */
+> > +struct scmi_transport {
+> > +       struct device *supplier;
+> > +       const struct scmi_desc *desc;
+> > +       struct scmi_transport_core_operations **core_ops;
+> > +};
+> > +
+> > +#define DEFINE_SCMI_TRANSPORT_DRIVER(__trans, __match_table, __core_ptr)\
+> > +static int __trans##_probe(struct platform_device *pdev)               \
+> > +{                                                                      \
+> > +       struct scmi_transport *scmi_trans;                              \
+> > +       struct platform_device *scmi_pdev;                              \
+> > +       struct device *dev = &pdev->dev;                                \
+> > +                                                                       \
+> > +       scmi_trans = devm_kzalloc(dev, sizeof(*scmi_trans), GFP_KERNEL);\
+> > +       if (!scmi_trans)                                                \
+> > +               return -ENOMEM;                                         \
+> > +                                                                       \
+> > +       scmi_pdev = devm_kzalloc(dev, sizeof(*scmi_pdev), GFP_KERNEL);  \
+> > +       if (!scmi_pdev)                                                 \
+> > +               return -ENOMEM;                                         \
+> > +                                                                       \
+> > +       scmi_trans->supplier = dev;                                     \
+> > +       scmi_trans->desc = &__trans##_desc;                             \
+> 
+> It's a bit weird the scmi_desc shall be specifically labeled __trans##_desc
+> in the transport driver source file while match table and transport core
+> operations instances references are passed as arguments. I think it's 
+> worth having the scmi_desc label also passed as an argument to
+> DEFINE_SCMI_TRANSPORT_DRIVER() macro.
 
+Yes, I agree, I was unsure about this so I have reworked all of these in
+V3 to pass as explicit parameter the driver name and desc name.
+
+> 
+> > +       scmi_trans->core_ops = __core_ptr;                              \
+> > +                                                                       \
+> > +       scmi_pdev->name = "arm-scmi";                                   \
+> > +       scmi_pdev->id = PLATFORM_DEVID_AUTO;                            \
+> > +       scmi_pdev->dev.platform_data = scmi_trans;                      \
+> > +                                                                       \
+> > +       device_set_of_node_from_dev(&scmi_pdev->dev, dev);              \
+> > +                                                                       \
+> > +       dev_set_drvdata(dev, scmi_pdev);                                \
+> > +                                                                       \
+> > +       return platform_device_register(scmi_pdev);                     \
+> > +}                                                                      \
+> > +                                                                       \
+> > +static void __trans##_remove(struct platform_device *pdev)             \
+> > +{                                                                      \
+> > +       struct platform_device *scmi_pdev;                              \
+> > +                                                                       \
+> > +       scmi_pdev = dev_get_drvdata(&pdev->dev);                        \
+> > +                                                                       \
+> > +       platform_device_unregister(scmi_pdev);                          \
+> > +}                                                                      \
+> > +                                                                       \
+> > +static struct platform_driver __trans##_driver = {                     \
+> 
+> Same here. I think __trans##_driver label should be also explicitly
+> passed as an argument to DEFINE_SCMI_TRANSPORT_DRIVER().
+> 
+
+Fixed in V3.
+
+Thanks,
+Cristian
 
