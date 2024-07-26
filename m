@@ -1,147 +1,95 @@
-Return-Path: <linux-kernel+bounces-263123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872E693D154
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A01993D157
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A14FB2181E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BA228141B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67F17836D;
-	Fri, 26 Jul 2024 10:45:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3467F8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5917838C;
+	Fri, 26 Jul 2024 10:46:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4550C7F8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721990722; cv=none; b=ouokgB8o/x/2/rgkUJ379trNNHcFXf2FVk04eIXlmoguefCtnZPcetljnKeWSUxPH3A+/JgLxLbvAFHKONC9q5abmeSISngOQnVIARB9XNE5XXeXHTHVHN3L3G2uhmJxD2c51RCwGs7vFIu8e9LPwYf2CyDCpsdIxOsyndb5HZw=
+	t=1721990812; cv=none; b=RAuei290WETmDy8WOijnxCq+whrq97blJt5K6xIjBVdgFkJVNEIKTPmdUjcDM8H9YRHW52TdTcSNRYiMdO8PTCqbcPW0vRRQJh/yWizUezPsg81oSdgkAUD6aSSdBdCbSliPCrXh3eB8C97Uiiu+XGrnniCchcfgwSkcq0y2zAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721990722; c=relaxed/simple;
-	bh=jO0E0sieOzH/MBK294S4mRe+gujdtebcb/LZ9lsPU/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uVpli4MIQqeW0yv4f1ARRCne2lcZIAnGlaVV515Kd3mSeIfoTe+Q2qr1/+fRG7i/F6wG8emA2EfBbDrjLniFb+odshW3KCg+L+BD5chyrBGERK9XkoUU11QFxK77LeRBQfwURfQleweMrq0pPiZMKLSpXo5X4aGCYKsQr/zLeEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27C911007;
-	Fri, 26 Jul 2024 03:45:44 -0700 (PDT)
-Received: from [10.57.78.186] (unknown [10.57.78.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 866A13F73F;
-	Fri, 26 Jul 2024 03:45:16 -0700 (PDT)
-Message-ID: <fdae26b5-1fe1-4544-b496-2273b2c2b523@arm.com>
-Date: Fri, 26 Jul 2024 11:45:14 +0100
+	s=arc-20240116; t=1721990812; c=relaxed/simple;
+	bh=LEXtchw25jKSI/e0hbHQsFmZjxoeFZikXMTdGqS5qn4=;
+	h=From:Subject:To:Cc:Message-ID:Date:MIME-Version:Content-Type; b=gaTZD+0S7X4Wws2wIWaNmZc3t5h3RYXM1asmENqOgqJ0/aQmCtH1pi110OY9N8aKGXRrFEIRQ1LD3Gy+r5kV6o8OwVgRreZ7JkWRqGBrX1hQQGgDqjunKyjs1JvkwgRfILG243H2IT5V72Rl62D4sPpKWwTuYX7Zy/WVhrjnN7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxyOmUfqNm+QsCAA--.7586S3;
+	Fri, 26 Jul 2024 18:46:44 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxPseOfqNmCqUCAA--.15131S3;
+	Fri, 26 Jul 2024 18:46:38 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Question about patch "bug.h: work around GCC PR82365 in BUG()"
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org
+Message-ID: <e54d8849-c920-a5c5-aac4-83870ee5ecb7@loongson.cn>
+Date: Fri, 26 Jul 2024 18:46:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: huge_memory: don't start_stop_khugepaged for non-PMD
- THP
-Content-Language: en-GB
-To: Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
- Lance Yang <ioworker0@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Yang Shi <shy828301@gmail.com>,
- Zi Yan <ziy@nvidia.com>
-References: <20240726082818.260008-1-21cnbao@gmail.com>
- <aeb0fcb9-7c84-4bc4-b89a-5f0f86478aaf@arm.com>
- <a9ff9028-a73a-4a80-b38a-266d1e8c20fe@redhat.com>
- <CAGsJ_4wN0TBnPDj5oeFdPqCZk6XkMaJ0JbLY+fETWn52npwjjg@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4wN0TBnPDj5oeFdPqCZk6XkMaJ0JbLY+fETWn52npwjjg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMCxPseOfqNmCqUCAA--.15131S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jr1UKF17Gw1xCFW7uF47WrX_yoWfCrg_A3
+	WDAwnrG3s8Wr4kAF42qFWUZF93t3ykA34DXrWfGwnrAryrJayqqF95ury7uws3A395Jr1D
+	Cw4rXFyfZF1UZosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrNtx
+	DUUUU
 
-On 26/07/2024 11:04, Barry Song wrote:
-> On Fri, Jul 26, 2024 at 9:48 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 26.07.24 11:43, Ryan Roberts wrote:
->>> On 26/07/2024 09:28, Barry Song wrote:
->>>> From: Barry Song <v-songbaohua@oppo.com>
->>>>
->>>> khugepaged will be automatically started when PMD-sized THP is enabled
->>>> (either of the per-size anon control or the top-level control are set
->>>> to "always" or "madvise"), and it'll be automatically shutdown when
->>>> PMD-sized THP is disabled (when both the per-size anon control and the
->>>> top-level control are "never").
->>>>
->>>> It seems unnecessary to call start_stop_khugepaged() for non-PMD THP,
->>>> as it would only waste CPU time.
->>>>
->>>> Cc: Lance Yang <ioworker0@gmail.com>
->>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Yang Shi <shy828301@gmail.com>
->>>> Cc: Zi Yan <ziy@nvidia.com>
->>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->>>> ---
->>>>   mm/huge_memory.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 41460847988c..bd365e35acf7 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -514,7 +514,7 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
->>>>      } else
->>>>              ret = -EINVAL;
->>>>
->>>> -    if (ret > 0) {
->>>> +    if (ret > 0 && order == HPAGE_PMD_ORDER) {
->>>>              int err;
->>>>
->>>>              err = start_stop_khugepaged();
->>>
->>> Personally I see this as a bit of a layering violation; its
->>> start_stop_khugepaged() that should decide the policy for when to start and stop
->>> the daemon. thpsize_enabled_store() should just be calling
->>> start_stop_khugepaged() to notify that something potentially pertinent to the a
->>> policy decision has changed.
->>
-> 
-> My impression is that it slightly deviates from the huge page documentation in
-> Documentation/admin-guide/mm/transhuge.rst.
-> 
-> khugepaged will be automatically started when PMD-sized THP is enabled
-> (either of the per-size anon control or the top-level control are set
-> to "always" or "madvise"), and it'll be automatically shutdown when
-> PMD-sized THP is disabled (when both the per-size anon control and the
-> top-level control are "never").
+Hi Arnd,
 
-But start_stop_khugepaged() doesn't unconditionally start khugepaged, it takes
-action based on hugepage_pmd_enabled() which only returns true if there are any
-pmd sized THP enabled (currently looking at anon and file, but should also look
-at shmem in future; that's a known bug that's been there forever). So I don't
-think it is inconsistent with the documentation?
+In the commit 173a3efd3edb "bug.h: work around GCC PR82365 in BUG()",
+an empty inline assembly was added to work around GCC 7.0, I want to
+know what is the status of this GCC bug, is it fixed or not?
 
-> 
-> non-PMD size is not involved in khugepaged, but I agree the policy might change
-> in the future.
-> 
->> Agreed, skimming the subject I was under the impression that we would be
->> fixing something here.
-> 
-> working on another swapin_enabled and reviewing the enabled source code.
-> I don't need this startstop for all sizes in that case, so I made a
-> quick adjustment
-> to this part as well. If neither of you likes it, that's fine with me :-)
-> 
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
-> 
-> Thanks
-> Barry
+If the GCC bug has been fixed, could you please tell me what is the
+commit id of GCC? I can not find it in the bug link:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82365
+
+The default CONFIG_FRAME_WARN is 2048 on 64 bit system, I am not sure
+whether it is time and proper to remove this workaround in the common
+header include/linux/compiler-gcc.h totally, at least I want to remove
+it in the arch specified header when compiling kernel with a newer GCC
+version (for example GCC 12.1 or higher on LoongArch), something like
+this:
+
++#ifdef barrier_before_unreachable
++#undef barrier_before_unreachable
++#define barrier_before_unreachable() do { } while (0)
++#endif
+
+Thanks,
+Tiezhu
 
 
