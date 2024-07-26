@@ -1,95 +1,318 @@
-Return-Path: <linux-kernel+bounces-263125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A01993D157
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:46:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7160E93D158
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BA228141B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:46:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D06DB217B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5917838C;
-	Fri, 26 Jul 2024 10:46:52 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4550C7F8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C53176FCF;
+	Fri, 26 Jul 2024 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RHA6wNp7"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB78C13D8B3
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721990812; cv=none; b=RAuei290WETmDy8WOijnxCq+whrq97blJt5K6xIjBVdgFkJVNEIKTPmdUjcDM8H9YRHW52TdTcSNRYiMdO8PTCqbcPW0vRRQJh/yWizUezPsg81oSdgkAUD6aSSdBdCbSliPCrXh3eB8C97Uiiu+XGrnniCchcfgwSkcq0y2zAQ=
+	t=1721990823; cv=none; b=hwzmllap4wAkkXdjCXGVok7WnY3hRYIH6yk4w9wSkvbXGlqreElWWKNxkcrjNrVpITb1w73r2B0TBQL2me/wA5pED+97aM582/O4FegvaxuHCVqing3LfwQm7T7vbZ4r13X1AgoDXg/wqNQEJLMW/bHSGpyGA3ID9wyn+zrLxHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721990812; c=relaxed/simple;
-	bh=LEXtchw25jKSI/e0hbHQsFmZjxoeFZikXMTdGqS5qn4=;
-	h=From:Subject:To:Cc:Message-ID:Date:MIME-Version:Content-Type; b=gaTZD+0S7X4Wws2wIWaNmZc3t5h3RYXM1asmENqOgqJ0/aQmCtH1pi110OY9N8aKGXRrFEIRQ1LD3Gy+r5kV6o8OwVgRreZ7JkWRqGBrX1hQQGgDqjunKyjs1JvkwgRfILG243H2IT5V72Rl62D4sPpKWwTuYX7Zy/WVhrjnN7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxyOmUfqNm+QsCAA--.7586S3;
-	Fri, 26 Jul 2024 18:46:44 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxPseOfqNmCqUCAA--.15131S3;
-	Fri, 26 Jul 2024 18:46:38 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Question about patch "bug.h: work around GCC PR82365 in BUG()"
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org
-Message-ID: <e54d8849-c920-a5c5-aac4-83870ee5ecb7@loongson.cn>
-Date: Fri, 26 Jul 2024 18:46:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1721990823; c=relaxed/simple;
+	bh=F9+C5tng75AM0mm4yQXJOuCuKMLOgYhdMIf39C7qJ1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvhitEnmhYYzkW2qkuSkqnJI7fewVu/3bEH4j3EFD+8ndmko+//01/RTuWL9H1UAKLJ7PU1/DZN61Iqo0awg2I6RlhxgDiv6IWmG4MRC6NSDzuVJg9W8DHW4wMG7OTNK4riDESc94JpK+Lw56gtz3ANPupqnyRi3GOUqIE9ZgIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RHA6wNp7; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so222899466b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721990819; x=1722595619; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=54a+yLeH+fk9Ru7raDHCV5+hfbTusx7m6TQ/Lw4ZCuw=;
+        b=RHA6wNp7DbkCdHHImwXnkyEPd4zYm9vHA1Q/j110vot0bjuaPq9jaSwDyKThf7gROi
+         hNi9WPPCDY6zdWsq3GEwHqXfthskJbB5HZw05FzUGJFHC5ziW0x145CPGXqOK2O08OKq
+         +9oC9OYciN76zZoS9Fk0FVR6SDf9JslIO1qY5Xhq5c+AzlVVLjq2tJcEznlRBV/2QneM
+         EmIB8X6idPSpzwrgzgmkWfhTllit+XURkvc4vsp80XuuMl0oX3iXG1sFjYBRjwosmJpv
+         lmPAFef3U5cvOvM4IuwDiKrV/vNDCAR7pHsxmdQBs4dJ2YjxiF7ku5MJ2PyPZgtfEIqY
+         YJOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721990819; x=1722595619;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=54a+yLeH+fk9Ru7raDHCV5+hfbTusx7m6TQ/Lw4ZCuw=;
+        b=MomhfzaigmjYUXbm4WrceNudtzg9WdAQOaQ0p7zT+LuJuqBaSes6vimt34fxqPsyh5
+         RjWtOBFmdJGmvJd5wY1I4/mMwb4yvcsprrf51Fvshxhopf8qBUnJLJbvN8Q3cf11LNmt
+         vlAujIaqqXiaTdbAqnvabx1+lnBhOSGQwPecqH1RfR6hGvMCk/FvAg6b23YtOeckvWrt
+         ufkt8nJoB3enmFZYm1KMj7aO8qo+mJojFJSeD2zy0uYO2ZeEvyDC75LX7Zr275qPW9cV
+         xz6g9J/1Uo4QNCmDISRAcWvnoUcf5Z9MpKEu3C9OMRyR/nMy06OjV2gIhRYG1+c2PXU1
+         4aiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVSrOgFOuTjgGWiN9LGu8+ZUvBrLZD1sh2mJx4TxxtJbZRA4Gc1p03dVKZdexy+16MgA9Bs4HVx4QmCaPVXsyMzRG60qaRKgsp+iLU
+X-Gm-Message-State: AOJu0Yz+E4Bg71KHxq/hfn1kruvciHehcg+KtxHfg9Es8SpVcfyfEEoG
+	MEhabVCcJz4uFNZ2MbEMpjqNhIv+x8//FbfomeO4mY9nVy6Uor08V0vHX4v41OI=
+X-Google-Smtp-Source: AGHT+IGJag/PKuLabeabCV+KmICbtNcJI6TcC4IxfaqC4ey2gN7y/UEWyo3D+3X0BiH6mBJyfLupMw==
+X-Received: by 2002:a17:907:9443:b0:a7a:8bcf:ac64 with SMTP id a640c23a62f3a-a7acb4a0043mr371806666b.36.1721990818836;
+        Fri, 26 Jul 2024 03:46:58 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad92fd8sm159969766b.159.2024.07.26.03.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 03:46:58 -0700 (PDT)
+Date: Fri, 26 Jul 2024 12:46:56 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: takakura@valinux.co.jp
+Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, akpm@linux-foundation.org, bhe@redhat.com,
+	lukas@wunner.de, wangkefeng.wang@huawei.com, ubizjak@gmail.com,
+	feng.tang@intel.com, j.granados@samsung.com,
+	stephen.s.brennan@oracle.com, linux-kernel@vger.kernel.org,
+	nishimura@valinux.co.jp, taka@valinux.co.jp
+Subject: Re: [PATCH] printk: CPU backtrace not printing on panic
+Message-ID: <ZqN-oBH5FWJqspMO@pathway.suse.cz>
+References: <20240726094437.306330-1-takakura@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMCxPseOfqNmCqUCAA--.15131S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Jr1UKF17Gw1xCFW7uF47WrX_yoWfCrg_A3
-	WDAwnrG3s8Wr4kAF42qFWUZF93t3ykA34DXrWfGwnrAryrJayqqF95ury7uws3A395Jr1D
-	Cw4rXFyfZF1UZosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrNtx
-	DUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726094437.306330-1-takakura@valinux.co.jp>
 
-Hi Arnd,
+On Fri 2024-07-26 18:44:37, takakura@valinux.co.jp wrote:
+> From: Ryo Takakura <takakura@valinux.co.jp>
+> 
+> commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
+> to ringbuffer") disabled non-panic CPUs to further write messages to
+> ringbuffer after panicked.
+> 
+> Since the commit, non-panicked CPU's are not allowed to write to
+> ring buffer after panicked and CPU backtrace which is triggered
+> after panicked to sample non-panicked CPUs' backtrace no longer
+> serves its function as it can't print anything.
 
-In the commit 173a3efd3edb "bug.h: work around GCC PR82365 in BUG()",
-an empty inline assembly was added to work around GCC 7.0, I want to
-know what is the status of this GCC bug, is it fixed or not?
+Great catch!
 
-If the GCC bug has been fixed, could you please tell me what is the
-commit id of GCC? I can not find it in the bug link:
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82365
+> Fix the issue by allowing non-panicked CPUs to write to ringbuffer
+> when CPU backtrace was enabled if there is no need for message
+> suppression. This patch brings back commit 13fb0f74d702 ("printk:
+> Avoid livelock with heavy printk during panic")'s implementation
+> for suppressing non-panicked CPUs' messages when detected messages
+> being dropped.
+> 
+> Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
+> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+> ---
+> 
+> I was not really sure what the best approach would be if we want to
+> allow cpu backtrace to function while prioritizing the panicked CPU's 
+> messages. Hoping to get some feedbacks, thanks!
+> 
+> Sincerely,
+> Ryo Takakura
+> 
+> ---
+>  include/linux/panic.h  |  9 +++++++++
+>  include/linux/printk.h |  1 +
+>  kernel/panic.c         | 10 +---------
+>  kernel/printk/printk.c | 26 ++++++++++++++++++++++++--
+>  4 files changed, 35 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/panic.h b/include/linux/panic.h
+> index 6717b15e798c..70dc17284785 100644
+> --- a/include/linux/panic.h
+> +++ b/include/linux/panic.h
+> @@ -16,6 +16,15 @@ extern void oops_enter(void);
+>  extern void oops_exit(void);
+>  extern bool oops_may_print(void);
+>  
+> +#define PANIC_PRINT_TASK_INFO		0x00000001
+> +#define PANIC_PRINT_MEM_INFO		0x00000002
+> +#define PANIC_PRINT_TIMER_INFO		0x00000004
+> +#define PANIC_PRINT_LOCK_INFO		0x00000008
+> +#define PANIC_PRINT_FTRACE_INFO		0x00000010
+> +#define PANIC_PRINT_ALL_PRINTK_MSG	0x00000020
+> +#define PANIC_PRINT_ALL_CPU_BT		0x00000040
+> +#define PANIC_PRINT_BLOCKED_TASKS	0x00000080
+> +
+>  extern int panic_timeout;
+>  extern unsigned long panic_print;
+>  extern int panic_on_oops;
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index 40afab23881a..cbb4c1ec1fca 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -78,6 +78,7 @@ extern char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE];
+>  struct ctl_table;
+>  
+>  extern int suppress_printk;
+> +extern int suppress_panic_printk;
+>  
+>  struct va_format {
+>  	const char *fmt;
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 8bff183d6180..8c23cd1f876e 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -66,14 +66,6 @@ static unsigned int warn_limit __read_mostly;
+>  int panic_timeout = CONFIG_PANIC_TIMEOUT;
+>  EXPORT_SYMBOL_GPL(panic_timeout);
+>  
+> -#define PANIC_PRINT_TASK_INFO		0x00000001
+> -#define PANIC_PRINT_MEM_INFO		0x00000002
+> -#define PANIC_PRINT_TIMER_INFO		0x00000004
+> -#define PANIC_PRINT_LOCK_INFO		0x00000008
+> -#define PANIC_PRINT_FTRACE_INFO		0x00000010
+> -#define PANIC_PRINT_ALL_PRINTK_MSG	0x00000020
+> -#define PANIC_PRINT_ALL_CPU_BT		0x00000040
+> -#define PANIC_PRINT_BLOCKED_TASKS	0x00000080
+>  unsigned long panic_print;
+>  
+>  ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+> @@ -252,7 +244,7 @@ void check_panic_on_warn(const char *origin)
+>   */
+>  static void panic_other_cpus_shutdown(bool crash_kexec)
+>  {
+> -	if (panic_print & PANIC_PRINT_ALL_CPU_BT)
+> +	if (panic_print & PANIC_PRINT_ALL_CPU_BT && !suppress_panic_printk)
+>  		trigger_all_cpu_backtrace();
+>  
+>  	/*
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 420fd310129d..0ac2ca1abbbf 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -459,6 +459,13 @@ static int console_msg_format = MSG_FORMAT_DEFAULT;
+>  static DEFINE_MUTEX(syslog_lock);
+>  
+>  #ifdef CONFIG_PRINTK
+> +
+> +/*
+> + * During panic, heavy printk by other CPUs can delay the
+> + * panic and risk deadlock on console resources.
+> + */
+> +int __read_mostly suppress_panic_printk;
+> +
+>  DECLARE_WAIT_QUEUE_HEAD(log_wait);
+>  /* All 3 protected by @syslog_lock. */
+>  /* the next printk record to read by syslog(READ) or /proc/kmsg */
+> @@ -2311,9 +2318,11 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  	/*
+>  	 * The messages on the panic CPU are the most important. If
+>  	 * non-panic CPUs are generating any messages, they will be
+> -	 * silently dropped.
+> +	 * silently dropped unless CPU backtrace on panic is enabled.
+>  	 */
+> -	if (other_cpu_in_panic())
+> +	if (other_cpu_in_panic() &&
+> +	   (!(panic_print & PANIC_PRINT_ALL_CPU_BT) ||
 
-The default CONFIG_FRAME_WARN is 2048 on 64 bit system, I am not sure
-whether it is time and proper to remove this workaround in the common
-header include/linux/compiler-gcc.h totally, at least I want to remove
-it in the arch specified header when compiling kernel with a newer GCC
-version (for example GCC 12.1 or higher on LoongArch), something like
-this:
+I would do it the other way and enable printing from other CPUs only
+when triggring the backtrace. We could do it because
+trigger_all_cpu_backtrace() waits until all backtraces are
+printed.
 
-+#ifdef barrier_before_unreachable
-+#undef barrier_before_unreachable
-+#define barrier_before_unreachable() do { } while (0)
-+#endif
+Something like:
 
-Thanks,
-Tiezhu
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index 3130e0b5116b..980bacbdfcfc 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -16,6 +16,7 @@ extern void oops_enter(void);
+ extern void oops_exit(void);
+ extern bool oops_may_print(void);
+ 
++extern int panic_triggering_all_cpu_backtrace;
+ extern int panic_timeout;
+ extern unsigned long panic_print;
+ extern int panic_on_oops;
+diff --git a/kernel/panic.c b/kernel/panic.c
+index f861bedc1925..7e9e97d59b1e 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -64,6 +64,8 @@ unsigned long panic_on_taint;
+ bool panic_on_taint_nousertaint = false;
+ static unsigned int warn_limit __read_mostly;
+ 
++int panic_triggering_all_cpu_backtrace;
++
+ int panic_timeout = CONFIG_PANIC_TIMEOUT;
+ EXPORT_SYMBOL_GPL(panic_timeout);
+ 
+@@ -253,8 +255,12 @@ void check_panic_on_warn(const char *origin)
+  */
+ static void panic_other_cpus_shutdown(bool crash_kexec)
+ {
+-	if (panic_print & PANIC_PRINT_ALL_CPU_BT)
++	if (panic_print & PANIC_PRINT_ALL_CPU_BT) {
++		/* Temporary allow printing messages on non-panic CPUs. */
++		panic_triggering_all_cpu_backtrace = true;
+ 		trigger_all_cpu_backtrace();
++		panic_triggering_all_cpu_backtrace = false;
++	}
+ 
+ 	/*
+ 	 * Note that smp_send_stop() is the usual SMP shutdown function,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 054c0e7784fd..c22b07049c38 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2316,7 +2316,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	 * non-panic CPUs are generating any messages, they will be
+ 	 * silently dropped.
+ 	 */
+-	if (other_cpu_in_panic())
++	if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+ 		return 0;
+ 
+ 	if (level == LOGLEVEL_SCHED) {
 
+
+> +	    unlikely(suppress_panic_printk)))
+>  		return 0;
+>  
+>  	if (level == LOGLEVEL_SCHED) {
+> @@ -2816,6 +2825,8 @@ void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
+>  bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>  			     bool is_extended, bool may_suppress)
+>  {
+> +	static int panic_console_dropped;
+> +
+>  	struct printk_buffers *pbufs = pmsg->pbufs;
+>  	const size_t scratchbuf_sz = sizeof(pbufs->scratchbuf);
+>  	const size_t outbuf_sz = sizeof(pbufs->outbuf);
+> @@ -2843,6 +2854,17 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>  	pmsg->seq = r.info->seq;
+>  	pmsg->dropped = r.info->seq - seq;
+>  
+> +	/*
+> +	 * Check for dropped messages in panic here so that printk
+> +	 * suppression can occur as early as possible if necessary.
+> +	 */
+> +	if (pmsg->dropped &&
+> +	    panic_in_progress() &&
+> +	    panic_console_dropped++ > 10) {
+> +		suppress_panic_printk = 1;
+> +		pr_warn_once("Too many dropped messages. Suppress messages on non-panic CPUs to prevent livelock.\n");
+> +	}
+
+I would keep it simple and omit this change. The risk of mess is lower
+if we enable other CPUs only around printing the backtraces.
+We could always add it back when we see problems in practice.
+
+> +
+>  	/* Skip record that has level above the console loglevel. */
+>  	if (may_suppress && suppress_message_printing(r.info->level))
+>  		goto out;
+
+Best Regards,
+Petr
 
