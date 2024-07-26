@@ -1,150 +1,123 @@
-Return-Path: <linux-kernel+bounces-263225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D16D93D2EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:25:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5982C93D300
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CF31C21316
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9D01C21A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B87C17A922;
-	Fri, 26 Jul 2024 12:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE0017B410;
+	Fri, 26 Jul 2024 12:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PuLfZwPh"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gEdhEb8l"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9FE57E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29017A5A1
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721996727; cv=none; b=ZzsXoEM9lCSyu7Mds5SaYis13AEY4R7ybRQLWw5sXxEzn//mylj9/V4kipSYulzJdUn/uArPhvgU2MaEekO3C8M0UOUdJ6O9lphffcosx+OibgObW8AmZxvQK40TY2cpEoJI3gal8FdRyFmg4/xogwcnr0EqrPou+OIjgvs+5uk=
+	t=1721997088; cv=none; b=DUYHH2NwOVQ4NP+YAzPzoOe9EExSAiKoexT7avZl5F2v/rx7yWPAlW0qd1Lq99bVHkrdmP9pkH2p82nvXh7lxt2Sc6aWM5qVEpPAzBW9jvVjsVuRTJtmLhGNE5VkubFopGNhg4eF5smFXixtsalOjy0KnM0yW9Tuqaev5hds/gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721996727; c=relaxed/simple;
-	bh=MTgnslXe+A1fSxmMYf8YcWnUSPILT5QASaJ5dgLuDjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIfI+7zeh1InmatuEnT673Qm/V+R0S5dJvNUkwt4emu78LSElpBL2mQE0qPcqd5PfmQGzNHld3rBGHijEbkcvcIMOZcG/uvpoc7QQq1hN3M8S4kPY8tmp2wLxQkVDgv/97Wgm2dWW8wdWNwajfZ8LT5ehbpV+jnDwzfaMlih9nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PuLfZwPh; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso1927075a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721996724; x=1722601524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SReWfJbm+hDNspPtpMlPGtYPQJ1oBqxc9fLUZr6H50U=;
-        b=PuLfZwPh3I6hdIiwBw4+LE3LrxRlWQzfAX2h/wuSsh4xUOdYrDxtyS66dkB4KPK76E
-         gH89nL7EIh6I93cTWSF6rM61v2xqhn/CR1vTkRTJRgeb7DBSohISPNvprU55OjJK/9Mc
-         EpFxfwgs9T+Yyy2hvSNQGR3lQtq+1tLK+iZ+pa0aqpIec6H+w4QWQwh8D+HajGcBeD8C
-         Hd0Mr/LJJBPU3uBEe/s3qrA2l8LOGEj2ldGalc3MVSOnnT6FpehSjTpZu8x5yL4pfx/Y
-         s1u38DprfSQpHa/vjozUjbg7QCM74sGWQKKEZGF+faoOBKJMQAXja2xN39/BxFYaZuvy
-         XPwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721996724; x=1722601524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SReWfJbm+hDNspPtpMlPGtYPQJ1oBqxc9fLUZr6H50U=;
-        b=qcUVyjT4AyP+T/9GfP60WVUGSI1fZ8w++R6lMp2r94YgNeWrud/PMZSzunYUTd3abH
-         EeeZDIBNidd2tuqlwCA1d8i9f7cLQ4Md7tsM4R710B8PWKbo+LzmBNjoBruXIaRGUt6B
-         EVss90pa6VtgVxyJNUkExjMBpT/STbmM0+pSoyaeE3kWN0G6hNixji4FLJbcdmvk0ydl
-         9n7JTGue0+CT2w0MzDg6Or/yyQdNaUdDid6SDDTVwJ+8Ipqx0wLULHEKjuidSzHfRlUN
-         iPGikYdcafOaW/cW1zeVLLTaArlV7xJN9Li130EFYofnGVShwsh/07KcqWfAzHvJHKsb
-         0r8g==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Px2CIha8NkMRPKHgdZ2oMMaVTOsu9VLLRJ/6JMdJIzNs3axk30GnWWJ4eZedhVJIeznNmeNeZE5WZSG5PP4R/itgrehCE2hCwo6e
-X-Gm-Message-State: AOJu0YxxT2Q0AMsXosYhVB94w35oGXnjKjt7XR5i7EkssnYQMo9sLPNy
-	QR12TLHdD3s7/C3Mg5cN+poXipDUuIJHu0X74hkxsyUavcYYtvoNnhPlp1mWm2Y=
-X-Google-Smtp-Source: AGHT+IFNDDXw6RcUlpYLXUW2kq/FptHCPKgNj3Vyz5pSTFDWre3HnwSBX1s6cmwtkH9rZwQ4sK/6uw==
-X-Received: by 2002:a17:906:2749:b0:a7a:b4bd:d0eb with SMTP id a640c23a62f3a-a7ac4ef5b07mr359921766b.24.1721996723591;
-        Fri, 26 Jul 2024 05:25:23 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23094sm171607166b.5.2024.07.26.05.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 05:25:23 -0700 (PDT)
-Date: Fri, 26 Jul 2024 14:25:21 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v3 03/19] printk: nbcon: Add function for printers
- to reacquire ownership
-Message-ID: <ZqOVsZ1KGh3rkxE6@pathway.suse.cz>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-4-john.ogness@linutronix.de>
+	s=arc-20240116; t=1721997088; c=relaxed/simple;
+	bh=pH+p7nZzFZZAMPEqXPgp2y0XkHPZTAS0cE3ZFAAlCqE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=VDQ1gT+KUnfsHIMZTA8VYHIEIh/mMIPeygGA+kNfPsc0ydLbNH68lomJdzgPWRrly/foQt7uezfAawARSZNOYseMkjfqjivQmXsq+Yzhu5A4aOMli7GtgzJQWw9Gls9wv/2ROjn0U3I4i18++vCppub4OKVaWfBhUlqVaLCtYqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gEdhEb8l; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721996776; bh=DmPYv1xm+7MvJdaLPZAvi0bqhJyet/7UQ5lTkBew6IQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gEdhEb8lHlXfwozGC0vVthbA1+X2362HIgwEYCrZfXaAB85j+9w76RbgVz/OnD15A
+	 /3vaOdw6NGewLKm9mJtgFhfF8uhx4l5m2PcwND+ePxHNoiezUJSst0kE0RXr4XU7oD
+	 ZAgvENjhd/t5Q0+9V3CmiJyI1cfWmTCBSOC9eSXI=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 68F1904C; Fri, 26 Jul 2024 20:26:15 +0800
+X-QQ-mid: xmsmtpt1721996775talzizcdf
+Message-ID: <tencent_ADCCB667DF06D952FB064A89952ED1AEFA06@qq.com>
+X-QQ-XMAILINFO: M5WvXNp9ZPrQI9k0Ye5DrSyX87ZGWJxg7Rp9bjHw+SD+WwOGGdy913XPPxzaZD
+	 CHSktNvzE+ElTDpp4kANQfYjo/q2nsUSkkX9advw+m9wGbibTnV9y24+NsMB/30r/76jWAXAkmzp
+	 G98uX6URdXu0Wbs3SG4zgCz5oYFMQtCCaIPwIy4DAcrcLeZjJF1pWZICKwVtyNufvquk7gKPBq+x
+	 MRyq7j0JVJW1mTKcBdFrXS7OxQwTgVCIkEkKF+oArt8qWE1f02US+DeG2B/An2pnDhFxk6zkNsmY
+	 ANkTpdg4Ui9XcVNcYwoEuvbeHdIEjkTSaVCNTfu3tTqvWHlMGWWY0/LHxco0UZVZqG+K9mnpA2At
+	 dpeDLJalJwjQSE3tyhfJ40EKWeXdXMtCg3e8YBRCekJz1VLtjor5z6u1css+zI9f3YMpY9Mg0bsP
+	 0/qaX3++2ViLFuDu4kmoDp5MtOGTbKJNR32FHSjCUWulHWYy5d1ztR48/1A33yrL5+aiVJFEePRy
+	 NSegMSN7L01HAxXzp6KaCacjUK6FExeoBZ+C52lnDTHl5sxNIlaWHUOJfHCK9HGf3/ghObwh4S9p
+	 QYRvD8dE0HbZy+mMzLnqNKulbhUEW3OiLJ1C1vGGl0lAfGAcFWcg4PHNtzkDJL3g8F7UBSyTBFCx
+	 L+MLWNKvVWaHHl5Eaz/zpWXWhqAFUJ90kY6b2uSscJovuTayoze17jrsp0p6vgssBcRipicjfmgO
+	 cOA0ZdibJr16SIBxrPrpx7rMqoDFGBRRSaIpI8vPxI65E3RZJFLNMDAaLTNGe0qboe2uubP1g8Tk
+	 TO7N/QIjwzO1+DJ+PwPrKX6oZCT1/WsM3CspL3m/2w5F8r8XICrh3Khusi4jZISDzY9uhUkDfyuo
+	 hr/2TXMCYYLeEp5zwdUoSTKU5My7ELQb+zzGBPgxImi9UTv7SsKw0=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+6c6c08700f9480c41fe3@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] [usb?] KASAN: use-after-free Read in rtw_load_firmware_cb
+Date: Fri, 26 Jul 2024 20:26:05 +0800
+X-OQ-MSGID: <20240726122604.2173126-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000391c1d061e1656a0@google.com>
+References: <000000000000391c1d061e1656a0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722171939.3349410-4-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon 2024-07-22 19:25:23, John Ogness wrote:
-> Since ownership can be lost at any time due to handover or
-> takeover, a printing context _must_ be prepared to back out
-> immediately and carefully. However, there are scenarios where
-> the printing context must reacquire ownership in order to
-> finalize or revert hardware changes.
-> 
-> One such example is when interrupts are disabled during
-> printing. No other context will automagically re-enable the
-> interrupts. For this case, the disabling context _must_
-> reacquire nbcon ownership so that it can re-enable the
-> interrupts.
+need wait for wow firmward complete
 
-I am still not sure how this is going to be used. It is suspicious.
-If the context lost the ownership than another started flushing
-higher priority messages.
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git 933069701c1b
 
-Is it really safe to manipulate the HW at this point?
-Won't it break the higher priority context?
+diff --git a/drivers/net/wireless/realtek/rtw88/main.c b/drivers/net/wireless/realtek/rtw88/main.c
+index 7ab7a988b123..ba2066aa46d9 100644
+--- a/drivers/net/wireless/realtek/rtw88/main.c
++++ b/drivers/net/wireless/realtek/rtw88/main.c
+@@ -1316,8 +1316,7 @@ static int rtw_wait_firmware_completion(struct rtw_dev *rtwdev)
+ 
+ 	fw = &rtwdev->fw;
+ 	wait_for_completion(&fw->completion);
+-	if (!fw->firmware)
+-		return -EINVAL;
++	printk("rtwdev: %p, fw name: %s, wow fw name: %s, fw: %p, %s\n", rtwdev, chip->fw_name, chip->wow_fw_name, fw->firmware, __func__);
+ 
+ 	if (chip->wow_fw_name) {
+ 		fw = &rtwdev->wow_fw;
+@@ -2174,6 +2173,7 @@ void rtw_core_deinit(struct rtw_dev *rtwdev)
+ 	struct rtw_rsvd_page *rsvd_pkt, *tmp;
+ 	unsigned long flags;
+ 
++	printk("rtwdev: %p, %s\n", rtwdev, __func__);
+ 	rtw_wait_firmware_completion(rtwdev);
+ 
+ 	if (fw->firmware)
+diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
+index a0188511099a..2bbf285c021a 100644
+--- a/drivers/net/wireless/realtek/rtw88/usb.c
++++ b/drivers/net/wireless/realtek/rtw88/usb.c
+@@ -913,6 +913,7 @@ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 	rtw_usb_free_rx_bufs(rtwusb);
+ 
+ err_release_hw:
++	printk("rtwdev: %p, %s\n", rtwdev, __func__);
+ 	ieee80211_free_hw(hw);
+ 
+ 	return ret;
+@@ -944,6 +945,7 @@ void rtw_usb_disconnect(struct usb_interface *intf)
+ 
+ 	rtw_usb_intf_deinit(rtwdev, intf);
+ 	rtw_core_deinit(rtwdev);
++	printk("rtwdev: %p, %s\n", rtwdev, __func__);
+ 	ieee80211_free_hw(hw);
+ }
+ EXPORT_SYMBOL(rtw_usb_disconnect);
 
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -911,6 +948,15 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
->  		return false;
->  	}
->  
-> +	if (!wctxt->outbuf) {
-
-This check works only when con->write_atomic() called nbcon_reacquire_nobuf().
-
-At least, we should clear the buffer also in nbcon_enter_unsafe() and
-nbcon_exit_unsafe() when they realize that they do own the context.
-
-Even better would be to add a check whether we still own the context.
-Something like:
-
-bool nbcon_can_proceed(struct nbcon_write_context *wctxt)
-{
-	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-	struct nbcon_state cur;
-
-	nbcon_state_read(con, &cur);
-
-	return nbcon_context_can_proceed(ctxt, &cur);
-}
-
-> +		/*
-> +		 * Ownership was lost and reacquired by the driver.
-> +		 * Handle it as if ownership was lost.
-> +		 */
-> +		nbcon_context_release(ctxt);
-> +		return false;
-> +	}
-> +
->  	/*
->  	 * Since any dropped message was successfully output, reset the
->  	 * dropped count for the console.
-
-Best Regards,
-Petr
 
