@@ -1,297 +1,223 @@
-Return-Path: <linux-kernel+bounces-262959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F89F93CF12
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:52:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C7F93CF13
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3E8B20DFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F281C210A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE49176246;
-	Fri, 26 Jul 2024 07:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7F7176AAD;
+	Fri, 26 Jul 2024 07:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU4kQ4zS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZP+sF4Au"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF67F23D2
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B348F1741FB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721980351; cv=none; b=RsZN2jHZj3iw2BcwJpJx+m2lvSij9CIycb2As3pKbVXoLuO50OJ/z0W8Noa9nCiKwxg8YdcZv7ujWVJOSYNDvZuJH/yoeF8jIJLncWLYcZBcnVMHYrj9ZicEqkk3Pn8rJvCYUEHAWWxXKPzSb2PpPlmeNeQr0x+koclxRJIN02w=
+	t=1721980361; cv=none; b=OAvtKbTLjAjqYk3m74MCbrRsGjeb1EbUYqnSzurJ/RCpPiiV6sVllv0ICJ1iRa0EcGyqnSVrqP+krLuhoHG3g4whbcc+02gT3JUOz1yrfRZwhZaRm4ixKeWbcWQ0DBKpHjuLFiXtZYLhi71i3lYhmvQKrP0+nspnckr3E37Bqs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721980351; c=relaxed/simple;
-	bh=1Gnp+jhgyUgxTJJpRd6kmLuy1UmFs3Myw8h0u8lhuzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLfAj0+XV25pgcvcSyNyFYwxyfPqtVAAaampmvKGQ/NTGueXjBHqLaLfLH29ofe2lztHoTetEKgjdgQ7OqjPPq+2l7eYKqdEWAMPrTlW8QN1dwM8Pul8VH24Bof3GvMSz7/JM6T4AMa25glMLkC9BjO5mX0VehiiPsKTyokiz9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gU4kQ4zS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D59C32782;
-	Fri, 26 Jul 2024 07:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721980350;
-	bh=1Gnp+jhgyUgxTJJpRd6kmLuy1UmFs3Myw8h0u8lhuzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gU4kQ4zS0c2qL5ff0aKvNpoOtwV7ktnM/5iIB05ADY2pz4diXLGrtRb81MHd0SyyQ
-	 ckKy2/EHoqf5/3XlSLESpcz1F4ox8pbjVT35lCSzAYyfYxcpm6O4qzPzBB8B8OniXI
-	 h/Lt6VF0HN/7YXC7/5nDESOVGXR/cSx4IoRYBzThyPm/LGdFCQShx3kyZIPnMpgUkm
-	 Zeegq1PMAT4xv1nq63guDkDoIowIEquCvMNzvK5Bf42m5ps/511zn/SQSlhfNuole1
-	 PuNXmqPkpGF/9a11m9M4XovYBxgOCmjYiYEx1OzanizsTqdErx5r9EtLlNFNv/mPVQ
-	 43MyP+Uv0C/qA==
-Date: Fri, 26 Jul 2024 09:52:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Kernel hackers <linux-kernel@vger.kernel.org>, 
-	Patrick Rohr <prohr@google.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: UML/hostfs - mount failure at tip of tree
-Message-ID: <20240726-wurmt-mitfiebern-d8e3f85d6992@brauner>
-References: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
- <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
- <b84a6ef8-7c3b-4c04-81d3-859692d91137@huawei.com>
- <CAHk-=wjH5uKPB6xrWoB8WkBMuLEJO2UsidKE1wV8XSXjAUFO8Q@mail.gmail.com>
- <CANP3RGdgnXOXjnAFe6irf2JwrPsStTLvihKkowpY2ggSgNw7KA@mail.gmail.com>
- <CANP3RGd7AQXPYQVrhjbgEN608Jo7hDUh7nc8VQ62gGQqW0iXMg@mail.gmail.com>
- <4a8ae74e-2f90-4da8-9511-325ca6f67aa6@huawei.com>
+	s=arc-20240116; t=1721980361; c=relaxed/simple;
+	bh=sDHNbFFR8u9Ol5TjK73rCYVuwpJnfqzoenZIDSugLOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lBA3tR2T0gv4SMNu4kd1qPfmTBs7TrQSzjJraNycIoY2I97x0JlgjPGbqR+nFLLAYZVzwibufbI11iECIz76CvgJVU1Dis5jZTWhcB347Aoa0G1Hyl3xOlnA1Nk8S/5Wa3qTLoA7iKPGmw/5pYqeCPtIkC45phent8J3uPds0cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZP+sF4Au; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3993fddea13so78995ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721980359; x=1722585159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBMQzLMIUbcFt/VMX67sOZNaoPLY2OiQ1SguXdFhPbs=;
+        b=ZP+sF4AuIHzAur8twvhjrbJ1ETtlUALymrtQjdig+Ha874uLtbzsowwnQLXdjoDAKd
+         NiMFBa+Ee3SlOLKLOsGcM0cf5N8TC150FrpyDYfF5of7LLb9+uPNCXevsOew/jDMSyyc
+         gvjtA/D5OlNp4k41Nq4pdOLgwR66QU8QKrCp0TEcY8U8xAwfqpa0xUZOso62lzlim/3u
+         N6H1DVWXaVMm2EIyldIrCUe8lVF48f6DYorEaTL2E+Az22lDIJkN6LdxxvZ/QnTOoCEW
+         TPVAHFDq6cbc+x6NejP9U7j5oQO4McinFuwPOoyehQoIaPydGHfb/JzveuVPWS0E1Nw8
+         h4VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721980359; x=1722585159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GBMQzLMIUbcFt/VMX67sOZNaoPLY2OiQ1SguXdFhPbs=;
+        b=mqsP/VDH5NfcMHKqlB9/RxG/7/LuZ6ECkN1uoTf8bZib/7YC9DLAAAGdnLth82B4GN
+         X/tWGhKf3iqjX/cgXMHg6aVa33Y9uojPENIRvPsKIm9enVA1v+83JK+LI4TBQZhivLDk
+         bh4v88kVSje371CnxyHt1Hco6GwyDYs+PUoO+PKRycWbQkzftPpKO7Jn6AlnpmP35TyF
+         s2AZEDeQk61nQa78pnC7QjT7biDkVQHAM+fJ/0BlpQbkqa77NXnsjaYaVRQcFLUBp6r2
+         naMzfbjHxfK+hNIrHw2WUhh1f/Or7otJrZKD8dzGXRg//EKo60m88aQnwCRPhpBrvUA3
+         f0kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDvyPHcJZh/RL6uus90CDXkPP1gmBlkls0PMMRFn6/uBdueBD25pEe+zOG+HzbX6UpwPYRRxs6J7O9bwvm8/JOsRtzTFF1cRzC7wFH
+X-Gm-Message-State: AOJu0YxxiGTjnkzWLXxUF/iDi9cdBpkwWbNtXEXxCrtWmL6RnFKLat0y
+	LCF+DAKRqboLWLEwK5ac6zZdtGw6CWPx03nOXk7u+9qJdXwSMtC/PdiYb6ascJTbs5sKW34YbWj
+	202FA2raFxPBjulj7WnR0hMYy2Gx/kJt0NXFk
+X-Google-Smtp-Source: AGHT+IECrbtVj1fH1Dt53KoC7R4VFg5GwNAQTW30EI0t0xukhScR5m6uiL+Eu7e1Dywp20PIeicc0ZaSLp0fsIsUS78=
+X-Received: by 2002:a05:6e02:1a6c:b0:398:a724:24e6 with SMTP id
+ e9e14a558f8ab-39a2b3fb060mr1813155ab.20.1721980358585; Fri, 26 Jul 2024
+ 00:52:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a8ae74e-2f90-4da8-9511-325ca6f67aa6@huawei.com>
+References: <20240718003025.1486232-1-irogers@google.com> <20240718003025.1486232-4-irogers@google.com>
+ <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com> <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
+ <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com> <CAP-5=fVMV4ZmGk4-XguqV=LAuif-MgAL+BK=mMAE1tC3f3tbhQ@mail.gmail.com>
+ <e8872317-8e18-48aa-9f23-b98af9345bed@linux.intel.com> <CAP-5=fUjEYwdOdmfa5N7b8OOLWDitJKBdeOr8-+UOYWA5+ehkA@mail.gmail.com>
+ <775d8f1d-437d-47a3-b4b2-da476e914cf5@linux.intel.com> <CAP-5=fUH+n+f_q1Tc-a3oV3vDV60VGOLANRFWUemDen197rYog@mail.gmail.com>
+ <c4b499a5-7d2a-44db-bd0c-c123417337a5@amd.com> <3c3d1cd9-ccb1-495d-a670-9ee504fb0bbe@amd.com>
+In-Reply-To: <3c3d1cd9-ccb1-495d-a670-9ee504fb0bbe@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 26 Jul 2024 00:52:25 -0700
+Message-ID: <CAP-5=fXpacz331M71WR1HZHS0p7t9zqNUqBvMf2EjOxaB9Ayyw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in sysfs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, James Clark <james.clark@arm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
+	sandipan.das@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 05:49:16PM GMT, Hongbo Li wrote:
-> 
-> 
-> On 2024/7/24 11:59, Maciej Żenczykowski wrote:
-> > On Tue, Jul 23, 2024 at 7:55 PM Maciej Żenczykowski <maze@google.com> wrote:
-> > > 
-> > > On Tue, Jul 23, 2024 at 7:22 PM Linus Torvalds
-> > > <torvalds@linux-foundation.org> wrote:
-> > > > 
-> > > > On Tue, 23 Jul 2024 at 18:35, Hongbo Li <lihongbo22@huawei.com> wrote:
-> > > > > 
-> > > > > I apologize for causing this issue. I am currently tracking it down.  If
-> > > > > reverting this can solve the problem, you can revert it first.
-> > > > 
-> > > > I don't get the feeling that this is _so_ urgent that it needs to be
-> > > > reverted immediately - let's give it at least a few days and see if
-> > > > you (or somebody else) figures out the bug.
-> > > > 
-> > > > Maciej - if you can verify that folio conversion fix suggestion of
-> > > > mine (or alternatively report that it doesn't help and I was barking
-> > > > up the wrong tree), that would be great.
-> > > 
-> > > That appears to fix the folio patch indeed (ie. I no longer need to revert it).
-> > > 
-> > > The tests are still super unhappy, but I've yet to fix our tests very
-> > > broken netlink parser for changes that released in 6.10, so that may
-> > > be unrelated ;-)
-> > 
-> > +++ fs/hostfs/hostfs_kern.c:
-> >   static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
-> >   {
-> >          struct hostfs_fs_info *fsi = sb->s_fs_info;
-> > -       const char *host_root = fc->source;
-> > +       const char *host_root = "/";
-> > 
-> This doesn't work in case where the host directory is designated (such as
-> mount -t hostfs hostfs -o /home /host).
-> 
-> I can fix this by the following patch, the root cause of this issue is the
-> incorrect parsing of the host directory. The original mount path will use
-> `parse_monolithic` to parse the host directory. For the new mount api, it
-> use `parse_param` directly. So we should call `fsconfig(fd,
-> FSCONFIG_SET_STRING, "hostfs", "xxx", 0)` to mount the hostfs(I think may be
-> we should add hostfs as the key for host directory.). This may need
-> Christian's reviews.:
-> 
-> ```
-> From e7cc3be86a01b8382e9510f6ae1a2764942c7cba Mon Sep 17 00:00:00 2001
-> From: Hongbo Li <lihongbo22@huawei.com>
-> Date: Wed, 24 Jul 2024 16:08:32 +0800
-> Subject: [PATCH] hostfs: fix the host directory parse when mounting.
-> 
-> hostfs not keep the host directory when mounting. When the host
-> directory is none (default), fc->source is used as the host root
-> directory, and this is wrong. Here we use `parse_monolithic` to
-> handle the old mount path for parsing the root directory. For new
-> mount path, The `parse_param` is used for the host directory parse.
-> 
-> Fixes: cd140ce9f611 ("hostfs: convert hostfs to use the new mount API")
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  fs/hostfs/hostfs_kern.c | 64 ++++++++++++++++++++++++++++++++++-------
->  1 file changed, 54 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-> index 3eb747d26924..205c3700a035 100644
-> --- a/fs/hostfs/hostfs_kern.c
-> +++ b/fs/hostfs/hostfs_kern.c
-> @@ -17,6 +17,7 @@
->  #include <linux/writeback.h>
->  #include <linux/mount.h>
->  #include <linux/fs_context.h>
-> +#include <linux/fs_parser.h>
->  #include <linux/namei.h>
->  #include "hostfs.h"
->  #include <init.h>
-> @@ -927,7 +928,6 @@ static const struct inode_operations hostfs_link_iops =
-> {
->  static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->  	struct hostfs_fs_info *fsi = sb->s_fs_info;
-> -	const char *host_root = fc->source;
->  	struct inode *root_inode;
->  	int err;
-> 
-> @@ -941,15 +941,6 @@ static int hostfs_fill_super(struct super_block *sb,
-> struct fs_context *fc)
->  	if (err)
->  		return err;
-> 
-> -	/* NULL is printed as '(null)' by printf(): avoid that. */
-> -	if (fc->source == NULL)
-> -		host_root = "";
-> -
-> -	fsi->host_root_path =
-> -		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-> -	if (fsi->host_root_path == NULL)
-> -		return -ENOMEM;
-> -
->  	root_inode = hostfs_iget(sb, fsi->host_root_path);
->  	if (IS_ERR(root_inode))
->  		return PTR_ERR(root_inode);
-> @@ -975,6 +966,57 @@ static int hostfs_fill_super(struct super_block *sb,
-> struct fs_context *fc)
->  	return 0;
->  }
-> 
-> +enum hostfs_parma {
-> +	Opt_hostfs,
-> +};
-> +
-> +static const struct fs_parameter_spec hostfs_param_specs[] = {
-> +	fsparam_string_empty("hostfs",		Opt_hostfs),
-> +	{}
-> +};
-> +
-> +static int hostfs_parse_param(struct fs_context *fc, struct fs_parameter
-> *param)
-> +{
-> +	struct hostfs_fs_info *fsi = fc->s_fs_info;
-> +	struct fs_parse_result result;
-> +	char *host_root;
-> +	int opt;
-> +
-> +	opt = fs_parse(fc, hostfs_param_specs, param, &result);
-> +	if (opt < 0)
-> +		return opt;
-> +
-> +	switch (opt) {
-> +	case Opt_hostfs:
-> +		host_root = param->string;
-> +		if (!host_root)
-> +			host_root = "";
+On Fri, Jul 26, 2024 at 12:10=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
+>
+>
+>
+> On 7/26/2024 12:36 PM, Dhananjay Ugwekar wrote:
+> > Hello, Ian, Kan,
+> >
+> > On 7/20/2024 3:32 AM, Ian Rogers wrote:
+> >> On Fri, Jul 19, 2024 at 9:35=E2=80=AFAM Liang, Kan <kan.liang@linux.in=
+tel.com> wrote:
+> >>> On 2024-07-19 10:59 a.m., Ian Rogers wrote:
+> >>>> Thanks Kan. I'm not wondering about a case of 2 CPUs, say on CPU0 an=
+d
+> >>>> solely its perf event context, I want to know its core power and
+> >>>> package power as a group so I never record one without the other. Th=
+at
+> >>>> grouping wouldn't be possible with 2 PMUs.
+> >>>
+> >>> For power, to be honest, I don't think it improves anything. It gives
+> >>> users a false image that perf can group these counters.
+> >>> But the truth is that perf cannot. The power counters are all
+> >>> free-running counters. It's impossible to co-schedule them (which
+> >>> requires a global mechanism to disable/enable all counters, e.g.,
+> >>> GLOBAL_CTRL for core PMU). The kernel still has to read the counters =
+one
+> >>> by one while the counters keep running. There are no differences with=
+ or
+> >>> without a group for the power events.
+> >>
+> >> Ok, so power should copy cstate with _core, _pkg, etc. I agree the
+> >> difference is small and I like the idea of being consistent.
+> >
+> > So, it seems we want to follow the new PMU addition approach for RAPL
+> > being consistent with Intel cstate driver, should I revive my "power_pe=
+r_core"
+> > PMU thread now?
+>
+> The power_per_core PMU thread link for reference,
+>
+> https://lore.kernel.org/all/20240711102436.4432-1-Dhananjay.Ugwekar@amd.c=
+om/
 
-That should be:
+I think so. Would it be possible to follow the same naming convention
+as cstate, where there is cstate_pkg and cstate_core? (ie no "_per" in
+the name)
 
-host_root = param->string;
-if (!*host_root)
-	host_root = "";
+Thanks,
+Ian
 
-as param->string is never NULL but can be an empty string. I'll fix that
-up though.
-
-Otherwise overall looks sane to me.
-
-I'm a bit puzzled that hostfs allowed to specify an option without a key like:
-
-mount("hostfs", "/mnt", "/home");
-
-but ok. So in the new mount api you did:
-
-fsconfig(fd, FSCONFIG_SET_STRING, "hostfs", "/home", 0);
-
-which I think is a lot saner.
-
-> +		fsi->host_root_path =
-> +			kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-> +		if (fsi->host_root_path == NULL)
-> +			return -ENOMEM;
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +static int hostfs_parse_monolithic(struct fs_context *fc, void *data)
-> +{
-> +	struct hostfs_fs_info *fsi = fc->s_fs_info;
-> +	char *host_root = (char *)data;
-> +
-> +	/* NULL is printed as '(null)' by printf(): avoid that. */
-> +	if (host_root == NULL)
-> +		host_root = "";
-> +
-> +	fsi->host_root_path =
-> +		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-> +	if (fsi->host_root_path == NULL)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
->  static int hostfs_fc_get_tree(struct fs_context *fc)
->  {
->  	return get_tree_nodev(fc, hostfs_fill_super);
-> @@ -992,6 +1034,8 @@ static void hostfs_fc_free(struct fs_context *fc)
->  }
-> 
->  static const struct fs_context_operations hostfs_context_ops = {
-> +	.parse_monolithic = hostfs_parse_monolithic,
-> +	.parse_param	= hostfs_parse_param,
->  	.get_tree	= hostfs_fc_get_tree,
->  	.free		= hostfs_fc_free,
->  };
-> -- 
-> 2.34.1
-> ```
-> 
-> Thanks,
-> Hongbo
-> 
-> > appears to fix the problem (when combined with Linus' folio fix).
-> > 
-> > I think fc->source is just the 'block device' passed to mount, and
-> > thus for a virtual filesystem like hostfs, it is just garbage...
-> > 
-> > (and with the appropriate netlink fixes all the tests now pass at tip-of-tree:
-> > 87f3073c2871 (HEAD) hostfs_fill_super(): host_root := "/" (not fc->source)
-> > 2743a4aabac6 fs/hostfs/hostfs_kern.c:445 buffer =
-> > folio_zero_tail(folio, bytes_read, buffer + bytes_read);
-> > a2caf678d7e1 neighbour: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GETNEIGH
-> > 3bb0c5772acf net: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GET(RULE|ROUTE)
-> > 786c8248dbd3 (linux/master) Merge tag
-> > 'perf-tools-fixes-for-v6.11-2024-07-23' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
-> > )
-> > 
-> > > > And perhaps remind me about this mount API thing too if it doesn't
-> > > > seem to be resolved by the end of the week when I'm starting to get
-> > > > ready to do the rc1?
-> > > > 
-> > > >               Linus
-> > > 
-> > > --
-> > > Maciej Żenczykowski, Kernel Networking Developer @ Google
-> > 
-> > --
-> > Maciej Żenczykowski, Kernel Networking Developer @ Google
-> > 
+> >
+> > Thanks,
+> > Dhananjay
+> >
+> >  Do we
+> >> want to add "event.cpus" support to the tool anyway for potential
+> >> future uses? This would at least avoid problems with newer kernels and
+> >> older perf tools were we to find a good use for it.
+> >>
+> >>>> My understanding had been that for core PMUs a "perf stat -C" option
+> >>>> would choose the particular CPU to count the event on, for an uncore
+> >>>> PMU the -C option would override the cpumask's "default" value. We
+> >>>> have code to validate this:
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next=
+.git/tree/tools/perf/util/evlist.c?h=3Dperf-tools-next#n2522
+> >>>> But it seems now that overriding an uncore PMU's default CPU is
+> >>>> ignored.
+> >>>
+> >>> For the uncore driver, no matter what -C set, it writes the default C=
+PU
+> >>> back.
+> >>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
+git/tree/arch/x86/events/intel/uncore.c#n760
+> >>>
+> >>>> If you did:
+> >>>> $ perf stat -C 1 -e data_read -a sleep 0.1
+> >>>> Then the tool thinks data_read is on CPU1 and will set its thread
+> >>>> affinity to CPU1 to avoid IPIs. It seems to fix this we need to just
+> >>>> throw away the -C option.
+> >>> The perf tool can still read the the counter from CPU1 and no IPIs
+> >>> because of the PMU_EV_CAP_READ_ACTIVE_PKG().
+> >>>
+> >>> Not quite sure, but it seems only the open and close may be impacted =
+and
+> >>> silently changed to CPU0.
+> >>
+> >> There's also enable/disable. Andi did the work and there were some
+> >> notable gains but likely more on core events. Ultimately it'd be nice
+> >> to be opening, closing.. everything in parallel given the calls are
+> >> slow and the work is embarrassingly parallel.
+> >> It feels like the cpumasks for uncore could still do with some cleanup
+> >> wrt -C I'm just unsure at the moment what this should be. Tbh, I'm
+> >> tempted to rewrite evlist propagate maps as someone may look at it and
+> >> think I believe in what it is doing. The parallel stuff we should grab
+> >> Riccardo's past work.
+> >>
+> >> Thanks,
+> >> Ian
+> >>
+> >>
+> >>> Thanks,
+> >>> Kan
+> >>>>
+> >>>>>> 2) do the /sys/devices/<pmu>/events/event.(unit|scale|per-pkg|snap=
+shot)
+> >>>>>> files parse correctly and have a corresponding event.
+> >>>>>> 3) keep adding opening events on the PMU to a group to make sure t=
+hat
+> >>>>>> when counters are exhausted the perf_event_open fails (I've seen t=
+his
+> >>>>>> bug on AMD)
+> >>>>>> 4) are the values in the type file unique
+> >>>>>>
+> >>>>>
+> >>>>> The rest sounds good to me.
+> >>>>
+> >>>> Cool. Let me know if you can think of more.
+> >>>>
+> >>>> Thanks,
+> >>>> Ian
+> >>>>
+> >>>>> Thanks,
+> >>>>> Kan
+> >>>>
+>
 
