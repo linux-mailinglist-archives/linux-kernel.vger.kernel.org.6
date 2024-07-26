@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-263389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8211493D53D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:41:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC6393D540
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4BA2819D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:41:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC19B1C23198
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E5B178CC8;
-	Fri, 26 Jul 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/gaqAEG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D21EB5B;
-	Fri, 26 Jul 2024 14:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339781CD06;
+	Fri, 26 Jul 2024 14:42:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85C91CF8A;
+	Fri, 26 Jul 2024 14:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722004867; cv=none; b=Ppv6dHhNTP28unMLUkerKLYjuHQcszg+iFRqdHS6I1ggRibL2hCfuSjdaDV44U3MPl/P7pDjL9jY7AHOnx9D/MD3ym1LFSHHbAAjUUXNpYo+SbE94NjVrzQKnZIjvUuEt0wjwnU4EvR1fytPcKw+qWKxSgmJjEc6y8URj/d64c0=
+	t=1722004920; cv=none; b=rCm5qodHUEhdH/bvtl3BhNSLMg5ZW+lOYVicjn3Xx0GbMmjGzCaBnutJhDH/YquBzhOeHTyytsZcGIeDTwZhsdwWkYi6Z9AFB20PXhFpHJrzeRcV9DHtpPyT2TsuCYCtFey62hwsFpKYlCny2FeUd5oe66v8dxu+6IYh6Nj1DZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722004867; c=relaxed/simple;
-	bh=Hd1JL23dFGnnsdWDCsLGIwCVYvzc8IgxEpr1AwQ/8yc=;
+	s=arc-20240116; t=1722004920; c=relaxed/simple;
+	bh=OVjAR3xpxSrVrspulml4D2ZEroEl46/dn79c/9mOqXA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Icw19nsTgJUs6wRHBDyOilWPqf/AzrwSFos/t+EXpmj95D4myWT+oDouRd/bP6UHH0sKXQQJKAK5IetAYD9TXsBHUwL/mER45pZkrrfiFT84fzvYh+ltKvmbM1kI8h/F09fqwGU8nJd6iD/Di+gQ98xOwp41PJKyK01slUcpEI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/gaqAEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B00DC32782;
-	Fri, 26 Jul 2024 14:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722004866;
-	bh=Hd1JL23dFGnnsdWDCsLGIwCVYvzc8IgxEpr1AwQ/8yc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/gaqAEGz71trf62Ions1brmcum60sa9P9+4cGUhvDRYEG1tqVQ8owmjg/LrtTvmy
-	 yxrgTQgoiM4DfV//wsgnpBjwj+gFRSIgPgMxYyNdWT3ih3wYlJBYp9ss3pwemfLA3l
-	 KqqgaS9yG9SFs7VgiFp9kYT1SnpYXc9fhWOXcnowmSOTjMhYiIrfTLH2ECQZ6jrnKj
-	 5VOISAaL4VKHUl2ZxD6rOdLXUXhnOUS+/eIUJ4FAcpRif1z/5moMGrF/nza9MEMtcV
-	 JXPQDId8MRJvnyi21nwCwZvBcHZ4veChE7xkWxp/EQW6OaXhMr0/UPvr4+b05f0yDI
-	 w6Hd0FsBPhh5g==
-Date: Fri, 26 Jul 2024 11:41:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.ibm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V9 02/13] perf/core: Add aux_pause, aux_resume,
- aux_start_paused
-Message-ID: <ZqO1gBIYnLiDpQWv@x1>
-References: <20240715160712.127117-1-adrian.hunter@intel.com>
- <20240715160712.127117-3-adrian.hunter@intel.com>
- <20240718093846.GJ26750@noisy.programming.kicks-ass.net>
- <14cd68b2-eeee-42e3-87a6-c12d3814bd51@intel.com>
- <20240718115126.GK26750@noisy.programming.kicks-ass.net>
- <20240718125849.GI28838@noisy.programming.kicks-ass.net>
- <ef63885b-f762-4398-beff-c695b24304e6@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcEfwnUDgnuu0hilu7G0G40Jv201YHoakwx04LpmXGQnmAO4TP+IpXNHnrTIzFEgMEpzIFmDGiaFmbGYFsJyMD7QfNkURcrkgocUUcxUa702pox6E53k4qFPxUGf0/nq6QQYEmrCrsE0UPtCNOp8+xqgguZz3LgDmvLUgw7LzGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 856C71007;
+	Fri, 26 Jul 2024 07:42:23 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C5133F5A1;
+	Fri, 26 Jul 2024 07:41:56 -0700 (PDT)
+Date: Fri, 26 Jul 2024 15:41:53 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Dhruva Gole <d-gole@ti.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] clk: scmi: add is_prepared hook
+Message-ID: <ZqO1sd2PP525g3U0@bogus>
+References: <20240726131007.1651996-1-peng.fan@oss.nxp.com>
+ <20240726134414.2ctbtt53sd3lyfjl@dhruva>
+ <ZqOuWbgCORuk9Qu5@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ef63885b-f762-4398-beff-c695b24304e6@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqOuWbgCORuk9Qu5@pluto>
 
-On Thu, Jul 18, 2024 at 06:06:16PM +0300, Adrian Hunter wrote:
-> On 18/07/24 15:58, Peter Zijlstra wrote:
-> > On Thu, Jul 18, 2024 at 01:51:26PM +0200, Peter Zijlstra wrote:
+On Fri, Jul 26, 2024 at 03:11:08PM +0100, Cristian Marussi wrote:
+> On Fri, Jul 26, 2024 at 07:14:14PM +0530, Dhruva Gole wrote:
+> > On Jul 26, 2024 at 21:10:07 +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > > 
+> > > Some clks maybe default enabled by hardware, so add is_prepared hook
+> > > for non-atomic clk_ops to get the status of the clk. Then when disabling
+> > > unused clks, those unused clks but default hardware on clks could be
+> > > in off state to save power.
+> > > 
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > > 
+> > > V2:
+> > >  Provider helper __scmi_clk_is_enabled for atomic and non-atomic usage
+> > >  Move is_prepared hook out of SCMI_CLK_STATE_CTRL_SUPPORTED
+> > > 
+> > >  drivers/clk/clk-scmi.c | 16 ++++++++++++++--
+> > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > > index d86a02563f6c..15510c2ff21c 100644
+> > > --- a/drivers/clk/clk-scmi.c
+> > > +++ b/drivers/clk/clk-scmi.c
+> > > @@ -156,13 +156,13 @@ static void scmi_clk_atomic_disable(struct clk_hw *hw)
+> > >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
+> > >  }
+> > >  
+> > > -static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+> > > +static int __scmi_clk_is_enabled(struct clk_hw *hw, bool atomic)
 > > 
-> >> OK, let me do that and make a few more edits and see if I can stare at
-> >> that next patch some.
-> > 
-> > I pushed out a stack of patches into queue.git perf/core
-> > Could you please double check I didn't wreck anything?
+> > I think we can combine other atomic/non atomic in the same way no?
+> > Let me know if I should send a follow up patch based on this to make
+> > __scmi_clk_enable(hw,atomic) and __scmi_clk_disable(hw,atomic)
 > 
-> Looks fine, and seems to work OK in a brief test.
+> I dont think that it is worth unifying also the disable/enable atomic and
+> non_atomic versions because if you look at their implementations they are
+> indeed already wrappers around the state_get()....this new is_prepared/is_enabled
+> were more 'thick' and so there was  a lot of duplicated code.
 > 
-> Thank you! :-)
 
-So should I go ahead and pick the tooling patches since the kernel bits
-are merged?
++1, was planning to respond with similar message. Just jumped now as you
+made it easier for me 😁.
 
-- Arnaldo
+-- 
+Regards,
+Sudeep
 
