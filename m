@@ -1,228 +1,274 @@
-Return-Path: <linux-kernel+bounces-263229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889E293D2FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5236593D2FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E94FCB23765
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83A61F22384
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9A17B410;
-	Fri, 26 Jul 2024 12:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="M6FgHhOr"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4178717B410;
+	Fri, 26 Jul 2024 12:31:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ABE23775
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0541D13C9CD
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721997037; cv=none; b=I87DJhXNaQqIAzSVB+H1o7l34LndvPaafFlPX+pDlIw1jMq50p48iZykjNuykw6Q9L4nxA8NefeUlJdREekmuxEo12rPN+1/4RDROuBiSkWz3s5QmTNf/jv0V0T5Xhpc4pkF8IBpb8LJximuOF7pAOJRfw/34HkOreHVqdYx+To=
+	t=1721997060; cv=none; b=tr0S1KnxMv2xu76nRIZHO1lh65B0zjAv2Rsv5vv6ZqwnBtOhLMhvDCrQvFs6qR0/HqWmzOqaNkU3R/dx56RyaMBbAFgpTi/IRp91pZLWPqvKGDg26hCL6rxpn69wENDfYaz+Ycv0j0OwDSjy0Mb31kxjryv3DCe8sp/P193jOPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721997037; c=relaxed/simple;
-	bh=q6Gwtss3pvnFcF/qkSJd20jqPuiCyMwdizvyf7ygzqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pFSyYUCEafWZwf1wvgm8vbzAqlTBKtVZRJ0bak1wg4RNQ7b9hu4myFHkljuLvdFsXPC9cHKcf/K0e7N3yRA5nCwASXjngYiUKMueEqDLvtq+x75TAqmsc87ueJCAIM9D1YEqeVM0yZ5gHNAg3Jo0ZiiVUnY5J2sq8264GDMubG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=M6FgHhOr; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f025bc147so1638078e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1721997033; x=1722601833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4MkoL6imQpG1KUTejyUrTfPNQmWj1rXtOt1VDTD28qg=;
-        b=M6FgHhOrJW43fOsJjgvDzk8ZBbrPOZmAtKLR47dSG51Rn3jfQbMZtTbIL1J0lmJkT7
-         OsvKaug0y/Qc6z6DqXxPozyFqSlwGh2vgJI3AKC589DZig7/UiOg56wgjBaUyEskH0jN
-         bkAlg+QY9j5k5HKZNYXf4dx3r9G6nWHIDCPZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721997033; x=1722601833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4MkoL6imQpG1KUTejyUrTfPNQmWj1rXtOt1VDTD28qg=;
-        b=HeA6Vn4n0r135YuG62403rBmpkJml51uyQ+DrEbr/WwDHFdVjlZhsGSJebzVkee66p
-         trb11hDdE1CyUWDp1VkKSvDwM6s5TA9hNgPd5b75DU2p0QDea0mqEz8bHiyLk9Hf/vJ6
-         +pFP5fjimK6Um8AzLFNkqT3Sodh91PZ+9uDJsnOqrHlZ8pemBdjk5Yv55vbf4JHhZpqO
-         oGDRmXxV1hJBZjb+YG6qzAos/7zl/+BWOwmOoA+3iHhsEZBFkAZ5nkHc/nVDQLBxdHPn
-         Pal6XSkkAmaMrT6W+PIOlYAQhSRNSEPe4euvMc85prVHYvJFLG0xOGXdlXFTxtkfeVrS
-         EJ+A==
-X-Gm-Message-State: AOJu0Yxo7PclC7s7bX1iZKKvdCP5bTWBEg9ziZJZrwEHgnXb0hWz7TQA
-	Z5jxTzzoVi3TIDBDuPIy4ixLIoMUOQ7L1x8Nq5a7DZjnezUhcT/J+9BAboyFi6BaG9VuIEMUmgJ
-	VnUp3fVndxktPkkyR2PoBNyOiiAaxtgUqwkCn
-X-Google-Smtp-Source: AGHT+IHkiXxBHJEZwIYGFtIgX4qqpAl+b/dQWWfKIM/DLi0NsWavT/GbnRBQVEJVmYB4jXGauKqc1dPkgIpA6XtKiyk=
-X-Received: by 2002:a05:6512:280c:b0:52c:e09c:b747 with SMTP id
- 2adb3069b0e04-52fd3f1fb23mr4108542e87.27.1721997032594; Fri, 26 Jul 2024
- 05:30:32 -0700 (PDT)
+	s=arc-20240116; t=1721997060; c=relaxed/simple;
+	bh=ScJ2q3whSbhU+hCbeJE29SRXtDNYwZj8tTgd1KpWqzs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l0LmDDd/n9lNnUm0ibE2JtoedK1j+kVrDANQpPGrS42iFJskDRhCDMUepeWknb2bJxUq2whXMLy08kFdXtTWGbqIrZDm0dZT5U7YfTPsxIWjhTzfo08NwukYGtsH1yjnFtEHoAaDZgqaISmFAp1iSEISYqFirVt14A7AthFEX30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WVn9t0DCHz6K5ny;
+	Fri, 26 Jul 2024 20:29:06 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id F25AE140A34;
+	Fri, 26 Jul 2024 20:30:49 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 26 Jul
+ 2024 13:30:49 +0100
+Date: Fri, 26 Jul 2024 13:30:48 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Philippe =?ISO-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>, Ani Sinha
+	<anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, Igor Mammedov
+	<imammedo@redhat.com>, "Marcel Apfelbaum" <marcel.apfelbaum@gmail.com>, Peter
+ Maydell <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+	"Yanan Wang" <wangyanan55@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v3 2/7] arm/virt: Wire up GPIO error source for ACPI /
+ GHES
+Message-ID: <20240726133048.00004e13@Huawei.com>
+In-Reply-To: <034a7e86761e09996001394c98ffb8201ac52cd2.1721630625.git.mchehab+huawei@kernel.org>
+References: <cover.1721630625.git.mchehab+huawei@kernel.org>
+	<034a7e86761e09996001394c98ffb8201ac52cd2.1721630625.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725201517.3c52e4b0@gandalf.local.home>
-In-Reply-To: <20240725201517.3c52e4b0@gandalf.local.home>
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-Date: Fri, 26 Jul 2024 18:00:18 +0530
-Message-ID: <CAD2QZ9b7=Y_x6o6R2UGwDRCky522A0fbiX_BxrY9w2LPyd=0sw@mail.gmail.com>
-Subject: Re: [PATCH] tracing: Have format file honor EVENT_FILE_FL_FREED
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mathias Krause <minipli@grsecurity.net>, 
-	=?UTF-8?B?SWxra2EgTmF1bGFww6TDpA==?= <digirigawa@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	regressions@leemhuis.info, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Alexey Makhalov <alexey.makhalov@broadcom.com>, 
-	Vasavi Sirnapalli <vasavi.sirnapalli@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Jul 26, 2024 at 5:45=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> From: Steven Rostedt <rostedt@goodmis.org>
->
-> When eventfs was introduced, special care had to be done to coordinate th=
-e
-> freeing of the file meta data with the files that are exposed to user
-> space. The file meta data would have a ref count that is set when the fil=
-e
-> is created and would be decremented and freed after the last user that
-> opened the file closed it. When the file meta data was to be freed, it
-> would set a flag (EVENT_FILE_FL_FREED) to denote that the file is freed,
-> and any new references made (like new opens or reads) would fail as it is
-> marked freed. This allowed other meta data to be freed after this flag wa=
-s
-> set (under the event_mutex).
->
-> All the files that were dynamically created in the events directory had a
-> pointer to the file meta data and would call event_release() when the las=
-t
-> reference to the user space file was closed. This would be the time that =
-it
-> is safe to free the file meta data.
->
-> A short cut was made for the "format" file. It's i_private would point to
-> the "call" entry directly and not point to the file's meta data. This is
-> because all format files are the same for the same "call", so it was
-> thought there was no reason to differentiate them.  The other files
-> maintain state (like the "enable", "trigger", etc). But this meant if the
-> file were to disappear, the "format" file would be unaware of it.
->
-> This fixes two bugs in the same code. One is a race that could be trigger
-> via the user_events test (that would create dynamic events and free them)=
-,
-> and running a loop that would read the user_events format files:
->
-> In one console run:
->
->  # cd tools/testing/selftests/user_events
->  # while true; do ./ftrace_test; done
->
-> And in another console run:
->
->  # cd /sys/kernel/tracing/
->  # while true; do cat events/user_events/__test_event/format; done 2>/dev=
-/null
->
-> With KASAN memory checking, it would trigger a use-after-free bug. This w=
-as
-> because the format file was not checking the file's meta data flag
-> "EVENT_FILE_FL_FREED", so it would access the event that the file meta da=
-ta
-> pointed to after it was freed.
->
-> The second bug is that the dynamic "format" file also registered a callba=
-ck
-> to decrement the meta data, but the "data" pointer passed to the callback
-> was the event itself. Not the meta data to free. This would either cause =
-a
-> memory leak (the meta data never was freed) or a crash as it could have
-> incorrectly freed the event itself.
->
-> Link: https://lore.kernel.org/all/20240719204701.1605950-1-minipli@grsecu=
-rity.net/
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Mathias Krause <minipli@grsecurity.net>
-> Fixes: b63db58e2fa5d ("eventfs/tracing: Add callback for release of an ev=
-entfs_inode")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Mon, 22 Jul 2024 08:45:54 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> Creates a GED - Generic Event Device and set a GPIO to
+The wonder of confusing names in ACPI.  I thought I'd
+fixed this but clearly not.
+
+This GED isn't a Generic Event Device, it's a 
+Generic Error (Device) as per 
+18.3.2.7.2  Event Notification for Generic Error Sources
+in ACPI 6.5
+PNP0C33 vs Generic Event Device which is unrelated :(
+and has ID ACPI0013
+
+This one is a bit of ACPI glue logic.
+https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+which is the kernel patch provides a bit more info.
+In kernel world this is called Hardware Error Device
+I guess to avoid tripping over GED naming?
+Maybe we are better using that here - so HED_*
+
+> be used or error injection.
+
+This should probably shout a bit more about the
+set_error callback added to struct MachineClass
+
+Whilst that works I suspect it will be controversial and I'd like to hear
+other suggestions on how to provide a convenient hook to signal that
+we've put an event in the firmware buffer where that signaling can come
+from pretty much any hw device emulation in QEMU.
+
+Jonathan
+
+
+
+> 
+> [mchehab: use a define for the generic event pin number and do some cleanups]
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->  kernel/trace/trace_events.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 6ef29eba90ce..852643d957de 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -1540,7 +1540,8 @@ enum {
->
->  static void *f_next(struct seq_file *m, void *v, loff_t *pos)
+>  hw/arm/virt-acpi-build.c | 30 ++++++++++++++++++++++++++----
+>  hw/arm/virt.c            | 14 ++++++++++++--
+>  include/hw/arm/virt.h    |  1 +
+>  include/hw/boards.h      |  1 +
+>  4 files changed, 40 insertions(+), 6 deletions(-)
+> 
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index f76fb117adff..c502ccf40909 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -63,6 +63,7 @@
+>  
+>  #define ARM_SPI_BASE 32
+>  
+> +#define ACPI_GENERIC_EVENT_DEVICE "GEDD"
+>  #define ACPI_BUILD_TABLE_SIZE             0x20000
+>  
+>  static void acpi_dsdt_add_cpus(Aml *scope, VirtMachineState *vms)
+> @@ -142,6 +143,8 @@ static void acpi_dsdt_add_pci(Aml *scope, const MemMapEntry *memmap,
+>  static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+>                                             uint32_t gpio_irq)
 >  {
-> -       struct trace_event_call *call =3D event_file_data(m->private);
-> +       struct trace_event_file *file =3D event_file_data(m->private);
-> +       struct trace_event_call *call =3D file->event_call;
->         struct list_head *common_head =3D &ftrace_common_fields;
->         struct list_head *head =3D trace_get_fields(call);
->         struct list_head *node =3D v;
-> @@ -1572,7 +1573,8 @@ static void *f_next(struct seq_file *m, void *v, lo=
-ff_t *pos)
->
->  static int f_show(struct seq_file *m, void *v)
+> +    uint32_t pin;
+> +
+>      Aml *dev = aml_device("GPO0");
+>      aml_append(dev, aml_name_decl("_HID", aml_string("ARMH0061")));
+>      aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+> @@ -155,7 +158,12 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+>  
+>      Aml *aei = aml_resource_template();
+>  
+> -    const uint32_t pin = GPIO_PIN_POWER_BUTTON;
+> +    pin = GPIO_PIN_POWER_BUTTON;
+> +    aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
+> +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
+> +                                 "GPO0", NULL, 0));
+> +    /* Pin for generic error */
+> +    pin = GPIO_PIN_GENERIC_ERROR;
+>      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
+>                                   AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
+>                                   "GPO0", NULL, 0));
+> @@ -166,6 +174,11 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+>      aml_append(method, aml_notify(aml_name(ACPI_POWER_BUTTON_DEVICE),
+>                                    aml_int(0x80)));
+>      aml_append(dev, method);
+> +    method = aml_method("_E06", 0, AML_NOTSERIALIZED);
+> +    aml_append(method, aml_notify(aml_name(ACPI_GENERIC_EVENT_DEVICE),
+> +                                  aml_int(0x80)));
+> +    aml_append(dev, method);
+> +
+>      aml_append(scope, dev);
+>  }
+>  
+> @@ -800,6 +813,15 @@ static void build_fadt_rev6(GArray *table_data, BIOSLinker *linker,
+>      build_fadt(table_data, linker, &fadt, vms->oem_id, vms->oem_table_id);
+>  }
+>  
+> +static void acpi_dsdt_add_generic_event_device(Aml *scope)
+> +{
+> +    Aml *dev = aml_device(ACPI_GENERIC_EVENT_DEVICE);
+> +    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
+> +    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+> +    aml_append(dev, aml_name_decl("_STA", aml_int(0xF)));
+> +    aml_append(scope, dev);
+> +}
+> +
+>  /* DSDT */
+>  static void
+>  build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+> @@ -841,10 +863,9 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+>                        HOTPLUG_HANDLER(vms->acpi_dev),
+>                        irqmap[VIRT_ACPI_GED] + ARM_SPI_BASE, AML_SYSTEM_MEMORY,
+>                        memmap[VIRT_ACPI_GED].base);
+> -    } else {
+> -        acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> -                           (irqmap[VIRT_GPIO] + ARM_SPI_BASE));
+>      }
+> +    acpi_dsdt_add_gpio(scope, &memmap[VIRT_GPIO],
+> +                       (irqmap[VIRT_GPIO] + ARM_SPI_BASE));
+>  
+>      if (vms->acpi_dev) {
+>          uint32_t event = object_property_get_uint(OBJECT(vms->acpi_dev),
+> @@ -858,6 +879,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
+>      }
+>  
+>      acpi_dsdt_add_power_button(scope);
+> +    acpi_dsdt_add_generic_event_device(scope);
+>  #ifdef CONFIG_TPM
+>      acpi_dsdt_add_tpm(scope, vms);
+>  #endif
+> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+> index c99c8b1713c6..f81cf3a69961 100644
+> --- a/hw/arm/virt.c
+> +++ b/hw/arm/virt.c
+> @@ -997,6 +997,13 @@ static void create_rtc(const VirtMachineState *vms)
+>  }
+>  
+>  static DeviceState *gpio_key_dev;
+> +
+> +static DeviceState *gpio_error_dev;
+> +static void virt_set_error(void)
+> +{
+> +    qemu_set_irq(qdev_get_gpio_in(gpio_error_dev, 0), 1);
+> +}
+> +
+>  static void virt_powerdown_req(Notifier *n, void *opaque)
 >  {
-> -       struct trace_event_call *call =3D event_file_data(m->private);
-> +       struct trace_event_file *file =3D event_file_data(m->private);
-> +       struct trace_event_call *call =3D file->event_call;
->         struct ftrace_event_field *field;
->         const char *array_descriptor;
->
-> @@ -1627,12 +1629,14 @@ static int f_show(struct seq_file *m, void *v)
->
->  static void *f_start(struct seq_file *m, loff_t *pos)
->  {
-> +       struct trace_event_file *file;
->         void *p =3D (void *)FORMAT_HEADER;
->         loff_t l =3D 0;
->
->         /* ->stop() is called even if ->start() fails */
->         mutex_lock(&event_mutex);
-> -       if (!event_file_data(m->private))
-> +       file =3D event_file_data(m->private);
-> +       if (!file || (file->flags & EVENT_FILE_FL_FREED))
->                 return ERR_PTR(-ENODEV);
+>      VirtMachineState *s = container_of(n, VirtMachineState, powerdown_notifier);
+> @@ -1015,6 +1022,9 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+>      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
+>                                          qdev_get_gpio_in(pl061_dev,
+>                                                           GPIO_PIN_POWER_BUTTON));
+> +    gpio_error_dev = sysbus_create_simple("gpio-key", -1,
+> +                                          qdev_get_gpio_in(pl061_dev,
+> +                                                           GPIO_PIN_GENERIC_ERROR));
+>  
+>      qemu_fdt_add_subnode(fdt, "/gpio-keys");
+>      qemu_fdt_setprop_string(fdt, "/gpio-keys", "compatible", "gpio-keys");
+> @@ -2385,9 +2395,8 @@ static void machvirt_init(MachineState *machine)
+>  
+>      if (has_ged && aarch64 && firmware_loaded && virt_is_acpi_enabled(vms)) {
+>          vms->acpi_dev = create_acpi_ged(vms);
+> -    } else {
+> -        create_gpio_devices(vms, VIRT_GPIO, sysmem);
+>      }
+> +    create_gpio_devices(vms, VIRT_GPIO, sysmem);
+>  
+>      if (vms->secure && !vmc->no_secure_gpio) {
+>          create_gpio_devices(vms, VIRT_SECURE_GPIO, secure_sysmem);
+> @@ -3101,6 +3110,7 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
+>      mc->default_ram_id = "mach-virt.ram";
+>      mc->default_nic = "virtio-net-pci";
+>  
+> +    mc->set_error = virt_set_error;
+>      object_class_property_add(oc, "acpi", "OnOffAuto",
+>          virt_get_acpi, virt_set_acpi,
+>          NULL, NULL);
+> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
+> index a4d937ed45ac..c9769d7d4d7f 100644
+> --- a/include/hw/arm/virt.h
+> +++ b/include/hw/arm/virt.h
+> @@ -49,6 +49,7 @@
+>  
+>  /* GPIO pins */
+>  #define GPIO_PIN_POWER_BUTTON  3
+> +#define GPIO_PIN_GENERIC_ERROR 6
+>  
+>  enum {
+>      VIRT_FLASH,
+> diff --git a/include/hw/boards.h b/include/hw/boards.h
+> index ef6f18f2c1a7..6cf01f3934ae 100644
+> --- a/include/hw/boards.h
+> +++ b/include/hw/boards.h
+> @@ -304,6 +304,7 @@ struct MachineClass {
+>      const CPUArchIdList *(*possible_cpu_arch_ids)(MachineState *machine);
+>      int64_t (*get_default_cpu_node_id)(const MachineState *ms, int idx);
+>      ram_addr_t (*fixup_ram_size)(ram_addr_t size);
+> +    void (*set_error)(void);
+>  };
+>  
+>  /**
 
-Some doubt:
-Because of the same race condition, it may happen that kmem_cache_free(file=
-)
-was executed while f_start() is waiting to get event_mutex. Once
-f_start() acquires
-event_mutex, it will access the *file which points to the freed cache.
-I am assuming in this case KASAN will not show anything as *file
-belongs to cache.
-
-- Ajay
-
->         while (l < *pos && p)
-> @@ -2485,7 +2489,6 @@ static int event_callback(const char *name, umode_t=
- *mode, void **data,
->         if (strcmp(name, "format") =3D=3D 0) {
->                 *mode =3D TRACE_MODE_READ;
->                 *fops =3D &ftrace_event_format_fops;
-> -               *data =3D call;
->                 return 1;
->         }
->
-> --
-> 2.43.0
->
 
