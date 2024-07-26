@@ -1,148 +1,91 @@
-Return-Path: <linux-kernel+bounces-263833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DCE93DB2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:34:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A6993DB2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4709E1F23B75
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BD91C231DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8866714B06A;
-	Fri, 26 Jul 2024 23:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3783014B07E;
+	Fri, 26 Jul 2024 23:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="szm0+8Ox"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RXtEjK5w"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4933A14036F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5BE17BDC
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722036850; cv=none; b=cuNvPjBg9ddWo/l1rdDtIUQ/uYXhmx+ruGmoC6cVuwxC2ag4T29mpe7GtTBtJu3YG4wQb7JsfckiAx0ZKU5BPe1hSgsJSTQpYf401Jt1FpexGXA5BRJcrCmNqbbglDS+wJwX5IWfHmRuAJ/Xm8u2hB7mh9S6se1NWNuhy0Uz3e8=
+	t=1722037208; cv=none; b=TfgbVqvBROBF0rCEXm7HuPGrh3goH0zGgaOjkoWa6gqFiuflmodztePIRJbutRnWPYLx7NZ20dTyegZvNKqJ+L57lirN6auuHFn55T6WjYySthOICYw5b0CTmru+ok4eNZdapNipaCDmRK3dI6kGmFbKMo8paCuG9K0AV4FGx58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722036850; c=relaxed/simple;
-	bh=RQtMbylGuU16XFykl5/Sl5CGPbrXSVa/OeAnd9P5ZI0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BAaZGt7MVQ1JYxs4VHd6GWMTTipQ2JMzaMmTmYapzSiXe26xVQPknDK+92cZSJee4EwcmxTwWhFH/degpgpvYDVIUvX3Qq7ofRPU5uTqWfzm1MqsXnyFk7xoXV2YmCMyZlltyNWCA3MNGi9D6rGSCq/CbkjXSWaXUr9lUozoeVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=szm0+8Ox; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-664bc570740so4400437b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722036848; x=1722641648; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSdsezEIt/Fp32s2FTf13aRyq05x0uAP+V8KzHmTBR4=;
-        b=szm0+8OxmOK+2/lCPfkUlvqCMBx5esrwkkuOgfxXXM0HgMdj9F9wR0sX+lxwsH/VR8
-         RP9+53kGICxa60G20KjZ1enuhZOasNk6/K7c662N8LAa0yPzsabTNTXrm/WT6DbaDaRr
-         bWZrUBD0d813IRzSxBEMSRJ2X+V3rB5Pg8Lhsw+TmXChsng7sCq+1DhdDfdIWHPvS2XE
-         rQVFqhmKPmRO+5z0c+RIJ0diwlGCR70RnP4kVB/ubwZKWTIHt2vUh1C6av7Jd38jVJ9T
-         hnouWZh1R0A3bmCSTzt8GErOLVmnV7BRZlCEY4GdOC2V/TWuyCIiaUESCS5BMh+L/2aO
-         YjcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722036848; x=1722641648;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSdsezEIt/Fp32s2FTf13aRyq05x0uAP+V8KzHmTBR4=;
-        b=quFPbQ30fNojHftZOnVrY+ACjFwhFNI3pALLqbis3b6dFt4mVvJ4nxav5GLU/OnflP
-         /0s+ITSBfBhIgXuqDJpkXBeltx/6FjDABZdmfVNeDwKuo4pV8vqpO3qPpT9NKzPFMb/A
-         FnvxXUJvm6uZNcSGWzUERLxGp5o1fnrJhnG5gIkMqKr4KlxUCOhHmLRBv0njAdRgruLI
-         dPrghybZRfsZXoDCZUR10hnWIk0WSPAv93g4NWY19iv0XYC58zuNzdAbzPaks/dnaAFN
-         FdRylyi2+xDcTAe/W37a1u7ExV4CHyTZ5Q99vSFapZUyBCuQfiMbeAoCm+P+07u9Q0FA
-         KPEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnwOhdE5QVvAaemoSs1qaRFeo/3te+gceR8bBRZI8SQxmKjSvOBgu2vmi+SMtsRYkPmlFRjII7VhNMPMmOc2V/wMOHgsCz1I1gTAzF
-X-Gm-Message-State: AOJu0YxMKfIpBoYnFr8UNcgxFCLysbWLK8e4FvxkU2kO+XleiJophWhw
-	wIGH6K0PtJenI6z4efTPWw5SaXPJmba7m/+LHTPKGKlUQeigf0zviA0sNYd+O2TpvSbS0n/kqCH
-	p/g==
-X-Google-Smtp-Source: AGHT+IE0Qhn7yLAoE6OMcvxw1EBbEbmBeHfypxe4U8DmBzxyyUTTUeSlmFqxg+6tY/vt3w4FV2PjG/zCs7A=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:3411:b0:66a:a05e:9fe4 with SMTP id
- 00721157ae682-67a2cd74953mr37387b3.3.1722036848234; Fri, 26 Jul 2024 16:34:08
- -0700 (PDT)
-Date: Fri, 26 Jul 2024 16:34:06 -0700
-In-Reply-To: <31cf77d34fc49735e6dff57344a0e532e028a975.camel@redhat.com>
+	s=arc-20240116; t=1722037208; c=relaxed/simple;
+	bh=Q3fSBrrZPqa7egg3tBbnZ2O+IC+t6/YBZYgNqr3XajM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NXuF/WfRZMYpceVsV9MuJDrvg5fVHRH9hoaW4A5gVnN0kJldgiMxDAKPAOp76oHn5Ufw/nWTikGvhqF3EXq1fQFrvQ/V/hnRRq3YZbTnsC940eIX+Kp+Ir2iqCkuXpD1iNx8YISloXWDkHIVwM40uvswqLpzYKhFGNL/iNLkDTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=RXtEjK5w; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 8CDD3C0000EA;
+	Fri, 26 Jul 2024 16:34:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 8CDD3C0000EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1722036861;
+	bh=Q3fSBrrZPqa7egg3tBbnZ2O+IC+t6/YBZYgNqr3XajM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RXtEjK5wE8jp1E1nvkXsVb6JIyfwDv0eKqjLCQj3AQ2G2m4EB9Hk+vEyd6aSrIX+Q
+	 N4/of2gUW7F0+o7PsI7k9fFIeIwdfrxx8DuIYReaHObg6AxiSrnr6nI9qXR0asFhRq
+	 BRdC91amH+yX2gN6BwK9z2LIhIlLFTTkvIvV80Po=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 01C4218041CAC4;
+	Fri, 26 Jul 2024 16:34:18 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ARM: bcm: Select ARM_GIC_V3 for ARCH_BRCMSTB
+Date: Fri, 26 Jul 2024 16:34:14 -0700
+Message-Id: <20240726233414.2305526-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-25-seanjc@google.com>
- <20d3017a8dd54b345104bf2e5cb888a22a1e0a53.camel@redhat.com>
- <ZoxaOqvXzTH6O64D@google.com> <31cf77d34fc49735e6dff57344a0e532e028a975.camel@redhat.com>
-Message-ID: <ZqQybtNkhSVZDOTu@google.com>
-Subject: Re: [PATCH v2 24/49] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to
- avoid macro collisions
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-07-08 at 14:29 -0700, Sean Christopherson wrote:
-> > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > Maybe we should instead rename the SPEC_CTRL_SSBD to
-> > > 'MSR_IA32_SPEC_CTRL_SSBD' and together with it, other fields of this msr.  It
-> > > seems that at least some msrs in this file do this.
-> > 
-> > Yeah, the #undef hack is quite ugly.  But I didn't (and still don't) want to
-> > introduce all the renaming churn in the middle of this already too-big series,
-> > especially since it would require touching quite a bit of code outside of KVM.
->
-> > 
-> > I'm also not sure that's the right thing to do; I kinda feel like KVM is the one
-> > that's being silly here.
-> 
-> I don't think that KVM is silly here. I think that hardware definitions like
-> MSRs, register names, register bit fields, etc, *must* come with a unique
-> prefix, it's not an issue of breaking some deeply nested macro, but rather an
-> issue of readability.
+A number of recent Broadcom STB SoCs utilize a GIC-600 interrupt
+controller thus requiring the use of the GICv3 driver.
 
-For the MSR names themselves, yes, I agree 100%.  But for the bits and mask, I
-disagree.  It's simply too verbose, especially given that in the vast majority
-of cases simply looking at the surrounding code will provide enough context to
-glean an understanding of what's going on.  E.g. even for SPEC_CTRL_SSBD, where
-there's an absurd amount of magic and layering, looking at the #define makes
-it fairly obvious that it belongs to MSR_IA32_SPEC_CTRL.
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ arch/arm/mach-bcm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-And for us x86 folks, who obviously look at this code far more often than non-x86
-folks, I find it valuable to know that a bit/mask is exactly that, and _not_ an
-MSR index.  E.g. VMX_BASIC_TRUE_CTLS is a good example, where renaming that to
-MSR_VMX_BASIC_TRUE_CTLS would make it look too much like MSR_IA32_VMX_TRUE_ENTRY_CTLS
-and all the other "true" VMX MSRs.
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 7318d8789e24..24bc6e18d806 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -185,6 +185,7 @@ config ARCH_BRCMSTB
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select ARM_AMBA
+ 	select ARM_GIC
++	select ARM_GIC_V3
+ 	select ARM_ERRATA_798181 if SMP
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select ZONE_DMA if ARM_LPAE
+-- 
+2.34.1
 
-> SPEC_CTRL_SSBD for example won't mean much to someone who only knows ARM, while
-> MSR_SPEC_CTRL_SSBD, or even better IA32_MSR_SPEC_CTRL_SSBD, lets you instantly know
-> that this is a MSR, and anyone with even a bit of x86 knowledge should at least have
-> heard about what a MSR is.
-> 
-> In regard to X86_FEATURE_INTEL_SSBD, I don't oppose this idea, because we have
-> X86_FEATURE_AMD_SSBD, but in general I do oppose the idea of adding 'INTEL' prefix,
-
-Ya, those are my feelings exactly.  And in this case, since we already have an
-AMD variant, I think it's actually a net positive to add an INTEL variant so that
-it's clear that Intel and AMD ended up defining separate CPUID to enumerate the
-same basic info.
-
-> because it sets a not that good precedent, because most of the features on x86
-> are first done by Intel, but then are also implemented by AMD, and thus an intel-only
-> feature name can stick after it becomes a general x86 feature.
-> 
-> IN case of X86_FEATURE_INTEL_SSBD, we already have sadly different CPUID bits for
-> each vendor (although I wonder if AMD also sets the X86_FEATURE_INTEL_SSBD).
-> 
-> I vote to rename 'SPEC_CTRL_SSBD', it can be done as a standalone patch, and can
-> be accepted right now, even before this patch series is accepted.
-
-If we go that route, then we also need to rename nearly ever bit/mask definition
-in msr-index.h, otherwise SPEC_CTRL_* will be the odd ones out.  And as above, I
-don't think this is the right direction.
 
