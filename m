@@ -1,149 +1,100 @@
-Return-Path: <linux-kernel+bounces-263340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE9393D49C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:52:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A13493D49E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B841C227D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:52:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E03FAB22B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77674178388;
-	Fri, 26 Jul 2024 13:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DED17BB2A;
+	Fri, 26 Jul 2024 13:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="19sF2YN9"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaWZfl17"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3921E51F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FD21E536;
+	Fri, 26 Jul 2024 13:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001927; cv=none; b=Gyxm8efLk8/P54XEQlssCAdIKjvqeD0n9agh8bmpQWAgmXg6MT/02h/EaBVFOVSvueMyP6nuSA+m1XbsTqKJyiJz6bVO+NR6f4OXpQmlLpfH6uIsPIpEI3j5kn4GfqC3tT0dhHH4ir8R9H+ncxrC+WAFsDCg+p60ZSnVNy/9x94=
+	t=1722001948; cv=none; b=gJuBF/caiTZdFWbUnQ1zA2Wyjy7hB1gdQTVM8g2HEDQ52bDd7jpMCLWCktdVEJTL+pFB6DcmY2/lL54uPPV/pbNTVlzwWMIcEz06Nq0GihTr8uoIz5lJWqBwOH05KjMJLYGYQMoX9vBAOJ2Z4pvBAdb0egEVvkapRhESJzlMTRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001927; c=relaxed/simple;
-	bh=p9LZjl6KaOwjvJF0IXHnTDzGnQo35y0H2Buy/T1CPjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G1/0iarOghzAbyI2WafmLNC+E2UV6QJlGdpZWfiQU4ILb6c2UAIp0ng5JOP5qXVMaC/dzUak+BjChKfQ+dSo0VDCWACLZrD8tT/0vgeacNyFu3XiAWkx+c0RpDrBTpIAoJk7xN4SaTHqoqOpiUG/MdkAKxbzC2XkDCX6AypJJxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=19sF2YN9; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so10440a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722001924; x=1722606724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzST+WgYB+YniWsc5gywqmeeedMARG6ljFEX5tmeU7g=;
-        b=19sF2YN9yZLPGUPy9HX5DAXVX2/8sQ/KSs5EUiuCaJetnQtPThcQC4SCKSqJ1naF1d
-         tkc6iyq0CeL1yVJJ81RSHWo834uCoz9MVp9Hn7LVe16fLrVBxrNBbA1ry53e5tFBe2Zm
-         CiGz4FgilLyKGGPNCnFt1ir59pxI6ZHH/nmSNFTjYq6ObGlkKGzIFNvjAHJYizw3IabK
-         q30Jz97RAlOHegMQbpsxGmsdiIBHeu9z6kS0lV97MBYmM9gVkcyPSSXYc6c7n9syEmxJ
-         34FfmiUiIPk+y3bILH87dlHtkXrGYmnZlkYZ5fMjkTyKtyXdKWxyw8pF1+VPKJGx+ljp
-         7O0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722001924; x=1722606724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bzST+WgYB+YniWsc5gywqmeeedMARG6ljFEX5tmeU7g=;
-        b=IdQrkoGUo4f84ebnB6puXdcyF82Dm4EXa8XrraOX5AlQgIliA42Rsiuwlod2xw24rG
-         k3QQA5pNg/kO5nV960CqBs4oOA1AUUXwoBmd5J5CbU0E2PF0VUc96XXK0ShH897nzY+l
-         Xj8kXUiRnt38Q28qR09YU1D29xZJn8IKDgo6z1IiCIf70wrl5UJ4bOUyLIRPkN3wTniW
-         e44ptkd7JaYPrnnC2dkgggWhpbLcJDh/c62fnrUaYIWmSyC8nRjjZBkAYIzSypxeOYJg
-         B4ZmmQ7qt2oE3E4Ci+aD6KrTonAhYqowzZ60cTp7rZWRkP7iGZUca9mKQqxo7UcZRFRs
-         vw/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQOXoQg1lF34+TTJ7IvsXpyyUxLQ5sOJodWRF5f6EQp5DHDTPN0UJ94v9wSRtlQxnfD4Pjjpe4PB21uwLmmQjunh+qbdvHtbmFLBcT
-X-Gm-Message-State: AOJu0Yz+Z0CMm55FKV5fL9QJVJ7DPHlq7cs+4hTlD6jpJzg4H1UjX4Jz
-	bdAuPhablBtz5Wpdc7N+GXXCj9uUX8ucBqGj+7F6+V3QcRZMVNi73ATie4/2UI6cUP+zpi8bKbN
-	7nS3V1tW9nbBnG8Ooj4b+eXORdVETHyeCLwkc
-X-Google-Smtp-Source: AGHT+IG3nG1xboIr8vSlksNa3ilwXQsXcvozmDP5icTpDxOIkFTcoQ9u5/IcNIPgYSZ/R0o7yKwC4+p03zInZGQO4b8=
-X-Received: by 2002:a05:6402:354f:b0:58b:15e4:d786 with SMTP id
- 4fb4d7f45d1cf-5af44348136mr79918a12.5.1722001923695; Fri, 26 Jul 2024
- 06:52:03 -0700 (PDT)
+	s=arc-20240116; t=1722001948; c=relaxed/simple;
+	bh=jlj8UiyT+P2UaTZylr/dBcyg5sAz55dyW1w+XM1xO5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nOJhJC1ZXfKSePpkq3mbJKOW2k+rFv0tM3V8HvZJ6cBRSbq4ieqgzNC97C15fo3CYLB0BxaXwIUOLT7SbzEEgV11D93CSP0wuHLwEg/Xm9/AqhIDDthVyBShMdZ1Z9swXxHW9LXF9TYC2ZagLzh2WxoPkDr6kYMJ6ElIK6tTSHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaWZfl17; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CE5C32782;
+	Fri, 26 Jul 2024 13:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722001947;
+	bh=jlj8UiyT+P2UaTZylr/dBcyg5sAz55dyW1w+XM1xO5w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RaWZfl17b2yvVK0pr3eaVtwrOTj505Xp8Tgdii9i4qQj3kq1olOttX4rhZ1153ZUK
+	 Kc34cOsHejgFFxQzXqk2l/k/ONOAJ8UjbhtZq6ru3XahiQyPp4l/LkvX1FVDMb4t1u
+	 96ClURNi1DHrMAKA9hGksQbPCEhLDm0iVRB8emOyx7wlEZU2Vjr+TGFDkWKj1TVtmG
+	 USBeiSjP8f65gPic8KLCv8eweNFA/aO9BnJuN8ZriPxgtvZw/Wi8gk/Z7RD57/bSWM
+	 ZU//iWBhM0C7T+BfahJIiGOlOFsdk4jytl6+UzAwUX0dyGhQrH5e8xuQ0k1kWUXqCZ
+	 m+fdfbhdvIsfQ==
+Message-ID: <30b6e9eb-a6f5-4238-93fe-4d8a19b31590@kernel.org>
+Date: Fri, 26 Jul 2024 15:52:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-kasan-tsbrcu-v3-0-51c92f8f1101@google.com>
- <20240725-kasan-tsbrcu-v3-1-51c92f8f1101@google.com> <CA+fCnZe-x+JOUN1P-H-i0_3ys+XgpZBKU_zi06XBRfmN+OzO+w@mail.gmail.com>
-In-Reply-To: <CA+fCnZe-x+JOUN1P-H-i0_3ys+XgpZBKU_zi06XBRfmN+OzO+w@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 26 Jul 2024 15:51:25 +0200
-Message-ID: <CAG48ez0hAN-bJtQtbTiNa15qkHQ+67hy95Aybgw24LyNWbuU0g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] kasan: catch invalid free before SLUB
- reinitializes the object
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: typec: fsa4480: Check if the chip is really there
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20240726-topic-fs4480_check-v2-1-901ca449db15@kernel.org>
+ <2024072615-hassle-enclose-673f@gregkh>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <2024072615-hassle-enclose-673f@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 2:43=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
-> On Thu, Jul 25, 2024 at 5:32=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > Currently, when KASAN is combined with init-on-free behavior, the
-> > initialization happens before KASAN's "invalid free" checks.
-> >
-> > More importantly, a subsequent commit will want to use the object metad=
-ata
-> > region to store an rcu_head, and we should let KASAN check that the obj=
-ect
-> > pointer is valid before that. (Otherwise that change will make the exis=
-ting
-> > testcase kmem_cache_invalid_free fail.)
->
-> This is not the case since v3, right?
 
-Oh, you're right, this text is now wrong.
 
-> Do we still need this patch?
+On 26.07.2024 3:12 PM, Greg Kroah-Hartman wrote:
+> On Fri, Jul 26, 2024 at 01:43:30PM +0200, Konrad Dybcio wrote:
+>> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> Currently, the driver will happily register the switch/mux devices, and
+>> so long as the i2c master doesn't complain, the user would never know
+>> there's something wrong.
+>>
+>> Add a device id check (based on [1]) and return -ENODEV if the read
+>> fails or returns nonsense.
+>>
+>> Checking the value on a Qualcomm SM6115P-based Lenovo Tab P11 tablet,
+>> the ID mentioned in the datasheet does indeed show up:
+>>  fsa4480 1-0042: Found FSA4480 v1.1 (Vendor ID = 0)
+>>
+>> [1] https://www.onsemi.com/pdf/datasheet/fsa4480-d.pdf
+>>
+>> Fixes: 1dc246320c6b ("usb: typec: mux: Add On Semi fsa4480 driver")
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> You can't sign off on a patch twice, that makes no sense, sorry.
 
-I just tried removing this patch from the series; without it, the
-kmem_cache_invalid_free kunit test fails because the kmem_cache_free()
-no longer synchronously notices that the pointer is misaligned. I
-guess I could change the testcase like this to make the tests pass
-without this patch, but I'd like to hear from you or another KASAN
-person whether you think that's a reasonable change:
+I'm losing access to the @linaro.org email and want to preserve the
+authorship there (as this patch was developed during work hours).
 
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index cba782a4b072..f44b0dcb0e84 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -981,14 +981,21 @@ static void kmem_cache_invalid_free(struct kunit *tes=
-t)
-        if (!p) {
-                kunit_err(test, "Allocation failed: %s\n", __func__);
-                kmem_cache_destroy(cache);
-                return;
-        }
+Then, the author's email doesn't match the sender's email, so I'm
+expected to sign off with the sender's one.
 
--       /* Trigger invalid free, the object doesn't get freed. */
--       KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_free(cache, p + 1));
-+       /*
-+        * Trigger invalid free, the object doesn't get freed.
-+        * Note that the invalid free detection may happen asynchronously
-+        * under CONFIG_SLUB_RCU_DEBUG.
-+        */
-+       KUNIT_EXPECT_KASAN_FAIL(test, ({
-+               kmem_cache_free(cache, p + 1);
-+               rcu_barrier();
-+       }));
+Should I assume that the maintainer trusts me to be the same person?
 
-Being able to get rid of this patch would be a nice simplification, so
-if you think asynchronous invalid-free detection for TYPESAFE_BY_RCU
-slabs is fine, I'll happily throw it out.
+Konrad
 
