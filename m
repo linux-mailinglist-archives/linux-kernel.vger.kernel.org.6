@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-263607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D5093D837
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:20:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C6A93D83D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863752827B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FAD1C22560
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548BF14F118;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE95153808;
 	Fri, 26 Jul 2024 18:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ls+AnFBC"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kfbw/Q+Q"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CCD73514;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C667347D;
 	Fri, 26 Jul 2024 18:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017887; cv=none; b=X+9fiaKr65qWVNAfI2T8mTYhmpLEqY4I85mbhiDSrev9OEbfm5V7c+YXiERcREvTWxR8tSfnM0K8INcGx3licpqzqWcB9BXxDtaaTfXIRQBVr+FFuPhiPtO+5fPYezzi1BnK9H7rzCY9Be3s7/JkFMa8Nz3lp59Ql7OXQUS2HQ8=
+	t=1722017888; cv=none; b=Kh5z4IkcHyoknRacLuDnlGKQi5pOJ5D2XjhoHEwIPdwZGTj4KbcUdupIXqEqjoHAGvPMYdSqVUxxBxfKAEO5paVafmdnN/HPfkxrQXh2akfmwhTYNwV1V3zyaBXEFJpC5IxvoYaR5aPXLcVCke5wIY5WSbb9WwtLsBBPFZ1xCQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017887; c=relaxed/simple;
-	bh=6Daa08I6itJcAFS9/xCN/oDOprQU3OGIjFNs0OxlHgY=;
+	s=arc-20240116; t=1722017888; c=relaxed/simple;
+	bh=95rG1YZ2UtrC8XMcpAiWyTjy7YQj9bjkJ0w9oWd8hII=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fw5iO1p5DArGrCSHHrEnN2nkQRBv0o7B6ikX666KBLo0ytirpsKOzW27zJUn5wN4hv3jxjeSM+GIBkKUvMmavNHELbq3yUi4qSea6p/x4XYbHWztwgQn01b2nU70u53ZIkKRnGDQJiOI9Sgmni3c5ct8SXqzXnnobQl7Q8RI8eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ls+AnFBC; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=cEoZmYfJlASzWpKwzeB/l1yllSEo5cGwIOmqVih2ITIR1yOzgYpPKH2v5l6xC3jnzbyTyE/HtsVryKmj4D2mlq4kcB0DIicMDe8SiPkrKGIlmlEccqxBDfLuwsNfVR5WhKrYX7AFr+lLAQ8semeYDl3zd+gUpWrsqWteIb+Oa7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kfbw/Q+Q; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6C3A2C000C;
-	Fri, 26 Jul 2024 18:18:01 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 43B4CC000E;
+	Fri, 26 Jul 2024 18:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722017882;
+	t=1722017883;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nVKDcHNw5TaBkw7ykMrWc0qPl//SaW0x/mq86RauHgc=;
-	b=Ls+AnFBCzBN0HwcYy9zP6koWjLz/YO08/2MPGZeHVW+/8c9SdnUo4Yr1yXevYIIdA+JYoE
-	lro7oeDBX4Wh3+5DHbesFtvd4e24dVubijUvREJ9hj/WeNhdwbSukzJCWQd9SF1IXydDjb
-	4XY+vNTR/4UuTlxtrqISnuDNvRt8QXq85DVzfPnH8QcbGXKUAL8QF0OmFq3XkLt73mL/Ct
-	mKBON+s+4BjiAgo4yKjZElTfJZcLFX6qK1ri4g3lMYeXEE3q99Y0xISPQctKBdMSmG2xpN
-	29eEr7sHUel6nlcKiS9YtvkEC6nhbD2R/03GTtaxA79IFS8RY7lQO4+2NFPy2g==
+	bh=ih+kvx1EySeuO8rTTlNvuYdd21gOB8JWUrmwahT1dOc=;
+	b=kfbw/Q+QBan9UTaP6HuJ77llt2vFWlvZpOKS3Av1JequqWPDFAHbb2QOk8eZazcs4Hv+03
+	R4xPpHj6knTcAUImEbRK6i8YNuqymlar61qVlryTH+DMasExG35Zv2WALwLZnqUzbxwP++
+	OJKRhGH4Mvr3lvIBxyhpglPe13jxK/Rvirs4rviwk2iVoiZNfwa/AR8py6n4kL5tpuc2Hs
+	R608HRMzfXRiNujGDZbh4k3UaUQTAkcHdtU1g73dVG/YVFLb/eNt/XuC4Yb6S8Uv0sTX5t
+	R7QThnoWYn/qXLSF2/kUexkcCiSmmywqI3Pb+BYTGJOnwbodqZqtBVN19urgZw==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 26 Jul 2024 20:17:58 +0200
-Subject: [PATCH v5 10/12] usb: cdns3: host: transmit lost_power signal from
- wrapper to XHCI
+Date: Fri, 26 Jul 2024 20:17:59 +0200
+Subject: [PATCH v5 11/12] arm64: dts: ti: k3-j7200: use J7200-specific USB
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240726-s2r-cdns-v5-10-8664bfb032ac@bootlin.com>
+Message-Id: <20240726-s2r-cdns-v5-11-8664bfb032ac@bootlin.com>
 References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -74,44 +74,28 @@ Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-cdns_role_driver->resume() receives the information if power was lost
-across suspend (ie if a reset occurred). Transmit that to the XHCI core
-using the newly introduced lost_power flag. We therefore override its
-default value that is based on XHCI_RESET_ON_RESUME.
+On our platform, suspend-to-idle or suspend-to-RAM turn the controller
+off. This compatible triggers reset-on-resume behavior to reconfigure
+the hardware.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/cdns3/host.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/ti/k3-j7200-main.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
-index d2cb529630e4..edef39ab8d15 100644
---- a/drivers/usb/cdns3/host.c
-+++ b/drivers/usb/cdns3/host.c
-@@ -139,6 +139,15 @@ static void cdns_host_exit(struct cdns *cdns)
- 	cdns_drd_host_off(cdns);
- }
+diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+index 9386bf3ef9f6..6b8e8672b386 100644
+--- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+@@ -766,7 +766,7 @@ pcie1_rc: pcie@2910000 {
+ 	};
  
-+static int cdns_host_resume(struct cdns *cdns, bool lost_power)
-+{
-+	struct usb_hcd *hcd = platform_get_drvdata(cdns->host_dev);
-+	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
-+
-+	xhci->lost_power = lost_power;
-+	return 0;
-+}
-+
- int cdns_host_init(struct cdns *cdns)
- {
- 	struct cdns_role_driver *rdrv;
-@@ -149,6 +158,7 @@ int cdns_host_init(struct cdns *cdns)
- 
- 	rdrv->start	= __cdns_host_init;
- 	rdrv->stop	= cdns_host_exit;
-+	rdrv->resume	= cdns_host_resume;
- 	rdrv->state	= CDNS_ROLE_STATE_INACTIVE;
- 	rdrv->name	= "host";
- 
+ 	usbss0: cdns-usb@4104000 {
+-		compatible = "ti,j721e-usb";
++		compatible = "ti,j7200-usb", "ti,j721e-usb";
+ 		reg = <0x00 0x4104000 0x00 0x100>;
+ 		dma-coherent;
+ 		power-domains = <&k3_pds 288 TI_SCI_PD_EXCLUSIVE>;
 
 -- 
 2.45.2
