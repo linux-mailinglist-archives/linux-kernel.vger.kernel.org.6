@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-263438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A8693D5D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A790493D5D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D1D284555
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AA8284518
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD53178CC8;
-	Fri, 26 Jul 2024 15:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ORs8+I68"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86CB18E1E;
-	Fri, 26 Jul 2024 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BCE178CC8;
+	Fri, 26 Jul 2024 15:19:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4114B21103;
+	Fri, 26 Jul 2024 15:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007132; cv=none; b=YWWXkVP6UzWb+c924cweVRzhIMpySA8931lIzCmmyaA+U4oXFlWeaGL4Ht5Wo6voU29o6jG/H1ndbXAYON2VueyFMGSsw3gcG6sLslKfk7ENJoPx4RNL6TEwM+M5B4vkjnhVjSG6GIk90Zh8w1qjeV3+EC6baOix9edzfEUczLA=
+	t=1722007145; cv=none; b=EqQ6kVBNd1oXCnzQMuoa3nCns2d8OGkcISLZP9vwaXDtbQ9TKVAOCAy5w2XonVZNG6V2S98uwjFvTACAiq2iutAWkFx3PwxgPZBMiVOQuMBX8YTF4ZTnFZL7SXdF1CP5j3ejVjWLUiUNww7EOWSNxzYDcanc7x6jwKvVoHgEjeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007132; c=relaxed/simple;
-	bh=PjfdjhRuAA9uezXACC/o7rmWQtJy7EjiNQo0cX536Qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=njNLOtNGhesjkbNP+EX1NAejLv1SIfCWz71dvjEYKSOECUFU3RfGZVlfkuy5osdDci0FZCfo290xT6w33IIGbrM+GJi3OhFU4qyz6n8Uub/CP3PeFiWmQVNn6X/IfmqxWcJHOiHytzPYeYx6pedbkYlHnAhc4R4uOKysqHmvCgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ORs8+I68; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QC8eJo028675;
-	Fri, 26 Jul 2024 15:18:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9ZbNNcZoESzP3l+yF+AAiOyMFNo46lNtooihjX+VvCo=; b=ORs8+I68SlqaTJNo
-	oQ95CRHCyK0oIDytGLV2VgPxwh6ICSGWKu4pamF6mvwJ2QVU6ufirowy1QoxbbDk
-	ze2Xq4epiazaRDiiihLdbbpl1lk6481PoUYXiFpW5famL827ApsvTk0SHBbyNEmA
-	7UbGGP5DnN2G05G9Rs8cEDPW3t/qQMlx/Wx7Ny7j2khDKv5t90CnSZr7ci3uNSj4
-	KTBjbnhE2xtFH2LWUCyR4DcQdFaGYeip1R97RSjs8AM4b8K4W7+I+J/0mIv/Febj
-	+12YmTbJ5P6r/M8ixx7M8Nq/dbR1+YQTm1TPQ6UPxUQHKuLQWdSsnHxsh23a12OI
-	GaVaRQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m1tthrrt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:18:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46QFIXR9027252
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 15:18:33 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
- 2024 08:18:32 -0700
-Message-ID: <4ee91b93-7a68-29dd-4532-a1543ccfd7af@quicinc.com>
-Date: Fri, 26 Jul 2024 09:18:31 -0600
+	s=arc-20240116; t=1722007145; c=relaxed/simple;
+	bh=jhyqHZ9A0JXwf8Jkr9SULQxpLu3Omt2PfY0yXjOJdAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKdL5ycBwQI2mI6ISj+wkTGh7jHZI2kU5K2oIZP4gdYQ2q8tB6m3kmzO6hNArsJV7ztH2f+J9jk0K/b9DUjrGV1Ww4OHsefcsAyX2LHEkLzaxKz/2aK7fDN0OVFp6Lvopwev3NzLdgyckg1+9C5t+vW83vZs3ztWenHMO9mgppY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02EB11007;
+	Fri, 26 Jul 2024 08:19:29 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D35A53F73F;
+	Fri, 26 Jul 2024 08:19:00 -0700 (PDT)
+Date: Fri, 26 Jul 2024 16:18:58 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	quic_sibis@quicinc.com, quic_nkela@quicinc.com, ptosi@google.com,
+	dan.carpenter@linaro.org, souvik.chakravarty@arm.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 1/8] firmware: arm_scmi: Introduce setup_shmem_iomap
+Message-ID: <ZqO-Yhemgp-nsnGu@pluto>
+References: <20240710173153.4060457-2-cristian.marussi@arm.com>
+ <202407130355.IWguWKJm-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] accel/qaic: Remove the description of
- DRM_IOCTL_QAIC_PART_DEV
-Content-Language: en-US
-To: Zenghui Yu <yuzenghui@huawei.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_carlv@quicinc.com>, <quic_pkanojiy@quicinc.com>,
-        <ogabbay@kernel.org>, <corbet@lwn.net>, <wanghaibin.wang@huawei.com>
-References: <20240716073036.453-1-yuzenghui@huawei.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240716073036.453-1-yuzenghui@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rAkFsSapuWO4wBK1hLP5vF94HeECq4kX
-X-Proofpoint-ORIG-GUID: rAkFsSapuWO4wBK1hLP5vF94HeECq4kX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_12,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=764 clxscore=1015 bulkscore=0
- spamscore=0 phishscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407260103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407130355.IWguWKJm-lkp@intel.com>
 
-On 7/16/2024 1:30 AM, Zenghui Yu wrote:
-> The partition device ioctl was removed during the development of the
-> initial version of qaic driver. Remove its description from the
-> documentation to avoid confusing readers.
+On Sat, Jul 13, 2024 at 03:44:38AM +0800, kernel test robot wrote:
+> Hi Cristian,
 > 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on soc/for-next]
+> [also build test WARNING on next-20240712]
+> [cannot apply to linus/master v6.10-rc7]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Introduce-setup_shmem_iomap/20240711-062033
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+> patch link:    https://lore.kernel.org/r/20240710173153.4060457-2-cristian.marussi%40arm.com
+> patch subject: [PATCH v2 1/8] firmware: arm_scmi: Introduce setup_shmem_iomap
+> config: arm64-randconfig-r132-20240712 (https://download.01.org/0day-ci/archive/20240713/202407130355.IWguWKJm-lkp@intel.com/config)
+> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+> reproduce: (https://download.01.org/0day-ci/archive/20240713/202407130355.IWguWKJm-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407130355.IWguWKJm-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/firmware/arm_scmi/shmem.c:153:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+>    drivers/firmware/arm_scmi/shmem.c:153:31: sparse:     expected void [noderef] __iomem *
+>    drivers/firmware/arm_scmi/shmem.c:153:31: sparse:     got void *
+>    drivers/firmware/arm_scmi/shmem.c:156:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+>    drivers/firmware/arm_scmi/shmem.c:156:31: sparse:     expected void [noderef] __iomem *
+>    drivers/firmware/arm_scmi/shmem.c:156:31: sparse:     got void *
+>    drivers/firmware/arm_scmi/shmem.c:165:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+>    drivers/firmware/arm_scmi/shmem.c:165:31: sparse:     expected void [noderef] __iomem *
+>    drivers/firmware/arm_scmi/shmem.c:165:31: sparse:     got void *
+>    drivers/firmware/arm_scmi/shmem.c:172:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+>    drivers/firmware/arm_scmi/shmem.c:172:31: sparse:     expected void [noderef] __iomem *
+>    drivers/firmware/arm_scmi/shmem.c:172:31: sparse:     got void *
+> 
+> vim +153 drivers/firmware/arm_scmi/shmem.c
+> 
+>    138	
+>    139	void __iomem *setup_shmem_iomap(struct scmi_chan_info *cinfo,
+>    140					struct device *dev, bool tx,
+>    141					struct resource *res)
+>    142	{
+>    143		struct device_node *shmem __free(device_node);
+>    144		const char *desc = tx ? "Tx" : "Rx";
+>    145		int ret, idx = tx ? 0 : 1;
+>    146		struct device *cdev = cinfo->dev;
+>    147		struct resource lres = {};
+>    148		resource_size_t size;
+>    149		void __iomem *addr;
+>    150	
+>    151		shmem = of_parse_phandle(cdev->of_node, "shmem", idx);
+>    152		if (!shmem)
+>  > 153			return ERR_PTR(-ENODEV);
+> 
 
-Pushed to drm-misc-next
+Will be fixed in V3 using IOMEM_ERR_PTR()
 
--Jeff
+Thanks,
+Cristian
 
