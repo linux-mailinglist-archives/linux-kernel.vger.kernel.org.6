@@ -1,226 +1,162 @@
-Return-Path: <linux-kernel+bounces-262885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3EE93CE47
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23EEE93CE4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D7DB213AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557671C20D3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B9C157E7D;
-	Fri, 26 Jul 2024 06:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6+IIuDd"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10507176226
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6311176AC4;
+	Fri, 26 Jul 2024 06:50:20 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB97817623A;
+	Fri, 26 Jul 2024 06:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721976615; cv=none; b=PkF//A6DAH1wOJcU/H78uzoYX6Khc9xgwT2Hn4PLM4ovUioFSyi2qdv0P+PMK2M9UJRsL0U+3rymVgLzwIHsJ6Y80R7R6orqaFwAE9XwxGNJJ+reAndwmDR7rXi1l2OkuLBtn7xX135DGFPtdksYKErcl7tWm8ZIHPQhj0+0M10=
+	t=1721976620; cv=none; b=QGWoaBA/umowFV2GrF18UA4QOeuUpNe8q8yCrdur3ZBIzRaNvf7WqQJsWeJVFp082PWiOifgKIiHxDtlwE+9iQxej/idIDDUcF//tgC/AYJQjQV9xFAtKkGio1f6xJqp+Wcu9mtO6p9IXp0YcMLPuL/TWzEO334kjJYEK87F9Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721976615; c=relaxed/simple;
-	bh=oBVGEkVVtBQ4le+SfYtgfWvw9mBR0Seci3aLjqF2T/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5WrEMXS+PEa3AuYxbIkyEh5vCk51U/Yxv/j1tW25T9KT9woeW45L1g9hSqrkTfQYFKznIMA3abcW/5zHuVB1HCyD+0oUHSqL3KZ8kVdJn/OA5/T5I3701E+cFUoC3jCpymG6GXKcMbxIDlqdPPvIdoxVTEVAoJD62V3hwbAhdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X6+IIuDd; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-38b3543541dso92885ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 23:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721976612; x=1722581412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yrDGVDfcbEdzvzB7i8L7n3jr8ddDBA4qpsWKmnewmuA=;
-        b=X6+IIuDdKNI+Xa7U1JQBUYpDYslfFSn/cfB/4AXlkyPDaozgyJNrO0sc4dU0+u3x2x
-         ifnz8mrrIAPGU3z5QDGP7v99RyGHmDPbYhI3rfIrH9a4TE/S52OBizxS9YBinTSs0B4d
-         6QptdbNLw81PRjEtZNfBwUzwy/OKeOU4H0njx+yJT3Q/a2AviC3+DT5xT+BdnmrNFhPw
-         NGgYcFvCf0HYmTRVoHNleNGTrZ8/+7wAkLIvbSMIbceJarNScZ9coA9IiPLDoAdBi/U7
-         1XYb4R9dAV+vWh3bRWMTKHIHcu5sem1ioqZyQeGibIXPMN4MG2kAmKPpYBEFjnbkDvkO
-         ycSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721976612; x=1722581412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yrDGVDfcbEdzvzB7i8L7n3jr8ddDBA4qpsWKmnewmuA=;
-        b=YvA5+mLW9rggjm+6UWkrC336NfKeIkK3Om8PVY1WdMI2BwOagKdFM3Py5viIU3zT8+
-         aLKNB2konZ0OH1s6RpAV04wSPRIQgYdt3QVbv1nauEDxZql1y6kPX3tFcfa/nXKX9dys
-         OorDrKQrksB/FtKVf7wAIQ8yIZyQBMo7ShXh0+wCWJ38P0PqulDmk/2uSozzn1GB/ybC
-         B1piQDmZwFGrG9Lo2hLaixQKn7u/kIJcE30MOTJr0r8crYWuGT05K5zkRFVqkBET0FAi
-         TShNiQ/LvL/XaV7XQ/KyhsslVmpQvuRNOMbL1lytSB1f8cuEW2RZZ4hQ9fBBTr285E4m
-         mAKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKvylb0KQVS/IwuEms0IE0KYKgXVjoGje5+S0np3ku05WaWpFcWLwNwwY5oEkCvqeWpYarAY2lFSKd96ALBmhWyuUEr+G30cXqnxwA
-X-Gm-Message-State: AOJu0YzwZgnpIFMzwQjl5o8gGM++Js1Sla4GnaLhf7ZfiSIB0ed/qbzj
-	i+7Q5ERGe1ou8Vb/rNA27XCsMb/eifgjhPlbVJfCC6+CeLK6Jcbc+HgsIfGs/g==
-X-Google-Smtp-Source: AGHT+IFhMmDduA5a1iE2vV0TLq5eSikCuAjR0q61Pqxg01+Hqyhn16WkR44U4x1SYv2rEC7ihuvi+Q==
-X-Received: by 2002:a05:6e02:b43:b0:377:1653:a1da with SMTP id e9e14a558f8ab-39a2b465e7dmr1927825ab.19.1721976611827;
-        Thu, 25 Jul 2024 23:50:11 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2e28:6:7804:a7e1:484d:96f2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f7d800e00sm92951939f.41.2024.07.25.23.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 23:50:11 -0700 (PDT)
-Date: Fri, 26 Jul 2024 00:50:04 -0600
-From: Yu Zhao <yuzhao@google.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable v1 5/5] mm/swap: remove boilerplate
-Message-ID: <ZqNHHMiHn-9vy_II@google.com>
-References: <20240711021317.596178-1-yuzhao@google.com>
- <20240711021317.596178-6-yuzhao@google.com>
- <CAGsJ_4y0cZwpKmYySdPObXLGaohwOZtKq=kcF4e4tXb22JkNTw@mail.gmail.com>
- <CAGsJ_4zn46WWmhjsTGES1hH9Un65BiNn+KLUfvE_Espnf0tw9Q@mail.gmail.com>
+	s=arc-20240116; t=1721976620; c=relaxed/simple;
+	bh=yuY8lQr4XJsFDjEBO/51xJBBFKCJZKqleGTBLoabv8k=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=O88+Pc+sdhGl+L2/lftxDzzxNirgKMMcq1/UIq2Fum9wPSpquEV9CmMPNfIDlriDIhef1c765gKuR4TMYSgcNs8QHmlFploJznupy53Xp2zCUOwnJTh0ZsKlfQXxOF1nIK19pZ+vp2lcIuT+X6iU8p1orqi7ylKXChcpFk/vUfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxmOkjR6NmnvcBAA--.5838S3;
+	Fri, 26 Jul 2024 14:50:11 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMDxa+UgR6NmT1oCAA--.13636S3;
+	Fri, 26 Jul 2024 14:50:11 +0800 (CST)
+Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for
+ kvm_hypercall
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Dandan Zhang <zhangdandan@uniontech.com>, zhaotianrui@loongson.cn,
+ kernel@xen0n.name, kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, wangyuli@uniontech.com,
+ Wentao Guan <guanwentao@uniontech.com>
+References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
+ <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn>
+ <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
+ <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn>
+ <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <9bad6e47-dac5-82d2-1828-57df3ec840f8@loongson.cn>
+Date: Fri, 26 Jul 2024 14:50:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGsJ_4zn46WWmhjsTGES1hH9Un65BiNn+KLUfvE_Espnf0tw9Q@mail.gmail.com>
+X-CM-TRANSID:qMiowMDxa+UgR6NmT1oCAA--.13636S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXF1Uuw4rJF4ruFy8Jr15Jrc_yoW5GFyDpF
+	ZxC3WDCF48Kr1xCw1xt3s8uryavrWkKw12gF15Wry5Arnxtr1fJr48tF4UCF1kZayrJF10
+	qFyag3WfZFyUA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
+	67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+	8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
+	CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+	daVFxhVjvjDU0xZFpf9x07jYSoJUUUUU=
 
-On Fri, Jul 26, 2024 at 05:56:10PM +1200, Barry Song wrote:
-> On Fri, Jul 26, 2024 at 5:48 PM Barry Song <21cnbao@gmail.com> wrote:
-> >
-> > On Thu, Jul 11, 2024 at 2:15 PM Yu Zhao <yuzhao@google.com> wrote:
-> > >
-> > > Remove boilerplate by using a macro to choose the corresponding lock
-> > > and handler for each folio_batch in cpu_fbatches.
-> > >
-> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > > ---
-> > >  mm/swap.c | 107 +++++++++++++++++++-----------------------------------
-> > >  1 file changed, 37 insertions(+), 70 deletions(-)
-> > >
-> > > diff --git a/mm/swap.c b/mm/swap.c
-> > > index 4a66d2f87f26..342ff4e39ba4 100644
-> > > --- a/mm/swap.c
-> > > +++ b/mm/swap.c
-> > > @@ -220,16 +220,45 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
-> > >         folios_put(fbatch);
-> > >  }
-> > >
-> > > -static void folio_batch_add_and_move(struct folio_batch *fbatch,
-> > > -               struct folio *folio, move_fn_t move_fn)
-> > > +static void __folio_batch_add_and_move(struct folio_batch *fbatch,
-> > > +               struct folio *folio, move_fn_t move_fn,
-> > > +               bool on_lru, bool disable_irq)
-> > >  {
-> > > +       unsigned long flags;
-> > > +
-> > > +       folio_get(folio);
-> > > +
-> > > +       if (on_lru && !folio_test_clear_lru(folio)) {
-> > > +               folio_put(folio);
-> > > +               return;
-> > > +       }
-> > > +
-> > >         if (folio_batch_add(fbatch, folio) && !folio_test_large(folio) &&
-> > >             !lru_cache_disabled())
-> > >                 return;
-> > >
-> > > +       if (disable_irq)
-> > > +               local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
-> > > +       else
-> > > +               local_lock(&cpu_fbatches.lock);
-> > > +
-> > >         folio_batch_move_lru(fbatch, move_fn);
-> > > +
-> > > +       if (disable_irq)
-> > > +               local_unlock_irqrestore(&cpu_fbatches.lock_irq, flags);
-> > > +       else
-> > > +               local_unlock(&cpu_fbatches.lock);
-> > >  }
-> > >
-> > > +#define folio_batch_add_and_move(folio, op, on_lru)                                            \
-> > > +       __folio_batch_add_and_move(                                                             \
-> > > +               this_cpu_ptr(&cpu_fbatches.op),                                                 \
-> > > +               folio,                                                                          \
-> > > +               op,                                                                             \
-> > > +               on_lru,                                                                         \
-> > > +               offsetof(struct cpu_fbatches, op) > offsetof(struct cpu_fbatches, lock_irq)     \
-> > > +       )
-> >
-> > I am running into this BUG, is it relevant?
 
-Sorry for the trouble.
 
-> > / # [   64.908801] check_preemption_disabled: 1804 callbacks suppressed
-> > [   64.908915] BUG: using smp_processor_id() in preemptible [00000000]
-> > code: jbd2/vda-8/96
-> > [   64.909912] caller is debug_smp_processor_id+0x20/0x30
-> > [   64.911743] CPU: 0 UID: 0 PID: 96 Comm: jbd2/vda-8 Not tainted
-> > 6.10.0-gef32eccacce2 #59
-> > [   64.912373] Hardware name: linux,dummy-virt (DT)
-> > [   64.912741] Call trace:
-> > [   64.913048]  dump_backtrace+0x9c/0x100
-> > [   64.913414]  show_stack+0x20/0x38
-> > [   64.913761]  dump_stack_lvl+0xc4/0x150
-> > [   64.914197]  dump_stack+0x18/0x28
-> > [   64.914557]  check_preemption_disabled+0xd8/0x120
-> > [   64.914944]  debug_smp_processor_id+0x20/0x30
-> > [   64.915321]  folio_add_lru+0x30/0xa8
-> > [   64.915680]  filemap_add_folio+0xe4/0x118
-> > [   64.916082]  __filemap_get_folio+0x178/0x450
-> > [   64.916455]  __getblk_slow+0xb0/0x310
-> > [   64.916816]  bdev_getblk+0x94/0xc0
-> > [   64.917169]  jbd2_journal_get_descriptor_buffer+0x6c/0x1b0
-> > [   64.917590]  jbd2_journal_commit_transaction+0x7f0/0x1c88
-> > [   64.917994]  kjournald2+0xd4/0x278
-> > [   64.918344]  kthread+0x11c/0x128
-> > [   64.918693]  ret_from_fork+0x10/0x20
+On 2024/7/26 下午2:32, Huacai Chen wrote:
+> On Fri, Jul 26, 2024 at 11:35 AM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>>
+>> On 2024/7/26 上午10:55, Huacai Chen wrote:
+>>> On Fri, Jul 26, 2024 at 9:49 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/7/25 下午9:48, Dandan Zhang wrote:
+>>>>> The kvm_hypercall set for LoongArch is limited to a1-a5.
+>>>>> The mention of a6 in the comment is undefined that needs to be rectified.
+>>>>>
+>>>>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+>>>>> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+>>>>> ---
+>>>>>     arch/loongarch/include/asm/kvm_para.h | 4 ++--
+>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
+>>>>> index 335fb86778e2..43ec61589e6c 100644
+>>>>> --- a/arch/loongarch/include/asm/kvm_para.h
+>>>>> +++ b/arch/loongarch/include/asm/kvm_para.h
+>>>>> @@ -39,9 +39,9 @@ struct kvm_steal_time {
+>>>>>      * Hypercall interface for KVM hypervisor
+>>>>>      *
+>>>>>      * a0: function identifier
+>>>>> - * a1-a6: args
+>>>>> + * a1-a5: args
+>>>>>      * Return value will be placed in a0.
+>>>>> - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
+>>>>> + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
+>>>>>      */
+>>>>>     static __always_inline long kvm_hypercall0(u64 fid)
+>>>>>     {
+>>>>>
+>>>>
+>>>> Dandan,
+>>>>
+>>>> Nice catch. In future hypercall abi may expand such as the number of
+>>>> input register and output register, or async hypercall function if there
+>>>> is really such requirement.
+>>>>
+>>>> Anyway the modification is deserved and it is enough to use now, thanks
+>>>> for doing it.
+>>>>
+>>>> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+>>> Maybe it is better to implement kvm_hypercall6() than remove a6 now?
+>> That is one option also. The main reason is that there is no such
+>> requirement in near future :(, I prefer to removing the annotation and
+>> keeping it clean.
+> I don't like removing something and then adding it back again, so if
+> kvm_hypercall6() is needed in future, it is better to add it now.
+I do not see the requirement by now.
+
+At the same time I just suggest you care about LoongArch kernel and 
+catch up the gap, just go forward rather than go around. Is it 
+responsibility of maintainer to catch future direction?
+
+Thanks for merging LoongArch KVM code at beginning, and I think I can 
+merge LoongArch kvm kernel to KVM tree directly just like KVM 
+x86/ARM64/RISCV.
+
+Regards
+Bibo
+
 > 
-> This removes the BUG complaint, but I'm unsure if it's the correct fix:
+> Huacai
+>>
+>> Regards
+>> Bibo Mao
+>>>
+>>> Huacai
+>>>>
+>>
+>>
 
-Below is the proper fix. Will post v2.
-
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -221,7 +221,7 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
- 	folios_put(fbatch);
- }
- 
--static void __folio_batch_add_and_move(struct folio_batch *fbatch,
-+static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
- 		struct folio *folio, move_fn_t move_fn,
- 		bool on_lru, bool disable_irq)
- {
-@@ -234,16 +234,14 @@ static void __folio_batch_add_and_move(struct folio_batch *fbatch,
- 		return;
- 	}
- 
--	if (folio_batch_add(fbatch, folio) && !folio_test_large(folio) &&
--	    !lru_cache_disabled())
--		return;
--
- 	if (disable_irq)
- 		local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
- 	else
- 		local_lock(&cpu_fbatches.lock);
- 
--	folio_batch_move_lru(fbatch, move_fn);
-+	if (!folio_batch_add(this_cpu_ptr(fbatch), folio) || folio_test_large(folio) ||
-+	    lru_cache_disabled())
-+		folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
- 
- 	if (disable_irq)
- 		local_unlock_irqrestore(&cpu_fbatches.lock_irq, flags);
-@@ -253,7 +251,7 @@ static void __folio_batch_add_and_move(struct folio_batch *fbatch,
- 
- #define folio_batch_add_and_move(folio, op, on_lru)						\
- 	__folio_batch_add_and_move(								\
--		this_cpu_ptr(&cpu_fbatches.op),							\
-+		&cpu_fbatches.op,								\
- 		folio,										\
- 		op,										\
- 		on_lru,										\
 
