@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-263763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9541293DA40
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:46:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FC993DA42
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16E21C23323
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61E21F24148
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5FF13CA99;
-	Fri, 26 Jul 2024 21:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B4414A09A;
+	Fri, 26 Jul 2024 21:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ioyu23W2"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BEMQLpsx"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CF363CB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDC928DCC
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722030408; cv=none; b=AYIDsYIdknm0muVqHp4MVtjMYG1H0ILg5bydTsVWkcI0RWU2S6zQFcdwKTw4TlZfjivLptCWaNNdDJbbn3m6VPuA2TF8AIS0YfQR7TG12r3K7dqopBSPcrakp3k8Hk2q6rX3WeBsqZGkRjDHQBZp6USNpRUmywa5f2iS9mFZaPc=
+	t=1722030489; cv=none; b=uZ+zcEzPEcTQFiK28lww+opn1ZgD43w3uHmeDpUlloV1nwzPYqDnvP4bHMmaZ2MoqqYUP9ySJH3U3O/Ip0LxbkFZE3TA4Sh83KKb7rL40vJS5ieiXvablpCwaMNv7XmpvwGc1JcBv3dLEi6afCHy/8M9pSJO4nKWUh3gJDnHtXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722030408; c=relaxed/simple;
-	bh=aCrfOtfi/A5BgDXHf+U8FweC4947+vdxNXBMOV7QZ2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/X8NJHuqnlIW8JAipVh5xzEBebK7QmvEa/BbugZY3pkoY8WM+MR5UR2/6XKu/1WjKtq7LE53RGIOhT0jXWLVyz4uHjnLgc/nvMUz2yeY7r9vZwpcL0/pqmEjJshYTW+u14qIDXLzqVRXusbtJnugXLXjTrSDtK+8dqxNPFk1fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ioyu23W2; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d2357df99so18098b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:46:44 -0700 (PDT)
+	s=arc-20240116; t=1722030489; c=relaxed/simple;
+	bh=+NEXPdLEYbaVxyaWs1Jns90v/Q9HGvkbAb9KiTOPDtU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6X3CmUgL1EYHbooyMTfI4Z/aGO9Z8V64QZJ7jo0FLarszdBRNK1Ubav/fb7rg8/l2VxlwBOe87J8AEiVmuhKY+3rwCwOemmLnruWrdEhQ1M82B8aEvfxuxq8GZum22XiW6lBCcxPshfkpb9ZRkmHcZT1FIiuHa5iwoLAEnd3w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BEMQLpsx; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ed9b802ceso2144886e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:48:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722030403; x=1722635203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TlhKPvCXZ2wElRTCBv/YFUrEL+eyae5eBT+lyjEKXCI=;
-        b=ioyu23W2mgoEx/NZk+wGSb+1uNBKx/5VqXV80x6OYvlgW/iVVhz5YnT0rCmBsCUHq9
-         hSbq/YQkHm7iuiKve+IWMF6qJvGScIPddZptS+0x3+Ar2tGtR9qMkDAvHs6RK7daJZSE
-         4wD/JKD5KOAHaAY5S3ZqcPlg8EIg/KVpUK4WeVEksRiejH4UhAjKigkRaNgSsF+X881w
-         tZDwDpVC9hh7DmGe5pPqWEBOt5lmFpIYxlOcxSbO5aEsKQKKzsTFS+wYpQI1TYYuIf95
-         ITVTS+XGTGfL6nLY6vxFL7w1vqDrukSaSlG9K3NjXmPKQiVJcBjYFl/hkg/pIr13MyWd
-         V8Lg==
+        d=linux-foundation.org; s=google; t=1722030485; x=1722635285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKuq6rb4iJjs6ClolIl+rhXCF6batvvgHN1Egz6YFgs=;
+        b=BEMQLpsx4q9eJZmBNDY5yZtuKE0nOFOoiLmHC2zS6EK7rVwXSVFdQgYREx9VXIoLgr
+         Mefbd82SAHu/1Hcw2VYAXNNvt92znX1vD23BN7j1Z73FYGrf2pUlHXmw85uRB1c2O5gs
+         QojqQRbHO4fZUOBAthlhZ9RnOKEv+jRKYWynw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722030403; x=1722635203;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TlhKPvCXZ2wElRTCBv/YFUrEL+eyae5eBT+lyjEKXCI=;
-        b=BMGBnVdYtFJN1QZQX5Fzt5117uSKSJrc6LYd1p8Eda8iCUDkpiv5veQCkWJJ5qapTo
-         pUuK3lfYTB8os5/1EliJcFFeTyA4GOV19zOyvBcGXY6ZnFZCDletr7MM6NzMXAPJyBFV
-         +so+3fZ6CqE17X0tVlyFwKsCM9lHibfkOoTZy7p048Bpw0Pjsn6pjDArGOuwTRhvNJZW
-         k3U8QD7w54ssAXyhPU/+XHOlCu4zbXKM5tjCFzujE/FjWW7S/oIv28PEtTaOsScnSliD
-         m0MI+8sMjIUR71weRNmbf26HXqCJ6TU5zLULEhFXK0GTzPNpsCQBrfAqlvdxB+jdJF7h
-         FOuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKTinpl96I6RDj8TnIIaSfwhdUjW3ZiiH7irwvxPBI61yIMa4ZjJTsqHwdsQ1BPEW/LHrIH++bn7jpjZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNJyhUUqO2u2V0lpmNEKeIwY62Ig++ih3IK5OKzWw2nzsYBnBT
-	7fbrpLVpI0xNSaYsVqliH7GJJp0ABGhUG6Qf0ScS5dnUJRIpJWQk0ou7a7w8jpQ=
-X-Google-Smtp-Source: AGHT+IHGwtBo/qH3tT7DlAHVbb8azYkmAsAKECyqzxQ8mGgtGWJBjAW/jHuwtZ8+veNJkacFfDZIzA==
-X-Received: by 2002:a05:6a00:8592:b0:706:aadc:b0a7 with SMTP id d2e1a72fcca58-70eac9a15c0mr4737841b3a.1.1722030403481;
-        Fri, 26 Jul 2024 14:46:43 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f884997bsm2825761a12.43.2024.07.26.14.46.41
+        d=1e100.net; s=20230601; t=1722030485; x=1722635285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pKuq6rb4iJjs6ClolIl+rhXCF6batvvgHN1Egz6YFgs=;
+        b=fI6iUfRCNsFKlfpu3KFT4vFki7BOgUihQL8iIvGHC0PJkjvuIELpGxtnKKrIyKw4bj
+         ZSsVbZk7i5gIE/askaqacq3255Qjtvli6GEYGloUOdY5e4tY9Dc0srJYdM8dK8wiZfuv
+         ZOYXG41ccuE3CaDPGNcLgzuEYS1IEy5GIHN4edZA46Xz9Tx4ftTMU8JnE/lWXTGmn8o/
+         am/QAjF5rr7u6ylwkQ0gk5LZWImMke/XxH0B1Qase9dZy91yRuJtcP420prp2ZIE/q0c
+         P4iq1n7tFRdL8wR6b+pqMuGewYv1GUdZJoL/2yJreolXM70I/zoIXhqEdg5Pf5BumvDd
+         wZOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYHRqJ237c3u9Kh2lu2Y24UtKSDfzixTWzlUILH5Wnv07BRR4PM+Mr2+3GIqohPXji8AyfS/w95APMc709F2oCOpI+7N/pStpkLv2s
+X-Gm-Message-State: AOJu0Yy7WFmEudev9Du8cl7O6j+gvbUbEuRbEeetf9iUiw7CSAct/b7T
+	nJEEPSgnqMRFDKB6bBjfjfCcjbzyczgDGyXmH8Ir7dKXyp2TIIVBEj9Wb1dIxogopBk282azbkG
+	tRFBibg==
+X-Google-Smtp-Source: AGHT+IF655QyxBTscsdYXG4sfLSbSX+kChTQ2YLjlMuN8dvPUrcHMVR+BsZawGqckoX/KQeMNbzC+w==
+X-Received: by 2002:ac2:5210:0:b0:52c:df83:ad52 with SMTP id 2adb3069b0e04-5309b2809acmr736910e87.36.1722030485073;
+        Fri, 26 Jul 2024 14:48:05 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2d111sm580773e87.279.2024.07.26.14.48.04
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 14:46:42 -0700 (PDT)
-Message-ID: <d73c9de5-7f18-41dc-870f-575ec59d50a1@kernel.dk>
-Date: Fri, 26 Jul 2024 15:46:41 -0600
+        Fri, 26 Jul 2024 14:48:04 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f025b94e07so20928841fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:48:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyEYx38KHLAG0q7gyO4svmov/Tud9+xhoRd1bgsIsrLC4oe19/EwhF//LxozhMXhZGF7BlA5jkiiKJy97kWdpt7ywwcBHe+Wr2TSEY
+X-Received: by 2002:a2e:9acb:0:b0:2ef:17f7:6e1d with SMTP id
+ 38308e7fff4ca-2f12ebcaefdmr6019161fa.4.1722030483957; Fri, 26 Jul 2024
+ 14:48:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] minmax: reduce compilation time
-To: Linus Torvalds <torvalds@linuxfoundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Laight <David.Laight@aculab.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Christoph Hellwig <hch@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
- "Jason@zx2c4.com" <Jason@zx2c4.com>,
- "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
- Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
- <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
- <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
- <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
- <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
- <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
- <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240726195044.18004-1-sedat.dilek@gmail.com> <CAHk-=wgEhoxDM7T+Ko-NgAC5X8etF0aL3fGsUXFeqnwggNXgCA@mail.gmail.com>
+ <CA+icZUWUdq-xR9nOB_c_8=pfwn8J062hiurFXcrF7zvmaNg8PA@mail.gmail.com>
+In-Reply-To: <CA+icZUWUdq-xR9nOB_c_8=pfwn8J062hiurFXcrF7zvmaNg8PA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 26 Jul 2024 14:47:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiruM9sWeOM8FKvGTetiWgSaGZF31YmdzS3_s=0bw0Ekg@mail.gmail.com>
+Message-ID: <CAHk-=wiruM9sWeOM8FKvGTetiWgSaGZF31YmdzS3_s=0bw0Ekg@mail.gmail.com>
+Subject: Re: [v2] arm64: Rename to KERNEL_IMAGE_COMPRESSED_INSTALL kconfig for
+ compressed kernel image
+To: sedat.dilek@gmail.com
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/26/24 3:36 PM, Linus Torvalds wrote:
-> Now, fixing that, and you end up with
-> 
->   Longest line is 61861 (82kB)
-> 
-> so it's now "only" 82kB in size, and that actually comes from
-> <linux/bio.h>, which has this:
-> 
->    static inline unsigned bio_segments(struct bio *bio)
->    {
->    ...
->         bio_for_each_segment(bv, bio, iter)
->                 segs++;
-> 
-> which looks very tame indeed, but it turns out that
-> "bio_for_each_segment()" expands to 82kB of code.
-> 
-> Jens? Maybe time to look into this?
+On Fri, 26 Jul 2024 at 13:54, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> And when you check a diff of two of your ARM64 .config?
+> What says COMPRESSED_INSTALL to other than the author w/o context :-)?
 
-Eek yes, that looks horrible. I'll take a look.
+Even without any context, I think it says "compressed install".
 
--- 
-Jens Axboe
+Which seems sensible. Because THAT'S EXACTLY WHAT IT IS.
 
+Now, admittedly I would have preferred not having a config option for
+this at all, but we have a sad historical situation of doing something
+odd on arm (and parisc).
+
+The RISC-V people used to do the same, but they decided to just make
+'install' do whatever image was built, so they base it on a
+combination of different config variables: CONFIG_XIP_KERNEL,
+CONFIG_RISCV_M_MODE, CONFIG_SOC_CANAAN_K210, and CONFIG_EFI_ZBOOT.
+
+I considered just using our pre-existing CONFIG_EFI_ZBOOT variable,
+but without knowing what the different boot loaders do...
+
+               Linus
 
