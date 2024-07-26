@@ -1,212 +1,161 @@
-Return-Path: <linux-kernel+bounces-263368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0798193D4F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B798493D4FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFFCA28796A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2069D287B10
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91ABFC0E;
-	Fri, 26 Jul 2024 14:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12871EEB2;
+	Fri, 26 Jul 2024 14:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSWKFfta"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CbqejKE8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oPDhyO50";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BkvrW/q0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8dEOA5J+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D753217C64;
-	Fri, 26 Jul 2024 14:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F84C4C8C;
+	Fri, 26 Jul 2024 14:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722003484; cv=none; b=l00xRFxmt6+d2HuZrsdl8aG5GuyKgJl8kdEXdVG7meNif6QGqctITjb40TThh7nztnO4wdDcLpjl2Jw5nF8QEyLruUegbXbbsVkTZjqgKUpeTBpJ3OWWi1tLxCpEyWfTpndTxd6fKta9Ikt5xmW7t2fF8D1wkVD+JyMpeoGQGGk=
+	t=1722003597; cv=none; b=Di4URlAizw+GGS6Yq5FAPD4D3KyK3KDJEW9bBEfkVdL6lofxdkpmz7eAPODoEcuxlaeU4CNk1+GX55XaInRt9PwBfmx/rPlWxPpw0U5no1weLk4Y5CKeeuMntx8I32zKu/VghH/6p3LPhzIPACz1UrU53tjxKJ8bhV2ENYN7KII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722003484; c=relaxed/simple;
-	bh=GEuaYMdifYZj2qLr1Mq99LFYCiUGknXwcHjv8sE9EFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYhKA3BcQkXD5hNjhEM0iouvvAZAs6fpM0WbVg6hPNSv/EXZqFND+PMJeLy939Ejl2CZiy7ayxpjEjI3bRF7+8aHvlFnadVx3zfaP86X0MjiXLuifkjYAGw7idOEOS78WrH1+/S/7wjhfxQW2RNmmfkLm2P3jVLYCxgVc13wBfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSWKFfta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEBCC32782;
-	Fri, 26 Jul 2024 14:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722003484;
-	bh=GEuaYMdifYZj2qLr1Mq99LFYCiUGknXwcHjv8sE9EFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSWKFftauRsaLRxZmdLfuuVG2ePLQOFeHnnI6QJWpy+1ZehwCup3TY6FvOnsIjI2u
-	 Yue3izIg8qvGX07TSDEQWnotMFQHxwd2NeuPbYxZlD372ZImq6WpdP4szqiSlzsgIr
-	 17K9R8Yq4RNUN5Rnoyn55sQWLjSmvnPbD3lOBcmzKII2nfB5JQeHJLsFPgLS9k/pKw
-	 PNvc23TGdfHzoe8XlSpbFTYFeDPeta+TRSNDZJrCq6axAqqOo4vIJv/wC9TDLkoQ2G
-	 630fSxQ40MougIhHfpuzAAfovjMqXOJwZNBf3amTUjtMg8HII8kQrWJpLQT7wNhqjH
-	 HJWZoOFzxnIAw==
-Date: Fri, 26 Jul 2024 11:18:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
-	gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
-	leo.yan@linux.dev, anshuman.khandual@arm.com,
-	James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-Message-ID: <ZqOwGWcYosGe9ru4@x1>
-References: <20240722101202.26915-1-james.clark@linaro.org>
+	s=arc-20240116; t=1722003597; c=relaxed/simple;
+	bh=JBKSlO27DYTY9vlhbfh78Vrum7iL/FZVXe8uTYF/+qY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Drj8cbLZET2OvpX4O1lYi219HWNG/S2ETGKcuMBDwKkLesqGKVfUQz6c73tyYPikvZK8TLRZKNW0mreJI9sPVPRq4kPvZvRRmqg5cIBl5UnpZAcmWBaHKdlLPPCCrGwbkKyndC2WVMkKc9yS5TxtmIo855At0x7kbs1W8h5BByQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CbqejKE8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oPDhyO50; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BkvrW/q0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8dEOA5J+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E081421BDF;
+	Fri, 26 Jul 2024 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722003593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVIcc43oqQoDSILwZYqe1MDhmRzn7/ptMvcrEbAq04s=;
+	b=CbqejKE8sgY/KPSgI3ZLsQvDe/t/nLBXH8XJvBvwVV8ygP0Zd+2oZkoF8264k8Hs9rha02
+	XlTb7NeFnjO51BuNg7DIYU5VoDrXZG8Ui1ZrQTH6NqQVYpDJwSVBAythmoXhFO07zgbV0l
+	/lMqPWr7EaHEsMQ9ZRPGMOpYkpEujx0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722003593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVIcc43oqQoDSILwZYqe1MDhmRzn7/ptMvcrEbAq04s=;
+	b=oPDhyO50Gn+jrMHQ4mqZzL0I1WBaH/5CRUUlsPLKh4n3YG0O/CvjKRBWoxgui8BuyrRwmL
+	m5titBvlnJU7krCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="BkvrW/q0";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8dEOA5J+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722003592; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVIcc43oqQoDSILwZYqe1MDhmRzn7/ptMvcrEbAq04s=;
+	b=BkvrW/q04O6bJQ4UbXg0RNTWrxeXRHtLD9UxV+aAXSy3wcrk/7nA3niVpj2Qd4IDtZhyLE
+	IbPeAY25v4ChIrp0XXTPFewwy8UW46/r5HtWgxnxSmJKRRZyhEmHOmqebwW3vZ4a6Imxgc
+	I3MRtt9aL5K+nsMvwTMod87SOq0hMkY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722003592;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVIcc43oqQoDSILwZYqe1MDhmRzn7/ptMvcrEbAq04s=;
+	b=8dEOA5J+/23AAbEMBteVxDPYhO5dSKwiiP+DxRFUAZ6zmnY/bEWlzdnzMDHexDTdg3Bv0Q
+	wK4G6ASpoOhuHBCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B1C50138A7;
+	Fri, 26 Jul 2024 14:19:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t+8vKoiwo2aHHQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 26 Jul 2024 14:19:52 +0000
+Date: Fri, 26 Jul 2024 16:20:28 +0200
+Message-ID: <878qxokzf7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: soxiebing <soxiebing@163.com>
+Cc: tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	songxiebing <songxiebing@kylinos.cn>,
+	bo liu <bo.liu@senarytech.com>
+Subject: Re: [PATCH v2] ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
+In-Reply-To: <20240726100726.50824-1-soxiebing@163.com>
+References: <20240726012342.8645-1-soxiebing@163.com>
+	<20240726100726.50824-1-soxiebing@163.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722101202.26915-1-james.clark@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.31 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[163.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.31
+X-Rspamd-Queue-Id: E081421BDF
 
-On Mon, Jul 22, 2024 at 11:11:42AM +0100, James Clark wrote:
-> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
-> as long as there are fewer than that many ETMs connected to each sink.
+On Fri, 26 Jul 2024 12:07:26 +0200,
+soxiebing wrote:
+> 
+> From: songxiebing <songxiebing@kylinos.cn>
+> 
+> The previous fix (7aeb25908648) only handles the unsol_event reporting
+> during interrupts and does not include the polling mode used to set
+> jackroll_ms, so now we are replacing it with snd_hda_jack_detect_enable_callback.
+> 
+> V1 -> V2: fix char persent compile error
+> 
+> Fixes: 7aeb25908648 ("ALSA: hda/conexant: Fix headset auto detect fail in cx8070 and SN6140")
+> Co-developed-by: bo liu <bo.liu@senarytech.com>
+> Signed-off-by: bo liu <bo.liu@senarytech.com>
+> Signed-off-by: songxiebing <songxiebing@kylinos.cn>
 
-Hey, may I take the tools part, i.e. patches 0-7 and someone on the ARM
-kernel team pick the driver bits?
+Thanks, applied now.
 
-- Arnaldo
- 
-> Each sink owns its own trace ID map, and any Perf session connecting to
-> that sink will allocate from it, even if the sink is currently in use by
-> other users. This is similar to the existing behavior where the dynamic
-> trace IDs are constant as long as there is any concurrent Perf session
-> active. It's not completely optimal because slightly more IDs will be
-> used than necessary, but the optimal solution involves tracking the PIDs
-> of each session and allocating ID maps based on the session owner. This
-> is difficult to do with the combination of per-thread and per-cpu modes
-> and some scheduling issues. The complexity of this isn't likely to worth
-> it because even with multiple users they'd just see a difference in the
-> ordering of ID allocations rather than hitting any limits (unless the
-> hardware does have too many ETMs connected to one sink).
-> 
-> Per-thread mode works but only until there are any overlapping IDs, at
-> which point Perf will error out. Both per-thread mode and sysfs mode are
-> left to future changes, but both can be added on top of this initial
-> implementation and only sysfs mode requires further driver changes.
-> 
-> The HW_ID version field hasn't been bumped in order to not break Perf
-> which already has an error condition for other values of that field.
-> Instead a new minor version has been added which signifies that there
-> are new fields but the old fields are backwards compatible.
-> 
-> Changes since v5:
->   
->   * Hide queue number printout behind -v option
->   * Style change in cs_etm__process_aux_output_hw_id()
->   * Move new format enum to an earlier commit to reduce churn
-> 
-> Changes since v4:
-> 
->   * Fix compilation failure when TRACE_ID_DEBUG is set
->   * Expand comment about not freeing individual trace IDs in
->     free_event_data()
-> 
-> Changes since v3:
-> 
->   * Fix issue where trace IDs were overwritten by possibly invalid ones
->     by Perf in unformatted mode. Now the HW_IDs are also used for
->     unformatted mode unless the kernel didn't emit any.
->   * Add a commit to check the OpenCSD version.
->   * Add a commit to not save invalid IDs in the Perf header.
->   * Replace cs_etm_queue's formatted and formatted_set members with a
->     single enum which is easier to use.
->   * Drop CORESIGHT_TRACE_ID_UNUSED_FLAG as it's no longer needed.
->   * Add a commit to print the queue number in the raw dump.
->   * Don't assert on the number of unformatted decoders if decoders == 0.
-> 
-> 
-> Changes since v2:
-> 
->   * Rebase on coresight-next 6.10-rc2 (b9b25c8496).
->   * Fix double free of csdev if device registration fails.
->   * Fix leak of coresight_trace_id_perf_start() if trace ID allocation
->     fails.
->   * Don't resend HW_ID for sink changes in per-thread mode. The existing
->     CPU field on AUX records can be used to track this instead.
->   * Tidy function doc for coresight_trace_id_release_all()
->   * Drop first two commits now that they are in coresight-next
->   * Add a commit to make the trace ID spinlock local to the map
-> 
-> Changes since V1:
-> 
->  * Rename coresight_device.perf_id_map to perf_sink_id_map.
->  * Instead of outputting a HW_ID for each reachable ETM, output
->    the sink ID and continue to output only the HW_ID once for
->    each mapping.
->  * Keep the first two Perf patches so that it applies cleanly
->    on coresight-next, although they have been applied on perf-tools-next
->  * Add new *_map() functions to the trace ID public API instead of
->    modifying existing ones.
->  * Collapse "coresight: Pass trace ID map into source enable" into
->    "coresight: Use per-sink trace ID maps for Perf sessions" because the
->    first commit relied on the default map being accessible which is no
->    longer necessary due to the previous bullet point.
-> 
-> 
-> James Clark (17):
->   perf: cs-etm: Create decoders after both AUX and HW_ID search passes
->   perf: cs-etm: Allocate queues for all CPUs
->   perf: cs-etm: Move traceid_list to each queue
->   perf: cs-etm: Create decoders based on the trace ID mappings
->   perf: cs-etm: Only save valid trace IDs into files
->   perf: cs-etm: Support version 0.1 of HW_ID packets
->   perf: cs-etm: Print queue number in raw trace dump
->   perf: cs-etm: Add runtime version check for OpenCSD
->   coresight: Remove unused ETM Perf stubs
->   coresight: Clarify comments around the PID of the sink owner
->   coresight: Move struct coresight_trace_id_map to common header
->   coresight: Expose map arguments in trace ID API
->   coresight: Make CPU id map a property of a trace ID map
->   coresight: Use per-sink trace ID maps for Perf sessions
->   coresight: Remove pending trace ID release mechanism
->   coresight: Emit sink ID in the HW_ID packets
->   coresight: Make trace ID map spinlock local to the map
-> 
->  drivers/hwtracing/coresight/coresight-core.c  |  37 +-
->  drivers/hwtracing/coresight/coresight-dummy.c |   3 +-
->  .../hwtracing/coresight/coresight-etm-perf.c  |  43 +-
->  .../hwtracing/coresight/coresight-etm-perf.h  |  18 -
->  .../coresight/coresight-etm3x-core.c          |   9 +-
->  .../coresight/coresight-etm4x-core.c          |   9 +-
->  drivers/hwtracing/coresight/coresight-priv.h  |   1 +
->  drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
->  drivers/hwtracing/coresight/coresight-sysfs.c |   3 +-
->  .../hwtracing/coresight/coresight-tmc-etr.c   |   5 +-
->  drivers/hwtracing/coresight/coresight-tmc.h   |   5 +-
->  drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
->  .../hwtracing/coresight/coresight-trace-id.c  | 138 ++--
->  .../hwtracing/coresight/coresight-trace-id.h  |  70 +-
->  include/linux/coresight-pmu.h                 |  17 +-
->  include/linux/coresight.h                     |  21 +-
->  tools/build/feature/test-libopencsd.c         |   4 +-
->  tools/include/linux/coresight-pmu.h           |  17 +-
->  tools/perf/Makefile.config                    |   2 +-
->  tools/perf/arch/arm/util/cs-etm.c             |  11 +-
->  .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  49 +-
->  .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   3 +-
->  .../util/cs-etm-decoder/cs-etm-min-version.h  |  13 +
->  tools/perf/util/cs-etm.c                      | 629 +++++++++++-------
->  tools/perf/util/cs-etm.h                      |  12 +-
->  25 files changed, 650 insertions(+), 475 deletions(-)
->  create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
-> 
-> -- 
-> 2.34.1
+
+Takashi
 
