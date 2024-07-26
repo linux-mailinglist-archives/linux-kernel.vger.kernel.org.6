@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-263757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B5793DA34
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC50693DA35
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDA23B227E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBF41C2313F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF91D149DFF;
-	Fri, 26 Jul 2024 21:33:27 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518EE149E17;
+	Fri, 26 Jul 2024 21:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BjT8++HQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E15438DEE
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DF138F82;
+	Fri, 26 Jul 2024 21:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722029607; cv=none; b=YWK5FwVNaEvbpZaVGxhuf09J7MdClb9166nzw77QOxDOAXutoqPmcCoiP6RLYsVMimK4Lz9TKRY3Mt9zx/Z4NUmACtEhuW9pJkKp6lha4u8Y3QJld3gzsVmF2MIZgds2mrCULuwwbUd+P/MbgXvKtUJfTiSB8jb45RiXy746JVY=
+	t=1722029776; cv=none; b=jR99HW5NG+YrUErGLAmn5brChi/fl8nw2Ym8pZWcQh/5co6t/g+MYrGbH/ka8K8wGCxpew5kPiSYWGCwqb4iCdLSmGtWD23taNg/AjFYQRgtCs4rFZd19L3BWmuf/6oZ+HwheZvB4/qDp0cxZobvv83mIhpjp8z6KxLGBrr4J7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722029607; c=relaxed/simple;
-	bh=OFjSYsehepx77wEMqry9IIbi4Y0fqCN70nQtwDkk2F4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=G/DWyCSreWoWvA1+5XKzWeT6s4peU65cjj8/b/onBLaZV3GxMWhK7T1PPAUZ9WAQL8+b+w3Zbo8uuCn1Csr9kwpSiHwsznD6RzNvb62OiveXlkGo4QVN4zoUijZEtANKztMRNulVKxdqappriiNEoFPTYQk582Q6cYccfvQbozg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-202-R4K3B1YWPbGMagsXExZgPQ-1; Fri, 26 Jul 2024 22:33:21 +0100
-X-MC-Unique: R4K3B1YWPbGMagsXExZgPQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 26 Jul
- 2024 22:32:43 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 26 Jul 2024 22:32:43 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Matthew
- Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig
-	<hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
-	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH 0/7] minmax: reduce compilation time
-Thread-Topic: [PATCH 0/7] minmax: reduce compilation time
-Thread-Index: Adrd1UnD4d8H4E3lR3eDOQFKqPNnSwBs614ZAAZcE0A=
-Date: Fri, 26 Jul 2024 21:32:43 +0000
-Message-ID: <20e5a0db0ebf4bbb991b13a1d8951137@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
- <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
- <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
- <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
-In-Reply-To: <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1722029776; c=relaxed/simple;
+	bh=JNsZ6MEcoHsNdkYIZD1Nv902TWnUmDtLFa2vdZ5xNAQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=TuoVo4aeVjhPSWradJUfahJn+7BkKCd5SByrZIJoJLWMN1RRzuTCzQMsJ2TZHyRhx9MlDwkWBhEK2VynwYJCGPiqpZMzcSFeF2PBYVqqRAyauO8HEOkduLBtqPGDuyIsTYqyU6esBPVO0jV5roitGRgBYmUBat3xawELt+3R/jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BjT8++HQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F68C32782;
+	Fri, 26 Jul 2024 21:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722029776;
+	bh=JNsZ6MEcoHsNdkYIZD1Nv902TWnUmDtLFa2vdZ5xNAQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BjT8++HQUy9MsXZhALq6Ls0NPiVPzLYBFTR9kMcNKOe3oogx2CiTAhlS2haZA6q0Q
+	 ko0NjyizYT7DZYR40IcM6G4tgLwYb+4AZSZdEvexbXz1nEBpaatxEAGw47jwi2zuCp
+	 2BnoF9eW89ciLq8KkC1UvuBMeiQi9nu6vjsAN5fY=
+Date: Fri, 26 Jul 2024 14:36:15 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.11-rc1
+Message-Id: <20240726143615.93c57975048105d2883f3d4a@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjYgSnVseSAyMDI0IDE5OjI0DQo+IA0KPiBP
-biBGcmksIDI2IEp1bCAyMDI0IGF0IDExOjEzLCBMb3JlbnpvIFN0b2FrZXMNCj4gPGxvcmVuem8u
-c3RvYWtlc0BvcmFjbGUuY29tPiB3cm90ZToNCj4gPg0KPiA+IDUsNDQ3LDUzOSAgICAgICAuL2Fy
-Y2gveDg2L3hlbi9zZXR1cC5vLnByZQ0KPiANCj4gQ2FuIHlvdSBwZXJoYXBzIGRvIHNvbWUga2lu
-ZCBvZiAibWF4IGV4cGFuc2lvbiIgb24gYWxsIHRoZQ0KPiBwcmVwcm9jZXNzb3IgZmlsZXMgKHlv
-dSBzZWVtIHRvIGhhdmUgZG9uZSBpdCBieSBjaGFuZ2luZyB0aGUgIi5jLm8iDQo+IHJ1bGUgdG8g
-anVzdCBzcGl0IGl0IG91dCBhcyAiby5wcmUiLCB3aGljaCBzb3VuZHMgZmluZSkuDQo+IA0KPiBG
-b3IgZXhhbXBsZSwgdGhpcyB0cml2aWFsIHBhdGNoIHNlZW1zIHRvIGZpeCB0aGUgc2V0dXAuYyBl
-eHBhbnNpb24gYnkNCj4gYWJvdXQgYW4gb3JkZXIgb2YgbWFnbml0dWRlIChpZSA1ME0gLT4gNU0p
-Lg0KPiANCj4gRW50aXJlbHkgdW50ZXN0ZWQsIGJ1dCBsb29rcyBPYnZpb3VzbHlDb3JyZWN0KHRt
-KSB0byBtZS4NCg0KLQlleHRyYV9wYWdlcyA9IG1pbjMoRVhUUkFfTUVNX1JBVElPICogbWluKG1h
-eF9wZm4sIFBGTl9ET1dOKE1BWE1FTSkpLA0KLQkJCSAgIGV4dHJhX3BhZ2VzLCBtYXhfcGFnZXMg
-LSBtYXhfcGZuKTsNCisJbWF4bWVtX3BhZ2VzID0gRVhUUkFfTUVNX1JBVElPICogbWluKG1heF9w
-Zm4sIFBGTl9ET1dOKE1BWE1FTSkpOw0KKwlleHRyYV9wYWdlcyA9IG1pbjMobWF4bWVtX3BhZ2Vz
-LCBleHRyYV9wYWdlcywgbWF4X3BhZ2VzIC0gbWF4X3Bmbik7DQoNCkkgc3VzcGVjdCBqdXN0IHJl
-b3JkZXJpbmcgdG86DQoJZXh0cmFfcGFnZXMgPSBtaW4zKGV4dHJhX3BhZ2VzLCBtYXhfcGFnZXMg
-LSBtYXhfcGZuLA0KCQlFWFRSQV9NRU1fUkFUSU8gKiBtaW4obWF4X3BmbiwgUEZOX0RPV04oTUFY
-TUVNKSkpOw0Kd2lsbCBoYXZlIGEgc2ltaWxhciBlZmZlY3QuDQoNCkknbGwgdHJ5IHRvIGRvIGEg
-djIgb2YgdGhlIHBhdGNoc2V0IHRvbW9ycm93Lg0KLSBJJ2xsIGxlYXZlIF9faXNfY29uc3RleHBy
-KCkgd2l0aCBpdHMgY3VycmVudCBkZWZpbmUgKGZvciBub3cpLg0KLSBGaXggdGhlIGlzc3VlIHRo
-ZSBidWlsZCByb2JvdCBmb3VudC4NCi0gRml4IHRoZSB0eXBvIGluIG1pbjMoKS4NCi0gdXNlIGF1
-dG9fdHlwZSBmb3IgbWluL21heCBmdW5jdGlvbnMuDQoNCk9uY2UgdGhhdCBsb3QgaXMgaW4gSSds
-bCBkbyBzb21lIGZ1cnRoZXIgY2hhbmdlcyBmb3IgJ25leHQnLg0KDQoJRGF2aWQNCg0KLQ0KUmVn
-aXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRv
-biBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+
+Linus, please merge this batch of hotfixes, thanks.
+
+The following changes since commit 1722389b0d863056d78287a120a1d6cadb8d4f7b:
+
+  Merge tag 'net-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-07-25 13:32:25 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-07-26-14-33
+
+for you to fetch changes up to 4811f7af6090e8f5a398fbdd766f903ef6c0d787:
+
+  nilfs2: handle inconsistent state in nilfs_btnode_create_block() (2024-07-26 14:33:10 -0700)
+
+----------------------------------------------------------------
+11 hotfixes, 7 of which are cc:stable.  7 are MM, 4 are other.
+
+----------------------------------------------------------------
+Dev Jain (1):
+      selftests/mm: skip test for non-LPA2 and non-LVA systems
+
+Gavin Shan (1):
+      mm/huge_memory: avoid PMD-size page cache if needed
+
+James Clark (2):
+      MAINTAINERS: mailmap: update James Clark's email address
+      dt-bindings: arm: update James Clark's email address
+
+Li Zhijian (1):
+      mm/page_alloc: fix pcp->count race between drain_pages_zone() vs __rmqueue_pcplist()
+
+Ram Tummala (1):
+      mm: fix old/young bit handling in the faulting path
+
+Roman Gushchin (1):
+      mm: memcg: add cacheline padding after lruvec in mem_cgroup_per_node
+
+Ross Lagerwall (1):
+      decompress_bunzip2: fix rare decompression failure
+
+Ryusuke Konishi (1):
+      nilfs2: handle inconsistent state in nilfs_btnode_create_block()
+
+Suren Baghdasaryan (1):
+      alloc_tag: outline and export free_reserved_page()
+
+Yang Shi (1):
+      mm: huge_memory: use !CONFIG_64BIT to relax huge page alignment on 32 bit machines
+
+ .mailmap                                           |  1 +
+ .../bindings/arm/arm,coresight-dummy-sink.yaml     |  2 +-
+ .../bindings/arm/arm,coresight-dummy-source.yaml   |  2 +-
+ MAINTAINERS                                        |  4 +--
+ fs/nilfs2/btnode.c                                 | 25 ++++++++++++----
+ fs/nilfs2/btree.c                                  |  4 +--
+ include/linux/huge_mm.h                            | 12 ++++++--
+ include/linux/memcontrol.h                         |  1 +
+ include/linux/mm.h                                 | 16 +---------
+ lib/decompress_bunzip2.c                           |  3 +-
+ mm/huge_memory.c                                   | 14 +++++++--
+ mm/memory.c                                        |  2 +-
+ mm/page_alloc.c                                    | 35 +++++++++++++++++-----
+ tools/testing/selftests/mm/va_high_addr_switch.c   | 16 +++++++++-
+ 14 files changed, 95 insertions(+), 42 deletions(-)
 
 
