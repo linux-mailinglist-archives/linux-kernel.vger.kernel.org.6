@@ -1,329 +1,246 @@
-Return-Path: <linux-kernel+bounces-263658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E4A93D8C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D3193D8CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A62865B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF10286B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B78A1465B8;
-	Fri, 26 Jul 2024 18:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E365482D7;
+	Fri, 26 Jul 2024 18:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNwM9LCZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="If+6QPtA";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GlGCmjbe"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F444778C;
-	Fri, 26 Jul 2024 18:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722020158; cv=none; b=tALfq2V8nVpdb5CP1eIoGWRZkVuYMR0G85jLzRHJzuCigVeK70Ns6xiMaOiLX6f9DtTU017Ny2mtGJ+uHqBup5d0ygrIBWmEqCaO4XF8FqbkdplcTO2ej6+hreH0Hl8YmmJf8yMPLeeDifuSlo6ePLxNm+XOpQNF2Vs1fgC3myc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722020158; c=relaxed/simple;
-	bh=WjAleJ0EAe9krZE0SpxeL5mH20sjOgzh7RakC4qNqdc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tNtPG+0hUxVU2HrQe2A0YXz3ihqlwnvE3SbZpbqUDpzv36W5tC8L85f5n5G2JaAOMAuCxSUS9ZAIqFyQwyZAPszliTejO/+V39NSXNrUVLgIbi6i+CMiNLTXyPD1nDH4Ed9Ai1WmkxQHTiXKtU7ULwxJGO71+zd9hxSxusQYqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNwM9LCZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12265C32782;
-	Fri, 26 Jul 2024 18:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722020158;
-	bh=WjAleJ0EAe9krZE0SpxeL5mH20sjOgzh7RakC4qNqdc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=sNwM9LCZQACXdBIoJMu27VGbvgCVy6DXqr2AOc9X+dQeKcji5Dj29FM8gzKUdKB1Q
-	 E0+5+Et/pffLsRpV/E/loAVzBtufdU6LzmDcS7GzISgXFATKas+Jek5CVlAcuC9/eY
-	 YNI48zeUVJLrI1twpD42xYTBr21R1rNTIkJnoNJp1uw1D3hGUXkOTL3BFtt7sfaLTy
-	 68HtzPI1hrI9q2dnC6PgtkVsBZC2pGy1H8NIJu8mgMqfluEsjOtMd+OGFNzEX0YMjf
-	 V+t1nkv3U7j5eLxO/9kHKchd29wRF56CVfPOcgna1hRW+B5hRF2XLpaWMDI2i7ITso
-	 cPGf9ay8SmNmw==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id D8DD3147373B; Fri, 26 Jul 2024 20:55:54 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
-To: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org,
- hawk@kernel.org, john.fastabend@gmail.com, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
-Subject: Re: [PATCH] bpf, cpumap: Fix use after free of bpf_cpu_map_entry in
- cpu_map_enqueue
-In-Reply-To: <20240726180157.1065502-2-radoslaw.zielonek@gmail.com>
-References: <20240726180157.1065502-2-radoslaw.zielonek@gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 26 Jul 2024 20:55:54 +0200
-Message-ID: <87h6ccnft1.fsf@toke.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CD6335A7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722020217; cv=fail; b=NxyZr//Tr1xqmpJSf3G8D1N31ZyCodRGgQAPPhnXFwUGwzP+jjrfOCCUXvPFNmDKiPjj9w9P2wRObxHun/sgmWMVXNJjwz2nEIesk0sV+e3bCkGqJYWc3RL3PBsTJrwc5pC7xdBksG1ASFuHDMGmSz8VMS3jJTziVvIZ+REIWyk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722020217; c=relaxed/simple;
+	bh=/1Y5oCw/44o4kmJWIgHZiCYP5+j9eeeE+P6EYgxuz0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NH2HefFkgXU2AOdW2HiB/TzGl+brSICzJ4XkvVQLrHFsRb1VAYe1HgwwVWsZ8zwkcZZMJV0jyiTp/H85i0jrNAWsqq0XDHPqnpV71ZIkTx/UD3pinlY5CmtigkLbqXisF1B7h/KYVgulcgyw5BweEoPyOmz1eNWeAnxohPhD5ow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=If+6QPtA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GlGCmjbe; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QHt3V0012583;
+	Fri, 26 Jul 2024 18:56:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=FxFG3d7RG0L6tue
+	VE7TZxLRf2ipSNhxg7rKNLa+XHv4=; b=If+6QPtA9Vi5Yx9wYpcddydAVMUEEMf
+	1znlB6VZCxfJvXSetdfGOL5Le9yW8MBV1fG9+5mnEDq0qGQdBcxrXWEQb5Wg0O4C
+	0MO62m7e17QgWWqfus1+dqaRSxxqp3I3kkOzI8+9RtO5E4eoc8Hd93rL8DhFMasx
+	YuenoVk1bd0VOfUwvRKJAcAuoA4mtyRqXO9qkXtdhaZlQz+tDE7ZpVH5Bp6JrUEL
+	MHf0JYiBBvOO1dWUstN1fPS6qqLjrpkZm4XTlyJSjKzG9PR6ckO5ajbeyPTTxDZ/
+	DXFDn6LDbs1YtJESSAXXO+CeD+RQpRv1peYK8hHCaS5HqmllhRqsk3g==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hft0p5uh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 18:56:39 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46QIdrqZ038919;
+	Fri, 26 Jul 2024 18:56:38 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h26s1m8q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 18:56:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uLAe+locmCZAyD7SXdqNMYwQs/zmZ3UTDamk8RPaLbnt7kzbzPBKxwNIgzrirqC8uTG/nSHnrj3Yr8xE+sUgmtI3wWV5pjrtLoLXXkFmIN82ep2y0G9qpMoFCQ9eWKrww26lkMyxXjIpZQAVffBciBjPHrda2IxCItOYDnGFhOfrRRU2D9/hQ4+hwTW/Z64D8BY2KnxM+O0QfNn/rw69JNy0gvO7AUyUz+QaHqmIqTevPu0xuc0wlb2VO250d/NNRTA0ObeRuEWcbJg+QaZhSHlRRAorMocTkJNK1P1/vb4LRR2LBt/YTuaKMGEKeYKNIOztmM6Zvy794t8cAIXC9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FxFG3d7RG0L6tueVE7TZxLRf2ipSNhxg7rKNLa+XHv4=;
+ b=o9Xh72DBiTD6Enr0fa8pT+H69v9UZxfjWYYeuhpfc3YrRrG/A3oOK19wNM7iZtcDJAU9oiuwOkWTTwYwiKeZS4okAHV8trkKuaJkiXoNMimsRdfXnnhAR//Lw31q0SDGWQKcDNq4UP8cboADsAIKFUG1f6PyeZUEHNPznhiABP0GEoxKno4znYC+VMkLZJPeZXCPHXcBeslqmUiBBOwGWfC1D3bRrt8u9v+kKEAWUr3y1Oqy3RpRCRErCJCsiQSAZVW1KrA5uLXlnk8r0WJQbcVBHS+/Z0bQLJ0xShHfTYgk7nkPRAqNxwqLsxEI2L3LJ7eHWnLicnhICPqtuVP3OA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FxFG3d7RG0L6tueVE7TZxLRf2ipSNhxg7rKNLa+XHv4=;
+ b=GlGCmjbeGGe8HfApteQHnNmcFTHGy6g1UWUvye0nWnrsD6PfF29bs18pwg1mhYXKciNPsx+y2Uyzi650PbMByqGyoZcA+jJPid0dgWR0OXnlRI3bQmmV+vZO67qFqJWhMU1X9phwt6RlZv0vbLBRAS9QUPJU+6tLgvYKOoc5ags=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by DS0PR10MB6270.namprd10.prod.outlook.com (2603:10b6:8:d2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Fri, 26 Jul
+ 2024 18:56:34 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7784.017; Fri, 26 Jul 2024
+ 18:56:34 +0000
+Date: Fri, 26 Jul 2024 19:56:31 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: David Laight <David.Laight@aculab.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Arnd Bergmann <arnd@kernel.org>, "Jason@zx2c4.com" <Jason@zx2c4.com>,
+        "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+Message-ID: <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
+ <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
+ <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+X-ClientProxiedBy: LO4P265CA0324.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:390::8) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|DS0PR10MB6270:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9223a8a4-8062-4755-b18b-08dcada4abc0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yyv+cxa+4hMWvkKVSyqTmhmok7dRkdTG38OWFauXXghtdcIbZ6TDFU+scA0m?=
+ =?us-ascii?Q?hyMJr3XABQBk3f8e2xN34ajmDpUuh1ME6odDw8cVQP2i/48SG/q4EOmr5rdI?=
+ =?us-ascii?Q?CN+rxvkpDcjL3AbBkNiQ2MEMHJS7uCkVQibgTnnV3BGPGWgDEQodu12kv3Hg?=
+ =?us-ascii?Q?yhYCRU3VM7LjW0PVgngubu1dhu0U7UiLOpdtNz9GSVURGiwbJHpPFyHEJT+0?=
+ =?us-ascii?Q?Ve4Ao7wR+Zl4LM6vawZkWzN2nFZaIL57wLftc+CTTHBFv0uQOlv6kvLftDoU?=
+ =?us-ascii?Q?43uM5dXEvBQcZVWuwCG/Brc4NrvPqm4eRkkNM3+pS1Z6jRtnZZCGfy2IXLiR?=
+ =?us-ascii?Q?Oikw3c8aCF9K7QGsnbDGIyHIM1/4FzxEc1qSMrW/JlJqwcztCRieVuNz0PQn?=
+ =?us-ascii?Q?4i3xDFoAQ1p1p5SKrh+3P9Wl0D5t56uuNQ55JZULcf+FCxasvtvEYJUX77HJ?=
+ =?us-ascii?Q?RR0Y4Hx8UsV+5i7lyI0nCCwrWVNSnRJSnBLfk97d1Jycx033CSTZjfc5D/+9?=
+ =?us-ascii?Q?iImXTmPl9CfCYx283EbNOg7kBp38KFNHTOV8cWUqQxON/N0UGJ5Z4fbIEBbA?=
+ =?us-ascii?Q?ojxi7zX0D4F9E2l2F13RI6ssqIqhWhGtHyWIURbs9lcaRmmaOtSH+NjGGTg/?=
+ =?us-ascii?Q?SPXULEC1f/jr3Q0FLGLmDYt9ZG5YNf7zehOVEqWu6e/dCKiJ37kocUP7BjoK?=
+ =?us-ascii?Q?2jvX9iReFfhtT1IEJg7wYNZZwe3bk6SrwWEuRzSzFmJ/CMzFc/gu3cPBzh9E?=
+ =?us-ascii?Q?34COOuHnrhAlhRwJFMVg4hBAKqZnI5GePz2GiOF4Q96Am9qRpykqLiVObsYi?=
+ =?us-ascii?Q?CNwxWhs4ejCsEIIKFwNR9HdXJlGQVvU+9GQphG66X+OUtcuZ5O6cE2Vy2/CN?=
+ =?us-ascii?Q?F7fF3MvRVXZs0r9ZhN/Y2Q/+ezrTHhTuYwfnxMkUQG8QZMiOsKVxBjlgT7BR?=
+ =?us-ascii?Q?NsbIKqiML2rjz2tL4M/BTzlJeU7BOHqbOoDs9wLXuBwvMYzUiiTNrNroaMjX?=
+ =?us-ascii?Q?Sv7zAz36cLSZZ+GmPtRcr/cKDBr71Rr0hGek3XUVbtuPoqjZ5gYXJT/bSsbQ?=
+ =?us-ascii?Q?7PpjuDKfvWnxK4/63QQh3Wmc9uIFYIpmg8zH3llHwXCjFNUpD1cHPezMRVif?=
+ =?us-ascii?Q?4mAk0VlETLmZiYondo7ww2Z6E431TXe3GS+OXUPHXMJ0twPuyozBC3j8268Z?=
+ =?us-ascii?Q?TiJ4ZiHbtbc6KUqZoJcnxWruvXW82oI+jb7LsXUa/BQq4lCroTpjqT5Gf0Sj?=
+ =?us-ascii?Q?lZJET0cQUEv4eBkUX7KES6anN3CqGgZ88XNCFR9ccfIj8TVdpB4ZbSX+oTW4?=
+ =?us-ascii?Q?0cQP6W5RWroCIwCciKxrLPEUwUJAXS7yGVV67cxNO52C+w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ArPFaO1VV1Vj76Ebb/hWPXJVlKR/YEYupysJ7dsIjwId3N59X6NaXE+sm5h+?=
+ =?us-ascii?Q?HBV7ZcIQ4g/kybmwDZcsz69CZACWIV+qTdBbbTX5e46v5Kd6/o2xsQRxec4A?=
+ =?us-ascii?Q?DH6jYaOoWrTVxW6Y/vrCrg70nGnF+jLcRmL8+bX449y+o9MSdtjy/M7cDKAk?=
+ =?us-ascii?Q?ZHi5nB5NGTttkCFcsrJmB1PyyhFrySv4joRO9uKJlq/S4/oYBgf2bfw96l8S?=
+ =?us-ascii?Q?/1OgxESBWYvAsJqaDRFe45JjUt06u4erqf9nTCeb6iarYulDVumTQdtF/ITQ?=
+ =?us-ascii?Q?gWyZt3qJQZqrJnFv8weTt6jOR8+75PtrbCtkXs/lIxet5UVO3ZTfrr5UZ/1E?=
+ =?us-ascii?Q?fJzI5flahvG+gU5afgFQ5uHIMVJDZpMu8GgIl0tfYWhFMIk6K6sJeX+k6zam?=
+ =?us-ascii?Q?1DjyGOpZDf/gSR4skNPbSbBxi0v7I6aK8Ket8TcDQkavEKXZ8ZgYdOFoOESe?=
+ =?us-ascii?Q?+Xu6YJj4vzIFUga3VAHcE+oSeOVGuBbGtPXaFWwrtoboeUdZ/Uhfq3RM3xyr?=
+ =?us-ascii?Q?vNRHjMR5Tiki5jkkneCBD9tsHaUNQ2hBxlruS4Tu78+eQHFmRdFpa9wIWtNZ?=
+ =?us-ascii?Q?f/HUixE4J89GiJOPnfQ7UPkKxdKGfhZgoz8LZd5dx7OR/cF5EDPBduM4nCa/?=
+ =?us-ascii?Q?Poo5UTs5RBrU/JisSPFmPYmiRm0gQ1e0ui3raXNml7occI8qi7Dxq9+Lb/3X?=
+ =?us-ascii?Q?k75kXL067U4z3sxknVyu7oefF0sJvlNS59Pw7lyC50AfByM/VIw3kCj7qBeV?=
+ =?us-ascii?Q?nezkJ8a9hGOOBRfsK47QP+CYmUy8NQMDRCXdD7Hpt14mOSmf48HvsFlf7B/G?=
+ =?us-ascii?Q?Px6SATCxZgKTZUtxRUkJKZQlvhagyFrrVQw1vxjazi1n4C8FctHeCTQ/uT1Q?=
+ =?us-ascii?Q?NeT9/d/jQmuaAD2MGM72Ji2m0SkhwGUK69VYcjIhxvd4lSRCsIwsXKc7BurQ?=
+ =?us-ascii?Q?34CFANZIleCrnbMBA4mojjsotAXCA5JAiYmBy2LMGI0Yb9+H2hI46JXBclgE?=
+ =?us-ascii?Q?AK/JkLNNjwdSZqugBlmGdIPynno2OjSeggFIcd0bQ1jfIB2hxenpELjyHEcx?=
+ =?us-ascii?Q?RRRNndH7CHI7CmOB3CM2HpiWf4DGEPS319YBcNmFXTcvMGtim5Bz57ViEDb9?=
+ =?us-ascii?Q?UbvzjShqhu47G8g2bNEzQ/A59DxFRe+Fp9/P5fl31l9NsaZF84mhoOM31WX4?=
+ =?us-ascii?Q?IsoXlDBt9f49ksa5otzNaipNFYNHWw3TegLBicTatSfoImiu0yDOWtQPfbZ3?=
+ =?us-ascii?Q?aXtX9zzILVCDG9YW15IRP4n0fv5OLXu7aOK9wseTyb0d2LSsREhEcziiONFo?=
+ =?us-ascii?Q?s+ZoP9fne8dT4MlI3heV/F9UyPzb3PzZTjc6Ch3tfxjA26pXShmt3WzEyfYo?=
+ =?us-ascii?Q?s+detjqr22ZpchSnx5dcf8VelBeq4xLe4+fI8AIue36ZahEgGTI7ya+c6fmL?=
+ =?us-ascii?Q?v87tyG0vMIPZXHojsUGG4vAUi1nko3uTBRTzRq84f+t8yB3o/XlIjaEgq7z9?=
+ =?us-ascii?Q?/6rkpTrdZFPMqCZKsfKS+Gxa8g097zr8mwyPKD1ETJ+ldn/Jcy2VVhWloSWf?=
+ =?us-ascii?Q?mdxMIdKFkea5S8EKkVdb1oDWD9dMx+vXcKsB+1c5M+9v+iuq/AElLbSyMXxb?=
+ =?us-ascii?Q?dhGw8g3p4RzraNyT+yulJCOeBkfQfNAn3ff1k6vSpxVETJPoEez5ZwDHcvWW?=
+ =?us-ascii?Q?PZM+OA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5qrOPaZ/gP1aLzX0E4nyB4rXrHxjmsh5j6UkMwXVrZXEkY4yvrqI+0cuJKOSMRH/EoTysdXsJaEzhzuTZpz/tMJ7/X8xnlx1nPVjrZRmUaZ9cSTJs0oiytC/4s/tjFTGu923bHJsqOUBgcTh1xkMALGPVMw8SkGiVXBN7oE9Tw2tzuxBsYM/uM5PQRlQAKIoLlOrKm0uCDnSQRE5ciYWXoudKmPi3fgjF9Vre1U2J2B3NrjM27jjsp3T0jZXOzRswproS+LnQ4HREZfwlXEj2R8u7BLl8UV7dMXQRrmVhrAT7WnMzZ4iNZmiztbe4NtwmCPb2nM3DJrZGFGF/k38u4LlC0E+xDyAB/69IfoI1ftQt3fIKgPUG608jmE7VLT0w0//rjsv9r2GXN8kIb68PPCcxlrJh6WjjZSRogdRtQGJC69nliYqZ68hoFisNF90AZ1ChaV9Lc9NjA4Dyp8ifBPonx2aMyYXjyfOxv4Q3n2VbrRt3a/9FdW0hPpgm0h6DwNsccZN+8Tre10vo05CRNHoQl36bLc9XKLcu+zVKqLNSdZ1qqyWgppwv0oc2zHqJmhaXtFzsnaSN6LnC6xzxPHwg6rC0fwqo+MyCRv9VcU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9223a8a4-8062-4755-b18b-08dcada4abc0
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 18:56:34.8431
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yw6WLtGFefTE+ZB3vtMOJiYFf11w1OxW2kskwjSez83w6AdK/+yTr1RhzyWptjTmvm/t48hAXl6+MMpxQbV+QcKzv6Y/bQShOTE2d9TWKXk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6270
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_12,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407260128
+X-Proofpoint-GUID: V8FElzscbJWKsnfdQRzNVqW5YsRerugD
+X-Proofpoint-ORIG-GUID: V8FElzscbJWKsnfdQRzNVqW5YsRerugD
 
-Radoslaw Zielonek <radoslaw.zielonek@gmail.com> writes:
-
-> When cpu_map has been redirected, first the pointer to the
-> bpf_cpu_map_entry has been copied, then freed, and read from the copy.
-> To fix it, this commit introduced the refcount cpu_map_parent during
-> redirections to prevent use after free.
+On Fri, Jul 26, 2024 at 11:24:09AM GMT, Linus Torvalds wrote:
+> On Fri, 26 Jul 2024 at 11:13, Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > 5,447,539       ./arch/x86/xen/setup.o.pre
 >
-> syzbot reported:
->
-> [   61.581464][T11670] ==================================================================
-> [   61.583323][T11670] BUG: KASAN: slab-use-after-free in cpu_map_enqueue+0xba/0x370
-> [   61.585419][T11670] Read of size 8 at addr ffff888122d75208 by task syzbot-repro/11670
-> [   61.587541][T11670]
-> [   61.588237][T11670] CPU: 1 PID: 11670 Comm: syzbot-repro Not tainted 6.9.0-rc6-00053-g0106679839f7 #27
-> [   61.590542][T11670] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.1 11/11/2019
-> [   61.592798][T11670] Call Trace:
-> [   61.593885][T11670]  <TASK>
-> [   61.594805][T11670]  dump_stack_lvl+0x241/0x360
-> [   61.595974][T11670]  ? tcp_gro_dev_warn+0x260/0x260
-> [   61.598242][T11670]  ? __wake_up_klogd+0xcc/0x100
-> [   61.599407][T11670]  ? panic+0x850/0x850
-> [   61.600516][T11670]  ? __virt_addr_valid+0x182/0x510
-> [   61.602073][T11670]  ? __virt_addr_valid+0x182/0x510
-> [   61.603496][T11670]  print_address_description+0x7b/0x360
-> [   61.605170][T11670]  print_report+0xfd/0x210
-> [   61.606370][T11670]  ? __virt_addr_valid+0x182/0x510
-> [   61.607925][T11670]  ? __virt_addr_valid+0x182/0x510
-> [   61.609577][T11670]  ? __virt_addr_valid+0x43d/0x510
-> [   61.610948][T11670]  ? __phys_addr+0xb9/0x170
-> [   61.612103][T11670]  ? cpu_map_enqueue+0xba/0x370
-> [   61.613448][T11670]  kasan_report+0x143/0x180
-> [   61.615000][T11670]  ? cpu_map_enqueue+0xba/0x370
-> [   61.616181][T11670]  cpu_map_enqueue+0xba/0x370
-> [   61.617620][T11670]  xdp_do_redirect+0x685/0xbf0
-> [   61.618787][T11670]  tun_xdp_act+0xe7/0x9e0
-> [   61.619856][T11670]  ? __tun_build_skb+0x2e0/0x2e0
-> [   61.621356][T11670]  tun_build_skb+0xac6/0x1140
-> [   61.622602][T11670]  ? tun_build_skb+0xb4/0x1140
-> [   61.623880][T11670]  ? tun_get_user+0x2760/0x2760
-> [   61.625341][T11670]  tun_get_user+0x7fa/0x2760
-> [   61.626532][T11670]  ? rcu_read_unlock+0xa0/0xa0
-> [   61.627725][T11670]  ? tun_get+0x1e/0x2f0
-> [   61.629147][T11670]  ? tun_get+0x1e/0x2f0
-> [   61.630265][T11670]  ? tun_get+0x27d/0x2f0
-> [   61.631486][T11670]  tun_chr_write_iter+0x111/0x1f0
-> [   61.632855][T11670]  vfs_write+0xa84/0xcb0
-> [   61.634185][T11670]  ? __lock_acquire+0x1f60/0x1f60
-> [   61.635501][T11670]  ? kernel_write+0x330/0x330
-> [   61.636757][T11670]  ? lockdep_hardirqs_on_prepare+0x43c/0x780
-> [   61.638445][T11670]  ? __fget_files+0x3ea/0x460
-> [   61.639448][T11670]  ? seqcount_lockdep_reader_access+0x157/0x220
-> [   61.641217][T11670]  ? __fdget_pos+0x19e/0x320
-> [   61.642426][T11670]  ksys_write+0x19f/0x2c0
-> [   61.643576][T11670]  ? __ia32_sys_read+0x90/0x90
-> [   61.644841][T11670]  ? ktime_get_coarse_real_ts64+0x10b/0x120
-> [   61.646549][T11670]  do_syscall_64+0xec/0x210
-> [   61.647832][T11670]  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> [   61.649485][T11670] RIP: 0033:0x472a4f
-> [   61.650539][T11670] Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 c9 d8 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c d9 02 00 48
-> [   61.655476][T11670] RSP: 002b:00007f7a7a90f5c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-> [   61.657675][T11670] RAX: ffffffffffffffda RBX: 00007f7a7a911640 RCX: 0000000000472a4f
-> [   61.659658][T11670] RDX: 0000000000000066 RSI: 0000000020000440 RDI: 00000000000000c8
-> [   61.661980][T11670] RBP: 00007f7a7a90f620 R08: 0000000000000000 R09: 0000000100000000
-> [   61.663982][T11670] R10: 0000000100000000 R11: 0000000000000293 R12: 00007f7a7a911640
-> [   61.666425][T11670] R13: 000000000000006e R14: 000000000042f2f0 R15: 00007f7a7a8f1000
-> [   61.668443][T11670]  </TASK>
-> [   61.669233][T11670]
-> [   61.669754][T11670] Allocated by task 11643:
-> [   61.670855][T11670]  kasan_save_track+0x3f/0x70
-> [   61.672094][T11670]  __kasan_kmalloc+0x98/0xb0
-> [   61.673466][T11670]  __kmalloc_node+0x259/0x4f0
-> [   61.674687][T11670]  bpf_map_kmalloc_node+0xd3/0x1c0
-> [   61.676069][T11670]  cpu_map_update_elem+0x2f0/0x1000
-> [   61.677619][T11670]  bpf_map_update_value+0x1b2/0x540
-> [   61.679006][T11670]  map_update_elem+0x52f/0x6e0
-> [   61.680076][T11670]  __sys_bpf+0x7a9/0x850
-> [   61.681610][T11670]  __x64_sys_bpf+0x7c/0x90
-> [   61.682772][T11670]  do_syscall_64+0xec/0x210
-> [   61.683967][T11670]  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> [   61.685648][T11670]
-> [   61.686282][T11670] Freed by task 1064:
-> [   61.687296][T11670]  kasan_save_track+0x3f/0x70
-> [   61.688498][T11670]  kasan_save_free_info+0x40/0x50
-> [   61.689786][T11670]  poison_slab_object+0xa6/0xe0
-> [   61.691059][T11670]  __kasan_slab_free+0x37/0x60
-> [   61.692336][T11670]  kfree+0x136/0x2f0
-> [   61.693549][T11670]  __cpu_map_entry_free+0x6f3/0x770
-> [   61.695004][T11670]  cpu_map_free+0xc0/0x180
-> [   61.696191][T11670]  bpf_map_free_deferred+0xe3/0x100
-> [   61.697703][T11670]  process_scheduled_works+0x9cb/0x14a0
-> [   61.699330][T11670]  worker_thread+0x85c/0xd50
-> [   61.700546][T11670]  kthread+0x2ef/0x390
-> [   61.701791][T11670]  ret_from_fork+0x4d/0x80
-> [   61.702942][T11670]  ret_from_fork_asm+0x11/0x20
-> [   61.704195][T11670]
-> [   61.704825][T11670] The buggy address belongs to the object at ffff888122d75200
-> [   61.704825][T11670]  which belongs to the cache kmalloc-cg-256 of size 256
-> [   61.708516][T11670] The buggy address is located 8 bytes inside of
-> [   61.708516][T11670]  freed 256-byte region [ffff888122d75200, ffff888122d75300)
-> [   61.712215][T11670]
-> [   61.712824][T11670] The buggy address belongs to the physical page:
-> [   61.714883][T11670] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x122d74
-> [   61.717300][T11670] head: order:1 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> [   61.719037][T11670] memcg:ffff888120d85f01
-> [   61.720006][T11670] flags: 0x17ff00000000840(slab|head|node=0|zone=2|lastcpupid=0x7ff)
-> [   61.722181][T11670] page_type: 0xffffffff()
-> [   61.723318][T11670] raw: 017ff00000000840 ffff88810004dcc0 dead000000000122 0000000000000000
-> [   61.725650][T11670] raw: 0000000000000000 0000000080100010 00000001ffffffff ffff888120d85f01
-> [   61.727943][T11670] head: 017ff00000000840 ffff88810004dcc0 dead000000000122 0000000000000000
-> [   61.730237][T11670] head: 0000000000000000 0000000080100010 00000001ffffffff ffff888120d85f01
-> [   61.732671][T11670] head: 017ff00000000001 ffffea00048b5d01 dead000000000122 00000000ffffffff
-> [   61.735029][T11670] head: 0000000200000000 0000000000000000 00000000ffffffff 0000000000000000
-> [   61.737400][T11670] page dumped because: kasan: bad access detected
-> [   61.740100][T11670] page_owner tracks the page as allocated
-> [   61.743121][T11670] page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 8343, tgid -2092279795 (syzbot-repro), ts 8343, free_ts 43505720198
-> [   61.754038][T11670]  post_alloc_hook+0x1e6/0x210
-> [   61.756046][T11670]  get_page_from_freelist+0x7d2/0x850
-> [   61.759460][T11670]  __alloc_pages+0x25e/0x580
-> [   61.761428][T11670]  alloc_slab_page+0x6b/0x1a0
-> [   61.764199][T11670]  allocate_slab+0x5d/0x200
-> [   61.766122][T11670]  ___slab_alloc+0xac5/0xf20
-> [   61.767195][T11670]  __kmalloc+0x2e0/0x4b0
-> [   61.769028][T11670]  fib_default_rule_add+0x4a/0x350
-> [   61.770394][T11670]  fib6_rules_net_init+0x42/0x100
-> [   61.771731][T11670]  ops_init+0x39d/0x670
-> [   61.773061][T11670]  setup_net+0x3bc/0xae0
-> [   61.774102][T11670]  copy_net_ns+0x399/0x5e0
-> [   61.775628][T11670]  create_new_namespaces+0x4de/0x8d0
-> [   61.776950][T11670]  unshare_nsproxy_namespaces+0x127/0x190
-> [   61.778352][T11670]  ksys_unshare+0x5e6/0xbf0
-> [   61.779741][T11670]  __x64_sys_unshare+0x38/0x40
-> [   61.781302][T11670] page last free pid 4619 tgid 4619 stack trace:
-> [   61.783542][T11670]  free_unref_page_prepare+0x72f/0x7c0
-> [   61.785018][T11670]  free_unref_page+0x37/0x3f0
-> [   61.786030][T11670]  __slab_free+0x351/0x3f0
-> [   61.786991][T11670]  qlist_free_all+0x60/0xd0
-> [   61.788827][T11670]  kasan_quarantine_reduce+0x15a/0x170
-> [   61.789951][T11670]  __kasan_slab_alloc+0x23/0x70
-> [   61.790999][T11670]  kmem_cache_alloc_node+0x193/0x390
-> [   61.792331][T11670]  kmalloc_reserve+0xa7/0x2a0
-> [   61.793345][T11670]  __alloc_skb+0x1ec/0x430
-> [   61.794435][T11670]  netlink_sendmsg+0x615/0xc80
-> [   61.796439][T11670]  __sock_sendmsg+0x21f/0x270
-> [   61.797467][T11670]  ____sys_sendmsg+0x540/0x860
-> [   61.798505][T11670]  __sys_sendmsg+0x2b7/0x3a0
-> [   61.799512][T11670]  do_syscall_64+0xec/0x210
-> [   61.800674][T11670]  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> [   61.802021][T11670]
-> [   61.802526][T11670] Memory state around the buggy address:
-> [   61.803701][T11670]  ffff888122d75100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [   61.805694][T11670]  ffff888122d75180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [   61.808104][T11670] >ffff888122d75200: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [   61.809769][T11670]                       ^
-> [   61.810672][T11670]  ffff888122d75280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [   61.812532][T11670]  ffff888122d75300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [   61.814846][T11670] ==================================================================
-> [   61.816914][T11670] Kernel panic - not syncing: KASAN: panic_on_warn set ...
-> [   61.818415][T11670] CPU: 1 PID: 11670 Comm: syzbot-repro Not tainted 6.9.0-rc6-00053-g0106679839f7 #27
-> [   61.821191][T11670] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.1 11/11/2019
-> [   61.822911][T11670] Call Trace:
-> [   61.823632][T11670]  <TASK>
-> [   61.824525][T11670]  dump_stack_lvl+0x241/0x360
-> [   61.825545][T11670]  ? tcp_gro_dev_warn+0x260/0x260
-> [   61.826706][T11670]  ? panic+0x850/0x850
-> [   61.828594][T11670]  ? lock_release+0x85/0x860
-> [   61.829749][T11670]  ? vscnprintf+0x5d/0x80
-> [   61.830951][T11670]  panic+0x335/0x850
-> [   61.832316][T11670]  ? check_panic_on_warn+0x21/0xa0
-> [   61.834475][T11670]  ? __memcpy_flushcache+0x2c0/0x2c0
-> [   61.835809][T11670]  ? _raw_spin_unlock_irqrestore+0xd8/0x140
-> [   61.838063][T11670]  ? _raw_spin_unlock_irqrestore+0xdd/0x140
-> [   61.842056][T11670]  ? _raw_spin_unlock+0x40/0x40
-> [   61.843116][T11670]  ? print_report+0x1cc/0x210
-> [   61.844527][T11670]  check_panic_on_warn+0x82/0xa0
-> [   61.845336][T11670]  ? cpu_map_enqueue+0xba/0x370
-> [   61.846117][T11670]  end_report+0x48/0xa0
-> [   61.846790][T11670]  kasan_report+0x154/0x180
-> [   61.847520][T11670]  ? cpu_map_enqueue+0xba/0x370
-> [   61.848471][T11670]  cpu_map_enqueue+0xba/0x370
-> [   61.849968][T11670]  xdp_do_redirect+0x685/0xbf0
-> [   61.850994][T11670]  tun_xdp_act+0xe7/0x9e0
-> [   61.851703][T11670]  ? __tun_build_skb+0x2e0/0x2e0
-> [   61.852598][T11670]  tun_build_skb+0xac6/0x1140
-> [   61.853362][T11670]  ? tun_build_skb+0xb4/0x1140
-> [   61.854454][T11670]  ? tun_get_user+0x2760/0x2760
-> [   61.855806][T11670]  tun_get_user+0x7fa/0x2760
-> [   61.856734][T11670]  ? rcu_read_unlock+0xa0/0xa0
-> [   61.857502][T11670]  ? tun_get+0x1e/0x2f0
-> [   61.858171][T11670]  ? tun_get+0x1e/0x2f0
-> [   61.858952][T11670]  ? tun_get+0x27d/0x2f0
-> [   61.859637][T11670]  tun_chr_write_iter+0x111/0x1f0
-> [   61.860913][T11670]  vfs_write+0xa84/0xcb0
-> [   61.861578][T11670]  ? __lock_acquire+0x1f60/0x1f60
-> [   61.862376][T11670]  ? kernel_write+0x330/0x330
-> [   61.863221][T11670]  ? lockdep_hardirqs_on_prepare+0x43c/0x780
-> [   61.864230][T11670]  ? __fget_files+0x3ea/0x460
-> [   61.864955][T11670]  ? seqcount_lockdep_reader_access+0x157/0x220
-> [   61.866571][T11670]  ? __fdget_pos+0x19e/0x320
-> [   61.867414][T11670]  ksys_write+0x19f/0x2c0
-> [   61.868263][T11670]  ? __ia32_sys_read+0x90/0x90
-> [   61.868996][T11670]  ? ktime_get_coarse_real_ts64+0x10b/0x120
-> [   61.869896][T11670]  do_syscall_64+0xec/0x210
-> [   61.870592][T11670]  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> [   61.871595][T11670] RIP: 0033:0x472a4f
-> [   61.873158][T11670] Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 c9 d8 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c d9 02 00 48
-> [   61.876447][T11670] RSP: 002b:00007f7a7a90f5c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-> [   61.877944][T11670] RAX: ffffffffffffffda RBX: 00007f7a7a911640 RCX: 0000000000472a4f
-> [   61.879751][T11670] RDX: 0000000000000066 RSI: 0000000020000440 RDI: 00000000000000c8
-> [   61.881100][T11670] RBP: 00007f7a7a90f620 R08: 0000000000000000 R09: 0000000100000000
-> [   61.882298][T11670] R10: 0000000100000000 R11: 0000000000000293 R12: 00007f7a7a911640
-> [   61.883501][T11670] R13: 000000000000006e R14: 000000000042f2f0 R15: 00007f7a7a8f1000
-> [   61.885999][T11670]  </TASK>
->
-> Signed-off-by: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
-> ---
->  kernel/bpf/cpumap.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-> index a8e34416e960..0034a6d423b6 100644
-> --- a/kernel/bpf/cpumap.c
-> +++ b/kernel/bpf/cpumap.c
-> @@ -59,6 +59,9 @@ struct bpf_cpu_map_entry {
->  	u32 cpu;    /* kthread CPU and map index */
->  	int map_id; /* Back reference to map */
->  
-> +	/* Used to end ownership transfer transaction */
-> +	struct bpf_map *parent_map;
-> +
->  	/* XDP can run multiple RX-ring queues, need __percpu enqueue store */
->  	struct xdp_bulk_queue __percpu *bulkq;
->  
-> @@ -427,6 +430,7 @@ __cpu_map_entry_alloc(struct bpf_map *map, struct bpf_cpumap_val *value,
->  	rcpu->cpu    = cpu;
->  	rcpu->map_id = map->id;
->  	rcpu->value.qsize  = value->qsize;
-> +	rcpu->parent_map = map;
->  
->  	if (fd > 0 && __cpu_map_load_bpf_program(rcpu, map, fd))
->  		goto free_ptr_ring;
-> @@ -639,6 +643,14 @@ static int cpu_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
->  
->  static long cpu_map_redirect(struct bpf_map *map, u64 index, u64 flags)
->  {
-> +	/*
-> +	 * Redirection is a transfer of ownership of the bpf_cpu_map_entry
-> +	 * During the transfer the bpf_cpu_map_entry is still in the map,
-> +	 * so we need to prevent it from being freed.
-> +	 * The bpf_map_inc() increments the refcnt of the map, so the
-> +	 * bpf_cpu_map_entry will not be freed until the refcnt is decremented.
-> +	 */
-> +	bpf_map_inc(map);
+> Can you perhaps do some kind of "max expansion" on all the
+> preprocessor files (you seem to have done it by changing the ".c.o"
+> rule to just spit it out as "o.pre", which sounds fine).
 
-Adding refcnt increase/decrease in the fast path? Hard NAK.
+Yeah I simply hacked in a gcc -E, ugly but effective, e.g. prepending
+cmd_cc_o_c in scripts/Makefile.build with:
 
-The map entry is protected by RCU, which should prevent this kind of UAF
-from happening. Looks like maybe there's a bug in the tun driver so this
-RCU protection is not working?
+cmd_cc_o_c = $(CC) $(c_flags) -E $< > $@.pre; \
 
--Toke
+(with credit to Arnd, who came up with a timing patch using a similar
+technique, I just super trivially adapted to do this instead).
+
+I therefore generate a bunch of .pre files, + run this to get total
+numbers:
+
+find . -iname '*.pre' -exec du -cb {} + | grep total$ | cut -f1 | paste -sd+ - | bc
+
+So I have the numbers for all of the files. Did you want me to post the
+numbers somewhere, or were you after someting cleverer, not sure what you
+mean by "max expansion"?
+
+>
+> For example, this trivial patch seems to fix the setup.c expansion by
+> about an order of magnitude (ie 50M -> 5M).
+>
+> Entirely untested, but looks ObviouslyCorrect(tm) to me.
+>
+>                      Linus
+>
+>                 Linus
+
+Yeah this has a big impact, with just this patch we go from 51,407,944 to
+4,351,747 locally for me, so match your results.
+
+Patch looks obviously correct to me, I wonder if we should just apply that
+now and take out one of the worst offenders while we figure out how to fix
+the broader problem?
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> fwiw on that :)
 
