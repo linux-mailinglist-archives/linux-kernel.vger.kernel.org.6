@@ -1,283 +1,194 @@
-Return-Path: <linux-kernel+bounces-263825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C3293DB0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE5493DB18
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2267E1C21189
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA4B1C21EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4A11586C9;
-	Fri, 26 Jul 2024 22:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4E214EC60;
+	Fri, 26 Jul 2024 23:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CTdOB9Bt"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCAF15350B;
-	Fri, 26 Jul 2024 22:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dFipUmbW"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9E12B9BE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722034772; cv=none; b=Nre5m5MGZuCfWVr9NLzPf8+C2NE0DK4lsjJg3Qj3WVq8+ErhJt+3i9P4E9TJNkGFbgDmNxbER+2f5vqNfUCZ/pq7UXUEqy0LH8LSp0PebeY+uRDFRJl9jv17qvHNgfaa5ZaWVXiMXbNrFPc+C/yK0yPywBQpS/pBdJ+iZgCzbsA=
+	t=1722035194; cv=none; b=JrQpYto52t/hjkjPeHbRXVrUTKm2NDcfVEcTvms5Sn6ypv/YGh4SNwKgb4TxiGaVX07FT4TIdPipGcWj/NamMGjGruBppivGaT4PKVSm8KvjcCtZmgJtSiPNWc8DMhYACSrrF/4g1j6vlF/GP/Il8dl+w3Q6F4cIN16gk8Bbn2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722034772; c=relaxed/simple;
-	bh=DLUnroqMGGTesiv/VYVlyBGgrYzR5oprmLBsFYEDDqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZGQ3tX4Ys899SEoFap3P14IHctNKxCdXbVubzplalkwuSFMgWm5xRPtVehbbHEtIIdtWRpRX1HCQXv2q34K8xDBNZ2CM/chKhXuEpXgAl9vJXGheF7brfazNxw/LC7mNj49yjJDYLkVoBu1Gs70hl2TBwHJKxiK3nmIOK7aARIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CTdOB9Bt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 262EB20B7139;
-	Fri, 26 Jul 2024 15:59:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 262EB20B7139
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722034770;
-	bh=HO3yRXjuxdLjBhwnppBtgMAHdHUWQFnMBR0lzUnYMd4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CTdOB9BtLQmksCAEH7nr1aJW0bLAE0rIU2bYhoG+rAer6pFBGUyYbWzRaJPvLHOQg
-	 hMNfTiuq7Q5Rkp5jRz875m5oA9Y7q4xceyViPsWreqV4KQPX14TOp15njTYyTtUBcq
-	 0zEwjKEOQOaO/ndF5oPyEX4dc6FmkQM0vPTR838w=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kw@linux.com,
-	kys@microsoft.com,
-	lenb@kernel.org,
-	lpieralisi@kernel.org,
-	mingo@redhat.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	tglx@linutronix.de,
-	wei.liu@kernel.org,
-	will@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	x86@kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	ssengar@microsoft.com,
-	sunilmut@microsoft.com,
-	vdso@hexbites.dev
-Subject: [PATCH v3 7/7] PCI: hv: Get vPCI MSI IRQ domain from DT
-Date: Fri, 26 Jul 2024 15:59:10 -0700
-Message-Id: <20240726225910.1912537-8-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240726225910.1912537-1-romank@linux.microsoft.com>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1722035194; c=relaxed/simple;
+	bh=ld6KeuB4sATn7KhNW/BfMGlPLHxeZpj4+EBu8ioiPck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iken1EDSOB/sbHTUJXXApc5/IcZtg9JtRv+X2WiXHw28I9qV9k9A42Z5f5rR5Xwfw1gnGo2ITkbAaTxLDW1nk1JtyigBF8rq5UVEQuUIKGH/S9lo+7u8eVy+04RH+H+yQbfmUgUMtAmcLBAAHUMspqje2I6SSXonrfAbkyvTzn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dFipUmbW; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ab2baf13d9so3053082a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722035190; x=1722639990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x+ufKxTs+4yOu1uTFcIromX5f1C1mm5vL8h9xvW7RjA=;
+        b=dFipUmbWeFL0f/u7/K9mPYDgjfJtEJYu38rdvPw7Ou23rc27tS5BYqHOPn0XfbiRmS
+         +jzOkXdlGi/nEYPtlC4VeeVnx2Xd91P3OQuzeWReTZVf8w9ZY+7KIrHOXCm0T6MOl5/B
+         yoSoxqav5claVSlBuhWRHkEaKnAKXa3HcvGfc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722035190; x=1722639990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x+ufKxTs+4yOu1uTFcIromX5f1C1mm5vL8h9xvW7RjA=;
+        b=bXiPw6hQixKruvlKafooO4QRwCjUZ0lIyYp6mcnO1PqeGmyRjPwEz+GUKWUADozRwB
+         oiTZ+CuKqcDCDpd6wArk3HQSJV3uF4pZcnZ2Jd3Ghn4mnI6OxV9z4Tid6EXcsovgBwyX
+         OI9nWJGsOQrQ5UKikx0v6jU7cUsc9UDP0Pq/EESEhPb7IHUZzFXAumE8EfIG6WbMZa08
+         8YjM0LCijn/0dYXqtH0sDYxyxYjohhV1m7Fjq1he66cbjzwrCGAMtMakoxX8t+6vi9OR
+         QGzJfkTebv+go/vYAqOvTLR92/kTv1IYzos5d0ldittr5pVNNfY7LmBqcxJSyNrH6dhs
+         2VhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVGGqJW3SCvbzsEm1XUqnOZ4W+VHjNdbElKHho2h3Sw3zFGRdDnLoc7pB5EIMWkjr0OBnYr+hnl+fil2Men0l7Ur+oSd26zTAjVAhW
+X-Gm-Message-State: AOJu0YxhRpfaOJhpOTTbm1xQX/vaHY0e+XR9HWK9HyYn/PC8atuL+0iM
+	ULZFObiY9ZZg4wHK03f+zkpfbuHcOebICf7BqiMBsfUBverb0kY6H32Eu7v0pxZueduMLcApnfx
+	N7hsLtCusxMt6f4/eCR8npy0mkry57w8LbSEIgQn/KCmnERQ=
+X-Google-Smtp-Source: AGHT+IGEQmOdGLNP3Mq5rTpzM4kyWZztDxXbtgm6nR21X2SELvdhrhBNz1AWPZR1GYT402EWXUxVjo+vAtNCDjCBUiw=
+X-Received: by 2002:a05:6402:3487:b0:5a3:b45:3979 with SMTP id
+ 4fb4d7f45d1cf-5b020ba8a06mr486269a12.17.1722035189399; Fri, 26 Jul 2024
+ 16:06:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org> <20240511071532.GC6672@thinkpad>
+In-Reply-To: <20240511071532.GC6672@thinkpad>
+From: Hsin-Yi Wang <hsinyi@chromium.org>
+Date: Fri, 26 Jul 2024 16:06:03 -0700
+Message-ID: <CAJMQK-gBACa0s7qo=sOkK2UJB+9WbNHBkfg4NTxp3dVfjvugSg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] PCI: Allow D3Hot for PCI bridges in Devicetree
+ based platforms
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lukas@wunner.de, 
+	mika.westerberg@linux.intel.com, Bjorn Helgaas <helgaas@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-arm64. It won't be able to do that in the VTL mode where only DeviceTree
-can be used.
+On Fri, Jul 26, 2024 at 4:02=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Tue, Mar 26, 2024 at 04:18:16PM +0530, Manivannan Sadhasivam wrote:
+> > Hi,
+> >
+> > This series allows D3Hot for PCI bridges in Devicetree based platforms.
+> > Even though most of the bridges in Devicetree platforms support D3Hot, =
+PCI
+> > core will allow D3Hot only when one of the following conditions are met=
+:
+> >
+> > 1. Platform is ACPI based
+> > 2. Thunderbolt controller is used
+> > 3. pcie_port_pm=3Dforce passed in cmdline
+> >
+> > While options 1 and 2 do not apply to most of the DT based platforms,
+> > option 3 will make the life harder for distro maintainers.
+> >
+> > Initially, I tried to fix this issue by using a Devicetree property [1]=
+, but
+> > that was rejected by Bjorn and it was concluded that D3Hot should be al=
+lowed by
+> > default for all the Devicetree based platforms.
+> >
+> > During the review of v3 series, Bjorn noted several shortcomings of the
+> > pci_bridge_d3_possible() API [2] and I tried to address them in this se=
+ries as
+> > well.
+> >
+> > But please note that the patches 2 and 3 needs closer review from ACPI =
+and x86
+> > folks since I've splitted the D3Hot and D3Cold handling based on my lit=
+tle
+> > understanding of the code.
+> >
+> > Testing
+> > =3D=3D=3D=3D=3D=3D=3D
+> >
+> > This series is tested on SM8450 based development board on top of [3].
+> >
+>
+> Bjorn, a gently ping on this series.
+>
 
-Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-case, too.
+Hi, I was also working on a similar patch to add bridge_d3 to arm
+platforms until I found this series, which is what we need. Also
+kindly ping on this series.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
- drivers/hv/vmbus_drv.c              | 23 +++++++-----
- drivers/pci/controller/pci-hyperv.c | 55 +++++++++++++++++++++++++++--
- include/linux/hyperv.h              |  2 ++
- 3 files changed, 69 insertions(+), 11 deletions(-)
+Thanks!
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 7eee7caff5f6..038bd9be64b7 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -45,7 +45,8 @@ struct vmbus_dynid {
- 	struct hv_vmbus_device_id id;
- };
- 
--static struct device  *hv_dev;
-+/* VMBus Root Device */
-+static struct device  *vmbus_root_device;
- 
- static int hyperv_cpuhp_online;
- 
-@@ -80,9 +81,15 @@ static struct resource *fb_mmio;
- static struct resource *hyperv_mmio;
- static DEFINE_MUTEX(hyperv_mmio_lock);
- 
-+struct device *get_vmbus_root_device(void)
-+{
-+	return vmbus_root_device;
-+}
-+EXPORT_SYMBOL_GPL(get_vmbus_root_device);
-+
- static int vmbus_exists(void)
- {
--	if (hv_dev == NULL)
-+	if (vmbus_root_device == NULL)
- 		return -ENODEV;
- 
- 	return 0;
-@@ -861,7 +868,7 @@ static int vmbus_dma_configure(struct device *child_device)
- 	 * On x86/x64 coherence is assumed and these calls have no effect.
- 	 */
- 	hv_setup_dma_ops(child_device,
--		device_get_dma_attr(hv_dev) == DEV_DMA_COHERENT);
-+		device_get_dma_attr(vmbus_root_device) == DEV_DMA_COHERENT);
- 	return 0;
- }
- 
-@@ -1892,7 +1899,7 @@ int vmbus_device_register(struct hv_device *child_device_obj)
- 		     &child_device_obj->channel->offermsg.offer.if_instance);
- 
- 	child_device_obj->device.bus = &hv_bus;
--	child_device_obj->device.parent = hv_dev;
-+	child_device_obj->device.parent = vmbus_root_device;
- 	child_device_obj->device.release = vmbus_device_release;
- 
- 	child_device_obj->device.dma_parms = &child_device_obj->dma_parms;
-@@ -2253,7 +2260,7 @@ static int vmbus_acpi_add(struct platform_device *pdev)
- 	struct acpi_device *ancestor;
- 	struct acpi_device *device = ACPI_COMPANION(&pdev->dev);
- 
--	hv_dev = &device->dev;
-+	vmbus_root_device = &device->dev;
- 
- 	/*
- 	 * Older versions of Hyper-V for ARM64 fail to include the _CCA
-@@ -2342,7 +2349,7 @@ static int vmbus_device_add(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	int ret;
- 
--	hv_dev = &pdev->dev;
-+	vmbus_root_device = &pdev->dev;
- 
- 	ret = of_range_parser_init(&parser, np);
- 	if (ret)
-@@ -2675,7 +2682,7 @@ static int __init hv_acpi_init(void)
- 	if (ret)
- 		return ret;
- 
--	if (!hv_dev) {
-+	if (!vmbus_root_device) {
- 		ret = -ENODEV;
- 		goto cleanup;
- 	}
-@@ -2706,7 +2713,7 @@ static int __init hv_acpi_init(void)
- 
- cleanup:
- 	platform_driver_unregister(&vmbus_platform_driver);
--	hv_dev = NULL;
-+	vmbus_root_device = NULL;
- 	return ret;
- }
- 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index 5992280e8110..cdecefd1f9bd 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -50,6 +50,7 @@
- #include <linux/irqdomain.h>
- #include <linux/acpi.h>
- #include <linux/sizes.h>
-+#include <linux/of_irq.h>
- #include <asm/mshyperv.h>
- 
- /*
-@@ -887,6 +888,35 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
- 	.activate = hv_pci_vec_irq_domain_activate,
- };
- 
-+#ifdef CONFIG_OF
-+
-+static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-+{
-+	struct device_node *parent;
-+	struct irq_domain *domain;
-+
-+	parent = of_irq_find_parent(to_platform_device(get_vmbus_root_device())->dev.of_node);
-+	domain = NULL;
-+	if (parent) {
-+		domain = irq_find_host(parent);
-+		of_node_put(parent);
-+	}
-+
-+	/*
-+	 * `domain == NULL` shouldn't happen.
-+	 *
-+	 * If somehow the code does end up in that state, treat this as a configuration
-+	 * issue rather than a hard error, emit a warning, and let the code proceed.
-+	 * The NULL parent domain is an acceptable option for the `irq_domain_create_hierarchy`
-+	 * function called later.
-+	 */
-+	if (!domain)
-+		WARN_ONCE(1, "No interrupt-parent found, check the DeviceTree data.\n");
-+	return domain;
-+}
-+
-+#endif
-+
- static int hv_pci_irqchip_init(void)
- {
- 	static struct hv_pci_chip_data *chip_data;
-@@ -906,10 +936,29 @@ static int hv_pci_irqchip_init(void)
- 	 * IRQ domain once enabled, should not be removed since there is no
- 	 * way to ensure that all the corresponding devices are also gone and
- 	 * no interrupts will be generated.
-+	 *
-+	 * In the ACPI case, the parent IRQ domain is supplied by the ACPI
-+	 * subsystem, and it is the default GSI domain pointing to the GIC.
-+	 * Neither is available outside of the ACPI subsystem, cannot avoid
-+	 * the messy ifdef below.
-+	 * There is apparently no such default in the OF subsystem, and
-+	 * `hv_pci_of_irq_domain_parent` finds the parent IRQ domain that
-+	 * points to the GIC as well.
-+	 * None of these two cases reaches for the MSI parent domain.
- 	 */
--	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
--							  fn, &hv_pci_domain_ops,
--							  chip_data);
-+#ifdef CONFIG_ACPI
-+	if (!acpi_disabled)
-+		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
-+			fn, &hv_pci_domain_ops,
-+			chip_data);
-+#endif
-+#if defined(CONFIG_OF)
-+	if (!hv_msi_gic_irq_domain)
-+		hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
-+			hv_pci_of_irq_domain_parent(), 0, HV_PCI_MSI_SPI_NR,
-+			fn, &hv_pci_domain_ops,
-+			chip_data);
-+#endif
- 
- 	if (!hv_msi_gic_irq_domain) {
- 		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 5e39baa7f6cb..b4aa1f579a97 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1346,6 +1346,8 @@ static inline void *hv_get_drvdata(struct hv_device *dev)
- 	return dev_get_drvdata(&dev->device);
- }
- 
-+struct device *get_vmbus_root_device(void);
-+
- struct hv_ring_buffer_debug_info {
- 	u32 current_interrupt_mask;
- 	u32 current_read_index;
--- 
-2.34.1
-
+> - Mani
+>
+> > - Mani
+> >
+> > [1] https://lore.kernel.org/linux-pci/20240214-pcie-qcom-bridge-v3-1-3a=
+713bbc1fd7@linaro.org/
+> > [2] https://lore.kernel.org/linux-pci/20240305175107.GA539676@bhelgaas/
+> > [3] https://lore.kernel.org/linux-arm-msm/20240321-pcie-qcom-bridge-dts=
+-v2-0-1eb790c53e43@linaro.org/
+> >
+> > Changes in v4:
+> > - Added pci_bridge_d3_possible() rework based on comments from Bjorn
+> > - Got rid of the DT property and allowed D3Hot by default on all DT pla=
+tforms
+> >
+> > Changes in v3:
+> > - Fixed kdoc, used of_property_present() and dev_of_node() (Lukas)
+> > - Link to v2: https://lore.kernel.org/r/20240214-pcie-qcom-bridge-v2-1-=
+9dd6dbb1b817@linaro.org
+> >
+> > Changes in v2:
+> > - Switched to DT based approach as suggested by Lukas.
+> > - Link to v1: https://lore.kernel.org/r/20240202-pcie-qcom-bridge-v1-0-=
+46d7789836c0@linaro.org
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> > Manivannan Sadhasivam (4):
+> >       PCI/portdrv: Make use of pci_dev::bridge_d3 for checking the D3 p=
+ossibility
+> >       PCI: Rename pci_bridge_d3_possible() to pci_bridge_d3_allowed()
+> >       PCI: Decouple D3Hot and D3Cold handling for bridges
+> >       PCI: Allow PCI bridges to go to D3Hot on all Devicetree based pla=
+tforms
+> >
+> >  drivers/pci/bus.c          |  2 +-
+> >  drivers/pci/pci-acpi.c     |  9 ++---
+> >  drivers/pci/pci-sysfs.c    |  2 +-
+> >  drivers/pci/pci.c          | 90 ++++++++++++++++++++++++++++++++------=
+--------
+> >  drivers/pci/pci.h          | 12 ++++---
+> >  drivers/pci/pcie/portdrv.c | 16 ++++-----
+> >  drivers/pci/remove.c       |  2 +-
+> >  include/linux/pci.h        |  3 +-
+> >  8 files changed, 89 insertions(+), 47 deletions(-)
+> > ---
+> > base-commit: 705c1da8fa4816fb0159b5602fef1df5946a3ee2
+> > change-id: 20240320-pci-bridge-d3-092e2beac438
+> >
+> > Best regards,
+> > --
+> > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
