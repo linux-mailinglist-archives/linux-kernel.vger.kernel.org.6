@@ -1,131 +1,151 @@
-Return-Path: <linux-kernel+bounces-263752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFC593DA29
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A937093DA2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A9F1C23339
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70474285431
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67E1149DEA;
-	Fri, 26 Jul 2024 21:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E22149C5A;
+	Fri, 26 Jul 2024 21:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="NS/ixlHx"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M4FfBEvg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A281748A;
-	Fri, 26 Jul 2024 21:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE8E748A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722029285; cv=none; b=BTuRYOqs+2fDu8tD2w9M3CpzfsJSgzf4VwM9NCA4SsG0acgEL4uADdb9hMfVsgERy+C0Q7teKFXnvfNNM/+2bDGKOOaU0OuEdfvlnX0hOUSBVGis4n3HSjItfM0mJXer5L1EGc+36Gjp3WG5SoE0Uc6H0KlXjR9C6Qjwq8IItYA=
+	t=1722029336; cv=none; b=eZCfaUJCxe/wVtApdJTl9I6ZjxjQ2PUlAwMnbzLavhId5PEhx3iUSrFF2bB3/GWlQWqpOmB1aVycGhzKDC9CfQ65tGMGeHkXmMn+keUBLSTA8vilLJYeihXLFe/W7d3apTVbWRBVHRbB/AT7i3U5n5cIyv+Xh5ABU48jzEs991A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722029285; c=relaxed/simple;
-	bh=OrrdlTnH3WEKPN3TEJlkVeUCJlHW+7VcMK+CyiOaVko=;
+	s=arc-20240116; t=1722029336; c=relaxed/simple;
+	bh=BSWSuKq3GdETVVD+bBDGO4tkeDnaegLbXieUBwwRVeU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S/D1WeeA0ECVNuMxgTOuichHP/pTXf0nZjQDjvwi3z8NvUNf61UBirNOw2uEEAqnDN8h/zanqAvsrcnnAP86wpfkmWQp6twly/y9M1eHCtIInqrnZHcjdng8O3SiFASUOQjztuykdpM9+z7Mj0cpEhkZxYtqYmrpNEVmCRG1bEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=NS/ixlHx; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1722029243; x=1722634043; i=christian@heusel.eu;
-	bh=7cb9FKqiTnmAm4LGtD713mXbbQFUzBHgztfenIYWcFs=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NS/ixlHxQgNlPBNJpdaCictNQj535JyqyZxV6PfqKrH1mfRDCFYuSKZM2yVgNKS9
-	 D28ag89tIeUkviAkdavPscpp5EFzG4n+wMQTP9WhSGihfhgN+AXqD4NCyEVKBTBoY
-	 9U3Gu86GOaxkRwdtqD2v4MFai0syNRcCAwfWQiaVFj3BVugdgP4IaxChfGVnGpNo6
-	 ua3p/vQRh5yIU7D83EwUdwMJT4yArzmAmD/7Z7ewWP/igTJlLwAcc44MEkA1CNyBf
-	 iL9ztpc9t5YxbQGSRG7ZvoiWCMr1FjPFn0FCbJBinCbcBhpuZL6gISboYsVwTbMgE
-	 9PhxBRBm8pjrlkfXJg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue106
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1M4rHF-1sXBM41NuZ-0030Ij; Fri, 26
- Jul 2024 23:27:23 +0200
-Date: Fri, 26 Jul 2024 23:27:21 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 00/29] 6.10.2-rc1 review
-Message-ID: <ff7f0e41-537c-4e06-8fba-5a027067a6a8@heusel.eu>
-References: <20240725142731.814288796@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gP1eV5mv2eUim/vW6RAbxOh9Lu3uTc49a/li4PL/rQXzag7TWR2JIrqMKgpPIuixjQAKpAwuZtwwEEuY+ORmdfqTg/Amo0ME8O1q6Shq+gYIj2gzPhadRBypzee5vuE+xLBsrr0u/S0q8ledyhIom1RhRKG7oOBTnZoE/StMLVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M4FfBEvg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722029333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lq8fcYg7vmbu2tY0cVnCTlYYMnfwT6dNzxghIL6A57Y=;
+	b=M4FfBEvgdRCwMF5Im/zHaxS5tP6DcSdr9qpN+/O1PnRMlg3T4owibzy2KsnR+Tg32Xy9fe
+	+iC/ZCGGQgZehMvO7F76w4uQW7pkSwA5YK3mvUVO/O+2K+4uvikIQliBlen0KdUlPerpPV
+	8cpcXat/DjcYn+3ojUXrBmr49fk6pGE=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-48-UmZvnWegONmt6E8jGL6iAg-1; Fri, 26 Jul 2024 17:28:51 -0400
+X-MC-Unique: UmZvnWegONmt6E8jGL6iAg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7ad98c1f8so2161376d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 14:28:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722029331; x=1722634131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lq8fcYg7vmbu2tY0cVnCTlYYMnfwT6dNzxghIL6A57Y=;
+        b=q+euOvb2ZQNEp5ClwE87JOZL9lm2ic6cmk4LT18+PpuU/d+KQz3BCNwR466EGI8Ii3
+         dUbkR8R6bXllK8bfpgKUm+hj4MrB+YiXYniADX3YRgKjbLmi1lIc/O7Fme1a04sPinfs
+         vlCC/nstKyAOthvKA3AUJB+LIKyYTvHsZlTf0OVmU90aJsT3I4AsOc88/fGEkR56GRN+
+         X6AiE0BMUNbIikkaVEUWN76Uwzvx7cZO43wAdpSpb5li+Ggxgj0gYlUPc4gmJabIOtO0
+         iVmSNixlB5a/FJY7cphgq/c/H8m47lZipCBAmL3ABixi7jo0W9jt19LzAT31hOM8GjYT
+         Nbiw==
+X-Gm-Message-State: AOJu0YxXCuOvqhMbWhQQB+c0eLIlUkruWAgAFDrhLKj9dbe6BiKx8c8O
+	ofSGmN5oQ5lqA8nKpxZUzf1SJhdvX8PKXe7YeHb5MpKMazBacC7m0XygJKDde2/dGDEwLh/9NAX
+	7hGCJyYChqAYDSKzKYZEu6CHe4RIsKk9ktVarbilf6yOmrYyBncoIBBGxTjgG7w==
+X-Received: by 2002:a05:620a:1a9f:b0:79e:fc9c:4bc2 with SMTP id af79cd13be357-7a1d690cf22mr524519985a.4.1722029330776;
+        Fri, 26 Jul 2024 14:28:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyiXPUaaUBgyOseIoBqy+vK4d5h7x2HpItD5MjFagg5KiFr43MKWqy7glmFCF3oJgLIGdk3A==
+X-Received: by 2002:a05:620a:1a9f:b0:79e:fc9c:4bc2 with SMTP id af79cd13be357-7a1d690cf22mr524518985a.4.1722029330388;
+        Fri, 26 Jul 2024 14:28:50 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe840cd64sm16520281cf.81.2024.07.26.14.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 14:28:49 -0700 (PDT)
+Date: Fri, 26 Jul 2024 17:28:47 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v1 1/2] mm: let pte_lockptr() consume a pte_t pointer
+Message-ID: <ZqQVDwv4RM-wIW7S@x1n>
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725183955.2268884-2-david@redhat.com>
+ <ZqPCjd35OdNRrcfl@x1n>
+ <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d6guo2gbfiwflmbb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240725142731.814288796@linuxfoundation.org>
-X-Provags-ID: V03:K1:u+DcOdoBn801YoG1swHt3jWoqlewT2v3Rp51C4Gn3TFSbo7y8YA
- RiwlhTjFS/NgIvioR0ijVxc8aF647WDV0i97P0d1lCOlw0BRJ+YlHJQfegMYc1xLQrCUI4i
- QWV0V2RSZBd5rp6r1aJgg1CHGYieQIuKOmFH2fixtbhqLjij8GP1tGNC101k0Ut+fcjq1CG
- +TK0XBf/4red6q1zQtmWQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2qsYY1e11Dc=;fgYB+yoosq6hmmwAi9PXEZDvWfL
- UK6BgD8Fo6iA6T8sEt42ltv26qu0aKZs2s6qJ/r71xl7MxyY3WWHnU4oAfs8el0p/fhic4eTm
- K6/vEwPcUzP18oydD+a/Y5SSV2AQBsAoAX6DLiwQcfBn+UbgiZi+PLATo2ZwVfGqVdtMiR/R6
- 5Q3sSBtzjGwT91DaHQOa4N0TWvuSi2iabgTDP9EIfKMnUUZNArkXtUSjFW8qplIgkuRJlHHAi
- VZ0GdlfPzpvVz1kKO2FSeKE7onhar3B4ygMFSqZOPg2oGlAFPWqDUbxYcd4qRL2IDhb9lH6T2
- zomfxSTXGo7yQUdF3xS49BkrlXi/B5T+NL/NiY1Dv9agbtnohOcXDLUjIYyGo+CIDdm5qD2bz
- hcn0YdF6kzlr3EX7DG/TJzZ2J3eodztXGJqQOgOrlFw9sbw6+z8XuLi0FJTxvP1gM/j36XNtd
- FXiryxz4BceyF8TtFmTNG4oTFPFVSxzNUwO9kXRxLY9K5e85YhthH54N7hDJgWcIm3hnXEo7L
- 8FjAco4hCbAbMPilgnggn3t22QbSRxK58O8elOyJkTAd73Lu2uwyHdV8wHPrKUI0mlo8ZsXm4
- mpPdKndz8MwnJWKKEqs153BmT/wAMwLsGZuMImY7Jw8rHud/ou8kPCwgX89IgIVOCLhRZVD2J
- 6mzSvTpNroFFLknzQzi4sojeX0u82D6Kvzk9k7/i3Anvq6vZGpavWwdIN5qniOulTOmbPm9dX
- glBnZgMzIUkjbtCgrKgwpLO/0cgU8Nfqw==
+In-Reply-To: <bf2069ed-f2b8-49d4-baf0-dbd2189362f9@redhat.com>
 
+On Fri, Jul 26, 2024 at 06:02:17PM +0200, David Hildenbrand wrote:
+> On 26.07.24 17:36, Peter Xu wrote:
+> > On Thu, Jul 25, 2024 at 08:39:54PM +0200, David Hildenbrand wrote:
+> > > pte_lockptr() is the only *_lockptr() function that doesn't consume
+> > > what would be expected: it consumes a pmd_t pointer instead of a pte_t
+> > > pointer.
+> > > 
+> > > Let's change that. The two callers in pgtable-generic.c are easily
+> > > adjusted. Adjust khugepaged.c:retract_page_tables() to simply do a
+> > > pte_offset_map_nolock() to obtain the lock, even though we won't actually
+> > > be traversing the page table.
+> > > 
+> > > This makes the code more similar to the other variants and avoids other
+> > > hacks to make the new pte_lockptr() version happy. pte_lockptr() users
+> > > reside now only in  pgtable-generic.c.
+> > > 
+> > > Maybe, using pte_offset_map_nolock() is the right thing to do because
+> > > the PTE table could have been removed in the meantime? At least it sounds
+> > > more future proof if we ever have other means of page table reclaim.
+> > 
+> > I think it can't change, because anyone who wants to race against this
+> > should try to take the pmd lock first (which was held already)?
+> 
+> That doesn't explain why it is safe for us to assume that after we took the
+> PMD lock that the PMD actually still points at a completely empty page
+> table. Likely it currently works by accident, because we only have a single
+> such user that makes this assumption. It might certainly be a different once
+> we asynchronously reclaim page tables.
 
---d6guo2gbfiwflmbb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think it's safe because find_pmd_or_thp_or_none() returned SUCCEED, and
+we're holding i_mmap lock for read.  I don't see any way that this pmd can
+become a non-pgtable-page.
 
-On 24/07/25 04:36PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.2 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
-> Anything received after that time might be too late.
->=20
+I meant, AFAIU tearing down pgtable in whatever sane way will need to at
+least take both mmap write lock and i_mmap write lock (in this case, a file
+mapping), no?
 
-Tested-by: Christian Heusel <christian@heusel.eu>
+> 
+> But yes, the PMD cannot get modified while we hold the PMD lock, otherwise
+> we'd be in trouble
+> 
+> > 
+> > I wonder an open coded "ptlock_ptr(page_ptdesc(pmd_page(*pmd)))" would be
+> > nicer here, but only if my understanding is correct.
+> 
+> I really don't like open-coding that. Fortunately we were able to limit the
+> use of ptlock_ptr to a single user outside of arch/x86/xen/mmu_pv.c so far.
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
+I'm fine if you prefer like that; I don't see it a huge deal to me.
 
---d6guo2gbfiwflmbb
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
+-- 
+Peter Xu
 
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmakFLgACgkQwEfU8yi1
-JYVL4Q//c3u7IM+ekLkSdT+bjoqcNA4/nqR390psXhySqWaO2Qmyebwqf2QuO8UN
-DE2qEVWHmQIBpgUM7lQah8lr41nfioMdMC1J3M9mILRahkVmvvY3URqamGEgvNmy
-SqKeErbxZ8b5HaohINtfaipCEWkHOyamFF2wITbRzRKqpfTIrwnBBedCtiTmsYZN
-R/NhNVY4Qy4L9Ith2AMjGTEPTfNqExnwzlAHDXHtGwitkFOFqtJRPAakOCRwJY6e
-l8kotjvpMRdTj6KouV3MyI/au5srpw6Dp4jbxOdDpkqyuvQXJZsSBzVShJwIWEQn
-PBcMeazXeVaGNK+CankKTLUfLr53AoqfeHobn30q4woP+sh9i/RLR0NUkKOsm+gk
-C64XTJqq+15Pp6kLW3h9yIxe1Yd6HQdTb8azOar/HDbfpM2JM61R15DZSOtbgQVv
-YKOzei1uvuN0bgI/uPvbm/yIhmueIRmCvpd614mPngiRhy72AF9KPpf38t/upRfm
-vv/AzxGVdei4ovd3UtH7q7ZtVN6TVmGnFHIoxwB9JdTAT/w/OUjpOHoJq/J2BdSS
-JdcF3RNCV6YjwTQC6RHzGQCXyR9N3MVduDcCNyPJozOUE0SCL/U1wwmc2dhzqmqr
-+FHkfgEX72OG5s7o9R4YZfXFX7hXbzLzi+GkXcWTeGtYjZQfySQ=
-=7Q49
------END PGP SIGNATURE-----
-
---d6guo2gbfiwflmbb--
 
