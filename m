@@ -1,138 +1,102 @@
-Return-Path: <linux-kernel+bounces-263127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F2593D15A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:50:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D20293D163
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD53281E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:50:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9A3280D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6217836A;
-	Fri, 26 Jul 2024 10:50:10 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D0817839C;
+	Fri, 26 Jul 2024 10:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsuB0gse"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DF87F8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7557F8;
+	Fri, 26 Jul 2024 10:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721991009; cv=none; b=g3pKqUBoavr2OvYQBBE76bTO5/+SNszjcruax+5X7JAKpRcpPe4TQM6ihGzcSS8hGttvp68OTriGer2YjeSAN8Tj6Ln9MWM15OApjWbI8CCv1qojBH46vSowxdUlRrfI7yo0XWqnXQtxTR6h+aa8zi+48vZ6l4F9Pz0w8VeilO4=
+	t=1721991392; cv=none; b=ippfRHpJqMCZVXZWRIU4O6Y59WhZLyyufUi2CsHc0/xjPK7ZODjqa4pO1vHKmfb/W2gTbS3fS5io7H2K+p+mNG1eiasPw9HqVU3hPBIlbTfoA2nclsiZKdkYtWGF8ov9D8AFp79xxhSUwhjZ4LC15jpx8muScttRYCllgmZbKyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721991009; c=relaxed/simple;
-	bh=hmUvLOCjxWHlgQdM0TgHUG/r5tnI2pMKD7HZtMLInk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RRT6ZNiQ19er9tkpantoAQRu1vSVr3ahH/gLwk3ljgrZwfYOfJQTSsgi2JbUaBmk9BPrWqqCnWuTWGkvFJCE1zit6ClfpzaIVvsUtkVY+tr1sHxSMS3MGpJJrMajLzaUeMLNEwC+Kt7Y3GdFXryJ9K+G1FCK/TzcFN9LTX6jym8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1721991392; c=relaxed/simple;
+	bh=oKNueoEH0ZwpLHiT5+AGyjA9KWLfAAD2adLpOO4WHtE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SjyjTsoVL+rUsHf+zId46/k7bqIEkrgeqeRd3MB60BlSlsry8DzmZYXrM0C51sP+YNHf1LSk2DvrBFLe8OM1zYQDBQQVFRlAf2f4x8ePjrEIaGPnYG+9wK8y7C5azmKL2VEK9wqYo8FClwKTeHah+G6SziEI/Fa19cnMk5/AaYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsuB0gse; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so195712666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:50:07 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so729020a12.1;
+        Fri, 26 Jul 2024 03:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721991389; x=1722596189; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oKNueoEH0ZwpLHiT5+AGyjA9KWLfAAD2adLpOO4WHtE=;
+        b=RsuB0gseBE9ehoHGHsCQ3l05iwkFS6D6kQKsc6U0zCAVZWxKfwqEKqV5V8nqArNXOk
+         x4gdGuh0vW2uDNcWZ8qqP6LZiu1VDXfasOsKFmuE1NeV0hCvODPaleDr7cVdXNbzNeul
+         7neHoDY5ej1HDa0hCwgrGnAnh14V1e+LQcVp+/h4lcNqE8KuQLWVLrRcxxIx//q1l/jg
+         F2kMpZ5LzQGuoZL7KQr1w4EqaV5ssRDfj/Qtc6cxQ4knZk+exycCnGaUL2ViH4D8nZIU
+         BpIwLadCuXOxEfSZNeHYp4Y6LaVBCRbAL7y2Ddntotk7IkFIG8f6y8xYP7WcEzWV/rJz
+         FSVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721991006; x=1722595806;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5/TaFwgH7oBT4VeR5Uyq0sXwbZTRatSQuEyidwWom8Y=;
-        b=eLnOMEEXi5iJlBu4wkfvWjVc+78VO7zbXJO6wfrpgO7QShmfp+toa4in5nUVMLRwtw
-         qxI1bwnDZDlRD4TUYUsKoArwbOBR1EpeAwQ6Nx5D0P5Aw5JLLJqvTUwHvEyLTLkK3/zA
-         eKwyr3YPC3ur8+lJdWmP07+Emlr10HMe/hkesY8dnx6Kq8Q/88jM1k7U3TCQVGTOSNhe
-         RgjtpWSYVDquCDoLaNEjh8o2g6tsZM/mBsGr5WYRO/6KEqB0C4RLeRskxeBzxWv3J/R/
-         3GRPzRa92PpolSqCv7qzW1NDhWuFWhVJwV5eH8CsTXw0RUMNrYG1WUliRAz8yMhlYgu1
-         O3Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVmqXXvycbwT3tahWlMHe0Q2x5WBSdKyV+8VAQ9M+f/dIUK9eyitEqnNWRP81KjNsYyTBQR8XTOb7e/wEIHHChgnrrq50Skeqokjpwt
-X-Gm-Message-State: AOJu0YydIQXHsdzqf67a1caWzLonAY2v8OT3OFIMBrEZtvc9x0LacP51
-	+Xmp0dch9+aYxbZnBEl4JoiYg2LG/2k/mor/DiPovDuO/+B36afb
-X-Google-Smtp-Source: AGHT+IGGZQsobC5No9JHzguxU8M6fDoVGjyqPHIH5upkHCDst80ydY6wFLaHPHliag+3w9/Ntv6KZg==
-X-Received: by 2002:a17:907:3da0:b0:a7a:bad3:e5b9 with SMTP id a640c23a62f3a-a7acb3d65dfmr357156166b.11.1721991005671;
-        Fri, 26 Jul 2024 03:50:05 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4148fsm161257666b.121.2024.07.26.03.50.05
+        d=1e100.net; s=20230601; t=1721991389; x=1722596189;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oKNueoEH0ZwpLHiT5+AGyjA9KWLfAAD2adLpOO4WHtE=;
+        b=C97q2B27epoeJ1/2OOVPRfvYZQRDIZwLmSBHJCPd6CgoaoQyGVCjbvV0FDgyICgFNV
+         HyZK36Fc5eXwTB/jB9O2+XvQMKqE5b8uGI3wIbLK3cj6kFw7flMJ7RztyJx7YpH3qQJm
+         aLhdi+A6G1WliIOUrWpPw7TmnfhM2djQA+KlYA2ZYxQLVRSxsemT1t0Jieibgv9ANgHE
+         HuWsE+7kXYguxgl+z1Ow4EHFo2bTnxXiBUWy9K/zMQfbv8lXPV+PhSjI+21H8j5xqdYR
+         UwEUBXRoaAqeE4hJNvWZNTk5UeC/iOAwLeYouwzysQkMmhDb+crCtk/XEDj6S+DUTW5S
+         rUdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoImBwUUyJI7S2D0si/W88N5yuDCsrGCQ7x2c6D6+moLMsEMWHDMXAo42D2ysUEhZNqqFOwsuei0N5CBTU3IejmfekVUruTbOqUNs2dFlWPxsP2TKv+yNT9Hx6pEANGK68bMAcnJtq
+X-Gm-Message-State: AOJu0YwSKQyE4BJOrXnDTWz5mc9dWcAWjd82ElVcIE7aUrz+7XZLVD0K
+	FZTVVv7cQ8b2AKj5I+THMk39UOM4iUMCgL9+BObj1C19urWi0Bs6
+X-Google-Smtp-Source: AGHT+IHm/uc98yx0YVfPVV0mdfB6o62dIPmxgET4rdpibDAyjPU3HrB4jhIFCTzbo1k5Q4W5sVxDwQ==
+X-Received: by 2002:a50:baa3:0:b0:58c:10fd:5082 with SMTP id 4fb4d7f45d1cf-5ab1a7af0f3mr8566405a12.10.1721991388618;
+        Fri, 26 Jul 2024 03:56:28 -0700 (PDT)
+Received: from ?IPv6:2001:a61:359b:e801:d44:32b3:6924:10d1? ([2001:a61:359b:e801:d44:32b3:6924:10d1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59c95sm1809400a12.50.2024.07.26.03.56.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 03:50:05 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: akinobu.mita@gmail.com,
-	akpm@linux-foundation.org
-Cc: leit@meta.com,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] fault-injection: Enhance failcmd to exit on non-hex address input
-Date: Fri, 26 Jul 2024 03:48:45 -0700
-Message-ID: <20240726104848.2756962-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        Fri, 26 Jul 2024 03:56:28 -0700 (PDT)
+Message-ID: <24ca48955e3b005620bded16aabd91aaa6997ad1.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ti-tsc2046: use
+ devm_regulator_get_enable_read_voltage()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Oleksij Rempel
+	 <o.rempel@pengutronix.de>, Jonathan Cameron <jic23@kernel.org>
+Cc: kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 26 Jul 2024 12:56:27 +0200
+In-Reply-To: <20240725-iio-regulator-refactor-round-4-v1-1-55e9dc1de325@baylibre.com>
+References: 
+	<20240725-iio-regulator-refactor-round-4-v1-1-55e9dc1de325@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The failcmd.sh script in the fault-injection toolkit does not currently
-validate whether the provided address is in hexadecimal format. This can
-lead to silent failures if the address is sourced from places like
-`/proc/kallsyms`, which omits the '0x' prefix, potentially causing users
-to operate under incorrect assumptions.
+On Thu, 2024-07-25 at 14:22 -0500, David Lechner wrote:
+> Use devm_regulator_get_enable_read_voltage() to replace
+> tsc2046_adc_configure_regulator() which does the same thing.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-Introduce a new function, `exit_if_not_hex`, which checks the format of
-the provided address and exits with an error message if the address is
-not a valid hexadecimal number.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-This enhancement prevents users from running the command with
-improperly formatted addresses, thus improving the robustness and
-usability of the failcmd tool.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- tools/testing/fault-injection/failcmd.sh | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- mode change 100644 => 100755 tools/testing/fault-injection/failcmd.sh
-
-diff --git a/tools/testing/fault-injection/failcmd.sh b/tools/testing/fault-injection/failcmd.sh
-old mode 100644
-new mode 100755
-index 78dac34264be..234d49fc49d9
---- a/tools/testing/fault-injection/failcmd.sh
-+++ b/tools/testing/fault-injection/failcmd.sh
-@@ -64,6 +64,14 @@ ENVIRONMENT
- EOF
- }
- 
-+exit_if_not_hex() {
-+    local value="$1"
-+    if ! [[ $value =~ ^0x[0-9a-fA-F]+$ ]]; then
-+        echo "Error: The provided value '$value' is not a valid hexadecimal number."
-+        exit 1
-+    fi
-+}
-+
- if [ $UID != 0 ]; then
- 	echo must be run as root >&2
- 	exit 1
-@@ -160,18 +168,22 @@ while true; do
- 		shift 2
- 		;;
- 	--require-start)
-+		exit_if_not_hex "$2"
- 		echo $2 > $FAULTATTR/require-start
- 		shift 2
- 		;;
- 	--require-end)
-+		exit_if_not_hex "$2"
- 		echo $2 > $FAULTATTR/require-end
- 		shift 2
- 		;;
- 	--reject-start)
-+		exit_if_not_hex "$2"
- 		echo $2 > $FAULTATTR/reject-start
- 		shift 2
- 		;;
- 	--reject-end)
-+		exit_if_not_hex "$2"
- 		echo $2 > $FAULTATTR/reject-end
- 		shift 2
- 		;;
--- 
-2.43.0
 
 
