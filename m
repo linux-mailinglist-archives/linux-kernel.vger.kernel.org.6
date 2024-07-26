@@ -1,168 +1,117 @@
-Return-Path: <linux-kernel+bounces-263501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C70C93D6F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5F993D6F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE21FB23FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B30E1F24A41
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FB617C232;
-	Fri, 26 Jul 2024 16:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC117BB2A;
+	Fri, 26 Jul 2024 16:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzGlGFr4"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UlUawq5f"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E03749C;
-	Fri, 26 Jul 2024 16:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28850144D0A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722011682; cv=none; b=RjI/PdBzG0LMMIoNa+A0TyieMxiU1aol045wDcl7QWEGrn7fuxWrtIu7bT552LCIKDoBo7F6kL6GqsMXnVKNPXuVZwvvw7oDocbYfSITEvWVDGymEWdpb6W18O3vY4pVTODSwb1rZ+BqKoQoqe1ZKBFnbh4M4LP7NH2sHy2GIy8=
+	t=1722011746; cv=none; b=giurLGFQ7kOzCGCUbuAoJxf9l66jbnzOh0xWaEjbVmIK7+eB6RaGCK0MAlXysqSo8sc0W/nqWsA/nf2SyDaw7bTlPKUrjtOcaLEFjwo1jDDn7DfSwwZjwyGjXrnux8BuMkL8+w0h4g7tIwaIYSdXZW4LvktrKXyQfLqvkLcBjHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722011682; c=relaxed/simple;
-	bh=a3W6GeimKRxRA60xDUiGl21hOcI3FV8wxR2WBNjOU8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpYPHkLEd6EuwcfLA5haDrpKAvGOFAdw5X9/7nNzCB4hvRBwtwmQjK2oN081QniiUdGjux8Tc6J7egyxTwAKqB6nyczTO5nnQAmX9Kps+p1gqI3cGetxO4PSuLOSMSxUWUrSxhlLH7ODnIw0hWZdMKI9rDKjNK+jqSsrIGAd1Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzGlGFr4; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-79b530ba612so835250a12.2;
-        Fri, 26 Jul 2024 09:34:40 -0700 (PDT)
+	s=arc-20240116; t=1722011746; c=relaxed/simple;
+	bh=XY7HymytUjgM+8NWLDU54wb/4FH5oqVN7Nv9uROTHfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rROqFuqjCJ/MM37BbfI3euqz1ETchmQVxPvMDIFkRlcgTtrljcIzKB20C1l9llTVPLc7RRGr2s+BBw8Olq8jURwTZ2SyY4zOFrGdxg5gb5C395DIpfXtIPqnPfxaa4nnTrnbq917pC/2irBfHFHI2GOfa0xJEGtw7IpRPJ+BM58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UlUawq5f; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-81f7faff04dso10263339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722011680; x=1722616480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AXsSnNuhk0LJBQD8hnBXU4IwSyNU0wvZpgqq1xZ0ssY=;
-        b=FzGlGFr4Y9yw0UJjkLqzOMhtvUaLzCzDQMBzSK01xEBpeFz1WzYqOvvRpmQHW9aiDC
-         6OmZo8uZ5ztrtoV+qloAta8Xw1IHl7k8LYr9zIFLDPAIPLljCNNBPm5QaUnNwPb497xF
-         fohDJULqbCpjRLaPQq28JaG1IPpANXgqRsHKilt8VZfC3q9iF/nmM5eVbju8CQjkexAh
-         TnO3JvgAte+1NKt+qJonv7LOHegFt4eLuMPVsEeXWBLcgqSY97vaWs3eSuKLNR3nzl4G
-         772BJlN/WpdN2doPBkoiZaqhTt46JxiNEy4ivbp5SV4cesb4j1rPeaCZpd6j+SwxQRnu
-         E8Qg==
+        d=linuxfoundation.org; s=google; t=1722011744; x=1722616544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NRqdg9zdgOn42cgCu3J2giuAnSl1Epr3+bFdL3aeFPc=;
+        b=UlUawq5fSMJbDGnyKBxDlejZwWUNxu6T9uMZ/8g6YRZnbgb9VPlZc46jYRM33m5YVc
+         AotmLSYBaBIBTJmIPXXfYBQXpWTQFkW4BlRJZ/qWTHjigDeojVzotbhyy3Xgd8ryIiji
+         VzxDnMlZVDF8Ic/pKr3BwpkqABZMsH0wYzJ8A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722011680; x=1722616480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AXsSnNuhk0LJBQD8hnBXU4IwSyNU0wvZpgqq1xZ0ssY=;
-        b=nZU1HG4qeDyu83cfxKwmXuj+shLrcoHcIXFAFXdinKz4yDfcF21eP9Eti3pcReBwYB
-         ER+BM5SRUy9ONPczT5vv07p3Bkvouk4K0QQE+yfLHBvryUZdC8KItaNFRfpyfOL5ZO1E
-         YvbKExf1F1HPUW4mEd4V4z4nZGYMgV4t1TXSv5+1o5UuGpCQS/O5OL/1sNygkXbDSAEB
-         57pgu6UjB2u0lgPJ7WbVCid1E/Lu+vwKWe1J4UuDUGiZ0LtFvduhP3PkFnixmPncGpVV
-         e1j+3MP6vEhcdkySXMrxhCfHeqFqD+ByRAX4r7T5sM/hj6z2tTReutFQAzLQBkdU9Kee
-         i2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfpfmfpA3kv1+6I+qRG/K6OM9drFXs2bV5oKhblGVEEvOD8raUAgff0rdzsYPVfm2C/z8HrU386u+1voyqL9SKrD1z2NdBUszclmK5ovMyPB7TsZnQ4bzgxNIjQ3hjIg0zGXcqbAg4iZL1BOoQ+rC2KDuA2YH7F/qgo6eCrPgTH3u0Xw==
-X-Gm-Message-State: AOJu0YwNC3KL8E97ttL+zjK+2nZUe9bqJI7jAkjHv8McQ6AFTJ59NuN1
-	FhetvlNC1RyP9TZ6b9baOdlR7F+CcsuLQCZp3vm5QyuoJVW0/Lr7sjAK2keNhSCKXLOy9ZDtOFm
-	c5cWq1m3PvwupumA8tIvr8F/A+jY=
-X-Google-Smtp-Source: AGHT+IG2nhXVPsr4p3NYl2OhYd5cSuUs8jjefg+oqn2WyP5btK61lIKhKhYl2JXMLcjCI4ADtUa7qcb9FQdOpXHCKo0=
-X-Received: by 2002:a17:90a:4d8d:b0:2cb:4e69:eaa3 with SMTP id
- 98e67ed59e1d1-2cf7e1b99b4mr36883a91.8.1722011680232; Fri, 26 Jul 2024
- 09:34:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722011744; x=1722616544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRqdg9zdgOn42cgCu3J2giuAnSl1Epr3+bFdL3aeFPc=;
+        b=DRaXYc0U+rROodEgD0vhYvIywlvuwHFf8abOpfoXq65ZEMzd8/Ln/ZS3uTPgwcxBja
+         3crkKaBr4lRwHonRTYxYfxhh8qcC3wRWRULRU9084BqPLWuhtrqZY+mXHHVp2FQZQtrU
+         kkUZO2/4RqbTdNlRmbB09OcrIcDWhDOcwPtW1SrKf04cZc8IZhS5kEhQYRG7L0eeT97a
+         rP8p2B4SyKh9p8aUa/YEFSOYIeiWLrDuYGLSs7o8Ff7sbrYhE1qlIRgW198ojPuhB8+w
+         MYsXIGrS53hahsgqNn/qSqQX3EzkR9251PxAysEA4IoVHVIPnNGa5ee5UJkyiGc6NUnF
+         M+RA==
+X-Forwarded-Encrypted: i=1; AJvYcCW94qcUWRvkI1d8F5WvWdAz7TnykNY+jsYjlnYtxBqFnrQ9LV5nq72M9bR2FW1jXQ9me4JLdXfFyuJN15TZnTUZ8/AZwlb8QfO6Cvsx
+X-Gm-Message-State: AOJu0YwEi+N5d3+KUiEg8TSYWW5v4wjEad+xw/1fpHaXPTPuSykq6r9q
+	YZV109eWVx8gVPmnZgs5YPSev0njX59qy8ME0pmlJDAFpoIeYp7bG48q6uFIZw8=
+X-Google-Smtp-Source: AGHT+IFeoDN0Drm6gcoPOSZye7+XsJes/VmkzbaVf1yHuzlZYvG68vGemgBrOcVeA30R2sMZKfn+uA==
+X-Received: by 2002:a5e:c70c:0:b0:81f:8cd4:2015 with SMTP id ca18e2360f4ac-81f8cd421e5mr185814939f.2.1722011744093;
+        Fri, 26 Jul 2024 09:35:44 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fa3e10esm936807173.10.2024.07.26.09.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 09:35:43 -0700 (PDT)
+Message-ID: <bcffbe4c-3eb3-4c36-8d79-a46ffd6a58f3@linuxfoundation.org>
+Date: Fri, 26 Jul 2024 10:35:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240713044645.10840-1-khuey@kylehuey.com> <ZpLkR2qOo0wTyfqB@krava>
- <20240715111208.GB14400@noisy.programming.kicks-ass.net> <CAP045ArBNZ559RFrvDTsHj42S4W+BuReHe+XV2tBPSeoHOMMpA@mail.gmail.com>
- <20240715150410.GJ14400@noisy.programming.kicks-ass.net> <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
- <20240715163003.GK14400@noisy.programming.kicks-ass.net> <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
- <ZpYgYaKKbw3FPUpv@krava> <CAEf4BzZWWzio9oPe2_jS=_7CnKuJnugr2h4yd3QY1TqSF0aMXQ@mail.gmail.com>
- <CAP045ArhO4K2vcrhG_GnJNhx=+7v6WLYKsDj4CvqO7HKzBshXg@mail.gmail.com>
-In-Reply-To: <CAP045ArhO4K2vcrhG_GnJNhx=+7v6WLYKsDj4CvqO7HKzBshXg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 26 Jul 2024 09:34:28 -0700
-Message-ID: <CAEf4BzbE4keci=hyt2APp5sfimvqfpLoWgEgEnC=Yp5S-jejKg@mail.gmail.com>
-Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing events
-To: Kyle Huey <me@kylehuey.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, khuey@kylehuey.com, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/13] 6.1.102-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240725142728.029052310@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240725142728.029052310@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 5:37=E2=80=AFAM Kyle Huey <me@kylehuey.com> wrote:
->
-> On Fri, Jul 19, 2024 at 11:26=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Tue, Jul 16, 2024 at 12:25=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com>=
- wrote:
-> > >
-> > > On Mon, Jul 15, 2024 at 09:48:58AM -0700, Kyle Huey wrote:
-> > > > On Mon, Jul 15, 2024 at 9:30=E2=80=AFAM Peter Zijlstra <peterz@infr=
-adead.org> wrote:
-> > > > >
-> > > > > On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote:
-> > > > >
-> > > > > > I think this would probably work but stealing the bit seems far=
- more
-> > > > > > complicated than just gating on perf_event_is_tracing().
-> > > > >
-> > > > > perf_event_is_tracing() is something like 3 branches. It is not a=
- simple
-> > > > > conditional. Combined with that re-load and the wrong return valu=
-e, this
-> > > > > all wants a cleanup.
-> > > > >
-> > > > > Using that LSB works, it's just that the code aint pretty.
-> > > >
-> > > > Maybe we could gate on !event->tp_event instead. Somebody who is mo=
-re
-> > > > familiar with this code than me should probably confirm that tp_eve=
-nt
-> > > > being non-null and perf_event_is_tracing() being true are equivalen=
-t
-> > > > though.
-> > > >
-> > >
-> > > it looks like that's the case, AFAICS tracepoint/kprobe/uprobe events
-> > > are the only ones having the tp_event pointer set, Masami?
-> > >
-> > > fwiw I tried to run bpf selftests with that and it's fine
-> >
-> > Why can't we do the most straightforward thing in this case?
-> >
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index ab6c4c942f79..cf4645b26c90 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -9707,7 +9707,8 @@ static int __perf_event_overflow(struct perf_even=
-t *event,
-> >
-> >         ret =3D __perf_event_account_interrupt(event, throttle);
-> >
-> > -       if (event->prog && !bpf_overflow_handler(event, data, regs))
-> > +       if (event->prog && event->prog->type =3D=3D BPF_PROG_TYPE_PERF_=
-EVENT &&
-> > +           !bpf_overflow_handler(event, data, regs))
-> >                 return ret;
-> >
-> >
-> > >
-> > > jirka
-> > >
->
-> Yes, that's effectively equivalent to calling perf_event_is_tracing()
-> and would work too. Do you want to land that patch? It needs to go to
-> 6.10 stable too.
+On 7/25/24 08:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.102 release.
+> There are 13 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Jul 2024 14:27:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.102-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-I'd appreciate it if you can just incorporate that into your patch and
-resend it, thank you!
+Compiled and booted on my test system. No dmesg regressions.
 
->
-> - Kyle
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
