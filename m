@@ -1,151 +1,100 @@
-Return-Path: <linux-kernel+bounces-263099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9503D93D10F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5315893D10C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A051C210E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F5F1F213DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8264179650;
-	Fri, 26 Jul 2024 10:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1301C178CC8;
+	Fri, 26 Jul 2024 10:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xel7RjZJ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="g72wm0mv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F0017920E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3122B9C4;
+	Fri, 26 Jul 2024 10:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721989398; cv=none; b=p79S+ALFXAavWw9pd5UtR4G8fHV5WNECw501kbXUrgM7Bu0SnIgSIAcZAA/L+tzx9fu4Jf9vSBE+1qd8EoQvlXejtF6Vjp+BPcSIGcs4tucIPkP7tIR5VuZ1m8iEdXuTd9ZZmjKhmOxh9WlLX4RA9qwA805DEcwFD0T/PZHaaCQ=
+	t=1721989391; cv=none; b=CpJ67CRBc/7xbJnx3wEqRBeHSO/TfW6bxXqtP3KWYvnpzNhRhhVOX0SP7Ay6bW5T5D+Myhpfmd6VyX+21u1mW5MPzLmmI+eFB+nMLopvZH0AYEbxRC8/AUFZVh5Rq6qAfNt/ig/gYHT0NEnZZWB8DBLVs+SNEO3pj2TiuAyGHjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721989398; c=relaxed/simple;
-	bh=VuMF3KoncyaI8CPrPZlQbATP2kYcE2y/7t+nGV+ZexI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ln0DocNM6igrVPLMwuePXkBzfWPZA0M8CVs9Q7/g6Yn/78/irOrLEpsJ6v/z3gjiU7kozJwmCeI49OBeEChoxj61AGo01JdZGuX//Tf7GAYKbhwv40aJrAqBIjmjdC2tSruBAqFkf9ly7vmFknIMcilMQGeM+th65QllKUxDjVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xel7RjZJ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52fc14aa5f5so2687e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721989393; x=1722594193; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOFadCdnFUNbKiegYZZRp810q0uwCcDa0ulZ63Y8FbI=;
-        b=Xel7RjZJNOa5uNUtKvZVIyMwhF3n335jRizRAvaN7UhzAMO5e9bNq79EKYGtPJ5krW
-         VxuIbIgTMXXfOVC0tJod5CkNh6a1fZcnWOgySSHargVnk6U+EIoveL5J5EixL3kvL7XG
-         gU2zJ5ppUDulWJoaRh7HfPhg8szGpkvRWKWbYRUptW+vws9oyvL9zedj3h/iV4jG9RGy
-         vHNHbtI55qoQC5Y+q1iVDenBky2kmrTn/OLycbCoUNDDxYEsZMdP/x4P8IYgmhUJEXcl
-         nTZO2IEx9cONQ1czTgiDtyhkWAk3tQdkhQXeZbqVrPDBKDnziGGdqw+pfOhbPUlolLc5
-         ot6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721989393; x=1722594193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOFadCdnFUNbKiegYZZRp810q0uwCcDa0ulZ63Y8FbI=;
-        b=jeXxW1SWT+Fp8kYipho3Y7AwsGL/eZZLOHXgY0cPuv1vBGD1UD3hQyn0RBZ8XQeTnu
-         sobEcW7yvU9LCw8i917TkfGEz0XoS4Qk910hisOflowvUJpJFq3HyLY8HOeGrEIoXHsB
-         lXiZdkSd3bfcBgkYNvG1x1epme62wnqpZyC6ZaYOe2enQe5HQUr4esza9CwV75ZsaM44
-         wX3O7ulXeh6FS0QS1h0wt7TF0RBMuZbad+P9/SSPMDt1Xse+avMrrPAXFEK/jKsVzDmM
-         uE+8mLhmtAcZp+oZ71d76LacHJMEKzFAfJ6TUEBl36CpwA9MzfR42eiH3Pf6ewqLi7FZ
-         b4Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPKNOXsrO+8ZNhlDctsCXNrSN5/sBDih0jW/JQ4vvrM2ROj4oASqDwn3F+Jgr8Fom1F4Bm0swYljnEzp4d7Z0f/ZM+L0lTY0dl7NeJ
-X-Gm-Message-State: AOJu0YyM+Bhg2dQz9hvnaHdpfB9DMapvHK3DCQkDCnVMX7IJVBjJ/KPn
-	alXemxETldfT05eYn03iBdDNrrL2qu/eiplcXkQpS+N53Jo//fFE9qxYMZ/qLM/LirAr+eYJP1h
-	SYCpd7LkZz54d7svxwwacue0nZfJBUkbP9JCk
-X-Google-Smtp-Source: AGHT+IF9PsWLNO3FCxU7aVV4sNWcmYQNVE+PU7vZtXlmu0uxBM72nozjBz9oOKU4fU1os2TPNEsTgE1Tex2EPNoxxSU=
-X-Received: by 2002:a05:6512:3e21:b0:52c:cc9b:be20 with SMTP id
- 2adb3069b0e04-52fdb52d825mr121406e87.1.1721989392884; Fri, 26 Jul 2024
- 03:23:12 -0700 (PDT)
+	s=arc-20240116; t=1721989391; c=relaxed/simple;
+	bh=kDbnJM5usfOL8WK3gKBTN7Odhzpvp6wRPgN3PjFOrvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUR/Y2mpXWRTISwAcHyIvtKKz7H3eakLT6Hu390M3mk4q4jFiJk5jwX3FIUpejqaJDsr7lH4rDNmoJVg9sM3cbeG1xQjSZXpY9QqXzh0lO51cwDOvLhY6sgj1CHPm9LXXqGmWAtbnFMYYOE6a+ktt7Tz8nqfTQzVKYy3pOTNI2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=g72wm0mv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6671CC4AF09;
+	Fri, 26 Jul 2024 10:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721989390;
+	bh=kDbnJM5usfOL8WK3gKBTN7Odhzpvp6wRPgN3PjFOrvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g72wm0mvx2CeHrbncrY8SRUqVz8nQr35oZ/nEN8tMlvF7FslUrlPh2Olk4WmU2dK1
+	 BDlcXpagG4Lp3SSfiRfXphcp45JAqd+CMMn8PeoLmUOPfW+05+xMEXp4PNEblG95t7
+	 hpN25C26yEkfnRu/cjmJ8zRZPgf/0u/AyN2fC5Kw=
+Date: Fri, 26 Jul 2024 12:23:02 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jari Ruusu <jariruusu@protonmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
+Message-ID: <2024072627-pasture-denim-0390@gregkh>
+References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
+ <2024072633-easel-erasure-18fa@gregkh>
+ <vp205FIjWV7QqFTJ2-8mUjk6Y8nw6_9naNa31Puw1AvHK8EinlyR9vPiJdEtUgk0Aqz9xuMd62uJLq0F1ANI5OGyjiYOs3vxd0aFXtnGnJ4=@protonmail.com>
+ <2024072635-dose-ferment-53c8@gregkh>
+ <93RnVgeI76u-tf0ZRdROl_JVVqqx-rtQnV4mOqGR_Rb5OmiWCMXC6MSYfnkTPp_615nKq8H-5nfzNt4I9MXPjUPzXBLp625jtGUJSGPsGBo=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725232126.1996981-1-mmaurer@google.com> <20240725232126.1996981-3-mmaurer@google.com>
- <CA+fCnZdwRcdOig0u-D0vnFz937hRufTQOpCqGiMeo5B+-1iRVA@mail.gmail.com>
-In-Reply-To: <CA+fCnZdwRcdOig0u-D0vnFz937hRufTQOpCqGiMeo5B+-1iRVA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 26 Jul 2024 12:23:01 +0200
-Message-ID: <CACT4Y+Y+XmdNervhF5WAEyVwprJ32m7Pd8FF2fKy3K9FiTpJtQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: rust: Enable KASAN support
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Matthew Maurer <mmaurer@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Alexander Potapenko <glider@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, kasan-dev@googlegroups.com, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <93RnVgeI76u-tf0ZRdROl_JVVqqx-rtQnV4mOqGR_Rb5OmiWCMXC6MSYfnkTPp_615nKq8H-5nfzNt4I9MXPjUPzXBLp625jtGUJSGPsGBo=@protonmail.com>
 
-On Fri, 26 Jul 2024 at 01:57, Andrey Konovalov <andreyknvl@gmail.com> wrote=
-:
->
-> On Fri, Jul 26, 2024 at 1:21=E2=80=AFAM Matthew Maurer <mmaurer@google.co=
-m> wrote:
-> >
-> > Rust supports KASAN via LLVM, but prior to this patch, the flags aren't
-> > set properly.
+On Fri, Jul 26, 2024 at 09:53:18AM +0000, Jari Ruusu wrote:
+> On Friday, July 26th, 2024 at 11:52, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > Also the "Fixes:" tag is not in the correct format, please fix that up
+> > at the very least.
+> 
+> Some older systems still compile kernels with old gcc version.
+> These warnings and errors show up when compiling with gcc 4.9.2
+> 
+>  error: "__GCC4_has_attribute___uninitialized__" is not defined [-Werror=undef]
+> 
+> Following patch fixes this. Upstream won't need this because  
+> newer kernels are not compilable with gcc 4.9.
+> 
+> Subject: gcc-4.9 warning/error fix for 5.10.223-rc1
+> Fixes: fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
+> Signed-off-by: Jari Ruusu <jariruusu@protonmail.com>
+> 
+> --- ./include/linux/compiler_attributes.h.OLD
+> +++ ./include/linux/compiler_attributes.h
+> @@ -37,6 +37,7 @@
+>  # define __GCC4_has_attribute___nonstring__           0
+>  # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
+>  # define __GCC4_has_attribute___no_sanitize_undefined__ (__GNUC_MINOR__ >= 9)
+> +# define __GCC4_has_attribute___uninitialized__       0
+>  # define __GCC4_has_attribute___fallthrough__         0
+>  # define __GCC4_has_attribute___warning__             1
+>  #endif
+> 
+> --
+> Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
+> 
 
-This is great, thanks, Matthew!
+Better, thanks!  I'll touch this up by hand and apply it to the relevant
+branches (not just this one needs it), for the next round of stable
+releases.
 
-Does Rust support KUnit tests?
-It would be good to add at least a simple positive test similar to the
-existing ones so that the support does not get rotten soon.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/=
-kasan/kasan_test.c
-
-
-
-> > Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> > Signed-off-by: Matthew Maurer <mmaurer@google.com>
->
-> Hi Matthew,
->
-> >  CFLAGS_KASAN_MINIMAL :=3D -fsanitize=3Dkernel-address
-> > +RUSTFLAGS_KASAN_MINIMAL :=3D -Zsanitizer=3Dkernel-address -Zsanitizer-=
-recover=3Dkernel-address
->
-> If I recall correctly, the reason we need CFLAGS_KASAN_MINIMAL is
-> because older compilers don't support some of the additional options.
-> With Rust, this shouldn't be needed, as it requires a modern compiler
-> that does support all needed options. E.g., for CONFIG_KASAN_SW_TAGS,
-> we also don't have the MINIMAL thing for the same reason. (Possibly,
-> we also already don't need this for GENERIC KASAN, as the GCC version
-> requirement was raised a few times since KASAN was introduced.)
->
-> >         # Now add all the compiler specific options that are valid stan=
-dalone
-> >         CFLAGS_KASAN :=3D $(CFLAGS_KASAN_SHADOW) \
-> >          $(call cc-param,asan-globals=3D1) \
-> >          $(call cc-param,asan-instrumentation-with-call-threshold=3D$(c=
-all_threshold)) \
-> >          $(call cc-param,asan-instrument-allocas=3D1)
-> > +       ifdef CONFIG_RUST
-> > +               RUSTFLAGS_KASAN :=3D $(RUSTFLAGS_KASAN_SHADOW) \
-> > +                $(call rustc-param,asan-globals=3D1) \
-> > +                $(call rustc-param,asan-instrumentation-with-call-thre=
-shold=3D$(call_threshold)) \
-> > +                $(call rustc-param,asan-instrument-allocas=3D1)
->
-> I'm wondering if there's a way to avoid duplicating all options for
-> Rust. Perhaps, some kind of macro?
->
-> Thanks!
+greg k-h
 
