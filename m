@@ -1,152 +1,151 @@
-Return-Path: <linux-kernel+bounces-262829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E863F93CD6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:08:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A2493CD74
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787B11F2217A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5FE28226E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D1B2F874;
-	Fri, 26 Jul 2024 05:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16866315BA;
+	Fri, 26 Jul 2024 05:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sqOA+kbS"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FpWPPULf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF2128E37
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F112B9BE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721970493; cv=none; b=XrW2FwEAee3MdEpnPL+sS7XACwMHsC2fANnZoPDyBQlGFRfHkxPnZ11PfxZ5eKcsb5Msya7OmDMlgWbTazXFf+IUqGeklsha2tw8Lvp85e5YWrUnkX7GeOZe8VNxhkkU/aNeAhDsMB3SwfsdXwrR2CYYN2yEJUV4o1CEDe6QCgw=
+	t=1721970570; cv=none; b=Fo9Ko7b76QHqgeitQPemsncP2v6gWw1Hp0MymGAoIYGgLoELUKHLMRB3HpyaRj2GV683GC4omX4q+zENKcBF0uHFDUXSRCCqfcAzo0OpRLQL+2v7ZFqrdiTogXR0oJzgzwj8UulTFcMU/QxQBzzE3IIcAuDeEU+OUHB1luqUeM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721970493; c=relaxed/simple;
-	bh=vRgTjVmBkef0bZYyhRCaL2/45FsAz1WDLtETKuC747c=;
+	s=arc-20240116; t=1721970570; c=relaxed/simple;
+	bh=mwBiyQNVoMNybA5O6D7Gx2PdVoETiCkHnYn15H6Goyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzOA0wZ5FUTOn5TminVrG3WXvIBmBR72J0PpmoHZp7kOuDeeL4yB6LYnAeJU9Z0XEJ+FFJdMPHOnjLJa20rAHYyUBa6a1Qc3dXqzzgHThbKxYIpwrKyZ7fKUniipfwN1K1YRf+kaqB6/7lTVg1LujXmxPUvsf2XoKzIumD8tk6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sqOA+kbS; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70eb0ae23e4so482783b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721970491; x=1722575291; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3rKwuSlqAIySxz11l4PWG6VIoo7RMKChxKPZ2GCuBEY=;
-        b=sqOA+kbSzpKrS1p78jLMNk5h5+k31RBR6LTEwrtkOqwcPbtodik8J5Ix+zIX44c08u
-         vk98RRhzB6td0SF7BauWYKCO6pFMsXikLDkeqNbrcpm2nHQH1Nb08wnqhOYkz53MJNXi
-         AW077w+9TScSVS6Xl+bFdbDVIEhbD9uEOH+VPFT7dUInGG5cuGZNE7NGaLTBntw1khdF
-         V+8NHheZUulpmjTcxiReF/VztZJOsg1kETTxf5SGhA2JQR9g+9HbQJCaRr8gBJf49VmA
-         +e0GkWO6L8/Zi7gg/XW9s74by5CHlD+stjf88n3EdI/y5wRV81tWP3SLOTjiZuk95Syc
-         gTlg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqAvvLNAWMPtqqaqeBU71bNqNb47DFMEiCRcawocfSnNfcTW48C1eD8IhgiL1nTHXk+Ua5nY5sJ/v1YCC9UKelP9qTUTDDNcMaOfjHWegSApgD47bDoUSOVbPfjq4Lv7pjELba71Zg41+FDxL6/OQcj8kjmTQ8hnSv2QIa6wmjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FpWPPULf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721970568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DbuOgyAkRILEBrf9MJ+4blSFephMiZi+pxSKWGG3nSg=;
+	b=FpWPPULfBm+9iH609S81DU77dt7QeIfHMOznjl0XiJ5f3HlLOE8VCtyJ6ksBapazI599IX
+	Y0A1B7Ow/55ShqjO3liy7D5IPMaw3dGKCdCm2PJH5P0NjOCdSY/06OFW0ykBZEkZBFWBK5
+	IAJS9+LFzb2AxeMldvH5XvFzJu9wyYg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-66-bpsvHhPrOLilFfipXA0dLA-1; Fri, 26 Jul 2024 01:09:26 -0400
+X-MC-Unique: bpsvHhPrOLilFfipXA0dLA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42807a05413so9011195e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 22:09:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721970491; x=1722575291;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3rKwuSlqAIySxz11l4PWG6VIoo7RMKChxKPZ2GCuBEY=;
-        b=UWvsz1jZPs5Du45Qb0C5w1QTpCu3gxRPA+vUxyzmHfaFsW4GNmX508PwjgT2n7J2i4
-         Q+3rDqKXEjLY4SLWerKunuaw3nvcITj7v5FXC47Ez+tsvmaBMOila0nYgmhrRv1Amc55
-         YVhOsVFyeBWZd912OoaEv1d6dEe+LBZx7it4V7UuFaCaKB6czlV8dGk+KMQF2ztt/T1q
-         6VgW0hQZozarIstrR5hVqhYWZjbjIAV5jlEglGjkUK2KZawV7VMspAIHDa9CHPCulLDA
-         NOa/DE8sytTducSOjDMGHleYL6hOhono4I88qj8RKubqDAK6ovq/LSgyiI/cqzoh7P5g
-         SatQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6IFBO9MO30jWf+5xv5CIkq0Eqma7w7OqSLpb2wSfg1zWbbaBmjNexOB0I0lEmkZYyYlPZknRTdS9qZgbIW77sYe2aQwkJoZzfZseN
-X-Gm-Message-State: AOJu0Yxu9vm29UztrTbLp0zQxz0ilC6gcKjJR4LfwO8/Q+tSEmsADlWZ
-	s7toQZoRKCyxHV9NB/J+vGHcOSTObAbIzKjPmcWGvY8qp4FPbO1HvjHJjZGGwQ==
-X-Google-Smtp-Source: AGHT+IFPb+cpIlmTJHSn/eJI9XIpxgM8cTQg0C4/esBr4+srXONC/O3SgQ8mdQoB+Y0Wokbd7ElKDg==
-X-Received: by 2002:a05:6a21:388a:b0:1c4:7138:ad1b with SMTP id adf61e73a8af0-1c47b4f896amr4158589637.54.1721970491165;
-        Thu, 25 Jul 2024 22:08:11 -0700 (PDT)
-Received: from thinkpad ([220.158.156.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f99099sm22814675ad.247.2024.07.25.22.08.06
+        d=1e100.net; s=20230601; t=1721970564; x=1722575364;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DbuOgyAkRILEBrf9MJ+4blSFephMiZi+pxSKWGG3nSg=;
+        b=GIXz/bek4EvCmfMIWbJEpwJF1C7cwYitooxDEaaY+ZN03VS6sM/jg2QC5PYqNAZDud
+         JNvbWkfzUhT1UCHJ6HvRvsVuKyYiCSzyOUDAGz0593wYXNKsm3OQ5tp1LmA1ZzkgVG8J
+         5J07xPZutQuF0Jgf51LYeJS9h8K190xXoZ5hGixyJzfDJdMG+Ih4c6Qt+y1ovxJgSBpU
+         NJZApsvQRHHsTU7oQCfAvL5s/a0EuMO2iLqKx+710L3VJloh7LYZ9K2kF10tShahslzO
+         /dZBrROoP532OCnyizVC7gHyG9n6075AQdnEO0onEtqiSmOUF6XXiUjmRKat/rXFfywb
+         jxzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnybAXFn4RHd+g0i6NY/a8xaho/PTBi0Uca+Z05lUrvr4FWD8ylT3FZQiED1bge3lKtEZv+p270ZQI/UDPiAoM2ArLv5im1JiJPeVj
+X-Gm-Message-State: AOJu0Yw664l261WFPTzL6xWlG8Abe5EROpEmkUajpiZgJQXYf22Sx8FM
+	GcxJ602RPVA4NDNLaoMuhwCbn/p96uvBss4K2ad0qlTMFvSykj7+L5q9qtGplthL708sZ+qQayA
+	km0NC9JO6em3noilp5vcYL/x0arFN+TWhUAzDod/x0XK6PkvDnGPSkTdLgmlLE9SbRsOkpEk1
+X-Received: by 2002:a05:600c:1c1f:b0:426:6153:5318 with SMTP id 5b1f17b1804b1-4280570fe50mr29400775e9.19.1721970564592;
+        Thu, 25 Jul 2024 22:09:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLGThAmioKqXVYW1bGCeFOTJCJYjUraPBu1ns0STXkcb4YEMtbOBAAif1jc1w6fYVZOAbSOQ==
+X-Received: by 2002:a05:600c:1c1f:b0:426:6153:5318 with SMTP id 5b1f17b1804b1-4280570fe50mr29400405e9.19.1721970563829;
+        Thu, 25 Jul 2024 22:09:23 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1f7:28ce:f21a:7e1e:6a9:f708])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e6871sm105269105e9.30.2024.07.25.22.09.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 22:08:10 -0700 (PDT)
-Date: Fri, 26 Jul 2024 10:38:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 09/12] PCI: brcmstb: Refactor for chips with many
- regular inbound BARs
-Message-ID: <20240726050805.GC2628@thinkpad>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-10-james.quinlan@broadcom.com>
- <20240725045318.GJ2317@thinkpad>
- <CA+-6iNyQ09BESbdCwY1x4yUOLmAHKFBU3-9TO_ST+2GkOEEAng@mail.gmail.com>
+        Thu, 25 Jul 2024 22:09:23 -0700 (PDT)
+Date: Fri, 26 Jul 2024 01:09:13 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Chashper, David" <chashper@amazon.com>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
+	"Christopher S . Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
+Message-ID: <20240726010511-mutt-send-email-mst@kernel.org>
+References: <20240725083215-mutt-send-email-mst@kernel.org>
+ <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
+ <20240725100351-mutt-send-email-mst@kernel.org>
+ <2a27205bfc61e19355d360f428a98e2338ff68c3.camel@infradead.org>
+ <20240725122603-mutt-send-email-mst@kernel.org>
+ <0959390cad71b451dc19e5f9396d3f4fdb8fd46f.camel@infradead.org>
+ <20240725163843-mutt-send-email-mst@kernel.org>
+ <d62925d94a28b4f8e07d14c1639023f3b78b0769.camel@infradead.org>
+ <20240725170328-mutt-send-email-mst@kernel.org>
+ <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+-6iNyQ09BESbdCwY1x4yUOLmAHKFBU3-9TO_ST+2GkOEEAng@mail.gmail.com>
+In-Reply-To: <c5a48c032a2788ecd98bbcec71f6f3fb0fb65e8c.camel@infradead.org>
 
-On Thu, Jul 25, 2024 at 04:29:56PM -0400, Jim Quinlan wrote:
-> On Thu, Jul 25, 2024 at 12:53 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Tue, Jul 16, 2024 at 05:31:24PM -0400, Jim Quinlan wrote:
-> > > Previously, our chips provided three inbound "BARS" with fixed purposes:
-> > > the first was for mapping SoC internal registers, the second was for
-> > > memory, and the third was for memory but with the endian swapped.  We
-> > > typically only used one of these BARs.
-> > >
-> > > Complicating that BARs usage was the fact that the PCIe HW would do a
-> > > baroque internal mapping of system memory, and concatenate the regions of
-> > > multiple memory controllers.
-> > >
-> > > Newer chips such as the 7712 and Cable Modem SOCs have taken a step forward
-> > > and now provide multiple inbound BARs.  This works in concert with the
-> > > dma-ranges property, where each provided range becomes an inbound BAR.
-> > >
-> > > This commit provides support for these new chips and their multiple
-> > > inbound BARs but also keeps the legacy support for the older system.
-> > >
-> >
-> > BAR belongs to the endpoints not to the RC. How can the RC have 'BARs'? RC can
-> > only map endpoint BARs to MEM region. What you are referring to is 'MEM region'
-> > maybe?
+On Thu, Jul 25, 2024 at 10:29:18PM +0100, David Woodhouse wrote:
+> > > > Then can't we fix it by interrupting all CPUs right after LM?
+> > > > 
+> > > > To me that seems like a cleaner approach - we then compartmentalize
+> > > > the ABI issue - kernel has its own ABI against userspace,
+> > > > devices have their own ABI against kernel.
+> > > > It'd mean we need a way to detect that interrupt was sent,
+> > > > maybe yet another counter inside that structure.
+> > > > 
+> > > > WDYT?
+> > > > 
+> > > > By the way the same idea would work for snapshots -
+> > > > some people wanted to expose that info to userspace, too.
 > 
-> Agreed, it is confusing.  Long story short, the HW team gave the
-> inbound windows the label "BAR".   We will still have to use their
-> register names,
-
-Wow, such an inventive naming :)
-
-> e.g. PCIE_MISC_RC_BAR4_CONFIG_LO, but what I can do is change
-> for example "struct rc_bar" to "struct inbound_win" as well as make similar
-> changes to the code and function names.
+> Those people included me. I wanted to interrupt all the vCPUs, even the
+> ones which were in userspace at the moment of migration, and have the
+> kernel deal with passing it on to userspace via a different ABI.
 > 
-> Let's assume you will be okay with my plan above; if not, please tell
-> me what you would prefer.
-> 
+> It ends up being complex and intricate, and requiring a lot of new
+> kernel and userspace support. I gave up on it in the end for snapshots,
+> and didn't go there again for this.
 
-Yes please. Just keep BAR in the register name and use 'inbound_win' elsewhere.
-Even better, add a comment at the top of these register names to clarify that
-these refer to inbound windows.
+Maybe become you insist on using ACPI?
+I see a fairly simple way to do it. For example, with virtio:
 
-- Mani
+one vq per CPU, with a single outstanding buffer,
+callback copies from the buffer into the userspace
+visible memory.
+
+Want me to show you the code?
 
 -- 
-மணிவண்ணன் சதாசிவம்
+MST
+
 
