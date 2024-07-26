@@ -1,114 +1,85 @@
-Return-Path: <linux-kernel+bounces-263240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EABE93D317
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:36:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBF893D319
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF341C23AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:36:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF508283A35
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0064E17B4F7;
-	Fri, 26 Jul 2024 12:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685517B4EF;
+	Fri, 26 Jul 2024 12:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfGXioFc"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgbuErNu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3E917B428;
-	Fri, 26 Jul 2024 12:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A52178CFA;
+	Fri, 26 Jul 2024 12:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721997404; cv=none; b=nlLR3sPh6p8KldBRrLH4HrMWJWRmxnVlXA8RxU8FmpjB+lu4PG4rpaoNvPwWE7CVCoDzo2ob3U2mZtg6JgVc6fiqtjV+Kac9eVEWogJQuV4tG83Wxt9yFUupbPnMo4AN/gghQ32ZdvP2zPC1kpIEiq4W4k/i0COUwyea2dErNNE=
+	t=1721997433; cv=none; b=XfnMMfYrGiSRp76fOZv5NKg43bG/7vR6NeOCPIw/5G43FhtS5avy9faASIT767oQxMQxmk1sVQjRbqX1zn3emgbMeGaVqWUc8vg/Gv90EJdeRDL7BBvSlZ2SLPXYDZMvNwmvAGTEcgGgnFqbMWkM0QJMBYbzWuVwxMn0gKodkVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721997404; c=relaxed/simple;
-	bh=1zWDRWp+paDjK/r/9N7qgoFAesuhA/2QMW3EwgwYqcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z6dLn8+VvpIE6AB+DRvcJGhKAtQm4pW0StpxkwPxuIk3D2F/Ic/Q0fhSVBoSYrCdQT4Zuabv1w6WLPmt4H62H1E2r8RhAkg1YsPlIuf6uiJxEvVKEk+qTwq7/B/RxxGswo8n266XKMDABxbs/a4T0g0caAkxT4DowTsvsAN2Lag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfGXioFc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc587361b6so5393235ad.2;
-        Fri, 26 Jul 2024 05:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721997402; x=1722602202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1zWDRWp+paDjK/r/9N7qgoFAesuhA/2QMW3EwgwYqcg=;
-        b=GfGXioFctx7+yPViCkHs9jyE+okbW4RPqB8XAzsJon7Q8s8IRxMZCTf7s9EStDNX/6
-         cyLVjAQcdgzTc2MuWDhKUHGhebL/F9yuOx1VaTvQ481sjKuUOsRHHxRwhzCqtoUU+1De
-         ln8XoBH8nC197TcPpIQKB+K9sKWdVhMab3djHyniTt0UHvynqeB8MUNbEPHCNKkG3R/v
-         g5WVZwHO+xBAdgiqHxDIn4e/9ZwCbLn300kJbCtYZQ4o4kCZtdJrb+duxqe5LLnSjNQX
-         FUsDdmc9MUMPcp9vwIhmHkir6oQ7OK/74hr9t7iLsChLKM5Z0HbPGmRriVbu/F/QPlch
-         Jc5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721997402; x=1722602202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zWDRWp+paDjK/r/9N7qgoFAesuhA/2QMW3EwgwYqcg=;
-        b=XcAEqGkp4XrR26+iVeHVgKznyXNwDKqQcr9qSHIvhtsEqu7J0lKChV1E3LE7f4PcAY
-         BZhy7lUcH7Im6wsdGqZMLiqkYTNiPb/o0seUPn3ZEUTLUNg0YQjybFLY591pmuqQeWCn
-         oqSWRDeISJsXdEEXa5UolMVsGvOp0RN/izQlQHb6+W2hqmcDEKMEKc1aUBKGcs/zUK6y
-         gk9EcN51fxdz/VzUzLQQXRrE2MwvVkkCykvp72zpEI4yJw7381/EKx6i138wvii+ZMAG
-         MYFOb5z/4dgjUUbBA3NSxF6zqbyVIcZ8HBvpiG+LTfVuV+grgrkaAkhCfwZlR3hQ23+L
-         g5sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbQ9dpi45lDA5oOn2DfZO3eqXFLMCMYLpNROapmRT34qaBTSA1clvWu9yWOnAmWP24R3CvzD88v4xG1oc7tkC3jfLVxL3h99br5po4BnjdlA3GLGiwX+milZP/tNobRf+hnYU/KiquV7QNftWC+cJPXO/b27wKLJrhS9ib+y7d7+Y3wm0uMVAPBM4=
-X-Gm-Message-State: AOJu0YxrylFGUGnk974sFCPr3mdv6LKQLDdf111lgRgWD73k7ZCMbsol
-	bTDZJSSkkwEqwTCgTE5gPL42zTgjfMTlV20v5UC49px3iJPTFG/1Mjmzn5s6+sUBdZ7ZNrkxErl
-	JEbEgrp0MfPrqmPzxKkXztaUjdr0=
-X-Google-Smtp-Source: AGHT+IHt4VEqTzpVq8r5CzvzfWANcuIs631ikOmdea7VFGcamFNux9yi9tHxpM7rdXBU4AZ90s8oyeHEh8iuSzasv6Q=
-X-Received: by 2002:a17:90a:1fc8:b0:2c9:57a4:a8c4 with SMTP id
- 98e67ed59e1d1-2cf2ebb9251mr5312268a91.42.1721997402182; Fri, 26 Jul 2024
- 05:36:42 -0700 (PDT)
+	s=arc-20240116; t=1721997433; c=relaxed/simple;
+	bh=2FjmwIGzJ5BW1ybnbpiZdxICECjVRKLvGWnmMe51Zuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YYfXNvISsE439koGuZRbAnpLqlDIQcCxTeloRcQhdNfMeLVA/q0/CjHy63L/eLeuoC5jRhoWBqiLyhSaEo3Q6PoICeBoZQfgLo4ArjA2Sb3pjkz3BtZ+bfjeGrQmuzNBK15s3dxm41tR1CDbvzu+Mw39T/kJ3Yh6nvDG+OSuAsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgbuErNu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6057AC32782;
+	Fri, 26 Jul 2024 12:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721997432;
+	bh=2FjmwIGzJ5BW1ybnbpiZdxICECjVRKLvGWnmMe51Zuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UgbuErNuX9JTHZrG3oFN+i3cW5bCQrNNpAlMJXMZZWFrdYpX5q4UJd12eXQc/It8H
+	 dVmNsQv6+r0oLdZ7eSuNvyFDFb8Is9BZCIdeaXSHmfHaPGFnLSC0xEuzIGrBKuM1AG
+	 ZB5cTsCCixhL3l3PmEqrxbYI/6ISnu+pic8laEC1aoe6jpObhVhU9zodE9CGP1NCDu
+	 4+LdH9nScFNCD/gRMRvNThJw72teVxtNft22uMMYH/M1UC9UL4xntvs7d37VyJavKK
+	 ieSa2xl/FNi5X08sx42DSAVr8TlQIyEBloH//IG7runikSEHlTZxBhSrdYC0axP5TI
+	 3nTlXXJ/sUOKA==
+Date: Fri, 26 Jul 2024 09:37:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Leo Yan <leo.yan@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	James Clark <james.clark@linaro.org>, amadio@gentoo.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] perf: build: Fix cross compilation
+Message-ID: <ZqOYdX5TSk1odkCH@x1>
+References: <20240717082211.524826-1-leo.yan@arm.com>
+ <77dd91c9-e545-4a6e-bf94-045418606f75@arm.com>
+ <ZqL7gu8AOvS1gOlq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725232126.1996981-1-mmaurer@google.com> <20240725232126.1996981-3-mmaurer@google.com>
- <CA+fCnZdwRcdOig0u-D0vnFz937hRufTQOpCqGiMeo5B+-1iRVA@mail.gmail.com> <CACT4Y+Y+XmdNervhF5WAEyVwprJ32m7Pd8FF2fKy3K9FiTpJtQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+Y+XmdNervhF5WAEyVwprJ32m7Pd8FF2fKy3K9FiTpJtQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 26 Jul 2024 14:36:30 +0200
-Message-ID: <CANiq72kb0df5k-8njjNgfFFVj7Cfx-uiTSEtMt5Cbb8f3DkjWg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: rust: Enable KASAN support
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>, Matthew Maurer <mmaurer@google.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Alexander Potapenko <glider@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, kasan-dev@googlegroups.com, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqL7gu8AOvS1gOlq@google.com>
 
-On Fri, Jul 26, 2024 at 12:23=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com>=
- wrote:
->
-> This is great, thanks, Matthew!
->
-> Does Rust support KUnit tests?
-> It would be good to add at least a simple positive test similar to the
-> existing ones so that the support does not get rotten soon.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/m=
-m/kasan/kasan_test.c
+On Thu, Jul 25, 2024 at 06:27:30PM -0700, Namhyung Kim wrote:
+> Hi Leo,
+> 
+> On Thu, Jul 25, 2024 at 07:53:18AM +0100, Leo Yan wrote:
+> > Hi Arnaldo, Namhyung,
+> > 
+> > On 7/17/2024 9:22 AM, Leo Yan wrote:
+> > > This patch series fixes cross compilation issues.
+> > 
+> > If this series is fine for you, would you mind to pick up this series?
+> 
+> Sure, I think we can carry this through perf-tools if Arnaldo is ok.
 
-Yeah, we have Rust doctests converted into KUnit tests, as well as
-upcoming `#[test]`s support (also handled as KUnit tests). For this, I
-assume the latter would make more sense, but we have to merge it.
+Well, rc1 isn't out, this has been out for a few weeks, so I think its
+ok to have it for the current merge window.
 
-Cheers,
-Miguel
+- Arnaldo
 
