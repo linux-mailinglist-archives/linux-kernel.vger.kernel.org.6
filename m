@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-263070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C663993D09A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D65C93D09B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0A628237D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E5228237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E7814F122;
-	Fri, 26 Jul 2024 09:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8DA178CF2;
+	Fri, 26 Jul 2024 09:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1tqeRqq"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTRkgLU4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0521EF01
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A1F17836C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721987248; cv=none; b=THSVz11nttlmJBAIwZj6WSwedgwGJJ91cWyrnCVIDJVjxNpCR+ZLVjL0ySQfc2kgoJNetKclBBb81rUlrJ4aopUApWBIYa3G6kvqVJBA7SWjN+wXwmqgvd+TmuODY8GxynmlNYJJdSpoR2LDh3NfFlYHCxQ5fjQ3sL2YOnk9ZLE=
+	t=1721987256; cv=none; b=hJHA79Jl3psqW16EjcTX8MuSY5X2SCDdNlqLMsmByUTJWHBV/FD+EqN5hMHXwghpbyH+bkAbv/Y7vMJXvSRyR0/W/rNBoDyfJYkIcBlSCD03+ZyPppr69x3OpuQEej5CK4qlJI4zrpcJmHqP4ktaOkxeI7VccB9qAs1IaIAf3es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721987248; c=relaxed/simple;
-	bh=FL0DQLlqOty5LHC8u2KEfUvSaAULygAFyXpxIIXIak0=;
+	s=arc-20240116; t=1721987256; c=relaxed/simple;
+	bh=bXOB40B+8P35FLMeevMSsTouLOFbjy0oSgq6ugv5yjY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RyHIs2NWSIikR9UmiX74ybtb2yYkUXeZAzqffgynbcCDEf+/icWdh+KZudCXUcXy7N31nuNE/OCx+sUEQx7zVNhR7qxYKdlT0fUengjfcadWi/C5Eevpl39pcI42eqOL5Wlu154a2rbpD//559nX/JMQMGZJowROqXNAOPdRobs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1tqeRqq; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=nocms/58LNNenvMM9m5T+c8CPOODVi/1dFf8Tegf8XcJCHm0IsRG+JtHeCfFU2UWbrws1Nvg+VPz5eDDu6m9y/yqd3C8TQIM8i57QKKZ76t/Np/VkpT3d4CRzDMFvtxJ652wJDSYqOwRolIk7F4kbuLnlno+idS+l3wrM0UydVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTRkgLU4; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd90c2fc68so4150205ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:47:26 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4fccdd78so3606985ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 02:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721987246; x=1722592046; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721987254; x=1722592054; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gT1UL0dJwOaNKYiFjA7EC0yRYS8xQDfFpNmhEqLpJwk=;
-        b=E1tqeRqqmVGSb/Rt2gkAE5VH736ehbcevJVcLyZs3e/Q+W933LLKsU9ZpsFDnG+gD3
-         uYS5b7cRnMTVwv5PeNqezP1aY/3opbbnHc6f/CXakzTUqdBUPkzJwwqvsvReaqmO+zr8
-         4Jol3nV6rwjg2erPnAVDGi/JkNVlecWNpSR/TeqLud4G93R+d/rXgrzmjsPTjT2l7kJB
-         CXZ6GzOCJvXUFoWw/mb3jdUr4w2EetzjoBHH+HOjFOPwsMTwYyp1RLgADXqD08i0H3bG
-         RShINeYqXmqlhVSUswOL2/iPdF1TlJfFfzvNH+mFIfx7XAN1plfgTJo3tb8XPHPIoZMj
-         xv3Q==
+        bh=hXeSWJ/2XL0C00VB4D2wsSnDGte33aaztEw6N6+DVHo=;
+        b=NTRkgLU4uPMNfQOhmS6daoTqhdwamv1HkJAZgu2DGpyHvsQsD6XKJqv9Tn/+WQEVaS
+         KoDwpHKJWD8tnglIuczgZrgjkYrsxjlK629LrXB/Sa8+fwbdpQjBgvasuYJYMzDkTV5F
+         08Fwg6CcG3Z/OF2vM62rA00UEqodQ7dkAm56m8G1KIR0TSRP+WKANddGfK9CrQXuii8C
+         RS8J5i0kp8sHltXpxbDjiSnQyMRhJWTZdG72SBfi84J0Bkl1fdprfE1L7BaXQGqnDJyI
+         O4a1tVdtkOQ1rtsTDG64t5ZZX688WBG41t5MzZCSXz6cTZdwNVVsOqiyvuqQrgZtGNQ2
+         p3PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721987246; x=1722592046;
+        d=1e100.net; s=20230601; t=1721987254; x=1722592054;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gT1UL0dJwOaNKYiFjA7EC0yRYS8xQDfFpNmhEqLpJwk=;
-        b=NURWDFODVcvI+9i+SShDmAcmbU9lQ/1zOu6jjt4WKLuZt4GbWrb2jo/IR9hQZ8WTvf
-         RiuJmgDSo0y919Jat0TnQ0IqZOom9e4r9L46lvTzm1J3JAfr7s85KI2IoQTFLhKOtBuJ
-         yWtwrnCFwbvzH3l1eh9tzotb1UJpnwgtmU2L64ssE97B2VO/fRiuT9t+P9hanh2iHrJu
-         tnjNlovTFeLdqXWdTSudYnZiTGrV11UaELHa+VC1NQvyaxSW+UNz/22nf9FYo5W5D52E
-         zs5+BmQS0ooQqc4bt/Hh7y4XUx8DtimO9iBqKrWzHVDx4z9fPjGkCi+HCmx5bKqk5JO/
-         KEDA==
-X-Forwarded-Encrypted: i=1; AJvYcCULU9I9FOVXdDtL+8Iq+1qqPptglG72Bscj0XAgMjnA5s9VIDVkTmUATsdQoasRl2k4CBlGpvKztvEsFqQ3OGOqftIXbTkqkC/FKDU9
-X-Gm-Message-State: AOJu0Ywnzyd5QIfjMRQ84vaXulMyNSV9C9SCyIi/HYcP03NndEnLgGD3
-	DArHNZXcHPDt0HQz/q8+DK1XEC1/U4sbupep2ajxgXCvpxxolMUU
-X-Google-Smtp-Source: AGHT+IFk/zzhxB/vWOVfPadjTGBbJvMnp6xOZwuxd7f6freLAGGRqyTe1ovwigii5sLP/MuWd1JkEQ==
-X-Received: by 2002:a17:902:ecd1:b0:1fd:7293:3d70 with SMTP id d9443c01a7336-1fed35301e8mr63985595ad.8.1721987246237;
-        Fri, 26 Jul 2024 02:47:26 -0700 (PDT)
+        bh=hXeSWJ/2XL0C00VB4D2wsSnDGte33aaztEw6N6+DVHo=;
+        b=YhRX64vyBxcvZ0L9cbbuhBYPiTuSxAcoGIJaLEp5oT+YVl71cgoXNC3OLGWnz8Rwr7
+         GiE1/MTClOiyTe5V+a6rhnM50SZY4uEwvFqw1mhFMuDft85hXBrk50dMCX8zlj9cYeBD
+         hOTIytPunc9L2tCtzwtQZ8G/X5NoTmnO2lm6KlMOyT6tL4uRM5bSP4/CBWaU0ZXG82bM
+         iDoTj9zU86D73tn1lwnDGSO7UyGXxg/K8SIjQOjnvssxfMtrq89PwNjNTL7fEnvxKV69
+         nqneO/bdDLrf4HDbnwYmRNc3LKCZcaZrxj0x8uHfQTgMP5Dl51k6SduWQBkYRYeYZr0Q
+         LFFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ6mRUv1ajYp/tHHvcHnK2XgDZcYXI8L6SQaxFhT0SRB+GVan5shnvwK1+VUJf6LsXSZ8F++B1PxcvqVJLmGP1Py3IRM1h49AufwBy
+X-Gm-Message-State: AOJu0YyMk2fi/OMHbZ4eaZP/6LqO7vn8ZIpEpOVRzsvDkQJNwMX33vc7
+	/RVIgyUEfzSpQ2k5VJNGDJZv+M9FTgmq4lUytBTf8CLu0SIhkjf4
+X-Google-Smtp-Source: AGHT+IEsB98ir1v1O+pC1M3K6sUPTrlIGX/N1CqYehZBqQeCofKQvFrGpl3C0i9QXGJhDvMHh4MUqQ==
+X-Received: by 2002:a17:902:dacc:b0:1fd:95ac:506b with SMTP id d9443c01a7336-1fed3af263fmr68421725ad.64.1721987254203;
+        Fri, 26 Jul 2024 02:47:34 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d15e98sm28127455ad.99.2024.07.26.02.47.18
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d15e98sm28127455ad.99.2024.07.26.02.47.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 02:47:25 -0700 (PDT)
+        Fri, 26 Jul 2024 02:47:33 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -89,11 +89,10 @@ Cc: ying.huang@intel.com,
 	v-songbaohua@oppo.com,
 	willy@infradead.org,
 	xiang@kernel.org,
-	yosryahmed@google.com,
-	Chuanhua Han <hanchuanhua@oppo.com>
-Subject: [PATCH v5 3/4] mm: support large folios swapin as a whole for zRAM-like swapfile
-Date: Fri, 26 Jul 2024 21:46:17 +1200
-Message-Id: <20240726094618.401593-4-21cnbao@gmail.com>
+	yosryahmed@google.com
+Subject: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
+Date: Fri, 26 Jul 2024 21:46:18 +1200
+Message-Id: <20240726094618.401593-5-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240726094618.401593-1-21cnbao@gmail.com>
 References: <20240726094618.401593-1-21cnbao@gmail.com>
@@ -105,315 +104,150 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Chuanhua Han <hanchuanhua@oppo.com>
+From: Barry Song <v-songbaohua@oppo.com>
 
-In an embedded system like Android, more than half of anonymous memory is
-actually stored in swap devices such as zRAM. For instance, when an app
-is switched to the background, most of its memory might be swapped out.
+Quote Ying's comment:
+A user space interface can be implemented to select different swap-in
+order policies, similar to the mTHP allocation order policy. We need
+a distinct policy because the performance characteristics of memory
+allocation differ significantly from those of swap-in. For example,
+SSD read speeds can be much slower than memory allocation. With
+policy selection, I believe we can implement mTHP swap-in for
+non-SWAP_SYNCHRONOUS scenarios as well. However, users need to understand
+the implications of their choices. I think that it's better to start
+with at least always never. I believe that we will add auto in the
+future to tune automatically, which can be used as default finally.
 
-Currently, we have mTHP features, but unfortunately, without support
-for large folio swap-ins, once those large folios are swapped out,
-we lose them immediately because mTHP is a one-way ticket.
-
-This patch introduces mTHP swap-in support. For now, we limit mTHP
-swap-ins to contiguous swaps that were likely swapped out from mTHP as
-a whole.
-
-Additionally, the current implementation only covers the SWAP_SYNCHRONOUS
-case. This is the simplest and most common use case, benefiting millions
-of Android phones and similar devices with minimal implementation
-cost. In this straightforward scenario, large folios are always exclusive,
-eliminating the need to handle complex rmap and swapcache issues.
-
-It offers several benefits:
-1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP after
-   swap-out and swap-in.
-2. Eliminates fragmentation in swap slots and supports successful
-   THP_SWPOUT without fragmentation.
-3. Enables zRAM/zsmalloc to compress and decompress mTHP, reducing CPU usage
-   and enhancing compression ratios significantly.
-
-Deploying this on millions of actual products, we haven't observed any
-noticeable increase in memory footprint for 64KiB mTHP based on CONT-PTE
-on ARM64.
-
-Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
-Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+Suggested-by: "Huang, Ying" <ying.huang@intel.com>
 Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 ---
- mm/memory.c | 211 ++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 188 insertions(+), 23 deletions(-)
+ Documentation/admin-guide/mm/transhuge.rst |  6 +++
+ include/linux/huge_mm.h                    |  1 +
+ mm/huge_memory.c                           | 44 ++++++++++++++++++++++
+ mm/memory.c                                |  3 +-
+ 4 files changed, 53 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 058485daf186..2e94e956ee12 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -144,6 +144,12 @@ hugepage sizes have enabled="never". If enabling multiple hugepage
+ sizes, the kernel will select the most appropriate enabled size for a
+ given allocation.
+ 
++Transparent Hugepage Swap-in for anonymous memory can be disabled or enabled
++by per-supported-THP-size with one of::
++
++	echo always >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/swapin_enabled
++	echo never >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/swapin_enabled
++
+ It's also possible to limit defrag efforts in the VM to generate
+ anonymous hugepages in case they're not immediately free to madvise
+ regions or to never try to defrag memory and simply fallback to regular
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index e25d9ebfdf89..25174305b17f 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -92,6 +92,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
+ #define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
+ #define TVA_IN_PF		(1 << 1)	/* Page fault handler */
+ #define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
++#define TVA_IN_SWAPIN          (1 << 3)        /* Do swap-in */
+ 
+ #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
+ 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 0167dc27e365..41460847988c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -80,6 +80,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+ unsigned long huge_anon_orders_always __read_mostly;
+ unsigned long huge_anon_orders_madvise __read_mostly;
+ unsigned long huge_anon_orders_inherit __read_mostly;
++unsigned long huge_anon_orders_swapin_always __read_mostly;
+ 
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 					 unsigned long vm_flags,
+@@ -88,6 +89,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ {
+ 	bool smaps = tva_flags & TVA_SMAPS;
+ 	bool in_pf = tva_flags & TVA_IN_PF;
++	bool in_swapin = tva_flags & TVA_IN_SWAPIN;
+ 	bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
+ 	unsigned long supported_orders;
+ 
+@@ -100,6 +102,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 		supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
+ 
+ 	orders &= supported_orders;
++	if (in_swapin)
++		orders &= READ_ONCE(huge_anon_orders_swapin_always);
+ 	if (!orders)
+ 		return 0;
+ 
+@@ -523,8 +527,48 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+ static struct kobj_attribute thpsize_enabled_attr =
+ 	__ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
+ 
++static DEFINE_SPINLOCK(huge_anon_orders_swapin_lock);
++
++static ssize_t thpsize_swapin_enabled_show(struct kobject *kobj,
++				    struct kobj_attribute *attr, char *buf)
++{
++	int order = to_thpsize(kobj)->order;
++	const char *output;
++
++	if (test_bit(order, &huge_anon_orders_swapin_always))
++		output = "[always] never";
++	else
++		output = "always [never]";
++
++	return sysfs_emit(buf, "%s\n", output);
++}
++
++static ssize_t thpsize_swapin_enabled_store(struct kobject *kobj,
++				     struct kobj_attribute *attr,
++				     const char *buf, size_t count)
++{
++	int order = to_thpsize(kobj)->order;
++	ssize_t ret = count;
++
++	if (sysfs_streq(buf, "always")) {
++		spin_lock(&huge_anon_orders_swapin_lock);
++		set_bit(order, &huge_anon_orders_swapin_always);
++		spin_unlock(&huge_anon_orders_swapin_lock);
++	} else if (sysfs_streq(buf, "never")) {
++		spin_lock(&huge_anon_orders_swapin_lock);
++		clear_bit(order, &huge_anon_orders_swapin_always);
++		spin_unlock(&huge_anon_orders_swapin_lock);
++	} else
++		ret = -EINVAL;
++
++	return ret;
++}
++static struct kobj_attribute thpsize_swapin_enabled_attr =
++	__ATTR(swapin_enabled, 0644, thpsize_swapin_enabled_show, thpsize_swapin_enabled_store);
++
+ static struct attribute *thpsize_attrs[] = {
+ 	&thpsize_enabled_attr.attr,
++	&thpsize_swapin_enabled_attr.attr,
+ #ifdef CONFIG_SHMEM
+ 	&thpsize_shmem_enabled_attr.attr,
+ #endif
 diff --git a/mm/memory.c b/mm/memory.c
-index 833d2cad6eb2..14048e9285d4 100644
+index 14048e9285d4..27c77f739a2c 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -3986,6 +3986,152 @@ static vm_fault_t handle_pte_marker(struct vm_fault *vmf)
- 	return VM_FAULT_SIGBUS;
- }
+@@ -4091,7 +4091,8 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+ 	 * and suitable for swapping THP.
+ 	 */
+ 	orders = thp_vma_allowable_orders(vma, vma->vm_flags,
+-			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
++			TVA_IN_PF | TVA_IN_SWAPIN | TVA_ENFORCE_SYSFS,
++			BIT(PMD_ORDER) - 1);
+ 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+ 	orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
  
-+/*
-+ * check a range of PTEs are completely swap entries with
-+ * contiguous swap offsets and the same SWAP_HAS_CACHE.
-+ * ptep must be first one in the range
-+ */
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static bool can_swapin_thp(struct vm_fault *vmf, pte_t *ptep, int nr_pages)
-+{
-+	struct swap_info_struct *si;
-+	unsigned long addr;
-+	swp_entry_t entry;
-+	pgoff_t offset;
-+	char has_cache;
-+	int idx, i;
-+	pte_t pte;
-+
-+	addr = ALIGN_DOWN(vmf->address, nr_pages * PAGE_SIZE);
-+	idx = (vmf->address - addr) / PAGE_SIZE;
-+	pte = ptep_get(ptep);
-+
-+	if (!pte_same(pte, pte_move_swp_offset(vmf->orig_pte, -idx)))
-+		return false;
-+	entry = pte_to_swp_entry(pte);
-+	offset = swp_offset(entry);
-+	if (swap_pte_batch(ptep, nr_pages, pte) != nr_pages)
-+		return false;
-+
-+	si = swp_swap_info(entry);
-+	has_cache = si->swap_map[offset] & SWAP_HAS_CACHE;
-+	for (i = 1; i < nr_pages; i++) {
-+		/*
-+		 * while allocating a large folio and doing swap_read_folio for the
-+		 * SWP_SYNCHRONOUS_IO path, which is the case the being faulted pte
-+		 * doesn't have swapcache. We need to ensure all PTEs have no cache
-+		 * as well, otherwise, we might go to swap devices while the content
-+		 * is in swapcache
-+		 */
-+		if ((si->swap_map[offset + i] & SWAP_HAS_CACHE) != has_cache)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static inline unsigned long thp_swap_suitable_orders(pgoff_t swp_offset,
-+		unsigned long addr, unsigned long orders)
-+{
-+	int order, nr;
-+
-+	order = highest_order(orders);
-+
-+	/*
-+	 * To swap-in a THP with nr pages, we require its first swap_offset
-+	 * is aligned with nr. This can filter out most invalid entries.
-+	 */
-+	while (orders) {
-+		nr = 1 << order;
-+		if ((addr >> PAGE_SHIFT) % nr == swp_offset % nr)
-+			break;
-+		order = next_order(&orders, order);
-+	}
-+
-+	return orders;
-+}
-+#else
-+static inline bool can_swapin_thp(struct vm_fault *vmf, pte_t *ptep, int nr_pages)
-+{
-+	return false;
-+}
-+#endif
-+
-+static struct folio *alloc_swap_folio(struct vm_fault *vmf)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	unsigned long orders;
-+	struct folio *folio;
-+	unsigned long addr;
-+	swp_entry_t entry;
-+	spinlock_t *ptl;
-+	pte_t *pte;
-+	gfp_t gfp;
-+	int order;
-+
-+	/*
-+	 * If uffd is active for the vma we need per-page fault fidelity to
-+	 * maintain the uffd semantics.
-+	 */
-+	if (unlikely(userfaultfd_armed(vma)))
-+		goto fallback;
-+
-+	/*
-+	 * A large swapped out folio could be partially or fully in zswap. We
-+	 * lack handling for such cases, so fallback to swapping in order-0
-+	 * folio.
-+	 */
-+	if (!zswap_never_enabled())
-+		goto fallback;
-+
-+	entry = pte_to_swp_entry(vmf->orig_pte);
-+	/*
-+	 * Get a list of all the (large) orders below PMD_ORDER that are enabled
-+	 * and suitable for swapping THP.
-+	 */
-+	orders = thp_vma_allowable_orders(vma, vma->vm_flags,
-+			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
-+	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
-+	orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
-+
-+	if (!orders)
-+		goto fallback;
-+
-+	pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd, vmf->address & PMD_MASK, &ptl);
-+	if (unlikely(!pte))
-+		goto fallback;
-+
-+	/*
-+	 * For do_swap_page, find the highest order where the aligned range is
-+	 * completely swap entries with contiguous swap offsets.
-+	 */
-+	order = highest_order(orders);
-+	while (orders) {
-+		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
-+		if (can_swapin_thp(vmf, pte + pte_index(addr), 1 << order))
-+			break;
-+		order = next_order(&orders, order);
-+	}
-+
-+	pte_unmap_unlock(pte, ptl);
-+
-+	/* Try allocating the highest of the remaining orders. */
-+	gfp = vma_thp_gfp_mask(vma);
-+	while (orders) {
-+		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
-+		folio = vma_alloc_folio(gfp, order, vma, addr, true);
-+		if (folio)
-+			return folio;
-+		order = next_order(&orders, order);
-+	}
-+
-+fallback:
-+#endif
-+	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
-+}
-+
-+
- /*
-  * We enter with non-exclusive mmap_lock (to exclude vma changes,
-  * but allow concurrent faults), and pte mapped but not yet locked.
-@@ -4074,35 +4220,37 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	if (!folio) {
- 		if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
- 		    __swap_count(entry) == 1) {
--			/*
--			 * Prevent parallel swapin from proceeding with
--			 * the cache flag. Otherwise, another thread may
--			 * finish swapin first, free the entry, and swapout
--			 * reusing the same entry. It's undetectable as
--			 * pte_same() returns true due to entry reuse.
--			 */
--			if (swapcache_prepare(entry)) {
--				/* Relax a bit to prevent rapid repeated page faults */
--				schedule_timeout_uninterruptible(1);
--				goto out;
--			}
--			need_clear_cache = true;
--
- 			/* skip swapcache */
--			folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
--						vma, vmf->address, false);
-+			folio = alloc_swap_folio(vmf);
- 			page = &folio->page;
- 			if (folio) {
- 				__folio_set_locked(folio);
- 				__folio_set_swapbacked(folio);
- 
-+				nr_pages = folio_nr_pages(folio);
-+				if (folio_test_large(folio))
-+					entry.val = ALIGN_DOWN(entry.val, nr_pages);
-+				/*
-+				 * Prevent parallel swapin from proceeding with
-+				 * the cache flag. Otherwise, another thread may
-+				 * finish swapin first, free the entry, and swapout
-+				 * reusing the same entry. It's undetectable as
-+				 * pte_same() returns true due to entry reuse.
-+				 */
-+				if (swapcache_prepare_nr(entry, nr_pages)) {
-+					/* Relax a bit to prevent rapid repeated page faults */
-+					schedule_timeout_uninterruptible(1);
-+					goto out_page;
-+				}
-+				need_clear_cache = true;
-+
- 				if (mem_cgroup_swapin_charge_folio(folio,
- 							vma->vm_mm, GFP_KERNEL,
- 							entry)) {
- 					ret = VM_FAULT_OOM;
- 					goto out_page;
- 				}
--				mem_cgroup_swapin_uncharge_swap(entry);
-+				mem_cgroup_swapin_uncharge_swap_nr(entry, nr_pages);
- 
- 				shadow = get_shadow_from_swap_cache(entry);
- 				if (shadow)
-@@ -4209,6 +4357,22 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		goto out_nomap;
- 	}
- 
-+	/* allocated large folios for SWP_SYNCHRONOUS_IO */
-+	if (folio_test_large(folio) && !folio_test_swapcache(folio)) {
-+		unsigned long nr = folio_nr_pages(folio);
-+		unsigned long folio_start = ALIGN_DOWN(vmf->address, nr * PAGE_SIZE);
-+		unsigned long idx = (vmf->address - folio_start) / PAGE_SIZE;
-+		pte_t *folio_ptep = vmf->pte - idx;
-+
-+		if (!can_swapin_thp(vmf, folio_ptep, nr))
-+			goto out_nomap;
-+
-+		page_idx = idx;
-+		address = folio_start;
-+		ptep = folio_ptep;
-+		goto check_folio;
-+	}
-+
- 	nr_pages = 1;
- 	page_idx = 0;
- 	address = vmf->address;
-@@ -4340,11 +4504,12 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		folio_add_lru_vma(folio, vma);
- 	} else if (!folio_test_anon(folio)) {
- 		/*
--		 * We currently only expect small !anon folios, which are either
--		 * fully exclusive or fully shared. If we ever get large folios
--		 * here, we have to be careful.
-+		 * We currently only expect small !anon folios which are either
-+		 * fully exclusive or fully shared, or new allocated large folios
-+		 * which are fully exclusive. If we ever get large folios within
-+		 * swapcache here, we have to be careful.
- 		 */
--		VM_WARN_ON_ONCE(folio_test_large(folio));
-+		VM_WARN_ON_ONCE(folio_test_large(folio) && folio_test_swapcache(folio));
- 		VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
- 		folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
- 	} else {
-@@ -4387,7 +4552,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- out:
- 	/* Clear the swap cache pin for direct swapin after PTL unlock */
- 	if (need_clear_cache)
--		swapcache_clear(si, entry);
-+		swapcache_clear_nr(si, entry, nr_pages);
- 	if (si)
- 		put_swap_device(si);
- 	return ret;
-@@ -4403,7 +4568,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		folio_put(swapcache);
- 	}
- 	if (need_clear_cache)
--		swapcache_clear(si, entry);
-+		swapcache_clear_nr(si, entry, nr_pages);
- 	if (si)
- 		put_swap_device(si);
- 	return ret;
 -- 
 2.34.1
 
