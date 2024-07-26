@@ -1,638 +1,260 @@
-Return-Path: <linux-kernel+bounces-263366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B3793D4EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:16:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6359693D4F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 16:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C421F225C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:16:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83F4B22FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0822310953;
-	Fri, 26 Jul 2024 14:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D693DDC7;
+	Fri, 26 Jul 2024 14:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7qndoa4"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s2y8zC8D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FCC1B86CF;
-	Fri, 26 Jul 2024 14:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD271B86CF;
+	Fri, 26 Jul 2024 14:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722003357; cv=none; b=B3NGCj9VvHihgGTg6qXZmc4ifAdjumDb8Bq0uHwLihGaGfFWRp9pP4wkAtXM7EYx840Lgg6UvjbYZDMv4BpTpa+FJBFY4uGFlW0c21EJS2Td2s1/IDTVcg2a6JKkfyQGVjohoKCaVu9ULHiIdeZfunJLt15XyIByfWadf7OFVKQ=
+	t=1722003472; cv=none; b=TOr5EPhpWufEzKv8Z2a50LZV71lcM+rlp3jRReyD/E6hRa5AofXKGCsbhyeL0zJfIUZ0Ven3+A99xk/NY/or+Fh88E1mwtN8cPAYHnmqQUlBmZdzaNLM/8JTsOmHqtJzslZTCf2YShLjg4Zg57vzpP7TOsmd7uRLCvGAlse+DDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722003357; c=relaxed/simple;
-	bh=q+7vPrs9tt/3G8M1AeKN7lQVj9JjZLo0VFSqtFFUYyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J4BRweoYNDmKR6Ah8YQfUMfkDqHY1Lb5jS2NAC+7auIJ+ebQAWoF6uNuk/ksDz618I2B/DtbK11E+NUXuBzvlJ9knhb57c72v5HL+A/F7EtO7YbEYVk2TJq1Vl8cJf8BTczN3aoIFcATq3LLs0com+HkXsj30gooX1r/3vleGFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7qndoa4; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b703eda27so685017b3a.3;
-        Fri, 26 Jul 2024 07:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722003355; x=1722608155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=IcU42lVW/EMANVHaPbsQ+AOUlbgahzpVYlZNTt0gz3c=;
-        b=i7qndoa4WJAbQjj4zBG3jY9QPrjkY+Njo1Q3bzU3jOu3dCttgxDyv7idL5yfTWD32Q
-         N3C2j1ieN5QA8p7pzYk+KdYmaCRybQVsmdopRIjjx/BTJbgdxvtHfTEZCXfJnrxctTZ8
-         irRFLbmBqWjHRe22HeFm2YAz7/HOVu5St2xRaTqkDsY2zJOVCQWbBlP5hBVBSibp6PxZ
-         OY5KmC5YDfJ6MK0LkvDLr9LZIR7cvUXb75nRu8E1T/tPnBBDJMoHt23S/Z8/YMxrwCTU
-         39VjQr721Zm8TSJH1TAWpjgci+Aupqd3DC3Q1WZMKeb7XsCg3aQ5Jt1ywVf9Dfu6DFiO
-         awBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722003355; x=1722608155;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IcU42lVW/EMANVHaPbsQ+AOUlbgahzpVYlZNTt0gz3c=;
-        b=IWmOltbP+IdQegYJNkTj0tJ2LYCz/apes9TRefTJsA5HvNQNC38WVSv/xJgioyLVbx
-         sFohC2J7FpZSfd4dqpQlN37FRPBxPk1aSx/6nE/UMhgVDLBFDqtb+0QyBKSX1xoNLxcX
-         JpKOaCcx20/J37rP2XKBePN8ebkhrkPrV8HMEdi/ZncenClrHdAdwU9m2w9EbaO3N7k9
-         H9VvuIOx+79CMnNxpgqxF61h+vihMx1/7OAsFLqmM23I8v/frUVrHBZ4rt8iwcZLlYYF
-         4NWrpXdF1R0fNBhTP15WqrWKb3tEMHm0qSja/3W6UPOcXaWn3/n6h/18hZVtSXgIdnTn
-         UHBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbNvYeUb3mBf6pTgZlOi20NFVmm3cH6qSXR09muKIeqEUtJT8Yp865feVTVBFvgfF7bwnAwoBVc2USs/V1TNklj2car/gRmTFSjuWWEbOxIOkOkQdSIerLqjPBQlT3wL/tw0vIvfnmgOoZUJbPZTw1oEzHyuBL8KUo3gcA3bfdnsWR+VksDReg0JvA83E2NOsrRtN/otOSN/I5jzDS+CN9actYFUe2tsvubpiVehifTr0Nidp8Xv1iff+TOMNp
-X-Gm-Message-State: AOJu0Yw5Th0tiooUJFHIq0Jz3dv8jqa/TJLPYEp8IJafayS5bhuSe1tS
-	n3yL0xLkf7ttjPBFr7FoKFhvdquC09ZaA4lbDaDJo/8uBr0yC3t5
-X-Google-Smtp-Source: AGHT+IFHRgLy6fU2tz6dkC8CEuix85D6d1Htj4b3oD6BeYcL6dUKIQ0gxO+L9DALAoPyqXUn0jsW2g==
-X-Received: by 2002:a05:6a21:9688:b0:1c1:61a9:de4a with SMTP id adf61e73a8af0-1c472acd1camr6581243637.24.1722003354706;
-        Fri, 26 Jul 2024 07:15:54 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f7b7b08dsm2828561a12.19.2024.07.26.07.15.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 07:15:53 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9572496f-f6b8-4f66-b084-de7644ea60a8@roeck-us.net>
-Date: Fri, 26 Jul 2024 07:15:50 -0700
+	s=arc-20240116; t=1722003472; c=relaxed/simple;
+	bh=m94Gnu0+cQ/UnRtKqw0/DwecjPO8FUz7R3pX9OR8GkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=kUoq866AbxVbdtq/KOwti32neDen2pbRN2V8Hnn07d8qu0eWa0do13Jm+2fHyhCTbJSp9HDJFvJMYUn/UZVrF7CFXEgkEQdDwdoPmF+CcikZL+yTglJFpR7jy5+/Q5HmXh1YLPChZLHuQRwJY6VFv/NfAr8i+islSH+L9rOY3E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s2y8zC8D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q9MAYb012066;
+	Fri, 26 Jul 2024 14:17:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
+	 bh=JN8gM5hqSOOU4zsShpolyYk8YQiJS54LpmLTQIvjPtg=; b=s2y8zC8DQwoH
+	7Y4HVIrpOFwDg8hh2n4aQYIXljB7ekc3CVfEFTrflnycVlSLI+xtPkDXuruynYZ6
+	/OUZlA0yaU/ZCLIR5qdWc//+erraZ51mL1msei6lfLZjPSjXjAN93+DdC+cuxLf1
+	y82JxJu/KXl4ddQ5k9ahe0nmEQQtPN1OJ+ND60qWZtPfNfZc2pOU0ijMzzmpsHeJ
+	ZcnxUiVlvNWNuS5y7Y99EcYsAxKRC2Ci/WwNSDy2adTVsSFfyHBT05GFtVaY4aSg
+	qxfKthyr6oJ63HPsrRYuKcRRuTPzfahkzggN1bWSSfrEQN7xx6mXmvq7Wm0jaVV1
+	/AzHHMF3nw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m2kv1p76-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 14:17:42 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QEAF1s007105;
+	Fri, 26 Jul 2024 14:17:42 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40gy2pue3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 14:17:41 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QEHaXb48759280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Jul 2024 14:17:38 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 20FFD20043;
+	Fri, 26 Jul 2024 14:17:36 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B446D20040;
+	Fri, 26 Jul 2024 14:17:35 +0000 (GMT)
+Received: from localhost (unknown [9.171.57.197])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 26 Jul 2024 14:17:35 +0000 (GMT)
+Date: Fri, 26 Jul 2024 16:17:34 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [GIT PULL] more s390 updates for 6.11 merge window
+Message-ID: <your-ad-here.call-01722003454-ext-3193@work.hours>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xLlS1AqWO2kchdTP9WCVLDwnLFeDZqiu
+X-Proofpoint-ORIG-GUID: xLlS1AqWO2kchdTP9WCVLDwnLFeDZqiu
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] hwmon: add driver for the hwmon parts of qnap-mcu
- devices
-To: Heiko Stuebner <heiko@sntech.de>, lee@kernel.org, jdelvare@suse.com,
- dmitry.torokhov@gmail.com, pavel@ucw.cz
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ukleinek@debian.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20240725194539.1780790-1-heiko@sntech.de>
- <20240725194539.1780790-6-heiko@sntech.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240725194539.1780790-6-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_11,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407260091
 
-On 7/25/24 12:45, Heiko Stuebner wrote:
-> The MCU can be found on network-attached-storage devices made by QNAP
-> and provides access to fan control including reading back its RPM as
-> well as reading the temperature of the NAS case.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Hello Linus,
 
-checkpatch --strict:
+please pull more s390 updates for 6.11 merge window.
 
-total: 0 errors, 1 warnings, 9 checks, 377 lines checked
+Thank you,
+Vasily
 
-Te warning is about the MAINTAINERS file, which is your call,
-but please fix the check messages.
+The following changes since commit 66ebbdfdeb093e097399b1883390079cd4c3022b:
 
-That does make me wonder, though. It looks like you don't plan to sign up
-to maintain this code. What do you expect to happen with it after it
-has been accepted ?
+  Merge tag 'irq-msi-2024-07-22' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2024-07-22 14:02:19 -0700)
 
-> ---
->   drivers/hwmon/Kconfig          |  12 ++
->   drivers/hwmon/Makefile         |   1 +
->   drivers/hwmon/qnap-mcu-hwmon.c | 352 +++++++++++++++++++++++++++++++++
+are available in the Git repository at:
 
-Documentation (Documentation/hwmon/...) missing.
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-2
 
->   3 files changed, 365 insertions(+)
->   create mode 100644 drivers/hwmon/qnap-mcu-hwmon.c
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index e14ae18a973b3..87b6ee463a967 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1806,6 +1806,18 @@ config SENSORS_PWM_FAN
->   	  This driver can also be built as a module. If so, the module
->   	  will be called pwm-fan.
->   
-> +config SENSORS_QNAP_MCU_HWMON
-> +	tristate "QNAP MCU hardware monitoring"
-> +	depends on MFD_QNAP_MCU
-> +	depends on THERMAL || THERMAL=n
-> +	help
-> +	  Say yes here to enable support for fans and temperatures sensors
+for you to fetch changes up to 6dc2e98d5f1de162d1777aee97e59d75d70d07c5:
 
-s/temperatures/temperature/
+  s390: Remove protvirt and kvm config guards for uv code (2024-07-23 16:02:33 +0200)
 
-> +	  connected to a QNAP MCU, as found in a number of QNAP network
-> +	  attached storage devices.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called qnap-mcu-hwmon.
-> +
->   config SENSORS_RASPBERRYPI_HWMON
->   	tristate "Raspberry Pi voltage monitor"
->   	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index e3f25475d1f04..b72c6a059e4af 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -188,6 +188,7 @@ obj-$(CONFIG_SENSORS_POWERZ)	+= powerz.o
->   obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
->   obj-$(CONFIG_SENSORS_PT5161L)	+= pt5161l.o
->   obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
-> +obj-$(CONFIG_SENSORS_QNAP_MCU_HWMON)	+= qnap-mcu-hwmon.o
->   obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
->   obj-$(CONFIG_SENSORS_SBTSI)	+= sbtsi_temp.o
->   obj-$(CONFIG_SENSORS_SBRMI)	+= sbrmi.o
-> diff --git a/drivers/hwmon/qnap-mcu-hwmon.c b/drivers/hwmon/qnap-mcu-hwmon.c
-> new file mode 100644
-> index 0000000000000..c4925ece165e2
-> --- /dev/null
-> +++ b/drivers/hwmon/qnap-mcu-hwmon.c
-> @@ -0,0 +1,352 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/*
-> + * Driver for hwmon elements found on QNAP-MCU devices
-> + *
-> + * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/mfd/qnap-mcu.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/thermal.h>
-> +
-> +struct qnap_mcu_hwmon {
-> +	struct qnap_mcu *mcu;
-> +	struct device *dev;
-> +
-> +	unsigned int pwm_min;
-> +	unsigned int pwm_max;
-> +
-> +	unsigned int pwm_value;
-> +	bool pwm_enabled;
-> +
-> +	unsigned int fan_state;
-> +	unsigned int fan_max_state;
-> +	unsigned int *fan_cooling_levels;
-> +
-> +	struct thermal_cooling_device *cdev;
-> +	struct hwmon_chip_info info;
-> +};
-> +
-> +static int qnap_mcu_hwmon_get_rpm(struct qnap_mcu_hwmon *hwm)
-> +{
-> +	u8 cmd[] = {
-> +		[0] = 0x40, /* @ */
-> +		[1] = 0x46, /* F */
-> +		[2] = 0x41  /* A */
-> +	};
+----------------------------------------------------------------
+more s390 updates for 6.11 merge window
 
-Can this be static ?
+- Fix KMSAN build breakage caused by the conflict between s390 and
+  mm-stable trees
 
-> +	u8 reply[6];
-> +	int ret;
-> +
-> +	/* poll the fan rpm */
-> +	ret = qnap_mcu_exec(hwm->mcu, cmd, sizeof(cmd), reply, sizeof(reply));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* First 2 bytes must mirror the sent command */
-> +	if (memcmp(cmd, reply, 2)) {
-> +		dev_err(hwm->dev, "malformed data received\n");
+- Add KMSAN page markers for ptdump
 
-Pleas drop those error messages.
+- Add runtime constant support
 
-> +		return -EIO;
-> +	}
-> +
-> +	return reply[4] * 450;
-> +}
-> +
-> +static int qnap_mcu_hwmon_update_fan(struct qnap_mcu_hwmon *hwm)
-> +{
-> +	u8 cmd[] = {
-> +		[0] = 0x40, /* @ */
-> +		[1] = 0x46, /* F */
-> +		[2] = 0x57, /* W */
-> +		[3] = 0x30, /* 0 ... fan-id? */
-> +		[4] = hwm->pwm_enabled ? hwm->pwm_value : 0
+- Fix __pa/__va for modules under non-GPL licenses by exporting necessary
+  vm_layout struct with EXPORT_SYMBOL to prevent linkage problems
 
-Per ABI, pwm_enabled == 0 is
-		- 0: no fan speed control (i.e. fan at full speed)
-This does the opposite.
+- Fix an endless loop in the CF_DIAG event stop in the CPU Measurement
+  Counter Facility code when the counter set size is zero
 
-I am not sure I understand the intent of pwm_enable.
-It seems to me it is supposed to turn off the fan, which
-is identical to just setting the pwm value to 0.
-If so, why have this attribute in the first place ?
+- Remove the PROTECTED_VIRTUALIZATION_GUEST config option and enable
+  its functionality by default
 
-> +	};
-> +
-> +	/* poll the fan rpm */
-> +	return qnap_mcu_exec_with_ack(hwm->mcu, cmd, sizeof(cmd));
-> +}
-> +
-> +static int qnap_mcu_hwmon_get_temp(struct qnap_mcu_hwmon *hwm)
-> +{
-> +	u8 cmd[] = {
-> +		[0] = 0x40, /* @ */
-> +		[1] = 0x54, /* T */
-> +		[2] = 0x33  /* 3 */
-> +	};
+- Support allocation of multiple MSI interrupts per device and improve
+  logging of architecture-specific limitations
 
-static ?
+- Add support for lowcore relocation as a debugging feature to catch
+  all null ptr dereferences in the kernel address space, improving
+  detection beyond the current implementation's limited write access
+  protection
 
-> +	u8 reply[4];
-> +	int ret;
-> +
-> +	/* poll the fan rpm */
-> +	ret = qnap_mcu_exec(hwm->mcu, cmd, sizeof(cmd), reply, sizeof(reply));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* First bytes must mirror the sent command */
-> +	if (memcmp(cmd, reply, sizeof(cmd))) {
-> +		dev_err(hwm->dev, "malformed data received\n");
+- Clean up and rework CPU alternatives to allow for callbacks and early
+  patching for the lowcore relocation
 
-Same as above.
+----------------------------------------------------------------
+Alexander Gordeev (1):
+      s390/boot: Do not assume the decompressor range is reserved
 
-> +		return -EIO;
-> +	}
-> +
-> +	/*
-> +	 * There is an unknown bit set in bit7.
-> +	 * Bits [6:0] report the actual temperature as returned by the
-> +	 * original qnap firmware-tools, so just drop bit7 for now.
-> +	 */
-> +	return reply[3] & 0x7f;
-> +}
-> +
-> +static int qnap_mcu_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
-> +			 u32 attr, int channel, long val)
-> +{
-> +	struct qnap_mcu_hwmon *hwm = dev_get_drvdata(dev);
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		if (val < hwm->pwm_min || val > hwm->pwm_max)
-> +			return -EINVAL;
-> +
+Gerd Bayer (2):
+      s390/pci: Refactor arch_setup_msi_irqs()
+      s390/pci: Allow allocation of more than 1 MSI interrupt
 
-I'd suggest to bail out if the value is outside (0, 255) and then
-clamp to (pwm_min, pwm_max). Users of the API are expected to know that
-pwm values are between 0 and 255, but not what the actual value range is.
+Heiko Carstens (11):
+      s390: Add runtime constant support
+      s390/alternatives: Use consistent naming
+      s390/alternatives: Merge both alternative header files
+      s390/alternatives: Move text sync functions
+      s390/uaccess: Make s390_kernel_write() usable for decompressor
+      s390/alternatives: Rework to allow for callbacks
+      s390/nospec: Push down alternative handling
+      s390/alternatives: Remove alternative facility list
+      s390/nmi: Simplify ptregs setup
+      s390/entry: Move SIE indicator flag to thread info
+      s390/atomic_ops: Disable flag outputs constraint for GCC versions below 14.2.0
 
-> +		hwm->pwm_value = val;
-> +		return qnap_mcu_hwmon_update_fan(hwm);
-> +	case hwmon_pwm_enable:
-> +		if (val < 0 || val > 1)
-> +			return -EINVAL;
-> +
-> +		hwm->pwm_enabled = val;
-> +		return qnap_mcu_hwmon_update_fan(hwm);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qnap_mcu_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-> +			     u32 attr, int channel, long *val)
-> +{
-> +	struct qnap_mcu_hwmon *hwm = dev_get_drvdata(dev);
-> +
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_input:
-> +			*val = hwm->pwm_value;
+Ilya Leoshkevich (2):
+      s390/kmsan: Fix merge conflict with get_lowcore() introduction
+      s390/ptdump: Add KMSAN page markers
 
-This doesn't return a real pwm value. It returns the most recently configured
-value, or 0 if no value was ever set. That makes me really unhappy. At the very least,
-if it is indeed impossible to get the actual pwm value from the device, it needs to be
-very clearly documented.
+Janosch Frank (1):
+      s390: Remove protvirt and kvm config guards for uv code
 
-> +			return 0;
-> +		case hwmon_pwm_enable:
-> +			*val = hwm->pwm_enabled;
-> +			return 0;
+Sven Schnelle (20):
+      s390/smp: Handle restart interrupt on ipl cpu
+      s390/smp: Switch pcpu_devices to percpu
+      s390: Move CIF flags to struct pcpu
+      s390/alternatives: Remove noaltinstr option
+      s390/alternatives: Allow early alternative patching in decompressor
+      s390: Add infrastructure to patch lowcore accesses
+      s390/head64: Make startup code ready for lowcore relocation
+      s390/entry: Make __sie64a() ready for lowcore relocation
+      s390/entry: Add base register to MBEAR macro
+      s390/entry: Add base register to SIEEXIT macro
+      s390/entry: Add base register to CHECK_VMAP_STACK/CHECK_STACK macro
+      s390/entry: Make pgm_check_handler() ready for lowcore relocation
+      s390/entry: Make int handlers ready for lowcore relocation
+      s390/entry: Make mchk_int_handler() ready for lowcore relocation
+      s390/entry: Make restart_int_handler() ready for lowcore relocation
+      s390/entry: Make __switch_to() ready for lowcore relocation
+      s390/entry: Make ret_from_fork() ready for lowcore relocation
+      s390/entry: Make system_call() ready for lowcore relocation
+      s390/kdump: Make kdump ready for lowcore relocation
+      s390/boot: Add cmdline option to relocate lowcore
 
-		default:
-missing
+Thomas Richter (1):
+      s390/cpum_cf: Fix endless loop in CF_DIAG event stop
 
-> +		}
-> +		return -EOPNOTSUPP;
-> +	case hwmon_fan:
-> +		*val = qnap_mcu_hwmon_get_rpm(hwm);
+Vasily Gorbik (1):
+      s390/setup: Fix __pa/__va for modules under non-GPL licenses
 
-This returns errors as negative rpm values.
-
-> +		return 0;
-> +	case hwmon_temp:
-> +		*val = qnap_mcu_hwmon_get_temp(hwm);
-
-hwmon ABI expects the temperature in degrees C. This returns
-a value between 0 and 0x7f, or in other words temperatures
-between 0 and 0.127 degrees C. On top of that, it returns errors
-as negative temperatures.
-
-Your call how to fix this. Either
-		ret = qnap_mcu_hwmon_get_temp(hwm);
-		if (ret < 0)
-			return ret;
-		*val = ret * 1000;
-		return 0;
-or
-		return qnap_mcu_hwmon_get_temp(hwm, val);
-
-and implement the conversion and return value assignment in
-qnap_mcu_hwmon_get_temp().
-
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static umode_t qnap_mcu_hwmon_is_visible(const void *data,
-> +				       enum hwmon_sensor_types type,
-> +				       u32 attr, int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_temp:
-> +		return 0444;
-> +
-> +	case hwmon_pwm:
-> +		return 0644;
-> +
-> +	case hwmon_fan:
-> +		return 0444;
-> +
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static const struct hwmon_ops qnap_mcu_hwmon_hwmon_ops = {
-> +	.is_visible = qnap_mcu_hwmon_is_visible,
-> +	.read = qnap_mcu_hwmon_read,
-> +	.write = qnap_mcu_hwmon_write,
-> +};
-> +
-> +/* thermal cooling device callbacks */
-> +static int qnap_mcu_hwmon_get_max_state(struct thermal_cooling_device *cdev,
-> +				      unsigned long *state)
-> +{
-> +	struct qnap_mcu_hwmon *hwm = cdev->devdata;
-> +
-> +	if (!hwm)
-> +		return -EINVAL;
-> +
-> +	*state = hwm->fan_max_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qnap_mcu_hwmon_get_cur_state(struct thermal_cooling_device *cdev,
-> +				      unsigned long *state)
-> +{
-> +	struct qnap_mcu_hwmon *hwm = cdev->devdata;
-> +
-> +	if (!hwm)
-> +		return -EINVAL;
-> +
-> +	*state = hwm->fan_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qnap_mcu_hwmon_set_cur_state(struct thermal_cooling_device *cdev,
-> +				      unsigned long state)
-> +{
-> +	struct qnap_mcu_hwmon *hwm = cdev->devdata;
-> +	int ret;
-> +
-> +	if (!hwm || (state > hwm->fan_max_state))
-
-Extra ( )
-
-> +		return -EINVAL;
-> +
-> +	if (state == hwm->fan_state)
-> +		return 0;
-> +
-> +	if (hwm->fan_cooling_levels[state]) {
-> +		hwm->pwm_enabled = 1;
-> +		hwm->pwm_value = hwm->fan_cooling_levels[state];
-> +	} else {
-> +		hwm->pwm_enabled = 0;
-> +	}
-> +
-> +	ret = qnap_mcu_hwmon_update_fan(hwm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	hwm->fan_state = state;
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct thermal_cooling_device_ops qnap_mcu_hwmon_cooling_ops = {
-> +	.get_max_state = qnap_mcu_hwmon_get_max_state,
-> +	.get_cur_state = qnap_mcu_hwmon_get_cur_state,
-> +	.set_cur_state = qnap_mcu_hwmon_set_cur_state,
-> +};
-> +
-> +static int qnap_mcu_hwmon_get_cooling_data(struct device *dev, struct qnap_mcu_hwmon *hwm)
-> +{
-> +	int num, i, ret;
-> +
-> +	if (!device_property_present(dev->parent, "cooling-levels"))
-> +		return 0;
-> +
-> +	ret = device_property_count_u32(dev->parent, "cooling-levels");
-> +	if (ret <= 0) {
-> +		dev_err(dev, "Wrong data!\n");
-
-That doesn't really mean anything to the user. Please refer to
-'cooling-levels' like below.
-
-> +		return ret ? : -EINVAL;
-> +	}
-> +
-> +	num = ret;
-> +	hwm->fan_cooling_levels = devm_kcalloc(dev, num, sizeof(u32),
-> +						   GFP_KERNEL);
-> +	if (!hwm->fan_cooling_levels)
-> +		return -ENOMEM;
-> +
-> +	ret = device_property_read_u32_array(dev->parent, "cooling-levels",
-> +					     hwm->fan_cooling_levels, num);
-> +	if (ret) {
-> +		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num; i++) {
-> +		if (hwm->fan_cooling_levels[i] > hwm->pwm_max) {
-> +			dev_err(dev, "fan state[%d]:%d > %d\n", i,
-> +				hwm->fan_cooling_levels[i], hwm->pwm_max);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	hwm->fan_max_state = num - 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct hwmon_channel_info * const qnap_mcu_hwmon_channels[] = {
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
-> +	NULL
-> +};
-> +
-> +static int qnap_mcu_hwmon_probe(struct platform_device *pdev)
-> +{
-> +	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-> +	const struct qnap_mcu_variant *variant = qnap_mcu_get_variant_data(mcu);
-> +	struct qnap_mcu_hwmon *hwm;
-> +	struct thermal_cooling_device *cdev;
-> +	struct device *dev = &pdev->dev;
-> +	struct device *hwmon;
-> +	int ret;
-> +
-> +	hwm = devm_kzalloc(dev, sizeof(*hwm), GFP_KERNEL);
-> +	if (!hwm)
-> +		return -ENOMEM;
-> +
-> +	hwm->mcu = mcu;
-> +	hwm->dev = &pdev->dev;
-> +	hwm->pwm_min = variant->fan_pwm_min;
-> +	hwm->pwm_max = variant->fan_pwm_max;
-> +
-> +	platform_set_drvdata(pdev, hwm);
-> +
-> +	/*
-> +	 * Set duty cycle to maximum allowed and enable PWM output as well as
-> +	 * the regulator. In case of error nothing is changed
-> +	 */
-> +	hwm->pwm_value = hwm->pwm_max;
-> +	hwm->pwm_enabled = 1;
-> +	qnap_mcu_hwmon_update_fan(hwm);
-> +
-> +	hwm->info.ops = &qnap_mcu_hwmon_hwmon_ops;
-> +	hwm->info.info = qnap_mcu_hwmon_channels;
-> +
-> +	hwmon = devm_hwmon_device_register_with_info(dev, "qnapmcu",
-> +						     hwm, &hwm->info, NULL);
-> +	if (IS_ERR(hwmon))
-> +		return dev_err_probe(dev, PTR_ERR(hwmon), "Failed to register hwmon device\n");
-> +
-> +	ret = qnap_mcu_hwmon_get_cooling_data(dev, hwm);
-> +	if (ret)
-> +		return ret;
-> +
-
-Please move ahead of hwmon device registration. It doesn't make sense to register
-the hwmon device only to unregister it because of bad devicetree data.
-
-> +	hwm->fan_state = hwm->fan_max_state;
-> +
-> +	if (IS_ENABLED(CONFIG_THERMAL)) {
-> +		cdev = devm_thermal_of_cooling_device_register(dev,
-> +				dev->parent->of_node, "qnap-mcu-hwmon",
-> +				hwm, &qnap_mcu_hwmon_cooling_ops);
-
-Does it make sense to register the cooling device even if there is no
-cooling device data ?
-
-> +		if (IS_ERR(cdev))
-> +			return dev_err_probe(dev, PTR_ERR(cdev),
-> +				"Failed to register qnap-mcu-hwmon as cooling device\n");
-> +		hwm->cdev = cdev;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver qnap_mcu_hwmon_driver = {
-> +	.probe = qnap_mcu_hwmon_probe,
-> +	.driver = {
-> +		.name = "qnap-mcu-hwmon",
-> +	},
-> +};
-> +module_platform_driver(qnap_mcu_hwmon_driver);
-> +
-> +MODULE_ALIAS("platform:qnap-mcu-hwmon");
-> +MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-> +MODULE_DESCRIPTION("QNAP MCU hwmon driver");
-> +MODULE_LICENSE("GPL");
-
+ Documentation/admin-guide/kernel-parameters.txt |   3 -
+ arch/s390/Kconfig                               |  11 --
+ arch/s390/boot/Makefile                         |   3 +-
+ arch/s390/boot/alternative.c                    |   3 +
+ arch/s390/boot/boot.h                           |   4 +
+ arch/s390/boot/ipl_parm.c                       |   3 +
+ arch/s390/boot/startup.c                        |  14 +-
+ arch/s390/boot/uv.c                             |   8 -
+ arch/s390/boot/uv.h                             |  13 --
+ arch/s390/boot/vmem.c                           |  11 +-
+ arch/s390/configs/debug_defconfig               |   1 -
+ arch/s390/configs/defconfig                     |   1 -
+ arch/s390/include/asm/abs_lowcore.h             |   8 +
+ arch/s390/include/asm/alternative-asm.h         |  57 ------
+ arch/s390/include/asm/alternative.h             | 154 +++++++++++++--
+ arch/s390/include/asm/atomic_ops.h              |   3 +-
+ arch/s390/include/asm/facility.h                |   1 -
+ arch/s390/include/asm/kmsan.h                   |   6 +-
+ arch/s390/include/asm/lowcore.h                 |  32 ++-
+ arch/s390/include/asm/nospec-branch.h           |   9 +
+ arch/s390/include/asm/page.h                    |   2 -
+ arch/s390/include/asm/processor.h               |  30 ++-
+ arch/s390/include/asm/runtime-const.h           |  77 ++++++++
+ arch/s390/include/asm/smp.h                     |   1 -
+ arch/s390/include/asm/spinlock.h                |   2 +-
+ arch/s390/include/asm/thread_info.h             |   1 +
+ arch/s390/include/asm/uaccess.h                 |   9 +-
+ arch/s390/include/asm/uv.h                      |  32 ---
+ arch/s390/kernel/Makefile                       |   3 +-
+ arch/s390/kernel/abs_lowcore.c                  |   1 +
+ arch/s390/kernel/alternative.c                  |  75 +++----
+ arch/s390/kernel/alternative.h                  |   0
+ arch/s390/kernel/asm-offsets.c                  |   5 +-
+ arch/s390/kernel/early.c                        |   9 +-
+ arch/s390/kernel/entry.S                        | 251 +++++++++++++-----------
+ arch/s390/kernel/head64.S                       |   8 +-
+ arch/s390/kernel/ipl.c                          |   2 +-
+ arch/s390/kernel/machine_kexec.c                |   2 +-
+ arch/s390/kernel/nospec-branch.c                |  16 +-
+ arch/s390/kernel/nospec-sysfs.c                 |   2 +-
+ arch/s390/kernel/perf_cpum_cf.c                 |  14 +-
+ arch/s390/kernel/processor.c                    |  20 +-
+ arch/s390/kernel/reipl.S                        |  26 ++-
+ arch/s390/kernel/setup.c                        |   7 +-
+ arch/s390/kernel/smp.c                          | 141 ++++++-------
+ arch/s390/kernel/uv.c                           |  35 ++--
+ arch/s390/kernel/vmlinux.lds.S                  |   5 +
+ arch/s390/lib/spinlock.c                        |   4 +-
+ arch/s390/mm/dump_pagetables.c                  |  30 +++
+ arch/s390/mm/maccess.c                          |   4 +-
+ arch/s390/pci/pci_irq.c                         | 110 +++++++----
+ drivers/s390/char/Kconfig                       |   2 +-
+ 52 files changed, 746 insertions(+), 525 deletions(-)
+ create mode 100644 arch/s390/boot/alternative.c
+ delete mode 100644 arch/s390/include/asm/alternative-asm.h
+ create mode 100644 arch/s390/include/asm/runtime-const.h
+ create mode 100644 arch/s390/kernel/alternative.h
 
