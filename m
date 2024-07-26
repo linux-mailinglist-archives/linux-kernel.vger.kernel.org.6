@@ -1,243 +1,232 @@
-Return-Path: <linux-kernel+bounces-263054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC29293D069
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79A193D06D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 11:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28BEE1C2110C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6E31C217A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083C9176AD8;
-	Fri, 26 Jul 2024 09:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98527176FA3;
+	Fri, 26 Jul 2024 09:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lsCeh7av"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013046.outbound.protection.outlook.com [52.101.67.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gsarib6J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DD5176AA6;
-	Fri, 26 Jul 2024 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721986139; cv=fail; b=VDsqOJinb7FJWenusuVcC6jPtcyiRtloz+rZH2FqG1OS3mvetSvew67jtGXqFq1hNFr63P7/BwH/r3BJNkmrgiCZ3/d0g3UOlG7SfNX4ZAWM60t/rv8a+fLTL1zKu53QcoMrY6fT8C1ZD+DiAhpvnzjF/Of3mzAqYmSIdn2E4fw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721986139; c=relaxed/simple;
-	bh=h7XRgAbQ4YQy13OaZaK8QrbM2AdPZsDrVTy2paoYEDc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QAM8m7hwUPbVr7vGsWYGMvaqvI5YKgGgrpNG63lPH5YZw+z61M/AWgXPWsOehSZVhfdJ6LRwrAwdJ/eM2YX757dR4mJcUGp4f4qjE3PZtFA3cBqcMOvvQqnsMPELIwlfKeucyvTqGd24gsTRiyRPHVJilyleXtD8ZM2jvdWK0Vw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lsCeh7av; arc=fail smtp.client-ip=52.101.67.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aeje1YL/1lRAVkzrlbnit7GTVIyNlhLZozNnvwO4DK7ZQ2m+C1qYPLo7VDGNeY9kCsMyruu7JnQhFUbvRB8HXkiZLEXOusmjD2I2ygx/l4QedW494HTikiqiET2su4R5CppKjwymm7/fe4zUDcbJCTTjJrNb+t6xiby1PP/jDKcd1sIxOTtLD7/ejLPPioNfyy7j5Lz+IUuPgjaZCkzlIpZI7MxhiKpeLAMiwIBtHVZGOoguUjyDQY0cWfk2EgY00cbbWQsEEN619eTIcKcv1C7lcPonlEt+vt/TQjHumJYX5cDHgopHetS+ZCdQNxeG9ROECmox9uSJ8WRw3ussRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0eEIEGvtRX2KHwcJD93BNqKL+DlXzu0KP3wbHQfcF1w=;
- b=wIzjpsKLMd8fdRY387CE0BhNDT/os9JqAC6tium1P/WKuQN8S6MRe24C539g47De4E9O80o4/u5ib+px5AQRZewJtswAx9S/53FsWLEJoBiHXpaazBwG2rbIvwctf7zc+ZSe8lfKXBantajFPhYhiEXK3QSaYfF9ewHwihwPNV6Xq7p2K3ZH5EehiMb+kna49YQs85nBqweNlj9aKZlyL2IVwdom9pIHTn+VKUaa5mBGrprK5TFNfiQNuwaOIMqW+P8SxLwjy/a2ZKRbpulyBiQE8yrjHkobut+JbuVuKtCzQQV04v+COhAmpppHH1XHahqiqHuc30fKesUyULD1IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0eEIEGvtRX2KHwcJD93BNqKL+DlXzu0KP3wbHQfcF1w=;
- b=lsCeh7avFMZWBVaGyqy8pINAzI5LNN0n0AB52mj5jigXLI5h7WPPcDGJTVTrHM+4BiU2UbF9Nf23aOhyiJ1OhFvQxWVnoVvm4qr8TfDlSOb162io0DHfVCyCJmB5+8xtyW3lFlTsLRdryequa8xsH5LV2MUDyt0AXISy3/YFh4osnNvu/u4F03ddKFpHjEIG7SXClIFzyokFK4cBGbWghZb+WoMCv8nYx5IYtLcWJh8Ku6KpnUeT66CnWb4HaAMAsCf5F/id11LTBqGCuJF2Rfh6bWCYK9dzk9WZL2ajdlSxMt09aM/JRMnswS44KXdG1+7znXlZQSWRAXjW0Mi4ug==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI0PR04MB10230.eurprd04.prod.outlook.com (2603:10a6:800:240::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Fri, 26 Jul
- 2024 09:28:53 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Fri, 26 Jul 2024
- 09:28:53 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Dhruva Gole <d-gole@ti.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: "sudeep.holla@arm.com" <sudeep.holla@arm.com>, "cristian.marussi@arm.com"
-	<cristian.marussi@arm.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "arm-scmi@vger.kernel.org"
-	<arm-scmi@vger.kernel.org>, "vigneshr@ti.com" <vigneshr@ti.com>,
-	"kamlesh@ti.com" <kamlesh@ti.com>
-Subject: RE: [PATCH] clk: scmi: add is_prepared hook
-Thread-Topic: [PATCH] clk: scmi: add is_prepared hook
-Thread-Index: AQHa3nDdvyZ63JzdWUmPgzcBzaVdhrIItZOAgAAJSyA=
-Date: Fri, 26 Jul 2024 09:28:52 +0000
-Message-ID:
- <PAXPR04MB8459C5A372FADDD970BCA33088B42@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
- <20240726085305.sb57f3i2ezvtwrwz@dhruva>
-In-Reply-To: <20240726085305.sb57f3i2ezvtwrwz@dhruva>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI0PR04MB10230:EE_
-x-ms-office365-filtering-correlation-id: 4c0e8c2c-4829-48f3-c6e7-08dcad555d6c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Nm+KOvC9OCv3gcHvvst7jpnHEDhzBoALWnV1+e6RI3iDdaallNCyiv2hzH4C?=
- =?us-ascii?Q?SiQ+da2EhADbzM7tmLQFX6sJkgWZRhqm8UvQ5kqRvshBjjQCY7mMSxXJcZkX?=
- =?us-ascii?Q?ZuesadHj0i0P9gV5q8kcjsRHWnYvpn2Xvr04TMR7fmsSnydTGFKB9ikRv8gt?=
- =?us-ascii?Q?uYwzJbivMuNiT2Q5cW3lSzANieWKJyylj4lyAOs+gk1W137e/mLCChM51DR1?=
- =?us-ascii?Q?m/PSkY6th6FEGh3AOvGwMpJmdC3gck/LtywFfvwTkAVcXHSdDUA5vUqnWhqf?=
- =?us-ascii?Q?CcJ9rLpLNJOgNwF6ppu80igtLYRTdt+aEByBNxNuHZDIBPDVmZIYjP/JEb/F?=
- =?us-ascii?Q?eV6jYPHwAfh8qwmZ5sShuxzD2B2uPDvf72gGSeH5Unqr8Zi2JGmtI0qxJTlb?=
- =?us-ascii?Q?GRScpBMYNECM16mg5i2tJ4Wja3Ge42CYtFbjr95ajNGkBdsPGL9hlJWPZRG5?=
- =?us-ascii?Q?71U/59pC+ck8E9Twz+qhoQeZO/lSltevY/1yDbTb4koO3CrdVSHRJvAtccNh?=
- =?us-ascii?Q?Aq3HI9lSHOjhhJKN6wDWlqzNY+0ayLklLxMRq/owJJG/vZ6YxErWCyQtOcHu?=
- =?us-ascii?Q?YVlmBx8rgOWO2ps3DYaQ5BWQv2rYVqCyljn4J60Onwz76EsQdE/LNDdX1zSZ?=
- =?us-ascii?Q?RqjWsISlBiV7RsbBhW432GvH9c50kDoKLkN/y+jchlstxNR13L4O3Za+AaT/?=
- =?us-ascii?Q?cC9T4mnLmxhJWD2TmShKcnJzehcyJopjoTWIasYD3G5pRRDEoYW8Ra1/9nSW?=
- =?us-ascii?Q?pjBpSAVf135181HsG2I+DdhqlQANdqDl8jMul03Rq2pvNKVYfD0SkmTdPFWl?=
- =?us-ascii?Q?NoknjzzG/f12eSWKq07oDkBkrOeY9gi+aCrmdkgY+Uvj3eLVqciRz+vAVhRp?=
- =?us-ascii?Q?V3Bkv2Vija6MMyHlEI4RzZbmjnZ3YNLbaMF46ZkeEB65xTyjjFp5QtySd0NT?=
- =?us-ascii?Q?bNFucPAAmnCA4KIMmSiUCgZSEJnMR3ZJGOr5CwmnsvE4AzltcW9NxdkxDAAI?=
- =?us-ascii?Q?/jHKsf79k3If5veV0bYeC1EOCDNTOesDGNrWLEK7yF9TPLoflEljFVg2w0Qz?=
- =?us-ascii?Q?C4yzZ3MPNsumS/VbCiq+Lic7e/GsfMYgRVo5xtDEUBqEkklOjwlITOPxOxQG?=
- =?us-ascii?Q?nGJZFALnhfwebG9gcaHh5WF7zcGWg8FdZYQpy7caCxRgB7fhaETdFpE11mBO?=
- =?us-ascii?Q?BnjiRYeIxeJfca2XCbg4EFmGZe7ZmrT8jwnB7GksiDSDX98pKF4giDr8hqZI?=
- =?us-ascii?Q?fgL0aXf21r/pV87dHKE9kImN0WzahR/pHS5tBhY4sbrJoz6h3NwGYSigwuua?=
- =?us-ascii?Q?4IgMeltwLiCNzwrtuaaSm+bkJJJc+hDmLDL/mitN3UukrL9LPQ1lyRytrSEh?=
- =?us-ascii?Q?X7zeV812K4C5xbkVjei69qJ6Mzr1NgvzCGXA9o2SvvjAD0IjHQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0muu7Ad0VqXiLkExKbBkyeeLOsJk9pgygN5axIYOHrVCq2dd0787SVP42KSb?=
- =?us-ascii?Q?Jj4CgkiWr0i13cVp8wbs9fKM0zQ1mPobdopjnnk7/sdEhuGBFFjDCgUrkQUz?=
- =?us-ascii?Q?zArrO35EC+OWbNN/jMGWD/8GVyppC8UrFdh+iELnXHhn3QICBm6GbMXuOLBD?=
- =?us-ascii?Q?CWKLQrbgUsGL4V7fE29Dhh3qPFl+R0eTkMrd63PTy7wp0qoMhSgntSNg9i4k?=
- =?us-ascii?Q?8MgbbadajVmEIE4GAWtvjkPupifORU7hhyFSvte+/301DO9WJ4Znk5Bcm/uC?=
- =?us-ascii?Q?NTfwp34fxt9tJZG3eUPXiZ3LJFjngAsoUqHdN3AvC/LqMLeqCapgDYf+znMo?=
- =?us-ascii?Q?ldOXzPEMeqkFzHT/NGaWaT8j0tOFWIIERLnJzKrvNCsDlvQ3B4zaQqa4lZim?=
- =?us-ascii?Q?mJhwjzNPcJSdF9KJ/e//COd+RZkH3PvRYe8JS/deJv6d5i46sqtrvbsJZod1?=
- =?us-ascii?Q?E9CT6QcNeusnc2j8qkC2t8cKUqHysA2TBvWwS8YE43Y4g2vn9sflU9zzGEIg?=
- =?us-ascii?Q?Mp82YSxhYOOfLyx+phT0ZfSN2Q9RZqISnKm9ey15aRHNqT4oOqTAk3gAxSMf?=
- =?us-ascii?Q?G/5L+GBlyk3+etfF+/NP143SJxl1uQ1BzwhpcWpwlUUTnh+wo5PaK4cDJkWh?=
- =?us-ascii?Q?Jbq4qHpm5Krn4wUnjY+6q6HStDcijNplW/RcS9S0DO7PqMm9uU6/5rQNNuzY?=
- =?us-ascii?Q?G6Qt62aQogoKfQUbpWDvAz3xfdgn4CsgKVa6wNWNSVZEcdzuK7Q6R/3IwleE?=
- =?us-ascii?Q?qKjumBVo/LG3pjS9fPqVkHHRyeJHQg2VRhoPEdimPA7ezcs8+/9Gw1mmxAGc?=
- =?us-ascii?Q?FYCRlSY93jaKTpgV2bF8ytyEvX02TVZxmtc2o+XFVOnUwAvCunmXTKkTu1cy?=
- =?us-ascii?Q?hKEbG4P7vc28VklzBvwizPo/w+O1RlHUNqpe7lrtKipHJW+h6Lo3jD05000s?=
- =?us-ascii?Q?tK7v//derF5lHIPa6meJyibWYfKMpHoygdK1EyUbaFnoPTAeHJhj1X4JS7vO?=
- =?us-ascii?Q?oxMLFHif7DFI0QU5k8o10/phZdw9x4zVwbl+jMiMQQJh+2kubZ4tl218l4yK?=
- =?us-ascii?Q?oraHiwqXcI4MTNQwlidTZOJosVstAcdb7jF7c+6xjbYBBAI19rQuMmCUt+5A?=
- =?us-ascii?Q?Hg2h2TbFNiv9vJhitTBMDPHvTjgQAhBDE0k7Sj85EihBf8fqS+qSP7mY5ImS?=
- =?us-ascii?Q?bRkqfUSgVsdtckAaZkoPcN/emDwRC+7VgSyAGy/hxTth5ySlHwDsneBrQUAm?=
- =?us-ascii?Q?nrEKzXCaIEBsMZUFPdQItXsmv4Rbtlnv2ceeghEI1hQq7HmlMscdZN/hB5ri?=
- =?us-ascii?Q?RBzA8Ejh1+gdoAG6yC0wwAnVijbS826URy8gCsE0L+JsmMNI+m54qCc6A0K+?=
- =?us-ascii?Q?U11xgqTmoAQw/ubMdcxahdYTMcgd3VhbX1+vYpZfEgfjJRV5ftBL6JNIELHx?=
- =?us-ascii?Q?lOIMYN0inF4oNsGeSXqDrFruJ2pBTEXDAD7Y1PsEF5GWjopLJr7O1DHdPxXi?=
- =?us-ascii?Q?TUEM7Nb6v4zGz2u2VKMPqXiZ/TwZCAyFhIfzRws0N2iqnc0IJqxNiPZAzR4+?=
- =?us-ascii?Q?RMvklaVbYj21mNZm0+c=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B2C17557B
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 09:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721986182; cv=none; b=dvtkLMVabU5koNZQ8li0kwJ7+UArirrD6a2bDIvbBhD4QnTF9wgZ6TtE2ZuRlxKnyukDXsBRomxb/f72rigfJS7unpPc50t78xFDBH6uaORDVZ2oz7r4lqun7QOW9oN3aKw45gOXr9U4Z5VdXXVIndKdGEVsnCk7MMA8hnwU27o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721986182; c=relaxed/simple;
+	bh=JjcNPWM2tx6HJZguDUoEKrnS8wTVS/c1kmrlB2l/PBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Chk4K3ZgroUpP8udWK1LwkKEW9hu4R3wP4cAKEZoiDVCC5Poet3jlWmTJ8qqQaAjkmrTu4k6WaP0TAgy2hThd7qEe5p6Rr9kaczdG3fqjfSKzafY+AdFVESrM0Sc5giOhvjH7OBRYA0tcngKMCBxHarLJwYAv3Bc+VdZTQa6ER8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gsarib6J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721986179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WJTdMoDMeV6ZkZEHxIrp+DXkTDs07/EHR6SJpwQn7MI=;
+	b=gsarib6JbceWgaGu2eHSdOvtgPBrQxDlon0vhUbNgK5tQMwzA1de5/y70cq7PnnhDA0Vfa
+	GmPUgh3zvmdaCQQvjDf27wlDLNj/FqZ30VaQpxBC8shMIjRLkAYNaWpLgXb7Z7pKkoVCxu
+	AsKXkjhGIw0eS4kuDhpydunRHBCJlF8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-LbZVJEjsNrK4clV6Ti2IRA-1; Fri,
+ 26 Jul 2024 05:29:35 -0400
+X-MC-Unique: LbZVJEjsNrK4clV6Ti2IRA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E9EE1955D4C;
+	Fri, 26 Jul 2024 09:29:33 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.25])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C3191955F40;
+	Fri, 26 Jul 2024 09:29:30 +0000 (UTC)
+Date: Fri, 26 Jul 2024 17:29:26 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Barry Song <21cnbao@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] mm/vmalloc: fix incorrect
+ __vmap_pages_range_noflush() if vm_area_alloc_pages() from high order
+ fallback to order0
+Message-ID: <ZqNsdmxa6cQfxKFP@MiWiFi-R3L-srv>
+References: <20240725035318.471-1-hailong.liu@oppo.com>
+ <ZqI5V+5E3RNhuSwx@MiWiFi-R3L-srv>
+ <20240725164003.ft6huabwa5dqoy2g@oppo.com>
+ <ZqMKZ67YhzhbqYg9@MiWiFi-R3L-srv>
+ <20240726040052.hs2gvpktrnlbvhsq@oppo.com>
+ <20240726050356.ludmpxfee6erlxxt@oppo.com>
+ <CAGsJ_4xOauOwkHO5MTKHBP=fpeoNiP_9VJ31G4gBECFvLG4y0g@mail.gmail.com>
+ <ZqNgY1T/VuWQvtfL@MiWiFi-R3L-srv>
+ <20240726084809.gdz2axvawwwekpu6@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c0e8c2c-4829-48f3-c6e7-08dcad555d6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2024 09:28:53.0473
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LPM9CRk8x6lI1zoDQfcH1s9qVGlZHedxI/hwPnZ2e9wXilqxz44rc4xhRmz+PvFtOq8FHrKC05TM/38Fkz2hSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10230
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240726084809.gdz2axvawwwekpu6@oppo.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-> Subject: Re: [PATCH] clk: scmi: add is_prepared hook
->=20
-> On Jul 25, 2024 at 17:07:41 +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
+On 07/26/24 at 04:48pm, Hailong Liu wrote:
+> On Fri, 26. Jul 16:37, Baoquan He wrote:
+> > On 07/26/24 at 05:29pm, Barry Song wrote:
+> > > On Fri, Jul 26, 2024 at 5:04 PM Hailong Liu <hailong.liu@oppo.com> wrote:
+> > > >
+> > > > On Fri, 26. Jul 12:00, Hailong Liu wrote:
+> > > > > On Fri, 26. Jul 10:31, Baoquan He wrote:
+> > > > > [...]
+> > > > > > > The logic of this patch is somewhat similar to my first one. If high order
+> > > > > > > allocation fails, it will go normal mapping.
+> > > > > > >
+> > > > > > > However I also save the fallback position. The ones before this position are
+> > > > > > > used for huge mapping, the ones >= position for normal mapping as Barry said.
+> > > > > > > "support the combination of PMD and PTE mapping". this  will take some
+> > > > > > > times as it needs to address the corner cases and do some tests.
+> > > > > >
+> > > > > > Hmm, we may not need to worry about the imperfect mapping. Currently
+> > > > > > there are two places setting VM_ALLOW_HUGE_VMAP: __kvmalloc_node_noprof()
+> > > > > > and vmalloc_huge().
+> > > > > >
+> > > > > > For vmalloc_huge(), it's called in below three interfaces which are all
+> > > > > > invoked during boot. Basically they can succeed to get required contiguous
+> > > > > > physical memory. I guess that's why Tangquan only spot this issue on kvmalloc
+> > > > > > invocation when the required size exceeds e.g 2M. For kvmalloc_node(),
+> > > > > > we have told that in the code comment above __kvmalloc_node_noprof(),
+> > > > > > it's a best effort behaviour.
+> > > > > >
+> > > > > Take a __vmalloc_node_range(2.1M, VM_ALLOW_HUGE_VMAP) as a example.
+> > > > > because the align requirement of huge. the real size is 4M.
+> > > > > if allocation first order-9 successfully and the next failed. becuase the
+> > > > > fallback, the layout out pages would be like order9 - 512 * order0
+> > > > > order9 support huge mapping, but order0 not.
+> > > > > with the patch above, would call vmap_small_pages_range_noflush() and do normal
+> > > > > mapping, the huge mapping would not exist.
+> > > > >
+> > > > > >  mm/mm_init.c <<alloc_large_system_hash>>
+> > > > > >  table = vmalloc_huge(size, gfp_flags);
+> > > > > >  net/ipv4/inet_hashtables.c <<inet_pernet_hashinfo_alloc>>
+> > > > > >  new_hashinfo->ehash = vmalloc_huge(ehash_entries * sizeof(struct inet_ehash_bucket),
+> > > > > >  net/ipv4/udp.c <<udp_pernet_table_alloc>>
+> > > > > >  udptable->hash = vmalloc_huge(hash_entries * 2 * sizeof(struct udp_hslot)
+> > > > > >
+> > > > > > Maybe we should add code comment or document to notice people that the
+> > > > > > contiguous physical pages are not guaranteed for vmalloc_huge() if you
+> > > > > > use it after boot.
+> > > > > >
+> > > > > > >
+> > > > > > > IMO, the draft can fix the current issue, it also does not have significant side
+> > > > > > > effects. Barry, what do you think about this patch? If you think it's okay,
+> > > > > > > I will split this patch into two: one to remove the VM_ALLOW_HUGE_VMAP and the
+> > > > > > > other to address the current mapping issue.
+> > > > > > >
+> > > > > > > --
+> > > > > > > help you, help me,
+> > > > > > > Hailong.
+> > > > > > >
+> > > > > >
+> > > > > >
+> > > > I check the code, the issue only happen in gfp_mask with __GFP_NOFAIL and
+> > > > fallback to order 0, actuaally without this commit
+> > > > e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
+> > > > if __vmalloc_area_node allocation failed, it will goto fail and try order-0.
+> > > >
+> > > > fail:
+> > > >         if (shift > PAGE_SHIFT) {
+> > > >                 shift = PAGE_SHIFT;
+> > > >                 align = real_align;
+> > > >                 size = real_size;
+> > > >                 goto again;
+> > > >         }
+> > > >
+> > > > So do we really need fallback to order-0 if nofail?
+> > >
+> > > Good catch, this is what I missed. I feel we can revert Michal's fix.
+> > > And just remove __GFP_NOFAIL bit when we are still allocating
+> > > by high-order. When "goto again" happens, we will allocate by
+> > > order-0, in this case, we keep the __GFP_NOFAIL.
 > >
-> > Some clks maybe default enabled by hardware, so add is_prepared
-> hook
->=20
-> Why is_prepared when there is an is_enabled hook?
+> > With Michal's patch, the fallback will be able to satisfy the allocation
+> > for nofail case because it fallback to 0-order plus __GFP_NOFAIL. The
+> 
+> Hi Baoquan:
+> 
+> int __vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+> 		pgprot_t prot, struct page **pages, unsigned int page_shift)
+> {
+> 	unsigned int i, nr = (end - addr) >> PAGE_SHIFT;
+> 
+> 	WARN_ON(page_shift < PAGE_SHIFT);
+> 
+> 	if (!IS_ENABLED(CONFIG_HAVE_ARCH_HUGE_VMALLOC) ||
+> 			page_shift == PAGE_SHIFT)
+> 		return vmap_small_pages_range_noflush(addr, end, prot, pages);
+> 
+> 	for (i = 0; i < nr; i += 1U << (page_shift - PAGE_SHIFT)) {  ---> huge mapping
+> 		int err;
+> 
+> 		err = vmap_range_noflush(addr, addr + (1UL << page_shift),
+> 					page_to_phys(pages[i]), prot, ---------> incorrect mapping would occur here if nofail and fallback to order0
 
-This patch is for non-atomic clk ops. The is_enabled hook is
-In atomic clk ops.
+Thanks. I have got this issue from your patch. I mean if we have adjusted
+the page_shift and page_order after fallback with the draft patch I
+proposed, Barry still mentioned the nofail issue, that confuses me.
 
-> See in the atomic case we already have something similar:
->=20
-> ops->is_enabled =3D scmi_clk_atomic_is_enabled;
->=20
-> > to get the status of the clk. Then when disabling unused clks, those
-> > unused clks but default hardware on clks could be in off state to save
-> > power.
+> 					page_shift);
+> 		if (err)
+> 			return err;
+> 
+> 		addr += 1UL << page_shift;
+> 	}
+> 
+> 	return 0;
+> }
+> > 'if (shift > PAGE_SHIFT)' conditional checking and handling may be
+> > problemtic since it could jump to fail becuase vmap_pages_range()
+> > invocation failed, or partially allocate huge parges and break down,
+> > then it will ignore the already allocated pages, and do all the thing again.
 > >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/clk/clk-scmi.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
+> > The only thing 'if (shift > PAGE_SHIFT)' checking and handling makes
+> > sense is it fallback to the real_size and real_align. BUT we need handle
+> > the fail separately, e.g
+> > 1)__get_vm_area_node() failed;
+> > 2)vm_area_alloc_pages() failed when shift > PAGE_SHIFT and non-nofail;
+> > 3)vmap_pages_range() failed;
 > >
-> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c index
-> > d86a02563f6c..d2d370337ba5 100644
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> > @@ -142,6 +142,20 @@ static void scmi_clk_disable(struct clk_hw
-> *hw)
-> >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);  }
+> > Honestly, I didn't see where the nofail is mishandled, could you point
+> > it out specifically? I could miss it.
 > >
-> > +static int scmi_clk_is_enabled(struct clk_hw *hw) {
-> > +	int ret;
-> > +	bool enabled =3D false;
-> > +	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +
-> > +	ret =3D scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled,
-> NOT_ATOMIC);
-> > +	if (ret)
-> > +		dev_warn(clk->dev,
-> > +			 "Failed to get state for clock ID %d\n", clk-
-> >id);
-> > +
-> > +	return !!enabled;
-> > +}
-> > +
-> >  static int scmi_clk_atomic_enable(struct clk_hw *hw)  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw); @@ -280,6 +294,7
-> @@
-> > scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
-> >  		} else {
-> >  			ops->prepare =3D scmi_clk_enable;
-> >  			ops->unprepare =3D scmi_clk_disable;
-> > +			ops->is_prepared =3D scmi_clk_is_enabled;
->=20
-> IMO from the decription and what the function is doing is_enabled
-> makes
-> more sense here to me, unless there's a better explanation.
->=20
-> Ref: linux/clk-provider.h
-> is_prepared: Queries the hardware to determine if the clock is prepared
-> vs
-> is_enabled: Queries the hardware to determine if the clock is enabled
-
-SCMI firmware has no knowledge of prepare/unprepared.
-
-As wrote in the beginning, this patch is for non atomic clk ops.
-
-Regards,
-Peng.
-
->=20
+> > Thanks
+> > Baoquan
+> >
+> 
 > --
-> Best regards,
-> Dhruva Gole <d-gole@ti.com>
+> help you, help me,
+> Hailong.
+> 
+
 
