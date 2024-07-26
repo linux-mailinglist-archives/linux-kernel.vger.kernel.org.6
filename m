@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-262902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2354D93CE84
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEE393CE87
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD221C2155B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07A31C20F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F917625C;
-	Fri, 26 Jul 2024 07:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A694A176241;
+	Fri, 26 Jul 2024 07:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="lLiwdkOP"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Suk7yVbi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB31F1741E8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC58282E5
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721977616; cv=none; b=YaPsXoje/R4CTkZ1eAIg3+QfRwf1YC4VywV7kvzRQEcM+25W36VoOQEaWpyxQMIMg5tytrzR96q90Kfzi8UNRcAzj8ub7JisPqvDYsWzn1zPx2olM2CJXseuIiVH46+mpPN9QJWY/+EzoGacmUmVA3Kg3YESElxltYROQdpUiIg=
+	t=1721977623; cv=none; b=H7Fvl+Fd4y1c3mV7hPpuJUZgXZ9pqHjWh9QYhkiTBJh0YNnZWd1L5Qmu93UZHSJXYTccTN1C4Cfz/+bUAO5oQNVUJjNiEdcdnClsCXqz6nZf9NkHmm6maY4g0+88lE2tXBk6Vfj4oDWN66jhvne4TgS1I0Si/W9s8gRiib5NM6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721977616; c=relaxed/simple;
-	bh=jpqwEfa8nGRMSxJaVMggBcXx9wtmXE0Es7GshUm/IAM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=amYA4iVillagSUvdpxBKbS4acJAdcVlvTWrQ33nzt3jPHPdP8lmq6vgWREsJzpvzAS8kpsC/IAQLjw/2sZXFH+WR2P08eQs8LFuWxhsGXL8uzjm7nQTPs2yXIwkMKYe1/F8rVLGp8e7n4EjFZuP/i3bxCq2jsc+8V02OEukMezI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=lLiwdkOP; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-396db51d140so6203445ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:06:54 -0700 (PDT)
+	s=arc-20240116; t=1721977623; c=relaxed/simple;
+	bh=wSoi4zLMIXPCXwIQ1UKPrQlhNTFJzZZZMgRyq8qz/f8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QB6LEzzs/PUVuWRkH0y63WTtUsBL/E3Ap6unaD19b8chfvkuuAlj5FnZNa6Tg4GTqAbwQgxxvWIvGXdAK4NikDeZUZem4gwzv+clqFPO5y1OvnVsGRm8e57zZV5Imo0is7rbkkJipk526cNTCH2pfZoE/Y5n24O55yHVJvGvSdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Suk7yVbi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so1829868a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721977614; x=1722582414; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R6bPP41x2BcXUf2RhmUFWS336ijR3sePP2PnHhiYKX0=;
-        b=lLiwdkOPkn52YVPIYLASST+K+q7ikq3mSWhZuxNgoOKHzK4sxfVIMYnwWRUXHOLFL9
-         eqXpVHfGC5ruy/zxbzcL11ea7+Kld5xMKQQo4Mhllfl3DPGr8wOuOCNF2q0C6xYy80Mc
-         Lrbx3arX/cFMxiYxw70nuTUS2jmxMq4sSPWhpoTrQasLXyjuG12o41jcTg86uXgqR+T3
-         mBpE05XhV0CFxGNYXbUZmW86vyoN6nZthuD6c88Fm5exHVjyCbrld8gH6CHmjk2ajpDW
-         c4XPyo7eoMvJeEwetsb3V6ExSXhLnNR9tP2TFe3eJSHMXcnmjTHyd5xvfTliS5gNjGqV
-         W+9g==
+        d=suse.com; s=google; t=1721977619; x=1722582419; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LN2nwbjbyXoRcJjZ570U1pjE8CZSOfXAC4h71zhOWHo=;
+        b=Suk7yVbiyCyxjxyqtajvHDYi9fR2PZw2sA3fql9Du+7zjIgaJi48D0vOI5lDmUmUgZ
+         iuVsG44iyNYE4BJRkCN7xMhdJj6NBz8MeQNYNatMVsmcJrtHOIks2F+BrKwiemQHoso4
+         Qvm0lnISNixPDzYAxjKMbbRbxFIJfLEYlbX75rpn35zvtGDH7blHgZyO6CWmRMjSnWzi
+         OBC7KpOCyE61lVBkop5UKdTEuzpMKbnEX9PgOulMHfkGQAI6KsqYZ55m9n3mzxvoxAwa
+         AstRTWu7ExnmhzWLwrxwwDQoWH6ibxFsoT9DgZIe5Nb4bwAvWsZL00XLejAKfDIUade+
+         JG1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721977614; x=1722582414;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R6bPP41x2BcXUf2RhmUFWS336ijR3sePP2PnHhiYKX0=;
-        b=eBo0ARWopk3NYJ83dCjCdbGTUwxycsaDpn3y+fKhQItoey8b4luyxoXIoywEAIwqsG
-         0LurgyOMiUZXNircSBXZijxB7O8OoVLdNP0BOL76iam5ZIcJfS6b3kR0xjopLGbLK7l8
-         9Xh3uv5uSg0rKMeNogtqy/VLZ/5WWah8b9vRmJbpK9RHTVy1XCdGZh8fiALdN72apH5H
-         RQjyQdK4ELA0gQDw3AMiKVd5agVhaXJvOoyuaRRy80G4l4tOKizJS2U3q2zOSIkJRFXy
-         bjVcQe/oGdauc5/A+h15UtPk7ofZojw4sNNHCxDjRGbeX8eQvvoZi+adONnNAVHskRFe
-         7QLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ3SVM8lu12QfM1OsG4pUD18ebxlieAgNQ/WzhQo66sMvNyZRAT/QOvYCAMc2A3Fz1SkaA/8UIXyW8Ii4tlcFxXOX0K0XaZgADGAEJ
-X-Gm-Message-State: AOJu0YwPEYzV2MoH/kzuEbF9pjqbJ9+z1Pha1GCiTkdCpP3A+WCgVpWD
-	SNY9epRXUdpfxLO23DmX39ncusEyrPVRs48Ac36Y3/ccN70dHbgwSzh6KUjtRbY=
-X-Google-Smtp-Source: AGHT+IH/MAMZrCPan9EzFang1zc1AhdOVmFmxnStAc5cJ/IPwPzY0XAHlowhcmA3IyMyJtLj8fNBeQ==
-X-Received: by 2002:a05:6e02:214c:b0:39a:e814:d2ab with SMTP id e9e14a558f8ab-39ae814d513mr6951765ab.21.1721977613849;
-        Fri, 26 Jul 2024 00:06:53 -0700 (PDT)
-Received: from [127.0.1.1] (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8749c2sm2108345b3a.155.2024.07.26.00.06.51
+        d=1e100.net; s=20230601; t=1721977619; x=1722582419;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LN2nwbjbyXoRcJjZ570U1pjE8CZSOfXAC4h71zhOWHo=;
+        b=Dl2iWGGufuxSLnHlF76FAT6t0ass+QHljD2SaS8ovS6zEszdRrUbp11kCMMkRGFUxC
+         JOfUUDsRHezjlp6EV7vAXdcF0zmp84ocNkh6x2PVX5yZR/upz2BZwNkLIGI0bI3Hjgqn
+         5j3cDmN8bCcCHLNV5jDkjZBZme6WF+N8+PcoN2ARO8FmPyPolNPD2hg5jyp0jlbHwTF5
+         SrMRsAoAkS4NyWP6HYzzVUda+gF8NjDeU5ujWf+HBLztpiYZJXFa5t49qrBbh95cobRG
+         oj/9V68jZWUyJgR7LjLKVuYBy3Onc8ABz6iLdIVTKOksYibE8jCLRgWP/jomJpQdDWDK
+         LFKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWACl06tyFJO/uOxUMiOwWGgXPtKDDDJkfq5YcaTL+t5bh/F6wuGm+yEEZDmcPki5bMYxG+IEU4XeZRP2bnzm3eHEIOiz5UspzFICMd
+X-Gm-Message-State: AOJu0YyTPT3Aw+uwuP+3WWtJhsPQ/nLazR6oAaDNKDi8RTlNVIIXuIMg
+	BLgQMKkN1LuKf7Ra3UiRZYs/5e7woQNwhzR3e4ExDZ1/5pldJHRCcIDTV6Gfa3GMMrhTJ1vogYm
+	H
+X-Google-Smtp-Source: AGHT+IGWgD0kDQnmq5bju6IZvv8WrDPwym6j5td1p9Lp+AbIhu60mgxTty3z9uNBsYM0WkzORGFhQw==
+X-Received: by 2002:a05:6402:35ce:b0:5a2:2ecc:2f0 with SMTP id 4fb4d7f45d1cf-5ac6203a57fmr3498866a12.1.1721977619053;
+        Fri, 26 Jul 2024 00:06:59 -0700 (PDT)
+Received: from localhost (109-81-83-231.rct.o2.cz. [109.81.83.231])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac64eb3ab8sm1558891a12.71.2024.07.26.00.06.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 00:06:53 -0700 (PDT)
-From: Andy Chiu <andy.chiu@sifive.com>
-Date: Fri, 26 Jul 2024 15:06:50 +0800
-Subject: [PATCH] net: axienet: start napi before enabling Rx/Tx
+        Fri, 26 Jul 2024 00:06:58 -0700 (PDT)
+Date: Fri, 26 Jul 2024 09:06:57 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg_write_event_control(): fix a user-triggerable oops
+Message-ID: <ZqNLEc54NVP40Kpn@tiehlicka>
+References: <20240726054357.GD99483@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240726-dev-andyc-net-fixes-v1-1-15a98b79afb4@sifive.com>
-X-B4-Tracking: v=1; b=H4sIAAlLo2YC/x3LQQqAIBBA0avIrBswK5WuEi1Ep5qNhYYU0d2Tl
- o/PfyBTYsowigcSFc68x4q2EeA3F1dCDtWgpOqlURoDFXQx3B4jnbjwRRk7qRerBmus76GeR6I
- /1HGa3/cD8bY0u2UAAAA=
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Robert Hancock <robert.hancock@calian.com>
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Andy Chiu <andy.chiu@sifive.com>
-X-Mailer: b4 0.13-dev-a684c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726054357.GD99483@ZenIV>
 
-softirq may get lost if an Rx interrupt comes before we call
-napi_enable. Move napi_enable in front of axienet_setoptions(), which
-turns on the device, to address the issue.
+On Fri 26-07-24 06:43:57, Al Viro wrote:
+> We are *not* guaranteed that anything past the terminating NUL
+> is mapped (let alone initialized with anything sane).
+>     
 
-Link: https://lists.gnu.org/archive/html/qemu-devel/2024-07/msg06160.html
-Fixes: cc37610caaf8 ("net: axienet: implement NAPI and GRO receive")
-Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
----
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 0dea116876ee ("cgroup: implement eventfd-based generic API for notifications")
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index db7640529ce7..6fb48268b47c 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1849,9 +1849,9 @@ static void axienet_dma_err_handler(struct work_struct *work)
- 			   ~(XAE_OPTION_TXEN | XAE_OPTION_RXEN));
- 	axienet_set_mac_address(ndev, NULL);
- 	axienet_set_multicast_list(ndev);
--	axienet_setoptions(ndev, lp->options);
- 	napi_enable(&lp->napi_rx);
- 	napi_enable(&lp->napi_tx);
-+	axienet_setoptions(ndev, lp->options);
- }
- 
- /**
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
----
-base-commit: 80532af22b67cb83736f62feaeba483b2a5f74db
-change-id: 20240726-dev-andyc-net-fixes-306f825878c4
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Best regards,
+> ---
+> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> index 2aeea4d8bf8e..417c96f2da28 100644
+> --- a/mm/memcontrol-v1.c
+> +++ b/mm/memcontrol-v1.c
+> @@ -1842,9 +1842,12 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+>  	buf = endp + 1;
+>  
+>  	cfd = simple_strtoul(buf, &endp, 10);
+> -	if ((*endp != ' ') && (*endp != '\0'))
+> +	if (*endp == '\0')
+> +		buf = endp;
+> +	else if (*endp == ' ')
+> +		buf = endp + 1;
+> +	else
+>  		return -EINVAL;
+> -	buf = endp + 1;
+>  
+>  	event = kzalloc(sizeof(*event), GFP_KERNEL);
+>  	if (!event)
+
 -- 
-Andy Chiu <andy.chiu@sifive.com>
-
+Michal Hocko
+SUSE Labs
 
