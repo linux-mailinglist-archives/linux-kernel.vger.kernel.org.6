@@ -1,131 +1,170 @@
-Return-Path: <linux-kernel+bounces-263219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3D293D2D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:09:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA5993D2DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F671F21A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62CD281B77
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5EE17B42C;
-	Fri, 26 Jul 2024 12:09:41 +0000 (UTC)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2DA17B42D;
+	Fri, 26 Jul 2024 12:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4ghq22hI"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29A8A3D;
-	Fri, 26 Jul 2024 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5A8A3D;
+	Fri, 26 Jul 2024 12:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721995780; cv=none; b=nwpyqKIRyfgVVsGF8N5Osgblez4OG7+rBjr3m21yYR5imqDcfNx0yztufMGONTFi/TL4TLF7i5gZ3dAD6HYBEglKpTJ3IOCZRGBzfWf9tm4wTEhN2bTXvLS5O2yYbtvA5gM+SvIzRHfQrs0EEp98tQdmjla994gSGJVxyG9/nAI=
+	t=1721995911; cv=none; b=NrRBnmQ+auvmyQO0TfYShuIa2kw2RrhZx20uIXRw6MdocInytqWBIdiW6royEVVLP9xzusQ+z/lG7JyzAvkZ1m4eRXYeRGUGZIg/IGu6HJTblJmx9LIpiZqydelS249aIankq9bLyMPe+4SzFNORs/ntIlH7LvLB8uZNkIYQvkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721995780; c=relaxed/simple;
-	bh=bnda64iSGU0m6KI9KDID0lLqIBqN6jiSVGUS9ihm/JI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=feeerBUz57s9ZIaZfVKh19WTDpQ6kcOq4zJsaCq1LxNLeszrKwpI2K1sR0hBwWEBBAaRSGjugKPj3sqMIjQIyzBYhmxmkZVqknCWmocKyxwQS9E9t58pQPEaA5EFnvY6TQoXOMc5eBjgnBv8Kh2Vt61NyU5jDAnmLLJDPPVGxHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso12774091fa.1;
-        Fri, 26 Jul 2024 05:09:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721995777; x=1722600577;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6MGhkO10DAFXXxWz/b8Cy8KqtLa3ot91CZL6+UeC3sM=;
-        b=j34lwHha6bTZ4sQe9xhDbWo07coJ5SmYsb6HJj963ZhECaNDGw4CwI3I2tHIAXdWaS
-         VQ4DjUMGBH7h+p1vpP5ivX+Tv7N4UQfIhA180L4vOSPzhP0R/l4650Vm6gc5ukL6PIRP
-         ikBLeylESNRNojEfoYDxyidmuwasWVzb3a3uNj/ZHdg7qiVkpLisoW1VdHttQR/jdLmS
-         gZ3vGNRAcnnhLxHco+jhKGCfOdmUt5f0JWDqRkUf1lMOxdG3yeybvONwUBqORgZ0+iAz
-         +rAiG4dMX5zMxKb7fPjTzdcj/Y8LBWCT7Ne5d7Q8/LqNoioFupRtzY52jzrMAYPVzLLw
-         8jiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAJ8w+NSiIM2iCaWF7fuyhXj9hpiqB+2XP9vUJxZA50GArD8YZbe00AcxPG07mIUDkX+EvEn0Ssi6O/lzUTOX9o+Zfq58kdKSSweiLhhNieyaU9OVVE2/4cv3EcK2Jl7hvldWO++32
-X-Gm-Message-State: AOJu0YyjO7FhQfYigVOXdYedSn2KtGop0UNLSV9sbhAAwknsRiTnbcVG
-	YjQuL0ok34SF2xcDd9VeUTcgi1sNQCovSxOvpkTSSTEHkFE6RJGn
-X-Google-Smtp-Source: AGHT+IFjWITrc1duUxyZEVURki42n1i/s79zMtzH8JRb44wpFw+niqIwLT/ZeSzb4wAjOgCN3Wwgzg==
-X-Received: by 2002:ac2:4ece:0:b0:52e:9beb:a2e2 with SMTP id 2adb3069b0e04-52fd602a7c3mr2704369e87.19.1721995776593;
-        Fri, 26 Jul 2024 05:09:36 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b038asm1857206a12.14.2024.07.26.05.09.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 05:09:36 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: kuba@kernel.org,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] docs: fault-injection: document cache-filter feature for failslab
-Date: Fri, 26 Jul 2024 05:09:30 -0700
-Message-ID: <20240726120930.3231333-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721995911; c=relaxed/simple;
+	bh=GZxo54bJ3f7Sd7a1JaifGKOqZ+KwanL7RY55M2lnB/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ElbQUvehocXVZu3XkKWEbNU31skQNAx/xOjsnO/qYs6J0XPIkfonCwD6FYo1sb+kz4mgklXn3G2Fw1MGvTNtJWTzeQFROAbA9O+iaM1OLUWCAXtTYOZh18t8d2xPS2iERlip43OrIXnV8LF4naUbWFt3pKvumLgABXk2Aj1l8Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4ghq22hI; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721995908;
+	bh=GZxo54bJ3f7Sd7a1JaifGKOqZ+KwanL7RY55M2lnB/g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=4ghq22hIr7fcrDa/seMdPi4r/UV0Ezaw3LfsT1qeXJdtLlHCSryyNyJHu9n+zb9H1
+	 p7FBhMMjPLUE78ce5iW82MMpYFCuHwX+kUOOJ4XqC28qg5P2Sq0U1+NPNJI1oOf5az
+	 OzVLZ5WSFixRy2yilz71K0OKguPwOCcc0JUJBYJuTsQOTcaHIFXI73j6idwR9gQTGY
+	 kVpwFg6RIHsGYeYQskcgTZyiTuxzA4Dq8lrjp7tAYI7q+bsG1qf6g3ChFkHf7o6343
+	 IJRqch/jf5qFoL38JTXCDsUTEHF0S3uR7c4/ifGhWLQ9kj71MBdeM5+ckeN1EePCTS
+	 k7jdWQe/2f+eQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3F55837804C6;
+	Fri, 26 Jul 2024 12:11:47 +0000 (UTC)
+Message-ID: <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
+Date: Fri, 26 Jul 2024 14:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
+ controller
+To: Chen-Yu Tsai <wenst@chromium.org>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+ <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The failslab fault injection mechanism has an undocumented capability
-that provides significant utility in testing and debugging. This feature,
-introduced in commit 4c13dd3b48fcb ("failslab: add ability to filter slab
-caches"), allows for targeted error injection into specific slab caches.
+Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
+> Hi,
+> 
+> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
+> <nfraprado@collabora.com> wrote:
+>>
+>> Currently if the xhci1 controller happens to probe before the pcie1
+>> controller then it fails with the following errors:
+>>
+>> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+>> xhci-mtk 11290000.usb: can't setup: -110
+>> xhci-mtk: probe of 11290000.usb failed with error -110
+>>
+>> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
+>> clock, although exactly why this pcie clock is needed for the usb
+>> controller is still unknown. Add the clock to the xhci1 controller so it
+>> always probes successfully and use a placeholder clock name for it.
+>>
+>> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+>> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
+>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
+> So I asked MediaTek about this, and it seems the correct thing to do is
+> disable USB 3 on this host controller using the following snippet. The
+> snippet is copy-pasted from our issue tracker and won't apply directly.
+> 
+> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
+> is used only for USB 2.0 on an M.2 slot.
+> 
 
-However, it was inadvertently left undocumented at the time of its
-implementation.
+Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
 
-Add documentation for the cache-filter feature in the failslab mode
-description. Also, providing a practical example demonstrating how to
-use cache-filter to inject failures specifically when allocating socket
-buffers (skbs).
+I agree about disabling it on specific boards that use only the USB 2.0 lines of
+this controller, but doing that globally looks wrong... and looks like being a
+workaround for an error that gets solved with adding a clock as well.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- .../fault-injection/fault-injection.rst       | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+In short, the question is: why would that be the correct thing to do?
 
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 70380a2a01b4..07c24710bd21 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -141,6 +141,14 @@ configuration of fault-injection capabilities.
- 	default is 'Y', setting it to 'N' will also inject failures into
- 	highmem/user allocations (__GFP_HIGHMEM allocations).
- 
-+- /sys/kernel/debug/failslab/cache-filter
-+	Format: { 'Y' | 'N' }
-+
-+        default is 'N', setting it to 'Y' will only inject failures when
-+        objects are requests from certain caches.
-+
-+        Select the cache by writing '1' to /sys/kernel/slab/<cache>/failslab:
-+
- - /sys/kernel/debug/failslab/ignore-gfp-wait:
- - /sys/kernel/debug/fail_page_alloc/ignore-gfp-wait:
- 
-@@ -459,6 +467,18 @@ Application Examples
-     losetup -d $DEVICE
-     rm testfile.img
- 
-+------------------------------------------------------------------------------
-+
-+- Inject only skbuff allocation failures ::
-+
-+    # mark skbuff_head_cache as faulty
-+    echo 1 > /sys/kernel/slab/skbuff_head_cache/failslab
-+    # Turn on cache filter (off by default)
-+    echo 1 > /sys/kernel/debug/failslab/cache-filter
-+    # Turn on fault injection
-+    echo 1 > /sys/kernel/debug/failslab/times
-+    echo 1 > /sys/kernel/debug/failslab/probability
-+
- 
- Tool to run command with failslab or fail_page_alloc
- ----------------------------------------------------
--- 
-2.43.0
+Cheers,
+Angelo
+
+> 
+> ChenYu
+> 
+> index 8b7307cdefc6..2dac9f706a58
+> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> @@ -1447,6 +1447,7 @@
+>                                        "xhci_ck";
+>                          mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>                          wakeup-source;
+> +                       mediatek,u3p-dis-msk = <0x1>;
+>                          status = "disabled";
+>                  };
+> 
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>> index 2ee45752583c..cc5169871f1c 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
+>>                                   <&topckgen CLK_TOP_SSUSB_P1_REF>,
+>>                                   <&apmixedsys CLK_APMIXED_USB1PLL>,
+>>                                   <&clk26m>,
+>> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
+>> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
+>> +                                /*
+>> +                                 * This clock is required due to a hardware
+>> +                                 * bug. The 'frmcnt_ck' clock name is used as a
+>> +                                 * placeholder.
+>> +                                 */
+>> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
+>>                          clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
+>> -                                     "xhci_ck";
+>> +                                     "xhci_ck", "frmcnt_ck";
+>>                          mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>>                          wakeup-source;
+>>                          status = "disabled";
+>>
+>> ---
+>> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+>> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
+>>
+>> Best regards,
+>> --
+>> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>
+>>
+
+
 
 
