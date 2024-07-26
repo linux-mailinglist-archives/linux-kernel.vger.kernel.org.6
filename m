@@ -1,225 +1,147 @@
-Return-Path: <linux-kernel+bounces-262872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2086293CE23
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278AD93CE28
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8EC281751
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7C62B20CCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 06:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E9D176AAB;
-	Fri, 26 Jul 2024 06:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NSxGqPc3"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B572175560;
+	Fri, 26 Jul 2024 06:28:20 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97151176255;
-	Fri, 26 Jul 2024 06:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721975221; cv=fail; b=luVES9A95gTAEh6a1uYghH9WfEWAHLSkGbaLWPXFWINTvlQaims9H1b6XZHpFCqomgwlp3W+P+LDD+MLVzPOU71NcHmaMVhPrbCGQ4kIrJoeZXM9aLCeW4D6em1aFHrJ8aI+kZUqf+WQ+jMhUOKZH3qBtr342tDGGKZoSzazk/8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721975221; c=relaxed/simple;
-	bh=ohzNNItMRwmIPWvRkMGgghSpEUQT9P/0RBIIgcxtjSw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZiWj+Z8HHTClwPYkVyB7kM/DeVpFe3saE6IH+8x1+VfT55gtW2zPLW2xdiIpDx1WMEQfHRa86y52ZHZCP+ZXnpFhAGwd+SUzBYib6893QGFiAaSOxaGOQayRLKmNVIJsybXnpaj943lS79o2LBQmcElJZLDBjxX+TVXivSlJlCg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NSxGqPc3; arc=fail smtp.client-ip=40.107.102.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NXzlWePQqfrXZxKExBGUsVqfAw7xjRyfX8OB+DXD2KB7GZ5ZSlA0xATCy4e+ReB+RnrvGw08WUj6RhksfdyATHUZgB+RML3i3AcD/tmeH9gq1UUfbtb81NJot/jq5GprYxwJ0XUdV49t2TP6SZrQfE+sQRX+9xtunhTeVgwv3evtkNTPB4RdJEbocNZWWfOyNxZIQ+CJOOMag6Z9jjeSlq+t/u7QenX+hgqZBb2P48DArsJN4VlOQxPhkIK8uz2a+qFBzmYn8KutfhH8mJrBO3WlHYg+0fsgt5UqSGdWbaR1ElxonKbysPfzqF7A3d+flnNB65CF/AwZ9CQOzNy9Sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MkF8tMqG9rcX9LES/G1M4qlMugBcZo+yog47nzfE4ag=;
- b=erWp/a3srdEsdWhv0RyFHs/J105jla3sQsJslhXzkfXvYaOfsFOmnDebrZgRxqk2KpQgzWQ7W+7C+lQjGxHDTJYrjiYFmCNvDALSLF/pod68IvU465uG6KOuvlUwXrWopIay8ihRqv1NkekaEMClxhLF2j7sVbr94XKY7X3xdfwTDPZlwd1jb8TIjKaTyPeKo2i6X3uzuCZDKAvwobVryJ19HgHGwZ8NvPl20fg24wkB8DJUXKqDkrgtb94Q5y+OJild+v/wph8LnD2aEllfkJAWFN8+Ohl4HLTO5mgjvCNFoIh6EyfipgcbmeD4zzAVQ8e9zXo9M6lh5GSVYrWpmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MkF8tMqG9rcX9LES/G1M4qlMugBcZo+yog47nzfE4ag=;
- b=NSxGqPc3N9xhSiiF56sfNgskVNrXkt2gKWiUjRVLxWq/nzRgv/n/Ewquq8fwvDvXgA5BkW+uGXROvomCzaKP5hU4TTcN9/XqREhBFtu893RWsuSbBAVp3GeKsWHVvEc1cY/XcTj/M4es1uWqOXgkspNOLS241OWat7esZNPaZic=
-Received: from MN2PR07CA0030.namprd07.prod.outlook.com (2603:10b6:208:1a0::40)
- by CY5PR12MB6407.namprd12.prod.outlook.com (2603:10b6:930:3c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Fri, 26 Jul
- 2024 06:26:56 +0000
-Received: from MN1PEPF0000ECDB.namprd02.prod.outlook.com
- (2603:10b6:208:1a0:cafe::8d) by MN2PR07CA0030.outlook.office365.com
- (2603:10b6:208:1a0::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28 via Frontend
- Transport; Fri, 26 Jul 2024 06:26:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000ECDB.mail.protection.outlook.com (10.167.242.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Fri, 26 Jul 2024 06:26:55 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 26 Jul
- 2024 01:26:54 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 26 Jul
- 2024 01:26:54 -0500
-Received: from xhdsneeli40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 26 Jul 2024 01:26:50 -0500
-From: Abin Joseph <abin.joseph@amd.com>
-To: <vkoul@kernel.org>, <michal.simek@amd.com>, <robh@kernel.org>,
-	<u.kleine-koenig@pengutronix.de>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <radhey.shyam.pandey@amd.com>,
-	<harini.katakam@amd.com>
-CC: <git@amd.com>, <abin.joseph@amd.com>, <dmaengine@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] dmaengine: zynqmp_dma: Add support for AMD Versal Gen 2 DMA IP
-Date: Fri, 26 Jul 2024 11:56:39 +0530
-Message-ID: <20240726062639.2609974-3-abin.joseph@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240726062639.2609974-1-abin.joseph@amd.com>
-References: <20240726062639.2609974-1-abin.joseph@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57532B9C4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 06:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721975300; cv=none; b=kG2OPVBAucGv0J2cblDUM8ujjMKB2eBKEJpNwwK9zBnP6Syw00Y9TGTn+x+Esn7FNaMxy7GLgqKk11jhDeHOIgirtaEE05RX5yLS2b+NAmkyI4sEKQnS55iOLt4mCmiKHdbTbZCaDzVcbGb6xtO7AG4boKD8juk1NpRwwiQlca4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721975300; c=relaxed/simple;
+	bh=mASy784erLL+EluMNRQrltZDJ3e4bSVi2ZckEXftvlw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YVVSuCm30Sh9ULv47Y1kw37R9X0fTtxCbnZ/6RBEAHU3+i1LlwGbZLdK2kTgQmVdgvdnluHc0S7H4/d0C/GISBgBji26v4H9EAYZlVxg5EsGC/BQkIsvCbwU7asMtqaeI/0KDlTI+CRDn/i3QoEFMxLPC/QmTTzSHVz7ukGTrE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 46Q6RgvF069514;
+	Fri, 26 Jul 2024 14:27:42 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WVd2J4C4Xz2Lk7m3;
+	Fri, 26 Jul 2024 14:22:00 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 26 Jul 2024 14:27:40 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH V2] f2fs: fix to use per-inode maxbytes and cleanup
+Date: Fri, 26 Jul 2024 14:27:26 +0800
+Message-ID: <1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECDB:EE_|CY5PR12MB6407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7fb355c8-e860-4db5-9b76-08dcad3bf264
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Hxp5PXY2gQt8HEdfRUnFRFo9ZFcU50afphu2mHDlfuDZu+GunfcCWb0F6ItN?=
- =?us-ascii?Q?KF7mKZRrWWcVi0cQHb3z1NzBXNiZfZdAb+tqte4S04axiV74UOtprX/DvTrF?=
- =?us-ascii?Q?V6r9AuyzAOfInBc1jXucbv4HpzsTTwEWvPSGT794cmdCn51WyCNGNLaJAROw?=
- =?us-ascii?Q?QHnzhf/NwtD0Wpphn8MohTKXhzY3C/fn43AkLrYfk5WqQQ/uB7+oKZud0OW4?=
- =?us-ascii?Q?QLAaUmzKB4tyE24YenMd26Aa7xp+YkGHo9hZ5IW4r+2fW+W8NyyR/gTJXV+N?=
- =?us-ascii?Q?soN47qcfqZbQs+FJs5c6yoRFuk4bEbWLmYUK8ZhJsPObp/b7VOOtGPifCEgJ?=
- =?us-ascii?Q?x5ziZT6BsNPf12yeIy/6mG58hLjzS2qB4cWpPy4hcbGkhqZQG5DJIjbs/uJ7?=
- =?us-ascii?Q?rEzfYjlxb4/S1jM5ERcuv0ItKwiEDq8M1rO2L0xRNeVKJ4T4tSnI2wkrXyre?=
- =?us-ascii?Q?SMtVXU0HezydNzAA4lubx12ZvkkFhwcB0zXWIvl7XwCLFTtFR9LPhZ7knHGk?=
- =?us-ascii?Q?tA4tei/7Smluy8TEEVjFwO2BV7E7fsYTQU2BrrI2bDifAie1Y/okSi7yQnQ+?=
- =?us-ascii?Q?6ZGE4ogoYF1cQsTw81iUISub9o+Y3LtOUH6ouaJZl/TNxkWrN3fk6+bffZ0D?=
- =?us-ascii?Q?Rzn1R6s98gZDwoLpn6sVNt2+8XZQMN+HCza2EHPVLM8OiH3/i3h1Wz/ZtsQ3?=
- =?us-ascii?Q?tSo/n8iXL0SEGKtPSlSgea2JhT5+XqaeNjJhT7JjB3MBAFX8kxtw/rftUjYI?=
- =?us-ascii?Q?qdSGm2BK4MZSNiJrk2o5szpoTUaBD32MbkBRr6OmQrUUXgX/tMPzTjOaMKih?=
- =?us-ascii?Q?VrVJqIt4Ytknk9fIZXNyenuVzXmTjrzziyqflt3VV2ZGB49UaiDpgR/p4L9u?=
- =?us-ascii?Q?u8NmO7NqZyBOfErV6lAk5rr8nRJt+LF/c3/EtpLn6+qR0iKA1iJbPa1pMfQS?=
- =?us-ascii?Q?jMwnc4UIwIAL76GlMaDOt2bNiumCk5iDtaU19HEbBzPEw7RJ8wZtbrkbt27v?=
- =?us-ascii?Q?ZD2gifc84alZ9aZhDIq5KN/OyGvzhGF9j/A44onrBDqLuI6XLfzsCa10lJFU?=
- =?us-ascii?Q?xKihg8FgzwOX+dT45uSCTbXgqYeTedZji3Kad3bgUy1WdWdws5v7Hi3APsuW?=
- =?us-ascii?Q?cco1oM95o9WsQV/FG+pIdMaZDiHo57MPhHdCT2U7GMuU4RhrT4l0enWsiFlM?=
- =?us-ascii?Q?w/FwaflYqMDXxJFg2jvp57AISkb7irVGBv+mZ45DfDSXn05+nhhJC8dLzd+n?=
- =?us-ascii?Q?Mgd9lcbNg06U30Ipw5I0+WwbpWgtkm2GfW/5Ni3y86ynWC/Q9H9JLKDtf+Hv?=
- =?us-ascii?Q?cQUYeNuqnepk5Y0pxySjvhCmBO4UKwMl9rUXzQR0hNjELBBwqd1+HcSk+HPM?=
- =?us-ascii?Q?el19k9+T0Gk7bYYhiRfxHZeoeSmwTC8rgBIla77WKxITJRPDBYJ9y5KpJuyB?=
- =?us-ascii?Q?ZfIOka9evGgUoUcbD9cu/VSN2WF3MZT7?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2024 06:26:55.8623
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb355c8-e860-4db5-9b76-08dcad3bf264
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECDB.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6407
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 46Q6RgvF069514
 
-ZynqMp DMA IP and AMD Versal Gen 2 DMA IP are similar but have different
-interrupt register offset. Create a dedicated compatible string to
-support Versal Gen 2 DMA IP with Irq register offset for interrupt
-Enable/Disable/Status/Mask functionality.
+This is a supplement to commit 6d1451bf7f84 ("f2fs: fix to use per-inode maxbytes")
+for some missed cases, also cleanup redundant code in f2fs_llseek.
 
-Signed-off-by: Abin Joseph <abin.joseph@amd.com>
+Cc: Chengguang Xu <cgxu519@mykernel.net>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 ---
- drivers/dma/xilinx/zynqmp_dma.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+v2: use Macro F2FS_BLK_TO_BYTES
+---
+---
+ fs/f2fs/data.c   | 4 ++--
+ fs/f2fs/file.c   | 7 ++-----
+ fs/f2fs/verity.c | 5 +++--
+ 3 files changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
-index f31631bef961..a5d84d746929 100644
---- a/drivers/dma/xilinx/zynqmp_dma.c
-+++ b/drivers/dma/xilinx/zynqmp_dma.c
-@@ -22,10 +22,10 @@
- #include "../dmaengine.h"
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a2c3d39..e9570f4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1938,7 +1938,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
  
- /* Register Offsets */
--#define ZYNQMP_DMA_ISR			0x100
--#define ZYNQMP_DMA_IMR			0x104
--#define ZYNQMP_DMA_IER			0x108
--#define ZYNQMP_DMA_IDS			0x10C
-+#define ZYNQMP_DMA_ISR			(chan->irq_offset + 0x100)
-+#define ZYNQMP_DMA_IMR			(chan->irq_offset + 0x104)
-+#define ZYNQMP_DMA_IER			(chan->irq_offset + 0x108)
-+#define ZYNQMP_DMA_IDS			(chan->irq_offset + 0x10C)
- #define ZYNQMP_DMA_CTRL0		0x110
- #define ZYNQMP_DMA_CTRL1		0x114
- #define ZYNQMP_DMA_DATA_ATTR		0x120
-@@ -145,6 +145,9 @@
- #define tx_to_desc(tx)		container_of(tx, struct zynqmp_dma_desc_sw, \
- 					     async_tx)
+ 	inode_lock_shared(inode);
  
-+/* IRQ Register offset for VersalGen2 */
-+#define IRQ_REG_OFFSET			0x308
-+
- /**
-  * struct zynqmp_dma_desc_ll - Hw linked list descriptor
-  * @addr: Buffer address
-@@ -211,6 +214,7 @@ struct zynqmp_dma_desc_sw {
-  * @bus_width: Bus width
-  * @src_burst_len: Source burst length
-  * @dst_burst_len: Dest burst length
-+ * @irq_offset: Irq register offset
-  */
- struct zynqmp_dma_chan {
- 	struct zynqmp_dma_device *zdev;
-@@ -235,6 +239,7 @@ struct zynqmp_dma_chan {
- 	u32 bus_width;
- 	u32 src_burst_len;
- 	u32 dst_burst_len;
-+	u32 irq_offset;
- };
+-	maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
++	maxbytes = F2FS_BLK_TO_BYTES(max_file_blocks(inode));
+ 	if (start > maxbytes) {
+ 		ret = -EFBIG;
+ 		goto out;
+@@ -2063,7 +2063,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ static inline loff_t f2fs_readpage_limit(struct inode *inode)
+ {
+ 	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+-		return inode->i_sb->s_maxbytes;
++		return F2FS_BLK_TO_BYTES(max_file_blocks(inode));
  
- /**
-@@ -919,6 +924,9 @@ static int zynqmp_dma_chan_probe(struct zynqmp_dma_device *zdev,
- 		return -EINVAL;
- 	}
+ 	return i_size_read(inode);
+ }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6c62f76..41ef3ad 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -432,7 +432,7 @@ static bool __found_offset(struct address_space *mapping,
+ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ {
+ 	struct inode *inode = file->f_mapping->host;
+-	loff_t maxbytes = inode->i_sb->s_maxbytes;
++	loff_t maxbytes = F2FS_BLK_TO_BYTES(max_file_blocks(inode));
+ 	struct dnode_of_data dn;
+ 	pgoff_t pgofs, end_offset;
+ 	loff_t data_ofs = offset;
+@@ -514,10 +514,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ static loff_t f2fs_llseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct inode *inode = file->f_mapping->host;
+-	loff_t maxbytes = inode->i_sb->s_maxbytes;
+-
+-	if (f2fs_compressed_file(inode))
+-		maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
++	loff_t maxbytes = F2FS_BLK_TO_BYTES(max_file_blocks(inode));
  
-+	if (of_device_is_compatible(node, "amd,versal2-dma-1.0"))
-+		chan->irq_offset = IRQ_REG_OFFSET;
-+
- 	chan->is_dmacoherent =  of_property_read_bool(node, "dma-coherent");
- 	zdev->chan = chan;
- 	tasklet_setup(&chan->tasklet, zynqmp_dma_do_tasklet);
-@@ -1162,6 +1170,7 @@ static void zynqmp_dma_remove(struct platform_device *pdev)
+ 	switch (whence) {
+ 	case SEEK_SET:
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index f7bb0c5..83310b5 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -74,7 +74,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 	struct address_space *mapping = inode->i_mapping;
+ 	const struct address_space_operations *aops = mapping->a_ops;
  
- static const struct of_device_id zynqmp_dma_of_match[] = {
- 	{ .compatible = "xlnx,zynqmp-dma-1.0", },
-+	{ .compatible = "amd,versal2-dma-1.0", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, zynqmp_dma_of_match);
+-	if (pos + count > inode->i_sb->s_maxbytes)
++	if (pos + count > F2FS_BLK_TO_BYTES(max_file_blocks(inode)))
+ 		return -EFBIG;
+ 
+ 	while (count) {
+@@ -237,7 +237,8 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
+ 	pos = le64_to_cpu(dloc.pos);
+ 
+ 	/* Get the descriptor */
+-	if (pos + size < pos || pos + size > inode->i_sb->s_maxbytes ||
++	if (pos + size < pos ||
++	    pos + size > F2FS_BLK_TO_BYTES(max_file_blocks(inode)) ||
+ 	    pos < f2fs_verity_metadata_pos(inode) || size > INT_MAX) {
+ 		f2fs_warn(F2FS_I_SB(inode), "invalid verity xattr");
+ 		f2fs_handle_error(F2FS_I_SB(inode),
 -- 
-2.25.1
+1.9.1
 
 
