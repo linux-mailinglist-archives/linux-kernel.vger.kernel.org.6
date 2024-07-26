@@ -1,341 +1,156 @@
-Return-Path: <linux-kernel+bounces-262949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E31593CEFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8980393CF00
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327ED1C21620
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE7D1C21D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4539517623E;
-	Fri, 26 Jul 2024 07:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DCC176AC6;
+	Fri, 26 Jul 2024 07:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7V7YA9G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXoczIPf"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445B237E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44631741FB;
+	Fri, 26 Jul 2024 07:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721979997; cv=none; b=G9OUb8jhYh3ubK0ZVs7RUF/g/J53Oa7Gc+gkFuXJeF955J2JwMIKPXwTNTDMJfmYI5Fzcn+pLVGcM1RWAltQ+XMNDS6Qeo5sPUJmOAr/x7EVqUNt55PPMTB5EieqI93loVKwCEidVjPNxX6j0+aQD/hZFrBluq29j5fHdlpSYis=
+	t=1721980115; cv=none; b=HIFCFU7K3/IYN4U3o33UFDETcTg6qr6yC3M3aNI8vkqX4uigZvcbtdOu9ZqSQ8ib5r3Fb55bvP7+cFVuuefYsrvjl65IDHw64cQzEikMA6uQ6HGxXu9Zumns7zMZInLTPLV+iHmEW0TIrrx9+rPpREVUj14YtBT1BShIS7WHDNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721979997; c=relaxed/simple;
-	bh=4dkOgTz+W+CPhX5MUDdwMnAzYZgSGUV44WKSHTwfMDs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hAtHfKLhQs4LyQyutIeJs/pITA7wESIpqHhfrBr3DfWcYtJGudM5W/+ViHiajq+FQOGAs51iT77QpEJGWRhLRRtuBtL+WGAkr6UeKhBHHW/NT6K3lMxFxNnMVzXt7NaFfRlo8kRhCL5WXDAZWdW98dOpur1hWa5DgflhEVtjbaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7V7YA9G; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721979996; x=1753515996;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=4dkOgTz+W+CPhX5MUDdwMnAzYZgSGUV44WKSHTwfMDs=;
-  b=R7V7YA9GHmrbX/tOoxXxQeECMlL8ax5bM81aEiHWQ4MZ9XzXY6dKaSYT
-   6qZsVEk7xZmL0Nu69ePt2yIl6wmGMTFFve4rn/+TYh4eQzNFhNrMBkHaE
-   F/DssYVklt3wwi2oQKT7hQU5PKPZP39uKIwLIBv2rdDxdmlx5vlUDNNGs
-   bMV7RUkLgZcR9kg2etrgrYf8UapxacmJaLvK+8+ppjLkNkMibR0Www7HP
-   nxQIp777/AwuIFxAdx6aHIjF6vycg1h1QGCaY5sG5Ni1AA/sY1cNCaqhO
-   5H/Fd6VRIZqFdwld++e27PIN7JgHG2JjIj30QhKYPxrqH/NWgvfLnWenL
-   A==;
-X-CSE-ConnectionGUID: knqsCHsGRnGjNF4xJl0Tbg==
-X-CSE-MsgGUID: bcT0HOdtRaG9ftzI801/SQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11144"; a="23519354"
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="23519354"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 00:46:35 -0700
-X-CSE-ConnectionGUID: YnW2zew7Tq2LPknE49BQRQ==
-X-CSE-MsgGUID: wBgAp7oqQX6RGR1fuBlPXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,238,1716274800"; 
-   d="scan'208";a="53099844"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 00:46:32 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Hugh
- Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <CACePvbWJ8c8pF0nQ=_bidJU2qoaJn6ygOAGVz4H07Kf0Rzxaag@mail.gmail.com>
-	(Chris Li's message of "Fri, 26 Jul 2024 00:15:58 -0700")
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
-	<20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
-	<ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
-	<CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
-	<b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
-	<CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-	<874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
-	<87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
-	<87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
-	<87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
-	<CACePvbV9cx6Le1cYgYo2D922E4Com45+XXquMZugog2+w5K_yg@mail.gmail.com>
-	<87plr26kg2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbXC6SwD1mx_s_9yCZpqTXZhRKMetbCcBNPOgT-ZtLmGCA@mail.gmail.com>
-	<87v80s3nvs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbWW6YLZe=47+kfuz76J+WWGmfKHvqatGGm=RyRX=D-WeQ@mail.gmail.com>
-	<87jzh83d3o.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbWJ8c8pF0nQ=_bidJU2qoaJn6ygOAGVz4H07Kf0Rzxaag@mail.gmail.com>
-Date: Fri, 26 Jul 2024 15:42:59 +0800
-Message-ID: <87y15o1tvg.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721980115; c=relaxed/simple;
+	bh=5ON6IusU5v7qrydb7czcU0yYORsRRJri7xK6Rr4x24w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a0gmZHMBHWH10N/CP3hm9fikjg2C6kRSht8q4Iv/ESzobhbljkA56X19V6IRWmBf1riV4vOYTbiR899Pz/RBnK3UfTWsUs/bbUYp6jP0ZL77bYRbvEuQ9u6nJyK32+5i0QX8ZgJ/N5hgd49k70Ef8ceNVgxOgEEQjTFMS2ZO964=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXoczIPf; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428098e2b3bso1037035e9.3;
+        Fri, 26 Jul 2024 00:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721980112; x=1722584912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7STCBcMZoBcNkHRG9IYlvtYZY+jcGZj/eZGXSHCEQA=;
+        b=NXoczIPfgrrxY+fNWFPXGIqj3dPGK1CAAzlAutSHM6kNEulthaMoZyOZp9pYcSv5nj
+         fvTKULweCEC9UeY8b0AIoxNc+PZXZD642VYvI2bo2xvFbHGeENcjEqdaslVRyfDJ2h8R
+         X3GXjVPicxwFdhFkoYqyxaixrqHTZ9g5jJdjFgNN35N7rx8nW9sfFov0N8RyuFcANRCC
+         g3eSrOXMqEz2Db0FdyJyBpRUtqjxa1Fw8C6RehR8ubWvKdLgSbKD9QVjJARYakCh2jZE
+         00zlSZsPAhn5aHgmyfMrRolYXc0lhHGuvCt6lI/rgoHcaCI9T+DpqwERNzwSQuVHiWvj
+         KFTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721980112; x=1722584912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7STCBcMZoBcNkHRG9IYlvtYZY+jcGZj/eZGXSHCEQA=;
+        b=ckYufXy/vzPKKasjtDTSbqmyCrzY8p2oigix6gBiLAhgbKuFKHOqs9VUUr1zyXTgxP
+         +yFYXPCVa6vcCHmyhGDGIjILorrppbhLQ01s9eCkcyAmqg4PkTJPSjUaJBILGRag75XK
+         /oKSLu2CWOy8lGKlSArxbeNJHl069vJSV9g4p5IZP9x6vmnTJ/EFppUMK7sL/khKNusR
+         4yOigqt0bfB3MWDlOHi/xR+jlyWBWGReRhSa1bXAiO5fvNbL91X7ew848/+T8e6OX91K
+         rX4/oGlKwX+/CBypMD1IDefEfwxvxcuUFF4GoQ43eoYJmCB/uLZzQ1flJec7bwv6IKPi
+         Wpeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxqxc4LxOE67FT3wcwuXSwo0G+e3rYa2b575zNyXt4Hv+ZW7NWmMgT7sa1xF+8TaoN9XLsVR6nhO+Y/WDqlnxjtv8+BZGrZvi5CiUdwG21Brg5Xvi0iQuP9ByYZwZSauxQkT5+YTzh4bDugHSTbfPpFJrbp1mDKlhAwGSY5ICmd3S1daP3JPziBXN97VZ8eX9UTpzT51rHjNcGTRfaMPSXmyTb8V8=
+X-Gm-Message-State: AOJu0YyT02eHFgP765fgplrefUa/QRCsNwwCy/+dZhEHh+RgOnCFdPA+
+	NxDZIj8/oQxvSfxpgKBGFHrfdgB78dUxQVkkR1eCWOCECVC3jZga
+X-Google-Smtp-Source: AGHT+IFjpz/7j0G/aN/7uXAqlqfX5pso/gmcLd8tUV2EhE7wpv7H5UoFFdvgPWnhdAQIGAJFn+acLA==
+X-Received: by 2002:a05:600c:3b87:b0:426:5f08:542b with SMTP id 5b1f17b1804b1-428053c9c55mr20937075e9.0.1721980111737;
+        Fri, 26 Jul 2024 00:48:31 -0700 (PDT)
+Received: from ivan-HLYL-WXX9.. ([2a01:4b00:d20e:7300:68e5:11ce:4d88:9958])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057a6368sm66045565e9.38.2024.07.26.00.48.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 00:48:31 -0700 (PDT)
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+To: perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net,
+	broonie@kernel.org,
+	shuah@kernel.org
+Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aholzinger@gmx.de
+Subject: [PATCH 0/4] Introduce userspace-driven ALSA timers
+Date: Fri, 26 Jul 2024 08:47:45 +0100
+Message-Id: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Chris Li <chrisl@kernel.org> writes:
+There are multiple possible timer sources which could be useful for
+the sound stream synchronization: hrtimers, hardware clocks (e.g. PTP),
+timer wheels (jiffies). Currently, using one of them to synchronize
+the audio stream of snd-aloop module would require writing a
+kernel-space driver which exports an ALSA timer through the
+snd_timer interface.
 
-> On Thu, Jul 25, 2024 at 11:05=E2=80=AFPM Huang, Ying <ying.huang@intel.co=
-m> wrote:
->>
->> Chris Li <chrisl@kernel.org> writes:
->>
->> > On Thu, Jul 25, 2024 at 7:13=E2=80=AFPM Huang, Ying <ying.huang@intel.=
-com> wrote:
->> >> >
->> >> > The current proposed order also improves things step by step. The o=
-nly
->> >> > disagreement here is which patch order we introduce yet another list
->> >> > in addition to the nonfull one. I just feel that it does not make
->> >> > sense to invest into new code if that new code is going to be
->> >> > completely rewrite anyway in the next two patches.
->> >> >
->> >> > Unless you mean is we should not do the patch 3 big rewrite and sho=
-uld
->> >> > continue the scan_swap_map_try_ssd_cluster() way of only doing half=
- of
->> >> > the allocation job and let scan_swap_map_slots() do the complex ret=
-ry
->> >> > on top of try_ssd(). I feel the overall code is more complex and le=
-ss
->> >> > maintainable.
->> >>
->> >> I haven't look at [3/3], will wait for your next version for that.  S=
-o,
->> >> I cannot say which order is better.  Please consider reviewers' effort
->> >> too.  Small step patch is easier to be understood and reviewed.
->> >
->> > That is exactly the reason I don't want to introduce too much new code
->> > depending on the scan_swap_map_slots() behavior, which will be
->> > abandoned in the big rewrite. Their constraints are very different. I
->> > want to make the big rewrite patch 3 as small as possible. Using
->> > incremental follow up patches to improve it.
->> >
->> >>
->> >> >> > That is why I want to make this change patch after patch 3. Ther=
-e is
->> >> >> > also the long test cycle after the modification to make sure the=
- swap
->> >> >> > code path is stable. I am not resisting a change of patch orders=
-, it
->> >> >> > is that patch can't directly be removed before patch 3 before th=
-e big
->> >> >> > rewrite.
->> >> >> >
->> >> >> >
->> >> >> >>
->> >> >> >> > Your original
->> >> >> >> > suggestion appears like that you want to keep all cluster wit=
-h order-N
->> >> >> >> > on the nonfull list for order-N always unless the number of f=
-ree swap
->> >> >> >> > entry is less than 1<<N.
->> >> >> >>
->> >> >> >> Well I think that's certainly one of the conditions for removin=
-g it. But agree
->> >> >> >> that if a full scan of the cluster has been performed and no sw=
-ap entries have
->> >> >> >> been freed since the scan started then it should also be remove=
-d from the list.
->> >> >> >
->> >> >> > Yes, in the later patch of patch, beyond patch 3, we have the al=
-most
->> >> >> > full cluster that for the cluster has been scan and not able to
->> >> >> > allocate order N entry.
->> >> >> >
->> >> >> >>
->> >> >> >> >
->> >> >> >> >>> And, I understand that in some situations it may
->> >> >> >> >>> be better to share clusters among CPUs.  So my suggestion i=
-s,
->> >> >> >> >>>
->> >> >> >> >>> - Make swap_cluster_info->order more accurate, don't preten=
-d that we
->> >> >> >> >>>   have free swap entries with that order even after we are =
-sure that we
->> >> >> >> >>>   haven't.
->> >> >> >> >>
->> >> >> >> >> Is this patch pretending that today? I don't think so?
->> >> >> >> >
->> >> >> >> > IIUC, in this patch swap_cluster_info->order is still "N" eve=
-n if we are
->> >> >> >> > sure that there are no order-N free swap entry in the cluster.
->> >> >> >>
->> >> >> >> Oh I see what you mean. I think you and Chris already discussed=
- this? IIRC
->> >> >> >> Chris's point was that if you move that cluster to N-1, eventua=
-lly all clusters
->> >> >> >> are for order-0 and you have no means of allocating high orders=
- until a whole
->> >> >> >> cluster becomes free. That logic certainly makes sense to me, s=
-o think its
->> >> >> >> better for swap_cluster_info->order to remain static while the =
-cluster is
->> >> >> >> allocated. (I only skimmed that conversation so appologies if I=
- got the
->> >> >> >> conclusion wrong!).
->> >> >> >
->> >> >> > Yes, that is the original intent, keep the cluster order as much=
- as possible.
->> >> >> >
->> >> >> >>
->> >> >> >> >
->> >> >> >> >> But I agree that a
->> >> >> >> >> cluster should only be on the per-order nonfull list if we k=
-now there are at
->> >> >> >> >> least enough free swap entries in that cluster to cover the =
-order. Of course
->> >> >> >> >> that doesn't tell us for sure because they may not be contig=
-uous.
->> >> >> >> >
->> >> >> >> > We can check that when free swap entry via checking adjacent =
-swap
->> >> >> >> > entries.  IMHO, the performance should be acceptable.
->> >> >> >>
->> >> >> >> Would you then use the result of that scanning to "promote" a c=
-luster's order?
->> >> >> >> e.g. swap_cluster_info->order =3D N+1? That would be neat. But =
-this all feels like
->> >> >> >> a separate change on top of what Chris is doing here. For high =
-orders there
->> >> >> >> could be quite a bit of scanning required in the worst case for=
- every page that
->> >> >> >> gets freed.
->> >> >> >
->> >> >> > Right, I feel that is a different set of patches. Even this seri=
-es is
->> >> >> > hard enough for review. Those order promotion and demotion is he=
-ading
->> >> >> > towards a buddy system design. I want to point out that even the=
- buddy
->> >> >> > system is not able to handle the case that swapfile is almost fu=
-ll and
->> >> >> > the recently freed swap entries are not contiguous.
->> >> >> >
->> >> >> > We can invest in the buddy system, which doesn't handle all the
->> >> >> > fragmentation issues. Or I prefer to go directly to the disconti=
-guous
->> >> >> > swap entry. We pay a price for the indirect mapping of swap entr=
-ies.
->> >> >> > But it will solve the fragmentation issue 100%.
->> >> >>
->> >> >> It's good if we can solve the fragmentation issue 100%.  Just need=
- to
->> >> >> pay attention to the cost.
->> >> >
->> >> > The cost you mean the development cost or the run time cost (memory=
- and cpu)?
->> >>
->> >> I mean runtime cost.
->> >
->> > Thanks for the clarification. Agree that we need to pay attention to
->> > the run time cost. That is given.
->> >
->> >> >> >> >>> My question is whether it's so important to share the per-c=
-pu cluster
->> >> >> >> >>> among CPUs?
->> >> >> >> >>
->> >> >> >> >> My rationale for sharing is that the preference previously h=
-as been to favour
->> >> >> >> >> efficient use of swap space; we don't want to fail a request=
- for allocation of a
->> >> >> >> >> given order if there are actually slots available just becau=
-se they have been
->> >> >> >> >> reserved by another CPU. And I'm still asserting that it sho=
-uld be ~zero cost to
->> >> >> >> >> do this. If I'm wrong about the zero cost, or in practice th=
-e sharing doesn't
->> >> >> >> >> actually help improve allocation success, then I'm happy to =
-take the exclusive
->> >> >> >> >> approach.
->> >> >> >> >>
->> >> >> >> >>> I suggest to start with simple design, that is, per-CPU
->> >> >> >> >>> cluster will not be shared among CPUs in most cases.
->> >> >> >> >>
->> >> >> >> >> I'm all for starting simple; I think that's what I already p=
-roposed (exclusive
->> >> >> >> >> in this patch, then shared in the "big rewrite"). I'm just o=
-bjecting to the
->> >> >> >> >> current half-and-half policy in this patch.
->> >> >> >> >
->> >> >> >> > Sounds good to me.  We can start with exclusive solution and =
-evaluate
->> >> >> >> > whether shared solution is good.
->> >> >> >>
->> >> >> >> Yep. And also evaluate the dynamic order inc/dec idea too...
->> >> >> >
->> >> >> > It is not able to avoid fragementation 100% of the time. I prefe=
-r the
->> >> >> > discontinued swap entry as the next step, which guarantees forwa=
-rd
->> >> >> > progress, we will not be stuck in a situation where we are not a=
-ble to
->> >> >> > allocate swap entries due to fragmentation.
->> >> >>
->> >> >> If my understanding were correct, the implementation complexity of=
- the
->> >> >> order promotion/demotion isn't at the same level of that of discon=
-tinued
->> >> >> swap entry.
->> >> >
->> >> > Discontinued swap entry has higher complexity but higher payout as
->> >> > well. It can get us to the place where cluster promotion/demotion
->> >> > can't.
->> >> >
->> >> > I also feel that if we implement something towards a buddy system
->> >> > allocator for swap, we should do a proper buddy allocator
->> >> > implementation of data structures.
->> >>
->> >> I don't think that it's easy to implement a real buddy allocator for
->> >> swap entries.  So, I avoid to use buddy in my words.
->> >
->> > Then such a mix of cluster order promote/demote lose some benefit of
->> > the buddy system. Because it lacks the proper data structure to
->> > support buddy allocation. The buddy allocator provides more general
->> > migration between orders. For the limited usage case of cluster
->> > promotion/demotion is supported (by luck). We need to evaluate whether
->> > it is worth the additional complexity.
->>
->> TBH, I believe that the complexity of order promote/demote is quite low,
->> both for development and runtime.  A real buddy allocator may need to
->> increase per-swap-entry memory footprint much.
->
-> I mostly concern its effectiveness. Anyway, the series is already
-> complex enough with the big rewrite and reclaim on swap cache.
->
-> Let me know if you think it needs to be done before the big rewrite.
+However, it is not really convenient for application developers, who may
+want to define their custom timer sources for audio synchronization.
 
-I hope so.  But, I will not force you to do that if you don't buy in it.
+For instance, we could have a network application which receives frames
+and sends them to snd-aloop pcm device, and another application
+listening on the other end of snd-aloop. It makes sense to transfer a
+new period of data only when certain amount of frames is received
+through the network, but definitely not when a certain amount of jiffies
+on a local system elapses. Since all of the devices are purely virtual
+it won't introduce any glitches and will help the application developers
+to avoid using sample-rate conversion.
 
---
-Best Regards,
-Huang, Ying
+This patch series introduces userspace-driven ALSA timers: virtual
+timers which are created and controlled from userspace. The timer can
+be created from the userspace using the new ioctl SNDRV_TIMER_IOCTL_CREATE.
+After creating a timer, it becomes available for use system-wide, so it
+can be passed to snd-aloop as a timer source (timer_source parameter
+would be "-1.SNDRV_TIMER_GLOBAL_UDRIVEN.{timer_id}"). When the userspace
+app decides to trigger a timer, it calls another ioctl
+SNDRV_TIMER_IOCTL_TRIGGER on the file descriptor of a timer. It
+initiates a transfer of a new period of data.
+
+Userspace-driven timers are associated with file descriptors. If the
+application wishes to destroy the timer, it can simply release the file
+descriptor of a virtual timer.
+
+I believe introducing new ioctl calls is quite inconvenient (as we have
+a limited amount of them), but other possible ways of app <-> kernel
+communication (like virtual FS) seem completely inappropriate for this
+task (but I'd love to discuss alternative solutions).
+
+This patch series also updates the snd-aloop module so the global timers
+can be used as a timer_source for it (it allows using userspace-driven
+timers as timer source).
+
+Ivan Orlov (4):
+  ALSA: aloop: Allow using global timers
+  Docs/sound: Add documentation for userspace-driven ALSA timers
+  ALSA: timer: Introduce virtual userspace-driven timers
+  selftests: ALSA: Cover userspace-driven timers with test
+
+ Documentation/sound/index.rst               |   1 +
+ Documentation/sound/utimers.rst             | 120 +++++++++++
+ include/uapi/sound/asound.h                 |  17 ++
+ sound/core/Kconfig                          |  11 +
+ sound/core/timer.c                          | 226 ++++++++++++++++++++
+ sound/drivers/aloop.c                       |   2 +
+ tools/testing/selftests/alsa/Makefile       |   2 +-
+ tools/testing/selftests/alsa/global-timer.c |  87 ++++++++
+ tools/testing/selftests/alsa/utimer-test.c  | 133 ++++++++++++
+ 9 files changed, 598 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/sound/utimers.rst
+ create mode 100644 tools/testing/selftests/alsa/global-timer.c
+ create mode 100644 tools/testing/selftests/alsa/utimer-test.c
+
+-- 
+2.34.1
+
 
