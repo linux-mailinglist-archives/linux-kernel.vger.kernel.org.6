@@ -1,290 +1,130 @@
-Return-Path: <linux-kernel+bounces-262914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F6A93CE9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:13:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE6C93CE9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77EA11F24CCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1966728258A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5B176AA6;
-	Fri, 26 Jul 2024 07:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DABF176AB7;
+	Fri, 26 Jul 2024 07:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="d61wr32y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YEMVNZTW"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA2B16F85B;
-	Fri, 26 Jul 2024 07:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94647381BD
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721977984; cv=none; b=XQy3vCHQe6UTIxNj+I6Mxsc7OuAj/s0Ex9OO9jl2f0e4Cq0TRvoWVPD5H3TmeMRoko/RtCjPv75FD5bLeFh2eOKEYbZOKsb+Q8IMv9NIG7tmFyf1PKZ1DlpSmzOWoujtk1QC4z5/Do5CVo+R8Q5cRcGKp24fRUZWHK4Ih3dcy/E=
+	t=1721977985; cv=none; b=oQMu29/40W1at11I+T1nG45VJEQ6uvNZSeIVQtDqA/aCipEcvywR8/tWcF0ZaBo4m9vp53FjWYSALBJi3ccSrQDY0oZ4N6o9L+grhy7I//+RPrerLgbHlLFg+dARz5tUL7KMqYJ5/5+Z2G9EMOexSl7ybs7q2FCYgkFl9WHqhEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721977984; c=relaxed/simple;
-	bh=wh0OJGTRDs1l3yOJWO2X7RyyUp4t2t1JbQNhSxPlarg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y9zmDn8RQShoYrOo0NEX6LP1pGaEhG5NgN+Bbk6gjS7ud6qpviVWnIUWvZAlFA6uSJndEhBxQm5Qxt/9krOeuVNa9+jjiUxNVUtX0s6lFmjKg1iBuh/ns+KGSNkh+jsAyAR6czfwWUn25wo8O0C13mfWoSZwBXGjkRgT3vWxZeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=d61wr32y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B41C32782;
-	Fri, 26 Jul 2024 07:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721977984;
-	bh=wh0OJGTRDs1l3yOJWO2X7RyyUp4t2t1JbQNhSxPlarg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=d61wr32yE2+BiAc1KhTwqflv+cEE9gudU2BQurp6quNvI1QwJtDkeo7uN9FAGAuAy
-	 9q8z9k9lm9n2a6CXqt4xDCy78btTz66AiJcKyahil+f1hv36hNuqhyBRZ/QIAsme1j
-	 nj4e9Gq/9YOGO6WT0XYCzeCP8JTQXr4cEDgtavjw=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 5.4 00/44] 5.4.281-rc2 review
+	s=arc-20240116; t=1721977985; c=relaxed/simple;
+	bh=f1A6KhFS6dTNPDRuPRPW4KrxtyD2JrdCBL9g3cxuav8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKS6l1K1dEyLWyh1lPJOgKxyRqQsupLimj9/GIX9t92qNc2cOTCum/F/2Z9O3EIZ5IpipMc+j9va3YAzEiLTZOv3FnQqCm4xgHQWXMK1QK/0E6PckKARMMPibOQsJKiTPRO2/LFqipw3/WsPTwKR4dNmiZE7dViC2F4PIBfhMJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YEMVNZTW; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so238397166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721977982; x=1722582782; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbS6QA/uxRn6Yw6eceppEaXLSgjLvSjiU2Xr+hMmLXY=;
+        b=YEMVNZTW8hptzUvmdaqD+BRxXkbKsh8V6iRryQS1BM/ATohK3d1K9UX/NaW+j+ALvk
+         E3pDRZ9WRajdlIvNuVsOC76Vs5z+4l7tPLkDgNVr8jPMQDmSfl0UpTuMJWI5Flm0SSMX
+         xhVzxk7WD57CnN5+vKVGn+fL2sRUZv/PSC3oHfHTNG0IGTYa8pQkPavCnyaXYfIVzy+i
+         bq1pljnv3rsbyuXkeK5PuUaRRBNoVwPV/9sSuIelRLLjnM/3wyO89Xpo9oOJ5zCZwitu
+         ILvY5DeULLM48+ufqDKZfHV8PRbKq8671D0ywF2FJ6X/h8n/Ui5DFbXb2W7z8ApLS3Vh
+         rfOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721977982; x=1722582782;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbS6QA/uxRn6Yw6eceppEaXLSgjLvSjiU2Xr+hMmLXY=;
+        b=IrH8pTZsqMJoHjLC50ewHXZtxBIkAk9UlS0EBCqhQ4fcxNCmMfLRco5YHKgN9+rXdb
+         qNTSV9dXzThqyyHJKvG/Av6+U0U7NVacI7/wrmTy/UfhBhkw2mnBDbw0kEDuToIPM/EE
+         v1qyR5sITXjsknBsOK0bTRzKGhxrOu6r15W5d1OfbwqjG5ik8/h6TlPFmbkMJTJA5IzS
+         8S8I6ZPiq3TirbVmTLkjlkFcZTVDcYaeMzmhtN5h6wBUrrpue42BIT7Trs3THgSJ2bHP
+         /GwezHzGrhj6cWL4DbQoB0hX0l3QgVQvr1MH3vhiFS0vLuZh3IlFyVR/AXfZy23+rG4p
+         gnLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1ln94qFmwnn3yIigwVkdC7SCRgeF3a7mpyfzMOsu0EV4IbAgaCsx49ZYD4/OYzgxKDUr5SKGnaVCivTOA4KPH7xkhQISefDVMmX62
+X-Gm-Message-State: AOJu0YyHXvZTWxzano0HJiei87Jni/SuQy+VoQ7OH6uPsxOILCEN4glC
+	Nm5Hxw6wmfOCGyvjpe65168Og2AWVdJNu88ygjQLH8L1bqx6BI1ycBJHeIyf7u4=
+X-Google-Smtp-Source: AGHT+IEh81DwYMTS6KZ5c2AMDO6VOtSFS17jbe6XTkWTEeeu3DUnF1wKJRQ4cB/Ro+dBAraNLLs4YQ==
+X-Received: by 2002:a17:907:a80e:b0:a7a:8284:c8d6 with SMTP id a640c23a62f3a-a7ac46914cfmr382950266b.24.1721977981732;
+        Fri, 26 Jul 2024 00:13:01 -0700 (PDT)
+Received: from localhost (109-81-83-231.rct.o2.cz. [109.81.83.231])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab2365fsm142215666b.21.2024.07.26.00.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 00:13:01 -0700 (PDT)
 Date: Fri, 26 Jul 2024 09:13:00 +0200
-Message-ID: <20240726070548.312552217@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+From: Michal Hocko <mhocko@suse.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg_write_event_control(): fix a user-triggerable oops
+Message-ID: <ZqNMfL6JmgHCJwBv@tiehlicka>
+References: <20240726054357.GD99483@ZenIV>
+ <ZqNLEc54NVP40Kpn@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.281-rc2.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.4.281-rc2
-X-KernelTest-Deadline: 2024-07-28T07:05+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqNLEc54NVP40Kpn@tiehlicka>
 
-This is the start of the stable review cycle for the 5.4.281 release.
-There are 44 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Fri 26-07-24 09:06:59, Michal Hocko wrote:
+> On Fri 26-07-24 06:43:57, Al Viro wrote:
+> > We are *not* guaranteed that anything past the terminating NUL
+> > is mapped (let alone initialized with anything sane).
+> >     
+> 
+> Fixes: 0dea116876ee ("cgroup: implement eventfd-based generic API for notifications")
+> 
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-Responses should be made by Sun, 28 Jul 2024 07:05:34 +0000.
-Anything received after that time might be too late.
+Btw. this should be
+Cc: stable
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.281-rc2.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-and the diffstat can be found below.
+> 
+> > ---
+> > diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> > index 2aeea4d8bf8e..417c96f2da28 100644
+> > --- a/mm/memcontrol-v1.c
+> > +++ b/mm/memcontrol-v1.c
+> > @@ -1842,9 +1842,12 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+> >  	buf = endp + 1;
+> >  
+> >  	cfd = simple_strtoul(buf, &endp, 10);
+> > -	if ((*endp != ' ') && (*endp != '\0'))
+> > +	if (*endp == '\0')
+> > +		buf = endp;
+> > +	else if (*endp == ' ')
+> > +		buf = endp + 1;
+> > +	else
+> >  		return -EINVAL;
+> > -	buf = endp + 1;
+> >  
+> >  	event = kzalloc(sizeof(*event), GFP_KERNEL);
+> >  	if (!event)
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.4.281-rc2
-
-Si-Wei Liu <si-wei.liu@oracle.com>
-    tap: add missing verification for short frame
-
-Dongli Zhang <dongli.zhang@oracle.com>
-    tun: add missing verification for short frame
-
-Jann Horn <jannh@google.com>
-    filelock: Fix fcntl/close race recovery compat path
-
-Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-    ALSA: hda/realtek: Enable headset mic on Positivo SU C1400
-
-lei lu <llfamsec@gmail.com>
-    jfs: don't walk off the end of ealist
-
-lei lu <llfamsec@gmail.com>
-    ocfs2: add bounds checking to ocfs2_check_dir_entry()
-
-Paolo Abeni <pabeni@redhat.com>
-    net: relax socket state check at accept time.
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    drm/amdgpu: Fix signedness bug in sdma_v4_0_process_trap_irq()
-
-Kuan-Wei Chiu <visitorckw@gmail.com>
-    ACPI: processor_idle: Fix invalid comparison with insertion sort for latency
-
-Masahiro Yamada <masahiroy@kernel.org>
-    ARM: 9324/1: fix get_user() broken with veneer
-
-Edward Adam Davis <eadavis@qq.com>
-    hfsplus: fix uninit-value in copy_name
-
-John Hubbard <jhubbard@nvidia.com>
-    selftests/vDSO: fix clang build errors and warnings
-
-Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-    spi: imx: Don't expect DMA for i.MX{25,35,50,51,53} cspi devices
-
-Christian Brauner <brauner@kernel.org>
-    fs: better handle deep ancestor chains in is_subdir()
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    Bluetooth: hci_core: cancel all works upon hci_unregister_dev()
-
-Xingui Yang <yangxingui@huawei.com>
-    scsi: libsas: Fix exp-attached device scan after probe failure scanned in again after probe failed
-
-Ganesh Goudar <ganeshgr@linux.ibm.com>
-    powerpc/eeh: avoid possible crash when edev->pdev changes
-
-Anjali K <anjalik@linux.ibm.com>
-    powerpc/pseries: Whitelist dtl slub object for copying to userspace
-
-Yunshui Jiang <jiangyunshui@kylinos.cn>
-    net: mac802154: Fix racy device stats updates by DEV_STATS_INC() and DEV_STATS_ADD()
-
-Daniele Palmas <dnlplm@gmail.com>
-    net: usb: qmi_wwan: add Telit FN912 compositions
-
-Shengjiu Wang <shengjiu.wang@nxp.com>
-    ALSA: dmaengine_pcm: terminate dmaengine before synchronize
-
-Heiko Carstens <hca@linux.ibm.com>
-    s390/sclp: Fix sclp_init() cleanup on failure
-
-Chen Ni <nichen@iscas.ac.cn>
-    can: kvaser_usb: fix return value for hif_usb_send_regout
-
-Primoz Fiser <primoz.fiser@norik.com>
-    ASoC: ti: omap-hdmi: Fix too long driver name
-
-Jai Luthra <j-luthra@ti.com>
-    ASoC: ti: davinci-mcasp: Set min period size using FIFO config
-
-Thomas GENTY <tomlohave@gmail.com>
-    bytcr_rt5640 : inverse jack detect for Archos 101 cesium
-
-Jonathan Denose <jdenose@google.com>
-    Input: elantech - fix touchpad state on resume for Lenovo N24
-
-Arnd Bergmann <arnd@arndb.de>
-    mips: fix compat_sys_lseek syscall
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek: Add more codec ID to no shutup pins list
-
-Michael Ellerman <mpe@ellerman.id.au>
-    KVM: PPC: Book3S HV: Prevent UAF in kvm_spapr_tce_attach_iommu_group()
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    wifi: cfg80211: wext: add extra SIOCSIWSCAN data check
-
-Alexander Usyskin <alexander.usyskin@intel.com>
-    mei: demote client disconnect warning on suspend to debug
-
-Yuntao Wang <yuntao.wang@linux.dev>
-    fs/file: fix the check in find_next_fd()
-
-Masahiro Yamada <masahiroy@kernel.org>
-    kconfig: remove wrong expr_trans_bool()
-
-Masahiro Yamada <masahiroy@kernel.org>
-    kconfig: gconf: give a proper initial state to the Save button
-
-Eric Dumazet <edumazet@google.com>
-    ila: block BH in ila_output()
-
-Hans de Goede <hdegoede@redhat.com>
-    Input: silead - Always support 10 fingers
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    wifi: mac80211: fix UBSAN noise in ieee80211_prep_hw_scan()
-
-Nicolas Escande <nico.escande@gmail.com>
-    wifi: mac80211: mesh: init nonpeer_pm to active by default in mesh sdata
-
-Armin Wolf <W_Armin@gmx.de>
-    ACPI: EC: Avoid returning AE_OK on errors in address space handler
-
-Armin Wolf <W_Armin@gmx.de>
-    ACPI: EC: Abort address space access upon error
-
-Saurav Kashyap <skashyap@marvell.com>
-    scsi: qedf: Set qed_slowpath_params to zero before use
-
-Jann Horn <jannh@google.com>
-    filelock: Remove locks reliably when fcntl/close race is detected
-
-Kees Cook <keescook@chromium.org>
-    gcc-plugins: Rename last_stmt() for GCC 14+
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/arm/include/asm/uaccess.h                     | 14 +------
- arch/mips/kernel/syscalls/syscall_o32.tbl          |  2 +-
- arch/powerpc/kernel/eeh_pe.c                       |  7 +++-
- arch/powerpc/kvm/book3s_64_vio.c                   | 18 ++++++---
- arch/powerpc/platforms/pseries/setup.c             |  4 +-
- drivers/acpi/ec.c                                  |  9 ++++-
- drivers/acpi/processor_idle.c                      | 40 ++++++++-----------
- drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c             |  2 +-
- drivers/input/mouse/elantech.c                     | 31 +++++++++++++++
- drivers/input/touchscreen/silead.c                 | 19 +++------
- drivers/misc/mei/main.c                            |  2 +-
- drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c   |  2 +-
- drivers/net/tap.c                                  |  5 +++
- drivers/net/tun.c                                  |  3 ++
- drivers/net/usb/qmi_wwan.c                         |  2 +
- drivers/s390/char/sclp.c                           |  1 +
- drivers/scsi/libsas/sas_internal.h                 | 14 +++++++
- drivers/scsi/qedf/qedf_main.c                      |  1 +
- drivers/spi/spi-imx.c                              |  2 +-
- fs/dcache.c                                        | 31 +++++++--------
- fs/file.c                                          |  4 +-
- fs/hfsplus/xattr.c                                 |  2 +-
- fs/jfs/xattr.c                                     | 23 +++++++++--
- fs/locks.c                                         | 18 ++++-----
- fs/ocfs2/dir.c                                     | 46 ++++++++++++++--------
- net/bluetooth/hci_core.c                           |  4 ++
- net/ipv4/af_inet.c                                 |  4 +-
- net/ipv6/ila/ila_lwt.c                             |  7 +++-
- net/mac80211/mesh.c                                |  1 +
- net/mac80211/scan.c                                | 14 +++++--
- net/mac802154/tx.c                                 |  8 ++--
- net/wireless/scan.c                                |  8 +++-
- scripts/gcc-plugins/gcc-common.h                   |  4 ++
- scripts/kconfig/expr.c                             | 29 --------------
- scripts/kconfig/expr.h                             |  1 -
- scripts/kconfig/gconf.c                            |  3 +-
- scripts/kconfig/menu.c                             |  2 -
- sound/core/pcm_dmaengine.c                         | 12 ++++++
- sound/pci/hda/patch_realtek.c                      |  5 +++
- sound/soc/intel/boards/bytcr_rt5640.c              | 11 ++++++
- sound/soc/ti/davinci-mcasp.c                       |  9 ++++-
- sound/soc/ti/omap-hdmi.c                           |  6 +--
- tools/testing/selftests/vDSO/parse_vdso.c          | 16 +++++---
- .../selftests/vDSO/vdso_standalone_test_x86.c      | 18 ++++++++-
- 45 files changed, 290 insertions(+), 178 deletions(-)
-
-
+-- 
+Michal Hocko
+SUSE Labs
 
