@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-263877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8442193DBC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 706CE93DBCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030771F21395
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A061F21726
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E97181B95;
-	Fri, 26 Jul 2024 23:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C166155CAE;
+	Fri, 26 Jul 2024 23:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vK0VXi5v"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oP14WA9W"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F190B181325
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0813181B8C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722038040; cv=none; b=hjIWTQ5u9GDBKRvO0PDYrSxRF2Pc0uuFNnm41X0Z05rW65sVkTattP4J5J+2YeSQf9eXEdYi/EGCFDZM87SlUC01EPECB3dvUteWaJoEmCzV2Uv/uX/KBCQT0gqdg0YB7R6FGZ9acFtmXM8rMqb3LIOsfuIGS+RDGz4MFNTAs3A=
+	t=1722038043; cv=none; b=FmsOkPY5fPGb6FTvkoQb2xvvcL9KnODWniZGTH1+jgGGPqIMoEDCL9a2MkQaRhOWpqKs8kUYrx3E+j2KGcfoZr1tZkeaLID0Ob2BXhnS/1sIhEyie+maPVWj+H6ZyxO77EUzOyt2IT+82HkWoBwjEbjFVi2AaHPLMYbc7VcdmX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722038040; c=relaxed/simple;
-	bh=wGZHvIOm+uvxUha7v63Q2rhvuGfIObXUhdqt56QjUZg=;
+	s=arc-20240116; t=1722038043; c=relaxed/simple;
+	bh=I21AIIPQRJE/LHqjT9YPoKMi3QRQyqy6GfrC1Ir9UhI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G8bL8jDn9KFpH7z6wZM++SA3S3ysXc1q/DnBLh+tow0lydvqYMFa6+K0MwZq6v5kGojUEQ8nrX3BYr2VSshiy2RWaTipyPaqQiTmDVGLPB5zMEd9uVlSGWEJIScACeAWy6hZocqBqGQ5kYce0BRt8HmYMQ6kKrcuEI1ZCQ1+U8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vK0VXi5v; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=AvCc5g391sBsLZQ3ZF8kpmsspHnijdKQ+sjpS3JyAsm2cTycK7DJJHu5InAEMk2DrsROTSO9oeQmb/LxNSC7S2OSbgNpnuyTmD1MmKW4LPGTyAvTetpzR9qiN+FW930pdgC7djkRbFpiVOzYUniUaWfdbdGccZhm+oRbFSg9Giw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oP14WA9W; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cb5d93c529so1607238a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:53:58 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc5e61f0bbso13362525ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 16:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722038038; x=1722642838; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722038040; x=1722642840; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qh6T21uN8n1VHf7Uf0xlt62GR+52F2/YXe/M8yozbBs=;
-        b=vK0VXi5vVMYQJjvZhe71mwVeVUHVb8jJnn3FMFVcVxiO9Ci4yN0qAPSp7XdGcY5RAM
-         xEMEm80RCefdybk2ZdegISuMx8WcAogIi8dkt2/S4D4Gy9jOKOYAmJIOvSoVfcoEF3kO
-         0x3JuVgNWEwMG6erjQxDn1h4yBFN3IgbcivQZdV2O6Xg0P90+otcVMpFZbv5PuIbHt1f
-         pKBdI2Jz14V24L8rlRbItxge8E6eo1FT9kEJIy6kPpH3i+cpJO7nzCflzAJJ0rPxJPxn
-         fbxC2gDrzdJ1Obl1z77jesVUD94GByOdDrwQGLnyfcUR6ZYuMeknpyrwbW+B329wH2HZ
-         G0Ww==
+        bh=kjY6k542G0oo6Yjo2zUiSEPku2YJftlYNe05DeRMCZs=;
+        b=oP14WA9WQjKMwJ3SmM9yDyF5evZPqDAdielp/u4IOvMY/lhacM4Mzg8V8jZFQUea21
+         8y9XJk0PcM7MxuxhQeyHX+mpdaXeC/5cJRS7RF0u2is7ZLR1GoMvfNgsnpyrskhdOgn7
+         RJ+SsT/32rrzzNs4uu5gyBx4beiPzkC1FbzRJwrv/leFGPytTC6Br0MpcImPzGBR5RyX
+         aopJnhf7RZZP/X4gq1hCKf92VVjA0V+LEoRodQmzVmwkTeTu8YQ9mYNtLIb8+6s4Us6T
+         Q7x5KVkHyR0ArslJxqqitqgnN01kZSWur5vLJtDQFKZ66QpRgMxA1NaK+VdL1RFlxssf
+         A3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722038038; x=1722642838;
+        d=1e100.net; s=20230601; t=1722038040; x=1722642840;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qh6T21uN8n1VHf7Uf0xlt62GR+52F2/YXe/M8yozbBs=;
-        b=bubYBNVWfhdZNqcj30b1xkd1ynMphiGd5o1D2Hwefuz1yOUzR/hW26it2RBwLJhkXu
-         Vnbe5UjCnp9UMk3fjgAiNmg1okFaPZ1ArpDFQuXFUQte0kILncE23z7AAdpmCfEYdV+K
-         xqe0W4YxbDeb4u6b2B9Ri5u9yNMPwpakn+VvN8nKlRfr4OTpNyyN1ZdKlobbf+rfN7s4
-         Y06PbVoXm/0T+Wh+gP7Mtt2xRX5VRWmeQuujJdCUGxp5SXw9Z86gFi90dYPFpk6yId7Q
-         wtFK+1GKbk4oSRbYmU92BlQqk05Z/dqeVlCHtgLPhb8ErlnPYElsN2BuwgMVoPT72EU/
-         qHBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/DMZITUEEPHp82bxXFpL3FoTP74wZTb1YR0ZKTKdQEe/YIzEsipx0zup6AOYs7kHoBPkoNoxu/aqLcpAtmNRi/e+a26PEU9qOr1Ru
-X-Gm-Message-State: AOJu0YyE7wVKf1doeDuqVk3FGC6+5zjBQaVkwF3ZTxXZ++Y2ROU+WGE+
-	mLv7BsjUYCPomI1PGV8pxS05i5eQ0DYjYw3JZ/iGUHj/gHPfokF+K36NvDCP5vS+3IvkUKZ+unA
-	o6Q==
-X-Google-Smtp-Source: AGHT+IHJ/uNdZAPdurru3IzCEMezhYQEvGsVQTc+qIu+wSY9S108IorpvBbDocczOA6aFsvKzrBA+JBrX4Q=
+        bh=kjY6k542G0oo6Yjo2zUiSEPku2YJftlYNe05DeRMCZs=;
+        b=nX8I9oVwhT+o1uAf7/0gFjGAm4/PL+6WQT1GWfdQ0UmDDeAp8NGjdp/LZHL2VbiFMG
+         EQjRsP3irhQLw0j5Hvg+cEGiR0T6gtlGZIAz2ysLCxwMuH6oRHt9QP+4hQ5U46xdtnC3
+         meUuoPAYQFi9OMe+7Sq1k5JTJiKTciDIiLl6t0pLAYJAiUvzoQUlZbQ1F3NvmRd28NsT
+         g+6dpM6mU4sM1G+FZJO8JUOjNAZkkGnJJElEhNCiO4FtUBfBgHJDL0/Cq2CY9tZFWFTn
+         lGdeGj00A1MIqMVqhslzNCGOMTQskWueNXRd4C6Tiggffdclua+xd6iu4MPwKzN34/VL
+         PoDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/qSieoqF08oTfESgIY2wjXInibRut4gSbZnaVAK+iJH4VzgK0SS+hk6zV56NRreNPvdZWk1RwGBTGdo94N/+m1pKQo+HrpJUP2w77
+X-Gm-Message-State: AOJu0Yw/7HZRRiLHBxSd1ekX9er3TFWbY+SAXO6oJiWK9KQzFQOPWUs8
+	vn/WeG1KLxOC6ueNfDNK772Vg2OIdavDhHPd/U7PB/Pi73gqWNePNtlvjVyPVJpqXFBrfMqS3Yb
+	qpg==
+X-Google-Smtp-Source: AGHT+IHzv0Ay1s7/D5RlCraUOAPppGpx+9DOe5Wc2TnAqa2oJae5LaRq2mY8TBHhwH7zU/okRdoTzatzS5o=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:4495:b0:2c9:61e2:ce26 with SMTP id
- 98e67ed59e1d1-2cf7e1c639emr12819a91.2.1722038038053; Fri, 26 Jul 2024
- 16:53:58 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:f60c:b0:1f8:6c64:3575 with SMTP id
+ d9443c01a7336-1ff046dcdffmr290425ad.0.1722038040140; Fri, 26 Jul 2024
+ 16:54:00 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 26 Jul 2024 16:51:48 -0700
+Date: Fri, 26 Jul 2024 16:51:49 -0700
 In-Reply-To: <20240726235234.228822-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240726235234.228822-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240726235234.228822-40-seanjc@google.com>
-Subject: [PATCH v12 39/84] KVM: x86/mmu: Add common helper to handle
- prefetching SPTEs
+Message-ID: <20240726235234.228822-41-seanjc@google.com>
+Subject: [PATCH v12 40/84] KVM: x86/mmu: Add helper to "finish" handling a
+ guest page fault
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -94,120 +94,80 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Deduplicate the prefetching code for indirect and direct MMUs.  The core
-logic is the same, the only difference is that indirect MMUs need to
-prefetch SPTEs one-at-a-time, as contiguous guest virtual addresses aren't
-guaranteed to yield contiguous guest physical addresses.
+Add a helper to finish/complete the handling of a guest page, e.g. to
+mark the pages accessed and put any held references.  In the near
+future, this will allow improving the logic without having to copy+paste
+changes into all page fault paths.  And in the less near future, will
+allow sharing the "finish" API across all architectures.
+
+No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c         | 40 +++++++++++++++++++++-------------
- arch/x86/kvm/mmu/paging_tmpl.h | 13 +----------
- 2 files changed, 26 insertions(+), 27 deletions(-)
+ arch/x86/kvm/mmu/mmu.c         | 12 +++++++++---
+ arch/x86/kvm/mmu/paging_tmpl.h |  2 +-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 0def1444c01c..e76f64f55c4a 100644
+index e76f64f55c4a..1cdd67707461 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -2897,32 +2897,41 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
- 	return ret;
+@@ -4311,6 +4311,12 @@ static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
+ 	return req_max_level;
  }
  
--static int direct_pte_prefetch_many(struct kvm_vcpu *vcpu,
--				    struct kvm_mmu_page *sp,
--				    u64 *start, u64 *end)
-+static bool kvm_mmu_prefetch_sptes(struct kvm_vcpu *vcpu, gfn_t gfn, u64 *sptep,
-+				   int nr_pages, unsigned int access)
- {
- 	struct page *pages[PTE_PREFETCH_NUM];
- 	struct kvm_memory_slot *slot;
--	unsigned int access = sp->role.access;
--	int i, ret;
--	gfn_t gfn;
-+	int i;
-+
-+	if (WARN_ON_ONCE(nr_pages > PTE_PREFETCH_NUM))
-+		return false;
- 
--	gfn = kvm_mmu_page_get_gfn(sp, spte_index(start));
- 	slot = gfn_to_memslot_dirty_bitmap(vcpu, gfn, access & ACC_WRITE_MASK);
- 	if (!slot)
--		return -1;
-+		return false;
- 
--	ret = kvm_prefetch_pages(slot, gfn, pages, end - start);
--	if (ret <= 0)
--		return -1;
-+	nr_pages = kvm_prefetch_pages(slot, gfn, pages, nr_pages);
-+	if (nr_pages <= 0)
-+		return false;
- 
--	for (i = 0; i < ret; i++, gfn++, start++) {
--		mmu_set_spte(vcpu, slot, start, access, gfn,
-+	for (i = 0; i < nr_pages; i++, gfn++, sptep++) {
-+		mmu_set_spte(vcpu, slot, sptep, access, gfn,
- 			     page_to_pfn(pages[i]), NULL);
- 		kvm_release_page_clean(pages[i]);
- 	}
- 
--	return 0;
-+	return true;
++static void kvm_mmu_finish_page_fault(struct kvm_vcpu *vcpu,
++				      struct kvm_page_fault *fault, int r)
++{
++	kvm_release_pfn_clean(fault->pfn);
 +}
 +
-+static bool direct_pte_prefetch_many(struct kvm_vcpu *vcpu,
-+				     struct kvm_mmu_page *sp,
-+				     u64 *start, u64 *end)
-+{
-+	gfn_t gfn = kvm_mmu_page_get_gfn(sp, spte_index(start));
-+	unsigned int access = sp->role.access;
-+
-+	return kvm_mmu_prefetch_sptes(vcpu, gfn, start, end - start, access);
+ static int kvm_mmu_faultin_pfn_private(struct kvm_vcpu *vcpu,
+ 				       struct kvm_page_fault *fault)
+ {
+@@ -4476,7 +4482,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
+ 	 * mmu_lock is acquired.
+ 	 */
+ 	if (mmu_invalidate_retry_gfn_unsafe(vcpu->kvm, fault->mmu_seq, fault->gfn)) {
+-		kvm_release_pfn_clean(fault->pfn);
++		kvm_mmu_finish_page_fault(vcpu, fault, RET_PF_RETRY);
+ 		return RET_PF_RETRY;
+ 	}
+ 
+@@ -4552,8 +4558,8 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 	r = direct_map(vcpu, fault);
+ 
+ out_unlock:
++	kvm_mmu_finish_page_fault(vcpu, fault, r);
+ 	write_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
+ 	return r;
  }
  
- static void __direct_pte_prefetch(struct kvm_vcpu *vcpu,
-@@ -2940,8 +2949,9 @@ static void __direct_pte_prefetch(struct kvm_vcpu *vcpu,
- 		if (is_shadow_present_pte(*spte) || spte == sptep) {
- 			if (!start)
- 				continue;
--			if (direct_pte_prefetch_many(vcpu, sp, start, spte) < 0)
-+			if (!direct_pte_prefetch_many(vcpu, sp, start, spte))
- 				return;
-+
- 			start = NULL;
- 		} else if (!start)
- 			start = spte;
+@@ -4641,8 +4647,8 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
+ 	r = kvm_tdp_mmu_map(vcpu, fault);
+ 
+ out_unlock:
++	kvm_mmu_finish_page_fault(vcpu, fault, r);
+ 	read_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
+ 	return r;
+ }
+ #endif
 diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index b02d0abfca68..e1c2f098d9d5 100644
+index e1c2f098d9d5..b6897916c76b 100644
 --- a/arch/x86/kvm/mmu/paging_tmpl.h
 +++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -533,9 +533,7 @@ static bool
- FNAME(prefetch_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 		     u64 *spte, pt_element_t gpte)
- {
--	struct kvm_memory_slot *slot;
- 	unsigned pte_access;
--	struct page *page;
- 	gfn_t gfn;
+@@ -835,8 +835,8 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 	r = FNAME(fetch)(vcpu, fault, &walker);
  
- 	if (FNAME(prefetch_invalid_gpte)(vcpu, sp, spte, gpte))
-@@ -545,16 +543,7 @@ FNAME(prefetch_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 	pte_access = sp->role.access & FNAME(gpte_access)(gpte);
- 	FNAME(protect_clean_gpte)(vcpu->arch.mmu, &pte_access, gpte);
- 
--	slot = gfn_to_memslot_dirty_bitmap(vcpu, gfn, pte_access & ACC_WRITE_MASK);
--	if (!slot)
--		return false;
--
--	if (kvm_prefetch_pages(slot, gfn, &page, 1) != 1)
--		return false;
--
--	mmu_set_spte(vcpu, slot, spte, pte_access, gfn, page_to_pfn(page), NULL);
--	kvm_release_page_clean(page);
--	return true;
-+	return kvm_mmu_prefetch_sptes(vcpu, gfn, spte, 1, pte_access);
+ out_unlock:
++	kvm_mmu_finish_page_fault(vcpu, fault, r);
+ 	write_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
+ 	return r;
  }
  
- static bool FNAME(gpte_changed)(struct kvm_vcpu *vcpu,
 -- 
 2.46.0.rc1.232.g9752f9e123-goog
 
