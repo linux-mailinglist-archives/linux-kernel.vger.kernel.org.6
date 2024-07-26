@@ -1,184 +1,163 @@
-Return-Path: <linux-kernel+bounces-263089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4687D93D0E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2E093D0E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41BF1F2285B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B481C20F0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11D3178CC3;
-	Fri, 26 Jul 2024 10:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4D5178395;
+	Fri, 26 Jul 2024 10:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="plreNQT5"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF5A17623E;
-	Fri, 26 Jul 2024 10:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nExR1B2w"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB2017623E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721988506; cv=none; b=ZFVeyi4Z7cjCx/U9EinhzJpIzrAQTbzsvtJLFdY7cW/psgowyglKpYT0uL2UaALmPsAJoinhe26KuAjfL8BWt3YeU9O/pAarOKUSlESLuEDZ9B1BYOHLb1fzTXc8tfEfr4yw/rF45E91o1wqVKw7HsHpmVuHK/sUiOzHRN1XBDo=
+	t=1721988713; cv=none; b=rY7IgBZWiVBfMBlz78vTS/wARYEnKfTxPVFyE9vL2LeQtRDDzQHHo0ZxwbG3kMLW646mu4jPTohsxi4xpHtGnjkGtU+viShAqXOnWsNdPSf0xseLuhRdJEY0pqalNV9UOzzWJzPVSJ9OJ8jPx3wfNeQ5blqD4jBynE3k8Hj4wVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721988506; c=relaxed/simple;
-	bh=Ood64rNIOWuYqSpflyYa5lV4UQwXqOLunxYo926e0IU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OrLlHtAj9U5GRyCl31BBIsX/Acs3YFGJK9S0oGtZQf3DINqAeXG+UHEkycmpONCKhaI/ifEnZpWhqAfr5ncIiEmCo1xVXstDBaq6/OlD89B1aEUZXbJ8q6iKvOa8fGRXUXNEL1b09GNqySKlAaUavcDdQojanArDAy3G+NUAoRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=plreNQT5; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pg+iy
-	yeRYmJJkwTJ+9hZ3wWgHFf7YDFOM4S6n15Ntzk=; b=plreNQT53znNl3EYtM7Vd
-	9lnyLIWglDjr7FeCoAmhZSPKPBcZdiH/15ttk9XqyTv7ShU8OvdFVWcTVSOkbdkC
-	HBtTwLlIV0Ej328MddeYD/zT74l7BZZfFWWYx2ctPZnQ2JWxsDyVvdspAe9ykkOg
-	HpuY00VDgKW87m2wvwZIcA=
-Received: from localhost.localdomain (unknown [111.48.69.245])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wDHjxtgdaNmPaOCAA--.28851S2;
-	Fri, 26 Jul 2024 18:07:29 +0800 (CST)
-From: soxiebing <soxiebing@163.com>
-To: tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	songxiebing <songxiebing@kylinos.cn>,
-	bo liu <bo.liu@senarytech.com>
-Subject: [PATCH v2] ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
-Date: Fri, 26 Jul 2024 18:07:26 +0800
-Message-Id: <20240726100726.50824-1-soxiebing@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240726012342.8645-1-soxiebing@163.com>
-References: <20240726012342.8645-1-soxiebing@163.com>
+	s=arc-20240116; t=1721988713; c=relaxed/simple;
+	bh=YkqzF8XAzHo9lwZwdFJ6HBuc/wGEIA0EqWO+Qg7glcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MWbrSeGpfqzdAfcciWtM3qe64KlWFynlRI98JxTJRtlRb6Sl+FlsuvOOoFNpCrM8xn5qxN1gc0q9OxbQc+jz1VFO6AfUUD+cYByR0zjn/CoqVjKb6AlCvq3H9ZhaADBRDscxHOwoPZ6oB+92qDjntbYSE6bS8Nmr5qLop4HkA3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nExR1B2w; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-827113c1fb4so174555241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 03:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721988711; x=1722593511; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eP6nUR3qmQ2fl5mhPqAgNEBfiba7cW0MObDAu+ZAnA8=;
+        b=nExR1B2wXTrBXi1zIaZl9OoOTmzYaJG7GH5Ep86Dd8CdWhkAj3GMH1z7Sx8WdGnKw8
+         jRuI6XQK/A47WZOA7rGqaqoXFnwbD2fc6AhynBzHxvAT4lA6JB7JG9QxIsujJcagL9wM
+         A3xnTzm/OeKJZjGF5DbKKQ5Q4iQvnWH/8y87rFBUQyA3f0lSkhA31S5UR/W7xfgJiR4A
+         iyjiRKs6gnq3qhaa1P1U1DwOMYFXxK2v0/FO0GUfPl2HB1NXiMq6bWybM97Bd6Yq6QqL
+         HkAke0LCEOQmVRdAFtvbEZFsqm1fWL03283o0uxNIPS7LUXfEtQT1JFcr66v8Jn/oDeh
+         +wBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721988711; x=1722593511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eP6nUR3qmQ2fl5mhPqAgNEBfiba7cW0MObDAu+ZAnA8=;
+        b=eA167TC6ZaEVnY761fk2a3Kl5lL2IlshSYY88gnMM9yg2+6fyQH4HGxiarCdlvmP1a
+         ecLttsafMDAwrkdDnI5dbRX5x4e6K6D8sNdrTMbdi9ZqRdXGsJ3zpX5zdo6H7+H1AQL7
+         NK6g3dD8r4M1IfQu5DHxWgNzGRCkntAIIm3xNqI5VkAp7JAK6OqqcqjmoN7xyUFDtpHj
+         iB0VSo5YCZHYLSFanUjk3ZN3YxYTpraX1blkJ1Vz8xp3kuMVT4CMjbIP0ESrZOwVINP/
+         6CIM8euXDDUcxXTp0SOMRV4WPf5k1emkE17gAM5wbT2Gqt1VquEGawZOfWQGeKuXKhfI
+         IscA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYXQCGOe8K7acRqbPyuwvRvblP/aTE8N0gGwTPdgfxpgSY3kVC0sdUJulie2K4F/JWB0KPMBq1ayRQmAgfU1gS0keLG4JK6p5kGzZB
+X-Gm-Message-State: AOJu0YzwECvREsp8g9OpWExnL5AKPGRusfBcZwIExp4PYY1zRO7l81v6
+	lKKRQarrKH4scFLDunyYkP2AL9q4vQVCFHCevOIBGvDmhIvu4CKXWZ0hrEgbmspee47nbJsrMvq
+	ZLYY90ifw5/VEVG16xpxzndintq+zWBtN
+X-Google-Smtp-Source: AGHT+IG2z9yyGyowQXy9edCnhDzzghfhjN0sZzfOaKAQo1+owybdxWT1aS22Rv1MV/Wz6YEiizdByhdbKNqFRX9DCPY=
+X-Received: by 2002:a05:6102:3f11:b0:493:e585:6ce3 with SMTP id
+ ada2fe7eead31-493e5856f8emr3229867137.31.1721988710657; Fri, 26 Jul 2024
+ 03:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHjxtgdaNmPaOCAA--.28851S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAr1xuw1kZF13JFWrXFy7ZFb_yoWrZF1fpF
-	1rCF1fXrZ3tF1vvayrJws7u3WUCFyrZFZrG347t3yfJw1a9ry8Xa4IgrySqFWfJFyDKF12
-	vr4qgFyUtr4UZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0mhrUUUUU=
-X-CM-SenderInfo: 5vr0xvpelqwqqrwthudrp/1tbiJx4ow2XAm9gpvAACsj
+References: <20240726082818.260008-1-21cnbao@gmail.com> <aeb0fcb9-7c84-4bc4-b89a-5f0f86478aaf@arm.com>
+In-Reply-To: <aeb0fcb9-7c84-4bc4-b89a-5f0f86478aaf@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 26 Jul 2024 22:11:38 +1200
+Message-ID: <CAGsJ_4wnc_qYyvHF5xdvsRpR1cXAnBSf93HiyOBhz1RTcOH0zg@mail.gmail.com>
+Subject: Re: [PATCH] mm: huge_memory: don't start_stop_khugepaged for non-PMD THP
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Lance Yang <ioworker0@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: songxiebing <songxiebing@kylinos.cn>
+On Fri, Jul 26, 2024 at 9:43=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 26/07/2024 09:28, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > khugepaged will be automatically started when PMD-sized THP is enabled
+> > (either of the per-size anon control or the top-level control are set
+> > to "always" or "madvise"), and it'll be automatically shutdown when
+> > PMD-sized THP is disabled (when both the per-size anon control and the
+> > top-level control are "never").
+> >
+> > It seems unnecessary to call start_stop_khugepaged() for non-PMD THP,
+> > as it would only waste CPU time.
+> >
+> > Cc: Lance Yang <ioworker0@gmail.com>
+> > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Yang Shi <shy828301@gmail.com>
+> > Cc: Zi Yan <ziy@nvidia.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >  mm/huge_memory.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 41460847988c..bd365e35acf7 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -514,7 +514,7 @@ static ssize_t thpsize_enabled_store(struct kobject=
+ *kobj,
+> >       } else
+> >               ret =3D -EINVAL;
+> >
+> > -     if (ret > 0) {
+> > +     if (ret > 0 && order =3D=3D HPAGE_PMD_ORDER) {
+> >               int err;
+> >
+> >               err =3D start_stop_khugepaged();
+>
+> Personally I see this as a bit of a layering violation; its
+> start_stop_khugepaged() that should decide the policy for when to start a=
+nd stop
+> the daemon. thpsize_enabled_store() should just be calling
+> start_stop_khugepaged() to notify that something potentially pertinent to=
+ the a
+> policy decision has changed.
+>
+> And I don't think this should be a hot path; I'd expect the global thp si=
+ze
+> configuration to be set at boot and remain pretty static. Do you have evi=
+dence
+> to the contrary?
 
-The previous fix (7aeb25908648) only handles the unsol_event reporting
-during interrupts and does not include the polling mode used to set
-jackroll_ms, so now we are replacing it with snd_hda_jack_detect_enable_callback.
+Absolutely no, I was reading and patching the doc
+"Documentation/admin-guide/mm/transhuge.rst"
+and was also copying-paste your "enabled" code to "swapin_enabled" with dro=
+pping
+start_stop_khugepaged() in that case. I believe I don't need it for
+enabling/disabling
+swapin as swapin is a subset of mTHP not a main entry.
 
-V1 -> V2: fix char persent compile error
+just feel a bit inconsistency between the doc and the code at least for thi=
+s
+moment:
+khugepaged will be automatically started when PMD-sized THP is enabled
+(either of the per-size anon control or the top-level control are set
+to "always" or "madvise"), and it'll be automatically shutdown when
+PMD-sized THP is disabled (when both the per-size anon control and the
+top-level control are "never").
 
-Fixes: 7aeb25908648 ("ALSA: hda/conexant: Fix headset auto detect fail in cx8070 and SN6140")
-Co-developed-by: bo liu <bo.liu@senarytech.com>
-Signed-off-by: bo liu <bo.liu@senarytech.com>
-Signed-off-by: songxiebing <songxiebing@kylinos.cn>
----
- sound/pci/hda/patch_conexant.c | 54 ++++++----------------------------
- 1 file changed, 9 insertions(+), 45 deletions(-)
+which triggered me to make this change.
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 17389a3801bd..4472923ba694 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -21,12 +21,6 @@
- #include "hda_jack.h"
- #include "hda_generic.h"
- 
--enum {
--	CX_HEADSET_NOPRESENT = 0,
--	CX_HEADSET_PARTPRESENT,
--	CX_HEADSET_ALLPRESENT,
--};
--
- struct conexant_spec {
- 	struct hda_gen_spec gen;
- 
-@@ -48,7 +42,6 @@ struct conexant_spec {
- 	unsigned int gpio_led;
- 	unsigned int gpio_mute_led_mask;
- 	unsigned int gpio_mic_led_mask;
--	unsigned int headset_present_flag;
- 	bool is_cx8070_sn6140;
- };
- 
-@@ -250,48 +243,19 @@ static void cx_process_headset_plugin(struct hda_codec *codec)
- 	}
- }
- 
--static void cx_update_headset_mic_vref(struct hda_codec *codec, unsigned int res)
-+static void cx_update_headset_mic_vref(struct hda_codec *codec, struct hda_jack_callback *event)
- {
--	unsigned int phone_present, mic_persent, phone_tag, mic_tag;
--	struct conexant_spec *spec = codec->spec;
-+	unsigned int mic_present;
- 
- 	/* In cx8070 and sn6140, the node 16 can only be config to headphone or disabled,
- 	 * the node 19 can only be config to microphone or disabled.
- 	 * Check hp&mic tag to process headset pulgin&plugout.
- 	 */
--	phone_tag = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
--	mic_tag = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_UNSOLICITED_RESPONSE, 0x0);
--	if ((phone_tag & (res >> AC_UNSOL_RES_TAG_SHIFT)) ||
--	    (mic_tag & (res >> AC_UNSOL_RES_TAG_SHIFT))) {
--		phone_present = snd_hda_codec_read(codec, 0x16, 0, AC_VERB_GET_PIN_SENSE, 0x0);
--		if (!(phone_present & AC_PINSENSE_PRESENCE)) {/* headphone plugout */
--			spec->headset_present_flag = CX_HEADSET_NOPRESENT;
--			snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
--			return;
--		}
--		if (spec->headset_present_flag == CX_HEADSET_NOPRESENT) {
--			spec->headset_present_flag = CX_HEADSET_PARTPRESENT;
--		} else if (spec->headset_present_flag == CX_HEADSET_PARTPRESENT) {
--			mic_persent = snd_hda_codec_read(codec, 0x19, 0,
--							 AC_VERB_GET_PIN_SENSE, 0x0);
--			/* headset is present */
--			if ((phone_present & AC_PINSENSE_PRESENCE) &&
--			    (mic_persent & AC_PINSENSE_PRESENCE)) {
--				cx_process_headset_plugin(codec);
--				spec->headset_present_flag = CX_HEADSET_ALLPRESENT;
--			}
--		}
--	}
--}
--
--static void cx_jack_unsol_event(struct hda_codec *codec, unsigned int res)
--{
--	struct conexant_spec *spec = codec->spec;
--
--	if (spec->is_cx8070_sn6140)
--		cx_update_headset_mic_vref(codec, res);
--
--	snd_hda_jack_unsol_event(codec, res);
-+	mic_present = snd_hda_codec_read(codec, 0x19, 0, AC_VERB_GET_PIN_SENSE, 0x0);
-+	if (!(mic_present & AC_PINSENSE_PRESENCE)) /* mic plugout */
-+		snd_hda_codec_write(codec, 0x19, 0, AC_VERB_SET_PIN_WIDGET_CONTROL, 0x20);
-+	else
-+		cx_process_headset_plugin(codec);
- }
- 
- static int cx_auto_suspend(struct hda_codec *codec)
-@@ -305,7 +269,7 @@ static const struct hda_codec_ops cx_auto_patch_ops = {
- 	.build_pcms = snd_hda_gen_build_pcms,
- 	.init = cx_auto_init,
- 	.free = cx_auto_free,
--	.unsol_event = cx_jack_unsol_event,
-+	.unsol_event = snd_hda_jack_unsol_event,
- 	.suspend = cx_auto_suspend,
- 	.check_power_status = snd_hda_gen_check_power_status,
- };
-@@ -1163,7 +1127,7 @@ static int patch_conexant_auto(struct hda_codec *codec)
- 	case 0x14f11f86:
- 	case 0x14f11f87:
- 		spec->is_cx8070_sn6140 = true;
--		spec->headset_present_flag = CX_HEADSET_NOPRESENT;
-+		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
- 		break;
- 	}
- 
--- 
-2.25.1
-
+Thanks
+Barry
 
