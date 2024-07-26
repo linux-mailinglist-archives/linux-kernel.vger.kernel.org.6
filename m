@@ -1,240 +1,106 @@
-Return-Path: <linux-kernel+bounces-263330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DC293D462
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:41:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E8793D45D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2871C24872
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:41:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4241BB232FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A4317C239;
-	Fri, 26 Jul 2024 13:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED31A17C22A;
+	Fri, 26 Jul 2024 13:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="e2c43uYC"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ibv/mVgL"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4D717C20E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A717C21C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001260; cv=none; b=mcLp0zGzGlfj4pBNZEjOnFQEYbvC5L7F+TnECNkYYsV+N7r3wfpTfnr5AgEEFmsU4sK12taPCuzyIrIAlaJm+naUtzyMmDr0hCgWB6+BthrP9xiXn4MMvGhJEqtg1hMFSDt1P8nF2myktZSXRs2FBCNhvM8wqxXL8M30x3qXw2Q=
+	t=1722001237; cv=none; b=GULbr/4VLd+aCXPjZ48r4mTYSlnBgPk0YcgloIcsc1WH1jEMGNfWzGjcThmFeRdhKCZ4ZfBySgTetWDb/RRu8+rIcfUkJ2vBwhPu9Vam3OuVsvZt6+wtMN/DflDiIDr+FvlziAXV+pfM1VK0IPytsQeGq/BFjCCfo57AaSHklAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001260; c=relaxed/simple;
-	bh=zLLuxR3/V2JlN8OpJMEgWoG2yzJmfvO65eS2FhFFww0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ty3EdpRRnAVyjIFZERxkleAlp628JRgNHhKZ6YVJ7Yo0+n8/P9W3SOgzCWjy09ApaD+jTO8qt402P10JVRm9Cm/0mly2rWPW0SfMUF2YpxYE7SYs9dK2OfX+hUCS56bKkiyByUighewBP24mW9kTDpn9dYUcwhYS2RzX3XZwdA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=e2c43uYC; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722001252;
-	bh=zLLuxR3/V2JlN8OpJMEgWoG2yzJmfvO65eS2FhFFww0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=e2c43uYCSx+UQy0ru8kSGsDvUIh1zIYSL0TfYSFHx07W2ZPuev8WkBemM1p9MXpMM
-	 WlVBkfZ9208dnBW9WEyDTKHilQxFDyp2tqGPmsyNhg0PywSdK6O/wtOMUqkBkCk0tV
-	 z9JSpYnth123fFk9b/rRrvrfpupSjJIU3dHn5rtc=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 26 Jul 2024 15:40:16 +0200
-Subject: [PATCH v2 2/2] drm/radeon: convert bios_hardcoded_edid to drm_edid
+	s=arc-20240116; t=1722001237; c=relaxed/simple;
+	bh=i2VwI/ItnEY4Smkcy/51knTi1QGpnddwYRamb6SUsY4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=bkQXUDzJoMX+HU4ScuvtvGJ/LvU1BVWZrLEHTJcMCzh6OEb7DNVepZsrDJt7mFXPMh5Va5CkXdmybUaT0noU7ml+Ljuv2tOlCtjwh9ZdW9YuWcTdofSW1far5iG9lBv6m25fLNz12xaC6tQQcTX3ud8WB+gWh70neXfyWmbjoZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ibv/mVgL; arc=none smtp.client-ip=43.163.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722001230; bh=GFr8RXHACSVOanuldZYi/bMbJE8OjdhO/msr6Qonqpw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Ibv/mVgLizanKcgWs7KBE/z3l8oemZOOY8jk/+TRUKkuxwr0Pd8ex83idjw7XAKcB
+	 1szKRRIUZtdnPJNIm3ahtmegfZpnamGWEF8jQkXAF8VJLpxKO/Farq3PChmylB1nLq
+	 unc/O2zr4AhG5lOrGY0jXnNeuPzvFxE7MFV7vzwI=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id A1C3CCE1; Fri, 26 Jul 2024 21:40:28 +0800
+X-QQ-mid: xmsmtpt1722001228tj0rhpbs0
+Message-ID: <tencent_ED660A3CBD379296C036AA4A1A75D7771D09@qq.com>
+X-QQ-XMAILINFO: NMmJpeSXIGQNVvOQWO+bTdplowi/Qjx/C3Bn+CbEOXjPcz4BN07XZrhylZawhV
+	 X+mYhgtA3tEqgxK+efEW0YQQkgaxBJ8V1+N28R4WC46h9bsE2O6xSqReB9vMyk9KQAl7/+5tb2Ti
+	 HwOwJUC/0WhhIX7a69ndf57zH61Cd17LZ/6Rq/QIDTAVlt/TtYO/Vv8PP88GpeuBovJzajb1OqJ2
+	 afwZwP4F7E+fv9Zcz15e6HDIHfi91wnM3TKJ+53r4d2l1Uoqcjk+C7ZvK1s9QCKWuZ1EYNrdR2NR
+	 weBtyMg080cmuNxhmd1BSrToYxxFzrVScuJv1nm5+ChOsSGlbv2nYU7PuKyJ8Pa9nHTVL3/HJjGZ
+	 Ac0lT0TS6UC2WY0XvzidmXCRLjU1zqMA+tmpxZTmdXn/w/uVU0hGirHcXuluN/hrIPYEGPhdDRei
+	 sB4166HfVHPhORYOZS1iCkNFNoWOUJCwafavIHKkgJVMpABAofI4i1vP5RcUt0mxuH5PglFc0Vjn
+	 IXweJ3SHFOgp0fXAq6SQfuccyRcnZw7N6puueDygUmvlVD7q+lqwVuVFivWGyuVUeYdhY7eyBzv0
+	 Va94JPPShWIY1rDNR6K3F38kUudJtc9w7L7xvSL8t8AUklM8wK9JYcQT2FTHRcWQcrstSLyzRLVN
+	 ROloTjfyUD7IasUmwcaTvKv5iZgtJAMMYolUH5PcCR5TtmqmP8IKnvUpuudX98dNkp7Nbwe8w46w
+	 862dwByRONNRGVNKcZHWYo84kv1Z2tzjh3S9vf8ZxEWHT6fKj5dHGOCBB/8+1VPuBLcUocucoUKB
+	 JIh7lLvTUC9e5gzrms1ZlnC+Q2Q4EhFMzy9f0XeFKN+Xk3SJJuQOjjMxMFtrghKsM4IEJwJ9kdRi
+	 cuiZwcaX10voBVbmmwdKMPGLL328cb/Q==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+dca05492eff41f604890@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dbSplit
+Date: Fri, 26 Jul 2024 21:40:29 +0800
+X-OQ-MSGID: <20240726134028.2249287-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000064c7a0061e2004d6@google.com>
+References: <00000000000064c7a0061e2004d6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240726-amdgpu-edid-bios-v2-2-8a0326654253@weissschuh.net>
-References: <20240726-amdgpu-edid-bios-v2-0-8a0326654253@weissschuh.net>
-In-Reply-To: <20240726-amdgpu-edid-bios-v2-0-8a0326654253@weissschuh.net>
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Xinhui Pan <Xinhui.Pan@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722001252; l=6245;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=zLLuxR3/V2JlN8OpJMEgWoG2yzJmfvO65eS2FhFFww0=;
- b=9ND2sB1KDIhpbUs2FjCzipLLAEQJwkB/HTt8Z/JxRNUUSxvSIwYeKKU96tmaLZFnby3Mhupea
- syJ6iAwiPvXC2fFCmF8mOeG+mGqSa0JgASFcS9JbNS7MXKxrMvLtY9Z
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Instead of manually passing around 'struct edid *' and its size,
-use 'struct drm_edid', which encapsulates a validated combination of
-both.
+check dmt_leafidx < 0 
 
-As the drm_edid_ can handle NULL gracefully, the explicit checks can be
-dropped.
+#syz test: upstream 7846b618e0a4
 
-Also save a few characters by transforming '&array[0]' to the equivalent
-'array' and using 'max_t(int, ...)' instead of manual casts.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/gpu/drm/radeon/radeon_atombios.c   | 17 ++++++-----------
- drivers/gpu/drm/radeon/radeon_combios.c    | 26 +++++---------------------
- drivers/gpu/drm/radeon/radeon_connectors.c |  4 ++--
- drivers/gpu/drm/radeon/radeon_display.c    |  2 +-
- drivers/gpu/drm/radeon/radeon_mode.h       |  4 ++--
- 5 files changed, 16 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/radeon_atombios.c b/drivers/gpu/drm/radeon/radeon_atombios.c
-index 168f3f94003b..81a0a91921b9 100644
---- a/drivers/gpu/drm/radeon/radeon_atombios.c
-+++ b/drivers/gpu/drm/radeon/radeon_atombios.c
-@@ -1716,23 +1716,18 @@ struct radeon_encoder_atom_dig *radeon_atombios_get_lvds_info(struct
- 				case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
- 					fake_edid_record = (ATOM_FAKE_EDID_PATCH_RECORD *)record;
- 					if (fake_edid_record->ucFakeEDIDLength) {
--						struct edid *edid;
-+						const struct drm_edid *edid;
- 						int edid_size;
- 
- 						if (fake_edid_record->ucFakeEDIDLength == 128)
- 							edid_size = fake_edid_record->ucFakeEDIDLength;
- 						else
- 							edid_size = fake_edid_record->ucFakeEDIDLength * 128;
--						edid = kmemdup(&fake_edid_record->ucFakeEDIDString[0],
--							       edid_size, GFP_KERNEL);
--						if (edid) {
--							if (drm_edid_is_valid(edid)) {
--								rdev->mode_info.bios_hardcoded_edid = edid;
--								rdev->mode_info.bios_hardcoded_edid_size = edid_size;
--							} else {
--								kfree(edid);
--							}
--						}
-+						edid = drm_edid_alloc(fake_edid_record->ucFakeEDIDString, edid_size);
-+						if (drm_edid_valid(edid))
-+							rdev->mode_info.bios_hardcoded_edid = edid;
-+						else
-+							drm_edid_free(edid);
- 						record += struct_size(fake_edid_record,
- 								      ucFakeEDIDString,
- 								      edid_size);
-diff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/drm/radeon/radeon_combios.c
-index 41ddc576f8f8..df8d7f56b028 100644
---- a/drivers/gpu/drm/radeon/radeon_combios.c
-+++ b/drivers/gpu/drm/radeon/radeon_combios.c
-@@ -370,7 +370,7 @@ static uint16_t combios_get_table_offset(struct drm_device *dev,
- bool radeon_combios_check_hardcoded_edid(struct radeon_device *rdev)
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cb3cda1390ad..c5b8883599e3 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1956,6 +1956,7 @@ dbAllocDmapLev(struct bmap * bmp,
  {
- 	int edid_info, size;
--	struct edid *edid;
-+	const struct drm_edid *edid;
- 	unsigned char *raw;
- 	edid_info = combios_get_table_offset(rdev_to_drm(rdev), COMBIOS_HARDCODED_EDID_TABLE);
- 	if (!edid_info)
-@@ -378,19 +378,14 @@ bool radeon_combios_check_hardcoded_edid(struct radeon_device *rdev)
+ 	s64 blkno;
+ 	int leafidx, rc;
++	dmtree_t *tp = (dmtree_t *) &dp->tree;
  
- 	raw = rdev->bios + edid_info;
- 	size = EDID_LENGTH * (raw[0x7e] + 1);
--	edid = kmalloc(size, GFP_KERNEL);
--	if (edid == NULL)
--		return false;
--
--	memcpy((unsigned char *)edid, raw, size);
-+	edid = drm_edid_alloc(raw, size);
- 
--	if (!drm_edid_is_valid(edid)) {
--		kfree(edid);
-+	if (!drm_edid_valid(edid)) {
-+		drm_edid_free(edid);
- 		return false;
- 	}
- 
- 	rdev->mode_info.bios_hardcoded_edid = edid;
--	rdev->mode_info.bios_hardcoded_edid_size = size;
- 	return true;
- }
- 
-@@ -398,18 +393,7 @@ bool radeon_combios_check_hardcoded_edid(struct radeon_device *rdev)
- struct edid *
- radeon_bios_get_hardcoded_edid(struct radeon_device *rdev)
- {
--	struct edid *edid;
--
--	if (rdev->mode_info.bios_hardcoded_edid) {
--		edid = kmalloc(rdev->mode_info.bios_hardcoded_edid_size, GFP_KERNEL);
--		if (edid) {
--			memcpy((unsigned char *)edid,
--			       (unsigned char *)rdev->mode_info.bios_hardcoded_edid,
--			       rdev->mode_info.bios_hardcoded_edid_size);
--			return edid;
--		}
--	}
--	return NULL;
-+	return drm_edid_duplicate(drm_edid_raw(rdev->mode_info.bios_hardcoded_edid));
- }
- 
- static struct radeon_i2c_bus_rec combios_setup_i2c_bus(struct radeon_device *rdev,
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 880edabfc9e3..528a8f3677c2 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -1059,7 +1059,7 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
+ 	/* can't be more than a dmaps worth of blocks */
+ 	assert(l2nb <= L2BPERDMAP);
+@@ -1964,10 +1965,10 @@ dbAllocDmapLev(struct bmap * bmp,
+ 	 * free space.  if sufficient free space is found, dbFindLeaf()
+ 	 * returns the index of the leaf at which free space was found.
  	 */
- 	if ((!rdev->is_atom_bios) &&
- 	    (ret == connector_status_disconnected) &&
--	    rdev->mode_info.bios_hardcoded_edid_size) {
-+	    rdev->mode_info.bios_hardcoded_edid) {
- 		ret = connector_status_connected;
- 	}
+-	if (dbFindLeaf((dmtree_t *) &dp->tree, l2nb, &leafidx, false))
++	if (dbFindLeaf(tp, l2nb, &leafidx, false))
+ 		return -ENOSPC;
  
-@@ -1392,7 +1392,7 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
- out:
- 	if ((!rdev->is_atom_bios) &&
- 	    (ret == connector_status_disconnected) &&
--	    rdev->mode_info.bios_hardcoded_edid_size) {
-+	    rdev->mode_info.bios_hardcoded_edid) {
- 		radeon_connector->use_digital = true;
- 		ret = connector_status_connected;
- 	}
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index 10fd58f400bc..8f5f8abcb1b4 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -1658,7 +1658,7 @@ void radeon_modeset_fini(struct radeon_device *rdev)
- 		rdev->mode_info.mode_config_initialized = false;
- 	}
+-	if (leafidx < 0)
++	if (leafidx < 0 || le32_to_cpu(tp->dmt_leafidx) < 0)
+ 		return -EIO;
  
--	kfree(rdev->mode_info.bios_hardcoded_edid);
-+	drm_edid_free(rdev->mode_info.bios_hardcoded_edid);
- 
- 	/* free i2c buses */
- 	radeon_i2c_fini(rdev);
-diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
-index e0a5af180801..421c83fc70dc 100644
---- a/drivers/gpu/drm/radeon/radeon_mode.h
-+++ b/drivers/gpu/drm/radeon/radeon_mode.h
-@@ -39,6 +39,7 @@
- #include <linux/i2c-algo-bit.h>
- 
- struct edid;
-+struct drm_edid;
- struct radeon_bo;
- struct radeon_device;
- 
-@@ -262,8 +263,7 @@ struct radeon_mode_info {
- 	/* Output CSC */
- 	struct drm_property *output_csc_property;
- 	/* hardcoded DFP edid from BIOS */
--	struct edid *bios_hardcoded_edid;
--	int bios_hardcoded_edid_size;
-+	const struct drm_edid *bios_hardcoded_edid;
- 
- 	/* firmware flags */
- 	u16 firmware_flags;
-
--- 
-2.45.2
+ 	/* determine the block number within the file system corresponding
 
 
