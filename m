@@ -1,107 +1,131 @@
-Return-Path: <linux-kernel+bounces-263273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386AE93D390
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:55:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017D993D394
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 14:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E162028176F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D5B1C2353E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 12:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F7B17B503;
-	Fri, 26 Jul 2024 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD4917BB0B;
+	Fri, 26 Jul 2024 12:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FeOkDyjp"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="YZdNMN0d"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21842B9DB
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 12:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD9717B511;
+	Fri, 26 Jul 2024 12:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721998527; cv=none; b=k6s7sQme1PeBRcNoUmMabHkWjGoU8Gfunb1rjuGG8MAh9WO4tthlf+z0GIgu8it/XnjNW6IpVf2b2cbzV+IOHJpmM4e4Gfo1Pg1waFwTM0T7Ae4SpfYiXuQcGk8UdJlWh55PGKjC3zkiTUBynx/VeqOZv4pxn2Fl5JyQOPvf+f8=
+	t=1721998541; cv=none; b=hmfMr6FDfKFUwfdrIfoS/fXMwzmU3hDHwCshuoABsg5K8EP3VoE6h9wcA74GYs1noOe7rZiNPAxSQOqsp51VNYKVkCC+8Ho4AcdF4HVSj1NlGX154mrJ3ZmJkJGHqLR//XLbzO8mRrYYs3qy0coHcnOyT2gN3uSl/n48mc+1de8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721998527; c=relaxed/simple;
-	bh=gWOoP+fv7pEw1NtmadvLFDgb72DgvaG/iBv5rtP5pp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKVJ72kby54WQepaoqspDtlO62Ack0QkaXjSBRBSy3mz1jxidmXABkUsDZx/lDLZ/zcOf4g2KyjTR65cqdisjCgBeeKH2H3FWtGLZcg5lG5M5SBEXwkhFQjGPPFQJ8M6rvaqpU29nPoYF29zpgTXLPlaZPRuAQQQ5w+q+Wj/u7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FeOkDyjp; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so145515366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 05:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721998524; x=1722603324; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s515EiJfB3o6tNen+NDMFyeZUjEv5X30MYwMKJzwHj8=;
-        b=FeOkDyjpPTo7CPeWvLjJJgpnRdsvyqXan7NDayAjU2ox+H6Z6KuTImF431xMiqRPHH
-         lpp3FPmNyvPcV3Il6Ucsrm2pEG6OpuWv+ERTWhJn5GH8KPxSGCB3iQvrvog0aSdv7wFR
-         eF1Wq/zXN3oUye24grwymDYs9JMXs9rRNa73FtahjrMDbvsCuZtAkQuocVhmuIX48xpU
-         w2oEqkVaSEPTV9vL3esXYiXzfMENml5QvzqlZMeVO15dQ+0dZ0cFmnJ9YKG5mrfxkQQs
-         5k8BOq1Q+Uk4xHmmA1bH1sNbpEn+4b5p0pokKO1Z9H3GbAF2xmKrlrwpce9sDogq6yAB
-         5UWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721998524; x=1722603324;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s515EiJfB3o6tNen+NDMFyeZUjEv5X30MYwMKJzwHj8=;
-        b=vHGQNYmVKrd1Z/7ggKVTRudMbV/IAvQFkjU8YQbbwrxHmq9H+GsHfYEcO7zkdpzyZM
-         z0ycD/lSOMcmUTQYqcwisA51SJTXSq/VK3bVcLm7/bLo7WQYkfmxcSa6bCpTuCrBEKnZ
-         OetIuiUJ9UUwgdByDcgABmJAvYfC84/Tsl4H/n1Gyiue7580i0CCbQu/k8/klQIGYZ+h
-         QoB0TFARJV3s4KpEhkjmntJOHiE/pzncOL+S1TL6x9vMWOTrx5LfgdUaSDM60K8t42ix
-         ZeAHPatX6PterFiCJ68bjb2XkMwntwnp46zhqNaD/aliHHvSDDciKKa87EuLfOkDaRuN
-         UG9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAxKLyMP6fh4oHzKQmtblqS3U+16c31duEw1mZuKtvNwACs4aTy/XG/+7UUnhzv4ZCEqXOp4sLYhBOabh7RTkcuaKSd2pghg14hXnt
-X-Gm-Message-State: AOJu0Yw9BgZh0qq4TUKNiUVxkktTitd1DqgLn/lnLIQhsmv6zcaZ6+ov
-	/vPljfklwid9T9+xc0Kph2GKeN4lomBZz9q+Vyi+oWCf23o/V5EwU+/OFv0uRtU=
-X-Google-Smtp-Source: AGHT+IFw9Y73O/h52y1SJEkHvHV/QcTIkhQkRuDEuu+k9RfShmohgsnCDufOG7SeMxlnKM7+dVAiyw==
-X-Received: by 2002:a17:907:72c9:b0:a77:eb34:3b4d with SMTP id a640c23a62f3a-a7acb3d9ee6mr388297966b.13.1721998524065;
-        Fri, 26 Jul 2024 05:55:24 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acada2b1asm173725466b.158.2024.07.26.05.55.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 05:55:23 -0700 (PDT)
-Date: Fri, 26 Jul 2024 14:55:22 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v3 04/19] printk: nbcon: Clarify rules of the
- owner/waiter matching
-Message-ID: <ZqOcuvuZM7_J-6C3@pathway.suse.cz>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-5-john.ogness@linutronix.de>
+	s=arc-20240116; t=1721998541; c=relaxed/simple;
+	bh=yzOx6oM1nG1syyzmhuVhnMa728h4vx7kNlsuELDiy+4=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=ioOUnjYtBbhCYXTftSW1mD4Uvsls6E1fCVBR5o7hEv53uUoTgIc3NQBO6e6x1247GNsVqiCpCNCywSXJANGpP9qwGiH+AqH4qJdSLmnPBHVmY1WkVdsLwepSWh57Z0nPqoakBMrO1bIuwXtfJhYZ40g/UzwXLFajEHvEqfKNPmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=YZdNMN0d; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id A8D4D3C3;
+	Fri, 26 Jul 2024 14:55:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1721998530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=yzOx6oM1nG1syyzmhuVhnMa728h4vx7kNlsuELDiy+4=;
+	b=YZdNMN0dE0uA7FnFXFdQTZc+gmQ70zEsvC94v1Q86rzibdNqDnJL5nrE5j8IB/b+AFTBzz
+	Dt4IzhB9GH0pF8coLguAkhMykHFlDxsb7IQC+qSUYMRZcp5e5A77Zwq5byUEB5RusCBMwr
+	7nlQc4/EIUzYkfbtqzGPcbrGikt6KKZioI14gpIIONVciaCFyrxrt33p0iZf5x4gZyx7YU
+	U9OhZkBEgbYpE+W5LeXEPVV77ZZltUaVXsCYdDgDQq2CdX7+I45vXmnPFxI0vBpvf2FPAa
+	fZ6T9AmMoYOvGazPddd7C7Lge7dhToJFuw15hwDu68RIEENxFamVE+FGrITgFg==
+Content-Type: multipart/signed;
+ boundary=3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 26 Jul 2024 14:55:28 +0200
+Message-Id: <D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
+ <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+From: "Michael Walle" <michael@walle.cc>
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "broonie@kernel.org" <broonie@kernel.org>,
+ "pratyush@kernel.org" <pratyush@kernel.org>, "miquel.raynal@bootlin.com"
+ <miquel.raynal@bootlin.com>, "richard@nod.at" <richard@nod.at>,
+ "vigneshr@ti.com" <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
+ <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
+ "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
+ "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
+ "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
+ <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
+X-Mailer: aerc 0.16.0
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+ <BN7PR12MB2802BEDFB821A1748185794CDC8AA@BN7PR12MB2802.namprd12.prod.outlook.com> <f5a47024-514a-4846-bc16-08cf0f9af912@linaro.org> <BN7PR12MB2802BB3DA682D9C13EF7DE08DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com> <5a6f6764-6779-42b0-b6c6-3f638b85ef78@linaro.org> <BN7PR12MB28029EB1A7D09882878499A2DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com> <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org> <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org> <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org> <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org> <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com> <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org> <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
+ <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com> <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+In-Reply-To: <
+ <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722171939.3349410-5-john.ogness@linutronix.de>
 
-On Mon 2024-07-22 19:25:24, John Ogness wrote:
-> The functions nbcon_owner_matches() and nbcon_waiter_matches()
-> use a minimal set of data to determine if a context matches.
-> The existing kerneldoc and comments were not clear enough and
-> caused the printk folks to re-prove that the functions are
-> indeed reliable in all cases.
-> 
-> Update and expand the explanations so that it is clear that the
-> implementations are sufficient for all cases.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+--3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Thanks a lot for documenting this!
+Hi,
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Based on the inputs/suggestions from Tudor, i am planning to add a new=20
+> layer between the SPI-NOR and MTD layers to support stacked and parallel=
+=20
+> configurations. This new layer will be part of the spi-nor and located in=
+=20
+> mtd/spi-nor/
 
-Best Regards,
-Petr
+Will AMD submit to maintain this layer? What happens if the
+maintainer will leave AMD? TBH, personally, I don't like to
+maintain such a niche feature.
+I'd really like to see some use cases and performance reports for
+this, like actual boards (and no evaluation boards don't count). Why
+wouldn't someone just use an octal flash?
+
+And as already mentioned there is also mtdcat, which seems to
+duplicate some features?
+
+-michael
+
+--3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZqOcwREcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+OcUAX9IjhR2BCZQ3HqidzuFStguMrN9iUIuss1D
+/ACvRq7kf2Zbxhm0mck1AjUfrnZR1eABf0SfkJW5GxxyiY5HbWtKSnCVoTuXKQTM
+LqmzqtPHKs+pr9bhbYutKEnQZiOlOyW93g==
+=jfd2
+-----END PGP SIGNATURE-----
+
+--3ce0a5c807a2ece26c72ec8034eaad1072585a573fd66fa563151480afdc--
 
