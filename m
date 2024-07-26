@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-263771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A1F93DA4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2024193DA4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2292827C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BAF282945
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1591615444D;
-	Fri, 26 Jul 2024 21:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097D9155326;
+	Fri, 26 Jul 2024 21:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1DOQbJa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GavtaFA8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C09153836
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1761552FE;
+	Fri, 26 Jul 2024 21:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722031033; cv=none; b=hcD+xybnlA4djZbdhe1sauVItt6XRdufTWBaAHADbkEvlZmSsWAGZHjBu4Wc90WecobxlAdmniSG6wkRskgAlOMODBZEMLh/8uIupURUPAqNFqjaN3vT4/C4CzlwPazH1e7iU7dpj6QlBgZTf0b1MFLMgBerMU67UQJ+TKHXKTI=
+	t=1722031036; cv=none; b=SvvZw7MpVIbFzwvKJNJ0wXvpLfASCUF5IooceT0v5GM07SyL8PDOJ8FL1j5XPfX6rERebrP57k3C17EqdC161mvmzftgkyLcdXg78QV/HNBLmZO4KLP55aDtUJIAe04vYpHFO3bJpbIXPibqHvPtfpbNNbu/H59P7Fjc4aXslaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722031033; c=relaxed/simple;
-	bh=xQm/Blenebln1H3o3tKc4fTJ6K2fC1fA3KMGh8EFNkM=;
+	s=arc-20240116; t=1722031036; c=relaxed/simple;
+	bh=yDztet0jee00Ipe/s5EJY6qHQwJ1DkD7Qxns7aI/l+o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ECYHGzJM0E9WLHuhO+lCNCj5DHr0/tRqrhqlGBo88NIGKWyHMeTbrczlEzR0GBR1X7msvliXVXN8uUZBR+inI9ytU9qBw0tIVxV2GTvUvYXqvHc8l4YSMwWRnwPZJY55neM9b/8Pi6mfYTN/okO3TRNd0Ok+oNmInnBMB67oixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1DOQbJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD62CC4AF09;
-	Fri, 26 Jul 2024 21:57:11 +0000 (UTC)
+	 MIME-Version; b=R64IdnEbrcVoe8+wOrm7FBg+ibrM1Hc7rmKtCbHUbODnQiuZRFGhf9rJVr4Akhatg0A33/WKhUnA1aEKviOxZpg6rp2kzLlLwtkv8z5mc5rd+omPIFL8DiOb/tw0e0rFybjY1AvvFHQek7exPuIM38NN6FrcLyH/hq7sUsz/zkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GavtaFA8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FD5C4AF0A;
+	Fri, 26 Jul 2024 21:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722031033;
-	bh=xQm/Blenebln1H3o3tKc4fTJ6K2fC1fA3KMGh8EFNkM=;
+	s=k20201202; t=1722031035;
+	bh=yDztet0jee00Ipe/s5EJY6qHQwJ1DkD7Qxns7aI/l+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c1DOQbJaZ756sFC42oFP2ciwft2vEyCQZhxZqfCUGZyexUUZpcrjkN4xHDYHoSv+Z
-	 UZwZKKVr/JYg9pG2e/C/tKKAjUVNa8PVJTV4jadxhInPdIQUCZx2vygpTqPhWDL5St
-	 +NWkU8Jawk2I4egagJDdVNp8nhAJKOq1EQDdsBkw+yxLyQGLBvgK6FWrEzZk4gFHEK
-	 GcfuetUp9bUsvbz3ipFW3+QCd1fGMP/Ps4Nmjjo8foEsqqJiMLo96DaA+jztZPdEti
-	 4oPLtqf4/O9hzsI3MAAVt+2SfjvslMDMy1JrCJUk+V82WlatkXXve+Y5jvyr2cx7QJ
-	 QXx0mub+ZITMg==
+	b=GavtaFA8yIc1xKeXM/ayPWrKoyOXfjnnpLhLizLKSSnJp99gaIWXaoSesmUSvWDrK
+	 DDpFz5O3ow0e/AnZoycPeTzQ3R6o44T9efOT5wURIBIsTg4K3HdXZHss2kdBg8zpV0
+	 QbczJLW7AmY8wHFIBo3P316kXQergQRc9HXiYj+oyTFHfLjVI4RIiz4WA/cJc9yubr
+	 /92aqFaqkVOrNlXgf2HSCmVkzuSCdcg4MLK8u9D8SrSvt8Hta0BtGXUvb/PjrIMRDW
+	 YOWr/Xef2AbSP7ijf4u4BBsbfPzZ9FKXKQcOu6SxUoxR/YNokmQskii+hubSgi3gRA
+	 OtP3dZKEdiOhg==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
+	Saurav Kashyap <skashyap@marvell.com>,
+	Javed Hasan <jhasan@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 03/20] firmware: stratix10-svc: Use kthread_run_on_cpu()
-Date: Fri, 26 Jul 2024 23:56:39 +0200
-Message-ID: <20240726215701.19459-4-frederic@kernel.org>
+Subject: [PATCH 04/20] scsi: bnx2fc: Use kthread_create_on_cpu()
+Date: Fri, 26 Jul 2024 23:56:40 +0200
+Message-ID: <20240726215701.19459-5-frederic@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240726215701.19459-1-frederic@kernel.org>
 References: <20240726215701.19459-1-frederic@kernel.org>
@@ -63,37 +68,35 @@ Content-Transfer-Encoding: 8bit
 
 Use the proper API instead of open coding it.
 
+However it looks like bnx2fc_percpu_io_thread() kthread could be
+replaced by the use of a high prio workqueue instead.
+
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- drivers/firmware/stratix10-svc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 528f37417aea..4cf5bd5647a4 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -967,18 +967,15 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
- 	/* first client will create kernel thread */
- 	if (!chan->ctrl->task) {
- 		chan->ctrl->task =
--			kthread_create_on_node(svc_normal_to_secure_thread,
--					      (void *)chan->ctrl,
--					      cpu_to_node(cpu),
--					      "svc_smc_hvc_thread");
-+			kthread_run_on_cpu(svc_normal_to_secure_thread,
-+					   (void *)chan->ctrl,
-+					   cpu, "svc_smc_hvc_thread");
- 			if (IS_ERR(chan->ctrl->task)) {
- 				dev_err(chan->ctrl->dev,
- 					"failed to create svc_smc_hvc_thread\n");
- 				kfree(p_data);
- 				return -EINVAL;
- 			}
--		kthread_bind(chan->ctrl->task, cpu);
--		wake_up_process(chan->ctrl->task);
- 	}
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index 1078c20c5ef6..789c155b939d 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -2610,14 +2610,11 @@ static int bnx2fc_cpu_online(unsigned int cpu)
  
- 	pr_debug("%s: sent P-va=%p, P-com=%x, P-size=%u\n", __func__,
+ 	p = &per_cpu(bnx2fc_percpu, cpu);
+ 
+-	thread = kthread_create_on_node(bnx2fc_percpu_io_thread,
+-					(void *)p, cpu_to_node(cpu),
+-					"bnx2fc_thread/%d", cpu);
++	thread = kthread_create_on_cpu(bnx2fc_percpu_io_thread,
++				       (void *)p, cpu, "bnx2fc_thread/%d");
+ 	if (IS_ERR(thread))
+ 		return PTR_ERR(thread);
+ 
+-	/* bind thread to the cpu */
+-	kthread_bind(thread, cpu);
+ 	p->iothread = thread;
+ 	wake_up_process(thread);
+ 	return 0;
 -- 
 2.45.2
 
