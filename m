@@ -1,135 +1,301 @@
-Return-Path: <linux-kernel+bounces-263624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B81B93D862
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BADC93D866
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D361F218BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F581F243EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA75C3D994;
-	Fri, 26 Jul 2024 18:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46AC3FB83;
+	Fri, 26 Jul 2024 18:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eGDMozfY"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AboQ4Nxb"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C7A36B11
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E9A25776
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722018728; cv=none; b=AjXpB9wFVx3QLhldoGk82TIEKi6u06GjHOt47sc8ad4TuyUTVr6TTympScS/PXcA1OzRre3V0et9sn8+6OfoGYfs4OVveJk5yuoTFfnNHEhK3TEWvMtIK2DgYMR5601QkIiLvhXH5x+s6FhBy7HX/j3/3D/4UYogMjlvH0XEGI0=
+	t=1722018910; cv=none; b=CacQgZpcglldnMVS3qRHvWu7i+mn4o2W1onKvOvR9FE3K0H5i/W0MGO22Z25xGZpyrjszfSwNj8OnFIa6DeM+JS2OeZU0Hpsf6p/4PYcmDLrr7w7jr/u8NEZIsS1yLAVgdJ7kK3hIOp0IRPV/JbynzHHOsM1Heg6PyNzdp3k4xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722018728; c=relaxed/simple;
-	bh=LcqkSuMuNnl7/EFnEDUzZFYLInqU1aN6PbEOOfIXya4=;
+	s=arc-20240116; t=1722018910; c=relaxed/simple;
+	bh=hRA8HZQcGcG6SxkVlDko/Vh5liedbsC6En7Rt/1y780=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oMlVwYX7Qv3GKgxg+7M6T/wad05A0PYEOvXDo0uuevJU5s767uEMav1p5xpDI5F1NjdGQQ0H6uGRPNbo80AGWXY0Crl66QXyUtYcL0WSBsGVkQmFZiGvVyogjfxPnZ88ENvJtDVvUOxxEgVN3EH/6O4C6U44fbbfI/uXsx7Oc9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eGDMozfY; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65f9e25fffaso24348377b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:32:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=Cx2aseXMCSwuP3dzK36BbbQws3QcmdpJe6gNoc7VHTg9uAOgnCUwBu7SHnUO8oRCGaNxmCC4By4i4aYf7bGatiDd7t0KeATgzPtLvuuo+S/7OZj9WLB8cWvyeJnje1naJbsNaPOjgafGkVi99CFg5R7L8CiemdS93HJnBR0Bdi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AboQ4Nxb; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52fc14d6689so1728515e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722018726; x=1722623526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hvU4GKCCA3VC4F0Qd0CpFcI4FShvIv+cMmwAVX3v5RQ=;
-        b=eGDMozfYB8gEAmLJs5f2osYiaiPav1IliQSQKwQtBH36sjlH0l7oWv4T6us+2GwulT
-         MuVElySTcarVNjtLNP7w6lW0hRUtG7/98qZUillPRIbRgHoRYXZrASlWgP/681Ynj2yy
-         3aY5eZoVFD7n25rvDMMAPQxjCUnOKnCYFRWWT0aLzXX8VUqEoBCgg5KuZ0QrIUYDSff2
-         FkN7ptOEvcdKLXri2Nk2SS2i1TNqWLEPoFq1PbdHMr9oCFhGfH9MqiSltWNpr6xo0IGh
-         gY8Gq/W981aYD5NW9YrV8n9HB5sS/YbdI4dKpB6FFrlCTSjaP/vv4a1s7jLrfl7gqWm5
-         Q28w==
+        d=broadcom.com; s=google; t=1722018907; x=1722623707; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XKiBPMLdAq3VqCci1gfJFsY5sdAkK4cbjCTzOGmnldU=;
+        b=AboQ4NxbrDe81AzA0pn+P9IwKShmzNBkeaFlqLuLYg3/QzM+26LFz8zF78xC9rAIPc
+         nYylyuEcfTJMm06+L1mxNDxE4bxX9/XpMFzEmLiFWpH/7ewZuWyET6YlmcOH+mYUXnMD
+         i9DKRa0ZEWaAMPA9Eu3g+/Ay/KdMYuba5wWQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722018726; x=1722623526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hvU4GKCCA3VC4F0Qd0CpFcI4FShvIv+cMmwAVX3v5RQ=;
-        b=Iyy7PkRGc3HC7u9J1X7PSfrpG9AdCJIx5iAHxAhAdDV4sdTdxcGztUrJXfyKeIE1j8
-         4Zyg5cJP0IASkcH+StA6+bPjZfQkOh3UzfJdKV1YL1tm4WRNUYekaGcU4/CHuRzDNM61
-         lOQ2LDcHSgBfYHIiqUvgISy0K2HGlrNiXMg+E4AsMR1JvG9o+t+knXo0RSBl/zO7wsgF
-         e7Yz3o+AqjHXl//JUp0yJ7gSetXzTkOy21m0H5Omdx4Ei8qSzQ5yZ84WJTtZBbAtO5jq
-         cWUoQhWZBBr35KZWPbwWupeio3Y0pwrumJiqzYsh3x1/A4O1G+xBwYtNL9+4TzL5r5Cs
-         Zd2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXgLnGi/lscbzUNde8d20oXuKf7Ygmu9ty5a5hLTMsD1emd34E9C7uuoqUn990SfFqHI6FtRUqq5XCakz2HwGEFS9FnplXBLb3/kSWp
-X-Gm-Message-State: AOJu0YzShrk1d31pajx1oIcP3mwSPPXodg74GXFxW3JDIYLdAYR0Y65R
-	OZ17/7LmU8XNGCmUvb7npr3Usy22kD34ns6B04sVPcTesyQYNPdbLL4rMJSAWGID55J7ruju9hy
-	YZzz+LguoMkBCD2UOp5wlYM5LMM1MgROx9rbj3A==
-X-Google-Smtp-Source: AGHT+IE4wP0yM1DlRgLAIm5ti9a4WsMp4eaJ8CYbOpEzOgzqand4B0+L/HFmtEMuilCr8eOCv90No9Xi12wmTjZOZHs=
-X-Received: by 2002:a0d:f3c2:0:b0:627:d23a:4505 with SMTP id
- 00721157ae682-67a053e06f5mr8508687b3.3.1722018725753; Fri, 26 Jul 2024
- 11:32:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722018907; x=1722623707;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XKiBPMLdAq3VqCci1gfJFsY5sdAkK4cbjCTzOGmnldU=;
+        b=R3xqbbp56v6dg45LuWAFp/Zur4bfDkV1SNTZCrHwPI1Gv+veYqTrKrF8YLFRCsqaI7
+         r81Z54YIPnrm1LUUVQzeVsAS5D2zor+14Rth0ibFqm9mk+RjNNKbxLXKoCxuclTvsTrM
+         +IS44zwAbst47CxV+za95fYjui0SUZxoeNk3WXiuzW63Of1LRTnYiPWtJK3q6tsMXhCO
+         jUR1qeqw6mI/m91j2CBTWc7yiOSbz/1lXa5M7RLERaS+ICfK82+Ap258BsteLcLtnOKc
+         bCyLULa78veURupfErosiElEke8yXu1VHKRF4Z0y79qQbc7qNGHSIaT69TBgcj2oKgsu
+         leKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWc1z5ukOTZrigze/cm3qTLgVZCKwiGKXjpyD+cmKaWr3p7mXujNLr9f+S3PAVpGFrxelNkCyHNbxuGDicapMkE6FPf+GddqL/mbY/Y
+X-Gm-Message-State: AOJu0YzKhWoiRiMxUKJw38BohtPR6UFBbHnJbttNCPU4E782qaUnddPY
+	IuZhdfAgybI6eoVazW59FBZvmd2IkB0D7zCHKSTn5STsr53t1PlxsA5WujVWgYUgPUrTQKw8zPg
+	uojLB3/br4HwcLP2HyXl4o2WfoRJZJ6MD2yp8
+X-Google-Smtp-Source: AGHT+IEbgJ14TM04t5gLjRe+UpYBB4YU4vQ+M/sK7yhVHORwhDBaUiHtDXx+lP6/YaX5tbkBl/fUpC0VCWpMQlYsIo0=
+X-Received: by 2002:ac2:548c:0:b0:52e:a721:497b with SMTP id
+ 2adb3069b0e04-5309b2bcc59mr423378e87.38.1722018906590; Fri, 26 Jul 2024
+ 11:35:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240726110142eucas1p29f261e5e81c177456fd5bb5546871eb4@eucas1p2.samsung.com>
- <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-7-m.majewski2@samsung.com>
-In-Reply-To: <20240726110114.1509733-7-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jul 2024 13:31:55 -0500
-Message-ID: <CAPLW+4k3d+x1V4cPcfbHX=mJ2jM10mDORcuY_Kw4-qr4LND=SQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Anand Moon <linux.amoon@gmail.com>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-4-james.quinlan@broadcom.com> <20240725043111.GD2317@thinkpad>
+ <CA+-6iNz9R5uMogd6h+BkgRvKrsmyH2VXsGO_5e=6yqC=JzjigA@mail.gmail.com> <20240726050423.GB2628@thinkpad>
+In-Reply-To: <20240726050423.GB2628@thinkpad>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Fri, 26 Jul 2024 14:34:54 -0400
+Message-ID: <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
+Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000004293d0061e2ac579"
+
+--0000000000004293d0061e2ac579
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
+On Fri, Jul 26, 2024 at 1:04=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> This is not true as of commit 5314b1543787 ("thermal/drivers/exynos: Use
-> set_trips ops").
+> On Thu, Jul 25, 2024 at 03:45:59PM -0400, Jim Quinlan wrote:
+> > On Thu, Jul 25, 2024 at 12:31=E2=80=AFAM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
+> > > > o Move the clk_prepare_enable() below the resource allocations.
+> > > > o Add a jump target (clk_out) so that a bit of exception handling c=
+an be
+> > > >   better reused at the end of this function implementation.
+> > > >
+> > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> > > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > > > ---
+> > > >  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++--------=
+----
+> > > >  1 file changed, 16 insertions(+), 13 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/co=
+ntroller/pcie-brcmstb.c
+> > > > index c08683febdd4..c257434edc08 100644
+> > > > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > > @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_=
+device *pdev)
+> > > >
+> > > >       pcie->ssc =3D of_property_read_bool(np, "brcm,enable-ssc");
+> > > >
+> > > > -     ret =3D clk_prepare_enable(pcie->clk);
+> > > > -     if (ret) {
+> > > > -             dev_err(&pdev->dev, "could not enable clock\n");
+> > > > -             return ret;
+> > > > -     }
+> > > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev=
+->dev, "rescal");
+> > > > -     if (IS_ERR(pcie->rescal)) {
+> > > > -             clk_disable_unprepare(pcie->clk);
+> > > > +     if (IS_ERR(pcie->rescal))
+> > > >               return PTR_ERR(pcie->rescal);
+> > > > -     }
+> > > > +
+> > > >       pcie->perst_reset =3D devm_reset_control_get_optional_exclusi=
+ve(&pdev->dev, "perst");
+> > > > -     if (IS_ERR(pcie->perst_reset)) {
+> > > > -             clk_disable_unprepare(pcie->clk);
+> > > > +     if (IS_ERR(pcie->perst_reset))
+> > > >               return PTR_ERR(pcie->perst_reset);
+> > > > +
+> > > > +     ret =3D clk_prepare_enable(pcie->clk);
+> > > > +     if (ret) {
+> > > > +             dev_err(&pdev->dev, "could not enable clock\n");
+> > > > +             return ret;
+> > > >       }
+> > > >
+> > > >       ret =3D reset_control_reset(pcie->rescal);
+> > > > -     if (ret)
+> > > > +     if (ret) {
+> > > >               dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> > > > +             goto clk_out;
+> > >
+> > > Please use a descriptive name for the err labels. Here this err path =
+disables
+> > > and unprepares the clk, so use 'clk_disable_unprepare'.
+> > ack
+> > >
+> > > > +     }
+> > > >
+> > > >       ret =3D brcm_phy_start(pcie);
+> > > >       if (ret) {
+> > > >               reset_control_rearm(pcie->rescal);
+> > > > -             clk_disable_unprepare(pcie->clk);
+> > > > -             return ret;
+> > > > +             goto clk_out;
+> > > >       }
+> > > >
+> > > >       ret =3D brcm_pcie_setup(pcie);
+> > > > @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_d=
+evice *pdev)
+> > > >
+> > > >       return 0;
+> > > >
+> > > > +clk_out:
+> > > > +     clk_disable_unprepare(pcie->clk);
+> > > > +     return ret;
+> > > > +
+> > >
+> > > This is leaking the resources. Move this new label below 'fail'.
+> > What resources is it leaking?  At "clk_out" the return value will be ne=
+gative
+> > and only managed resources have been allocated at that juncture.
+> >
 >
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
+> Right, but what about the err path below this one? If that path is taken,=
+ then
+> clks won't be released, right?
+No, that is the same situation.  The clock is originally allocated
+with "devm_clk_get_optional()", i.e. it is a managed resource.
+ If the probe fails, and it does in both of these error paths,
+Linux deallocates the newly formed device structure and all of its resource=
+s.
+Perhaps I am missing something?
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+>
+> It is not a good design to return from each err labels. There should be o=
+nly one
+> return for all err labels at the end and those labels need to be in rever=
+se
+> order w.r.t the actual code.
 
-> v1 -> v2: remove an unnecessary sentence.
+Agreed.
+
+Regards,
+Jim Quinlan
+Broadcom STB/CM
 >
->  .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+> - Mani
 >
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-the=
-rmal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-therma=
-l.yaml
-> index b8c0bb7f4263..b85b4c420cd3 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> @@ -40,11 +40,7 @@ properties:
->    interrupts:
->      description: |
->        The Exynos TMU supports generating interrupts when reaching given
-> -      temperature thresholds. Number of supported thermal trip points de=
-pends
-> -      on the SoC (only first trip points defined in DT will be configure=
-d)::
-> -       - most of SoC: 4
-> -       - samsung,exynos5433-tmu: 8
-> -       - samsung,exynos7-tmu: 8
-> +      temperature thresholds.
->      maxItems: 1
->
->    reg:
 > --
-> 2.45.1
->
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+--0000000000004293d0061e2ac579
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCenPxyWO7KXw8o3HXf0rLW38lulHTR
+R7MQuYYGfaK1JTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MjYxODM1MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEADpYiPqZzxeQNtLOkQs4POJdOUPKWmsjT7lEo3iuybcwCSX18
+ub/P3ulwfpcFsjLOT2ZINL3CNhTtQ+eVhaeJ6KCmeLqRifw6RxjQHHBhu89vnTnkbG1ejuuHOUru
++tUYYYOv3mHTUtS2oKosfxVBnPSsp1XviMZxwJbvRgug8rTJWGEieSzyjuWQR/WhFsJNE/7hgncZ
+8hQ8iT7fK+I4XPgaA6gs/3jmevwn7/b1y8si9ObsYT9DxC/RYp6hpie9Q85CK9D1zaUZt6Zh2gnO
+VQWixktMNarJllj+0HPHM7gdGVdwuH2ul9LZn9nhyo+iDL9CykHUkDDQ8hxeqDFQsw==
+--0000000000004293d0061e2ac579--
 
