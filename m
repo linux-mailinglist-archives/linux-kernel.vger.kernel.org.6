@@ -1,61 +1,66 @@
-Return-Path: <linux-kernel+bounces-262842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834EB93CD9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1329893CDC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08D41C21A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28671F22630
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 05:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74CB3A29F;
-	Fri, 26 Jul 2024 05:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EAC3A1DC;
+	Fri, 26 Jul 2024 05:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F+Lqyd5N"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xq4meg/A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0720F1A716;
-	Fri, 26 Jul 2024 05:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE43AA34;
+	Fri, 26 Jul 2024 05:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721972077; cv=none; b=XrOazpybwku7hkfJwBguo4L+XhdyY7RsxVCb/Sbdv0WHBkQ71u4efpt9DyZrNp7waJCZkSTkcovTxLTZhKp8uCZLdGraS78waGukI8q2VNGaX0AV/XvEsWq0nt9emEE9B1osPMAosG3v5DTZ9Fp7jwi6m9ICvFkE/xwxEnDmqzw=
+	t=1721972365; cv=none; b=JEw0q3RDW7OrWxJdDPUFmcxHJ2yMpO2CfwTpVxa1+o2Uh/lack1aaM3nD93gntLIxo/Q7L+SGF7b2gzqMn1zqnEy2OpHIp/I6QxThDsEUxh+izvahFx2hQkqDDWIawOvsd2QJlMEvnrctlpSloap8HHKUlo7lWTU7nvU48MM/mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721972077; c=relaxed/simple;
-	bh=j8S11bQ4rCpOQplRWibtrlGiHW89yVi6R/BAsL7/vAw=;
+	s=arc-20240116; t=1721972365; c=relaxed/simple;
+	bh=JRVYVNBUG+zgdWMbHTC0PsFOiJ7UtAmU7KEE7HY0g7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlidzeyyLRjSOtwZ7yGTGkGw6kp7FVNqiBgyROPt5fh+rftkkH/Z6dywDYy2S0P+9I4HBZM0s3upKmREqG6RrdreVYyalFbFbTSnoJqjTaHzcAhLBy9f2oBM6lt3//jJDWh+hZSoYp8SoTTYS6mtYxyL7v/EzQtUS0ncW8Bx65w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F+Lqyd5N; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1ekO3R2vJa5Ho8q/Kh8JU8rDOdI33MwHGdHSPVjRH/Q=; b=F+Lqyd5NBnxm8qAH18kDB2Uruz
-	NiJRYF10Mep2Cgk+TbbZPYv43LsbdLhpWiKjBa4hWOXMh/n9iJ2c3cCXABGowBV2Z8ZRQEt39Kp+1
-	HSJG6XIiuzhkKjZFZvbo1+YDqqCbkOc9kEk7M0gNEF7vs622DH0kWd0AKaMzRmEQ46omUGA7z4V5L
-	1CrwGhbkOmP5I48AVJ/qlm1fqHYycMzRuaNOQPVldOQjnhcXrbYVaDN43V+Tb+QUENR+EJVKO3vx6
-	HEq9qBEnesWr/F1qps9B1NRIE7w64ixsCOAkD0Cddup6GEWYvkJ95o4nyn438Jr2w/bvOTLZ8Nilc
-	9qD+/JDg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXDb4-0000000294Z-21Cu;
-	Fri, 26 Jul 2024 05:34:30 +0000
-Date: Fri, 26 Jul 2024 06:34:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com
-Subject: Re: [PATCH bpf-next 1/2] bpf: Add kfunc bpf_get_dentry_xattr() to
- read xattr from dentry
-Message-ID: <20240726053430.GB99483@ZenIV>
-References: <20240725234706.655613-1-song@kernel.org>
- <20240725234706.655613-2-song@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkMCXOFgHm0LUTZvFKGqA2zrxbpSMLamiNUhlZBULceGiKpD1dpytaXiQSQvqkyIAYq53S/0CmSklgAItSA1Z66d3+kZp/pkaWq6oUxUo7cFgJqIOE+cR2k1qYM3f/2VXkCVn/Vqpd/gXkTAssa47Nql60ORiFpgt17bKvXeG7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xq4meg/A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8810C32782;
+	Fri, 26 Jul 2024 05:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721972365;
+	bh=JRVYVNBUG+zgdWMbHTC0PsFOiJ7UtAmU7KEE7HY0g7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xq4meg/Acb2ZTdSB1geTsbaLOae9gExpapRqPMDUDl8+Aodg/amZaivlLKCutQrjH
+	 yJx0fKxC5b90Ie/GQ3S5tXrFlnttKxDkvKFlPWXKVsuR3D/C8ET0xp/hNUyAAMrSri
+	 V/ranR4gZ8OyA3+qI0MZ/PelGy/829foydYwNTTc=
+Date: Fri, 26 Jul 2024 07:39:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
+	airlied@redhat.com, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Aakash Sen Sharma <aakashsensharma@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rust: Introduce irq module
+Message-ID: <2024072609-oncoming-scrunch-97cc@gregkh>
+References: <20240725222822.1784931-1-lyude@redhat.com>
+ <20240725222822.1784931-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,34 +69,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725234706.655613-2-song@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240725222822.1784931-2-lyude@redhat.com>
 
-On Thu, Jul 25, 2024 at 04:47:05PM -0700, Song Liu wrote:
+On Thu, Jul 25, 2024 at 06:27:50PM -0400, Lyude Paul wrote:
+> +unsigned long rust_helper_local_irq_save(void) {
 
-> +__bpf_kfunc struct dentry *bpf_file_dentry(const struct file *file)
-> +{
-> +	/* file_dentry() does not hold reference to the dentry. We add a
-> +	 * dget() here so that we can add KF_ACQUIRE flag to
-> +	 * bpf_file_dentry().
-> +	 */
-> +	return dget(file_dentry(file));
-> +}
+Nit, the '{' goes on the next line for a function declaration in C.
+checkpatch.pl should have caught this, right?
+
+> +	unsigned long flags;
 > +
-> +__bpf_kfunc struct dentry *bpf_dget_parent(struct dentry *dentry)
-> +{
-> +	return dget_parent(dentry);
-> +}
+> +	local_irq_save(flags);
 > +
-> +__bpf_kfunc void bpf_dput(struct dentry *dentry)
-> +{
-> +	return dput(dentry);
+> +	return flags;
 > +}
+> +EXPORT_SYMBOL_GPL(rust_helper_local_irq_save);
+> +
+> +void rust_helper_local_irq_restore(unsigned long flags) {
 
-	If you keep a file reference, why bother grabbing dentry one?
-If not, you have a very bad trouble if that opened file is the only
-thing that keeps the filesystem busy.
+Same here.
 
-	It's almost certainly a wrong interface; please, explain what
-exactly are you trying to do here.
+thanks,
+
+greg k-h
 
