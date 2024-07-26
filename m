@@ -1,205 +1,136 @@
-Return-Path: <linux-kernel+bounces-262905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D241A93CE89
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:08:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E62A93CE66
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E050B229BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDD31F21DBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11717798C;
-	Fri, 26 Jul 2024 07:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C25176255;
+	Fri, 26 Jul 2024 07:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cMJnBSOh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ki8qKwq4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cMJnBSOh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ki8qKwq4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BSR16UfT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460B8176FB3;
-	Fri, 26 Jul 2024 07:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F74023D2;
+	Fri, 26 Jul 2024 07:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721977627; cv=none; b=CAcsZvko/B7Inm0CuveKNPKFD6dm2nYtLwjL6Gx7bh2TJnI8fLiQ653Ej0fPPBgqB1rntTMO5JP1WjDbiFL4YB3mCa06uMCSRFyNtsAwvFLlMla+K/vgCLMlO3kC2EQsPK3vO9rQ0kM8Cg3TrWZLj9Ns7T5JNAvgwCeQX/kaV8s=
+	t=1721977296; cv=none; b=OCLHp2zfCRnX2d5eYXDhjs96Hd8hht0oeKp9OWbaWY4A64D+pC87sJzuDDVZezSuiVQ/NaiHiNRP88ah4T2vz5YnEboLjL68RhFAFpUZO8KrvpjKV2S1ZaVfSTSWnUT2c/i5CXYZ2CaZCH+sd8KuZwLZ7qe/iJ546/FTvIbARXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721977627; c=relaxed/simple;
-	bh=zAhgEqjAUHHGlpi6Rh8b5bm1Di8bavHwLB0FzbgZaAY=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=I0XQuOOyytwvxoARalH0M/5BvejVQVzbgGJhgW34gVhAp9Nw4TAtSK/JvxiOE5fkTtoMX451dgwjwKOb7fmmu0Uh12l3qZZsQRO7t+9rkkxvVqRv3C4HCJ/BWkz6OIJBbOo+RovgF9YgiTF6aHDzSFqj4pJZdw5P/QBdzj7gzhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cMJnBSOh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ki8qKwq4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cMJnBSOh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ki8qKwq4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6567A1F867;
-	Fri, 26 Jul 2024 06:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721977169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HjInU5/CNBl9RZHwKcIpVuA5oVueIOQCnxxVoCimJJQ=;
-	b=cMJnBSOh3EB0jHL/++VhXNPalkqiqgzpGIIR1F+eTcK7UOP76lmzeKYr6SVsI+Xylwq+3W
-	Gz4akr6qqZpooCpKDYziHfQYoKsPuFBS+OFyJqbr8i0EvwTCGyR07DJKSREEIGhO+vK3Nl
-	P/rA61ijWtADhSGIwuLz2tFliLRPTCI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721977169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HjInU5/CNBl9RZHwKcIpVuA5oVueIOQCnxxVoCimJJQ=;
-	b=Ki8qKwq4iMR/IC8QJ4qW01DhaLmtnPWnZ6GMqpiOeeVZd0iBpmjeP3VIp9HPBjRvPRGpdx
-	YoOFMieHay52NSBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721977169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HjInU5/CNBl9RZHwKcIpVuA5oVueIOQCnxxVoCimJJQ=;
-	b=cMJnBSOh3EB0jHL/++VhXNPalkqiqgzpGIIR1F+eTcK7UOP76lmzeKYr6SVsI+Xylwq+3W
-	Gz4akr6qqZpooCpKDYziHfQYoKsPuFBS+OFyJqbr8i0EvwTCGyR07DJKSREEIGhO+vK3Nl
-	P/rA61ijWtADhSGIwuLz2tFliLRPTCI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721977169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HjInU5/CNBl9RZHwKcIpVuA5oVueIOQCnxxVoCimJJQ=;
-	b=Ki8qKwq4iMR/IC8QJ4qW01DhaLmtnPWnZ6GMqpiOeeVZd0iBpmjeP3VIp9HPBjRvPRGpdx
-	YoOFMieHay52NSBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BE16138A7;
-	Fri, 26 Jul 2024 06:59:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bZmODVFJo2Z5GAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 26 Jul 2024 06:59:29 +0000
-Date: Fri, 26 Jul 2024 09:00:03 +0200
-Message-ID: <87ttgchc3w.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.11-rc1
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721977296; c=relaxed/simple;
+	bh=BpykowJ9h4lhejSBCRQ5ewjt4CV375wwZQYHRzmFWM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gqbi6LqiylpFTPRibLjMpz9A4AEthBVCXO8VST/n8YLXmp8m5vo0GjyJZov3GYeE+HiDz8mRFg2VOsJfjWMHmIAlEk3Fw34JbHXXSb1WCIMR8MwW83vbXP9K2UGlhn8URWNb7EUegA67i5JUirTgGPsLNuBBxB0MKlxxw88JaN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BSR16UfT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46Q15ifB018586;
+	Fri, 26 Jul 2024 07:01:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B3zvec5pWB4rOB8Rd2yXXfGVchNT6ea4/aUuH8APNBI=; b=BSR16UfTDhZs4nTj
+	OA6uZWOgJ4yag78zdXwy4YRwK8pIee8sgEahe53VqUKzMfCdnSusLHVCFnRrS5YN
+	jbhZstejMisRbgvCajsjdQxOUz5HGmeYDtkITSZlUiTY2aR3ld3pdQySUFA4aqlk
+	P4DiJoECDCQkxBbWy7elUcAm9Y7nIma9Dn5qsslWBelcujaAugM3aW4o4VEPoKWF
+	o+PtW2nVR6MliJdIUmD7U/bG6/B0ONl1srXFAjFLEL02E0VIDUr+gagEToK/JivV
+	CLMViQzvwRsIi4bTq/2/YDbk7F1caLf652ia+237MpkoHL6zogpj29vsU8AO3yM+
+	Io1O2Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m1u5gmht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 07:01:25 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46Q71OAr003454
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Jul 2024 07:01:24 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
+ 2024 00:01:21 -0700
+Message-ID: <fe44268d-76bb-bdbd-e54e-39a38e4e5a49@quicinc.com>
+Date: Fri, 26 Jul 2024 12:31:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.10
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+ <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+ <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+ <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MJgTtgTg9D62WMhxtZohgcFV0K8Ibioy
+X-Proofpoint-GUID: MJgTtgTg9D62WMhxtZohgcFV0K8Ibioy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_04,2024-07-25_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ mlxlogscore=885 adultscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407260046
 
-Linus,
 
-please pull sound fixes for v6.11-rc1 from:
+On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
+> On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
+>>> I have no idea. Why does it matter ?
+>>>
+>>
+>> This clock expected to be kept always ON, as per design, or else the 
+>> GDSC transition form ON to OFF (vice versa) wont work.
+>
+> Yes, parking to XO per this patch works for me. So I guess its already 
+> on and is left in that state by the park.
+>
+>> Want to know the clock status after bootup, to understand if the 
+>> clock got turned off during the late init. May I know exactly what 
+>> you have tested? Did you test the camera usecases as well?
+>
+> Of course.
+>
+> The camera works on x13s with this patch. That's what I mean by tested.
+>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.11-rc1
+It might be working in your case, but it is not the HW design 
+recommended way to do. The same should not be propagated to other 
+target's camcc drivers, as I already observed it is not working on SM8150.
 
-The topmost commit is e8b96a66ae01d039699bac256c5b6b30b2284170
 
-----------------------------------------------------------------
-
-sound fixes for 6.11-rc1
-
-A collection of the fixes gathered since the previous PR.
-We see a bit large LOCs at a HD-audio quirk, but that's only bulk
-COEF data, hence it's safe to take.  In addition to that, there
-were two minor fixes for MIDI 2.0 handling for ALSA core, and the
-rest are all rather random small and device-specific fixes.
-
-----------------------------------------------------------------
-
-Arnd Bergmann (2):
-      ALSA: hda: tas2781: mark const variables as __maybe_unused
-      ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
-
-Curtis Malainey (1):
-      ASoC: Intel: Fix RT5650 SSP lookup
-
-Dan Carpenter (1):
-      ASoC: TAS2781: Fix tasdev_load_calibrated_data()
-
-Daniel Baluta (1):
-      ASoC: SOF: imx8m: Fix DSP control regmap retrieval
-
-Luke D. Jones (1):
-      ALSA: hda/realtek: cs35l41: Fixup remaining asus strix models
-
-Nick Weihs (1):
-      ALSA: hda/realtek: Implement sound init sequence for Samsung Galaxy Book3 Pro 360
-
-Peter Ujfalusi (2):
-      ASoC: SOF: ipc4-topology: Only handle dai_config with HW_PARAMS for ChainDMA
-      ASoC: SOF: ipc4-topology: Preserve the DMA Link ID for ChainDMA on unprepare
-
-Pierre-Louis Bossart (2):
-      ASOC: SOF: Intel: hda-loader: only wait for HDaudio IOC for IPC4 devices
-      ASoC: Intel: use soc_intel_is_byt_cr() only when IOSF_MBI is reachable
-
-Shengjiu Wang (1):
-      ASoC: fsl-asoc-card: Dynamically allocate memory for snd_soc_dai_link_components
-
-Takashi Iwai (4):
-      ALSA: usb-audio: Move HD Webcam quirk to the right place
-      ALSA: ump: Don't update FB name for static blocks
-      ALSA: ump: Force 1 Group for MIDI1 FBs
-      ASoC: amd: yc: Support mic on Lenovo Thinkpad E16 Gen 2
-
-Venkata Prasad Potturu (1):
-      ASoC: sof: amd: fix for firmware reload failure in Vangogh platform
-
-wangdicheng (2):
-      ALSA: usb-audio: Fix microphone sound on HD webcam.
-      ALSA: usb-audio: Add a quirk for Sonix HD USB Camera
-
----
- include/sound/tas2781-tlv.h                        |   6 +-
- sound/core/ump.c                                   |  13 +
- sound/pci/hda/patch_realtek.c                      |  15 +-
- sound/pci/hda/samsung_helper.c                     | 310 +++++++++++++++++++++
- sound/soc/amd/yc/acp6x-mach.c                      |   7 +
- sound/soc/codecs/tas2781-fmwlib.c                  |   2 +-
- sound/soc/fsl/fsl-asoc-card.c                      |  46 +--
- sound/soc/intel/common/soc-acpi-intel-ssp-common.c |   9 +
- sound/soc/intel/common/soc-intel-quirks.h          |   2 +-
- sound/soc/sof/amd/pci-vangogh.c                    |   1 -
- sound/soc/sof/imx/imx8m.c                          |   2 +-
- sound/soc/sof/intel/hda-loader.c                   |  18 +-
- sound/soc/sof/intel/hda.c                          |  17 +-
- sound/soc/sof/ipc4-topology.c                      |  18 +-
- sound/soc/tegra/Kconfig                            |   1 +
- sound/usb/mixer.c                                  |   7 +
- sound/usb/quirks.c                                 |   4 +
- 17 files changed, 433 insertions(+), 45 deletions(-)
- create mode 100644 sound/pci/hda/samsung_helper.c
-
+> ---
+> bod
 
