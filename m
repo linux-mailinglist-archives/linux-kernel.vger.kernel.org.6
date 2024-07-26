@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-263686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077D393D955
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AA693D95A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC371C22D19
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796B41C22BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 19:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D2513FD66;
-	Fri, 26 Jul 2024 19:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83323502B1;
+	Fri, 26 Jul 2024 19:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WkMmgtEU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="BVw4wawU"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFD921364;
-	Fri, 26 Jul 2024 19:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD2A383BF
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 19:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722023611; cv=none; b=N6A+xs3wNYTliGGglmXrBdG5xfHQi7BfCnN/0ekA3W7+gI7sg/zOH6hreIn86LxIrnXtigV2rTcw7KnxpDI9vr3PclOif3A0zzCCRXzrp6yNcclKyk00E48+SyeD9Ab4ZLLoMfcWOH38DCpnHKPhkiVyGcATt39y3E4ACLR3wOU=
+	t=1722023754; cv=none; b=JqWBntfAp2AlvFPhBvK2893hqfIfwixqlEe1zQRwwG6mu9WDhH73fJfsnowcu/oMXvqSIAU3+nllAViwVHKPUFsK41tooui2LG0wXuf75QDLonqsqPnx/CiVQXFnSGIOjMdhZgt/5txEBNytEHYjgAnzrZorHygQAqpIWRCMx58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722023611; c=relaxed/simple;
-	bh=RItrGGuVLmlSCWHomQhd90T1QLhUEfGxr2jZ5urvIQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=mtXJSCz3Ax1qLV97xkhuItl7eorg8SS7h+6cOdy5USRCmi4cqTeTT6SK+yBxQ7AX99SCz0vVsOKtsWsRhbf2+k2Ls1DSS1BoiHMmyCaAhCljBWXek3m5BCeoWdtnBiGwyNsVNG5MPT+lz6aGJmAn1xIUuA5y48eR7KAFIPiMHC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WkMmgtEU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QBfuNZ013396;
-	Fri, 26 Jul 2024 19:53:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RItrGGuVLmlSCWHomQhd90T1QLhUEfGxr2jZ5urvIQ4=; b=WkMmgtEUiak64LIH
-	+TUl60yVMD3b4c/uRJMToOMVLifnQW/BuYeoLfFxynVYz8zzxx4VLRMPy9jS5E5l
-	mNXHMo1A7odzLGq/GX6Zi6RsBqVqzAYn8/I6t/JV+/ZyLy8jG044Gd13E3O5/J7+
-	ckPk49tn5rb0KCs9RoCsXd7/w31RALr1NWPgaDxvoGUWzqvAjOZSEYqvwlq8Fy/3
-	WEUkxRifCq9HTlOkYJNfZK20+ZaRcGfprQIms6U1jwURqCbucEXtNSMP2SfK23lq
-	HM5Mew7XaNL/zAusWifm5CCdqkneyEYyaWg3JZJwQ6XphZXpxSrOJfmS/41HCW7H
-	kUTW0w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40m2192app-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 19:53:08 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46QJr661016526
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 19:53:07 GMT
-Received: from [10.71.113.104] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Jul
- 2024 12:53:06 -0700
-Message-ID: <957b3c13-e4ba-45e3-b880-7a313e48c33f@quicinc.com>
-Date: Fri, 26 Jul 2024 12:52:52 -0700
+	s=arc-20240116; t=1722023754; c=relaxed/simple;
+	bh=jUxzW/eISqOpiBVr30pQZVVtykzlvo8h4zWQeImEN0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=txxkWzGlRVAS5MfCIZ5n/fU6HJ94DdxXXzlMqdWs1/PFD3OZzqPUdAbCgFxFdz8AGPf7l7X+b1Vgr3ZCUv2bWPrlxpFFuqt+4J1307ShGlQt1OrInjYy289ksp9/O7z+x0zDb4XjGMmqcae7K1axVcLGne1VLGXaF+xVAWZ+hGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=BVw4wawU; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1722023716;
+ bh=8Q1Sz4i2dNHc/6tQGm+set8ubAONMQllV0779TpuRX0=;
+ b=BVw4wawUSz+IG9WCwJYQB9sbPZyyzROf5y1sbPxY9sTTbSL0lKK/gg0LsTS0WOtC6kPUR1m32
+ lM/kHoYPrr6j7OqmM0Z8UbX3ueDi0U+zJtSciNo3IazzU4xgAd0XFu09ndpoMf40YLpslHggoGo
+ bGR0pYnZ6f6NnPdWu4+ahd8Q1AHHUJbqTaQWO/KklRS4tw0GIW9qox/NyUDYn+Rn38QveNMFw0T
+ i9fX2aHXXqoK75987PrPV4DNsNp/wTPF6dIMIDoc8LNDlu/OPKWqhz5nAE29lP+Io4zw+VuHWrK
+ 92FV6go6mB6xPJFhbBdw8Z/SNIaDpX+mGGKE49NRPsow==
+Message-ID: <fd35532b-d69e-49bc-a46e-61a7b6a93971@kwiboo.se>
+Date: Fri, 26 Jul 2024 21:55:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,117 +49,335 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
- <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
- <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
- <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
- <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
- <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
- <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
- <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
- <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
- <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
- <70bf10a7-7f87-4fd1-bd44-1733d3b2b15e@linux.intel.com>
- <b1fcef2a-2af9-4985-ae00-f348ca5df3f1@linux.intel.com>
- <ab734271-58ee-4981-926c-9b57f36b8ac6@linux.intel.com>
- <ccbf9366-f3de-4a80-bffc-e32a8409e1a7@quicinc.com>
- <adb4e27b-b328-4eef-87ca-9b8bad6639e6@linux.intel.com>
- <f9923336-3dd3-4f36-b5f6-f45f4ed09e0c@linux.intel.com>
- <3634f704-a496-4341-a01d-07182248eccf@quicinc.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+To: Detlev Casanova <detlev.casanova@collabora.com>, Alex Bee
+ <knaerzche@gmail.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
+ <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>, Andy Yan
+ <andy.yan@rock-chips.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Paul Kocialkowski
+ <paul.kocialkowski@bootlin.com>, Nicolas Dufresne
+ <nicolas.dufresne@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <4356151.ejJDZkT8p0@arisu> <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
+ <6070053.DvuYhMxLoT@arisu>
 Content-Language: en-US
-In-Reply-To: <3634f704-a496-4341-a01d-07182248eccf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DuesmGckL6g633jTihSWh-2zcTYsVcDD
-X-Proofpoint-GUID: DuesmGckL6g633jTihSWh-2zcTYsVcDD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_12,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- clxscore=1011 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=962 bulkscore=0 phishscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407260135
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <6070053.DvuYhMxLoT@arisu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 66a3ff22df62d509e165a502
 
-Hi Pierre/Amadeusz,
+Hi Detlev,
 
-On 7/8/2024 4:16 PM, Wesley Cheng wrote:
-> On 7/4/2024 4:25 AM, Pierre-Louis Bossart wrote:
->>>> Just so I understand...is it really desired that userspace doesn't
->>>> have the flexibility to choose which USB device is offloaded?  I know
->>>> it complicates what needs to be done, but it could be just an
->>>> additional feature that can be added later on.  Again, by default, we
->>>> select the last USB headset plugged in to be enabled for offload by
->>>> default.
->>> If it chooses endpoint by itself perhaps you can send patch set without
->>> controls first? This has added benefit of less patches in series, making
->>> it easier to review and it won't block whole patch set by discussion on
->>> controls feature. Controls can be added in followup series.
->> We do need read-only controls for userspace to know that offload is
->> possible and which card/device to use. That can be done in a first step
->> assuming there's a single device plugged-in.
-> I agree, some kcontrol need to be present to at least determine:
->
-> 1. USB SND device is offload capable (ASoC card and PCM index)- Fetches associated (mapped) ASoC platform card and PCM index (read only)
->
-> 2. ASoC platform card offload status - Current offload status (read only)
->
-> Those would be the minimum kcontrols we could have at this time.  I will remove the device selection part, and leave that for future discussions.  Does this sound good, Amadeusz/Pierre?
-
-So I reworked the series a bit with respects to the kcontrols that we had, and I simplified it for the next submission.  I went ahead and just have a read only kcontrol residing in the USB SND device and will implement #1 above:
-
-/ # tinymix -D 1 contents
-Number of controls: 9
-ctl     type    num     name                                    value
-0       INT     2       Capture Channel Map                     0, 0 (range 0->36)
-1       INT     2       Playback Channel Map                    0, 0 (range 0->36)
-2       BOOL    1       Headset Capture Switch                  On
-3       INT     1       Headset Capture Volume                  10 (range 0->13)
-4       BOOL    1       Sidetone Playback Switch                On
-5       INT     1       Sidetone Playback Volume                4096 (range 0->8192)
-6       BOOL    1       Headset Playback Switch                 On
-7       INT     2       Headset Playback Volume                 20, 20 (range 0->24)
-8       INT     2       USB Offload Playback Route PCM#0        0, 0 (range -1->255)
-
-If there is an available audio offload path, then the value will show the card and pcm index that it is mapped to.  That way the application will know which card/pcm device to open from there.  In the above example, the offload path is mapped to card#0 pcm#0.  If there is no offload path available, it will show -1, -1.
-
-For now, I removed the control that allows for explicit selection of which USB card and PCM device to offload, and will take this up on a separate series as we see fit.  The codebase I have now will select the last USB headset plugged in for offloading.  Will clean up the changes and submit a new revision with the other feedback included as well.
-
-
-Thanks
-
-Wesley Cheng
-
->
->> Dealing with multiple devices and defining rules or configuration
->> options to select the offloaded device is a second-level problem.
+On 2024-07-26 17:26, Detlev Casanova wrote:
+> Hi Jonas !
+> 
+> On Thursday, June 27, 2024 6:39:36 P.M. EDT Jonas Karlman wrote:
+>> Hi Datlev,
 >>
->> In most cases the only thing that will be offloaded is a headset
->> anyways, so the selection could be rather static based on a
->> vendor/system ID, all other USB devices would be ignored.
-> If the USB SND offload driver (ie qc_audio_offload) isn't compiled in, then it would be disabled.  Do we need some over-arching mechanism to disable the offload functionality?  Although, one thing I can see if I can add is some device classification within the USB offload vendor driver.
->
-> Thanks
->
-> Wesley Cheng
->
+>> On 2024-06-27 22:56, Detlev Casanova wrote:
+>>> Hi Jonas,
+>>>
+>>> On Monday, June 24, 2024 5:16:33 A.M. EDT Jonas Karlman wrote:
+>>>> Hi Detlev and Alex,
+>>>>
+>>>> On 2024-06-20 15:31, Detlev Casanova wrote:
+>>>>> Hi Jonas, Alex,
+>>>>>
+>>>>> On Wednesday, June 19, 2024 2:06:40 P.M. EDT Jonas Karlman wrote:
+>>>>>> Hi Alex,
+>>>>>>
+>>>>>> On 2024-06-19 19:19, Alex Bee wrote:
+>>>>>>> Am 19.06.24 um 17:28 schrieb Jonas Karlman:
+>>>>>>>> Hi Detlev,
+>>>>>>>>
+>>>>>>>> On 2024-06-19 16:57, Detlev Casanova wrote:
+>>>>>>>>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>>>>>>>> ---
+>>>>>>>>>
+>>>>>>>>>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50
+>>>>>>>>>   +++++++++++++++++++++++
+>>>>>>>>>   1 file changed, 50 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>>>>>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
+>>>>>>>>> 6ac5ac8b48ab..7690632f57f1 100644
+>>>>>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>>>>>> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
+>>>>>>>>>
+>>>>>>>>>   		ranges = <0x0 0x0 0xff001000 0xef000>;
+>>>>>>>>>   		#address-cells = <1>;
+>>>>>>>>>   		#size-cells = <1>;
+>>>>>>>>>
+>>>>>>>>> +
+>>>>>>>>> +		vdec0_sram: rkvdec-sram@0 {
+>>>>>>>>> +			reg = <0x0 0x78000>;
+>>>>>>>>> +			pool;
+>>>>>>>>> +		};
+>>>>>>>>> +
+>>>>>>>>> +		vdec1_sram: rkvdec-sram@1 {
+>>>>>>>>> +			reg = <0x78000 0x77000>;
+>>>>>>>>> +			pool;
+>>>>>>>>> +		};
+>>>>>>>>>
+>>>>>>>>>   	};
+>>>>>>>>>   	
+>>>>>>>>>   	pinctrl: pinctrl {
+>>>>>>>>>
+>>>>>>>>> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
+>>>>>>>>>
+>>>>>>>>>   			#interrupt-cells = <2>;
+>>>>>>>>>   		
+>>>>>>>>>   		};
+>>>>>>>>>   	
+>>>>>>>>>   	};
+>>>>>>>>>
+>>>>>>>>> +
+>>>>>>>>> +	vdec0: video-decoder@fdc38100 {
+>>>>>>>>> +		compatible = "rockchip,rk3588-vdec";
+>>>>>>>>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+>>>>>>>>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+>>>>>>>>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
+>>>>>
+>>>>> <&cru
+>>>>>
+>>>>>>>>> CLK_RKVDEC0_CA>, +			 <&cru
+>>>>>
+>>>>> CLK_RKVDEC0_CORE>, <&cru
+>>>>>
+>>>>>>>>> CLK_RKVDEC0_HEVC_CA>;
+>>>>>>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+>>>>>
+>>>>> "hevc_cabac";
+>>>>>
+>>>>>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
+>>>>>
+>>>>> CLK_RKVDEC0_CORE>,
+>>>>>
+>>>>>>>>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
+>>>>>
+>>>>> CLK_RKVDEC0_HEVC_CA>;
+>>>>>
+>>>>>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+>>>>>>>>> +				       <600000000>, <1000000000>;
+>>>>>>>>> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>,
+>>>>>
+>>>>> <&cru
+>>>>>
+>>>>>>>>> SRST_RKVDEC0_CA>, +			 <&cru
+>>>>>
+>>>>> SRST_RKVDEC0_CORE>, <&cru
+>>>>>
+>>>>>>>>> SRST_RKVDEC0_HEVC_CA>;
+>>>>>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+>>>>>>>>> +			      "rst_core", "rst_hevc_cabac";
+>>>>>>>>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+>>>>>>>>> +		sram = <&vdec0_sram>;
+>>>>>>>>> +		status = "okay";
+>>>>>>>>> +	};
+>>>>>>>>> +
+>>>>>>>>> +	vdec1: video-decoder@fdc40100 {
+>>>>>>>>> +		compatible = "rockchip,rk3588-vdec";
+>>>>>>>>> +		reg = <0x0 0xfdc40100 0x0 0x500>;
+>>>>>>>>> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+>>>>>>>>> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>,
+>>>>>
+>>>>> <&cru
+>>>>>
+>>>>>>>>> CLK_RKVDEC1_CA>, +			 <&cru
+>>>>>
+>>>>> CLK_RKVDEC1_CORE>, <&cru
+>>>>>
+>>>>>>>>> CLK_RKVDEC1_HEVC_CA>;
+>>>>>>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+>>>>>
+>>>>> "hevc_cabac";
+>>>>>
+>>>>>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru
+>>>>>
+>>>>> CLK_RKVDEC1_CORE>,
+>>>>>
+>>>>>>>>> +				  <&cru CLK_RKVDEC1_CA>, <&cru
+>>>>>
+>>>>> CLK_RKVDEC1_HEVC_CA>;
+>>>>>
+>>>>>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+>>>>>>>>> +				       <600000000>, <1000000000>;
+>>>>>>>>> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>,
+>>>>>
+>>>>> <&cru
+>>>>>
+>>>>>>>>> SRST_RKVDEC1_CA>, +			 <&cru
+>>>>>
+>>>>> SRST_RKVDEC1_CORE>, <&cru
+>>>>>
+>>>>>>>>> SRST_RKVDEC1_HEVC_CA>;
+>>>>>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+>>>>>>>>> +			      "rst_core", "rst_hevc_cabac";
+>>>>>>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+>>>>>>>>> +		sram = <&vdec1_sram>;
+>>>>>>>>> +		status = "okay";
+>>>>>>>>> +	};
+>>>>>>>>
+>>>>>>>> This is still missing the iommus, please add the iommus, they should
+>>>>>>>> be
+>>>>>>>>
+>>>>>>>> supported/same as the one used for e.g. VOP2:
+>>>>>>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+>>>>>>>>
+>>>>>>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
+>>>>>>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
+>>>>>>>> special on RK3588.
+>>>>>>>>
+>>>>>>>> Please add the iommus :-)
+>>>>>>>
+>>>>>>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
+>>>>>>> applied for vdec's iommus. Since it's rightly frowned upon adding such
+>>>>>>> boolean-quirk-properties to upstream devicetrees, we'd at least need
+>>>>>>> additional (fallback-) compatibles, even if it works with the iommu
+>>>>>>> driver
+>>>>>>> as is (what I doubt, but haven't tested). We need to be able to apply
+>>>>>>> those
+>>>>>>> quirks later without changing the devicetree (as usual) and I'm sure
+>>>>>>> RK
+>>>>>>> devs haven't added these quirks for the personal amusement.
+>>>>>>
+>>>>>> Based on what I investigated the hw should work similar, and the quirks
+>>>>>> mostly seem related to optimizations and sw quirks, like do not zap
+>>>>>> each
+>>>>>> line, keep it alive even when pm runtime say it is not in use and other
+>>>>>> quirks that seem to be more of sw nature on how to best utilize the hw.
+>>>>>
+>>>>> I did some testing with the IOMMU but unfortunately, I'm only getting
+>>>>> page
+>>>>> fault errors. This may be something I'm doing wrong, but it clearly
+>>>>> needs
+>>>>> more investigation.
+>>>>
+>>>> I re-tested and the addition of sram seem to now cause page faults, the
+>>>> sram also need to be mapped in the iommu.
+>>>>
+>>>> However, doing more testing revealed that use of iommu present the same
+>>>> issue as seen with hevc on rk3399, after a fail fluster tests continue
+>>>> to fail until a reset.
+>>>>
+>>>> Seeing how this issue was very similar I re-tested on rk3399 without
+>>>> iommu and cma=1G and could observe that there was no longer any need to
+>>>> reset after a failed test. Interestingly the score also went up from
+>>>> 135 to 137/147.
+>>>>
+>>>> Digging some more revealed that the iommu also is reset during the
+>>>> internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
+>>>> and paging in disabled state.
+>>>>
+>>>> Ensuring that the iommu was reconfigured after a failure fixed the issue
+>>>> observed on rk3399 and I now also get 137/147 hevc fluster score using
+>>>> the iommu.
+>>>>
+>>>> Will send out a rkvdec hevc v2 series after some more testing.
+>>>>
+>>>> Guessing there is a similar need to reconfigure iommu on rk3588, and my
+>>>> initial tests also showed promising result, however more tests are
+>>>> needed.
+>>>
+>>> I did some testing with the IOMMU. The good news is that it now works with
+>>> the SRAM.
+>>
+>> Great, I did not look into SRAM at all, just replaced sram prop with iommus
+>> for my tests, so great that you found a way to make it work with the iommu
+>> :-)
+>>> I am also able to hack the iommu driver to force a reset in case of an
+>>> error in the decoder. I'm not sure how to implement that with the IOMMU
+>>> kernel API though.
+>>
+>> I am planning on sending something along the way of this as an RFC:
+>>
+>> https://github.com/Kwiboo/linux-rockchip/compare/6da640232631...bf332524d880
+>>
+>> If we re-configure and re-enable the iommu just before next decoding run
+>> after a decoding has failed seem to resolve any issue I have seen, have
+>> mainly been tested with rkvdec and HEVC on RK3399/RK3328. On RK3588 this
+>> also seemed to work, at least when I tested earlier this week.
+>>
+>>> Another issue is that resetting the iommu will drop all buffer addresses
+>>> of
+>>> other decoding contexts that may be running in parallel.
+>>
+>> I do not think we need/should reset the iommu, we just need to deal with
+>> the fact that the rkvdec will reset and disable use of the mmu when it
+>> reset itself.
+>>
+>>> I *think* that the downstream mpp remaps the buffers in the iommu for each
+>>> frame, but I'm not sure about that either.
+>>
+>> As long as a frame can be decoded correctly, the mmu config seem to continue
+>> to be valid and next frame can be decoded.
+>>
+>>> So running fluster with `-j 1` gives me the expected 129/135 passed tests,
+>>> but `-j 8` will start failing all tests after the first fail (well, first
+>>> fail because of decoder error).
+>>
+>> This was the main issue blocking rkvdec hevc, just re-confgure the mmu
+>> after a frame fails to decode seem to resolve this issue.
+>>
+>> Biggest issue at the moment is how to properly signal iommu subsystem that
+>> it should re-configure, I may have abused the flush_iotlb_all ops, since
+>> that seemed closest existing hook.
+>>
+>> Will send an RFC to linux-iommu to collect input on how to best signal
+>> iommu subsystem that the mmu has been reset by an external event and now
+>> need to be re-configured.
+> 
+> Do you mind if I go ahead and send your iommu flush_iotlb_all patch upstream to 
+> start the discussion ? I'd love for this patch set to move along and that's 
+> kind of a blocker right now.
+
+Sorry for the delay, will try to get something on list this weekend or
+early next week.
+
+I have reworked our LibreELEC FFmpeg v4l2-request patches [1] to help
+test the iommu change for rkvdec1 hevc, and have now patches that should
+be more upstreamable.
+
+Testing the iommu flush with hevc on rkvdec1 has shown that the iommu
+change seem to work for most part, however there was still situations
+when parallel jobs and/or threads was used with fluster that some
+unrelated tests could fail, with a single job it improved hevc score to
+137 of 145, so it is an improvement but for perfect multi-stream
+decoding hard-reset handling may also be needed in future.
+
+Also running fluster VP9 test suite also cause my RK3399 board to freeze
+with a kernel panic in iommu irq handler, have not yet tried to dig any
+deeper, if it is an old issue or a new issue due to the new iommu flush.
+
+[1] https://github.com/FFmpeg/FFmpeg/compare/master...Kwiboo:FFmpeg:v4l2request-2024-v2
+
+Regards,
+Jonas
+
+> 
+> Detlev.
+> 
+> 
+
 
