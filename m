@@ -1,125 +1,173 @@
-Return-Path: <linux-kernel+bounces-262968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF9A93CF3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A842693CF33
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 10:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA559B22EB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347011F22468
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 08:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024FC17837F;
-	Fri, 26 Jul 2024 08:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBAE176ABA;
+	Fri, 26 Jul 2024 08:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RRFql49r"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gSKcjBF0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB9D176ADD
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7FD176227
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721981097; cv=none; b=fEq3R8unmGfdaIQlWjxfG3KTpIxsdmlMzG2wYogfoLQ6Hp+t4MoOGHuzGP+wVq5KhFXS+L2x+KJ6y08rqu2z7Dm8uSCiQJ3dJ8Z5A4yPfOZwhaheIBdi82KXPCKiMDr5NRfjhfkn71Q/lyFoykwYBcwaOcXOJTJAaZeeiduhk+w=
+	t=1721981093; cv=none; b=AMrg8mzNPHce0ojCdDBTuKqfaasNP2CZbcq8TbVimib+ttuzYsQN1SBGwI47K2UV01SZ8b5RULwfZeTwndxqgavttV8YQ/8xCEYOOYsCpBDHZP38es4l2QSIPzJVCNb6PWYWX+qbjlmULQUsyk/yvd8AdgrFsvyFoV4z09Hj4Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721981097; c=relaxed/simple;
-	bh=TYWIXrzkXVZZkZdz/QrKdM2ifv+qqqsEjLpzrowXvkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=PlKJKHKXyQFEqTIktV8GnRYC+LlO1k/6RYeaUBTB4RcbQEZIk70JKClK1mHXYEvV5scT5gjbJrYNWZuwTwjXffi7UQZ+PSZTynNutktc42TysdqHsTS13orqcaUNPQZ+WQEgrp3v5TLvlY6YIIunKj2IQlQphRXiUsAVNV/e24s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RRFql49r; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc5296e214so3427065ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1721981095; x=1722585895; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TYWIXrzkXVZZkZdz/QrKdM2ifv+qqqsEjLpzrowXvkE=;
-        b=RRFql49rFXFAqF4zve46pf3X2MbjA6hs/ZGlyUvjdtygs77+1bt3hfw56mkpKPGQ5s
-         x5enAJ55pJXC8AP4yewyxAPhq1E73CZ0gRBJujtYGYTrKSzoD1z/vV7YihNiVfLB4Raf
-         x/mFqnzjZWeG5LCHqWrTrHTxGmWJX2zQ+6SLUzI8pS3NMW0ev1n2yJWlv1EFhx+R7frw
-         Hh94j3Xq+2YPI40RYgqC7QvrliVj5RntASc97Eb7dLYLsSnVgjVR05WvOzCJ69IH0J+L
-         kEJ6c1vEfOH10Ysvg8LJV2Isi2qZI1jX0GqkmPwFnwoc9TOy5KWy4a6ZX4d6Xmx1WX24
-         EoMw==
+	s=arc-20240116; t=1721981093; c=relaxed/simple;
+	bh=yUuFltt45FQtFzuK1w8hJRFb23L+VeB3qRdS/ehuEqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kj9H6qiI3rBc1YHz6aIOajdh7T54XssKR18AQYT9G979pYSNNzAHpuvvHzZ26rS+zhf6eDPrwpms3lPHsXzVUGg8/1ozgMaG3C13K8lIf4wBwi4x9eaiEASIZAAiEG2uQfFUCr9RPKaHjDxEXLNy1fPzSTcy6OsKyOwnLIhI/L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gSKcjBF0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721981091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KeiNTJdmCJ20vhBFNxxCabsImvLk+JzwPPZxTwy4a88=;
+	b=gSKcjBF0e5OYsu1IiwfRA8GU6hnYPaxF4At3rSrjxuwkA9sth+IZQdgEm8yJB6AT3DGFkl
+	QxYS1eFbA4A51eYfNGyEQ03I50/smuWbkjoW02gOjn4DExZBAcedMDoxla1HzHXHOzl3sU
+	InQydC5cCEL6C30kEeAgTV5/EKrUK9E=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-EiaBfYIOO7u2Q9pZvEeFuA-1; Fri, 26 Jul 2024 04:04:49 -0400
+X-MC-Unique: EiaBfYIOO7u2Q9pZvEeFuA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4280d8e685eso2545515e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 01:04:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721981095; x=1722585895;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TYWIXrzkXVZZkZdz/QrKdM2ifv+qqqsEjLpzrowXvkE=;
-        b=SoUBm361eN7Pgwt9PHxlj2YtlK2vJz0SHhgZtLdtCqzuKz2ylEyiqaMOsCG3n+5j8H
-         xc0wYWRkQRJLyBwa9q7EbDLEB/dfcLUd8azziFWEzGo9ATz2cf1C7LRFEBdFzZ0RKqB0
-         ez02u8EI59wGgerk8oQa20mjMZlb6F7FqnvS+EmHX9Sqo2bM2UO674AJrDI06VLI9Cgm
-         iroRtkmuGgm//u1BBy2vkAKxcqwYXbWil7k5UqEglWxeA8107ESUHZgufQUBB+pDF5Go
-         4SMIzYa6qm3ujiNxCMGelW3Xtx+wP/HSho/DYU7z+NSE1GAIqqwczEcfAWpLRwg1BoPD
-         lUog==
-X-Forwarded-Encrypted: i=1; AJvYcCVDnuCsEaMW///HPdxgdjMIwfJrt8DTLDL6fsQHO1EtCPYyXgLOWY6a+TOZnPc0NXx8Q/9Nu3G5UT49pJY9qkdkxhqpzAx1W4NIs63e
-X-Gm-Message-State: AOJu0YypYnBxMhngAhMk8I7DpOIXtZDGfu5mQ7HzJJawo7ThNAM6bn0I
-	EA8RxGGBIkQtk4pqTdm17UHhFAIwKKNpgxSLz+a2Z7dfoYikn7YbEUPtwYVlSWQ=
-X-Google-Smtp-Source: AGHT+IEThCF8MbTWoYXIfCiu9y7Wa9LyskvBWhr5h/HfiuuzcdkiOmRFKdkB2FSE+F5WHhuVNo59Hw==
-X-Received: by 2002:a17:902:f685:b0:1fd:9fd8:1b2f with SMTP id d9443c01a7336-1fed90b8c7amr55949925ad.8.1721981094597;
-        Fri, 26 Jul 2024 01:04:54 -0700 (PDT)
-Received: from dev-mattc2.dev.purestorage.com ([208.88.159.129])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fed7d37b9asm26186495ad.114.2024.07.26.01.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 01:04:54 -0700 (PDT)
-From: Matthew W Carlis <mattc@purestorage.com>
-To: macro@orcam.me.uk
-Cc: alex.williamson@redhat.com,
-	bhelgaas@google.com,
-	christophe.leroy@csgroup.eu,
-	davem@davemloft.net,
-	david.abdurachmanov@gmail.com,
-	edumazet@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	kuba@kernel.org,
-	leon@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	lukas@wunner.de,
-	mahesh@linux.ibm.com,
-	mattc@purestorage.com,
-	mika.westerberg@linux.intel.com,
-	mpe@ellerman.id.au,
-	netdev@vger.kernel.org,
-	npiggin@gmail.com,
-	oohall@gmail.com,
-	pabeni@redhat.com,
-	pali@kernel.org,
-	saeedm@nvidia.com,
-	sr@denx.de,
-	wilson@tuliptree.org
-Subject: PCI: Work around PCIe link training failures
-Date: Fri, 26 Jul 2024 02:04:46 -0600
-Message-Id: <20240726080446.12375-1-mattc@purestorage.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240724191830.4807-1-mattc@purestorage.com>
-References: <20240724191830.4807-1-mattc@purestorage.com>
+        d=1e100.net; s=20230601; t=1721981088; x=1722585888;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KeiNTJdmCJ20vhBFNxxCabsImvLk+JzwPPZxTwy4a88=;
+        b=Nnd6S0kj9VLf4GXJkJafgl9dDx+LIbMFCry7bWRgiy9KCy785lSRMBNrAgk8DXgi1Q
+         9zDIPWe9zO1PJU8eYyniRcckkWhppJpeNuvVw7wkRwVD8sbGo6xqjkH+N6zyGsr0P0F+
+         eVdleiSqjocROn0xiAlscyM5l20KlkB7THCGUkcpxGACrL9mEklMY5+QjFCrFh/uwLFq
+         etZGrbDLVwongOuvqCVb0y/oreQ0sbpVo7W5UYXo+En+ellWFPu66XJXMJno+wk7cq7H
+         XVCPdV1Rj3RSZZxSsIpsO7uAopVsNZhJBHi0GCJnjafv3Mxx82IZkV0yN8Mt+ACrUDZS
+         JYEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdc8itDqrgawLPLAdCqIS8d+qjPxJ7appBzsrqS4ZXj8Za2T7SEDwpQ+mIoZJLReDCSXy33RuHtjrP7PMuDS+r4OW9Tn197Y01TXow
+X-Gm-Message-State: AOJu0Yw6oa7/jz/yf734dAklfC7x2oshJQ3XYq9n7MIlqDxcy4ao2XP3
+	HR9RvsyquiJCOJWZX8nvJQylh4eINjz9hHpGm/E6Wy0CNwBD+TXmaxUf4ZYc1oWn9nJMjMOaTBf
+	4cn/Orq/B5vmCB1fCeOFLvntzCm234/TZsVsFODhwjGqwqGCNoT6qTUYA92AKmA==
+X-Received: by 2002:a05:600c:1d92:b0:427:dae6:8416 with SMTP id 5b1f17b1804b1-4280579efcbmr31573505e9.36.1721981088391;
+        Fri, 26 Jul 2024 01:04:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkub+jgUxfHcNsWmweJcOhKL/25xmLrvMu2yPzE1IqHOfHep7o/J1rzZaaOTz80NtiwLL27g==
+X-Received: by 2002:a05:600c:1d92:b0:427:dae6:8416 with SMTP id 5b1f17b1804b1-4280579efcbmr31573275e9.36.1721981088002;
+        Fri, 26 Jul 2024 01:04:48 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c713:a600:7ca0:23b3:d48a:97c7? (p200300cbc713a6007ca023b3d48a97c7.dip0.t-ipconnect.de. [2003:cb:c713:a600:7ca0:23b3:d48a:97c7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9576sm4396129f8f.31.2024.07.26.01.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 01:04:47 -0700 (PDT)
+Message-ID: <17256b99-ab26-4f7b-9100-2fc42b233af2@redhat.com>
+Date: Fri, 26 Jul 2024 10:04:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>, Peter Xu <peterx@redhat.com>,
+ Oscar Salvador <osalvador@suse.de>, stable@vger.kernel.org
+References: <20240725183955.2268884-1-david@redhat.com>
+ <20240725183955.2268884-3-david@redhat.com>
+ <0067dfe6-b9a6-4e98-9eef-7219299bfe58@linux.alibaba.com>
+ <707d8937-d4c8-43b3-bc19-70f0038522a9@linux.alibaba.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <707d8937-d4c8-43b3-bc19-70f0038522a9@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Jul 2024, Maciej W. Rozycki wrote:
+>>
+>>> +     *
+>>> +     * If that does not hold for an architecture, then that architecture
+>>> +     * must disable split PT locks such that all *_lockptr() functions
+>>> +     * will give us the same result: the per-MM PT lock.
+>>> +     */
+>>> +    if (huge_page_size(h) < PMD_SIZE)
+>>> +        return pte_lockptr(mm, pte);
+>>> +    else if (huge_page_size(h) < PUD_SIZE)
+>>>            return pmd_lockptr(mm, (pmd_t *) pte);
+>>
+>> IIUC, as I said above, this change doesn't fix the inconsistent lock for
+>> cont-PMD size hugetlb for GUP, and it will also break the lock rule for
+>> unmapping/migrating a cont-PMD size hugetlb (use mm->page_table_lock
+>> before for cont-PMD size hugetlb before).
+> 
+> After more thinking, I realized I confused the PMD table with the PMD
+> entry. Therefore, using the PMD table's lock is safe for cont-PMD size
+> hugetlb. This change looks good to me. Sorry for noise.
+> 
 
-> The main reason is it is believed that it is the downstream device
-> causing the issue, and obviously you can't fetch its ID if you can't
-> negotiate link so as to talk to it in the first place.
+Thanks for the review, highly appreciated!
 
-Have had some more time to look into this issue. So, I think the problem
-with this change is that it is quite strict in its assumptions about what
-it means when a device fails to train, but in an environment where hot-plug
-is exercised frequently you are essentially bound have something interrupt
-the link training. In the first case where we caught this problem our test
-automation was doing some power cycle tortures on our endpoints. If you catch
-the right timing the link will be forced down to Gen1 forever without some other
-automation to recover you unless your device is the one single device in the
-allowlist which had the hardware bug in the first place.
+-- 
+Cheers,
 
-I wonder if we can come up with some kind of alternative.
+David / dhildenb
 
-- Matt
 
