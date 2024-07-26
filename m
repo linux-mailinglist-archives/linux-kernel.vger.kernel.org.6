@@ -1,90 +1,208 @@
-Return-Path: <linux-kernel+bounces-263755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAB493DA2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:30:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29A293DA32
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 23:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98FD1C23345
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:30:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA642B2111C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 21:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27143149E13;
-	Fri, 26 Jul 2024 21:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0D614A08F;
+	Fri, 26 Jul 2024 21:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KnmBAoEq"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3m/ESuQ7"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3825C149E06
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAF238DEE;
+	Fri, 26 Jul 2024 21:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722029416; cv=none; b=Ik6wXXMOR+VieZpx4xoiC98RHMGjfOfB9CYE9eSZfQsQNFQ8z86j59F0Mzm2gWEEvpugmWRByw0o1HACEwFMMijsWiZ1cxBPGFjMPteKyd9PF+WSzoXSUJwCF0XrHL7N78+dmjUO991hp1kQKaXGZVCzbBfF/j+8/wKCG0cFGPc=
+	t=1722029443; cv=none; b=QBxb4p1qoWKASiF8lC0cHOUzikefWxyZKHh/0gyyteCub2a7zG3IsJNCGRh+2R2Gm4MxS7/i495zYPovt02dvGzINhoB8cXaVzkyRMOjrNgXFay44GYu1VqswddrFJNhg4BiBYNMQe6Wgjwq7wFq/s2KzGuOKzq0ZP7XuBiqEbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722029416; c=relaxed/simple;
-	bh=TazJz5DuIy70P9F4AIkG+gYscTAZ4DJnFp342oDsZ3U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OAbeZREq7ZaPOBTqv5gjtkHavOivNuOMWQtZ9W2o/w/TuyD3GqFnvM4gc8lUlckZioWp8jNR/AoT7GhM43x+gyZF9gSGwPQVUZhYddN/uuHQeZkTQX5Yi6F9JfChcs6ylqCbVgduUDN6oaFlW+B+ZGXd7Je+bR4wcwhcAz1nyjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KnmBAoEq; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722029407; x=1722288607;
-	bh=TazJz5DuIy70P9F4AIkG+gYscTAZ4DJnFp342oDsZ3U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=KnmBAoEq774sWlpBt9Vk2FT/I+OIj6TmATo3eR3g9mQOvfRSfSz2WGHIxhL+eTGq9
-	 phSqHCH+u1XvkjYCKUQLHd3He2NJrZ9gzNnrJvQQV0eFVjGbWlv21aIvadO8BBV/z5
-	 wh+HI42Qw3UW0b2omFDSbIYqIMcdqIHXxGUH0G4U4MoqZ6LbWsjRi/01n+qzmnbChj
-	 ghoOJx+w7/JL7cqRdwzO7h69c+4tvwvsr6ZpTmlEaVCFJD/pdBu1YbFWeteSHwJs6x
-	 okW+LJJ2xCvponbQ6uHYCRmsvh/YyUOx8aRLhhUosIlwFfCuRrwz/VVlnJAsplHJNc
-	 aD6eBfAbCviHw==
-Date: Fri, 26 Jul 2024 21:30:00 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, Lyude Paul <lyude@redhat.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: Introduce irq module
-Message-ID: <e46d6e12-144f-47fe-9db4-d7d04914f265@proton.me>
-In-Reply-To: <ZqQTXUl4w6LRPqLh@boqun-archlinux>
-References: <20240725222822.1784931-1-lyude@redhat.com> <20240725222822.1784931-2-lyude@redhat.com> <ZqQTXUl4w6LRPqLh@boqun-archlinux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 67cf4481c52eddca5d086a82b0eb77c95d794ba7
+	s=arc-20240116; t=1722029443; c=relaxed/simple;
+	bh=P0f+aG8YLTqaJQzziKinOzYx/AvYQ071j9jvqmbzf0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJFpXGt9MaERuGpq4o45LftTaEpx1nZkQJYboEpmhwfDXWrfyHMe8yJM+gCFlNUv+DrgeEZr1oAXqufbRB42dJU1Hppw/DJfOa2igPFcg2h1W9pj7/t1DFcBHtn/YViWrwu9eSmJNniVfwzC8AoQbxVrm1a1KXzylXy0Jhmz92s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3m/ESuQ7; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722029440;
+	bh=P0f+aG8YLTqaJQzziKinOzYx/AvYQ071j9jvqmbzf0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=3m/ESuQ7CpqiyowL8oOI/ML1V6ite/dxLIaZZpmcnoegbNQ0JVnyLn0Re+SywaqD6
+	 XC9ltiELzCFTvhr6YF1vQtPpTznfSUmJ+H4zoBvqTrz7Wnogs1icgzlXowPwTHPB50
+	 oEGh4K0UOgk6E3AlAzOnhp8jeSln42FGd+rVoY7OGv+VxHNl3ETPNwOCPHjjnzaqCL
+	 8G1IDsiZEz5stqV7wfd8BsCLwcTKGXsyPJnCKP/63GHtWTRI18LGNNPu4cd1smcIKl
+	 06eFN2s+RWCrsjq14SqEE65mjKG8CBQ/X2ZkL1H02HazcCyvlUFAAfpLIq1pxsNg4e
+	 IaCIhYFqGPreA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3D56537821C0;
+	Fri, 26 Jul 2024 21:30:40 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id A1264106097F; Fri, 26 Jul 2024 23:30:37 +0200 (CEST)
+Date: Fri, 26 Jul 2024 23:30:37 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com, 
+	linux-usb@vger.kernel.org, bleung@google.com, abhishekpandit@chromium.org, 
+	andersson@kernel.org, fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, 
+	hdegoede@redhat.com, neil.armstrong@linaro.org, rajaram.regupathy@intel.com, 
+	saranya.gopal@intel.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] usb: typec: ucsi: Add status to UCSI power supply
+ driver
+Message-ID: <up2clptjacrc2n2ibzkpv5od47pky6im3pzzgjuymm4xd7ielu@ulg7lb2u5lih>
+References: <20240724201116.2094059-1-jthies@google.com>
+ <20240724201116.2094059-2-jthies@google.com>
+ <tzljywuym6jsh5q5iuc7rrtq564d3ffl3e4ltuii7xzkd6cf7d@2nmj5qkusbkt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gxaustdnzg6e6jcp"
+Content-Disposition: inline
+In-Reply-To: <tzljywuym6jsh5q5iuc7rrtq564d3ffl3e4ltuii7xzkd6cf7d@2nmj5qkusbkt>
+
+
+--gxaustdnzg6e6jcp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 26.07.24 23:21, Boqun Feng wrote:
-> On Thu, Jul 25, 2024 at 06:27:50PM -0400, Lyude Paul wrote:
-> [...]
->> +pub struct IrqDisabled<'a>(PhantomData<&'a ()>);
+Hi,
+
+On Thu, Jul 25, 2024 at 06:31:00AM GMT, Dmitry Baryshkov wrote:
+> On Wed, Jul 24, 2024 at 08:11:13PM GMT, Jameson Thies wrote:
+> > Add status to UCSI power supply driver properties based on the port's
+> > connection and power direction states.
+> >=20
+> > Signed-off-by: Jameson Thies <jthies@google.com>
 >=20
-> I think you need to make this type !Send and !Sync (because you are
-> going to make it Copy). Otherwise, you will be able to pass the irq
-> disabled token to another thread on a different CPU which doesn't have
-> irq disabled.
+> Please CC Power Supply maintainers for this patchset (added to cc).
 
-Oh yeah this is a good catch! (although it should not matter at the
-moment, see the end of the note below)
+Thanks. I guess I should add something like this to MAINTAINERS
+considering the power-supply bits are in its own file for UCSI:
 
-Just a note: it is not because of making it Copy, this problem already
-exists in the current implementation. One could have sent the reference
-to a different thread using a "scoped spawn"-esque function [1]. IIRC we
-currently do not have such a function, but it should be possible to
-later add such a function. (and it is much more accurate to make this
-type not be thread safe)
+UCSI POWER-SUPPLY API
+R:	Sebastian Reichel <sre@kernel.org>
+L:	linux-pm@vger.kernel.org
+F:	drivers/usb/typec/ucsi/psy.c
 
-[1]: https://doc.rust-lang.org/std/thread/struct.Scope.html#method.spawn
+> At least per the Documentation/ABI/testing/sysfs-class-power, the status
+> property applies to batteries, while UCSI psy device is a charger. This
+> is logical, as there might be multiple reasons why the battery is not
+> being charging even when the supply is online.
 
----
-Cheers,
-Benno
+Correct. These status bits are not meant for chargers. E.g.
+POWER_SUPPLY_STATUS_NOT_CHARGING has a very specific meaning, that a
+battery is neither charged nor discharged. Since the device is
+running that can only happen when a charger is connected, but not
+charging (or the device has two batteries).
 
+For AC the power-supply API has been designed only taking the SINK
+role into account. At some point USB was added and some time later
+people added reverse mode to their USB chargers for OTG mode. So
+far this has been handled by registering a regulator and using that
+to switch the mode. This made sense for OTG, but USB-C PD makes
+things even more complex.
+
+I am open to ideas how to properly handle the source role in the
+power-supply API, but let's not overload the status property for
+it. Please make sure to CC me on any follow-up series.
+
+-- Sebastian
+
+>=20
+> > ---
+> > Changes in V2:
+> > - None.
+> >=20
+> >  drivers/usb/typec/ucsi/psy.c | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
+> > index e623d80e177c..d0b52cee41d2 100644
+> > --- a/drivers/usb/typec/ucsi/psy.c
+> > +++ b/drivers/usb/typec/ucsi/psy.c
+> > @@ -29,6 +29,7 @@ static enum power_supply_property ucsi_psy_props[] =
+=3D {
+> >  	POWER_SUPPLY_PROP_CURRENT_MAX,
+> >  	POWER_SUPPLY_PROP_CURRENT_NOW,
+> >  	POWER_SUPPLY_PROP_SCOPE,
+> > +	POWER_SUPPLY_PROP_STATUS,
+> >  };
+> > =20
+> >  static int ucsi_psy_get_scope(struct ucsi_connector *con,
+> > @@ -51,6 +52,20 @@ static int ucsi_psy_get_scope(struct ucsi_connector =
+*con,
+> >  	return 0;
+> >  }
+> > =20
+> > +static int ucsi_psy_get_status(struct ucsi_connector *con,
+> > +			       union power_supply_propval *val)
+> > +{
+> > +	val->intval =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> > +	if (con->status.flags & UCSI_CONSTAT_CONNECTED) {
+> > +		if ((con->status.flags & UCSI_CONSTAT_PWR_DIR) =3D=3D TYPEC_SINK)
+> > +			val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
+> > +		else
+> > +			val->intval =3D POWER_SUPPLY_STATUS_DISCHARGING;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int ucsi_psy_get_online(struct ucsi_connector *con,
+> >  			       union power_supply_propval *val)
+> >  {
+> > @@ -249,6 +264,8 @@ static int ucsi_psy_get_prop(struct power_supply *p=
+sy,
+> >  		return ucsi_psy_get_current_now(con, val);
+> >  	case POWER_SUPPLY_PROP_SCOPE:
+> >  		return ucsi_psy_get_scope(con, val);
+> > +	case POWER_SUPPLY_PROP_STATUS:
+> > +		return ucsi_psy_get_status(con, val);
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > --=20
+> > 2.45.2.1089.g2a221341d9-goog
+> >=20
+>=20
+> --=20
+> With best wishes
+> Dmitry
+
+--gxaustdnzg6e6jcp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmakFXcACgkQ2O7X88g7
++pr57w/9EBA0L5P8nxUJlgmdL1QGR61UIchbd0Re+ABJCNxJfrMpa/GjOD+trxe+
+mqQcT05CvS2PUjadGvzUFOfisoVA93gIb19Y37spHrSyQED4hcEzz24CEmwgSeGi
+oEdp7JytIKeI+uUZ+1pKHe+eiJbG1dTK/ol5f9ZhziAplbXFJ3E8aWQouPsodknE
+GFPRTj5nroyvVgsIOXdqWIHDyKIMD8m3AfAxWTb5rvKRICmegIlY/hQx8Q+h1+CX
+hvmMprU5ZeFBL2dJmmiH1kth04K437g0bW1OM1wfgcXALYFTXk0/3MWiu2xBUHZN
+SXLTRCVv2fz1cxJlPBbeNZxq3ZWQ5tkfgwEEOL7uSgZHUgJ7kcS15rd2ty80vV8o
+fgITMohtiM1Oclv1HiHgx58TkJyv/LJ0ttz/fzntkCVT5gKff5u97HUhrDm5r1iK
+2X9KcL+jkIouP/e7RM7iQdGxlVd/p3dQmoK3ioxZln05MwEEMjl3rNwnsLa3Bh4/
+FQKOMsY3kV9S3vbN/TLld5n5P+B6HtQ+UEV9ku6OC3ZV4GkACVja+pT3lEj0TXwE
+m4MdQlXjwrd3kIBb8mZzMxXmhjMbmVifkPPZ6ip9jJBg4ZhKtD4hfJM3XzPjWNhd
+dMq1QHhJ3GYXoL17xb7p4CZllvjgZ3WIQL9Mb2pAu6fe5ZCqvLA=
+=kjxQ
+-----END PGP SIGNATURE-----
+
+--gxaustdnzg6e6jcp--
 
