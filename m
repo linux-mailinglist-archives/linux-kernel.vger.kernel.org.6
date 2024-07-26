@@ -1,343 +1,202 @@
-Return-Path: <linux-kernel+bounces-263598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2B093D819
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F9B93D822
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 20:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C4A2829AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874CD28251F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 18:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0AE3B791;
-	Fri, 26 Jul 2024 18:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8561B4EB2B;
+	Fri, 26 Jul 2024 18:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="StvPGw0P"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JNU/tS9M"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8DA2E644
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5532D611;
+	Fri, 26 Jul 2024 18:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017881; cv=none; b=G+Amok7/tYrnjLMtmN62op33VWJ/38iZpzo8h/ESPRE5tcKZGFYudltnm1qHnMAHSrbqIBliwqm20eNE21qgbZaWWgrvmnDopMOVRzrfn/j0XsIIJ8rpaHfPSrzwbDogjMBNy915VVvauaFxxMk7BJDvNTBAThLFuTMbzdbhH6s=
+	t=1722017883; cv=none; b=Hkyt9ctIe3ZC+oKLSJQ+ME5yySHUqzcLOahktpCetSFnzsF5MkW5FKII7V69qTTeuR4dqdwr9e3wSwUd90iBTC4unVFzonSIEGNa9wB9NnXCF60if8UAdEanC60vycMazw7mTw5qj9F+23Kh9b55W/WnuO2v64uDcGKuoHLhh7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017881; c=relaxed/simple;
-	bh=iNXRAuShoPFV8EbSD1nlq3fKisPFVuqcoHZCgPOnMcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ibj/6/qhuf3a570/msbBsXNdxjJSYqFjireE1ZHTB3hnGjBo9tznc+hurUWbt6Cde2cdUdIcHGeVJnRKEMAfj3H4mu6eot92heJQsTALx1fMxcWSrdPTiRE+ffeGGJ3R2vJMe0WdMkSffKsTzoN+Z4EIBzeeBjA++qOhmrs6yuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=StvPGw0P; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-708e75d8d7cso803451a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 11:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722017878; x=1722622678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8v4j6Kmsi//EQBNaeRK94t6ko3fmxzbzxpLIUFXfJmE=;
-        b=StvPGw0PvUl+E8/yJOxruuiNX4ZpQl9LYTvHOXMrAdAMMfO5KktsV/oAZrn4n6/5dx
-         p1PjL38sipbnUHXBhfzXatpaZHUDWNRCccrzf71QqhxsHP0BXIdVgrT59YwfhvbwMmd0
-         13rkgbusTWicHWCDSVs2B4K/5QIEbSrOnopNI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722017878; x=1722622678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8v4j6Kmsi//EQBNaeRK94t6ko3fmxzbzxpLIUFXfJmE=;
-        b=e9qcU7F5db53aBXpaulIUdM7Bat+x4h01MrIln7lGYNNnfhpYX3WSi+Hm9ECfMNOHY
-         UJaQrmfVqMiVM+oT3uJGiqTNr2NkRdtNCYSazH1pflI0N5POKRHwK7Fg6GQoBCDbIv2g
-         9sqO11YSndMCulUtS0M3aUEzb9RHC34q11leKvf+5SuaXhxyAVybvW21AcD2Q5R3trAU
-         NrR9LQNCrncRJAtqt82yADCKIWioUj6FiDV5THSKEu7jOKLeeXEwjCT9e/b44qQt8qsU
-         ctJWfbuiiHI7Edefv4alC0CcEiZzzkPUL2uX0XZYN2mGwTjlk+pwNI8cGth6EUjVSFxc
-         VSgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX81nMeeN8ZX3abfLMIQf2Lns6bjSzL4/hcNV3EWYEZPyUTqBQh1s9diTMdSx6XqfEQWNlZDkZ8tNeu6sl/zdyfRFLar3pay4gRRUn/
-X-Gm-Message-State: AOJu0YxUCzfErbQywmZmrRv3b3GhF/sqluIrYj0vmNRSSPIjqMoU5Xn4
-	f9U0MAWrlGBypg9k5rqcrdEOl6lVpYjj2k7Lp1gpcZ27wAVQyR3GSsVo0VwUca7FMa8zs7p2RGe
-	JHRDGdNVT7U4kU5F29Axy7shmN28FFoyTj0YL
-X-Google-Smtp-Source: AGHT+IERZnTCqmhM+vqiVlanP0wPqZdcVEb2wkDDWZ7sXULI/hMtjPea6urdQjsBJhSihLbQ14D8Dl0uok7A1/XNrF4=
-X-Received: by 2002:a05:6870:472b:b0:25e:19fe:f240 with SMTP id
- 586e51a60fabf-267d4d1315fmr686006fac.9.1722017877674; Fri, 26 Jul 2024
- 11:17:57 -0700 (PDT)
+	s=arc-20240116; t=1722017883; c=relaxed/simple;
+	bh=y0aifFpFzNsEAjy2SimRCfMt/eNN8A856yZr5Zw3+rU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L+ozfDUA3pOK2PKHE0WpPeh6Oy1aNJR94SWP7twdd6U/I2dTVBA/7PVI5L6TsEu8l0BbXO27OX8c6a30tHkJgBpzXyytF7v4c/FzzZIgR7HfwfgnML0hc1nHFeRAg40yEXUvO7e2TcCKYOTJYCBbaq/Qg9/PC/c26hiX1iA+p0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JNU/tS9M; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D2D5BC0002;
+	Fri, 26 Jul 2024 18:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722017873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=h+M5K/FZ1fAvJSe8Y1/x7LcWzZnw1g2sjOGJPV2jVE0=;
+	b=JNU/tS9Mh7WpBflvpXUS/z85fsM7MHw696PpFSdfx6nVZiUmf19DLGTEstvovUprPn+g3w
+	ouUbnL7/zqVTOTmz9XAkKUoJQBtzvs/E7PkTGCPcoy5A6Jq90Nq86vHPpO11bJGqHYZJIR
+	wrez+is5/I42XaeTPsKE/kU1mGLQH9J5I4vgkR5On1lc502eaA3EoBUzNlSCcQ5MaVqGcI
+	9k0eIrCWd+xFXIEsumwY/bdAL0//nK23lF5eM58sG6dpqw5JllCaPMxrXX8/Qnt18AjaXt
+	8CJ6SPLIDpXaAqYhtg7/kFctS7WRdansnSpi3F3iNsFG3gEY9sb+WgDbXJnMjA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v5 00/12] Fix USB suspend on TI J7200 (cdns3-ti, cdns3,
+ xhci)
+Date: Fri, 26 Jul 2024 20:17:48 +0200
+Message-Id: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjsKPSgV39SF0gdX@wunner.de> <20240510052616.GC4162345@black.fi.intel.com>
- <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
- <20240511043832.GD4162345@black.fi.intel.com> <20240511054323.GE4162345@black.fi.intel.com>
- <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
- <ZkUcihZR_ZUUEsZp@wunner.de> <20240516083017.GA1421138@black.fi.intel.com>
- <20240516100315.GC1421138@black.fi.intel.com> <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
- <20240626080517.GZ1532424@black.fi.intel.com>
-In-Reply-To: <20240626080517.GZ1532424@black.fi.intel.com>
-From: Esther Shimanovich <eshimanovich@chromium.org>
-Date: Fri, 26 Jul 2024 14:17:46 -0400
-Message-ID: <CA+Y6NJEg-1uGCS0eJ2QP4p6EEh2S+6-yTAUKpPvvqDpyb6_DMQ@mail.gmail.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rajat Jain <rajatja@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEzoo2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyMz3WKjIt3klLxiXZMkQwuD5BRLM4O0NCWg8oKi1LTMCrBR0bG1tQA
+ hrSxnWgAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>, 
+ Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>, 
+ Mathias Nyman <mathias.nyman@intel.com>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Kevin Hilman <khilman@kernel.org>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Wed, Jun 26, 2024 at 4:05=E2=80=AFAM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> I will be on vacation starting next week for the whole July. The patch
-> is kind of "pseudo-code" in that sense that it probably needs some
-> additional work, cleanup, maybe drop the serial number checks and so on.
-> You are free to use it as you see fit, or submit upstream as proper
-> patch if nobody objects.
+Currently, system-wide suspend is broken on J7200 because of a
+controller reset. The TI wrapper does not get re-initialised at resume
+and the first register access from cdns core fails.
 
-I cleaned it up, but I think I'd like to run it by you before
-submitting it, as you are the author and also some of my cleanups
-ended up being a bit more involved than I anticipated.
+We address that in a few ways:
+ - In cdns3-ti, if a reset has occured at resume, we reconfigure the HW.
+ - We pass the XHCI_RESET_ON_RESUME quirk, meaning the XHCI core expects
+   a resume.
+ - We add a xhci->lost_power flag.
 
-For cleanup, I did the following:
+The previous revision had one big issue: we had to know if
+reset-on-resume was true, at probe-time. This is where the main
+difference with previous revisions is. We now pass the information from
+wrapper devices back up into XHCI. The xhci->lost_power flag gets its
+default value from the XHCI_RESET_ON_RESUME quirk. It however allows
+wrappers to signal *at resume* if they still expect a reset.
 
-1) I ended up moving the changes from pcie_set_pcie_untrusted to
-pci_set_removable for multiple reasons:
+That means wrappers that are unsure if they will reset should:
+ - (1) set the quirk at probe and,
+ - (2) potentially set xhci->lost_power to false at resume.
 
-- The downstream bug I ran into happened because of the "removable" attribu=
-te.
+We implement that for cdns3, by piggybacking on the host role ->resume()
+callback already receives the information from its caller.
 
-- There seems to be a reason why both removable and untrusted exist
-despite both having the same logic. pci_fixup_early is run after
-pcie_set_pcie_untrusted, but before pci_set_removable. It seems like
-this was done on purpose so that downstream security policies can use
-quirks to set specific internal, fixed devices as untrusted.
+Have a nice day,
+Théo
 
-- The way you wrote it makes the attributes removable =3D untrusted,
-which wasn't the case before, and undos the pci_fixup_early quirks
-logic.
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v5:
+- dt-bindings: take Reviewed-by Rob and Conor for the first
+  patch: "dt-bindings: usb: ti,j721e-usb: fix compatible list".
+- cdns3-ti:
+  - We now do have HW init code inside cdns_ti_reset_and_init_hw().
+  - It gets called at probe unconditionally and from ->runtime_resume()
+    if a reset is detected (using the W1 register).
+  - Auxdata patches have been reworked now that there is default auxdata
+    since commit b50a2da03bd9 ("usb: cdns3-ti: Add workaround for
+    Errata i2409"). We now have a patch that moves auxdata to match
+    data: "usb: cdns3-ti: grab auxdata from match data".
+- cdns3/xhci: those are three new patches.
+  - First, we rename "hibernated" to "lost_power" in arguments to
+    the role ->resume() callbacks.
+  - Then we add the xhci->lost_power flag, and only have it always copy
+    the value from XHCI_RESET_ON_RESUME.
+  - Finally, we set the flag from the host role driver.
+- Link to v4: https://lore.kernel.org/lkml/20240307-j7200-usb-suspend-v4-0-5ec7615431f3@bootlin.com/
 
-- If you want to make sure that these non-tunneled discrete
-thunderbolt chips are labeled as trusted, we may have to duplicate
-this logic in both functions (which seems to be already the case
-anyways in their current state).
-I just don't fully know what the "untrusted" attribute entails, so I
-am erring on the more conservative side of only making changes I fully
-understand.
+Changes in v4:
+- dt-bindings: usb: ti,j721e-usb:
+  - Remove ti,am64-usb single compatible entry.
+  - Reverse ordering of compatible pair j721e + am64
+    (becoming am64 + j721e).
+  - Add j7200 + j721e compatible pair (versus only j7200). It is the
+    same thing as am64: only the integration differs with base j721e
+    compatible.
+  - NOT taking trailers from Conor as patches changed substantially.
+- arm64: dts: ti: j3-j7200:
+  - Use j7200 + j721e compatible pair (versus only j7200 previously).
+- arm64: dts: ti: j3-am64:
+  - Fix to use am64 + j721e compatible pair (versus only am64).
+    This is a new patch.
+- Link to v3: https://lore.kernel.org/r/20240223-j7200-usb-suspend-v3-0-b41c9893a130@bootlin.com
 
-2) I changed this comment into code:
+Changes in v3:
+- dt-bindings: use an enum to list compatibles instead of the previous
+  odd construct. This is done in a separate patch from the one adding
+  J7200 compatible.
+- dt-bindings: dropped Acked-by Conor as the changes were modified a lot.
+- Add runtime PM back. Put the init sequence in ->runtime_resume(). It
+  gets called at probe for all compatibles and at resume for J7200.
+- Introduce a cdns_ti_match_data struct rather than rely on compatible
+  from code.
+- Reorder code changes. Add infrastructure based on match data THEN add
+  compatible and its match data.
+- DTSI: use only J7200 compatible rather than both J7200 then J721E.
+- Link to v2: https://lore.kernel.org/r/20231120-j7200-usb-suspend-v2-0-038c7e4a3df4@bootlin.com
 
-> +/* root->external_facing is true, parent !=3D NULL */
+Changes in v2:
+- Remove runtime PM from cdns3-ti; it brings nothing. That means our
+  cdns3-ti suspend/resume patch is simpler; there is no need to handle
+  runtime PM at suspend/resume.
+- Do not add cdns3 host role suspend/resume callbacks; they are not
+  needed as core detects reset on resume & calls cdns_drd_host_on when
+  needed.
+- cdns3-ti: Move usb2_refclk_rate_code assignment closer to the value
+  computation.
+- cdns3/host.c: do not pass XHCI_SUSPEND_RESUME_CLKS quirk to xHCI; it
+  is unneeded on our platform.
+- Link to v1: https://lore.kernel.org/r/20231113-j7200-usb-suspend-v1-0-ad1ee714835c@bootlin.com
 
-3) I edited legacy comments to reflect what the code does now. I also
-changed your comments to reflect how I changed the code, but for the
-most part I kept your words in as they were really clear.
+---
+Théo Lebrun (12):
+      dt-bindings: usb: ti,j721e-usb: fix compatible list
+      dt-bindings: usb: ti,j721e-usb: add ti,j7200-usb compatible
+      usb: cdns3-ti: move reg writes to separate function
+      usb: cdns3-ti: run HW init at resume() if HW was reset
+      usb: cdns3: add quirk to platform data for reset-on-resume
+      usb: cdns3-ti: grab auxdata from match data
+      usb: cdns3-ti: add J7200 support with reset-on-resume behavior
+      usb: cdns3: rename hibernated argument of role->resume() to lost_power
+      xhci: introduce xhci->lost_power flag
+      usb: cdns3: host: transmit lost_power signal from wrapper to XHCI
+      arm64: dts: ti: k3-j7200: use J7200-specific USB compatible
+      arm64: dts: ti: k3-am64: add USB fallback compatible to J721E
 
-4) I removed the serial checks as you suggested
+ .../devicetree/bindings/usb/ti,j721e-usb.yaml      |   5 +-
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi           |   2 +-
+ arch/arm64/boot/dts/ti/k3-j7200-main.dtsi          |   2 +-
+ drivers/usb/cdns3/cdns3-gadget.c                   |   4 +-
+ drivers/usb/cdns3/cdns3-ti.c                       | 151 ++++++++++++++-------
+ drivers/usb/cdns3/cdnsp-gadget.c                   |   2 +-
+ drivers/usb/cdns3/core.h                           |   3 +-
+ drivers/usb/cdns3/host.c                           |  13 ++
+ drivers/usb/host/xhci.c                            |   8 +-
+ drivers/usb/host/xhci.h                            |   6 +
+ 10 files changed, 136 insertions(+), 60 deletions(-)
+---
+base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
+change-id: 20240726-s2r-cdns-4b180cd960ff
 
-> If nothing has happened when I come back, I can pick up the work if I
-> still remember this ;-)
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
 
-I did my best to clean up! I'm unsure if you will want me to duplicate
-this logic to pcie_set_pcie_untrusted, so just let me know if I should
-fix that, and I'll send it to the kernel! (I'm assuming with the
-Co-developed-by, and the Signed-off-by lines, to properly attribute
-you?)
-
-I hope you had a nice vacation! Both you and Lukas Wurner have been so
-helpful and attentive.
-
-The cleaned up patch is below:
-
-
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 43159965e09e9..fc3ef2cf66d58 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1613,24 +1613,161 @@ static void set_pcie_untrusted(struct pci_dev *dev=
-)
-                dev->untrusted =3D true;
- }
-
-+/*
-+ * Checks if the PCIe switch that contains pdev is directly under
-+ * the specified bridge.
-+ */
-+static bool pcie_switch_directly_under(struct pci_dev *bridge,
-+                                      struct pci_dev *parent,
-+                                      struct pci_dev *pdev)
-+{
-+       /*
-+        * If the device has a PCIe type, that means it is part of a PCIe
-+        * switch.
-+        */
-+       switch (pci_pcie_type(pdev)) {
-+       case PCI_EXP_TYPE_UPSTREAM:
-+               if (parent =3D=3D bridge)
-+                       return true;
-+               break;
-+
-+       case PCI_EXP_TYPE_DOWNSTREAM:
-+               if (pci_pcie_type(parent) =3D=3D PCI_EXP_TYPE_UPSTREAM) {
-+                       parent =3D pci_upstream_bridge(parent);
-+                       if (parent =3D=3D bridge)
-+                               return true;
-+               }
-+               break;
-+
-+       case PCI_EXP_TYPE_ENDPOINT:
-+               if (pci_pcie_type(parent) =3D=3D PCI_EXP_TYPE_DOWNSTREAM) {
-+                       parent =3D pci_upstream_bridge(parent);
-+                       if (parent && pci_pcie_type(parent) =3D=3D
-PCI_EXP_TYPE_UPSTREAM) {
-+                               parent =3D pci_upstream_bridge(parent);
-+                               if (parent =3D=3D bridge)
-+                                       return true;
-+                       }
-+               }
-+               break;
-+       }
-+
-+       return false;
-+}
-+
-+static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-+{
-+       struct fwnode_handle *fwnode;
-+
-+       /*
-+        * For USB4 the tunneled PCIe root or downstream ports are marked w=
-ith
-+        * the "usb4-host-interface" property so we look for that first. Th=
-is
-+        * should cover the most cases.
-+        */
-+       fwnode =3D fwnode_find_reference(dev_fwnode(&pdev->dev),
-+                                      "usb4-host-interface", 0);
-+       if (!IS_ERR(fwnode)) {
-+               fwnode_handle_put(fwnode);
-+               return true;
-+       }
-+
-+       /*
-+        * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
-+        * before Alder Lake do not have the above device property so we
-+        * use their PCI IDs instead. All these are tunneled. This list
-+        * is not expected to grow.
-+        */
-+       if (pdev->vendor =3D=3D PCI_VENDOR_ID_INTEL) {
-+               switch (pdev->device) {
-+               /* Ice Lake Thunderbolt 3 PCIe Root Ports */
-+               case 0x8a1d:
-+               case 0x8a1f:
-+               case 0x8a21:
-+               case 0x8a23:
-+               /* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
-+               case 0x9a23:
-+               case 0x9a25:
-+               case 0x9a27:
-+               case 0x9a29:
-+               /* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
-+               case 0x9a2b:
-+               case 0x9a2d:
-+               case 0x9a2f:
-+               case 0x9a31:
-+                       return true;
-+               }
-+       }
-+
-+       return false;
-+}
-+
-+static bool pcie_is_tunneled(struct pci_dev *root, struct pci_dev *parent,
-+                            struct pci_dev *pdev)
-+{
-+       /* Return least trusted outcome if params are invalid */
-+       if (!(root && root->external_facing && parent))
-+               return true;
-+
-+       /* Anything directly behind a "usb4-host-interface" is tunneled */
-+       if (pcie_has_usb4_host_interface(parent))
-+               return true;
-+
-+       /*
-+        * Check if this is a discrete Thunderbolt/USB4 controller that is
-+        * directly behind a PCIe Root Port marked as "ExternalFacingPort".
-+        * These are not behind a PCIe tunnel.
-+        */
-+       if (pcie_switch_directly_under(root, parent, pdev))
-+               return false;
-+
-+       return true;
-+}
-+
- static void pci_set_removable(struct pci_dev *dev)
- {
--       struct pci_dev *parent =3D pci_upstream_bridge(dev);
-+       struct pci_dev *parent, *root;
-+
-+       parent =3D pci_upstream_bridge(dev);
-
-        /*
--        * We (only) consider everything downstream from an external_facing
--        * device to be removable by the user. We're mainly concerned with
--        * consumer platforms with user accessible thunderbolt ports that a=
-re
--        * vulnerable to DMA attacks, and we expect those ports to be marke=
-d by
--        * the firmware as external_facing. Devices in traditional hotplug
--        * slots can technically be removed, but the expectation is that un=
-less
--        * the port is marked with external_facing, such devices are less
--        * accessible to user / may not be removed by end user, and thus no=
-t
--        * exposed as "removable" to userspace.
-+        * We're mainly concerned with consumer platforms with user accessi=
-ble
-+        * thunderbolt ports that are vulnerable to DMA attacks.
-+        * We expect those ports to be marked by the firmware as
-external_facing.
-+        * Devices outside external_facing ports are labeled as removable, =
-with
-+        * the exception of discrete thunderbolt chips within the chassis.
-+        *
-+        * Devices in traditional hotplug slots can technically be removed,
-+        * but the expectation is that unless the port is marked with
-+        * external_facing, such devices are less accessible to user / may =
-not
-+        * be removed by end user, and thus not exposed as "removable" to
-+        * userspace.
-         */
--       if (parent &&
--           (parent->external_facing || dev_is_removable(&parent->dev)))
-+       if (!parent)
-+               return;
-+
-+       if (dev_is_removable(&parent->dev))
-                dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
-+
-+       root =3D pcie_find_root_port(dev);
-+
-+       if (root && root->external_facing) {
-+               /*
-+                * All devices behind a PCIe root port labeled as
-+                * "ExternalFacingPort" are tunneled by definition,
-+                * with the exception of discrete Thunderbolt/USB4
-+                * controllers that add Thunderbolt capabilities
-+                * to CPUs that lack integrated Thunderbolt.
-+                * They are identified because by definition, they
-+                * aren't tunneled.
-+                *
-+                * Those discrete Thunderbolt/USB4 controllers are
-+                * not removable. Only their downstream facing ports
-+                * are actually something that are exposed to the
-+                * wild so we only mark devices tunneled behind those
-+                * as removable.
-+                */
-+               if (pcie_is_tunneled(root, parent, dev))
-+                       dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
-+       }
- }
-
- /**
 
