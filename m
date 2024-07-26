@@ -1,91 +1,194 @@
-Return-Path: <linux-kernel+bounces-263435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D85B93D5CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C092293D5CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 17:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8BF1F243CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C561F24466
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D4E1EB31;
-	Fri, 26 Jul 2024 15:16:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B241168C7;
-	Fri, 26 Jul 2024 15:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AE4148312;
+	Fri, 26 Jul 2024 15:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VApsODoC"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D84B134A8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 15:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006969; cv=none; b=RhCQfYrOLlVoiKGivXLSQhHqPi7yemc2uVM0C3g/yhoj60cpU+VsZ5SyEOGD3JQUCDlt0XDKDKHHwkDjbmzx1yTsjZulLSskFhxGuTOjK+EaluuDWLviHCu2ClDND43AX3mq3FuuFM7BlazkykhDi7GVlEtUPZJk2xNYYpMA2yg=
+	t=1722007040; cv=none; b=bcp7GFej/+BNp6ZjoWdjq5xPKtKzgn6LwOKlCenT7ZsK95gRow4GfqD0Agve9wR/MsnYwBaXN8IrCKQnnNCgM8DBdShBnRtgQzFkdFSbP42gfaULZCC4qd0c7/yL6mnORQeWxbXd8PLEUr20Jw5ISn0ZFU2cbVneS95PrtI6p58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006969; c=relaxed/simple;
-	bh=SjYuF0wHvMidJzi2rqAX+BCgJqz8mbzUz6DGGs/7Ki0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMTt7RmYz4Q6Jmr1IPrNoC1XObKjpzzXXWvdiLXnBvBsDX7KJ6hHktY7HMRadGdZeTddtIpMVTpjPwxidETfY94lGcyRAlQu5iFrh+mbFACb6tQgxoRV8uV7qHDDLspv6GLWJqITM78fdOYzSF+iJJLBeJqAzmmAChbd1SA80KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54A7A1007;
-	Fri, 26 Jul 2024 08:16:32 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 161E33F73F;
-	Fri, 26 Jul 2024 08:16:05 -0700 (PDT)
-Date: Fri, 26 Jul 2024 16:16:03 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Etienne Carriere <etienne.carriere@foss.st.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	<arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] firmware: arm_scmi: fix voltage description in failure
- cases
-Message-ID: <ZqO9s9YzYjaCHSap@bogus>
-References: <20240725065317.3758165-1-etienne.carriere@foss.st.com>
+	s=arc-20240116; t=1722007040; c=relaxed/simple;
+	bh=Kh2EmKRnIzKsX1QsBp0T4Gqr6Uw5Lr9ktVvyTCM4dyo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QnoHn/qur+zouFdlO7QhuGUAKTMpsS+hYWOI9LNXJJ6GYtqwKxIHqrgNczpohC2ceha5iLFyhK2ZRkH4tDaWWaJnLjidleYXr7Uk51pk8tDGi2cUKLA6mjvdvdXQIb11t6i0nhVMq2BGHAnG5t3XvQ4mnVwyPHNM2sPiNYPdWVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VApsODoC; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-368440b073bso1404876f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 08:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722007036; x=1722611836; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TX38zlb9MOxIJNDEgb9YWH7GVDZ/sgMkCnZQXoDOuOM=;
+        b=VApsODoC6OQAp1GWBq8hGDGcEaRJy0UdhHMAirZn0wvt+zJBQ7F4JnXRF02PvOQ+M/
+         HqEU6syYURrWIMQM1+sQ/bwWyGXFdIEAC+vfP897w8pJvULAA8T5osNDjzUsnopco5kL
+         iqzg0kkuOKSzeHcPh5CoeWGI2eiwXi59w5vqr0dLmbOja3NxaM/KxyYLkW4XxksvFBEd
+         rkvGPovafgOILOLJNvrhQY8scTnch6M0iSc5NPJd5GHIDshhE6NB87zX8sAq1qFvIqB+
+         MZZOcdIOsDac+U4fiosQh44Ss8NLbhF8ybbZt0gwCSlGI5C+Hzd5x2DGNIUCOVVwK1Va
+         KpXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722007036; x=1722611836;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TX38zlb9MOxIJNDEgb9YWH7GVDZ/sgMkCnZQXoDOuOM=;
+        b=CMkQp3Lnif984bF2Ishjc1GnwG3SHMKV/LQb/aMG6QdpezW+LNRPKorK+yPmDtAT93
+         2R9JeNTIGk9NVFKTFqjlMguH3kf3LimUbG0P6VFAfWIv+9nuduFz9ePVsn6oaU4n8XKN
+         w5I/8IGrNRmuMvfdzod0/eDQmtkc9XpBnykGKsArgr8M5g8RL2DNhN9CkZWtjwPIZHlR
+         12+prUx/azYn3Alet8AjutLePfPSrYUTdl+7x95lYe15Tc8u3WZpAr9am5ylg0Q22qPP
+         m9GXnXniSjEtYPBNY0YRBmmGw1Yk2YKtDxQOkjgMaSqBqmZXBxJxS/hef3SdbiFI6EAk
+         hb9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVXpfC1uJ9chp8Gh4OZTc5Brg2pv5HyFE32i0WEqKIJ+T7b1WNMDfl5wLghhcNOIGGFdKCJ4YDxHSPG5lYf4TNoj1g43AmKhjQzJVQr
+X-Gm-Message-State: AOJu0Yzo8rjOjzK1ItZ7TMD2G1VSiTOcVeXrcuU9UGvAAIhRJ/+XtNUI
+	6VUjddWGOyrZhzmoKZkMdkBfANxBLCknpC/wRsn+SGEEOJnSDlUQvmT4gs5U2dQ=
+X-Google-Smtp-Source: AGHT+IEiSU2LED1cE3t9Ou/VFGjstbNy6SUV5w3usiuVDiv0mt877k6eAW3qFGh9ZiTt/EzcGcEUCg==
+X-Received: by 2002:a5d:61d0:0:b0:36b:33eb:f0d6 with SMTP id ffacd0b85a97d-36b33ebf24cmr4630428f8f.2.1722007036220;
+        Fri, 26 Jul 2024 08:17:16 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9576sm5528350f8f.31.2024.07.26.08.17.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 08:17:15 -0700 (PDT)
+Message-ID: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+Date: Fri, 26 Jul 2024 17:17:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725065317.3758165-1-etienne.carriere@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Jaewon Kim <jaewon02.kim@samsung.com>,
+ Mateusz Majewski <m.majewski2@samsung.com>,
+ Henrik Grimler <henrik@grimler.se>, David Virag <virag.david003@gmail.com>,
+ Artur Weber <aweber.kernel@gmail.com>,
+ Raymond Hackley <raymondhackley@protonmail.com>
+References: <20240129204717.9091-1-semen.protsenko@linaro.org>
+ <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 08:53:17AM +0200, Etienne Carriere wrote:
-> Reset the reception buffer max size when a voltage domain description
-> request fails, for example when the voltage domain returns an access
-> permission error (SCMI_ERR_ACCESS) unless what only a single 32bit
-> word is read back for the remaining voltage description requests
-> responses leading to invalid information. The side effect of this
-> issue is that the voltage regulators registered from those remaining
-> SCMI voltage domain were assigned a wrong regulator name.
+On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
+> On 29/01/2024 21:47, Sam Protsenko wrote:
+>> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
+>>
+>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> ---
+>>  MAINTAINERS | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 939f6dd0ef6a..77c10cc669f8 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -19281,6 +19281,16 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
+>>  F:	Documentation/devicetree/bindings/sound/samsung*
+>>  F:	sound/soc/samsung/
+>>  
+>> +SAMSUNG EXYNOS850 SoC SUPPORT
+>> +M:	Sam Protsenko <semen.protsenko@linaro.org>
+>> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>> +L:	linux-samsung-soc@vger.kernel.org
 > 
-> Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> ---
->  drivers/firmware/arm_scmi/voltage.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/voltage.c b/drivers/firmware/arm_scmi/voltage.c
-> index 2175ffd6cef5..f1a7c04ae820 100644
-> --- a/drivers/firmware/arm_scmi/voltage.c
-> +++ b/drivers/firmware/arm_scmi/voltage.c
-> @@ -229,8 +229,10 @@ static int scmi_voltage_descriptors_get(const struct scmi_protocol_handle *ph,
->  		/* Retrieve domain attributes at first ... */
->  		put_unaligned_le32(dom, td->tx.buf);
->  		/* Skip domain on comms error */
-> -		if (ph->xops->do_xfer(ph, td))
-> +		if (ph->xops->do_xfer(ph, td)) {
-> +			ph->xops->reset_rx_to_maxsz(ph, td);
+> Sorry, but I am still against individual SoC entries in maintainers,
+> like I replied multiple times and pointed to the updated
+> get_maintainers.pl script to fetch emails from boards.
 
-I am fine with this to keep it simple, but thought I will check my thoughts.
-We usually use reset_rx_to_maxsz in iterators as we don't know the expected
-size of the response, whereas here it must be max sizeof(*resp_dom).
+I retract my earlier statement.
 
-That said, we don't have any helpers and changing xfer->rx.len directly
-doesn't looks good ? Or may be it is OK ? Thoughts ?
+Some background: I was really hoping that scripts/get_maintainers.pl
+patch, which adds fetching emails from files (e.g. DTS), will be picked
+up, but it has been few years, few resends and there is no conclusion. I
+don't think it will be ever merged, thus this email.
 
---
-Regards,
-Sudeep
+Since C files do not have in-file "maintainer" entry and particular
+drivers have MAINTAINERS-file entries, then why DTS should be different?
+
+I'll take the patch after merge window.
+
++Cc few other folks,
+
+I understand that with lei/lore filters one can easily track patches
+sent for particular boards or SoCs, but being listed in MAINTAINERS have
+a bit bigger meaning. Therefore if any of you consider / want to add
+themself to MAINTAINERS for particular DTS, then go ahead. By DTS I
+mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC
+(e.g. Exynos850 like here).
+
+Best regards,
+Krzysztof
+
 
