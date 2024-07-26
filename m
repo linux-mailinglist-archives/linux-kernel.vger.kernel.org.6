@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-262961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-262962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B323393CF17
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:54:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1C393CF1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 09:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D726C1C21825
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9126C1F22B04
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 07:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77869176AC3;
-	Fri, 26 Jul 2024 07:54:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A762176ABF;
+	Fri, 26 Jul 2024 07:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fJRe4j+1"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917AD1741E8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34081741FB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 07:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721980464; cv=none; b=m2RKO3ahBKSZAcs0db2eT7F8A8triXoyUMEdL6Li4pv31Mi62RK5cma+obUnHTIkmY6kgLweTaeNUqskjLgigGAk0WtuXIIBl9nlxHKLDIh0AEWYgJFnhEHg4IHXZW8+dQZCglg5lSLrjX8ZFAaHQIG08Ov3nChjvFHj/VdRxjM=
+	t=1721980478; cv=none; b=S5LRwzjtNhxyL+ZKgaNPk2tKFVq6bXBxBb3n2Ql9NL1Eo7bF24Tyeo1RPylT5HURyLjuQyrNrvM7brz70CtW7r+TxGkDRFthdrp4YWID0K+dQxB75AloG5YdXeej4qQ01y3mbhFq5i2O7Pe8pvO6bkgP0VX0GxDrcdniH/xooH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721980464; c=relaxed/simple;
-	bh=ZCM57uE+kaICz9B53NmIJzwrlcJS0QVtr24NFyAUYTg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MIlojGEbgt9F+zZDok4dIe9uVhhDEYVbOcmDKsWT9W+RhJB4ie5Y+YqIxZtmWIjYAQRNpVD1JmMu0ikyd6Nl4xChsIb0AtKGS8uIPsrOl3e4EIaDEIc64qJudZgJIWSS4ff2BtEcPPHDxF+5wTVE+oWlYN93esyR3fPwv9BdGLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39862b50109so19644535ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:54:22 -0700 (PDT)
+	s=arc-20240116; t=1721980478; c=relaxed/simple;
+	bh=RwzWWLRlKkqepKvBN5fdT/d0yz8f733U2RRrSTg9/no=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5VeWnAhrRoxTBHXCDrtdaI+kz/Dy06zpfTAKhEpk8neviGuNyZrKLX6osnST3keOsCqhGpj/uKCE7g/7NUk4HL+oRdWoqMS3Lx/y4Gy8lzADH7ON+3bDCLCDdLuOlZ7xNxgYx+DZP2Ni/9y6FKtQZVDEVnQB78AYpxBoWXbwtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fJRe4j+1; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ef95ec938so1250985e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 00:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721980474; x=1722585274; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLnzH0Tuz7U9XRD9djw1OdkIPjJA5X6DCcdcepF94ns=;
+        b=fJRe4j+1QYtJrYzwt+C5BF9XKxPgaGFjmhApX8bYLp/i47eToIanWw32Ad83PI30KH
+         NKuX04y0+hDGEWebmpwK3viJeFJ/QVe+EhCB0PSttPTgbzAd/DYd0ldils+I6lw986Xh
+         vml3as+CsFtC9xE/ET+W+5VUfmeJ+js4C7kRif+I7qFsFogtuQykMOB8/5sBzj4yVWN4
+         IOyxIdZN4sSPHCh2iIw5etQnXQ+fU7O1ECr9Snbs3i9w2NVoywKJPKVIdWGZAw6WfYMf
+         xBCgh+j4Q7VlYWaaTfke6wZICC3mK9az4/RYJao3s0qqZz2wTp/+bDlK4Q1JDEk/PXvR
+         f4cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721980462; x=1722585262;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vnDCOOC3UV8dc6a0qIuJGgDHn4oMM4I2MKMhtLQV5q8=;
-        b=jxP4n/fIxLQ+uM/8ERZTQO4SbOSPQuEVqZXTZWNhZnmdEj1XlcpYChQmRZN9TfGZv+
-         sWizj6BmY/uQWDH+hPIj6YGk4BSMeJmwE9XwfXG8L7aMBTxJ6VOVVZrau1O30aWk3JsV
-         d7tXFba38rbPxvyrx8vPfRjQW95y6dXNTOh2xmf5MSGRl3Y1IF9nS7gauuR/Kyx0gTHf
-         NmLziYl/t9UllWDqNZfZeyNHZmjTcLkk5FpLAQ2D9Bb8yKConhDBXx/kmWLSuogeLRGn
-         hVTMhh4ZUJ2ygs0R7Yr9Ggg8U+J11aEYJsMEX4z6yW2wnkhA8NYyaj9tgVQuhXdRcKCJ
-         O8kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNQ0O+DwRsd7CMtiTjKRxhYGPKCE1S5ZOfzj9PE2pp7L6LSqQpZXAj/HlZ+gJywnZT/P75qR8YU8slTyEEnUcXthaMuPVrvRmkWmBo
-X-Gm-Message-State: AOJu0Yy7Q1p5S1yfheIDbU1+oJ/yVG+zVMnOmtW1nH0Kh0wSiz6yggkg
-	AFNJOUKNqKd3cs9dBqdj+vzphJDejz6tn5DR8F19YYv2TPrj6pqWHW6ERftewuUXBPkpVhhnFdh
-	Q3nJ6WFphC4L8LuZT58R4aknitIm/+sgzrBSvhNrNf6ys8ggmvu/wtG4=
-X-Google-Smtp-Source: AGHT+IGTiaIgqckHaA2GQY4sMfSe0y7Ns330nWXc2INezDOpG2bIu9XyNhnlvPD25B2z0rB2cIya/K7ELlJjF4im0Ag3ixXSpARU
+        d=1e100.net; s=20230601; t=1721980474; x=1722585274;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vLnzH0Tuz7U9XRD9djw1OdkIPjJA5X6DCcdcepF94ns=;
+        b=UrSlB+mj3zBPJoFkehLIpp1xY5srsrmqtM7CNzsD5zq2UzaIsTpv6E5y8bqs5sqNDa
+         oxotuDUAgsAxXijAmyeN03ynS7AZZAKdUhg0TEtHML1QwhnuNDPIyRtzlPzPW++rCtFN
+         GOMQw0DraqDYZ6a5BdLDIBubQyQpdyDK5Z7qExrZ1a5zB8naEm6sbx1UmXwJesaiJgkC
+         Zm60UhrAtUPi30JbsHD6zn8rD2LzXsQTNyDEFcptVMLg8bCuT3lE7rpwp99/ZkGjR4SD
+         6A+U0gNCfO1nmcs7CQtgklEOF/SOy5Bk1Y+smzk7mzoPLNdpHi2MAQrKbzDJ4t8lEZpw
+         teQg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0/UTGBLI3RaQYFAq0JkX3ZrQk6TVEQe3pZAKLwcXk3zWO0pKtf2OptCUjhNfzztZtHS0ckE7x/dhBLDqm9vCKmVYxjtHSFaWnctrT
+X-Gm-Message-State: AOJu0Yw33apm87Kdp7RheL5hq7+CQM4YvhdYi3v+atZbV3V/dItkPw6Y
+	IIB0bjKzPfTeGEcrb1wQcr5J2Vmt44C2qBdJwe9lPUodTW18SidRAazwFYLejao=
+X-Google-Smtp-Source: AGHT+IFnZcbYOKsf8mFfRLK1pWmaH8ouvafSG1jZC4pd2hKy8vDuX0O20rzr0mRRxFIliC1jFHoAew==
+X-Received: by 2002:a05:6512:683:b0:52c:daa7:8975 with SMTP id 2adb3069b0e04-52fd3efe6aemr3714067e87.18.1721980473716;
+        Fri, 26 Jul 2024 00:54:33 -0700 (PDT)
+Received: from localhost (109-81-83-231.rct.o2.cz. [109.81.83.231])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590ac3sm1578410a12.34.2024.07.26.00.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 00:54:33 -0700 (PDT)
+Date: Fri, 26 Jul 2024 09:54:32 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg_write_event_control(): fix a user-triggerable oops
+Message-ID: <ZqNWOLwOoKfquBvH@tiehlicka>
+References: <20240726054357.GD99483@ZenIV>
+ <ZqNLEc54NVP40Kpn@tiehlicka>
+ <ZqNMfL6JmgHCJwBv@tiehlicka>
+ <20240726074804.GE99483@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2184:b0:39a:e800:eec9 with SMTP id
- e9e14a558f8ab-39ae8010c08mr539575ab.4.1721980461578; Fri, 26 Jul 2024
- 00:54:21 -0700 (PDT)
-Date: Fri, 26 Jul 2024 00:54:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b90a8e061e21d12f@google.com>
-Subject: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, jack@suse.cz, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726074804.GE99483@ZenIV>
 
-Hello,
+On Fri 26-07-24 08:48:04, Al Viro wrote:
+> On Fri, Jul 26, 2024 at 09:13:00AM +0200, Michal Hocko wrote:
+> > On Fri 26-07-24 09:06:59, Michal Hocko wrote:
+> > > On Fri 26-07-24 06:43:57, Al Viro wrote:
+> > > > We are *not* guaranteed that anything past the terminating NUL
+> > > > is mapped (let alone initialized with anything sane).
+> > > >     
+> > > 
+> > > Fixes: 0dea116876ee ("cgroup: implement eventfd-based generic API for notifications")
+> > > 
+> > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > 
+> > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > Btw. this should be
+> > Cc: stable
+> 
+> Point, except that for -stable it needs to be applied to mm/memcontrol.c
+> instead...
 
-syzbot found the following issue on:
+Correct. And if anybody wants to backport to pre 3.14 then to
+kernel/cgroup.c
 
-HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14955423980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e3f4ec8ccf7c/disk-1722389b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f19bcd908282/vmlinux-1722389b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d93604974a98/bzImage-1722389b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e0d10e1258f5/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 58 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-Modules linked in:
-CPU: 1 UID: 0 PID: 58 Comm: kworker/1:2 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events destroy_super_work
-RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-Code: 74 19 e8 86 d5 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
-RSP: 0018:ffffc9000133fb30 EFLAGS: 00010246
-RAX: 0000000000000002 RBX: 1ffff11005324477 RCX: ffff8880163f5a00
-RDX: 0000000000000000 RSI: ffffffff8c3f9540 RDI: ffff888029922350
-RBP: 0000000000000167 R08: ffffffff82092061 R09: 1ffffffff1cbbbd4
-R10: dffffc0000000000 R11: fffffbfff1cbbbd5 R12: dffffc0000000000
-R13: 1ffff1100532446a R14: ffff888029922350 R15: ffff888029922350
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055557c167738 CR3: 000000007ada8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
- destroy_super_work+0xec/0x130 fs/super.c:282
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Michal Hocko
+SUSE Labs
 
