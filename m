@@ -1,106 +1,167 @@
-Return-Path: <linux-kernel+bounces-263328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E8793D45D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4942193D466
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 15:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4241BB232FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0056D2838FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2024 13:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED31A17C22A;
-	Fri, 26 Jul 2024 13:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3B717C222;
+	Fri, 26 Jul 2024 13:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ibv/mVgL"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCT95JBi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A717C21C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 13:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F326AC1;
+	Fri, 26 Jul 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001237; cv=none; b=GULbr/4VLd+aCXPjZ48r4mTYSlnBgPk0YcgloIcsc1WH1jEMGNfWzGjcThmFeRdhKCZ4ZfBySgTetWDb/RRu8+rIcfUkJ2vBwhPu9Vam3OuVsvZt6+wtMN/DflDiIDr+FvlziAXV+pfM1VK0IPytsQeGq/BFjCCfo57AaSHklAA=
+	t=1722001303; cv=none; b=CxG3JIImcLpp3pkUahUK15VjZ7qZgE4ZQebEawvTxF6ZKZAd/Mf+SzRyMEgBQ9r/9zKk9tTz4xiMEKt4vs5QTATpIFPGB/wDcDX892yoEXvJfq7Mtd3QgGCFCYjyDJYxsq1YsAlnd6v+hTkzrbffoMw8YU2mV6AvuhwsuXBklVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001237; c=relaxed/simple;
-	bh=i2VwI/ItnEY4Smkcy/51knTi1QGpnddwYRamb6SUsY4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=bkQXUDzJoMX+HU4ScuvtvGJ/LvU1BVWZrLEHTJcMCzh6OEb7DNVepZsrDJt7mFXPMh5Va5CkXdmybUaT0noU7ml+Ljuv2tOlCtjwh9ZdW9YuWcTdofSW1far5iG9lBv6m25fLNz12xaC6tQQcTX3ud8WB+gWh70neXfyWmbjoZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ibv/mVgL; arc=none smtp.client-ip=43.163.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722001230; bh=GFr8RXHACSVOanuldZYi/bMbJE8OjdhO/msr6Qonqpw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ibv/mVgLizanKcgWs7KBE/z3l8oemZOOY8jk/+TRUKkuxwr0Pd8ex83idjw7XAKcB
-	 1szKRRIUZtdnPJNIm3ahtmegfZpnamGWEF8jQkXAF8VJLpxKO/Farq3PChmylB1nLq
-	 unc/O2zr4AhG5lOrGY0jXnNeuPzvFxE7MFV7vzwI=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id A1C3CCE1; Fri, 26 Jul 2024 21:40:28 +0800
-X-QQ-mid: xmsmtpt1722001228tj0rhpbs0
-Message-ID: <tencent_ED660A3CBD379296C036AA4A1A75D7771D09@qq.com>
-X-QQ-XMAILINFO: NMmJpeSXIGQNVvOQWO+bTdplowi/Qjx/C3Bn+CbEOXjPcz4BN07XZrhylZawhV
-	 X+mYhgtA3tEqgxK+efEW0YQQkgaxBJ8V1+N28R4WC46h9bsE2O6xSqReB9vMyk9KQAl7/+5tb2Ti
-	 HwOwJUC/0WhhIX7a69ndf57zH61Cd17LZ/6Rq/QIDTAVlt/TtYO/Vv8PP88GpeuBovJzajb1OqJ2
-	 afwZwP4F7E+fv9Zcz15e6HDIHfi91wnM3TKJ+53r4d2l1Uoqcjk+C7ZvK1s9QCKWuZ1EYNrdR2NR
-	 weBtyMg080cmuNxhmd1BSrToYxxFzrVScuJv1nm5+ChOsSGlbv2nYU7PuKyJ8Pa9nHTVL3/HJjGZ
-	 Ac0lT0TS6UC2WY0XvzidmXCRLjU1zqMA+tmpxZTmdXn/w/uVU0hGirHcXuluN/hrIPYEGPhdDRei
-	 sB4166HfVHPhORYOZS1iCkNFNoWOUJCwafavIHKkgJVMpABAofI4i1vP5RcUt0mxuH5PglFc0Vjn
-	 IXweJ3SHFOgp0fXAq6SQfuccyRcnZw7N6puueDygUmvlVD7q+lqwVuVFivWGyuVUeYdhY7eyBzv0
-	 Va94JPPShWIY1rDNR6K3F38kUudJtc9w7L7xvSL8t8AUklM8wK9JYcQT2FTHRcWQcrstSLyzRLVN
-	 ROloTjfyUD7IasUmwcaTvKv5iZgtJAMMYolUH5PcCR5TtmqmP8IKnvUpuudX98dNkp7Nbwe8w46w
-	 862dwByRONNRGVNKcZHWYo84kv1Z2tzjh3S9vf8ZxEWHT6fKj5dHGOCBB/8+1VPuBLcUocucoUKB
-	 JIh7lLvTUC9e5gzrms1ZlnC+Q2Q4EhFMzy9f0XeFKN+Xk3SJJuQOjjMxMFtrghKsM4IEJwJ9kdRi
-	 cuiZwcaX10voBVbmmwdKMPGLL328cb/Q==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+dca05492eff41f604890@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dbSplit
-Date: Fri, 26 Jul 2024 21:40:29 +0800
-X-OQ-MSGID: <20240726134028.2249287-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000064c7a0061e2004d6@google.com>
-References: <00000000000064c7a0061e2004d6@google.com>
+	s=arc-20240116; t=1722001303; c=relaxed/simple;
+	bh=2uwGAT67KdxSGGyx9e1hkXaE47VnHch064J3H/Nv5VY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EdQW/RrGuzxf1Zg5+0ISO0FKbPlrTacZqiB0oIk6x8w0T1mRxsYbUeFum2ZzBYGmhCR2GZ2qcQ0BPM16hKz/XTn/jlhQ/S5jPYIxrvOQUVH5Z8zu/h92vn3yfVEznCsvfdwOpNnAvsKHrG4pqQm9ckuIPtoiNxedOr0NzWAnhUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCT95JBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89579C32782;
+	Fri, 26 Jul 2024 13:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722001303;
+	bh=2uwGAT67KdxSGGyx9e1hkXaE47VnHch064J3H/Nv5VY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qCT95JBiNyMQUnVYinaep8t2WRvwpf7EMBoGMk6ydE4aUQfu+DSocckfOd7DvjCh6
+	 DYg865rP41ytadSnYgRSwrXqDh4os+UkGJzOTfVujNxClEvNUvzHCtesw47CuJeSWy
+	 2dGd4PFcZDyJEZJieIOb21iKp/rAcK/2MqNtc4FlvfMzvJC51t22vzgYxQUAMgm/lp
+	 nJws/mu7KU+XwHWVs0HEsP4vAbYtMmdjhTxdrRFMWXr9LVuef2Z1U1Z+FrlmLD8adX
+	 JerndEIFDi/BF/s+fRKd7Zn+5hw8lsISP9qLoIgC1inNOeGFNDi2x8ZpNBfgZzP4Uc
+	 Q7aq4R2VIDpPQ==
+Date: Fri, 26 Jul 2024 15:41:37 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
+ address BARs in EPC
+Message-ID: <ZqOnkTidYLc0EboJ@ryzen.lan>
+References: <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
+ <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
+ <Zp/e2+NanHRNVfRJ@x1-carbon.lan>
+ <20240725053348.GN2317@thinkpad>
+ <CAAEEuhpH-HB-tLinkLcCmiJ-9fmrGVjJFTjj7Nxk5M8M3XxSPA@mail.gmail.com>
+ <ZqJeX9D0ra2g9ifP@ryzen.lan>
+ <20240725163652.GD2274@thinkpad>
+ <ZqLJIDz1P7H9tIu9@ryzen.lan>
+ <9c76b9b4-9983-4389-bacb-ef4a5a8e7043@kernel.org>
+ <CAAEEuhp+ZtjrU1986CJE5nmFy97YPdnfd1Myoufr+6TgjRODeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAEEuhp+ZtjrU1986CJE5nmFy97YPdnfd1Myoufr+6TgjRODeA@mail.gmail.com>
 
-check dmt_leafidx < 0 
+On Fri, Jul 26, 2024 at 01:21:32PM +0200, Rick Wertenbroek wrote:
+> 
+> One thing to keep in mind is that 'struct pci_epf_bar 'conf' would be
+> an 'inout' parameter, where 'conf' gets changed in case of a fixed
+> address BAR or fixed 64-bit etc. This means the EPF code needs to
+> check 'conf' after the call. Also, if the caller sets flags and the
+> controller only handles different flags, do we return an error, or
+> configure the BAR with the only possible flags and let the caller
+> check if those flags are ok for the endpoint function ?
+> 
+> This is a bit unclear for me for the moment.
 
-#syz test: upstream 7846b618e0a4
+Indeed, it is quite messy at the moment, which is why we should try
+to do better, and clearly document the cases where the API should
+fail, and when it is okay for the API to set things automatically.
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index cb3cda1390ad..c5b8883599e3 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -1956,6 +1956,7 @@ dbAllocDmapLev(struct bmap * bmp,
- {
- 	s64 blkno;
- 	int leafidx, rc;
-+	dmtree_t *tp = (dmtree_t *) &dp->tree;
- 
- 	/* can't be more than a dmaps worth of blocks */
- 	assert(l2nb <= L2BPERDMAP);
-@@ -1964,10 +1965,10 @@ dbAllocDmapLev(struct bmap * bmp,
- 	 * free space.  if sufficient free space is found, dbFindLeaf()
- 	 * returns the index of the leaf at which free space was found.
- 	 */
--	if (dbFindLeaf((dmtree_t *) &dp->tree, l2nb, &leafidx, false))
-+	if (dbFindLeaf(tp, l2nb, &leafidx, false))
- 		return -ENOSPC;
- 
--	if (leafidx < 0)
-+	if (leafidx < 0 || le32_to_cpu(tp->dmt_leafidx) < 0)
- 		return -EIO;
- 
- 	/* determine the block number within the file system corresponding
 
+How the current pci_epf_alloc_space() (which is used to allocate space
+for a BAR) works:
+- Takes a enum pci_barno bar.
+
+- Will modify the epf_bar[bar] array of structs. (For either primary
+  interface array of BARs or secondary interface array of BARs.)
+  Perhaps it would be better if this was an array of pointers instead,
+  so that an EPF driver cannot modify a BAR that has not been allocated,
+  and that the new API allocates a 'struct pci_epf_bar', and sets the
+  pointer. (But perhaps better to leave it like it is to start with.)
+
+- Uses |= to set flags, which means that if an EPF has modified
+  epf_bar[bar].flags before calling pci_epf_alloc_space(), these
+  flags would still be set. (I wouldn't recommend any EPF driver to do so.)
+  It would be much better if we provided 'flags' to the new API, so that
+  the new API can set the flags using = instead of |=.
+
+- Flag PCI_BASE_ADDRESS_MEM_TYPE_64 will automatically get set if the BAR
+  can only be a 64-bit BAR according to epc_features.
+  This is a bit debatable. For some EPF drivers, getting a 64-bit BAR even
+  if you only requested a 32-bit BAR, might be fine. But for some EPF
+  drivers, I can imagine that it is not okay. (Perhaps we need a
+  "bool strict" that gives errors more often instead of implicitly setting
+  flags not that was not requested.
+
+- Will set PCI_BASE_ADDRESS_MEM_TYPE_64 if the requested size is larger
+  than 2 GB. The new API should simply give an error if flag
+  PCI_BASE_ADDRESS_MEM_TYPE_64 is not set when size is larger than 2 GB.
+
+- If the bar is a fixed size BAR according to epc_features, it will set a
+  size larger than the requested size. It will however give an error if the
+  requested size is larger than the fixed size BAR. (Should a possible
+  "bool strict" give an error if you cannot set the exact requested size,
+  or is it usually okay to have a BAR size that is larger than requested?)
+
+
+How the current pci_epc_set_bar() works:
+- Takes 'struct pci_epf_bar *epf_bar'
+
+- This function will give an error if PCI_BASE_ADDRESS_MEM_TYPE_64 is not set
+  when size is larger than 2 GB, or if you try to set BAR5 as a 64-bit BAR.
+
+- Calls epc->ops->set_bar() will should return errors if it cannot satisfy
+  the 'struct pci_epf_bar *epf_bar'.
+
+
+How the epc->ops->set_bar() works:
+- A EPC might have additional restrictions that are controller specific,
+  which isn't/couldn't be described in epc_features. E.g. pcie-designware-ep.c
+  requires a 64-bit BAR to start at a even BAR number. (The PCIe spec allows
+  a 64-bit BAR to start both at an odd or even BAR number.)
+
+
+So it seems right now, alloc_space() might result in a 'struct pci_epf_bar'
+that wasn't exactly what was requested, but set_bar() should always fail if
+an EPC driver cannot fullfil exactly what was requested in the
+'struct pci_epf_bar' (that was returned by alloc_space()).
+
+
+We all agree that this is a good idea, but does anyone actually intend to
+take on the effort of trying to create a new API that is basically
+pci_epf_alloc_space() + pci_epc_set_bar() combined?
+
+Personally, my plan is to respin/improve Damien's "improved PCI endpoint
+memory mapping API" series:
+https://lore.kernel.org/linux-pci/20240330041928.1555578-1-dlemoal@kernel.org/
+
+But I'm also going away on two weeks vacation starting today, so it will
+take a while before I send something out...
+
+
+Kind regards,
+Niklas
 
