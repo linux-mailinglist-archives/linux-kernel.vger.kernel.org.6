@@ -1,291 +1,158 @@
-Return-Path: <linux-kernel+bounces-264057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E1393DE5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:51:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1EC93DE85
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD1F1F21E6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59B01F21F1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474014D9FE;
-	Sat, 27 Jul 2024 09:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F1A54277;
+	Sat, 27 Jul 2024 10:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iibC0LT+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ok4AWHb4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421C7383B2;
-	Sat, 27 Jul 2024 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AADB328B6;
+	Sat, 27 Jul 2024 10:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722073890; cv=none; b=r9kYSlfOvib+/MVDixgv2WRbvML4w+lkZFWZOfks4zKOpTfdhI0LlF6Y8f1GrMHKUdZlB1aul9GndLqPtmsPZ+1czFVVL9yDxC651DeiG0/+WEsEvjWHsn3HCy+GiuZqGmbLNTcpMywvXj01isjPp8kyQPYAWrgdrq7RiErkYxc=
+	t=1722074602; cv=none; b=tURSkxlw2xw1zwkrUApuXGdEjz2mUMxfnTrMbEuOYuKAnzIh9/C7J0RNihAvMDVY2UyYzuXqpDRz4IkrfNPhN7zt+sFkEVA7XTTttjVONCu0dtD5UuwZ76PoYIsaZEloROAsvqoDnGoLD9Ged89jv+AQW5YYHMyRQDvhVCqeTWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722073890; c=relaxed/simple;
-	bh=qEb4NWfCNnDOT3pJDMSegBfpZylFDRXJ8vZw2R46gs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHdoB8wbzRZ95uDb04EJckCItGC0VHSVBDTPr0RWTnNsKekJx0xmqJ92Z1FEWoNzjimVOkTC6nCu1EFIRhiltR20L/MkU+GMna9liO88glMX++YPGAEtMlY6TFdUzqgPc0xLnR7Da+zB4N/W+aISSVFK6qRGroHpPcwOPkAOQ74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iibC0LT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6064C32781;
-	Sat, 27 Jul 2024 09:51:25 +0000 (UTC)
+	s=arc-20240116; t=1722074602; c=relaxed/simple;
+	bh=Z15GjYBZCh0HcGaZaCE/4VnIjxekyMTKY0iRxlGu1PA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MHVvu16xXim+eGK0vHZSxB7CKQybbCGq/QIBc2W9CQDnhgz4qa/R4L354gGj9KSLDzlu84pYGVjMmN0XIbjs3BzFMeLMVjli2mgEZAG29+JCxTL6UuPIQyfFacpPCczSgGhx+cCyWhZfKBHFbPvoxL1vK8N+CBAwu83ALqO84Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ok4AWHb4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77796C32781;
+	Sat, 27 Jul 2024 10:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722073889;
-	bh=qEb4NWfCNnDOT3pJDMSegBfpZylFDRXJ8vZw2R46gs4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iibC0LT+SvydpWUp7fkcAL9po8tIf9H5Y2nYkg4UQPL39OURuSgSq9i0BJ3Fkod7N
-	 GAcYJYlwZTcznatQS3STv0YKmUUjt21Tjp73m2qNwHJC+2yfoq+3sIDAvDiGVOMEeJ
-	 PnfQ2z3uEM+0SBgIDCi36nW30E7zP8IHN8qDt94M8SsiazD6IcdTiy7c4hNyvILwsq
-	 4m0fXXGrgnwI+bXYsvRpBZg7RYaD84lUcQniZQ5il7dQmEqEfiLF1QbyX45NC0xHMi
-	 Uk/rmZ4dFx8e2+o6pUOvlUHp5ryBur1uj8E4AGHN9sq/dM2FHoQdw3gQnQTRam98ON
-	 rWctFkkFf63ag==
-Message-ID: <3ef6c902-b004-4aa0-96c9-dabd81a01a6a@kernel.org>
-Date: Sat, 27 Jul 2024 11:51:23 +0200
+	s=k20201202; t=1722074602;
+	bh=Z15GjYBZCh0HcGaZaCE/4VnIjxekyMTKY0iRxlGu1PA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ok4AWHb4QaT3BZQStD15E36iUCU2UuDBcNPlFOIA/DhOH0azzybPlLfvzbSglEIbB
+	 69WRkdqlckQBFasTxvqUJa3OkbGDLyCAYzTqouNn5NH5Ln0x7uBVIMP4/Ypi3+91nx
+	 0VjFEPmwpT+iUvzd2Zyn6yueK+5ksV6vRv16s0UKhLycxD+W/gaXVfF2c92C82NslT
+	 Q26gG7Dl+Vl8uofcKh3jrDQAevL5hut2L1xglpuin3UPu6p3iYhRZrQ34FF4xAyYrW
+	 HeETB2+viF2VZZjKu4hPh/sPKNCN2gbDFEPeAA1Cl2DhidvXQr85y5p/0R3O/t2B8Q
+	 SmfpxvOlAjorw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/7] mptcp: fix inconsistent backup usage
+Date: Sat, 27 Jul 2024 12:01:22 +0200
+Message-Id: <20240727-upstream-net-20240727-mptcp-backup-signal-v1-0-f50b31604cf1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 2/2] iio: proximity: aw9610x: Add support for aw9610x
- proximity sensor
-To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- waqar.hameed@axis.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: liweilei@awinic.com, kangjiajun@awinic.com
-References: <20240726061312.1371450-1-wangshuaijie@awinic.com>
- <20240726061312.1371450-3-wangshuaijie@awinic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240726061312.1371450-3-wangshuaijie@awinic.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHLFpGYC/z2NQQrCQAxFr1KyNjDGSqtXERdxmtagHcNkKkLp3
+ R1cuHwf3n8ruGQVh3OzQpa3ur5Shf2ugXjnNAnqUBkoUBs66nAxL1l4xiQF/+tsJRreOD4WQ9c
+ p8RNPbU+H40g8hB7qn2UZ9fNrXaDacN22LxQ5gKyAAAAA
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Florian Westphal <fw@strlen.de>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ linux-trace-kernel@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3260; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=Z15GjYBZCh0HcGaZaCE/4VnIjxekyMTKY0iRxlGu1PA=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmpMXlT5eTB1icmHhpv0jNQaUD+kXrTj7d4lnyU
+ VRbbOKUdgaJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZqTF5QAKCRD2t4JPQmmg
+ c80rEAC4OrIKiaeZgNf9fW+ItbNT/z72+ZfFjWqCFiN4s0EIaTDtxXDJ1VSScHeg/YXeE9Cpqvi
+ FmK0vhIK/5pYs9W3EJTPSr+VBxvvm67VhgrnnUixnIvrXhpWr8rqZAi6dPuGGSQvUSlmwH/TEN2
+ gNFhOABr3/g6D9tzbKs5tn03v35sD0Fce6KjG9pnGQPc+hV+BBLbtHgEo/nKeXh3ZTJmFBAIWjm
+ ZFDvHFM9455J3gg5uYtL7O26WTZNOhtUplm+q4K/mPqurrVFRSGU7DHYEyy+KbJPW7QjckqG3eP
+ KEpqZGZqsPjIeBZZ/dH3pncnUHKSeX0fwkQAkKc+SxecsVxugNWr94s8Y98/cf4q9L8AW3H+iy8
+ 5YfTiveoY13H2k3ybT63Ah+7tYWaZm7oAYhcPwXFhHaeP3iGZg0WqGF1c7FDPXbJwAAtIcHTxCo
+ Bral6iKRxAAqxTM4S6iHDYhL43T0Wl88I4xOXNbJTLtELT4UoKCHUpLIuINJWbfaOMhjYOJ8jJo
+ ksWrPdeoTPVqRKMqWi8P8CJbOFuyNcuHpS4s4hUaiF0x728Eu9n9E0Zla0r4bVlrsOkRjyc/k4z
+ vuA26TKI89vF2Y45qInICfadQs9OK4w6p0sYzZirm6oCr9ejCezbmIUK+GaTZ/I7dB1UFuCJqNS
+ qGQnhhmzxn3VXuA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On 26/07/2024 08:13, wangshuaijie@awinic.com wrote:
-> From: shuaijie wang <wangshuaijie@awinic.com>
-> 
-> AW9610X is a low power consumption capacitive touch and proximity controller.
-> Each channel can be independently config as sensor input, shield output.
-> 
-> Channel Information:
->   aw96103: 3-channel
->   aw96105: 5-channel
-> 
-> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
-> ---
->  drivers/iio/proximity/Kconfig   |  11 +
->  drivers/iio/proximity/Makefile  |   1 +
->  drivers/iio/proximity/aw9610x.c | 791 ++++++++++++++++++++++++++++++++
->  drivers/iio/proximity/aw9610x.h | 140 ++++++
->  4 files changed, 943 insertions(+)
->  create mode 100644 drivers/iio/proximity/aw9610x.c
->  create mode 100644 drivers/iio/proximity/aw9610x.h
-> 
-> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-> index 2ca3b0bc5eba..ca1b8bde2def 100644
-> --- a/drivers/iio/proximity/Kconfig
-> +++ b/drivers/iio/proximity/Kconfig
-> @@ -219,4 +219,15 @@ config VL53L0X_I2C
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called vl53l0x-i2c.
->  
-> +config AW9610X
-> +	tristate "Awinic AW9610X proximity sensor"
-> +	select REGMAP_I2C
-> +	depends on I2C
-> +	help
-> +	  Say Y here to build a driver for Awinic's AW9610X capacitive
-> +	  proximity sensor.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called aw9610x.
-> +
->  endmenu
-> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-> index f36598380446..483f5bf1ac8b 100644
-> --- a/drivers/iio/proximity/Makefile
-> +++ b/drivers/iio/proximity/Makefile
-> @@ -21,4 +21,5 @@ obj-$(CONFIG_SX_COMMON) 	+= sx_common.o
->  obj-$(CONFIG_SX9500)		+= sx9500.o
->  obj-$(CONFIG_VCNL3020)		+= vcnl3020.o
->  obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
-> +obj-$(CONFIG_AW9610X)		+= aw9610x.o
->  
-> diff --git a/drivers/iio/proximity/aw9610x.c b/drivers/iio/proximity/aw9610x.c
-> new file mode 100644
-> index 000000000000..de5be3918e4f
-> --- /dev/null
-> +++ b/drivers/iio/proximity/aw9610x.c
-> @@ -0,0 +1,791 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * AWINIC aw9610x proximity sensor driver
-> + *
-> + * Author: Wang Shuaijie <wangshuaijie@awinic.com>
-> + *
-> + * Copyright (c) 2024 awinic Technology CO., LTD
-> + */
-> +
-> +#include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/firmware.h>
-> +#include <linux/i2c.h>
-> +#include <linux/input.h>
+In all the MPTCP backup related tests, the backup flag was set on one
+side, and the expected behaviour is to have both sides respecting this
+decision. That's also the "natural" way, and what the users seem to
+expect.
 
-Where do you use it?
+On the scheduler side, only the 'backup' field was checked, which is
+supposed to be set only if the other peer flagged a subflow as backup.
+But in various places, this flag was also set when the local host
+flagged the subflow as backup, certainly to have the expected behaviour
+mentioned above.
 
-> +#include <linux/interrupt.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/events.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/trigger.h>
-> +#include <linux/iio/triggered_buffer.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +#include <linux/of_gpio.h>
+Patch 1 modifies the packet scheduler to check if the backup flag has
+been set on both directions, not to change its behaviour after having
+applied the following patches. That's what the default packet scheduler
+should have done since the beginning in v5.7.
 
-Where do you use it?
+Patch 2 fixes the backup flag being mirrored on the MPJ+SYN+ACK by
+accident since its introduction in v5.7. Instead, the received and sent
+backup flags are properly distinguished in requests.
 
-> +#include <linux/power_supply.h>
-> +#include <linux/pinctrl/consumer.h>
+Patch 3 stops setting the received backup flag as well when sending an
+MP_PRIO, something that was done since the MP_PRIO support in v5.12.
 
-Where do you use it?
+Patch 4 adds related and missing MIB counters to be able to easily check
+if MP_JOIN are sent with a backup flag. Certainly because these counters
+were not there, the behaviour that is fixed by patches here was not
+properly verified.
 
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
+Patch 5 validates the previous patch by extending the MPTCP Join
+selftest.
 
-Maybe several others are not used...
+Patch 6 fixes the backup support in signal endpoints: if a signal
+endpoint had the backup flag, it was not set in the MPJ+SYN+ACK as
+expected. It was only set for ongoing connections, but not future ones
+as expected, since the introduction of the backup flag in endpoints in
+v5.10.
 
-> +#include "aw9610x.h"
-> +
-> +static unsigned int aw9610x_reg_default[] = {
+Patch 7 validates the previous patch by extending the MPTCP Join
+selftest as well.
 
-Why this cannot be const?
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (7):
+      mptcp: sched: check both directions for backup
+      mptcp: distinguish rcv vs sent backup flag in requests
+      mptcp: pm: only set request_bkup flag when sending MP_PRIO
+      mptcp: mib: count MPJ with backup flag
+      selftests: mptcp: join: validate backup in MPJ
+      mptcp: pm: fix backup support in signal endpoints
+      selftests: mptcp: join: check backup support in signal endp
 
-> +	0x0000, 0x00003f3f, 0x0004, 0x00000064, 0x0008, 0x0017c11e,
-> +	0x000c, 0x05000000, 0x0010, 0x00093ffd, 0x0014, 0x19240009,
-> +	0x0018, 0xd81c0207, 0x001c, 0xff000000, 0x0020, 0x00241900,
-> +	0x0024, 0x00093ff7, 0x0028, 0x58020009, 0x002c, 0xd81c0207,
-> +	0x0030, 0xff000000, 0x0034, 0x00025800, 0x0038, 0x00093fdf,
-> +	0x003c, 0x7d3b0009, 0x0040, 0xd81c0207,	0x0044, 0xff000000,
-> +	0x0048, 0x003b7d00, 0x004c, 0x00093f7f, 0x0050, 0xe9310009,
-> +	0x0054, 0xd81c0207, 0x0058, 0xff000000,	0x005c, 0x0031e900,
-> +	0x0060, 0x00093dff, 0x0064, 0x1a0c0009,	0x0068, 0xd81c0207,
-> +	0x006c, 0xff000000, 0x0070, 0x000c1a00,	0x0074, 0x80093fff,
-> +	0x0078, 0x043d0009, 0x007c, 0xd81c0207,	0x0080, 0xff000000,
-> +	0x0084, 0x003d0400, 0x00a0, 0xe6400000,	0x00a4, 0x00000000,
-> +	0x00a8, 0x010408d2, 0x00ac, 0x00000000,	0x00b0, 0x00000000,
-> +	0x00b8, 0x00005fff, 0x00bc, 0x00000000,	0x00c0, 0x00000000,
-> +	0x00c4, 0x00000000, 0x00c8, 0x00000000,	0x00cc, 0x00000000,
-> +	0x00d0, 0x00000000, 0x00d4, 0x00000000, 0x00d8, 0x00000000,
-> +	0x00dc, 0xe6447800, 0x00e0, 0x78000000,	0x00e4, 0x010408d2,
-> +	0x00e8, 0x00000000, 0x00ec, 0x00000000,	0x00f4, 0x00005fff,
-> +	0x00f8, 0x00000000, 0x00fc, 0x00000000,	0x0100, 0x00000000,
-> +	0x0104, 0x00000000, 0x0108, 0x00000000,	0x010c, 0x02000000,
-> +	0x0110, 0x00000000, 0x0114, 0x00000000,	0x0118, 0xe6447800,
-> +	0x011c, 0x78000000, 0x0120, 0x010408d2,	0x0124, 0x00000000,
-> +	0x0128, 0x00000000, 0x0130, 0x00005fff,	0x0134, 0x00000000,
-> +	0x0138, 0x00000000, 0x013c, 0x00000000,	0x0140, 0x00000000,
-> +	0x0144, 0x00000000, 0x0148, 0x02000000,	0x014c, 0x00000000,
-> +	0x0150, 0x00000000, 0x0154, 0xe6447800,	0x0158, 0x78000000,
-> +	0x015c, 0x010408d2, 0x0160, 0x00000000,	0x0164, 0x00000000,
-> +	0x016c, 0x00005fff, 0x0170, 0x00000000,	0x0174, 0x00000000,
-> +	0x0178, 0x00000000, 0x017c, 0x00000000,	0x0180, 0x00000000,
-> +	0x0184, 0x02000000, 0x0188, 0x00000000,	0x018c, 0x00000000,
-> +	0x0190, 0xe6447800, 0x0194, 0x78000000,	0x0198, 0x010408d2,
-> +	0x019c, 0x00000000, 0x01a0, 0x00000000,	0x01a8, 0x00005fff,
-> +	0x01ac, 0x00000000, 0x01b0, 0x00000000,	0x01b4, 0x00000000,
-> +	0x01b8, 0x00000000, 0x01bc, 0x00000000,	0x01c0, 0x02000000,
-> +	0x01c4, 0x00000000, 0x01c8, 0x00000000,	0x01cc, 0xe6407800,
-> +	0x01d0, 0x78000000, 0x01d4, 0x010408d2,	0x01d8, 0x00000000,
-> +	0x01dc, 0x00000000, 0x01e4, 0x00005fff,	0x01e8, 0x00000000,
-> +	0x01ec, 0x00000000, 0x01f0, 0x00000000,	0x01f4, 0x00000000,
-> +	0x01f8, 0x00000000, 0x01fc, 0x02000000,	0x0200, 0x00000000,
-> +	0x0204, 0x00000000, 0x0208, 0x00000008,	0x020c, 0x0000000d,
-> +	0x41fc, 0x00000000, 0x4400, 0x00000000,	0x4410, 0x00000000,
-> +	0x4420, 0x00000000, 0x4430, 0x00000000,	0x4440, 0x00000000,
-> +	0x4450, 0x00000000, 0x4460, 0x00000000,	0x4470, 0x00000000,
-> +	0xf080, 0x00003018, 0xf084, 0x00000fff,	0xf800, 0x00000000,
-> +	0xf804, 0x00002e00, 0xf8d0, 0x00000001,	0xf8d4, 0x00000000,
-> +	0xff00, 0x00000301, 0xff0c, 0x01000000,	0xffe0, 0x00000000,
-> +	0xfff4, 0x00004011, 0x0090, 0x00000000,	0x0094, 0x00000000,
-> +	0x0098, 0x00000000, 0x009c, 0x3f3f3f3f,
-> +};
-> +
-
-...
-
-> +static int aw9610x_read_chipid(struct aw9610x *aw9610x)
-> +{
-> +	unsigned char cnt = 0;
-> +	u32 reg_val;
-> +	int ret;
-> +
-> +	while (cnt < AW_READ_CHIPID_RETRIES) {
-> +		ret = aw9610x_i2c_read(aw9610x, REG_CHIPID, &reg_val);
-> +		if (ret < 0) {
-> +			cnt++;
-> +			usleep_range(2000, 3000);
-> +		} else {
-> +			reg_val = FIELD_GET(AW9610X_CHIPID_MASK, reg_val);
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (reg_val == AW9610X_CHIP_ID)
-> +		return 0;
-
-So devices are detectable? Encode this in the bindings (oneOf and a
-fallback compatible) and drop unneeded entry from ID tables.
+ include/trace/events/mptcp.h                    |  2 +-
+ net/mptcp/mib.c                                 |  2 +
+ net/mptcp/mib.h                                 |  2 +
+ net/mptcp/options.c                             |  2 +-
+ net/mptcp/pm.c                                  | 12 +++++
+ net/mptcp/pm_netlink.c                          | 19 ++++++-
+ net/mptcp/pm_userspace.c                        | 18 +++++++
+ net/mptcp/protocol.c                            | 10 ++--
+ net/mptcp/protocol.h                            |  4 ++
+ net/mptcp/subflow.c                             | 10 ++++
+ tools/testing/selftests/net/mptcp/mptcp_join.sh | 72 ++++++++++++++++++++-----
+ 11 files changed, 132 insertions(+), 21 deletions(-)
+---
+base-commit: 301927d2d2eb8e541357ba850bc7a1a74dbbd670
+change-id: 20240727-upstream-net-20240727-mptcp-backup-signal-948235f2ad08
 
 Best regards,
-Krzysztof
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
