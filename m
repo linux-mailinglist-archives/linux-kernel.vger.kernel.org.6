@@ -1,85 +1,110 @@
-Return-Path: <linux-kernel+bounces-263946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA11193DD03
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:08:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1AB93DD04
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3061F23DAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3CA1C2227C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858284C9B;
-	Sat, 27 Jul 2024 02:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DB21FA1;
+	Sat, 27 Jul 2024 02:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fDPTF0TX"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="e3v9DHdd"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0834A05
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 02:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594D715BB
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 02:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722046122; cv=none; b=rHaaKBw+r1NFspL0Hi0PdlekinDOkR6m2Sw2FJmMzq2NtJ0fhZPJP+F9FI2aQV4TAuWhVaj4VAAiqA/l1lYLM9h7djrHZAWARTX/xPOPzQTPk+0JKC3kj+XrUHzvUlDNaKLR0jtcuoKjPf67L579SvF2DmghBYkC1e1HvQIb3Ps=
+	t=1722046402; cv=none; b=PqhR7SweRh1H796JpfBkk0Anjd/5tcQ3HNqpzuadY/Yrdk1nQE1F7qnyqIfpX4dTzfrRv167Iuy+gyjpPsAhdf6wo31stDLIHlV+9N47kq20TND69OZ1kTQcrXang0cXEnTlYYt5uWTHlJt/7ATfophvCGeT9tie4K3d0FIChC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722046122; c=relaxed/simple;
-	bh=EB8cHQVJrTeVloffs5C+C1VejYBEXLUAZYRSR1ifYIo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DNLatdjD5qWuubbCic/kW90sf2zYwshepKAUnz1+n2nY57jIuO6wsGlSmZiClVx9GUhZkJeogrB+LiEMV+E3zdP9wIooNE/hYEz5L1G/ams9V2kG8XIdwSkM/E4MQQmAYjZ9oFrmuU4EFDvE5DcZkoLckucFeOCUugwDAbi+ar8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fDPTF0TX; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=EuosPWo/SMY3Ag8riJ+kOIDiKjmJxa9RY3PBvDWQSxU=; b=fDPTF0TX/T2HkQpbmD8SvDtoca
-	LAkH3dE2g4a8UBqTqSdSfS9tMWNzxTge7fyCKqHlzHHpfaRvY6KzpSem8kM4IzcE9u7deXb5gkmso
-	P5VA6B5KAZz83Fn3UobaRY64xRECEdP7GWkEG1bkFkbSUhHKKKsj2vJ4BzgfvTPMBQv3smJAQD8cd
-	aY9zuKqzSlMnYceRoxmItnYZg4tjELfRmGbLk0x8mnvTjoCaLGcQWswbCZqGLbQ9EfMdWi3VLxBFh
-	Sc9x+o2pYB1K+4PhywYUGufozKMueE7FTScvPlWzVJSr4qxWPZIXJSTVYLlyqs0VHsCSByIeca8OK
-	rdMFP3Sw==;
-Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXWTp-0000000AtEt-1Dk6;
-	Sat, 27 Jul 2024 01:44:17 +0000
-Message-ID: <c7858827-b788-426a-acaa-9563c154f58d@infradead.org>
-Date: Sat, 27 Jul 2024 10:44:11 +0900
+	s=arc-20240116; t=1722046402; c=relaxed/simple;
+	bh=wEE3KKRF5KdmT21NgICOuk2eCzT7AGUZk6K06BAa0iA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=hA5w2rq2x4PUCliq12BAn8Bwlpzqhq0mZCIksDjl4pn9QqQOh1mDlP2m2/dll2+cTWX7OTZDhPLyz1J5Bonaea63iYbOj7C8nVuox8+XhfKvQilNirUgj6nCHOuut3RJqECYvsQjgZdWDuVAPB20C4R/L6272p+HkEKPg+oKO7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=e3v9DHdd; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722046098; bh=NR6gWVG9Sg6CKvElz/M5UqHb/XcudCPVakxUrk+/l9o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=e3v9DHddVq3zkfV9pL6atWr74PaAmY24SK6CyxuXbl+LYjxCgqSpesixR5atrrZ5y
+	 f25066Kwe1HiLOQReGcZ92bqA/qnc/x8t3m1s8V3AR7/hvPIpp9CpaoJOWqcXov5hs
+	 vwaaRwcV52i0NxFWgRRzVquKBZJ2OrV+9Tlw1iRI=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 2101C6DF; Sat, 27 Jul 2024 10:08:16 +0800
+X-QQ-mid: xmsmtpt1722046096tgu0podq0
+Message-ID: <tencent_250DFF9261DD82DDDA19784F898D9625D107@qq.com>
+X-QQ-XMAILINFO: MdoRYM9mYrydHHQCVZdW4A3o7Zk6uP2K1XScDEco4gA81+zCI9yf+ukbtpQ9PR
+	 iImuEeuyEAxEFgVqS8Fv1MLOmgJcf/lMgUROkg4k7Z0b8SDS/bM2vHsCtRbYj6CRU/50Wk0JvZBs
+	 uRozWPyf4rYVX333fTBDg210+SgpEZfkP2/4fdLyzn6PSUIKCq4ozLmv84wfFszNP3HvPz9WzMgM
+	 bqRVZJgHyU6Gw1aAKQHMKgBaju3BUcO08plXzuaD4E/KEVD+89yuK2IZb0BpEmqkQ1x8ur6tM08L
+	 qQKK850nX6Qy0eHModfdi94HS+mhIVKQHdSyP6aEprvF3fqi1C5bMtfOSwR57586eaPuIrbZgoFl
+	 NKaO/vWaUAASHYmZWMXdDnfUMk9mT8IPC4DzeVYSeGhKKUqJv2iuc6MPa03zwA6qp3vEVpAagjZR
+	 Yv23J7iYXR5IrzwcVHHswd++zg2OYRHLr4Qi2FZmkzyo3hc+2IbtRLVJFgNSReHjAHL4Jak0GTLQ
+	 8gm73A+So09dZFrAJirucSRUaPR1k2mI1tObmJUDMVBDXoCTJp20DNgkK8h403K/tKrbu+80nKGH
+	 rXIttT2LrSIYgHUJWVYU1pqmTl1EYArp69vGJkZbB5MVn11GfR4oZC5BUVJkasARRrVaQCOuNhcK
+	 9iPVJOP5y0ItexIBXkv4vqPHlBqRTmj6xs7qwGQevxdQ8+vqTUmOHSaXmSA3n5EeT/o+9mWkcAOj
+	 duAjFmN4eMZvWTxfhJfYbg5eWE9eXiuMI5tFkDi54cX7ngvarhWlOzJruefRmT4+PzTO3nmsLE4k
+	 GJi+klZxyiBTD1I55HKVbjer+Wpi8AU1789HDsHGe91KQPYCiWy54+6lmBBdMBoOjcdFDmwgy0V8
+	 zU/6QtEz8a0igSHJoHwKGWzuevsqFrDSCfdudKvaRdj6NV+NBfvW+Jk4lQ30xqYS/yfONqEAy8Ec
+	 WxiPMcS+w=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+Date: Sat, 27 Jul 2024 10:08:16 +0800
+X-OQ-MSGID: <20240727020815.2493999-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
+References: <0000000000005c7ccb061e032b9b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Geoff Levand <geoff@infradead.org>
-Subject: Re: [PATCH 1/2] MAINTAINERS: Mark powerpc Cell as orphaned
-To: Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>,
- linuxppc-dev@lists.ozlabs.org
-Cc: Jeremy Kerr <jk@ozlabs.org>, linux-kernel@vger.kernel.org
-References: <20240726123322.1165562-1-mpe@ellerman.id.au>
- <60581044-df82-40ad-b94c-56468007a93e@app.fastmail.com>
-Content-Language: en-US
-In-Reply-To: <60581044-df82-40ad-b94c-56468007a93e@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+add mutex sync remount and shutdown
 
-On 7/26/24 22:15, Arnd Bergmann wrote:
-> Geoff, are you using spufs on ps3, and if so, should
-> we move arch/powerpc/platforms/cell/spu* to the PS3
-> entry in the MAINTAINERS file? I don't think there
-> is any advantage in actually moving the files to
-> platforms/ps3 if we delete the cell blade support.
+#syz test: upstream 2c9b3512402e
 
-ps3_defconfig has both CONFIG_SPU_BASE and CONFIG_SPU_FS
-enabled.  I think one of the things users want to use are
-the SPUs.
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6066c6eecf41..1f4542a899c3 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -27,6 +27,7 @@ static struct kmem_cache *victim_entry_slab;
+ 
+ static unsigned int count_bits(const unsigned long *addr,
+ 				unsigned int offset, unsigned int len);
++static DEFINE_MUTEX(gc_lock);
+ 
+ static int gc_thread_func(void *data)
+ {
+@@ -203,10 +204,13 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 
+ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
++	struct f2fs_gc_kthread *gc_th;
+ 
+-	if (!gc_th)
++	guard(mutex)(&gc_lock);
++	gc_th = sbi->gc_thread;
++	if (gc_th < PAGE_OFFSET)
+ 		return;
++
+ 	kthread_stop(gc_th->f2fs_gc_task);
+ 	wake_up_all(&gc_th->fggc_wq);
+ 	kfree(gc_th);
 
-Updating the MAINTAINERS file sounds OK. Do you want to
-make the patch for that?
-
--Geoff
 
