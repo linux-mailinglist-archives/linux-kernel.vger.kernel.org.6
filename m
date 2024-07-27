@@ -1,81 +1,90 @@
-Return-Path: <linux-kernel+bounces-264120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B09293DF1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:15:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1636293DF21
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7B71C211FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DA9DB2360D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF726BB5B;
-	Sat, 27 Jul 2024 11:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0F46CDAB;
+	Sat, 27 Jul 2024 11:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnXROIeJ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WK+iymWp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7C84CB37
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536E84CB37;
+	Sat, 27 Jul 2024 11:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722078917; cv=none; b=Obqv1gsAo6LIV7r2nRK7ZVuCKiE1tLswi1cw29zbS5Ls35lZmgo4VWQFTWAOIpiUFjC87TkCJhjfkhGsmv6i7ZYgqBfwa60c6PZIgiZ5FLyIvLL947nNwUzFU8fcZH8gxOxci3Y+Gors44zbrrUKRhA09tTPXmDUzB6mONTpt4w=
+	t=1722079163; cv=none; b=tgxZjvTfWmUW99FLvXz5gU3T3MQXjqqEPz7e/48fCvX57/AMCllPIzNFIs2+lFlohwFZ80d8DeK3SJu3VUOtoj0s4LlsG6YP5XYv5jLT8KhnRhm/IM+W3we4p+TsZ6nJs/flgHcgrxG5/gS5SrPtat1akPuZyJeE4DWgo2iY7OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722078917; c=relaxed/simple;
-	bh=XW+Sl05nPKtK0oJETkXKZKjWld845FHy7XWyvct8PHo=;
+	s=arc-20240116; t=1722079163; c=relaxed/simple;
+	bh=yniDgNp34tOrJ9OCd28Zdi6tFrmUOFGfFoYfjp0Jsxk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OI2A3sjGGQobifY3GJ5J7MHg8Mi0nxkocFe10/1S2maTw+HtHft1qCsTyVnQuRjAxgzE+SM687wHCof/Y4Xc5/3iBUo+7WNtPEze1CbbgQsk77gPcLUtt0UnW348rG7Fpt6J0Pk4+VmKx5NFW10pOrIhZdC1dwZnkNG0XvpW/Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnXROIeJ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ee920b0781so22304721fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 04:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722078913; x=1722683713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6IkcugCt219ovB+QT/C8OnX7+9cAi+LnPtWh9ZzNwI=;
-        b=JnXROIeJjlxYnQ5Wj4iudV+2+ZlQDYVIvKPX9xB4wwvBCQpVdgDYzlhLCEzDB6Qz6D
-         Ol4XsLK0AUZyS+y2weXpzsnJtX1KKT6+0dhpv8pTt7YSUsB74atuHfs2bmdtqsBwGiXu
-         C5D3d/mlRZu+lS+TvrYluRMMKeFVZtdFUtrVlvjk3RmDMgvOi0dG8GNreqLb67AcFsV4
-         sTPBbS+lNVlxtK2m5LO1rZ5LOhUmyegcQh/k6INpMnowynn9GO0EG0t2We/J8CPPfhYg
-         +izhdLtwXzK4ONyzqe5UkOE3mAjfXUVFEpZnnn0uxA94I5EyJlOfRVi0X0gAKqm0b23E
-         Rnug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722078913; x=1722683713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6IkcugCt219ovB+QT/C8OnX7+9cAi+LnPtWh9ZzNwI=;
-        b=m8OysMmAVaVhoB5lzbC8YlQtJMQ6BvnmPmtmUCK0DD8DY4K2s2b0G02I2G+Q4RSUCt
-         tWLk7kb5aC50aslG/HwFEAuIQCPaswQk2Bbi28pg/0I0/tcuoS4b8Y5BfDlV4GcKFXvb
-         bPM/tAWFLintiEbFv5zVoiICZPth45KxTpwt7tukP1V0D6GNvdPNBOCZBIeB6i1TGlfZ
-         dxs2/ESw3yDHLD38Oibm/9SFUEm2IbSL90RCNLEQj3Bx9z+514SHZp6/32innfj+5trD
-         zIFINNHBiLobA64/2sT5+Zmt6tUPFK9zlvc+mXGRX+5h0ZOhABFJMnLz5OU8TnW1jq3i
-         wuKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI4DCJMYcwHwj8ICca4Y3RvGcKcwNKFj18jlIZNlgdbnM3Y/YL5qBuj2vFzwhVkAdOc2hB6clsToN6y8gYuP9d5Nloe58CKLqvi/45
-X-Gm-Message-State: AOJu0YxFy6r68v+nzT1AiZMIo8zIiMjGd+XtHvbV+sqPC3vKavq2VI6z
-	VroHQbbmkLH/rAtNGckfq6GZt+jY7M/CSnSKpZLdy7V+uxyEr66tZlq3qjiylcY=
-X-Google-Smtp-Source: AGHT+IFVXUmMe+3AT1Z/H4tmBdr6d67ABfA5prOEZcm0+0GcEzV9I7RRCuZCY8eehOOL6sI8HfvrCg==
-X-Received: by 2002:a2e:9d99:0:b0:2ef:24dd:8d86 with SMTP id 38308e7fff4ca-2f12ee634a8mr12638391fa.49.1722078912885;
-        Sat, 27 Jul 2024 04:15:12 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf0f9bfsm6943141fa.16.2024.07.27.04.15.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 04:15:12 -0700 (PDT)
-Date: Sat, 27 Jul 2024 14:15:10 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, saravanak@google.com
-Subject: Re: [RFC PATCH] ARM: dts: imx53-qsb: Add MCIMX-LVDS1 display module
- support
-Message-ID: <xoj4sypxndql62k64ztmco5ufddeysp26fyc46prwr4ezik223@sssy5zmefwtg>
-References: <20240726065012.618606-1-victor.liu@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIDt0CviDLThsQ3JYNBZwUHOSx5dTHpqYcDywmwKXgavKGZVv7Pa4Rs0M3IHD+Mj79uTrJxdJz68XUw3V+4fArFZF6mSBXLgkWTkxkUbRx8mUwGRjMfFDzSpNj3n8zjXEzBeFOECSBle1emiUudaLMJLPTl0PmX/NvYTYItGh0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WK+iymWp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46RAuEej032086;
+	Sat, 27 Jul 2024 11:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=p3Zam5bj3FIGCMqt2deaMDzjNPC
+	tjo9u2qYWHmgvrCo=; b=WK+iymWpOiXElY8TglD85CA90l1bnYQVUpJLrVkYrRl
+	oJ0wQjB8fMYpdSEu45bb8unmoZyelEmcy4D/4q3TMTzMln8Kqj4tsnuKxbmJsujU
+	qgf6gQQMPsTOBmb3pILMiAMtR5aGr7ape0s8hfC+XiOtwjXTQzQQxjiTtkXM9nWF
+	ddA0MuTosPvgRYTfq5dpHvOrhQx9zaMvBPkhFfMixxvT2ge63rEy4ghSgP6SFwTy
+	wkJkI8Ofq7l1B/f/KV/BukgbcwNMU7OW3zWSpfVC+zxSgLGcvvknSJeaHVQZh89E
+	+uNZZGxmEIPwLXwlO68KICz8sL7ATG3DJ5eSOveYnsg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mvyw87yy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 27 Jul 2024 11:18:51 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46RBIoCs004130;
+	Sat, 27 Jul 2024 11:18:50 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mvyw87yw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 27 Jul 2024 11:18:50 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46R8cgCJ006130;
+	Sat, 27 Jul 2024 11:18:49 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40mwht0dv1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 27 Jul 2024 11:18:49 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46RBIkbG29622952
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 27 Jul 2024 11:18:48 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 260D820043;
+	Sat, 27 Jul 2024 11:18:46 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1212620040;
+	Sat, 27 Jul 2024 11:18:44 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.37.64])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 27 Jul 2024 11:18:43 +0000 (GMT)
+Date: Sat, 27 Jul 2024 16:48:41 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>, stable@kernel.org
+Subject: Re: [PATCH 07/20] ext4: drop ppath from ext4_ext_replay_update_ex()
+ to avoid double-free
+Message-ID: <ZqTXkQDYJpjSWn4R@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-8-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,153 +93,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726065012.618606-1-victor.liu@nxp.com>
+In-Reply-To: <20240710040654.1714672-8-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: gnc2sN--EWEZgXz2uZZWGXeDDM8fjqd1
+X-Proofpoint-ORIG-GUID: Yc7uEyf32ip7gFiLJNotUcNJ-D5nvG6d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-27_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=784 mlxscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407270071
 
-On Fri, Jul 26, 2024 at 02:50:12PM GMT, Liu Ying wrote:
-> MCIMX-LVDS1[1] display module integrates a HannStar HSD100PXN1 LVDS
-> display panel and a touch IC.  Add an overlay to support the LVDS
-> panel on i.MX53 QSB / QSRB platforms.
+On Wed, Jul 10, 2024 at 12:06:41PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> [1] https://www.nxp.com/part/MCIMX-LVDS1
+> When calling ext4_force_split_extent_at() in ext4_ext_replay_update_ex(),
+> the 'ppath' is updated but it is the 'path' that is freed, thus potentially
+> triggering a double-free in the following process:
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ext4_ext_replay_update_ex
+>   ppath = path
+>   ext4_force_split_extent_at(&ppath)
+>     ext4_split_extent_at
+>       ext4_ext_insert_extent
+>         ext4_ext_create_new_leaf
+>           ext4_ext_grow_indepth
+>             ext4_find_extent
+>               if (depth > path[0].p_maxdepth)
+>                 kfree(path)                 ---> path First freed
+>                 *orig_path = path = NULL    ---> null ppath
+>   kfree(path)                               ---> path double-free !!!
+> 
+> So drop the unnecessary ppath and use path directly to avoid this problem.
+> And use ext4_find_extent() directly to update path, avoiding unnecessary
+> memory allocation and freeing. Also, propagate the error returned by
+> ext4_find_extent() instead of using strange error codes.
+> 
+> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
+> Cc: stable@kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+Hey Baokun, 
+These ppath bugs are really subtle indeed :)
+
+Anyways, feel free to add:
+
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+
 > ---
-> I mark RFC in patch subject prefix because if the DT overlay is used, both ldb
-> and panel devices end up as devices deferred.  However, if the DT overlay is
-> not used and the devices are defined in imx53-qsb-common.dtsi, then they can be
-> probed ok.
+>  fs/ext4/extents.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
 > 
-> With a dev_err_probe() added to imx_ldb_probe() in imx-ldb.c, devices_deferred
-> indicates 53fa8008.ldb and panel-lvds kind of depend on each other.
-> 
-> root@imx53qsb:~# cat /sys/kernel/debug/devices_deferred
-> 53fa8008.ldb    imx-ldb: failed to find panel or bridge for channel0
-> panel-lvds      platform: wait for supplier /soc/bus@50000000/ldb@53fa8008/lvds-channel@0
-> 
-> It looks like the issue is related to fw_devlink, because if "fw_devlink=off"
-> is added to kernel bootup command line, then the issue doesn't happen.
-
-Could you please fdtdump /sys/firmware/fdt (or just generated DTB files)
-in both cases and compare the dumps for sensible differences?
-
-> 
-> Saravana, DT folks, any ideas?
-> 
-> Thanks.
-> 
->  arch/arm/boot/dts/nxp/imx/Makefile            |  4 ++
->  .../boot/dts/nxp/imx/imx53-qsb-common.dtsi    |  4 +-
->  .../dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso    | 43 +++++++++++++++++++
->  3 files changed, 49 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
-> 
-> diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
-> index 92e291603ea1..7116889e1515 100644
-> --- a/arch/arm/boot/dts/nxp/imx/Makefile
-> +++ b/arch/arm/boot/dts/nxp/imx/Makefile
-> @@ -46,8 +46,10 @@ dtb-$(CONFIG_SOC_IMX53) += \
->  	imx53-ppd.dtb \
->  	imx53-qsb.dtb \
->  	imx53-qsb-hdmi.dtb \
-> +	imx53-qsb-mcimx-lvds1.dtb \
->  	imx53-qsrb.dtb \
->  	imx53-qsrb-hdmi.dtb \
-> +	imx53-qsrb-mcimx-lvds1.dtb \
->  	imx53-sk-imx53.dtb \
->  	imx53-sk-imx53-atm0700d4-lvds.dtb \
->  	imx53-sk-imx53-atm0700d4-rgb.dtb \
-> @@ -57,7 +59,9 @@ dtb-$(CONFIG_SOC_IMX53) += \
->  	imx53-usbarmory.dtb \
->  	imx53-voipac-bsb.dtb
->  imx53-qsb-hdmi-dtbs := imx53-qsb.dtb imx53-qsb-hdmi.dtbo
-> +imx53-qsb-mcimx-lvds1-dtbs := imx53-qsb.dtb imx53-qsb-mcimx-lvds1.dtbo
->  imx53-qsrb-hdmi-dtbs := imx53-qsrb.dtb imx53-qsb-hdmi.dtbo
-> +imx53-qsrb-mcimx-lvds1-dtbs := imx53-qsrb.dtb imx53-qsb-mcimx-lvds1.dtbo
->  dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6dl-alti6p.dtb \
->  	imx6dl-apf6dev.dtb \
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi b/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
-> index 05d7a462ea25..430792a91ccf 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi
-> @@ -16,7 +16,7 @@ memory@70000000 {
->  		      <0xb0000000 0x20000000>;
->  	};
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 1660434fbfc7..b1cfce5b57d2 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -5920,7 +5920,7 @@ int ext4_clu_mapped(struct inode *inode, ext4_lblk_t lclu)
+>  int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+>  			      int len, int unwritten, ext4_fsblk_t pblk)
+>  {
+> -	struct ext4_ext_path *path = NULL, *ppath;
+> +	struct ext4_ext_path *path;
+>  	struct ext4_extent *ex;
+>  	int ret;
 >  
-> -	backlight_parallel: backlight-parallel {
-> +	backlight: backlight {
-
-Nit: this seems unrelated to the LVDS support
-
->  		compatible = "pwm-backlight";
->  		pwms = <&pwm2 0 5000000 0>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
-> @@ -89,7 +89,7 @@ panel_dpi: panel {
->  		compatible = "sii,43wvf1g";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&pinctrl_display_power>;
-> -		backlight = <&backlight_parallel>;
-> +		backlight = <&backlight>;
->  		enable-gpios = <&gpio3 24 GPIO_ACTIVE_HIGH>;
->  
->  		port {
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso b/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
-> new file mode 100644
-> index 000000000000..27f6bedf3d39
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/imx/imx53-qsb-mcimx-lvds1.dtso
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2024 NXP
-> + */
+> @@ -5936,30 +5936,29 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+>  	if (le32_to_cpu(ex->ee_block) != start ||
+>  		ext4_ext_get_actual_len(ex) != len) {
+>  		/* We need to split this extent to match our extent first */
+> -		ppath = path;
+>  		down_write(&EXT4_I(inode)->i_data_sem);
+> -		ret = ext4_force_split_extent_at(NULL, inode, &ppath, start, 1);
+> +		ret = ext4_force_split_extent_at(NULL, inode, &path, start, 1);
+>  		up_write(&EXT4_I(inode)->i_data_sem);
+>  		if (ret)
+>  			goto out;
+> -		kfree(path);
+> -		path = ext4_find_extent(inode, start, NULL, 0);
 > +
-> +/dts-v1/;
-> +/plugin/;
+> +		path = ext4_find_extent(inode, start, &path, 0);
+>  		if (IS_ERR(path))
+> -			return -1;
+> -		ppath = path;
+> +			return PTR_ERR(path);
+>  		ex = path[path->p_depth].p_ext;
+>  		WARN_ON(le32_to_cpu(ex->ee_block) != start);
 > +
-> +&{/} {
-> +	panel-lvds {
-
-Nit: Just 'panel' should be enough.
-
-> +		compatible = "hannstar,hsd100pxn1";
-> +		backlight = <&backlight>;
-> +		power-supply = <&reg_3p2v>;
+>  		if (ext4_ext_get_actual_len(ex) != len) {
+>  			down_write(&EXT4_I(inode)->i_data_sem);
+> -			ret = ext4_force_split_extent_at(NULL, inode, &ppath,
+> +			ret = ext4_force_split_extent_at(NULL, inode, &path,
+>  							 start + len, 1);
+>  			up_write(&EXT4_I(inode)->i_data_sem);
+>  			if (ret)
+>  				goto out;
+> -			kfree(path);
+> -			path = ext4_find_extent(inode, start, NULL, 0);
 > +
-> +		port {
-> +			panel_lvds_in: endpoint {
-> +				remote-endpoint = <&lvds0_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&ldb {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	status = "okay";
-> +
-> +	lvds-channel@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		fsl,data-mapping = "spwg";
-> +		fsl,data-width = <18>;
-> +		status = "okay";
-> +
-> +		port@2 {
-> +			reg = <2>;
-> +
-> +			lvds0_out: endpoint {
-> +				remote-endpoint = <&panel_lvds_in>;
-> +			};
-> +		};
-> +	};
-> +};
+> +			path = ext4_find_extent(inode, start, &path, 0);
+>  			if (IS_ERR(path))
+> -				return -EINVAL;
+> +				return PTR_ERR(path);
+>  			ex = path[path->p_depth].p_ext;
+>  		}
+>  	}
 > -- 
-> 2.34.1
+> 2.39.2
 > 
-
--- 
-With best wishes
-Dmitry
 
