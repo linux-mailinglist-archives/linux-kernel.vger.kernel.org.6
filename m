@@ -1,199 +1,120 @@
-Return-Path: <linux-kernel+bounces-264037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAB393DE2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758B093DE30
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990881C2164B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228DC1F21CC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AB94CB37;
-	Sat, 27 Jul 2024 09:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D14481A7;
+	Sat, 27 Jul 2024 09:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LOcg2so2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuXm/dLh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5249405C9;
-	Sat, 27 Jul 2024 09:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304383CF65
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722072810; cv=none; b=uDNw5FG/0rEyo+iOQoOfX1RfGk/SHvkl0CgHQbrJikzsB67Sj5ACL0uTKX0uXu/e85SisiHrQNLfLA3w8l94KvSC0VYF9qU8rZc9bTO4n/cweyu9rtfuKJ+8itsFXdP/hAf0A8REf/2FVefp1nRGOQ/hjeWCbUdODgMv4dwosLc=
+	t=1722072949; cv=none; b=hZ9gZ2qmqFUGLgQCTxtuTvYV4xXdHNOn9iwKYYEu6WgwnfCBpoAZOS8qS+geXMETUkXc0X8DF54U9U8aMpSB/UtsQ2Kk8Ed8p4sWJeuChtFPQ6ei+Mbndng043DjRb90naROu2CT8ZB4xyQm6Ul1lqtHD7X5fndjumhMmJm+sco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722072810; c=relaxed/simple;
-	bh=96QOIG/h1nLnig5TjvXXPOrhIEeMRrOBAX7BbjccgxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gm6AMH4fLrwWrCq0fKHfsfF63wO9COpEEOg/+o6W4uZxMIGLno2WtEi7u6dv1YJ/e66/YlRcKS3iUG57UwY0vr9UPPa7zj4OjzFtPGSPwu8vku1Q9q+/hoVfXslp8jKEYZ6XPswwwZUrdYY/xELD2l5j+d2CuocmU3YbvkcFSt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LOcg2so2; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722072808; x=1753608808;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=96QOIG/h1nLnig5TjvXXPOrhIEeMRrOBAX7BbjccgxY=;
-  b=LOcg2so2GtBM2bmRGc2elBkIErkIdedlyCVu8ikxygK3WL6t9ahFXzm7
-   iX7++6im8ga1hna5wh0VNWpwFJlnHpaioJLCWVRVVVdWfNVoVIsPFToT6
-   d7P12H/tn5cw1LnVbV304YXm14YnzxuX4Nghg9bIjB/zIsTv0dvdmoYFi
-   cCal4ZL7naKFul9grlk6k6dUct4jWb8MXfoySM0v2K0f0Gy+cBxfH25QU
-   qBs8PDBOaWHYk7m8wk+vb+AoLNsnXW6ufEJmRN2Bz1FBnMgqdPXWgyi9K
-   1MfdPAIxq8G38Zppci+PZUCmACFzeLt6lU/G2YkRUYD8coGDBbAAEksJN
-   A==;
-X-CSE-ConnectionGUID: H7ZtnrnMReix0w8b7bjTEg==
-X-CSE-MsgGUID: OG5IZX79TZyFr41IOdzkQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="23623102"
-X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
-   d="scan'208";a="23623102"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 02:33:27 -0700
-X-CSE-ConnectionGUID: 5BsX9X7rT/uE1OY406do8A==
-X-CSE-MsgGUID: H/UUFVt3SzWj6VvkW03j2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
-   d="scan'208";a="54279932"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 27 Jul 2024 02:33:23 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sXdnk-000pou-0b;
-	Sat, 27 Jul 2024 09:33:20 +0000
-Date: Sat, 27 Jul 2024 17:32:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>,
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Simon Horman <horms@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Judith Mendez <jm@ti.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Linux regression tracking <regressions@leemhuis.info>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] can: m_can: Do not cancel timer from within timer
-Message-ID: <202407271748.gsVE0Hih-lkp@intel.com>
-References: <20240726195944.2414812-5-msp@baylibre.com>
+	s=arc-20240116; t=1722072949; c=relaxed/simple;
+	bh=D2Fr1XAE3Q/rdDD8rzZH7itthj8Iknru7wdYfU+InXk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tv0k6RzxaFXTfFIY+1oEY8nGKmQ02+xoAwAMFkAIktMuZdZJVNDRoezjfiAxXgSLBsQV6ZgvKCoWDGg3D28LucKhGJ9IMnrcq8p57FaZm1GaN5HVFGjUNi7/cif1ewSAgYJwWvN3AyCN+Rzw547AhXmvWR4zdsOXpiJbgXG7yCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuXm/dLh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958DBC32781;
+	Sat, 27 Jul 2024 09:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722072948;
+	bh=D2Fr1XAE3Q/rdDD8rzZH7itthj8Iknru7wdYfU+InXk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZuXm/dLhD1BpUQbqgnfTrSC8lBfIkPlw/wg+m7THaDJgvmmgl8Nsu98gAv7tLf4qb
+	 d7aZEHQLtlsLlbCGKidzvIxc0fTmrfGytAxbQN2NKNp67JrDBsoAT5+NSNUS3e0K3D
+	 5Q5AwhdAbDW6EcQB/TngDCcQx8f4lzdmfH8tBx5D9o3K1l3tr/rbtBpZxpfEepIyQr
+	 Q6h1PeCLOadNlDBD81TqTBEuqGQLPK+W1bVSZJxqMRBi6h+doowPtmtEWD8wkiRhB+
+	 +232Ixv6M5g2VBvveiAZqVUAPICXW+qaouBDDuTavooIgymHPYuSqCI1WUTWuKurD4
+	 CAOPPmGtnW+GQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sXdq6-00Fnvv-8k;
+	Sat, 27 Jul 2024 10:35:46 +0100
+Date: Sat, 27 Jul 2024 10:35:45 +0100
+Message-ID: <861q3f2n4e.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <tglx@linutronix.de>,
+	<joey.gouly@arm.com>,
+	<mark.rutland@arm.com>,
+	<will@kernel.org>,
+	<catalin.marinas@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3: Remove asmlinkage for gic_handle_irq()
+In-Reply-To: <20240727073648.1042377-1-ruanjinjie@huawei.com>
+References: <20240727073648.1042377-1-ruanjinjie@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726195944.2414812-5-msp@baylibre.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ruanjinjie@huawei.com, tglx@linutronix.de, joey.gouly@arm.com, mark.rutland@arm.com, will@kernel.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Markus,
+On Sat, 27 Jul 2024 08:36:48 +0100,
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+> 
+> Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
+> the gic_handle_irq() is only called by C functions, so remove
+> the asmlinkage.
 
-kernel test robot noticed the following build warnings:
+You clearly haven't looked very far.
 
-[auto build test WARNING on mkl-can-next/testing]
-[also build test WARNING on linus/master v6.10 next-20240726]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index c19083bfb943..0efa3443c323 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
+>  	__gic_handle_nmi(irqnr, regs);
+>  }
+>  
+> -static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+> +static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+>  {
+>  	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
+>  		__gic_handle_irq_from_irqsoff(regs);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Schneider-Pargmann/can-m_can-Reset-coalescing-during-suspend-resume/20240727-042714
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git testing
-patch link:    https://lore.kernel.org/r/20240726195944.2414812-5-msp%40baylibre.com
-patch subject: [PATCH 4/7] can: m_can: Do not cancel timer from within timer
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20240727/202407271748.gsVE0Hih-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407271748.gsVE0Hih-lkp@intel.com/reproduce)
+$ git grep handle_arch_irq arch/arm/
+arch/arm/kernel/entry-armv.S:   bl      generic_handle_arch_irq
+arch/arm/kernel/entry-armv.S:   mov_l   r0, generic_handle_arch_irq
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407271748.gsVE0Hih-lkp@intel.com/
+Until someone rewrites 32bit ARM to have all of its low-level
+interrupt handling in C, this stays. This has no effect on arm64
+anyway.
 
-All warnings (new ones prefixed by >>):
-
->> drivers/net/can/m_can/m_can.c:1205: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This interrupt handler is called either from the interrupt thread or a
-
-
-vim +1205 drivers/net/can/m_can/m_can.c
-
-  1203	
-  1204	/**
-> 1205	 * This interrupt handler is called either from the interrupt thread or a
-  1206	 * hrtimer. This has implications like cancelling a timer won't be possible
-  1207	 * blocking.
-  1208	 */
-  1209	static int m_can_interrupt_handler(struct m_can_classdev *cdev)
-  1210	{
-  1211		struct net_device *dev = cdev->net;
-  1212		u32 ir;
-  1213		int ret;
-  1214	
-  1215		if (pm_runtime_suspended(cdev->dev))
-  1216			return IRQ_NONE;
-  1217	
-  1218		ir = m_can_read(cdev, M_CAN_IR);
-  1219		m_can_coalescing_update(cdev, ir);
-  1220		if (!ir)
-  1221			return IRQ_NONE;
-  1222	
-  1223		/* ACK all irqs */
-  1224		m_can_write(cdev, M_CAN_IR, ir);
-  1225	
-  1226		if (cdev->ops->clear_interrupts)
-  1227			cdev->ops->clear_interrupts(cdev);
-  1228	
-  1229		/* schedule NAPI in case of
-  1230		 * - rx IRQ
-  1231		 * - state change IRQ
-  1232		 * - bus error IRQ and bus error reporting
-  1233		 */
-  1234		if (ir & (IR_RF0N | IR_RF0W | IR_ERR_ALL_30X)) {
-  1235			cdev->irqstatus = ir;
-  1236			if (!cdev->is_peripheral) {
-  1237				m_can_disable_all_interrupts(cdev);
-  1238				napi_schedule(&cdev->napi);
-  1239			} else {
-  1240				ret = m_can_rx_handler(dev, NAPI_POLL_WEIGHT, ir);
-  1241				if (ret < 0)
-  1242					return ret;
-  1243			}
-  1244		}
-  1245	
-  1246		if (cdev->version == 30) {
-  1247			if (ir & IR_TC) {
-  1248				/* Transmission Complete Interrupt*/
-  1249				u32 timestamp = 0;
-  1250				unsigned int frame_len;
-  1251	
-  1252				if (cdev->is_peripheral)
-  1253					timestamp = m_can_get_timestamp(cdev);
-  1254				frame_len = m_can_tx_update_stats(cdev, 0, timestamp);
-  1255				m_can_finish_tx(cdev, 1, frame_len);
-  1256			}
-  1257		} else  {
-  1258			if (ir & (IR_TEFN | IR_TEFW)) {
-  1259				/* New TX FIFO Element arrived */
-  1260				ret = m_can_echo_tx_event(dev);
-  1261				if (ret != 0)
-  1262					return ret;
-  1263			}
-  1264		}
-  1265	
-  1266		if (cdev->is_peripheral)
-  1267			can_rx_offload_threaded_irq_finish(&cdev->offload);
-  1268	
-  1269		return IRQ_HANDLED;
-  1270	}
-  1271	
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
