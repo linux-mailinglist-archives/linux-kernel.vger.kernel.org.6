@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-264200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDF493E020
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF7493E023
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9201C20BFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:27:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6361E1C21100
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB01862B9;
-	Sat, 27 Jul 2024 16:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7795186E20;
+	Sat, 27 Jul 2024 16:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gvj006CL"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="JCxihUNI"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF00D1D52B
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 16:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35431822F8;
+	Sat, 27 Jul 2024 16:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722097627; cv=none; b=tM2qdqejff2ReM00p0yEeOw35LMItn0AKY3N/63fW+if7RcNV4U21t4+p4z2MyQZ5DAoy79nCytgE7QX5dcO1pwjzaCihSwYKUJQmN8+qRuXUAP1EU0j8TTzuMgxTvowl6En+oLyQLcjpJEZzoGosLw4sqMyWiwdkGLIInp0HqI=
+	t=1722097721; cv=none; b=J9bWI4qPeJE8NE0LTbD5gChxWnbyk+ezggtIoBAA49bwP9+JmQgItfrUTMHZQ5//ItCHpXMLiIHBw6EV7xnGpaujb/dlY3ioo+zEU2SVr6lzLFzbQ5TPweod9dtRKmymwEaExosnSwTjVt2WNmsj4VnMXqcJ708IQRfvBsHLw+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722097627; c=relaxed/simple;
-	bh=diXfqiCnCAfhXQocQa2/R2YkFW5MXX/JQJ1vfWqciTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lrRIeyarTcXKxdo8H9LxOtbLUiKbyFTPA+Ez62AQpb38MX7p7UWuxYO3KbIigBt0DWU/EtVMpm39D3VMJEYPwOSMqNoOsj58S7GpVMxOA+PTNMHlxInf4UTk8bt4LhtmHcmmTbpUm27dmQZGdPryVokc1uwM/adfjFYsFxJIQrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gvj006CL; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f025b94e07so27926161fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722097622; x=1722702422; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5XbfB27Ib3T/DNbvi3aTzDyG5nLhpOW9JULvBjkbrW4=;
-        b=Gvj006CLBeF5lll7Z26kh4k4GT+gavxbzrYPT5ckCrU+QfybX9zztXaLbfxr8jy4i4
-         coK15qlhTuc6YxOUXiLbdwIRoquGfjcrAMKi5FU0v3dNuTnn/AsAxDnuFoDIKVl/6isn
-         lqH4lL1S9g9RNDtqGfVJ0r0CMpDWGsexVBYRs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722097622; x=1722702422;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5XbfB27Ib3T/DNbvi3aTzDyG5nLhpOW9JULvBjkbrW4=;
-        b=cUF2u1JMobq6jKpSxrCF5q4gIkslCFA/sryq6F/m82KFM8x64Mjlvu8iA1qEBLTVVA
-         s2fOI2CJ80qyjZBdTrMBbe3VE8fvvHE06L0YWT8wwstFjcNUE2ZeNjj1EHiL7xljMTOW
-         jHLT9jrBHKu3VXj3U3HGQR/JlOBNE2mFqEv1cdKF3xKymgvaoqTz9zIJz96N2Ikjd5CJ
-         oYLwEveLIFUAgANiPPVPto9BNNLD4MOXo6SFtVQd2MIoG15KRXcTauRrz6LhEt0JXRFE
-         bTsIZIMZkuwzbg5eaVrtv0vQu5zer5ep3ANKmBSezqRJi5fGTNJGmqzJD0gs0o8qtqgK
-         8VYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEnXyKVicO1Y50IrANiAEi5r+/QKCbefEHEr138ZrMeeJKbiID7q+PAfj3f5DbXnbDfBqgX7lD1peIxw3PBcaQp4DccesTanoQtoHx
-X-Gm-Message-State: AOJu0YxBAXCgL9vW9L67ecJ9ySWpQhJx428KL3Blvsyq//TXX2/DkxKy
-	dbT9rkDcn+j3vTAGNkwYf2bl9ezQGHzX0Ol2ZEQEUajdr5ij0ovSQugCB6VRZDOXXXYaOorqR2G
-	h94tJ/g==
-X-Google-Smtp-Source: AGHT+IErcA0ppHXcdvlXMQ8Oc7PHQqKkZxS5ByKVJWVdNwYH3mLttGBKfcaX3il8FdkK2A+lKpA7xw==
-X-Received: by 2002:ac2:46d9:0:b0:52e:7f18:176b with SMTP id 2adb3069b0e04-5309b269b7cmr2232116e87.11.1722097622408;
-        Sat, 27 Jul 2024 09:27:02 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2cc36sm795687e87.270.2024.07.27.09.27.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jul 2024 09:27:01 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso27334781fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:27:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWztUQgX9apermjX8KyMZkHkpeXvWV5JqTFrZGm/GCKSGZdyeAPNIzlFqTI7EsQRfnwVh1Ro4MZs0aDw0C5gk+3Fb7mUsNioQFEo1Lj
-X-Received: by 2002:a2e:90d9:0:b0:2ee:8d19:85af with SMTP id
- 38308e7fff4ca-2f12ee24392mr18800621fa.36.1722097620647; Sat, 27 Jul 2024
- 09:27:00 -0700 (PDT)
+	s=arc-20240116; t=1722097721; c=relaxed/simple;
+	bh=3f0zTor1mnvMTzO0DsCTtilH+K/71txNhBOAejZBYvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QuunOKqMT+XJ4okVS3yLMQPqW8183kSM4D8gsSamLEtwQSm978n5veSqRSj8GMPa5DUg12UoUPJZZnwh9JNjFk5g5gQrliANgBwMmGLMIdqeZbTk/5ayUY9g4H9emSyMR/5xiYos7lm8OaSNJD7m/kPZKO6YUh/G2sUT8D701I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=JCxihUNI; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=6woDU4xkf0yXoBT9uAn0Jihe89Zin8AHAJkgz1oPFS4=;
+	t=1722097718; x=1722529718; b=JCxihUNId6gqdqHylgpyn1eaWY4FHEAiGHcehJ3T48+i0wd
+	QOBQUTNEs9jHwTI56r5RlWp7e+P8yvx2HjN9rpIxODcfIiaUg0Q71KEW5KHFISSsNCLbS0cyiaquF
+	mADibR4jwNq6j7nf2Nc3MaG5evuHnBnT3Df4zV2W/f4LyrEnoAFexb/0RLPLtKfofxKZPWGduuCvQ
+	4ov0Tcs3NZ8B0f1DwKp57o/8NgipkKD24dJLORnZutATtNU0UNfLrEVmTCyFt7aMwWnTmjb7pBJ4b
+	VRkMM7CdhVoBNHG8RzHcXrkLGYyTFWWmbZHCTRnQIusIzYbUNU7zZlDQf14Cn6xQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sXkHV-00007W-6i; Sat, 27 Jul 2024 18:28:29 +0200
+Message-ID: <9ca719e4-2790-4804-b2cb-4812899adfe8@leemhuis.info>
+Date: Sat, 27 Jul 2024 18:28:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local> <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
- <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local> <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
- <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local> <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
- <2f1be7ee-2d70-4dd3-bfa2-1b94a4fc5a66@lucifer.local>
-In-Reply-To: <2f1be7ee-2d70-4dd3-bfa2-1b94a4fc5a66@lucifer.local>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Sat, 27 Jul 2024 09:26:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
-Message-ID: <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] minmax: reduce compilation time
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Laight <David.Laight@aculab.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] No image on 4k display port displays connected
+ through usb-c dock in kernel 6.10
+To: kevin@holm.dev, Alex Deucher <alexander.deucher@amd.com>,
+ Hersen Wu <hersenxs.wu@amd.com>, Wayne Lin <wayne.lin@amd.com>
+Cc: regressions@lists.linux.dev, stable@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+References: <d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Language: en-US, de-DE
+In-Reply-To: <d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722097718;5d878406;
+X-HE-SMSGID: 1sXkHV-00007W-6i
 
-On Sat, 27 Jul 2024 at 01:08, Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> 62603617./drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o.pre
+[adding a few people and lists to the recipients]
 
-Heh.
+Hi! Thx for your rpeort.
 
-  Longest line is drivers/.../ia_css_ynr.host.c:71 (27785kB)
+On 27.07.24 18:07, kevin@holm.dev wrote:
+> Connecting two 4k displays with display port through a lenovo usb-c
+> dock (type 40AS) to a Lenovo P14s Gen 2 (type 21A0) results in no
+> image on the connected displays.
+> 
+> The CPU in the Lenovo P14s is a 'AMD Ryzen 7 PRO 5850U with Radeon
+> Graphics' and it has no discrete GPU.
+> 
+> I first noticed the issue with kernel version '6.10.0-arch1-2'
+> provided by arch linux. With the previous kernel version
+> '6.9.10.arch1-1' both connected displays worked normally. I reported
+> the issue in the arch forums at
+> https://bbs.archlinux.org/viewtopic.php?id=297999 and was guided to
+> do a bisection to find the commit that caused the problem. Through
+> testing I identified that the issue is not present in the latest
+> kernel directly compiled from the trovalds/linux git repository.
+> 
+> With git bisect I identified 4df96ba66760345471a85ef7bb29e1cd4e956057
 
-yeah, that's a single line that expands to 27MB in size.
+That's 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for
+mst mode validation") [v6.10-rc1] from Hersen Wu.
 
-And yes, that line is one single min(...) expression with arguments
-that are then in turn macros with other nested min/max arguments.
+Did you try if reverting that commit is possible and might fix the problem?
 
-See also drivers/staging/media/atomisp/pci/sh_css_frac.h.
+> as the first bad commit and fa57924c76d995e87ca3533ec60d1d5e55769a27
 
-On my fairly beefy (admittedly more cores than single-thread) machine,
-just generating the preprocessor file takes just under 20s.
+That's fa57924c76d995 ("drm/amd/display: Refactor function
+dm_dp_mst_is_port_support_mode()") [v6.10-post] from Wayne Lin.
 
-Building the object file is actually faster at "only" 8.5s for that
-one file, because it uses the built-in preprocessor and never writes
-it out, and most of the actual preprocessing result is trivial stuff
-that gets thrown away immediately.
+> as the first commit that fixed the problem again.
 
-              Linus
+Hmm, the latter commit does not have a fixes tag and might or might not
+be to invasive to backport to 6.10. Let's see what the AMD developers say.
+
+> The initial commit only still shows an image on one of the connected
+> 4k screens. I have not investigated further to find out at what point
+> both displays stopped showing an image.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
