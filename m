@@ -1,220 +1,283 @@
-Return-Path: <linux-kernel+bounces-264227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD5F93E064
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7273D93E065
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8C61C2115F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED23E1F21AD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64047187325;
-	Sat, 27 Jul 2024 17:46:25 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAD7186E51;
+	Sat, 27 Jul 2024 17:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lr1jbSsu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB59186E3A
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 17:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DF91B86E0
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 17:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722102384; cv=none; b=EorxkOljOVOg7WdWHX+aRgvb8BW3TS7TZowgI0egQgtt1SB++2BHQ2YGJgxuYODAwygkPl5cQlr4M6+2KkDsE3U8bcH6+975ZfqeSJzTopq1BW9TVEiaY2cEjuYs9cSE+8+2YSkRMnSHOEvIbsjXjaciTqsZrQG3zsxGUiO4gP0=
+	t=1722103058; cv=none; b=fZ5/MCTQpViZuaLNklm6WjLGgYFOYUmuNIqmL+jcQF3i6AnCBme1rLVAjjLiH0fGElqnhx9g8wtj12Rxgo9anod1m1QxY5bPrcg21rv6Vm8pdJ7fwJsSCIXutkugzkA3n/mxyAlLg6lLdVjZctdoz/CFa+iWsJCCkvYLB/z0y5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722102384; c=relaxed/simple;
-	bh=H1n8/FUosp5p8anYXvKh+X7UEiNvge/fearvUY8uZvc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JHsYuakGSI45xNzkVMw3ZZFraJqkDhj5JPH5feD3OCsmNWQ11v7oGT5kVJjkLinu3uxOSOhFHbT2xpzx+o2s0dOa3ZE6I7Rs9CVBYMEYBRjCIXA2TVcqFwXFBNt3TBgpLnt/S8swemQNxynQK0GnZx0UqCX05O4qb42/p573V7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f89e62706so324829939f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:46:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722102382; x=1722707182;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMdMeoV8Gkz/QuASMOSnjC0t99+ftL/4/W9YdtqQFaw=;
-        b=l+etf93hqlKleK/g0FYcIM3Ds2eMd3ekWXGDTPE3/Fn1ZQeUf3E1+10flBY2L/cejZ
-         Rsz6efkp8pFdgG58UpdLiTIMbU7ag8eXFcJgr9POQG7FUE15XJFGSMfH4PCNaPYSQp/N
-         nMV+pkrSm0DL+WZfsnv+4kBhDL8c1EairyxGyVMhGRT5jNGqF+bcIipRf2RN1Cvr+Qho
-         ppGRwHn8jgiz/uy45MV1vmu120067W3OqqFoC5zQatzQpdWJEaXa/w5ttjGoi5W6z+Sy
-         BM+zQbQNBMnD1/mjfDbiGs423yW23TBzb3XWSls7LYQ4BzBjDJNfmAQUGBlVtegPN+Zx
-         Pz3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCpTHzmsPKPr/lyOZxj4wLb7wMugveFdvioClb3XxnpxhrBSii/7VUTW4N72JcK4+jMYPP/Fih6+a1m8ST93zo+lNDfI1qPEfAtyTP
-X-Gm-Message-State: AOJu0YxlKYzo2+YWjTgBsusWQjPKjasnSzx0Ce2pbdEM0i5XdrsRLMBS
-	A9jbATHT6Ez98rEP7ZsRaz0KtZ+e7sEtOM3GMKXN0gxXSckWItoCLStIv1eg51roI1bPmOFIQYO
-	Tg4G7ORczhQ+US6wxXKQQceGgpFrPu6m4mSH24LoUYvL0a3LuqIPYx3Q=
-X-Google-Smtp-Source: AGHT+IGo7hg5BZF6IfBarGDUtYjlUa5DsQAHNitfc10BNTuK4WVC5nTkeF+T0N5CIwlD/NIbr3fsboLYPjplyN54HvIT+8Q9pvY2
+	s=arc-20240116; t=1722103058; c=relaxed/simple;
+	bh=f4X6sLVBqVCBhpFRm3Jj0cwE8loNwOi5YXY9SizYem0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=nrwXUyt0vu84g7qd1YKmc2yHP1LHFLyvnLxaZxntcEoKtBHgLGrR7HRMYWF71+uitkYwx9mDszX9jJPv3nD1RhDtxLMbdsfvcjjlks6kMu0GhUTgJzcoYh6KJg1YQUksiVaYnWm5YGrLq1FCwwISgf4CPq8sR3KM2YoKGvd0eAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lr1jbSsu; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722103057; x=1753639057;
+  h=date:from:to:cc:subject:message-id;
+  bh=f4X6sLVBqVCBhpFRm3Jj0cwE8loNwOi5YXY9SizYem0=;
+  b=lr1jbSsuDuqybx7IcwgRzsj/nUiw0fipM5wxri5RWV63oSCozFf8H5Jp
+   QRfIVW0/fSWA7CwDQDcp90VHDb2moWShYVwLZTHOlWOAiV7TxFxpcvKpb
+   CYpBEXZNjJlgXIPpajaK3n4kn/pyU35207MB/4JCQOYY/8xQTnuJtI21O
+   9N63SbdSzFtU79otygAVrZHokrCZeSJnSaR+gbEy7a7wuPljTmYwaRgvM
+   OSma+60b8MTSoF6cQXMm7h8ub1qkIZm5v0R3zO38fAKPnReIasTzUM8fM
+   nbR6Z+lDWD7/izdLm5gRVySZyrynUTi/maWv/fPqRDe5UeMymEGuDLRqY
+   A==;
+X-CSE-ConnectionGUID: VIZ2ULnITca+p4lB5FREug==
+X-CSE-MsgGUID: qO3n31zOREy6mhXKqQNpNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="19485925"
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="19485925"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 10:57:36 -0700
+X-CSE-ConnectionGUID: ZNMujZ54RsGhNMQhpEzO/A==
+X-CSE-MsgGUID: n147QVZ+QCqzAmbEfvVpkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="84205593"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 27 Jul 2024 10:57:35 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXlfg-000q7y-0m;
+	Sat, 27 Jul 2024 17:57:32 +0000
+Date: Sun, 28 Jul 2024 01:56:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/urgent] BUILD SUCCESS
+ 81a91abab1307d7725fa4620952c0767beae7753
+Message-ID: <202407280156.mTSVUCpk-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1452:b0:4c0:838e:9fd1 with SMTP id
- 8926c6da1cb9f-4c64c59da0fmr341572173.5.1722102382300; Sat, 27 Jul 2024
- 10:46:22 -0700 (PDT)
-Date: Sat, 27 Jul 2024 10:46:22 -0700
-In-Reply-To: <000000000000ec1f6b061ba43f7d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c3a37d061e3e3452@google.com>
-Subject: Re: [syzbot] [net?] [s390?] possible deadlock in smc_switch_to_fallback
- (2)
-From: syzbot <syzbot+bef85a6996d1737c1a2f@syzkaller.appspotmail.com>
-To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
+branch HEAD: 81a91abab1307d7725fa4620952c0767beae7753  irqchip/loongarch-cpu: Fix return value of lpic_gsi_to_irq()
 
-HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10affabd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=bef85a6996d1737c1a2f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d70365980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17565655980000
+elapsed time: 1339m
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f6e80669686a/disk-1722389b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ee658b141f49/vmlinux-1722389b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/35cfa877b1af/bzImage-1722389b.xz
+configs tested: 191
+configs skipped: 5
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bef85a6996d1737c1a2f@syzkaller.appspotmail.com
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-syzkaller-12562-g1722389b0d86 #0 Not tainted
-------------------------------------------------------
-syz-executor383/5226 is trying to acquire lock:
-ffff888022c58a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                          axs103_defconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                    vdk_hs38_smp_defconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   clang-20
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-14.1.0
+arm                                 defconfig   gcc-13.2.0
+arm                          pxa910_defconfig   gcc-13.2.0
+arm64                            allmodconfig   clang-20
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-13.2.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240727   gcc-13
+i386         buildonly-randconfig-002-20240727   clang-18
+i386         buildonly-randconfig-002-20240727   gcc-13
+i386         buildonly-randconfig-003-20240727   gcc-13
+i386         buildonly-randconfig-003-20240727   gcc-8
+i386         buildonly-randconfig-004-20240727   gcc-10
+i386         buildonly-randconfig-004-20240727   gcc-13
+i386         buildonly-randconfig-005-20240727   clang-18
+i386         buildonly-randconfig-005-20240727   gcc-13
+i386         buildonly-randconfig-006-20240727   clang-18
+i386         buildonly-randconfig-006-20240727   gcc-13
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240727   clang-18
+i386                  randconfig-001-20240727   gcc-13
+i386                  randconfig-002-20240727   gcc-13
+i386                  randconfig-002-20240727   gcc-8
+i386                  randconfig-003-20240727   clang-18
+i386                  randconfig-003-20240727   gcc-13
+i386                  randconfig-004-20240727   clang-18
+i386                  randconfig-004-20240727   gcc-13
+i386                  randconfig-005-20240727   clang-18
+i386                  randconfig-005-20240727   gcc-13
+i386                  randconfig-006-20240727   gcc-13
+i386                  randconfig-011-20240727   gcc-13
+i386                  randconfig-012-20240727   gcc-13
+i386                  randconfig-013-20240727   gcc-11
+i386                  randconfig-013-20240727   gcc-13
+i386                  randconfig-014-20240727   gcc-13
+i386                  randconfig-015-20240727   clang-18
+i386                  randconfig-015-20240727   gcc-13
+i386                  randconfig-016-20240727   gcc-13
+i386                  randconfig-016-20240727   gcc-7
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+m68k                           sun3_defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-14.1.0
+mips                          ath79_defconfig   gcc-13.2.0
+mips                     loongson1b_defconfig   gcc-13.2.0
+mips                malta_qemu_32r6_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                      bamboo_defconfig   gcc-13.2.0
+powerpc                    mvme5100_defconfig   gcc-13.2.0
+powerpc                      pmac32_defconfig   gcc-13.2.0
+powerpc                     tqm8541_defconfig   gcc-13.2.0
+riscv                            allmodconfig   clang-20
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+s390                             alldefconfig   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                     magicpanelr2_defconfig   gcc-13.2.0
+sh                           se7619_defconfig   gcc-13.2.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc                       sparc64_defconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240727   gcc-8
+x86_64       buildonly-randconfig-002-20240727   gcc-13
+x86_64       buildonly-randconfig-002-20240727   gcc-8
+x86_64       buildonly-randconfig-003-20240727   gcc-13
+x86_64       buildonly-randconfig-003-20240727   gcc-8
+x86_64       buildonly-randconfig-004-20240727   gcc-13
+x86_64       buildonly-randconfig-004-20240727   gcc-8
+x86_64       buildonly-randconfig-005-20240727   clang-18
+x86_64       buildonly-randconfig-005-20240727   gcc-8
+x86_64       buildonly-randconfig-006-20240727   gcc-13
+x86_64       buildonly-randconfig-006-20240727   gcc-8
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240727   gcc-13
+x86_64                randconfig-001-20240727   gcc-8
+x86_64                randconfig-002-20240727   clang-18
+x86_64                randconfig-002-20240727   gcc-8
+x86_64                randconfig-003-20240727   clang-18
+x86_64                randconfig-003-20240727   gcc-8
+x86_64                randconfig-004-20240727   clang-18
+x86_64                randconfig-004-20240727   gcc-8
+x86_64                randconfig-005-20240727   gcc-13
+x86_64                randconfig-005-20240727   gcc-8
+x86_64                randconfig-006-20240727   clang-18
+x86_64                randconfig-006-20240727   gcc-8
+x86_64                randconfig-011-20240727   gcc-13
+x86_64                randconfig-011-20240727   gcc-8
+x86_64                randconfig-012-20240727   gcc-13
+x86_64                randconfig-012-20240727   gcc-8
+x86_64                randconfig-013-20240727   clang-18
+x86_64                randconfig-013-20240727   gcc-8
+x86_64                randconfig-014-20240727   gcc-10
+x86_64                randconfig-014-20240727   gcc-8
+x86_64                randconfig-015-20240727   gcc-12
+x86_64                randconfig-015-20240727   gcc-8
+x86_64                randconfig-016-20240727   gcc-10
+x86_64                randconfig-016-20240727   gcc-8
+x86_64                randconfig-071-20240727   gcc-13
+x86_64                randconfig-071-20240727   gcc-8
+x86_64                randconfig-072-20240727   gcc-13
+x86_64                randconfig-072-20240727   gcc-8
+x86_64                randconfig-073-20240727   gcc-8
+x86_64                randconfig-074-20240727   gcc-8
+x86_64                randconfig-075-20240727   clang-18
+x86_64                randconfig-075-20240727   gcc-8
+x86_64                randconfig-076-20240727   clang-18
+x86_64                randconfig-076-20240727   gcc-8
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                            allnoconfig   gcc-14.1.0
+xtensa                  cadence_csp_defconfig   gcc-13.2.0
+xtensa                generic_kc705_defconfig   gcc-13.2.0
 
-but task is already holding lock:
-ffff888022c58258 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
-ffff888022c58258 (sk_lock-AF_INET){+.+.}-{0:0}, at: smc_sendmsg+0x55/0x530 net/smc/af_smc.c:2773
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
-       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (rtnl_mutex){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
-       do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
-       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
-       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
-       __do_sys_sendto net/socket.c:2216 [inline]
-       __se_sys_sendto net/socket.c:2212 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2212
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &smc->clcsock_release_lock --> rtnl_mutex --> sk_lock-AF_INET
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sk_lock-AF_INET);
-                               lock(rtnl_mutex);
-                               lock(sk_lock-AF_INET);
-  lock(&smc->clcsock_release_lock);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor383/5226:
- #0: ffff888022c58258 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
- #0: ffff888022c58258 (sk_lock-AF_INET){+.+.}-{0:0}, at: smc_sendmsg+0x55/0x530 net/smc/af_smc.c:2773
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5226 Comm: syz-executor383 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
- smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
- __do_sys_sendto net/socket.c:2216 [inline]
- __se_sys_sendto net/socket.c:2212 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2212
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1c3ca27ab9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffe06c23b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1c3ca27ab9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007f1c3ca9a5f0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000200007fd R11: 0000000000000246 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
