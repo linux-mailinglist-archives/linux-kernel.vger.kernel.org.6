@@ -1,211 +1,128 @@
-Return-Path: <linux-kernel+bounces-263987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6EF93DD91
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220C493DD93
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 986B31C210FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC88628408B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED80E24B4A;
-	Sat, 27 Jul 2024 06:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjcwWZRx"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D374427269;
+	Sat, 27 Jul 2024 06:43:02 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3AE14A85
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 06:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFC14A85;
+	Sat, 27 Jul 2024 06:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722062425; cv=none; b=bZnSQTGOg3DwhBY8H2xlMpNrMXv6tw4lYOWajXfLhn8QmQdUPobYFmzB79gtOcyYbE4c4pKbB6nJ4VURSK43QpQmQrj7A99PekQlb+NL02c57EN9R/jEuvdeV3rn92wtOF7e+JDk1/wVAabQiXoJ32Ah6oQY3/qkcwotq9fzf+k=
+	t=1722062582; cv=none; b=PjEBpteTPo+MhRmH69mXMRsnzv74zRuKeE91uaNm+w6d9pUpO7R8vePJQkneBQHo37vqjh61fVJ0v/9BroYKUi34rKLPKYnuE00q9KsolyLkUeLSCSZhgAFvQiklvY4DkeNOgDucpKwKCdLfxXHmNcn+l8pQkKQAjwDT5gggeI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722062425; c=relaxed/simple;
-	bh=OXKBrPrL25aam8XjpMYme4BwhCrlNIj9shfk12QYcGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwminVU9V5erIdNMyvGB0e9MeRLB7JqUGvnvJEir9a2FdewP+4426B+Z8P6cdluKm1grMYd6M8N//1eMlB74/jRtfu/GcYsE//fgYkXGuOtF32GXL5NlbiOBkDWk9yxY3S9bfuOhvUTPSBYJ+qYGj9YIJO61XLXcrQ+3u2qvmLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EjcwWZRx; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd90c2fc68so11871075ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:40:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722062423; x=1722667223; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KruoNU1ECeduc4ttqiLP75/tZo5xqSr0uZUmxvRMw4Y=;
-        b=EjcwWZRxxNMb01wQ/gaDcwl++b1gydxW3taDqY3klLMiWP4NbjoXWYUbIHw1OLY3bB
-         0m/jVH2B5Q/KHGNUZuIP/Qsv7LFrnzB/gLLH2VvJQR6//Vy1mAL8GSNtHgI9M305/MHw
-         ajpqga66cEQSmolMlYpT4uJO9zaaRK78/9VJEnFqGsCBm392F+LPZ3vbgT0CQ0g8rCAF
-         Tnt7H/C6vL7L+MQOIvSxLHiY8A/Oi3YauF0ETlU0SwExH0E4JNqt+ULlwVvK56xPEVkk
-         6pLVah5oUNOMXd7ncAT5dnmn3MvJ/Mf22Sv6cvn0e/KRVGVeigTW5amdEwZyAivycUmu
-         1izA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722062423; x=1722667223;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KruoNU1ECeduc4ttqiLP75/tZo5xqSr0uZUmxvRMw4Y=;
-        b=uVugy/nr+IDAV4qYf7KOklQf9uAf4WVCGROTk1ZgIgPs4iOxT0sHd2Pu92kueINn0E
-         tOCyv1P2mkyEbTXxbc+RWC3f/2uJ3Lc3LrqvEJND0POPLIlEhD8oG6TaZyzpgVXimLgv
-         61wcKvpeJ3Kh9/jfF0Aq+9tjRsIoq0nbLRgfWaTusJx/nWjEyM8uJuc/tfMkOv8vuDS2
-         QdXUVvTywXOvgGRrzFkjb2rS66R7tbEM8BhtPhOGzARvZypiUgUl1PnQJQ1QsP+PEjFB
-         lAFyBQF12U5a7AMVq5JTXIZgw0a/bP4hSciui8eROremA+pLu6Xk4r55MpoGru7EMcxt
-         WALg==
-X-Forwarded-Encrypted: i=1; AJvYcCWD3ikfCxKPQTrqVeTotiopOY4nOllVEFoTSvDd4gbMqYbtDbitLtAZ+XRAvYMgm5fWu5uF8rGm+lCFOQW0p4Q0f4cIn3hd9BeBL1ho
-X-Gm-Message-State: AOJu0YxM3HDEWQFfPDjuSqlgzvg/SW8BjPooHzHZyDYJCXl9aE2pBuUY
-	QV3pM+u6rKfKPYUOjjU+GkzbJ0c0IRyC6cvshaINZin4ga9DviIFGwRU658UeA==
-X-Google-Smtp-Source: AGHT+IENJIkVYk0rpCVthW0PQEkqM+SCa3WgfxY8ADZSjTocFT+s7pDZP7ZlTCOhfSzDNDgG2/7LNA==
-X-Received: by 2002:a17:903:186:b0:1fd:5fa0:e996 with SMTP id d9443c01a7336-1ff048e4f43mr21262975ad.43.1722062422683;
-        Fri, 26 Jul 2024 23:40:22 -0700 (PDT)
-Received: from thinkpad ([120.56.198.67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1b6c3sm43588715ad.192.2024.07.26.23.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 23:40:22 -0700 (PDT)
-Date: Sat, 27 Jul 2024 12:10:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in
- brcm_pcie_probe()
-Message-ID: <20240727064013.GA2974@thinkpad>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-4-james.quinlan@broadcom.com>
- <20240725043111.GD2317@thinkpad>
- <CA+-6iNz9R5uMogd6h+BkgRvKrsmyH2VXsGO_5e=6yqC=JzjigA@mail.gmail.com>
- <20240726050423.GB2628@thinkpad>
- <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
+	s=arc-20240116; t=1722062582; c=relaxed/simple;
+	bh=3wZYqDVGE42T53Wdlc7dDNpSBdpre5BBtcEW0BR0sOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=obYFtfZjrM+Epuy10mTZKFSEgPi61CfTW/RlJ/wtufhbGPqP4yMGTwvsL3rDkvVjk+YbKxbAswyAvziAJkvmQSDxe1uapIUlOc6YXgrmIJACwd9GF+FGWdE+rkak7+sacv4t8PYT5A5nCvrYpEWnZ8hP3o8MtCriuhweCsqkD+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WWFRn1J6dz4f3jk0;
+	Sat, 27 Jul 2024 14:42:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A23911A162D;
+	Sat, 27 Jul 2024 14:42:53 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgCHaTfqlqRmTXguBQ--.2624S3;
+	Sat, 27 Jul 2024 14:42:53 +0800 (CST)
+Message-ID: <84d1cae3-1939-463c-b1f9-344e02f87a9c@huaweicloud.com>
+Date: Sat, 27 Jul 2024 14:42:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/20] ext4: get rid of ppath in ext4_split_extent_at()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-13-libaokun@huaweicloud.com>
+ <20240725110756.fuyjfdvgbprma5ml@quack3>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240725110756.fuyjfdvgbprma5ml@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCHaTfqlqRmTXguBQ--.2624S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1kCry3KrW8CF15JF43KFg_yoW8Xr1Up3
+	y3C3Wqkr1jq3ykCFZ2qFyDZa4rGw47Wr4UG395Wa40gFyDtrya9F1xK3WjkF43Jr4xC3yI
+	yFWIg3yfu3W2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQARBWajXfxD2AAAsq
 
-On Fri, Jul 26, 2024 at 02:34:54PM -0400, Jim Quinlan wrote:
-> On Fri, Jul 26, 2024 at 1:04 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Thu, Jul 25, 2024 at 03:45:59PM -0400, Jim Quinlan wrote:
-> > > On Thu, Jul 25, 2024 at 12:31 AM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
-> > > > > o Move the clk_prepare_enable() below the resource allocations.
-> > > > > o Add a jump target (clk_out) so that a bit of exception handling can be
-> > > > >   better reused at the end of this function implementation.
-> > > > >
-> > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > > > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> > > > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> > > > > ---
-> > > > >  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++------------
-> > > > >  1 file changed, 16 insertions(+), 13 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> > > > > index c08683febdd4..c257434edc08 100644
-> > > > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > > > @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
-> > > > >
-> > > > >       pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
-> > > > >
-> > > > > -     ret = clk_prepare_enable(pcie->clk);
-> > > > > -     if (ret) {
-> > > > > -             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > > -             return ret;
-> > > > > -     }
-> > > > >       pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
-> > > > > -     if (IS_ERR(pcie->rescal)) {
-> > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > +     if (IS_ERR(pcie->rescal))
-> > > > >               return PTR_ERR(pcie->rescal);
-> > > > > -     }
-> > > > > +
-> > > > >       pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
-> > > > > -     if (IS_ERR(pcie->perst_reset)) {
-> > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > +     if (IS_ERR(pcie->perst_reset))
-> > > > >               return PTR_ERR(pcie->perst_reset);
-> > > > > +
-> > > > > +     ret = clk_prepare_enable(pcie->clk);
-> > > > > +     if (ret) {
-> > > > > +             dev_err(&pdev->dev, "could not enable clock\n");
-> > > > > +             return ret;
-> > > > >       }
-> > > > >
-> > > > >       ret = reset_control_reset(pcie->rescal);
-> > > > > -     if (ret)
-> > > > > +     if (ret) {
-> > > > >               dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
-> > > > > +             goto clk_out;
-> > > >
-> > > > Please use a descriptive name for the err labels. Here this err path disables
-> > > > and unprepares the clk, so use 'clk_disable_unprepare'.
-> > > ack
-> > > >
-> > > > > +     }
-> > > > >
-> > > > >       ret = brcm_phy_start(pcie);
-> > > > >       if (ret) {
-> > > > >               reset_control_rearm(pcie->rescal);
-> > > > > -             clk_disable_unprepare(pcie->clk);
-> > > > > -             return ret;
-> > > > > +             goto clk_out;
-> > > > >       }
-> > > > >
-> > > > >       ret = brcm_pcie_setup(pcie);
-> > > > > @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
-> > > > >
-> > > > >       return 0;
-> > > > >
-> > > > > +clk_out:
-> > > > > +     clk_disable_unprepare(pcie->clk);
-> > > > > +     return ret;
-> > > > > +
-> > > >
-> > > > This is leaking the resources. Move this new label below 'fail'.
-> > > What resources is it leaking?  At "clk_out" the return value will be negative
-> > > and only managed resources have been allocated at that juncture.
-> > >
-> >
-> > Right, but what about the err path below this one? If that path is taken, then
-> > clks won't be released, right?
-> No, that is the same situation.  The clock is originally allocated
-> with "devm_clk_get_optional()", i.e. it is a managed resource.
->  If the probe fails, and it does in both of these error paths,
-> Linux deallocates the newly formed device structure and all of its resources.
-> Perhaps I am missing something?
-> 
+On 2024/7/25 19:07, Jan Kara wrote:
+> On Wed 10-07-24 12:06:46, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> The use of path and ppath is now very confusing, so to make the code more
+>> readable, pass path between functions uniformly, and get rid of ppath.
+>>
+>> To get rid of the ppath in ext4_split_extent_at(), the following is done
+>> here:
+>>
+>>   * Free the extents path when an error is encountered.
+>>   * Its caller needs to update ppath if it uses ppath.
+>>   * Teach ext4_ext_show_leaf() to skip error pointer.
+>>   * Propagate ext4_find_extent() error return value in ext4_insert_range().
+>>
+>> No functional changes.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> One nit below:
+>
+>> @@ -5596,6 +5606,7 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
+>>   	path = ext4_find_extent(inode, offset_lblk, NULL, 0);
+>>   	if (IS_ERR(path)) {
+>>   		up_write(&EXT4_I(inode)->i_data_sem);
+>> +		ret = PTR_ERR(path);
+>>   		goto out_stop;
+>>   	}
+> AFAICT this actually fixes a bug where we could have returned 0 although
+> ext4_find_extent() spotted an error?
+Yeah, exactly.
+> This would deserve a separate patch so
+> that it could be easily pulled into stable.
+>
+> Otherwise looks good. Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> 								Honza
+Ok, I'll put this in a separate patch in the next version.
 
-No, I missed the fact that __brcm_pcie_remove() is freeing all resources. But
-grouping all release functions in a single helper and using it in multiple err
-paths even when the err path need not release everything the helper is
-releasing, warrants trouble.
-
-- Mani
+Thank you very much for your review!
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With Best Regards,
+Baokun Li
+
 
