@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-264105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4760D93DF02
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FEF93DF00
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717B61C216D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2D81C21648
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B53880BF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD3E8062E;
 	Sat, 27 Jul 2024 11:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fgsHNGWw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="izh7o+SR"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDAE53362
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841DF53373
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722078148; cv=none; b=h/PZenOvodM2aQOu3tPXQNe+ozqc5cx7vkwgOiHuCWkq888EtAlYYURdkpc8o7G4DFfIR/NkBHUEN33NCOMKMwBglWy79tV4O6RxkRyZc0XCRAnZgCkkwQzByf8HxJ2ryYg2N1jCFF/jQvozIMs2Po6TwHU6+HWh/pCnQvgc2Oc=
+	t=1722078147; cv=none; b=h/zYuxaltwdJo1WjdqEf+OSLIgUca9CWuts3Xv2NZKKKJ378rTtLhpmoPU24L5XxIvQL3xIRLNjxThoUmcZl+V61HMiuDux/F9eE6Xjkakimgz+TI34oML/wF3fyAQdLGWgGznrJE4ZU6/P0cjFnJt2bhbhz043goWV2igL24z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722078148; c=relaxed/simple;
-	bh=Or4+uACR+jQL3H4G5GA++OAJ9Aj6g9B8faMTAV3niIc=;
+	s=arc-20240116; t=1722078147; c=relaxed/simple;
+	bh=oQpf4g/SySD6xJ/0w+UWEVV5+reLGOg1YKvu+Lqt664=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=sgXdQ0E13mPZi9juZkd+UZQNILZDXXION2Fdbtd4oLjzZVQg1pnIUMoo8TEAvS1B0hT5a5fJLhNG2l/Ln6wty1kJfSox7NJvMDKmBb9v/mS84W1sedCbDoDRP2Ml0SeqEb691b+5QitN76DSfg0klKUyoKCLUS6tfO+GdBJTlLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fgsHNGWw; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=p0Ztv1regamJ/U2nAL2m03xNj9zkcggtCX2bblIm5CNYzYYIuhkm8bg8Q+pq2XXPo6utAoz8WL7BBbzyn72ldjZs1O+8ec41Axxdt1zObJc4U0nVyxUBWvJ9jG9JwdXiQZwNGGAl7MVeWAlsDH7+SZ6BKjscq7XLPRJUuQ8A/0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=izh7o+SR; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=BxHbmBvcrkqr1ZyDmvxI/RrR7sTlnrHIdKc8vA7hhaE=; b=fgsHNGWwlfVWyS3sLj0i8Y9d11
-	6bdonR1gkw4iYya1fz1uQVlcOdThRqpAXqJeAzNgz7LzhyVDyy/CEDhcXZDawklyIblTZ5uKcq4Yl
-	pA8yBY9uOvOi47rG5BwLRUfKhSHYhXTdr14SDwyo02vKORVa9ORfJyXcIE8z38u5dmfxSCt0Da7JI
-	9EaiXr7To1waMtqmwbGgCHefY3arcW0KiiCKcSfc796zMQSSe9nOF+qUof3vOkTY7lH/4TPrKG8hV
-	v/8voreNVY+JV55YP1AAD1OfVqV1gl/gk8OXtuHpVgyczNdk30YHnWQj0ptBWckGMljaagA/vE18o
-	aH/V8Z6w==;
+	bh=FAkwvs/DyGvaLJA1zsiw9ImjvNqvGv3MsoxpjJVRuYw=; b=izh7o+SRwUt0X1MlRXI9Z8ZmYD
+	7/U4kEQCHtjRo+UtdCJJx45Np3FfB6xj1bOsZ6hSXQkH9x0s5n+7wePFyTlqprwtOmSyrba/pf/Y6
+	REn3NLSNcygym8nzkX0dom1YVLRJtwdvIqYLJ8HRhJQWgRu6Ke/Ejqb/ZQYVtWJBrqU0wCtCbxMfo
+	/eKAQIKYshH/ZJboLstFddQ7RtA8UTP7skRLleRi5tbYW57YlnqzCex5/ugMyeIT+YTlgqtT0k5ZP
+	hj4UcDFiQxVzQkXJghax7VUmf3zDZdiWyhIjq1gvmAgWNBeGb04r0Qk8qVIZoSITjlNMRV3zV/m2S
+	gA7bWuDQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
 	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXfBh-00000004QN1-3hcV;
+	id 1sXfBh-00000004QN2-3hcN;
 	Sat, 27 Jul 2024 11:02:10 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id EEFEA307F59; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
-Message-Id: <20240727105030.735459544@infradead.org>
+	id F411F308024; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
+Message-Id: <20240727105030.842834421@infradead.org>
 User-Agent: quilt/0.65
-Date: Sat, 27 Jul 2024 12:27:53 +0200
+Date: Sat, 27 Jul 2024 12:27:54 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  peterz@infradead.org,
@@ -64,9 +64,8 @@ Cc: kprateek.nayak@amd.com,
  wuyun.abel@bytedance.com,
  youssefesmat@chromium.org,
  tglx@linutronix.de,
- efault@gmx.de,
- Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: [PATCH 21/24] sched/eevdf: Allow shorter slices to wakeup-preempt
+ efault@gmx.de
+Subject: [PATCH 22/24] sched/eevdf: Use sched_attr::sched_runtime to set request/slice suggestion
 References: <20240727102732.960974693@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,180 +75,315 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Part of the reason to have shorter slices is to improve
-responsiveness. Allow shorter slices to preempt longer slices on
-wakeup.
+Allow applications to directly set a suggested request/slice length using
+sched_attr::sched_runtime.
 
-    Task                  |   Runtime ms  | Switches | Avg delay ms    | Max delay ms    | Sum delay ms     |
+The implementation clamps the value to: 0.1[ms] <= slice <= 100[ms]
+which is 1/10 the size of HZ=1000 and 10 times the size of HZ=100.
 
-  100ms massive_intr 500us cyclictest NO_PREEMPT_SHORT
+Applications should strive to use their periodic runtime at a high
+confidence interval (95%+) as the target slice. Using a smaller slice
+will introduce undue preemptions, while using a larger value will
+increase latency.
 
-  1 massive_intr:(5)      | 846018.956 ms |   779188 | avg:   0.273 ms | max:  58.337 ms | sum:212545.245 ms |
-  2 massive_intr:(5)      | 853450.693 ms |   792269 | avg:   0.275 ms | max:  71.193 ms | sum:218263.588 ms |
-  3 massive_intr:(5)      | 843888.920 ms |   771456 | avg:   0.277 ms | max:  92.405 ms | sum:213353.221 ms |
-  1 chromium-browse:(8)   |  53015.889 ms |   131766 | avg:   0.463 ms | max:  36.341 ms | sum:60959.230  ms |
-  2 chromium-browse:(8)   |  53864.088 ms |   136962 | avg:   0.480 ms | max:  27.091 ms | sum:65687.681  ms |
-  3 chromium-browse:(9)   |  53637.904 ms |   132637 | avg:   0.481 ms | max:  24.756 ms | sum:63781.673  ms |
-  1 cyclictest:(5)        |  12615.604 ms |   639689 | avg:   0.471 ms | max:  32.272 ms | sum:301351.094 ms |
-  2 cyclictest:(5)        |  12511.583 ms |   642578 | avg:   0.448 ms | max:  44.243 ms | sum:287632.830 ms |
-  3 cyclictest:(5)        |  12545.867 ms |   635953 | avg:   0.475 ms | max:  25.530 ms | sum:302374.658 ms |
+For all the following examples assume a scheduling quantum of 8, and for
+consistency all examples have W=4:
 
-  100ms massive_intr 500us cyclictest PREEMPT_SHORT
+  {A,B,C,D}(w=1,r=8):
 
-  1 massive_intr:(5)      | 839843.919 ms |   837384 | avg:   0.264 ms | max:  74.366 ms | sum:221476.885 ms |
-  2 massive_intr:(5)      | 852449.913 ms |   845086 | avg:   0.252 ms | max:  68.162 ms | sum:212595.968 ms |
-  3 massive_intr:(5)      | 839180.725 ms |   836883 | avg:   0.266 ms | max:  69.742 ms | sum:222812.038 ms |
-  1 chromium-browse:(11)  |  54591.481 ms |   138388 | avg:   0.458 ms | max:  35.427 ms | sum:63401.508  ms |
-  2 chromium-browse:(8)   |  52034.541 ms |   132276 | avg:   0.436 ms | max:  31.826 ms | sum:57732.958  ms |
-  3 chromium-browse:(8)   |  55231.771 ms |   141892 | avg:   0.469 ms | max:  27.607 ms | sum:66538.697  ms |
-  1 cyclictest:(5)        |  13156.391 ms |   667412 | avg:   0.373 ms | max:  38.247 ms | sum:249174.502 ms |
-  2 cyclictest:(5)        |  12688.939 ms |   665144 | avg:   0.374 ms | max:  33.548 ms | sum:248509.392 ms |
-  3 cyclictest:(5)        |  13475.623 ms |   669110 | avg:   0.370 ms | max:  37.819 ms | sum:247673.390 ms |
+  ABCD...
+  +---+---+---+---
 
-As per the numbers the, this makes cyclictest (short slice) it's
-max-delay more consistent and consistency drops the sum-delay. The
-trade-off is that the massive_intr (long slice) gets more context
-switches and a slight increase in sum-delay.
+  t=0, V=1.5				t=1, V=3.5
+  A  |------<				A          |------<
+  B   |------<				B   |------<
+  C    |------<				C    |------<
+  D     |------<			D     |------<
+  ---+*------+-------+---		---+--*----+-------+---
 
-[mike: numbers]
+  t=2, V=5.5				t=3, V=7.5
+  A          |------<			A          |------<
+  B           |------<			B           |------<
+  C    |------<				C            |------<
+  D     |------<			D     |------<
+  ---+----*--+-------+---		---+------*+-------+---
+
+Note: 4 identical tasks in FIFO order
+
+~~~
+
+  {A,B}(w=1,r=16) C(w=2,r=16)
+
+  AACCBBCC...
+  +---+---+---+---
+
+  t=0, V=1.25				t=2, V=5.25
+  A  |--------------<                   A                  |--------------<
+  B   |--------------<                  B   |--------------<
+  C    |------<                         C    |------<
+  ---+*------+-------+---               ---+----*--+-------+---
+
+  t=4, V=8.25				t=6, V=12.25
+  A                  |--------------<   A                  |--------------<
+  B   |--------------<                  B                   |--------------<
+  C            |------<                 C            |------<
+  ---+-------*-------+---               ---+-------+---*---+---
+
+Note: 1 heavy task -- because q=8, double r such that the deadline of the w=2
+      task doesn't go below q.
+
+Note: observe the full schedule becomes: W*max(r_i/w_i) = 4*2q = 8q in length.
+
+Note: the period of the heavy task is half the full period at:
+      W*(r_i/w_i) = 4*(2q/2) = 4q
+
+~~~
+
+  {A,C,D}(w=1,r=16) B(w=1,r=8):
+
+  BAACCBDD...
+  +---+---+---+---
+
+  t=0, V=1.5				t=1, V=3.5
+  A  |--------------<			A  |---------------<
+  B   |------<				B           |------<
+  C    |--------------<			C    |--------------<
+  D     |--------------<		D     |--------------<
+  ---+*------+-------+---		---+--*----+-------+---
+
+  t=3, V=7.5				t=5, V=11.5
+  A                  |---------------<  A                  |---------------<
+  B           |------<                  B           |------<
+  C    |--------------<                 C                    |--------------<
+  D     |--------------<                D     |--------------<
+  ---+------*+-------+---               ---+-------+--*----+---
+
+  t=6, V=13.5
+  A                  |---------------<
+  B                   |------<
+  C                    |--------------<
+  D     |--------------<
+  ---+-------+----*--+---
+
+Note: 1 short task -- again double r so that the deadline of the short task
+      won't be below q. Made B short because its not the leftmost task, but is
+      eligible with the 0,1,2,3 spread.
+
+Note: like with the heavy task, the period of the short task observes:
+      W*(r_i/w_i) = 4*(1q/1) = 4q
+
+~~~
+
+  A(w=1,r=16) B(w=1,r=8) C(w=2,r=16)
+
+  BCCAABCC...
+  +---+---+---+---
+
+  t=0, V=1.25				t=1, V=3.25
+  A  |--------------<                   A  |--------------<
+  B   |------<                          B           |------<
+  C    |------<                         C    |------<
+  ---+*------+-------+---               ---+--*----+-------+---
+
+  t=3, V=7.25				t=5, V=11.25
+  A  |--------------<                   A                  |--------------<
+  B           |------<                  B           |------<
+  C            |------<                 C            |------<
+  ---+------*+-------+---               ---+-------+--*----+---
+
+  t=6, V=13.25
+  A                  |--------------<
+  B                   |------<
+  C            |------<
+  ---+-------+----*--+---
+
+Note: 1 heavy and 1 short task -- combine them all.
+
+Note: both the short and heavy task end up with a period of 4q
+
+~~~
+
+  A(w=1,r=16) B(w=2,r=16) C(w=1,r=8)
+
+  BBCAABBC...
+  +---+---+---+---
+
+  t=0, V=1				t=2, V=5
+  A  |--------------<                   A  |--------------<
+  B   |------<                          B           |------<
+  C    |------<                         C    |------<
+  ---+*------+-------+---               ---+----*--+-------+---
+
+  t=3, V=7				t=5, V=11
+  A  |--------------<                   A                  |--------------<
+  B           |------<                  B           |------<
+  C            |------<                 C            |------<
+  ---+------*+-------+---               ---+-------+--*----+---
+
+  t=7, V=15
+  A                  |--------------<
+  B                   |------<
+  C            |------<
+  ---+-------+------*+---
+
+Note: as before but permuted
+
+~~~
+
+>From all this it can be deduced that, for the steady state:
+
+ - the total period (P) of a schedule is:	W*max(r_i/w_i)
+ - the average period of a task is:		W*(r_i/w_i)
+ - each task obtains the fair share:		w_i/W of each full period P
+
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Mike Galbraith <umgwanakikbuti@gmail.com>
 ---
- kernel/sched/fair.c     |   64 ++++++++++++++++++++++++++++++++++++++++++------
- kernel/sched/features.h |    5 +++
- 2 files changed, 61 insertions(+), 8 deletions(-)
+ include/linux/sched.h   |    1 +
+ kernel/sched/core.c     |    4 +++-
+ kernel/sched/debug.c    |    3 ++-
+ kernel/sched/fair.c     |    6 ++++--
+ kernel/sched/syscalls.c |   29 +++++++++++++++++++++++------
+ 5 files changed, 33 insertions(+), 10 deletions(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -973,10 +973,10 @@ static void clear_buddies(struct cfs_rq
-  * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
-  * this is probably good enough.
-  */
--static void update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
-+static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	if ((s64)(se->vruntime - se->deadline) < 0)
--		return;
-+		return false;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -544,6 +544,7 @@ struct sched_entity {
+ 	unsigned char			on_rq;
+ 	unsigned char			sched_delayed;
+ 	unsigned char			rel_deadline;
++	unsigned char			custom_slice;
+ 					/* hole */
  
- 	/*
- 	 * For EEVDF the virtual time slope is determined by w_i (iow.
-@@ -993,10 +993,7 @@ static void update_deadline(struct cfs_r
- 	/*
- 	 * The task has consumed its request, reschedule.
- 	 */
--	if (cfs_rq->nr_running > 1) {
--		resched_curr(rq_of(cfs_rq));
--		clear_buddies(cfs_rq, se);
--	}
-+	return true;
- }
+ 	u64				exec_start;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4347,7 +4347,6 @@ static void __sched_fork(unsigned long c
+ 	p->se.nr_migrations		= 0;
+ 	p->se.vruntime			= 0;
+ 	p->se.vlag			= 0;
+-	p->se.slice			= sysctl_sched_base_slice;
+ 	INIT_LIST_HEAD(&p->se.group_node);
  
- #include "pelt.h"
-@@ -1134,6 +1131,38 @@ static inline void update_curr_task(stru
- 		dl_server_update(p->dl_server, delta_exec);
- }
+ 	/* A delayed task cannot be in clone(). */
+@@ -4600,6 +4599,8 @@ int sched_fork(unsigned long clone_flags
  
-+static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct sched_entity *curr)
-+{
-+	if (!sched_feat(PREEMPT_SHORT))
-+		return false;
-+
-+	if (curr->vlag == curr->deadline)
-+		return false;
-+
-+	return !entity_eligible(cfs_rq, curr);
-+}
-+
-+static inline bool do_preempt_short(struct cfs_rq *cfs_rq,
-+				    struct sched_entity *pse, struct sched_entity *se)
-+{
-+	if (!sched_feat(PREEMPT_SHORT))
-+		return false;
-+
-+	if (pse->slice >= se->slice)
-+		return false;
-+
-+	if (!entity_eligible(cfs_rq, pse))
-+		return false;
-+
-+	if (entity_before(pse, se))
-+		return true;
-+
-+	if (!entity_eligible(cfs_rq, se))
-+		return true;
-+
-+	return false;
-+}
-+
- /*
-  * Used by other classes to account runtime.
-  */
-@@ -1157,6 +1186,7 @@ static void update_curr(struct cfs_rq *c
- 	struct sched_entity *curr = cfs_rq->curr;
- 	struct rq *rq = rq_of(cfs_rq);
- 	s64 delta_exec;
-+	bool resched;
+ 		p->prio = p->normal_prio = p->static_prio;
+ 		set_load_weight(p, false);
++		p->se.custom_slice = 0;
++		p->se.slice = sysctl_sched_base_slice;
  
- 	if (unlikely(!curr))
- 		return;
-@@ -1166,7 +1196,7 @@ static void update_curr(struct cfs_rq *c
- 		return;
- 
- 	curr->vruntime += calc_delta_fair(delta_exec, curr);
--	update_deadline(cfs_rq, curr);
-+	resched = update_deadline(cfs_rq, curr);
- 	update_min_vruntime(cfs_rq);
- 
- 	if (entity_is_task(curr)) {
-@@ -1184,6 +1214,14 @@ static void update_curr(struct cfs_rq *c
+ 		/*
+ 		 * We don't need the reset flag anymore after the fork. It has
+@@ -8328,6 +8329,7 @@ void __init sched_init(void)
  	}
  
- 	account_cfs_rq_runtime(cfs_rq, delta_exec);
+ 	set_load_weight(&init_task, false);
++	init_task.se.slice = sysctl_sched_base_slice,
+ 
+ 	/*
+ 	 * The boot idle thread does lazy MMU switching as well:
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -580,11 +580,12 @@ print_task(struct seq_file *m, struct rq
+ 	else
+ 		SEQ_printf(m, " %c", task_state_to_char(p));
+ 
+-	SEQ_printf(m, "%15s %5d %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld.%06ld %9Ld %5d ",
++	SEQ_printf(m, "%15s %5d %9Ld.%06ld %c %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld %5d ",
+ 		p->comm, task_pid_nr(p),
+ 		SPLIT_NS(p->se.vruntime),
+ 		entity_eligible(cfs_rq_of(&p->se), &p->se) ? 'E' : 'N',
+ 		SPLIT_NS(p->se.deadline),
++		p->se.custom_slice ? 'S' : ' ',
+ 		SPLIT_NS(p->se.slice),
+ 		SPLIT_NS(p->se.sum_exec_runtime),
+ 		(long long)(p->nvcsw + p->nivcsw),
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -995,7 +995,8 @@ static void update_deadline(struct cfs_r
+ 	 * nice) while the request time r_i is determined by
+ 	 * sysctl_sched_base_slice.
+ 	 */
+-	se->slice = sysctl_sched_base_slice;
++	if (!se->custom_slice)
++		se->slice = sysctl_sched_base_slice;
+ 
+ 	/*
+ 	 * EEVDF: vd_i = ve_i + r_i / w_i
+@@ -5190,7 +5191,8 @@ place_entity(struct cfs_rq *cfs_rq, stru
+ 	u64 vslice, vruntime = avg_vruntime(cfs_rq);
+ 	s64 lag = 0;
+ 
+-	se->slice = sysctl_sched_base_slice;
++	if (!se->custom_slice)
++		se->slice = sysctl_sched_base_slice;
+ 	vslice = calc_delta_fair(se->slice, se);
+ 
+ 	/*
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -401,10 +401,20 @@ static void __setscheduler_params(struct
+ 
+ 	p->policy = policy;
+ 
+-	if (dl_policy(policy))
++	if (dl_policy(policy)) {
+ 		__setparam_dl(p, attr);
+-	else if (fair_policy(policy))
++	} else if (fair_policy(policy)) {
+ 		p->static_prio = NICE_TO_PRIO(attr->sched_nice);
++		if (attr->sched_runtime) {
++			p->se.custom_slice = 1;
++			p->se.slice = clamp_t(u64, attr->sched_runtime,
++					      NSEC_PER_MSEC/10,   /* HZ=1000 * 10 */
++					      NSEC_PER_MSEC*100); /* HZ=100  / 10 */
++		} else {
++			p->se.custom_slice = 0;
++			p->se.slice = sysctl_sched_base_slice;
++		}
++	}
+ 
+ 	/*
+ 	 * __sched_setscheduler() ensures attr->sched_priority == 0 when
+@@ -700,7 +710,9 @@ int __sched_setscheduler(struct task_str
+ 	 * but store a possible modification of reset_on_fork.
+ 	 */
+ 	if (unlikely(policy == p->policy)) {
+-		if (fair_policy(policy) && attr->sched_nice != task_nice(p))
++		if (fair_policy(policy) &&
++		    (attr->sched_nice != task_nice(p) ||
++		     (attr->sched_runtime != p->se.slice)))
+ 			goto change;
+ 		if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
+ 			goto change;
+@@ -846,6 +858,9 @@ static int _sched_setscheduler(struct ta
+ 		.sched_nice	= PRIO_TO_NICE(p->static_prio),
+ 	};
+ 
++	if (p->se.custom_slice)
++		attr.sched_runtime = p->se.slice;
 +
-+	if (rq->nr_running == 1)
-+		return;
-+
-+	if (resched || did_preempt_short(cfs_rq, curr)) {
-+		resched_curr(rq);
-+		clear_buddies(cfs_rq, curr);
+ 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
+ 	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
+ 		attr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
+@@ -1012,12 +1027,14 @@ static int sched_copy_attr(struct sched_
+ 
+ static void get_params(struct task_struct *p, struct sched_attr *attr)
+ {
+-	if (task_has_dl_policy(p))
++	if (task_has_dl_policy(p)) {
+ 		__getparam_dl(p, attr);
+-	else if (task_has_rt_policy(p))
++	} else if (task_has_rt_policy(p)) {
+ 		attr->sched_priority = p->rt_priority;
+-	else
++	} else {
+ 		attr->sched_nice = task_nice(p);
++		attr->sched_runtime = p->se.slice;
 +	}
  }
  
- static void update_curr_fair(struct rq *rq)
-@@ -8611,7 +8649,17 @@ static void check_preempt_wakeup_fair(st
- 	cfs_rq = cfs_rq_of(se);
- 	update_curr(cfs_rq);
- 	/*
--	 * XXX pick_eevdf(cfs_rq) != se ?
-+	 * If @p has a shorter slice than current and @p is eligible, override
-+	 * current's slice protection in order to allow preemption.
-+	 *
-+	 * Note that even if @p does not turn out to be the most eligible
-+	 * task at this moment, current's slice protection will be lost.
-+	 */
-+	if (do_preempt_short(cfs_rq, pse, se) && se->vlag == se->deadline)
-+		se->vlag = se->deadline + 1;
-+
-+	/*
-+	 * If @p has become the most eligible task, force preemption.
- 	 */
- 	if (pick_eevdf(cfs_rq) == pse)
- 		goto preempt;
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -18,6 +18,11 @@ SCHED_FEAT(PLACE_REL_DEADLINE, true)
-  * 0-lag point or until is has exhausted it's slice.
-  */
- SCHED_FEAT(RUN_TO_PARITY, true)
-+/*
-+ * Allow wakeup of tasks with a shorter slice to cancel RESPECT_SLICE for
-+ * current.
-+ */
-+SCHED_FEAT(PREEMPT_SHORT, true)
- 
- /*
-  * Prefer to schedule the task we woke last (assuming it failed
+ /**
 
 
 
