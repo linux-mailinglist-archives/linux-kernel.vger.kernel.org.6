@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-264009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1EE93DDD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E199193DDD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6A1BB20EF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164581C21287
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9073FB87;
-	Sat, 27 Jul 2024 08:15:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AE81CD26;
-	Sat, 27 Jul 2024 08:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5D739FE5;
+	Sat, 27 Jul 2024 08:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="xK763BF+"
+Received: from mr85p00im-ztdg06021701.me.com (mr85p00im-ztdg06021701.me.com [17.58.23.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5092570
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 08:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722068149; cv=none; b=lHBxmYyr2E0cFKJYClw/EpL9VHgUWunNRaygqH6V05uFlHKFMC3ohwyNbHJQzH9WzliIlWL7CrjoNGeW7wZO1MW8qQmmy0S7+Hu2YD6M4V+92IdWkTT6wtOpNKNS9OAmT91rQTI9Ixz1Ldp/EpnCk+WCQyxzwJluf1OQ3zfhJks=
+	t=1722069264; cv=none; b=Od0qyT78PEFeoRP+Lx2aK+M63S7xiRK4oZZkLgWyB+ieCZuB3x1YXJbS+Dldx13WetFxio0QbM+TrGwyinCosijji5mUU1wLEyRm/psTxO1CdPupt/+6184V54SOlV7hjEwFcAFNU/JEIeUIY5Xh1r/UbOM5VNIwi8l+OouQhFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722068149; c=relaxed/simple;
-	bh=c0HkLBzLxjXhROnMwtb5vgjiCp0jImc3wEw9yyW8COU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mIAK/hUvp+XyQhQMmACS6xL1ghQ1Cp1ga5CHkytW/grHSOK0TBCE+AkS5JkW8F82n21j1fUv0nnnD3OU+8k9qqO1wlvrSHOCYtx4gHeu8b7uMRlpMtGZzDU8E3va0RLMcG5C+AMJyGPu2dKSA75L0EPxZBQyXkFUd6kE5C7vCRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00C1D1007;
-	Sat, 27 Jul 2024 01:16:12 -0700 (PDT)
-Received: from [10.25.200.97] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B81FD3F73F;
-	Sat, 27 Jul 2024 01:15:42 -0700 (PDT)
-Message-ID: <962a0fe6-c6bf-415a-9c57-ecb259bd0066@arm.com>
-Date: Sat, 27 Jul 2024 10:15:26 +0200
+	s=arc-20240116; t=1722069264; c=relaxed/simple;
+	bh=bGkivs/jYI7//1S41rjSPg6Zf30D00sjQ6Ibe9SbJSA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LNi2mrsfVE0QrvaufkOR7tAbpBOZjeC+tNtNI8GAniA/AQ0qT8aCKQLXzVedL6WrdBqmhIwGd/LReDT5MPlCG9MLq1f0g2f5JNUjX+QzBiZG7TLXTCGaN4hL34Bb6C8xsQO3kyb4ktHxmOJTcQ49GqJwHCJU+6PI6Hpn8nWwHHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=xK763BF+; arc=none smtp.client-ip=17.58.23.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1722069262;
+	bh=vpzvlHTUX+FHKuRxdNgrBIa8MECN/tebROqRQxFYSlA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=xK763BF+Vz2fFG7ux/8WZKKt079LtXQ3dBdX9R0fMsOuCcmZDwlmhWE2cyEedacTA
+	 jXyWeuIF/NaIDHopgNdE0r4/OQAwDTCuF6A+n77IFe/A7HJD//uYlAgvy6h5pq0+SH
+	 FSPYiV35Hi9OyrGhgPfLDz2Sy75LR67Le61p105LwHlDV3knI6/WdSi+wiN2P3/uqO
+	 W81pzSKeeS+/DuBrhcM15Xc+rsBC5h9vXHdoGM98EBDi4Q6j7QXZHqZgqW3gBPYpeO
+	 UqR9ugbKiN1ISXUHXCelojRKf8DbPEJc9TTksQL3k+8RnBx+zvt4wRzyfIEEDZ3SRK
+	 Heve97tALfWHQ==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06021701.me.com (Postfix) with ESMTPSA id 644902633357;
+	Sat, 27 Jul 2024 08:34:18 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Sat, 27 Jul 2024 16:34:01 +0800
+Subject: [PATCH] driver core: bus: Fix double free in driver API
+ bus_register()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Christian Loehle <christian.loehle@arm.com>,
- Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240619201409.2071728-1-qyousef@layalina.io>
- <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
- <20240628015200.vw75huo53redgkzf@airbuntu>
- <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
- <20240705002205.nnrgq7savzvsoqgl@airbuntu>
- <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
- <20240724211012.mxb6vgbhurk7rcvc@airbuntu>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240724211012.mxb6vgbhurk7rcvc@airbuntu>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240727-bus_register_fix-v1-1-fed8dd0dba7a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPiwpGYC/x2MQQqAMAzAviI9O9jGZOBXRIbOqr1MaVUE8e8Wj
+ wkkDwgyoUBbPcB4kdBWFFxdQV6HsqChSRm89cFGH814SmJcSA7kNNNtQmhczrN10UbQbGdU/S+
+ 7/n0/8CMOtmIAAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-GUID: TDXSc6dwp1M4QLsAgct-rq7AeS1skhf3
+X-Proofpoint-ORIG-GUID: TDXSc6dwp1M4QLsAgct-rq7AeS1skhf3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-27_06,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 phishscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407270053
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On 24/07/2024 23:10, Qais Yousef wrote:
-> On 07/05/24 13:50, Dietmar Eggemann wrote:
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-[...]
+For bus_register(), any error which happens after kset_register() will
+cause that @priv are freed twice, fixed by setting @priv with NULL after
+the first free.
 
->> I tried to explained it in the 4 lines below. With a local 'decayed'
->> update_cfs_rq_load_avg() and propagate_entity_load_avg() set it every
->> time update_load_avg() gets called. And this then determines whether
->> update_tg_load_avg() is called on this cfs_rq later in update_load_avg().
->>
->> The new code:
->>
->>   cfs_rq->decayed |= update_cfs_rq_load_avg() (*)
->>   cfs_rq->decayed |= propagate_entity_load_avg()
->>
->> will not reset 'cfs_rq->decayed' for non-root cfs_rq's.
->>
->> (*) You changed this in v3 from:
->>
->>   cfs_rq->decayed  = update_cfs_rq_load_avg()
->>
->>
->>>> update_load_avg() itself. They will stay decayed after cfs_rq->decayed
->>>> has been set to 1 once and will never be reset to 0. So with UPDATE_TG
->>>> update_tg_load_avg() will then always be called on those non-root
->>>> cfs_rq's all the time.
->>>
->>> We could add a check to update only the root cfs_rq. But what do we gain? Or
->>> IOW, what is the harm of unconditionally updating cfs_rq->decayed given that we
->>> only care about the root cfs_rq? I see more if conditions and branches which
->>> I am trying to avoid.
->>
->> Yes, keep 'decayed' local and add a:
->>
->>     if (cfs_rq == &rq_of(cfs_rq)->cfs)
->>         cfs_rq->decayed = decayed
-> 
-> I still don't see a problem here. If we don't do it this way, how the outcome
-> of frequency selection will change? You're replacing set-but-not-cleared with
-> never-set, and un unconditional write with a branch.
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ drivers/base/bus.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This seems to be a misunderstanding. The problem is not with the
-frequency selection.
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index ffea0728b8b2..08362ecec0ec 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -920,6 +920,8 @@ int bus_register(const struct bus_type *bus)
+ 	bus_remove_file(bus, &bus_attr_uevent);
+ bus_uevent_fail:
+ 	kset_unregister(&priv->subsys);
++	/* Above kset_unregister() will kfree @priv */
++	priv = NULL;
+ out:
+ 	kfree(priv);
+ 	return retval;
 
-The issue I see is when you set 'cfs_rq->decayed' for a non-root cfs_rq
-it stays set forever since there is no code to reset it. This leads to
-the fact that update_tg_load_avg(..., UPDATE_TG) is then always called
-for this cfs_rq within update_load_avg() whereas before 'decayed' was
-evaluated with each invocation of update_load_avg().
+---
+base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
+change-id: 20240727-bus_register_fix-4451ccf01707
 
-[...]
-
-
-
-
-
-
-
-
-
-
-
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
