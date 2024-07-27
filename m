@@ -1,91 +1,204 @@
-Return-Path: <linux-kernel+bounces-264283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E740A93E10F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:30:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A4D93E121
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F2D1F218E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17DEB20B36
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219023FB87;
-	Sat, 27 Jul 2024 21:30:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534E340861;
+	Sat, 27 Jul 2024 21:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WPhnu8v5"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAC36F30B
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 21:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07931358A7
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 21:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722115806; cv=none; b=cdr6/xtrBaThP1nmY1+++VzQY382Hm+A8+y/HxjRrfqh/ldmrHi6/aL6H455qiQai0gvCTXDxGTbLFGtTsFGFtisilPUX+yj2J28i4jenNoS46ipjaSGH9UGbirK9eipt5YJzTHsoddVBfBhBzusODcqrUfq8VdHjB9q0Q43Mgg=
+	t=1722116336; cv=none; b=ePriaC0zCmwyX1xri6yXzuLQpfDjFeeO21mdE0qVhMJ2Hpiywk1rohen6qeQEtb0OIpVP8uzO9F/KBF3ibTrycruoeLhItZOTEF5b6hrwomMfd5y27AT55hLAP+vVkjGRy0Rh/YtiqkQFykQbQvaNo+ex8hkGgXXMB+xt40iSKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722115806; c=relaxed/simple;
-	bh=aVNeDwAcH3nhinn8KN74yp/VldGnmgYK31tdROz90MU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ge4fwcU/YxxZj9TV/+1na3jIGZnesusSdfghGfSYzpR8gtLeY/TyE2ehK8JClhpVwwRR3TvR2AWpC1pBSPrdlVSZE/MM799FfM9Er5vdqoHttZ/ME0UP5lNsaK97cEB5T7ZTJk4OPs52ZITinWn3CUSLpWSkIV/5QE8eLk1c6YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa12a11b7so26427739f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 14:30:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722115804; x=1722720604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fsdRpaghEJ+/Dj0wdbkeHYQLI2pmFwp1Jcpptz5Os0=;
-        b=LFJsNLg4D+TA3waGD+yHsfPwARtOOmSicQrFxgy0ViDKlJCE+KvzFfDm2ogw5Od2Lm
-         /NWQ9SoqgLitclGMlAe85MO9ZdVfO0vk8/K9UX7ZITs5WFNoe7V/noAy1ntRfax+1BUB
-         MaDORskVBTb67mSxx3qnHD29BRjAOuUVRyxvxa9a4nkonNl54hbSND++N57KDEou1JDa
-         lRqck7C28a/UQZPl1rG72lj4ZfTiJF3s5Sxn9QjvkkRyQjE6c/pwrNaUl8xEDZMfu6SE
-         NamgfuMna4UCUvtCXE6TcMlYJzdO3oVAtTK4JImcoc/3jf+mfZPlTueBpntSJ86uZ+EM
-         iJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrEh+kTF4NYTWIoCzEgRJzd68uMrmQ9NVkNRQlg6y/EQxsqJe8H4YW77y3xrezz+XynBgu1LRM9yuj/O4280dOHgGq2N9Q8/ddCfxe
-X-Gm-Message-State: AOJu0YyoAjVvfCgiq8In3L9QuEGrDV2jav5SeLC+3enHc1bUjdM6vcY3
-	ddud02ClgdJFtwnillvbruRDUYYG/EYaojlhjjNwhaoB53a66UcyuP/q9+0xxXnt87fmAaEzr21
-	iTnW66yI16OneNer5hp54FLz2PiQxmgzMz/XKIBh3RzAqXL64IsXzYsY=
-X-Google-Smtp-Source: AGHT+IEUvhd20vFaJyfB7vqzeeapYRA2ugZRDA9EUzCJ2ga1J1o4joW8dZ5gt42Tjtt++7T/3t4KQ3D0k6wJQCAiSA7/YhflOq40
+	s=arc-20240116; t=1722116336; c=relaxed/simple;
+	bh=DIwWOaaQ00YN/z+RPYknNJSlrG9jljopgyXneIMtbIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ln4nwU9IMuMeldK6xdlKO6PoA/zk+xet4zxh7BsY2ltbyAjKLntXrkBDD1KjY6j2W/x41O/RHe0LtBeUdNNIS9f+3UH/vC/G1p8Arquf7RXxr6Cw5gWbW35Fqo6te4vfdgoX/7XKq7KXSCn/NBA9gG02jqipkcBF4eSOfdi7CoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WPhnu8v5; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8014238b-2668-4602-add1-64a0c6e480ad@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722116331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JWOVtMmp5rkstgdKWTPceRhx9TWpXK/fgZKWzzIJtdo=;
+	b=WPhnu8v5AXV0snlmuvj9zxxVssvrGd6ZHQ13OcJJayuSnm+r1vry9q/9/dET9CWh0KSmCL
+	d9fsQSlKRoOLXuPb0k9uWsDkxV4Fany82NCYwYK6HTODdEUceZ6Ozx90cW7BNfTgBaVb1t
+	a2uWnA+gPWx9nGAU6sZ4fk65v2VKLMw=
+Date: Sun, 28 Jul 2024 05:38:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c56e:0:b0:397:2946:c83c with SMTP id
- e9e14a558f8ab-39aec41b90dmr2735975ab.4.1722115804535; Sat, 27 Jul 2024
- 14:30:04 -0700 (PDT)
-Date: Sat, 27 Jul 2024 14:30:04 -0700
-In-Reply-To: <0000000000002488fc061ae886f8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000caad4b061e4154d2@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_file_mmap
-From: syzbot <syzbot+c1751b6739d83d70bb75@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 00/19] Add Freescale i.MX8qxp Display Controller
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de,
+ vkoul@kernel.org, kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org,
+ francesco@dolcini.it, frank.li@nxp.com
+References: <20240724092950.752536-1-victor.liu@nxp.com>
+ <wky3mjl7fn773myatyrdsea6oc2xebkvrgmigmmoj36eswgqry@2kox5ad5dynl>
+ <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
+ <zr2t6deyvwacawj7s36gols2vxu24fah25x6ofy7xpqyvc4s2d@luavybrlxpaf>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <zr2t6deyvwacawj7s36gols2vxu24fah25x6ofy7xpqyvc4s2d@luavybrlxpaf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot has bisected this issue to:
+Hi,
 
-commit 69505fe98f198ee813898cbcaf6770949636430b
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Thu May 30 07:54:07 2024 +0000
+On 7/28/24 04:28, Dmitry Baryshkov wrote:
+> On Sun, Jul 28, 2024 at 03:10:21AM GMT, Sui Jingfeng wrote:
+>> Hi,
+>>
+>> On 7/28/24 00:39, Dmitry Baryshkov wrote:
+>>>> Hi,
+>>>>
+>>>> This patch series aims to add Freescale i.MX8qxp Display Controller support.
+>>>>
+>>>> The controller is comprised of three main components that include a blit
+>>>> engine for 2D graphics accelerations, display controller for display output
+>>>> processing, as well as a command sequencer.
+>>>>
+>>>> Previous patch series attempts to do that can be found at:
+>>>> https://patchwork.freedesktop.org/series/84524/
+>>>>
+>>>> This series addresses Maxime's comments on the previous one:
+>>>> a. Split the display controller into multiple internal devices.
+>>>>      1) List display engine, pixel engine, interrupt controller and more as the
+>>>>         controller's child devices.
+>>>>      2) List display engine and pixel engine's processing units as their child
+>>>>         devices.
+>>>>
+>>>> b. Add minimal feature support.
+>>>>      Only support two display pipelines with primary planes with XR24 fb,
+>>>>      backed by two fetchunits.  No fetchunit dynamic allocation logic(to be done
+>>>>      when necessary).
+>>>>
+>>>> c. Use drm_dev_{enter, exit}().
+>>>>
+>>>> Since this series changes a lot comparing to the previous one, I choose to
+>>>> send it with a new patch series, not a new version.
+>>> I'm sorry, I have started reviewing v2 without noticing that there is a
+>>> v3 already.
+>>>
+>>> Let me summarize my comments:
+>>>
+>>> - You are using OF aliases. Are they documented and acked by DT
+>>>     maintainers?
+>>>
+>>> - I generally feel that the use of so many small devices to declare
+>>>     functional blocks is an abuse of the DT. Please consider creating
+>>>     _small_ units from the driver code directly rather than going throught
+>>>     the components.
+>>
+>> Well, I really don't think so. I don't agree.
+>>
+>> I have checked the DTSpec[1] before type, the spec isn't define how
+>> many is considered to be "many", and the spec isn't define to what
+>> extent is think to be "small" as well.
+> 
+> Yeah. However _usually_ we are not defining DT devices for sub-device
+> components. 
 
-    fs/ntfs3: Replace inode_trylock with inode_lock
+I guess, this depended on their hardware (i.MX8qxp) layout, reflecting
+exactly what their hardware's layout is perfectly valid. It also depend
+on if specific part of those sub-device will be re-visioned or not. If
+only a small part of the whole is re-versioned in the future, we can 
+still re-using this same driver with slightly modify(update) the DTS.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17772623980000
-start commit:   2f8c4f506285 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14f72623980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f72623980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108328d9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e875a1980000
+The point is to controll the granularity and forward compatibility.
 
-Reported-by: syzbot+c1751b6739d83d70bb75@syzkaller.appspotmail.com
-Fixes: 69505fe98f19 ("fs/ntfs3: Replace inode_trylock with inode_lock")
+> So at least such decisions ought to be described and
+> explained in the cover letter.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Agree, but I see 08/19 patch has a beautiful schematic. I have learned
+a lot when reading it. I can't see any abuse of the DT through this
+bulk series anyway.
+
+
+Comments below are not revelant to Ying's patch series itself.
+
+/*----------------------------------------------------------------*/
+
+By the way, the last time that I have ever seen and feel abuse of the
+DT is the aux-bridge.c[1] and aux-hpd-bridge.c[2]. I strongly feel that
+those two *small* programs are abuses to the DT and possibily abuse to
+the auxiliary bus framework.
+
+1) It's so *small* that it don't even have a hardware entity (physical
+    device) to corresponding with. As far as I can see, all hardware
+    units in this patch series are bigger than yours. Because your HPD
+    bridge is basically a "virtual wire".
+
+    An non-physical-exist wire hold reference to several device node,
+    this is the most awful abuse to the DT I have ever seen. In other
+    words, despite you want to solve some software problems, but then,
+    you could put a device not in the DTS, and let the 'OF' system
+    create a device for you. Just like what this series do.
+
+2) I feel your HPD fake bridge driver abuse to the philosophy of
+    auxiliary bus [3]. The document of auxiliary bus tell us that
+
+    "These individual devices split from the core cannot live on
+     the platform bus as they are not physical devices that are
+     controlled by DT/ACPI"
+
+     Which is nearly equivalent to say that devices that are controlled
+     by DT/ACPI have better ways to enforce the control. When using
+     auxiliary bus, we *generally* should not messed with DT. See
+     golden examples[4][5]. At least, their code are able to run on
+     X86, while the code you write just can't.
+
+[0] https://patchwork.freedesktop.org/patch/605555/?series=135786&rev=3
+[1] 
+https://elixir.bootlin.com/linux/v6.10.2/source/drivers/gpu/drm/bridge/aux-bridge.c
+[2] 
+https://elixir.bootlin.com/linux/v6.10.2/source/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+[3] https://www.kernel.org/doc/html/latest/driver-api/auxiliary_bus.html
+
+[4] https://patchwork.freedesktop.org/series/136431/
+[5] https://patchwork.freedesktop.org/series/134837/
+
+
+Best regards
+Sui
+
+>>
+>> [1]
+>> https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.4
+> 
+
+-- 
+Best regards
+Sui
+
 
