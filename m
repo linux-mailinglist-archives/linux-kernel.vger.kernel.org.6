@@ -1,78 +1,102 @@
-Return-Path: <linux-kernel+bounces-264276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAE693E0F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:33:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B6593E0F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6158E1F21783
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F291C20C18
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8F6383B2;
-	Sat, 27 Jul 2024 20:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D523B784;
+	Sat, 27 Jul 2024 20:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAeiVayM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="U6ej5lWi"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7976E18643;
-	Sat, 27 Jul 2024 20:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8576618643;
+	Sat, 27 Jul 2024 20:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722112383; cv=none; b=EPFmAxuV2ieU0JjSuBL0dB+TtDPRSYTdScpvID30FdfA2If7rr7OBRWxGG9rZdamZMYuYh2VqxAunUHf6n25BI3YnxQTsXUYhFQq5XaZkijDeE6twfMUgbdBm18NyYUE8sidtAs3/MSOqr8XJffzL8xICoHpFYtCbR8CGpJKwEQ=
+	t=1722112660; cv=none; b=P0bjI3DuLMT5XSoHU+b/bCA1Lpc8zG0YI/xcJ6Vp9i33siQzWqUgfZH1h76vSRzoHGRk42k1m3OPmHwhFMZJE4p0uXuM2+0QrJVJFwFUgYq+11FRt9quXFZTjtyojxy8DRgDsR3qaTyNwJVNWvcgYR3KIXVoqYvehVa/F4H6tFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722112383; c=relaxed/simple;
-	bh=DpSgpkZvuLUZVNBT3Vb4mqU32qmMylafuoxwCOAiLVA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GqcLnqaWBaMS4YkKAi2gVe3fI5QmSPXrQrYUlyVPseybfKIQrA5usrrzNWS+k1pz7gRTGoAGhBPH2aBNhYqQUPBc/oFev1zoH+pK4aNx9NJRtG72julPEvw2L8DQ397gSuNSXFYWdAfRN0BTVQWfa8RIJ16Y/QKaAHTMsrPEpM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAeiVayM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 049F9C32781;
-	Sat, 27 Jul 2024 20:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722112383;
-	bh=DpSgpkZvuLUZVNBT3Vb4mqU32qmMylafuoxwCOAiLVA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=EAeiVayMuM9B5vjkfvNrJuZ7GWZxlUw71s4yjVIMZxrWWQYz9f24HMV6YF1IHSqrN
-	 CJ9jrR+6xaD4H1DffCCXExLrR+e8HINZ9TFWN/69bPNRqJTSTQ2T8jEzAtYqM9jtZZ
-	 F/ZvY7UoOuur6CiMmpPoYsFFIiOSweyDGlqEs85VyKfc7xONfrCqDmnhOuWkbDYg3w
-	 VVJ2C4h13st2+CbvQl5MkFstSEDVdck3rTxy/RYNUbDzzEBXu5jcnypcwx9VsBV4XV
-	 XOmZReuu04N1CFvB5nkUXlTdYMdK+HN2G8llle9iqcmqc3zvtff+u2F6n6SQT7cAHF
-	 /x9KZR4tSnu3w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EBD4DC43601;
-	Sat, 27 Jul 2024 20:33:02 +0000 (UTC)
-Subject: Re: [GIT PULL] AppArmor updates for 6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-References: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
-X-PR-Tracked-Commit-Id: e0ff0cff1f6cdce0aa596aac04129893201c4162
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ff30564411ffdcee49d579cb15eb13185a36e253
-Message-Id: <172211238295.32007.614550602116166247.pr-tracker-bot@kernel.org>
-Date: Sat, 27 Jul 2024 20:33:02 +0000
-To: John Johansen <john.johansen@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKLM <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+	s=arc-20240116; t=1722112660; c=relaxed/simple;
+	bh=0wv8LplG2WHF4iagJpseBcJkythLO5m0vQLh2flInxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FIv41it9GmdjdR18cWsHrLxI8zro9J8CfmO3mzCAOcwOA4YZNHvkcvLR4/ayWloDwxggpTN5cALsIJtDfj4avWZKKfnbiRcZDLvaEtFbwZBUulZpbmaDbYDmCyrzEOUBdC4TAjjbOiYi68yGIZAMJ4efl1aaej5kDJRHEO2D0q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=U6ej5lWi; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id XoAXsrPVIkc2vXoAXsClW4; Sat, 27 Jul 2024 22:37:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722112655;
+	bh=vIvNRlhJ8J1UYs1bJ4mqG+wbUkdAzoI8r7PqTBxe4YQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=U6ej5lWiSSomDCFhDS+xWGLTsUPjvg/qAq1Eep/eoo04w1fx995girCnmq28SM+P7
+	 dMzuPiR3EqUDihnl0ATX+ggOrYxFMT2/EOsOMEwAJwGFoymrYmgFd2b5ugs6vuYPyO
+	 YcbH5XJVCpBVl0BeAUVCUtlONz7Dk0dRtYfRCAoXCZcxlvsV0nMFmBNtDqa1ANCT67
+	 +YfWj2P87GiTF+5OZApYqSPqgeFv1vhbtwz+CvH2dcpiTjBatRRX2ylQaAmuKmRCWR
+	 6DHiBYYg9CVRy95zoabkxm5To9W6wznVEKwXIUYaR0Zi19IawuQ+TWFvlO4GjDfCVm
+	 aPo7NQcNSEdUA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 Jul 2024 22:37:35 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: lpfc: Use bitmap_size()
+Date: Sat, 27 Jul 2024 22:37:27 +0200
+Message-ID: <704d0aade3c8ed4ff64f6ddf81edfb409514be92.1722112623.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 25 Jul 2024 11:06:28 -0700:
+Use bitmap_size() instead of hand-writing it.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/lpfc/lpfc_mem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ff30564411ffdcee49d579cb15eb13185a36e253
-
-Thank you!
-
+diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
+index 2697da3248b3..8dfceb0938b0 100644
+--- a/drivers/scsi/lpfc/lpfc_mem.c
++++ b/drivers/scsi/lpfc/lpfc_mem.c
+@@ -21,6 +21,7 @@
+  * included with this package.                                     *
+  *******************************************************************/
+ 
++#include <linux/bitmap.h>
+ #include <linux/mempool.h>
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+@@ -78,8 +79,7 @@ lpfc_mem_alloc_active_rrq_pool_s4(struct lpfc_hba *phba) {
+ 
+ 	if (max_xri <= 0)
+ 		return -ENOMEM;
+-	bytes = ((BITS_PER_LONG - 1 + max_xri) / BITS_PER_LONG) *
+-		  sizeof(unsigned long);
++	bytes = bitmap_size(max_xri);
+ 	phba->cfg_rrq_xri_bitmap_sz = bytes;
+ 	phba->active_rrq_pool = mempool_create_kmalloc_pool(LPFC_MEM_POOL_SIZE,
+ 							    bytes);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.2
+
 
