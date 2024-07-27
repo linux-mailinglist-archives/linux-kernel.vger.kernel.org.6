@@ -1,94 +1,145 @@
-Return-Path: <linux-kernel+bounces-264229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C8593E066
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAC693E069
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A73E282090
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205021F21A3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF6B186E58;
-	Sat, 27 Jul 2024 17:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E467A186E5D;
+	Sat, 27 Jul 2024 18:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="hh+AqGgJ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/S1bFiv"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAAE1B86E0;
-	Sat, 27 Jul 2024 17:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26C67470;
+	Sat, 27 Jul 2024 18:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722103174; cv=none; b=QmcBrLU0O1q/vRZZ1hWqoK5K+PCVXmynHtjAaUfh/6qVzodd9rxtXh919IQ4ujPliNKLjx5O950OJIHA4OAp5AYX28S+Gw1UctPt0oNZtUqWMUBVZF027Dob7WYc/x3vJAsPrnZYpV7VDysPtVy5VLQLCPf4GTfysg8qDRuEZno=
+	t=1722103833; cv=none; b=Ze1KFy5hBvrVao1lS9BvUWWXNytlq8raZZO+ZUw7P55y9igf9Q1xIekHJSnI9eDPARSoopResUgSXsQTG++dBv+CMM1obHmf3tFPjGND+K7iEgrRa1DHJ7UVdpfSBZWzjVzqtvB3DlitwS3L0QhN9mgFmlgboXD+f0//1JFuhII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722103174; c=relaxed/simple;
-	bh=yacrdQusfkCcIMqDSB29R/hnX5iOsHJv7Je8DcSsUOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n5J1zOuSmZwqbnBezGPGgrpWS0wKU02MvYYtOh6W7Q2RaVlZ1JhVNiTN6JyL8r+bBRLyAS8LSQiTK8YXxU/p49v7K1c/x7V7nCWf7YE5SUiNKRg+qdbEMxpBQQ94SUQrSptJp+f+20VBdlgJgEHUp8aX9QOZmncmfP2ndT/UplA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=hh+AqGgJ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=gNCePMHY9CyJAzGQAAO6F3n4UO9QnLvv118Cz3BcFFU=; b=hh+AqGgJy3h0hzG7
-	oc8LgJ5i4SO2oP2xgJ9DNYoAAe9MKiO8JJSJq3WCm5eAOcBi0FV+HCc/DmEH5JwB2GNRc0DkvWp4O
-	XwGZj+vyOExF+OGYHEKFQUBvUedWMsLUSEOAifs6CRGN5/dWTYwzepQGVAN4fB8vW1oRiEoPvjrQW
-	panKT68edKBU4/Cz5n/6Jj3S4vS5GjQlwOQovA2QFxyzq6suMaDr1qJwj7Yacn8uhXn8dPxV7Wp9S
-	LosL0xi4SVnTqn0/GnXX6AzUJg2qb/3xNAfSApuZNMijbit5RGqaQxZ4cZPneBYdxhsWQBHvEj3tT
-	5KQmJ+ZOUoUqhgIVpQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sXlhQ-00DZBB-2y;
-	Sat, 27 Jul 2024 17:59:20 +0000
-From: linux@treblig.org
-To: irogers@google.com,
-	kan.liang@linux.intel.com,
-	acme@kernel.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf test pmu: Remove unused test_pmus
-Date: Sat, 27 Jul 2024 18:59:19 +0100
-Message-ID: <20240727175919.1041468-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722103833; c=relaxed/simple;
+	bh=zlABaadhvFHp0oZ6FFLIWEU2EQWEwhOhVKdxlKQcx3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSISGQeJ7bz1FJgdK9dJdWxvMpq0w4zbZfjBEp6Oe+mzWzTJht3X+6iBs1XuiR4jF+t3HYtu+SvbTld4iZ7pmsb5ysrdjaYGA/pQwx9s9o98wwT3Kzk5wkciFwVHgYBOjXmUOOFyW5lRDmKZRVC8pyUwpLqDaXmDWVKdBm1UV3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/S1bFiv; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so676760276.2;
+        Sat, 27 Jul 2024 11:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722103830; x=1722708630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8GXSL9+pEaFlUy/iMZ0metWt0BsFvkNW53VDiHwizg=;
+        b=Z/S1bFivyGwFGgwZgZQeCgMiFFTZPt4HZ4HwamR/rAtRwSqylIVfy80n65FHysIKOJ
+         opvwqOI/msLvU785yoL+2CnE80Ls45l1fI56WipBXArWLQL0J5X1/ompGyWDjA0NPJr0
+         yh0w9B3Ujc1/ebOFYr10eg0Aav0Sqkid1EeQGdNTCWmHljW2jbh7qOML7u0DFaF94eRd
+         D31sTfRE95n6SR0t/q7T/9OOPgGVBV+qznREJta8IBoGw55AyFWabF0qalZG4IQz0a8i
+         EHhjOV5d7lh6DxpPbvi1iadaRhscyXsx2Q8TOy/78ZSoYJWGfDmmJBzi4NNpFkheZqRW
+         ozYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722103830; x=1722708630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c8GXSL9+pEaFlUy/iMZ0metWt0BsFvkNW53VDiHwizg=;
+        b=QBp16g2WrCqyZEcpH7ExvppNoILx2LWk5v41b4Emr4pdW6SBoNHTznCEP1jDA6u2NT
+         +AyFkO+3mgSJolFXnF6l8lMXjJruoGIdIn1aURhugqYTEHvDNU88fz6MM+mOKOfz5ues
+         nf1yTxjsqu5wWimcJbHmLI2FXmLf13+6rFOBQ8j1Q+ZfdFaaKSr8lxbAXefBbC5C42OK
+         lQWi0tWT5uJS2vRYIS77CjuMKP/l8DHi9vTnBsxgZGHIGvCA29wR0hqW5XlPPNzaSPEO
+         7T+fxrVMOdi6WskYj3aaXyzLoGM3lTsqPKZQI7h59mukb0OF9MncROpHRk7SCFuJAKoe
+         4sIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUli0GahhZyGK/bwzn6UH8uTpAz88FBxIAbzRIUa7fI62VClUnvTaDThGxvqJq3a/RoO63xvS7f3xsUv3W8+nTge7xbXvy4n0bReTePXiysqHub5zFbgC5JqabD3K1vHx1dpma3eF+n/v7MKzKv
+X-Gm-Message-State: AOJu0YxJest/eUpklvyUXGCXbYAB4Bf7n1LmazWmoupFiSz4fypP/Q4f
+	hPxzp3xHqNcVD48LZMP1X0ulYmyg1MNR/5o6y3qH5J0WYB3LpJ9k
+X-Google-Smtp-Source: AGHT+IEUBssDqF49luapyssQ1Jl7uLcNwe4blGUpQHGlf8FfI98CQIv4Kf/VPLMEYRTJTAUyzuYANQ==
+X-Received: by 2002:a05:6902:f84:b0:e0b:6951:c766 with SMTP id 3f1490d57ef6-e0b6951e0b0mr750054276.49.1722103830200;
+        Sat, 27 Jul 2024 11:10:30 -0700 (PDT)
+Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2a93a98dsm1146551276.56.2024.07.27.11.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 11:10:29 -0700 (PDT)
+Date: Sat, 27 Jul 2024 11:10:28 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kees@kernel.org,
+	David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>,
+	kernel@collabora.com
+Subject: Re: [PATCH 0/3] bitmap: Convert test_bitmap to kunit test
+Message-ID: <ZqU4FANdHOvpGc5t@yury-ThinkPad>
+References: <20240726110658.2281070-1-usama.anjum@collabora.com>
+ <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Jul 26, 2024 at 01:26:48PM -0600, Shuah Khan wrote:
+> On 7/26/24 05:06, Muhammad Usama Anjum wrote:
+> > In this series, test_bitmap is being converted to kunit test. Multiple
+> > patches will make the review process smooth.
+> > 
+> > - Patch-1: Convert the tests in lib/test_bitmap.c to kunit
+> > - Patch-2: Rename the lib/test_bitmap.c to lib/bitmap_kunit.c and other
+> >             configuration options
+> > - Patch-3: Remove the bitmap.sh selftest
+> > 
+> > Muhammad Usama Anjum (3):
+> >    bitmap: convert test_bitmap to KUnit test
+> >    bitmap: Rename module
+> >    selftests: lib: remove test_bitmap
+> > 
+> >   MAINTAINERS                           |   2 +-
+> >   lib/Kconfig.debug                     |  15 +-
+> >   lib/Makefile                          |   2 +-
+> >   lib/{test_bitmap.c => bitmap_kunit.c} | 624 ++++++++++++--------------
+> >   tools/testing/selftests/lib/Makefile  |   2 +-
+> >   tools/testing/selftests/lib/bitmap.sh |   3 -
+> >   tools/testing/selftests/lib/config    |   1 -
+> >   7 files changed, 295 insertions(+), 354 deletions(-)
+> >   rename lib/{test_bitmap.c => bitmap_kunit.c} (70%)
+> >   delete mode 100755 tools/testing/selftests/lib/bitmap.sh
+> > 
+> 
+> Can you tell me how this conversion helps?
+> 
+> It is removing the ability to run bitmap tests during boot.
+> It doesn't make sense to blindly convert all test under lib
+> to kunit - Nack on this change or any change that takes away
+> the ability to run tests and makes them dependent on kunit.
 
-Commit aa1551f299ba ("perf test pmu: Refactor format test and exposed
-test APIs") added the 'test_pmus' list, but didn't use it.
-(It seems to put them on the other_pmus list?)
+Hi Muhammad,
 
-Remove it.
+In addition to Shuah's and John's reasoning. This patch wipes the
+test history (git blame will point on you for most of the test),
+breaks boot-time testing support, messes with config names and
+usability, and drops kselftest support for ... exactly, what?
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- tools/perf/tests/pmu.c | 3 ---
- 1 file changed, 3 deletions(-)
+KUNIT engine here doesn't improve on readability, neither shorten
+the test length, to my taste.
 
-diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-index 40132655ccd1..0b2f04a55d7b 100644
---- a/tools/perf/tests/pmu.c
-+++ b/tools/perf/tests/pmu.c
-@@ -18,9 +18,6 @@
- #include <sys/stat.h>
- #include <sys/types.h>
- 
--/* Fake PMUs created in temp directory. */
--static LIST_HEAD(test_pmus);
--
- /* Cleanup test PMU directory. */
- static int test_pmu_put(const char *dir, struct perf_pmu *pmu)
- {
--- 
-2.45.2
+If you'd like to contribute to bitmaps testing - I'm all for that.
+This is the very core and performance-sensitive piece of kernel,
+and any extra-coverage is always welcome.
 
+But I think the best way would be either adding new cases to the
+existing test, or writing a new test, KUNIT-based, if you like.
+
+Thanks,
+Yury
 
