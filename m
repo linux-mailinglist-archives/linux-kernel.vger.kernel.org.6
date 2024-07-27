@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-263945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED41193DCFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA11193DD03
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335861C233A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3061F23DAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF9C1FC4;
-	Sat, 27 Jul 2024 01:53:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858284C9B;
+	Sat, 27 Jul 2024 02:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fDPTF0TX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2491510FA
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 01:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0834A05
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 02:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722045184; cv=none; b=SjgNDqEAEt+2wIgdli6+MhufggaJUk/Zg8zUGQqwg5RYvN9S7KyvTdmTijlGqgu2thHpRik+vGqTr34uvrrC/vM33f78T+4JxFSkXpw33rovkOe2xRojfGwsulqBzA6Bv+etTOvVzd+I8rCAsvxJ4yTRvipmpOa4Y2EP9P1ayEI=
+	t=1722046122; cv=none; b=rHaaKBw+r1NFspL0Hi0PdlekinDOkR6m2Sw2FJmMzq2NtJ0fhZPJP+F9FI2aQV4TAuWhVaj4VAAiqA/l1lYLM9h7djrHZAWARTX/xPOPzQTPk+0JKC3kj+XrUHzvUlDNaKLR0jtcuoKjPf67L579SvF2DmghBYkC1e1HvQIb3Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722045184; c=relaxed/simple;
-	bh=g1X9NuD5YfdppjtdDRBipdoDtE2rl7UOBbpttqYJV+w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fTaBPBymHk/NTtzWfmXk1obMkYao7l26ONuo48SRxn68eeCkEionzPLFvIoM1sZ/ljxyzVi2UYljk+cIMeO3Lit9YYztAMTpnC75MRINl5TZwcA2vHSlMfYlhf/dp5ZRRm8MqwGAtR/Dq3riRjKQSKimcEx4Qg37sbKk0WyGd3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f86fc9fdaso259464239f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 18:53:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722045182; x=1722649982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E797tWMRErOfnI7k/AeJPqLUGBRe5XXNS3CVj57mB6I=;
-        b=t0+crMBKBBPYpWBlC9dJz/k9eJHqqFNbRYtb+Vto3tcmwYR8ODTk2jYpZhn0fCnszX
-         4AKwJGeXtedYYv0hgCpfFixlbKPaM1LVi1uwSGN3wzgsIerMHe+JJ8gOgzvEOL76e3nC
-         CqPDSjhW5D7Kjskuh3sYWovd6avuBQbR60QqXGk4XXSD1hAGO/U1Ohvbftb2chV30ajS
-         ENH9sqhZ1NgcsuuglMIKXr/NvCYL7AiP7n4pElc5V2v7g08rpa9z1JxWMY9tkkIzgCYx
-         CEn7lSIwFXchiudTkkAkM9ttC1SpzGvsHs2PfsCs+LL0LO1389OjaiFEDKanWVYy7+dy
-         FRbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+7RHLF6uhAhGtVDGqszDd1Fg+m7tmu0iuVHLXGTb4Lnz4Ng4PK165n2U68hCEwtW4te7oneUy/v1RuXzDeK5cAKOeK93byCp6tsb
-X-Gm-Message-State: AOJu0YwcdDEj5gUpts1s0hREQToZP57G5Ti7HzHTrsJ/DR91JpKhJ9l5
-	4o5bYWptm829P2sIbLaV5iPJvJ5Qbx+7lK3jyz1hFd/R/erlF7+CBxwsldQ15J5wAFcPDkNDBPP
-	m3y29ZP1FCe2cjToPiKuMcoueYJW2NLE0838kngWjmoD4cUjPGkmcvgM=
-X-Google-Smtp-Source: AGHT+IHI+hXmYfRaZeXqNxynhA/QSetk/BaUC29K24NEpjfjPjiljOOo3fowz7KE5bs3tooL4nCoFLoMhCTGUAONJ6rJeabs0gdV
+	s=arc-20240116; t=1722046122; c=relaxed/simple;
+	bh=EB8cHQVJrTeVloffs5C+C1VejYBEXLUAZYRSR1ifYIo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DNLatdjD5qWuubbCic/kW90sf2zYwshepKAUnz1+n2nY57jIuO6wsGlSmZiClVx9GUhZkJeogrB+LiEMV+E3zdP9wIooNE/hYEz5L1G/ams9V2kG8XIdwSkM/E4MQQmAYjZ9oFrmuU4EFDvE5DcZkoLckucFeOCUugwDAbi+ar8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fDPTF0TX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=EuosPWo/SMY3Ag8riJ+kOIDiKjmJxa9RY3PBvDWQSxU=; b=fDPTF0TX/T2HkQpbmD8SvDtoca
+	LAkH3dE2g4a8UBqTqSdSfS9tMWNzxTge7fyCKqHlzHHpfaRvY6KzpSem8kM4IzcE9u7deXb5gkmso
+	P5VA6B5KAZz83Fn3UobaRY64xRECEdP7GWkEG1bkFkbSUhHKKKsj2vJ4BzgfvTPMBQv3smJAQD8cd
+	aY9zuKqzSlMnYceRoxmItnYZg4tjELfRmGbLk0x8mnvTjoCaLGcQWswbCZqGLbQ9EfMdWi3VLxBFh
+	Sc9x+o2pYB1K+4PhywYUGufozKMueE7FTScvPlWzVJSr4qxWPZIXJSTVYLlyqs0VHsCSByIeca8OK
+	rdMFP3Sw==;
+Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXWTp-0000000AtEt-1Dk6;
+	Sat, 27 Jul 2024 01:44:17 +0000
+Message-ID: <c7858827-b788-426a-acaa-9563c154f58d@infradead.org>
+Date: Sat, 27 Jul 2024 10:44:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:618b:b0:7f9:3fd9:ccf with SMTP id
- ca18e2360f4ac-81f95c0c509mr3355239f.2.1722045182351; Fri, 26 Jul 2024
- 18:53:02 -0700 (PDT)
-Date: Fri, 26 Jul 2024 18:53:02 -0700
-In-Reply-To: <20240727011616.2144-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000061a872061e30e33b@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Geoff Levand <geoff@infradead.org>
+Subject: Re: [PATCH 1/2] MAINTAINERS: Mark powerpc Cell as orphaned
+To: Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>,
+ linuxppc-dev@lists.ozlabs.org
+Cc: Jeremy Kerr <jk@ozlabs.org>, linux-kernel@vger.kernel.org
+References: <20240726123322.1165562-1-mpe@ellerman.id.au>
+ <60581044-df82-40ad-b94c-56468007a93e@app.fastmail.com>
+Content-Language: en-US
+In-Reply-To: <60581044-df82-40ad-b94c-56468007a93e@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi Arnd,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 7/26/24 22:15, Arnd Bergmann wrote:
+> Geoff, are you using spufs on ps3, and if so, should
+> we move arch/powerpc/platforms/cell/spu* to the PS3
+> entry in the MAINTAINERS file? I don't think there
+> is any advantage in actually moving the files to
+> platforms/ps3 if we delete the cell blade support.
 
-Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-Tested-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+ps3_defconfig has both CONFIG_SPU_BASE and CONFIG_SPU_FS
+enabled.  I think one of the things users want to use are
+the SPUs.
 
-Tested on:
+Updating the MAINTAINERS file sounds OK. Do you want to
+make the patch for that?
 
-commit:         1722389b Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c0ee03980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=137dd2f9980000
-
-Note: testing is done by a robot and is best-effort only.
+-Geoff
 
