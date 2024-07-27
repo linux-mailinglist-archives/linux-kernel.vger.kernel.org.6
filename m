@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-264007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431E993DDCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:09:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1EE93DDD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD3C2837CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6A1BB20EF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A3E3CF65;
-	Sat, 27 Jul 2024 08:09:30 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0EA25745
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 08:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9073FB87;
+	Sat, 27 Jul 2024 08:15:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AE81CD26;
+	Sat, 27 Jul 2024 08:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722067769; cv=none; b=Nvcna+eMbxPwqAwK7NBhJ251b4RLr3EZRpA0gWu4dBYax2Mk5mLUqKnaiQDx9m/Sv1bXqcPGnpAg4IsmsV8w+vOUNwafxMmuq7n2NvJHrFnS/59S2JhqcOUYg2Nsc7G6vSJSL69tWoax5yUXy4OdWMUVGMeicxO2KmbiRHZbhro=
+	t=1722068149; cv=none; b=lHBxmYyr2E0cFKJYClw/EpL9VHgUWunNRaygqH6V05uFlHKFMC3ohwyNbHJQzH9WzliIlWL7CrjoNGeW7wZO1MW8qQmmy0S7+Hu2YD6M4V+92IdWkTT6wtOpNKNS9OAmT91rQTI9Ixz1Ldp/EpnCk+WCQyxzwJluf1OQ3zfhJks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722067769; c=relaxed/simple;
-	bh=UgHGFys7HNnqiBeMC/GuBNAqLhnwF5Plq8jJTKFsKlg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=EgkfxQ61+iWuiPdfKZ3J7eO5qGSXgKylD4rbL/rkohQ9OqNxYAc1PIkTRxIO2AyICMp5xJSWooTzEXqRKOoyFyglAlA9ESWJpJcXo7VlF28PjbBXs6AXPxbmvxDG/1tfmU9aQgNbYW0vlYijORJM/6afndVrVeuCJUkpzZKrH3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-119-yJiuI0zgMP-QS7m7LuOXKQ-1; Sat, 27 Jul 2024 09:09:18 +0100
-X-MC-Unique: yJiuI0zgMP-QS7m7LuOXKQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 27 Jul
- 2024 09:08:39 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 27 Jul 2024 09:08:39 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Jens Axboe <axboe@kernel.dk>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Matthew
- Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig
-	<hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
-	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH 0/7] minmax: reduce compilation time
-Thread-Topic: [PATCH 0/7] minmax: reduce compilation time
-Thread-Index: Adrd1UnD4d8H4E3lR3eDOQFKqPNnSwCBfkcCAAdYOfA=
-Date: Sat, 27 Jul 2024 08:08:39 +0000
-Message-ID: <40369e153bd447e5b597c31e7bc9a2b1@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
- <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
- <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
- <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
- <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
- <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
- <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
- <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1722068149; c=relaxed/simple;
+	bh=c0HkLBzLxjXhROnMwtb5vgjiCp0jImc3wEw9yyW8COU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIAK/hUvp+XyQhQMmACS6xL1ghQ1Cp1ga5CHkytW/grHSOK0TBCE+AkS5JkW8F82n21j1fUv0nnnD3OU+8k9qqO1wlvrSHOCYtx4gHeu8b7uMRlpMtGZzDU8E3va0RLMcG5C+AMJyGPu2dKSA75L0EPxZBQyXkFUd6kE5C7vCRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00C1D1007;
+	Sat, 27 Jul 2024 01:16:12 -0700 (PDT)
+Received: from [10.25.200.97] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B81FD3F73F;
+	Sat, 27 Jul 2024 01:15:42 -0700 (PDT)
+Message-ID: <962a0fe6-c6bf-415a-9c57-ecb259bd0066@arm.com>
+Date: Sat, 27 Jul 2024 10:15:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240619201409.2071728-1-qyousef@layalina.io>
+ <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
+ <20240628015200.vw75huo53redgkzf@airbuntu>
+ <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
+ <20240705002205.nnrgq7savzvsoqgl@airbuntu>
+ <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
+ <20240724211012.mxb6vgbhurk7rcvc@airbuntu>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
+In-Reply-To: <20240724211012.mxb6vgbhurk7rcvc@airbuntu>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 
-Li4uDQo+IGFuZCBpdCB3aWxsIHNwaXQgb3V0DQo+IA0KPiAgIExvbmdlc3QgbGluZSBpcyBkcml2
-ZXJzL25ldC9ldGhlcm5ldC9tYXJ2ZWxsL212cHAyL212cHAyX21haW4uYzoxMTM2ICgyMzQ2a0Ip
-DQo+ICAgICAgJyAgICgoKCgoKHBrdF9zaXplKSArIF9fYnVpbHRpbl9jaG9vc2VfZXhwcigoc2l6
-ZW9mKGludCkgPT0NCj4gc2l6ZW9mKCooOCA/ICgodm9pZCAqKSgobG9uZykoKF9fYnVpbHRpbl8u
-Li4nDQo+IA0KPiB0byB0ZWxsIG1lIHRoYXQgd2UgaGF2ZSB0aGF0IGluc2FuZSAyLjIgKm1lZ2Fi
-eXRlKiBsaW5lIGR1ZSB0byB0aGUNCj4gTVZQUDJfU0tCX0hFQURST09NIHRoaW5nLCBhbmQgSSBz
-aG91bGQgYXBwbHkgdGhpcyBwYXRjaDoNCj4gDQo+IC0jZGVmaW5lIE1WUFAyX1NLQl9IRUFEUk9P
-TSAgICAgbWluKG1heChYRFBfUEFDS0VUX0hFQURST09NLCBORVRfU0tCX1BBRCksIDIyNCkNCj4g
-KyNkZWZpbmUgTVZQUDJfU0tCX0hFQURST09NDQo+IE1JTl9UKGludCxNQVhfVChpbnQsWERQX1BB
-Q0tFVF9IRUFEUk9PTSwgTkVUX1NLQl9QQUQpLCAyMjQpDQo+IA0KPiB0byBmaXggaXQuDQoNCk9y
-IChpZiBJJ3ZlIGdvdCBpcyByaWdodCk6DQojZGVmaW5lIE1WUFAyX1NLQl9IRUFEUk9PTSBjbGFt
-cChYRFBfUEFDS0VUX0hFQURST09NLCBORVRfU0tCX1BBRCwgMjI0KQ0KDQpIbW1tLi4uDQpJJ3Zl
-IGZvdW5kOg0KI2RlZmluZSBYRFBfUEFDS0VUX0hFQURST09NIDI1Ng0KI2RlZmluZSBORVRfU0tC
-X1BBRCBtYXgoMzIsIEwxX0NBQ0hFX0JZVEVTKQ0KSSdkIGJldCB0aGF0IHNvbWUgYXJjaGl0ZWN0
-dXJlIGV2ZW4gaGFzIGEgbm9uLWNvbnN0YW50IEwxX0NBQ0hFX0JZVEVTLg0KDQpCdXQgdGhlIDI1
-NiBtZWFucyB0aGUgaGVhZHJvb20gaXMgYWx3YXlzIDIyNCAod2hhdGV2ZXIgdGhhdCBsaW1pdCBp
-cyByZWxhdGVkIHRvKS4NCg0KSXQgaXMgZGVmaW5pdGVseSB3b3J0aCBmcmVlaW5nIHVwIE1JTigp
-IGFuZCBNQVgoKSBmb3I6DQojZGVmaW5lIE1JTih4LCB5KSAoIFwNCglCVUlMRF9CVUdfT05fWkVS
-TyhfX2lzX2NvbnN0ZXhwcigoeCkgKyAoeSkpICsgKCh4KSA8ICh5KSA/ICh4KSA6ICh5KSkpDQp3
-aGljaCBpcyB0aGVuIHVzYWJsZSBmb3Igc3RhdGljIGluaXRpYWxpc2Vycy4NCkp1c3QgYXNzdW1p
-bmcgdGhhdCBubyBvbmUgaXMgc2lsbHkgZW5vdWdoIHRvIGdldCBhIG5lZ2F0aXZlIGNvbnN0YW50
-DQpjb21wYXJlZCB0byBhbiB1bnNpZ25lZCB2YWx1ZS4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVy
-ZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5
-bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On 24/07/2024 23:10, Qais Yousef wrote:
+> On 07/05/24 13:50, Dietmar Eggemann wrote:
+
+[...]
+
+>> I tried to explained it in the 4 lines below. With a local 'decayed'
+>> update_cfs_rq_load_avg() and propagate_entity_load_avg() set it every
+>> time update_load_avg() gets called. And this then determines whether
+>> update_tg_load_avg() is called on this cfs_rq later in update_load_avg().
+>>
+>> The new code:
+>>
+>>   cfs_rq->decayed |= update_cfs_rq_load_avg() (*)
+>>   cfs_rq->decayed |= propagate_entity_load_avg()
+>>
+>> will not reset 'cfs_rq->decayed' for non-root cfs_rq's.
+>>
+>> (*) You changed this in v3 from:
+>>
+>>   cfs_rq->decayed  = update_cfs_rq_load_avg()
+>>
+>>
+>>>> update_load_avg() itself. They will stay decayed after cfs_rq->decayed
+>>>> has been set to 1 once and will never be reset to 0. So with UPDATE_TG
+>>>> update_tg_load_avg() will then always be called on those non-root
+>>>> cfs_rq's all the time.
+>>>
+>>> We could add a check to update only the root cfs_rq. But what do we gain? Or
+>>> IOW, what is the harm of unconditionally updating cfs_rq->decayed given that we
+>>> only care about the root cfs_rq? I see more if conditions and branches which
+>>> I am trying to avoid.
+>>
+>> Yes, keep 'decayed' local and add a:
+>>
+>>     if (cfs_rq == &rq_of(cfs_rq)->cfs)
+>>         cfs_rq->decayed = decayed
+> 
+> I still don't see a problem here. If we don't do it this way, how the outcome
+> of frequency selection will change? You're replacing set-but-not-cleared with
+> never-set, and un unconditional write with a branch.
+
+This seems to be a misunderstanding. The problem is not with the
+frequency selection.
+
+The issue I see is when you set 'cfs_rq->decayed' for a non-root cfs_rq
+it stays set forever since there is no code to reset it. This leads to
+the fact that update_tg_load_avg(..., UPDATE_TG) is then always called
+for this cfs_rq within update_load_avg() whereas before 'decayed' was
+evaluated with each invocation of update_load_avg().
+
+[...]
+
+
+
+
+
+
+
+
+
+
+
 
 
