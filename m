@@ -1,86 +1,111 @@
-Return-Path: <linux-kernel+bounces-264087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E630E93DEE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:55:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55ABB93DEE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB411C2137A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868351C21519
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FA760275;
-	Sat, 27 Jul 2024 10:55:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A2D57CB1;
+	Sat, 27 Jul 2024 10:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VwzcvJgh"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563F40858
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB4A5589B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722077704; cv=none; b=n9J5PLPyvtaRj03+vS01LhkD8OXHejAeEo8s4znAp7D5TYwdFnp5NHuCKol2j2DSkvFvg6QOF9wAdIkHdGQVBbL8gOqBSEogTndaUyY7Y1R4z7vRThimEg5PwZik3qxi/Vjkj436/9rR3XGWN7E6C2qf6WG1u+O8mF4OTb/2FRI=
+	t=1722077745; cv=none; b=Zyvxe3hHXAThXDOtBOyW18x8vA78TI0gO+EVrYNxx24RJLdJZygMIb9p/IOOipchEpWTlgXFU9o3gmFi/dZuB7cssvC3Bub0xx0KiX+MTOCrBApGC4iA6cIPHIWUJj/1SJ79TfqdzzLxNoLfOCe+mKNg881VBib45GBx6T8BzLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722077704; c=relaxed/simple;
-	bh=mN9JBSFdHUtWmEMJd3AfrtbvHUm6FDyAS6LItf+96qk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FS8Z+KmkWYMLqdOKK75xho0hA0Wx84ecvVZUg5eXl2AU/RdQiaXwQknr3a6bGHQedRV1c0fGDJ6yIWyn6lhHso4Zov7lBkReAQlLzqkdbItBl5vpL/Z97tocAvD9nVby18DkwDjYSmZ1XeNtwjetQOukznjGEqUuGHtJQ+YbzpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f81dcb634so281696839f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 03:55:03 -0700 (PDT)
+	s=arc-20240116; t=1722077745; c=relaxed/simple;
+	bh=68s/AGh0KdHaOGVbq3ybeiL3/h7OccMgD2M7Qinek94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AuRBCISJHgr/JqIy8DksuPloWHweOsfjOKNwsUAEq6T9ZmUeoCPX1ljRv9m6m8HsMsY2ZKC9Se9NR3zgn0eq8dQ7W+6oF5FjaFitG/DMitemij+EgRhKINhxY5PfmIRd1jqyZ4DPS1ECSj+ofnHDG4WD7w4B9XmC8Jq8o9kYL/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VwzcvJgh; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so3072417e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 03:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722077742; x=1722682542; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eSQLqxhvdwaXYSfWwT/zXs0MzmxstO7ywTlJURA+QUQ=;
+        b=VwzcvJghIPwvE0gB7qZ8B/pN2jJyT1ouDFx9RBLvnzNWPMJMcVzed/8rl9bTsXpmv9
+         NRPdRVp6q4lyzZCWQ0nkWvmRf47Uoqx0qVFcGoCcZw3pqvHCvhZsycc4g0Hi8eoFKQLz
+         VO3VM1aOdV+xrBtDRM5KkLtQQC5B6qb/O4XuDRf0k606K1KAxqQcJ9ZP1cdA6RmXXoL5
+         KyJ2jC6g625GULPyHxiZU1ZtHIS1QHE8TlT5UhUOebtKWJBUgejWR60znEMV65hBZd0y
+         52xGCBJvgZ5peI0BszR+OUfzUZzSBJvOfN4X07n60UcFH1k42UtZGj5NrCY+YciMpM1w
+         6LNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722077703; x=1722682503;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIf0WCByCZdxcxXAQVgPW7AkJ2Ukdu13lE4G81WbrCE=;
-        b=cg2n24dsWnPxWDlE8CnH3hfP0RA9htrrQCdwigRjXvFQLLGInx9QeEkmT9muB/aM2d
-         Y1MNaDE/3O56kGXb/7a1k3gZ2iXfvkRXg6RF+uKE/2zVrdQe3oJl1nwimsCEauXHvNOt
-         P/2ObUui9gV1tYI0Fu6k2KeK5M8kph1hr3RDgNpJtZRJU37bhz0LPgShiICJpYlFgCPt
-         Az9p+Qi5nN3mdA2OPlhFAvSLuFWx32y391XFJ7eQFglPJ3tSTHzKiXeCkvg/XUf7pp28
-         6+4yWYnOwLVNIJ/vsFFgE0Jo8x5U/V/08aTcnseFHFaioeGPtxEX39sb86ohyr1C0YBv
-         TBBg==
-X-Gm-Message-State: AOJu0YzZ7//MQbIstUHUDiFYmmKfjyNfhry93JwFKmzcfaDJ0nQvaaKz
-	hM/bEzf2CDGWW5Ir6xURG1HVjaUcXDapAMVuQDJuRC6n2CxnBbgSSfqEwvGzVAWPF5u/27xwcDp
-	Cx1qfz66Oe2TLxHc1HuEHokAldHRq+3Onm2CWbzyQYImUNUfWAnR6LYM=
-X-Google-Smtp-Source: AGHT+IHALXdOA9FWx8hi6/bkEYyV1ER0MEOWXKNg6J2o48MTWPv3Q+JD1nN3irmn57b2Ew0cm1zhMu8I+UVJVzDNDf2C+PxlBYyd
+        d=1e100.net; s=20230601; t=1722077742; x=1722682542;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eSQLqxhvdwaXYSfWwT/zXs0MzmxstO7ywTlJURA+QUQ=;
+        b=tdkzthGigZ/SLV+736BpL4hflXYsjjI/U3dxNfdlPTmAZoo3Y3ZZ/MEYj/86/iC5gO
+         /zrZuW7sBOMsM/EqT6YFnAma43hHhh6u2XHSs79u7pkYOhzVMF39uSPSVHFduFhI+FT1
+         IbKpwaMgHoRDIlyaIbFsXCLM4a1lRITcoj9wX1P+1+1a3DVuzkBoZgjeDL0BiN33+ipM
+         q4XmQ/8OeD3lMFZ53/W8DCrLV+leIppmYSVdzkJkJ/JnnVD6tZMDlm/FS2diJGOGpVJi
+         K2d9Jo1np6O4gWkED0pM5rwJjFz4DJ8EZ9Rw5Vh9HhgewLTe3+lAvhA0/xz2/7NKckEV
+         NAmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3UruApOmQEAa9uSe6Mlt9VNQjHqAU8hQuROnu3NyfJrLM/k/1exWNbm6HLfoCUZHgDOXamZiS1L2xXYmYU5uHVSOtRYXy+35+GEMV
+X-Gm-Message-State: AOJu0YyuZO4bkgGqv8/5MRx0px7EtswWCQjGAoH8hRmBeXkku7EuE6OH
+	D+sv+0jncqPpgXSkdrrztNUbGvHhzSL4IleWojqXLMTFzjijO5XL2RAKIj/PoQY=
+X-Google-Smtp-Source: AGHT+IG/g89VE0vaiUQwCJYmJWWSqhFEML1N3eYG2UploJkfiYPufIYQVcfURtGME0TkGEoamzZuAg==
+X-Received: by 2002:a05:6512:2513:b0:52c:b479:902d with SMTP id 2adb3069b0e04-5309b259c26mr1773343e87.4.1722077742260;
+        Sat, 27 Jul 2024 03:55:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c081ddsm736621e87.132.2024.07.27.03.55.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 03:55:41 -0700 (PDT)
+Date: Sat, 27 Jul 2024 13:55:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Mohammad Rafi Shaik <quic_mohs@quicinc.com>, Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Banajit Goswami <bgoswami@quicinc.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 0/6] ASoC: codecs: wcd93xx/wsa88xx: Correct Soundwire
+ ports mask
+Message-ID: <kggm3zlkevqw3lelxukz5lyfch3vd4uxta3gi7kcidacpo7uz2@hlqq73saz27c>
+References: <20240726-asoc-wcd-wsa-swr-ports-genmask-v1-0-d4d7a8b56f05@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1448:b0:4c1:b049:25f with SMTP id
- 8926c6da1cb9f-4c63eb2e764mr81653173.1.1722077702731; Sat, 27 Jul 2024
- 03:55:02 -0700 (PDT)
-Date: Sat, 27 Jul 2024 03:55:02 -0700
-In-Reply-To: <7490ae81-f90c-4d24-9d84-120dc7c30046@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bf4808061e3875cb@google.com>
-Subject: Re: [syzbot] [kernel?] KMSAN: uninit-value in profile_hits (3)
-From: syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726-asoc-wcd-wsa-swr-ports-genmask-v1-0-d4d7a8b56f05@linaro.org>
 
-Hello,
+On Fri, Jul 26, 2024 at 04:10:40PM GMT, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Incorrect mask of Soundwire ports - one bit too long/big - was passed.
+> 
+> Theoretically, too wide mask could cause an out of bounds read in
+> sdw_get_slave_dpn_prop() in stream.c, however only in the case of buggy
+> driver, e.g. adding incorrect number of ports via
+> sdw_stream_add_slave().
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Well, granted that sdw_stream_add_slave() crashes on RB3, we know that
+the driver is buggy.
 
-Reported-by: syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com
-Tested-by: syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com
+> Not adding Cc-stable because I don't think the issue can lead to real
+> out-of-bounds read.
 
-Tested on:
-
-commit:         3a7e02c0 minmax: avoid overly complicated constant exp..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1560a373980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=642d8255eed2a7f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=b1a83ab2a9eb9321fbdd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=166fde11980000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+With best wishes
+Dmitry
 
