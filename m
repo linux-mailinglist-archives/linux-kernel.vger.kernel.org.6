@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-264163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16A193DFA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AD693DFA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A161C20DFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7C51C20D39
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D27C16F27B;
-	Sat, 27 Jul 2024 14:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A07E16F848;
+	Sat, 27 Jul 2024 14:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7HA93Qu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoa4imk2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C454C9B;
-	Sat, 27 Jul 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB3F16F292;
+	Sat, 27 Jul 2024 14:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722088986; cv=none; b=h+LRyIe59ioQcSVGjstDg0Ka+Z5x4pzxeVQWcSu2vvVuTexBvusYlZNhmFh4iPxxzgFScR3VepDKQcQdm1R6cU2+cf7+KRK/B4FxOuSW70uaDEZZX/mwkhPrVrbsi3Ape9+w7/23yX+ahtRvWr7Ov4IM7HXs7VNj9+cc/ZW+MY0=
+	t=1722088987; cv=none; b=MJ9UnmNQVCrLKFfUe23Wd+WIn3JAtrax7WyPOovHkFY2vXHAUkkGF25U6PlorKc3dZRX2O65oHMDMKhAvANzf12YxEEOuifPTFrkluteavZClCsI7egUlyBbTjBR+BT07VLcZLa6KuYY6zOLvitk9AeIoDIwquDfFgxyUckYMqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722088986; c=relaxed/simple;
-	bh=JlnARo1+2U7ZszBtmY5wjUSRQZ/RtDlKPPT+ppYwIw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PlQOLOvvyw+UopWpORvF+aHMfC4lORPWOXDa3LUBiHZJbqB4hIIR/eFzztex8h8np0sRHVYnKSw3HW3DZ9wttuK38bB6jt6r413zJetpk+CiWDeJlahfp8Jef8bTEcJKhk96H3TIXKQ1+ftcvcefm6/FmkFIsiExwEj1kOq4ouY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7HA93Qu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34FDC32781;
-	Sat, 27 Jul 2024 14:03:04 +0000 (UTC)
+	s=arc-20240116; t=1722088987; c=relaxed/simple;
+	bh=2vLDQugn+/+XgkBdbRNQF9G2eDDaSMZ1zxxoU6dwvKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pcJ8s6p5CtE6mJy1LvqZ8mK+jJBuXYIKJ9FkxzLmsDN5S2SSrjvK+c9CioLrT7TwShaOVkCG9imGTAwWb2cgB42+D9ccwaCggN8ZZn/6l7egSfHpfvZoQmrvgKZ6NeiWREU69BRgsK4oPiojWUam7HHmJoSuhgdFQQTVR7zggAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoa4imk2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA8EC4AF0C;
+	Sat, 27 Jul 2024 14:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722088985;
-	bh=JlnARo1+2U7ZszBtmY5wjUSRQZ/RtDlKPPT+ppYwIw8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X7HA93QuqjeF6WxmFyecnL5Gunp+TQuk+NEAoJeU6jJ3UkYGq/5Jt8+64P1/aTgfK
-	 WvCyuN8EuYC2VAk029XG7zLoFsI9irgk/Xavh12J4UyLbn8pJueLCNV0wsaoi9JrfW
-	 uK4U1O6b05HB4ve027W9TYHSQIyjcCpelDZvZbkQwG7VAi7yfNutR96Vf0EKivZk+Y
-	 o2AhhYpxjzceJQsmRf8BmOe5R60u8RxmIaCfu1mRbX6hFMwTCiF4ivI6a5QhmZ8VY4
-	 fuVrvXOeOU8daW0cnSxgJJnzJiBQssLFHVoo6tP5fQW3EmtaZec+w0ORjStcco4CQI
-	 T6Dn1h7tJbsqw==
+	s=k20201202; t=1722088987;
+	bh=2vLDQugn+/+XgkBdbRNQF9G2eDDaSMZ1zxxoU6dwvKo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hoa4imk24yoIDC4UuujxCMhGJXdWbcwuDlQQ0KLxgTJ7hcyuWILyz08yGYfyA5kXL
+	 5RoQvz63NZZk9L+ipD36Biw6U+ynFevoXPy5iCe4n7BVM43Y+AAMmBUSCNijmS113k
+	 2qLctYSkI2ZGfAYqgPxVx6/r9zT05vM4N8E0P+nTrRMNuC8B9QRns58OTJWww/DbI5
+	 tNk9xS1XuHv7JplvzUIO7CbOc7z+dTNznjzw/DVvc4olptcHTQEqvmj8ZfC9xTTWEt
+	 5nAbkESwtpvpcrJf5kj1z6Zwvfx7rhYDcS7fhoygA76JGIuPOFy0yLEZ3aiP0N8FkI
+	 Hgqb2ttFMdMzA==
 From: Masahiro Yamada <masahiroy@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	rust-for-linux@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 1/2] rust: suppress error messages from CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT
-Date: Sat, 27 Jul 2024 23:02:59 +0900
-Message-ID: <20240727140302.1806011-1-masahiroy@kernel.org>
+Subject: [PATCH 2/2] rust: fix the default format for CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT
+Date: Sat, 27 Jul 2024 23:03:00 +0900
+Message-ID: <20240727140302.1806011-2-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240727140302.1806011-1-masahiroy@kernel.org>
+References: <20240727140302.1806011-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,39 +59,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While this is a somewhat unusual case, I encountered odd error messages
-when I ran Kconfig in a foreign architecture chroot.
+Another oddity in these config entries is their default value can fall
+back to 'n', which is a value for bool or tristate symbols.
 
-  $ make allmodconfig
-  sh: 1: rustc: not found
-  sh: 1: bindgen: not found
-  #
-  # configuration written to .config
-  #
+The '|| echo n' is an incorrect workaround to avoid the syntax error.
+This is not a big deal, as the entry is hidden by 'depends on RUST' in
+situations where '$(RUSTC) --version' or '$(BINDGEN) --version' fails.
+Anyway, it looks odd.
 
-The successful execution of 'command -v rustc' does not necessarily mean
-that 'rustc --version' will succeed.
-
-  $ sh -c 'command -v rustc'
-  /home/masahiro/.cargo/bin/rustc
-  $ sh -c 'rustc --version'
-  sh: 1: rustc: not found
-
-Here, 'rustc' is built for x86, and I ran it in an arm64 system.
-
-The current code:
-
-  command -v $(RUSTC) >/dev/null 2>&1 && $(RUSTC) --version || echo n
-
-can be turned into:
-
-  command -v $(RUSTC) >/dev/null 2>&1 && $(RUSTC) --version 2>/dev/null || echo n
-
-However, I did not understand the necessity of 'command -v $(RUSTC)'.
-
-I simplified it to:
-
-  $(RUSTC) --version 2>/dev/null || echo n
+The default of a string type symbol should be a double-quoted string
+literal. Turn it into an empty string when the version command fails.
 
 Fixes: 2f7ab1267dc9 ("Kbuild: add Rust support")
 Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
@@ -98,21 +78,21 @@ Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/init/Kconfig b/init/Kconfig
-index c41260ffe99a..466849f9f1b9 100644
+index 466849f9f1b9..47e074a93d94 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -1919,12 +1919,12 @@ config RUST
  config RUSTC_VERSION_TEXT
  	string
  	depends on RUST
--	default $(shell,command -v $(RUSTC) >/dev/null 2>&1 && $(RUSTC) --version || echo n)
-+	default $(shell,$(RUSTC) --version 2>/dev/null || echo n)
+-	default $(shell,$(RUSTC) --version 2>/dev/null || echo n)
++	default "$(shell,$(RUSTC) --version 2>/dev/null)"
  
  config BINDGEN_VERSION_TEXT
  	string
  	depends on RUST
--	default $(shell,command -v $(BINDGEN) >/dev/null 2>&1 && $(BINDGEN) --version || echo n)
-+	default $(shell,$(BINDGEN) --version 2>/dev/null || echo n)
+-	default $(shell,$(BINDGEN) --version 2>/dev/null || echo n)
++	default "$(shell,$(BINDGEN) --version 2>/dev/null)"
  
  #
  # Place an empty function call at each tracepoint site. Can be
