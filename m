@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-263979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024B593DD78
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD6093DD7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84D511F23B73
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6397A1C22AA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302941BDD0;
-	Sat, 27 Jul 2024 06:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FeuFz9G1"
-Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4891D543;
+	Sat, 27 Jul 2024 06:18:45 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B941B86E0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 06:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A23179A3;
+	Sat, 27 Jul 2024 06:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722060536; cv=none; b=SvrpwOkRopv4pAHTrnKi4Tb2OKTLY8OB4TLOiW0OQMCamqtEiqC6sTHk1pEAqVHeRWsr1kGvQf/PycoO/5TgWvSGk/4lCmix/6vOqgCoGsOrjYjBF84+zR1z/ttLb+hZFhTRv+Ok1FcaKrL31ITESfeNshxL9Vc30phhrTuXmoA=
+	t=1722061125; cv=none; b=hBucIeCcQqGPmoXnNZhjUNfcN1kTSZk865O/pHtONZ2y8WTmY+2b7vl3RVIrAF+hga8N+rwGO+LQeSnnMka5JTdD5ADOK3wLFTq8W6Wv637oDci1vTEn9uX0p3+WomvEaECbnrIfJDcYfZ/Dh4qLG2j3G269g2cP9EWjT85yDlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722060536; c=relaxed/simple;
-	bh=huv63ZmmuwphOK8/zWcY3ypjqrBCmEZX/IGYQ1Y/ifY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ilWAFqnWVsBEMBHd+ILlJYYMT43tqgpGQZv09GUFpC65+NQDQJY6/Y1JH6s1rAG0Mt2j8oLMDlRNQHKFwBJQO5Y2O5SytxeJm7e6haE/CEfE3iiLrvcP21j0SyGiHm3y2eQQLqqeIrCtIdLSANi+Cc2Loswz0goF1uGwKddEqfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FeuFz9G1; arc=none smtp.client-ip=17.58.6.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1722060533;
-	bh=y3Iwxz3osm/lv9z5nAuzzQETnzt40X0j259hiuyoxKI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=FeuFz9G12R8UQTLnWHWQ93woJqOGSwb+ttw35lOgwbkKLwIztfuFZFzhgELaV1pXU
-	 jiSY3Brd/82tEuClSyxeOirqcanM3CvUkb/Gn/3RCES5uDPREElsI/UqlaOLRMjc9+
-	 bo48az6xSHmG7DDS1NFfMR4x+MNHrZuGIoV25lFYkmZT+nMUr3jJ1MmhJCpuLEi300
-	 ufuptRwdxxfQp/7zODEd4dfhc959jYmkx0aD80ibFCY/L+ppipFq2Bk6sc1lL0dmnF
-	 8ZqcBop1QravOIJtW3/x0qHGqpYxX/SM2kDQ8wrggbnwJJDacw7EwJ84E0OQtq3i1B
-	 Vypqc58S80nNQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 54848DC0194;
-	Sat, 27 Jul 2024 06:08:48 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Sat, 27 Jul 2024 14:08:34 +0800
-Subject: [PATCH] driver core: bus: Add simple error handling for
- buses_init()
+	s=arc-20240116; t=1722061125; c=relaxed/simple;
+	bh=XnB7eF1idtqMlUAHZPALwQO/j32z2jCcdvS16GgaLPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l0aqH1Z4vAezUZmFSZQcu36lP8YkYYWqs2idJhx4B/FCToGGKGI6y/vkHrl2G+ulsnRgUxrVPkeSdFAv3/R5OfBB/sTY0cVBg7GCWoAHgRaK01n78oZ0NjpygiSL11DxNcEY01H/QclbHFzfaJD+DUM2xKmmwhUdiutVAlEzbm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WWDvh1PGdz4f3kvL;
+	Sat, 27 Jul 2024 14:18:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E33911A0359;
+	Sat, 27 Jul 2024 14:18:37 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgCHazk5kaRmA9wsBQ--.26184S3;
+	Sat, 27 Jul 2024 14:18:37 +0800 (CST)
+Message-ID: <0046d3b3-24ce-4cdb-a40a-4022b79a5a7b@huaweicloud.com>
+Date: Sat, 27 Jul 2024 14:18:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240727-buses_init-v1-1-e863295a2c0e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOGOpGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDcyNz3aTS4tTi+My8zBLd5BTLNHMzS1PD1DRLJaCGgqLUtMwKsGHRsbW
- 1ACMxUfxcAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: ja9IaSrFNI5wN0582Z3Mh1r3X2gxQx9S
-X-Proofpoint-ORIG-GUID: ja9IaSrFNI5wN0582Z3Mh1r3X2gxQx9S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-27_03,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 mlxlogscore=940
- suspectscore=0 clxscore=1015 phishscore=0 malwarescore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2407270035
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/20] ext4: get rid of ppath in ext4_find_extent()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-9-libaokun@huaweicloud.com>
+ <20240725103823.fvvinixcctacf4fx@quack3>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240725103823.fvvinixcctacf4fx@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHazk5kaRmA9wsBQ--.26184S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1kKF1fXw1fJF4xWFWxWFg_yoW8tFy7pr
+	48AF18G34Utr18CrWxJr1UXry7ua1UJw4UJr48JFyUAF1UJrnIgF12qw1YgF15Xr4xGry2
+	yr18Jr17uw1Ut37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQARBWajXfxCnQABsv
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 2024/7/25 18:38, Jan Kara wrote:
+> On Wed 10-07-24 12:06:42, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> The use of path and ppath is now very confusing, so to make the code more
+>> readable, pass path between functions uniformly, and get rid of ppath.
+>>
+>> Getting rid of ppath in ext4_find_extent() requires its caller to update
+>> ppath. These ppaths will also be dropped later. No functional changes.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> One nit below, otherwise feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+>> @@ -3260,11 +3257,12 @@ static int ext4_split_extent_at(handle_t *handle,
+>>   	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
+>>   	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
+>>   	 */
+>> -	path = ext4_find_extent(inode, ee_block, ppath,
+>> +	path = ext4_find_extent(inode, ee_block, *ppath,
+>>   				flags | EXT4_EX_NOFAIL);
+>>   	if (IS_ERR(path)) {
+>>   		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
+>>   				 split, PTR_ERR(path));
+>> +		*ppath = NULL;
+>>   		return PTR_ERR(path);
+>>   	}
+> I think here you forgot to update ppath on success case. It will go away by
+> the end of the series but still it's good to keep thing consistent...
+>
+> 								Honza
 
-Add simple error handling for buses_init() since it is easy to do.
+Hi Honza,
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/bus.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Thank you for your review！
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index ffea0728b8b2..e7d7a94fba4e 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -1385,8 +1385,13 @@ int __init buses_init(void)
- 		return -ENOMEM;
- 
- 	system_kset = kset_create_and_add("system", NULL, &devices_kset->kobj);
--	if (!system_kset)
-+	if (!system_kset) {
-+		/* Do error handling here as devices_init() do */
-+		kset_unregister(bus_kset);
-+		bus_kset = NULL;
-+		pr_err("%s: failed to create and add kset 'bus'\n", __func__);
- 		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
+In patch 5, the ppath is already updated in case of success, so there
+is no need to add it here. This update was not shown when the patch
+was made and it looks like this：
 
----
-base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
-change-id: 20240727-buses_init-cd9f76951ef9
+-       path = ext4_find_extent(inode, ee_block, ppath,
++       path = ext4_find_extent(inode, ee_block, *ppath,
+                                 flags | EXT4_EX_NOFAIL);
+         if (IS_ERR(path)) {
+                 EXT4_ERROR_INODE(inode, "Failed split extent on %u, err 
+%ld",
+                                  split, PTR_ERR(path));
++               *ppath = NULL;
+                 return PTR_ERR(path);
+         }
+         depth = ext_depth(inode);
+         ex = path[depth].p_ext;
+         *ppath = path;
 
-Best regards,
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+With Best Regards,
+Baokun Li
 
 
