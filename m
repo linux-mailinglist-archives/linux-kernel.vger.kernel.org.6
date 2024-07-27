@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-264301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38B893E173
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFA793E175
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA061C20D15
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A22D1C20E26
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A92217D378;
-	Sat, 27 Jul 2024 23:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KV+ZTvIq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322F553E24;
+	Sat, 27 Jul 2024 23:48:08 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0F839FD8;
-	Sat, 27 Jul 2024 23:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F225634
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 23:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722122977; cv=none; b=O7IO6pOcRBiM1Bz4OfR/CvR2I8lViXIC1SBBGLw4LNObr/02HScwBFIHFAvqAJX1o0JkKzJFsBLE+9JNVNYuqFwuzcnND8cI7HfvF57ibA2HGToU3Rj7N582JyI4UZ7NzFsP2ugqWPZzzwOD0zV4CJbfEEqXiO1GfRSS3S8f3p4=
+	t=1722124087; cv=none; b=MQvM+bnhWqRq55LofbVLw1YwIq4Mxe0Mxhk7JwEfThofd2k92us2YPjUT1qigrNkLkJA/gqA/1bWzyH4eIpdhlwM/ccdb4yyMhpaZFfXHob8YvtFUya1eZW9CCxTUNkrpkOy4uOSiyA4dyIOglL1Z5CIdr7VoJeLFcQeVVVX0rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722122977; c=relaxed/simple;
-	bh=dKHmD9TzO61V8LsScNepDdSQuLuFO3Ew+vfL4iPD3xY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f48TV4Nd1r9073cyo9ytSp6hjP7y/R/1PjaFYSpkqN2VFlQh5Rb1vll679g7EG+hLaJot7yTUld3a+rAN6VbfsqiP7QWgLmCTzvJLaopPj3oQ/9kYvSHneKffLZ5rj4iz57jNerA7VoE3AQLJTW3fTPPHbWako1Oq5wTeJCmdbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KV+ZTvIq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=HaaAkZs/uXoGFjtpoKrvzxVCk50c7iJVjvXXtxRnZvg=; b=KV+ZTvIqOVoY7I4As9tQv8L1tn
-	819kw6gNFnL7wsEIITH63adMEz5Z+lDzxlnMIqs+OMJZ0ssoDi1PVNt6d0iSKQvwT3mMB/ZBKAbBo
-	OQRDYRZr5Lv23dV/Ztz5kkRkJcn1ubbuIaDHXsWznbC89pTb6oRhnDqKx4FlUoykyPIc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sXqqc-003Mmx-74; Sun, 28 Jul 2024 01:29:10 +0200
-Date: Sun, 28 Jul 2024 01:29:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
-	UNGLinuxDriver@microchip.com, davem@davemloft.net,
-	edumazet@google.com, f.fainelli@gmail.com,
-	gregkh@linuxfoundation.org, kuba@kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, lucas.demarchi@intel.com,
-	masahiroy@kernel.org, mcgrof@kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-Message-ID: <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
-References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
- <20240726121530.193547-1-jtornosm@redhat.com>
- <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
- <931b582808f237aa3746c5b0a96b3665@manjaro.org>
+	s=arc-20240116; t=1722124087; c=relaxed/simple;
+	bh=u1LwNZMZtEUicaM10i+yfP1IqJpfhNlzUVn5c23iwm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gqtUO1Lswxv037FFHGpL6bIsZlivbFpeXpYMIVbSRYs3i34HWJEJB9aEtOrryuEFVLNeeq84K3Vg0xSDYTs+USKeUJI+mDec2VWzRbGZL2zUkVpFhKuO6oroKiAm6uZTCnwWCWqlkQGFjEmQe8WKrPo1qzzGKBDeUb11URKLluQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46RNluYc080678;
+	Sun, 28 Jul 2024 08:47:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Sun, 28 Jul 2024 08:47:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46RNluZp080674
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 28 Jul 2024 08:47:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <503c1a50-ddc0-4128-b0f0-feceb43ff5d3@I-love.SAKURA.ne.jp>
+Date: Sun, 28 Jul 2024 08:47:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <931b582808f237aa3746c5b0a96b3665@manjaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] profiling: remove prof_cpu_mask
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
+ <CAHk-=wgs52BxT4Zjmjz8aNvHWKxf5_ThBY4bYL1Y6CTaNL2dTw@mail.gmail.com>
+ <87a5i2ttv0.ffs@tglx>
+ <CAHk-=wg-qQGB2iM1OeprikBWp9-nUEDaWNxwwJ00u1vmUJVtHg@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHk-=wg-qQGB2iM1OeprikBWp9-nUEDaWNxwwJ00u1vmUJVtHg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Before going into explaining my viewpoint, could someone, please, clarify
-> which LAN78xx USB-to-Ethernet bridge does this apply to?  I already had
-> a look at a few LAN78xx datasheets, and I'm not sure how the external PHY
-> becomes exposed over the USB interface, so it needs a driver.
+On 2024/07/28 6:22, Linus Torvalds wrote:
+> I wonder how many people actually use this ancient kernel profiling
+> thing. I get the feeling that it's "one real user and a hundred syzbot
+> test failures".
 
-https://elixir.bootlin.com/linux/v6.10/source/drivers/net/usb/lan78xx.c#L2049
+What about emitting some kernel messages for investigating whether there
+are users who need this code, and wait for two years for whether someone
+says "I need this code" ?
 
-This is creating an MDIO bus device. The MDIO bus will be scanned and
-PHYs on the bus found. There are then a few calls to phy_find_first()
-which will get the PHY.
+For example, hfs ( https://syzkaller.appspot.com/upstream/s/hfs ) has
+many open bugs. Some of them have patches but nobody can review/take them.
+Unless a filesystem needs to be mounted as a native filesystem, I think
+that re-implementing such filesystem as a fuse-based filesystem will help
+reducing overall bugs.
 
-The code itself looks pretty broken, it is directly accessing PHY
-registers, which a MAC driver should not do. That is a layering
-violation.
+Anyway, it seems that the kernel sleep profiling is no longer working
+after commit 42a20f86dc19 ("sched: Add wrapper for get_wchan() to keep
+task blocked").
 
-	Andrew
 
