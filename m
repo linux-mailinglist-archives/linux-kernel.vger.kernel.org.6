@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-264121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1636293DF21
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:19:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB2193DF22
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DA9DB2360D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9AF28124C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0F46CDAB;
-	Sat, 27 Jul 2024 11:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01826F2E0;
+	Sat, 27 Jul 2024 11:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WK+iymWp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nMeV99EI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536E84CB37;
-	Sat, 27 Jul 2024 11:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118B24CB37;
+	Sat, 27 Jul 2024 11:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722079163; cv=none; b=tgxZjvTfWmUW99FLvXz5gU3T3MQXjqqEPz7e/48fCvX57/AMCllPIzNFIs2+lFlohwFZ80d8DeK3SJu3VUOtoj0s4LlsG6YP5XYv5jLT8KhnRhm/IM+W3we4p+TsZ6nJs/flgHcgrxG5/gS5SrPtat1akPuZyJeE4DWgo2iY7OY=
+	t=1722079293; cv=none; b=hCbxi4u2rtiEUEpdR4yaaBYrmlaigX3MvKu6ViJ1Qg1+1RYMmyzCkgIKMZTspTVplKh2ZxEx2HoIQYVxUhgIhwFpL79Q0KqXYToXlmQOqpa4y8sedMR1AlF1Tvd9FuG5lTdvGbQorgbMW3Dy4gHu5wyAUQJgE2z3uGcJaQkd5O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722079163; c=relaxed/simple;
-	bh=yniDgNp34tOrJ9OCd28Zdi6tFrmUOFGfFoYfjp0Jsxk=;
+	s=arc-20240116; t=1722079293; c=relaxed/simple;
+	bh=Np9BXsfpZ4ED8CIWS5ZU5lyVIGmxSf2WKXevqzEFx4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIDt0CviDLThsQ3JYNBZwUHOSx5dTHpqYcDywmwKXgavKGZVv7Pa4Rs0M3IHD+Mj79uTrJxdJz68XUw3V+4fArFZF6mSBXLgkWTkxkUbRx8mUwGRjMfFDzSpNj3n8zjXEzBeFOECSBle1emiUudaLMJLPTl0PmX/NvYTYItGh0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WK+iymWp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46RAuEej032086;
-	Sat, 27 Jul 2024 11:18:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=p3Zam5bj3FIGCMqt2deaMDzjNPC
-	tjo9u2qYWHmgvrCo=; b=WK+iymWpOiXElY8TglD85CA90l1bnYQVUpJLrVkYrRl
-	oJ0wQjB8fMYpdSEu45bb8unmoZyelEmcy4D/4q3TMTzMln8Kqj4tsnuKxbmJsujU
-	qgf6gQQMPsTOBmb3pILMiAMtR5aGr7ape0s8hfC+XiOtwjXTQzQQxjiTtkXM9nWF
-	ddA0MuTosPvgRYTfq5dpHvOrhQx9zaMvBPkhFfMixxvT2ge63rEy4ghSgP6SFwTy
-	wkJkI8Ofq7l1B/f/KV/BukgbcwNMU7OW3zWSpfVC+zxSgLGcvvknSJeaHVQZh89E
-	+uNZZGxmEIPwLXwlO68KICz8sL7ATG3DJ5eSOveYnsg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mvyw87yy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 27 Jul 2024 11:18:51 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46RBIoCs004130;
-	Sat, 27 Jul 2024 11:18:50 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40mvyw87yw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 27 Jul 2024 11:18:50 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46R8cgCJ006130;
-	Sat, 27 Jul 2024 11:18:49 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40mwht0dv1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 27 Jul 2024 11:18:49 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46RBIkbG29622952
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 27 Jul 2024 11:18:48 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 260D820043;
-	Sat, 27 Jul 2024 11:18:46 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1212620040;
-	Sat, 27 Jul 2024 11:18:44 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.37.64])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 27 Jul 2024 11:18:43 +0000 (GMT)
-Date: Sat, 27 Jul 2024 16:48:41 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>, stable@kernel.org
-Subject: Re: [PATCH 07/20] ext4: drop ppath from ext4_ext_replay_update_ex()
- to avoid double-free
-Message-ID: <ZqTXkQDYJpjSWn4R@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-8-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mq/lHkgcz9vjQ+v4toRGEuAnMGz7EpbvucBc7iiR3jGtTVDTBQDJpzr1yo63q/xfUFQzXNdoErQynfalV3C098TyOTJyT23xtJrAXnspRQuVnki5hHsBaeLNhd3AtxZG7mFGkuZKqq2YNnhbYfmk8lPHl4TNVYJs60vPMs2euN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nMeV99EI; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722079291; x=1753615291;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Np9BXsfpZ4ED8CIWS5ZU5lyVIGmxSf2WKXevqzEFx4s=;
+  b=nMeV99EIfyCjf7mO0bDqM5qrjGX13uaIBLWnaTOwaMqyEAkNNHERKdzG
+   2D1sVjw7s/UbRoM3B19Uj6U/hAIy/0q10Hi+z1QAYsioor49U7EHXuvIk
+   YlRcMcHO/Gkhy3yxgqOUzCyhW1NA7dwcuH9HGECnpR2v1+50jNts89owe
+   yhlwpSR9z2C/0QgMpQJARNDFtUk4RGEis6KKvNL65JPf0dckSg+Vtzk/e
+   f8lrdIyZQc/LwdITo7VenxYWBBKFw48jsm7WNTJu5Ci4Qv4ccON45mEt3
+   2UfbH9SUmJ+uF/Lp711i+1IJLLyMnlKptLw/WsVICRLky5ZwcbRX66GOk
+   w==;
+X-CSE-ConnectionGUID: FuNlzBKfR2qf03hgYgEEOA==
+X-CSE-MsgGUID: 8N64uqquRqq6lUfDLrRtbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="31259288"
+X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
+   d="scan'208";a="31259288"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 04:21:31 -0700
+X-CSE-ConnectionGUID: uMFzfeUtQD+UFOZTZFeGgw==
+X-CSE-MsgGUID: dwocBO3IR5yf8fF7fPZ1IQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
+   d="scan'208";a="58315801"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 27 Jul 2024 04:21:26 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXfUI-000ptc-2e;
+	Sat, 27 Jul 2024 11:21:22 +0000
+Date: Sat, 27 Jul 2024 19:21:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: sync: Add IrqSpinLock
+Message-ID: <202407271842.ujYe0mc0-lkp@intel.com>
+References: <20240725222822.1784931-4-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,114 +92,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-8-libaokun@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: gnc2sN--EWEZgXz2uZZWGXeDDM8fjqd1
-X-Proofpoint-ORIG-GUID: Yc7uEyf32ip7gFiLJNotUcNJ-D5nvG6d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-27_08,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=784 mlxscore=0 malwarescore=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407270071
+In-Reply-To: <20240725222822.1784931-4-lyude@redhat.com>
 
-On Wed, Jul 10, 2024 at 12:06:41PM +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> When calling ext4_force_split_extent_at() in ext4_ext_replay_update_ex(),
-> the 'ppath' is updated but it is the 'path' that is freed, thus potentially
-> triggering a double-free in the following process:
-> 
-> ext4_ext_replay_update_ex
->   ppath = path
->   ext4_force_split_extent_at(&ppath)
->     ext4_split_extent_at
->       ext4_ext_insert_extent
->         ext4_ext_create_new_leaf
->           ext4_ext_grow_indepth
->             ext4_find_extent
->               if (depth > path[0].p_maxdepth)
->                 kfree(path)                 ---> path First freed
->                 *orig_path = path = NULL    ---> null ppath
->   kfree(path)                               ---> path double-free !!!
-> 
-> So drop the unnecessary ppath and use path directly to avoid this problem.
-> And use ext4_find_extent() directly to update path, avoiding unnecessary
-> memory allocation and freeing. Also, propagate the error returned by
-> ext4_find_extent() instead of using strange error codes.
-> 
-> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Hi Lyude,
 
-Hey Baokun, 
-These ppath bugs are really subtle indeed :)
+kernel test robot noticed the following build errors:
 
-Anyways, feel free to add:
+[auto build test ERROR on next-20240725]
+[also build test ERROR on linus/master v6.10]
+[cannot apply to rust/rust-next v6.10 v6.10-rc7 v6.10-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Lyude-Paul/rust-Introduce-irq-module/20240726-064926
+base:   next-20240725
+patch link:    https://lore.kernel.org/r/20240725222822.1784931-4-lyude%40redhat.com
+patch subject: [PATCH 3/3] rust: sync: Add IrqSpinLock
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240727/202407271842.ujYe0mc0-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407271842.ujYe0mc0-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407271842.ujYe0mc0-lkp@intel.com/
 
-> ---
->  fs/ext4/extents.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 1660434fbfc7..b1cfce5b57d2 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5920,7 +5920,7 @@ int ext4_clu_mapped(struct inode *inode, ext4_lblk_t lclu)
->  int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
->  			      int len, int unwritten, ext4_fsblk_t pblk)
->  {
-> -	struct ext4_ext_path *path = NULL, *ppath;
-> +	struct ext4_ext_path *path;
->  	struct ext4_extent *ex;
->  	int ret;
->  
-> @@ -5936,30 +5936,29 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
->  	if (le32_to_cpu(ex->ee_block) != start ||
->  		ext4_ext_get_actual_len(ex) != len) {
->  		/* We need to split this extent to match our extent first */
-> -		ppath = path;
->  		down_write(&EXT4_I(inode)->i_data_sem);
-> -		ret = ext4_force_split_extent_at(NULL, inode, &ppath, start, 1);
-> +		ret = ext4_force_split_extent_at(NULL, inode, &path, start, 1);
->  		up_write(&EXT4_I(inode)->i_data_sem);
->  		if (ret)
->  			goto out;
-> -		kfree(path);
-> -		path = ext4_find_extent(inode, start, NULL, 0);
-> +
-> +		path = ext4_find_extent(inode, start, &path, 0);
->  		if (IS_ERR(path))
-> -			return -1;
-> -		ppath = path;
-> +			return PTR_ERR(path);
->  		ex = path[path->p_depth].p_ext;
->  		WARN_ON(le32_to_cpu(ex->ee_block) != start);
-> +
->  		if (ext4_ext_get_actual_len(ex) != len) {
->  			down_write(&EXT4_I(inode)->i_data_sem);
-> -			ret = ext4_force_split_extent_at(NULL, inode, &ppath,
-> +			ret = ext4_force_split_extent_at(NULL, inode, &path,
->  							 start + len, 1);
->  			up_write(&EXT4_I(inode)->i_data_sem);
->  			if (ret)
->  				goto out;
-> -			kfree(path);
-> -			path = ext4_find_extent(inode, start, NULL, 0);
-> +
-> +			path = ext4_find_extent(inode, start, &path, 0);
->  			if (IS_ERR(path))
-> -				return -EINVAL;
-> +				return PTR_ERR(path);
->  			ex = path[path->p_depth].p_ext;
->  		}
->  	}
-> -- 
-> 2.39.2
-> 
+All errors (new ones prefixed by >>):
+
+>> error: mismatched closing delimiter: `)`
+   --> rust/doctests_kernel_generated.rs:4097:34
+   |
+   4097 | let b = with_irqs_disabled(|irq| {
+   |                           -      ^ unclosed delimiter
+   |                           |
+   |                           closing delimiter possibly meant for this
+   ...
+   4100 | );
+   | ^ mismatched closing delimiter
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
