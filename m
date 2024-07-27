@@ -1,189 +1,140 @@
-Return-Path: <linux-kernel+bounces-263985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D422793DD87
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:35:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E1093DD8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8D3284A32
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110071C22BF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EDB2574B;
-	Sat, 27 Jul 2024 06:35:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C16282EE;
+	Sat, 27 Jul 2024 06:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BdGgqL4b"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D8D259C;
-	Sat, 27 Jul 2024 06:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB9208B0;
+	Sat, 27 Jul 2024 06:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722062130; cv=none; b=KpPLJq9lbE6dEAQnwD0rD2snXlcl3QzNnb7URfjA7RfyrYIzrNQhOE+Y2QClSt7tmsBngRIocPRlCFWe7ZTl/sSMdW6yieu3wNVcJ+DgFFkHkIy+wAabfLvClIXdgLgP13B2ow+e2M+c285ZmHyROPSBE5uS/yB9dCzOb3rSHjk=
+	t=1722062295; cv=none; b=jN47Ci/dnMAjFJV9FjxFFyk4nTfgH7juNpTkbBYgqLNLRO3BiGlwLfhjLN+rge5ccA33qtkIZXBMp3TjhJNTxtQFrI830a8KpE16HZg2ad4wlkUs6ZgRT1eHfrAy+teUeldea0tDaEvQd4dt/5LgORLSkI9lF9b2cxqAXfNldNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722062130; c=relaxed/simple;
-	bh=2DCsZsMgbkJqLuVAR8/p04owkkkcz+QGeBAZgUaOp9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/9g1Nwhy5jUK44bSLckIjQ2qQRWwi8e5B4YBfN8zm10E6v5dEKIYSAdHPM/4MxksgVs4sdth1OLbIOy3WWfeXIaV7H+1kPuTf1RfpkcglGkCX6fi+LffuArAOoy+O/rcyi89OvcJnEKKlIGCsPhEfA4Jp0vrCjxgtYKlDMpYlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WWFH05Xyyz4f3kvF;
-	Sat, 27 Jul 2024 14:35:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7A1AD1A0572;
-	Sat, 27 Jul 2024 14:35:22 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgDXuTcmlaRm1_YtBQ--.27594S3;
-	Sat, 27 Jul 2024 14:35:22 +0800 (CST)
-Message-ID: <44337bbe-bb24-444d-a5b8-f579eceaeac5@huaweicloud.com>
-Date: Sat, 27 Jul 2024 14:35:18 +0800
+	s=arc-20240116; t=1722062295; c=relaxed/simple;
+	bh=GrJeDK2srVi+z2UkjJHob9c8b6SOSjMXZQ3r/XMlwYQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FhR+VhPzq4Ckhxo50KykFCMRE+XKzpINBnPzd9k+Id1JE/lrKcEB2iVNUcUk0Y3bqvk2AmJZ4P5A/kUnvT2RVUca+Ws8uNHbT9/vYNhI7ON2MGkEU2tPWHnQOb9uB3eH1rWRXoRkd99/I4PX2RbCZ182T+NtCgZRJU4zJqzSgG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BdGgqL4b; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Xb2zsVCoM6bu3Xb2zscawa; Sat, 27 Jul 2024 08:36:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722062213;
+	bh=ZHDCDqysapmv2ryBK6BEJxU1h57yEUk6bw3Qv1mEShs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=BdGgqL4bydrIPmm/lNBGsOHsGXsAa+Q8dwBHEn4O7+m/PqLOLNJdH9HqY4c7QYtti
+	 C8Gq6wLy+Xt7fDflgw1nohqsR4qbyLv388/Eb/UULvVVACDlW5LBjv0/OdE++MESZz
+	 96rXENTHPWC6YeNN+eJCY0s2g2bpxLb7yrMyrdiTLm6EjkKEBaT6FOa/UzXebqvk98
+	 /BW4kKokbm7FgcexUWp2YD16plDbNqFpnQvJs/rZD7UX47e2LVl10Yl8VG94w5tSX+
+	 9cEsz+6kgF33UksgZ58JzVMZ9nK7hvEw4R5PKFkv3w1V5wNUuKt+UePkt2KaMfm2Xn
+	 HieCaZrfQRlgw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 Jul 2024 08:36:53 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org
+Subject: [PATCH v2] Input: spear-keyboard - Switch to devm_clk_get_prepared()
+Date: Sat, 27 Jul 2024 08:36:49 +0200
+Message-ID: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/20] ext4: get rid of ppath in
- ext4_ext_create_new_leaf()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-11-libaokun@huaweicloud.com>
- <20240725104624.v73lgnkrojxaiuig@quack3>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240725104624.v73lgnkrojxaiuig@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDXuTcmlaRm1_YtBQ--.27594S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWDJw4kuF1xGw47XFyrJFb_yoW5Ar18pr
-	WrAFy8Ka1rJa4j9rZ2v3Z8W3Wa9w4fGr4UCFWfCFykJasFqFnagFyfKayYkFW5AFWxua4I
-	qFW8tr17Cw12qFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgARBWajXpVDgQABsb
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/25 18:46, Jan Kara wrote:
-> On Wed 10-07-24 12:06:44, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> The use of path and ppath is now very confusing, so to make the code more
->> readable, pass path between functions uniformly, and get rid of ppath.
->>
->> To get rid of the ppath in ext4_ext_create_new_leaf(), the following is
->> done here:
->>
->>   * Free the extents path when an error is encountered.
->>   * Its caller needs to update ppath if it uses ppath.
->>
->> No functional changes.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Just one nit below. Otherwise feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
->> @@ -1424,28 +1423,24 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->>   		 * entry: create all needed subtree and add new leaf */
->>   		err = ext4_ext_split(handle, inode, mb_flags, path, newext, i);
->>   		if (err)
->> -			goto out;
->> +			goto errout;
->>   
->>   		/* refill path */
->>   		path = ext4_find_extent(inode,
->>   				    (ext4_lblk_t)le32_to_cpu(newext->ee_block),
->>   				    path, gb_flags);
->> -		if (IS_ERR(path))
->> -			err = PTR_ERR(path);
-> So I'd rather have here:
-> 		return path;
->
-> That way it's obvious we will not confuse some code below with error stored
-> in 'path' and we can also save one indentation level by removing 'else'
-> below (probably do reindenting in a separate patch).
->
-> 								Honza
-Yes, that looks clearer! I'll add 'return path' in the next version, and
-add a cleanup patch after this one to save indentation.
+Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
+error handling path of the probe and from the .remove() function.
 
-Thanks,
-Baokun
->>   	} else {
->>   		/* tree is full, time to grow in depth */
->>   		err = ext4_ext_grow_indepth(handle, inode, mb_flags);
->>   		if (err)
->> -			goto out;
->> +			goto errout;
->>   
->>   		/* refill path */
->>   		path = ext4_find_extent(inode,
->>   				   (ext4_lblk_t)le32_to_cpu(newext->ee_block),
->>   				    path, gb_flags);
->> -		if (IS_ERR(path)) {
->> -			err = PTR_ERR(path);
->> -			goto out;
->> -		}
->> +		if (IS_ERR(path))
->> +			return path;
->>   
->>   		/*
->>   		 * only first (depth 0 -> 1) produces free space;
->> @@ -1457,9 +1452,11 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->>   			goto repeat;
->>   		}
->>   	}
->> -out:
->> -	*ppath = IS_ERR(path) ? NULL : path;
->> -	return err;
->> +	return path;
->> +
->> +errout:
->> +	ext4_free_ext_path(path);
->> +	return ERR_PTR(err);
->>   }
->>   
->>   /*
->> @@ -2112,10 +2109,14 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
->>   	 */
->>   	if (gb_flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
->>   		mb_flags |= EXT4_MB_USE_RESERVED;
->> -	err = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
->> -				       ppath, newext);
->> -	if (err)
->> +	path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
->> +					path, newext);
->> +	if (IS_ERR(path)) {
->> +		*ppath = NULL;
->> +		err = PTR_ERR(path);
->>   		goto cleanup;
->> +	}
->> +	*ppath = path;
->>   	depth = ext_depth(inode);
->>   	eh = path[depth].p_hdr;
->>   
->> -- 
->> 2.39.2
->>
+This done, the whole .remove() function can also be axed because
+'input_dev' is a managed resource allocated with
+devm_input_allocate_device() and we can fully rely on devm for cleaning up.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+Changes in v2:
+  - Merge patch 1 and 2, because patch 1 alone introduced a bug   [Dmitry Torokhov]
+
+v1: https://lore.kernel.org/all/cover.1721939824.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/input/keyboard/spear-keyboard.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+index 557d00a667ce..1df4feb8ba01 100644
+--- a/drivers/input/keyboard/spear-keyboard.c
++++ b/drivers/input/keyboard/spear-keyboard.c
+@@ -222,7 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(kbd->io_base))
+ 		return PTR_ERR(kbd->io_base);
+ 
+-	kbd->clk = devm_clk_get(&pdev->dev, NULL);
++	kbd->clk = devm_clk_get_prepared(&pdev->dev, NULL);
+ 	if (IS_ERR(kbd->clk))
+ 		return PTR_ERR(kbd->clk);
+ 
+@@ -255,14 +255,9 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 		return error;
+ 	}
+ 
+-	error = clk_prepare(kbd->clk);
+-	if (error)
+-		return error;
+-
+ 	error = input_register_device(input_dev);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "Unable to register keyboard device\n");
+-		clk_unprepare(kbd->clk);
+ 		return error;
+ 	}
+ 
+@@ -272,14 +267,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static void spear_kbd_remove(struct platform_device *pdev)
+-{
+-	struct spear_kbd *kbd = platform_get_drvdata(pdev);
+-
+-	input_unregister_device(kbd->input);
+-	clk_unprepare(kbd->clk);
+-}
+-
+ static int spear_kbd_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+@@ -373,7 +360,6 @@ MODULE_DEVICE_TABLE(of, spear_kbd_id_table);
+ 
+ static struct platform_driver spear_kbd_driver = {
+ 	.probe		= spear_kbd_probe,
+-	.remove_new	= spear_kbd_remove,
+ 	.driver		= {
+ 		.name	= "keyboard",
+ 		.pm	= pm_sleep_ptr(&spear_kbd_pm_ops),
 -- 
-With Best Regards,
-Baokun Li
+2.45.2
 
 
