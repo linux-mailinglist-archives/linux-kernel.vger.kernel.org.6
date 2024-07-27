@@ -1,213 +1,178 @@
-Return-Path: <linux-kernel+bounces-264165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E962493DFAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:08:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A27393DFAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2696D1C20DBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B092814A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159E9171081;
-	Sat, 27 Jul 2024 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B0317164C;
+	Sat, 27 Jul 2024 14:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qBEFKJJL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MUwHRryQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etpzCSRg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A509C16F904;
-	Sat, 27 Jul 2024 14:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC31B171679;
+	Sat, 27 Jul 2024 14:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722089325; cv=none; b=Lph2vFEFhAE1vpSWSGV6kTNRdsbhlMPn45YGj9TGksIuYZVhZVg9mbh0uBK9TCjW3ofTX69YVrrUZ5dYd7Rj9/6aZ8fVg3CFyrXy4E4dxtNy+BtTIrxVVi9KdYnnRxsVrpbYAKkkE94ktRQSkE0yHyczrmCA3shlWXN/PUJ6vus=
+	t=1722089536; cv=none; b=jPuaAQoltopkjhbXKZoU7Kzqx452FmwMGOtdEArCHScjc02lX+TCy3I2iUHYCHV3vXqSvmtpJ8VHtv2EJmGNyuCuzI5xtD2JPy4UBMLC2WPGGyeaKcWxxr8SVhHCyB6YeqvmvNRShHKh8tPaFUsKZC1bNpmb/oy5vTWfFN81X5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722089325; c=relaxed/simple;
-	bh=JdVpZbX4TYs6TEGs3dkOZTu4SjMER0GQiXIieByL/2I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qZQqMRpvpI+iHgYkIGGIufIOqpeJVr3uKKgouEIwYY04MK49pDBE52Pm9A6bkRWQoBukXglfYBytTxuXZhir6DqS4h9bSqN1I9Los8VW2Y+8MHkebmrxX6VPfveGz9m7qZK1LlJTUBR5UYUd4r7uOtYNyLWdFIzo4Hej+caIl6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qBEFKJJL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MUwHRryQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722089322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N13OAhaELBgeVcPvm7OycULd91H2iBHXkcWHOWbzuPE=;
-	b=qBEFKJJLGDq+P8PrIawihTfYkYy+Dq2vdSfA67f+HhVxwZ6xp0Y0Kko1nRtTLbWMYPa7JM
-	SItAtKRwXjEUULmnHZep3buYjd9zuHlH8UhJmJZx01ayWRpFrCNbGhgSVBHZSCVfKg8mYr
-	+4NepnTP8uMFQ3FMkvD4BnbXnER9qjDXIO1ecdyWBkbfnuTO2z4S9OoXRpFu/4lDUfix4I
-	N9OUQCujFNHV7xB3LCYM4M4MQ/f+STiav0ziVK8Bq3tpoA/HmKNWBMooMcZv0eOb49oBzl
-	M+MdDCY+ESACSOKeXWT7ivJ3ErARl/f0S+YTLWBtARivb3xZXJsqGJ3RreYeVA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722089322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N13OAhaELBgeVcPvm7OycULd91H2iBHXkcWHOWbzuPE=;
-	b=MUwHRryQL9qiUiSh+i1vXHHp/hmsm9K0eGXM+BKxtH2nxf49qgfhsCRyY2V5icZbhIbBZY
-	gRlJdibhI+qPtMDg==
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org
-Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Guillaume Thouvenin <thouveng@gmail.com>,
- Luc Michel <luc@lmichel.fr>, Jules Maselbas <jmaselbas@zdiv.net>,
- bpf@vger.kernel.org
-Subject: Re: [RFC PATCH v3 35/37] kvx: Add IPI driver
-In-Reply-To: <20240722094226.21602-36-ysionneau@kalrayinc.com>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-36-ysionneau@kalrayinc.com>
-Date: Sat, 27 Jul 2024 16:08:41 +0200
-Message-ID: <87le1nsz9y.ffs@tglx>
+	s=arc-20240116; t=1722089536; c=relaxed/simple;
+	bh=LAXD1eyCD4cqWYJ3DXOC9Ot083musefdyG8yo+EdFpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L71obKtvVtvlka6nlDODDnsRqvqp+F/w7ufwvRxApFBBdAf+F7fCkFhuNMgrnpzoFoqwXnmNx0C+Inurd/qgnIZbU0olaFAuZI23BqDJ36c9nRjrZpkllu0tq7GqgxO/oBH9Umjm3QSexreZ2Bup+/wrRRfLAbGja36iWsPH//8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etpzCSRg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C1CC32781;
+	Sat, 27 Jul 2024 14:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722089536;
+	bh=LAXD1eyCD4cqWYJ3DXOC9Ot083musefdyG8yo+EdFpo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=etpzCSRg7aPcW+yfWja0iw8A6aN7EeobFXpEzdIRD9yK3NeOeVIw3SznVnU095EVk
+	 EeDZOzOjYfXPpm9ODXfoVnAgT5NyVQjaQmEp88cZPEoERUuLfpiFYu1ocMKHHEIex9
+	 RVRN96doH+3/uuAoSicRS1V6tYp8iaYgSJbMmmgKbbCPK8CbAlqi7vOFxTrCONx37Q
+	 dN1d/3zgZQRtxqji5JJjbp1047ekTZu/tHDWXN2hKKZjtLjIT3CT77SYKNApz2oBSE
+	 1AJxKgvh8LWdM/dPZRoOq2FyXbQRjNmXLwHSoG01dli2hqAL5EvyLuosEPrAELbDds
+	 oHco60I1RZOdw==
+Date: Sat, 27 Jul 2024 15:12:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, waqar.hameed@axis.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ liweilei@awinic.com, kangjiajun@awinic.com
+Subject: Re: [PATCH V5 1/2] dt-bindings: iio: aw9610x: Add bindings for
+ aw9610x sensor
+Message-ID: <20240727151208.667a9df7@jic23-huawei>
+In-Reply-To: <20240726061312.1371450-2-wangshuaijie@awinic.com>
+References: <20240726061312.1371450-1-wangshuaijie@awinic.com>
+	<20240726061312.1371450-2-wangshuaijie@awinic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22 2024 at 11:41, ysionneau@kalrayinc.com wrote:
-> +/*
-> + * IPI controller can signal RM and PE0 -> 15
-> + * In order to restrict that to the PE, write the corresponding mask
+On Fri, 26 Jul 2024 06:13:11 +0000
+wangshuaijie@awinic.com wrote:
 
-This comment is undecodable
+> From: shuaijie wang <wangshuaijie@awinic.com>
+> 
+> Add device tree bindings for aw9610x proximity sensor.
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+> ---
+>  .../iio/proximity/awinic,aw9610x.yaml         | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
 
-> + */
-> +#define KVX_IPI_CPU_MASK	(~0xFFFF)
-> +
-> +/* A collection of single bit ipi messages.  */
-> +static DEFINE_PER_CPU_ALIGNED(unsigned long, ipi_data);
-> +
-> +struct kvx_ipi_ctrl {
-> +	void __iomem *regs;
-> +	unsigned int ipi_irq;
-> +};
-> +
-> +static struct kvx_ipi_ctrl kvx_ipi_controller;
-> +
-> +void kvx_ipi_send(const struct cpumask *mask, unsigned int operation)
+No wild cards in naming of dt-bindings or within the driver.
+It goes wrong far too often because manufacturers love to release
+new devices that have similar part names but are completely unrelated.
 
-Why is this global? It's only used in this file, no?
+So we just name everything after the first part supported.
 
-> +{
-> +	const unsigned long *maskb = cpumask_bits(mask);
-> +	unsigned long flags;
-> +	int cpu;
-> +
-> +	/* Set operation that must be done by receiver */
-> +	for_each_cpu(cpu, mask)
-> +		set_bit(operation, &per_cpu(ipi_data, cpu));
-> +
-> +	/* Commit the write before sending IPI */
-> +	smp_wmb();
-> +
-> +	local_irq_save(flags);
-> +
-> +	WARN_ON(*maskb & KVX_IPI_CPU_MASK);
+One other thing inline.
 
-> +#define KVX_IPI_CPU_MASK	(~0xFFFF)
+Jonathan
 
-This means the system is limited to 16 CPUs, right?
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml b/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
+> new file mode 100644
+> index 000000000000..631b1fe5a900
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/proximity/awinic,aw9610x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Awinic's AW9610X capacitive proximity sensor
 
-How should a bit >= NR_CPUs be set in a valid cpu mask?  Also above you
-happily iterate the full cpumask. This does not make sense.
+Title is less important for wild cards but even here I'd just name it
+after one part + add "and similar" to the end of the title.
 
-> +	writel(*maskb, kvx_ipi_controller.regs + IPI_INTERRUPT_OFFSET);
-> +
-> +	local_irq_restore(flags);
-> +}
-> +
-> +static int kvx_ipi_starting_cpu(unsigned int cpu)
-> +{
-> +	enable_percpu_irq(kvx_ipi_controller.ipi_irq, IRQ_TYPE_NONE);
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvx_ipi_dying_cpu(unsigned int cpu)
-> +{
-> +	disable_percpu_irq(kvx_ipi_controller.ipi_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t ipi_irq_handler(int irq, void *dev_id)
-> +{
-> +	unsigned long *pending_ipis = &per_cpu(ipi_data, smp_processor_id());
+title: Awinic's AW96101 capacity proximity sensor and similar
 
-  this_cpu_ptr() ?
-
-> +	while (true) {
-> +		unsigned long ops = xchg(pending_ipis, 0);
 > +
-> +		if (!ops)
-> +			return IRQ_HANDLED;
+> +maintainers:
+> +  - Wang Shuaijie <wangshuaijie@awinic.com>
 > +
-> +		handle_IPI(ops);
-> +	}
-
-        for (ops = xchg(pending_ipis, 0); ops; ops = xchg(pending_ipis, 0))
-        	handle_IPI(ops);
-
-Hmm?
-
-> +	return IRQ_HANDLED;
-> +}
+> +description: |
+> +  Awinic's AW9610X proximity sensor.
+> +  The specific absorption rate (SAR) is a metric that measures
+> +  the degree of absorption of electromagnetic radiation emitted by
+> +  wireless devices, such as mobile phones and tablets, by human tissue.
+> +  In mobile phone applications, the proximity sensor is primarily
+> +  used to detect the proximity of the human body to the phone. When the
+> +  phone approaches the human body, it will actively reduce the transmit
+> +  power of the antenna to keep the SAR within a safe range. Therefore,
+> +  we also refer to the proximity sensor as a SAR sensor.
 > +
-> +int __init kvx_ipi_ctrl_init(struct device_node *node,
-> +			     struct device_node *parent)
-> +{
-> +	int ret;
-> +	unsigned int ipi_irq;
-> +	void __iomem *ipi_base;
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - awinic,aw96103
+> +      - awinic,aw96105
 > +
-> +	BUG_ON(!node);
+> +  reg:
+> +    maxItems: 1
 > +
-> +	ipi_base = of_iomap(node, 0);
+> +  interrupts:
+> +    description:
+> +      Generated by the device to announce that a close/far
+> +      proximity event has happened.
+> +    maxItems: 1
+> +
+> +  vcc-supply:
+> +    description:
+> +      Optional regulator for chip, 1.7V-3.6V.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
 
-What's the point of this ipi_base indirection? Just use controller.regs
-directly.
+vcc-supply should be required.
+Note this is about the binding documenting the need for power vs
+an optional powersupply which some devices have.  It is not
+related to whether the dts files actually provide that supply
+(though good if they do) because the regulator core will happily
+provide you with a fake regulator on the assumption that any regulators
+we don't know about must be turned on already.
 
-> +	BUG_ON(!ipi_base);
-> +
-> +	kvx_ipi_controller.regs = ipi_base;
-> +
-> +	/* Init mask for interrupts to PE0 -> PE15 */
-> +	writel(KVX_IPI_CPU_MASK, kvx_ipi_controller.regs + IPI_MASK_OFFSET);
-> +
-> +	ipi_irq = irq_of_parse_and_map(node, 0);
-> +	if (!ipi_irq) {
-> +		pr_err("Failed to parse irq: %d\n", ipi_irq);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = request_percpu_irq(ipi_irq, ipi_irq_handler,
-> +						"kvx_ipi", &kvx_ipi_controller);
-> +	if (ret) {
-> +		pr_err("can't register interrupt %d (%d)\n",
-> +						ipi_irq, ret);
-> +		return ret;
-> +	}
-> +	kvx_ipi_controller.ipi_irq = ipi_irq;
-> +
-> +	ret = cpuhp_setup_state(CPUHP_AP_IRQ_KVX_STARTING,
-> +				"kvx/ipi:online",
-> +				kvx_ipi_starting_cpu,
-> +				kvx_ipi_dying_cpu);
-> +	if (ret < 0) {
-> +		pr_err("Failed to setup hotplug state");
+A well written dts will use a fixed regulator to provide more
+description to the drivers etc.
 
-That leaves the half initialized IPI handler around.
+Jonathan
 
-> +		return ret;
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        proximity@12 {
+> +            compatible = "awinic,aw96103";
+> +            reg = <0x12>;
+> +            interrupt-parent = <&gpio>;
+> +            interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
+> +        };
+> +    };
 
-Thanks,
-
-        tglx
 
