@@ -1,212 +1,279 @@
-Return-Path: <linux-kernel+bounces-264299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48F293E16A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:07:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4999993E16F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 069F0281A0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD91B21525
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B165186E5E;
-	Sat, 27 Jul 2024 23:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5A141C64;
+	Sat, 27 Jul 2024 23:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJJ7FXZ9"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zYpo5NaO"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F009F1862B2
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 23:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7779C39FD8
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 23:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722121613; cv=none; b=POuPsEuB0TYBLuS44x4nArpS3nyef9sbl6cly8RoGcqCtgyn2r0KNuDWrcvOxlJIn4wk6Uqi24ehRV3cPBZaKTAEeONN9tkeZR5tq8sKAHQViDKG61zEZW3nZq5UydOR9MDQfjqB0E2NhEhQogMcapKyHIu3VPAqenHSlZqHnsA=
+	t=1722122652; cv=none; b=aquEIWFuH7Q8AgpjGkdMlLm0El+Qf6qQkfGsFAQ1wTm+ufzlfeAc00AJz9B/cyE6oki2XWqBAEFbh+N0F9wYgB1j0KWMPhzPJqjd3MY0dxeDbYiigE2igYocg8YdxXGKDzvdd6+nVtpy2oPUVkOfnAljy8BMMRsKyTMDW5KSzQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722121613; c=relaxed/simple;
-	bh=LTy+jkbEyRIQPOLyxWnCz08S5NOGybmn236jQt0GbRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V/DXwU780uq1GxnkuTG04qhiS1o3Sdpg8DUgxeyrkLjr8Xpxwsy7XtJ3rY3opPi2yBmnY6diDGfSsS/kjWthvWrETBPFe4Mm8ZGC+8gtnf0fO25UB215KkD6cnrxPOZeahXlP904GzCV6kGaHMgy07ts0xy3JkqNh2kOqLjKrWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJJ7FXZ9; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fed72d23a7so13213665ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 16:06:51 -0700 (PDT)
+	s=arc-20240116; t=1722122652; c=relaxed/simple;
+	bh=nuO7vzihiJv1c6VfvqZ9dopzSQV/yn3omJmNNFU5Fkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WBqXBdHsPDSKilLQjluQvni4d0Q8vtMte5idyYV2fQk7jK/3xHLkgCmgWGRaXQk4crAfYmOtuTi77Vm2f/T3ft0wurLSUKoSxFfOwIgAMTkNUbChX9kQeEvhEZ56fFTub4blgn8jcgAuNWskDjFiTi91NRbZGq0r2D1oD2LUnpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zYpo5NaO; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso827184276.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 16:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722121611; x=1722726411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722122649; x=1722727449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yd+/PkNsbnZGnxyGV+P8ksi9diuCZ2xuAbwQqloCs2E=;
-        b=jJJ7FXZ9wMpXIhY5moV0qhAk/rR0Yqcj+MUR99Uk9sgNppkLEYdPL7xVg+CTCkUAlW
-         s0s8P6SCUJ5P+0X/2OofP7+yE/bhdh2UNoTib0Jmp+huj0Dgo05EFMIuPoDiZw1fC9IP
-         tU7OL3G78U2j82MRbfeoscFEcszo6gAvr3BhKEALh1sMN3+jreMCyjhOqbpub04vhXxE
-         GNGLZRUQhJ1+MySgdDQv6vuYlIDlRZq5IhWpSt8jiw4hQlvHe01IfYVk5Yh6QRq+0Lp4
-         Pn6aaFGjpEuWuaBoud9gggY9gCo9Wv4TlgdzanIWtqdh8HaJO4+bUPH2jusRf8wU6ZFc
-         ksog==
+        bh=B4yEmtYniciXoEKJkwuK70Tje2jx27N9dXaU+niH9co=;
+        b=zYpo5NaOZKifxjcXBIZtgnoNmtSzn7UbTwKqcZSojPeCBtr/Pz3/Tp9qe9KGUhk8cf
+         yyV/zde0HBhRjeV68cb1rj8wwuYPT7l2+yEv2lAbs6wMD+qCVClBWCE9Ifwn4DWQ/yVQ
+         xebkPJbhUmK8RQL8DGxdbi7u0nq7BRg4RVnL7/qIHfkCN6KnKx+dqQUVsPl7VJl+8Bjf
+         x/y2Hwbt2LFTShCOF29Rsv3PHzr2j2QdACN9vTHLEO0I0cuz+/B5xn8aEF6Dg97FaogZ
+         1kVcd4aZ58bLdK8jaQC77150cEGS0bf5GiHccGQ9VzoalFjgxj4EgNgZSY+2s8yWtTSP
+         X8HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722121611; x=1722726411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722122649; x=1722727449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yd+/PkNsbnZGnxyGV+P8ksi9diuCZ2xuAbwQqloCs2E=;
-        b=J/bvEtI1rpD6ggTJAVagu2f2E2bSwt1TyyZuliHknprEHnsdUGy79GctIdGUNWzBVy
-         yw9nL2nq40jV4rOvYTfPo4R/uhIzyCDBHJmAdYAu04V+MVv9fa4rgJOV+itnWiqbbcrL
-         AgMlCOKAFNQbDIvIMlcxI1tVYe/wGNaSUHB+OQy/v7beavwYm/Veq34AMk+MR2AJ6+X5
-         UH/Y0ISzeXHWiyWXXSpkCExEOZ2zVq3W8m1gw1XxQDodz3iObfqJe7RewjKbVjRCihcc
-         JG2hOZaYAJJWdkE/0uL9RBSquX9bwO239aTy0nC/NhWcuPE8hqpHYri6PtO616qlIomZ
-         kO4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU84DKLwiu/R/hWeoBAdA5uZMycJfcZIFfHXauAQiQWH6FocmIZANNjtoEOIYG1fjMFI5ipfNT8S/pw7KoH0KCSCWBaSpyqYV8ap2J8
-X-Gm-Message-State: AOJu0Yy1I2WQXWNiF71OsH8YHE0W70qs6Y8uMnoXjjBqRtWh7R+djFys
-	itW9hYzV3vK/ekQ/mTTVqMsCAoaFqXgMiWUu9dpw6JeeVK+1l+yq
-X-Google-Smtp-Source: AGHT+IF/8gi3Mz4DsUNG9UiAYAkoJ0FEr706604n2lQS02Byp3AL/IAe8zts+2DvzxbR9MZ9cSUcCg==
-X-Received: by 2002:a17:902:e5ca:b0:1fb:3d7:1d01 with SMTP id d9443c01a7336-1ff048e4fd6mr30034875ad.59.1722121611214;
-        Sat, 27 Jul 2024 16:06:51 -0700 (PDT)
-Received: from cbuild.incus (h101-111-009-128.hikari.itscom.jp. [101.111.9.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f274a7sm55881145ad.209.2024.07.27.16.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 16:06:50 -0700 (PDT)
-From: Takero Funaki <flintglass@gmail.com>
-To: Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Takero Funaki <flintglass@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] mm: zswap: fix global shrinker error handling logic
-Date: Sat, 27 Jul 2024 23:06:30 +0000
-Message-ID: <20240727230635.3170-3-flintglass@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240727230635.3170-1-flintglass@gmail.com>
-References: <20240727230635.3170-1-flintglass@gmail.com>
+        bh=B4yEmtYniciXoEKJkwuK70Tje2jx27N9dXaU+niH9co=;
+        b=KC1xuN3k/vfS60zkL1KLtDVOARa37qFRPBHEow3A87iV+WgFGZ3QRbhPZws3wF1oPG
+         cjxDPAK5FIuFLk/q8uEQ3RQY5KUNAmbUgA8fzkc59+cIyOYXTiKLv9pk3GopRsDDSYzc
+         iW0N7wWMl0oBjmOGI3FTuqS7dkcVUH9WrvaImITSKINUY6NcpHIjprtRy8wvowbfROhN
+         grn91ymw8HD38zF7VkqLfJtqpnJReGw58qg2tTO1zUsNz5XttdFDwYCBdLY3fM1GMckO
+         uCduyHHhlvZjudhqgULy2ekWs9qLrIZVmMt3uDbaHaq80cAOjKUs9REU1jaXFzEKo+d0
+         JEIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZD5f7FPUihk8Qi0vCGg5toPFC+a1pIgcctprfuafri4fE3BwwAW6tOLesZT3D6Rve+QhHT2nPlEVjLXjCLggId7TFXO1TDFNstSdz
+X-Gm-Message-State: AOJu0YxCA9kQx73G6CB5oSwExrvv4kufm22ZyLvF4GX6mz1Otl5L3UDe
+	Rm5E6/egWBNAHkqMztjUwl/F3TEW5nthcY0MVqQMRE0qzwpK8cZ7ra9/W6xt6JFmOgVAFc5tc7N
+	/FFicKX/gebkAjnla+UW5mQORn8oFw1nEadl0
+X-Google-Smtp-Source: AGHT+IG1neJarxOVV2rFw+9+KTUgqO5z/Fa+YpV+zqf45OHqYeGWexbbXnHWKJ38xmTobbKVm/7ogvEDWeuam+aKcGA=
+X-Received: by 2002:a05:6902:10c1:b0:e0b:5fdb:1cd9 with SMTP id
+ 3f1490d57ef6-e0b5fdb302emr2156487276.35.1722122649068; Sat, 27 Jul 2024
+ 16:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231212204647.2170650-1-sagis@google.com> <20231212204647.2170650-17-sagis@google.com>
+ <1f9d2b41-95ad-42ca-b1e5-70212b93a9c1@linux.intel.com> <ZeawWs9cAhjLb/YO@yzhao56-desk.sh.intel.com>
+In-Reply-To: <ZeawWs9cAhjLb/YO@yzhao56-desk.sh.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Sat, 27 Jul 2024 18:23:56 -0500
+Message-ID: <CAAhR5DGBkrRaG2OmrOnKy6wRhxi0-MxiPthEuRfkGY9ZGWR7PQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 16/29] KVM: selftests: TDX: Add TDX HLT exit test
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Binbin Wu <binbin.wu@linux.intel.com>, linux-kselftest@vger.kernel.org, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Peter Gonda <pgonda@google.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Chao Peng <chao.p.peng@linux.intel.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Roger Wang <runanwang@google.com>, Vipin Sharma <vipinsh@google.com>, jmattson@google.com, 
+	dmatlack@google.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch fixes the zswap global shrinker, which did not shrink the
-zpool as expected.
+On Tue, Mar 5, 2024 at 12:10=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wro=
+te:
+>
+> On Sat, Mar 02, 2024 at 03:31:07PM +0800, Binbin Wu wrote:
+> > On 12/13/2023 4:46 AM, Sagi Shahar wrote:
+> > > The test verifies that the guest runs TDVMCALL<INSTRUCTION.HLT> and t=
+he
+> > > guest vCPU enters to the halted state.
+> > >
+> > > Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+> > > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> > > Signed-off-by: Ryan Afranji <afranji@google.com>
+> > > ---
+> > >   .../selftests/kvm/include/x86_64/tdx/tdx.h    |  2 +
+> > >   .../selftests/kvm/lib/x86_64/tdx/tdx.c        | 10 +++
+> > >   .../selftests/kvm/x86_64/tdx_vm_tests.c       | 78 ++++++++++++++++=
++++
+> > >   3 files changed, 90 insertions(+)
+> > >
+> > > diff --git a/tools/testing/selftests/kvm/include/x86_64/tdx/tdx.h b/t=
+ools/testing/selftests/kvm/include/x86_64/tdx/tdx.h
+> > > index 85ba6aab79a7..b18e39d20498 100644
+> > > --- a/tools/testing/selftests/kvm/include/x86_64/tdx/tdx.h
+> > > +++ b/tools/testing/selftests/kvm/include/x86_64/tdx/tdx.h
+> > > @@ -8,6 +8,7 @@
+> > >   #define TDG_VP_VMCALL_GET_TD_VM_CALL_INFO 0x10000
+> > >   #define TDG_VP_VMCALL_REPORT_FATAL_ERROR 0x10003
+> > > +#define TDG_VP_VMCALL_INSTRUCTION_HLT 12
+> > >   #define TDG_VP_VMCALL_INSTRUCTION_IO 30
+> > >   #define TDG_VP_VMCALL_INSTRUCTION_RDMSR 31
+> > >   #define TDG_VP_VMCALL_INSTRUCTION_WRMSR 32
+> > > @@ -20,5 +21,6 @@ uint64_t tdg_vp_vmcall_get_td_vmcall_info(uint64_t =
+*r11, uint64_t *r12,
+> > >                                     uint64_t *r13, uint64_t *r14);
+> > >   uint64_t tdg_vp_vmcall_instruction_rdmsr(uint64_t index, uint64_t *=
+ret_value);
+> > >   uint64_t tdg_vp_vmcall_instruction_wrmsr(uint64_t index, uint64_t v=
+alue);
+> > > +uint64_t tdg_vp_vmcall_instruction_hlt(uint64_t interrupt_blocked_fl=
+ag);
+> > >   #endif // SELFTEST_TDX_TDX_H
+> > > diff --git a/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx.c b/tools=
+/testing/selftests/kvm/lib/x86_64/tdx/tdx.c
+> > > index 88ea6f2a6469..9485bafedc38 100644
+> > > --- a/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx.c
+> > > +++ b/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx.c
+> > > @@ -114,3 +114,13 @@ uint64_t tdg_vp_vmcall_instruction_wrmsr(uint64_=
+t index, uint64_t value)
+> > >     return __tdx_hypercall(&args, 0);
+> > >   }
+> > > +
+> > > +uint64_t tdg_vp_vmcall_instruction_hlt(uint64_t interrupt_blocked_fl=
+ag)
+> > > +{
+> > > +   struct tdx_hypercall_args args =3D {
+> > > +           .r11 =3D TDG_VP_VMCALL_INSTRUCTION_HLT,
+> > > +           .r12 =3D interrupt_blocked_flag,
+> > > +   };
+> > > +
+> > > +   return __tdx_hypercall(&args, 0);
+> > > +}
+> > > diff --git a/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c b/tool=
+s/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > > index 5db3701cc6d9..5fae4c6e5f95 100644
+> > > --- a/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > > +++ b/tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> > > @@ -721,6 +721,83 @@ void verify_guest_msr_writes(void)
+> > >     printf("\t ... PASSED\n");
+> > >   }
+> > > +/*
+> > > + * Verifies HLT functionality.
+> > > + */
+> > > +void guest_hlt(void)
+> > > +{
+> > > +   uint64_t ret;
+> > > +   uint64_t interrupt_blocked_flag;
+> > > +
+> > > +   interrupt_blocked_flag =3D 0;
+> > > +   ret =3D tdg_vp_vmcall_instruction_hlt(interrupt_blocked_flag);
+> > > +   if (ret)
+> > > +           tdx_test_fatal(ret);
+> > > +
+> > > +   tdx_test_success();
+> > > +}
+> > > +
+> > > +void _verify_guest_hlt(int signum);
+> > > +
+> > > +void wake_me(int interval)
+> > > +{
+> > > +   struct sigaction action;
+> > > +
+> > > +   action.sa_handler =3D _verify_guest_hlt;
+> > > +   sigemptyset(&action.sa_mask);
+> > > +   action.sa_flags =3D 0;
+> > > +
+> > > +   TEST_ASSERT(sigaction(SIGALRM, &action, NULL) =3D=3D 0,
+> > > +               "Could not set the alarm handler!");
+> > > +
+> > > +   alarm(interval);
+> > > +}
+> > > +
+> > > +void _verify_guest_hlt(int signum)
+> > > +{
+> > > +   struct kvm_vm *vm;
+> > > +   static struct kvm_vcpu *vcpu;
+> > > +
+> > > +   /*
+> > > +    * This function will also be called by SIGALRM handler to check =
+the
+> > > +    * vCPU MP State. If vm has been initialized, then we are in the =
+signal
+> > > +    * handler. Check the MP state and let the guest run again.
+> > > +    */
+> > > +   if (vcpu !=3D NULL) {
+> >
+> > What if the following case if there is a bug in KVM so that:
+> >
+> > In guest, execution of tdg_vp_vmcall_instruction_hlt() return 0, but th=
+e
+> > vcpu is not actually halted. Then guest will call tdx_test_success().
+> >
+> > And the first call of _verify_guest_hlt() will call kvm_vm_free(vm) to =
+free
+> > the vm, which also frees the vcpu, and 1 second later, in this path vcp=
+u
+> > will
+> > be accessed after free.
+> >
+> Right. Another possibility is that if buggy KVM returns success to guest
+> without putting guest to halted state, the selftest will still print
+> "PASSED" because the second _verify_guest_hlt() (after waiting for 1s)
+> has no chance to get executed before the process exits.
+>
+It sounds like in both cases we're going to hit an assert at some
+point. If the VM was already freed then vcpu_mp_state_get will fail
+the ioctl and assert internally or crash the process. If the guest
+never halts and vcpu is still valid then the mp state assert will
+fire. Either way it would be pretty obvious that something is wrong.
 
-The issue addressed is that shrink_worker() did not distinguish between
-unexpected errors and expected errors, such as failed writeback from an
-empty memcg. The shrinker would stop shrinking after iterating through
-the memcg tree 16 times, even if there was only one empty memcg.
 
-With this patch, the shrinker no longer considers encountering an empty
-memcg, encountering a memcg with writeback disabled, or reaching the end
-of a memcg tree walk as a failure, as long as there are memcgs that are
-candidates for writeback. Systems with one or more empty memcgs will now
-observe significantly higher zswap writeback activity after the zswap
-pool limit is hit.
-
-To avoid an infinite loop when there are no writeback candidates, this
-patch tracks writeback attempts during memcg tree walks and limits
-reties if no writeback candidates are found.
-
-To handle the empty memcg case, the helper function shrink_memcg() is
-modified to check if the memcg is empty and then return -ENOENT.
-
-Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-Signed-off-by: Takero Funaki <flintglass@gmail.com>
----
- mm/zswap.c | 41 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 7 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index e9b5343256cd..60c8b1232ec9 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1293,10 +1293,10 @@ static struct shrinker *zswap_alloc_shrinker(void)
- 
- static int shrink_memcg(struct mem_cgroup *memcg)
- {
--	int nid, shrunk = 0;
-+	int nid, shrunk = 0, scanned = 0;
- 
- 	if (!mem_cgroup_zswap_writeback_enabled(memcg))
--		return -EINVAL;
-+		return -ENOENT;
- 
- 	/*
- 	 * Skip zombies because their LRUs are reparented and we would be
-@@ -1310,20 +1310,34 @@ static int shrink_memcg(struct mem_cgroup *memcg)
- 
- 		shrunk += list_lru_walk_one(&zswap_list_lru, nid, memcg,
- 					    &shrink_memcg_cb, NULL, &nr_to_walk);
-+		scanned += 1 - nr_to_walk;
- 	}
-+
-+	if (!scanned)
-+		return -ENOENT;
-+
- 	return shrunk ? 0 : -EAGAIN;
- }
- 
- static void shrink_worker(struct work_struct *w)
- {
- 	struct mem_cgroup *memcg;
--	int ret, failures = 0;
-+	int ret, failures = 0, attempts = 0;
- 	unsigned long thr;
- 
- 	/* Reclaim down to the accept threshold */
- 	thr = zswap_accept_thr_pages();
- 
--	/* global reclaim will select cgroup in a round-robin fashion.
-+	/*
-+	 * Global reclaim will select cgroup in a round-robin fashion from all
-+	 * online memcgs, but memcgs that have no pages in zswap and
-+	 * writeback-disabled memcgs (memory.zswap.writeback=0) are not
-+	 * candidates for shrinking.
-+	 *
-+	 * Shrinking will be aborted if we encounter the following
-+	 * MAX_RECLAIM_RETRIES times:
-+	 * - No writeback-candidate memcgs found in a memcg tree walk.
-+	 * - Shrinking a writeback-candidate memcg failed.
- 	 *
- 	 * We save iteration cursor memcg into zswap_next_shrink,
- 	 * which can be modified by the offline memcg cleaner
-@@ -1361,9 +1375,14 @@ static void shrink_worker(struct work_struct *w)
- 		spin_unlock(&zswap_shrink_lock);
- 
- 		if (!memcg) {
--			if (++failures == MAX_RECLAIM_RETRIES)
-+			/*
-+			 * Continue shrinking without incrementing failures if
-+			 * we found candidate memcgs in the last tree walk.
-+			 */
-+			if (!attempts && ++failures == MAX_RECLAIM_RETRIES)
- 				break;
- 
-+			attempts = 0;
- 			goto resched;
- 		}
- 
-@@ -1371,8 +1390,16 @@ static void shrink_worker(struct work_struct *w)
- 		/* drop the extra reference */
- 		mem_cgroup_put(memcg);
- 
--		if (ret == -EINVAL)
--			break;
-+		/*
-+		 * There are no writeback-candidate pages in the memcg.
-+		 * This is not an issue as long as we can find another memcg
-+		 * with pages in zswap. Skip this without incrementing attempts
-+		 * and failures.
-+		 */
-+		if (ret == -ENOENT)
-+			continue;
-+		++attempts;
-+
- 		if (ret && ++failures == MAX_RECLAIM_RETRIES)
- 			break;
- resched:
--- 
-2.43.0
-
+> > > +           struct kvm_mp_state mp_state;
+> > > +
+> > > +           vcpu_mp_state_get(vcpu, &mp_state);
+> > > +           TEST_ASSERT_EQ(mp_state.mp_state, KVM_MP_STATE_HALTED);
+> > > +
+> > > +           /* Let the guest to run and finish the test.*/
+> > > +           mp_state.mp_state =3D KVM_MP_STATE_RUNNABLE;
+> > > +           vcpu_mp_state_set(vcpu, &mp_state);
+> > > +           return;
+> > > +   }
+> > > +
+> > > +   vm =3D td_create();
+> > > +   td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> > > +   vcpu =3D td_vcpu_add(vm, 0, guest_hlt);
+> > > +   td_finalize(vm);
+> > > +
+> > > +   printf("Verifying HLT:\n");
+> > > +
+> > > +   printf("\t ... Running guest\n");
+> > > +
+> > > +   /* Wait 1 second for guest to execute HLT */
+> > > +   wake_me(1);
+> > > +   td_vcpu_run(vcpu);
+> > > +
+> > > +   TDX_TEST_ASSERT_SUCCESS(vcpu);
+> > > +
+> > > +   kvm_vm_free(vm);
+> > > +   printf("\t ... PASSED\n");
+> > > +}
+> > > +
+> > > +void verify_guest_hlt(void)
+> > > +{
+> > > +   _verify_guest_hlt(0);
+> > > +}
+> > >   int main(int argc, char **argv)
+> > >   {
+> > > @@ -740,6 +817,7 @@ int main(int argc, char **argv)
+> > >     run_in_new_process(&verify_guest_reads);
+> > >     run_in_new_process(&verify_guest_msr_writes);
+> > >     run_in_new_process(&verify_guest_msr_reads);
+> > > +   run_in_new_process(&verify_guest_hlt);
+> > >     return 0;
+> > >   }
+> >
+> >
 
