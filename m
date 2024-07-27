@@ -1,51 +1,56 @@
-Return-Path: <linux-kernel+bounces-263998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A922F93DDAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AE193DDB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB93283A56
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EFB1C2183C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436DB3B784;
-	Sat, 27 Jul 2024 07:32:16 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC5338F97;
+	Sat, 27 Jul 2024 07:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3HVQr6x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DB52629D
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 07:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FAC20B0F;
+	Sat, 27 Jul 2024 07:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722065535; cv=none; b=Qi3QT65tVM0uS+z3IKC1jLygIu0/liCjEDEW6/kPmuGWSU3j2mZsJIFlgURvd1m+umgtcBDcLgZUqtk7HoMaPg0o7N56nm15O4iZi5Z3ysljRZsGhGOr3w0blm1fJ+pqk5Z6P/plkOagtWq75mt9Oxn2ix9SzyVnviDIBdTgjVU=
+	t=1722066335; cv=none; b=XFzTcST0VBdp4bY4PVwlcPMrpXlOS+BNk5JHPeruOkGy8qyNCWxZ+WdNIrKurj6o4NzB0aFqTk9KJk+NSTdSALw3FG1wIApPryDUAhvSory8aJrfH5mGHxgrTNg+gjKsq38z1X1AW/MwFo+1pFwkrun004NtSICgt2cZsNBQzmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722065535; c=relaxed/simple;
-	bh=qFXj9W8JokV87MhzXDZ6DRC24UoUteMdkizHF1yMirU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f501RKXR4o/xbE4QD+xLvnDfvfLIhakhG6KJ/7LNJqwpmbWmhMig9rMz1DUpacJvY0PNDSIwR9CHWS3pac/R2p2K1hzdoyA+l74lztXTDOC/F0Yf+A3Y60oFYwgt8i/B6iZAGbOnSVhW0dMtEQrnxXPEzuce6yo69pFyB0mrIbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WWGXY5XrxzxV6F;
-	Sat, 27 Jul 2024 15:31:57 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id E2DDD1800A1;
-	Sat, 27 Jul 2024 15:32:03 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 27 Jul
- 2024 15:32:03 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <maz@kernel.org>, <tglx@linutronix.de>, <joey.gouly@arm.com>,
-	<mark.rutland@arm.com>, <will@kernel.org>, <catalin.marinas@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] irqchip/gic-v3: Remove asmlinkage for gic_handle_irq()
-Date: Sat, 27 Jul 2024 15:36:48 +0800
-Message-ID: <20240727073648.1042377-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722066335; c=relaxed/simple;
+	bh=atqhpQgieqR12n8JuZM+c2ZwAaiSuInW49HRgevi5JY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JSgPzvEnRspXsNmlIc1ZbVqPguyRjvvPkG2kvYH4k6mGk4A7z0HqtYXXsAucwKMJKNgFoghaLXxpcs3jCZ3/mqMz0WzCGC7IpvPN77mDA/4UGtxn8220i8IVAgcdBa/bIRUDRbxtFAsMUltgozkmxozZhvRUAjpGnToFNULC7No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3HVQr6x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68A7C32781;
+	Sat, 27 Jul 2024 07:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722066334;
+	bh=atqhpQgieqR12n8JuZM+c2ZwAaiSuInW49HRgevi5JY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B3HVQr6x2L4jelPTcGTjlaFzXma5OofaWAzpsrRtsyQS/a/pUobFbXri9cw2JxBjs
+	 TtM9IEo3758c28I2OLsfS+puaBaNWfEcrS9bOCExhSk3jv7lQhH8FqsArUnwxUkyKO
+	 AQDmm8nlr3YazsDHCy+yFv/J/WhG6o9DKU4S/8YrEbe1S5xWPorvIbsxJbMV17gOlv
+	 Gg+9nR+t9Awwt7bog6fn/RMlH2ewwpCKbMP2JLdCE1V1SchGrKUVMSLXoAu448OYbo
+	 nvOvETxc2QA9wkgcgOXUKQODJOo84UpjOIrbWQ1rT2tLpiwpH5k1OpxDASSqx2iRVk
+	 EdFLKPTvsMHwg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ben Hutchings <ben@decadent.org.uk>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 0/4] kbuild: cross-compile linux-headers package
+Date: Sat, 27 Jul 2024 16:42:00 +0900
+Message-ID: <20240727074526.1771247-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,34 +58,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
 
-Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
-the gic_handle_irq() is only called by C functions, so remove
-the asmlinkage.
 
-Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/irqchip/irq-gic-v3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series makes cross-built linux-headers package usable in the
+installed system. Currently, host programs in it are built for the
+build machine instead of the target architecture.
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index c19083bfb943..0efa3443c323 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
- 	__gic_handle_nmi(irqnr, regs);
- }
- 
--static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
-+static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
- {
- 	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
- 		__gic_handle_irq_from_irqsoff(regs);
+The first two patches refactors modpost. The endianness in modpost is
+currently determined at compile-time, but the build machine cannot
+execute scripts/mod/mk_elfconfig compiled for a forein architecture.
+
+The last patch rebuilds scripts/ for the target architecture.
+
+
+
+Masahiro Yamada (4):
+  modpost: remove unused HOST_ELFCLASS
+  modpost: detect endianness on run-time
+  kbuild: slim down package for building external modules
+  kbuild: cross-compile linux-headers package when possible
+
+ scripts/mod/mk_elfconfig.c           | 25 -------------
+ scripts/mod/modpost.c                | 36 +++++++++++++++++++
+ scripts/mod/modpost.h                | 13 +++----
+ scripts/package/install-extmod-build | 54 +++++++++++++++++++++++++---
+ 4 files changed, 89 insertions(+), 39 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
