@@ -1,114 +1,220 @@
-Return-Path: <linux-kernel+bounces-264143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C2193DF71
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DA593DF79
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64247B211C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF93E1F21960
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA3080BEE;
-	Sat, 27 Jul 2024 12:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCE139568;
+	Sat, 27 Jul 2024 13:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b="haWmD0Cn"
-Received: from outgoing2021.csail.mit.edu (outgoing2021.csail.mit.edu [128.30.2.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPkBEqTL"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD0F4204B;
-	Sat, 27 Jul 2024 12:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.30.2.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FF46F303;
+	Sat, 27 Jul 2024 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722084813; cv=none; b=gvadUY6pJBDltgMh0I3oN+pI+cVnjrJOflfFoSeACiBuz67zEA48bLBWb1Xxt99XbYvBibV49kPT3lIZ9+9PWjYk7wAVRbtFwWn/+eqM1xu+0kHUi4DoryPpvleKGleVYxE7ZTEVgqaYWlzc15TJWFou54eveXvuDmASl1O9VW4=
+	t=1722085227; cv=none; b=EyCGuebSOEy6tYjQuGp46wHF3JdC70tTPsfjK6lphcopvSw2iGQT33fuLv8bBhGimCajL2rdhElOTEKBYPlvvyeK0nnvP83sd+pnNpPQBtRwt3dEibU0MsxKf9RFxsxflZx3LFSRtVq1eO/FPlQDAYrlZhf8a5nu9CNog9JOHmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722084813; c=relaxed/simple;
-	bh=43nsIiMLcI0BhYal9OGjHJm5ys+DnQ1ANMeM2pJt9Fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7SjgTBSGMX+hcX8l2I5vfPuIwbQCWcoIaq/JosfqYgr8u5IE0SsNpkzEidH5qbnfA5Pw2MnHfJzRaYTphKSB5EJy1PNmBlrkmUIGY2epk1GXkhxKqDcUH+fjtbQkvFaYHTUPL1xcP9GH8S6onDCmrVYC1ICR9ZfO5EefWJYq44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu; spf=pass smtp.mailfrom=csail.mit.edu; dkim=pass (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b=haWmD0Cn; arc=none smtp.client-ip=128.30.2.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csail.mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=outgoing.csail.mit.edu; s=test20231205; h=In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JC33cJseZjIq4zuXKHq4PMMlt37bhXvQFX2NLrHqo4U=; t=1722084811; x=1722948811; 
-	b=haWmD0CnJQUK6FnTYPCpXEGzQrCJpvbo/+WEwtdTa6+Cfo65a7X4vEuscq5mu6cm3S85QKCO0la
-	I/x8bH6+pjPa7CbpqT7yKGzcUkDGo6Qu9wWLO+EgYrCIhQD9tvSOUcmzICu7kcWMZPScs/nOovSmO
-	8k2P0jHcnoDT1B4q6mSZFXoUhnXbAZpFL3iW0JYw6K8K6OVb84Ac9gcbQd31cfaXEiwsyWqRbSZpO
-	yuiAJziiaOuL8m8luhaGqnH5K4jGAkaXiu9Pc39x5ikpN2ZLx7r1yJaaEGXZsy08MOQ3HZkW1Yb1t
-	JX1CQsy/NqSmG71O/TygRetAFFGwCENa+E0A==;
-Received: from [172.179.10.40] (helo=csail.mit.edu)
-	by outgoing2021.csail.mit.edu with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <srivatsa@csail.mit.edu>)
-	id 1sXgvJ-00Ae4C-A1;
-	Sat, 27 Jul 2024 08:53:21 -0400
-Date: Sat, 27 Jul 2024 12:53:15 +0000
-From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: Dexuan Cui <decui@microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Saurabh Singh Sengar <ssengar@microsoft.com>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-Message-ID: <ZqTtu1Qdz9e9/Fnm@csail.mit.edu>
-References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
- <133be5cb-761e-4646-96ec-b6b53f0c1097@linux.microsoft.com>
- <20240725153519.GA21016@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SA1PR21MB1317797B68A7AFCD8D75650ABFB42@SA1PR21MB1317.namprd21.prod.outlook.com>
- <ZqNDjUALdN2Qtop6@csail.mit.edu>
- <20240726112619.GA10862@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1722085227; c=relaxed/simple;
+	bh=5thcGpGJ69XFlGA1JcPrbpuQqRrzWcuyzT0COcmxWqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FcY45OdE03SkKsLwarKQB5Iyf4cPAJmNDlFZQNfPmCz6ZsMJlj743Mm4PD1PxYYh/wZafpPli4PDmpI2D3KBCwhgfZwW3Kmautu82/4lR5FAVsUVzeY7HyhKylNSRp9vMlIMbvrTyUdex0apQSt3IKdKpoIJEdlnV/DKLMjCm/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPkBEqTL; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3db18102406so1285835b6e.1;
+        Sat, 27 Jul 2024 06:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722085224; x=1722690024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ke2b2wOLe+75TWmUjgmqpavix1co7pFeONNfWYeaTVs=;
+        b=TPkBEqTLMW6PzqSjCP5ushcYf6ZVdSakzLCdI9gMVpmN/AVyuewBKbRuw3a8er4kLm
+         rxKL9xv1O7h0VMa9fvZHmEiVW0fCFWCgQH33Bu+N2kZWtUNGAgB/5Zu7HjNbs3gc9axb
+         XS0FDrUNSs+oGYBlXKXo2oV2Tmw5arBnIoTwkfwHa17nhgfZGY+xC8uCfl9I/JdREVcj
+         WB2PNMFLwpZVmfEpxj+p/we2xghZeAHp4FGnMvXfZQBP2OxuzzOCQGhECy/yqtETbSSS
+         aMnipYFHR7/b9AWSB6R5jmnnFigTsy3Vv0bkqSV8NUl8And/GNUaLyU8HDQT3LA88dMD
+         WCrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722085224; x=1722690024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ke2b2wOLe+75TWmUjgmqpavix1co7pFeONNfWYeaTVs=;
+        b=hT9UefIvC/kBRtHcUNN58c1FEpSKJwskteONFuBLP/p9Z25Wh2YHIn+7G+z2mQ2TVj
+         UG8zv0tunvQ5FhhhSnjNl2h0k0JWuATaToODjDNc7gceKRuY3YPCpLGgIYK5bXErNGxY
+         ZopDUxNtEEG9D3V7tqdb0kFuhCew8WiCgOoQMFRkXJmX9frg/dnrTeqA/hFUVHu7T8KV
+         4jLcNXxoZO1/zN5/DNAFTzRfgC3XCGvTqGBSaaNHboXs8XA1hZ3XmUmkwrNTYbmt0G/g
+         EPCsQ2Db5dyLOFhZmp32RBQIV3178wp3E+hpskdYDeoT2NyUpAEYTqsxMUlgCrndQ7bB
+         5JcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHehAtDCE+j41a/I+qUGjg+jfrj5+79Czwa+Reb9jq42K/2Jl1QmQ9ZKV2WBQKB/hbqeWdq4aK708Ytip0F6TQRQr866BR1rbxyr/GsQGvgX/oQOrj9f7a4sQwACKDc8ls33CNNW8HztbZHm9yE523Sg63UkkiVB7Sj8vvla6hL4au7t8=
+X-Gm-Message-State: AOJu0YyriLW8AJZd2GNhQLXuTtUw3LdSQQN7MFASMTDD99BTfd3Qyns5
+	eJIf1jy29Z6ocIOoFn40zyZjSXyWK0rqgOGcpmAYtvnwMtJyrDNo
+X-Google-Smtp-Source: AGHT+IFugrwths5qXmiGrpyWRGPLjxYN9ABKLPzyxBbke/9wB2mDHVVUMREeBtaM84xUj8get90c5A==
+X-Received: by 2002:a05:6830:3c05:b0:703:6a3e:d3ca with SMTP id 46e09a7af769-70940c61394mr3405364a34.26.1722085224394;
+        Sat, 27 Jul 2024 06:00:24 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73b9b7dsm7231551a91.21.2024.07.27.06.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 06:00:24 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: nxp,lpc3220-gpio: Convert to dtschema
+Date: Sat, 27 Jul 2024 18:30:03 +0530
+Message-ID: <20240727130008.408772-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726112619.GA10862@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 26, 2024 at 04:26:19AM -0700, Saurabh Singh Sengar wrote:
-> On Fri, Jul 26, 2024 at 06:34:53AM +0000, Srivatsa S. Bhat wrote:
-> > On Fri, Jul 26, 2024 at 12:01:33AM +0000, Dexuan Cui wrote:
-> > > > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-> > > > Sent: Thursday, July 25, 2024 8:35 AM
-> > > > Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-> > > 
-> > > Without the patch, I think the current CPU uses IPIs to let the other
-> > > CPUs, one by one,  run the function calls, and synchronously waits
-> > > for the function calls to finish.
-> > > 
-> > > IMO the patch is not "Deferring per cpu tasks". "Defer" means "let it
-> > > happen later". Here it schedules work items to different CPUs, and
-> > > the work items immediately start to run on these CPUs.
-> > > 
-> > > I would suggest a more accurate subject:
-> > > Drivers: hv: vmbus: Run hv_synic_init() concurrently
-> > > 
-> > 
-> > It would be great to call out the "why" as well in the title,
-> > something like:
-> > 
-> > Drivers: hv: vmbus: Speed-up booting by running hv_synic_init() concurrently
-> 
-> Thanks, I can also rephrase it like below if sounds fine to you:
-> 
-> Drivers: hv: vmbus: Optimize boot time by concurrent execution of hv_synic_init()
-> 
+Convert the NXP LPC3220 SoC GPIO controller bindings to DT schema format.
 
-Sure, that sounds good too.
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-Regards,
-Srivatsa
-Microsoft Linux Systems Group
+--
+Changes in v2:
+  - Changed the file name to match the compatible string.
+  - Removed optional from the description of '#gpio-cells' as it was wrongly
+    present.
+---
+ .../devicetree/bindings/gpio/gpio_lpc32xx.txt | 43 ---------------
+ .../bindings/gpio/nxp,lpc3220-gpio.yaml       | 52 +++++++++++++++++++
+ 2 files changed, 52 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+deleted file mode 100644
+index 49819367a011..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-NXP LPC32xx SoC GPIO controller
+-
+-Required properties:
+-- compatible: must be "nxp,lpc3220-gpio"
+-- reg: Physical base address and length of the controller's registers.
+-- gpio-controller: Marks the device node as a GPIO controller.
+-- #gpio-cells: Should be 3:
+-   1) bank:
+-      0: GPIO P0
+-      1: GPIO P1
+-      2: GPIO P2
+-      3: GPIO P3
+-      4: GPI P3
+-      5: GPO P3
+-   2) pin number
+-   3) optional parameters:
+-      - bit 0 specifies polarity (0 for normal, 1 for inverted)
+-- reg: Index of the GPIO group
+-
+-Example:
+-
+-	gpio: gpio@40028000 {
+-		compatible = "nxp,lpc3220-gpio";
+-		reg = <0x40028000 0x1000>;
+-		gpio-controller;
+-		#gpio-cells = <3>; /* bank, pin, flags */
+-	};
+-
+-	leds {
+-		compatible = "gpio-leds";
+-
+-		led0 {
+-			gpios = <&gpio 5 1 1>; /* GPO_P3 1, active low */
+-			linux,default-trigger = "heartbeat";
+-			default-state = "off";
+-		};
+-
+-		led1 {
+-			gpios = <&gpio 5 14 1>; /* GPO_P3 14, active low */
+-			linux,default-trigger = "timer";
+-			default-state = "off";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml b/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+new file mode 100644
+index 000000000000..cea2f2bb2393
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/nxp,lpc3220-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC3220 SoC GPIO controller
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 3
++    description: |
++      1) bank:
++        0: GPIO P0
++        1: GPIO P1
++        2: GPIO P2
++        3: GPIO P3
++        4: GPI P3
++        5: GPO P3
++      2) pin number
++      3) flags:
++        - bit 0 specifies polarity (0 for normal, 1 for inverted)
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    gpio@40028000 {
++        compatible = "nxp,lpc3220-gpio";
++        reg = <0x40028000 0x1000>;
++        gpio-controller;
++        #gpio-cells = <3>; /* bank, pin, flags */
++    };
+-- 
+2.45.2
+
 
