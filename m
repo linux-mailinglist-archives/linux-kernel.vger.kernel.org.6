@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-263942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546E093DCF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:37:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ADA93DCF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C271F23E08
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:37:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46340B23235
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 01:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6290E1878;
-	Sat, 27 Jul 2024 01:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EC91878;
+	Sat, 27 Jul 2024 01:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="wc4b3fPj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AbMe2EeV"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qjxoUicB"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3917B186A
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 01:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237DC15BB
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 01:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722044225; cv=none; b=EpSNs4NHM2+qz6UgEAc7QTSR1EjyhWE1gcZDGmC1v+dG4fVp2tO7KHnYfCMAxVxlZFdScktR/PDFl2X08l29xOFppVymIuZSmIqIcUcy7A4gJNKKJ3Es+9DNoKczFHCl6hXuS7dR47d1lxMdVZQ4egHJ2YgpgNPHfztqEZ29fx4=
+	t=1722044564; cv=none; b=hNkwkau/eB7HKbwLtuEioN9ASx3bCTvSdMpki9a8Wi47ItMDoo3q3dloKoI08itxK7oTtFKW0GQElkD2cFfBrFr8ayNd/413mYx48VNmCbK7tIPQe2ELk4BdTvQj67HWBo3fjhaXRVQfvR67cP7AZL5a4h8ZPLJ1JrgnQKA2jS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722044225; c=relaxed/simple;
-	bh=tla3eDKFXJGxqzcKzzAWNc2HUqJWlZY9BWNhCnF5QJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CX7dsymduJFJcSJi29HxiCAUfaN26KqtKdl+0oASdzZvGbRl2WGuCgC2HJqTFtpB99MUEWq7NXQtMX+xNd1z2Hx9J9P7IWl4YauqnWRv/9rKYpqiG/6xarrbcCN+ZfROsE4EvMT7J7/B4qNI4QH0SfULGuAl037uMaxe0Z32Mh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=wc4b3fPj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AbMe2EeV; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 41D81114016B;
-	Fri, 26 Jul 2024 21:37:01 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 26 Jul 2024 21:37:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722044221; x=
-	1722130621; bh=aGQwEv9LAE+vilTM4phPNf8+PymlrONlm64LKRuFtL4=; b=w
-	c4b3fPjZm53KAK2Uw4xsZxjaaH/2UenhYFSYZl+eU7gH07x6OAXECHVvN8jI5eO8
-	6sa/iEdLpcedjWtJCSBu2U92s87f6gUCKy43ZmKIk1QhXVKi8L4S6XkJQV3YMLyZ
-	4k6D5buyb/NemzfZj9Ill0zl6NS6HuNnw2cVKkXjJd3NEO3FfgWYrDUVXM2zEay5
-	A68IJr40MqcFNB7HAki/xVAei8gdu8MKYNW8HHxCUOGgusl0gsGhYy7d6O6zrEIK
-	yxfJzn+0JS1kGkXHhBcssqp54ovoa8bqp7BdJrxqjUGEMIVHf31lFmMt+bHTbFlw
-	1xrvbelfNRsosb4QN4A1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722044221; x=1722130621; bh=aGQwEv9LAE+vilTM4phPNf8+Pyml
-	rONlm64LKRuFtL4=; b=AbMe2EeVgSv3RdzBf6296Q0lTzO09srcxtg5CqA9GDdj
-	yxLnvXaArevmmntXaS0gEnTCHChu0LrWcGIDwLNW1/eE/kkbhphgPFahAX/yvjir
-	DjDP8bX36/Epw7s03GxfV/YGXie6xdYpzX3H1pzoX0FlbingoEkqkt3tjSm5SxA8
-	L8EHGsiMnNkxWP/nTA4FHZlT9IIZ3NC9AsyONbOp2H0qthqL8m1Kh5/OkM+b2Cc4
-	++3yh3oKgD5bCz/LjHzOU5YxyK90RXJ+igohzgTTuZGw0V8xkHX6wQbgddT2jgVd
-	SM7HsCCyZOmCk68T4O7Ial8SIFY+AegS1kBOKfCqMw==
-X-ME-Sender: <xms:PU-kZvgB94znfxKW0nX52dssSTPLQq-coaUbeDcWBqXZYHUe5ow9RA>
-    <xme:PU-kZsDChhnArUqgaIeyaikCG8aTe2i18inrtDyjfLqKZ50GWbokGRoe9CfVoHZqh
-    nVLv5Ofd9ybVCYa820>
-X-ME-Received: <xmr:PU-kZvHDufHC1pRDYleAxm9WbONWkC6mjQhrSWFJUdCmnbsl9GLvfTNDUAtc5ui2KCR3bH8rgJ-WdL_reJpl82G2RkE4pS0mjUA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrieeigdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtre
-    dttddtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
-    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhud
-    ekffehkeffudduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhn
-    pehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggp
-    rhgtphhtthhopedt
-X-ME-Proxy: <xmx:PU-kZsRfMrdj-vjNQwsJu7xr2FHRXISP9YXRl7K3MRYt6K43LEW2tQ>
-    <xmx:PU-kZsyicL-_-C2V9_zTET7RpUiMrF-zijBwdcLj3F1M3zHxY7Hynw>
-    <xmx:PU-kZi41LzJr7Sr8mRnh4rPTCCWfxc49MDvWGghwlblQ2a-BOK9lmg>
-    <xmx:PU-kZhyK5iQTQx5jC4sJqygH3Ck-4Bsoyq7johAozONw_ENFAiobyg>
-    <xmx:PU-kZo_Sa_HyyBqylFxyWJE1zRen3bviUChgZYAkuLZI2Zoa5pLdk7fc>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 26 Jul 2024 21:36:59 -0400 (EDT)
-Date: Sat, 27 Jul 2024 10:36:57 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, gustavo@embeddedor.com
-Subject: Re: [PATCH] Revert "firewire: Annotate struct fw_iso_packet with
- __counted_by()"
-Message-ID: <20240727013657.GB163039@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, gustavo@embeddedor.com
-References: <20240725161648.130404-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1722044564; c=relaxed/simple;
+	bh=F1jC6e0yscKmoUQrnKK0B13Euq9ibniQly0rwP0K0cs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Ljrc87y8g0+ELYedswfEvoS5xvPhuc78Xcwlz72oQan1NXHWkyDU7Wg4jkyqJYnr0jRL5pyIWqYaLRu5Pv3Q9SCAh7Kpk7Lv2t+VzQJ4SfhAM54JyGWtWzKxL6EkLEfVfcknYHI2QYGa/Gpc/wLbzZkjAvxHhvAuYdLH5/CjKAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qjxoUicB; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722044551; bh=7SLdZ01xonqza949W0eAf//l/jirighpLzT6wAxM/GM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=qjxoUicBemrkQ0TWtCikHRP66+4zyppsp1stdrtsis9MnnfZ2c8GymwhGpAAvTvo8
+	 EUk1N/32irPC9OezW09Et/h48MSjNtVzRDgsWabm4tEH0Bku3ANLdNL/3wxQweEAuu
+	 5DsFKecMObf9BKk96EhuuW07+cMsBziamGTRcvVM=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id A9D1C086; Sat, 27 Jul 2024 09:42:29 +0800
+X-QQ-mid: xmsmtpt1722044549tyo4sxqvf
+Message-ID: <tencent_5D0479366FE42D1D6DD09554EA66ED9ACC0A@qq.com>
+X-QQ-XMAILINFO: NvKyM24IHTKSRwfinymltxKRndFXX3PzaRQbjdfp32yz1UVYoZ2EQxQRajW98W
+	 jNUfOUTZDE6Ydl47YwOjj5v2rYcTWmKNreLfvVbhdshJzR2JaazXQ9JXpSr6hracBgra6KxosLqu
+	 Cq7Sd5xAyCFc645Q6audB8EAOahAxW9USUs4IpzCYTHSD2poO9qk34Dl2kuBZ4Wvo6eBY71jPgy4
+	 UqsHbOs6J9gXB4xhkcqXK1vzIpfgrBDBidr5QB+2/p2VRnvqQUFheMRoxqHX7jXFaxox0LzfH6XH
+	 b3U2ZL5+5UNuyfyKCz+9gtCOPozxuzocrNAOpx/kiAphrR8FgfJkccYHp8je14Tl3+sdifjQZKqm
+	 hHHGya8196IHylfB/JEKsxNBAyX3aaAofo0NVvnO57xLuBSkrSUrLUqUQYTag7ORkbtk96ER+1UO
+	 NHUJPkmW983ldWNVrZhiyobOF0xOeMp7VCFN6R5nAOYUXC7HVvvkFdJc7oo2/Gip67D43c/nRK/B
+	 POoOawepPTOHdrAMTGqw5yIclZPSCVtgg0gwtsa3t82ln/jOFz3HJgJMEoEZZO6yBlhVujxNQWxE
+	 GhWiQkShe4IMHp+8T4FDRWGFqt3JGHqfSp0b20AJyD3PynhMSzNmXmgngZEqleKeZV3whjE4Dp6t
+	 2WK6HjXcEmJS250Ut/1gChGXo1gPRrUFSyrRS33i26ixo025I+5obi+eeMCODn6+jWB8CztyEfnt
+	 6DV5eJsJCm8u4b+Ya4B6PiT7duPStNAUb2A74dmMxGjb18JxiMBXJouscs3gy/tb764zIOI98L3C
+	 hZZaBnd/I5IHyB+fr8WSUWXYF1Ak5pCAhuGRSLxwnusS8OWa5NEbB3WPdeTK4v5tao1Ig1ypyyvw
+	 aYgPiEinCKhLRkWKvc/sTe6dgTP9iqGKrSTsI3IZ9AiVpWC/hyxmaJzRl5pEsOYc8S9PU8IsLcs8
+	 czjMKtya6ECxEYZf9Ncw==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: dave.kleikamp@oracle.com
+Cc: eadavis@qq.com,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	syzbot+dca05492eff41f604890@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] jfs: check if leafidx greater than num leaves per dmap tree
+Date: Sat, 27 Jul 2024 09:42:30 +0800
+X-OQ-MSGID: <20240727014229.2464364-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <c8b1c258-740a-412f-ae0b-4d68a53e698f@oracle.com>
+References: <c8b1c258-740a-412f-ae0b-4d68a53e698f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725161648.130404-1-o-takashi@sakamocchi.jp>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 26, 2024 at 01:16:48AM +0900, Takashi Sakamoto wrote:
-> This reverts commit d3155742db89df3b3c96da383c400e6ff4d23c25.
-> 
-> The header_length field is byte unit, thus it can not express the number of
-> elements in header field.
-> 
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> ---
->  include/linux/firewire.h | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/firewire.h b/include/linux/firewire.h
-> index 00abe0e5d602..1cca14cf5652 100644
-> --- a/include/linux/firewire.h
-> +++ b/include/linux/firewire.h
-> @@ -462,9 +462,8 @@ struct fw_iso_packet {
->  				/* rx: Sync bit, wait for matching sy	*/
->  	u32 tag:2;		/* tx: Tag in packet header		*/
->  	u32 sy:4;		/* tx: Sy in packet header		*/
-> -	u32 header_length:8;	/* Length of immediate header		*/
-> -				/* tx: Top of 1394 isoch. data_block    */
-> -	u32 header[] __counted_by(header_length);
-> +	u32 header_length:8;	/* Size of immediate header		*/
-> +	u32 header[];		/* tx: Top of 1394 isoch. data_block	*/
->  };
->  
->  #define FW_ISO_CONTEXT_TRANSMIT			0
+syzbot report a out of bounds in dbSplit, it because dmt_leafidx greater
+than num leaves per dmap tree, add a checking for dmt_leafidx in dbFindLeaf.
 
-Applied to for-linus branch in firewire subsystem tree[1], with slight
-change of comment. It would be sent to mainline today with another patch[2].
+Reported-and-tested-by: syzbot+dca05492eff41f604890@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=dca05492eff41f604890
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/jfs/jfs_dmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cb3cda1390ad..516bac758053 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -2976,6 +2976,8 @@ static int dbFindLeaf(dmtree_t *tp, int l2nb, int *leafidx, bool is_ctl)
+ 		 */
+ 		assert(n < 4);
+ 	}
++	if (le32_to_cpu(tp->dmt_leafidx) >= LPERDMAP)
++		return -ENOSPC;
+ 
+ 	/* set the return to the leftmost leaf describing sufficient
+ 	 * free space.
+-- 
+2.43.0
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git/log/?h=for-linus
-[2] https://lore.kernel.org/stable/20240725155640.128442-1-o-takashi@sakamocchi.jp/
-
-Regards
-
-Takashi Sakamoto
 
