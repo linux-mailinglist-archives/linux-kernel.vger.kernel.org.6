@@ -1,130 +1,200 @@
-Return-Path: <linux-kernel+bounces-263994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68A393DDA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD3293DDA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFA71F2283F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90FF51C217A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9972B376EC;
-	Sat, 27 Jul 2024 07:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00643381B9;
+	Sat, 27 Jul 2024 07:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b="IHpEi6Zg"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jR9Xk8dP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DFE2E62D
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 07:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853CD374C2
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 07:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722064974; cv=none; b=lJgLnp6vXR7v8YiAGCujj7KIytp/XOFWARhmKrEEOXF0uCEwlvhxlOVYfwLenwxNT1tZ/g4ssMejWCM7+g+FW5hn/Z2I8gT4yvoK74nFsW3Ki/GF/CCg0wFGcsjw5toCeisKczulyisDEE2X6p06FPvTig2EgAQhwxiDbX4zHx0=
+	t=1722065128; cv=none; b=JGHG+Y4zcblbjGaMUjcW1W1vDuNgH6M4h4qgU5WqchuZfQlxzRZhukfStDSn0jYFR+NmIqCB7oXTIPiL8TdoW/3Fu4FB2bNTS09dQavb3uW3wLzIvucSghvqw2Jtfj8ahUskoP1V2mRescKfG7NNSnHYlvinE0FQYgjoC+kz+YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722064974; c=relaxed/simple;
-	bh=/oV/zbGDKKiElb8p0MX0ZIo3k5eYk2ocCAxjwwHUZdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l6u/smWso7ILrLMXKTaxPC0F32kLAKXQa7T0oZimKlvzlv7dM+dh4M1gM/Vf3rFfEbWyHjdm3VFrPyeGEelDYw+GVaO+cEtsor+oCEYuCObhoQzpV14arHZHuyIEtaFQ/Qqp73Flksg0fY3wrQUhHYaHU1r9btAB/bba0EvzJPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in; spf=fail smtp.mailfrom=mitaoe.ac.in; dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b=IHpEi6Zg; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mitaoe.ac.in
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cd34c8c588so1132495a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 00:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mitaoe.ac.in; s=google; t=1722064973; x=1722669773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yTAe3Oq4Gtwe+aHW5T8I7GOgKOZZg0n4SEdM1OJIAzQ=;
-        b=IHpEi6ZgvmbNP/+0k6jCsvUppCxiv6vLbjuNXX+AlDnTra2umoYSgmbc7sPytoVzNV
-         0PFr1fQR2OpvzpYnc/OBdrn0DBW/Fm/bjIjyq6/aAnmPv812ml4OxmCMPcl6+zif3F8r
-         bwBB13ECvEB44yNHVO9Ayy9AmWuY1R03lx8kehCzlx21DeGcl7mhkRCNpuism2NcWJtx
-         i3/ea1NLsFV0Teddm7s1NRxKAOhGs8k8RFBQ3eWElMQnONjdXCwG4HywDsGPhegSfJ/z
-         6obymsLmk9u6BH0RjsIZmFKrvoABc1ktqvLRPVXBSVcbNffKddAsIvjKWBjEfR3ubHKQ
-         SaBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722064973; x=1722669773;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yTAe3Oq4Gtwe+aHW5T8I7GOgKOZZg0n4SEdM1OJIAzQ=;
-        b=TlLA0uxI7UAtUugWr0Y4l2ucqvGAgyUforkfXzVq5/TRVOYn0cqsPlP5FyRVhAN6Vj
-         n4NbyIw7pRYt47lFDMBhY2ZNovDHuhPcQt0Yg617O2lMQSW9IJ6g2/5uXmNOrw5W3fU/
-         MvnEjL+kWPFXENubyAlDapmnRVovQwLWYoVi++oR71ECDle2I6FqBRq4HqQakZofiGI/
-         HE0cXMPjZ437+AzOBEb5I/Bzg6tU8U42xgCPEcx8i9xVHpVg8kTphIsKnN4+VkVBq9GX
-         IAv7qxlaXZwtamS81Ib+fFxZ49zwd7rCjg660k9tCq2pQWbumpls2OnklaJv3Dro8YOH
-         Pxaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHQoJWzmawGh/8HzdWKoH/goalHSYPmkAaizwZMPGOpixA9vYMHOZR0zO6YQjKwGt2wuEPG3ZVtLfG8IlnTpR4aNbRRUAGnORd0kgh
-X-Gm-Message-State: AOJu0Yw6PIxnj66cEo1UFrp1NCLVzFZmoB0XtjOLvV2jO27edx5bptgu
-	BRRz9owdnYLAiB9I6866M7I4P20ebmWj+HSoUtbdjB0QSLi9f2vk9gzgbm9DmsQ=
-X-Google-Smtp-Source: AGHT+IHt10QY0pcBbWSUFi/9SgKeB4xClFMu2pDiosx+GuN7h/LiuLO82FiJUhv/WxmBCpUC+YMC+Q==
-X-Received: by 2002:a17:90b:4f46:b0:2c9:aea7:614f with SMTP id 98e67ed59e1d1-2cf7e2073c2mr1868283a91.24.1722064972694;
-        Sat, 27 Jul 2024 00:22:52 -0700 (PDT)
-Received: from localhost.localdomain ([152.58.18.158])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e8769sm6634537a91.42.2024.07.27.00.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 00:22:52 -0700 (PDT)
-From: mohitpawar@mitaoe.ac.in
-To: brauner@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mohit0404 <mohitpawar@mitaoe.ac.in>
-Subject: [PATCH] Fixed: fs: file_table_c: Missing blank line warnings and struct declaration improved
-Date: Sat, 27 Jul 2024 12:51:34 +0530
-Message-Id: <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
-References: <linux-fsdevel@vger.kernel.org>
- <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
-Reply-To: brauner@kernel.org jack@suse.cz
+	s=arc-20240116; t=1722065128; c=relaxed/simple;
+	bh=N8sbAXOrGNq9MafR41Ns3GNaJEO1tU2bnnRUrxQXi5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+TmFTbRRmONZx2QRxAGt0nQX8zvA9vL6nrtg1DbbEJVjcr6sdthPQYSaq+l6qdLRbaUtiOydXepE/s8lzYgPynf7GWlQn/FsNfOup/llJ9GeK3M20vRuQKLWr2khCYZWlgpXzCVS5Wajht1Mbzf1Zk4tfkMT1NdMhJoLKXo2Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jR9Xk8dP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722065126; x=1753601126;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N8sbAXOrGNq9MafR41Ns3GNaJEO1tU2bnnRUrxQXi5A=;
+  b=jR9Xk8dPSFmmk3kwVTLVJRDtn6FLgDcGiSfO5xQXL38o50t/HYpTXtcW
+   S0DhC98k57vMV6vQO+Zti9qHR/3zaiXqh+25EUUMQd0eeTKv5/7Hv0ngR
+   uum+5Qw9PvfAZPlwF7zt8R8J94AEGiBVkHw04VNH2hehhy2YanZX2Q2ww
+   Yu7/IM2/syidZLFCT0fth8kgrAPlrZak8kmBSfFgzbHqQf6gevNXTuZA9
+   yG+0w7XEaTWVEoWXRcVLUchKfwiRNlxIsEIgUXlKRMseERuM2Cdbp+S6V
+   A5gdDRlpjL8ai0mGlDTNwOba5zwaQq0lz8Nq6hl+jLfkfNuZNX0rMGOO2
+   w==;
+X-CSE-ConnectionGUID: SQLmF5qlTGCsrPSe44Vscg==
+X-CSE-MsgGUID: MoRFfE+aROOCxZ9ZfTsIXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="20051417"
+X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
+   d="scan'208";a="20051417"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 00:25:26 -0700
+X-CSE-ConnectionGUID: F7qawGQUTz2BRCzV8TI8Xw==
+X-CSE-MsgGUID: miuXKPi+SdyZwTPHTUeAVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
+   d="scan'208";a="58288846"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 27 Jul 2024 00:25:19 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXbno-000piS-07;
+	Sat, 27 Jul 2024 07:25:16 +0000
+Date: Sat, 27 Jul 2024 15:24:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tim Merrifield <tim.merrifield@broadcom.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+	Xin Li <xin3.li@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Kai Huang <kai.huang@intel.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, alex.james@broadcom.com,
+	doug.covelli@broadcom.com, jeffrey.sheldon@broadcom.com,
+	kevin.christopher@broadcom.com, aravind-as.srinivasan@broadcom.com,
+	ravindra.kumar@broadcom.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] Add prctl to allow userlevel TDX hypercalls
+Message-ID: <202407271528.NcCDP6PG-lkp@intel.com>
+References: <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
 
-From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+Hi Tim,
 
-Fixed-
-	WARNING: Missing a blank line after declarations
-	WARNING: Missing a blank line after declarations
-	Declaration format: improved struct file declaration format
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Mohit0404 <mohitpawar@mitaoe.ac.in>
----
- fs/file_table.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+[auto build test ERROR on tip/x86/vmware]
+[also build test ERROR on tip/x86/tdx linus/master v6.10 next-20240726]
+[cannot apply to tip/x86/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index ca7843dde56d..306d57623447 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
- 	register_sysctl_init("fs", fs_stat_sysctls);
- 	if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
- 		struct ctl_table_header *hdr;
-+
- 		hdr = register_sysctl_mount_point("fs/binfmt_misc");
- 		kmemleak_not_leak(hdr);
- 	}
-@@ -383,7 +384,10 @@ EXPORT_SYMBOL_GPL(alloc_file_pseudo_noaccount);
- struct file *alloc_file_clone(struct file *base, int flags,
- 				const struct file_operations *fops)
- {
--	struct file *f = alloc_file(&base->f_path, flags, fops);
-+	struct file *f;
-+
-+	f = alloc_file(&base->f_path, flags, fops);
-+
- 	if (!IS_ERR(f)) {
- 		path_get(&f->f_path);
- 		f->f_mapping = base->f_mapping;
+url:    https://github.com/intel-lab-lkp/linux/commits/Tim-Merrifield/Add-prctl-to-allow-userlevel-TDX-hypercalls/20240727-025221
+base:   tip/x86/vmware
+patch link:    https://lore.kernel.org/r/651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield%40broadcom.com
+patch subject: [PATCH v2 1/2] Add prctl to allow userlevel TDX hypercalls
+config: i386-buildonly-randconfig-003-20240727 (https://download.01.org/0day-ci/archive/20240727/202407271528.NcCDP6PG-lkp@intel.com/config)
+compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407271528.NcCDP6PG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407271528.NcCDP6PG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/kernel.h:23,
+                    from arch/x86/kernel/process.c:5:
+   arch/x86/kernel/process.c: In function 'get_coco_user_hcall_mode':
+>> arch/x86/kernel/process.c:1041:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   include/linux/bitops.h:45:37: note: in definition of macro 'bitop'
+       __builtin_constant_p((uintptr_t)(addr) != (uintptr_t)NULL) && \
+                                        ^~~~
+   arch/x86/kernel/process.c:1040:10: note: in expansion of macro 'test_bit'
+     return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+             ^~~~~~~~
+>> arch/x86/kernel/process.c:1041:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   include/linux/bitops.h:46:16: note: in definition of macro 'bitop'
+       (uintptr_t)(addr) != (uintptr_t)NULL &&   \
+                   ^~~~
+   arch/x86/kernel/process.c:1040:10: note: in expansion of macro 'test_bit'
+     return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+             ^~~~~~~~
+>> arch/x86/kernel/process.c:1041:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   include/linux/bitops.h:47:50: note: in definition of macro 'bitop'
+       __builtin_constant_p(*(const unsigned long *)(addr))) ? \
+                                                     ^~~~
+   arch/x86/kernel/process.c:1040:10: note: in expansion of macro 'test_bit'
+     return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+             ^~~~~~~~
+>> arch/x86/kernel/process.c:1041:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   include/linux/bitops.h:48:17: note: in definition of macro 'bitop'
+      const##op(nr, addr) : op(nr, addr))
+                    ^~~~
+   arch/x86/kernel/process.c:1040:10: note: in expansion of macro 'test_bit'
+     return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+             ^~~~~~~~
+>> arch/x86/kernel/process.c:1041:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   include/linux/bitops.h:48:32: note: in definition of macro 'bitop'
+      const##op(nr, addr) : op(nr, addr))
+                                   ^~~~
+   arch/x86/kernel/process.c:1040:10: note: in expansion of macro 'test_bit'
+     return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+             ^~~~~~~~
+   arch/x86/kernel/process.c: In function 'set_coco_user_hcall_mode':
+   arch/x86/kernel/process.c:1048:25: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+       &current->mm->context.flags);
+                            ^
+   arch/x86/kernel/process.c:1051:27: error: 'mm_context_t' {aka 'struct <anonymous>'} has no member named 'flags'
+         &current->mm->context.flags);
+                              ^
+   arch/x86/kernel/process.c: In function 'get_coco_user_hcall_mode':
+   arch/x86/kernel/process.c:1042:1: warning: control reaches end of non-void function [-Wreturn-type]
+    }
+    ^
+
+
+vim +1041 arch/x86/kernel/process.c
+
+  1037	
+  1038	static int get_coco_user_hcall_mode(void)
+  1039	{
+  1040		return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+> 1041				&current->mm->context.flags);
+  1042	}
+  1043	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
