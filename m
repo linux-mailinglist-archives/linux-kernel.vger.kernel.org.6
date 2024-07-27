@@ -1,173 +1,272 @@
-Return-Path: <linux-kernel+bounces-263965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC7193DD43
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2901C93DD45
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5E22819FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D195628472D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA481B80F;
-	Sat, 27 Jul 2024 04:36:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D423517C66;
+	Sat, 27 Jul 2024 04:44:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B295D2F2F;
-	Sat, 27 Jul 2024 04:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5645217577
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 04:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722054990; cv=none; b=q6kgJjkDuFFgdpzISKRp9BSnnE/CgLIlrqft/ALpGA5NrTE0u4bJvMef8icRTupXANR3qWru3+Fh2PVzrWI7JROUXxWAqJpvd3ow1nDmSh6twfzypVhK7IqTIXDbyN0mYFU+6Oc/3x599lyYUHstz+mOiMZivwtahJyW2TFw1xc=
+	t=1722055466; cv=none; b=OyebTHgHV1GthdIyN2aJwm9AZ7RfSlWHUQMTALVl1ifodc1MB8SDiWI9V5Mnn5JOekWTUbAyqOSHCjhPjGn00kObxu5hKTjsALdTzIC1v7doDSD2OY8RNLwWp5cI6gxeZaYJCtdksU49J8aUvzF+MmJCAxJg79aiUWfMJjh17Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722054990; c=relaxed/simple;
-	bh=+qxr+MmwJA4pD8/vtf0lGZ6jMOxTY7GW1bblbLD+OQ8=;
-	h=From:Subject:To:References:Cc:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lkqFo1c/rmf7naQFB92n3u22+FJZO+qFscYNLCX2l4RuqjtCj17foHJNc5Aqizd2unbachkrtR8sTnB23td6foN6FKlrjOoDCxez2QETioAwUngFZuugEG61lxSwGvlRXN0+CGSyH63/L10mN3Hy2l+ymCx2TLMgvp36Y9svR98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WWBdh3XHyz4f3jjy;
-	Sat, 27 Jul 2024 12:36:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id ED1211A0568;
-	Sat, 27 Jul 2024 12:36:16 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP1 (Coremail) with SMTP id cCh0CgBnBXc8eaRm+4r4BA--.1299S2;
-	Sat, 27 Jul 2024 12:36:16 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-Subject: Re: [PATCH] bpf, cpumap: Fix use after free of bpf_cpu_map_entry in
- cpu_map_enqueue
-To: =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
- Radoslaw Zielonek <radoslaw.zielonek@gmail.com>, yonghong.song@linux.dev
-References: <20240726180157.1065502-2-radoslaw.zielonek@gmail.com>
- <87h6ccnft1.fsf@toke.dk>
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <65fe18d2-bd9c-7d0e-0f15-c7dd855644d5@huaweicloud.com>
-Date: Sat, 27 Jul 2024 12:36:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1722055466; c=relaxed/simple;
+	bh=R6CqX1RjvbfppaU8D0sg4yPK6djNc7kCG/B6RiovlNk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Rj96iPlw/O5e2HUDAowTmF7T1fs1Q+KE+f73fRP7QV+iPOeGEWZgk+WTFJI3riOSMFF8kTUN0gW05Gi9TWS49jDzqhYyfm7KT/CLs5KUE1YZVDMt/FYhprtuGA5441Se54Bn9R9crar+gVaVUTGxoN5nyLk3CyeD44UotwS9K+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-398ae4327f1so30857755ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:44:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722055463; x=1722660263;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Oqi27XOY4Pg/pSy24EoTMF3Q4/sWKLZFSqoYwiD62I=;
+        b=Uu6r91b+j8iY7ULSyo2OXVlYA4c+8UWnWqYPUHQ3mB8vOSGCEa81aO2xFO/15MZJLB
+         PhGI7skL8Y0kcFRWzcLQ82ks7St9129HYpyV+wc3pQ0BiArDsHwmxKj4a1aIkEXBmARw
+         ak61YFDQrea5w/VCL9leckzDMFqmzzQ4DbRJ7qXFMVi9/FrS1haq6L23s6NtP1z7VtNH
+         H2JIl5LDZyH1JmJSVlA+oQkJQTebDON018yjyblnYC7lTSaatLBN48CnhGhDAK25udup
+         wL9kqadAlJZzEUAFGWwKor8n1r6122TW9HHJxdUHz4kmDQhOPrNsN26F+Vlb7u9c1B/E
+         lxIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGLjIHlG07kt6KParj5VL/oSOFgN4bMp6/Po9yYXPoYJQrjfWjsd9KGOUdURgAcM/a1IIYGEjmoq+F1rC0QH1xkQI+0W9AOagLOWwq
+X-Gm-Message-State: AOJu0YxIi7lZpy7RKUbwfQ7DDLoTpZS0fujWeZKRtVvHwFeRaoMf5nLk
+	jEpAW9rC9kyN/EPtZh9HEiuGgVgKoXhiu2stym/tCvp1q6NwUbk5tszZX/bTSjP2O8BwKPof38a
+	cJ5AytaaemRhODNpapj/KNx603JPeOBGDzniIPRUhk1eYjophmBersPs=
+X-Google-Smtp-Source: AGHT+IF5DEMeI+yLO8PMpOTLq3pKbKRsiV2C3baJb1TMZkWu+u/JEWxsy97hymOmV0HQCP0Z4BCMn9bjMNE5XPcpx754n8vv+G4A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87h6ccnft1.fsf@toke.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:cCh0CgBnBXc8eaRm+4r4BA--.1299S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFWrGw1DZryrGFW7WrWrAFb_yoWrJry8pF
-	4DtFyxGr48JrWjka4rZw1UAF1Iyw1vqw4rG34rKa48J3ZxWr93GFykKFZrZFy5urs5uF43
-	Xr4qqrW8uayqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
-	1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU0s2-5UUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+X-Received: by 2002:a05:6e02:2188:b0:381:37d6:e590 with SMTP id
+ e9e14a558f8ab-39aebd5c887mr1242685ab.2.1722055463518; Fri, 26 Jul 2024
+ 21:44:23 -0700 (PDT)
+Date: Fri, 26 Jul 2024 21:44:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002fda01061e334873@google.com>
+Subject: [syzbot] [erofs?] INFO: task hung in z_erofs_runqueue
+From: syzbot <syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com>
+To: chao@kernel.org, dhavale@google.com, huyue2@coolpad.com, 
+	jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2f8c4f506285 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=107c2903980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
+dashboard link: https://syzkaller.appspot.com/bug?extid=4fc98ed414ae63d1ada2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beafa5a4d4f9/disk-2f8c4f50.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e58aee7103bd/vmlinux-2f8c4f50.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/92d87af85377/bzImage-2f8c4f50.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+
+INFO: task syz.0.1705:11501 blocked for more than 143 seconds.
+      Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.1705      state:D stack:24064 pid:11501 tgid:11500 ppid:11214  flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ io_schedule+0x8d/0x110 kernel/sched/core.c:7401
+ folio_wait_bit_common+0x882/0x12b0 mm/filemap.c:1307
+ folio_lock include/linux/pagemap.h:1050 [inline]
+ z_erofs_fill_bio_vec fs/erofs/zdata.c:1470 [inline]
+ z_erofs_submit_queue fs/erofs/zdata.c:1650 [inline]
+ z_erofs_runqueue+0xa8c/0x2010 fs/erofs/zdata.c:1732
+ z_erofs_readahead+0xbae/0xf00 fs/erofs/zdata.c:1863
+ read_pages+0x180/0x840 mm/readahead.c:160
+ page_cache_ra_unbounded+0x6ce/0x7f0 mm/readahead.c:273
+ do_page_cache_ra mm/readahead.c:303 [inline]
+ force_page_cache_ra+0x280/0x2f0 mm/readahead.c:332
+ force_page_cache_readahead mm/internal.h:338 [inline]
+ generic_fadvise+0x528/0x840 mm/fadvise.c:106
+ vfs_fadvise mm/fadvise.c:185 [inline]
+ ksys_fadvise64_64 mm/fadvise.c:199 [inline]
+ __do_sys_fadvise64 mm/fadvise.c:214 [inline]
+ __se_sys_fadvise64 mm/fadvise.c:212 [inline]
+ __x64_sys_fadvise64+0x145/0x190 mm/fadvise.c:212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0148f77299
+RSP: 002b:00007f0149d48048 EFLAGS: 00000246 ORIG_RAX: 00000000000000dd
+RAX: ffffffffffffffda RBX: 00007f0149105f80 RCX: 00007f0148f77299
+RDX: 0000000000000000 RSI: 0000000000e0ffff RDI: 0000000000000004
+RBP: 00007f0148fe48e6 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f0149105f80 R15: 00007fffc733a208
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937660 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8e937660 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8e937660 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6620
+3 locks held by kworker/u8:6/1106:
+ #0: ffff88802a670948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff88802a670948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc900042bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc900042bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4194
+4 locks held by kworker/u8:9/2557:
+ #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc900094efd00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc900094efd00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8fc72ed0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
+ #3: ffffffff8e93ca38 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:296 [inline]
+ #3: ffffffff8e93ca38 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:958
+1 lock held by syslogd/4657:
+ #0: ffff8880b933ea18 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
+2 locks held by dhcpcd/4889:
+ #0: ffff88806adb9678 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: netlink_dump+0xcb/0xd80 net/netlink/af_netlink.c:2271
+ #1: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #1: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x99/0x200 net/core/rtnetlink.c:6506
+2 locks held by getty/4977:
+ #0: ffff88802f6520a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000312b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2211
+1 lock held by syz.0.1705/11501:
+ #0: ffff88801de44880 (mapping.invalidate_lock#9){.+.+}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:854 [inline]
+ #0: ffff88801de44880 (mapping.invalidate_lock#9){.+.+}-{3:3}, at: page_cache_ra_unbounded+0xf7/0x7f0 mm/readahead.c:225
+2 locks held by kworker/u9:3/12128:
+1 lock held by syz-executor/12808:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+1 lock held by syz-executor/12935:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+1 lock held by syz-executor/12997:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+1 lock held by syz-executor/13018:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+1 lock held by syz.0.1882/13025:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: __tun_chr_ioctl+0x48f/0x2400 drivers/net/tun.c:3120
+1 lock held by syz-executor/13026:
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc7fa48 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:379
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 4664 Comm: klogd Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:unwind_next_frame+0x6c5/0x2a00 arch/x86/kernel/unwind_orc.c:505
+Code: 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 93 1b 00 00 0f b6 5d 01 83 e3 07 48 89 df 48 c7 c6 80 32 7a 8e e8 ce 7a 52 00 48 85 db <74> 16 83 fb 01 75 1e e8 3f 75 52 00 4d 89 f7 48 8b 2c 24 e9 8c 14
+RSP: 0018:ffffc9000931f228 EFLAGS: 00000206
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffff8880604fbc00
+RDX: 0000000000000002 RSI: ffffffff8e7a3280 RDI: 0000000000000003
+RBP: ffffffff9140d5f0 R08: 0000000000000003 R09: ffffffff81410e12
+R10: 0000000000000002 R11: ffff8880604fbc00 R12: ffffffff90957014
+R13: dffffc0000000000 R14: 1ffff92001263e60 R15: ffffffff9140d5ec
+FS:  00007f3530fce380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe45b7c2270 CR3: 000000002dd0a000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ arch_stack_walk+0x151/0x1b0 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4158 [inline]
+ __kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4177
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:605
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:674
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6526
+ sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2815
+ unix_dgram_sendmsg+0x6d3/0x1f80 net/unix/af_unix.c:2030
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x223/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
+ __do_sys_sendto net/socket.c:2216 [inline]
+ __se_sys_sendto net/socket.c:2212 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f35311309b5
+Code: 8b 44 24 08 48 83 c4 28 48 98 c3 48 98 c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 26 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 7a 48 8b 15 44 c4 0c 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffeb7c54b88 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f35311309b5
+RDX: 0000000000000053 RSI: 0000555babb61eb0 RDI: 0000000000000003
+RBP: 0000555babb5a910 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
+R13: 00007f35312be212 R14: 00007ffeb7c54c88 R15: 0000000000000000
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 7/27/2024 2:55 AM, Toke Høiland-Jørgensen wrote:
-> Radoslaw Zielonek <radoslaw.zielonek@gmail.com> writes:
->
->> When cpu_map has been redirected, first the pointer to the
->> bpf_cpu_map_entry has been copied, then freed, and read from the copy.
->> To fix it, this commit introduced the refcount cpu_map_parent during
->> redirections to prevent use after free.
->>
->> syzbot reported:
->>
->> [   61.581464][T11670] ==================================================================
->> [   61.583323][T11670] BUG: KASAN: slab-use-after-free in cpu_map_enqueue+0xba/0x370
->> [   61.585419][T11670] Read of size 8 at addr ffff888122d75208 by task syzbot-repro/11670
->> [   61.587541][T11670]
->> [   61.588237][T11670] CPU: 1 PID: 11670 Comm: syzbot-repro Not tainted 6.9.0-rc6-00053-g0106679839f7 #27
->> [   61.590542][T11670] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.1 11/11/2019
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-SNIP
->> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
->> index a8e34416e960..0034a6d423b6 100644
->> --- a/kernel/bpf/cpumap.c
->> +++ b/kernel/bpf/cpumap.c
->> @@ -59,6 +59,9 @@ struct bpf_cpu_map_entry {
->>  	u32 cpu;    /* kthread CPU and map index */
->>  	int map_id; /* Back reference to map */
->>  
->> +	/* Used to end ownership transfer transaction */
->> +	struct bpf_map *parent_map;
->> +
->>  	/* XDP can run multiple RX-ring queues, need __percpu enqueue store */
->>  	struct xdp_bulk_queue __percpu *bulkq;
->>  
->> @@ -427,6 +430,7 @@ __cpu_map_entry_alloc(struct bpf_map *map, struct bpf_cpumap_val *value,
->>  	rcpu->cpu    = cpu;
->>  	rcpu->map_id = map->id;
->>  	rcpu->value.qsize  = value->qsize;
->> +	rcpu->parent_map = map;
->>  
->>  	if (fd > 0 && __cpu_map_load_bpf_program(rcpu, map, fd))
->>  		goto free_ptr_ring;
->> @@ -639,6 +643,14 @@ static int cpu_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
->>  
->>  static long cpu_map_redirect(struct bpf_map *map, u64 index, u64 flags)
->>  {
->> +	/*
->> +	 * Redirection is a transfer of ownership of the bpf_cpu_map_entry
->> +	 * During the transfer the bpf_cpu_map_entry is still in the map,
->> +	 * so we need to prevent it from being freed.
->> +	 * The bpf_map_inc() increments the refcnt of the map, so the
->> +	 * bpf_cpu_map_entry will not be freed until the refcnt is decremented.
->> +	 */
->> +	bpf_map_inc(map);
-> Adding refcnt increase/decrease in the fast path? Hard NAK.
->
-> The map entry is protected by RCU, which should prevent this kind of UAF
-> from happening. Looks like maybe there's a bug in the tun driver so this
-> RCU protection is not working?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-It will be possible if two different xdp programs set and use the value
-of ri->tgt_vlaue separately as shown below:
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-(1) on CPU 0: xdp program A invokes bpf_redirect_map() (e.g., through
-test_run) and sets ri->tgt_value as one entry in cpu map X
-(2) release the xdp program A and the cpu map X is freed.
-(3) on CPU 0: xdp program B doesn't invoke bpf_redirect_map(), but it
-returns XDP_REDIRECT, so the old value of ri->tgt_value is used by
-program B.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-I think the problem is fixed after the merge of commit 401cb7dae813
-("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT"). 
-Before the commit, bpf_redirect_info is a per-cpu variable, and
-ri->tgt_value is not cleared when the running of xdp program completes,
-so it is possible that one xdp program could use a stale tgt_values set
-by other xdp program. After changing bpf_redirect_info into a per-thread
-variable and clearing it after each run of xdp program, such sharing
-will be impossible.
-
-Zielonek, could you please help to check whether or not the problem is
-reproducible in latest bpf-next tree ?
-
->
-> -Toke
->
->
-> .
-
+If you want to undo deduplication, reply with:
+#syz undup
 
