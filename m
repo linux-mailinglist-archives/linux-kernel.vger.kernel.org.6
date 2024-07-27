@@ -1,191 +1,163 @@
-Return-Path: <linux-kernel+bounces-264149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB73893DF85
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:18:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F93093DF89
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB92282427
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE421C20C2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724D715666A;
-	Sat, 27 Jul 2024 13:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066CD15E5CD;
+	Sat, 27 Jul 2024 13:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pWRz/nh9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rttw5g6z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeWtmhWH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC414A05
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D6715D5C3;
+	Sat, 27 Jul 2024 13:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722086303; cv=none; b=mWPn+9anS0bJUcESo7F0eyUQcox9QqwyJAg8JoYQ1en3m4m82ix7Qm0YYaeeK5zEBt08HMP1HYWOPAm1H+LWv4Wbhu2j2g4JUyrgMpwGWugOcMK1LEyYlN3Zx72kcMO9sxh/fo5wrc4MNfz2RMyh1iTZvMeQLIqZHJjtouy8mOU=
+	t=1722086821; cv=none; b=KvX8c0iXSNxydiiyYtvzW2wALqoh5qdb14FqwrrGTerwmvyFVBz1ncCbtzcVpJR7ZJY0u/p6XfvhwHWrrAIZjOgebUkxd5sdCDK8hkw5wz24SAffOitIrBaEq9hjH0bXRbhh/1iqaSA00E25Cul579Cxxv8godotXXaX6pvdLT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722086303; c=relaxed/simple;
-	bh=CRo33d3+IlgOwgsl/An+cSbRS/RYy8uzvzF8IlC5E5Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BkpvD4AmOQ/3tTYsQ2tZ/M7VsQ37hGAyPPH0xaMTMDIEcDcA6yHnMc/KnFCPZKdKg9ZfD3c4zaVsDp4Xci0j+bn/IHEYGKLXHoT1fDurnEGH4is/gJKd5zXzSutrpoTxBB5dNudqTiwRp3H5iZjS47r79Amhx6U3Wu1rTt6vA3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pWRz/nh9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rttw5g6z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722086300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GEKPvWNF26FpZqYKEbY/3mMMPQLgcFsKgxOO0cpAK2k=;
-	b=pWRz/nh96iQ6qAFbysZJvPpkgVztzKcaRy5d7RNKuxyfqf0XYp7k5sN4sTdtTTvOQke+cQ
-	b3Mh0pXDiwKVS/Z5Me0pzp7CdnSja3Y75//fgfMS29v2H3c/uB+nsNSBGBZ8e9wmFFfRjt
-	NTUnkB2Vx01hYPxDGgOPMFo3mt+YwJLxZx3jM47v+JJ105Mv5iRCoDxoLIsQoxaFMojj/N
-	7jAwY0bq+ivXxdJKpDDId3QYEz1TE2HkHWg7tLp0QM7vGD9KW7YBi031Pr4GGuJkXXoWm3
-	6Ol9NxB6EGQg9OwITiLaiXmXyaKoMa+Aegf9XE8PnFxil52sGp3mqgVecxJm/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722086300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GEKPvWNF26FpZqYKEbY/3mMMPQLgcFsKgxOO0cpAK2k=;
-	b=rttw5g6zoRHss2u4A3uhSHOQvo9zfmOhcQ9gVPmptYqBPm+uE9YaAynTPRxWByR/L9dkWN
-	XCXWhl4B+iULnWBQ==
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org
-Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Vincent Chardon
- <vincent.chardon@elsys-design.com>
-Subject: Re: [RFC PATCH v3 20/37] irqchip: Add irq-kvx-itgen driver
-In-Reply-To: <20240722094226.21602-21-ysionneau@kalrayinc.com>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-21-ysionneau@kalrayinc.com>
-Date: Sat, 27 Jul 2024 15:18:19 +0200
-Message-ID: <87ttgbt1lw.ffs@tglx>
+	s=arc-20240116; t=1722086821; c=relaxed/simple;
+	bh=hfm/a0WJzKDzsAPXoH8vv1DrOwVXSTC9IQm/YjmsKwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fv7j6fIYUp/PWRRmcUdFEr1gNirAADV7E3ThJiWOLHSouFEO5htnVOHLQaZckWdYKxa9zBVAQ1Z1pUwUC6lEDfDhE5ovfeRQSDkpl0PGThPxFeRzhG1CRNsLPYnPy/Tq6YWhTMwYCfLOevuZIRcJc54gnuDZT21dJ8bpDeuvRho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeWtmhWH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A03C32781;
+	Sat, 27 Jul 2024 13:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722086820;
+	bh=hfm/a0WJzKDzsAPXoH8vv1DrOwVXSTC9IQm/YjmsKwY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jeWtmhWH/yI52jgw83HNHqf/C0n95czBcPQJ8+zBY9Yp9O15lM0i8caFgPM5JKlgS
+	 8m/+0ccWBODrczcueAG5AV9yttxJE93VQCVIlQyhHzwAD3pyWe1ucMWBjYrbJSC4ux
+	 oG4hB2MPwpVisc60xuQN2xQFvRg6FCAeEM95kynWO0wZaPrziphdcx8r5RVWCnmpup
+	 nOH8bppqn+K0AzRv8CQksd5PlO2g//ox7bsf53EGRz0hUNc2lWaRbK5Q3iPy4xFL+X
+	 ysvhhCPPZfit65qm1URaof0kmiTe3xsfwobDx1vyoo3l1Syt+yX1yIKOBve/hMU/R1
+	 GfPiWWyXZdiNQ==
+Date: Sat, 27 Jul 2024 14:26:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v3 3/9] spi: add support for hardware triggered
+ offload
+Message-ID: <20240727142652.45942b5c@jic23-huawei>
+In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-3-7420e45df69b@baylibre.com>
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+	<20240722-dlech-mainline-spi-engine-offload-2-v3-3-7420e45df69b@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22 2024 at 11:41, ysionneau@kalrayinc.com wrote:
-> +
-> +static void kvx_itgen_mask(struct irq_data *data)
+On Mon, 22 Jul 2024 16:57:10 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> This extends the SPI framework to support hardware triggered offloading.
+> This allows an arbitrary hardware trigger to be used to start a SPI
+> transfer that was previously set up with spi_offload_prepare().
+> 
+> Since the hardware trigger can happen at any time, this means the SPI
+> bus must be reserved for exclusive use as long as the hardware trigger
+> is enabled. Since a hardware trigger could be enabled indefinitely,
+> we can't use the existing spi_bus_lock() and spi_bus_unlock() functions,
+> otherwise this could cause deadlocks. So we introduce a new flag so that
+> any attempt to lock or use the bus will fail with -EBUSY as long as the
+> hardware trigger is enabled.
+> 
+> Peripheral drivers may need to control the trigger source as well. For
+> this, we introduce a new spi_offload_hw_trigger_get_clk() function that
+> can be used to get a clock trigger source. This is intended for used
+> by ADC drivers that will use the clock to control the sample rate.
+> Additional functions to get other types of trigger sources could be
+> added in the future.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> 
+> TODO: Currently, spi_bus_lock() always returns 0, so none of the callers
+> check the return value. All callers will need to be updated first before
+> this can be merged.
+
+If it's going to fail sometimes, probably needs a name that indicates
+that. I'm not sure spi_bus_try_lock() is appropriate though.
+
+> 
+> v3 changes:
+> * renamed enable/disable functions to spi_offload_hw_trigger_*mode*_...
+> * added spi_offload_hw_trigger_get_clk() function
+> * fixed missing EXPORT_SYMBOL_GPL
+> 
+> v2 changes:
+> 
+> This is split out from "spi: add core support for controllers with
+> offload capabilities".
+> 
+> Mark suggested that the standard SPI APIs should be aware that the
+> hardware trigger is enabled. So I've added some locking for this. Nuno
+> suggested that this might be overly strict though, and that we should
+> let each individual controller driver decide what to do. For our use
+> case though, I think we generally are going to have a single peripheral
+> on the SPI bus, so this seems like a reasonable starting place anyway.
+
+...
+
+> +int spi_offload_hw_trigger_mode_enable(struct spi_device *spi, const char *id)
 > +{
-> +	kvx_itgen_enable(data, 0x0);
-> +	irq_chip_mask_parent(data);
+> +	struct spi_controller *ctlr = spi->controller;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	if (!ctlr->offload_ops || !ctlr->offload_ops->hw_trigger_mode_enable)
+> +		return -EOPNOTSUPP;
+> +
+> +	mutex_lock(&ctlr->bus_lock_mutex);
+> +
+> +	if (ctlr->offload_hw_trigger_mode_enabled) {
+> +		mutex_unlock(&ctlr->bus_lock_mutex);
+> +		return -EBUSY;
+> +	}
+> +
+> +	spin_lock_irqsave(&ctlr->bus_lock_spinlock, flags);
+> +	ctlr->offload_hw_trigger_mode_enabled = true;
+Why do you need to take the spinlock when setting this to true, but not when
+setting it to fast (in the error path below)?
+
+> +	spin_unlock_irqrestore(&ctlr->bus_lock_spinlock, flags);
+> +
+> +	/* TODO: how to wait for empty message queue? */
+> +
+> +	mutex_lock(&ctlr->io_mutex);
+> +	ret = ctlr->offload_ops->hw_trigger_mode_enable(spi, id);
+> +	mutex_unlock(&ctlr->io_mutex);
+> +
+> +	if (ret) {
+> +		ctlr->offload_hw_trigger_mode_enabled = false;
+> +		mutex_unlock(&ctlr->bus_lock_mutex);
+> +		return ret;
+> +	}
+> +
+> +	mutex_unlock(&ctlr->bus_lock_mutex);
+> +
+> +	return 0;
 > +}
-> +
-> +static void kvx_itgen_unmask(struct irq_data *data)
-> +{
-> +	kvx_itgen_enable(data, 0x1);
-> +	irq_chip_unmask_parent(data);
+> 
 
-The ordering is asymmetric vs. mask().
-
-> +#define ITGEN_UNSUPPORTED_TYPES (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING)
-> +
-> +static int kvx_itgen_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> +				   unsigned int nr_irqs, void *args)
-> +{
-> +	int i, err;
-> +	struct irq_fwspec *fwspec = args;
-> +	int hwirq = fwspec->param[0];
-> +	int type = IRQ_TYPE_NONE;
-> +	struct kvx_itgen *itgen;
-> +
-> +	if (fwspec->param_count >= 2)
-> +		type = fwspec->param[1];
-> +
-> +	WARN_ON(type & ITGEN_UNSUPPORTED_TYPES);
-
-So you warn here and then continue without fixing type up?
-
-> +	err = platform_msi_device_domain_alloc(domain, virq, nr_irqs);
-
-This function is gone as of 6.11-rc1. Please convert to parent MSI domain.
-
-> +	if (err)
-> +		return err;
-> +
-
-> +static void kvx_itgen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
-> +{
-> +	struct irq_data *d = irq_get_irq_data(desc->irq);
-> +	struct kvx_itgen *itgen = irq_data_get_irq_chip_data(d);
-> +	uint32_t cfg_val = 0;
-> +	uintptr_t dest_addr = ((uint64_t) msg->address_hi << 32) |
-> +							msg->address_lo;
-> +	void __iomem *cfg = get_itgen_cfg_offset(itgen, irqd_to_hwirq(d));
-> +
-> +	/*
-> +	 * The address passed in the msi data is the address of the target
-> +	 * mailbox. The itgen however writes to the mailbox based on the mppa
-> +	 * id, cluster id and mailbox id instead of an address. So, extract
-> +	 * these information from the mailbox address.
-> +	 */
-> +
-> +	cfg_val |= (((kvx_sfr_get(PCR) & KVX_SFR_PCR_CID_MASK) >>
-> +				 KVX_SFR_PCR_CID_SHIFT)
-> +				<< KVX_ITGEN_CFG_TARGET_CLUSTER_SHIFT);
-
-Please create proper inline functions or macros for this 
-
-> +	cfg_val |= ((dest_addr >> MB_ADDR_MAILBOX_SHIFT) &
-> +		     KVX_ITGEN_CFG_TARGET_MAILBOX_MASK)
-> +		    << KVX_ITGEN_CFG_TARGET_MAILBOX_SHIFT;
-
-and this.
-
-> +	/*
-> +	 * msg->data contains the bit number to be written and is included in
-> +	 * the itgen config
-> +	 */
-> +	cfg_val |= ((msg->data << KVX_ITGEN_CFG_TARGET_SELECT_BIT_SHIFT)
-> +		    & KVX_ITGEN_CFG_TARGET_SELECT_BIT_MASK);
-> +
-> +	dev_dbg(&itgen->pdev->dev,
-> +		"Writing dest_addr %lx, value %x to cfg %p\n",
-> +		dest_addr, cfg_val, cfg);
-> +
-> +	writel(cfg_val, cfg);
-> +}
-> +
-> +static int
-> +kvx_itgen_device_probe(struct platform_device *pdev)
-
-Pointless line break.
-
-> +{
-> +	struct kvx_itgen *itgen;
-> +	u32 it_count;
-> +	struct resource *mem;
-> +
-> +	itgen = devm_kzalloc(&pdev->dev, sizeof(*itgen), GFP_KERNEL);
-> +	if (!itgen)
-> +		return -ENOMEM;
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	itgen->base = devm_ioremap_resource(&pdev->dev, mem);
-> +	if (IS_ERR(itgen->base))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(itgen->base),
-> +				     "Failed to ioremap itgen\n");
-> +
-> +	itgen->pdev = pdev;
-> +	it_count = readl(get_itgen_param_offset(itgen) +
-> +				KVX_ITGEN_PARAM_IT_NUM_OFFSET);
-> +
-> +	itgen->domain = platform_msi_create_device_domain(&pdev->dev,
-> +						   it_count,
-> +						   kvx_itgen_write_msg,
-> +						   &itgen_domain_ops,
-> +						   itgen);
-
-This function is gone as of 6.11-rc1. Please convert to parent MSI domain.
-
-Thanks,
-
-        tglx
 
