@@ -1,190 +1,87 @@
-Return-Path: <linux-kernel+bounces-263956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FEE93DD25
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:46:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A716293DD2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCB91F2437F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62074285411
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1CD4A0C;
-	Sat, 27 Jul 2024 03:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="doskXc/x"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C554A15;
+	Sat, 27 Jul 2024 04:01:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CCD197;
-	Sat, 27 Jul 2024 03:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB4A1FB5
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 04:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722051960; cv=none; b=ZCy8c2N4q05hoCaVKMMc8U4oyQKvU8qpi/ZQzWJI6ZqhFoYZFSghkj8/aRriKVQRA1VHXcwAUkTtPYn3tlwl9r/E/RESJKWF9E76LWFIPhltpf6yI5V/Pngt1jyIcMyA7R1R1V8DfbzWQ2T618Vg4dNpe1BhqszQlzdJquni9Yc=
+	t=1722052866; cv=none; b=Y0rGLPH1k2TimBADp5ecnzP66D9X/I7aw+5b811BVG82fo1KLJFuBHuzDHufC+OnoP9eH9I0uEwpXsHr9T7cD1uGb4zk194gNQ5wOHLziXn4+koPCJjc3xlYVjhfSijxAHuWq1dQTkLxJNC73HIRnOgy8ZFlvyu0aU9fk2fhevo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722051960; c=relaxed/simple;
-	bh=+6aRiZHMY2UwD1ptIzZl2dlB05/JayzoKzX0xOcUvZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nP28I6PtQzs0cYP2JPOfo5O1AhTXv03ei7S/s+o5tHxlxAmOVR6EUEfcQRPYeNeMu0wd6BXH4al7EkPGgS6smscsETMCCb4nAQGHYDS1F8My6HBR+hS3dM7lF+5/SjRnrPZMVkrAKdKWIYr4DI2Y1kEEbNyxUVN78SVoMi58Esc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=doskXc/x; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Iwm9lv3I5imfKYFcLqJtJ/Iu0ZLj1yI4POD9Lw39XuI=; b=doskXc/xybEr0BE1ibQySiEGLN
-	oMctDTJOwrit8ua2vRfXqlxXRD1gj+61yc6Ig6PAzVNU9rZgwFkxATHTSGKhLZqT22knFwf8RUnhI
-	Qx+U/oRATfvUxksFm/DgNmFXOsUzcZjkFlrjMImTtZGg0xDqSdYX0JGr0dxzkdLgOAVXXbyYWci/K
-	86BsDIFizCUwR4YDgEANTX2HkAN7U9eL8kM1pZ3NgMVVsDaF4ZzsPVVCYftrUeYOEIUfUUXdR2h1i
-	FLzjYhnFh44w1mxsDjvQzZqx+bTZICnSYZDCMG0FO82MnRkOrGw1//s+guZs9MI7RIdQIpFNh5My9
-	raHuj0cg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXYNV-0000000AyMm-0crs;
-	Sat, 27 Jul 2024 03:45:53 +0000
-Date: Sat, 27 Jul 2024 04:45:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <ZqRtcZHWFfUf6dfi@casper.infradead.org>
-References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net>
- <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
- <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net>
- <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
- <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
- <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+	s=arc-20240116; t=1722052866; c=relaxed/simple;
+	bh=VVK5qiiXHynEeUXP4H2skGGyzv5kDvTscRuofbVBMKg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pzmoUW2+5L60AwOqQNoUNrLw42e0hXMYKSnvtdm8LkCYf5KCN9Qq5zAdP19GjujWDhxMdmtx1jXd0OpWCBkSWExmwPmrssgBY0gcXjyksZxPFhkKVUqSPZuqFiFgaqfp639Q2mUyGyShD9L/6FDcYJrx+qMpU5PMMY0NthBfOuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f86fc9fdaso271858539f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 21:01:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722052864; x=1722657664;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JCn0UAQC5vYxpdQ9MTsPrzZ9A5eOXhCSx9TSJ3TDDMU=;
+        b=ZpddmnahDchyOam55dbNrpu8rJ16bUqhQFhrXAwj4Lgb6TMi8WMT5g9i8U3NcEMaD2
+         xhebiJTyaiaUiEKZF48r0vzErv0uERRXZJHyFI6Dy1SST2wX93WcFDZoEpaPwpLr7iIv
+         M95m8C6EirqEHThi5JCoQVphSjeoNi2RWPkxtvXWmLy7+basgMotjQvTEYISjj3LYklM
+         JDU5v9xydLHP7imlq4pCEWOqJbCk6uiHg+3vt3ZiaZgu1oQKxg5lV7pnFiCYT+nHBMOo
+         AtcZuTeZok2H4b19niXrb+98ZqfAdwTu6nwDYSQAvBxK3Bcb7xO6GEXEi0NCF0NVIqsd
+         JBQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN12lsQXes/p8NXaqJOvYzhbbtQ0UFtlDuWfCGwULzczv0rylne1HxTbFVAikg+8N/P/HAB6hXBFM44KzkW3+vKz7yvGcI3Sdfdybg
+X-Gm-Message-State: AOJu0YzR7Q26qLg5ekdloDR6UDyzNa8n1Y0qaZ9bSaWafkPO/tsup2uA
+	LOEUPnqlzfcggK+ICP3C6LX/9/a1k4v6xsEiS1816ZGYFQd2fdMiSiIbJlq5UiYpV0RYuUykXfW
+	pRh+xJonDz8wstredFaVaDYdc5kgB759vatb0LNEvGh4W6FHWkEv3jT8=
+X-Google-Smtp-Source: AGHT+IGe1WDiGsFllS/6d264+CgOGkK1wuR1RqWhjV6+HJYv9brh6Vr//BkJl6fP2kBaLGYEM8ZKeLAxxYQ6yoQLBORk9nKKxYqW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+X-Received: by 2002:a92:c56e:0:b0:397:2946:c83c with SMTP id
+ e9e14a558f8ab-39aec41b90dmr1174935ab.4.1722052864297; Fri, 26 Jul 2024
+ 21:01:04 -0700 (PDT)
+Date: Fri, 26 Jul 2024 21:01:04 -0700
+In-Reply-To: <tencent_42384B7F1B3425E4BA97BB4133B29E341B08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000042da79061e32adf0@google.com>
+Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
+From: syzbot <syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 06:29:44PM -0700, Suren Baghdasaryan wrote:
-> On Fri, Jul 26, 2024 at 5:20 PM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Jul 22, 2024 at 12:09 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > >
-> > > On Wed, Jul 10, 2024 at 2:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Wed, Jul 10, 2024 at 11:16:31AM +0200, Peter Zijlstra wrote:
-> > > >
-> > > > > If it were an actual sequence count, I could make it work, but sadly,
-> > > > > not. Also, vma_end_write() seems to be missing :-( If anything it could
-> > > > > be used to lockdep annotate the thing.
-> > >
-> > > Thanks Matthew for forwarding me this discussion!
-> > >
-> > > > >
-> > > > > Mooo.. I need to stare more at this to see if perhaps it can be made to
-> > > > > work, but so far, no joy :/
-> > > >
-> > > > See, this is what I want, except I can't close the race against VMA
-> > > > modification because of that crazy locking scheme :/
-> > >
-> > > Happy to explain more about this crazy locking scheme. The catch is
-> > > that we can write-lock a VMA only while holding mmap_lock for write
-> > > and we unlock all write-locked VMAs together when we drop that
-> > > mmap_lock:
-> > >
-> > > mmap_write_lock(mm);
-> > > vma_start_write(vma1);
-> > > vma_start_write(vma2);
-> > > ...
-> > > mmap_write_unlock(mm); -> vma_end_write_all(mm); // unlocks all locked vmas
-> > >
-> > > This is done because oftentimes we need to lock multiple VMAs when
-> > > modifying the address space (vma merge/split) and unlocking them
-> > > individually would be more expensive than unlocking them in bulk by
-> > > incrementing mm->mm_lock_seq.
-> > >
-> > > >
-> > > >
-> > > > --- a/kernel/events/uprobes.c
-> > > > +++ b/kernel/events/uprobes.c
-> > > > @@ -2146,11 +2146,58 @@ static int is_trap_at_addr(struct mm_str
-> > > >         return is_trap_insn(&opcode);
-> > > >  }
-> > > >
-> > > > -static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
-> > > > +#ifndef CONFIG_PER_VMA_LOCK
-> > > > +static struct uprobe *__find_active_uprobe(unsigned long bp_vaddr)
-> > > > +{
-> > > > +       return NULL;
-> > > > +}
-> > > > +#else
-> > >
-> > > IIUC your code below, you want to get vma->vm_file without locking the
-> > > VMA. I think under RCU that would have been possible if vma->vm_file
-> > > were RCU-safe, which it's not (we had discussions with Paul and
-> > > Matthew about that in
-> > > https://lore.kernel.org/all/CAJuCfpHW2=Zu+CHXL+5fjWxGk=CVix=C66ra+DmXgn6r3+fsXg@mail.gmail.com/).
-> > > Otherwise you could store the value of vma->vm_lock_seq before
-> > > comparing it with mm->mm_lock_seq, then do get_file(vma->file) and
-> > > then compare your locally stored vm_lock_seq against vma->vm_lock_seq
-> > > to see if VMA got locked for modification after we got the file. So,
-> > > unless I miss some other race, I think the VMA locking sequence does
-> > > not preclude you from implementing __find_active_uprobe() but
-> > > accessing vma->vm_file would be unsafe without some kind of locking.
-> >
-> > Hey Suren!
-> >
-> > I've haven't yet dug properly into this, but from quick checking
-> > around I think for the hot path (where this all matters), we really
-> > only want to get vma's underlying inode. vm_file itself is just a
-> > means to that end. If there is some clever way to do
-> > vma->vm_file->f_inode under RCU and without mmap_read_lock, that would
-> > be good enough, I think.
-> 
-> Hi Andrii,
-> Sorry, I'm not aware of any other way to get the inode from vma. Maybe
-> Matthew with his FS background can find a way?
+Hello,
 
-Hum.  What if we added SLAB_TYPESAFE_BY_RCU to files_cachep?  That way
-we could do:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-	inode = NULL;
-	rcu_read_lock();
-	vma = find_vma(mm, address);
-	if (!vma)
-		goto unlock;
-	file = READ_ONCE(vma->vm_file);
-	if (!file)
-		goto unlock;
-	inode = file->f_inode;
-	if (file != READ_ONCE(vma->vm_file))
-		inode = NULL;
-unlock:
-	rcu_read_unlock();
+Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Tested-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
 
-	if (inode)
-		return inode;
-	mmap_read_lock();
-	vma = find_vma(mm, address);
-	...
+Tested on:
 
-I think this would be safe because 'vma' will not be reused while we
-hold the read lock, and while 'file' might be reused, whatever f_inode
-points to won't be used if vm_file is no longer what it once was.
+commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=13bc41a1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=125559a1980000
 
-On the other hand, it's quarter to midnight on Friday, and I have a
-terrible virus that I'm struggling through, so not ideal circumstances
-for me to be reasoning about RCU guarantees.
+Note: testing is done by a robot and is best-effort only.
 
