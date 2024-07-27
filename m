@@ -1,264 +1,173 @@
-Return-Path: <linux-kernel+bounces-263964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BF993DD3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC7193DD43
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4403A1F23390
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5E22819FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7CFBA5E;
-	Sat, 27 Jul 2024 04:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VIxLzRiv";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NrxW8npn"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA481B80F;
+	Sat, 27 Jul 2024 04:36:30 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31588469D;
-	Sat, 27 Jul 2024 04:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B295D2F2F;
+	Sat, 27 Jul 2024 04:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722054304; cv=none; b=EOX+OfBsqdQS9gt2/izUOjtJlAtgqsgjuMl8o1Thg3nl5i15oX+LLdTeRlTSNVFjnpphej9lQkIcaTjLNdxsdWm4aYXK7Z91t+q3cIROISajLfNSn5Ni5Ga8M+lDMestY9rMvquDSfKFdohERlUxxsnaiPcc3OjDQetMeX2/hWE=
+	t=1722054990; cv=none; b=q6kgJjkDuFFgdpzISKRp9BSnnE/CgLIlrqft/ALpGA5NrTE0u4bJvMef8icRTupXANR3qWru3+Fh2PVzrWI7JROUXxWAqJpvd3ow1nDmSh6twfzypVhK7IqTIXDbyN0mYFU+6Oc/3x599lyYUHstz+mOiMZivwtahJyW2TFw1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722054304; c=relaxed/simple;
-	bh=BLWshaB639I9Y4xfgfqbX+op5Cc0PweVm+o28FZzsjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K6Cyk0FUkX21wRFvlBphKr85ab6Au4/O8HIlVCxMUl6DJ2KFmQ0HwPN/nLZrGK073LNTJPIB5Zy/n+0uzYF9pzHHrfDzK+hCB/LsJfqluLIgUaOXNLdF3fZ3G3dUkD/XbSgd3ygsU8u2wyVp7permC2DCIVnDfysbx9ajb2Q4Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VIxLzRiv; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NrxW8npn; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WWBNq2W2Tz9t4V;
-	Sat, 27 Jul 2024 06:24:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1722054299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EvFDlAT6bSm4ZK0YHHMjAx+yZbFsKsUM3J2C8BY88GQ=;
-	b=VIxLzRiv6nDqZ9+HET6Qb/I6YY5gRgjkF8Uz2kxj6UfKpZj+qtbcGJQhyMqBpO7brpug1q
-	Lo1bsAWXe+29OnvnhdUld6ssD9n+kvcLm6MZPUheVN7WNLT/BSRrkbPrELqIA/t/3jmbf8
-	S+p+O7hs/DX/rfzlXlUMsZLzgsnBC5rCp8Y3tBL60VUR+vHqbw0fss2rTjS6JbzvmYA77+
-	nJL01Yxyu5mSe9PU2sqhZw60Z+VLta768si6DtDEMQOQYfOwpu9S2ZAIDQnW6NQFgWGMmi
-	y6N18rmYE8MK9iDOIVEKLbCEWdkOhsEIK55IiunfhiX4lzwGAR5jM06W2ZkRrg==
-From: Alex Mantel <alexmantel93@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1722054297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EvFDlAT6bSm4ZK0YHHMjAx+yZbFsKsUM3J2C8BY88GQ=;
-	b=NrxW8npnUgj8knIJF2G9wB9Y5OmTdjtEDLlhAQ4R2gTY2BuBdKhrPdpImnWopcsXunLfwt
-	jHcuzs2KO55t0FXtPhycc5SURb3FxfYK8uiTn+AAztsyUN8uuCHv0RwGJ+l7p97/m+qEYE
-	5aubczqstLNqVnCfq8hexOxcyCAZwhmD226IIZotPXvcv60btMaIg6O5+6CYgX2Ow1nuKx
-	+Sm617SYVWtXEYICxUwMExvs3k3YQOdI/dTLOM7P5yOFisaG/o3xi2O5rRzTZNSugw2DNM
-	ljUGSCCpSb2oe8EKJ3jDN6SbXO8XQJdozQHImAe2q7ppje/ri6VrGv4xPyH7HQ==
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	wedsonaf@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alex Mantel <alexmantel93@mailbox.org>
-Subject: [PATCH v3] rust: Implement the smart pointer `InPlaceInit` for `Arc`
-Date: Fri, 26 Jul 2024 21:24:42 -0700
-Message-Id: <20240727042442.682109-1-alexmantel93@mailbox.org>
+	s=arc-20240116; t=1722054990; c=relaxed/simple;
+	bh=+qxr+MmwJA4pD8/vtf0lGZ6jMOxTY7GW1bblbLD+OQ8=;
+	h=From:Subject:To:References:Cc:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=lkqFo1c/rmf7naQFB92n3u22+FJZO+qFscYNLCX2l4RuqjtCj17foHJNc5Aqizd2unbachkrtR8sTnB23td6foN6FKlrjOoDCxez2QETioAwUngFZuugEG61lxSwGvlRXN0+CGSyH63/L10mN3Hy2l+ymCx2TLMgvp36Y9svR98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WWBdh3XHyz4f3jjy;
+	Sat, 27 Jul 2024 12:36:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id ED1211A0568;
+	Sat, 27 Jul 2024 12:36:16 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP1 (Coremail) with SMTP id cCh0CgBnBXc8eaRm+4r4BA--.1299S2;
+	Sat, 27 Jul 2024 12:36:16 +0800 (CST)
+From: Hou Tao <houtao@huaweicloud.com>
+Subject: Re: [PATCH] bpf, cpumap: Fix use after free of bpf_cpu_map_entry in
+ cpu_map_enqueue
+To: =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
+ Radoslaw Zielonek <radoslaw.zielonek@gmail.com>, yonghong.song@linux.dev
+References: <20240726180157.1065502-2-radoslaw.zielonek@gmail.com>
+ <87h6ccnft1.fsf@toke.dk>
+Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <65fe18d2-bd9c-7d0e-0f15-c7dd855644d5@huaweicloud.com>
+Date: Sat, 27 Jul 2024 12:36:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <87h6ccnft1.fsf@toke.dk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 87cdbe66921b1de3be3
-X-MBO-RS-META: qjf8jnorw5ggqd48bj7idagiqpn3xom8
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgBnBXc8eaRm+4r4BA--.1299S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFWrGw1DZryrGFW7WrWrAFb_yoWrJry8pF
+	4DtFyxGr48JrWjka4rZw1UAF1Iyw1vqw4rG34rKa48J3ZxWr93GFykKFZrZFy5urs5uF43
+	Xr4qqrW8uayqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
+	1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7IU0s2-5UUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-For pinned and unpinned initialization of structs, a trait named
-`InPlaceInit` exists for uniform access. `Arc` did not implement
-`InPlaceInit` yet, although the functions already existed. The main
-reason for that, was that the trait itself returned a `Pin<Self>`. The
-`Arc` implementation of the kernel is already implicitly pinned.
 
-To enable `Arc` to implement `InPlaceInit` and to have uniform access,
-for in-place and pinned in-place initialization, an associated type is
-introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
-for `Arc` sets `Arc` as the associated type. Older implementations use
-an explicit `Pin<T>` as the associated type. The implemented methods for
-`Arc` are mostly moved from a direct implementation on `Arc`. There
-should be no user impact. The implementation for `ListArc` is omitted,
-because it is not merged yet.
 
-Link: https://github.com/Rust-for-Linux/linux/issues/1079
-Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
----
-Hello again!
+On 7/27/2024 2:55 AM, Toke Høiland-Jørgensen wrote:
+> Radoslaw Zielonek <radoslaw.zielonek@gmail.com> writes:
+>
+>> When cpu_map has been redirected, first the pointer to the
+>> bpf_cpu_map_entry has been copied, then freed, and read from the copy.
+>> To fix it, this commit introduced the refcount cpu_map_parent during
+>> redirections to prevent use after free.
+>>
+>> syzbot reported:
+>>
+>> [   61.581464][T11670] ==================================================================
+>> [   61.583323][T11670] BUG: KASAN: slab-use-after-free in cpu_map_enqueue+0xba/0x370
+>> [   61.585419][T11670] Read of size 8 at addr ffff888122d75208 by task syzbot-repro/11670
+>> [   61.587541][T11670]
+>> [   61.588237][T11670] CPU: 1 PID: 11670 Comm: syzbot-repro Not tainted 6.9.0-rc6-00053-g0106679839f7 #27
+>> [   61.590542][T11670] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.1 11/11/2019
 
-This is the 3rd version of my very first patch. I applied the
-suggestions on the 2nd submission. Thank you again for your feedback,
-looking for more!
+SNIP
+>> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+>> index a8e34416e960..0034a6d423b6 100644
+>> --- a/kernel/bpf/cpumap.c
+>> +++ b/kernel/bpf/cpumap.c
+>> @@ -59,6 +59,9 @@ struct bpf_cpu_map_entry {
+>>  	u32 cpu;    /* kthread CPU and map index */
+>>  	int map_id; /* Back reference to map */
+>>  
+>> +	/* Used to end ownership transfer transaction */
+>> +	struct bpf_map *parent_map;
+>> +
+>>  	/* XDP can run multiple RX-ring queues, need __percpu enqueue store */
+>>  	struct xdp_bulk_queue __percpu *bulkq;
+>>  
+>> @@ -427,6 +430,7 @@ __cpu_map_entry_alloc(struct bpf_map *map, struct bpf_cpumap_val *value,
+>>  	rcpu->cpu    = cpu;
+>>  	rcpu->map_id = map->id;
+>>  	rcpu->value.qsize  = value->qsize;
+>> +	rcpu->parent_map = map;
+>>  
+>>  	if (fd > 0 && __cpu_map_load_bpf_program(rcpu, map, fd))
+>>  		goto free_ptr_ring;
+>> @@ -639,6 +643,14 @@ static int cpu_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
+>>  
+>>  static long cpu_map_redirect(struct bpf_map *map, u64 index, u64 flags)
+>>  {
+>> +	/*
+>> +	 * Redirection is a transfer of ownership of the bpf_cpu_map_entry
+>> +	 * During the transfer the bpf_cpu_map_entry is still in the map,
+>> +	 * so we need to prevent it from being freed.
+>> +	 * The bpf_map_inc() increments the refcnt of the map, so the
+>> +	 * bpf_cpu_map_entry will not be freed until the refcnt is decremented.
+>> +	 */
+>> +	bpf_map_inc(map);
+> Adding refcnt increase/decrease in the fast path? Hard NAK.
+>
+> The map entry is protected by RCU, which should prevent this kind of UAF
+> from happening. Looks like maybe there's a bug in the tun driver so this
+> RCU protection is not working?
 
-v1: 
-  * https://lore.kernel.org/rust-for-linux/20240717034801.262343-2-alexmantel93@mailbox.org/
+It will be possible if two different xdp programs set and use the value
+of ri->tgt_vlaue separately as shown below:
 
-v2: 
-  * remove the `From:` from the patch.
-  * add the prefix `rust: ` to the subject.
-  * Remove the empty line between `Link` and `Signed-off-by`.
-  * https://lore.kernel.org/all/20240719192234.330341-1-alexmantel93@mailbox.org/
+(1) on CPU 0: xdp program A invokes bpf_redirect_map() (e.g., through
+test_run) and sets ri->tgt_value as one entry in cpu map X
+(2) release the xdp program A and the cpu map X is freed.
+(3) on CPU 0: xdp program B doesn't invoke bpf_redirect_map(), but it
+returns XDP_REDIRECT, so the old value of ri->tgt_value is used by
+program B.
 
-v3:
-  * Rename PinnedResult to PinnedSelf
-  * Adjust documentation for PinnedSelf
+I think the problem is fixed after the merge of commit 401cb7dae813
+("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT"). 
+Before the commit, bpf_redirect_info is a per-cpu variable, and
+ri->tgt_value is not cleared when the running of xdp program completes,
+so it is possible that one xdp program could use a stale tgt_values set
+by other xdp program. After changing bpf_redirect_info into a per-thread
+variable and clearing it after each run of xdp program, such sharing
+will be impossible.
 
- rust/kernel/init.rs     | 39 +++++++++++++++++++++++++++++++++++----
- rust/kernel/sync/arc.rs | 25 ++-----------------------
- 2 files changed, 37 insertions(+), 27 deletions(-)
+Zielonek, could you please help to check whether or not the problem is
+reproducible in latest bpf-next tree ?
 
-diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-index 68605b633..fa5f182fe 100644
---- a/rust/kernel/init.rs
-+++ b/rust/kernel/init.rs
-@@ -213,6 +213,7 @@
- use crate::{
-     alloc::{box_ext::BoxExt, AllocError, Flags},
-     error::{self, Error},
-+    sync::Arc,
-     sync::UniqueArc,
-     types::{Opaque, ScopeGuard},
- };
-@@ -1112,11 +1113,17 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
- 
- /// Smart pointer that can initialize memory in-place.
- pub trait InPlaceInit<T>: Sized {
-+    /// Pinned version of Rusts `Self`.
-+    ///
-+    /// If a type already implicitly pins its pointee, `Pin<Self>` is unnecessary. In this case use
-+    /// `Self`, otherwise just use `Pin<Self>`.
-+    type PinnedSelf;
-+
-     /// Use the given pin-initializer to pin-initialize a `T` inside of a new smart pointer of this
-     /// type.
-     ///
-     /// If `T: !Unpin` it will not be able to move afterwards.
--    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
-+    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedSelf, E>
-     where
-         E: From<AllocError>;
- 
-@@ -1124,7 +1131,7 @@ fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>,
-     /// type.
-     ///
-     /// If `T: !Unpin` it will not be able to move afterwards.
--    fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Pin<Self>>
-+    fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Self::PinnedSelf>
-     where
-         Error: From<E>,
-     {
-@@ -1153,9 +1160,31 @@ fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
-     }
- }
- 
-+impl<T> InPlaceInit<T> for Arc<T> {
-+    type PinnedSelf = Self;
-+
-+    #[inline]
-+    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedSelf, E>
-+    where
-+        E: From<AllocError>,
-+    {
-+        UniqueArc::try_pin_init(init, flags).map(|u| u.into())
-+    }
-+
-+    #[inline]
-+    fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
-+    where
-+        E: From<AllocError>,
-+    {
-+        UniqueArc::try_init(init, flags).map(|u| u.into())
-+    }
-+}
-+
- impl<T> InPlaceInit<T> for Box<T> {
-+    type PinnedSelf = Pin<Self>;
-+
-     #[inline]
--    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
-+    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedSelf, E>
-     where
-         E: From<AllocError>,
-     {
-@@ -1184,8 +1213,10 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
- }
- 
- impl<T> InPlaceInit<T> for UniqueArc<T> {
-+    type PinnedSelf = Pin<Self>;
-+
-     #[inline]
--    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
-+    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Self::PinnedSelf, E>
-     where
-         E: From<AllocError>,
-     {
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 3673496c2..3021f30fd 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -12,12 +12,13 @@
- //! 2. It does not support weak references, which allows it to be half the size.
- //! 3. It saturates the reference count instead of aborting when it goes over a threshold.
- //! 4. It does not provide a `get_mut` method, so the ref counted object is pinned.
-+//! 5. The object in [`Arc`] is pinned implicitly.
- //!
- //! [`Arc`]: https://doc.rust-lang.org/std/sync/struct.Arc.html
- 
- use crate::{
-     alloc::{box_ext::BoxExt, AllocError, Flags},
--    error::{self, Error},
-+    bindings,
-     init::{self, InPlaceInit, Init, PinInit},
-     try_init,
-     types::{ForeignOwnable, Opaque},
-@@ -209,28 +210,6 @@ pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
-         // `Arc` object.
-         Ok(unsafe { Self::from_inner(Box::leak(inner).into()) })
-     }
--
--    /// Use the given initializer to in-place initialize a `T`.
--    ///
--    /// If `T: !Unpin` it will not be able to move afterwards.
--    #[inline]
--    pub fn pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> error::Result<Self>
--    where
--        Error: From<E>,
--    {
--        UniqueArc::pin_init(init, flags).map(|u| u.into())
--    }
--
--    /// Use the given initializer to in-place initialize a `T`.
--    ///
--    /// This is equivalent to [`Arc<T>::pin_init`], since an [`Arc`] is always pinned.
--    #[inline]
--    pub fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
--    where
--        Error: From<E>,
--    {
--        UniqueArc::init(init, flags).map(|u| u.into())
--    }
- }
- 
- impl<T: ?Sized> Arc<T> {
--- 
-2.39.2
+>
+> -Toke
+>
+>
+> .
 
 
