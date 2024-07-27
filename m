@@ -1,504 +1,142 @@
-Return-Path: <linux-kernel+bounces-264058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA9593DE5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:53:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E0093DE56
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A409A2811A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:53:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4471F21EBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375524CDE0;
-	Sat, 27 Jul 2024 09:53:09 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AAF4DA00;
+	Sat, 27 Jul 2024 09:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSElptFr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9C3383B2;
-	Sat, 27 Jul 2024 09:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907D61B86CD;
+	Sat, 27 Jul 2024 09:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722073988; cv=none; b=TeHbVKRHhTWwXc9cX+Kn7UJA/XyYKrol7N1FQYgAJT6SRS2fkb3QxC4b/IKIyGFJVIMJdyrjZzQ1i+5Y1loLDnHWOfHnA0/lYFefeWh7C1vCe8MLEN8Q3Bawlz8QjDV7/wFEe0lpokWrYviYRdO88QalFqTl9xOwaFZFt0lrYEw=
+	t=1722073587; cv=none; b=IlBLZMkFNQS2e+o7Cf4nsjHhNGyKx+9LCRemVrSWJavB4WN0pipF0+PNDXdvO/8helSt3QV63wM4yR1UiTEzEdNPw+VlIUjjtTR/n/BU0SdDPj0YH8xEXITmVqzL/rSkPXdeyMaQ1klMfjrTvJeQjUE79LPGgoVRY/6i41oJDwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722073988; c=relaxed/simple;
-	bh=kW3zb6SBCoPJO7jqQ4z+6lwe/Gl12NKwCK2xChriDgk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L4WlQs6TVfMXBCTjQPud++f5XjWSVflfwbnc2lPFHljzm5UKTYBCEMtNsGt23uIqYJfkIEIujX+f+SDOdltZcL5XHhG87G8p30lLxtfnSZmcr98eoiKu8l7B9ui1dkSShQghJQRIxZRnME/4bAZrmDKtTT6dYbFrEyQjtdWwaCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WWKfB2xL4znccM;
-	Sat, 27 Jul 2024 17:52:02 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE4CD1800FF;
-	Sat, 27 Jul 2024 17:52:55 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 27 Jul
- 2024 17:52:55 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<liaochang1@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
-Subject: [PATCH] uprobes: Optimize the allocation of insn_slot for performance
-Date: Sat, 27 Jul 2024 09:44:05 +0000
-Message-ID: <20240727094405.1362496-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722073587; c=relaxed/simple;
+	bh=9FQnGXlM3SBNU9QPFIRpF4CE71e9eQq1O4i18cUi9c0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iWrZnyAd9KQZ7dTZ+5W1xH7c69PVNueu7mWTyh96yNYtqVjdpxPAUEQY3WPFZNomQkZeVHx6ThbYEkzjYQktU8CjJdumBy2uNsW7U87H5nq8NpZpjk4Dx5I9gl0LwVXwzu2Bu6q2QXoqscLrxa8kkA5TLgjQWJYS37QxznTwi38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSElptFr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B1DFC32781;
+	Sat, 27 Jul 2024 09:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722073587;
+	bh=9FQnGXlM3SBNU9QPFIRpF4CE71e9eQq1O4i18cUi9c0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DSElptFrIoh7UZ6QJTFAzvnob3lgXLYIOQktkTPDZdgEewdj61kQ2U5o9UCoAmlUM
+	 FS4uV/0dgz2ZodZlaEsQRviqQOIhWNDuTCp1cBQojywbLQsDU1rqlxt0RWp0Vn7Th7
+	 4s97zQ8lB49IxSyUwp2jExJJfKfHVqLrHyIZhqLYhrLOcf2IJF5F9d9USfDhYhPyFD
+	 c4dSfe7Mgllm0pYL+rlAbaRks18zDW+SVT9xuJmN45K+kAwWJObSf7glba4RtkH0pA
+	 4QaH0laJEEwWr9DwB6G24EURdFPYSmGggoNeZz6I44dWxldMlakGezbwK0QgWO1lHF
+	 ZjT7/TyFWX0Kw==
+Message-ID: <2132f31e-f543-4082-ab09-e269c53100cb@kernel.org>
+Date: Sat, 27 Jul 2024 11:46:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 1/2] dt-bindings: iio: aw9610x: Add bindings for
+ aw9610x sensor
+To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ waqar.hameed@axis.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: liweilei@awinic.com, kangjiajun@awinic.com
+References: <20240726061312.1371450-1-wangshuaijie@awinic.com>
+ <20240726061312.1371450-2-wangshuaijie@awinic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240726061312.1371450-2-wangshuaijie@awinic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The profiling result of single-thread model of selftests bench reveals
-performance bottlenecks in find_uprobe() and caches_clean_inval_pou() on
-ARM64. On my local testing machine, 5% of CPU time is consumed by
-find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() take
-about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
+On 26/07/2024 08:13, wangshuaijie@awinic.com wrote:
+> From: shuaijie wang <wangshuaijie@awinic.com>
+> 
+> Add device tree bindings for aw9610x proximity sensor.
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+> ---
 
-This patch introduce struct uprobe_breakpoint to track previously
-allocated insn_slot for frequently hit uprobe. it effectively reduce the
-need for redundant insn_slot writes and subsequent expensive cache
-flush, especially on architecture like ARM64. This patch has been tested
-on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
-bench and Redis GET/SET benchmark result below reveal obivious
-performance gain.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-before-opt
-----------
-trig-uprobe-nop:  0.371 ± 0.001M/s (0.371M/prod)
-trig-uprobe-push: 0.370 ± 0.001M/s (0.370M/prod)
-trig-uprobe-ret:  1.637 ± 0.001M/s (1.647M/prod)
-trig-uretprobe-nop:  0.331 ± 0.004M/s (0.331M/prod)
-trig-uretprobe-push: 0.333 ± 0.000M/s (0.333M/prod)
-trig-uretprobe-ret:  0.854 ± 0.002M/s (0.854M/prod)
-Redis SET (RPS) uprobe: 42728.52
-Redis GET (RPS) uprobe: 43640.18
-Redis SET (RPS) uretprobe: 40624.54
-Redis GET (RPS) uretprobe: 41180.56
 
-after-opt
----------
-trig-uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
-trig-uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
-trig-uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
-trig-uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
-trig-uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
-trig-uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
-Redis SET (RPS) uprobe: 43939.69
-Redis GET (RPS) uprobe: 45200.80
-Redis SET (RPS) uretprobe: 41658.58
-Redis GET (RPS) uretprobe: 42805.80
-
-While some uprobes might still need to share the same insn_slot, this
-patch compare the instructions in the resued insn_slot with the
-instructions execute out-of-line firstly to decides allocate a new one
-or not.
-
-Additionally, this patch use a rbtree associated with each thread that
-hit uprobes to manage these allocated uprobe_breakpoint data. Due to the
-rbtree of uprobe_breakpoints has smaller node, better locality and less
-contention, it result in faster lookup times compared to find_uprobe().
-
-The other part of this patch are some necessary memory management for
-uprobe_breakpoint data. A uprobe_breakpoint is allocated for each newly
-hit uprobe that doesn't already have a corresponding node in rbtree. All
-uprobe_breakpoints will be freed when thread exit.
-
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
 ---
- include/linux/uprobes.h |   3 +
- kernel/events/uprobes.c | 246 +++++++++++++++++++++++++++++++++-------
- 2 files changed, 211 insertions(+), 38 deletions(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index f46e0ca0169c..04ee465980af 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -78,6 +78,9 @@ struct uprobe_task {
- 
- 	struct return_instance		*return_instances;
- 	unsigned int			depth;
-+
-+	struct rb_root			breakpoints_tree;
-+	rwlock_t			breakpoints_treelock;
- };
- 
- struct return_instance {
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 2c83ba776fc7..3f1a6dc2a327 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -33,6 +33,7 @@
- #define MAX_UPROBE_XOL_SLOTS		UINSNS_PER_PAGE
- 
- static struct rb_root uprobes_tree = RB_ROOT;
-+
- /*
-  * allows us to skip the uprobe_mmap if there are no uprobe events active
-  * at this time.  Probably a fine grained per inode count is better?
-@@ -886,6 +887,174 @@ static bool filter_chain(struct uprobe *uprobe,
- 	return ret;
- }
- 
-+static struct uprobe_task *get_utask(void);
-+static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr);
-+static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp);
-+
-+struct uprobe_breakpoint {
-+	struct rb_node		rb_node;
-+	refcount_t		ref;
-+	unsigned long		slot;
-+	unsigned long		vaddr;
-+	struct uprobe		*uprobe;
-+};
-+
-+static void put_ubp(struct uprobe_breakpoint *ubp)
-+{
-+	if (refcount_dec_and_test(&ubp->ref)) {
-+		put_uprobe(ubp->uprobe);
-+		kfree(ubp);
-+	}
-+}
-+
-+static struct uprobe_breakpoint *get_ubp(struct uprobe_breakpoint *ubp)
-+{
-+	refcount_inc(&ubp->ref);
-+	return ubp;
-+}
-+
-+#define __node_2_ubp(node) rb_entry((node), struct uprobe_breakpoint, rb_node)
-+
-+struct __ubp_key {
-+	unsigned long bp_vaddr;
-+};
-+
-+static int ubp_cmp(const unsigned long bp_vaddr,
-+		   const struct uprobe_breakpoint *ubp)
-+{
-+	if (bp_vaddr < ubp->vaddr)
-+		return -1;
-+
-+	if (bp_vaddr > ubp->vaddr)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int __ubp_cmp_key(const void *k, const struct rb_node *b)
-+{
-+	const struct __ubp_key *key = k;
-+
-+	return ubp_cmp(key->bp_vaddr, __node_2_ubp(b));
-+}
-+
-+static int __ubp_cmp(struct rb_node *a, const struct rb_node *b)
-+{
-+	const struct uprobe_breakpoint *ubp = __node_2_ubp(a);
-+
-+	return ubp_cmp(ubp->vaddr, __node_2_ubp(b));
-+}
-+
-+static void delete_breakpoint(struct uprobe_task *utask)
-+{
-+	struct rb_node *node;
-+
-+	write_lock(&utask->breakpoints_treelock);
-+	node = rb_first(&utask->breakpoints_tree);
-+	while (node) {
-+		rb_erase(node, &utask->breakpoints_tree);
-+		write_unlock(&utask->breakpoints_treelock);
-+
-+		put_ubp(__node_2_ubp(node));
-+
-+		write_lock(&utask->breakpoints_treelock);
-+		node = rb_next(node);
-+	}
-+	write_unlock(&utask->breakpoints_treelock);
-+}
-+
-+static struct uprobe_breakpoint *alloc_breakpoint(struct uprobe_task *utask,
-+						  struct uprobe *uprobe,
-+						  unsigned long bp_vaddr)
-+{
-+	struct uprobe_breakpoint *ubp;
-+	struct rb_node *node;
-+
-+	ubp = kzalloc(sizeof(struct uprobe_breakpoint), GFP_KERNEL);
-+	if (!ubp)
-+		return NULL;
-+
-+	ubp->vaddr = bp_vaddr;
-+	ubp->uprobe = uprobe;
-+	/* get access + creation ref */
-+	refcount_set(&ubp->ref, 2);
-+	ubp->slot = UINSNS_PER_PAGE;
-+
-+	write_lock(&utask->breakpoints_treelock);
-+	node = rb_find_add(&ubp->rb_node, &utask->breakpoints_tree, __ubp_cmp);
-+	write_unlock(&utask->breakpoints_treelock);
-+
-+	/* Two or more threads hit the same breakpoint */
-+	if (node) {
-+		WARN_ON(uprobe != __node_2_ubp(node)->upobre);
-+		kfree(ubp);
-+		return get_ubp(__node_2_ubp(node));
-+	}
-+
-+	return ubp;
-+}
-+
-+static struct uprobe_breakpoint *find_breakpoint(struct uprobe_task *utask,
-+						 unsigned long bp_vaddr)
-+{
-+	struct rb_node *node;
-+	struct __ubp_key key = {
-+		.bp_vaddr = bp_vaddr,
-+	};
-+
-+	read_lock(&utask->breakpoints_treelock);
-+	node = rb_find(&key, &utask->breakpoints_tree, __ubp_cmp_key);
-+	read_unlock(&utask->breakpoints_treelock);
-+
-+	if (node)
-+		return get_ubp(__node_2_ubp(node));
-+
-+	return NULL;
-+}
-+
-+static struct uprobe_breakpoint *find_active_breakpoint(struct pt_regs *regs,
-+							unsigned long bp_vaddr)
-+{
-+	struct uprobe_task *utask = get_utask();
-+	struct uprobe_breakpoint *ubp;
-+	struct uprobe *uprobe;
-+	int is_swbp;
-+
-+	if (unlikely(!utask))
-+		return NULL;
-+
-+	ubp = find_breakpoint(utask, bp_vaddr);
-+	if (ubp)
-+		return ubp;
-+
-+	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
-+	if (!uprobe) {
-+		if (is_swbp > 0) {
-+			/* No matching uprobe; signal SIGTRAP. */
-+			force_sig(SIGTRAP);
-+		} else {
-+			/*
-+			 * Either we raced with uprobe_unregister() or we can't
-+			 * access this memory. The latter is only possible if
-+			 * another thread plays with our ->mm. In both cases
-+			 * we can simply restart. If this vma was unmapped we
-+			 * can pretend this insn was not executed yet and get
-+			 * the (correct) SIGSEGV after restart.
-+			 */
-+			instruction_pointer_set(regs, bp_vaddr);
-+		}
-+		return NULL;
-+	}
-+
-+	ubp = alloc_breakpoint(utask, uprobe, bp_vaddr);
-+	if (!ubp) {
-+		put_uprobe(uprobe);
-+		return NULL;
-+	}
-+
-+	return ubp;
-+}
-+
- static int
- install_breakpoint(struct uprobe *uprobe, struct mm_struct *mm,
- 			struct vm_area_struct *vma, unsigned long vaddr)
-@@ -1576,9 +1745,8 @@ void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
- /*
-  *  - search for a free slot.
-  */
--static unsigned long xol_take_insn_slot(struct xol_area *area)
-+static __always_inline int xol_take_insn_slot(struct xol_area *area)
- {
--	unsigned long slot_addr;
- 	int slot_nr;
- 
- 	do {
-@@ -1590,34 +1758,48 @@ static unsigned long xol_take_insn_slot(struct xol_area *area)
- 			slot_nr = UINSNS_PER_PAGE;
- 			continue;
- 		}
--		wait_event(area->wq, (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
-+		wait_event(area->wq,
-+			   (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
- 	} while (slot_nr >= UINSNS_PER_PAGE);
- 
--	slot_addr = area->vaddr + (slot_nr * UPROBE_XOL_SLOT_BYTES);
--	atomic_inc(&area->slot_count);
-+	return slot_nr;
-+}
-+
-+static __always_inline unsigned long
-+choose_insn_slot(struct xol_area *area, struct uprobe_breakpoint *ubp)
-+{
-+	if ((ubp->slot == UINSNS_PER_PAGE) ||
-+	    test_and_set_bit(ubp->slot, area->bitmap)) {
-+		ubp->slot = xol_take_insn_slot(area);
-+	}
- 
--	return slot_addr;
-+	atomic_inc(&area->slot_count);
-+	return area->vaddr + ubp->slot * UPROBE_XOL_SLOT_BYTES;
- }
- 
- /*
-  * xol_get_insn_slot - allocate a slot for xol.
-  * Returns the allocated slot address or 0.
-  */
--static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
-+static unsigned long xol_get_insn_slot(struct uprobe_breakpoint *ubp)
- {
- 	struct xol_area *area;
- 	unsigned long xol_vaddr;
-+	struct uprobe *uprobe = ubp->uprobe;
- 
- 	area = get_xol_area();
- 	if (!area)
- 		return 0;
- 
--	xol_vaddr = xol_take_insn_slot(area);
-+	xol_vaddr = choose_insn_slot(area, ubp);
- 	if (unlikely(!xol_vaddr))
- 		return 0;
- 
--	arch_uprobe_copy_ixol(area->pages[0], xol_vaddr,
--			      &uprobe->arch.ixol, sizeof(uprobe->arch.ixol));
-+	if (memcmp((void *)xol_vaddr, &uprobe->arch.ixol,
-+		   sizeof(uprobe->arch.ixol)))
-+		arch_uprobe_copy_ixol(area->pages[0], xol_vaddr,
-+				      &uprobe->arch.ixol,
-+				      sizeof(uprobe->arch.ixol));
- 
- 	return xol_vaddr;
- }
-@@ -1717,8 +1899,7 @@ void uprobe_free_utask(struct task_struct *t)
- 	if (!utask)
- 		return;
- 
--	if (utask->active_uprobe)
--		put_uprobe(utask->active_uprobe);
-+	delete_breakpoint(utask);
- 
- 	ri = utask->return_instances;
- 	while (ri)
-@@ -1739,8 +1920,11 @@ void uprobe_free_utask(struct task_struct *t)
-  */
- static struct uprobe_task *get_utask(void)
- {
--	if (!current->utask)
-+	if (!current->utask) {
- 		current->utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
-+		current->utask->breakpoints_tree = RB_ROOT;
-+		rwlock_init(&current->utask->breakpoints_treelock);
-+	}
- 	return current->utask;
- }
- 
-@@ -1921,7 +2105,8 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
- 
- /* Prepare to single-step probed instruction out of line. */
- static int
--pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
-+pre_ssout(struct uprobe *uprobe, struct pt_regs *regs,
-+	  struct uprobe_breakpoint *ubp)
- {
- 	struct uprobe_task *utask;
- 	unsigned long xol_vaddr;
-@@ -1931,12 +2116,12 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
- 	if (!utask)
- 		return -ENOMEM;
- 
--	xol_vaddr = xol_get_insn_slot(uprobe);
-+	xol_vaddr = xol_get_insn_slot(ubp);
- 	if (!xol_vaddr)
- 		return -ENOMEM;
- 
- 	utask->xol_vaddr = xol_vaddr;
--	utask->vaddr = bp_vaddr;
-+	utask->vaddr = ubp->vaddr;
- 
- 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
- 	if (unlikely(err)) {
-@@ -2182,32 +2367,19 @@ bool __weak arch_uretprobe_is_alive(struct return_instance *ret, enum rp_check c
-  */
- static void handle_swbp(struct pt_regs *regs)
- {
-+	struct uprobe_breakpoint *ubp;
- 	struct uprobe *uprobe;
- 	unsigned long bp_vaddr;
--	int is_swbp;
- 
- 	bp_vaddr = uprobe_get_swbp_addr(regs);
- 	if (bp_vaddr == get_trampoline_vaddr())
- 		return handle_trampoline(regs);
- 
--	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
--	if (!uprobe) {
--		if (is_swbp > 0) {
--			/* No matching uprobe; signal SIGTRAP. */
--			force_sig(SIGTRAP);
--		} else {
--			/*
--			 * Either we raced with uprobe_unregister() or we can't
--			 * access this memory. The latter is only possible if
--			 * another thread plays with our ->mm. In both cases
--			 * we can simply restart. If this vma was unmapped we
--			 * can pretend this insn was not executed yet and get
--			 * the (correct) SIGSEGV after restart.
--			 */
--			instruction_pointer_set(regs, bp_vaddr);
--		}
-+	ubp = find_active_breakpoint(regs, bp_vaddr);
-+	if (!ubp)
- 		return;
--	}
-+
-+	uprobe = ubp->uprobe;
- 
- 	/* change it in advance for ->handler() and restart */
- 	instruction_pointer_set(regs, bp_vaddr);
-@@ -2241,12 +2413,11 @@ static void handle_swbp(struct pt_regs *regs)
- 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
- 		goto out;
- 
--	if (!pre_ssout(uprobe, regs, bp_vaddr))
--		return;
-+	pre_ssout(uprobe, regs, ubp);
- 
- 	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
- out:
--	put_uprobe(uprobe);
-+	put_ubp(ubp);
- }
- 
- /*
-@@ -2266,7 +2437,6 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
- 	else
- 		WARN_ON_ONCE(1);
- 
--	put_uprobe(uprobe);
- 	utask->active_uprobe = NULL;
- 	utask->state = UTASK_RUNNING;
- 	xol_free_insn_slot(current);
--- 
-2.34.1
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
 
 
