@@ -1,145 +1,148 @@
-Return-Path: <linux-kernel+bounces-264230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAC693E069
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:10:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8849093E06B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205021F21A3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:10:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A40DB2105D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E467A186E5D;
-	Sat, 27 Jul 2024 18:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75BA186E42;
+	Sat, 27 Jul 2024 18:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/S1bFiv"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gQ6+L22u"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26C67470;
-	Sat, 27 Jul 2024 18:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D074411
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 18:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722103833; cv=none; b=Ze1KFy5hBvrVao1lS9BvUWWXNytlq8raZZO+ZUw7P55y9igf9Q1xIekHJSnI9eDPARSoopResUgSXsQTG++dBv+CMM1obHmf3tFPjGND+K7iEgrRa1DHJ7UVdpfSBZWzjVzqtvB3DlitwS3L0QhN9mgFmlgboXD+f0//1JFuhII=
+	t=1722104217; cv=none; b=Mc6aP8K0te9sxB2olR7jPaKtfsLZCSsMWl5Kc2g8plomwS6upalHxfS56AnGbL9kP1Mw/GvPkkU8OQ2t6VWT9qX3Yk6KxrZ//Qt7yTEZdh+1+ktmoVPX4SRK19MOeeptMF08LPkvkXaiFl+GQoCrYTWrWB8ufJ08CeSby0Zwtpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722103833; c=relaxed/simple;
-	bh=zlABaadhvFHp0oZ6FFLIWEU2EQWEwhOhVKdxlKQcx3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSISGQeJ7bz1FJgdK9dJdWxvMpq0w4zbZfjBEp6Oe+mzWzTJht3X+6iBs1XuiR4jF+t3HYtu+SvbTld4iZ7pmsb5ysrdjaYGA/pQwx9s9o98wwT3Kzk5wkciFwVHgYBOjXmUOOFyW5lRDmKZRVC8pyUwpLqDaXmDWVKdBm1UV3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/S1bFiv; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so676760276.2;
-        Sat, 27 Jul 2024 11:10:31 -0700 (PDT)
+	s=arc-20240116; t=1722104217; c=relaxed/simple;
+	bh=kW/4gXUk6F1yB2qi00XQkWYCcAqmnJCZximrn0yej+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F+69H5O1CttNxmWFf1IabWf1xpaxt/0S4JkwTQeM1GaJbC0JosWj43W882a6EkvCzKEkOK0Xi5zIKpgcXbilMwPV+PtjhQTTHBI/b3IEAYaZ8m+uXphMNN4e2aRFQMJsb7RbjMqNau4pwWcsmT92Ug+3RJ2XOXCkDaFUf9RUeZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gQ6+L22u; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso3980009a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:16:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722103830; x=1722708630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8GXSL9+pEaFlUy/iMZ0metWt0BsFvkNW53VDiHwizg=;
-        b=Z/S1bFivyGwFGgwZgZQeCgMiFFTZPt4HZ4HwamR/rAtRwSqylIVfy80n65FHysIKOJ
-         opvwqOI/msLvU785yoL+2CnE80Ls45l1fI56WipBXArWLQL0J5X1/ompGyWDjA0NPJr0
-         yh0w9B3Ujc1/ebOFYr10eg0Aav0Sqkid1EeQGdNTCWmHljW2jbh7qOML7u0DFaF94eRd
-         D31sTfRE95n6SR0t/q7T/9OOPgGVBV+qznREJta8IBoGw55AyFWabF0qalZG4IQz0a8i
-         EHhjOV5d7lh6DxpPbvi1iadaRhscyXsx2Q8TOy/78ZSoYJWGfDmmJBzi4NNpFkheZqRW
-         ozYQ==
+        d=linuxfoundation.org; s=google; t=1722104213; x=1722709013; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N7MXJDFanOvjXGeDbmsv4q4l8yEMA8rUdIcZkh48+uU=;
+        b=gQ6+L22ugtwDaCP1UkrL5vGcRE8/bx4Kn7zyiZeuSV28NwTZKAHx4pvpoxWigOtWsA
+         8qTh1Tpf6ZewGI1Ir8H8+vSLdd4UaKxs3Qt5A1x+LIHd7gSH3g2R0q4GzTuFRWWYcU9O
+         rsLi0hW9DQXDq9cJe/jKXj5xAY3+RmtwUB04U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722103830; x=1722708630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c8GXSL9+pEaFlUy/iMZ0metWt0BsFvkNW53VDiHwizg=;
-        b=QBp16g2WrCqyZEcpH7ExvppNoILx2LWk5v41b4Emr4pdW6SBoNHTznCEP1jDA6u2NT
-         +AyFkO+3mgSJolFXnF6l8lMXjJruoGIdIn1aURhugqYTEHvDNU88fz6MM+mOKOfz5ues
-         nf1yTxjsqu5wWimcJbHmLI2FXmLf13+6rFOBQ8j1Q+ZfdFaaKSr8lxbAXefBbC5C42OK
-         lQWi0tWT5uJS2vRYIS77CjuMKP/l8DHi9vTnBsxgZGHIGvCA29wR0hqW5XlPPNzaSPEO
-         7T+fxrVMOdi6WskYj3aaXyzLoGM3lTsqPKZQI7h59mukb0OF9MncROpHRk7SCFuJAKoe
-         4sIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUli0GahhZyGK/bwzn6UH8uTpAz88FBxIAbzRIUa7fI62VClUnvTaDThGxvqJq3a/RoO63xvS7f3xsUv3W8+nTge7xbXvy4n0bReTePXiysqHub5zFbgC5JqabD3K1vHx1dpma3eF+n/v7MKzKv
-X-Gm-Message-State: AOJu0YxJest/eUpklvyUXGCXbYAB4Bf7n1LmazWmoupFiSz4fypP/Q4f
-	hPxzp3xHqNcVD48LZMP1X0ulYmyg1MNR/5o6y3qH5J0WYB3LpJ9k
-X-Google-Smtp-Source: AGHT+IEUBssDqF49luapyssQ1Jl7uLcNwe4blGUpQHGlf8FfI98CQIv4Kf/VPLMEYRTJTAUyzuYANQ==
-X-Received: by 2002:a05:6902:f84:b0:e0b:6951:c766 with SMTP id 3f1490d57ef6-e0b6951e0b0mr750054276.49.1722103830200;
-        Sat, 27 Jul 2024 11:10:30 -0700 (PDT)
-Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2a93a98dsm1146551276.56.2024.07.27.11.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 11:10:29 -0700 (PDT)
-Date: Sat, 27 Jul 2024 11:10:28 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kees@kernel.org,
-	David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>,
-	kernel@collabora.com
-Subject: Re: [PATCH 0/3] bitmap: Convert test_bitmap to kunit test
-Message-ID: <ZqU4FANdHOvpGc5t@yury-ThinkPad>
-References: <20240726110658.2281070-1-usama.anjum@collabora.com>
- <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
+        d=1e100.net; s=20230601; t=1722104213; x=1722709013;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N7MXJDFanOvjXGeDbmsv4q4l8yEMA8rUdIcZkh48+uU=;
+        b=KuSh1puLKG4QUI76hUbFBnP6DavwCQzU/tIevJGt99XoibJ7Ak/K54QrgCNaRV1wcd
+         oxu8o09HJLEzVJ93PqKYxaFTNkYdKIca1XVeI9pIO9Zqrj3aGaSrBR+LOCAot71raRYQ
+         FWTFmXXlfs9LEEaVJ8Q6El/aJ90/GKrhoTaNIkU3ppwGE+1o/qDSEhd9UwNsGZxQPonf
+         mC5wUubKZ0GDHUGxSXFapiM03+DL1AbjUap70sEkE+DBvSWchVxBwukn1DPWATxdYH32
+         7TuAHoZLu3Lv8YLAG0PYM7atTGixTfaxtqQ/7PJn4+iuG9wRt+moJQeCD0DQHPzevdGh
+         y1Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCW96aQv5UXp+VS8Vr7k4i7akyZXIBOlQhEKfzXqSQijeE0JQjAhOb3kWMAgH95TRaNxcgwoEvr/SL1B8rSxCmB1Nrc+sfKzZYGa5sNW
+X-Gm-Message-State: AOJu0Yx7q/rx+/P/6wB/MuTcMHUWBLAAATfOPq44IBWm+N3ZfXdplRmR
+	I6PflePNxy+kcpxRrXIiUqQICj6ILAoEVlT1kpAUITrGDVkD+QFkobP+hPTFYSYSAMVtP2s3f40
+	j/mVzDQ==
+X-Google-Smtp-Source: AGHT+IE1yFSDdnSmkm93v8Ok7xUQ4yjImwsGXI+ngTdnReJLD9bcLX1IbuPHZVDX2E0aWMDFKbKGiA==
+X-Received: by 2002:a50:cd54:0:b0:5a0:c709:aa0b with SMTP id 4fb4d7f45d1cf-5b021f0c45bmr1886574a12.24.1722104212842;
+        Sat, 27 Jul 2024 11:16:52 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b033fsm3323366a12.1.2024.07.27.11.16.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Jul 2024 11:16:51 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so4285447a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:16:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXuGqotg8UybL9hqeLwq852wS+0orXMr9x4mEC5okFrWgMv3A2GGABEqteEPvK6HYfVVcRznrzGFMhKR6LzWv3KVphpntiX6HjOIpfF
+X-Received: by 2002:a05:6402:2813:b0:5a3:a4d7:caf5 with SMTP id
+ 4fb4d7f45d1cf-5b0224cf4eemr1877971a12.36.1722104210954; Sat, 27 Jul 2024
+ 11:16:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27b91030-b01f-44e4-82f7-93b3e11e8d74@linuxfoundation.org>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local> <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local> <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local> <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
+ <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
+ <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com> <ZqUvgRJZQUmyHpna@casper.infradead.org>
+In-Reply-To: <ZqUvgRJZQUmyHpna@casper.infradead.org>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sat, 27 Jul 2024 11:16:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi0UOUydauODOLAcS=mDzQsnxd=tGsJRLja88qrWjABWA@mail.gmail.com>
+Message-ID: <CAHk-=wi0UOUydauODOLAcS=mDzQsnxd=tGsJRLja88qrWjABWA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jens Axboe <axboe@kernel.dk>, 
+	David Laight <David.Laight@aculab.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 01:26:48PM -0600, Shuah Khan wrote:
-> On 7/26/24 05:06, Muhammad Usama Anjum wrote:
-> > In this series, test_bitmap is being converted to kunit test. Multiple
-> > patches will make the review process smooth.
-> > 
-> > - Patch-1: Convert the tests in lib/test_bitmap.c to kunit
-> > - Patch-2: Rename the lib/test_bitmap.c to lib/bitmap_kunit.c and other
-> >             configuration options
-> > - Patch-3: Remove the bitmap.sh selftest
-> > 
-> > Muhammad Usama Anjum (3):
-> >    bitmap: convert test_bitmap to KUnit test
-> >    bitmap: Rename module
-> >    selftests: lib: remove test_bitmap
-> > 
-> >   MAINTAINERS                           |   2 +-
-> >   lib/Kconfig.debug                     |  15 +-
-> >   lib/Makefile                          |   2 +-
-> >   lib/{test_bitmap.c => bitmap_kunit.c} | 624 ++++++++++++--------------
-> >   tools/testing/selftests/lib/Makefile  |   2 +-
-> >   tools/testing/selftests/lib/bitmap.sh |   3 -
-> >   tools/testing/selftests/lib/config    |   1 -
-> >   7 files changed, 295 insertions(+), 354 deletions(-)
-> >   rename lib/{test_bitmap.c => bitmap_kunit.c} (70%)
-> >   delete mode 100755 tools/testing/selftests/lib/bitmap.sh
-> > 
-> 
-> Can you tell me how this conversion helps?
-> 
-> It is removing the ability to run bitmap tests during boot.
-> It doesn't make sense to blindly convert all test under lib
-> to kunit - Nack on this change or any change that takes away
-> the ability to run tests and makes them dependent on kunit.
+On Sat, 27 Jul 2024 at 10:34, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> In the specific case of PageLocked, that can hopefully go away fairly
+> soon.  We only have 24 instances left in tree and five of those are
+> comments/docs.  The ones in fs (btrfs, crypto, f2fs, ocfs2 and pipe)
+> should be converted to folio soon.
 
-Hi Muhammad,
+So unlike the min/max mess, at least in this case there's some
+_reason_ for the long lines (ie it's not some long line because of
+just mindless expansion, it's a long line because it defines several
+helper functions intentionally in one go).
 
-In addition to Shuah's and John's reasoning. This patch wipes the
-test history (git blame will point on you for most of the test),
-breaks boot-time testing support, messes with config names and
-usability, and drops kselftest support for ... exactly, what?
+End result: I don't think these are really in the same class as some
+of the min/max expansion issues, but:
 
-KUNIT engine here doesn't improve on readability, neither shorten
-the test length, to my taste.
+> But I have been wondering whether the way we define all the functions
+> around page/folio flags is sensible.  Every file which includes
+> page-flags.h (... which is most of them ...) regenerates the macros.
+> You can't grep for the definition of folio_test_locked().  There's
+> nowhere to put kernel-doc for folio_test_locked().
 
-If you'd like to contribute to bitmaps testing - I'm all for that.
-This is the very core and performance-sensitive piece of kernel,
-and any extra-coverage is always welcome.
+Right, these things do have their own issues, and the different flag
+handling helper functions _used_ to be simpler than they are now. It
+is indeed a pain to grep for, for example, and yes, it gets included
+for a lot of people who simply don't need it or want it.
 
-But I think the best way would be either adding new cases to the
-existing test, or writing a new test, KUNIT-based, if you like.
+I'm not convinced having it in a generated file would help the
+greppability - I certainly don't use "grep -R" any more, I use "git
+grep", which by definition will never see any generated files any more
+than it sees pre-processor output.
 
-Thanks,
-Yury
+But whether those functions should be in one core header file at all,
+that's clearly questionable. I wonder how inlined they need to be
+either, outside of the trivial cases.
+
+(And when I say "those functions", I don't mean just the pageflag
+ones. The folio ones largely have all the same issues - except the
+"page" ones have a *TON* of debugging code in them, so they expand to
+be much bigger)
+
+Side note: one very simple thing to do might be to short-circuit the
+"constant bit number" test in the bitops that the PG_##flags cases
+use. That's a lot of noise to select between "simple constant bit
+number" and "generic variable one" when we know they are all constant.
+
+                   Linus
 
