@@ -1,334 +1,78 @@
-Return-Path: <linux-kernel+bounces-264265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FEA93E0DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:14:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30A693E0C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41F828174B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:14:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42320B214F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616546F30B;
-	Sat, 27 Jul 2024 20:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5446230358;
+	Sat, 27 Jul 2024 20:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="lax5XgDK"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CC6JKK9R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA7036AEC
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940442F2F
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722111280; cv=none; b=Ota05MMvA+8ITNrtwJ8FQHAWA7sEjv42k6zysrYHd6C0WjJfk63kfl5nuyzVd9+tBXdE1DcjdFy9dWP5DIWw8eKluOG405NfD1Gaxq6y8iy3NS7bG9QwSppikrmwc8filZYcYXKRhiI2xl8UsKuhXM4ZDqszFOktJpCOs10JkV4=
+	t=1722110837; cv=none; b=SaZXVs+l7EMGFkjMIqgXfjcChvvpbgojjXN3SJM5k3gT2E/8gBr6wlIWMdxWqV1kcH2Mxe87fIQFBqLwpMRbaR7CHugYWfCP1bvJjt1Gv+A3BdWpSAjOx2bOTGJSnUwE4oHyhWeXdo8XNNNH7DTnoO1CGixtJEoyJ5ji9Cdkrcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722111280; c=relaxed/simple;
-	bh=0WyqCcZuz550BHwEaLp7GfV8RnMm8AdV6sdfP9OM00Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QYVVIX9RnrQ+Ksa3/rSaFzDxouZeXA0jNI2DdJEDukk+u7POzxDcOSwEvgymGOn9o6kedmgoIVM7j/KF7s4G7I55SvxKUh10Bt3bqCtovipJHKhT4AmrpUVGUSSFbkqiayD97kIRyQvvpajC7NW7nv9re6ngkqWf7HNceztrHtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=lax5XgDK; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 32A29240104
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 22:14:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-	t=1722111271; bh=0WyqCcZuz550BHwEaLp7GfV8RnMm8AdV6sdfP9OM00Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:From;
-	b=lax5XgDKoAcCuZ7+JFkwvMwHepr8aMnMOG50CLv/5jPpfVMMBgYfqMZCH/JQjNcib
-	 QfJp4RhaB8G+XhHO4ciGvgyka7zXtHI8ub7mj5Ik3DJSVn9kcEBzXeiOCowt8fxncy
-	 cEAEjESpU9J4Ml9y1GbYUENmCw0SoiskQ/ZCUbyHg2dROcbHW4nbhpC5Qq3iwfrXED
-	 mZFUmPAColUNxXJH3YgttvhiZbtvttiviGg+QqjSY6xU8XuS98dfgjRI3SMRRO1U0d
-	 LDa51youPP9y2bK5FqGQ8ooqzTrsIlWHxa1mAXfEqZ8RX/2XTw7ohaiUU1lPsKd9y5
-	 YubuB/cq9p0+Q==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4WWbSQ1SYfz6trs;
-	Sat, 27 Jul 2024 22:14:30 +0200 (CEST)
-From: Alexander Reimelt <alexander.reimelt@posteo.de>
-To: andersson@kernel.org,
-	petr.vorel@gmail.com,
-	konrad.dybcio@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] arm64: dts: qcom: msm8992-lg-h815: Initial support for LG G4 (H815)
-Date: Sat, 27 Jul 2024 20:04:50 +0000
-Message-ID: <20240727201413.114317-3-alexander.reimelt@posteo.de>
-In-Reply-To: <20240727201413.114317-1-alexander.reimelt@posteo.de>
-References: <20240727201413.114317-1-alexander.reimelt@posteo.de>
+	s=arc-20240116; t=1722110837; c=relaxed/simple;
+	bh=+DV4kCRHLIGABvSMp8Zc9czMIuhamMhxIql3DNJsYWQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LEqwkmfKNkWRlIt7l9DPTdqOG1vHM2poQ9tr64FMmFulVu9xCZmy+KzxUMK9mvKA0COabiiP1M/8eOAJ4CDMKKCewA6pIpSNYmjPJpdFH8KJVUDupor2KHvCYVhb+2U0b3cerhKsFAchkswMPAMCwhHt1gN5fD31sDdbzz1rBfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CC6JKK9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 77735C32781;
+	Sat, 27 Jul 2024 20:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722110837;
+	bh=+DV4kCRHLIGABvSMp8Zc9czMIuhamMhxIql3DNJsYWQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=CC6JKK9RWSFS5cV12YxQT2Ok4K84sX6yIGDb5hSl7gTWC5wfw19YU6N5LJhNxiu0T
+	 sX37WOBrzjkwfipOtBagSyVC54pgT0Y9QcC3yw8+ugUQrvIhsvBsHPLYIenZhjBTgc
+	 hB2HxbaFx6DNhwUzOP6u+2jYC//9837anK5cxtwc7bCMWbpOyDaF/UkLebCvkKtDp0
+	 U8VsN6v3hfEVRYWCL2AKcipxKGLWhGBZl6YPR+/Pp3c2qIwsB7iDpMhRnA419f7CLJ
+	 kSdl3MxkDPdB5ym7TWMsyW/rQbH57zkWjka/lsYC2y6OIBjkYVJ8reuSFyP9qTFL14
+	 nhdHuzNVikdXQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 65141C4333D;
+	Sat, 27 Jul 2024 20:07:17 +0000 (UTC)
+Subject: Re: [GIT PULL] RISC-V Patches for the 6.11 Merge Window, Part 2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <mhng-d1533559-79a3-401a-8eee-a743b80b3bb2@palmer-ri-x1c9>
+References: <mhng-d1533559-79a3-401a-8eee-a743b80b3bb2@palmer-ri-x1c9>
+X-PR-Tracked-List-Id: <linux-riscv.lists.infradead.org>
+X-PR-Tracked-Message-Id: <mhng-d1533559-79a3-401a-8eee-a743b80b3bb2@palmer-ri-x1c9>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-mw2
+X-PR-Tracked-Commit-Id: 52420e483d3e1562f11a208d3c540b27b5e5dbf4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c9f33436d85b72b2addfd9423eae864cb8dac1da
+Message-Id: <172211083740.16614.18306159259071737244.pr-tracker-bot@kernel.org>
+Date: Sat, 27 Jul 2024 20:07:17 +0000
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-To make it easier for downstream projects and avoid duplication of work.
-Makes the device bootable and enables all buttons, hall sensor, eMMC and SD-Card.
+The pull request you sent on Sat, 27 Jul 2024 06:29:14 -0700 (PDT):
 
-Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
----
- arch/arm64/boot/dts/qcom/Makefile            |   1 +
- arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts | 231 +++++++++++++++++++
- 2 files changed, 232 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
+> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-mw2
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 0e5c810304fb..597481e3eeeb 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -69,6 +69,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-kugo.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-suzu.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-10.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-101.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-h815.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-msft-lumia-octagon-talkman.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-xiaomi-libra.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-huawei-angler-rev-101.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
-new file mode 100644
-index 000000000000..38b305816d2f
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * MSM8992 LG G4 (h815) device tree.
-+ *
-+ * Copyright (c) 2024, Alexander Reimelt <alexander.reimelt@posteo.de>
-+ */
-+
-+/dts-v1/;
-+
-+#include "msm8992.dtsi"
-+#include "pm8994.dtsi"
-+#include "pmi8994.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/* different mapping */
-+/delete-node/ &cont_splash_mem;
-+
-+/* disabled downstream */
-+/delete-node/ &dfps_data_mem;
-+
-+/ {
-+	model = "LG G4 (H815)";
-+	compatible = "lg,h815", "qcom,msm8992";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <0xfb 0x0>;
-+	qcom,pmic-id = <0x10009 0x1000a 0x0 0x0>;
-+	qcom,board-id = <0xb64 0x0>;
-+
-+	/* psci is broken */
-+	/delete-node/ psci;
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		spin-table@6000000 {
-+			reg = <0x0 0x06000000 0x0 0x00001000>;
-+			no-map;
-+		};
-+
-+		ramoops@ff00000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0x0ff00000 0x0 0x00100000>;
-+			console-size = <0x20000>;
-+			pmsg-size = <0x20000>;
-+			record-size = <0x10000>;
-+			ecc-size = <0x10>;
-+		};
-+
-+		cont_splash_mem: fb@3400000 {
-+			reg = <0x0 0x03400000 0x0 0x00c00000>;
-+			no-map;
-+		};
-+
-+		crash_fb_mem: crash-fb@4000000 {
-+			reg = <0x0 0x04000000 0x0 0x00c00000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-hall-sensor {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&hall_sensor_default>;
-+		pinctrl-names = "default";
-+
-+		label = "Hall Effect Sensor";
-+
-+		event-hall-sensor {
-+			gpios = <&tlmm 75 GPIO_ACTIVE_LOW>;
-+			label = "hall effect sensor";
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-vol-up {
-+			label = "volume up";
-+			gpios = <&pm8994_gpios 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			wakeup-source;
-+			debounce-interval = <15>;
-+		};
-+	};
-+};
-+
-+&CPU0 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU1 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU2 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU3 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU4 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU5 {
-+	enable-method = "spin-table";
-+};
-+
-+&pm8994_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8994-regulators";
-+
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+		vdd_s5-supply = <&vph_pwr>;
-+		vdd_s7-supply = <&vph_pwr>;
-+		vdd_l1-supply = <&pmi8994_s1>;
-+		vdd_l2_26_28-supply = <&pm8994_s3>;
-+		vdd_l3_11-supply = <&pm8994_s3>;
-+		vdd_l4_27_31-supply = <&pm8994_s3>;
-+		vdd_l5_7-supply = <&pm8994_s5>;
-+		vdd_l6_12_32-supply = <&pm8994_s5>;
-+		vdd_l8_16_30-supply = <&vph_pwr>;
-+		vdd_l9_10_18_22-supply = <&pmi8994_bby>;
-+		vdd_l13_19_23_24-supply = <&pmi8994_bby>;
-+		vdd_l14_15-supply = <&pm8994_s5>;
-+		vdd_l17_29-supply = <&pmi8994_bby>;
-+		vdd_l20_21-supply = <&pmi8994_bby>;
-+		vdd_l25-supply = <&pm8994_s5>;
-+		vdd_lvs1_2-supply = <&pm8994_s4>;
-+
-+		pm8994_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		/* sdhc1 vqmmc and bcm */
-+		pm8994_s4: s4 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-system-load = <325000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		pm8994_s5: s5 {
-+			regulator-min-microvolt = <2150000>;
-+			regulator-max-microvolt = <2150000>;
-+		};
-+
-+		/* sdhc2 vqmmc */
-+		pm8994_l13: l13 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <22000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		/* sdhc1 vmmc */
-+		pm8994_l20: l20 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <570000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		/* sdhc2 vmmc */
-+		pm8994_l21: l21 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <800000>;
-+			regulator-allow-set-load;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,rpm-pmi8994-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_bst_byp-supply = <&vph_pwr>;
-+
-+		pmi8994_s1: s1 {
-+			regulator-min-microvolt = <1025000>;
-+			regulator-max-microvolt = <1025000>;
-+		};
-+
-+		/* S2 & S3 - VDD_GFX */
-+
-+		pmi8994_bby: boost-bypass {
-+			regulator-min-microvolt = <3150000>;
-+			regulator-max-microvolt = <3600000>;
-+		};
-+	};
-+};
-+
-+&sdhc1 {
-+	mmc-hs400-1_8v;
-+	vmmc-supply = <&pm8994_l20>;
-+	vqmmc-supply = <&pm8994_s4>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&sdhc2 {
-+	vmmc-supply = <&pm8994_l21>;
-+	vqmmc-supply = <&pm8994_l13>;
-+	cd-gpios = <&pm8994_gpios 8 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	hall_sensor_default: hall-sensor-default-state {
-+		pins = "gpio75";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+};
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c9f33436d85b72b2addfd9423eae864cb8dac1da
+
+Thank you!
+
 -- 
-2.45.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
