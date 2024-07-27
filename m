@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-264243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D11793E0AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202FB93E0AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93D94B21213
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58571F21828
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7540C18754D;
-	Sat, 27 Jul 2024 19:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QGqh6HkN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1066F1862B2;
+	Sat, 27 Jul 2024 19:11:44 +0000 (UTC)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C57580C09;
-	Sat, 27 Jul 2024 19:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB815B570;
+	Sat, 27 Jul 2024 19:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722107502; cv=none; b=Wz0qPvUBxgsFLGST39sQMQp3b83MDIvVJkU7R6BJke5KLAQhMK1ai+UuQWwOX5f2Q460S3akb2CFaZyAdirIncuzPM+Hc/E7zvkj/6Oz+zN6M896yRHcgt5bhrzseFwLvuCtg6lgCk/YWfRUKca1OSIj5KGaZbrMcaeqCwlnlWI=
+	t=1722107503; cv=none; b=gILLr9wacgJV0d6WqhH5Z1yDJA5LBCeTJn0TNitPmPFFzPtQ+FM4R3+iNRjOhulwqHMor5oDdyY0XgfFLt6AXSO2sm8SD7H+ObH6VqXzUIspd6f75Dxk+15UXmPHw9zC76RdD4nF5VPZXvLHCfV9SAAKRYIB4LWJUfdB8VngWb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722107502; c=relaxed/simple;
-	bh=M8mrct+fcXWf4dQP4IR3e4KiOgK+DHB5K7VgHM1qCDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TuxIBcqyPCBwvmWEy5XkpkPrLeg+Lix+w6zUoodxUkXFVWW/x6/WhrLc29hnHYHOIWMb7fgIi2KgzH7FQ47evlhc6q51SV7otxgmvb2huh7pwJ0kzqdSW8FN1CrcitrnI2SeJFuhCE+IuVi9EJ4hn/dCYcCyVwpdwOLuPS4Kkic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QGqh6HkN; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722107500; x=1753643500;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M8mrct+fcXWf4dQP4IR3e4KiOgK+DHB5K7VgHM1qCDM=;
-  b=QGqh6HkNaLLN6pwjbKizC3hee9tPHzyCIJY2Ejh0RrUMJmgp3uguS9c+
-   XxBBr4ltNUMUB0gYkX3K9owYvSRKBR1z9emzGTlXu0PiBpGaBv0OTS+za
-   HDKGLHpMNdHK6Txsxpek6fwG8BbtXAhpui8G6AUUg1/7Pj7MKCZUfRKo4
-   wRxtK9UU6Modgse+4bDYnAhulFBixAd80rHuK+e6+kPiwNB455GiFvCsv
-   CPo/bNhXp4hhKMmSGO9XSeKD/FuDMioxoD/qorhBcmNhJ/ZNNZw6w4mrG
-   KuOShxYussF0W2bGWINGMM4IptX3b/LkghuyA6kAerp5N2oJgPy5IxxIt
-   Q==;
-X-CSE-ConnectionGUID: rD8YJziURpCzS8cVtIjoOw==
-X-CSE-MsgGUID: uW4GXKzASl2YiIHga0qfIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="23737250"
-X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
-   d="scan'208";a="23737250"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 12:11:39 -0700
-X-CSE-ConnectionGUID: 2Ao0g3xGS8qfccCuivH2mA==
-X-CSE-MsgGUID: QhoqwShcSuSMVXNuVVxAXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
-   d="scan'208";a="76793712"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Jul 2024 12:11:37 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sXmpK-000qAq-1F;
-	Sat, 27 Jul 2024 19:11:34 +0000
-Date: Sun, 28 Jul 2024 03:11:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA
- driver
-Message-ID: <202407280250.YTVHsCYs-lkp@intel.com>
-References: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com>
+	s=arc-20240116; t=1722107503; c=relaxed/simple;
+	bh=nKvWUVR/oTeV71PdUgP2hI6ww6eaino7g+EdNFlSC9I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sqA04hq/VfoXiFDESc+hcZY62Jm8xa7LhtKRNVvY2unynoacMxHIbrDpmMsnRFGfYnQcNEncYKfKQ4naWRxiRIuDxJgX6JGVomJTprdZjSNRsRspul8CWLOEtwuoqRzslzEnxrUOUGEXBZcL+9ze5TG68RKILSFjXAFwhhDwWRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-260f863109cso1352969fac.1;
+        Sat, 27 Jul 2024 12:11:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722107501; x=1722712301;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NDIB7c0sILO/knUgvZlVA7r7ElBc2AbO2B42Uc06C88=;
+        b=o3ZJbPXAZN3O0aSrNPu34dMsluTTJISiT/PHiIMCFFkcC0JuK94VbugoSmXHPs0vUW
+         t42QWW6w0L16xMN93ktNtx8OsOy0fnvRVZeTJCt8cEB7pT70A/F5tzZPSt7rGp2WeKQ5
+         orOahfS8SYY0Cu5Kw0Wa666rF9FgFHDSLdJueOEV3QKlhrLSBHXXSvGhJI7vywj3PbD/
+         +n1jlUJ2GMAQ6/lOSJtlzpCiAYn+4rmket1FjXQFe1J2fnBdBGcJ6wN3LdJLNnIzYNZl
+         xiRtFe4jz0vAnx4cx3CutcWftqX/v2ehYBcAcP6WZ621YKgPU3N5FVZBVgGffqeQkKKZ
+         FO6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwqG+CuLyDS8nNy/eOqzfUIZm7nRj21RcIQcM+FwyMpuXZCqYSYkC19w5Devh8U3nzVWQGFH6gjqcplEJdOZF4ZH42udflh5qgZeQr
+X-Gm-Message-State: AOJu0YwFGwX4CvXqzeKhJ921Y5lfTJz8vz/aODg2bgZ2a1KhIoWau66y
+	eAIJTJhdy8P0maNDzu+9WvTHU0mgXWV/VU7upnp443xMid/op7i/GshZzwvVIxBaggHq5DLD8Sj
+	FmPmcM3UW/ldMIVRjq935M6kST6PWsOPj
+X-Google-Smtp-Source: AGHT+IGziHFDotrmMFNvvp6kjuGMHtgF8O1lHoFfz/47jjPhJRiTguk/dkPxR2ht2TG1OYRtn56MG1DJmIsR3i4oUic=
+X-Received: by 2002:a05:6871:5207:b0:261:1b0f:dc94 with SMTP id
+ 586e51a60fabf-267d4f3b525mr4023833fac.45.1722107501023; Sat, 27 Jul 2024
+ 12:11:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com>
+From: Len Brown <lenb@kernel.org>
+Date: Sat, 27 Jul 2024 15:11:30 -0400
+Message-ID: <CAJvTdK=eR67WE6e9YDZKoVTStoeTMPaJ2D-2=_agwU1tjFbu1g@mail.gmail.com>
+Subject: [GIT PULL] turbostat-2024.07.26 for Linux-6.11-merge
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Keguang,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+The following changes since commit b15943c4b3351173d5f3b0d87362d2994a89bb66:
 
-[auto build test ERROR on 668d33c9ff922c4590c58754ab064aaf53c387dd]
+  tools/power turbostat: Add local build_bug.h header for snapshot
+target (2024-06-27 23:53:27 -0400)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-dma-Add-Loongson-1-APB-DMA/20240726-212659
-base:   668d33c9ff922c4590c58754ab064aaf53c387dd
-patch link:    https://lore.kernel.org/r/20240726-loongson1-dma-v10-2-31bf095a6fa6%40gmail.com
-patch subject: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240728/202407280250.YTVHsCYs-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240728/202407280250.YTVHsCYs-lkp@intel.com/reproduce)
+are available in the Git repository at:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407280250.YTVHsCYs-lkp@intel.com/
+  git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git tags/v6.11-merge
 
-All errors (new ones prefixed by >>):
+for you to fetch changes up to 866d2d36b81d7d0e6d91423b6dd9b1bcfd0510dd:
 
->> drivers/dma/loongson1-apb-dma.c:58:3: error: requested alignment must be 4294967296 bytes or smaller
-      58 | } __aligned(LS1X_DMA_LLI_ALIGNMENT);
-         |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_attributes.h:33:56: note: expanded from macro '__aligned'
-      33 | #define __aligned(x)                    __attribute__((__aligned__(x)))
-         |                                                        ^           ~
-   1 error generated.
+  tools/power turbostat: version 2024.07.26 (2024-07-26 14:36:08 -0400)
 
+----------------------------------------------------------------
+turbostat release 2024.07.26
 
-vim +58 drivers/dma/loongson1-apb-dma.c
+Enable turbostat extensions to add both perf and PMT
+(Intel Platform Monitoring Technology) counters via the cmdline.
 
-    53	
-    54	struct ls1x_dma_lli {
-    55		unsigned int hw[LS1X_DMADESC_SIZE];
-    56		dma_addr_t phys;
-    57		struct list_head node;
-  > 58	} __aligned(LS1X_DMA_LLI_ALIGNMENT);
-    59	
+Demonstrate PMT access with built-in support for Meteor Lake's Die%c6 counter.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+----------------------------------------------------------------
+Len Brown (1):
+      tools/power turbostat: version 2024.07.26
+
+Patryk Wlazlyn (16):
+      tools/power turbostat: Remove anonymous union from rapl_counter_info_t
+      tools/power turbostat: Replace enum rapl_source and
+cstate_source with counter_source
+      tools/power turbostat: Add ZERO_ARRAY for zero initializing builtin array
+      tools/power turbostat: Group SMI counter with APERF and MPERF
+      tools/power turbostat: Extend --add option with perf counters
+      tools/power turbostat: Fix formatting in turbostat.8
+      tools/power turbostat: Add perf added counter example to turbostat.8
+      tools/power turbostat: Fix typo in turbostat.8
+      tools/power turbostat: Move debug prints from stdout to stderr
+      tools/power turbostat: Move verbose counter messages to level 2
+      tools/power turbostat: Add selftests for SMI, APERF and MPERF counters
+      tools/power turbostat: Add selftests for added perf counters
+      tools/power turbostat: Add early support for PMT counters
+      tools/power turbostat: Add MTL's PMT DC6 builtin counter
+      tools/power turbostat: Document PMT in turbostat.8
+      tools/power turbostat: Include umask=%x in perf counter's config
+
+Tony Luck (1):
+      tools/power/turbostat: Switch to new Intel CPU model defines
+
+ tools/power/x86/turbostat/Makefile                 |    1 +
+ tools/power/x86/turbostat/turbostat.8              |   98 +-
+ tools/power/x86/turbostat/turbostat.c              | 2341 ++++++++++++++++----
+ .../selftests/turbostat/added_perf_counters.py     |  178 ++
+ .../testing/selftests/turbostat/smi_aperf_mperf.py |  157 ++
+ 5 files changed, 2277 insertions(+), 498 deletions(-)
+ create mode 100755 tools/testing/selftests/turbostat/added_perf_counters.py
+ create mode 100755 tools/testing/selftests/turbostat/smi_aperf_mperf.py
 
