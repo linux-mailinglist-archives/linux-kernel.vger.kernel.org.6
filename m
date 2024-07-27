@@ -1,117 +1,128 @@
-Return-Path: <linux-kernel+bounces-264221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0396F93E055
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34FD93E058
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3502E1C20CAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9D02821AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D26186E47;
-	Sat, 27 Jul 2024 17:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39367186E4B;
+	Sat, 27 Jul 2024 17:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKeo8DjC"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ViSWKFfs"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEA71B86E0;
-	Sat, 27 Jul 2024 17:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13621B86E0;
+	Sat, 27 Jul 2024 17:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722101170; cv=none; b=BfQ2TL3IvZOWmsluJcnVbqnTO+heO9VpCPG/o1qEfnHKL8cfxY5oIRZL2POwlciA7+hR9VcnuKiXdbkc7KpLCE1gD3kdtwsLF+ieUD3pzM/zpbQeCwQOBQxPtT8ESHPdsOi9zW2IoU1QXQk0LY24/bgOj9C8GZm9xFOTNUzxA6k=
+	t=1722101179; cv=none; b=j62Lcnlz/BCw8SyiaHdtpy2igTYPCDY2Ojl7JmkYZj8rUj7LRPK/beCUi5Bjvy8GpZFBL6UbnFBgRTPX9/B4PyUnh9N/BWxOM7PU8r0Yth9j3WP3hIyXVxNsKqvHKmHkw90QtqxdwKYhQxwfmNnRj8Gvh16ObDmj6JLYuCMgIe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722101170; c=relaxed/simple;
-	bh=9oAufN8joVb0E8rKmzeoqRUEaltCXxDgkoiJeB/YjV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0eawToo/3UfrSVjLHQPLDuLmLPRiktNRazOaaOE2ZCqpo4ed4HgEHkpSzMntfMz4ICWZOeYxCOikWVKXYCIycJ0jneucUI/vDt7GSflW1cMLyEoexmY59Cj75nKLj/abLVDb3MXkTR1fwg7il/HgFbjxhTE6d4DK5bc0UGJuKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKeo8DjC; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44fe58fcf29so8612881cf.2;
-        Sat, 27 Jul 2024 10:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722101168; x=1722705968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mXEidSCbTxCEMvjRmFfWopU+ZWCaSmREcQ6uNlzUY8=;
-        b=KKeo8DjC2mbS0FqyhSwAQu5ZaM/EfxDaNRlP3/xbNChOSiw/HOsW1ONPDGqLjCVNrx
-         yi96ymPmlCQMXTY7r6/Mc1p82ok1LLWvvztaG6/B6UnVnRg71+Bo4PgsE+L8+MdN/hwZ
-         OnjSZC+Xv8aIFIzIG5Bq3R4McxQcaNc4rFyx+M1+0b0BsLl8Ppqc7U7YwNWPg6+LRHGa
-         AziVJbBxsr2v0U66ATZ6EVGTO/WbDie5u9rVsvDOSu87Zz+whxfC4DV3oBhTqbvjjdrg
-         hMRBbOyLHj4sN9shCR6X08zetgrhePXGgfNMUa6ASQsFnQzGMIlAmWW1kt/2toAtU3sc
-         fKoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722101168; x=1722705968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9mXEidSCbTxCEMvjRmFfWopU+ZWCaSmREcQ6uNlzUY8=;
-        b=dmRQ6kWHv5nIbXLKsj7jZhwJzW7XKwWmgxTkNv6QPgS+Lq1OauDfyQGrdg8fe/ldT3
-         s6xyVu8gisC6j0gRNsWFVIhE/3J0q2o5v+j4zvzU7BDfLM8UqVVYUVCtOl6C32dMQrAJ
-         WNSdgnMV2ZHgcFZqcW1U4o1kC+FTv4alqJmV3rX6YB1t1/1XiysVssgBDs94B/FoFTEG
-         8kgX6fSwMISPQ3fOEXEDRkuRUrvwnbeXwQpvCVoqii9hIEf2m8OCDYFItpxO+JCBnUzd
-         VtDvYonKJNwj6rH/jrroah8PhFluijIfRzOkeS+DELQkmYH1O3pcNPH+RJMvA5r1F/nJ
-         Y96w==
-X-Forwarded-Encrypted: i=1; AJvYcCXt1opj/XqM3/0tOA2ioCDInChKPumWKr6LnWXwB+w2eHln7yF9BMPa1+hXmsDDB7oYWqzJcbP5/1HrkFrM217omfjSzcUu15WdtoG300terTcV8wM9qmaS9naSN04cZv7fpNTE5WWUTQ==
-X-Gm-Message-State: AOJu0YwctultnPwmzsrQSCNvWfxtcCQhHchNellK8nQl69Yfjuv0Ev2b
-	oIIImz2E2dPZ2vnNbe/9MGxMSiiUl1EF4uUvmwFxe7S5KsZS7uYv
-X-Google-Smtp-Source: AGHT+IHZmTWCYaCpj+GEFbm8JxA2Vfn8GpH4Olgk26FftL3v9YKmgGnC9zttm9v5+DghGzE9vJ1fwA==
-X-Received: by 2002:a05:622a:447:b0:447:d867:2aa7 with SMTP id d75a77b69052e-45004f3dba3mr38418051cf.46.1722101168180;
-        Sat, 27 Jul 2024 10:26:08 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8123516sm25656831cf.1.2024.07.27.10.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 10:26:07 -0700 (PDT)
-Date: Sat, 27 Jul 2024 13:26:05 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mehdi.djait@bootlin.com, christophe.jaillet@wanadoo.fr, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add driver for Sharp Memory LCD
-Message-ID: <crnz3y3y3m4yjrovjamtlftmztmqejqx6s2jg33guhkt2slnvl@45cfsfia3pyi>
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240726194456.1336484-1-lanzano.alex@gmail.com>
- <a814e348-9837-4cfa-a500-72f47b47c9b7@kernel.org>
+	s=arc-20240116; t=1722101179; c=relaxed/simple;
+	bh=0JUr3fUYlefWhft141VQNfADwU7JSh8bF/I57R0uKBs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=AkB41En9gy98DuvhZ5jGHTUxfjQJvf43XEubz7L7tP6V1rkfimI8xENFaoibK57gB8RzAvHmFNYZEA+d6Ra5ievLZDlM6x0i8a3zxbHPOISZUv7s/yBRw2OfDw3EVZIXFJevBaFYuOT044wcX8kN8KN8NVjlWUUiJeR0DBayV7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ViSWKFfs; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a814e348-9837-4cfa-a500-72f47b47c9b7@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722101174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W0xWla7GajGgE12FYJTA3d2+hQz1cIEdi3VEmQzhsqU=;
+	b=ViSWKFfsWDciK9XUpUBuKYVTxLx9sxSn8tut/Fb7rTZ8nc+lDO0Cqt+IEXrLa9ANFnOnwR
+	hZZDDRyhK5TpO9LtPOqwUmvjUnJ30p0bN0dA7WKoQmlqxpCcx8x/3FW1uyw9UxWbNEUy/R
+	YP3kkWlSb5/TqYFmpfv054kaAz7YxVF8HLwCkJ2cjVCa8kbxensjSURX6CRnLWB9b8MOkr
+	qNjBK+CZuZ8cFirrNd3DaZjYAbIP/QQlp2127HvV5/PAYVlt6xMCJRCfQC1WDyQhY9+V/b
+	vgEMR+hkTrLuqKxlZHOHZ10Hpl+tOOk1q7VNuOuPiCA+Ab4oFCDfd/hCYxx9cQ==
+Date: Sat, 27 Jul 2024 19:26:14 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, mturquette@baylibre.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+In-Reply-To: <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
+References: <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-2-heiko@sntech.de>
+ <20240716-deceiving-saucy-851fb2303c1f@spud> <3178118.zE8UqtGg2D@diego>
+ <20240718-prozac-specks-6b5fd8b83e3e@spud>
+ <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
+Message-ID: <1f6f4cd84b06a95881093772d5b799ef@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Sat, Jul 27, 2024 at 11:00:08AM GMT, Krzysztof Kozlowski wrote:
-> On 26/07/2024 21:44, Alex Lanzano wrote:
-> > This patch series add support for the monochrome Sharp Memory LCD
-> > panels. This series is based off of the work done by Mehdi Djait.
-> > 
-> > References:
-> > https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
-> > https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
-> > 
-> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> > Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> > Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> 
-> Do not attach (thread) your patchsets to some other threads (unrelated
-> or older versions). This buries them deep in the mailbox and might
-> interfere with applying entire sets.
-> 
-> Best regards,
-> Krzysztof
-> 
+Hello Stephen,
 
-Will do! Sorry about that
+On 2024-07-27 00:21, Stephen Boyd wrote:
+> Quoting Conor Dooley (2024-07-18 08:59:50)
+>> 
+>> FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
+>> "vdd-supply" are pretty generic and I think the latter is missing from
+>> the vast majority of real* "fixed-clocks". I would expect that devices
+>> where the datasheet would call
+>> 
+>> * Real because there's plenty of "fixed-clocks" (both in and out of 
+>> tree)
+>> that are used to work around the lack of a clock-controller driver for 
+>> an
+>> SoC.
+> 
+> I agree!
+> 
+>> > I think generic power-sequences
+>> >   were the topic back then, though that might have changed over time?
+>> > - There are places that describe "fixed-clock" as
+>> >   "basic fixed-rate clock that cannot gate" [1]
+>> 
+>> I think that that is something that could be changed, it's "just" a
+>> comment in some code! Sounds like Stephen disagrees though :)
+> 
+> It's more about making a clear break from the fixed-clock binding so
+> that the extra properties are required.
+>> 
+>> > - Stephen also suggested a separate binding [2]
+>> 
+>> I liked your "gated-oscillator" suggestion in another reply, but
+>> "gated-fixed-clock" might be a better "thematic" fit since this is a
+>> special case of fixed-clocks?
+> 
+> It looks to me like we've arrived at the hardest problem in computer
+> science, i.e. naming. Any of these names is fine. I'd look to see what
+> those parts on mouser are called and use that to drive the compatible
+> name decision if you can't decide. The description section in the
+> binding could be verbose and link to some parts/pdfs if that helps too.
+> In the past I've seen EEs call these things clock buffers. I'm not a
+> classically trained EE myself but it usually helps to use similar names
+> from the schematic in DT because DT authors are sorta translating
+> schematics to DT.
 
-Best regards,
-Alex
+Please note that the hardware components modeled by these DT bindings
+are definitely not clock buffers.  Those are simply clock generators,
+which can be gated, hense the proposal to use "gated-fixed-clock".
+
+If we were to additionally model Aurasemi AU5426 or Diodes PI6C557 into
+new DT bindings and into the board dts file(s), which I'd support 
+because
+of accuracy, those should actually be called "clock-buffer".
 
