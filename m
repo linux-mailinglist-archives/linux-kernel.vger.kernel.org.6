@@ -1,168 +1,158 @@
-Return-Path: <linux-kernel+bounces-264279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D316D93E0FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088C893E0EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524361F21790
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA2E1C20BAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DD83A268;
-	Sat, 27 Jul 2024 20:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488C82D60C;
+	Sat, 27 Jul 2024 20:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="SsCGeMqn";
-	dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="XZU3UdwO"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVwYt1ub"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6452570;
-	Sat, 27 Jul 2024 20:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722113284; cv=pass; b=oB4HTEJXOv2R3VBC93Gujvlm+da2cQQquJGamyQ3D6ya2sPQueEGizMeX03DunueSbhQaQUhzv0ysSRtkd5LSOr7OqMF5fSgv6anFGbAf/mq9wVUOdAnhGwXaWI6lKaYe+yBYCawd30NvGRyDbb4gR4erhHKOAOymf2u1qCTc38=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722113284; c=relaxed/simple;
-	bh=Ao75NPTLWqtX2T2FoWRa/rYvNt7Mt7u2U8fa7OkFN5Q=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88CB29413
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722112088; cv=none; b=Fuu5ppnYNomNzg01HEJxlMJl/Yl0+hWCF4MXumkILb3hCs0V/3vSy7HjYs4nKotW9eM0HhgtktiYL0CeLgiKiKXO2mM732wCO/jmGV11A5+E7r6wiR/zDcAfa51Jzv1zgGTWhLJlwEThMZz3UT6+AZd5qBzwVuUJiV8/Xh4tfpk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722112088; c=relaxed/simple;
+	bh=5Iq+hQdX1Or4aYNR2qZjlxumyuiILNoE8GDhZSLDlAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FD3ePxmCfMKE4lrCKyNT49+gLB3WhdaxYlaXPVDcqvyEu9GA6MrvWQizrBt189vVntdbBLwoS2fX2QaU6AUN7IBSms60vIp7sQj/MFTGFKe43UB9E3kjf8SKA1zWUoMGwWOnFwwXfL+vgwdoiq/2chuV9eTNTzrAXRMZZCZO8Bc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gerhold.net; spf=none smtp.mailfrom=gerhold.net; dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=SsCGeMqn; dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=XZU3UdwO; arc=pass smtp.client-ip=81.169.146.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gerhold.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gerhold.net
-ARC-Seal: i=1; a=rsa-sha256; t=1722111832; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Mqk+klkc+fxyVY32lJdxOxdZ1uiwbUY4Ew8/Ux98tLOqYdZTkQJk6EneWYnuhkV3Nk
-    JWMJPbLHExMmHyFtp7zrtb00KUE5HAImn8sFaLerX29jhTkCmmo2UYjOcph7xdO2BXPw
-    HpNJZUi2gbf59WlZBvBJ+Oo/a7bv8Zab0jd2VA4vW8qNDmc9ZXcCdBNgA2m8xmwaqV3t
-    GjvRSA1uZYm2+/ycy+xWsEIKdHE7Tboi9Y+vVXE4C9UjgmcIvNv6z9i/6MdMWjQXh26o
-    nJEyhEci61YpIjQFmatGOX+vXVVyRDuBMrsU90GhIiLax8WCIBNA87h5j5oint8HTsCG
-    CAnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1722111832;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=YpxShBJRloUhGmeW7MprfQelhLb4bKBceOGSaOcp9pg=;
-    b=TqRTwhiLEa9QLU4MySj8hX/iq9R4IW/as2WOOfgm0ryMY9bam6AU7TJcBkWu9bjdzZ
-    qGOYX5X4/RO5qA0Pi5EGPuKAK7FXxqOFUjOSYYMD+tEuA/epH7knXXNZAJTs6kWRS54a
-    n/BzPbiuYL8mTmpuaL8I4kVSHVt/SyegdO0cI9MoxHNmGLZhCglLQn6MuIPE6hnMq39E
-    sSC02EBG7Gy3oyjM68N6LOhv+58zJ//DHRYatIxH6IzRpt80oNM0pxySUggffHPfpeZ+
-    4mykMtfz+Zk5iaorZ0f0pM1tFdzOJQpzo3UQ/wFbaA6JECOKnwdYw/1xJw/5kA4q7wUn
-    V/Cg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1722111832;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=YpxShBJRloUhGmeW7MprfQelhLb4bKBceOGSaOcp9pg=;
-    b=SsCGeMqnG/7ffQLBevxW43NjStrCDL3W7KddzGamWN4rTucrNKDWbbwN+gPs1/vfrK
-    VECIdK8/EjiaJxn3Er2rvuw/nmwCpiXE5wsFj/lEgWtLWQS8gDoWC9bJ3nWjgokyapzF
-    ddEIJtAtsx9f0Yfs40mgnseQ3a6j4xUmFHvkGe2v2w7+obgJeuSg6KoPqIhD4uumQ03m
-    J4GvIpKudkI8AvP3ATEHOH8jGD2B4foEA1NFH7cBJXhx1aUxfO5cE15m7iya1SccscqM
-    5eZYj1NQiM63JZaUAP3B+ajyyUrJnYz9sZZkpQ7okN7jqQcaHchjEqLF6pISskQ6QWGg
-    s5qA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1722111832;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=YpxShBJRloUhGmeW7MprfQelhLb4bKBceOGSaOcp9pg=;
-    b=XZU3UdwOclmz/PUJr6H71gSl7D/TxsWxqweKTXM1pSMY0o8uSMBZJB7VQOWkeNDQbu
-    5h/Xfg2+Xh0iuwTESbBA==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXTbAOHjRHIhr1eFeJ69I="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 51.1.0 DYNA|AUTH)
-    with ESMTPSA id R5d98406RKNqV6u
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sat, 27 Jul 2024 22:23:52 +0200 (CEST)
-Date: Sat, 27 Jul 2024 22:23:44 +0200
-From: Stephan Gerhold <stephan@gerhold.net>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to
- separate binding
-Message-ID: <ZqVXUI37fNB5D0DM@gerhold.net>
-References: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iu2CpE34axO+lSHIVl3w3cYRX3/IF5/7y09ILpfX532MR2dXVSIor+uiB/A0kV6tl5/LelSF/a2uSEtkYQhQoq61c/h4PT4ho+mOxby+QX+HlWZw70Y2H2C78VkM+bcITudZSlsapdAqTmFjb3hbeAaKQXRAfd2Cmkz4kfoIu5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WVwYt1ub; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso36467401fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722112085; x=1722716885; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5TCSE5IQPZmg5+Co6Qb5Q76qkbbdisagHTdBaE0Lw8=;
+        b=WVwYt1ub+QimCBdcP7PkJWij9uqZ0PRcwxFLpWNnq0FQvW33uzx2QpeIO8Y4D1VBJr
+         GOU5mAetNor5ijB2GgT328pCuwQ8x11amjI9drMf2uPaRVYlElsoertKqT0SjCenduON
+         GNfvRDLLd13NUc6NWkYk/absGs/0VkrYP1zEp1fSB5RyN/eiQDO0jGOYvObizey2OlKc
+         tixG9ws2y9gIqcPbmvUI9WBFtA1LwRk+4MdgGNPIHcl0YqRdpmo06kip72XUIp3tNZ+W
+         zgD5+xatFHjTfSArmR2C6pT0VwbZPiwQw78dYjKREiPvu17tPPsIcJ/jjgQNLtd1+604
+         SW/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722112085; x=1722716885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5TCSE5IQPZmg5+Co6Qb5Q76qkbbdisagHTdBaE0Lw8=;
+        b=iBxPXmaObb1P8MHzEjU3AdTm6Vkx73zCUW+NuJJLndPtRvMqVf5VmfGvQiv0J62djU
+         MiFXfHNej+UmbHbiXyzha4BpNeH1CzFJbI2XrQQAI1s9VaV48gKCR+9eEv/MdvROz/ww
+         Z4YgX0mRD2w5ivWHOp5CJXMOe5vW/0xfibxQez9jrp/pUdXVBTBBQ8x1t1pURoBPutLj
+         l+9S9E8IRbeUqwAsG9gE73dAAnemEKGVBRQgRfsuT94RP9ACjMDqwoOQq3LhypMqttly
+         qvaZMs0TKLCC6LKE2/RH01YdeAAnvYiSyKQ0lc0d5IuHODtSL2E+YjXS587SoZvik7GM
+         leVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUinDnxRdcrpNbdv8bgLR7cp9NnFrOulR5H5UHVfHKQgCrxqzOQaxkfRG0UqB2nX4vtPiY1yL69TO8CAOh2PHrkuOvUh1CAfTCg7kkv
+X-Gm-Message-State: AOJu0Yw4M8DwLrHmTRqprZixTGnPEVmkjY7xRfWyroxs1Q/EKRR/DhVN
+	nrXr4Yq2GlW/JEH10MCV8MGlqRbNW9N4DSAlAa0+MBXG0KPMtzBMF35r+rVD0bgMZsTONpnM4hf
+	z
+X-Google-Smtp-Source: AGHT+IHk5AHyaj6Kn7pMIySWcR20lekDgoIkBhN1ucGkQo9nR7bUmFlDSzTzDXUXY1CP8lJJ++NOEg==
+X-Received: by 2002:a2e:b5b1:0:b0:2ef:2555:e52d with SMTP id 38308e7fff4ca-2f12ee6342bmr21991621fa.45.1722112084809;
+        Sat, 27 Jul 2024 13:28:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03d074ea4sm7683151fa.116.2024.07.27.13.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 13:28:04 -0700 (PDT)
+Date: Sat, 27 Jul 2024 23:28:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, p.zabel@pengutronix.de, 
+	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de, vkoul@kernel.org, 
+	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, 
+	frank.li@nxp.com
+Subject: Re: [PATCH v3 00/19] Add Freescale i.MX8qxp Display Controller
+ support
+Message-ID: <zr2t6deyvwacawj7s36gols2vxu24fah25x6ofy7xpqyvc4s2d@luavybrlxpaf>
+References: <20240724092950.752536-1-victor.liu@nxp.com>
+ <wky3mjl7fn773myatyrdsea6oc2xebkvrgmigmmoj36eswgqry@2kox5ad5dynl>
+ <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
 
-On Tue, Jul 23, 2024 at 10:33:00AM +0200, Krzysztof Kozlowski wrote:
->The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
->others: they have additional IO muxing address space and pin control.
->Move them to separate schema, so the original qcom,sm8250.yaml will be
->easier to manage.  New schema is going to grow for other platforms
->having more of IO muxing address spaces.
->
->Cc: Adam Skladowski <a39.skl@gmail.com>
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->---
-> .../sound/qcom,apq8016-sbc-sndcard.yaml       | 205 ++++++++++++++++++
-> .../bindings/sound/qcom,sm8250.yaml           | 137 ------------
-> 2 files changed, 205 insertions(+), 137 deletions(-)
-> create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
->
->diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
->new file mode 100644
->index 000000000000..6ad451549036
-> [...]
->diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->index c9076dcd44c1..1d3acdc0c733 100644
->--- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->+++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->@@ -27,9 +27,7 @@ properties:
->               - qcom,sm8650-sndcard
->           - const: qcom,sm8450-sndcard
->       - enum:
->-          - qcom,apq8016-sbc-sndcard
->           - qcom,apq8096-sndcard
->-          - qcom,msm8916-qdsp6-sndcard
->           - qcom,qcm6490-idp-sndcard
->           - qcom,qcs6490-rb3gen2-sndcard
->           - qcom,qrb5165-rb5-sndcard
->@@ -58,18 +56,6 @@ properties:
->     $ref: /schemas/types.yaml#/definitions/string
->     description: User visible long sound card name
->
->-  pin-switches:
->-    description: List of widget names for which pin switches should be created.
->-    $ref: /schemas/types.yaml#/definitions/string-array
->-
->-  widgets:
->-    description: User specified audio sound widgets.
->-    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->-
+On Sun, Jul 28, 2024 at 03:10:21AM GMT, Sui Jingfeng wrote:
+> Hi,
+> 
+> On 7/28/24 00:39, Dmitry Baryshkov wrote:
+> > > Hi,
+> > > 
+> > > This patch series aims to add Freescale i.MX8qxp Display Controller support.
+> > > 
+> > > The controller is comprised of three main components that include a blit
+> > > engine for 2D graphics accelerations, display controller for display output
+> > > processing, as well as a command sequencer.
+> > > 
+> > > Previous patch series attempts to do that can be found at:
+> > > https://patchwork.freedesktop.org/series/84524/
+> > > 
+> > > This series addresses Maxime's comments on the previous one:
+> > > a. Split the display controller into multiple internal devices.
+> > >     1) List display engine, pixel engine, interrupt controller and more as the
+> > >        controller's child devices.
+> > >     2) List display engine and pixel engine's processing units as their child
+> > >        devices.
+> > > 
+> > > b. Add minimal feature support.
+> > >     Only support two display pipelines with primary planes with XR24 fb,
+> > >     backed by two fetchunits.  No fetchunit dynamic allocation logic(to be done
+> > >     when necessary).
+> > > 
+> > > c. Use drm_dev_{enter, exit}().
+> > > 
+> > > Since this series changes a lot comparing to the previous one, I choose to
+> > > send it with a new patch series, not a new version.
+> > I'm sorry, I have started reviewing v2 without noticing that there is a
+> > v3 already.
+> > 
+> > Let me summarize my comments:
+> > 
+> > - You are using OF aliases. Are they documented and acked by DT
+> >    maintainers?
+> > 
+> > - I generally feel that the use of so many small devices to declare
+> >    functional blocks is an abuse of the DT. Please consider creating
+> >    _small_ units from the driver code directly rather than going throught
+> >    the components.
+> 
+> Well, I really don't think so. I don't agree.
+> 
+> I have checked the DTSpec[1] before type, the spec isn't define how
+> many is considered to be "many", and the spec isn't define to what
+> extent is think to be "small" as well.
 
-These two properties are also valid and supported on all newer
-platforms, please keep them here! There are certain use cases where
-these are needed independent of the platform, e.g. to control an analog
-switch or mux connected to speaker or headphone outputs.
+Yeah. However _usually_ we are not defining DT devices for sub-device
+components. So at least such decisions ought to be described and
+explained in the cover letter.
 
-I agree that it is cleaner to move the IO muxing to a new schema though.
-Perhaps we could define something like a shared qcom,sndcard-common.yaml
-schema to avoid duplication for these generic properties? In the Linux
-driver, these are handled for all platforms in sound/soc/qcom/common.c.
+> 
+> [1]
+> https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.4
 
-Thanks,
-Stephan
+-- 
+With best wishes
+Dmitry
 
