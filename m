@@ -1,258 +1,94 @@
-Return-Path: <linux-kernel+bounces-264026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCAE93DE0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8579D93DE11
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA707283E35
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DFD1C2155D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58605644E;
-	Sat, 27 Jul 2024 09:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzmnWdzd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7AE4AEF5;
+	Sat, 27 Jul 2024 09:16:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3608481B9;
-	Sat, 27 Jul 2024 09:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D441C64
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722071173; cv=none; b=czXuDSekFacMhwb7wQq/mpQMZo+W2Mi2Djxc6M/YdRmZqgD0v/rs/NPohE3XnsYaONgG0rR/WPKQ53VQPWaJTcQj6yfc1c+0LFjaUKWMYXDBprohXejfv8orMOoINs5XN0GuetvL700t+qirefkaoG3kOTMYMJ4zdoaG5c6jLHQ=
+	t=1722071765; cv=none; b=lFJeYK1G3zwOdE4TRVXxs8ksG0ZchD25Dep7QIt/AEobBNx6OPF6epjRdmBtWY8ZQe1SPoRFAvJWbBTvitqLsCEnpGiIELaecAvEQcvmkgrxbtx3aAYQDW0Mb9rpFv248tK5/y6/Xwn15xm/sV9PiIb1498c497hHzwtUQsoZxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722071173; c=relaxed/simple;
-	bh=Z4hMzwjlVCw7IekS4CNQPfHlyOxqR5j69BIvedqQkYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K0uVk5BncFkvwPZXfcBlJzT6Ct4s9Tj5MRSgGjicwCLDuZCVZLGJ5sZRkDuDdgTVUiV1Zz669Y1b0zJscAToKdvYEH3sWdwzvYL6ikStT75ihcd9elX4tBDrCHk0uqn6GQZPdYDtF8y9bVc2J963K8eFhUSN8LjvVEqe0v0pu74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FzmnWdzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80738C32781;
-	Sat, 27 Jul 2024 09:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722071172;
-	bh=Z4hMzwjlVCw7IekS4CNQPfHlyOxqR5j69BIvedqQkYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FzmnWdzdi28nnYKKzar3Td0ojsbTV+BNYCbunFUaUEW26slgC+e/wBHnb7SIXh+aY
-	 PUEmA/vkv/uaZsztqLEdq3jWQO/8VHeUpb3PlkpkVh6U2OOTMmnLUK8urqiz2AUTVx
-	 2JC8umjUoW614G+/KiuYtN9r6uoXllcoxbhpHCzN9FNp3pRlfiAOw7ylW5IgM02lJk
-	 DR6wpflN4JmYrjWEGEaUAmJKBzc9ibOA4snp+iz28S/UdmZU3R+EZchluooNborlDt
-	 JUYksZa7rLeQxWNyBSZ3bMd2b3Q+1b9uHPaffF9fih6YsG4+4YqPp9UhCRZmSiadVl
-	 IftGTbEs85aOg==
-Message-ID: <52bf1aa6-449f-4f77-992e-45e510fe6e7f@kernel.org>
-Date: Sat, 27 Jul 2024 11:06:05 +0200
+	s=arc-20240116; t=1722071765; c=relaxed/simple;
+	bh=dtvUBiAawgrbk/2NPnFXCKh/rwYKsAYierU6VX78Dls=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qqElQnla6Nqh7WI13wAo8barjqyWCOU3yreHIzKmugbvAHzOqusZTg1dKUGMivnAPtsdxUb6fmZA3oF65CdNeqgfPo84icQOKTsFL9RkaX7+5H02iIq2sfSe/BX/yGEJAddIl4Fwqjklu8h8jpqQvOmaCV5xwkbPjjhI12lxHek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-396a820a8a3so32074875ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 02:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722071763; x=1722676563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtgwoy9Z2Qa1FGZaJIoMnbuyZFsJQYJvV6j3oH+HdZo=;
+        b=F8fAjpm3Ye/T18hPTYbCpwoq4CMIp4mWjTGAMBkIL6L4GkjxoFn9YyL290Cths9gyf
+         27xVW0VyQaBzmoud+lMoVwyjT5mC2LRgud3XuKKEtXQ8A2+fzWe2N+Y1hrHAvprmrQzq
+         QNgb1QbbdBelQgd29Tu4mwFnEXkDCa/I+zBPbb5KSNRm4j2nI7sG0PHnhDVqTIbkYpti
+         uAp+nN1DRLXM3M0/ZWWCUnFG/9MBRAVTUcgBWHR12/8rjD+j5CeMK8SD9N9ANS2trRxa
+         ap2nUTZFCch1r6Gl2uwVjYUTIVw4JrVUIwR5VR6RQuJpahlEhgleAUZquQVQGC3deIkF
+         UwuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV//QsQAQctj0by5GZKz/wDWaMKiWV27Fhr/gWXcuEyDhC1nEM6KyzIT9rcypz8pFoEFk5RmMbdKhHMgwgzMXhboL4apUiZ47Qyq9gY
+X-Gm-Message-State: AOJu0YwqI6MJnjXbVU9+wlNkZykeQjhVtWcmoJF20TBTat3WeVk5WzXo
+	sWV2fToJsn6m6O4XNQr4HHbfqk/S4WdWsv+gnwVXCnEWJt3xbXxQi+vpW0gGObAtn/h/nWp8qSU
+	hKyywx7zyquKeP52CKz/JDNU4vZ8VQBYN4ls+UzJlS5TDcsJCGsL84ZQ=
+X-Google-Smtp-Source: AGHT+IErWPbCOrtbq/dbUnqctTf2rtdkbh1lbkPC+maSPidZr2xjge9XRYxMaBhgfp08AMHsfmVRold/vyjY2spnOGlOdDgWTLkS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: Add Sharp Memory LCD
- bindings
-To: Alex Lanzano <lanzano.alex@gmail.com>, mehdi.djait@bootlin.com,
- christophe.jaillet@wanadoo.fr,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240725004734.644986-1-lanzano.alex@gmail.com>
- <20240726194456.1336484-1-lanzano.alex@gmail.com>
- <20240726194456.1336484-2-lanzano.alex@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240726194456.1336484-2-lanzano.alex@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cd8c:0:b0:395:fa9a:3187 with SMTP id
+ e9e14a558f8ab-39aebd77810mr1691265ab.3.1722071763015; Sat, 27 Jul 2024
+ 02:16:03 -0700 (PDT)
+Date: Sat, 27 Jul 2024 02:16:02 -0700
+In-Reply-To: <0000000000004fe821060e0a68d1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b66dc7061e371339@google.com>
+Subject: Re: [syzbot] [net?] INFO: rcu detected stall in ipv6_rcv (4)
+From: syzbot <syzbot+d9b3e95a78490389cfb7@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dcaratti@redhat.com, dsahern@kernel.org, 
+	edumazet@google.com, jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, pctammela@mojatatu.com, 
+	shuah@kernel.org, syzkaller-bugs@googlegroups.com, vinicius.gomes@intel.com, 
+	vladimir.oltean@nxp.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/07/2024 21:44, Alex Lanzano wrote:
-> Add device tree bindings for the monochrome Sharp Memory LCD
-> 
-> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+syzbot suspects this issue was fixed by commit:
 
-The order of tags is incorrect. Who developed it first? Please read at
-Submitting patches - it explained this case quite precisely.
+commit fb66df20a7201e60f2b13d7f95d031b31a8831d3
+Author: Vladimir Oltean <vladimir.oltean@nxp.com>
+Date:   Mon May 27 15:39:55 2024 +0000
 
-> ---
->  .../bindings/display/sharp,ls010b7dh04.yaml   | 94 +++++++++++++++++++
->  1 file changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
-> new file mode 100644
-> index 000000000000..79bde7bf0d7d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/sharp,ls010b7dh04.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sharp Memory LCD panels
-> +
-> +maintainers:
-> +  - Alex Lanzano <lanzano.alex@gmail.com>
-> +
-> +description:
-> +  Sharp Memory LCDs are a series of monochrome displays that operate over
-> +  a SPI bus when the chip select is high. The displays require a signal (VCOM)
-> +  to be generated to prevent DC bias build up resulting in pixels being
-> +  unable to change. Three modes can be used to provide the VCOM signal
-> +  ("software", "external", "pwm").
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sharp,ls010b7dh04
-> +      - sharp,ls011b7dh03
-> +      - sharp,ls012b7dd01
-> +      - sharp,ls013b7dh03
-> +      - sharp,ls013b7dh05
-> +      - sharp,ls018b7dh02
-> +      - sharp,ls027b7dh01
-> +      - sharp,ls027b7dh01a
-> +      - sharp,ls032b7dd02
-> +      - sharp,ls044q7dh01
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-cs-high: true
+    net/sched: taprio: extend minimum interval restriction to entire cycle too
 
-<form letter>
-This is a friendly reminder during the review process.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=179b2623980000
+start commit:   2cf4f94d8e86 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=314e9ad033a7d3a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9b3e95a78490389cfb7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1487fc06e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e5b4d6e80000
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Thank you.
-</form letter>
+#syz fix: net/sched: taprio: extend minimum interval restriction to entire cycle too
 
-> +
-> +  spi-max-frequency:
-> +    maximum: 2000000
-> +
-> +  sharp,vcom-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: |
-> +      software - This mode relies on a software operation to send a
-> +      "maintain display" message to the display, toggling the vcom
-> +      bit on and off with each message
-> +
-> +      external - This mode relies on an external clock to generate
-> +      the signal on the EXTCOMM pin
-
-External clock? Then you might be missing clocks property.
-> +
-> +      pwm - This mode relies on a pwm device to generate the signal
-> +      on the EXTCOMM pin
-
-That's an enum. Otherwise why "pony" would be a correct vcom-mode?
-
-> +
-> +  enable-gpios: true
-> +
-> +  pwms:
-> +    maxItems: 1
-> +    description: External VCOM signal
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - spi-cs-high
-> +  - sharp,vcom-mode
-> +
-> +allOf:
-> +  - $ref: panel/panel-common.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        sharp,vcom-mode:
-> +          const: pwm
-> +    then:
-> +      required:
-> +        - pwms
-> +
-> +additionalProperties: false
-
-Instead:
-unevaluatedProperties: false
-
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        display@0{
-
-Missing space (see DTS coding style or any DTS)
-
-> +            compatible = "sharp,ls013b7dh03";
-> +            reg = <0>;
-> +            spi-cs-high;
-> +            spi-max-frequency = <1000000>;
-> +            sharp,vcom-mode = "software";
-> +        };
-> +    };
-> +...
-
-Best regards,
-Krzysztof
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
