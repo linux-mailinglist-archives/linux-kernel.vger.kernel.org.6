@@ -1,341 +1,290 @@
-Return-Path: <linux-kernel+bounces-264147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0BC93DF7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223AF93DF83
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72361B212AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF49282939
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443AD145B24;
-	Sat, 27 Jul 2024 13:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E8F155C95;
+	Sat, 27 Jul 2024 13:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0wRmuSSw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CT0kvH76"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SoyCUnhp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F925145B16
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70415572A;
+	Sat, 27 Jul 2024 13:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722085843; cv=none; b=gmdrGFj2W+QBdBPhlEkme1PHieiQawIj4ZFYDXj0Bew58p/QgGZcTXHj1lkDbPBGISpJPp5Vq1MlViJMxQCxoELnOdUjHTwfInN8jptsKnXQPARnsSUX5xDMTg3tJsj86xuh8q41GBDmHQaxjwLM7SD2mg85xwT2P1Zkb96Ntxk=
+	t=1722086122; cv=none; b=RdYm7FrfRYxj6pKe1B6wYY5S32wQmhWIlBin7AJj1yrExZEStSACwbQepqil9YmKNNT72ZeDYCwCxUj0BSX5tUlsqc9faUoPloVkH2sORK4BjyUMafoHv9zGNfjvUBFywaYpseLjUKZa7TnyYVgvyy7t5Y3/HJrG/Ui5eWqFTUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722085843; c=relaxed/simple;
-	bh=8LcZwIcVxLX8DJKUcg1J6hk7v9u1J4PLkxdT9Najpm0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GA6D7gw56bZiYF0WDqurLppQaDSq9arh8M2Hj0D8sMIWRKC83YxGHcmj5VOFAWCr2ocyJlW7vkHHPM8Qq8xEUrQtbLgE4ENuKiv1s/n6mYdoAcFiLk6Vdf7Pa9yxXQJ+hfATzlED+a6Fi9thbMIM5LuCAbo+wQE5YK3kyCgSFeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0wRmuSSw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CT0kvH76; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722085839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mFCsmtjcKjYimExJfHjihgppXboAjDYfec4GDPTKq7Q=;
-	b=0wRmuSSwRutDRsxEC/cMiwN2GspF0GTWCoWEw8lngdKKGOk6w8axvtUG6+HBaqcLSHn5u7
-	/depEL+4Q7o+SnaZQa10/OTagqj6eXaRgN1h/v7nyA0SxfSUy8NibO+muIN6Tz8SpA9aVL
-	Yct8v4YZ+ndRMgHlwgzCjKRybnnAhsBGDu0kR3ZDk7guPErX/zqi0t7B/ncLeDNWsbAZ8E
-	mzcVNSiEylAq9cengM2p/1olUhXjiOPld+YWuKTtn/q2tfPHE6gDctUrxTvGF/wtLfc9e9
-	2KHwbJ4mc7WPEJthYdlYVPx1Q7BP9hNQfAK/SQ7fN1EFRh0PecWm1D/eb/pJGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722085839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mFCsmtjcKjYimExJfHjihgppXboAjDYfec4GDPTKq7Q=;
-	b=CT0kvH76maB/M6JxqTgbglVUD/REcWHP8vkDqGR6ZUVTxfwU4L3phivBF81C7JGcFUJN+7
-	JpEueHBnLRH2YbDw==
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org
-Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Vincent Chardon
- <vincent.chardon@elsys-design.com>
-Subject: Re: [RFC PATCH v3 19/37] irqchip: Add irq-kvx-apic-gic driver
-In-Reply-To: <20240722094226.21602-20-ysionneau@kalrayinc.com>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-20-ysionneau@kalrayinc.com>
-Date: Sat, 27 Jul 2024 15:10:38 +0200
-Message-ID: <87wml7t1yp.ffs@tglx>
+	s=arc-20240116; t=1722086122; c=relaxed/simple;
+	bh=YY30Z5vupIFa3g6VTA98yRyyZaHpk/gD8ZHVbkeLOD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oYBOCgu4cTg0fqPm3MoNoN1YHtrrZVKVGvLdSTZMpUMn3AoAUR9SBRqXfTLJoRqBQAA7XpbKMLSAN+HNic77BgzwBGZeMhw5xg6bsDCdrz9DRRyyZsCq/H/bQTz4InGenPEN3qqBzvkNlCRn5+AE8KIQ1KduS430pmftOEF89so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SoyCUnhp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816C8C32781;
+	Sat, 27 Jul 2024 13:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722086122;
+	bh=YY30Z5vupIFa3g6VTA98yRyyZaHpk/gD8ZHVbkeLOD8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SoyCUnhp5X0eoUNsMozvitTkJbefCgH6pAy0lwrhibwoq75muwrrH3ThFio/FGSTo
+	 xQiYVECt1v+7pXIzVguZZPUMqbx/f+OeNUHjOUMsg5xlOiswMJ0vS0C5OQMiFK6qSc
+	 jjVzEeo4/EZji+L9n+oRgB2b27f0DhjgdFSCnOcein6Nq7qts46p15XFi6Cw3NynQs
+	 6cF75Gni1MI+lAqh0zLSnPBdabEy+84Q90EABfoG/I1xCwJNKRRZ8cZn/onba3O1/s
+	 7RwaXNHnAdgWTByNxd6wt3B5Ib8ZSK9R2NGk9tS2TB/If6ufFQNgJbeOjjJ7bZJ72E
+	 bUkXbEjHDPKIw==
+Date: Sat, 27 Jul 2024 14:15:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v3 2/9] spi: add basic support for SPI offloading
+Message-ID: <20240727141512.6dfecc03@jic23-huawei>
+In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-2-7420e45df69b@baylibre.com>
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+	<20240722-dlech-mainline-spi-engine-offload-2-v3-2-7420e45df69b@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Yann!
+On Mon, 22 Jul 2024 16:57:09 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-On Mon, Jul 22 2024 at 11:41, ysionneau@kalrayinc.com wrote:
+> SPI offloading is a feature that allows the SPI controller to perform
+> transfers without any CPU intervention. This is useful, e.g. for
+> high-speed data acquisition.
+> 
+> This patch adds the basic infrastructure to support SPI offloading. It
+> introduces new callbacks that are to be implemented by controllers with
+> offload capabilities.
+> 
+> On SPI device probe, the standard spi-offloads devicetree property is
+> parsed and passed to the controller driver to reserve the resources
+> requested by the peripheral via the map_channel() callback.
+> 
+> The peripheral driver can then use spi_offload_prepare() to load a SPI
+> message into the offload hardware.
+> 
+> If the controller supports it, this message can then be passed to the
+> SPI message queue as if it was a normal message. Future patches will
+> will also implement a way to use a hardware trigger to start the message
+> transfers rather than going through the message queue.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+A few trivial comments inline.
+
+J
+
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index d4da5464dbd0..d01b2e5c8c44 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -2477,6 +2477,51 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
+>  	of_spi_parse_dt_cs_delay(nc, &spi->cs_hold, "spi-cs-hold-delay-ns");
+>  	of_spi_parse_dt_cs_delay(nc, &spi->cs_inactive, "spi-cs-inactive-delay-ns");
+>  
+> +	/* Offloads */
+
+Might be good to factor this out as a little utility function.
+
+> +	rc = of_count_phandle_with_args(nc, "spi-offloads", "#spi-offload-cells");
+> +	if (rc > 0) {
+> +		int num_offload = rc;
 > +
+> +		if (!ctlr->offload_ops) {
+> +			dev_err(&ctlr->dev, "SPI controller doesn't support offloading\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		for (idx = 0; idx < num_offload; idx++) {
+> +			struct of_phandle_args args;
+> +			const char *offload_name = NULL;
+> +
+> +			rc = of_parse_phandle_with_args(nc, "spi-offloads",
+> +							"#spi-offload-cells",
+> +							idx, &args);
+> +			if (rc) {
+> +				dev_err(&spi->dev, "Failed to parse offload phandle %d: %d\n",
+> +					idx, rc);
+> +				return rc;
+> +			}
+> +
+> +			if (args.np != ctlr->dev.of_node) {
+> +				dev_err(&spi->dev, "Offload phandle %d is not for this SPI controller\n",
+> +					idx);
+> +				of_node_put(args.np);
+> +				return -EINVAL;
+> +			}
+> +
+> +			of_property_read_string_index(nc, "spi-offload-names",
+> +						      idx, &offload_name);
+
+Check for errors?  If not, perhaps a comment on why not.
+
+> +
+> +			rc = ctlr->offload_ops->map_channel(spi, offload_name,
+> +							    args.args,
+> +							    args.args_count);
+> +			of_node_put(args.np);
+> +			if (rc) {
+> +				dev_err(&spi->dev, "Failed to map offload channel %d: %d\n",
+> +					value, rc);
+> +				return rc;
+> +			}
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+
+...
+
 > +/**
-> + * For each CPU, there is 4 output lines coming from the apic GIC.
-> + * We only use 1 line and this structure represent this line.
-> + * @base Output line base address
-> + * @cpu CPU associated to this line
-
-This is not valid kernel doc. 
-
+> + * spi_offload_prepare - prepare offload hardware for a transfer
+> + * @spi:	The spi device to use for the transfers.
+> + * @id:		Function ID if SPI device uses more than one offload or NULL.
+> + * @msg:	The SPI message to use for the offload operation.
+> + *
+> + * Requests an offload instance with the specified ID and programs it with the
+> + * provided message.
+> + *
+> + * The message must not be pre-optimized (do not call spi_optimize_message() on
+> + * the message).
+> + *
+> + * Calls must be balanced with spi_offload_unprepare().
+> + *
+> + * Return: 0 on success, else a negative error code.
 > + */
-> +struct gic_out_irq_line {
-> +	void __iomem *base;
-> +	unsigned int cpu;
-> +};
-
-Please read
-
-       https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
-
-which contains coding style information. Fix it up all over the place.
-
-> +struct gic_in_irq_line {
-> +	bool enabled;
-> +	struct gic_out_irq_line *out_line;
-> +	unsigned int it_num;
-> +};
-
-Please use proper ordering so that you don't have gaps in the
-structure. pahole helps you to look at that.
-
-> +/**
-> + * Enable/Disable an output irq line
-> + * This function is used by both mask/unmask to disable/enable the line.
-
-Again invalid kernel doc
-
-> + */
-> +static void irq_line_set_enable(struct gic_out_irq_line *irq_line,
-> +				struct gic_in_irq_line *in_irq_line,
-> +				int enable)
-
-bool enable or 'u8 val' and then supply the proper constants from the
-call sites: LINE_ENABLE, LINE_DISABLE or such.
-
+> +int spi_offload_prepare(struct spi_device *spi, const char *id,
+> +			struct spi_message *msg)
 > +{
-> +	void __iomem *enable_line_addr = irq_line->base +
-> +	       KVX_GIC_ENABLE_OFFSET +
-> +	       in_irq_line->it_num * KVX_GIC_ENABLE_ELEM_SIZE;
-
-This is really unreadable.
-
-	void __iomem *enable_line_addr = irq_line->base + KVX_GIC_ENABLE_OFFSET +
-					 in_irq_line->it_num * KVX_GIC_ENABLE_ELEM_SIZE;
-
-Also line->it_num is only used here, so you can do the multiplication at
-the site which initializes 'line', no?
-
-> +	writeb((uint8_t) enable ? 1 : 0, enable_line_addr);
-
-The above spares you the typecast and please use 'u8' and friends for
-kernel code.
-
-> +	in_irq_line->enabled = enable;
-> +}
+> +	struct spi_controller *ctlr = spi->controller;
+> +	int ret;
 > +
-> +static void kvx_apic_gic_set_line(struct irq_data *data, int enable)
-> +{
-> +	struct kvx_apic_gic *gic = irq_data_get_irq_chip_data(data);
-> +	unsigned int in_irq = irqd_to_hwirq(data);
-> +	struct gic_in_irq_line *in_line = &gic->input_irq[in_irq];
-> +	struct gic_out_irq_line *out_line = in_line->out_line;
+> +	if (!ctlr->offload_ops)
+> +		return -EOPNOTSUPP;
 > +
-> +	raw_spin_lock(&gic->lock);
+> +	msg->offload = true;
+I'd set this later perhaps as...
+> +
+> +	ret = spi_optimize_message(spi, msg);
+> +	if (ret)
 
-Please use guard() 
+It otherwise needs clearing here so it doesn't have side
+effects if an error occurs.
 
-> +	/* Set line enable on currently assigned cpu */
-> +	irq_line_set_enable(out_line, in_line, enable);
-> +	raw_spin_unlock(&gic->lock);
-> +}
+> +		return ret;
 > +
-> +static void kvx_apic_gic_mask(struct irq_data *data)
-> +{
-> +	kvx_apic_gic_set_line(data, 0);
-> +}
+> +	mutex_lock(&ctlr->io_mutex);
+> +	ret = ctlr->offload_ops->prepare(spi, id, msg);
+> +	mutex_unlock(&ctlr->io_mutex);
 > +
-> +static void kvx_apic_gic_unmask(struct irq_data *data)
-> +{
-> +	kvx_apic_gic_set_line(data, 1);
-> +}
-> +
-> +#ifdef CONFIG_SMP
-> +
-> +static int kvx_apic_gic_set_affinity(struct irq_data *d,
-> +				     const struct cpumask *cpumask,
-> +				     bool force)
-> +{
-> +	struct kvx_apic_gic *gic = irq_data_get_irq_chip_data(d);
-> +	unsigned int new_cpu;
-> +	unsigned int hw_irq = irqd_to_hwirq(d);
-> +	struct gic_in_irq_line *input_line = &gic->input_irq[hw_irq];
-> +	struct gic_out_irq_line *new_out_line;
-> +
-> +	/* We assume there is only one cpu in the mask */
-
-That's an invalid assumption. The mask can contain multiple CPUs. It's a
-different story whether you select a single target CPU in your code.
-
-> +	new_cpu = cpumask_first(cpumask);
-
-Also cpumask_first() is wrong as the mask can contain offline CPUs. You
-want to use cpumask_any_and(mask, cpu_online_mask) or such.
-
-That still has the problem that this will select the first CPU for all
-interrupts by default, so on boot you end up with all interrupts on
-CPU0. You might want to use something like cpumask_pick_least_loaded().
-
-> +	new_out_line = &gic->output_irq[new_cpu];
-> +
-> +	raw_spin_lock(&gic->lock);
-> +
-> +	/* Nothing to do, line is the same */
-> +	if (new_out_line == input_line->out_line)
-> +		goto out;
-> +
-> +	/* If old line was enabled, enable the new one before disabling
-> +	 * the old one
-> +	 */
-> +	if (input_line->enabled)
-> +		irq_line_set_enable(new_out_line, input_line, 1);
-> +
-> +	/* Disable it on old line */
-> +	irq_line_set_enable(input_line->out_line, input_line, 0);
-> +
-> +	/* Assign new output line to input IRQ */
-> +	input_line->out_line = new_out_line;
-> +
-> +out:
-> +	raw_spin_unlock(&gic->lock);
-
-        scoped_guard(raw_spinlock)(&gic->lock) {
-                if (outline != input_line->out_line) {
-                   	.....
-                }
-        }
-
-which spares the goto and has a well defined scope.
-
-> +	irq_data_update_effective_affinity(d, cpumask_of(new_cpu));
-> +
-> +	return IRQ_SET_MASK_OK;
-> +}
-> +#endif
-> +
-> +static struct irq_chip kvx_apic_gic_chip = {
-> +	.name           = "kvx apic gic",
-> +	.irq_mask	= kvx_apic_gic_mask,
-> +	.irq_unmask	= kvx_apic_gic_unmask,
-> +#ifdef CONFIG_SMP
-> +	.irq_set_affinity = kvx_apic_gic_set_affinity,
-> +#endif
-> +};
-> +
-> +static int kvx_apic_gic_alloc(struct irq_domain *domain, unsigned int virq,
-> +				   unsigned int nr_irqs, void *args)
-> +{
-> +	int i;
-> +	struct irq_fwspec *fwspec = args;
-> +	int hwirq = fwspec->param[0];
-> +
-> +	for (i = 0; i < nr_irqs; i++) {
-> +		irq_domain_set_info(domain, virq + i, hwirq + i,
-> +				    &kvx_apic_gic_chip,
-> +				    domain->host_data, handle_simple_irq,
-> +				    NULL, NULL);
-
-Please use the full 100 character width.
-
+> +	if (ret) {
+> +		spi_unoptimize_message(msg);
+> +		msg->offload = false;
+> +		return ret;
 > +	}
 > +
 > +	return 0;
 > +}
-> +
-> +static const struct irq_domain_ops kvx_apic_gic_domain_ops = {
-> +	.alloc  = kvx_apic_gic_alloc,
-> +	.free   = irq_domain_free_irqs_common,
-> +};
-> +
-> +static void irq_line_get_status_lac(struct gic_out_irq_line *out_irq_line,
-> +			uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE])
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < KVX_GIC_STATUS_LAC_ARRAY_SIZE; i++) {
-> +		status[i] = readq(out_irq_line->base +
-> +				  KVX_GIC_STATUS_LAC_OFFSET +
-> +				  i * KVX_GIC_STATUS_LAC_ELEM_SIZE);
-> +	}
-> +}
-> +
-> +static void kvx_apic_gic_handle_irq(struct irq_desc *desc)
-> +{
-> +	struct kvx_apic_gic *gic_data = irq_desc_get_handler_data(desc);
-> +	struct gic_out_irq_line *out_line;
-> +	uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE];
-> +	unsigned long irqn, cascade_irq;
-> +	unsigned long cpu = smp_processor_id();
-> +
-> +	out_line = &gic_data->output_irq[cpu];
-> +
-> +	irq_line_get_status_lac(out_line, status);
-> +
-> +	for_each_set_bit(irqn, (unsigned long *) status,
-> +			KVX_GIC_STATUS_LAC_ARRAY_SIZE * BITS_PER_LONG) {
+> +EXPORT_SYMBOL_GPL(spi_offload_prepare);
 
-  sizeof(status) * 8 ?
+...
 
-> +
-> +		cascade_irq = irq_find_mapping(gic_data->domain, irqn);
-> +
-> +		generic_handle_irq(cascade_irq);
-> +	}
-> +}
-> +
-> +static void __init apic_gic_init(struct kvx_apic_gic *gic)
-> +{
-> +	unsigned int cpu, line;
-> +	struct gic_in_irq_line *input_irq_line;
-> +	struct gic_out_irq_line *output_irq_line;
-> +	uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE];
-> +
-> +	/* Initialize all input lines (device -> )*/
-> +	for (line = 0; line < KVX_GIC_INPUT_IT_COUNT; line++) {
-> +		input_irq_line = &gic->input_irq[line];
-> +		input_irq_line->enabled = false;
-> +		/* All input lines map on output 0 */
-> +		input_irq_line->out_line = &gic->output_irq[0];
-> +		input_irq_line->it_num = line;
-> +	}
-> +
-> +	/* Clear all output lines (-> cpus) */
-> +	for (cpu = 0; cpu < KVX_GIC_OUTPUT_IT_COUNT; cpu++) {
-> +		output_irq_line = &gic->output_irq[cpu];
-> +		output_irq_line->cpu = cpu;
-> +		output_irq_line->base = gic->base +
-> +			cpu * (KVX_GIC_ELEM_SIZE * KVX_GIC_PER_CPU_IT_COUNT);
-> +
-> +		/* Disable all external lines on this core */
-> +		for (line = 0; line < KVX_GIC_INPUT_IT_COUNT; line++)
-> +			irq_line_set_enable(output_irq_line,
-> +					&gic->input_irq[line], 0x0);
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index d7a16e0adf44..4998b48ea7fd 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -31,6 +31,7 @@ struct spi_transfer;
 
-See bracket rules
+...
 
-> +		irq_line_get_status_lac(output_irq_line, status);
-> +	}
-> +}
+> @@ -1122,6 +1127,7 @@ struct spi_transfer {
+>   * @pre_optimized: peripheral driver pre-optimized the message
+>   * @optimized: the message is in the optimized state
+>   * @prepared: spi_prepare_message was called for the this message
+> + * @offload: message is to be used with offload hardware
+>   * @status: zero for success, else negative errno
+>   * @complete: called to report transaction completions
+>   * @context: the argument to complete() when it's called
+> @@ -1131,6 +1137,7 @@ struct spi_transfer {
+>   * @queue: for use by whichever driver currently owns the message
+>   * @state: for use by whichever driver currently owns the message
+>   * @opt_state: for use by whichever driver currently owns the message
+> + * @offload_state: for use by whichever driver currently owns the message
+>   * @resources: for resource management when the SPI message is processed
+>   *
+>   * A @spi_message is used to execute an atomic sequence of data transfers,
+> @@ -1159,6 +1166,8 @@ struct spi_message {
+>  
+>  	/* spi_prepare_message() was called for this message */
+>  	bool			prepared;
+> +	/* spi_offload_prepare() was called on this message */
+> +	bool			offload;
 
-A general observation. I understand that you want to use self
-explanatory variable names, but some of them are really overdone for my
-taste.
+offloaded? To match with prepared.
+>  
+>  	/*
+>  	 * REVISIT: we might want a flag affecting the behavior of the
+> @@ -1191,6 +1200,11 @@ struct spi_message {
+>  	 * __spi_optimize_message() and __spi_unoptimize_message().
+>  	 */
+>  	void			*opt_state;
+> +	/*
+> +	 * Optional state for use by controller driver between calls to
+> +	 * offload_ops->prepare() and offload_ops->unprepare().
+> +	 */
+> +	void			*offload_state;
+>  
+>  	/* List of spi_res resources when the SPI message is processed */
+>  	struct list_head        resources;
+> @@ -1556,6 +1570,49 @@ static inline ssize_t spi_w8r16be(struct spi_device *spi, u8 cmd)
+>  
+>  /*---------------------------------------------------------------------------*/
+>  
+> +/*
+> + * Offloading support.
+> + *
+> + * Some SPI controllers support offloading of SPI transfers. Essentially,
+> + * this allows the SPI controller to record SPI transfers and then play them
+> + * back later in one go via a single trigger.
+> + */
+> +
+> +/**
+> + * struct spi_controller_offload_ops - callbacks for offload support
+> + *
+> + * Drivers for hardware with offload support need to implement all of these
+> + * callbacks.
+> + */
+> +struct spi_controller_offload_ops {
+> +	/**
+> +	 * @map_channel: Required callback to reserve an offload instance for
+> +	 * the given SPI device. If a SPI device requires more than one instance,
+> +	 * then @id is used to differentiate between them. Channels must be
+> +	 * unmapped in the struct spi_controller::cleanup() callback.
 
-Thanks,
+Probably a good idea to talk about possible return values as well.
 
-        tglx
+> +	 */
+> +	int (*map_channel)(struct spi_device *spi, const char *id,
+> +			   const unsigned int *args, unsigned int num_args);
 
