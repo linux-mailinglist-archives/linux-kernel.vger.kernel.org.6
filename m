@@ -1,145 +1,263 @@
-Return-Path: <linux-kernel+bounces-264089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883BA93DEEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6293DEF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D891C20F5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F870283B99
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E5E6BB4B;
-	Sat, 27 Jul 2024 10:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jM/VF1ra"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8230F6A332;
+	Sat, 27 Jul 2024 11:00:02 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ADD57CBB
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C424A05
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722077846; cv=none; b=rJSR0EUUNMBdI3pxc2dkaYyb6LRIjeug/QLoxqf7b6Uaxg9GtMKThDz4qkDI/qYuk3DwmAv+TO1Tbpk/J2jviAvBNjrpeU+VlfAlrpEnIHJHz+SZfzFUBshszzndDbi+/5rNtIEu04OcVohFDIpEhwJ7cGVe9ZAWE+9BX17PD78=
+	t=1722078002; cv=none; b=ml5kbiwbsz4Co6+4fZEz0wAnS0/GhgGXnMxPeB9AFtMv7m8+iNmiCIqsgX8zBWBVE5hdBMfrqtdhkeRimBDkYpv5MRnKR3vgmGbyQ5iQZsO9eI1JaDtlGvBD4ENIGt0eQxJQU8ZMYmFmXV1NhVFPlDPqydJrSX6BEJ7m6sWmzlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722077846; c=relaxed/simple;
-	bh=4ISVk/vdphSQYrLF7Brrm2YmUaLwXbAnzpebTPwhg7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iN7/0uCr+vaD+yT002XNLGyxGbzZfdRyEd4jQXBChk18mdYofvKC9Px7MzTAayFJB8h8yWKZxRteQIR0eCJuPT5glXcSq7ahhjsMInfQCoyCZZDn/GmS1/okwdWuYvk1VWbt64SpNHy8sX4DQS8UYIjbRkN9LgI7q4VroG5Om3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jM/VF1ra; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04c1e58eso2671642e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 03:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722077843; x=1722682643; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hxmmVAVvk+vvgGFyvRrZ8b77pvrFFDYWtqz7SZeBRsU=;
-        b=jM/VF1rao0Txk+iX+ArMzPEZ/7HntvI74BUjMiOM/QWPcUlmpsebFAzC/2PkehXcsg
-         i2bIMfwqeFzIUskZX4D/Mskg7pNkKcflalF7NIdSenBvU+B2Pp26eepdhnVf0P5B7MqE
-         /gKlBifddp7mUjmapYoNNqSPCzfEa9nIMg/CzoPq8sO7s+isJWopRyr7zqLAe7PCtEB9
-         gu6boRmQXQgFxM0inUfXE8as+9R4o9Nj0kkmAKwuluIb6atOBXTWC2yJR+HP0bT7FtOy
-         U+Z+epEiq25gaDVUeicxovqEYVNxal9cxr8sFuW9+nxTV2aCb3X9ZgFNyewA2XJJivKp
-         zB1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722077843; x=1722682643;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hxmmVAVvk+vvgGFyvRrZ8b77pvrFFDYWtqz7SZeBRsU=;
-        b=d3wTHrEGD57kL9axzYer+AS1WiLBIQd08LKLnzBvVonlS8juK0t2RbXa/5tuU2TO6B
-         mSfJc7VENs5cWEJo7dun9aYwufAaMu7uWQyubtiB3xMNpLviiHkQ/Eu49vsP1VXjNx7d
-         IDZWXbJHEOp5Z/ggZXtwon3+2Fbt33gbCghbjWvYo8VG00QLG8pQlGLsHI4PaMn1MoFH
-         mMUbnT80WfcTkQ11dhzzT1xAauSiG+WZoFSj3s1Iq6TKflsV9nvR2sIVdItZbdfCfLgv
-         zIy7HDzuYT6Z4+nMHs7c0J0sbsZ5nVy3usv5A1oZSCLocqfXeAsLD4Q+Pip99lW6Lym8
-         DhhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAwCId6qQgc8ucnoUE7ZngTrgIRQ9aQ4Y/WaUdeCtOK6PAOXxPv1jV5sPeukR986qCxsZ7jqZEU2CqmdoqfUTVGpF7KshJTM4MpLnU
-X-Gm-Message-State: AOJu0YwHTeGXp1llG+bixINlKl+yxN2COlpu6TFF+VL471rec15ixVY2
-	Okhsd2c+X/Mjugn7Jyg7RpY++ILrUvhFYBryXc8VgMU/Ufffc4Rx0fcFcScQ8i2QRVRJsi3dRSU
-	d
-X-Google-Smtp-Source: AGHT+IELi02/6G6dD6tTjTDnKEeCFK58r3pOETxeaedHn5RbjxndmkFuS1ko58/BqBTsiCXnZInZBQ==
-X-Received: by 2002:a05:6512:1d2:b0:52e:d0f8:2d43 with SMTP id 2adb3069b0e04-5309b27a1demr1767649e87.17.1722077842616;
-        Sat, 27 Jul 2024 03:57:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c1eec2sm721242e87.233.2024.07.27.03.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 03:57:22 -0700 (PDT)
-Date: Sat, 27 Jul 2024 13:57:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: Re: [PATCH v2 3/6] clk: qcom: clk-alpha-pll: Add support for Regera
- PLL ops
-Message-ID: <33f7fclmf3qmfurrkq7ykdkl4v34rpyfy2c6xlerh6jtcgt6ug@5fc4exottrpv>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-3-4baf54ec7333@quicinc.com>
- <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
- <6adaca81-2751-ae48-850c-453a34c0e341@quicinc.com>
- <2a509ef6-1b83-d422-f3f8-29f51d6056be@quicinc.com>
+	s=arc-20240116; t=1722078002; c=relaxed/simple;
+	bh=0EYaGqyDuycQNLJXCllbzVfo1TMksI5cZ/vKAvvG1wg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Rrk9+pcxRgG44qsdqXw17YFe7b7B+4c1Ac0Mzhb4jmjplk3BwuRUZsiXnrWzFdv9keL7J5fMG74evPyuRN/J4m+MBkgSRt15qWert59GCVlVeWioBWSQFuXWg55kRU8Xx4H9SmHu7bdgofQ/ECCPvKkutAzqN1KrUNCPmGkAlzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46RAxvXq086990;
+	Sat, 27 Jul 2024 19:59:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Sat, 27 Jul 2024 19:59:57 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46RAxvfQ086987
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 27 Jul 2024 19:59:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
+Date: Sat, 27 Jul 2024 19:59:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a509ef6-1b83-d422-f3f8-29f51d6056be@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] profiling: remove prof_cpu_mask
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 01:40:33PM GMT, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> On 7/9/2024 4:21 PM, Satya Priya Kakitapalli (Temp) wrote:
-> > 
-> > On 7/3/2024 3:35 PM, Dmitry Baryshkov wrote:
-> > > On Tue, Jul 02, 2024 at 09:20:41PM GMT, Satya Priya Kakitapalli wrote:
-> > > > From: Taniya Das <quic_tdas@quicinc.com>
-> > > > 
-> > > > Regera PLL ops are required to control the Regera PLL from clock
-> > > > controller drivers, thus add support for the same.
-> > > the same what?
-> > 
-> > 
-> > I'll rephrase the commit text.
-> > 
-> > 
-> > > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> > > > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> > > > ---
-> > > >   drivers/clk/qcom/clk-alpha-pll.c | 32
-> > > > +++++++++++++++++++++++++++++++-
-> > > >   drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
-> > > >   2 files changed, 36 insertions(+), 1 deletion(-)
+syzbot is reporting uninit-value at profile_hits(), for there is a race
+window between
 
-[...]
+  if (!alloc_cpumask_var(&prof_cpu_mask, GFP_KERNEL))
+    return -ENOMEM;
+  cpumask_copy(prof_cpu_mask, cpu_possible_mask);
 
-> > > > +EXPORT_SYMBOL_GPL(clk_regera_pll_configure);
-> > > Does it make sense to call this function from clk_zonda_pll_configure()?
-> > 
-> > 
-> > Okay, I'll evaluate this internally and see if that can be done.
-> > 
-> 
-> I have checked this, although there is common part between Zonda and Regera
-> PLL configure APIs, a different sequence needs to be followed for Zonda, and
-> calling this function from zonda_pll_configure would affect the sequence.
-> Hence, I think it is better to leave it as is.
+in profile_init() and
 
-Ack.
+  cpumask_available(prof_cpu_mask) &&
+  cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
 
+in profile_tick(); prof_cpu_mask remains uninitialzed until cpumask_copy()
+completes while cpumask_available(prof_cpu_mask) returns true as soon as
+alloc_cpumask_var(&prof_cpu_mask) completes.
 
+We could replace alloc_cpumask_var() with zalloc_cpumask_var() and
+call cpumask_copy() from create_proc_profile() on only UP kernels, for
+profile_online_cpu() calls cpumask_set_cpu() as needed via
+cpuhp_setup_state(CPUHP_AP_ONLINE_DYN) on SMP kernels. But this patch
+removes prof_cpu_mask because it seems unnecessary.
+
+The cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) test
+in profile_tick() is likely always true due to
+
+  a CPU cannot call profile_tick() if that CPU is offline
+
+and
+
+  cpumask_set_cpu(cpu, prof_cpu_mask) is called when that CPU becomes
+  online and cpumask_clear_cpu(cpu, prof_cpu_mask) is called when that
+  CPU becomes offline
+
+. This test could be false during transition between online and offline.
+
+But according to include/linux/cpuhotplug.h , CPUHP_PROFILE_PREPARE
+belongs to PREPARE section, which means that the CPU subjected to
+profile_dead_cpu() cannot be inside profile_tick() (i.e. no risk of
+use-after-free bug) because interrupt for that CPU is disabled during
+PREPARE section. Therefore, this test is guaranteed to be true, and
+can be removed. (Since profile_hits() checks prof_buffer != NULL, we
+don't need to check prof_buffer != NULL here unless get_irq_regs() or
+user_mode() is such slow that we want to avoid when prof_buffer == NULL).
+
+do_profile_hits() is called from profile_tick() from timer interrupt
+only if cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) is true and
+prof_buffer is not NULL. But syzbot is also reporting that sometimes
+do_profile_hits() is called while current thread is still doing vzalloc(),
+where prof_buffer must be NULL at this moment. This indicates that multiple
+threads concurrently tried to write to /sys/kernel/profiling interface,
+which caused that somebody else try to re-allocate prof_buffer despite
+somebody has already allocated prof_buffer. Fix this by using
+serialization.
+
+Reported-by: syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=b1a83ab2a9eb9321fbdd
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Tested-by: syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>
+---
+ kernel/ksysfs.c  |  7 +++++++
+ kernel/profile.c | 46 ++++++----------------------------------------
+ 2 files changed, 13 insertions(+), 40 deletions(-)
+
+diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
+index 07fb5987b42b..1bab21b4718f 100644
+--- a/kernel/ksysfs.c
++++ b/kernel/ksysfs.c
+@@ -92,7 +92,14 @@ static ssize_t profiling_store(struct kobject *kobj,
+ 				   const char *buf, size_t count)
+ {
+ 	int ret;
++	static DEFINE_MUTEX(lock);
+ 
++	/*
++	 * We need serialization, for profile_setup() initializes prof_on
++	 * value and profile_init() must not reallocate prof_buffer after
++	 * once allocated.
++	 */
++	guard(mutex)(&lock);
+ 	if (prof_on)
+ 		return -EEXIST;
+ 	/*
+diff --git a/kernel/profile.c b/kernel/profile.c
+index 2b775cc5c28f..4654c6cd984e 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -47,7 +47,6 @@ static unsigned short int prof_shift;
+ int prof_on __read_mostly;
+ EXPORT_SYMBOL_GPL(prof_on);
+ 
+-static cpumask_var_t prof_cpu_mask;
+ #if defined(CONFIG_SMP) && defined(CONFIG_PROC_FS)
+ static DEFINE_PER_CPU(struct profile_hit *[2], cpu_profile_hits);
+ static DEFINE_PER_CPU(int, cpu_profile_flip);
+@@ -114,11 +113,6 @@ int __ref profile_init(void)
+ 
+ 	buffer_bytes = prof_len*sizeof(atomic_t);
+ 
+-	if (!alloc_cpumask_var(&prof_cpu_mask, GFP_KERNEL))
+-		return -ENOMEM;
+-
+-	cpumask_copy(prof_cpu_mask, cpu_possible_mask);
+-
+ 	prof_buffer = kzalloc(buffer_bytes, GFP_KERNEL|__GFP_NOWARN);
+ 	if (prof_buffer)
+ 		return 0;
+@@ -132,7 +126,6 @@ int __ref profile_init(void)
+ 	if (prof_buffer)
+ 		return 0;
+ 
+-	free_cpumask_var(prof_cpu_mask);
+ 	return -ENOMEM;
+ }
+ 
+@@ -267,9 +260,6 @@ static int profile_dead_cpu(unsigned int cpu)
+ 	struct page *page;
+ 	int i;
+ 
+-	if (cpumask_available(prof_cpu_mask))
+-		cpumask_clear_cpu(cpu, prof_cpu_mask);
+-
+ 	for (i = 0; i < 2; i++) {
+ 		if (per_cpu(cpu_profile_hits, cpu)[i]) {
+ 			page = virt_to_page(per_cpu(cpu_profile_hits, cpu)[i]);
+@@ -302,14 +292,6 @@ static int profile_prepare_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int profile_online_cpu(unsigned int cpu)
+-{
+-	if (cpumask_available(prof_cpu_mask))
+-		cpumask_set_cpu(cpu, prof_cpu_mask);
+-
+-	return 0;
+-}
+-
+ #else /* !CONFIG_SMP */
+ #define profile_flip_buffers()		do { } while (0)
+ #define profile_discard_flip_buffers()	do { } while (0)
+@@ -334,8 +316,8 @@ void profile_tick(int type)
+ {
+ 	struct pt_regs *regs = get_irq_regs();
+ 
+-	if (!user_mode(regs) && cpumask_available(prof_cpu_mask) &&
+-	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
++	/* This is the old kernel-only legacy profiling */
++	if (!user_mode(regs))
+ 		profile_hit(type, (void *)profile_pc(regs));
+ }
+ 
+@@ -418,10 +400,6 @@ static const struct proc_ops profile_proc_ops = {
+ int __ref create_proc_profile(void)
+ {
+ 	struct proc_dir_entry *entry;
+-#ifdef CONFIG_SMP
+-	enum cpuhp_state online_state;
+-#endif
+-
+ 	int err = 0;
+ 
+ 	if (!prof_on)
+@@ -431,26 +409,14 @@ int __ref create_proc_profile(void)
+ 				profile_prepare_cpu, profile_dead_cpu);
+ 	if (err)
+ 		return err;
+-
+-	err = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "AP_PROFILE_ONLINE",
+-				profile_online_cpu, NULL);
+-	if (err < 0)
+-		goto err_state_prep;
+-	online_state = err;
+-	err = 0;
+ #endif
+ 	entry = proc_create("profile", S_IWUSR | S_IRUGO,
+ 			    NULL, &profile_proc_ops);
+-	if (!entry)
+-		goto err_state_onl;
+-	proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
+-
+-	return err;
+-err_state_onl:
++	if (entry)
++		proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
+ #ifdef CONFIG_SMP
+-	cpuhp_remove_state(online_state);
+-err_state_prep:
+-	cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
++	else
++		cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
+ #endif
+ 	return err;
+ }
 -- 
-With best wishes
-Dmitry
+2.43.5
+
 
