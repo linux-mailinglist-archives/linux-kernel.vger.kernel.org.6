@@ -1,326 +1,94 @@
-Return-Path: <linux-kernel+bounces-264198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A6C93E019
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:14:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D994593E01D
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048981C210D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBEF01C210CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D156185E5A;
-	Sat, 27 Jul 2024 16:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880F81862AF;
+	Sat, 27 Jul 2024 16:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PzBUAbHI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwT6opiG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC5185607
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 16:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B21EA8D;
+	Sat, 27 Jul 2024 16:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722096877; cv=none; b=iGG1Fg1Uja6FYXxrYaX2Dgpe1ZLoGUpxj/bDbyovMdlmYHk6vSRrmXPpqepHrRGZ8ZtIff15PN5bBNyNsAVCuwIyZcAsN1kR5FDcfNPyWeMLrqOh45NzjDNkWx2UxftnmWmWvCHJ9aQByrJsUQKkggFW3dczWDQNO6KtwQvzbbM=
+	t=1722097032; cv=none; b=Ylqosb+2Khq/oURQvlhb/U9ozIq3QPUIYLn+pU9nhn9VL6ZuF+Z1DlkaTgWMFVeaPHZDYHwdHApYZ2sHHlCDgbVfe8vRKtfG7zaAOf0adPiVPP0l0zm1MQgQfzbJHgSC9/YKzav0fXgeFKK3DdesHCoktj1Y8CG08rVAhx+TKGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722096877; c=relaxed/simple;
-	bh=4QXn+6awezAwV1/Id7kEpKf1/XjZArKQs57tFB4Hd5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=sTO0qVjFX02bPBEavozjs73q9bhez2GQvUVhxey0nIb3WlpMwZY+tm+cQmYVCiEUm+zKyIG4beSzwMnS1alS6yD/AExKsfVEtMC/L1ysXE4KDSAbwxHHeeK3r/d6T+igZRASqxrfJNahrskRgQoAzldoym15XBsLLRKANjrbWX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PzBUAbHI; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722096875; x=1753632875;
-  h=date:from:to:cc:subject:message-id;
-  bh=4QXn+6awezAwV1/Id7kEpKf1/XjZArKQs57tFB4Hd5Y=;
-  b=PzBUAbHIPphgHpa+YfmumwtyYmzt7Hw0lDfgpyhkah+9LOGsGh2JhWdR
-   +jCNCm8w9j6PwXjiArNOsy5wFI5DJddligjcq58Dkp1ocjNUpC15WQoqN
-   e7FGEfezK2dIUrmQSTJRn6yaWtN4yKsOrbHuUvhrzexni19tJFkFZ89eT
-   qFtiUvgenQBjoIzrvymmOWtZ1/OU/tSVcYXwmrV9504BhAYWl8ysdslqq
-   LEM7yNwa/AfsMYV1LTiCkNFiHTEN29OpwN8IrCI0iy/p2wRCkIHIOjgl1
-   99oRBArbmhO5dNq+sF+uvAfeda1mmLlO07QWP5yKznF/VE63mcR/hvXdJ
-   A==;
-X-CSE-ConnectionGUID: qrKlHzReSzyZnC4fQIs+ZA==
-X-CSE-MsgGUID: 9auwadElTZKwNdh3XmkfyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="42406840"
-X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
-   d="scan'208";a="42406840"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 09:14:32 -0700
-X-CSE-ConnectionGUID: Qe+Z9l7dTt+lH6kTL3d/fg==
-X-CSE-MsgGUID: g3zv8qtkQvyNoOkth2DthQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,241,1716274800"; 
-   d="scan'208";a="53457151"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 27 Jul 2024 09:14:30 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sXk3w-000q3Y-0u;
-	Sat, 27 Jul 2024 16:14:28 +0000
-Date: Sun, 28 Jul 2024 00:14:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240710-cbc] BUILD
- REGRESSION ba4d0a22cd60f51cf49570a61486bef14df575c2
-Message-ID: <202407280012.JvSU6tni-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722097032; c=relaxed/simple;
+	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWtHvJe9vr3jwauf8lVPcvoHuJEmHv8gOnHJn2wXKjOpjlcrH2mZhBG797WOuBf9pHEteDgkXX0SNgVJXYh4mLbw/3Yq8VayWBzWWBqmS4WC/J1KJTHgNMkp2ZxXGwFbT2zL37Oe2768nrndDUKLWrpZVhh++E35W+YMxyAGW+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwT6opiG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20790C4AF0A;
+	Sat, 27 Jul 2024 16:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722097032;
+	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VwT6opiGoFfluZ/7HmqzfFkjSVKigc0vkxyTd0MHd29e8BrnWOCCkEn3ceyPDz6Y0
+	 rJo/n86DRnaDA0VYNumwPCF8agRoWyflP9dPutQFSOkiUM6KuDFqkWIiurtLFjy1kg
+	 gWCIeG28HIPUXIiRoYg2H+bFmBQxevSH32hPjIt8/cU3PCdYdXXaz3OdrRMnwdG+k1
+	 HMic4JI2oZOGK2gu/TzRn/4t5Ukfvlfi1MGbasiGjeV+EnZcGiTSHXx184XDHcwuuN
+	 3gbi1eT4YJMCJrWnD+C5gtroCiZh02mrQP3qNrDKjdsJ89RW4PYWewIoo6ipTltvK0
+	 H+iHjwhG+uZdg==
+Date: Sat, 27 Jul 2024 17:17:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: David.Laight@aculab.com, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] tcp: Use clamp() in htcp_alpha_update()
+Message-ID: <20240727161703.GA1625564@kernel.org>
+References: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240710-cbc
-branch HEAD: ba4d0a22cd60f51cf49570a61486bef14df575c2  ethtool: Avoid -Wflex-array-member-not-at-end warning
+On Sat, Jul 27, 2024 at 02:30:45PM +0200, Christophe JAILLET wrote:
+> Using clamp instead of min(max()) is easier to read and it matches even
+> better the comment just above it.
+> 
+> It also reduces the size of the preprocessed files by ~ 36 ko.
+> (see [1] for a discussion about it)
+> 
+> $ ls -l net/ipv4/tcp_htcp*.i
+>  5871593 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+>  5835319 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
+> 
+> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Error/Warning ids grouped by kconfigs:
+## Form letter - net-next-closed
 
-recent_errors
-|-- arm-allmodconfig
-|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-rockchip-rk3288_crypto.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm-allyesconfig
-|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-rockchip-rk3288_crypto.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-defconfig
-|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-power-supply-cros_charge-control.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- drivers-xen-pci.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-randconfig-002-20240727
-|   `-- drivers-crypto-rockchip-rk3288_crypto.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- i386-allmodconfig
-|   |-- usr-include-linux-ethtool.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   |-- usr-include-linux-ethtool.h:error:unknown-type-name-offsetof
-|   |-- usr-include-linux-usb-video.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   `-- usr-include-linux-usb-video.h:error:unknown-type-name-offsetof
-|-- i386-allyesconfig
-|   |-- usr-include-linux-ethtool.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   |-- usr-include-linux-ethtool.h:error:unknown-type-name-offsetof
-|   |-- usr-include-linux-usb-video.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   `-- usr-include-linux-usb-video.h:error:unknown-type-name-offsetof
-|-- i386-buildonly-randconfig-005-20240727
-|   |-- usr-include-linux-ethtool.h:error:expected-)
-|   |-- usr-include-linux-ethtool.h:warning:type-specifier-missing-defaults-to-int
-|   `-- usr-include-linux-usb-video.h:warning:type-specifier-missing-defaults-to-int
-|-- loongarch-allmodconfig
-|   |-- drivers-gpu-drm-nouveau-nouveau_svm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-power-supply-cros_charge-control.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- lib-test_hmm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- m68k-allmodconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- m68k-allyesconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- microblaze-allmodconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- microblaze-allyesconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allmodconfig
-|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allnoconfig
-|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allyesconfig
-|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-ath79_defconfig
-|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- openrisc-allyesconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-allmodconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-allyesconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-randconfig-002-20240727
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc-allmodconfig
-|   |-- arch-powerpc-include-asm-hvcall.h:error:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- arch-powerpc-perf-hv-common.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- arch-powerpc-platforms-powermac-nvram.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_svm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-test_hmm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc64-randconfig-002-20240727
-|   |-- arch-powerpc-include-asm-hvcall.h:error:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- arch-powerpc-platforms-powermac-nvram.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- arch-powerpc-sysdev-xics-ics-native.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc64-randconfig-003-20240727
-|   `-- arch-powerpc-platforms-powermac-nvram.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- s390-allyesconfig
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-s390-scsi-zfcp_fc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-allmodconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-allyesconfig
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-randconfig-001-20240727
-|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc-allmodconfig
-|   |-- arch-sparc-kernel-ds.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc-sparc64_defconfig
-|   `-- arch-sparc-kernel-ds.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc64-randconfig-001-20240727
-|   `-- arch-sparc-kernel-ds.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-`-- x86_64-allyesconfig
-    |-- usr-include-linux-ethtool.h:error:expected-)
-    |-- usr-include-linux-ethtool.h:warning:type-specifier-missing-defaults-to-int
-    `-- usr-include-linux-usb-video.h:warning:type-specifier-missing-defaults-to-int
+(Adapted from text by Jakub)
 
-elapsed time: 1453m
+The merge window for v6.11 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
 
-configs tested: 133
-configs skipped: 5
+Please repost when net-next reopens after 28th July.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                          axs103_defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240727   gcc-13.2.0
-arc                   randconfig-002-20240727   gcc-13.2.0
-arc                    vdk_hs38_smp_defconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   clang-14
-arm                          pxa910_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240727   gcc-14.1.0
-arm                   randconfig-002-20240727   gcc-14.1.0
-arm                   randconfig-003-20240727   clang-17
-arm                   randconfig-004-20240727   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240727   clang-20
-arm64                 randconfig-002-20240727   gcc-14.1.0
-arm64                 randconfig-003-20240727   gcc-14.1.0
-arm64                 randconfig-004-20240727   clang-20
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240727   gcc-14.1.0
-csky                  randconfig-002-20240727   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   clang-20
-hexagon               randconfig-001-20240727   clang-20
-hexagon               randconfig-002-20240727   clang-20
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240727   gcc-13
-i386         buildonly-randconfig-002-20240727   clang-18
-i386         buildonly-randconfig-003-20240727   gcc-8
-i386         buildonly-randconfig-004-20240727   gcc-10
-i386         buildonly-randconfig-005-20240727   clang-18
-i386         buildonly-randconfig-006-20240727   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240727   clang-18
-i386                  randconfig-002-20240727   gcc-8
-i386                  randconfig-003-20240727   clang-18
-i386                  randconfig-004-20240727   clang-18
-i386                  randconfig-005-20240727   clang-18
-i386                  randconfig-006-20240727   gcc-13
-i386                  randconfig-011-20240727   gcc-13
-i386                  randconfig-012-20240727   gcc-13
-i386                  randconfig-013-20240727   gcc-11
-i386                  randconfig-014-20240727   gcc-13
-i386                  randconfig-015-20240727   clang-18
-i386                  randconfig-016-20240727   gcc-7
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240727   gcc-14.1.0
-loongarch             randconfig-002-20240727   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                           sun3_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                          ath79_defconfig   gcc-14.1.0
-mips                     loongson1b_defconfig   clang-15
-mips                malta_qemu_32r6_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240727   gcc-14.1.0
-nios2                 randconfig-002-20240727   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                randconfig-001-20240727   gcc-14.1.0
-parisc                randconfig-002-20240727   gcc-14.1.0
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                      bamboo_defconfig   clang-20
-powerpc                    mvme5100_defconfig   gcc-14.1.0
-powerpc                      pmac32_defconfig   clang-20
-powerpc               randconfig-003-20240727   clang-20
-powerpc                     tqm8541_defconfig   clang-15
-powerpc64             randconfig-001-20240727   clang-20
-powerpc64             randconfig-002-20240727   gcc-14.1.0
-powerpc64             randconfig-003-20240727   gcc-14.1.0
-riscv                            allmodconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                 randconfig-001-20240727   gcc-14.1.0
-riscv                 randconfig-002-20240727   gcc-14.1.0
-s390                             alldefconfig   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                  randconfig-001-20240727   gcc-14.1.0
-s390                  randconfig-002-20240727   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                     magicpanelr2_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240727   gcc-14.1.0
-sh                    randconfig-002-20240727   gcc-14.1.0
-sh                           se7619_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc64_defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240727   gcc-14.1.0
-sparc64               randconfig-002-20240727   gcc-14.1.0
-um                                allnoconfig   clang-17
-um                    randconfig-001-20240727   gcc-13
-um                    randconfig-002-20240727   gcc-13
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                  cadence_csp_defconfig   gcc-14.1.0
-xtensa                generic_kc705_defconfig   gcc-14.1.0
-xtensa                randconfig-001-20240727   gcc-14.1.0
+RFC patches sent for review only are welcome at any time.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+--
+pw-bot: defer
 
