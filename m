@@ -1,151 +1,221 @@
-Return-Path: <linux-kernel+bounces-263931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89B793DC87
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A09693DC93
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15CB31C20990
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7C12824F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9198FEA4;
-	Sat, 27 Jul 2024 00:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA131C36;
+	Sat, 27 Jul 2024 00:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AoWHWe68"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jQSAr33F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55017195
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 00:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9D4812;
+	Sat, 27 Jul 2024 00:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722039878; cv=none; b=PyI78mTEzZK9dSip7UCGVBU8Tyc2IBFMJj12P7AeM4rp9wBIwb+hE5Lz4bJx1ICDX7BFdli/Vx/1HfRAYPled7EptxO/X6fWfsnwRXV9+6rpgczLxmmVfQUHMmEs1ffm6eJDQ0v1Nexma82JNZs2+us3cktQ+Hv70ssfxB782z0=
+	t=1722040220; cv=none; b=fwZrDyQRsdUCaKsBrtoMNJVOi2xjCIs4iRPuSWKDTixKCKtms8sb0MXLNIHoe+Cm9cDwDBfXUc4eaCHYYezN0by0oH3j1NavPgzWpXGTYCmADripKKJJNcbJpoJS0xXdKbTyS3bke7fHWv6lyqtJW1FPF9PlPQOn/RXW4D6PjmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722039878; c=relaxed/simple;
-	bh=Ndp4bAkXYF/K4IQwJ7+ZYrFKk1x51BhCGMUzpEpODxE=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f7E4Hw/q2o+e2k+HDy/T9r5OBzqHEr1MrSmMEYoprlzmiPkh3eVavo6Po2CG5r7Ns3Q1olL5d9BjrPhCQLDzwvPnAcBTw/m+f8ZP4HAjToUpNfKSdVW1l0fPKWuCdJjlQ89CMONnbvwNsLQ1K+JewcFkzKmMyFkJwfSb1Mi4zh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AoWHWe68; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b791cddfcbso6198016d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 17:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722039876; x=1722644676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=07ogrVS5x8lpQcrfQ9VX3T1kjP2RfniPU+x1JGxiSQI=;
-        b=AoWHWe68+5YY+0+oIoHmTNw2Zv8QsJgqZc03WaOlTf54NSrl9+rI7nFJVSmsAuLCYu
-         C6nviqqlDT07P990LRPCxrkn/1i8a2/qj0La9fd3klsk6xaGcdT+1WTzChOZm6ibLGTD
-         brgRQVpwE1Hx4zmDcsi8/GFYu2VrWpChDquD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722039876; x=1722644676;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=07ogrVS5x8lpQcrfQ9VX3T1kjP2RfniPU+x1JGxiSQI=;
-        b=gYgXP/sDA1PfUAry+sy/b2Qanl5TDqYpe95IIuUfo9rUDrtPcAgEXPWZfbhXNsVFkz
-         WtnrNWM9CZuwRn7IQxKnd5mLgmJBhjDk+IxmaG6c0eqa45ESKBWgV6rbbFWafs0gbnr4
-         ZOSS9Jd+1anGsBrmy5Vu41KScYC5I5t5j//eZ4UsPE1Dq2YXmkAwIFR2ddGtSnWaQN/z
-         Rh5KJiEe2e9p+uG0xFTr50Dw0rTaeXaaKz/xmoXTAtysXbs58qq48GgMeIfQfTqMZX90
-         LR0J199MdmP/jXbDTeCTv1XRL9Y5p3AJN67id990jncqzOs7PaKDEU803S82y8P4w7Qu
-         w3MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtW540NOZXF0tkwVfubpbJBMBf84khnYjNFSb82luwzj8gX7tgiO5qOEggnmZMkVWAF0v8ZFILjDgJ+wC/mt7LnTAV3Scfe5mQAJyw
-X-Gm-Message-State: AOJu0Yzmrk/o5iJy5keeunpCWl6JHKc41bNXdvVnUbriTHMOQoVOGiQb
-	GuUdzaUkXjdu8CFtos4CLnASAO2KSlXc16VFoxehbanQvPGuqP0kv0WxPrWzCLPg225djQPBjgz
-	yf0IZ2mA9SPIU8USxm5LgKSZ7fdAamqKR1fid
-X-Google-Smtp-Source: AGHT+IHpnZkC5VzVD/9wtOuDbyMsVbJocHHwdfZb7aYI9KRRHqHEMH/h3Uk7GOcJxPPS3XvCEOHVuSYaA8p7WV7saKw=
-X-Received: by 2002:a05:6214:19c7:b0:6b5:6b1:6c with SMTP id
- 6a1803df08f44-6bb55a1533dmr19000576d6.24.1722039876063; Fri, 26 Jul 2024
- 17:24:36 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 26 Jul 2024 17:24:35 -0700
+	s=arc-20240116; t=1722040220; c=relaxed/simple;
+	bh=mCVSTRV3rhZ/5whvsTgdVrcA6k8L7Ed+HfUHhstdUuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdYYbOlfT6ft+/sLVgUAfaxbGGVFaOZf0pZQcyEVXH37O4S9NZEbIywcUj3CTbQ4zJWWk0o5qe8p+Y/1PtstqaR2smEQCdYjwHMhrSjztGYafm37xv1qmfr7x90ypnCezW11xapHqgg21PPXs3uaAqzVBq9psSQY+oLSsjqcOV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jQSAr33F; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722040216; x=1753576216;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mCVSTRV3rhZ/5whvsTgdVrcA6k8L7Ed+HfUHhstdUuE=;
+  b=jQSAr33FU0EoYTTx5Wz/+pZnkn2eD9bKA9X/okLNl7YSfoYUjCOCWl/+
+   WBXdB3/gxPDs7RGNssvvxCB0sEU225rOrJAYZ8K0C8Slvr9k5sFCWkfxn
+   JRzmWAlNA7y3AblLhcXl0+6BFR8haRp5LVk9YcRCVLMoXVMpAXQvvM04R
+   9gE8yQij1pWiA2GL2PoLcX4cpXCqwHZNTDXKm4oShau3NYWIGwCtu9V4k
+   WqFo2+4IdePxmIlOo7CVjNyO1RnO/jQoAHSfm9RRCaotFrJE0rbeymsAo
+   QDqLvneW7OcIZWtD5QuSScwAzmHvPBm4mjx1ldURSiX+0KeRM6iXwGBWB
+   Q==;
+X-CSE-ConnectionGUID: UO++9VWZR8Kr5AZTqlqSow==
+X-CSE-MsgGUID: 9FpVLjwwRRCs+/7Ev9zaWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="37321867"
+X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
+   d="scan'208";a="37321867"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2024 17:30:16 -0700
+X-CSE-ConnectionGUID: rMIvXdeOS4+hpXO92LzViw==
+X-CSE-MsgGUID: y/8zfYvSSsePWi2954/lOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
+   d="scan'208";a="90875769"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 26 Jul 2024 17:30:11 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXVK4-000pWi-39;
+	Sat, 27 Jul 2024 00:30:08 +0000
+Date: Sat, 27 Jul 2024 08:29:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	vassilisamir@gmail.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to
+ new configuration
+Message-ID: <202407270859.izJnB7MZ-lkp@intel.com>
+References: <20240725231039.614536-8-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240725220320.130916-1-quic_abhinavk@quicinc.com>
-References: <20240725220320.130916-1-quic_abhinavk@quicinc.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Fri, 26 Jul 2024 17:24:35 -0700
-Message-ID: <CAE-0n50mBEX98HH+5BurM-uRyzrxcPXFJ7yLg__hFJHfYjm67Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/dp: fix the max supported bpp logic
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Guenter Roeck <groeck@chromium.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Tanmay Shah <tanmay@codeaurora.org>, Vara Reddy <quic_varar@quicinc.com>, 
-	freedreno@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, 
-	neil.armstrong@linaro.org, abel.vesa@linaro.org, quic_khsieh@quicinc.com, 
-	Rob Clark <robdclark@chromium.org>, Chandan Uddaraju <chandanu@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725231039.614536-8-vassilisamir@gmail.com>
 
-Quoting Abhinav Kumar (2024-07-25 15:03:19)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-> index a916b5f3b317..56ce5e4008f8 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-> @@ -423,8 +424,10 @@ int dp_panel_init_panel_info(struct dp_panel *dp_panel)
->                                 drm_mode->clock);
->         drm_dbg_dp(panel->drm_dev, "bpp = %d\n", dp_panel->dp_mode.bpp);
->
-> -       dp_panel->dp_mode.bpp = max_t(u32, 18,
-> -                               min_t(u32, dp_panel->dp_mode.bpp, 30));
-> +       max_supported_bpp = dp_panel_get_mode_bpp(dp_panel, dp_panel->dp_mode.bpp,
-> +                                                 dp_panel->dp_mode.drm_mode.clock);
-> +       dp_panel->dp_mode.bpp = max_t(u32, 18, max_supported_bpp);
+Hi Vasileios,
 
-Is the max_t() usage still required once 'max_supported_bpp' is also a
-u32? Also, what is 18? Shouldn't that be some sort of define so we know
-what it represents?
+kernel test robot noticed the following build errors:
 
-Or maybe none of that is required? From what I can tell,
-dp_panel_get_mode_bpp() calls dp_panel_get_supported_bpp() which will
-essentially clamp the bpp range between 18 and 30, unless
-dp_panel->dp_mode.bpp is between 30 and 18 but not divisible by 6, e.g.
-29. Perhaps this patch can be included and the max_t above dropped.
+[auto build test ERROR on 47ee461357f9da5a35d5f43527b7804a6a5744cb]
 
----8<--
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c
-b/drivers/gpu/drm/msm/dp/dp_panel.c
-index 07db8f37cd06..5cd7c138afd3 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.c
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-@@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
- static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
- 		u32 mode_edid_bpp, u32 mode_pclk_khz)
- {
--	struct dp_link_info *link_info;
-+	const struct dp_link_info *link_info;
- 	const u32 max_supported_bpp = 30, min_supported_bpp = 18;
--	u32 bpp = 0, data_rate_khz = 0;
-+	u32 bpp, data_rate_khz;
+url:    https://github.com/intel-lab-lkp/linux/commits/Vasileios-Amoiridis/iio-pressure-bmp280-Use-bulk-read-for-humidity-calibration-data/20240726-071712
+base:   47ee461357f9da5a35d5f43527b7804a6a5744cb
+patch link:    https://lore.kernel.org/r/20240725231039.614536-8-vassilisamir%40gmail.com
+patch subject: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to new configuration
+config: s390-randconfig-002-20240726 (https://download.01.org/0day-ci/archive/20240727/202407270859.izJnB7MZ-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407270859.izJnB7MZ-lkp@intel.com/reproduce)
 
- 	bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407270859.izJnB7MZ-lkp@intel.com/
 
- 	link_info = &dp_panel->link_info;
- 	data_rate_khz = link_info->num_lanes * link_info->rate * 8;
+All errors (new ones prefixed by >>):
 
--	while (bpp > min_supported_bpp) {
-+	do {
- 		if (mode_pclk_khz * bpp <= data_rate_khz)
--			break;
-+			return bpp;
- 		bpp -= 6;
--	}
-+	} while (bpp > min_supported_bpp);
+   In file included from drivers/iio/pressure/bmp280-core.c:36:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+                                                             ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+                                                        ^
+   In file included from drivers/iio/pressure/bmp280-core.c:36:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+                                                             ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+                                                        ^
+   In file included from drivers/iio/pressure/bmp280-core.c:36:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsb(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsw(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsl(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesb(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesw(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesl(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+>> drivers/iio/pressure/bmp280-core.c:3146:29: error: initializer element is not a compile-time constant
+           .id_reg = bmp180_chip_info.id_reg,
+                     ~~~~~~~~~~~~~~~~~^~~~~~
+   12 warnings and 1 error generated.
 
--	return bpp;
-+	return min_supported_bpp;
- }
 
- static int dp_panel_update_modes(struct drm_connector *connector,
+vim +3146 drivers/iio/pressure/bmp280-core.c
+
+  3144	
+  3145	const struct bmp280_chip_info bmp085_chip_info = {
+> 3146		.id_reg = bmp180_chip_info.id_reg,
+  3147		.chip_id = bmp180_chip_info.chip_id,
+  3148		.num_chip_id = bmp180_chip_info.num_chip_id,
+  3149		.regmap_config = bmp180_chip_info.regmap_config,
+  3150		.start_up_time = bmp180_chip_info.start_up_time,
+  3151		.channels = bmp180_chip_info.channels,
+  3152		.num_channels = bmp180_chip_info.num_channels,
+  3153		.avail_scan_masks = bmp180_chip_info.avail_scan_masks,
+  3154	
+  3155		.oversampling_temp_avail = bmp180_chip_info.oversampling_temp_avail,
+  3156		.num_oversampling_temp_avail =
+  3157			bmp180_chip_info.num_oversampling_temp_avail,
+  3158		.oversampling_temp_default = bmp180_chip_info.oversampling_temp_default,
+  3159	
+  3160		.oversampling_press_avail = bmp180_chip_info.oversampling_press_avail,
+  3161		.num_oversampling_press_avail =
+  3162			bmp180_chip_info.num_oversampling_press_avail,
+  3163		.oversampling_press_default =
+  3164			bmp180_chip_info.oversampling_press_default,
+  3165	
+  3166		.temp_coeffs = bmp180_chip_info.temp_coeffs,
+  3167		.temp_coeffs_type = bmp180_chip_info.temp_coeffs_type,
+  3168		.press_coeffs = bmp180_chip_info.press_coeffs,
+  3169		.press_coeffs_type = bmp180_chip_info.press_coeffs_type,
+  3170	
+  3171		.chip_config = bmp180_chip_info.chip_config,
+  3172		.read_temp = bmp180_chip_info.read_temp,
+  3173		.read_press = bmp180_chip_info.read_press,
+  3174		.read_calib = bmp180_chip_info.read_calib,
+  3175		.set_mode = bmp180_chip_info.set_mode,
+  3176		.wait_conv = bmp180_chip_info.wait_conv,
+  3177	
+  3178		.trigger_probe = bmp085_trigger_probe,
+  3179		.trigger_handler = bmp180_trigger_handler,
+  3180	};
+  3181	EXPORT_SYMBOL_NS(bmp085_chip_info, IIO_BMP280);
+  3182	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
