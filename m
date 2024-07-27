@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-264184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA2593DFED
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:18:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7692093DFF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F3C1F21B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0C028233E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF3D181328;
-	Sat, 27 Jul 2024 15:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1D418133C;
+	Sat, 27 Jul 2024 15:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwWb6Iok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dtrPzDin"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3D67D40D;
-	Sat, 27 Jul 2024 15:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281F21D52B;
+	Sat, 27 Jul 2024 15:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722093495; cv=none; b=q9kLGvKORYDU8rbgUJ/p1za37gHLXRxxO89EFc5kfemvQ9Y3bcnRaed8YXa7kPoqi7ouCTIjLFvfKMWu1AlqlKy58P0dyR1TzbfLF+E51rDO5S4mFT7zBakA6Uu63Yp5S2i6CZKaRxt8XzrXehrJenVvLEXXGm8zcye84w23gyo=
+	t=1722093671; cv=none; b=hqZ7S8kmXwsOx366GwzeG5HCVq7VFypDVsKzJJCu/d4jtMUp2FeEAKn0rYfRVgTaE6WXsp2WRn2yKwG75C/LLYW6vqFWZRVUrbg9h2tIbfzZtAk7W0azsBgifAeGmEMqJ1UcNoijgAi6req0r6GzFlqZ1Z3oE6+cq+9pfvpjx3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722093495; c=relaxed/simple;
-	bh=btTXuTbKagMwME/+aT4QIdnx1STO462E7hNfPKzYr9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqY7Vfq7KM2WHqMi390khrQxekbLTzxD0kyAFx3wp7tEnye4MjCISSS0MhppufDE4h7oEetH1GvPGeJNa3T2+k2tVGd7NaufnSTqR8GtZj4au1ga639ntri3O9EuypqL18Jegov0zbF89kmiABVg0jGUwKf8+vogTa12Qnk2SGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwWb6Iok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020CEC32781;
-	Sat, 27 Jul 2024 15:18:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722093495;
-	bh=btTXuTbKagMwME/+aT4QIdnx1STO462E7hNfPKzYr9o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZwWb6IokZ6x+KiUdMLBFFzH5bTIgIUOhbHLYmgPtqKqSvjD++YbXyE3mKkTzo1UB0
-	 qXHnYbbVQqDdlwwjjsOLDKBDDMbtdv6xVggktIKZumGVCnkrbdIHvIJTdHG6SFWPz9
-	 +Z/IgS1ewdY6g4/LEBHXdVCr6LR+uKb0FNYs6yQDHb8OwgB/smDmlXhd6J78bY0a4U
-	 IjvRor3eXGNlVkfV0qlpLWkXQwm5AqTu+tlaMKfG6Cg6RBw1x6Fh36gFMe4AuNPs3R
-	 oXXm5KLqET20wOyznQeQ+H+2dXGq8k15OcO+b/B0ZN/lSun+IlomL9OA674jX6g9O6
-	 ROa0ZiAtwpHJg==
-Date: Sat, 27 Jul 2024 16:18:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, <linux-iio@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 7/9] iio: adc: stm32-dfsdm: adopt generic channels
- bindings
-Message-ID: <20240727161806.18286978@jic23-huawei>
-In-Reply-To: <20240724153639.803263-8-olivier.moysan@foss.st.com>
-References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
-	<20240724153639.803263-8-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722093671; c=relaxed/simple;
+	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LW08HPkm2BmU+2MZpusAxVOASg5kr9UbYFZSgJJIkAkdOlXQFUVMA+0P7d5pI4zszmorDu5gtPdySPmzksRp7/t7GMEPu6LNaqyoj6rDT26ORwCq9Gs1Kn0MifXuvEt6vJdj5ZjmYKPwBDd7c0t4jMJ5HnaulE35nvaj6oBILaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dtrPzDin; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722093662;
+	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dtrPzDindDUqtKeTfN/U9eGJTxRtiORH+sBa4/KNusvAqNIamb5HittPoxrpr2T9P
+	 f+ytVSEqe/UU70hK3AktguP/3/gbUb96f8aMfdxownRIlyezL0gD/EDw3ut5jbYzWX
+	 bKgCM1F8uo4JWeJ0T6vZur1olslCOP2QnJkW7voH8o4R5cw+43Y6/pdfp+9fDRna8T
+	 vWM06z/XkdocbNZ1fFmmfxU/Qdm42BkQ3oXJM2VF7wan57j+qTMBbyzmioMCyzeSKz
+	 OwulObdUDPl3Y9Iq9wJROgy4gU+6I7tfe7fUBV5FiglhZMa+oyBInIrma5JBLdE5zO
+	 jWmIL30pe/V+A==
+Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dmitry.osipenko)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6E87837821B7;
+	Sat, 27 Jul 2024 15:21:00 +0000 (UTC)
+Message-ID: <25a6acd4-551f-439f-bd5d-7026b3b5d2fe@collabora.com>
+Date: Sat, 27 Jul 2024 18:20:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/client: Fix error code in
+ drm_client_buffer_vmap_local()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Zack Rusin <zack.rusin@broadcom.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 24 Jul 2024 17:36:35 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
-
-> Move to generic channels binding to ease new backend framework adoption
-> and prepare the convergence with MDF IP support on STM32MP2 SoC family.
+On 7/24/24 19:09, Dan Carpenter wrote:
+> This function accidentally returns zero/success on the failure path.
+> It leads to locking issues and an uninitialized *map_copy in the
+> caller.
 > 
-> Legacy binding:
-> DFSDM is an IIO channel consumer.
-> SD modulator is an IIO channels provider.
-> The channel phandles are provided in DT through io-channels property
-> and channel indexes through st,adc-channels property.
+> Fixes: b4b0193e83cb ("drm/fbdev-generic: Fix locking with drm_client_buffer_vmap_local()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/drm_client.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> New binding:
-> DFSDM is an IIO channel provider.
-> The channel indexes are given by reg property in channel child node.
-> 
-> This new binding is intended to be used with SD modulator IIO backends.
-> It does not support SD modulator legacy IIO devices.
-> The st,adc-channels property presence is used to discriminate
-> between legacy and backend bindings.
-> 
-> The support of the DFSDM legacy channels and SD modulator IIO devices
-> is kept for backward compatibility.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-Hi Olivier,
+> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+> index 2803ac111bbd..bfedcbf516db 100644
+> --- a/drivers/gpu/drm/drm_client.c
+> +++ b/drivers/gpu/drm/drm_client.c
+> @@ -355,7 +355,7 @@ int drm_client_buffer_vmap_local(struct drm_client_buffer *buffer,
+>  
+>  err_drm_gem_vmap_unlocked:
+>  	drm_gem_unlock(gem);
+> -	return 0;
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(drm_client_buffer_vmap_local);
+>  
 
-At some point it would be good to use dev_err_probe() though out all the
-probe only paths.
-It might save you quite a few lines of code and print nicer error messages.
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Otherwise LGTM
-
-Thanks,
-
-Jonathan
+-- 
+Best regards,
+Dmitry
 
 
