@@ -1,251 +1,113 @@
-Return-Path: <linux-kernel+bounces-264236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E971193E07A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:21:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4955D93E090
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 792031F21B38
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090C1281BB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5018B16B389;
-	Sat, 27 Jul 2024 18:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678CC187349;
+	Sat, 27 Jul 2024 18:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtUQ1ylC"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3ts2yxk"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC61188CA1;
-	Sat, 27 Jul 2024 18:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B0F17F4F2;
+	Sat, 27 Jul 2024 18:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722104462; cv=none; b=CvgwCFLluMM4VxJP0NBq9Oco6tLjXtWtEfp5WSFmDFPWbzFqj9u//yqckK+lEZshSu+j1c8RYob+UKMfCSC7n4P0Hes9T3eioexg/FygshOWmuCQYCRvvxNeSSf35KDqANgHkmtp+vaWEKKs1CO+oJ4u2hdz8mSWDw2bf71jbN8=
+	t=1722105014; cv=none; b=QcuazTReKoAoiA1sFUtEhBYUWtlzv8Ie1f8miV5/3WTkrH2z24YIVJ6vNqStlXoX0UbKPj0xdxaTO6eMdKzwmRY4Lxr8eHs9Oj/XKs8UrJmmiCqIFaWMVGlHRp4aSdzov/m2kC34hGbNaTT6Yb3BxyYpfuAE8vbaog0RYskUq04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722104462; c=relaxed/simple;
-	bh=5zVSTCeiMxOBFFg5PrNZbHTDjaRaeLpoeIwBE9Am3N4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g3OMOrno75lA0tWq+JzAAx/iVLRI2S2Z73NW8qqSt3FHuhWo5QiSrtE4ytZtvz0IvcyJXbsryMFL/CyR4iB/yJ48CTaQfeyNmK76eXJyHQoQYZBxadKHCpznIbVf4ENg61/FEIumzV6TD16eG/HZHsSa4f24sf6K3nxS8HFKEYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtUQ1ylC; arc=none smtp.client-ip=209.85.208.172
+	s=arc-20240116; t=1722105014; c=relaxed/simple;
+	bh=D2NayIw+YZ5M3thPrvmQwPrfZUHKh9LHHRYlSF4IZVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4O0Zk6ztHBBgoUEmZEiUusKxpIRPu5lNVt1lvmQgPotwT6MhEZsENy8NVrNRMI9kQhDBRgP8dtRu8PbOj0jZO+p2Vmi6Zmoka+832IZFbPF/hJvSZT2jJ+qdbwo5hKHMnQjN+CamWEiKRme01gQxYcUAgDiaY8DEoEV9aS6nD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3ts2yxk; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2c109eabso28603001fa.0;
-        Sat, 27 Jul 2024 11:21:00 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb576db1c5so1301442a91.1;
+        Sat, 27 Jul 2024 11:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722104458; x=1722709258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EqaxMQ0ue5RjoXRCR/HykfXlaIjq8MZY6Aig5hFF/Rw=;
-        b=MtUQ1ylCPtLRTrOAiX8i5WrJ4AcAnh0wZML1jlgHTUae7RlEZ35bIWMXr4JXQmJSme
-         s0n08HW1hcc9FN0FkqiNF79rP8rnsIXCRk42aEQPrAe8N1meWWASu7DP9Gm/o882Tp/3
-         YnHsu6oiGCnHUouNabr0DJjvCeHZ+Zk1Pbm4aWDOO3hAhRebO8DR+pc3TWXvPoVV9+/c
-         JxP6GO6CnX2ZtEMMAFpDEe3LAZTmk2i7Y5sAwPa24PYXUyzmZpNGoQN9NGHDH7RyFfo7
-         OCF9ttNibtwm6H+3cm4ecP38WkntUbh2Tkj1PqI02RvMpS0UZZJQOPGDsIxvb4Zxt2TS
-         pT0g==
+        d=gmail.com; s=20230601; t=1722105013; x=1722709813; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2tIbGkJ5FaHNotzNwzZQOrcMVRMXKevboQ1vZRbHCI=;
+        b=e3ts2yxkIm8+jONcaNaUilo3JQidfgIO9EHSA+9XSzbn8a4vhH7cvr/klmi7yoEfrl
+         ZEyip1TMSU2qxfvcRmvwuCEFUEa7A48JfiOQAwq1fTs58Qi/7bVGV2iTX2GfNzX/o0rr
+         Wwid23kOd+4Fe5N0eEXFVp7rD4pM0w/VQUCSgTuKkUml8R9uFZEKw4H5o9dYF42iOF7H
+         kN4SiCvqvmn9BkoW93puub7vLEmxomYp12SaHoqWpF//Dz/EerIwmxkWr+7u02VoQ71m
+         ScXvrx2TYrNdSNzI/91iAZ6MnHW2M12VsSINdo5krkkKd57vGj8LrY96XY/tQWD+k2fJ
+         hnIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722104458; x=1722709258;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EqaxMQ0ue5RjoXRCR/HykfXlaIjq8MZY6Aig5hFF/Rw=;
-        b=YucXuQgwpIRZ1z5p5LlkxHYbd+m+GVRpUJtJxYU/V3OMfoLjmmldNxajOPAYwoTJIx
-         tVn5q+Zw1a5lZOhG4Fi86/SxTZi/L+XbZPwE7T2rJ8yw0UL/7ce0OVnwbPF6G+Y0AoZ2
-         zJ2+9ZFN46cz0ipsA8LSG6NJ9IHkE2lhc/wdsLXe07TQDwgpgrVBaOhdnRLoc8IpEFTJ
-         8uAD1R8fTC6r43V/W1wZgv9Vz7XtNLawE/o4UY40lO/TlKFJm4iH+915gPZArm3JekHU
-         ysbIiSNgRKm2nlGeIKPIez1mJjq0J0Xn60rEeAxIsMeI/tJZOqT2NtoQdN6oNYYe8YkF
-         OdXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVodgq4oZOHsEGVSYmGlP/7hXEuNhEQWoXS7ZymyV7Pf5R2vWbFk1HVmbEviHYGCbXZtXIH3n1XPyjYD0rUjg7M69sErIKt/oP+CUGX0SvkVeQ39ADmfqb7n040KF4e1wYpzr2lTWsjjmp5JN/bWYEviN0C1IwbG39/SS8P17c7t9lAy3EmNu1ehRJSzITMAq8e1lqhzBWOyilcIH8p0I9Oyp1Gcw==
-X-Gm-Message-State: AOJu0Yw67EKsSByZsLfRWQTRgiNsjUqAydcqj7JFBJxO5n1kVAhE7BdY
-	7t0LckxFKSLQdWqZo5JBMnZHwyjTxw4COP0ZEcm4OLna8dRPJCJ6+uOnzA==
-X-Google-Smtp-Source: AGHT+IGbBdJtk3eIEo/RH3d6bKcSiI0SsWpJ+V+kkSG9Ok71l+0sMc9Cw5SGvtCbjRPh+gvKYM/Y9Q==
-X-Received: by 2002:a2e:990e:0:b0:2ef:24e0:633b with SMTP id 38308e7fff4ca-2f12ecd42d4mr19809041fa.19.1722104458102;
-        Sat, 27 Jul 2024 11:20:58 -0700 (PDT)
-Received: from localhost.localdomain (byw127.neoplus.adsl.tpnet.pl. [83.30.42.127])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03d077226sm7504891fa.126.2024.07.27.11.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 11:20:57 -0700 (PDT)
-From: Adam Skladowski <a39.skl@gmail.com>
-To: 
-Cc: phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Vladimir Lypak <vladimir.lypak@gmail.com>
-Subject: [PATCH v2 4/4] ASoC: qcom: apq8016_sbc: Add support for msm8953/msm8976 SoC
-Date: Sat, 27 Jul 2024 20:20:27 +0200
-Message-ID: <20240727182031.35069-5-a39.skl@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240727182031.35069-1-a39.skl@gmail.com>
-References: <20240727182031.35069-1-a39.skl@gmail.com>
+        d=1e100.net; s=20230601; t=1722105013; x=1722709813;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e2tIbGkJ5FaHNotzNwzZQOrcMVRMXKevboQ1vZRbHCI=;
+        b=NEt2v3AH9awtMjpT8hPT7wlljb8+A0n2vvir9xm6FI1xUufyJKwo/+jW2HAHasifTj
+         4PuwldotAvorRnaqtsUsBj2zPFzeUkm+NybvkhgkbmkqjWsre2Ai0CmXdcwHMwow4JKI
+         Z0ovRUY/ktZ/PgvhIM+317xpYu6VDFKWkQkEVjnYWDkmsBSYM/LaSZolxEMLlmqz2Z37
+         k2ijHXjZjThs91PfU+Zsq/Xup+jG9nwrc5oTOPtq2q7y8Zii59IRbn/zT+9PWPtpDMpe
+         KlPu3CufNlrk1pyduEj1YG7aG+OxdjCtO+dzSYvjvUlSVPmFTGAwRm2Vfo4qgUtpR15Z
+         NwOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQB66iqzF2GBeRd7ZMGhHxAacDOQkt4xTEdy3wJeJU2oPHU5k5KHBbz6dRVbdFjOy839oHJ2Y3/nmRqUYMJgbzlFb/79UDzwG5xfU8Ab3qUzgTCREBZN/NLJ5E8F+bm1Xcy0Em
+X-Gm-Message-State: AOJu0Ywm0tUH3TY1YGubyvzn0umm5W0wYTpjJPIfKOrk3kEQQZm3DY1X
+	acjS7jabL26RhSA/SEBV9m0hAlfI8f+7s0s0WrzV1fd/XKZOW4UxtiWqsNiXJ41/m2Yq/6imumY
+	dw56W3zdCEwPC60U3dlMmjrFYyok=
+X-Google-Smtp-Source: AGHT+IFyEr0kvwb/7knRP4TFENc52rWZnHuDTR0zpFZ72RAEBTpzzmI4od9i8/ZA53QP/uYmbCHVDMCQe5LTBYf83dk=
+X-Received: by 2002:a17:90a:d146:b0:2ca:1c9e:e012 with SMTP id
+ 98e67ed59e1d1-2cf7e09cda9mr2904890a91.6.1722105012623; Sat, 27 Jul 2024
+ 11:30:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240725-tcp-ao-static-branch-rcu-v1-1-021d009beebf@gmail.com> <20240726193403.1b15a2af@kernel.org>
+In-Reply-To: <20240726193403.1b15a2af@kernel.org>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Sat, 27 Jul 2024 19:30:05 +0100
+Message-ID: <CAJwJo6bAAFv+02J7W_Yz0=LZUrvgpx=e6dFmQbWoy7AFKDbj-Q@mail.gmail.com>
+Subject: Re: [PATCH net] net/tcp: Disable TCP-AO static key after RCU grace period
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Vladimir Lypak <vladimir.lypak@gmail.com>
+Hi Jakub,
 
-Introduce support for audio card on MSM8953/MSM8976 platform.
-Main difference between those two is Q6AFE CLK API supported by firmware
-which influence way we enable digital codec clock.
-Either inside machine driver or outside via q6afe-clocks driver.
+On Sat, 27 Jul 2024 at 03:34, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Thu, 25 Jul 2024 06:00:02 +0100 Dmitry Safonov via B4 Relay wrote:
+> > @@ -290,9 +298,7 @@ void tcp_ao_destroy_sock(struct sock *sk, bool twsk)
+> >                       atomic_sub(tcp_ao_sizeof_key(key), &sk->sk_omem_alloc);
+> >               call_rcu(&key->rcu, tcp_ao_key_free_rcu);
+> >       }
+> > -
+> > -     kfree_rcu(ao, rcu);
+> > -     static_branch_slow_dec_deferred(&tcp_ao_needed);
+> > +     call_rcu(&ao->rcu, tcp_ao_info_free_rcu);
+>
+> Maybe free the keys inside tcp_ao_info_free_rcu, too?
+> IIUC you're saying that new sock is still looking at this ao under RCU
+> protection - messing with the key list feels a tiny bit odd since the
+> object is technically "live" until the end of the RCU grace period.
 
-Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-[Adam: Add MSM8976, rename functions, add mclk setting,add msg]
-Co-developed-by: Adam Skladowski <a39.skl@gmail.com>
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
----
- sound/soc/qcom/apq8016_sbc.c | 68 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 2 deletions(-)
+Yeah, I think that's possible.
+Looking at it now, I think it also needs
+: rcu_assign_pointer(tp->ao_info, NULL)
+above, rather than a plain null-assign.
 
-diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
-index 303dd88206b1..453ca4795603 100644
---- a/sound/soc/qcom/apq8016_sbc.c
-+++ b/sound/soc/qcom/apq8016_sbc.c
-@@ -22,6 +22,11 @@
- 
- #define MI2S_COUNT  (MI2S_QUINARY + 1)
- 
-+enum afe_clk_api {
-+	Q6AFE_CLK_V1,
-+	Q6AFE_CLK_V2
-+};
-+
- struct apq8016_sbc_data {
- 	struct snd_soc_card card;
- 	void __iomem *mic_iomux;
-@@ -29,6 +34,8 @@ struct apq8016_sbc_data {
- 	void __iomem *quin_iomux;
- 	struct snd_soc_jack jack;
- 	bool jack_setup;
-+	enum afe_clk_api q6afe_clk_ver;
-+	bool dig_cdc_mclk_en;
- 	int mi2s_clk_count[MI2S_COUNT];
- };
- 
-@@ -192,6 +199,28 @@ static int qdsp6_dai_get_lpass_id(struct snd_soc_dai *cpu_dai)
- 	}
- }
- 
-+static int qdsp6_get_clk_id(struct apq8016_sbc_data *data, int mi2s_id)
-+{
-+	if (data->q6afe_clk_ver == Q6AFE_CLK_V2) {
-+		switch (mi2s_id) {
-+		case MI2S_PRIMARY:
-+			return Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT;
-+		case MI2S_SECONDARY:
-+			return Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT;
-+		case MI2S_TERTIARY:
-+			return Q6AFE_LPASS_CLK_ID_TER_MI2S_IBIT;
-+		case MI2S_QUATERNARY:
-+			return Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT;
-+		case MI2S_QUINARY:
-+			return Q6AFE_LPASS_CLK_ID_QUI_MI2S_IBIT;
-+		default:
-+			break;
-+		}
-+	}
-+	/* If AFE CLK isn't V2 return V1 */
-+	return LPAIF_BIT_CLK;
-+}
-+
- static int msm8916_qdsp6_dai_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-@@ -214,8 +243,17 @@ static int msm8916_qdsp6_startup(struct snd_pcm_substream *substream)
- 
- 	if (++data->mi2s_clk_count[mi2s] > 1)
- 		return 0;
-+	/*
-+	 * On newer legacy SoC (MSM8976) lpass codec clocks are not available in gcc region
-+	 * so we have to request clock from machine driver using V1 API)
-+	 */
-+	if (data->q6afe_clk_ver == Q6AFE_CLK_V1 && data->dig_cdc_mclk_en == true) {
-+		ret = snd_soc_dai_set_sysclk(cpu_dai,  LPAIF_DIG_CLK, DEFAULT_MCLK_RATE, 0);
-+		if (ret)
-+			dev_err(card->dev, "Failed to enable LPAIF dig clk: %d\n", ret);
-+	}
- 
--	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, MI2S_BCLK_RATE, 0);
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), MI2S_BCLK_RATE, 0);
- 	if (ret)
- 		dev_err(card->dev, "Failed to enable LPAIF bit clk: %d\n", ret);
- 	return ret;
-@@ -236,9 +274,16 @@ static void msm8916_qdsp6_shutdown(struct snd_pcm_substream *substream)
- 	if (--data->mi2s_clk_count[mi2s] > 0)
- 		return;
- 
--	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, 0, 0);
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), 0, 0);
- 	if (ret)
- 		dev_err(card->dev, "Failed to disable LPAIF bit clk: %d\n", ret);
-+
-+	if (data->q6afe_clk_ver == Q6AFE_CLK_V1 && data->dig_cdc_mclk_en == true) {
-+		ret = snd_soc_dai_set_sysclk(cpu_dai,  LPAIF_DIG_CLK, 0, 0);
-+		if (ret)
-+			dev_err(card->dev, "Failed to disable LPAIF dig clk: %d\n", ret);
-+	}
-+
- }
- 
- static const struct snd_soc_ops msm8916_qdsp6_be_ops = {
-@@ -279,6 +324,23 @@ static void msm8916_qdsp6_add_ops(struct snd_soc_card *card)
- 	}
- }
- 
-+static void msm8953_qdsp6_add_ops(struct snd_soc_card *card)
-+{
-+	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
-+
-+	pdata->q6afe_clk_ver = Q6AFE_CLK_V2;
-+	msm8916_qdsp6_add_ops(card);
-+}
-+
-+static void msm8976_qdsp6_add_ops(struct snd_soc_card *card)
-+{
-+	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
-+
-+	pdata->q6afe_clk_ver = Q6AFE_CLK_V1;
-+	pdata->dig_cdc_mclk_en = true;
-+	msm8916_qdsp6_add_ops(card);
-+}
-+
- static const struct snd_kcontrol_new apq8016_sbc_snd_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Headphone Jack"),
- 	SOC_DAPM_PIN_SWITCH("Mic Jack"),
-@@ -343,6 +405,8 @@ static int apq8016_sbc_platform_probe(struct platform_device *pdev)
- static const struct of_device_id apq8016_sbc_device_id[] __maybe_unused = {
- 	{ .compatible = "qcom,apq8016-sbc-sndcard", .data = apq8016_sbc_add_ops },
- 	{ .compatible = "qcom,msm8916-qdsp6-sndcard", .data = msm8916_qdsp6_add_ops },
-+	{ .compatible = "qcom,msm8953-qdsp6-sndcard", .data = msm8953_qdsp6_add_ops },
-+	{ .compatible = "qcom,msm8976-qdsp6-sndcard", .data = msm8976_qdsp6_add_ops },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, apq8016_sbc_device_id);
--- 
-2.45.2
+Will fix and send v2.
 
+Thanks,
+             Dmitry
 
