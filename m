@@ -1,178 +1,102 @@
-Return-Path: <linux-kernel+bounces-264166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A27393DFAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:12:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C0893DFB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B092814A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8091C20DF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B0317164C;
-	Sat, 27 Jul 2024 14:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6A617B403;
+	Sat, 27 Jul 2024 14:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etpzCSRg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cqoUKebv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P5RYtd7t"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC31B171679;
-	Sat, 27 Jul 2024 14:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8242D1741EB;
+	Sat, 27 Jul 2024 14:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722089536; cv=none; b=jPuaAQoltopkjhbXKZoU7Kzqx452FmwMGOtdEArCHScjc02lX+TCy3I2iUHYCHV3vXqSvmtpJ8VHtv2EJmGNyuCuzI5xtD2JPy4UBMLC2WPGGyeaKcWxxr8SVhHCyB6YeqvmvNRShHKh8tPaFUsKZC1bNpmb/oy5vTWfFN81X5k=
+	t=1722090164; cv=none; b=kATW3iLoxOp0hm36PsijivVbwEhVHKS5vFYzEX7/KICEEWjaq/yAuCdKIeqY/mfUV50fBkmJbl7cDq90gET2nlkC2R/mqd1JEf7j2FtFJsOrEB1eGXZcK64CgpVi67c1wac3Xtn7h6byZChJdfOZORYhNy0hwU+0hzzDEF3FtHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722089536; c=relaxed/simple;
-	bh=LAXD1eyCD4cqWYJ3DXOC9Ot083musefdyG8yo+EdFpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L71obKtvVtvlka6nlDODDnsRqvqp+F/w7ufwvRxApFBBdAf+F7fCkFhuNMgrnpzoFoqwXnmNx0C+Inurd/qgnIZbU0olaFAuZI23BqDJ36c9nRjrZpkllu0tq7GqgxO/oBH9Umjm3QSexreZ2Bup+/wrRRfLAbGja36iWsPH//8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etpzCSRg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C1CC32781;
-	Sat, 27 Jul 2024 14:12:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722089536;
-	bh=LAXD1eyCD4cqWYJ3DXOC9Ot083musefdyG8yo+EdFpo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=etpzCSRg7aPcW+yfWja0iw8A6aN7EeobFXpEzdIRD9yK3NeOeVIw3SznVnU095EVk
-	 EeDZOzOjYfXPpm9ODXfoVnAgT5NyVQjaQmEp88cZPEoERUuLfpiFYu1ocMKHHEIex9
-	 RVRN96doH+3/uuAoSicRS1V6tYp8iaYgSJbMmmgKbbCPK8CbAlqi7vOFxTrCONx37Q
-	 dN1d/3zgZQRtxqji5JJjbp1047ekTZu/tHDWXN2hKKZjtLjIT3CT77SYKNApz2oBSE
-	 1AJxKgvh8LWdM/dPZRoOq2FyXbQRjNmXLwHSoG01dli2hqAL5EvyLuosEPrAELbDds
-	 oHco60I1RZOdw==
-Date: Sat, 27 Jul 2024 15:12:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: wangshuaijie@awinic.com
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, waqar.hameed@axis.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V5 1/2] dt-bindings: iio: aw9610x: Add bindings for
- aw9610x sensor
-Message-ID: <20240727151208.667a9df7@jic23-huawei>
-In-Reply-To: <20240726061312.1371450-2-wangshuaijie@awinic.com>
-References: <20240726061312.1371450-1-wangshuaijie@awinic.com>
-	<20240726061312.1371450-2-wangshuaijie@awinic.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722090164; c=relaxed/simple;
+	bh=hsV53QaQje/Nq0MxE5lD4ayKZ4Sp/6SGF3CZOpBFrUo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OLIWjyovbGtVg3AS7sQtTH9+rc9Q1KfgEWkIGU57Xd0vOD0pIlXjYoCYddnTggMZ8L1WjqsQ6Gb7AcELpP8bdk45VakpVbqTvegJsuHxFgtFTwEjPc1g687H4dEh4nm8hkugQheKL8pvArdCxcs68xqOzkMnYkxw8QjidVWklw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cqoUKebv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P5RYtd7t; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722090160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OfyUrm2SempW7ID5gaaJ5w5nwP+tis0SN656zuj998I=;
+	b=cqoUKebvmL0nha8ga1nu0ngGoaMFr64Vkipd72aWw3lDEQAW4Icvq2LSn+Xlyn/dGzVxa7
+	NAnEAVwdYHnaPVHzC7eHrN5yqYRRh5KMVhisTPg30NcTDdT4dXlSi83yuAsp85Yx1yJR/C
+	MkI3u3y20hwFcKjg2ZjQjJFpGem1nHSp8ntfDF7ziL5BMTIzvP78Mwcvmobl5MqfaQuPCJ
+	RvvJwIkRz2vqDzR68KooaWyXujn3mm5rmmSsHGcgNz8e8E7lXRJ84GsoIQ9Lh3rhz/SS8G
+	IIJhDXhjA5GnKZ67Z0CIFeLWxC9Sdi4cZjul+PLkk0Uqd7RhFdVfJn+CswcLuQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722090160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OfyUrm2SempW7ID5gaaJ5w5nwP+tis0SN656zuj998I=;
+	b=P5RYtd7tGnnYZ0YFYJoN2LAGQG3+8yWBJ0iN0JcaRdFgk0ef9Eh+qmfzCDf9wFN2hKN0hJ
+	yODtXzD6rnsv7YAw==
+To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
+ Leger <clement@clement-leger.fr>, Julien Hascoet <jhascoet@kalrayinc.com>,
+ Louis Morhet <lmorhet@kalrayinc.com>, Luc Michel <luc@lmichel.fr>, Marius
+ Gligor <mgligor@kalrayinc.com>, bpf@vger.kernel.org
+Subject: Re: [RFC PATCH v3 30/37] kvx: Add multi-processor (SMP) support
+In-Reply-To: <20240722094226.21602-31-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-31-ysionneau@kalrayinc.com>
+Date: Sat, 27 Jul 2024 16:22:40 +0200
+Message-ID: <87ikwqud73.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Fri, 26 Jul 2024 06:13:11 +0000
-wangshuaijie@awinic.com wrote:
-
-> From: shuaijie wang <wangshuaijie@awinic.com>
-> 
-> Add device tree bindings for aw9610x proximity sensor.
-> 
-> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
-> ---
->  .../iio/proximity/awinic,aw9610x.yaml         | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
-
-No wild cards in naming of dt-bindings or within the driver.
-It goes wrong far too often because manufacturers love to release
-new devices that have similar part names but are completely unrelated.
-
-So we just name everything after the first part supported.
-
-One other thing inline.
-
-Jonathan
-
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml b/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
-> new file mode 100644
-> index 000000000000..631b1fe5a900
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/proximity/awinic,aw9610x.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/proximity/awinic,aw9610x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+On Mon, Jul 22 2024 at 11:41, ysionneau@kalrayinc.com wrote:
 > +
-> +title: Awinic's AW9610X capacitive proximity sensor
+> +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> +{
+> +	int ret;
+> +
+> +	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
+> +	__cpu_up_task_pointer[cpu] = tidle;
+> +	/* We need to be sure writes are committed */
+> +	smp_mb();
+> +
+> +	if (!smp_ops.smp_boot_secondary) {
+> +		pr_err_once("No smp_ops registered: could not bring up secondary CPUs\n");
+> +		return -ENOSYS;
+> +	}
+> +
+> +	ret = smp_ops.smp_boot_secondary(cpu);
+> +	if (ret == 0) {
+> +		/* CPU was successfully started */
+> +		while (!cpu_online(cpu))
+> +			cpu_relax();
 
-Title is less important for wild cards but even here I'd just name it
-after one part + add "and similar" to the end of the title.
+Please use the generic CPU hotplug synchronization mechanisms CONFIG_HOTPLUG_*_SYNC
 
-title: Awinic's AW96101 capacity proximity sensor and similar
+Thanks,
 
-> +
-> +maintainers:
-> +  - Wang Shuaijie <wangshuaijie@awinic.com>
-> +
-> +description: |
-> +  Awinic's AW9610X proximity sensor.
-> +  The specific absorption rate (SAR) is a metric that measures
-> +  the degree of absorption of electromagnetic radiation emitted by
-> +  wireless devices, such as mobile phones and tablets, by human tissue.
-> +  In mobile phone applications, the proximity sensor is primarily
-> +  used to detect the proximity of the human body to the phone. When the
-> +  phone approaches the human body, it will actively reduce the transmit
-> +  power of the antenna to keep the SAR within a safe range. Therefore,
-> +  we also refer to the proximity sensor as a SAR sensor.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - awinic,aw96103
-> +      - awinic,aw96105
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Generated by the device to announce that a close/far
-> +      proximity event has happened.
-> +    maxItems: 1
-> +
-> +  vcc-supply:
-> +    description:
-> +      Optional regulator for chip, 1.7V-3.6V.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-
-vcc-supply should be required.
-Note this is about the binding documenting the need for power vs
-an optional powersupply which some devices have.  It is not
-related to whether the dts files actually provide that supply
-(though good if they do) because the regulator core will happily
-provide you with a fake regulator on the assumption that any regulators
-we don't know about must be turned on already.
-
-A well written dts will use a fixed regulator to provide more
-description to the drivers etc.
-
-Jonathan
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        proximity@12 {
-> +            compatible = "awinic,aw96103";
-> +            reg = <0x12>;
-> +            interrupt-parent = <&gpio>;
-> +            interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-
+        tglx
 
