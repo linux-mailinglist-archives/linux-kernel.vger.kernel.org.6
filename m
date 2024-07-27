@@ -1,133 +1,233 @@
-Return-Path: <linux-kernel+bounces-264127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E145693DF37
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD1893DF3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956641F21E0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FCF41F2247C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD356F30F;
-	Sat, 27 Jul 2024 12:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C473466;
+	Sat, 27 Jul 2024 12:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="tOILh6sn"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+dI+HLp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F103382;
-	Sat, 27 Jul 2024 12:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D80811C83;
+	Sat, 27 Jul 2024 12:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722082161; cv=none; b=hVA2S5BdnxjPP2lXxylXVFcyOj5myLtOWbQKargZv7EOX6hoXLTpZeqZDIxRrKI7pyAr54Dd4Q4cKGVEL8SKhQSFKKggwBd4nxs5IlFyBg1YY9K7Ds3CbMiN+TGhSJR6OU4KP9G/HtHSuf8lN3klzGNoKe6dXXnrewBauWu7QOk=
+	t=1722082537; cv=none; b=kM091eBBMUXyQ+gZHYQEoHiOjTsfShzu0z7YQJ0K293E+lk3604TP2k1DWyPljOznvgJ7m15ap6FafQfzp1tob8sPu6lznsgZX9AbTpbhazJEqQTsvJY5sAjdw4fHFlVAzM56PEJESGsN6XlRSbspO4KbKWN4eVBAZjff9pLMaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722082161; c=relaxed/simple;
-	bh=eLEYHa+txvP+ORLO1DCQFTF3C165+1lS1YxZqje5J3A=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=DeGWkNYlNAe5jh97HxVHqMNHnW/m1aaaU/hdkT76YC+V6kzf23bgg2yPfj1j11KLHTr134XIWAouvd/hkV22B3zwQ3Q5IWBCRHq82BeTIgNPaBZbSPlT8ngyZHA0WxH81nyjxwtvaoyxjXaqbFF3h7BzYBkiJdsUbPpdZaGddBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=tOILh6sn; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1722082135; x=1722686935; i=frank-w@public-files.de;
-	bh=eLEYHa+txvP+ORLO1DCQFTF3C165+1lS1YxZqje5J3A=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=tOILh6snPTqW9mFqqm1CrUJLwTATYXkQ8Hr8kNRzyhFdnEQ24kzQKr6HbZqgpSNn
-	 IwDYtU/3s3YMjrpw57f04vChsEDyap+5O564IMtVrfkwE4T1+SICXINbnLLre8yWH
-	 dzxA2jwLhZvRN6JoYmZOf4cjNyNw/G/Idh5lsNSZubwcEsDScpLMvmG+k9J30kn8i
-	 qM+XlOlhawYZLkOyQP8T5JYTgyhWqJ6yNmpyUUy7S6O2/ccMBaaHFCDYOO13oAbKW
-	 +QqBiAtSJy/enTRpH4FXqK7vyXwQi53K0hmcY5HvT9qyskuNV/lGJFEsTrVPJJvle
-	 gHIvA2KX+jq0dSH8zg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [80.245.78.50] ([80.245.78.50]) by web-mail.gmx.net
- (3c-app-gmx-bs28.server.lan [172.19.170.80]) (via HTTP); Sat, 27 Jul 2024
- 14:08:54 +0200
+	s=arc-20240116; t=1722082537; c=relaxed/simple;
+	bh=RkNV4TIuJeEznWhIML71pNK+ucVIMiyt6oztrCTx5qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VZev0AwNnHBqucplQK00LiYWlGEfquF3GpMxUmtndH8Yo++iaqSAFHvyi5gV4KpLHCNe2RejX1H4esXbwVWhutCk3AxZdt2KAvekb13s3PDc63QFQh85Q6oLtvTur2oL/ZHR4rt4f2otUCLwfnKjri02Ws9s8jkbfbuJfYXr960=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+dI+HLp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1C7C32781;
+	Sat, 27 Jul 2024 12:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722082536;
+	bh=RkNV4TIuJeEznWhIML71pNK+ucVIMiyt6oztrCTx5qw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O+dI+HLpX+5K2JrJPRyQ7pepv7HPUxIfODKxqSIFKpcmEXDVRbR9NAMWgsA8v7t1Z
+	 dYDyZsg3DQQoAzB80YsiAwmO/lY2PFykJM4MwBU2Ex2mydEp1Ha1PQaCGelvbPQB36
+	 QfbsmEG0y74htG6i7cA/7nDNgHRvpG/UgxinIv8eohZqJCb/EWROwBG3LQgvRi4qE8
+	 GgUCnh5Y2d4WAwYSxJkFO+KtZBtDEdglY6oCAbtldrFuI5Y/8JysiAzbuxV7xz7bUW
+	 cDAyVVRCPaRU1nkdDD0J5TZaCQJlwkU7qDP9InRgwiznFKMyQBc5leV8FeQ6BCpMvM
+	 ZKA+719ZXk/sA==
+Date: Sat, 27 Jul 2024 13:15:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 09/10] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <20240727131525.60950546@jic23-huawei>
+In-Reply-To: <20240722203834.GA468105@vamoiridPC>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+	<20240711211558.106327-10-vassilisamir@gmail.com>
+	<20240720123727.7598111b@jic23-huawei>
+	<20240721235113.GF325365@vamoiridPC>
+	<20240722203138.07b21300@jic23-huawei>
+	<20240722203834.GA468105@vamoiridPC>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-3bc6fc80-e245-4691-9a57-f021b080d070-1722082134917@3c-app-gmx-bs28>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Chunfeng Yun
- <chunfeng.yun@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Daniel Golle <daniel@makrotopia.org>, John Crispin <john@phrozen.org>,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Aw: Re: mt7988 usb broken on 6.10
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 27 Jul 2024 14:08:54 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <2024072712-paralyze-overthrow-ea04@gregkh>
-References: <trinity-c8e0af34-2704-476a-9454-bf5001256eb9-1722013999541@3c-app-gmx-bap12>
- <2024072712-paralyze-overthrow-ea04@gregkh>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:CbCz3z3Lqvb4tz8Jopzw/pM4eonOQHsnprkPdh8Mmb3zZxcFK2f79E781zfvABNzOVK4S
- fqKGamZYtuFniMTxLY8iZJwgGMI3oATZDiujaUlFv0tg9D9aOnJdrS8LX9X1OZtsvXoI4XafDYzi
- FTErfxAGxzb7uX59A6NP4GYyP7ZBU33mxk2GcrEH2yBY0a9KmxpAO6Mb7CRZQrTnBRSIvDM2ZX9q
- TZWujumc3WuVUblaPvXvJw86T5fFSJYpRiogWcOFwvyY4LZW6sas+q+2tiSCG1lLcDZmyxQtbBb2
- 9Y=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LE2+ll9mjvg=;GoNkjmUw+Zn4trXBKg3J5Pz0lA2
- wa3IIY91QoDY6VA6IHvvk2tKwKYIQdEVYCB0iuRCGiKFTSkInXLpR/NeFNSf+IVZtP/b7uhsP
- JVPSAtvjGrADvle5DUsoyww91Pup6ymhdaHhIv7bPZowbniF4/nEqc8iWoUeLdum2BEuQfEun
- e9fOvQgkTYzT7MpKIz12d+3gpSO3lWJBeDezf5ZkgrTjYeILtWxUb7HLbyc2ea0quR3V8JEVo
- S2UmdygXtjHpaJwUM/o49EcD98EHVISY8yaPUsgSJaEGpmxOgYjmqPQARRNvYU65+M1CqVD/A
- bodWYA4dpu9EnSjr3RRU23vj+jfZcD26t5zl+sxI2ndA1LAs8dT/2mZMYawnq1RSRTLnU/4X/
- 1FkK8XKJX22fLbFO4SYRDtws9NQyty9L05bJosPOGA2ykXmA1ptHdHbO8FB5+22pq9l7Q92h2
- m3NlJrs8LOqxnXv92OOVlPCvrmbkoiMXiwVNXwJH7f+oK/rm+axDH9Z/ZgoLXLCgj0VYkd3in
- LQ3SkLNbhUJAGVEPPaGen5ToMxX2UXLfcsUMD8anARJpXH2dyVJx3nn7xZ3rby5GZkJXeu6je
- gSbGW63jhryav6h2tBjeusIA6hLfS+NNMlMQVNtQDno5ja8wi19k8MZbgCnlsZG6qOz4Y7G44
- b7C1/cMZYtiD18LAmNDFxUm3tUzbicYTI6FXewFfvQ==
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi
+On Mon, 22 Jul 2024 22:38:34 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-> Gesendet: Samstag, 27. Juli 2024 um 06:57 Uhr
-> Von: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-> An: "Frank Wunderlich" <frank-w@public-files.de>
-> Cc: "Mathias Nyman" <mathias.nyman@intel.com>, "Chunfeng Yun" <chunfeng.=
-yun@mediatek.com>, "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGio=
-acchino Del Regno" <angelogioacchino.delregno@collabora.com>, "Daniel Goll=
-e" <daniel@makrotopia.org>, "John Crispin" <john@phrozen.org>, linux-usb@v=
-ger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists=
-.infradead.org, linux-kernel@vger.kernel.org
-> Betreff: Re: mt7988 usb broken on 6.10
->
-> On Fri, Jul 26, 2024 at 07:13:19PM +0200, Frank Wunderlich wrote:
-> > Hi,
-> >
-> > i've noticed that usb on mt7988 is broken in 6.10, was working on 6.9 =
-(with some additional patches like
-> > for pinctrl and dts as this chipset is not completely supported by mai=
-nline yet).
->
-> Any chance you can use 'git bisect' to track down the offending commit?
+> On Mon, Jul 22, 2024 at 08:31:38PM +0100, Jonathan Cameron wrote:
+> > On Mon, 22 Jul 2024 01:51:13 +0200
+> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> >   
+> > > On Sat, Jul 20, 2024 at 12:37:27PM +0100, Jonathan Cameron wrote:  
+> > > > On Thu, 11 Jul 2024 23:15:57 +0200
+> > > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> > > >     
+> > > > > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> > > > > a trigger for when there are data ready in the sensor for pick up.
+> > > > > 
+> > > > > This use case is used along with NORMAL_MODE in the sensor, which allows
+> > > > > the sensor to do consecutive measurements depending on the ODR rate value.
+> > > > > 
+> > > > > The trigger pin can be configured to be open-drain or push-pull and either
+> > > > > rising or falling edge.
+> > > > > 
+> > > > > No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> > > > > values.
+> > > > > 
+> > > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>    
+> > > > 
+> > > > A few minor things inline.
+> > > > 
+> > > > It might be worth thinking a bit about future fifo support as that can
+> > > > get a little messy in a driver that already supports a dataready trigger.
+> > > > We end up with no trigger being set meaning use the fifo.  Sometimes
+> > > > it makes more sense to not support triggers at all.
+> > > > 
+> > > > What you have here is fine though as we have a bunch of drivers
+> > > > that grew dataready trigger support before adding fifos later
+> > > > particularly as often it's a 'new chip' that brings the fifo
+> > > > support but maintains backwards compatibility if you don't use it.
+> > > >     
+> > > 
+> > > Hi Jonathan,
+> > > 
+> > > Thank you very much for your thorough review again!
+> > > 
+> > > What I could do to make the code even better to be able to accept
+> > > FIFO irq support are the following:
+> > > 
+> > > 1) in the bmp{380/580}_trigger_handler() currently, the data registers
+> > > are being read. What I could do is to move the reading of registers
+> > > to a separe function like bmpxxx_drdy_trigger_handler() and calling
+> > > it inside the bmp{380/580}_trigger_handler() when I have DRDY or
+> > > sysfs irq. In order to check the enabled irqs I propose also no.2  
+> > 
+> > You shouldn't get to the trigger_handler by other paths.  But sure 
+> > a bit of code reuse might make sense if fifo read out path is same
+> > as for other data reads.  Superficially it looks totally different
+> > on the bmp380 though as there is a separate fifo register.
+> >   
+> 
+> So, I don't mean getting into the trigger_handler by other paths. I will
+> always end up in the trigger_handler and then, depending on the interrupt
+> that was triggered (DRDY, FIFO, etc...) I choose different actions.
 
-because in mainline there is much missing for this SoC/board bisect is a b=
-it tricky, so i tried to find someone which can say this error can be caus=
-ed by a limited set of changes so i could simply revert some suspicious co=
-mmits.
-
-But i found out that we had some major differences in the usb devicetree n=
-odes i have not expected (and to be honest not checked prior to posting). =
-After using same dts like in 6.9 all is good, sorry for the noise.
-
-> thanks,
->
-> greg k-h
+Often the right thing to do for a fifo is to not use a trigger at all.
+So instead it becomes the main interrupt handler that runs that path.
+The reason being that triggers are typically one per 'scan' i.e. set of
+channels and fifo interrupts are much less common.  That makes a mess
+of things like timestamps etc that means different handling is necessary.
+So for fifo paths we often just don't use a trigger.
 
 
-regards Frank
+> 
+> > > 
+> > > 2) in the following bmp{380/580}_trigger_probe() functions instead of
+> > > just doing:
+> > > 
+> > >        irq = fwnode_irq_get_byname(fwnode, "DRDY");
+> > >        if (!irq) {
+> > >                dev_err(data->dev, "No DRDY interrupt found\n");
+> > >                return -ENODEV;
+> > >        }
+> > > 
+> > > I could also use some type of variable like we do for the active
+> > > channels in order to track "active/existing irqs".  
+> > 
+> > I think there is only one IRQ on the 380 at least.  So
+> > you should only request it once for this driver.  Then software
+> > gets to configure what it is for.
+> > 
+> > However it shouldn't be called DRDY for these parts at least. It's
+> > just INT on the datasheet.
+> > The interrupt control register value will tell you what is enabled.
+> > No need to track it separately.
+> >   
+> 
+> So I am a bit confused. Indeed, BMP380 has only irq line. So I understand
+> why I should call it INT. The actual IRQ inside the chip that will be 
+> triggered needs to be configured by software. I do it through the
+> bmp{3/5}80_int_config() function. How am I supposed to know
+> which IRQ to enable? Options are:
+> 
+> 	a) DRDY only
+> 	b) FIFO only
+> 	c) both
+> 
+> How can I inform the driver about which to enable? Shouldn't this go
+> through the device-tree?
+
+No. This is a policy question for the driver, not something to do
+with wiring (which is what belongs in device tree).
+You choose how it is used based on what userspace configures the
+device to do.
+
+DRDY if it uses that trigger.  FIFO typically if the buffer is enabled
+without a trigger (though we have a few cases where a dummy trigger
+is used for this).  
+
+
+> 
+> > If you mean track the one from the poll function registered for
+> > handling triggers - that's an internal detail but you would indeed
+> > need to track in your data structures whether that's the trigger
+> > currently being used or not (easy to do by comparing iio_dev->trig
+> > with a pointer for each trigger in iio_priv() data - so should be no
+> > need for separate tracking.
+> >   
+> 
+> My idea is that there is one trigger_handler which inside you check
+> which interrupt triggered and you choose which path to choose. If that's
+> wrong, do you know any specific driver that implements it in the correct
+> way? Because in my mind, the iio_dev->trig is one and just inside the
+> handler, different functions are called.
+
+You don't have to use a trigger.  Just look for drivers that handle
+a fifo. This is pretty common situation and there are a couple of
+different solutions but often the cleanest is to not use the
+trigger infrastructure at all if the fifo is in use.
+
+Jonathan
+
+> 
+> > Jonathan
+> > 
+> >   
+> 
+> Thanks for the feedback :)
+> 
+> Cheers,
+> Vasilis
+> 
+> >   
+> > > 
+> > > Like this it would be easier to track the active irqs of the sensor.
+> > > 
+> > > Let me know what you think, or if I manage to have time I might send
+> > > a v2 with those changes even earlier :)
+> > > 
+> > > Cheers,
+> > > Vasilis
+> > >   
+> >   
+
 
