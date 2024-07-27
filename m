@@ -1,158 +1,209 @@
-Return-Path: <linux-kernel+bounces-264268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088C893E0EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED8793E0EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA2E1C20BAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84BF91F21776
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488C82D60C;
-	Sat, 27 Jul 2024 20:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01923D966;
+	Sat, 27 Jul 2024 20:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVwYt1ub"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1wf15ox5"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88CB29413
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B60208B0
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722112088; cv=none; b=Fuu5ppnYNomNzg01HEJxlMJl/Yl0+hWCF4MXumkILb3hCs0V/3vSy7HjYs4nKotW9eM0HhgtktiYL0CeLgiKiKXO2mM732wCO/jmGV11A5+E7r6wiR/zDcAfa51Jzv1zgGTWhLJlwEThMZz3UT6+AZd5qBzwVuUJiV8/Xh4tfpk=
+	t=1722112256; cv=none; b=AepPfBS5gSTF7Ly7wf4qWkPFadJUnZq5pWP3vQOg2vih+jLrg2XLvILZCO8R2d9g/9YDqIrtN1fcZvA0S8b4gjhQkXNUNAU3PkgiDl9c5+tdkOuOXStdfgJ2aAoYyGxJ+9FNfw0CMXjq+YE57EArNKzA8PxkSZTUMQbFC7f8mWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722112088; c=relaxed/simple;
-	bh=5Iq+hQdX1Or4aYNR2qZjlxumyuiILNoE8GDhZSLDlAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iu2CpE34axO+lSHIVl3w3cYRX3/IF5/7y09ILpfX532MR2dXVSIor+uiB/A0kV6tl5/LelSF/a2uSEtkYQhQoq61c/h4PT4ho+mOxby+QX+HlWZw70Y2H2C78VkM+bcITudZSlsapdAqTmFjb3hbeAaKQXRAfd2Cmkz4kfoIu5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WVwYt1ub; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso36467401fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:28:06 -0700 (PDT)
+	s=arc-20240116; t=1722112256; c=relaxed/simple;
+	bh=ol8yMUHYdxk0eaGfzFCR+OIokuJ26t8SNULwd7TYEM0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=swHJcacrHbZyW7UBp4U9L+PN9WAnAKcF75RPfHtVhtBPmn6+rLEzi0QW5fH7MkMyddDNfzOBflu6yxK+roQGjo96Xs76aoB8PoMYwqe2fh2U/KrX4c2eHK8JzyGtNd74Aj9+tNAZNko7/BFE3ZU2B1PkcblMZ9N1zK07Htt8y0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1wf15ox5; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b28f23a28so1602075276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722112085; x=1722716885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a5TCSE5IQPZmg5+Co6Qb5Q76qkbbdisagHTdBaE0Lw8=;
-        b=WVwYt1ub+QimCBdcP7PkJWij9uqZ0PRcwxFLpWNnq0FQvW33uzx2QpeIO8Y4D1VBJr
-         GOU5mAetNor5ijB2GgT328pCuwQ8x11amjI9drMf2uPaRVYlElsoertKqT0SjCenduON
-         GNfvRDLLd13NUc6NWkYk/absGs/0VkrYP1zEp1fSB5RyN/eiQDO0jGOYvObizey2OlKc
-         tixG9ws2y9gIqcPbmvUI9WBFtA1LwRk+4MdgGNPIHcl0YqRdpmo06kip72XUIp3tNZ+W
-         zgD5+xatFHjTfSArmR2C6pT0VwbZPiwQw78dYjKREiPvu17tPPsIcJ/jjgQNLtd1+604
-         SW/Q==
+        d=google.com; s=20230601; t=1722112253; x=1722717053; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cSKWxaKZQofKx1RyVRotZETYguVPUaZB2mNr86tB8V0=;
+        b=1wf15ox5U0B9CjE6fgbhrTCJtF+3vSZ+Zrf0tV534LIkq5rzcHH5NuJLC4HJr5F/ps
+         uptMt1JPEcG/IAhZXUUr0tADL6jWgjiIwCTiepwyaVkbldpgUgHws0Dj5nJqlnFHUFLX
+         roWWEk9WFh83ABbZSRo6GdiwLuWaOiKOCoyomr8mikYsJnkPdaT5e3Pyq8NRc+JeEbZF
+         NL3iGY35gCvaSJ8hElqiA/VN1aXXdwTDxrjXZnHfeb27nptc1+TYLE3LbepeEbJSKSpC
+         39uou06J9nmYX276qrilb74bLMC32592p9e+D9JuyZyyulsvm/QWyKIcXQ+SKTKOqsg3
+         9o3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722112085; x=1722716885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a5TCSE5IQPZmg5+Co6Qb5Q76qkbbdisagHTdBaE0Lw8=;
-        b=iBxPXmaObb1P8MHzEjU3AdTm6Vkx73zCUW+NuJJLndPtRvMqVf5VmfGvQiv0J62djU
-         MiFXfHNej+UmbHbiXyzha4BpNeH1CzFJbI2XrQQAI1s9VaV48gKCR+9eEv/MdvROz/ww
-         Z4YgX0mRD2w5ivWHOp5CJXMOe5vW/0xfibxQez9jrp/pUdXVBTBBQ8x1t1pURoBPutLj
-         l+9S9E8IRbeUqwAsG9gE73dAAnemEKGVBRQgRfsuT94RP9ACjMDqwoOQq3LhypMqttly
-         qvaZMs0TKLCC6LKE2/RH01YdeAAnvYiSyKQ0lc0d5IuHODtSL2E+YjXS587SoZvik7GM
-         leVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUinDnxRdcrpNbdv8bgLR7cp9NnFrOulR5H5UHVfHKQgCrxqzOQaxkfRG0UqB2nX4vtPiY1yL69TO8CAOh2PHrkuOvUh1CAfTCg7kkv
-X-Gm-Message-State: AOJu0Yw4M8DwLrHmTRqprZixTGnPEVmkjY7xRfWyroxs1Q/EKRR/DhVN
-	nrXr4Yq2GlW/JEH10MCV8MGlqRbNW9N4DSAlAa0+MBXG0KPMtzBMF35r+rVD0bgMZsTONpnM4hf
-	z
-X-Google-Smtp-Source: AGHT+IHk5AHyaj6Kn7pMIySWcR20lekDgoIkBhN1ucGkQo9nR7bUmFlDSzTzDXUXY1CP8lJJ++NOEg==
-X-Received: by 2002:a2e:b5b1:0:b0:2ef:2555:e52d with SMTP id 38308e7fff4ca-2f12ee6342bmr21991621fa.45.1722112084809;
-        Sat, 27 Jul 2024 13:28:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03d074ea4sm7683151fa.116.2024.07.27.13.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 13:28:04 -0700 (PDT)
-Date: Sat, 27 Jul 2024 23:28:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, p.zabel@pengutronix.de, 
-	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de, vkoul@kernel.org, 
-	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, 
-	frank.li@nxp.com
-Subject: Re: [PATCH v3 00/19] Add Freescale i.MX8qxp Display Controller
- support
-Message-ID: <zr2t6deyvwacawj7s36gols2vxu24fah25x6ofy7xpqyvc4s2d@luavybrlxpaf>
-References: <20240724092950.752536-1-victor.liu@nxp.com>
- <wky3mjl7fn773myatyrdsea6oc2xebkvrgmigmmoj36eswgqry@2kox5ad5dynl>
- <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
+        d=1e100.net; s=20230601; t=1722112253; x=1722717053;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cSKWxaKZQofKx1RyVRotZETYguVPUaZB2mNr86tB8V0=;
+        b=Q4gAA76YRfyjdv+6e+Ca445O0olZ2Bp5m8L7GRunFceXmQRNZOKsaOKUsw4kIxmarl
+         10WtpReFjsxi2kk19ZK6JDOfUcWFDtlOBbLgqQtASX9uJ7zgh3QJSdFKZejXr/gnlgH7
+         sOVJ/3gbOrZimbDnBW0js2AJuHDqux6we9XrXcJS3jveRhCTN4x/VBA9S/H5t6VhbDCa
+         Srx1klQoLYwE6/0VFEdeDxbZyPTSPQXfKvGTg15dnVU4Wvz01sx+eziioHEfDa6AGjOT
+         FZgmXetsc5wYHBrOU8nr6nl8NWSxbSNXcNXGlnA8hvbaRTdfAdUhENoHTrArKHnousTl
+         9lrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYCtMW86mxa3Dwxxw0X5hkq9iqZToIzqyyPVifLjyRw1sy1bA3XqDpjXKUkqdZWzNtoHHf1Ir3gKTcHG9rEC1jZlCHzu9sF2OpxcR9
+X-Gm-Message-State: AOJu0Ywibzgj9HAFKadtq03js1BY1UiZOSTv029uRBEQHCw3OwVyAqxd
+	vlF6KtG9lveC4R+C4v0qpDHbeMvaPEDJNB/fvsbZqgWmYcDVtiN923/zqCPmeIE/A3q8WYAKRvv
+	RQgOVdDujaw4PNWhcTzq2BV8/9Q==
+X-Google-Smtp-Source: AGHT+IHTl3sfyDu1yNHktJR09a85dnJJVearjw1LxX4KKTYzgabvSGQgjGJlmzn2okerqsuTS8lInGVOTA0hScA4wIE=
+X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
+ (user=mattgilbride job=sendgmr) by 2002:a25:854e:0:b0:e05:6e45:84b6 with SMTP
+ id 3f1490d57ef6-e0b5455d8cfmr6334276.8.1722112252598; Sat, 27 Jul 2024
+ 13:30:52 -0700 (PDT)
+Date: Sat, 27 Jul 2024 20:30:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAPVYpWYC/23QwW7DIAwG4FepOI/JxoSQnfYe0w6GmDbS1lSki
+ jZVefeRXkKUHX/E91v2Q02SB5nU2+mhsszDNIzXEvzLScULX8+ih75kZcAQGmh0sDqHexbRHAI
+ yoEvAoMr/W5Y0/Dy7Pj5LvgzTfcy/z+oZ19e1xcK+ZUYNuusaIREhH+H9PI7nL3mN47daa2ZTU
+ exqagqFgEjMgQj6A6WNWvQ1pULJkCBZ6iDKgdqNOqCa2pWCF0u945DigTY1dTVt1l1dknI36dp /dnUbbRFr6gpFGyQh+9gHPtC2omY3tS2URbyPzKmM3dFlWf4AuaT96QUCAAA=
+X-Mailer: b4 0.13.0
+Message-ID: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
+Subject: [PATCH v8 0/6] Red-black tree abstraction needed by Rust Binder
+From: Matt Gilbride <mattgilbride@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
+Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Jul 28, 2024 at 03:10:21AM GMT, Sui Jingfeng wrote:
-> Hi,
-> 
-> On 7/28/24 00:39, Dmitry Baryshkov wrote:
-> > > Hi,
-> > > 
-> > > This patch series aims to add Freescale i.MX8qxp Display Controller support.
-> > > 
-> > > The controller is comprised of three main components that include a blit
-> > > engine for 2D graphics accelerations, display controller for display output
-> > > processing, as well as a command sequencer.
-> > > 
-> > > Previous patch series attempts to do that can be found at:
-> > > https://patchwork.freedesktop.org/series/84524/
-> > > 
-> > > This series addresses Maxime's comments on the previous one:
-> > > a. Split the display controller into multiple internal devices.
-> > >     1) List display engine, pixel engine, interrupt controller and more as the
-> > >        controller's child devices.
-> > >     2) List display engine and pixel engine's processing units as their child
-> > >        devices.
-> > > 
-> > > b. Add minimal feature support.
-> > >     Only support two display pipelines with primary planes with XR24 fb,
-> > >     backed by two fetchunits.  No fetchunit dynamic allocation logic(to be done
-> > >     when necessary).
-> > > 
-> > > c. Use drm_dev_{enter, exit}().
-> > > 
-> > > Since this series changes a lot comparing to the previous one, I choose to
-> > > send it with a new patch series, not a new version.
-> > I'm sorry, I have started reviewing v2 without noticing that there is a
-> > v3 already.
-> > 
-> > Let me summarize my comments:
-> > 
-> > - You are using OF aliases. Are they documented and acked by DT
-> >    maintainers?
-> > 
-> > - I generally feel that the use of so many small devices to declare
-> >    functional blocks is an abuse of the DT. Please consider creating
-> >    _small_ units from the driver code directly rather than going throught
-> >    the components.
-> 
-> Well, I really don't think so. I don't agree.
-> 
-> I have checked the DTSpec[1] before type, the spec isn't define how
-> many is considered to be "many", and the spec isn't define to what
-> extent is think to be "small" as well.
+This patchset contains the red-black tree abstractions needed by the Rust
+implementation of the Binder driver.
 
-Yeah. However _usually_ we are not defining DT devices for sub-device
-components. So at least such decisions ought to be described and
-explained in the cover letter.
+Binder driver benefits from O(log n) search/insertion/deletion of
+key/value mappings in various places, including `process.rs` and
+`range_alloc.rs`.  In `range_alloc.rs`, the ability to store and
+search by a generic key type is also useful.
 
-> 
-> [1]
-> https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.4
+Please see the Rust Binder RFC for usage examples [1]. Note that
+the `container_of` macro is currently used only by `rbtree` itself.
 
+Users of "rust: rbtree: add red-black tree implementation backed by the C version"
+    [PATCH RFC 03/20] rust_binder: add threading support
+    [PATCH RFC 05/20] rust_binder: add nodes and context managers
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add iterator"
+    [PATCH RFC 17/20] rust_binder: add oneway spam detection
+
+Users of "rust: rbtree: add mutable iterator"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add `RBTreeCursor`"
+    [PATCH RFC 06/20] rust_binder: add oneway transactions
+
+Users of "rust: rbtree: add RBTree::entry"
+    Not used in the original RFC, but introduced after further
+    code review.  See: https://r.android.com/2849906
+
+The Rust Binder RFC addresses the upstream deprecation of red-black
+tree. Quoted here for convenience:
+
+"This RFC uses the kernel's red-black tree for key/value mappings, but we
+are aware that the red-black tree is deprecated. We did this to make the
+performance comparison more fair, since C binder also uses rbtree for
+this. We intend to replace these with XArrays instead. That said, we
+don't think that XArray is a good fit for the range allocator, and we
+propose to continue using the red-black tree for the range allocator."
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+---
+Changes in v8:
+- Fix small style nit (use ? operator)
+- Fix doc comment pointing at a private item
+- Link to v7: https://lore.kernel.org/r/20240726-b4-rbtree-v7-0-aee88caaf97c@google.com
+
+Changes in v7:
+- make `RawVacantEntry.rbtree` a raw pointer like
+  `RawVacantEntry.child_field_of_parent`, since the latter can
+  technically point at a field of the former. We prefer that the
+  implementation be explicit about the safety guarantees of both because
+  of the relationship between them.
+- Link to v6: https://lore.kernel.org/r/20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com
+
+Changes in v6:
+- Minimize usage of `*mut bindings::rb_node`, replacing with
+  `NonNull<bindings::rb_node>`. Specifically, changing
+  `RBTreeCursor.current` to be `NonNull<bindings::rb_node>` and updating
+  the corresponding functions.
+- Update `RBTreeCursor:to_key_value` helpers to have their own lifetime
+  (they are not instance methods, using a different lifetime than that
+  of the `impl` block they are in makes things more clear.
+- Fix misplaced semicolon in `cursor_lower_bound`.
+- Link to v5: https://lore.kernel.org/r/20240606-b4-rbtree-v5-0-96fe1a0e97c0@google.com
+
+Changes in v5:
+- Used `Box::write` in `RBTreeNodeReservation::into_node`, removing
+  unnecessary `unsafe` blocks.
+- Updated `RBTreeCursor::remove_current` to return the removed node.
+- Link to v4: https://lore.kernel.org/r/20240603-b4-rbtree-v4-0-308e43d6abfc@google.com
+
+Changes in v4:
+- rebased onto the tip of rust-for-linux/rust-next (97ab3e8eec0ce79d9e265e6c9e4c480492180409)
+- addressed comments from draft PR on GitHub: https://github.com/Rust-for-Linux/linux/pull/1081
+- Link to v3: https://lore.kernel.org/r/20240418-b4-rbtree-v3-0-323e134390ce@google.com
+
+Changes in v3:
+- Address various feedback re: SAFETY and INVARIANT comments from v2.
+- Update variable naming and add detailed comments for the `RBTree::insert` (later moved to
+  `RBTree::raw_entry`) implementation.
+- Link to v2: https://lore.kernel.org/r/20240219-b4-rbtree-v2-0-0b113aab330d@google.com
+
+Changes in v2:
+- Update documentation link to the C header file
+- Use `core::convert::Infallible` in try_reserve_node
+- Link to v1: https://lore.kernel.org/r/20240205-b4-rbtree-v1-0-995e3eee38c0@google.com
+
+---
+Alice Ryhl (1):
+      rust: rbtree: add `RBTree::entry`
+
+Benno Lossin (1):
+      rust: kernel: add `drop_contents` to `BoxExt`
+
+Matt Gilbride (1):
+      rust: rbtree: add `RBTreeCursor`
+
+Wedson Almeida Filho (3):
+      rust: rbtree: add red-black tree implementation backed by the C version
+      rust: rbtree: add iterator
+      rust: rbtree: add mutable iterator
+
+ rust/helpers.c               |    7 +
+ rust/kernel/alloc/box_ext.rs |   24 +-
+ rust/kernel/lib.rs           |    1 +
+ rust/kernel/rbtree.rs        | 1288 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1319 insertions(+), 1 deletion(-)
+---
+base-commit: 97ab3e8eec0ce79d9e265e6c9e4c480492180409
+change-id: 20231205-b4-rbtree-abb1a016f0a0
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Matt Gilbride <mattgilbride@google.com>
+
 
