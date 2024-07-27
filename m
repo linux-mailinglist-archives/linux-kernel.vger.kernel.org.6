@@ -1,196 +1,145 @@
-Return-Path: <linux-kernel+bounces-264186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D598193DFF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:24:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DB193DFF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9889D2822EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0822E1F21422
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D16D181B83;
-	Sat, 27 Jul 2024 15:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2590181329;
+	Sat, 27 Jul 2024 15:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsdI2Oz0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS+fgueU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D506F30B;
-	Sat, 27 Jul 2024 15:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73B26F30B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 15:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722093837; cv=none; b=VIB9bOs6KATfCSiP/G9ZtgnpFmtZ55lFL729aRAo0Obme9oaloCIxVUp00kUAdXAlSJFZskUZ/GI2hDkRpPkAdPhL6c2E9gA6VmWAtV8MggQYMx0GVgtiKElEziiJ7gwV7EKNirhPSmu5UmuSc0HzJIMoLNPLgGtu1O6ryHrfmo=
+	t=1722094023; cv=none; b=K/MmWwBTnYT+ZHo3HoFmkhARrcdH+Tz0hViHToM+7T7J6Wqv0RsmnaVETkmGqnk4vx5lK4KXLGX3Ivycq7zJUKPwwLEXfBEfC4IrYHXjaLdiDjuGEOlr5i7AhPhPme0YJAT76CS7H9dnOfSXSNSW55wq/Yt/BG5QYj20VZukeUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722093837; c=relaxed/simple;
-	bh=8zg+3Q4qdZh2c+7tjZafeq34AmHYH10iUg/BmrKF5V4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CM463MPqi2qFSBhjP5Np1CevnDWGrrjGPGyiRAtEdzXBXO2yrDP2J7vtAdMxT8+Bip8Z2EuBzFsuSDBRBEYUv6PcTlkypmf6XGJ4/77EKhJcfurYl0wRH9GASoIvneIQBqFB7CsWVzDYo0zq8tB0LDbQHAXUMuRIGR0DCBLIDZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsdI2Oz0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C276C32781;
-	Sat, 27 Jul 2024 15:23:51 +0000 (UTC)
+	s=arc-20240116; t=1722094023; c=relaxed/simple;
+	bh=rcuyZk++ao7a339NuIqP/aH38I07fe8AieeU7rnNYhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gnut/pSr/uuiegU+zLUnKXMMBGZaHnS5MHTS7bINXDoA7Y8u791OEeDtKlg7wiqY58yhljWKXv8Lm8+m2hLQh3DLA3KUeh3ZmvoG2yURuUl1vq2jAeZNaRM2463pKwyxCyPGooAUF9kWr4j/ejpVZc1vaSAYPxm557n7qd9sfXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jS+fgueU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F05DC32781;
+	Sat, 27 Jul 2024 15:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722093836;
-	bh=8zg+3Q4qdZh2c+7tjZafeq34AmHYH10iUg/BmrKF5V4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bsdI2Oz001Po1JTadNbPzemMB0CoFFoTuYed9/LvFZj5c4zfg0JG7HF8tW6kByOuf
-	 hThy1gtAbO3iGRqa9lrdqmwnPIYCZxCkdlQMo/N3LY8aZ9n5TiwM5nuo4y/61iABgC
-	 VVAl40n/jXhgrOHyAk4AtHRQp50LlootYtsXYAv2nOofH7zAWRiExaiGTqanvzTeN+
-	 qD3jbp4ySgU+F9sC8eD1FleYrw6IsYO/OpMpgr3oq//jLlPYuCjCXsKE5kOrIHVAWz
-	 KIALEti1O2eeEuJBVYpvSPUPBmrX+3I7gNaoS1ptdLZgcybfcWGc2WQZtZ+P97feON
-	 yvJYivxFyQoWw==
-Date: Sat, 27 Jul 2024 16:23:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Nuno Sa
- <nuno.sa@analog.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, Marius
- Cristea <marius.cristea@microchip.com>, Mike Looijmans
- <mike.looijmans@topic.nl>, Liam Beguin <liambeguin@gmail.com>, Ivan
- Mikhaylov <fr0st61te@gmail.com>, Marcus Folkesson
- <marcus.folkesson@gmail.com>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: add a7779 doc
-Message-ID: <20240727162347.51fb6270@jic23-huawei>
-In-Reply-To: <20240724155517.12470-3-ramona.nechita@analog.com>
-References: <20240724155517.12470-1-ramona.nechita@analog.com>
-	<20240724155517.12470-3-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722094022;
+	bh=rcuyZk++ao7a339NuIqP/aH38I07fe8AieeU7rnNYhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jS+fgueUdt9LXpCLv+BvHwMNLSYa7FVjEu/RT5JGX8MEPC47NR7z4uEhUsH80B3Hr
+	 cHbl64JkL2ipNIU6QRrD8tiHDTDH8sBhOW8gV38326GvoPqW9KBAuoNa4GQO3ho0fl
+	 981Aq8uIamCH6bh5Vmt1qH1fj9O9ngTl9YdVx9F4dGsOUPDtFUYziHMg4UTcKhgUdv
+	 o5YKmwf/wJyLnO0mErf6EUs2C4xt2VvoD2dc7xa97xz9JR+A0T0TG06DHnGNIkpRk3
+	 8evM7oVtpMbbvKp0XWf8Qbc1E60TDYJls47ya2bnjRaa01+J10L6akWBahoOPff/j7
+	 Vlv3y8U52+ftA==
+Date: Sat, 27 Jul 2024 15:27:00 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Subject: Re: [PATCH] f2fs: fix to avoid use-after-free in
+ f2fs_stop_gc_thread()
+Message-ID: <ZqURxBYKHipWcz_U@google.com>
+References: <20240725020841.894814-1-chao@kernel.org>
+ <ZqUOFzAPXE8plKU0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqUOFzAPXE8plKU0@google.com>
 
-On Wed, 24 Jul 2024 18:54:39 +0300
-Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
+On 07/27, Jaegeuk Kim wrote:
+> On 07/25, Chao Yu wrote:
+> > syzbot reports a f2fs bug as below:
+> > 
+> >  __dump_stack lib/dump_stack.c:88 [inline]
+> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+> >  print_report+0xe8/0x550 mm/kasan/report.c:491
+> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> >  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+> >  atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+> >  __refcount_add include/linux/refcount.h:184 [inline]
+> >  __refcount_inc include/linux/refcount.h:241 [inline]
+> >  refcount_inc include/linux/refcount.h:258 [inline]
+> >  get_task_struct include/linux/sched/task.h:118 [inline]
+> >  kthread_stop+0xca/0x630 kernel/kthread.c:704
+> >  f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
+> >  f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
+> >  f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
+> >  __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
+> >  vfs_ioctl fs/ioctl.c:51 [inline]
+> >  __do_sys_ioctl fs/ioctl.c:907 [inline]
+> >  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > 
+> > The root cause is below race condition, it may cause use-after-free
+> > issue in sbi->gc_th pointer.
+> > 
+> > - remount
+> >  - f2fs_remount
+> >   - f2fs_stop_gc_thread
+> >    - kfree(gc_th)
+> > 				- f2fs_ioc_shutdown
+> > 				 - f2fs_do_shutdown
+> > 				  - f2fs_stop_gc_thread
+> > 				   - kthread_stop(gc_th->f2fs_gc_task)
+> > 
+> > We will call f2fs_do_shutdown() in two paths:
+> > - for f2fs_ioc_shutdown() path, we should grab sb->s_umount semaphore
+> > for fixing.
+> > - for f2fs_shutdown() path, it's safe since caller has already grabbed
+> > sb->s_umount semaphore.
+> > 
+> > Reported-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000005c7ccb061e032b9b@google.com
+> > Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
+> > Signed-off-by: Chao Yu <chao@kernel.org>
+> > ---
+> >  fs/f2fs/file.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 7a37f2b393b9..62d72da25754 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -2388,7 +2388,10 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+> >  		}
+> >  	}
+> >  
+> > +	/* grab sb->s_umount to avoid racing w/ remount() */
+> > +	down_read(&sbi->sb->s_umount);
+> 
+> Is this safe for freeze_bdev()?
 
-> Add dt bindings for adc ad7779.
->=20
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-> ---
->  .../bindings/iio/adc/adi,ad7779.yaml          | 85 +++++++++++++++++++
->  1 file changed, 85 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
-yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
-> new file mode 100644
-> index 000000000000..10a67644e915
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
-> @@ -0,0 +1,85 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Samp=
-ling ADCs
-> +
-> +maintainers:
-> +  - Ramona Nechita <ramona.nechita@analog.com>
-> +
-> +description: |
-> +  The AD777X family consist of 8-channel, simultaneous sampling analog-t=
-o-
-> +  digital converter (ADC). Eight full =CE=A3-=CE=94 ADCs are on-chip. The
-> +  AD7771 provides an ultralow input current to allow direct sensor
-> +  connection. Each input channel has a programmable gain stage
-> +  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
-> +  outputs into the full-scale ADC input range, maximizing the
-> +  dynamic range of the signal chain.
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7770.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7771.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7779.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad7770
-> +      - adi,ad7771
-> +      - adi,ad7779
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
+bdev_freeze
+ -> fs_bdev_freeze
+  -> get_bdev_super
+   -> bdev_super_lock(bdev, true)
+    -> super_lock(sb, true)
+     -> __super_lock(sb, true)
+      -> down_write(s_umount)
 
-I missed this earlier, but a device that only has a reference supply is=20
-novel.  A quick glance at the datasheet shows a bunch of others power suppl=
-ies.
-They all need to be documented and any that are required for the device to =
-function
-must be listed as required.
-
-Also seems to be at least one plausible interrupt line (alert)
-that needs documenting whether or not the driver supports it yet.
-
-
-
-> +  vref-supply:
-> +    description:
-> +      The regulator to use as an external reference. If it does not exis=
-ts the
-> +      internal reference will be used.
-> +
-> +  start-gpios:
-> +    description:
-> +      Pin that controls start synchronization pulse.
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        adc@0 {
-> +          compatible =3D "adi,ad7779";
-> +          reg =3D <0>;
-> +          vref-supply =3D <&vref>;
-> +          start-gpios =3D <&gpio0 87 GPIO_ACTIVE_LOW>;
-> +          reset-gpios =3D <&gpio0 93 GPIO_ACTIVE_LOW>;
-> +          clocks =3D <&adc_clk>;
-> +        };
-> +    };
-> +...
-
+> 
+> >  	ret = f2fs_do_shutdown(sbi, in, readonly);
+> > +	up_read(&sbi->sb->s_umount);
+> >  
+> >  	if (need_drop)
+> >  		mnt_drop_write_file(filp);
+> > -- 
+> > 2.40.1
 
