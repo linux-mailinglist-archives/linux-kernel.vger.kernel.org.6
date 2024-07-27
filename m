@@ -1,89 +1,133 @@
-Return-Path: <linux-kernel+bounces-263997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF86E93DDAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C7E93DDAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C421F22331
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03041F220AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3273A268;
-	Sat, 27 Jul 2024 07:26:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5043C08A;
+	Sat, 27 Jul 2024 07:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2KkYHBoh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D0374C2;
-	Sat, 27 Jul 2024 07:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C552629D;
+	Sat, 27 Jul 2024 07:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722065182; cv=none; b=Eja+TU9S9E+rNqextgnSA9sGK3/Nu3x+S/p0Pq8igud4KmjBKd3lJD5Hk8bpMYq7sIwsOCXZu2+VziWAqxBbRm4C8N4utDxIGgRbr7y3anaooKmQKQKAJp0NukI2noxKE4ioDmbLf7dKA+HHIGZndPYUrJbB1Qwd5WH8mJJZyd4=
+	t=1722065662; cv=none; b=UVBeYgKWyKYy7kP6CyDTU089ig8DQ1PE3mNVY1qTeM3TP1K/wZIba457rYP0PNfMDPEpMkgI4hl7tK1iUEuyjP05ST/6LUG7qhL4+ZHpi2qekuS4ZEAO5gvyB++qtgpBxFek/cQVnqSnt4ryRs0QzEI/KhHhgQ/SiZ86vP7L44A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722065182; c=relaxed/simple;
-	bh=O5h6v4LX/XxQHqQLQSNlrrEJ6Ieu09w7kscKsBy0cuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cp5ccEUrl9nqcFmjPtPyB7XxX7O1bpmrHZM0l9x+CELWnbLoCmovEBFoHvG9Q8IVz5gU1Zx+6YSR6annADe+X4Xm9VwFmuBcr9ETZPGmYL79cXtFYiv16rHt4PxH8x2WwxzGUmsheNa8R27qqdjrj1/TLdNCOHcX31zwqjEyda4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WWGJk5nRhz28fcQ;
-	Sat, 27 Jul 2024 15:21:42 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F3451402CF;
-	Sat, 27 Jul 2024 15:26:11 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 27 Jul
- 2024 15:26:10 +0800
-Message-ID: <62b0b761-37bf-4ae8-9eef-9ac275e99d6c@huawei.com>
-Date: Sat, 27 Jul 2024 15:26:10 +0800
+	s=arc-20240116; t=1722065662; c=relaxed/simple;
+	bh=7r23hVigX5yYEuu+GOKoXtWqwDOor9/UcEPCOhiQUss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVMzjpRLPR/wscpwQqkmuBVRmh2BMMkTTE8kXQKfp9mGWlDrD0gTUHhVkRXjW07ClmbMxCT6296Tj0qgD/2cfpDDtT/ePXCQJ+YV/KjgNCSt9Mi+71ep98Hz0VbNmA1lW+gAbxa16OcXen4nw92PYRp0v/7N9t+RNYmrbFJUgZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2KkYHBoh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A975C32781;
+	Sat, 27 Jul 2024 07:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722065661;
+	bh=7r23hVigX5yYEuu+GOKoXtWqwDOor9/UcEPCOhiQUss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2KkYHBohmuoRZugp57DvOEnbklY0qtbptR/ZrFmcDmyH/eEV3/lClZTDv5IrsO0d8
+	 qdo0EqqRWExCHCHM8NECbcROhJbBg4rzCgYgWqg3kRpYLQogSkVJBddvYq4uPnRyir
+	 CTDh3QmYLBNcbP/lZc9OOqETuTbZksIRfWWk86ko=
+Date: Sat, 27 Jul 2024 09:34:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: CVE-2024-35918: randomize_kstack: Improve entropy diffusion
+Message-ID: <2024072746-ample-sponsor-bef6@gregkh>
+References: <2024051912-CVE-2024-35918-3fed@gregkh>
+ <lsh7xgorp67fplqey6evmukt66tbstbjob34bwyt7wiklkqu3n@6wftjk4z7xja>
+ <2024072606-outlet-stuffy-259b@gregkh>
+ <D4CED3E9-5E5F-4E94-AB59-3EA617213DA1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup/cpuset: reduce redundant comparisons for
- generating shecd domains
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-CC: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
-	<bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240726085946.2243526-1-chenridong@huawei.com>
- <cfpvrcplrjeb7r4zscfjnmeahpi5c5c3kxtql2jyrj4hdp2l2x@25sfleq3wjph>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <cfpvrcplrjeb7r4zscfjnmeahpi5c5c3kxtql2jyrj4hdp2l2x@25sfleq3wjph>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+In-Reply-To: <D4CED3E9-5E5F-4E94-AB59-3EA617213DA1@kernel.org>
 
-
-
-On 2024/7/26 19:37, Michal KoutnÃ½ wrote:
-> Hello.
+On Fri, Jul 26, 2024 at 07:12:36AM -0700, Kees Cook wrote:
 > 
-> On Fri, Jul 26, 2024 at 08:59:46AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
->> In the generate_sched_domains function, it's unnecessary to start the
->> second for loop with zero, which leads redundant comparisons.
->> Simply start with i+1, as that is sufficient.
 > 
-> Please see
-> https://lore.kernel.org/r/20240704062444.262211-1-xavier_qy@163.com
+> On July 26, 2024 2:54:25 AM PDT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >On Fri, Jul 26, 2024 at 11:45:59AM +0200, Michal Koutný wrote:
+> >> Hello.
+> >> 
+> >> On Sun, May 19, 2024 at 12:11:12PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >> > Description
+> >> > ===========
+> >> > 
+> >> > In the Linux kernel, the following vulnerability has been resolved:
+> >> > 
+> >> > randomize_kstack: Improve entropy diffusion
+> >> > 
+> >> > The kstack_offset variable was really only ever using the low bits for
+> >> > kernel stack offset entropy. Add a ror32() to increase bit diffusion.
+> >> > 
+> >> > The Linux kernel CVE team has assigned CVE-2024-35918 to this issue.
+> >> > 
+> >> > 
+> >> > Affected and fixed versions
+> >> > ===========================
+> >> > 
+> >> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 5.15.155 with commit dfb2ce952143
+> >> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.1.86 with commit e80b4980af26
+> >> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.6.27 with commit 300a2b9c2b28
+> >> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.8.6 with commit 6be74b1e21f8
+> >> > 	Issue introduced in 5.13 with commit 39218ff4c625 and fixed in 6.9 with commit 9c573cd31343
+> >> 
+> >> The commit
+> >> 9c573cd313433 ("randomize_kstack: Improve entropy diffusion") v6.9-rc4~35^2
+> >> adds ~2 bits of entropy to stack offsets (+the diffusion, x86_64)
+> >> 
+> >> The commit
+> >> 39218ff4c625d ("stack: Optionally randomize kernel stack offset each syscall") v5.13-rc1~184^2~3
+> >> adds ~8 bit of entropy to stack offsets (there was none before, x86_64)
+> >> 
+> >> Why the former commit has a CVE while the latter doesn't? (2 < 8)
+> >> 
+> >> I'd expect both to be treated equally or even inversely.
+> >
+> >If you wish for a CVE to be assigned to 39218ff4c625d, we will be glad
+> >to do so, but it was not on our "old list" of GSD entries to backfill in
+> >CVE entries for, which is why it was not assigned one.
 > 
-> Your patch is likely obsoleted with that.
-> 
-> Michal
+> I don't think either need a CVE. 39218ff4c625d added a new security
+> flaw mitigation. 9c573cd313433 improved it. The original did what it
+> said it did, so a CVE wouldn't seem to traditionally apply.
 
-Thanks, Michal, I'm sorry I didn't notice these patches. It's a good 
-idea to optimize with uf_node.
+We assigned a CVE to 9c573cd313433 as it was implied by many that this
+was "fixing a weakness" in the security feature in 39218ff4c625d.  If
+this is not the case, then we can revoke this CVE.
 
-Thanks
-Ridong
+> If adding a new mitigation feature (or improving an old one) means we
+> need to issue CVEs against the earlier kernels, this would be a whole
+> new class of CVE. (Though I would certainly support it: "your kernel
+> is vulnerable because you're not using a new mitigation" is a message
+> I've been trying to communicate forever.)
+
+"improving an old one so it actually works" is fixing a vulnerability
+(i.e. something that says it works but it wasn't), so those should be
+getting a CVE if I am reading the requirements properly.
+
+I too would love to assign CVEs to "a new mitigation feature was added
+that you should be using", but I don't think that would fly :(
+
+thanks,
+
+greg k-h
 
