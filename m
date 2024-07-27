@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-263976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A3993DD6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE9393DD73
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42201C217C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5858A1F23B8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7048A1C680;
-	Sat, 27 Jul 2024 05:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733A51B974;
+	Sat, 27 Jul 2024 05:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MeUtVqCH"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UEQZC/KP"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B5B14A8F
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 05:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E96A4A15
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 05:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722058342; cv=none; b=HsIJDGEZj6xpff0K55tHcwmvRZ/wC6yIyH0VGSpw1m/pX4gZ2Xz6IKG3DBktoTQj9hWxzDXy4Jo48RounUehsM35kVhWk0nl8oZGzspYo+JZhyRRcJG7uAW8F2eFNMMbQzdbjgONI4/dNalyrEvc9Gj7OBwuDEgRnQqaGo33PSE=
+	t=1722059820; cv=none; b=bNZYKtyM/0dTJ+I/DpcpzlHA8Y6YZo3Vlff1rvTMPb3hWCty4jr1IHeyN2iZtP6ksi1w9RUvcNXblZFXp1D9Ud9nIOyOlVT+JNDDQNu/nMb1ODSx2EVPlemlrNfdOwrhaggJY+IaPgs8uckDRwCWipKyUS/IFRaxjc8Ajt02xZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722058342; c=relaxed/simple;
-	bh=GEANmLRl3pd78CbWRm41BOno0EJdXj6oN+vaLlcrdT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LeR8mbRpp6NOweW3qrt9bPYJX8O66dVLf5D2kKHQalozO9BlYEU8oQzLSn2TeydDsG2xvABts7ommcht2MgrX8Q2zTvPS56v3k2U9o2kv8gcC3SomcT9qPE/LZS3L9J8Q+5N9aMUDPX0h1nu5olEskdkO/5fqZFkS1gCkIP1ojc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MeUtVqCH; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3db16a98d16so1065586b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 22:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722058339; x=1722663139; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ll2tSeXkgEmDF6KKRHBsaNEm0CYvP0CwAGds8QRblZc=;
-        b=MeUtVqCHUSjfz0Op/DKO/rkaMvO2DUVbsh2ALrMNfZfJQg2pE/uzT0D46UmKqI0lhr
-         kCdVjUWMgAGlT9/srtA8QGR/o4AMi0vM3zm2kh2BE5PG7rWTIehNTR9J1iARp58ForTk
-         Z90A1dC6IozAhZcW6XNjJiquIgP/42JXJ+a+ut7AI9yGv+3lTG600WUBhbZO54D3i3Dx
-         Lluae7JdGPHLVOMxhtG0gUNBe/w6A6XYG6eIRNr+ol8NCO3lZAtnH7ky0usRuy4FflCS
-         Jdhscb3pjoPkwxvR4VSnUsDD74AOxxPVVDpcFZ4NAinV7z6XJ4seNSU5kSYWN3zyl8Bt
-         /EvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722058339; x=1722663139;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ll2tSeXkgEmDF6KKRHBsaNEm0CYvP0CwAGds8QRblZc=;
-        b=gi86nRRbWx3S17gegMt31wCiklWRlHf7RVabuVMCgbv9p/EAFueMRv0HpQsHUSWMC5
-         rSkRCO5zzQX8tjNcAZH06p1tvMq4AC+/dRzAd8baPHCfX4UoK5vPGp5Z9q97cnKVf6Eq
-         OazxMVOhDhjf9TKA551HBMCELK9yfZn98v1vA3YUuGntUxNsuMpw4olXCoa8eHh5DB1w
-         HkQ8wF1xLvkaGMsblgoQgFk6fj9LOYagymybWc8/A2FFjfU7tAVQQaqyy6OTJ63X/D4t
-         1w6hzAUKQdoefvGkw3gVRyLLCsyd314BTdQxT3BFFmyLHS0fBlRtZ8PrJ4tLpzIzNgxT
-         Ducw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3D9ic8+QAG2T8DRX+NZ5Qh4KpW/TdFj2rzuTuq3qnG8ifXR4SRHclvY9mzO1gtVcy28DXRJ341oR6G/IpixP9UFHw0ZIjtFTn6RUO
-X-Gm-Message-State: AOJu0YxwIhMONHMH+57k5gFwGuIQ+IB3eHNTPr52qIL1KS/2eAhTqmUE
-	rzhREspHxqiK6V0wtUThg4S3sqn+d/3NIyEVEk66YTMjeC2OtcJyir4vU9m6AnU=
-X-Google-Smtp-Source: AGHT+IHUCPIsi7uCYJwSWeWo164OHgRFN3CFwvOwVNjz9dDYRNJ4CXpR1iCMOHy3FSP/CtE+ihndVg==
-X-Received: by 2002:a05:6830:65c5:b0:703:802a:98a8 with SMTP id 46e09a7af769-70940c0eb3cmr2782964a34.9.1722058338829;
-        Fri, 26 Jul 2024 22:32:18 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::1cb1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7093070671fsm1112735a34.21.2024.07.26.22.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 22:32:18 -0700 (PDT)
-Date: Sat, 27 Jul 2024 00:32:15 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zack Rusin <zack.rusin@broadcom.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/plane: Fix IS_ERR() vs NULL bug
-Message-ID: <83d9bb89-1a16-4ca4-80b4-1965fca498c1@stanley.mountain>
+	s=arc-20240116; t=1722059820; c=relaxed/simple;
+	bh=ZUPHT8xBRNd99Oh1SNWUpnaJeD+1yPzBqpvUcCOGHwA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=nATomInh5kIN1s5M6WIrk6kFyTUucOZPEpJI4uI+a9s0zEUdTfCtPU75d3204U3pDDc+8WifSx92kwroTtcvX/G+yfpNQvD+Div7Tbug7x/At79nvIxO+VqXuupsXGU6qsVk7V6sQiFAzwxiOkU/Ak4hlN7eNS5/SWTegJtA09c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UEQZC/KP; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722059815; bh=zbSS+ajYypXg92Z/q7nSeFt+R/QQz5CJOPsbYcOtdj0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=UEQZC/KPG7t/x+wlaaU2qd6pCZ9MapP5JEAcRXnOH5UBDNJbYp8S9IWecO7vit/VH
+	 St9Jvi8222Q+WNA1X2T4x7j7tYILcFxHT3mXZn80ohVUuDC3MrRPmo58Rg1kETXpRS
+	 6zWo6ElYdfHtDnzNo9lqXm+2XYFYeAAOg7TpiZKg=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id E342E056; Sat, 27 Jul 2024 13:56:52 +0800
+X-QQ-mid: xmsmtpt1722059812tjpbhik0q
+Message-ID: <tencent_CA1DBB2E333C9E521B814B291BDA25D7BA08@qq.com>
+X-QQ-XMAILINFO: MdoRYM9mYrydMDhbCpm8ury3tFQsl48ql/AgBElB1v2x9S06raK/RrIkgwRZfn
+	 MYz5x0TEA+128JO8j7/zVqJvcdRCU1M0BkydoPJIlZTTAtQ1EJBxkJuBsRHxhlSm0ntZtKuuQn+Q
+	 vdOvRFiRnZHMmsTBfPHtT9943DSwvAV+qv+8u6qKALJsbW6gbep4D5bprvs1MhebHzWvsMlHvugu
+	 QlqcV0ZUVXp7uAgkPcuC3JQdUkmM1c67gm3NAO0XA6GR72/MxuuLSN8wQ2ssCp6yyo9HWUk4cMmM
+	 S0LDEmqWMiFipHijj9lvEv4KPDGLJIO/ahCM6r4t0JE59bq0H8iHkfsYCNluNT74ilwhIAtBHqIv
+	 BTbeLKOAvv3WL2yqOMpXPS0ezS7cIJ1ZML5oy2EKhalfezQRV4iZBo5IA2BPnwlA+sRjD1byV773
+	 YTFZQm30vlKVcPjsCh/toesg/5xtbPLJhZp7VFVWxETIGK8EcIB8OIPp0GZHWCHJga8leIybsgzG
+	 P3BPk4nHt4l7QrrSowyt92YJ/JdeN6gTZk3Ptdkad3FamnaA3NnguTht3WeGG04tJQ8jE4KqJrjR
+	 Wf5Deo+Pq0FeuJ1aLPIC1QF9N4HkRW7qlqfE/yxa42IvflHi6/P9a389+/l6JHQsi8GAPM4P+C4d
+	 hcJf74tIUepBjkurHpFWiVsjvCn6Xdg8nmtGzm+mqj1ynigYvtS8tP56E19d2LB5ih4cJzBONEYW
+	 iHl4/dc+oOO7dcWUCO4R2JSu6mTgOA7GUE1WdR06lWFwkxwWP8NM4MT3UZ0MrczVjnJB7dJUqKkG
+	 jVI9Qpeepz3ufF31gRGC7ZPmFLTuRYlld7KC7EOB3wg4w0AQmJqVPulcZqsGPVEV5jCgEawmG66Q
+	 g5zilatLdRcWlgj3jnpj3ntQKfeWIDVIy/CVWhHdyIlvevSJGYry9PpSHjCN+pW7hYiXYiHPt4
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Cc: chao@kernel.org,
+	daehojeong@google.com,
+	jaegeuk@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] f2fs: Add mutex to prevent gc task from being accessed before initialization
+Date: Sat, 27 Jul 2024 13:56:53 +0800
+X-OQ-MSGID: <20240727055652.2700649-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
+References: <0000000000005c7ccb061e032b9b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-The drm_property_create_signed_range() function returns NULL on error,
-it doesn't return error pointers.  Change the IS_ERR() tests to check
-for NULL.
+syzbot report null-ptr-deref Write in f2fs_stop_gc_thread, because 
+shutdown and remount can cause multi-path entry into f2fs_stop_gc_thread,
+resulting in incorrect access to f2fs_gc_task before it is properly
+initialized.
 
-Fixes: 8f7179a1027d ("drm/atomic: Add support for mouse hotspots")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reported-and-tested-by: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- drivers/gpu/drm/drm_plane.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/gc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index a28b22fdd7a4..4fcb5d486de6 100644
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -328,14 +328,14 @@ static int drm_plane_create_hotspot_properties(struct drm_plane *plane)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6066c6eecf41..a624e8271fbc 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -27,6 +27,7 @@ static struct kmem_cache *victim_entry_slab;
  
- 	prop_x = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_X",
- 						  INT_MIN, INT_MAX);
--	if (IS_ERR(prop_x))
--		return PTR_ERR(prop_x);
-+	if (!prop_x)
-+		return -ENOMEM;
+ static unsigned int count_bits(const unsigned long *addr,
+ 				unsigned int offset, unsigned int len);
++static DEFINE_MUTEX(gc_lock);
  
- 	prop_y = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_Y",
- 						  INT_MIN, INT_MAX);
--	if (IS_ERR(prop_y)) {
-+	if (!prop_y) {
- 		drm_property_destroy(plane->dev, prop_x);
--		return PTR_ERR(prop_y);
-+		return -ENOMEM;
- 	}
+ static int gc_thread_func(void *data)
+ {
+@@ -203,10 +204,13 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
  
- 	drm_object_attach_property(&plane->base, prop_x, 0);
+ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
++	struct f2fs_gc_kthread *gc_th;
+ 
+-	if (!gc_th)
++	guard(mutex)(&gc_lock);
++	gc_th = sbi->gc_thread;
++	if (!gc_th || gc_th->f2fs_gc_task < PAGE_OFFSET)
+ 		return;
++
+ 	kthread_stop(gc_th->f2fs_gc_task);
+ 	wake_up_all(&gc_th->fggc_wq);
+ 	kfree(gc_th);
 -- 
 2.43.0
 
