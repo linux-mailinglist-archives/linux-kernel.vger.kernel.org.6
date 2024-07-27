@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-264302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DFA793E175
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:48:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BC693E176
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A22D1C20E26
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:48:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D963FB21516
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 23:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322F553E24;
-	Sat, 27 Jul 2024 23:48:08 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F80279952;
+	Sat, 27 Jul 2024 23:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEGwSf0K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F225634
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 23:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3C374D1
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 23:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722124087; cv=none; b=MQvM+bnhWqRq55LofbVLw1YwIq4Mxe0Mxhk7JwEfThofd2k92us2YPjUT1qigrNkLkJA/gqA/1bWzyH4eIpdhlwM/ccdb4yyMhpaZFfXHob8YvtFUya1eZW9CCxTUNkrpkOy4uOSiyA4dyIOglL1Z5CIdr7VoJeLFcQeVVVX0rk=
+	t=1722124608; cv=none; b=MljR3jflvUKGhPIgytW3R1RSzYp8QpugctkeI7kjJxzzUAF7jF+PE5jie003626IGk+XX3hWCl+Ni0QrLK6kJ3dBNqrmWHe3fWDshEhbB/Zs1J2ZDn1QSW2m/9SMEhqQPCrxdzK2nqidKVbUs8xHDDEXqlT2ovezqA5J1M4/Y6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722124087; c=relaxed/simple;
-	bh=u1LwNZMZtEUicaM10i+yfP1IqJpfhNlzUVn5c23iwm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gqtUO1Lswxv037FFHGpL6bIsZlivbFpeXpYMIVbSRYs3i34HWJEJB9aEtOrryuEFVLNeeq84K3Vg0xSDYTs+USKeUJI+mDec2VWzRbGZL2zUkVpFhKuO6oroKiAm6uZTCnwWCWqlkQGFjEmQe8WKrPo1qzzGKBDeUb11URKLluQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46RNluYc080678;
-	Sun, 28 Jul 2024 08:47:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Sun, 28 Jul 2024 08:47:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46RNluZp080674
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 28 Jul 2024 08:47:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <503c1a50-ddc0-4128-b0f0-feceb43ff5d3@I-love.SAKURA.ne.jp>
-Date: Sun, 28 Jul 2024 08:47:55 +0900
+	s=arc-20240116; t=1722124608; c=relaxed/simple;
+	bh=JtCwE4XCHEFt1ylEL6cxOUJbYcIdIEy1l0hElg5I3yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tp3vOF6JN8ceVUInmnQkZ8LXn9tzFfYVpXk03vFnJjv67N4sr9W17IiAYz04NlutzB/UZ/4HBFySRSKW9HizbCd/oFMCBfz99e6MqYUtH0hdF2LJFCR2Ag3ZFIKWM0PN0BXv7Td8rpIqSsGLoWRmvBtxkluPBCvEtqKxkcZbrTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEGwSf0K; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722124607; x=1753660607;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=JtCwE4XCHEFt1ylEL6cxOUJbYcIdIEy1l0hElg5I3yA=;
+  b=AEGwSf0KsIjqS79HnQlGw90dD3LpNJCZmjktCAtY1/tjGOBBRutxcQB4
+   mQgwv9AMFeSvv+hQaRXZQV2/6z7zund4gRU3qmHTw77sNIHeoTPG0m5+m
+   po2A6UFOgicgBDS2oapWAfggyqn/gT9B4ei2Z7mO7HQh6I/PmUawHGs0K
+   qDRe9LD3ow4K4eA70qqFashpxxP51l2LcjBQ3A1j4FB+Akx18z31tahYX
+   yx/VViONEVATRoREWbWo87VON2mS/D/OyRnLPVbJBY5H4xahLBlZmM7Xw
+   8U8rExqZFVQD9UMF/G2c4pMuwBWpHkWOmiyYgzski7R32tP3hHy5VFnGK
+   g==;
+X-CSE-ConnectionGUID: UiCF2rlpSjaP2QmMDxqDEg==
+X-CSE-MsgGUID: 2HA4tWEWQ2ymcTDPwyG3dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="12748059"
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="12748059"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 16:56:46 -0700
+X-CSE-ConnectionGUID: 9WE3M3I+S5ye17l7VKEVgQ==
+X-CSE-MsgGUID: rSSvb5/ZSOCc3o1j1o0ZBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="58382888"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 27 Jul 2024 16:56:44 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXrHF-000qLQ-2H;
+	Sat, 27 Jul 2024 23:56:41 +0000
+Date: Sun, 28 Jul 2024 07:56:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nuno Sa <nuno.sa@analog.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: drivers/iio/imu/adis16400.o: warning: objtool:
+ adis16400_write_raw+0xa3: can't find jump dest instruction at
+ .text.adis16400_write_raw+0x222
+Message-ID: <202407280732.8oRaogGU-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] profiling: remove prof_cpu_mask
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
- <CAHk-=wgs52BxT4Zjmjz8aNvHWKxf5_ThBY4bYL1Y6CTaNL2dTw@mail.gmail.com>
- <87a5i2ttv0.ffs@tglx>
- <CAHk-=wg-qQGB2iM1OeprikBWp9-nUEDaWNxwwJ00u1vmUJVtHg@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHk-=wg-qQGB2iM1OeprikBWp9-nUEDaWNxwwJ00u1vmUJVtHg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024/07/28 6:22, Linus Torvalds wrote:
-> I wonder how many people actually use this ancient kernel profiling
-> thing. I get the feeling that it's "one real user and a hundred syzbot
-> test failures".
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   910bfc26d16d07df5a2bfcbc63f0aa9d1397e2ef
+commit: 9d9dae6ae8ab440835981b209ebe6ba8465b46a4 iio: imu: adis16400: make use of the new lock helpers
+date:   5 weeks ago
+config: x86_64-randconfig-122-20240728 (https://download.01.org/0day-ci/archive/20240728/202407280732.8oRaogGU-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240728/202407280732.8oRaogGU-lkp@intel.com/reproduce)
 
-What about emitting some kernel messages for investigating whether there
-are users who need this code, and wait for two years for whether someone
-says "I need this code" ?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407280732.8oRaogGU-lkp@intel.com/
 
-For example, hfs ( https://syzkaller.appspot.com/upstream/s/hfs ) has
-many open bugs. Some of them have patches but nobody can review/take them.
-Unless a filesystem needs to be mounted as a native filesystem, I think
-that re-implementing such filesystem as a fuse-based filesystem will help
-reducing overall bugs.
+All warnings (new ones prefixed by >>):
 
-Anyway, it seems that the kernel sleep profiling is no longer working
-after commit 42a20f86dc19 ("sched: Add wrapper for get_wchan() to keep
-task blocked").
+>> drivers/iio/imu/adis16400.o: warning: objtool: adis16400_write_raw+0xa3: can't find jump dest instruction at .text.adis16400_write_raw+0x222
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
