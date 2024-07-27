@@ -1,263 +1,120 @@
-Return-Path: <linux-kernel+bounces-264090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6293DEF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE20793DF13
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F870283B99
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8DF1C20D6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8230F6A332;
-	Sat, 27 Jul 2024 11:00:02 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60C6CDCC;
+	Sat, 27 Jul 2024 11:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iqxpCX1d"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C424A05
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 10:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B59143C59
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722078002; cv=none; b=ml5kbiwbsz4Co6+4fZEz0wAnS0/GhgGXnMxPeB9AFtMv7m8+iNmiCIqsgX8zBWBVE5hdBMfrqtdhkeRimBDkYpv5MRnKR3vgmGbyQ5iQZsO9eI1JaDtlGvBD4ENIGt0eQxJQU8ZMYmFmXV1NhVFPlDPqydJrSX6BEJ7m6sWmzlw=
+	t=1722078160; cv=none; b=T66rSacV4CWCW0lCQDgXINcEV2upZyErcWW1LknuAPtfxFzb3C2FIA9SIw5jwojwMXxNLXAnrCxdrAo+xahnSf6Rks0U2BGxcZ5v6N1v/xwMPW/44wBYkolQ+gdeVU4OFEOJRmk+38YtExwjL+VuK6eIjcR/X4XbdI1yyGgs48U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722078002; c=relaxed/simple;
-	bh=0EYaGqyDuycQNLJXCllbzVfo1TMksI5cZ/vKAvvG1wg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Rrk9+pcxRgG44qsdqXw17YFe7b7B+4c1Ac0Mzhb4jmjplk3BwuRUZsiXnrWzFdv9keL7J5fMG74evPyuRN/J4m+MBkgSRt15qWert59GCVlVeWioBWSQFuXWg55kRU8Xx4H9SmHu7bdgofQ/ECCPvKkutAzqN1KrUNCPmGkAlzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46RAxvXq086990;
-	Sat, 27 Jul 2024 19:59:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Sat, 27 Jul 2024 19:59:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46RAxvfQ086987
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 27 Jul 2024 19:59:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
-Date: Sat, 27 Jul 2024 19:59:57 +0900
+	s=arc-20240116; t=1722078160; c=relaxed/simple;
+	bh=V+YDUSc3nGYr1WxRfHK9/D7VF2Nro5Dl90xbTvXtMhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THYmX6P8ceOM7STymnLKks4FfA9tXROfPN/4WhpuztZjsoppZZ/ePWLigZImUtoVtXIhLgbgaAdYzFOBi4OAoT9dFplWxTbKxYMCYzwFqlCA5O8WsHr65SXvZHeAnV5PRlXoGv2r7f4BXr7VY/YxrW82qKhh6GYsPJd0CJWmnlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iqxpCX1d; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so31159941fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 04:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722078157; x=1722682957; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jye8ZO2/pki4i7qm4KDwuAM4qsHOMHYsZkmnjiOoEkk=;
+        b=iqxpCX1dkxM06GEE/8m4VPEIYtPVSswuO+bxJzFEisOa8Y4zk81NosIQs2tJHsTcat
+         K07C2H2UqVQjfHaaKts1/O6X/RmKZAhTvJr2xmei3oHnh4lXD7KAVHgXmKsfXiLfNqal
+         R9wQWxQZv7PSOabudgky36PGRcaUnyyOaKOZ3cmca3OpYquCwviBHzCPBlGwJiXNyH88
+         hQgxy2p32kUqLoBYe7FBitroj2tAX9Jl8Vm91lIjHbcdJoJA/f0lZ+DixZVgupSe6AWF
+         JKbEYQGFL8EWuJFpFIekbD2ZRQLY4T3VJNcleIWQjUUrKQbSXkVFzTixReU1uo8PuGyH
+         rWHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722078157; x=1722682957;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jye8ZO2/pki4i7qm4KDwuAM4qsHOMHYsZkmnjiOoEkk=;
+        b=EXxnAsaRMYy6KKXf5Dnd+/tlgwdEkCAMg4b2oAMj+CdJeo6azcJM1QQez9MQR9itGU
+         yQU6AWf/Gj1N1QWo+frbv+m8W2iLHQkibk3VcT4jkU1JEK79VbPLa3ccI7ak1IAKNLuL
+         V1NmSUPFgxmksL7w1LN3aYRrZ+qcG0TMGFPB6D8KejGtjoYIT6M9ltIcrMRkpIPXM64B
+         kwSedYHmsyD3rShXJyvypNWrUR6uLBpw8/SYmj1/Mldd2/uz8/4IYUM5yuZPQpbI0v7o
+         5UUIqX7W2tWwtfTqDab1YNXj5wHF1eiTvJCDrMVm9JLCkjgdVEwwVq+Okv10L8EHZLZ/
+         9Ycg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKhvsREV1c6jd+THFDRnKxtseil0/O3mxPQak86uwCnwMbz0LLlH0Z1kTDJnop9FDBCW3m2NjKD11qAuivscAWK9ENQFUqkQLSVvga
+X-Gm-Message-State: AOJu0YwUK/QlQrEhIci8FIAspffiuimoJnnd1qapKavDZaYvRsmadktY
+	14iEe2RbD2rtRzBxByVemDxEKwvc+lwMf2rDjvvrYt30yMdxwv8EHcZs/lO8r5c=
+X-Google-Smtp-Source: AGHT+IE9K63HbHii+F8cpEh7ccZeL65+H13yCLffjMNQtukHmqqedaSKiBaVF/n7Xsgj2haKQ1NhgQ==
+X-Received: by 2002:a2e:95d0:0:b0:2ef:2dac:9076 with SMTP id 38308e7fff4ca-2f12ecd2742mr13863451fa.11.1722078156689;
+        Sat, 27 Jul 2024 04:02:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf53bc1sm6887531fa.58.2024.07.27.04.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 04:02:36 -0700 (PDT)
+Date: Sat, 27 Jul 2024 14:02:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com, 
+	linux-usb@vger.kernel.org, bleung@google.com, abhishekpandit@chromium.org, 
+	andersson@kernel.org, fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, 
+	hdegoede@redhat.com, neil.armstrong@linaro.org, rajaram.regupathy@intel.com, 
+	saranya.gopal@intel.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] usb: typec: ucsi: Add status to UCSI power supply
+ driver
+Message-ID: <5bnu2usyw54rlqvo7msq4ve6rmsk27jeouegpwymg7m3zbnx7m@x6u3gi3yscv5>
+References: <20240724201116.2094059-1-jthies@google.com>
+ <20240724201116.2094059-2-jthies@google.com>
+ <tzljywuym6jsh5q5iuc7rrtq564d3ffl3e4ltuii7xzkd6cf7d@2nmj5qkusbkt>
+ <up2clptjacrc2n2ibzkpv5od47pky6im3pzzgjuymm4xd7ielu@ulg7lb2u5lih>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] profiling: remove prof_cpu_mask
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <up2clptjacrc2n2ibzkpv5od47pky6im3pzzgjuymm4xd7ielu@ulg7lb2u5lih>
 
-syzbot is reporting uninit-value at profile_hits(), for there is a race
-window between
+On Fri, Jul 26, 2024 at 11:30:37PM GMT, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Thu, Jul 25, 2024 at 06:31:00AM GMT, Dmitry Baryshkov wrote:
+> > On Wed, Jul 24, 2024 at 08:11:13PM GMT, Jameson Thies wrote:
+> > > Add status to UCSI power supply driver properties based on the port's
+> > > connection and power direction states.
+> > > 
+> > > Signed-off-by: Jameson Thies <jthies@google.com>
+> > 
+> > Please CC Power Supply maintainers for this patchset (added to cc).
+> 
+> Thanks. I guess I should add something like this to MAINTAINERS
+> considering the power-supply bits are in its own file for UCSI:
+> 
+> UCSI POWER-SUPPLY API
+> R:	Sebastian Reichel <sre@kernel.org>
+> L:	linux-pm@vger.kernel.org
+> F:	drivers/usb/typec/ucsi/psy.c
 
-  if (!alloc_cpumask_var(&prof_cpu_mask, GFP_KERNEL))
-    return -ENOMEM;
-  cpumask_copy(prof_cpu_mask, cpu_possible_mask);
+Or maybe extract a separate USB PD PSY driver, which can get used by
+other Type-C port managers (I didn't evalue if it makes sense, i.e. if
+the TCPM drivers can provide data, I just assume they can).
 
-in profile_init() and
-
-  cpumask_available(prof_cpu_mask) &&
-  cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
-
-in profile_tick(); prof_cpu_mask remains uninitialzed until cpumask_copy()
-completes while cpumask_available(prof_cpu_mask) returns true as soon as
-alloc_cpumask_var(&prof_cpu_mask) completes.
-
-We could replace alloc_cpumask_var() with zalloc_cpumask_var() and
-call cpumask_copy() from create_proc_profile() on only UP kernels, for
-profile_online_cpu() calls cpumask_set_cpu() as needed via
-cpuhp_setup_state(CPUHP_AP_ONLINE_DYN) on SMP kernels. But this patch
-removes prof_cpu_mask because it seems unnecessary.
-
-The cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) test
-in profile_tick() is likely always true due to
-
-  a CPU cannot call profile_tick() if that CPU is offline
-
-and
-
-  cpumask_set_cpu(cpu, prof_cpu_mask) is called when that CPU becomes
-  online and cpumask_clear_cpu(cpu, prof_cpu_mask) is called when that
-  CPU becomes offline
-
-. This test could be false during transition between online and offline.
-
-But according to include/linux/cpuhotplug.h , CPUHP_PROFILE_PREPARE
-belongs to PREPARE section, which means that the CPU subjected to
-profile_dead_cpu() cannot be inside profile_tick() (i.e. no risk of
-use-after-free bug) because interrupt for that CPU is disabled during
-PREPARE section. Therefore, this test is guaranteed to be true, and
-can be removed. (Since profile_hits() checks prof_buffer != NULL, we
-don't need to check prof_buffer != NULL here unless get_irq_regs() or
-user_mode() is such slow that we want to avoid when prof_buffer == NULL).
-
-do_profile_hits() is called from profile_tick() from timer interrupt
-only if cpumask_test_cpu(smp_processor_id(), prof_cpu_mask) is true and
-prof_buffer is not NULL. But syzbot is also reporting that sometimes
-do_profile_hits() is called while current thread is still doing vzalloc(),
-where prof_buffer must be NULL at this moment. This indicates that multiple
-threads concurrently tried to write to /sys/kernel/profiling interface,
-which caused that somebody else try to re-allocate prof_buffer despite
-somebody has already allocated prof_buffer. Fix this by using
-serialization.
-
-Reported-by: syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=b1a83ab2a9eb9321fbdd
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Tested-by: syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>
----
- kernel/ksysfs.c  |  7 +++++++
- kernel/profile.c | 46 ++++++----------------------------------------
- 2 files changed, 13 insertions(+), 40 deletions(-)
-
-diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
-index 07fb5987b42b..1bab21b4718f 100644
---- a/kernel/ksysfs.c
-+++ b/kernel/ksysfs.c
-@@ -92,7 +92,14 @@ static ssize_t profiling_store(struct kobject *kobj,
- 				   const char *buf, size_t count)
- {
- 	int ret;
-+	static DEFINE_MUTEX(lock);
- 
-+	/*
-+	 * We need serialization, for profile_setup() initializes prof_on
-+	 * value and profile_init() must not reallocate prof_buffer after
-+	 * once allocated.
-+	 */
-+	guard(mutex)(&lock);
- 	if (prof_on)
- 		return -EEXIST;
- 	/*
-diff --git a/kernel/profile.c b/kernel/profile.c
-index 2b775cc5c28f..4654c6cd984e 100644
---- a/kernel/profile.c
-+++ b/kernel/profile.c
-@@ -47,7 +47,6 @@ static unsigned short int prof_shift;
- int prof_on __read_mostly;
- EXPORT_SYMBOL_GPL(prof_on);
- 
--static cpumask_var_t prof_cpu_mask;
- #if defined(CONFIG_SMP) && defined(CONFIG_PROC_FS)
- static DEFINE_PER_CPU(struct profile_hit *[2], cpu_profile_hits);
- static DEFINE_PER_CPU(int, cpu_profile_flip);
-@@ -114,11 +113,6 @@ int __ref profile_init(void)
- 
- 	buffer_bytes = prof_len*sizeof(atomic_t);
- 
--	if (!alloc_cpumask_var(&prof_cpu_mask, GFP_KERNEL))
--		return -ENOMEM;
--
--	cpumask_copy(prof_cpu_mask, cpu_possible_mask);
--
- 	prof_buffer = kzalloc(buffer_bytes, GFP_KERNEL|__GFP_NOWARN);
- 	if (prof_buffer)
- 		return 0;
-@@ -132,7 +126,6 @@ int __ref profile_init(void)
- 	if (prof_buffer)
- 		return 0;
- 
--	free_cpumask_var(prof_cpu_mask);
- 	return -ENOMEM;
- }
- 
-@@ -267,9 +260,6 @@ static int profile_dead_cpu(unsigned int cpu)
- 	struct page *page;
- 	int i;
- 
--	if (cpumask_available(prof_cpu_mask))
--		cpumask_clear_cpu(cpu, prof_cpu_mask);
--
- 	for (i = 0; i < 2; i++) {
- 		if (per_cpu(cpu_profile_hits, cpu)[i]) {
- 			page = virt_to_page(per_cpu(cpu_profile_hits, cpu)[i]);
-@@ -302,14 +292,6 @@ static int profile_prepare_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static int profile_online_cpu(unsigned int cpu)
--{
--	if (cpumask_available(prof_cpu_mask))
--		cpumask_set_cpu(cpu, prof_cpu_mask);
--
--	return 0;
--}
--
- #else /* !CONFIG_SMP */
- #define profile_flip_buffers()		do { } while (0)
- #define profile_discard_flip_buffers()	do { } while (0)
-@@ -334,8 +316,8 @@ void profile_tick(int type)
- {
- 	struct pt_regs *regs = get_irq_regs();
- 
--	if (!user_mode(regs) && cpumask_available(prof_cpu_mask) &&
--	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
-+	/* This is the old kernel-only legacy profiling */
-+	if (!user_mode(regs))
- 		profile_hit(type, (void *)profile_pc(regs));
- }
- 
-@@ -418,10 +400,6 @@ static const struct proc_ops profile_proc_ops = {
- int __ref create_proc_profile(void)
- {
- 	struct proc_dir_entry *entry;
--#ifdef CONFIG_SMP
--	enum cpuhp_state online_state;
--#endif
--
- 	int err = 0;
- 
- 	if (!prof_on)
-@@ -431,26 +409,14 @@ int __ref create_proc_profile(void)
- 				profile_prepare_cpu, profile_dead_cpu);
- 	if (err)
- 		return err;
--
--	err = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "AP_PROFILE_ONLINE",
--				profile_online_cpu, NULL);
--	if (err < 0)
--		goto err_state_prep;
--	online_state = err;
--	err = 0;
- #endif
- 	entry = proc_create("profile", S_IWUSR | S_IRUGO,
- 			    NULL, &profile_proc_ops);
--	if (!entry)
--		goto err_state_onl;
--	proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
--
--	return err;
--err_state_onl:
-+	if (entry)
-+		proc_set_size(entry, (1 + prof_len) * sizeof(atomic_t));
- #ifdef CONFIG_SMP
--	cpuhp_remove_state(online_state);
--err_state_prep:
--	cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
-+	else
-+		cpuhp_remove_state(CPUHP_PROFILE_PREPARE);
- #endif
- 	return err;
- }
 -- 
-2.43.5
-
+With best wishes
+Dmitry
 
