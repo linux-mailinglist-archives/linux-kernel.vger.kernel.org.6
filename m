@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-264171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084EB93DFC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:39:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BAE93DFD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A8291C20F4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51F22823D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527B217F4E4;
-	Sat, 27 Jul 2024 14:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE2D180A74;
+	Sat, 27 Jul 2024 14:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVJ8IIEz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="W3SqZwj6"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0117A91B;
-	Sat, 27 Jul 2024 14:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BA0180A6F
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 14:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722091113; cv=none; b=sLvPYbinnLQSix9RiLigb2hTZHC22lONWV8B4IK14WnoYB8uHIipFX7ra2iUOOsRjt/xfW89buUZcSKWOZMnt84Lrkm5Wz6PDuQJW79CbwwCb2DT5UHzNWvu7n+kUF90xatlviiVIVaU0Zhm/0fIm/Xp6zVsugE7FfAQr9eN03s=
+	t=1722092098; cv=none; b=aW8/JD5EFFPLGWxeulfHCo5wNp5HLQYXsHDvN4j0BUYnw6Q9HkWkPN0BzB/ninfR1PtJfSd926LjI5CUp+T97t1ldmOzHDcu8SidHJ/cg+Lpi2J9pHnPjwtYU5uZE3bacZDFxNVpW1DoRL7pPkaf8LjCgu8v0sxv5vRqsbcz3S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722091113; c=relaxed/simple;
-	bh=8y5f1zxNiODm4UXL4eX5MjelZjB7Y2NyylWPMZ1tbag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ihYAVicRtL0YC1Bl+r3d+4f8hSfTt7i6nMRVtYVlTtbNjQMkiXzHbjtEnFSQiSWDl48XRKGAP3boT2vseoCSW7NGNaN1SxPnIq96jReAVlqWie7vBFtboJPx0LyKAwY0XZG3GN/hDPtM5jkppVCxK4I5bsNQnQ50mkcVhLC0HSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVJ8IIEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA9FC4AF0A;
-	Sat, 27 Jul 2024 14:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722091113;
-	bh=8y5f1zxNiODm4UXL4eX5MjelZjB7Y2NyylWPMZ1tbag=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pVJ8IIEzH/I0l/gaMh1csDBJt6zM3aQWBVZLnJmi0spUCIHCjXMvDxNoroxuEELCg
-	 Xaj1yrlThXOwSAU+h54gFP1DRc/V61gGQeCd4J4YpNKGSn0HUZkfY8uDBp0/3OaE5t
-	 q4knupyV9yXB877qLLId9Pa+qmFEQORW4XtXOH7mLskM+UHq28CwOEoY9mEL3cYckg
-	 en1IRUjV7vtVdmlxBTevkn2LEFq+l7XNieQ61VVrCzEkk/bUGRhiCIAj2aEHd8W2Ye
-	 ljT9aLlhh0lxUx0X1bo02vvMqf8aado/yQRBmxUAAX3+XNCh6ZKfcQ8MP3Y+ibZIC2
-	 OY9kTCi/JG4yw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests: harness: rename __constructor_order for clarification
-Date: Sat, 27 Jul 2024 23:37:37 +0900
-Message-ID: <20240727143816.1808657-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240727143816.1808657-1-masahiroy@kernel.org>
-References: <20240727143816.1808657-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1722092098; c=relaxed/simple;
+	bh=yiWuP8Onb+fyKehtZA9+3qlxXA9OLQ0daLGmt8gHCrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlS1GwJ/3lHLngtzuoeRVXYdmXto6eSSrZMd4Cd4arZdSXIVybfhiqoJyeaoutCRJ0Cybo6XlxHuOzUb+SUcHXQHicHJXEKpNdG8FGRMgZvpWUuTTJfOn0l7tTXbgaVQVvYYwjvIGOJ+BoIz/EUPlDscPAFwxISnvN/Fk0d3BSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=W3SqZwj6; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46REqWUW017051
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 27 Jul 2024 10:52:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1722091958; bh=qLhE8zhbnsrLQesDE5s8eN6bXS32QqwKbPnsHmPpjPs=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=W3SqZwj6xO4JInZDIxy44/G9zuWEAwQBDT8wo9oAislq4E8B456lR87n3bSU9fcTu
+	 iY0V57/ee8ng08hyb4Csnb2aESguN8FAilgp5bT1uF+l0t0N6l5WFjifYiECO6bUDd
+	 t5BTjYHDKkOovBhtRTqwkR8rL7aX++aINeXzjuXf7n9rHduxZMGTecM7BxEExtLP51
+	 RiF9Pepy9ILquFzBv7I6nIGYyVPO16Y/OWE3V35dTFL7MdnWaaeUIgp9Z79JAPI2dj
+	 iZEP64jTBjnKooEX1ccphhGHyHOYzUv04vJ6/ie7IN7IddG/d/a9WC4B2NrMWDyWKL
+	 An8LLBeP0m5Aw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 8A69515C0251; Sat, 27 Jul 2024 10:52:32 -0400 (EDT)
+Date: Sat, 27 Jul 2024 10:52:32 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: David Sterba <dsterba@suse.cz>, Youling Tang <youling.tang@linux.dev>,
+        kreijack@inwind.it, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <20240727145232.GA377174@mit.edu>
+References: <ZqJjsg3s7H5cTWlT@infradead.org>
+ <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
+ <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+ <ZqOs84hdYkSV_YWd@infradead.org>
+ <20240726152237.GH17473@twin.jikos.cz>
+ <20240726175800.GC131596@mit.edu>
+ <ZqPmPufwqbGOTyGI@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqPmPufwqbGOTyGI@infradead.org>
 
-Now, __constructor_order is boolean; 1 for forward-order systems,
-0 for backward-order systems while parsing __LIST_APPEND().
+On Fri, Jul 26, 2024 at 11:09:02AM -0700, Christoph Hellwig wrote:
+> On Fri, Jul 26, 2024 at 01:58:00PM -0400, Theodore Ts'o wrote:
+> > Yeah, that's my reaction as well.  This only saves 50 lines of code in
+> > ext4, and that includes unrelated changes such as getting rid of "int
+> > i" and putting the declaration into the for loop --- "for (int i =
+> > ...").  Sure, that saves two lines of code, but yay?
+> > 
+> > If the ordering how the functions gets called is based on the magic
+> > ordering in the Makefile, I'm not sure this actually makes the code
+> > clearer, more robust, and easier to maintain for the long term.
+> 
+> So you two object to kernel initcalls for the same reason and would
+> rather go back to calling everything explicitly?
 
-Change it into a bool variable, and rename it for clarification.
+I don't oject to kernel initcalls which don't have any
+interdependencies and where ordering doesn't matter.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
-Changes in v2:
- - reword "reverse-order" to "backward-order" in commit description
-
- tools/testing/selftests/kselftest_harness.h | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 71648d2102cb..a5a72415e37b 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -818,7 +818,7 @@
- 		item->prev = item; \
- 		return;	\
- 	} \
--	if (__constructor_order == _CONSTRUCTOR_ORDER_FORWARD) { \
-+	if (__constructor_order_forward) { \
- 		item->next = NULL; \
- 		item->prev = head->prev; \
- 		item->prev->next = item; \
-@@ -882,9 +882,7 @@ struct __test_xfail {
- 	}
- 
- static struct __fixture_metadata *__fixture_list = &_fixture_global;
--static int __constructor_order;
--
--#define _CONSTRUCTOR_ORDER_FORWARD   1
-+static bool __constructor_order_forward;
- 
- static inline void __register_fixture(struct __fixture_metadata *f)
- {
-@@ -935,7 +933,7 @@ static inline bool __test_passed(struct __test_metadata *metadata)
-  * list so tests are run in source declaration order.
-  * https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
-  * However, it seems not all toolchains do this correctly, so use
-- * __constructor_order to detect which direction is called first
-+ * __constructor_order_foward to detect which direction is called first
-  * and adjust list building logic to get things running in the right
-  * direction.
-  */
-@@ -1330,7 +1328,7 @@ static int test_harness_run(int argc, char **argv)
- 
- static void __attribute__((constructor)) __constructor_order_first(void)
- {
--	__constructor_order = _CONSTRUCTOR_ORDER_FORWARD;
-+	__constructor_order_forward = true;
- }
- 
- #endif  /* __KSELFTEST_HARNESS_H */
--- 
-2.43.0
-
+						- Ted
 
