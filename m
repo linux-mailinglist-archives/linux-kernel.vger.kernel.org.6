@@ -1,138 +1,109 @@
-Return-Path: <linux-kernel+bounces-264014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7585093DDE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6C993DDE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 10:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BDFF2820C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3831F22318
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BAB4502B;
-	Sat, 27 Jul 2024 08:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A4043AD5;
+	Sat, 27 Jul 2024 08:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJsNctuj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LAAsN5yQ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3E94C9B;
-	Sat, 27 Jul 2024 08:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45A44205D
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 08:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722070589; cv=none; b=P1t52BBROql032o4ac6NoiDA+calAYyjuDzxQm+VMNE377g1+HG/mBDMO9sgOcTfj+lERzLe71QQ2Df1R3UcJQE+iQE0gxPN+YJV2uoOhbo+fhuc+zhd/D/nd/xHHInTv1RBZ8Ks8W2vQmQo9VXtfkKn/sUXfCZL6gTT/OBYLGI=
+	t=1722070725; cv=none; b=V9iBcsKiQfnJsQe61Z9O3yQ0p3zNgowSykuWLtIzPs27twQ279b1nxA50gwPJKyDXKD9lvF86pr2TO1bRSI1r0SDn6b7OTTl6YDiOxo8+8tWK6Sl9LEbIMeIYdJOU0Oz2hmdjAjgovYsgMAiHd2Z2kmJamJODj92kNklxskYAWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722070589; c=relaxed/simple;
-	bh=YZX+eUFnTZVDI0mLazr1SxOOdIekJM920sukaMYLSKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5JsB2kcn3f8cYXza0nvhsvhGzUuGPfxSSiQG/gao9eSdjV8fx8y081JKAsVfMg/abXCnOqGjy4wg399FmROneHzXgAv/LNIKBVuH/hlcRwJQOY0POQgQAPazF2eqR8X5q3mmbmMWWzUF/LmSVP+vQlgNSlFOBaj8UCh9IqiqZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJsNctuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE82C32781;
-	Sat, 27 Jul 2024 08:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722070588;
-	bh=YZX+eUFnTZVDI0mLazr1SxOOdIekJM920sukaMYLSKk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LJsNctujo4L47X4fMtysW/DacxQRGQCz0q3+ggHSUDOWFvnQwtHKZmK14FG3H+Ouk
-	 vpXRjjnZhqeBzSfVb+rVtEyT0S2l0FoGnTQGR2mASBYWjPh71CYIv7ew/KwFxy340I
-	 jcqSgak7IMzqQ5+AzhUv6+wiXGhoKOhgT6DUa572g0JWWp0cadDcrScnhSaTF/J0Zk
-	 8OcoH6GFlzMGcEHbyu7BUOVm99d6cLA/hgW0PI3xmqefoidMxIaHtmzq52ERLCyWWa
-	 Vc87xR5SxZxQAwdKexUeJJkEKQiyT91imewHnfbTvdQvDk60kwSk7/4PolccmPgK8z
-	 y7LD3vZ5VIGtA==
-Message-ID: <7418bfcd-c572-4574-accc-7f2ae117529f@kernel.org>
-Date: Sat, 27 Jul 2024 10:56:18 +0200
+	s=arc-20240116; t=1722070725; c=relaxed/simple;
+	bh=LcgEyp/IYnAKXO+Dvl3srBVV/CmiqeEknQN8bVUv+ic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dnEFVRA++ZFcCEdTcAZpwcmtz0TQxq1vhz+qluXjOh5JlJvi2MlYyyoTTMEsnwLjUpWdsOoyrf+xyVYOP0hbE85zOEWp4dxfdv2njLYd6dcV6oL+jS0zSH8zG3yhpx92ATI5kPrbfj04Yns/dtaJ2af5XjsXxDz3OmFWx40H4l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LAAsN5yQ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-368557c9e93so273527f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 01:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722070722; x=1722675522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LcgEyp/IYnAKXO+Dvl3srBVV/CmiqeEknQN8bVUv+ic=;
+        b=LAAsN5yQTlzWr95OtMG1eMfPHzmWkEbelCrLL6jbhKlcKz6cpujgl7sgV1O89Zzypx
+         uWR6olz69hbcy9wLLl3Nf1AU8jnZTz69f7OGdw9jC6IyUXXzQSOyUSoxgK+5hDsvYlRF
+         NWbyJ3GxbmqAnaYK/q9lFqdk4OZQMIvgK56QVyYBF0Abpsfyn2AqrQNmTQzv5aRhFYkd
+         r59pHohX2x3k0Gt3TiEtSFjQHIqWnoLZQSZBn8epOdvUVjSt8YwV3pdoje8XJVui4+UM
+         W0qAoNpKR51RW7EH2TmUS+OTMFGioFIdSwJ9W+yKTfdJt9tkCg6cdf4iEhbYxerDjBtE
+         T5JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722070722; x=1722675522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LcgEyp/IYnAKXO+Dvl3srBVV/CmiqeEknQN8bVUv+ic=;
+        b=cBSTR0g3szzdFh1UN7TckvwIX1DUv0cjJPHwwfQ1p/BFUUPUiIAjSQ4+Ba3PI5Wq53
+         BtUWc2FC55I1Z0KXKsi7+hE67NQh/y8p8Zpqei+EaCa8VvgjMDLGhkikPZvaSZ2F7WaH
+         F2KJ1YbJmsrDBh5QQ6ao3GJiutEYBLVTZcuzaiVOiVFS25AwFLzfMux4V7dGbQKHRtDY
+         eMLuf0bA87HhRljYue9kz99C76hgy/ZoBps1Tg0eQqyOJwgbLEhmlwtHWbyRw0WmA2o6
+         pkzSMzqYa8jXsYZyJX9SbiDSfnoLhsuctpDoFjsxtI2Vzv6KnBhwLm0hlQLf+zgae8Kg
+         NdFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVofGy03NKOtVWQzmLv16gsKR3R/fLCb5F9Y1mhLSm47Id0vYDaJjUSa5ZrxSyAbQDt789OGhdt0mYKizJSrGGnI96U+5BS1fM+BAO2
+X-Gm-Message-State: AOJu0YwHRZ0G0wgQWve1GQNf+DDI7ydGDa9xJZZmWSjdrkZ1hHxT0lG5
+	P26vaOqXm2zqTmNcwsya/Pd+5VxHHlPbB6t9eZAGCoM2bTG6Ir3tgG+34Gzm3ta4ih2rTp8VvyZ
+	jvOAN/immjJ5H/IpsuKVekmqeCJi4D3MfHznC
+X-Google-Smtp-Source: AGHT+IEJd0KUJd2pb3W32mJA6m/WBUd7vT8mCwjrAMv1qZd21H89mER5g+dz6DHruOk/X+WXnO7cGJ/ZJv5eKP8dpJw=
+X-Received: by 2002:a5d:6288:0:b0:368:7f8c:1b38 with SMTP id
+ ffacd0b85a97d-36b5cf23f54mr1123461f8f.30.1722070721690; Sat, 27 Jul 2024
+ 01:58:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] Drivers: hv: vmbus: Get the IRQ number from DT
-To: Roman Kisel <romank@linux.microsoft.com>, arnd@arndb.de,
- bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, kw@linux.com, kys@microsoft.com, lenb@kernel.org,
- lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org, robh@kernel.org,
- tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Cc: apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
- sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-7-romank@linux.microsoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240726225910.1912537-7-romank@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240727042442.682109-1-alexmantel93@mailbox.org>
+In-Reply-To: <20240727042442.682109-1-alexmantel93@mailbox.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sat, 27 Jul 2024 10:58:29 +0200
+Message-ID: <CAH5fLght8TRtSi0g1Tm8RjJVH9otOsTG+_4hzU5ZNrfBuwfFOQ@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: Implement the smart pointer `InPlaceInit` for `Arc`
+To: Alex Mantel <alexmantel93@mailbox.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/07/2024 00:59, Roman Kisel wrote:
-> @@ -2338,6 +2372,21 @@ static int vmbus_device_add(struct platform_device *pdev)
->  		cur_res = &res->sibling;
->  	}
->  
-> +	/*
-> +	 * Hyper-V always assumes DMA cache coherency, and the DMA subsystem
-> +	 * might default to 'not coherent' on some architectures.
-> +	 * Avoid high-cost cache coherency maintenance done by the CPU.
-> +	 */
-> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
-> +	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
-> +	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
-> +
-> +	if (!of_property_read_bool(np, "dma-coherent"))
-> +		pr_warn("Assuming cache coherent DMA transactions, no 'dma-coherent' node supplied\n");
+On Sat, Jul 27, 2024 at 6:25=E2=80=AFAM Alex Mantel <alexmantel93@mailbox.o=
+rg> wrote:
+>
+> For pinned and unpinned initialization of structs, a trait named
+> `InPlaceInit` exists for uniform access. `Arc` did not implement
+> `InPlaceInit` yet, although the functions already existed. The main
+> reason for that, was that the trait itself returned a `Pin<Self>`. The
+> `Arc` implementation of the kernel is already implicitly pinned.
+>
+> To enable `Arc` to implement `InPlaceInit` and to have uniform access,
+> for in-place and pinned in-place initialization, an associated type is
+> introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
+> for `Arc` sets `Arc` as the associated type. Older implementations use
+> an explicit `Pin<T>` as the associated type. The implemented methods for
+> `Arc` are mostly moved from a direct implementation on `Arc`. There
+> should be no user impact. The implementation for `ListArc` is omitted,
+> because it is not merged yet.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1079
+> Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
 
-Why do you need this property at all, if it is allways dma-coherent? Are
-you supporting dma-noncoherent somewhere?
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
