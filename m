@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-264111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D3093DF0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:06:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4ADA93DF07
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24974286C6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595821F22F13
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA0013AA4C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4098A13A416;
 	Sat, 27 Jul 2024 11:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i57wwRoU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RdgnCKZ7"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FA2763EE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4553E7404B
 	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722078149; cv=none; b=CD1Oj8VTnjKg26YjWuySBNxrI91GeJufrxsuzWlAIipdgo8G9xM9CSQVLzGWpUm9d96FDLaLMnmgWZkqNhdnYz5GTj6oBlAAldFlgtQkhV8lzv6eouSU+L9whqjMWlotwZqyw8Ye9GT1fKCMD8uaO0l/a4daFxf0LT6qI23mAVk=
+	t=1722078149; cv=none; b=LYRJ7BDuC8VTpEhJ+9tXRQiKSRx8ajyhVfDOXBnkyGOC8P0kyQKhtFmUZjkQAljOA/yzoIbm6O6P9VcivJd7p2atwWjkNjY58iznofcTUT3XrU4L6+Q4J3NeVQzbP9vdoTH0RthHMoSuFOLpPEZqom/EIkfvf734kEyjomuzTLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722078149; c=relaxed/simple;
-	bh=W7ixlBVpjk3Ug3BVDum/bSfV7lclGNSQIxdbcrz6DBI=;
+	bh=gw3JP4/yaIApWvKIzw8xSsfXB6GJVNQesX3J64WYlD0=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=m1HWq3kgvFV53jKgKcn/cVmPmSjGGrZhP/HCfAaInTs1a/uRUjum3JLWEUfHw8JVN/zImg94otrWoSQ6Bp3JfVjl61gGR/p4VWvMjYVWyQC8e0mhvNBMCZ9dTNGUxJbYFQZyAzrKmNJ1M+raUcPSbLZTdbkYZRmNO74tZTT9VCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i57wwRoU; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=IgZJLrQylLJCFm79q0btdQ64HdbPhrapuyqIUZoLpZJoYfNhiq1W3+6Q4NDRppfQRnniO5UoQfcVzaM1GGbRhQFnyY+k8nYkFaeqEp+1Lf84UbLvQ/9aiZI0d2GJvt9r66rq6Mlz1YyrWdX8iwLD8G1jb43DOVVSApB1Ea9anzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RdgnCKZ7; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=Zafh4zVDUAS/FH2BtZM4nOsdVxbLhzdki+RYH2NkTR8=; b=i57wwRoUpYQrtEV06H3CCV7tqU
-	IE+v6U57JWNB5MxyZ4WE+CCyw8u/bcn+LZhPsuDZpaAttlKtEB5s/8r7t2oSXPNADQiq4hf2oAHwS
-	pqV5PCpnp9iDmPAdc0PlFi/AFzEEm17SO06Q3yPMhlAuA79JaLBHr3kcgOOVxdQo4Iv+wGeMFnH12
-	+l+5WGvZTNEzTXm2MPQU0j2GV2qJjn2tVsVy6kke9m6tudhX+k0G/L0AwkfEMqITUzoyNn4TE2V7a
-	P6SB9N4bAssowPiTNugh4Q/KLQUVrUeb9eNeW84RAI+DJ5zAEpb/7qptz4w21uBlZi/czKmrGCwf7
-	lzjdJ8Cg==;
+	bh=mnMD1X1rMlybv0/z4WGvNLJsPKB2ipjRlyKJPJw/a9E=; b=RdgnCKZ7lGCtBr1mWeYG0DrL7I
+	efJJNj/vUYpODp8Jf7MSSDtPKt12/k/h8GwIc8l/GDPP5UwQWDSYwfvYbzKe+3c4/sMIF2mrvDHhk
+	kDRfHO9WM9pti5+ZS7DZ+xHnKvbAnh/eHoREvRZZ9VImsUq0Sz1E31oimZHhfs+OpBjyza0NyFd9d
+	+I2rid3IdRwpekBaL5OMb8gn1Hzulldgc23R2qOn3iWoRW0FxbeRxbtALTKYsBmIL/gjAns4jdMYy
+	HJkWazrfk/547tOuBclABs6WoH1tqoTXmVtAki2A19tSxEfhlNT0SyazM2Njg5YgK9jSFVJamq3Sp
+	wlg4Nliw==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXfBg-0000000BGJS-1d2B;
-	Sat, 27 Jul 2024 11:02:08 +0000
+	id 1sXfBg-0000000BGJV-3v9I;
+	Sat, 27 Jul 2024 11:02:09 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id CB99C3061AB; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
-Message-Id: <20240727105029.888107381@infradead.org>
+	id D1C803061D0; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
+Message-Id: <20240727105029.998329901@infradead.org>
 User-Agent: quilt/0.65
-Date: Sat, 27 Jul 2024 12:27:46 +0200
+Date: Sat, 27 Jul 2024 12:27:47 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  peterz@infradead.org,
@@ -65,7 +65,7 @@ Cc: kprateek.nayak@amd.com,
  youssefesmat@chromium.org,
  tglx@linutronix.de,
  efault@gmx.de
-Subject: [PATCH 14/24] sched/fair: Implement ENQUEUE_DELAYED
+Subject: [PATCH 15/24] sched,freezer: Mark TASK_FROZEN special
 References: <20240727102732.960974693@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,87 +75,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Doing a wakeup on a delayed dequeue task is about as simple as it
-sounds -- remove the delayed mark and enjoy the fact it was actually
-still on the runqueue.
+The special task states are those that do not suffer spurious wakeups,
+TASK_FROZEN is very much one of those, mark it as such.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/fair.c |   37 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+ include/linux/sched.h |    5 +++--
+ kernel/freezer.c      |    2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5290,6 +5290,9 @@ static inline int cfs_rq_throttled(struc
- static inline bool cfs_bandwidth_used(void);
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -147,8 +147,9 @@ struct user_event_mm;
+  * Special states are those that do not use the normal wait-loop pattern. See
+  * the comment with set_special_state().
+  */
+-#define is_special_task_state(state)				\
+-	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_PARKED | TASK_DEAD))
++#define is_special_task_state(state)					\
++	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_PARKED |	\
++		    TASK_DEAD | TASK_FROZEN))
  
- static void
-+requeue_delayed_entity(struct sched_entity *se);
-+
-+static void
- enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
- 	bool curr = cfs_rq->curr == se;
-@@ -5922,8 +5925,10 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
- 	for_each_sched_entity(se) {
- 		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+ # define debug_normal_state_change(state_value)				\
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -72,7 +72,7 @@ bool __refrigerator(bool check_kthr_stop
+ 		bool freeze;
  
--		if (se->on_rq)
-+		if (se->on_rq) {
-+			SCHED_WARN_ON(se->sched_delayed);
- 			break;
-+		}
- 		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
- 
- 		if (cfs_rq_is_idle(group_cfs_rq(se)))
-@@ -6773,6 +6778,22 @@ static int sched_idle_cpu(int cpu)
- }
- #endif
- 
-+static void
-+requeue_delayed_entity(struct sched_entity *se)
-+{
-+	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-+
-+	/*
-+	 * se->sched_delayed should imply both: se->on_rq == 1.
-+	 * Because a delayed entity is one that is still on
-+	 * the runqueue competing until elegibility.
-+	 */
-+	SCHED_WARN_ON(!se->sched_delayed);
-+	SCHED_WARN_ON(!se->on_rq);
-+
-+	se->sched_delayed = 0;
-+}
-+
- /*
-  * The enqueue_task method is called before nr_running is
-  * increased. Here we update the fair scheduling stats and
-@@ -6787,6 +6812,11 @@ enqueue_task_fair(struct rq *rq, struct
- 	int task_new = !(flags & ENQUEUE_WAKEUP);
- 	int rq_h_nr_running = rq->cfs.h_nr_running;
- 
-+	if (flags & ENQUEUE_DELAYED) {
-+		requeue_delayed_entity(se);
-+		return;
-+	}
-+
- 	/*
- 	 * The code below (indirectly) updates schedutil which looks at
- 	 * the cfs_rq utilization to select a frequency.
-@@ -6804,8 +6834,11 @@ enqueue_task_fair(struct rq *rq, struct
- 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
- 
- 	for_each_sched_entity(se) {
--		if (se->on_rq)
-+		if (se->on_rq) {
-+			if (se->sched_delayed)
-+				requeue_delayed_entity(se);
- 			break;
-+		}
- 		cfs_rq = cfs_rq_of(se);
- 		enqueue_entity(cfs_rq, se, flags);
- 
+ 		raw_spin_lock_irq(&current->pi_lock);
+-		set_current_state(TASK_FROZEN);
++		WRITE_ONCE(current->__state, TASK_FROZEN);
+ 		/* unstale saved_state so that __thaw_task() will wake us up */
+ 		current->saved_state = TASK_RUNNING;
+ 		raw_spin_unlock_irq(&current->pi_lock);
 
 
 
