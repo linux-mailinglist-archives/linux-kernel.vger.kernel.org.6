@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-264244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202FB93E0AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C182D93E0B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58571F21828
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF5D1F21807
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1066F1862B2;
-	Sat, 27 Jul 2024 19:11:44 +0000 (UTC)
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF607186E4B;
+	Sat, 27 Jul 2024 19:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gy+X+vrC"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB815B570;
-	Sat, 27 Jul 2024 19:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1343911C83
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 19:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722107503; cv=none; b=gILLr9wacgJV0d6WqhH5Z1yDJA5LBCeTJn0TNitPmPFFzPtQ+FM4R3+iNRjOhulwqHMor5oDdyY0XgfFLt6AXSO2sm8SD7H+ObH6VqXzUIspd6f75Dxk+15UXmPHw9zC76RdD4nF5VPZXvLHCfV9SAAKRYIB4LWJUfdB8VngWb4=
+	t=1722108137; cv=none; b=IFddDbPUcka3T2wnMNdxGQsgQZU+vZh198MUvk4a+pfsXesXNo69EneMi+t4EvBRUueDS8zXLmyYveDUJFKQA3/UojQvlN9E2K4PoqVRiJEfmpQ/qFH8SgImDVKQYz8OWwJqXMHEoA0qE8vwOvQ7g89UHEGBklxPMgWZ+ODGVW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722107503; c=relaxed/simple;
-	bh=nKvWUVR/oTeV71PdUgP2hI6ww6eaino7g+EdNFlSC9I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sqA04hq/VfoXiFDESc+hcZY62Jm8xa7LhtKRNVvY2unynoacMxHIbrDpmMsnRFGfYnQcNEncYKfKQ4naWRxiRIuDxJgX6JGVomJTprdZjSNRsRspul8CWLOEtwuoqRzslzEnxrUOUGEXBZcL+9ze5TG68RKILSFjXAFwhhDwWRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-260f863109cso1352969fac.1;
-        Sat, 27 Jul 2024 12:11:41 -0700 (PDT)
+	s=arc-20240116; t=1722108137; c=relaxed/simple;
+	bh=XH7QXN+2y7hO8/JJz9910xatXSDCkspLYbGWcH+J/yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gqo8ofby8HDJClW539fhUN6508IDyKdNxZD1ZedRx+t+DGWfyQT+WJxA70cD9RXd73HM+8U+XIvTtobwhOa1bYkb/GZi57BP34xXkZZNz4AnZfBP2eMdaqCacj+Tx74gJrWbPoqQvWoXrg4to+AQHLjIXyp9ZIHbHfQhNzMsQLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gy+X+vrC; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so307882466b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 12:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722108134; x=1722712934; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/KGqVB/57I9KELw43F3w/OzLTiYGnfik0UvJkjuipds=;
+        b=gy+X+vrCkhgfXQXn2/4IB7MvPkmg9lmQoUPHYhGCBRGrUPCdg065h5Mr/aaW4aKDj6
+         DGreYej3c1cRZweZX8Ds10Y44u5nsXqOpn8xuNV4L9xdOtI8JxCpymO2etyDLW3pJeIu
+         fZNM8EVeDbINIywxhZdTiDBomsRc2k+O+Qwhw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722107501; x=1722712301;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NDIB7c0sILO/knUgvZlVA7r7ElBc2AbO2B42Uc06C88=;
-        b=o3ZJbPXAZN3O0aSrNPu34dMsluTTJISiT/PHiIMCFFkcC0JuK94VbugoSmXHPs0vUW
-         t42QWW6w0L16xMN93ktNtx8OsOy0fnvRVZeTJCt8cEB7pT70A/F5tzZPSt7rGp2WeKQ5
-         orOahfS8SYY0Cu5Kw0Wa666rF9FgFHDSLdJueOEV3QKlhrLSBHXXSvGhJI7vywj3PbD/
-         +n1jlUJ2GMAQ6/lOSJtlzpCiAYn+4rmket1FjXQFe1J2fnBdBGcJ6wN3LdJLNnIzYNZl
-         xiRtFe4jz0vAnx4cx3CutcWftqX/v2ehYBcAcP6WZ621YKgPU3N5FVZBVgGffqeQkKKZ
-         FO6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwqG+CuLyDS8nNy/eOqzfUIZm7nRj21RcIQcM+FwyMpuXZCqYSYkC19w5Devh8U3nzVWQGFH6gjqcplEJdOZF4ZH42udflh5qgZeQr
-X-Gm-Message-State: AOJu0YwFGwX4CvXqzeKhJ921Y5lfTJz8vz/aODg2bgZ2a1KhIoWau66y
-	eAIJTJhdy8P0maNDzu+9WvTHU0mgXWV/VU7upnp443xMid/op7i/GshZzwvVIxBaggHq5DLD8Sj
-	FmPmcM3UW/ldMIVRjq935M6kST6PWsOPj
-X-Google-Smtp-Source: AGHT+IGziHFDotrmMFNvvp6kjuGMHtgF8O1lHoFfz/47jjPhJRiTguk/dkPxR2ht2TG1OYRtn56MG1DJmIsR3i4oUic=
-X-Received: by 2002:a05:6871:5207:b0:261:1b0f:dc94 with SMTP id
- 586e51a60fabf-267d4f3b525mr4023833fac.45.1722107501023; Sat, 27 Jul 2024
- 12:11:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722108134; x=1722712934;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/KGqVB/57I9KELw43F3w/OzLTiYGnfik0UvJkjuipds=;
+        b=CMKKGQSCR0BQQGitrIFPARc2JH/TnCXH10FWz8++wuwLexSjR9Y3CjTjfF1j8n996c
+         jcTQZCClURvCdFe5WysXtocYHSsFSk8b6Ayzkh9e5DZRniYGod3sV8uH5oxUbbwL7+Rh
+         FMpZwcodWEyELesDfscFcatWrnMjM2n953wTxWU7GQU5HhY98YYaniIsU9MHwvboasS8
+         nPtSJg2kr72vx+JOhoe8hKEe56scLe//KsZfjsfhU5wwEFpIXYbjPxmP9TjeBxjqm7PQ
+         qLJG6WiaVNi9MyG9X0Xf6gi8i1UAwrYammlmfWSvIZuOR184hza7/oN0m71f/ehvavMs
+         S5HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbwiUDYvHYW/SmOo38aWZZVUd4SPD9pLFIh/BKc++w5nTiDEzwaHRPEBKb42AWZj05jXaiiU/A39ybru/l69E6avqC/1EAJcgyIuQl
+X-Gm-Message-State: AOJu0YxFWe/tA3Q2uasAnUsVRbRJvNKUPZ1x1OJ1g1Bt13dQmyidCoPp
+	0r6FKm7lMvqc8qu2WPCj6/MPcwY5GZYOOMfAStNpUiIKo46794fBKQm/m1HrmRCWwV1fcaYlP/0
+	61aklnQ==
+X-Google-Smtp-Source: AGHT+IHSvCANo2QibfmMGEohA75I8zqwk7NSt8/xb41zC0K/to/osXrwG0tGSbCMAtK4bmsBmEcZGw==
+X-Received: by 2002:a17:907:3203:b0:a7a:ca07:1de3 with SMTP id a640c23a62f3a-a7d4014c5camr228300266b.56.1722108134310;
+        Sat, 27 Jul 2024 12:22:14 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad416basm308254266b.104.2024.07.27.12.22.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Jul 2024 12:22:13 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso1610913a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 12:22:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUau5vCO5nU/FwN6pCtusN8QAGcc/kuR5idxQGKc10GR4FQr5e3UwXcEX/2aiH4Aoio/yVdzy5MNFfVzihIPYHc7dCTr2tO8HpsM1Qm
+X-Received: by 2002:a05:6402:2546:b0:5a7:464a:abd with SMTP id
+ 4fb4d7f45d1cf-5b021d2243bmr1942089a12.30.1722108132482; Sat, 27 Jul 2024
+ 12:22:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Len Brown <lenb@kernel.org>
-Date: Sat, 27 Jul 2024 15:11:30 -0400
-Message-ID: <CAJvTdK=eR67WE6e9YDZKoVTStoeTMPaJ2D-2=_agwU1tjFbu1g@mail.gmail.com>
-Subject: [GIT PULL] turbostat-2024.07.26 for Linux-6.11-merge
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local> <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local> <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local> <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
+ <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
+ <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com>
+ <40369e153bd447e5b597c31e7bc9a2b1@AcuMS.aculab.com> <eea5d9a4-fcb4-4076-8222-fcff668a2bfa@lucifer.local>
+In-Reply-To: <eea5d9a4-fcb4-4076-8222-fcff668a2bfa@lucifer.local>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sat, 27 Jul 2024 12:21:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh1+7iNaq7wvxgw=2NEWvgj5SMrvFUZEw8C42zKbzsUBg@mail.gmail.com>
+Message-ID: <CAHk-=wh1+7iNaq7wvxgw=2NEWvgj5SMrvFUZEw8C42zKbzsUBg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Laight <David.Laight@aculab.com>, Jens Axboe <axboe@kernel.dk>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Sat, 27 Jul 2024 at 12:01, Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> > > -#define MVPP2_SKB_HEADROOM     min(max(XDP_PACKET_HEADROOM, NET_SKB_PAD), 224)
+> > > +#define MVPP2_SKB_HEADROOM
+> > > MIN_T(int,MAX_T(int,XDP_PACKET_HEADROOM, NET_SKB_PAD), 224)
+>
+> Yeah sorry just saw you had already addresed this Linus... I just went with a
+> clamp()_t in my patch.
 
-The following changes since commit b15943c4b3351173d5f3b0d87362d2994a89bb66:
+I think your patch is better. I threw away my disgusting MIN_T() thing
+here. It made more sense in pageblock-flags.h where it replaced
+"min_t()".
 
-  tools/power turbostat: Add local build_bug.h header for snapshot
-target (2024-06-27 23:53:27 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git tags/v6.11-merge
-
-for you to fetch changes up to 866d2d36b81d7d0e6d91423b6dd9b1bcfd0510dd:
-
-  tools/power turbostat: version 2024.07.26 (2024-07-26 14:36:08 -0400)
-
-----------------------------------------------------------------
-turbostat release 2024.07.26
-
-Enable turbostat extensions to add both perf and PMT
-(Intel Platform Monitoring Technology) counters via the cmdline.
-
-Demonstrate PMT access with built-in support for Meteor Lake's Die%c6 counter.
-
-----------------------------------------------------------------
-Len Brown (1):
-      tools/power turbostat: version 2024.07.26
-
-Patryk Wlazlyn (16):
-      tools/power turbostat: Remove anonymous union from rapl_counter_info_t
-      tools/power turbostat: Replace enum rapl_source and
-cstate_source with counter_source
-      tools/power turbostat: Add ZERO_ARRAY for zero initializing builtin array
-      tools/power turbostat: Group SMI counter with APERF and MPERF
-      tools/power turbostat: Extend --add option with perf counters
-      tools/power turbostat: Fix formatting in turbostat.8
-      tools/power turbostat: Add perf added counter example to turbostat.8
-      tools/power turbostat: Fix typo in turbostat.8
-      tools/power turbostat: Move debug prints from stdout to stderr
-      tools/power turbostat: Move verbose counter messages to level 2
-      tools/power turbostat: Add selftests for SMI, APERF and MPERF counters
-      tools/power turbostat: Add selftests for added perf counters
-      tools/power turbostat: Add early support for PMT counters
-      tools/power turbostat: Add MTL's PMT DC6 builtin counter
-      tools/power turbostat: Document PMT in turbostat.8
-      tools/power turbostat: Include umask=%x in perf counter's config
-
-Tony Luck (1):
-      tools/power/turbostat: Switch to new Intel CPU model defines
-
- tools/power/x86/turbostat/Makefile                 |    1 +
- tools/power/x86/turbostat/turbostat.8              |   98 +-
- tools/power/x86/turbostat/turbostat.c              | 2341 ++++++++++++++++----
- .../selftests/turbostat/added_perf_counters.py     |  178 ++
- .../testing/selftests/turbostat/smi_aperf_mperf.py |  157 ++
- 5 files changed, 2277 insertions(+), 498 deletions(-)
- create mode 100755 tools/testing/selftests/turbostat/added_perf_counters.py
- create mode 100755 tools/testing/selftests/turbostat/smi_aperf_mperf.py
+               Linus
 
