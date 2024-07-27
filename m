@@ -1,140 +1,211 @@
-Return-Path: <linux-kernel+bounces-263986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E1093DD8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:38:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6EF93DD91
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 08:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110071C22BF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:38:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 986B31C210FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 06:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C16282EE;
-	Sat, 27 Jul 2024 06:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED80E24B4A;
+	Sat, 27 Jul 2024 06:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BdGgqL4b"
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjcwWZRx"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB9208B0;
-	Sat, 27 Jul 2024 06:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3AE14A85
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 06:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722062295; cv=none; b=jN47Ci/dnMAjFJV9FjxFFyk4nTfgH7juNpTkbBYgqLNLRO3BiGlwLfhjLN+rge5ccA33qtkIZXBMp3TjhJNTxtQFrI830a8KpE16HZg2ad4wlkUs6ZgRT1eHfrAy+teUeldea0tDaEvQd4dt/5LgORLSkI9lF9b2cxqAXfNldNc=
+	t=1722062425; cv=none; b=bZnSQTGOg3DwhBY8H2xlMpNrMXv6tw4lYOWajXfLhn8QmQdUPobYFmzB79gtOcyYbE4c4pKbB6nJ4VURSK43QpQmQrj7A99PekQlb+NL02c57EN9R/jEuvdeV3rn92wtOF7e+JDk1/wVAabQiXoJ32Ah6oQY3/qkcwotq9fzf+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722062295; c=relaxed/simple;
-	bh=GrJeDK2srVi+z2UkjJHob9c8b6SOSjMXZQ3r/XMlwYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FhR+VhPzq4Ckhxo50KykFCMRE+XKzpINBnPzd9k+Id1JE/lrKcEB2iVNUcUk0Y3bqvk2AmJZ4P5A/kUnvT2RVUca+Ws8uNHbT9/vYNhI7ON2MGkEU2tPWHnQOb9uB3eH1rWRXoRkd99/I4PX2RbCZ182T+NtCgZRJU4zJqzSgG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BdGgqL4b; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Xb2zsVCoM6bu3Xb2zscawa; Sat, 27 Jul 2024 08:36:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722062213;
-	bh=ZHDCDqysapmv2ryBK6BEJxU1h57yEUk6bw3Qv1mEShs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BdGgqL4bydrIPmm/lNBGsOHsGXsAa+Q8dwBHEn4O7+m/PqLOLNJdH9HqY4c7QYtti
-	 C8Gq6wLy+Xt7fDflgw1nohqsR4qbyLv388/Eb/UULvVVACDlW5LBjv0/OdE++MESZz
-	 96rXENTHPWC6YeNN+eJCY0s2g2bpxLb7yrMyrdiTLm6EjkKEBaT6FOa/UzXebqvk98
-	 /BW4kKokbm7FgcexUWp2YD16plDbNqFpnQvJs/rZD7UX47e2LVl10Yl8VG94w5tSX+
-	 9cEsz+6kgF33UksgZ58JzVMZ9nK7hvEw4R5PKFkv3w1V5wNUuKt+UePkt2KaMfm2Xn
-	 HieCaZrfQRlgw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 Jul 2024 08:36:53 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH v2] Input: spear-keyboard - Switch to devm_clk_get_prepared()
-Date: Sat, 27 Jul 2024 08:36:49 +0200
-Message-ID: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722062425; c=relaxed/simple;
+	bh=OXKBrPrL25aam8XjpMYme4BwhCrlNIj9shfk12QYcGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwminVU9V5erIdNMyvGB0e9MeRLB7JqUGvnvJEir9a2FdewP+4426B+Z8P6cdluKm1grMYd6M8N//1eMlB74/jRtfu/GcYsE//fgYkXGuOtF32GXL5NlbiOBkDWk9yxY3S9bfuOhvUTPSBYJ+qYGj9YIJO61XLXcrQ+3u2qvmLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EjcwWZRx; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd90c2fc68so11871075ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 23:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722062423; x=1722667223; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KruoNU1ECeduc4ttqiLP75/tZo5xqSr0uZUmxvRMw4Y=;
+        b=EjcwWZRxxNMb01wQ/gaDcwl++b1gydxW3taDqY3klLMiWP4NbjoXWYUbIHw1OLY3bB
+         0m/jVH2B5Q/KHGNUZuIP/Qsv7LFrnzB/gLLH2VvJQR6//Vy1mAL8GSNtHgI9M305/MHw
+         ajpqga66cEQSmolMlYpT4uJO9zaaRK78/9VJEnFqGsCBm392F+LPZ3vbgT0CQ0g8rCAF
+         Tnt7H/C6vL7L+MQOIvSxLHiY8A/Oi3YauF0ETlU0SwExH0E4JNqt+ULlwVvK56xPEVkk
+         6pLVah5oUNOMXd7ncAT5dnmn3MvJ/Mf22Sv6cvn0e/KRVGVeigTW5amdEwZyAivycUmu
+         1izA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722062423; x=1722667223;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KruoNU1ECeduc4ttqiLP75/tZo5xqSr0uZUmxvRMw4Y=;
+        b=uVugy/nr+IDAV4qYf7KOklQf9uAf4WVCGROTk1ZgIgPs4iOxT0sHd2Pu92kueINn0E
+         tOCyv1P2mkyEbTXxbc+RWC3f/2uJ3Lc3LrqvEJND0POPLIlEhD8oG6TaZyzpgVXimLgv
+         61wcKvpeJ3Kh9/jfF0Aq+9tjRsIoq0nbLRgfWaTusJx/nWjEyM8uJuc/tfMkOv8vuDS2
+         QdXUVvTywXOvgGRrzFkjb2rS66R7tbEM8BhtPhOGzARvZypiUgUl1PnQJQ1QsP+PEjFB
+         lAFyBQF12U5a7AMVq5JTXIZgw0a/bP4hSciui8eROremA+pLu6Xk4r55MpoGru7EMcxt
+         WALg==
+X-Forwarded-Encrypted: i=1; AJvYcCWD3ikfCxKPQTrqVeTotiopOY4nOllVEFoTSvDd4gbMqYbtDbitLtAZ+XRAvYMgm5fWu5uF8rGm+lCFOQW0p4Q0f4cIn3hd9BeBL1ho
+X-Gm-Message-State: AOJu0YxM3HDEWQFfPDjuSqlgzvg/SW8BjPooHzHZyDYJCXl9aE2pBuUY
+	QV3pM+u6rKfKPYUOjjU+GkzbJ0c0IRyC6cvshaINZin4ga9DviIFGwRU658UeA==
+X-Google-Smtp-Source: AGHT+IENJIkVYk0rpCVthW0PQEkqM+SCa3WgfxY8ADZSjTocFT+s7pDZP7ZlTCOhfSzDNDgG2/7LNA==
+X-Received: by 2002:a17:903:186:b0:1fd:5fa0:e996 with SMTP id d9443c01a7336-1ff048e4f43mr21262975ad.43.1722062422683;
+        Fri, 26 Jul 2024 23:40:22 -0700 (PDT)
+Received: from thinkpad ([120.56.198.67])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1b6c3sm43588715ad.192.2024.07.26.23.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 23:40:22 -0700 (PDT)
+Date: Sat, 27 Jul 2024 12:10:13 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 03/12] PCI: brcmstb: Use common error handling code in
+ brcm_pcie_probe()
+Message-ID: <20240727064013.GA2974@thinkpad>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-4-james.quinlan@broadcom.com>
+ <20240725043111.GD2317@thinkpad>
+ <CA+-6iNz9R5uMogd6h+BkgRvKrsmyH2VXsGO_5e=6yqC=JzjigA@mail.gmail.com>
+ <20240726050423.GB2628@thinkpad>
+ <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+-6iNzpfh7_rXUEXNjZLCLQKu-e_bYMAO6PdKaxqReJRKjuAQ@mail.gmail.com>
 
-Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
-error handling path of the probe and from the .remove() function.
+On Fri, Jul 26, 2024 at 02:34:54PM -0400, Jim Quinlan wrote:
+> On Fri, Jul 26, 2024 at 1:04 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Thu, Jul 25, 2024 at 03:45:59PM -0400, Jim Quinlan wrote:
+> > > On Thu, Jul 25, 2024 at 12:31 AM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Tue, Jul 16, 2024 at 05:31:18PM -0400, Jim Quinlan wrote:
+> > > > > o Move the clk_prepare_enable() below the resource allocations.
+> > > > > o Add a jump target (clk_out) so that a bit of exception handling can be
+> > > > >   better reused at the end of this function implementation.
+> > > > >
+> > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > > Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+> > > > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > > > > ---
+> > > > >  drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++------------
+> > > > >  1 file changed, 16 insertions(+), 13 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> > > > > index c08683febdd4..c257434edc08 100644
+> > > > > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > > > @@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+> > > > >
+> > > > >       pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
+> > > > >
+> > > > > -     ret = clk_prepare_enable(pcie->clk);
+> > > > > -     if (ret) {
+> > > > > -             dev_err(&pdev->dev, "could not enable clock\n");
+> > > > > -             return ret;
+> > > > > -     }
+> > > > >       pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+> > > > > -     if (IS_ERR(pcie->rescal)) {
+> > > > > -             clk_disable_unprepare(pcie->clk);
+> > > > > +     if (IS_ERR(pcie->rescal))
+> > > > >               return PTR_ERR(pcie->rescal);
+> > > > > -     }
+> > > > > +
+> > > > >       pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
+> > > > > -     if (IS_ERR(pcie->perst_reset)) {
+> > > > > -             clk_disable_unprepare(pcie->clk);
+> > > > > +     if (IS_ERR(pcie->perst_reset))
+> > > > >               return PTR_ERR(pcie->perst_reset);
+> > > > > +
+> > > > > +     ret = clk_prepare_enable(pcie->clk);
+> > > > > +     if (ret) {
+> > > > > +             dev_err(&pdev->dev, "could not enable clock\n");
+> > > > > +             return ret;
+> > > > >       }
+> > > > >
+> > > > >       ret = reset_control_reset(pcie->rescal);
+> > > > > -     if (ret)
+> > > > > +     if (ret) {
+> > > > >               dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> > > > > +             goto clk_out;
+> > > >
+> > > > Please use a descriptive name for the err labels. Here this err path disables
+> > > > and unprepares the clk, so use 'clk_disable_unprepare'.
+> > > ack
+> > > >
+> > > > > +     }
+> > > > >
+> > > > >       ret = brcm_phy_start(pcie);
+> > > > >       if (ret) {
+> > > > >               reset_control_rearm(pcie->rescal);
+> > > > > -             clk_disable_unprepare(pcie->clk);
+> > > > > -             return ret;
+> > > > > +             goto clk_out;
+> > > > >       }
+> > > > >
+> > > > >       ret = brcm_pcie_setup(pcie);
+> > > > > @@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+> > > > >
+> > > > >       return 0;
+> > > > >
+> > > > > +clk_out:
+> > > > > +     clk_disable_unprepare(pcie->clk);
+> > > > > +     return ret;
+> > > > > +
+> > > >
+> > > > This is leaking the resources. Move this new label below 'fail'.
+> > > What resources is it leaking?  At "clk_out" the return value will be negative
+> > > and only managed resources have been allocated at that juncture.
+> > >
+> >
+> > Right, but what about the err path below this one? If that path is taken, then
+> > clks won't be released, right?
+> No, that is the same situation.  The clock is originally allocated
+> with "devm_clk_get_optional()", i.e. it is a managed resource.
+>  If the probe fails, and it does in both of these error paths,
+> Linux deallocates the newly formed device structure and all of its resources.
+> Perhaps I am missing something?
+> 
 
-This done, the whole .remove() function can also be axed because
-'input_dev' is a managed resource allocated with
-devm_input_allocate_device() and we can fully rely on devm for cleaning up.
+No, I missed the fact that __brcm_pcie_remove() is freeing all resources. But
+grouping all release functions in a single helper and using it in multiple err
+paths even when the err path need not release everything the helper is
+releasing, warrants trouble.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+- Mani
 
-Changes in v2:
-  - Merge patch 1 and 2, because patch 1 alone introduced a bug   [Dmitry Torokhov]
-
-v1: https://lore.kernel.org/all/cover.1721939824.git.christophe.jaillet@wanadoo.fr/
----
- drivers/input/keyboard/spear-keyboard.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
-
-diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
-index 557d00a667ce..1df4feb8ba01 100644
---- a/drivers/input/keyboard/spear-keyboard.c
-+++ b/drivers/input/keyboard/spear-keyboard.c
-@@ -222,7 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	if (IS_ERR(kbd->io_base))
- 		return PTR_ERR(kbd->io_base);
- 
--	kbd->clk = devm_clk_get(&pdev->dev, NULL);
-+	kbd->clk = devm_clk_get_prepared(&pdev->dev, NULL);
- 	if (IS_ERR(kbd->clk))
- 		return PTR_ERR(kbd->clk);
- 
-@@ -255,14 +255,9 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 		return error;
- 	}
- 
--	error = clk_prepare(kbd->clk);
--	if (error)
--		return error;
--
- 	error = input_register_device(input_dev);
- 	if (error) {
- 		dev_err(&pdev->dev, "Unable to register keyboard device\n");
--		clk_unprepare(kbd->clk);
- 		return error;
- 	}
- 
-@@ -272,14 +267,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void spear_kbd_remove(struct platform_device *pdev)
--{
--	struct spear_kbd *kbd = platform_get_drvdata(pdev);
--
--	input_unregister_device(kbd->input);
--	clk_unprepare(kbd->clk);
--}
--
- static int spear_kbd_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -373,7 +360,6 @@ MODULE_DEVICE_TABLE(of, spear_kbd_id_table);
- 
- static struct platform_driver spear_kbd_driver = {
- 	.probe		= spear_kbd_probe,
--	.remove_new	= spear_kbd_remove,
- 	.driver		= {
- 		.name	= "keyboard",
- 		.pm	= pm_sleep_ptr(&spear_kbd_pm_ops),
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
