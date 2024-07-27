@@ -1,165 +1,208 @@
-Return-Path: <linux-kernel+bounces-265965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4190B93F848
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5454793FBB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF341F22BC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4781F23790
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D582B156231;
-	Mon, 29 Jul 2024 14:32:19 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3438A16D4C3;
+	Mon, 29 Jul 2024 16:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nNxJxq15"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72B1494AC;
-	Mon, 29 Jul 2024 14:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB6315ECC3
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722263539; cv=none; b=QFiy4cwIueHkc1XDOXcB74jen2n5Ry8nkv+x9TZF3u0wAP0M0y88db0XRzPDKbix7Dhe3afAZ0Jp4urit7elWPI892+AfcMv+U5pgf53XQ0b1gboH5VF0zdcqdn5q8e3iky/aA5h78NnI/bo+mNMw8pWlRprJHUd4yPc6gOgxvs=
+	t=1722271569; cv=none; b=DrV5kHpeO8bNyj5PwQsqejwI5Gjrm7fliqNj/bzV27xLcyuejJktICFLQ7dE0IJxVVZX6ncUWgyApIUIMiSJaK5yeNLYsNUgVazDCEIB92ivjp2piLmCzfinOchpQPwrq9FqSAaswGWjNSa7uA2hCzh0xngvlzerbcCFw5C8zSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722263539; c=relaxed/simple;
-	bh=FkoerdYwKiBNqZ/THKIbD6JIfYJKUyVNO0Qlv6PxoDY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lAIpsguJpi7di1BSJH7r8p3hfmAQUJ+thGXrz0plUt7kkB5KNImIrDGQUJjrcFNliG65YClWBuEMcpEtZMGM+C1XY2mjPcdVZyjSv18Eofufpt8dX1skboh5BIEFr71o9tPunOyEh3xhsOdTuEHKqyKL9l9ZvNbAxhWqAmF8wYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WXgkS37lrzgYBS;
-	Mon, 29 Jul 2024 22:30:24 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D37A180105;
-	Mon, 29 Jul 2024 22:32:14 +0800 (CST)
-Received: from lihuafei.huawei.com (10.90.53.74) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 29 Jul 2024 22:32:13 +0800
-From: Li Huafei <lihuafei1@huawei.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>
-CC: <acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
-Subject: [PATCH] perf/x86/intel: Restrict period on Haswell
-Date: Tue, 30 Jul 2024 06:33:28 +0800
-Message-ID: <20240729223328.327835-1-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722271569; c=relaxed/simple;
+	bh=wNvqt1xvuMD0pHy+ZTcuN/4GhZ2p2a/Hb6rfsGPujGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jJDbgsQoye3vGrkoA66cU9enxVQyNUUaWiuC6bSlprS0kQRpIKS/8QZaTTT85xygmXaam9HcxrJnK4OQ5+KJ1fGz8CeGy/PGAEBmvAWVJoLZ5TCdkUIjeI6O5DuEUS2DaJxxiYEwKAzn7FRIgh5COfYn/52b0VSkJ1+zi+BUSeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nNxJxq15; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fd9e6189d5so23478645ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722271566; x=1722876366; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0kviHpjNAUi5B7kpuc65zsq7f4mxJO5hSE3q4QPsnoQ=;
+        b=nNxJxq15f56yDrWt5P7BDhUq89DNeeM3SFOFR80LGM1OgrMjWFJL8n+4tp57dbTRv9
+         jq3CrvdZUsVPEFDh8ZB1iD1N1OAaUxs7MQZrdD4xwXdw8oxw7HDAB/bXwPDmVgfa0RKW
+         RlAOqb7gn8QFTCGSp0Qcpujp/3eoL2lwDPhZG+xzaC7FbYsR2f1I4qmuFuggxgN3Gsdp
+         4nI/C6bqoODr3zq6cHURe7RUYuVoB776JoNf5j337jk+0oeSs9o1Mnd0zc6cnU31lN5d
+         t5LLPPurvjq7A93/lyT3zd0q2fx0Odnf8u/X3vyPwZGndtfleCNVkzFx+sxJnPK/Lp6F
+         TCIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722271566; x=1722876366;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0kviHpjNAUi5B7kpuc65zsq7f4mxJO5hSE3q4QPsnoQ=;
+        b=C0ybma7VH+Oyb9ysAjApqeSJ8JEiTVfCfxHnU2WWCDuIu0GGekJ3jDZr2C0I6b5a2r
+         GZ0tHxApK5Kugb8EcKB1MaVzHylAeCPM8+j0i3YACyDqLBmKERED13o8bgqK254LwN9O
+         7cDKPm4XRk0GG2jyuGk2n9xt8I249iY0XDV3oaNDMyjE3hczKdi9oditJtkPMOICexFo
+         Hxe3srddMxzUqRZkYD9hbSxMizdRCnG4L8ibk4irmasS4TKQslrJYOguXmve9gDrMXHH
+         cxVz/oStea78CMW+9gVmerK0X0znVDwD74oPcCVpBrvuLAZO4qxqJq3+gFoS61zlO8TK
+         PXCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiGNOUsWO7SQKqPjo7FAGu71NlQFX7IVQDo3mL4OOLdR3I8SngCje24207oZiSs/g2r2Ixu6GFDvQAUIxBhW3EgXV/eZ4t3SFz/pId
+X-Gm-Message-State: AOJu0YwrkF6tZRYLREKGczWPe2UzMUnUFPqOSIuVSQF/yVL6uPUhpouC
+	m2Vd8uWFUvAv9NYp1djHadjEOlu+NmI1dFAwvKUDO8DE82u6YVAUlAUwLm+wx74=
+X-Google-Smtp-Source: AGHT+IEqfgg9K3tkn+AB81uDLY3sOHsM9ebG79PIdI/mdENlVn5qemW73G2meb4IA0mrZqN8jjItFQ==
+X-Received: by 2002:a17:902:d3c9:b0:1fb:6616:9cd4 with SMTP id d9443c01a7336-1ff04854376mr56208365ad.38.1722271566097;
+        Mon, 29 Jul 2024 09:46:06 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d401c6sm85480545ad.117.2024.07.29.09.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 09:46:05 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v2 0/8] libperf: Add interface for overflow check of
+ sampling events
+Date: Fri, 26 Jul 2024 22:29:30 -0700
+Message-Id: <20240726-overflow_check_libperf-v2-0-7d154dcf6bea@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALqFpGYC/x2MQQqAIBAAvxJ7TiiRkr4SEaZrLoWKQgXh35OOM
+ zDzQsZEmGFqXkh4UabgK/C2Ae2U35GRqQy846Ib+cDChcme4V61Q32sJ22xCialMr0QRhitoMY
+ xoaXnH89LKR9e5qTbaAAAAA==
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>, 
+ Shunsuke Nakamura <nakamura.shun@fujitsu.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722271564; l=4073;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=wNvqt1xvuMD0pHy+ZTcuN/4GhZ2p2a/Hb6rfsGPujGQ=;
+ b=FdQ9KN3+e83hrpLxZcZ6n3PLWI6MPr9FY9nv9pCOlvEiq3JGXcclYvvBxB0PCTclrKFqn9JJy
+ qHmNcAOOxouAO82eOp8fzg99RZhqq7nB/D9HczDgVx2e9Uc9JzYf/fY
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-On my Haswell machine, running the ltp test cve-2015-3290 concurrently
-reports the following warnings:
+I was going to send a similar series but after looking through the
+mailing list found this approach which fits my use-case exactly. I have
+rebased the series and applied the suggestions from Namhyung. The
+original cover letter with minor changes follows.
 
-  perfevents: irq loop stuck!
-  WARNING: CPU: 31 PID: 32438 at arch/x86/events/intel/core.c:3174 intel_pmu_handle_irq+0x285/0x370
-  CPU: 31 UID: 0 PID: 32438 Comm: cve-2015-3290 Kdump: loaded Tainted: G S      W          6.11.0-rc1+ #3
-  ...
-  Call Trace:
-   <NMI>
-   ? __warn+0xa4/0x220
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? __report_bug+0x123/0x130
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? __report_bug+0x123/0x130
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? report_bug+0x3e/0xa0
-   ? handle_bug+0x3c/0x70
-   ? exc_invalid_op+0x18/0x50
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? irq_work_claim+0x1e/0x40
-   ? intel_pmu_handle_irq+0x285/0x370
-   perf_event_nmi_handler+0x3d/0x60
-   nmi_handle+0x104/0x330
-   ? ___ratelimit+0xe4/0x1b0
-   default_do_nmi+0x40/0x100
-   exc_nmi+0x104/0x180
-   end_repeat_nmi+0xf/0x53
-   ...
-   ? intel_pmu_lbr_enable_all+0x2a/0x90
-   ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
-   ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
-   perf_ctx_enable+0x8e/0xc0
-   __perf_install_in_context+0x146/0x3e0
-   ? __pfx___perf_install_in_context+0x10/0x10
-   remote_function+0x7c/0xa0
-   ? __pfx_remote_function+0x10/0x10
-   generic_exec_single+0xf8/0x150
-   smp_call_function_single+0x1dc/0x230
-   ? __pfx_remote_function+0x10/0x10
-   ? __pfx_smp_call_function_single+0x10/0x10
-   ? __pfx_remote_function+0x10/0x10
-   ? lock_is_held_type+0x9e/0x120
-   ? exclusive_event_installable+0x4f/0x140
-   perf_install_in_context+0x197/0x330
-   ? __pfx_perf_install_in_context+0x10/0x10
-   ? __pfx___perf_install_in_context+0x10/0x10
-   __do_sys_perf_event_open+0xb80/0x1100
-   ? __pfx___do_sys_perf_event_open+0x10/0x10
-   ? __pfx___lock_release+0x10/0x10
-   ? lockdep_hardirqs_on_prepare+0x135/0x200
-   ? ktime_get_coarse_real_ts64+0xee/0x100
-   ? ktime_get_coarse_real_ts64+0x92/0x100
-   do_syscall_64+0x70/0x180
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-   ...
+This patch series adds interface for overflow check of sampling events
+to libperf.
 
-My machine has 32 physical cores, each with two logical cores. During
-testing, it executes the CVE-2015-3290 test case 100 times concurrently.
+First patch move 'open_flags' from tools/perf to evsel::open_flags.
 
-This warning was already present in [1] and a patch was given there to
-limit period to 128 on Haswell, but that patch was not merged into the
-mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
-and 32 period on my machine and found that the problem could be
-reproduced with a limit of 16, but the problem did not reproduce when
-set to 32. It looks like we can limit the cycles to 32 on Haswell as
-well.
+Second patch extracts out the opts used by BPF into a common header to
+be used by perf.
 
-[1] https://lore.kernel.org/lkml/20150501070226.GB18957@gmail.com/#r
-[2] https://lore.kernel.org/all/1566256411-18820-1-git-send-email-johunt@akamai.com/T/#mf1479ab3f25d3f7f3a899244081baa2e7b7bc0b9
+Third patch introduce perf_{evsel, evlist}__open_opt() with extensible
+structure opts.
 
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+Fourth patch adds support for overflow handling of sampling events.
+
+Fifth patch adds a interface to check overflowed events.
+
+Sixth patch adds a interface to perform IOC_REFRESH and IOC_PERIOD.
+
+Seventh and eighth patch adds tests.
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- arch/x86/events/intel/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Previous version at:
+https://lore.kernel.org/lkml/20220422093833.340873-1-nakamura.shun@fujitsu.com/
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 0c9c2706d4ec..459dec2f07e3 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4625,6 +4625,11 @@ static void glc_limit_period(struct perf_event *event, s64 *left)
- 		*left = max(*left, 128LL);
- }
- 
-+static void hsw_limit_period(struct perf_event *event, s64 *left)
-+{
-+	*left = max(*left, 32LL);
-+}
-+
- PMU_FORMAT_ATTR(event,	"config:0-7"	);
- PMU_FORMAT_ATTR(umask,	"config:8-15"	);
- PMU_FORMAT_ATTR(edge,	"config:18"	);
-@@ -6767,6 +6772,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.hw_config = hsw_hw_config;
- 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
- 		x86_pmu.lbr_double_abort = true;
-+		x86_pmu.limit_period = hsw_limit_period;
- 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
- 			hsw_format_attr : nhm_format_attr;
- 		td_attr  = hsw_events_attrs;
+Changes in v2:
+- Rebase onto v6.10
+- Add a patch to move BPF opts helpers into a global include
+- Renamed flags to fcntl_flags
+- Changed signal type to int
+- Add comment to owner_type member
+- Add _cpu to perf_evsel__run_fcntl
+- Rename sig to sigact
+- Remove "!" from owner.type check
+- Removed _GNU_SOURCE addition
+- Removed null check for perf_evsel__attr()
+- Make timeouts consistent between test-evlist.c and test-evsel.c
+
+Changes in v1:
+ - Move initialization/reference of evsel->open_flags from the first
+   patch to the second patch
+ - Move signal-related handling and related fields of the opts
+   structure from the second patch to the third patch
+ - Move _GNU_SOURCE from test-evlist.c to Makefile
+ - Delete *_cpu() function
+ - Refactor the fourth patch
+ - Fix test to use real-time signals instead of standard signals
+
+Changes in RFC v2:
+ - Delete perf_evsel__set_close_on_exec() function
+ - Introduce perf_{evsel, evlist}__open_opt() with extensible structure
+   opts
+ - Fix perf_evsel__set_signal() to a internal function
+ - Add bool type argument to perf_evsel__check_{fd, fd_cpu}() to indicate
+   overflow results
+
+---
+Charlie Jenkins (1):
+      libbpf: Move opts code into dedicated header
+
+Shunsuke Nakamura (7):
+      libperf: Move 'open_flags' from tools/perf to evsel::open_flags
+      libperf: Introduce perf_{evsel, evlist}__open_opt with extensible struct opts
+      libperf: Add support for overflow handling of sampling events
+      libperf: Add perf_evsel__has_fd() functions
+      libperf: Add perf_evsel__{refresh, period}() functions
+      libperf test: Add test_stat_overflow()
+      libperf test: Add test_stat_overflow_event()
+
+ tools/include/tools/opts.h               |  68 +++++++++++++
+ tools/lib/bpf/bpf.c                      |   1 +
+ tools/lib/bpf/btf.c                      |   1 +
+ tools/lib/bpf/btf_dump.c                 |   1 +
+ tools/lib/bpf/libbpf.c                   |   3 +-
+ tools/lib/bpf/libbpf_internal.h          |  48 ---------
+ tools/lib/bpf/linker.c                   |   1 +
+ tools/lib/bpf/netlink.c                  |   1 +
+ tools/lib/bpf/ringbuf.c                  |   1 +
+ tools/lib/perf/Documentation/libperf.txt |  17 ++++
+ tools/lib/perf/Makefile                  |   1 +
+ tools/lib/perf/evlist.c                  |  20 ++++
+ tools/lib/perf/evsel.c                   | 169 +++++++++++++++++++++++++++++--
+ tools/lib/perf/include/internal/evsel.h  |   2 +
+ tools/lib/perf/include/perf/evlist.h     |   3 +
+ tools/lib/perf/include/perf/evsel.h      |  30 ++++++
+ tools/lib/perf/libperf.map               |   5 +
+ tools/lib/perf/tests/test-evlist.c       | 112 +++++++++++++++++++-
+ tools/lib/perf/tests/test-evsel.c        | 107 +++++++++++++++++++
+ tools/perf/util/evsel.c                  |  16 +--
+ tools/perf/util/evsel.h                  |   1 -
+ 21 files changed, 541 insertions(+), 67 deletions(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240726-overflow_check_libperf-88ad144d4dca
 -- 
-2.25.1
+- Charlie
 
 
