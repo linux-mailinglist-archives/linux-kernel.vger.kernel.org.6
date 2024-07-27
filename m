@@ -1,109 +1,190 @@
-Return-Path: <linux-kernel+bounces-263957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E797493DD26
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FEE93DD25
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8951C2356E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCB91F2437F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8112C4A15;
-	Sat, 27 Jul 2024 03:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1CD4A0C;
+	Sat, 27 Jul 2024 03:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Drjj4RLL"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="doskXc/x"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241154688
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 03:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CCD197;
+	Sat, 27 Jul 2024 03:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722052028; cv=none; b=WgqxhuTEHCloturRf7NgpPei8beIeWxi7k5NJZcoo5QSHskGlJRArIHlwkDIhoMW+ALPhTBtp27fbyS7jXS6Xh9ePD3Tniv2LZYFuLeF+aX+LJQc3H3kXfSGbfG3o+bietFuL/yUuamBKJXUZePGR2ChwLzYX51yOZOEMeVxoos=
+	t=1722051960; cv=none; b=ZCy8c2N4q05hoCaVKMMc8U4oyQKvU8qpi/ZQzWJI6ZqhFoYZFSghkj8/aRriKVQRA1VHXcwAUkTtPYn3tlwl9r/E/RESJKWF9E76LWFIPhltpf6yI5V/Pngt1jyIcMyA7R1R1V8DfbzWQ2T618Vg4dNpe1BhqszQlzdJquni9Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722052028; c=relaxed/simple;
-	bh=jqfPqtNrdaF/ZNPy73R69QrgWFH2f23wPfxQBz0Ybow=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=j9jw2/lntELA7mBnqhNrTIVKqAdsKoQmThkYgfuoUlPHR1q6jkWu4N9gvW4iNeOYnQ4rnz9JJ6EnU6OpKX6l4KznA2XzkYrv8kX4STp7Bt3lLJZNIl8psFlQVSzzvhT0woknO3brFpRsNzPZr+OcSnkp/ZLdgM4yoYJdDBSoJmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Drjj4RLL; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722052022; bh=4kw4FEjK/LFE9ABNC4tf2hdkrKwnOkwYBNAouFRPs18=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Drjj4RLLjZBOMwzmTwfl9ICbr6NiWSVDBlHjur5WIauS0a0t7zcowGoQ5xNNgjVNM
-	 L3Dk/ziccFphTHmh0SNkxXJC70xK8VW545R/lranuAMAoUmDqy8AcQ0N7prJmq3Qk7
-	 QB7ksAsyIbWQ8A7vOwzPESCA2rZWOMEIrWI6b/8A=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 9B3AAC6B; Sat, 27 Jul 2024 11:38:51 +0800
-X-QQ-mid: xmsmtpt1722051531tq2sa4lvi
-Message-ID: <tencent_42384B7F1B3425E4BA97BB4133B29E341B08@qq.com>
-X-QQ-XMAILINFO: NaP/9vkEGeDXotafcCvUxv3o3u3zsAZC/CiXoThYtHM052hC47WOV4fGETt0Jb
-	 aKVrkIu4zyqjKlFS6ySSnhOGQA9cKfLf/8qleWNOxBbAJ2FamAWerSRyjFrN+RZDl96oyPP6yb4F
-	 iy6/GShF1autOzJmQAYPRP6vv+nSaiQ1EHtcQHZ4nnk9Rq3Ulol+l/rVPWMPUxwrpw9B1ROjPMQc
-	 OHhNTHFss86I7UmOykCoBHYQEIZdRCaypnH1HEtzlOiLypQcaesCWBWBap7Cf5hED93mSjaSePF2
-	 5mCCnp3d12ltb4oy5YwKajeoTF5UOzDLOZA/Oj/aJjaccWHVe3vOfPMOZHbOHdYMNuaw13ZWLNab
-	 UhTMz5K1ilpz79Q8gWPMtykA52cYLg+LUHpaiXSN+5ZhYng9mpFZ26ExjAiREROit4pB8HaxSWyc
-	 ucoUI+uxur/bqAP6JKf4sjJlMpgEmebw4rr5KOYp2wzWOwnCB03gaxkD/qbZjc3MYSMYXqPCWhWD
-	 EZ48F2rIQU5Yl7akzAhIBK+K8ygW/ng9oejLeURmpo4nMDMMOMSJoyki3SwtaVlXZVhVccPfXeF8
-	 SskiMpIiCRt96e0Ia8qlj0lDNUcMv8eBBcaF3BzzDvg5AlNXOxIeqjZiu25tNjxUr5jLwnQvh7NX
-	 qpGxjpd30WGlhJsE80v1AiA2DruBPg3xNC+36sTQcH7vvmIuV9c+TMkdRtdcD/3KKmZx6CLebbGI
-	 rPyRnz7+sPIvdRdIpqDjpgLMx6aAi6x6pOmVU83A33kXPLMwgDGQ5Lvw99p+/6NYvIR/LvJ7rEfx
-	 m6DNlLleg3q/zkrwzcx0MwK/dnN+kHeaprHLWxe0K4DgYlXEOyAaoSE9FTBLhbmzA9TJBs+HKDu3
-	 EujVSAgF1SzdpdSEEY7SNOGQ3ijQ6Bx4tqC9tRGhZbslmDs3+KstpwCKy8NoDy5GiAWcRtjQ4Q
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [f2fs?] KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-Date: Sat, 27 Jul 2024 11:38:52 +0800
-X-OQ-MSGID: <20240727033851.2570282-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000005c7ccb061e032b9b@google.com>
-References: <0000000000005c7ccb061e032b9b@google.com>
+	s=arc-20240116; t=1722051960; c=relaxed/simple;
+	bh=+6aRiZHMY2UwD1ptIzZl2dlB05/JayzoKzX0xOcUvZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nP28I6PtQzs0cYP2JPOfo5O1AhTXv03ei7S/s+o5tHxlxAmOVR6EUEfcQRPYeNeMu0wd6BXH4al7EkPGgS6smscsETMCCb4nAQGHYDS1F8My6HBR+hS3dM7lF+5/SjRnrPZMVkrAKdKWIYr4DI2Y1kEEbNyxUVN78SVoMi58Esc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=doskXc/x; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Iwm9lv3I5imfKYFcLqJtJ/Iu0ZLj1yI4POD9Lw39XuI=; b=doskXc/xybEr0BE1ibQySiEGLN
+	oMctDTJOwrit8ua2vRfXqlxXRD1gj+61yc6Ig6PAzVNU9rZgwFkxATHTSGKhLZqT22knFwf8RUnhI
+	Qx+U/oRATfvUxksFm/DgNmFXOsUzcZjkFlrjMImTtZGg0xDqSdYX0JGr0dxzkdLgOAVXXbyYWci/K
+	86BsDIFizCUwR4YDgEANTX2HkAN7U9eL8kM1pZ3NgMVVsDaF4ZzsPVVCYftrUeYOEIUfUUXdR2h1i
+	FLzjYhnFh44w1mxsDjvQzZqx+bTZICnSYZDCMG0FO82MnRkOrGw1//s+guZs9MI7RIdQIpFNh5My9
+	raHuj0cg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXYNV-0000000AyMm-0crs;
+	Sat, 27 Jul 2024 03:45:53 +0000
+Date: Sat, 27 Jul 2024 04:45:53 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <ZqRtcZHWFfUf6dfi@casper.infradead.org>
+References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+ <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+ <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+ <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+ <20240710091631.GT27299@noisy.programming.kicks-ass.net>
+ <20240710094013.GF28838@noisy.programming.kicks-ass.net>
+ <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+ <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
+ <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
 
-add mutex sync remount and shutdown
+On Fri, Jul 26, 2024 at 06:29:44PM -0700, Suren Baghdasaryan wrote:
+> On Fri, Jul 26, 2024 at 5:20 PM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Mon, Jul 22, 2024 at 12:09 PM Suren Baghdasaryan <surenb@google.com> wrote:
+> > >
+> > > On Wed, Jul 10, 2024 at 2:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Wed, Jul 10, 2024 at 11:16:31AM +0200, Peter Zijlstra wrote:
+> > > >
+> > > > > If it were an actual sequence count, I could make it work, but sadly,
+> > > > > not. Also, vma_end_write() seems to be missing :-( If anything it could
+> > > > > be used to lockdep annotate the thing.
+> > >
+> > > Thanks Matthew for forwarding me this discussion!
+> > >
+> > > > >
+> > > > > Mooo.. I need to stare more at this to see if perhaps it can be made to
+> > > > > work, but so far, no joy :/
+> > > >
+> > > > See, this is what I want, except I can't close the race against VMA
+> > > > modification because of that crazy locking scheme :/
+> > >
+> > > Happy to explain more about this crazy locking scheme. The catch is
+> > > that we can write-lock a VMA only while holding mmap_lock for write
+> > > and we unlock all write-locked VMAs together when we drop that
+> > > mmap_lock:
+> > >
+> > > mmap_write_lock(mm);
+> > > vma_start_write(vma1);
+> > > vma_start_write(vma2);
+> > > ...
+> > > mmap_write_unlock(mm); -> vma_end_write_all(mm); // unlocks all locked vmas
+> > >
+> > > This is done because oftentimes we need to lock multiple VMAs when
+> > > modifying the address space (vma merge/split) and unlocking them
+> > > individually would be more expensive than unlocking them in bulk by
+> > > incrementing mm->mm_lock_seq.
+> > >
+> > > >
+> > > >
+> > > > --- a/kernel/events/uprobes.c
+> > > > +++ b/kernel/events/uprobes.c
+> > > > @@ -2146,11 +2146,58 @@ static int is_trap_at_addr(struct mm_str
+> > > >         return is_trap_insn(&opcode);
+> > > >  }
+> > > >
+> > > > -static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+> > > > +#ifndef CONFIG_PER_VMA_LOCK
+> > > > +static struct uprobe *__find_active_uprobe(unsigned long bp_vaddr)
+> > > > +{
+> > > > +       return NULL;
+> > > > +}
+> > > > +#else
+> > >
+> > > IIUC your code below, you want to get vma->vm_file without locking the
+> > > VMA. I think under RCU that would have been possible if vma->vm_file
+> > > were RCU-safe, which it's not (we had discussions with Paul and
+> > > Matthew about that in
+> > > https://lore.kernel.org/all/CAJuCfpHW2=Zu+CHXL+5fjWxGk=CVix=C66ra+DmXgn6r3+fsXg@mail.gmail.com/).
+> > > Otherwise you could store the value of vma->vm_lock_seq before
+> > > comparing it with mm->mm_lock_seq, then do get_file(vma->file) and
+> > > then compare your locally stored vm_lock_seq against vma->vm_lock_seq
+> > > to see if VMA got locked for modification after we got the file. So,
+> > > unless I miss some other race, I think the VMA locking sequence does
+> > > not preclude you from implementing __find_active_uprobe() but
+> > > accessing vma->vm_file would be unsafe without some kind of locking.
+> >
+> > Hey Suren!
+> >
+> > I've haven't yet dug properly into this, but from quick checking
+> > around I think for the hot path (where this all matters), we really
+> > only want to get vma's underlying inode. vm_file itself is just a
+> > means to that end. If there is some clever way to do
+> > vma->vm_file->f_inode under RCU and without mmap_read_lock, that would
+> > be good enough, I think.
+> 
+> Hi Andrii,
+> Sorry, I'm not aware of any other way to get the inode from vma. Maybe
+> Matthew with his FS background can find a way?
 
-#syz test: upstream 2c9b3512402e
+Hum.  What if we added SLAB_TYPESAFE_BY_RCU to files_cachep?  That way
+we could do:
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6066c6eecf41..a624e8271fbc 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -27,6 +27,7 @@ static struct kmem_cache *victim_entry_slab;
- 
- static unsigned int count_bits(const unsigned long *addr,
- 				unsigned int offset, unsigned int len);
-+static DEFINE_MUTEX(gc_lock);
- 
- static int gc_thread_func(void *data)
- {
-@@ -203,10 +204,13 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 
- void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
- {
--	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
-+	struct f2fs_gc_kthread *gc_th;
- 
--	if (!gc_th)
-+	guard(mutex)(&gc_lock);
-+	gc_th = sbi->gc_thread;
-+	if (!gc_th || gc_th->f2fs_gc_task < PAGE_OFFSET)
- 		return;
-+
- 	kthread_stop(gc_th->f2fs_gc_task);
- 	wake_up_all(&gc_th->fggc_wq);
- 	kfree(gc_th);
+	inode = NULL;
+	rcu_read_lock();
+	vma = find_vma(mm, address);
+	if (!vma)
+		goto unlock;
+	file = READ_ONCE(vma->vm_file);
+	if (!file)
+		goto unlock;
+	inode = file->f_inode;
+	if (file != READ_ONCE(vma->vm_file))
+		inode = NULL;
+unlock:
+	rcu_read_unlock();
 
+	if (inode)
+		return inode;
+	mmap_read_lock();
+	vma = find_vma(mm, address);
+	...
+
+I think this would be safe because 'vma' will not be reused while we
+hold the read lock, and while 'file' might be reused, whatever f_inode
+points to won't be used if vm_file is no longer what it once was.
+
+On the other hand, it's quarter to midnight on Friday, and I have a
+terrible virus that I'm struggling through, so not ideal circumstances
+for me to be reasoning about RCU guarantees.
 
