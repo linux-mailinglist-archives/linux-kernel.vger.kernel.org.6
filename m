@@ -1,98 +1,201 @@
-Return-Path: <linux-kernel+bounces-263952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0164293DD12
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 04:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A7393DD13
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 05:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD67283E70
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0004F285056
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 03:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168B1C36;
-	Sat, 27 Jul 2024 02:55:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5F31B86E8;
+	Sat, 27 Jul 2024 03:15:14 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21670208B0;
-	Sat, 27 Jul 2024 02:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D50417E9
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 03:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722048900; cv=none; b=sZJvq8KLKGgVWvff/iiqLJuZOrCtOPvEQAhQje2Br/bYaCJT6p2c/sbW3b0JQKYyKAhqp80rGMC6oaQVn1i4+ukdvRK0zpfoAUutsepHoqB0xLD+pA0HfTI5JavefYOsoEfIKwRNsJosdPPws6e4g6JhpyvPP516ILwCsWWV8DE=
+	t=1722050113; cv=none; b=DGZtOjUk01d6aXVc/Of/NOYwFHEeTxj4+fdBhfDvfZhYwfyMRyeoMaekAHuLU3lJs63ciC9I7KpM95zfcT8851W5nc5O8OLQdCYL0P4JcAsxhruqkFycr96h4ASlKs7iDbz+kXSpX0VbZaNyZF36i+Jjo5PGCWdfTUNLcNnWOz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722048900; c=relaxed/simple;
-	bh=SC4ewOAvXzgVqB7T0j0VlxyhUMM9hasZjA4JU3RaXaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EMO6dx/psbJ9rzBJSvlXqZnPqKlte2jXFxCJGnGmPZfn8t8jxluwimrr8JlVDzfs2bg5LfA49EThQGeVUOcTbGoaf4XQCnpI8iyIzp+1wxkn2OYCXO3Gh8uNf5O6JT+tgUq6Staml5YdA9vbva+NYdq2mNk0i0Fz5oUsmtNd7f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WW8Lp4QGszMqnv;
-	Sat, 27 Jul 2024 10:53:06 +0800 (CST)
-Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0A194180102;
-	Sat, 27 Jul 2024 10:54:55 +0800 (CST)
-Received: from [10.67.110.48] (10.67.110.48) by kwepemg100016.china.huawei.com
- (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 27 Jul
- 2024 10:54:54 +0800
-Message-ID: <55390a1e-5994-465a-a5c5-94f3370259c3@huawei.com>
-Date: Sat, 27 Jul 2024 10:54:30 +0800
+	s=arc-20240116; t=1722050113; c=relaxed/simple;
+	bh=vfWLMUCNQqdCjzCDTMhi+pl6nCwaPxvVUzyCErSQoDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGxoIGfeKM1bs8Lc0V1OapSxOP4htO6oNZTQmmKw5Hj5U6WPIuBqH4KRlm/p54N11wf4uPQV1jhYzz8NZmmvVGmlHkVgBR+rsA4azH9k3hkcVbKTQq0Xq3D8AHcAcetuhUpk/KqDJh7cLac8Ifcnwsd60W/NL9fyizdJ8hHKsp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc5239faebso10010685ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2024 20:15:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722050111; x=1722654911;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLRbFlYw1y7KC9S4hQ5ZFyFBozLVkK+PnMW946p6k3U=;
+        b=lF1tzn8oMoN5G0/Eyt8z95fIM1uGeycZiDBR4CD6o9DSwQ1No7KIDBEOUempoW5Ffy
+         QR6NKI6xWKuFqGoaNUzO4PNnV+kPdJ8OdsL1u4ZGB7R4DMkjl21icfw68wei32g/0LE+
+         sICAIHnkFWL/zRy5jjg9rcS7sCkjHNPye4xBSF4K76iE1TDdwulir3N81T09nQB1aOUS
+         qIGn0TGYcpwrNQvZIV03Nuu/eaWjzWtzSNOk5Z0VeiI4HLBDeS+s7l+TdGkITRHLh9wo
+         mx1qnhE5FVOx1lEagJph/U0Gzj6u98uv4P6F0MVXbry1OYjuxwDqxuXvQNCanyMk8XWS
+         G0pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt17OVdybXjgXZQmeGU49tsHXfGUWcLt83mT20REgTuyocyoWQpYa0aeABNIW0F/hhO5c/mpdj6BjNBoQ811T5g0KtDMbFZQd/GLlC
+X-Gm-Message-State: AOJu0YyPOuoUdfMGvhSDLlxok/sU+8U8Azk0mYvW2Y1E7mX7/bAAiWND
+	9207isO/oXdNr5O6j/sVk/h13lk7WAlx3k0fM9Qrrpsf35oRqCpa
+X-Google-Smtp-Source: AGHT+IEh0vRQcYCjKacpBe+tlN5TG/wqG8G56zuBfhH316hJWOb2texq/hSHkLPuAMlU+eKcHwai8g==
+X-Received: by 2002:a17:903:228c:b0:1fd:6766:6848 with SMTP id d9443c01a7336-1ff0481b9d3mr18339475ad.17.1722050111104;
+        Fri, 26 Jul 2024 20:15:11 -0700 (PDT)
+Received: from snowbird ([136.25.84.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7f62fsm40488975ad.19.2024.07.26.20.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 20:15:10 -0700 (PDT)
+Date: Fri, 26 Jul 2024 20:15:07 -0700
+From: Dennis Zhou <dennis@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, kernel test robot <oliver.sang@intel.com>,
+	Suren Baghdasaryan <surenb@google.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Kees Cook <keescook@chromium.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Christoph Lameter <cl@linux.com>, Gary Guo <gary@garyguo.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>, linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: Re: [linus:master] [mm]  24e44cc22a:
+ BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_alloc
+Message-ID: <ZqRmO6LNol6S65dm@snowbird>
+References: <202407191651.f24e499d-oliver.sang@intel.com>
+ <Zp6bMoDnUMxNrKos@boqun-archlinux>
+ <Zp6cVgXJlzF4VOwl@slm.duckdns.org>
+ <Zp6e1PWZbz4pkh9Z@boqun-archlinux>
+ <Zp6kpCcQRPTGk1LK@V92F7Y9K0C.lan>
+ <Zp7G4EfISRwlmmIT@boqun-archlinux>
+ <Zp9EvUTqni5wMDlC@snowbird>
+ <ZqAdGAD01kZPms2J@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
- moving proc to root cgroup
-To: Ondrej Mosnacek <omosnace@redhat.com>
-CC: Paul Moore <paul@paul-moore.com>, Stephen Smalley
-	<stephen.smalley.work@gmail.com>, <selinux@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Wang Weiyang <wangweiyang2@huawei.com>
-References: <20240702095401.16278-1-gongruiqi1@huawei.com>
- <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
- <CAHC9VhR+tk4mwmaQ6u8SEnzg6zMF2krFHKVwxKx91GX1K=4A=g@mail.gmail.com>
- <0729db54-98cf-4006-91d0-0ebda4dbc251@huawei.com>
- <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
-Content-Language: en-US
-From: Gong Ruiqi <gongruiqi1@huawei.com>
-In-Reply-To: <CAFqZXNsN9M__Mo018L8m0txi60vm3Ui5HgHvJYQK__0hhhMULQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg100016.china.huawei.com (7.202.181.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqAdGAD01kZPms2J@Boquns-Mac-mini.home>
 
-
-On 2024/07/26 21:43, Ondrej Mosnacek wrote:
-> On Thu, Jul 18, 2024 at 2:34 PM Gong Ruiqi <gongruiqi1@huawei.com> wrote:
->>
->>
->> On 2024/07/18 0:17, Paul Moore wrote:
->>> ...
->>>
->>> Where (what distribution, version, etc.) did you see this problem?
->>
->> The problem occurred when I ran the testsuite on Fedora 40 with v6.6
->> kernel, and it was the only failed testcase.
+On Tue, Jul 23, 2024 at 02:14:00PM -0700, Boqun Feng wrote:
+> On Mon, Jul 22, 2024 at 10:50:53PM -0700, Dennis Zhou wrote:
+> > On Mon, Jul 22, 2024 at 01:53:52PM -0700, Boqun Feng wrote:
+> > > On Mon, Jul 22, 2024 at 11:27:48AM -0700, Dennis Zhou wrote:
+> > > > Hello,
+> > > > 
+> > > > On Mon, Jul 22, 2024 at 11:03:00AM -0700, Boqun Feng wrote:
+> > > > > On Mon, Jul 22, 2024 at 07:52:22AM -1000, Tejun Heo wrote:
+> > > > > > On Mon, Jul 22, 2024 at 10:47:30AM -0700, Boqun Feng wrote:
+> > > > > > > This looks like a data race because we read pcpu_nr_empty_pop_pages out
+> > > > > > > of the lock for a best effort checking, @Tejun, maybe you could confirm
+> > > > > > > on this?
+> > > > > > 
+> > > > > > That does sound plausible.
+> > > > > > 
+> > > > > > > -       if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+> > > > > > > +       /*
+> > > > > > > +        * Checks pcpu_nr_empty_pop_pages out of the pcpu_lock, data races may
+> > > > > > > +        * occur but this is just a best-effort checking, everything is synced
+> > > > > > > +        * in pcpu_balance_work.
+> > > > > > > +        */
+> > > > > > > +       if (data_race(pcpu_nr_empty_pop_pages) < PCPU_EMPTY_POP_PAGES_LOW)
+> > > > > > >                 pcpu_schedule_balance_work();
+> > > > > > 
+> > > > > > Would it be better to use READ/WRITE_ONCE() for the variable?
+> > > > > > 
+> > > > > 
+> > > > > For READ/WRITE_ONCE(), we will need to replace all write accesses and
+> > > > > all out-of-lock read accesses to pcpu_nr_empty_pop_pages, like below.
+> > > > > It's better in the sense that it doesn't rely on compiler behaviors on
+> > > > > data races, not sure about the performance impact though.
+> > > > > 
+> > > > 
+> > > > I think a better alternative is we can move it up into the lock under
+> > > > area_found. The value gets updated as part of pcpu_alloc_area() as the
+> > > > code above populates percpu memory that is already allocated.
+> > > > 
+> > > 
+> > > Not sure I followed what exactly you suggested here because I'm not
+> > > familiar with the logic, but a simpler version would be:
+> > > 
+> > > 
+> > 
+> > I believe that's the only naked access of pcpu_nr_empty_pop_pages. So
+> > I was thinking this'll fix this problem.
+> > 
+> > I also don't know how to rerun this CI tho..
+> > 
+> > ---
+> > diff --git a/mm/percpu.c b/mm/percpu.c
+> > index 20d91af8c033..325fb8412e90 100644
+> > --- a/mm/percpu.c
+> > +++ b/mm/percpu.c
+> > @@ -1864,6 +1864,10 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+> >  
+> >  area_found:
+> >  	pcpu_stats_area_alloc(chunk, size);
+> > +
+> > +	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+> > +		pcpu_schedule_balance_work();
+> > +
 > 
-> Sorry for the delay... For some reason the test passes for me even
-> with cgroup v2 only and without the patch (also when run from a
-> regular user account with sudo). Do you happen to know what
-> circumstances are needed for it to fail when the cgroup is not
-> switched?
+> But the pcpu_chunk_populated() afterwards could modify the
+> pcpu_nr_empty_pop_pages again, wouldn't this be a behavior changing?
 > 
 
-As the comment in the script says, a process need to be in the root
-cgroup in order to switch its scheduler policy to SCHED_{RR,FIFO}. So
-maybe in your case the shell process is already in the root cgroup?
+It does, but really at this point it's a mixed bag because the lock
+isn't permanently held at all while we do all these operations. The
+value is read at best effort.
 
-In my case I need to ssh to a Fedora VM, and that makes my shell process
-to be in a sub cgroup called /user.slice/.../XXX.scope (looks like some
-systemd stuff). And since /sys/fs/cgroup/cpu/tasks doesn't exit in the
-system with cgroup v2 only, the script skips moving the target process
-to the root cgroup, and therefore the subsequent test fails.
+Ultimately the code below is populating backing pages for non-atomic
+allocations. At this point the ideal situation is we're using an already
+populated page. There are caveats but I can't say the prior is any
+better than this version.
+
+The code you mentioned pairs with the comment on line 916 below.
+
+	/*
+	 * If the allocation is not atomic, some blocks may not be
+	 * populated with pages, while we account it here.  The number
+	 * of pages will be added back with pcpu_chunk_populated()
+	 * when populating pages.
+	 */
+
+Thanks,
+Dennis
+
+> Regards,
+> Boqun
+> 
+> >  	spin_unlock_irqrestore(&pcpu_lock, flags);
+> >  
+> >  	/* populate if not all pages are already there */
+> > @@ -1891,9 +1895,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+> >  		mutex_unlock(&pcpu_alloc_mutex);
+> >  	}
+> >  
+> > -	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+> > -		pcpu_schedule_balance_work();
+> > -
+> >  	/* clear the areas and return address relative to base address */
+> >  	for_each_possible_cpu(cpu)
+> >  		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
 
