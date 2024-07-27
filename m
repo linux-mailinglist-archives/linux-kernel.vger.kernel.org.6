@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-264222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34FD93E058
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E2893E05B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9D02821AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8BB281DC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39367186E4B;
-	Sat, 27 Jul 2024 17:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F594185E50;
+	Sat, 27 Jul 2024 17:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ViSWKFfs"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d1FzqFtg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13621B86E0;
-	Sat, 27 Jul 2024 17:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158AC538A
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 17:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722101179; cv=none; b=j62Lcnlz/BCw8SyiaHdtpy2igTYPCDY2Ojl7JmkYZj8rUj7LRPK/beCUi5Bjvy8GpZFBL6UbnFBgRTPX9/B4PyUnh9N/BWxOM7PU8r0Yth9j3WP3hIyXVxNsKqvHKmHkw90QtqxdwKYhQxwfmNnRj8Gvh16ObDmj6JLYuCMgIe8=
+	t=1722101644; cv=none; b=kUIRI0gE9nYP98CaLFrIGPUrt8Boviqx0vUfPg+3EP0Soo9ddOyhVX5iT32wk5jT2Dl0bbRZwOrVx8htmzQurorIqMl81a2FIskCdfImD22a8+LFsuIWQshZwZ6YzSmC3/NZcnq/pBvR3wcX5yBkprPzyfAFQ4NCA8+GnhokeIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722101179; c=relaxed/simple;
-	bh=0JUr3fUYlefWhft141VQNfADwU7JSh8bF/I57R0uKBs=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=AkB41En9gy98DuvhZ5jGHTUxfjQJvf43XEubz7L7tP6V1rkfimI8xENFaoibK57gB8RzAvHmFNYZEA+d6Ra5ievLZDlM6x0i8a3zxbHPOISZUv7s/yBRw2OfDw3EVZIXFJevBaFYuOT044wcX8kN8KN8NVjlWUUiJeR0DBayV7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ViSWKFfs; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722101644; c=relaxed/simple;
+	bh=xlVYA4FIasX2gV3GXStceke29uE+c5IdOd0It3o2Y3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGnf2DZX1gIEF1kvxm6bCcHuG5OHVgVjI8mqTxauWH8cLa43lBeEjRm/qGoVa2mFN8Vtp+aOjUGTWK/I1lI3glZFSHXt785cgO3o+z/kAXEuUDbr56/Svhxe3TvKEgqrkEtQ+SLu7wsYZkfphGXsCivXgLQ5KuRduKQehRwt8j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d1FzqFtg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HS0ksnlZL3s+zWv6Trq4NFtCnIvD2qUV6Wcs5vzw3ZU=; b=d1FzqFtgfXrP5irXlBrEXa1BIA
+	nrWpyGGNox3Y89PGNJn3SEM+ZBNR4umAz2dqT6IUYndgXGVACQuPZil0rRg070ZPPtxvEw98FHbqh
+	Vk2TJsJFUPouhKFuDdV0KI4fIWKln2kK/cTVZnHzscD8lhL2U/a4zRCBWnpLsIrOR23QlzgjUvzKH
+	jcIlAGqXYLY1lnuZk8YR7RIkDHS69i5wrMyQWuIsq5n9Itf2/eIv6WpxgL7nL+jvKlbUg+yPyhnrz
+	sNpGeVDYycFu7OBSnVVyddwVrVgTcRKFn2zGWGLbr++LAjQeouRTL4Zqub1clG5XWYT0esIeKdQNa
+	F70V5g9A==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXlIn-0000000BYCn-1k0c;
+	Sat, 27 Jul 2024 17:33:53 +0000
+Date: Sat, 27 Jul 2024 18:33:53 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	David Laight <David.Laight@aculab.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@kernel.org>,
+	"Jason@zx2c4.com" <Jason@zx2c4.com>,
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+Message-ID: <ZqUvgRJZQUmyHpna@casper.infradead.org>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
+ <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
+ <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
+ <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
+ <CAHk-=wjPr3b-=dshE6n3fM2Q0U3guT4reOoCZiBye_UMJ-qg1A@mail.gmail.com>
+ <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722101174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W0xWla7GajGgE12FYJTA3d2+hQz1cIEdi3VEmQzhsqU=;
-	b=ViSWKFfsWDciK9XUpUBuKYVTxLx9sxSn8tut/Fb7rTZ8nc+lDO0Cqt+IEXrLa9ANFnOnwR
-	hZZDDRyhK5TpO9LtPOqwUmvjUnJ30p0bN0dA7WKoQmlqxpCcx8x/3FW1uyw9UxWbNEUy/R
-	YP3kkWlSb5/TqYFmpfv054kaAz7YxVF8HLwCkJ2cjVCa8kbxensjSURX6CRnLWB9b8MOkr
-	qNjBK+CZuZ8cFirrNd3DaZjYAbIP/QQlp2127HvV5/PAYVlt6xMCJRCfQC1WDyQhY9+V/b
-	vgEMR+hkTrLuqKxlZHOHZ10Hpl+tOOk1q7VNuOuPiCA+Ab4oFCDfd/hCYxx9cQ==
-Date: Sat, 27 Jul 2024 19:26:14 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, mturquette@baylibre.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-In-Reply-To: <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <20240716-deceiving-saucy-851fb2303c1f@spud> <3178118.zE8UqtGg2D@diego>
- <20240718-prozac-specks-6b5fd8b83e3e@spud>
- <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
-Message-ID: <1f6f4cd84b06a95881093772d5b799ef@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgVZwBrCXyphH+HcY9X56EK0KNQrnWZ+Qb0Bz79POLSUw@mail.gmail.com>
 
-Hello Stephen,
+On Fri, Jul 26, 2024 at 09:13:11PM -0700, Linus Torvalds wrote:
+> but while that is certainly an impressive 82kB line, we have some good
+> company in code VM header files, and I've also seen
+> 
+>   Longest line is include/linux/page-flags.h:507 (27kB)
+>      'static inline __attribute__((__gnu_inline__))
+> __attribute__((__unused__)) __attribute__((no_instrume...'
+> 
+> because the expansion from
+> 
+>     __PAGEFLAG(Locked, locked, PF_NO_TAIL)
+> 
+> does indeed generate some impressive stuff. It's all the functions for
+> the locked bit handling generated from one line.
 
-On 2024-07-27 00:21, Stephen Boyd wrote:
-> Quoting Conor Dooley (2024-07-18 08:59:50)
->> 
->> FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
->> "vdd-supply" are pretty generic and I think the latter is missing from
->> the vast majority of real* "fixed-clocks". I would expect that devices
->> where the datasheet would call
->> 
->> * Real because there's plenty of "fixed-clocks" (both in and out of 
->> tree)
->> that are used to work around the lack of a clock-controller driver for 
->> an
->> SoC.
-> 
-> I agree!
-> 
->> > I think generic power-sequences
->> >   were the topic back then, though that might have changed over time?
->> > - There are places that describe "fixed-clock" as
->> >   "basic fixed-rate clock that cannot gate" [1]
->> 
->> I think that that is something that could be changed, it's "just" a
->> comment in some code! Sounds like Stephen disagrees though :)
-> 
-> It's more about making a clear break from the fixed-clock binding so
-> that the extra properties are required.
->> 
->> > - Stephen also suggested a separate binding [2]
->> 
->> I liked your "gated-oscillator" suggestion in another reply, but
->> "gated-fixed-clock" might be a better "thematic" fit since this is a
->> special case of fixed-clocks?
-> 
-> It looks to me like we've arrived at the hardest problem in computer
-> science, i.e. naming. Any of these names is fine. I'd look to see what
-> those parts on mouser are called and use that to drive the compatible
-> name decision if you can't decide. The description section in the
-> binding could be verbose and link to some parts/pdfs if that helps too.
-> In the past I've seen EEs call these things clock buffers. I'm not a
-> classically trained EE myself but it usually helps to use similar names
-> from the schematic in DT because DT authors are sorta translating
-> schematics to DT.
+In the specific case of PageLocked, that can hopefully go away fairly
+soon.  We only have 24 instances left in tree and five of those are
+comments/docs.  The ones in fs (btrfs, crypto, f2fs, ocfs2 and pipe)
+should be converted to folio soon.
 
-Please note that the hardware components modeled by these DT bindings
-are definitely not clock buffers.  Those are simply clock generators,
-which can be gated, hense the proposal to use "gated-fixed-clock".
+Mostly they're just detritus.  We could probably remove the PageLocked
+definition in the next merge window if we actually care.
 
-If we were to additionally model Aurasemi AU5426 or Diodes PI6C557 into
-new DT bindings and into the board dts file(s), which I'd support 
-because
-of accuracy, those should actually be called "clock-buffer".
+
+But I have been wondering whether the way we define all the functions
+around page/folio flags is sensible.  Every file which includes
+page-flags.h (... which is most of them ...) regenerates the macros.
+You can't grep for the definition of folio_test_locked().  There's
+nowhere to put kernel-doc for folio_test_locked().
+
+Would we be better off generating page-flags-generated.h from a more
+compact definition file somewhere, rather than using the C preprocessor?
 
