@@ -1,342 +1,264 @@
-Return-Path: <linux-kernel+bounces-264239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE7C93E09F
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:45:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8769B93E0A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64504B2146E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC415281C90
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65AF12EBCA;
-	Sat, 27 Jul 2024 18:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB8186E3B;
+	Sat, 27 Jul 2024 18:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BAC5m4O+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ODB3/+ZI"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvSqOS7a"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6F31B86CB
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 18:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722105938; cv=fail; b=Ch+UolTJ3nDmjK/bRCVA/VwaqLEBDMbSp3Vwx+pvHTVIaq/QkINCzYHtvxENlv1PQozguGeggGr0sPDrLKO9dbpGX/qABM8MR/EFE3JKlQZn//zwJMIkYcCze33WLMSItaXqb5aZbdXZKH6jUYqINNTr70jM1tJQxBoPQBY1SrY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722105938; c=relaxed/simple;
-	bh=Xm0Wj4dcg0bncO0FEzvp5PJJyqZEqESD/iyKC/86eeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BzMPoVe3Y5r62o93XhLKmQ7S8nmY40qjYFJN3Q2EZPKCKyP9hAGuVjubObT6J1wrAyGKmIgR9bZ8LPelIObdXLvhXFOxMtwboKtF+DkGfDQVfUluG4pm8sP2UnArKTByPdfsxf8J3oP5ys4VGMQ1kLIuT2A+TQoRUMmIV26RKAY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BAC5m4O+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ODB3/+ZI; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46R51EjT008611;
-	Sat, 27 Jul 2024 18:44:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=ddtuoaVFyFW+00D
-	Vf1096L6uIcMpFN85ay2yKhE7X78=; b=BAC5m4O+uYhIG9s/dU0+m44SCoc/BH4
-	PYV4sJUEFAMjC/j7r9oMsZ5BqYbhF1vP6w0e8RQkQ4NViqVw4SfxbS6bh3rvXzcZ
-	5DdTBe3yiULWjF69kvQ27JenDTyn6ectLpuODBiaFX3YtVKOkuJXcoNzXne4wOuf
-	LhSIGlb4HDSGtSHoukd91H4vsBS7GNPaqfqWV2L1Mb7GbrwrkStUJnk6b+oQFkZB
-	pyg9cGw569h+BMTmh0D3zO6bHK8c3hil2Li4RJPG43S+SwCWMUAvgw6Bm0kIxH/P
-	tDNQjj4tocNeC3XawoLx5YYQw5dpTvSVZb3h/Y/8sDqDfAm6Z6SSPSw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40mqfy8hjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 27 Jul 2024 18:44:16 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46RHH4bU030845;
-	Sat, 27 Jul 2024 18:44:14 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40mqbbp62j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 27 Jul 2024 18:44:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kksfDsxo0sXVsPmmLyTiv8devW0P8Y4FwV/YcjZn9jmOtX0ntMwzCHG3TQS5JdBN1ACtLQp6ELZFH48dSj+7a91oLigZ4A9akcnC4IKTY3fjRryVqXMyYdLw7a/F2KLuqx4khdwuNd2tmqUokeqWZX+DAB3V2hjaFT9tCTKnS08M1aP51VnpunjqpLl9DEbMW0c961xXEBqfNWKTOaZoZ7w9CORaANOU/76J5bgS9LC6Cr/OOsThW2yBiEMxGsPHF2vmI1CuOOlV9nXckxxJgDTJ01wu+nNXpoZ8syp82Dut38ryD/scizjdOgumjcfWEWwf5mxVK91fYCRhGucqPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ddtuoaVFyFW+00DVf1096L6uIcMpFN85ay2yKhE7X78=;
- b=DuZouVYmTAw5sfcgBJgrAlpcPWdXyMxVw2EL8zvv3gO0Ka0ktoaeJ75JzXl03xSlAZ2NXBLgS7YQaEO0lTtv+3Dy9fFbhW1RI/DzByW48eXL2Az/hIRFA911uqW/waMkSMZuErcqtiNxE+O0drnZl86CAhgGL5Bm/Jk1rB14V08cpazH8GtTeJoPtUpcAUJknzsF32T5lUyioGLU7ZRJuGjy8HFeF0V3K9S5pX/xUi9k3TULA5O10JxouOnYp+KRjBQtq0x//0OEpF3LvdpMOhyiaiyHpHu94n9qhWRv7Mq9j7aYzPW9DNW63OkD3QCrf8GYwjoGnJORbuaPRB+mbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E715C179A3;
+	Sat, 27 Jul 2024 18:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722106487; cv=none; b=Y0Oco2Lplr3f+dSQz8UTYaVAhz6001276WFy0y5a1DxRPUj3VLv1eyHDe4WwEUFEoG2DUc1t1u+Bh7tf+WYtZwQIclM5wQ/yNL8LluH1tI8p0uoK3lpSvJ/qD5mMxkRBGkTdgzXu3kfRSaKploRhP2Dal0VCmlcZoqFFJBPYUDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722106487; c=relaxed/simple;
+	bh=hl2sU+Q2AQkj+GvBmrCXNBYy7krd5P+IwfogcVOn3vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNGt2hN1VdkQtsVjSGD4C4fVcOGzOBHRWZJRpeW3fbjZIFLjAiWJJTcjGDq1Mlo7LglZCOrftuiN5rhPpVe/UuX2HZrc46IbKynKt6BaiP6RD6r7/3oBclKiUic9apc+cZVeSvgWKfChkDRlCxBon/IhFhs3qBRxkNmu+oif0C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvSqOS7a; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b78c980981so9950496d6.2;
+        Sat, 27 Jul 2024 11:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ddtuoaVFyFW+00DVf1096L6uIcMpFN85ay2yKhE7X78=;
- b=ODB3/+ZIIGHLCE+kWHra8bC/bn62DFurmIPMRQU6pbQWpp/HbhbdG44+WnTwzp3pV17Kxev3dhXvJqxmaHmz8wyvyhR88OMet/J7J+6CGcIc+dKMfY+8FDISht4MdlVAy8NWjcy9kuHIgbfbfsoIYI2h27QuikcaJzGrmU+xRcw=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by BY5PR10MB4354.namprd10.prod.outlook.com (2603:10b6:a03:20c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.23; Sat, 27 Jul
- 2024 18:44:12 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7807.026; Sat, 27 Jul 2024
- 18:44:11 +0000
-Date: Sat, 27 Jul 2024 19:44:05 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: David Laight <David.Laight@aculab.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Arnd Bergmann <arnd@kernel.org>, "Jason@zx2c4.com" <Jason@zx2c4.com>,
-        "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 0/7] minmax: reduce compilation time
-Message-ID: <5882b96e-1287-4390-8174-3316d39038ef@lucifer.local>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local>
- <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
- <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local>
- <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
- <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
- <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
- <2f1be7ee-2d70-4dd3-bfa2-1b94a4fc5a66@lucifer.local>
- <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
-X-ClientProxiedBy: LO2P265CA0066.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:60::30) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=gmail.com; s=20230601; t=1722106484; x=1722711284; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9b2EluIDdwCbEMT9V2F6Mpy73Q0qmkww/Qaik2t/B+w=;
+        b=CvSqOS7axupxegwaGFe6QNqzgnwLESt9jW8+7wSu9ttTlzCB/ynLQJb52TQwBJsew/
+         qX28ld7jfxjuqseZrohh9pQg9p81PDd2lVQmaQg6ML/EssBBT2nRY0GHoYAFl6Sdqd23
+         0uiSEwUp+OxNy3yaoijs2/O/QpK3KaItMyLtRxfgCdufDVMCIGiQKsvMPPYM97ob/VBA
+         IItpuioTVbavYDwrivTt14Z9R7biDD5zpDyJyP6GKsZBRDQhGlM9AcXBZOwwNuU/fm7j
+         1Rjljm7S4/p3LuKmZlL8FbWy/vDXHknlpLw6Vvn3iYYBv8AMffr+MULex4Lt/93lpVP4
+         9Csw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722106484; x=1722711284;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9b2EluIDdwCbEMT9V2F6Mpy73Q0qmkww/Qaik2t/B+w=;
+        b=sSvL61l7yPG9wnazKmajM1ux6B/zr828PlYSiWwqHTWxDX/GyN7mBVQOIKnCIPzDbS
+         +4ddM+t9BrxGdr3wpVW/ZQDewHy4s0YnSNYPSFQZx2ioESIVJyLaSKVHfR6wNYr3UPwG
+         agv/ijbWr2wj7hkV2zPGxiSDF+heN0h6CJvnTSIDPCREHmzjn6lTaFGbW4CrUeYc6S5q
+         PajjXeV/R9oU3FD/QEuLpUkpjSlA3GjBoCuNEfvvb4jorlrL7xtov+QLfG20TO2Qwp5Q
+         cLbMRTE93saLGbmFQcGFAo9iIENfAd+ZBxbRbExuT3qIQ3/reYyJipMSlD94jMEnvK8h
+         GAlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1kkcfT5MKN//NRiYCjNpGvHaNw4C+52V9nM8N9mzcMJA8jw3N79hgk5NXLdxkI2weR+QiiFhhMfTP63m5+qDsjL7ptNA0UoWktOc4UkWZLY0H+KaxpB42NHSRxmJQxfpB/C5zfEr6/g==
+X-Gm-Message-State: AOJu0YwDyaNzWlvfEnnRlC6ZtjMSnxMDBLPPjqCM70qgJvXSX4m1KxOg
+	NSy6+6l6TvOpeRICaDXKBNofOetsbG7Suoce2Jyb2v1f+qqOZvv5
+X-Google-Smtp-Source: AGHT+IHtqR5DOIyMv177rcxe4AjeaR9AX0+sk4521t4XZ+FIkJi22ahOIfLiRVbkdFsi5DkCJu+geg==
+X-Received: by 2002:ad4:5943:0:b0:6b7:9c52:db53 with SMTP id 6a1803df08f44-6bb55ac596fmr51596386d6.48.1722106483720;
+        Sat, 27 Jul 2024 11:54:43 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8f83c9sm32265646d6.38.2024.07.27.11.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 11:54:43 -0700 (PDT)
+Date: Sat, 27 Jul 2024 14:54:40 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mehdi.djait@bootlin.com, christophe.jaillet@wanadoo.fr, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: display: Add Sharp Memory LCD
+ bindings
+Message-ID: <4jzq2jvezh6kcb2gxbyicveiaetn2drybi2wlrzmwziud6hcy3@gdqoo7bxmlba>
+References: <20240725004734.644986-1-lanzano.alex@gmail.com>
+ <20240726194456.1336484-1-lanzano.alex@gmail.com>
+ <20240726194456.1336484-2-lanzano.alex@gmail.com>
+ <52bf1aa6-449f-4f77-992e-45e510fe6e7f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|BY5PR10MB4354:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d02714a-8cb7-47f8-f9a3-08dcae6c1b15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iJ5HlOXWxloYKEdOpzU/J7XtgfA4GIR+6s+VIcRiaKs9E1Dh3v6IZHz7spUv?=
- =?us-ascii?Q?5fcWkoLs26HU9C371nB7mbVjnWE+USZGpWI/fPr1QkxZkHmzqZXVkQILrFL2?=
- =?us-ascii?Q?Yhu2hYDkS2Rgn19t3cJGr9ECCxbX22iR70YbU+yGMuDE1vi/sXKA8g1KunjA?=
- =?us-ascii?Q?HM+qH2WSVJlRJm8c3q5lQ839RcCQD3ghE1QZX8DnYzUxfukzRhbhUXOdi0cX?=
- =?us-ascii?Q?qyBp3u1BrKYdwZRdxrPBPNh7xLNnxr6yhk3PAwLdWPOR6bhKzoIt8YNDWyVY?=
- =?us-ascii?Q?bMfQPrSSjSDAk0XTaZIlkGkeyGMmanKigcTKvNe9IYPbgpUkdSRiP9RqJDZv?=
- =?us-ascii?Q?JggT6vs+lS9G6bbmjYjO8nBb2TWAtrv9ZpwFn8k+mBmncR8gO6D3l5do6PNy?=
- =?us-ascii?Q?qc1DEqYnEuifT52GcNgaeGI3UMTsl2rllB6NOLES/5oJorlPuSD8UBtnbU49?=
- =?us-ascii?Q?OlCBqzNwGRwM/NPGhu00I53XZx8tMZrFAtg/Wbu/+39/heHEjJEeLthIFREd?=
- =?us-ascii?Q?faQl6JdrsUse71h20ty//aS9uJ+y72bdpdBAxD6iNp7QJq2FEYDnup2ApGo+?=
- =?us-ascii?Q?Fy08xW67nxTpd2RVW0cQtLznvHLLqkl1grRJlMfCjxGMXfIb27rnlKxkFY6i?=
- =?us-ascii?Q?P1X6k+E700RQmv1a0NRhssp22t2QSba1R7hbV1iKF1OX37BVjV9kjOnqX3ck?=
- =?us-ascii?Q?fXQ1jQCpsH1dCnFX3553k+ez/fNh+mF+P4KdDBszwJiIguZdW+Xrz3tSSaFP?=
- =?us-ascii?Q?8yK2FVKU1BZobcyk+98BJrYPwTfukpbFFnZ2QPbt37fz0VQkHpkEe1RLb+7/?=
- =?us-ascii?Q?nhQCBcV3NSA+MQaq9DjEV2EA1LB0XeLcQKRNr8RTP+XXMFIjmE86Tk7N/V6P?=
- =?us-ascii?Q?UMVlRoxx9FTBq5n7G3Ioe9t04nVRQls51+2RKj4dcKKhRlx1ljuNssHFwl6q?=
- =?us-ascii?Q?cuM1Cg8t04+a/6S6eSfezkPKyvaecvrXi3auvPhuwWQwKsqDV+vzV7i71UmI?=
- =?us-ascii?Q?aPmCMn1Mn5a3GrBnjOR6y/pyoIoe0QqhHDu+Lclet3B4dXWuIfKG63gqs4lH?=
- =?us-ascii?Q?AvBoDx/gOUWbZVC6wDo5rUnnnSIYIe3jKT8g0ygZa8aBCHPEQXlBgE0jNqIC?=
- =?us-ascii?Q?a17q46fH8yTjFAMxKe/gVj3R3LfRgW7KwrqVbp0UlRQl1++Al+u61rIJvre5?=
- =?us-ascii?Q?OP4r46IaGA7YHIKt1q34CODSSI/EYdnBh5wOS2NiA7ExdLSuaqXdjYndA9+r?=
- =?us-ascii?Q?WQvwIcVwCofjz01sXRmn4MP9shy40sh/TRc1diEoyNPOZA8bXeUhZNTJaXhB?=
- =?us-ascii?Q?NK3HpJhJKnT6H6byOTJlU1jhyHHVRtlCHatyelZJpPo8MA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CHtYr/NzJ6PmLz+xxRfxFzzGzusENuVX+DSLh2RzedYewQU906UN2wuQfM4k?=
- =?us-ascii?Q?9pYOR7au8IKbgXSvpJpTV8eYneXmGyOb2bgBb6TFRgEQxu/pyaecotg+NEjI?=
- =?us-ascii?Q?SyMrnCoXcbSDmyYLWwgui/fArO123elebxt4EHlSJFCZ98DNP9ifSljB2zsS?=
- =?us-ascii?Q?HXQFBoaMhrVH3WPJpguWjQWm+hB0/trTkKsr6NylWMYpQj1LpLydmI/YFzWx?=
- =?us-ascii?Q?3lMLVeRHEmxnm8ozEEsHd4xncSox19z6M67zKSEmYi9r0kAGAIhCRynaYcBX?=
- =?us-ascii?Q?Cf44ik6UN7rmV0b2E0J0pPWg0smHNncsGkq1CQJs/eU5LcXKsSzQyGFdtEe/?=
- =?us-ascii?Q?QPWd/nDz/GzEk8hRIm1DyJYYi+3ht846jwrh3YRROU3pPgS6nsv705OGCi0H?=
- =?us-ascii?Q?nmohg+h5vy0v7We70nzT09BEAFIFbalKrnwmrrfbiNANUx/68RF6tIgPXEil?=
- =?us-ascii?Q?4x1xmbSLEAsJKGyH6Pp/NAA9zcN3ttJ0Sun3cBtowciQDRV1ZrWw/9H+5vKJ?=
- =?us-ascii?Q?JK9inEFdXMqW0I72RcfQXZeTz4u3Lsh3FS29foWj3noMFxci3/n0FR/MVFO4?=
- =?us-ascii?Q?/WqBcKLHp3sddtmXxcO7//tz+xz9n2pYZLuQCVEQ11eX5BoNt822ue95dzIV?=
- =?us-ascii?Q?N7fiffztcovYZ7k0MG673LxSvfwmjTDxBky39ysEVuFJq+fHtRpJDiH7FjvK?=
- =?us-ascii?Q?uugcAj188MtEwrzmsShyJ6fEOeCujKL14AWFNToE69S5Reip8aHSP/308fuf?=
- =?us-ascii?Q?pPIoHqJp8CGcagBhbprQvcsqDipIb5EWrsQRUVkdiT2HSQALpO5Qj4VxUHkn?=
- =?us-ascii?Q?bqX+xDOsyXKX/wwahVuTDKUfvI7tmhFW+vLAkq5/F7Mvaf/0o5NB2Ye2Xq7B?=
- =?us-ascii?Q?kvLIuLqIBIVDZ/2BWIknMTNM2gzSFV4EEwqTaKWuAzTHAFZqdUgSP2aHoJOO?=
- =?us-ascii?Q?0ZNjxP+3uT9lbOPjnWIPACOBIif4QuTuvyIdqcJ1aEU+T9pi0sVI+XZP0N4y?=
- =?us-ascii?Q?Zz2pySSEGLFyKIK9utnSxlod6JPtM4027m0prh0+G/Zc1iYarYJFTX7Ej8Fd?=
- =?us-ascii?Q?1tKyw9BwjIWUqc3dBcb+n6PXEOnUTOPO2D9D92iGwfExdopl0UKjKQHGNE8c?=
- =?us-ascii?Q?L22CBveJ5bWWcY2EagRHOHG9PPPiN9sHWbwa50LCmkH5xOlSb5y0/SustHJ8?=
- =?us-ascii?Q?9Drnl6hNo86j3e0bMMXj1KqDUobzu9kw1xVVXqOZfzP4Wve+XevjEtDplz+j?=
- =?us-ascii?Q?TnGx+hG9jPWg30Behb81F4WXCyGar23+IPlSlkp0Np5/yv1YLw04SWgyK8CT?=
- =?us-ascii?Q?PFh04wx5o6qNmfsUPgG5sEDqYZddS07QOa2lQePOn96Lj6V5BloajdTP2LPw?=
- =?us-ascii?Q?OJ7YgTGdqGuoMioh270Pw9vknv3aywVAQiHHQJhuWAuBYzOXLmz4Y1Xiw4oF?=
- =?us-ascii?Q?1HET/lHbb8uk70JlANfaVqQfsZndy1s+t40DY+OktGwNzK5Vdzlcc3p/1y6h?=
- =?us-ascii?Q?xhHJJTn2/6t1NMxzkJBCYwV6EGuQSCV95UX++95NHQST6AUIPiF/hb8PcIje?=
- =?us-ascii?Q?24a5FqnL3k4EI3SPVa/E3h7lXEHOPtGDcCxE1+9+bnOxRNNCFyc7fhORjE/S?=
- =?us-ascii?Q?uxVruKm9kJ+bHRG/dFCPk0KDo1GMnFBrdJ/P//nVrn3O+A2nh56NlgJT8cVH?=
- =?us-ascii?Q?yIOMWQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qpNRDUFZrU8xqUEhk+pcDvGwpG4Oed9n5a3o91we3Vcan/a48ACMm9gvCjl0HuyCHnh7GL7x6PyiYx2JquhfE4QnDC6kd3546N9YpEfv/u37LRkyNdzQP65s53CKyGfIzHoRakKhmD/1WAS5e39WJuQJLJWRH6YG0FqfjuWEdIHNhdfFcdIgEC45cvDcl4g5I4VwiaixwP6UESXlfEyn7uAzEy3+DLHfAgHsIPu5KbsItR366e4sAEasK/j49YouRsqK+MQb1dNQphT30wuyTLMRC0uvXPhjtuGVyfNPBY20Gtqyo+hzHIGfybjRotL1cLHt6yp+bVvIQvIbIYPXnI5rL1TekeYddQgm93PAK9MxkzdA8aRTBGkumheXmm/7X+sTDAdADuG+T5WZESfCHTJHrkOJLyXoTGDiKEzmRw6o/eTlo5uPqW+2+fwqVzIrEpPyFvjutExDZQtmkVTHpW3ik5oiDgVvsaT2HcTGo4x45tQyuVS2cSDQn7IgRHG43BOI4va0zWEk4eXbYJNkoiRqg7J1XaExJ6lPZcnCesW+KEP1sCiFbAGh4W4b6wHxhBc2B64XKouL8ZMUEuEWkjUcQC7KtQbh2P6tvCOveAM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d02714a-8cb7-47f8-f9a3-08dcae6c1b15
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2024 18:44:11.4765
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GJKdX0ET7K4Z0+bAxVQsXhmnfdr8X9i3F1DLjLRsdPZURRQEf2WUbXmJ/Sj6ck4UQ2QApQN5mvQItwZGhmxIPUihmgTRJTc0XvpNfZddh3E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4354
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-27_12,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 phishscore=0
- spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407270129
-X-Proofpoint-GUID: igc-gfHKKqFSF6BKIgpCxHduRj5ytCLK
-X-Proofpoint-ORIG-GUID: igc-gfHKKqFSF6BKIgpCxHduRj5ytCLK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52bf1aa6-449f-4f77-992e-45e510fe6e7f@kernel.org>
 
-On Sat, Jul 27, 2024 at 09:26:43AM GMT, Linus Torvalds wrote:
-> On Sat, 27 Jul 2024 at 01:08, Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > 62603617./drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o.pre
->
-> Heh.
->
->   Longest line is drivers/.../ia_css_ynr.host.c:71 (27785kB)
->
-> yeah, that's a single line that expands to 27MB in size.
->
-> And yes, that line is one single min(...) expression with arguments
-> that are then in turn macros with other nested min/max arguments.
->
-> See also drivers/staging/media/atomisp/pci/sh_css_frac.h.
->
-> On my fairly beefy (admittedly more cores than single-thread) machine,
-> just generating the preprocessor file takes just under 20s.
->
-> Building the object file is actually faster at "only" 8.5s for that
-> one file, because it uses the built-in preprocessor and never writes
-> it out, and most of the actual preprocessing result is trivial stuff
-> that gets thrown away immediately.
->
->               Linus
+On Sat, Jul 27, 2024 at 11:06:05AM GMT, Krzysztof Kozlowski wrote:
+> On 26/07/2024 21:44, Alex Lanzano wrote:
+> > Add device tree bindings for the monochrome Sharp Memory LCD
+> > 
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> > Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> > Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> 
+> The order of tags is incorrect. Who developed it first? Please read at
+> Submitting patches - it explained this case quite precisely.
+> 
 
-I attach a patch which addresses some of the worst culprits here including
-that staging monstrosity. Changing the sDIGIT_FITTING() and
-uDIGIT_FITTING() macros affects a ton of other related drivers so has an
-outsized impact.
+Will fix!
 
-Another big one I tackled is the NET_SKB_PAD define causing slightly hidden
-nesting, we can just replace that with a dumb #if and get rid of that.
+> > ---
+> >  .../bindings/display/sharp,ls010b7dh04.yaml   | 94 +++++++++++++++++++
+> >  1 file changed, 94 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+> > new file mode 100644
+> > index 000000000000..79bde7bf0d7d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+> > @@ -0,0 +1,94 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/sharp,ls010b7dh04.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Sharp Memory LCD panels
+> > +
+> > +maintainers:
+> > +  - Alex Lanzano <lanzano.alex@gmail.com>
+> > +
+> > +description:
+> > +  Sharp Memory LCDs are a series of monochrome displays that operate over
+> > +  a SPI bus when the chip select is high. The displays require a signal (VCOM)
+> > +  to be generated to prevent DC bias build up resulting in pixels being
+> > +  unable to change. Three modes can be used to provide the VCOM signal
+> > +  ("software", "external", "pwm").
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sharp,ls010b7dh04
+> > +      - sharp,ls011b7dh03
+> > +      - sharp,ls012b7dd01
+> > +      - sharp,ls013b7dh03
+> > +      - sharp,ls013b7dh05
+> > +      - sharp,ls018b7dh02
+> > +      - sharp,ls027b7dh01
+> > +      - sharp,ls027b7dh01a
+> > +      - sharp,ls032b7dd02
+> > +      - sharp,ls044q7dh01
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  spi-cs-high: true
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
+> 
+> Thank you.
+> </form letter>
+> 
 
-I also moved MVPP2_SKB_HEADROOM to a clamp_t().
+My apologies! I must've missed the comment on this line. I replied to this
+on the v1 thread
 
-I noticed a bunch of xfs stuff that's slow too, but tracked that down to
-<linux/bio.h> which I see you're covering in another thread with Willy.
+> > +
+> > +  spi-max-frequency:
+> > +    maximum: 2000000
+> > +
+> > +  sharp,vcom-mode:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      software - This mode relies on a software operation to send a
+> > +      "maintain display" message to the display, toggling the vcom
+> > +      bit on and off with each message
+> > +
+> > +      external - This mode relies on an external clock to generate
+> > +      the signal on the EXTCOMM pin
+> 
+> External clock? Then you might be missing clocks property.
 
-There are other bits and pieces, but this seems to cover the most egregious
-cases.
+This is to handle the case where a clock IC or other signal generator IC is provided
+on the display module itself. So I don't believe the clocks property would be 
+needed.
 
-This patch reduces preprocessor-generated output for allmodconfig from
-102,966,525,841 bytes (!) to 102,764,954,617 on my system, thus saves
-~200MB of generated output.
+> > +
+> > +      pwm - This mode relies on a pwm device to generate the signal
+> > +      on the EXTCOMM pin
+> 
+> That's an enum. Otherwise why "pony" would be a correct vcom-mode?
+> 
 
-----8<----
-From 02f844f0a623645134732aeb96f635558050d104 Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date: Sat, 27 Jul 2024 19:10:01 +0100
-Subject: [PATCH] minmax: fixup call sites generating egregious macro
- expansions
+Will fix!
 
-Adjust code that results in a combinatorial explosion of min()/max() macro
-expansion, resulting in significant build performance degradation.
+> > +
+> > +  enable-gpios: true
+> > +
+> > +  pwms:
+> > +    maxItems: 1
+> > +    description: External VCOM signal
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - spi-cs-high
+> > +  - sharp,vcom-mode
+> > +
+> > +allOf:
+> > +  - $ref: panel/panel-common.yaml#
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +  - if:
+> > +      properties:
+> > +        sharp,vcom-mode:
+> > +          const: pwm
+> > +    then:
+> > +      required:
+> > +        - pwms
+> > +
+> > +additionalProperties: false
+> 
+> Instead:
+> unevaluatedProperties: false
+> 
 
-Simplify by using constructs that do not result in the preprocessor doing
-this.
+Will fix!
 
-This code should have no functional impact.
+> > +
+> > +examples:
+> > +  - |
+> > +    spi {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        display@0{
+> 
+> Missing space (see DTS coding style or any DTS)
+> 
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  2 +-
- .../staging/media/atomisp/pci/sh_css_frac.h   | 26 ++++++++++++++-----
- include/linux/skbuff.h                        |  6 ++++-
- 3 files changed, 25 insertions(+), 9 deletions(-)
+Will Fix!
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-index e809f91c08fb..8b431f90efc3 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -23,7 +23,7 @@
- /* The PacketOffset field is measured in units of 32 bytes and is 3 bits wide,
-  * so the maximum offset is 7 * 32 = 224
-  */
--#define MVPP2_SKB_HEADROOM	min(max(XDP_PACKET_HEADROOM, NET_SKB_PAD), 224)
-+#define MVPP2_SKB_HEADROOM	clamp_t(int, XDP_PACKET_HEADROOM, NET_SKB_PAD, 224)
+> > +            compatible = "sharp,ls013b7dh03";
+> > +            reg = <0>;
+> > +            spi-cs-high;
+> > +            spi-max-frequency = <1000000>;
+> > +            sharp,vcom-mode = "software";
+> > +        };
+> > +    };
+> > +...
+> 
+> Best regards,
+> Krzysztof
+> 
 
- #define MVPP2_XDP_PASS		0
- #define MVPP2_XDP_DROPPED	BIT(0)
-diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-index b90b5b330dfa..ec6cc818f3c6 100644
---- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-+++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-@@ -32,12 +32,24 @@
- #define uISP_VAL_MAX		      ((unsigned int)((1 << uISP_REG_BIT) - 1))
+Again, thank you for taking the time to review.
 
- /* a:fraction bits for 16bit precision, b:fraction bits for ISP precision */
--#define sDIGIT_FITTING(v, a, b) \
--	min_t(int, max_t(int, (((v) >> sSHIFT) >> max(sFRACTION_BITS_FITTING(a) - (b), 0)), \
--	  sISP_VAL_MIN), sISP_VAL_MAX)
--#define uDIGIT_FITTING(v, a, b) \
--	min((unsigned int)max((unsigned)(((v) >> uSHIFT) \
--	>> max((int)(uFRACTION_BITS_FITTING(a) - (b)), 0)), \
--	  uISP_VAL_MIN), uISP_VAL_MAX)
-+static inline int sDIGIT_FITTING(short v, int a, int b)
-+{
-+	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
-+
-+	v >>= sSHIFT;
-+	v >>= fit_shift > 0 ? fit_shift : 0;
-+
-+	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
-+}
-+
-+static inline unsigned uDIGIT_FITTING(unsigned v, int a, int b)
-+{
-+	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
-+
-+	v >>= uSHIFT;
-+	v >>= fit_shift > 0 ? fit_shift : 0;
-+
-+	return clamp_t(unsigned, v, uISP_VAL_MIN, uISP_VAL_MAX);
-+}
-
- #endif /* __SH_CSS_FRAC_H */
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 29c3ea5b6e93..d53b296df504 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3164,7 +3164,11 @@ static inline int pskb_network_may_pull(struct sk_buff *skb, unsigned int len)
-  * NET_IP_ALIGN(2) + ethernet_header(14) + IP_header(20/40) + ports(8)
-  */
- #ifndef NET_SKB_PAD
--#define NET_SKB_PAD	max(32, L1_CACHE_BYTES)
-+#if L1_CACHE_BYTES < 32
-+#define NET_SKB_PAD	32
-+#else
-+#define NET_SKB_PAD	L1_CACHE_BYTES
-+#endif
- #endif
-
- int ___pskb_trim(struct sk_buff *skb, unsigned int len);
---
-2.45.2
+Best regards,
+Alex
 
