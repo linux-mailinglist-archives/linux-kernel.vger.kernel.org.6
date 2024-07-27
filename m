@@ -1,200 +1,196 @@
-Return-Path: <linux-kernel+bounces-263990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A097B93DD9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:14:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DC493DDA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7FF1B21D6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA981F22318
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 07:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E5C2837D;
-	Sat, 27 Jul 2024 07:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419D72574B;
+	Sat, 27 Jul 2024 07:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGH90k3i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="MikX91qo"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B072CCC2
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 07:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B89E2940F
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 07:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722064466; cv=none; b=kHKGq6YeR1W+BAaMYbGiLnhuRBTd8UCB3/0sf0fKRoeu+U8f9j2w5HiH7k/evYvXdDrN/fEb0s4e+HNl/KUxa8+hak2SGZZKwElZydb5ClXcO2pEyZZ2FilsWV9W69txzd/vsK5igil9LRpBme+4qKOQbQ2mhme1cD8eeF48wR4=
+	t=1722064821; cv=none; b=J01huzc++gys+LQTraIB5bHLfSbWe85suAAZwpiR1ZP0qFex60oBsMaglc9yzM5BhDkdjj4NbOydGdy3RcgJpGaPjj1ZtE4e806XWdepzfgxEE2ULDCRbKNYJOFP4CJj6obd0pfQiTfumJZkWEB8C5ASWWD98kGuENffBjqG5b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722064466; c=relaxed/simple;
-	bh=PDrDSG679tZgrgzWDkMYt0FDb+JhOwYtt2rOW8etHWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpvIznLML2AolH8LHOImzhm7yGyHfegI4k7vzlDXs6guDJdEa0IUt9Mf3Y1OWd3GqcYkuZn1MxKAR0GRdH7UBUNwGG+0TkCQ/Pc/wXVmso5nE+djQ4RQn8pz9VqOaNH7O5HCrrHpave8Jtj1lAr9ceNUaVIG8dbMHOWNfVwH+FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGH90k3i; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722064465; x=1753600465;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PDrDSG679tZgrgzWDkMYt0FDb+JhOwYtt2rOW8etHWk=;
-  b=RGH90k3iU6FtjA6LpvOnGZCL6uxS1qWucbsmAHW719fD66t/1MtIlO6g
-   QoMgeHqsJZsBrhU9ZF804cgpJhcWP2nEhnvsjsR0JPuAr/jzIxsA+SvLo
-   CKiJqeadT7zXXhhxULG9+kRNCoEM4nmthUbJq+JOb1F0OBETyjZqXTAgf
-   hJWw3ldxt17x6M7uI6SMhAdvBwDqHLmMOs53d+2daVugRLZoHtsBFb/e0
-   CNghZ41pQZNG+p24j+gNhvMa9c1GyUfTY/ZBRPggpyT+L/TawIPr+GSgb
-   +QN2hxJChCQvJy6MKWx74mfZnv5IB1xZ6Av6j3O7RkhpLDQ6NhgGnILPk
-   w==;
-X-CSE-ConnectionGUID: 5kal4T+sTmCfvxyez5wcbQ==
-X-CSE-MsgGUID: rvjSxd8wQDO2afqzqQgz5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11145"; a="30474622"
-X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
-   d="scan'208";a="30474622"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 00:14:24 -0700
-X-CSE-ConnectionGUID: K4q1gM87SDGxQEzAl3vBjg==
-X-CSE-MsgGUID: 6QD6XAxERwisc8lAKMYJtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,240,1716274800"; 
-   d="scan'208";a="53150571"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Jul 2024 00:14:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sXbd9-000phs-2e;
-	Sat, 27 Jul 2024 07:14:15 +0000
-Date: Sat, 27 Jul 2024 15:13:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tim Merrifield <tim.merrifield@broadcom.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-	Xin Li <xin3.li@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Kai Huang <kai.huang@intel.com>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	virtualization@lists.linux.dev, alex.james@broadcom.com,
-	doug.covelli@broadcom.com, jeffrey.sheldon@broadcom.com,
-	kevin.christopher@broadcom.com, aravind-as.srinivasan@broadcom.com,
-	ravindra.kumar@broadcom.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] Add prctl to allow userlevel TDX hypercalls
-Message-ID: <202407271423.sLLB8VXR-lkp@intel.com>
-References: <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
+	s=arc-20240116; t=1722064821; c=relaxed/simple;
+	bh=Mj2Cgfna1zlKya0P3RKhQWiKc0MVRcD6WSn1njYEx9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cE5Ko6+WUW6yImlAH6+snqC8LV8VRtxLj1gJ2/RvPMKhmjEdReaQxiMxHgkPVR4tTq86k10JHO7BmUZdoJBF/xIjSjVzHJ2X96Xzth33R68IMIFNBffKtiQhswdDRYGVRUYaiepoC+7Y2vVU8p7OUDlKgm9JHY6Hd7hkDjkBwdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=MikX91qo; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efaae7edfso2349474e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 00:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1722064817; x=1722669617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=filpyQkk9f0QR0ZeZDqORBnz2FVGnj0jpfuEwjUBe9U=;
+        b=MikX91qo6Ezr2r73ZgEIbg0ip+cRIuiFvev1IODTk6hsnULTnBB556ZUKMdDb+kXcD
+         cvNf+layU5GMXQuWVLU4JxITuVbEISOIfJ3Kw1kgHcRbA1AWJxzfWy6tNlCSODdixh4W
+         qynt9Lq05i93Hdqd9RDjW6dF11KYeDqy0Sb5BlI726EttQEnAxYonq7mz0ALY9aM68B7
+         e4R14JYJXQZE+1NedA5k86BObvRhUtPF95H+Cn6rYyR1XfbUzr4cbZQnPHX4Q+SxZMEs
+         rz53aZ1LPCwaEpJPBP8FBr+Z6oZzWfHWgtm+DNzk6P0S99o3X035LfUmyoWkLLyHyU7m
+         G3Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722064817; x=1722669617;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=filpyQkk9f0QR0ZeZDqORBnz2FVGnj0jpfuEwjUBe9U=;
+        b=DefEmDM0SkAtUrm1j5QCKcg/abBfA59opf+zSKDpvdoMYFTfovEqiilMccIBNrmD9a
+         UzpUA9/AVyGch7sXKS1aQ3Z/dihIVecFqa3wqqfDWXyPFKMse7SNx20jq8WjyiPzM9pw
+         G33pn91YA8TW+UIkyvs+4JeLccY7vazuc2neMb/zhT5sSeF3qI4wBbH8pDiNGAf456+B
+         ppsoggzDEtBMG3okvXMD2K3wleHDmxgb16btY//++jsVkbaoMcyQv0goy05PwQ+l0xrp
+         dtlgAuQmMI5rqknNLTVnIibiX8P7bJLYW4sn4RzmQLEUGvMNdFj2KhVKQrSK00Z8Pzbu
+         yKRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWb1H62OjUhdEj2Ce426kxIdal6anpZZF+I2dJHCtHrITaiAa+yx4goxn+Wa/1LzavKFwxXs3R1j3vB4nQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH9uYHXAEnQls4jiC/0AuCKwvGOsnZB+hIMHFdJ88MDxylE++z
+	oEX06j3oX1q7Z5+nfx/WjcfIikbtkziS4S39C9i3Qn8K1cQ9aa32NFZJGq3fiwM=
+X-Google-Smtp-Source: AGHT+IFDPYDSILZU3rP/sPsaknvIEFg9+E1jfU5/iGH9hRwxbQl+WMz7VJsnbKT21Rw1A48t2VpFvw==
+X-Received: by 2002:a19:770c:0:b0:52c:d626:77aa with SMTP id 2adb3069b0e04-5309b2d9aa9mr1005911e87.58.1722064816895;
+        Sat, 27 Jul 2024 00:20:16 -0700 (PDT)
+Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab231f2sm253102866b.7.2024.07.27.00.20.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 00:20:16 -0700 (PDT)
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+To: u-boot@lists.denx.de,
+	linux-kernel@vger.kernel.org
+Cc: mbrugger@suse.com,
+	pbrobinson@gmail.com,
+	trini@konsulko.com,
+	sjg@chromium.org,
+	bmeng.cn@gmail.com,
+	Patrick Rudolph <patrick.rudolph@9elements.com>
+Subject: [PATCH 07/17] arm: acpi: Add generic ACPI methods
+Date: Sat, 27 Jul 2024 09:17:08 +0200
+Message-ID: <20240727071742.1735703-8-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240727071742.1735703-1-patrick.rudolph@9elements.com>
+References: <20240727071742.1735703-1-patrick.rudolph@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Tim,
+Add generic ACPI code to generate
+- MADT GICC
+- MADT GICD
 
-kernel test robot noticed the following build errors:
+as commonly used on arm platforms.
 
-[auto build test ERROR on tip/x86/vmware]
-[also build test ERROR on tip/x86/tdx linus/master v6.10 next-20240726]
-[cannot apply to tip/x86/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Cc: Tom Rini <trini@konsulko.com>
+Cc: Simon Glass <sjg@chromium.org>
+---
+ arch/arm/include/asm/acpi_table.h | 18 +++++++++++++
+ arch/arm/lib/Makefile             |  1 +
+ arch/arm/lib/acpi_table.c         | 44 +++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+)
+ create mode 100644 arch/arm/lib/acpi_table.c
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tim-Merrifield/Add-prctl-to-allow-userlevel-TDX-hypercalls/20240727-025221
-base:   tip/x86/vmware
-patch link:    https://lore.kernel.org/r/651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield%40broadcom.com
-patch subject: [PATCH v2 1/2] Add prctl to allow userlevel TDX hypercalls
-config: i386-buildonly-randconfig-001-20240727 (https://download.01.org/0day-ci/archive/20240727/202407271423.sLLB8VXR-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240727/202407271423.sLLB8VXR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407271423.sLLB8VXR-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/kernel.h:23,
-                    from arch/x86/kernel/process.c:5:
-   arch/x86/kernel/process.c: In function 'get_coco_user_hcall_mode':
->> arch/x86/kernel/process.c:1041:46: error: 'mm_context_t' has no member named 'flags'
-    1041 |                         &current->mm->context.flags);
-         |                                              ^
-   include/linux/bitops.h:45:44: note: in definition of macro 'bitop'
-      45 |           __builtin_constant_p((uintptr_t)(addr) != (uintptr_t)NULL) && \
-         |                                            ^~~~
-   arch/x86/kernel/process.c:1040:17: note: in expansion of macro 'test_bit'
-    1040 |         return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-         |                 ^~~~~~~~
->> arch/x86/kernel/process.c:1041:46: error: 'mm_context_t' has no member named 'flags'
-    1041 |                         &current->mm->context.flags);
-         |                                              ^
-   include/linux/bitops.h:46:23: note: in definition of macro 'bitop'
-      46 |           (uintptr_t)(addr) != (uintptr_t)NULL &&                       \
-         |                       ^~~~
-   arch/x86/kernel/process.c:1040:17: note: in expansion of macro 'test_bit'
-    1040 |         return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-         |                 ^~~~~~~~
->> arch/x86/kernel/process.c:1041:46: error: 'mm_context_t' has no member named 'flags'
-    1041 |                         &current->mm->context.flags);
-         |                                              ^
-   include/linux/bitops.h:47:57: note: in definition of macro 'bitop'
-      47 |           __builtin_constant_p(*(const unsigned long *)(addr))) ?       \
-         |                                                         ^~~~
-   arch/x86/kernel/process.c:1040:17: note: in expansion of macro 'test_bit'
-    1040 |         return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-         |                 ^~~~~~~~
->> arch/x86/kernel/process.c:1041:46: error: 'mm_context_t' has no member named 'flags'
-    1041 |                         &current->mm->context.flags);
-         |                                              ^
-   include/linux/bitops.h:48:24: note: in definition of macro 'bitop'
-      48 |          const##op(nr, addr) : op(nr, addr))
-         |                        ^~~~
-   arch/x86/kernel/process.c:1040:17: note: in expansion of macro 'test_bit'
-    1040 |         return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-         |                 ^~~~~~~~
->> arch/x86/kernel/process.c:1041:46: error: 'mm_context_t' has no member named 'flags'
-    1041 |                         &current->mm->context.flags);
-         |                                              ^
-   include/linux/bitops.h:48:39: note: in definition of macro 'bitop'
-      48 |          const##op(nr, addr) : op(nr, addr))
-         |                                       ^~~~
-   arch/x86/kernel/process.c:1040:17: note: in expansion of macro 'test_bit'
-    1040 |         return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-         |                 ^~~~~~~~
-   arch/x86/kernel/process.c: In function 'set_coco_user_hcall_mode':
-   arch/x86/kernel/process.c:1048:46: error: 'mm_context_t' has no member named 'flags'
-    1048 |                         &current->mm->context.flags);
-         |                                              ^
-   arch/x86/kernel/process.c:1051:48: error: 'mm_context_t' has no member named 'flags'
-    1051 |                           &current->mm->context.flags);
-         |                                                ^
-   arch/x86/kernel/process.c: In function 'get_coco_user_hcall_mode':
->> arch/x86/kernel/process.c:1042:1: warning: control reaches end of non-void function [-Wreturn-type]
-    1042 | }
-         | ^
-
-
-vim +1041 arch/x86/kernel/process.c
-
-  1037	
-  1038	static int get_coco_user_hcall_mode(void)
-  1039	{
-  1040		return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
-> 1041				&current->mm->context.flags);
-> 1042	}
-  1043	
-
+diff --git a/arch/arm/include/asm/acpi_table.h b/arch/arm/include/asm/acpi_table.h
+index e69de29bb2..8a25e93847 100644
+--- a/arch/arm/include/asm/acpi_table.h
++++ b/arch/arm/include/asm/acpi_table.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++#ifndef __ASM_ACPI_TABLE_H__
++#define __ASM_ACPI_TABLE_H__
++
++#ifndef __ACPI__
++
++void acpi_write_madt_gicc(struct acpi_madt_gicc *gicc, uint cpu_num,
++			  uint perf_gsiv, ulong phys_base, ulong gicv,
++			  ulong gich, uint vgic_maint_irq, ulong mpidr,
++			  uint efficiency);
++
++void acpi_write_madt_gicd(struct acpi_madt_gicd *gicd, uint gic_id,
++			  ulong phys_base, uint gic_version);
++
++#endif /* !__ACPI__ */
++
++#endif /* __ASM_ACPI_TABLE_H__ */
+diff --git a/arch/arm/lib/Makefile b/arch/arm/lib/Makefile
+index 67275fba61..a7efed6771 100644
+--- a/arch/arm/lib/Makefile
++++ b/arch/arm/lib/Makefile
+@@ -86,6 +86,7 @@ obj-y	+= psci-dt.o
+ obj-$(CONFIG_DEBUG_LL)	+= debug.o
+ 
+ obj-$(CONFIG_BLOBLIST)  += xferlist.o
++obj-$(CONFIG_GENERATE_ACPI_TABLE) += acpi_table.o
+ 
+ # For EABI conformant tool chains, provide eabi_compat()
+ ifneq (,$(findstring -mabi=aapcs-linux,$(PLATFORM_CPPFLAGS)))
+diff --git a/arch/arm/lib/acpi_table.c b/arch/arm/lib/acpi_table.c
+new file mode 100644
+index 0000000000..ea3a6343c9
+--- /dev/null
++++ b/arch/arm/lib/acpi_table.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Based on acpi.c from coreboot
++ *
++ * Copyright (C) 2024 9elements GmbH
++ */
++
++#define LOG_CATEGORY LOGC_ACPI
++
++#include <acpi/acpigen.h>
++#include <acpi/acpi_device.h>
++#include <acpi/acpi_table.h>
++#include <string.h>
++
++void acpi_write_madt_gicc(struct acpi_madt_gicc *gicc, uint cpu_num,
++			  uint perf_gsiv, ulong phys_base, ulong gicv,
++			  ulong gich, uint vgic_maint_irq, ulong mpidr,
++			  uint efficiency)
++{
++	memset(gicc, '\0', sizeof(struct acpi_madt_gicc));
++	gicc->type = ACPI_APIC_GICC;
++	gicc->length = sizeof(struct acpi_madt_gicc);
++	gicc->cpu_if_num = cpu_num;
++	gicc->processor_id = cpu_num;
++	gicc->flags = ACPI_MADTF_ENABLED;
++	gicc->perf_gsiv = perf_gsiv;
++	gicc->phys_base = phys_base;
++	gicc->gicv = gicv;
++	gicc->gich = gich;
++	gicc->vgic_maint_irq = vgic_maint_irq;
++	gicc->mpidr = mpidr;
++	gicc->efficiency = efficiency;
++}
++
++void acpi_write_madt_gicd(struct acpi_madt_gicd *gicd, uint gic_id,
++			  ulong phys_base, uint gic_version)
++{
++	memset(gicd, '\0', sizeof(struct acpi_madt_gicd));
++	gicd->type = ACPI_APIC_GICD;
++	gicd->length = sizeof(struct acpi_madt_gicd);
++	gicd->gic_id = gic_id;
++	gicd->phys_base = phys_base;
++	gicd->gic_version = gic_version;
++}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
 
