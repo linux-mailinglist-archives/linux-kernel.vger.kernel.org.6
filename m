@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-264242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EE493E0A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:10:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D11793E0AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 21:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D051F218E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93D94B21213
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 19:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3154D187334;
-	Sat, 27 Jul 2024 19:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7540C18754D;
+	Sat, 27 Jul 2024 19:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BUpc1yWX"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QGqh6HkN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BD380C09
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 19:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C57580C09;
+	Sat, 27 Jul 2024 19:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722107448; cv=none; b=NEccS5CQrKsDIphIXJoi43GIbgSNI6SfrLauc+hYUneA7coIP0J711dt2dwwz7cKQWKlt8CyQNM+jt6uC5nscEI2mcR/1GX6UKnyXIp22AkNeOGQRNmSOpGPRp5yYeIMhKpZ+XS1Bx1DAWtqmVo1BkwTq7FYBuL13qb64P38SG8=
+	t=1722107502; cv=none; b=Wz0qPvUBxgsFLGST39sQMQp3b83MDIvVJkU7R6BJke5KLAQhMK1ai+UuQWwOX5f2Q460S3akb2CFaZyAdirIncuzPM+Hc/E7zvkj/6Oz+zN6M896yRHcgt5bhrzseFwLvuCtg6lgCk/YWfRUKca1OSIj5KGaZbrMcaeqCwlnlWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722107448; c=relaxed/simple;
-	bh=XRJBv4prRAZ80meCtpugyYXP8y6zq81EO8DmSU7EQmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QpTO2bdfwcsoMTWUsnH/LWvp5xQoY6cU59FfKnL20JTEZ9TpJezfE/5uV2JXRlz5GSbQVNlV+GKHTseRzoT3oWXEMS2fm4kkeu7buTLxPtIa+ktp+6vyDoiMhtsGfjIIlVM5Ef9Z3z8dqDFGUeU9iJvIGrOjGpXJshIK8qcQMFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BUpc1yWX; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <aba35ecb-2357-4c4f-8366-08d14e40d436@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722107442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vnZTjo/7pmFDEeMIrWbXmgk6xCg9PHf76iCLLIkf1sQ=;
-	b=BUpc1yWXl1A9gUDv/LzaTVmzB/d7l1asUwM6acVHDHnrQRlZ82O55595uQzK4b3qtuAWoB
-	BeTwNtbGNPa/hihoms9YkJzZ9VRMl5SeRzf8OlCOCLWUqrVYd3JCDqduQSFL6ZD/42gedN
-	ns3+9GxixhIy+Nfcttbvm80cuiN0Ozs=
-Date: Sun, 28 Jul 2024 03:10:21 +0800
+	s=arc-20240116; t=1722107502; c=relaxed/simple;
+	bh=M8mrct+fcXWf4dQP4IR3e4KiOgK+DHB5K7VgHM1qCDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TuxIBcqyPCBwvmWEy5XkpkPrLeg+Lix+w6zUoodxUkXFVWW/x6/WhrLc29hnHYHOIWMb7fgIi2KgzH7FQ47evlhc6q51SV7otxgmvb2huh7pwJ0kzqdSW8FN1CrcitrnI2SeJFuhCE+IuVi9EJ4hn/dCYcCyVwpdwOLuPS4Kkic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QGqh6HkN; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722107500; x=1753643500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M8mrct+fcXWf4dQP4IR3e4KiOgK+DHB5K7VgHM1qCDM=;
+  b=QGqh6HkNaLLN6pwjbKizC3hee9tPHzyCIJY2Ejh0RrUMJmgp3uguS9c+
+   XxBBr4ltNUMUB0gYkX3K9owYvSRKBR1z9emzGTlXu0PiBpGaBv0OTS+za
+   HDKGLHpMNdHK6Txsxpek6fwG8BbtXAhpui8G6AUUg1/7Pj7MKCZUfRKo4
+   wRxtK9UU6Modgse+4bDYnAhulFBixAd80rHuK+e6+kPiwNB455GiFvCsv
+   CPo/bNhXp4hhKMmSGO9XSeKD/FuDMioxoD/qorhBcmNhJ/ZNNZw6w4mrG
+   KuOShxYussF0W2bGWINGMM4IptX3b/LkghuyA6kAerp5N2oJgPy5IxxIt
+   Q==;
+X-CSE-ConnectionGUID: rD8YJziURpCzS8cVtIjoOw==
+X-CSE-MsgGUID: uW4GXKzASl2YiIHga0qfIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="23737250"
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="23737250"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2024 12:11:39 -0700
+X-CSE-ConnectionGUID: 2Ao0g3xGS8qfccCuivH2mA==
+X-CSE-MsgGUID: QhoqwShcSuSMVXNuVVxAXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,242,1716274800"; 
+   d="scan'208";a="76793712"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 27 Jul 2024 12:11:37 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sXmpK-000qAq-1F;
+	Sat, 27 Jul 2024 19:11:34 +0000
+Date: Sun, 28 Jul 2024 03:11:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA
+ driver
+Message-ID: <202407280250.YTVHsCYs-lkp@intel.com>
+References: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 00/19] Add Freescale i.MX8qxp Display Controller
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org,
- aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com
-References: <20240724092950.752536-1-victor.liu@nxp.com>
- <wky3mjl7fn773myatyrdsea6oc2xebkvrgmigmmoj36eswgqry@2kox5ad5dynl>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <wky3mjl7fn773myatyrdsea6oc2xebkvrgmigmmoj36eswgqry@2kox5ad5dynl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726-loongson1-dma-v10-2-31bf095a6fa6@gmail.com>
 
-Hi,
+Hi Keguang,
 
-On 7/28/24 00:39, Dmitry Baryshkov wrote:
->> Hi,
->>
->> This patch series aims to add Freescale i.MX8qxp Display Controller support.
->>
->> The controller is comprised of three main components that include a blit
->> engine for 2D graphics accelerations, display controller for display output
->> processing, as well as a command sequencer.
->>
->> Previous patch series attempts to do that can be found at:
->> https://patchwork.freedesktop.org/series/84524/
->>
->> This series addresses Maxime's comments on the previous one:
->> a. Split the display controller into multiple internal devices.
->>     1) List display engine, pixel engine, interrupt controller and more as the
->>        controller's child devices.
->>     2) List display engine and pixel engine's processing units as their child
->>        devices.
->>
->> b. Add minimal feature support.
->>     Only support two display pipelines with primary planes with XR24 fb,
->>     backed by two fetchunits.  No fetchunit dynamic allocation logic(to be done
->>     when necessary).
->>
->> c. Use drm_dev_{enter, exit}().
->>
->> Since this series changes a lot comparing to the previous one, I choose to
->> send it with a new patch series, not a new version.
-> I'm sorry, I have started reviewing v2 without noticing that there is a
-> v3 already.
-> 
-> Let me summarize my comments:
-> 
-> - You are using OF aliases. Are they documented and acked by DT
->    maintainers?
-> 
-> - I generally feel that the use of so many small devices to declare
->    functional blocks is an abuse of the DT. Please consider creating
->    _small_ units from the driver code directly rather than going throught
->    the components. 
+kernel test robot noticed the following build errors:
 
-Well, I really don't think so. I don't agree.
+[auto build test ERROR on 668d33c9ff922c4590c58754ab064aaf53c387dd]
 
-I have checked the DTSpec[1] before type, the spec isn't define how
-many is considered to be "many", and the spec isn't define to what
-extent is think to be "small" as well.
+url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-dma-Add-Loongson-1-APB-DMA/20240726-212659
+base:   668d33c9ff922c4590c58754ab064aaf53c387dd
+patch link:    https://lore.kernel.org/r/20240726-loongson1-dma-v10-2-31bf095a6fa6%40gmail.com
+patch subject: [PATCH v10 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240728/202407280250.YTVHsCYs-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240728/202407280250.YTVHsCYs-lkp@intel.com/reproduce)
 
-[1] 
-https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.4
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407280250.YTVHsCYs-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/dma/loongson1-apb-dma.c:58:3: error: requested alignment must be 4294967296 bytes or smaller
+      58 | } __aligned(LS1X_DMA_LLI_ALIGNMENT);
+         |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_attributes.h:33:56: note: expanded from macro '__aligned'
+      33 | #define __aligned(x)                    __attribute__((__aligned__(x)))
+         |                                                        ^           ~
+   1 error generated.
+
+
+vim +58 drivers/dma/loongson1-apb-dma.c
+
+    53	
+    54	struct ls1x_dma_lli {
+    55		unsigned int hw[LS1X_DMADESC_SIZE];
+    56		dma_addr_t phys;
+    57		struct list_head node;
+  > 58	} __aligned(LS1X_DMA_LLI_ALIGNMENT);
+    59	
 
 -- 
-Best regards
-Sui
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
