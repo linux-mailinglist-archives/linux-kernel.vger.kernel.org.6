@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-264269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED8793E0EC
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C7F93E0ED
 	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 22:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84BF91F21776
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7536F1F21A94
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 20:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01923D966;
-	Sat, 27 Jul 2024 20:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BD153E22;
+	Sat, 27 Jul 2024 20:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1wf15ox5"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AN5pXvlL"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B60208B0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D255F2C69B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722112256; cv=none; b=AepPfBS5gSTF7Ly7wf4qWkPFadJUnZq5pWP3vQOg2vih+jLrg2XLvILZCO8R2d9g/9YDqIrtN1fcZvA0S8b4gjhQkXNUNAU3PkgiDl9c5+tdkOuOXStdfgJ2aAoYyGxJ+9FNfw0CMXjq+YE57EArNKzA8PxkSZTUMQbFC7f8mWI=
+	t=1722112256; cv=none; b=mwddjtijK++yFatE1qAm6BlqfedMHoA9K/te7ZNMiB09qu2odjfK6v2Vor0jpgJSzOqSQZ+bC3YrpoQduLlekmGOnOBVId+7Qxm92oiispUXBGCcVv0TNaNLRDvICbsuRUwz/k268La1C83eVTCgTQS86Jt1P60/ox+Lb1f7S2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722112256; c=relaxed/simple;
-	bh=ol8yMUHYdxk0eaGfzFCR+OIokuJ26t8SNULwd7TYEM0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=swHJcacrHbZyW7UBp4U9L+PN9WAnAKcF75RPfHtVhtBPmn6+rLEzi0QW5fH7MkMyddDNfzOBflu6yxK+roQGjo96Xs76aoB8PoMYwqe2fh2U/KrX4c2eHK8JzyGtNd74Aj9+tNAZNko7/BFE3ZU2B1PkcblMZ9N1zK07Htt8y0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1wf15ox5; arc=none smtp.client-ip=209.85.219.202
+	bh=JMYAJfnvh5fBjtCAE9lnpRby5Iz4gLoiR7otAicAG7Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XWLtwTd1mil6wA1P6tUruKzmlaUR4EbvhLQGaMfVhsXt0sXQmEDheMLZRtwgRHv0rTEXNUpT8+1h2fIa8jv/S+L0OXnVgpb7TUkW3xctQnxtYR22LfCrbsiw6VD1f7nHsqkrdRmLexEusLIe6bhMNaupDsT1s82+0NOWT9V981c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AN5pXvlL; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b28f23a28so1602075276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:30:53 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e05e9e4dfbeso1679673276.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 13:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722112253; x=1722717053; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cSKWxaKZQofKx1RyVRotZETYguVPUaZB2mNr86tB8V0=;
-        b=1wf15ox5U0B9CjE6fgbhrTCJtF+3vSZ+Zrf0tV534LIkq5rzcHH5NuJLC4HJr5F/ps
-         uptMt1JPEcG/IAhZXUUr0tADL6jWgjiIwCTiepwyaVkbldpgUgHws0Dj5nJqlnFHUFLX
-         roWWEk9WFh83ABbZSRo6GdiwLuWaOiKOCoyomr8mikYsJnkPdaT5e3Pyq8NRc+JeEbZF
-         NL3iGY35gCvaSJ8hElqiA/VN1aXXdwTDxrjXZnHfeb27nptc1+TYLE3LbepeEbJSKSpC
-         39uou06J9nmYX276qrilb74bLMC32592p9e+D9JuyZyyulsvm/QWyKIcXQ+SKTKOqsg3
-         9o3g==
+        d=google.com; s=20230601; t=1722112254; x=1722717054; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsba2l+mTog8DKmlCLg5ao+hwsKRjwNNTQ3oaykOYeU=;
+        b=AN5pXvlLRuRwkGJ8ZnkhIEEzrhFazra0EcOXiCxHpZrqbuFKBAyT4FgaX7YFSDZLBj
+         YzVFVG+niIAnl6zj5ZVtYiQ/3guqBWqlm3OJmLwAPtShuhnG/1dO+AfxkgDl49y0M7bF
+         avV1uz55gUUgeLB1sUHqAazYYjI414lu9azj5RXjVn88arvB2/noBQrio43amdWFq1xS
+         Hrz1DojZ0b+8n8Uwmn8dk8xi8HqoU+Fh7mrsbovacws5oHr53egCM6F/Sw31VHP+p+wa
+         j65EznzWqy9iNRiGzuildY4qLxZXz8QDMtslalXOtvOVxammW30wSgVoZmSUljHlVTuK
+         DooA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722112253; x=1722717053;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cSKWxaKZQofKx1RyVRotZETYguVPUaZB2mNr86tB8V0=;
-        b=Q4gAA76YRfyjdv+6e+Ca445O0olZ2Bp5m8L7GRunFceXmQRNZOKsaOKUsw4kIxmarl
-         10WtpReFjsxi2kk19ZK6JDOfUcWFDtlOBbLgqQtASX9uJ7zgh3QJSdFKZejXr/gnlgH7
-         sOVJ/3gbOrZimbDnBW0js2AJuHDqux6we9XrXcJS3jveRhCTN4x/VBA9S/H5t6VhbDCa
-         Srx1klQoLYwE6/0VFEdeDxbZyPTSPQXfKvGTg15dnVU4Wvz01sx+eziioHEfDa6AGjOT
-         FZgmXetsc5wYHBrOU8nr6nl8NWSxbSNXcNXGlnA8hvbaRTdfAdUhENoHTrArKHnousTl
-         9lrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYCtMW86mxa3Dwxxw0X5hkq9iqZToIzqyyPVifLjyRw1sy1bA3XqDpjXKUkqdZWzNtoHHf1Ir3gKTcHG9rEC1jZlCHzu9sF2OpxcR9
-X-Gm-Message-State: AOJu0Ywibzgj9HAFKadtq03js1BY1UiZOSTv029uRBEQHCw3OwVyAqxd
-	vlF6KtG9lveC4R+C4v0qpDHbeMvaPEDJNB/fvsbZqgWmYcDVtiN923/zqCPmeIE/A3q8WYAKRvv
-	RQgOVdDujaw4PNWhcTzq2BV8/9Q==
-X-Google-Smtp-Source: AGHT+IHTl3sfyDu1yNHktJR09a85dnJJVearjw1LxX4KKTYzgabvSGQgjGJlmzn2okerqsuTS8lInGVOTA0hScA4wIE=
+        d=1e100.net; s=20230601; t=1722112254; x=1722717054;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsba2l+mTog8DKmlCLg5ao+hwsKRjwNNTQ3oaykOYeU=;
+        b=dojSUfNaczpAmkeQYrdbVkc6cFRdt8Zc2kbwYivEmVi7KNL9fFUYvJYPwTOsLzK+iI
+         Mlu2Jh1grA60ZFOAl1S864vW6x4SUUR3HvMEb1svDQ+VW4tz4cS4OU0Rsi8d54XdHwML
+         VwX8NYZNopeK99JCAiAf7YVat1jUERWPLEBR9nI8Suw2VUudErYnhlN5MU6C+TVp567X
+         w+oM2eA/zR2IhvGkUiydTITXJWWpEg3/rchWOOjWr8H6q6ZpwZ89AWG1yt0vhg8vLnxL
+         RQtZ7aoHACIsi2syyqhYqIgjJdiuqcW3cThpTlJzbmP7KxN/dRME6U6iF5vH0F1+5zC0
+         Jevg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWTA162xtbO1ir9UUu8zlfKAuonNbwk+mYwgmhVy4ETUrdGQ/jeb8Gdj0bX1JWs8Og1cPxlsarTpM4+ViA4SD5o78MRJzX1vv4KJzO
+X-Gm-Message-State: AOJu0YyL4N3SUfi7XaiGo4eNOZOzS49SJL4nucAwohpcoRuLT3yTyQzY
+	zDjYaDzcFBvwS/KEX/nY5BMn2vNFVIgLAeM5BgQQp9VggAstd6B0CZBFCkx9zO7VD4Yx186NnSw
+	ZSOc5SjWr6IbBbGoNWfY5ibMZDw==
+X-Google-Smtp-Source: AGHT+IHpu7bjRnigEBEh0qhoPcCoGcFLnuGxtsTcc9qvNxSWHxq1NqzBuyWbVE6j5NNmPxREKIAuQuV4TpRKm7sYoyI=
 X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
- (user=mattgilbride job=sendgmr) by 2002:a25:854e:0:b0:e05:6e45:84b6 with SMTP
- id 3f1490d57ef6-e0b5455d8cfmr6334276.8.1722112252598; Sat, 27 Jul 2024
- 13:30:52 -0700 (PDT)
-Date: Sat, 27 Jul 2024 20:30:45 +0000
+ (user=mattgilbride job=sendgmr) by 2002:a25:868f:0:b0:e08:6c33:7334 with SMTP
+ id 3f1490d57ef6-e0b5454caa4mr86236276.8.1722112253919; Sat, 27 Jul 2024
+ 13:30:53 -0700 (PDT)
+Date: Sat, 27 Jul 2024 20:30:46 +0000
+In-Reply-To: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAPVYpWYC/23QwW7DIAwG4FepOI/JxoSQnfYe0w6GmDbS1lSki
- jZVefeRXkKUHX/E91v2Q02SB5nU2+mhsszDNIzXEvzLScULX8+ih75kZcAQGmh0sDqHexbRHAI
- yoEvAoMr/W5Y0/Dy7Pj5LvgzTfcy/z+oZ19e1xcK+ZUYNuusaIREhH+H9PI7nL3mN47daa2ZTU
- exqagqFgEjMgQj6A6WNWvQ1pULJkCBZ6iDKgdqNOqCa2pWCF0u945DigTY1dTVt1l1dknI36dp /dnUbbRFr6gpFGyQh+9gHPtC2omY3tS2URbyPzKmM3dFlWf4AuaT96QUCAAA=
+References: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
 X-Mailer: b4 0.13.0
-Message-ID: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
-Subject: [PATCH v8 0/6] Red-black tree abstraction needed by Rust Binder
+Message-ID: <20240727-b4-rbtree-v8-1-951600ada434@google.com>
+Subject: [PATCH v8 1/6] rust: kernel: add `drop_contents` to `BoxExt`
 From: Matt Gilbride <mattgilbride@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -90,120 +89,69 @@ Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>,
 	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This patchset contains the red-black tree abstractions needed by the Rust
-implementation of the Binder driver.
+From: Benno Lossin <benno.lossin@proton.me>
 
-Binder driver benefits from O(log n) search/insertion/deletion of
-key/value mappings in various places, including `process.rs` and
-`range_alloc.rs`.  In `range_alloc.rs`, the ability to store and
-search by a generic key type is also useful.
+Sometimes (see [1]) it is necessary to drop the value inside of a
+`Box<T>`, but retain the allocation. For example to reuse the allocation
+in the future.
+Introduce a new function `drop_contents` that turns a `Box<T>` into
+`Box<MaybeUninit<T>>` by dropping the value.
 
-Please see the Rust Binder RFC for usage examples [1]. Note that
-the `container_of` macro is currently used only by `rbtree` itself.
-
-Users of "rust: rbtree: add red-black tree implementation backed by the C version"
-    [PATCH RFC 03/20] rust_binder: add threading support
-    [PATCH RFC 05/20] rust_binder: add nodes and context managers
-    [PATCH RFC 06/20] rust_binder: add oneway transactions
-
-Users of "rust: rbtree: add iterator"
-    [PATCH RFC 17/20] rust_binder: add oneway spam detection
-
-Users of "rust: rbtree: add mutable iterator"
-    [PATCH RFC 06/20] rust_binder: add oneway transactions
-
-Users of "rust: rbtree: add `RBTreeCursor`"
-    [PATCH RFC 06/20] rust_binder: add oneway transactions
-
-Users of "rust: rbtree: add RBTree::entry"
-    Not used in the original RFC, but introduced after further
-    code review.  See: https://r.android.com/2849906
-
-The Rust Binder RFC addresses the upstream deprecation of red-black
-tree. Quoted here for convenience:
-
-"This RFC uses the kernel's red-black tree for key/value mappings, but we
-are aware that the red-black tree is deprecated. We did this to make the
-performance comparison more fair, since C binder also uses rbtree for
-this. We intend to replace these with XArrays instead. That said, we
-don't think that XArray is a good fit for the range allocator, and we
-propose to continue using the red-black tree for the range allocator."
-
-Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
-Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e134390ce@google.com/ [1]
 ---
-Changes in v8:
-- Fix small style nit (use ? operator)
-- Fix doc comment pointing at a private item
-- Link to v7: https://lore.kernel.org/r/20240726-b4-rbtree-v7-0-aee88caaf97c@google.com
+ rust/kernel/alloc/box_ext.rs | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-Changes in v7:
-- make `RawVacantEntry.rbtree` a raw pointer like
-  `RawVacantEntry.child_field_of_parent`, since the latter can
-  technically point at a field of the former. We prefer that the
-  implementation be explicit about the safety guarantees of both because
-  of the relationship between them.
-- Link to v6: https://lore.kernel.org/r/20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com
+diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+index 829cb1c1cf9e..557895db4f48 100644
+--- a/rust/kernel/alloc/box_ext.rs
++++ b/rust/kernel/alloc/box_ext.rs
+@@ -4,7 +4,7 @@
+ 
+ use super::{AllocError, Flags};
+ use alloc::boxed::Box;
+-use core::mem::MaybeUninit;
++use core::{mem::MaybeUninit, ptr};
+ 
+ /// Extensions to [`Box`].
+ pub trait BoxExt<T>: Sized {
+@@ -17,6 +17,20 @@ pub trait BoxExt<T>: Sized {
+     ///
+     /// The allocation may fail, in which case an error is returned.
+     fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError>;
++
++    /// Drops the contents, but keeps the allocation.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use kernel::alloc::flags;
++    ///
++    /// let value = Box::new([0; 32], flags::GFP_KERNEL);
++    /// let value = value.unwrap().drop_contents();
++    /// // Now we can re-use `value`:
++    /// Box::write(value, [1; 32]);
++    /// ```
++    fn drop_contents(self) -> Box<MaybeUninit<T>>;
+ }
+ 
+ impl<T> BoxExt<T> for Box<T> {
+@@ -53,4 +67,12 @@ fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
+         // zero-sized types, we use `NonNull::dangling`.
+         Ok(unsafe { Box::from_raw(ptr) })
+     }
++
++    fn drop_contents(self) -> Box<MaybeUninit<T>> {
++        let ptr = Box::into_raw(self);
++        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
++        unsafe { ptr::drop_in_place(ptr) };
++        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
++        unsafe { Box::from_raw(ptr.cast()) }
++    }
+ }
 
-Changes in v6:
-- Minimize usage of `*mut bindings::rb_node`, replacing with
-  `NonNull<bindings::rb_node>`. Specifically, changing
-  `RBTreeCursor.current` to be `NonNull<bindings::rb_node>` and updating
-  the corresponding functions.
-- Update `RBTreeCursor:to_key_value` helpers to have their own lifetime
-  (they are not instance methods, using a different lifetime than that
-  of the `impl` block they are in makes things more clear.
-- Fix misplaced semicolon in `cursor_lower_bound`.
-- Link to v5: https://lore.kernel.org/r/20240606-b4-rbtree-v5-0-96fe1a0e97c0@google.com
-
-Changes in v5:
-- Used `Box::write` in `RBTreeNodeReservation::into_node`, removing
-  unnecessary `unsafe` blocks.
-- Updated `RBTreeCursor::remove_current` to return the removed node.
-- Link to v4: https://lore.kernel.org/r/20240603-b4-rbtree-v4-0-308e43d6abfc@google.com
-
-Changes in v4:
-- rebased onto the tip of rust-for-linux/rust-next (97ab3e8eec0ce79d9e265e6c9e4c480492180409)
-- addressed comments from draft PR on GitHub: https://github.com/Rust-for-Linux/linux/pull/1081
-- Link to v3: https://lore.kernel.org/r/20240418-b4-rbtree-v3-0-323e134390ce@google.com
-
-Changes in v3:
-- Address various feedback re: SAFETY and INVARIANT comments from v2.
-- Update variable naming and add detailed comments for the `RBTree::insert` (later moved to
-  `RBTree::raw_entry`) implementation.
-- Link to v2: https://lore.kernel.org/r/20240219-b4-rbtree-v2-0-0b113aab330d@google.com
-
-Changes in v2:
-- Update documentation link to the C header file
-- Use `core::convert::Infallible` in try_reserve_node
-- Link to v1: https://lore.kernel.org/r/20240205-b4-rbtree-v1-0-995e3eee38c0@google.com
-
----
-Alice Ryhl (1):
-      rust: rbtree: add `RBTree::entry`
-
-Benno Lossin (1):
-      rust: kernel: add `drop_contents` to `BoxExt`
-
-Matt Gilbride (1):
-      rust: rbtree: add `RBTreeCursor`
-
-Wedson Almeida Filho (3):
-      rust: rbtree: add red-black tree implementation backed by the C version
-      rust: rbtree: add iterator
-      rust: rbtree: add mutable iterator
-
- rust/helpers.c               |    7 +
- rust/kernel/alloc/box_ext.rs |   24 +-
- rust/kernel/lib.rs           |    1 +
- rust/kernel/rbtree.rs        | 1288 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 1319 insertions(+), 1 deletion(-)
----
-base-commit: 97ab3e8eec0ce79d9e265e6c9e4c480492180409
-change-id: 20231205-b4-rbtree-abb1a016f0a0
-
-Best regards,
 -- 
-Matt Gilbride <mattgilbride@google.com>
+2.46.0.rc1.232.g9752f9e123-goog
 
 
