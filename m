@@ -1,232 +1,133 @@
-Return-Path: <linux-kernel+bounces-264126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4AC93DF32
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E145693DF37
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 14:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9058B22A7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956641F21E0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 12:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F85D8F0;
-	Sat, 27 Jul 2024 11:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD356F30F;
+	Sat, 27 Jul 2024 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TXcxHm0d"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="tOILh6sn"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957BF4653A
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F103382;
+	Sat, 27 Jul 2024 12:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722081036; cv=none; b=kWNMrSeT9jkDm71afy2DY1JvOG/il3ICNa6e+wdJIdpXt4v9kvUAbvdqHqYyyewcFnYKghApKUlCFGd8WcvM4Kap6hOyfAOhPjthFq+UiXpXfgUVJzMdxYCzwxOfu7s+Eg+3oKSrSXhX9yhOkaHnywcBZxvUdwmNnB7KjCUJ6Xo=
+	t=1722082161; cv=none; b=hVA2S5BdnxjPP2lXxylXVFcyOj5myLtOWbQKargZv7EOX6hoXLTpZeqZDIxRrKI7pyAr54Dd4Q4cKGVEL8SKhQSFKKggwBd4nxs5IlFyBg1YY9K7Ds3CbMiN+TGhSJR6OU4KP9G/HtHSuf8lN3klzGNoKe6dXXnrewBauWu7QOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722081036; c=relaxed/simple;
-	bh=3xxq0uRE/TYYRpxSPdCc/u36vIuLVeV/XR7RE9mHUik=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/m4m1bVPrE8fFuuQlSc/KL8rcEwlUH0aQFbwZqsanCz1SlR2JU0h4MKtZZ4OeY+YyaOUtAgcU8DnI8uLoBbrqYkxM3VH7ZrWFVj6FiRBu+LVKgbEA3Y7ajFx0y+06JxxaCny2ZIfjnLUFjQD5cMIAnmOwac2WyoYomwzWQ/uu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TXcxHm0d; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7B2863F4E0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1722081026;
-	bh=8JdHSCk1TXD1rDArBPNNtadzpjUExOiwwzc15+VV1S8=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=TXcxHm0dd8w8U7Zs5cj0SdadNNqVO1usPmWgHzR97MLWjWGIpCeAEmNn4yHB5AgKC
-	 AGTanF7XXDK56uO9h1OLjW+UyIc56uyeQk5xegEf+AcDs7tYs4wGgmncElxyLGgEw5
-	 Rfj+MrrmXDTzIEN5ZMonu9LDNn54eQQeXQKoeOLbouFnRrMPeUo1KEw1PlkEfVK+Rn
-	 yLgsjJpIpL1a6ndW7KxfgT3Znbh2bzN081jQV33Y1vOBJcEXIsfEqCFMM8nWxSFoHH
-	 FFHCAcJ5V+bcqD5b15ZPhpu6Efmcdq/A1toTq87QxWQ/Lf++RzI12FES5bC6HKFstS
-	 TKoj4M1uoA58w==
-Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e0b365efb6cso1085799276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 04:50:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722081025; x=1722685825;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8JdHSCk1TXD1rDArBPNNtadzpjUExOiwwzc15+VV1S8=;
-        b=p3VaWs6XLPueGFY6AUEVEA+sjsT9yBh2/DQK4JTgJZGa7bA55ydMDqv1yQ4hCPW1ob
-         lrADWikcSQ8B7K9iO9Nm/hHvsO51o2afX+lMqZGGHLJhzzGMIe0btbx6iokULPa/gDUw
-         IXDzYo3f46IvHLjcGq0c8uy1cC0vVZZGGq3inUSzCMUMPfaJmaZcbmp3E5kuhee2DtoS
-         oxf7XZyi46f3XDWc66oESDF1EUo8+ihI89KGVdLWfaZmfJ9gWQNrdXKx2MOH2lqSI/XK
-         uCPeFBvR9VtSOh49gwzGzT5j14s0uopdwdz52nu4IBQSm7lkdqPD1iz+WqAwmC2ly39O
-         wbSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3LoZK+uPJLWLWPbLHE/HFDS+xdJf6BRnvX2LL8VaigFWi1O3zqY8vzybMcLT49jvIdcfrbIr2bni4hCGISKWG5WCyKhud/X4gXKyW
-X-Gm-Message-State: AOJu0YxJSf+d9XggCPv4gj572lnxNsuOWZbYaElW7HN+9ZJIUja/dg+F
-	u1eIzJN8053WWOroad4Q8Di5ssQi6aXgEEeDmWFV0RqE/ashtdXQKXR8T2Hh8wCr+9eNetCW8Ok
-	WXQ3yVEaltUNvrW9jHEJUgn5N5qtg4nHyUZ9GjZuOOr216w02Hl70BIdwTvqI0O6rpmgGy+QyBt
-	udKThRadRtQ/cHizm/xYfHbm9yhDn9SnnnI2U83XJF+3er2iNM78L7
-X-Received: by 2002:a05:6902:1881:b0:e03:530d:3a1a with SMTP id 3f1490d57ef6-e0b545427c6mr2865498276.25.1722081025104;
-        Sat, 27 Jul 2024 04:50:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3f7Cohl+U3pUSCtdrfmw46MeGQOG0+JmN4t93TMxeEXj+mHvV5dSlJkVcfLWn19McS5jKUW+7u5/86o9rxCc=
-X-Received: by 2002:a05:6902:1881:b0:e03:530d:3a1a with SMTP id
- 3f1490d57ef6-e0b545427c6mr2865475276.25.1722081024566; Sat, 27 Jul 2024
- 04:50:24 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 27 Jul 2024 06:50:24 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <CAHk-=wiruM9sWeOM8FKvGTetiWgSaGZF31YmdzS3_s=0bw0Ekg@mail.gmail.com>
-References: <20240726195044.18004-1-sedat.dilek@gmail.com> <CAHk-=wgEhoxDM7T+Ko-NgAC5X8etF0aL3fGsUXFeqnwggNXgCA@mail.gmail.com>
- <CA+icZUWUdq-xR9nOB_c_8=pfwn8J062hiurFXcrF7zvmaNg8PA@mail.gmail.com> <CAHk-=wiruM9sWeOM8FKvGTetiWgSaGZF31YmdzS3_s=0bw0Ekg@mail.gmail.com>
+	s=arc-20240116; t=1722082161; c=relaxed/simple;
+	bh=eLEYHa+txvP+ORLO1DCQFTF3C165+1lS1YxZqje5J3A=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=DeGWkNYlNAe5jh97HxVHqMNHnW/m1aaaU/hdkT76YC+V6kzf23bgg2yPfj1j11KLHTr134XIWAouvd/hkV22B3zwQ3Q5IWBCRHq82BeTIgNPaBZbSPlT8ngyZHA0WxH81nyjxwtvaoyxjXaqbFF3h7BzYBkiJdsUbPpdZaGddBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=tOILh6sn; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1722082135; x=1722686935; i=frank-w@public-files.de;
+	bh=eLEYHa+txvP+ORLO1DCQFTF3C165+1lS1YxZqje5J3A=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tOILh6snPTqW9mFqqm1CrUJLwTATYXkQ8Hr8kNRzyhFdnEQ24kzQKr6HbZqgpSNn
+	 IwDYtU/3s3YMjrpw57f04vChsEDyap+5O564IMtVrfkwE4T1+SICXINbnLLre8yWH
+	 dzxA2jwLhZvRN6JoYmZOf4cjNyNw/G/Idh5lsNSZubwcEsDScpLMvmG+k9J30kn8i
+	 qM+XlOlhawYZLkOyQP8T5JYTgyhWqJ6yNmpyUUy7S6O2/ccMBaaHFCDYOO13oAbKW
+	 +QqBiAtSJy/enTRpH4FXqK7vyXwQi53K0hmcY5HvT9qyskuNV/lGJFEsTrVPJJvle
+	 gHIvA2KX+jq0dSH8zg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [80.245.78.50] ([80.245.78.50]) by web-mail.gmx.net
+ (3c-app-gmx-bs28.server.lan [172.19.170.80]) (via HTTP); Sat, 27 Jul 2024
+ 14:08:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sat, 27 Jul 2024 06:50:24 -0500
-Message-ID: <CAJM55Z82yardOi-x59TbdrXb834xq6_Nt=1DPqJC77MfM9vvHA@mail.gmail.com>
-Subject: Re: [v2] arm64: Rename to KERNEL_IMAGE_COMPRESSED_INSTALL kconfig for
- compressed kernel image
-To: Linus Torvalds <torvalds@linux-foundation.org>, sedat.dilek@gmail.com
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-ID: <trinity-3bc6fc80-e245-4691-9a57-f021b080d070-1722082134917@3c-app-gmx-bs28>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Chunfeng Yun
+ <chunfeng.yun@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Golle <daniel@makrotopia.org>, John Crispin <john@phrozen.org>,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Aw: Re: mt7988 usb broken on 6.10
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 27 Jul 2024 14:08:54 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <2024072712-paralyze-overthrow-ea04@gregkh>
+References: <trinity-c8e0af34-2704-476a-9454-bf5001256eb9-1722013999541@3c-app-gmx-bap12>
+ <2024072712-paralyze-overthrow-ea04@gregkh>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:CbCz3z3Lqvb4tz8Jopzw/pM4eonOQHsnprkPdh8Mmb3zZxcFK2f79E781zfvABNzOVK4S
+ fqKGamZYtuFniMTxLY8iZJwgGMI3oATZDiujaUlFv0tg9D9aOnJdrS8LX9X1OZtsvXoI4XafDYzi
+ FTErfxAGxzb7uX59A6NP4GYyP7ZBU33mxk2GcrEH2yBY0a9KmxpAO6Mb7CRZQrTnBRSIvDM2ZX9q
+ TZWujumc3WuVUblaPvXvJw86T5fFSJYpRiogWcOFwvyY4LZW6sas+q+2tiSCG1lLcDZmyxQtbBb2
+ 9Y=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LE2+ll9mjvg=;GoNkjmUw+Zn4trXBKg3J5Pz0lA2
+ wa3IIY91QoDY6VA6IHvvk2tKwKYIQdEVYCB0iuRCGiKFTSkInXLpR/NeFNSf+IVZtP/b7uhsP
+ JVPSAtvjGrADvle5DUsoyww91Pup6ymhdaHhIv7bPZowbniF4/nEqc8iWoUeLdum2BEuQfEun
+ e9fOvQgkTYzT7MpKIz12d+3gpSO3lWJBeDezf5ZkgrTjYeILtWxUb7HLbyc2ea0quR3V8JEVo
+ S2UmdygXtjHpaJwUM/o49EcD98EHVISY8yaPUsgSJaEGpmxOgYjmqPQARRNvYU65+M1CqVD/A
+ bodWYA4dpu9EnSjr3RRU23vj+jfZcD26t5zl+sxI2ndA1LAs8dT/2mZMYawnq1RSRTLnU/4X/
+ 1FkK8XKJX22fLbFO4SYRDtws9NQyty9L05bJosPOGA2ykXmA1ptHdHbO8FB5+22pq9l7Q92h2
+ m3NlJrs8LOqxnXv92OOVlPCvrmbkoiMXiwVNXwJH7f+oK/rm+axDH9Z/ZgoLXLCgj0VYkd3in
+ LQ3SkLNbhUJAGVEPPaGen5ToMxX2UXLfcsUMD8anARJpXH2dyVJx3nn7xZ3rby5GZkJXeu6je
+ gSbGW63jhryav6h2tBjeusIA6hLfS+NNMlMQVNtQDno5ja8wi19k8MZbgCnlsZG6qOz4Y7G44
+ b7C1/cMZYtiD18LAmNDFxUm3tUzbicYTI6FXewFfvQ==
+Content-Transfer-Encoding: quoted-printable
 
-Linus Torvalds wrote:
-> On Fri, 26 Jul 2024 at 13:54, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+Hi
+
+> Gesendet: Samstag, 27. Juli 2024 um 06:57 Uhr
+> Von: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+> An: "Frank Wunderlich" <frank-w@public-files.de>
+> Cc: "Mathias Nyman" <mathias.nyman@intel.com>, "Chunfeng Yun" <chunfeng.=
+yun@mediatek.com>, "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGio=
+acchino Del Regno" <angelogioacchino.delregno@collabora.com>, "Daniel Goll=
+e" <daniel@makrotopia.org>, "John Crispin" <john@phrozen.org>, linux-usb@v=
+ger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists=
+.infradead.org, linux-kernel@vger.kernel.org
+> Betreff: Re: mt7988 usb broken on 6.10
+>
+> On Fri, Jul 26, 2024 at 07:13:19PM +0200, Frank Wunderlich wrote:
+> > Hi,
 > >
-> > And when you check a diff of two of your ARM64 .config?
-> > What says COMPRESSED_INSTALL to other than the author w/o context :-)?
+> > i've noticed that usb on mt7988 is broken in 6.10, was working on 6.9 =
+(with some additional patches like
+> > for pinctrl and dts as this chipset is not completely supported by mai=
+nline yet).
 >
-> Even without any context, I think it says "compressed install".
+> Any chance you can use 'git bisect' to track down the offending commit?
+
+because in mainline there is much missing for this SoC/board bisect is a b=
+it tricky, so i tried to find someone which can say this error can be caus=
+ed by a limited set of changes so i could simply revert some suspicious co=
+mmits.
+
+But i found out that we had some major differences in the usb devicetree n=
+odes i have not expected (and to be honest not checked prior to posting). =
+After using same dts like in 6.9 all is good, sorry for the noise.
+
+> thanks,
 >
-> Which seems sensible. Because THAT'S EXACTLY WHAT IT IS.
->
-> Now, admittedly I would have preferred not having a config option for
-> this at all, but we have a sad historical situation of doing something
-> odd on arm (and parisc).
->
-> The RISC-V people used to do the same, but they decided to just make
-> 'install' do whatever image was built, so they base it on a
-> combination of different config variables: CONFIG_XIP_KERNEL,
-> CONFIG_RISCV_M_MODE, CONFIG_SOC_CANAAN_K210, and CONFIG_EFI_ZBOOT.
+> greg k-h
 
-With the approach taken by RISC-V you can choose which compression you want
-(including uncompressed) and not just gzip. For arm64 it would look something
-like this:
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ae527d1d409f..a99864491703 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -234,6 +234,13 @@ config ARM64
- 	select HAVE_RUST if CPU_LITTLE_ENDIAN
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
-+	select HAVE_KERNEL_BZIP2 if !EFI_ZBOOT
-+	select HAVE_KERNEL_GZIP if !EFI_ZBOOT
-+	select HAVE_KERNEL_LZ4 if !EFI_ZBOOT
-+	select HAVE_KERNEL_LZMA if !EFI_ZBOOT
-+	select HAVE_KERNEL_LZO if !EFI_ZBOOT
-+	select HAVE_KERNEL_UNCOMPRESSED if !EFI_ZBOOT
-+	select HAVE_KERNEL_ZSTD if !EFI_ZBOOT
- 	select HAVE_KPROBES
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
-@@ -2337,17 +2344,6 @@ config EFI
- 	  allow the kernel to be booted as an EFI application. This
- 	  is only useful on systems that have UEFI firmware.
-
--config COMPRESSED_INSTALL
--	bool "Install compressed image by default"
--	help
--	  This makes the regular "make install" install the compressed
--	  image we built, not the legacy uncompressed one.
--
--	  You can check that a compressed image works for you by doing
--	  "make zinstall" first, and verifying that everything is fine
--	  in your environment before making "make install" do this for
--	  you.
--
- config DMI
- 	bool "Enable support for SMBIOS (DMI) tables"
- 	depends on EFI
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index f6bc3da1ef11..b798875311aa 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -159,18 +159,21 @@ libs-y		:= arch/arm64/lib/ $(libs-y)
- libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-
- # Default target when executing plain make
--boot		:= arch/arm64/boot
-+boot					:= arch/arm64/boot
-+boot-image-y				:= Image
-+boot-image-$(CONFIG_KERNEL_BZIP2)	:= Image.bz2
-+boot-image-$(CONFIG_KERNEL_GZIP)	:= Image.gz
-+boot-image-$(CONFIG_KERNEL_LZ4)		:= Image.lz4
-+boot-image-$(CONFIG_KERNEL_LZMA)	:= Image.lzma
-+boot-image-$(CONFIG_KERNEL_LZO)		:= Image.lzo
-+boot-image-$(CONFIG_KERNEL_ZSTD)	:= Image.zst
-+boot-image-$(CONFIG_EFI_ZBOOT)		:= vmlinuz.efi
-
--BOOT_TARGETS	:= Image vmlinuz.efi image.fit
-+KBUILD_IMAGE := $(boot)/$(boot-image-y)
-+BOOT_TARGETS := Image Image.bz2 Image.gz Image.lz4 Image.lzma
-Image.lzo Image.zst vmlinuz.efi image.fit
-
- PHONY += $(BOOT_TARGETS)
-
--ifeq ($(CONFIG_EFI_ZBOOT),)
--KBUILD_IMAGE	:= $(boot)/Image.gz
--else
--KBUILD_IMAGE	:= $(boot)/vmlinuz.efi
--endif
--
- all:	$(notdir $(KBUILD_IMAGE))
-
- image.fit: dtbs
-@@ -182,13 +185,8 @@ $(BOOT_TARGETS): vmlinux
- Image.%: Image
- 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-
--ifeq ($(CONFIG_COMPRESSED_INSTALL),y)
-- DEFAULT_KBUILD_IMAGE = $(KBUILD_IMAGE)
--else
-- DEFAULT_KBUILD_IMAGE = $(boot)/Image
--endif
--
--install: KBUILD_IMAGE := $(DEFAULT_KBUILD_IMAGE)
-+# the install target always installs KBUILD_IMAGE (which may be compressed)
-+# but keep the zinstall target for compatibility with older releases
- install zinstall:
- 	$(call cmd,install)
-
-@@ -232,11 +230,15 @@ virtconfig:
- 	$(call merge_into_defconfig_override,defconfig,virt)
-
- define archhelp
--  echo  '* Image.gz      - Compressed kernel image
-(arch/$(ARCH)/boot/Image.gz)'
-   echo  '  Image         - Uncompressed kernel image (arch/$(ARCH)/boot/Image)'
-+  echo  '  Image.bz2     - Compressed kernel image
-(arch/$(ARCH)/boot/Image.bz2)'
-+  echo  '* Image.gz      - Compressed kernel image
-(arch/$(ARCH)/boot/Image.gz)'
-+  echo  '  Image.lz4     - Compressed kernel image
-(arch/$(ARCH)/boot/Image.lz4)'
-+  echo  '  Image.lzma    - Compressed kernel image
-(arch/$(ARCH)/boot/Image.lzma)'
-+  echo  '  Image.lzo     - Compressed kernel image
-(arch/$(ARCH)/boot/Image.lzo)'
-+  echo  '  Image.zst     - Compressed kernel image
-(arch/$(ARCH)/boot/Image.zst)'
-   echo  '  image.fit     - Flat Image Tree (arch/$(ARCH)/boot/image.fit)'
--  echo  '  install       - Install kernel (compressed if
-COMPRESSED_INSTALL set)'
--  echo  '  zinstall      - Install compressed kernel'
-+  echo  '  install       - Install kernel'
-   echo  '                  Install using (your) ~/bin/installkernel or'
-   echo  '                  (distribution) /sbin/installkernel or'
-   echo  '                  install to $$(INSTALL_PATH) and run lilo'
+regards Frank
 
