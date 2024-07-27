@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-264185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7692093DFF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:21:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D598193DFF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 17:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0C028233E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9889D2822EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 15:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1D418133C;
-	Sat, 27 Jul 2024 15:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D16D181B83;
+	Sat, 27 Jul 2024 15:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dtrPzDin"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsdI2Oz0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281F21D52B;
-	Sat, 27 Jul 2024 15:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D506F30B;
+	Sat, 27 Jul 2024 15:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722093671; cv=none; b=hqZ7S8kmXwsOx366GwzeG5HCVq7VFypDVsKzJJCu/d4jtMUp2FeEAKn0rYfRVgTaE6WXsp2WRn2yKwG75C/LLYW6vqFWZRVUrbg9h2tIbfzZtAk7W0azsBgifAeGmEMqJ1UcNoijgAi6req0r6GzFlqZ1Z3oE6+cq+9pfvpjx3s=
+	t=1722093837; cv=none; b=VIB9bOs6KATfCSiP/G9ZtgnpFmtZ55lFL729aRAo0Obme9oaloCIxVUp00kUAdXAlSJFZskUZ/GI2hDkRpPkAdPhL6c2E9gA6VmWAtV8MggQYMx0GVgtiKElEziiJ7gwV7EKNirhPSmu5UmuSc0HzJIMoLNPLgGtu1O6ryHrfmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722093671; c=relaxed/simple;
-	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LW08HPkm2BmU+2MZpusAxVOASg5kr9UbYFZSgJJIkAkdOlXQFUVMA+0P7d5pI4zszmorDu5gtPdySPmzksRp7/t7GMEPu6LNaqyoj6rDT26ORwCq9Gs1Kn0MifXuvEt6vJdj5ZjmYKPwBDd7c0t4jMJ5HnaulE35nvaj6oBILaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dtrPzDin; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722093662;
-	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dtrPzDindDUqtKeTfN/U9eGJTxRtiORH+sBa4/KNusvAqNIamb5HittPoxrpr2T9P
-	 f+ytVSEqe/UU70hK3AktguP/3/gbUb96f8aMfdxownRIlyezL0gD/EDw3ut5jbYzWX
-	 bKgCM1F8uo4JWeJ0T6vZur1olslCOP2QnJkW7voH8o4R5cw+43Y6/pdfp+9fDRna8T
-	 vWM06z/XkdocbNZ1fFmmfxU/Qdm42BkQ3oXJM2VF7wan57j+qTMBbyzmioMCyzeSKz
-	 OwulObdUDPl3Y9Iq9wJROgy4gU+6I7tfe7fUBV5FiglhZMa+oyBInIrma5JBLdE5zO
-	 jWmIL30pe/V+A==
-Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dmitry.osipenko)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6E87837821B7;
-	Sat, 27 Jul 2024 15:21:00 +0000 (UTC)
-Message-ID: <25a6acd4-551f-439f-bd5d-7026b3b5d2fe@collabora.com>
-Date: Sat, 27 Jul 2024 18:20:57 +0300
+	s=arc-20240116; t=1722093837; c=relaxed/simple;
+	bh=8zg+3Q4qdZh2c+7tjZafeq34AmHYH10iUg/BmrKF5V4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CM463MPqi2qFSBhjP5Np1CevnDWGrrjGPGyiRAtEdzXBXO2yrDP2J7vtAdMxT8+Bip8Z2EuBzFsuSDBRBEYUv6PcTlkypmf6XGJ4/77EKhJcfurYl0wRH9GASoIvneIQBqFB7CsWVzDYo0zq8tB0LDbQHAXUMuRIGR0DCBLIDZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsdI2Oz0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C276C32781;
+	Sat, 27 Jul 2024 15:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722093836;
+	bh=8zg+3Q4qdZh2c+7tjZafeq34AmHYH10iUg/BmrKF5V4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bsdI2Oz001Po1JTadNbPzemMB0CoFFoTuYed9/LvFZj5c4zfg0JG7HF8tW6kByOuf
+	 hThy1gtAbO3iGRqa9lrdqmwnPIYCZxCkdlQMo/N3LY8aZ9n5TiwM5nuo4y/61iABgC
+	 VVAl40n/jXhgrOHyAk4AtHRQp50LlootYtsXYAv2nOofH7zAWRiExaiGTqanvzTeN+
+	 qD3jbp4ySgU+F9sC8eD1FleYrw6IsYO/OpMpgr3oq//jLlPYuCjCXsKE5kOrIHVAWz
+	 KIALEti1O2eeEuJBVYpvSPUPBmrX+3I7gNaoS1ptdLZgcybfcWGc2WQZtZ+P97feON
+	 yvJYivxFyQoWw==
+Date: Sat, 27 Jul 2024 16:23:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>, Nuno Sa
+ <nuno.sa@analog.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, Marius
+ Cristea <marius.cristea@microchip.com>, Mike Looijmans
+ <mike.looijmans@topic.nl>, Liam Beguin <liambeguin@gmail.com>, Ivan
+ Mikhaylov <fr0st61te@gmail.com>, Marcus Folkesson
+ <marcus.folkesson@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: add a7779 doc
+Message-ID: <20240727162347.51fb6270@jic23-huawei>
+In-Reply-To: <20240724155517.12470-3-ramona.nechita@analog.com>
+References: <20240724155517.12470-1-ramona.nechita@analog.com>
+	<20240724155517.12470-3-ramona.nechita@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/client: Fix error code in
- drm_client_buffer_vmap_local()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Zack Rusin <zack.rusin@broadcom.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/24/24 19:09, Dan Carpenter wrote:
-> This function accidentally returns zero/success on the failure path.
-> It leads to locking issues and an uninitialized *map_copy in the
-> caller.
-> 
-> Fixes: b4b0193e83cb ("drm/fbdev-generic: Fix locking with drm_client_buffer_vmap_local()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Wed, 24 Jul 2024 18:54:39 +0300
+Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
+
+> Add dt bindings for adc ad7779.
+>=20
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
 > ---
->  drivers/gpu/drm/drm_client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-> index 2803ac111bbd..bfedcbf516db 100644
-> --- a/drivers/gpu/drm/drm_client.c
-> +++ b/drivers/gpu/drm/drm_client.c
-> @@ -355,7 +355,7 @@ int drm_client_buffer_vmap_local(struct drm_client_buffer *buffer,
->  
->  err_drm_gem_vmap_unlocked:
->  	drm_gem_unlock(gem);
-> -	return 0;
-> +	return ret;
->  }
->  EXPORT_SYMBOL(drm_client_buffer_vmap_local);
->  
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> new file mode 100644
+> index 000000000000..10a67644e915
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Samp=
+ling ADCs
+> +
+> +maintainers:
+> +  - Ramona Nechita <ramona.nechita@analog.com>
+> +
+> +description: |
+> +  The AD777X family consist of 8-channel, simultaneous sampling analog-t=
+o-
+> +  digital converter (ADC). Eight full =CE=A3-=CE=94 ADCs are on-chip. The
+> +  AD7771 provides an ultralow input current to allow direct sensor
+> +  connection. Each input channel has a programmable gain stage
+> +  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
+> +  outputs into the full-scale ADC input range, maximizing the
+> +  dynamic range of the signal chain.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7770.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7771.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7779.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7770
+> +      - adi,ad7771
+> +      - adi,ad7779
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+I missed this earlier, but a device that only has a reference supply is=20
+novel.  A quick glance at the datasheet shows a bunch of others power suppl=
+ies.
+They all need to be documented and any that are required for the device to =
+function
+must be listed as required.
 
--- 
-Best regards,
-Dmitry
+Also seems to be at least one plausible interrupt line (alert)
+that needs documenting whether or not the driver supports it yet.
+
+
+
+> +  vref-supply:
+> +    description:
+> +      The regulator to use as an external reference. If it does not exis=
+ts the
+> +      internal reference will be used.
+> +
+> +  start-gpios:
+> +    description:
+> +      Pin that controls start synchronization pulse.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    spi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        adc@0 {
+> +          compatible =3D "adi,ad7779";
+> +          reg =3D <0>;
+> +          vref-supply =3D <&vref>;
+> +          start-gpios =3D <&gpio0 87 GPIO_ACTIVE_LOW>;
+> +          reset-gpios =3D <&gpio0 93 GPIO_ACTIVE_LOW>;
+> +          clocks =3D <&adc_clk>;
+> +        };
+> +    };
+> +...
 
 
