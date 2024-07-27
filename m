@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-264038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758B093DE30
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6DF93DE31
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228DC1F21CC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869071C20F07
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 09:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D14481A7;
-	Sat, 27 Jul 2024 09:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B363A482FA;
+	Sat, 27 Jul 2024 09:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuXm/dLh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAGXytKI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304383CF65
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0538D1C6BE
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722072949; cv=none; b=hZ9gZ2qmqFUGLgQCTxtuTvYV4xXdHNOn9iwKYYEu6WgwnfCBpoAZOS8qS+geXMETUkXc0X8DF54U9U8aMpSB/UtsQ2Kk8Ed8p4sWJeuChtFPQ6ei+Mbndng043DjRb90naROu2CT8ZB4xyQm6Ul1lqtHD7X5fndjumhMmJm+sco=
+	t=1722073263; cv=none; b=fp3BAW04cxTmyTeYSTFMTzmmVU1xVgXv/g5XPLmTSV/4e0d/pjop6X8cxCjQ1MZ2dFvOGsfsEdRfJK6a1QDKf/PBKA0KmoSbO9ry2CoODw+IcH9pJhC1EBFoj7u7shckb7Qajivn7bjlewZroKDGrlh7C1m3BRDYRdsxpqLOPxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722072949; c=relaxed/simple;
-	bh=D2Fr1XAE3Q/rdDD8rzZH7itthj8Iknru7wdYfU+InXk=;
+	s=arc-20240116; t=1722073263; c=relaxed/simple;
+	bh=I/TrLaduxjdZgcj+s3Q1EQKZO7dhJ/hm+0Mp1b/lXD8=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tv0k6RzxaFXTfFIY+1oEY8nGKmQ02+xoAwAMFkAIktMuZdZJVNDRoezjfiAxXgSLBsQV6ZgvKCoWDGg3D28LucKhGJ9IMnrcq8p57FaZm1GaN5HVFGjUNi7/cif1ewSAgYJwWvN3AyCN+Rzw547AhXmvWR4zdsOXpiJbgXG7yCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuXm/dLh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958DBC32781;
-	Sat, 27 Jul 2024 09:35:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Zx6O6t74VW4oWfAuUw1pLBPb6UTWHjNJwQgefYH2cTetxdbLG9DpbtX/Iyeet8SKf+STfqokVgRNX5B887x5KDZSm/RqHMTOQXWaFC04UKTAugOZNOmGKIbrE/KNzM/FD1MvcZKDoZpmwBw3CqO6WcqxWk03pQPnH2nwQBFtJRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAGXytKI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F58C32781;
+	Sat, 27 Jul 2024 09:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722072948;
-	bh=D2Fr1XAE3Q/rdDD8rzZH7itthj8Iknru7wdYfU+InXk=;
+	s=k20201202; t=1722073262;
+	bh=I/TrLaduxjdZgcj+s3Q1EQKZO7dhJ/hm+0Mp1b/lXD8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZuXm/dLhD1BpUQbqgnfTrSC8lBfIkPlw/wg+m7THaDJgvmmgl8Nsu98gAv7tLf4qb
-	 d7aZEHQLtlsLlbCGKidzvIxc0fTmrfGytAxbQN2NKNp67JrDBsoAT5+NSNUS3e0K3D
-	 5Q5AwhdAbDW6EcQB/TngDCcQx8f4lzdmfH8tBx5D9o3K1l3tr/rbtBpZxpfEepIyQr
-	 Q6h1PeCLOadNlDBD81TqTBEuqGQLPK+W1bVSZJxqMRBi6h+doowPtmtEWD8wkiRhB+
-	 +232Ixv6M5g2VBvveiAZqVUAPICXW+qaouBDDuTavooIgymHPYuSqCI1WUTWuKurD4
-	 CAOPPmGtnW+GQ==
+	b=EAGXytKIMy1OL5Ao2jbeYdszsmAe+/+smN1ISQl7o7u52V01NYfG6GecmruIC4qDf
+	 ZqXY4bcrmv/N7MRIJI/Izwubd0jLmb8mUKRBQ2//L24bFQ4Rv7dO5Mvu865kpzvR9d
+	 KTuZGUgeJUBRqQpwEssKrljsOor2nl4uf5kuPuZcdAlgaDV8mBkgtM8zKIOew7WPrr
+	 TpVdiCqOUwGl7dl5LFYpW/jk3cPEzNWiNjjWocz1ePTyZptiHq2uINV//Twhx307+k
+	 QE0fE0VqWh0rennnicPwLYLElYdXf8nJhJ7dyDfbWPaILQP2QuktmhZ/mGWVlvK1vR
+	 Fb7j01TGJKIwQ==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.95)
 	(envelope-from <maz@kernel.org>)
-	id 1sXdq6-00Fnvv-8k;
-	Sat, 27 Jul 2024 10:35:46 +0100
-Date: Sat, 27 Jul 2024 10:35:45 +0100
-Message-ID: <861q3f2n4e.wl-maz@kernel.org>
+	id 1sXdv9-00Fnz7-UZ;
+	Sat, 27 Jul 2024 10:41:00 +0100
+Date: Sat, 27 Jul 2024 10:40:59 +0100
+Message-ID: <86zfq318b8.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
 To: Jinjie Ruan <ruanjinjie@huawei.com>
 Cc: <tglx@linutronix.de>,
@@ -58,8 +58,9 @@ Cc: <tglx@linutronix.de>,
 	<linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] irqchip/gic-v3: Remove asmlinkage for gic_handle_irq()
-In-Reply-To: <20240727073648.1042377-1-ruanjinjie@huawei.com>
+In-Reply-To: <861q3f2n4e.wl-maz@kernel.org>
 References: <20240727073648.1042377-1-ruanjinjie@huawei.com>
+	<861q3f2n4e.wl-maz@kernel.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -75,43 +76,50 @@ X-SA-Exim-Rcpt-To: ruanjinjie@huawei.com, tglx@linutronix.de, joey.gouly@arm.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, 27 Jul 2024 08:36:48 +0100,
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On Sat, 27 Jul 2024 10:35:45 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
 > 
-> Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
-> the gic_handle_irq() is only called by C functions, so remove
-> the asmlinkage.
-
-You clearly haven't looked very far.
-
+> On Sat, 27 Jul 2024 08:36:48 +0100,
+> Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+> > 
+> > Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
+> > the gic_handle_irq() is only called by C functions, so remove
+> > the asmlinkage.
 > 
-> Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/irqchip/irq-gic-v3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> You clearly haven't looked very far.
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index c19083bfb943..0efa3443c323 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
->  	__gic_handle_nmi(irqnr, regs);
->  }
->  
-> -static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
-> +static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
->  {
->  	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
->  		__gic_handle_irq_from_irqsoff(regs);
+> > 
+> > Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > ---
+> >  drivers/irqchip/irq-gic-v3.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index c19083bfb943..0efa3443c323 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
+> >  	__gic_handle_nmi(irqnr, regs);
+> >  }
+> >  
+> > -static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+> > +static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+> >  {
+> >  	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
+> >  		__gic_handle_irq_from_irqsoff(regs);
+> 
+> $ git grep handle_arch_irq arch/arm/
+> arch/arm/kernel/entry-armv.S:   bl      generic_handle_arch_irq
+> arch/arm/kernel/entry-armv.S:   mov_l   r0, generic_handle_arch_irq
+> 
+> Until someone rewrites 32bit ARM to have all of its low-level
+> interrupt handling in C, this stays. This has no effect on arm64
+> anyway.
 
-$ git grep handle_arch_irq arch/arm/
-arch/arm/kernel/entry-armv.S:   bl      generic_handle_arch_irq
-arch/arm/kernel/entry-armv.S:   mov_l   r0, generic_handle_arch_irq
+Scratch that, I misread it. We have an indirection, so this patch is fine.
 
-Until someone rewrites 32bit ARM to have all of its low-level
-interrupt handling in C, this stays. This has no effect on arm64
-anyway.
+Apologies for the noise.
 
 	M.
 
