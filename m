@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-264199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D994593E01D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDF493E020
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 18:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBEF01C210CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9201C20BFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 16:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880F81862AF;
-	Sat, 27 Jul 2024 16:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB01862B9;
+	Sat, 27 Jul 2024 16:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwT6opiG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gvj006CL"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B21EA8D;
-	Sat, 27 Jul 2024 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF00D1D52B
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 16:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722097032; cv=none; b=Ylqosb+2Khq/oURQvlhb/U9ozIq3QPUIYLn+pU9nhn9VL6ZuF+Z1DlkaTgWMFVeaPHZDYHwdHApYZ2sHHlCDgbVfe8vRKtfG7zaAOf0adPiVPP0l0zm1MQgQfzbJHgSC9/YKzav0fXgeFKK3DdesHCoktj1Y8CG08rVAhx+TKGk=
+	t=1722097627; cv=none; b=tM2qdqejff2ReM00p0yEeOw35LMItn0AKY3N/63fW+if7RcNV4U21t4+p4z2MyQZ5DAoy79nCytgE7QX5dcO1pwjzaCihSwYKUJQmN8+qRuXUAP1EU0j8TTzuMgxTvowl6En+oLyQLcjpJEZzoGosLw4sqMyWiwdkGLIInp0HqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722097032; c=relaxed/simple;
-	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWtHvJe9vr3jwauf8lVPcvoHuJEmHv8gOnHJn2wXKjOpjlcrH2mZhBG797WOuBf9pHEteDgkXX0SNgVJXYh4mLbw/3Yq8VayWBzWWBqmS4WC/J1KJTHgNMkp2ZxXGwFbT2zL37Oe2768nrndDUKLWrpZVhh++E35W+YMxyAGW+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwT6opiG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20790C4AF0A;
-	Sat, 27 Jul 2024 16:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722097032;
-	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VwT6opiGoFfluZ/7HmqzfFkjSVKigc0vkxyTd0MHd29e8BrnWOCCkEn3ceyPDz6Y0
-	 rJo/n86DRnaDA0VYNumwPCF8agRoWyflP9dPutQFSOkiUM6KuDFqkWIiurtLFjy1kg
-	 gWCIeG28HIPUXIiRoYg2H+bFmBQxevSH32hPjIt8/cU3PCdYdXXaz3OdrRMnwdG+k1
-	 HMic4JI2oZOGK2gu/TzRn/4t5Ukfvlfi1MGbasiGjeV+EnZcGiTSHXx184XDHcwuuN
-	 3gbi1eT4YJMCJrWnD+C5gtroCiZh02mrQP3qNrDKjdsJ89RW4PYWewIoo6ipTltvK0
-	 H+iHjwhG+uZdg==
-Date: Sat, 27 Jul 2024 17:17:03 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: David.Laight@aculab.com, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] tcp: Use clamp() in htcp_alpha_update()
-Message-ID: <20240727161703.GA1625564@kernel.org>
-References: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1722097627; c=relaxed/simple;
+	bh=diXfqiCnCAfhXQocQa2/R2YkFW5MXX/JQJ1vfWqciTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lrRIeyarTcXKxdo8H9LxOtbLUiKbyFTPA+Ez62AQpb38MX7p7UWuxYO3KbIigBt0DWU/EtVMpm39D3VMJEYPwOSMqNoOsj58S7GpVMxOA+PTNMHlxInf4UTk8bt4LhtmHcmmTbpUm27dmQZGdPryVokc1uwM/adfjFYsFxJIQrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gvj006CL; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f025b94e07so27926161fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722097622; x=1722702422; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5XbfB27Ib3T/DNbvi3aTzDyG5nLhpOW9JULvBjkbrW4=;
+        b=Gvj006CLBeF5lll7Z26kh4k4GT+gavxbzrYPT5ckCrU+QfybX9zztXaLbfxr8jy4i4
+         coK15qlhTuc6YxOUXiLbdwIRoquGfjcrAMKi5FU0v3dNuTnn/AsAxDnuFoDIKVl/6isn
+         lqH4lL1S9g9RNDtqGfVJ0r0CMpDWGsexVBYRs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722097622; x=1722702422;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5XbfB27Ib3T/DNbvi3aTzDyG5nLhpOW9JULvBjkbrW4=;
+        b=cUF2u1JMobq6jKpSxrCF5q4gIkslCFA/sryq6F/m82KFM8x64Mjlvu8iA1qEBLTVVA
+         s2fOI2CJ80qyjZBdTrMBbe3VE8fvvHE06L0YWT8wwstFjcNUE2ZeNjj1EHiL7xljMTOW
+         jHLT9jrBHKu3VXj3U3HGQR/JlOBNE2mFqEv1cdKF3xKymgvaoqTz9zIJz96N2Ikjd5CJ
+         oYLwEveLIFUAgANiPPVPto9BNNLD4MOXo6SFtVQd2MIoG15KRXcTauRrz6LhEt0JXRFE
+         bTsIZIMZkuwzbg5eaVrtv0vQu5zer5ep3ANKmBSezqRJi5fGTNJGmqzJD0gs0o8qtqgK
+         8VYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEnXyKVicO1Y50IrANiAEi5r+/QKCbefEHEr138ZrMeeJKbiID7q+PAfj3f5DbXnbDfBqgX7lD1peIxw3PBcaQp4DccesTanoQtoHx
+X-Gm-Message-State: AOJu0YxBAXCgL9vW9L67ecJ9ySWpQhJx428KL3Blvsyq//TXX2/DkxKy
+	dbT9rkDcn+j3vTAGNkwYf2bl9ezQGHzX0Ol2ZEQEUajdr5ij0ovSQugCB6VRZDOXXXYaOorqR2G
+	h94tJ/g==
+X-Google-Smtp-Source: AGHT+IErcA0ppHXcdvlXMQ8Oc7PHQqKkZxS5ByKVJWVdNwYH3mLttGBKfcaX3il8FdkK2A+lKpA7xw==
+X-Received: by 2002:ac2:46d9:0:b0:52e:7f18:176b with SMTP id 2adb3069b0e04-5309b269b7cmr2232116e87.11.1722097622408;
+        Sat, 27 Jul 2024 09:27:02 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2cc36sm795687e87.270.2024.07.27.09.27.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Jul 2024 09:27:01 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso27334781fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 09:27:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWztUQgX9apermjX8KyMZkHkpeXvWV5JqTFrZGm/GCKSGZdyeAPNIzlFqTI7EsQRfnwVh1Ro4MZs0aDw0C5gk+3Fb7mUsNioQFEo1Lj
+X-Received: by 2002:a2e:90d9:0:b0:2ee:8d19:85af with SMTP id
+ 38308e7fff4ca-2f12ee24392mr18800621fa.36.1722097620647; Sat, 27 Jul 2024
+ 09:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local> <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local> <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local> <36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local>
+ <2f1be7ee-2d70-4dd3-bfa2-1b94a4fc5a66@lucifer.local>
+In-Reply-To: <2f1be7ee-2d70-4dd3-bfa2-1b94a4fc5a66@lucifer.local>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sat, 27 Jul 2024 09:26:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
+Message-ID: <CAHk-=wj9GLHpMo=ikVYzXtnNBpFwG3YeCZHfWndj5_xm=19szg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Laight <David.Laight@aculab.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 27, 2024 at 02:30:45PM +0200, Christophe JAILLET wrote:
-> Using clamp instead of min(max()) is easier to read and it matches even
-> better the comment just above it.
-> 
-> It also reduces the size of the preprocessed files by ~ 36 ko.
-> (see [1] for a discussion about it)
-> 
-> $ ls -l net/ipv4/tcp_htcp*.i
->  5871593 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
->  5835319 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
-> 
-> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sat, 27 Jul 2024 at 01:08, Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> 62603617./drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o.pre
 
-## Form letter - net-next-closed
+Heh.
 
-(Adapted from text by Jakub)
+  Longest line is drivers/.../ia_css_ynr.host.c:71 (27785kB)
 
-The merge window for v6.11 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations.
-We are currently accepting bug fixes only.
+yeah, that's a single line that expands to 27MB in size.
 
-Please repost when net-next reopens after 28th July.
+And yes, that line is one single min(...) expression with arguments
+that are then in turn macros with other nested min/max arguments.
 
-RFC patches sent for review only are welcome at any time.
+See also drivers/staging/media/atomisp/pci/sh_css_frac.h.
 
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
---
-pw-bot: defer
+On my fairly beefy (admittedly more cores than single-thread) machine,
+just generating the preprocessor file takes just under 20s.
+
+Building the object file is actually faster at "only" 8.5s for that
+one file, because it uses the built-in preprocessor and never writes
+it out, and most of the actual preprocessing result is trivial stuff
+that gets thrown away immediately.
+
+              Linus
 
