@@ -1,228 +1,169 @@
-Return-Path: <linux-kernel+bounces-263929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-263930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7969893DC7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:23:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928A293DC82
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 02:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040A61F24E27
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61B11C23609
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 00:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C402D057;
-	Sat, 27 Jul 2024 00:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01C71FA3;
+	Sat, 27 Jul 2024 00:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k31olA2X"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ZDCHeys5"
+Received: from mr85p00im-hyfv06011401.me.com (mr85p00im-hyfv06011401.me.com [17.58.23.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9EB2B9D4;
-	Sat, 27 Jul 2024 00:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F53B197
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 00:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722039636; cv=none; b=UJ5GljZDbMN9Pai4+z5ZdovbcU7m7izUOri2wU84b7AeRK4QJhyZb1F3HAv+nZgE5l/jrgRhrWdX7m/2U53SfmNZenqGlHEpyMG5wbK78LCCBDsSiHgiC7l5uGLz4LH4BzS7e+MVxTJOnaabYteOB3Gl2nT4VbRTztmDvG8U3lc=
+	t=1722039826; cv=none; b=pZcAC/EZkAMKSqj3PK/4nEIVjDD1J9KyXSw7uHdD2sKECDZ9FalzFNEUV5O69KSh38gPSJNOsRygYOvw/Ai1obbITM7aNamsFldEvbU+lBjEQKm82zTD/4rmAMU+xRLd2+s8xuZ2J25efO1I72HQHg5oTQ+iaxesN5TYu5YDV0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722039636; c=relaxed/simple;
-	bh=5BwdVeRXroaCch0299cZUCu929XRs81yMmwuZ8jLu6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B6twdHljZv/Y0I8mYh1Til2lq7awQacs/OJsHPlLdCu5QvohaqZ9zZOjOhxEUMcLgcV9KbN6BSyG3pYFrZpkPxdi7+5DvNFRvL3nkqZ4et3dwSW7acr1daucGZOOPVx3F1ODfMFsepr1fhtb0ufQwB0rcpBenSVjLkzD4ueMGmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k31olA2X; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb566d528aso1165741a91.1;
-        Fri, 26 Jul 2024 17:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722039635; x=1722644435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YdZ/E67W28RaT0y7rLXbroqFFJnrFdEDfPZEL+ZYeOY=;
-        b=k31olA2XvC22K2NiOTCnAX4uHrPBieW1eOGulK7qO+Ubf4xL9BhUQLYorn34+Q+cvy
-         Bgz9OYI8pZXuOEBKfiF4kQGScDJBacg14Yh2YW+Lwq5VgGIq5uhrjxqQoT8wzixUzYUL
-         MrZdIpTw+entKWwloP0jSLLO3LtgPkUh0UlmPxvlAvSWr8XmeasJ3zcS3vfLX4Y8vGWK
-         fLMVBx6RFoqR4/WIkW0AAoJfIpU1Hs+MC8azgLkkRJDTpfOmhDxHs6QhxMBdWhqBgbWe
-         WeyXmF9P5H4SgT0JS2BDVKBSUNG93pGQBBMIWAzydKNwj+4dDAJnVrGoYUZ5eY/7yKPI
-         ZyLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722039635; x=1722644435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YdZ/E67W28RaT0y7rLXbroqFFJnrFdEDfPZEL+ZYeOY=;
-        b=GzyOWWV+BiUOzQX4qbXKwvAkAn7KmoRupVZyGANJf88q0hL7Q9P+C7frRu5dwW2Iwz
-         y0upph+cbhm3fwdHedzKCTSXSDyFrWkBStiuCOAMqSu8pIOco3idPPj41GUN+ApRZgMg
-         K3pc5Pkrd2UzxxbVd30C0/j/QHQG8wjwtEZfbFuRs3fRjwMEgcmitILmOXun/DV/MJLC
-         jPF+b0zl/F3AppejH3twUP6HFFqi/PAX1RqwbO+9CKugBlj8CDpS4JRNHiEW8CKMVce0
-         F8kT7AREBpoL7dwFaif/p4FSd+JV8nPFVavpbjiku3bWhDzOA9hUr0pe7BeJ5ZATqq2a
-         V2Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvBDXta4m335RgO9QAczP3+BgeBOtHz+Q4lINz7A4bd6W6dp85AHFbdpE/xWz+fXvXCG7dzTWCPTrqSynp5Lbh5kmtahy7xnBV/nx+xe6j4mzN0MZ1SkghZd2S1dt5apQA
-X-Gm-Message-State: AOJu0YyN5SX459AgT8Dz60+bWH7M7AiMuiO9UhgT/8MsfK9A0EI0gzZP
-	uT7caV5RqojXtLx390kA6SyTDBw899yhqltCi5ol0khmUeaje/GBXdJe9IAqax0uH0dBHQzd8Qn
-	yNIjxbvO7pAJcOl4DL2wYSI10FTf7y0hM
-X-Google-Smtp-Source: AGHT+IEJs9zgd9trjHhL+WYaGOsGxqbUC9T/Tq87PIhxOaBUNJQKzImcVGDcvS3KMq3Hg5mFR8an66sBJde6+JUcDiY=
-X-Received: by 2002:a17:90a:e64f:b0:2c9:7611:e15d with SMTP id
- 98e67ed59e1d1-2cf7e20a113mr1304532a91.20.1722039634700; Fri, 26 Jul 2024
- 17:20:34 -0700 (PDT)
+	s=arc-20240116; t=1722039826; c=relaxed/simple;
+	bh=cnPsn611UjJ02M558mWmVyCwR6qA++WjYS1aQhoNmkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uuqTaMa4hP1eMWcGXONgvFxhxPBgzOXz6g3n7mfadXgYPGDnFim4oAd3PzAZJ5nDak/nUDhGF0bwyoA6leGFzs+ZfEgm4FDLn6W79E3bLRJEzh8NooaPmEFXozXDb9M90IxJ3XnS+HbBvufFUO3CYTzOzFos17JMa75gEeyCYRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ZDCHeys5; arc=none smtp.client-ip=17.58.23.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1722039823;
+	bh=OF//PZdzhsZCrVIwn37lsY6lbpixHa5B2D3Ug9HdfCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=ZDCHeys5+W4QQC0BTyKvSy4P/1nCb4GcXZBMDblyCu+9u9jFBSGd8uAFvEtW0EbCu
+	 MrJEmo4OyMXZVjRro0mt1zPU5CXYBltrq8XqdzHbmXlryfy72yM+t/5ebCeqSastgA
+	 541zfKMDZ3JYGmVJwkmIkh+U0TgL8LPAezFpn+SOhdW2XlanxKG619byAoRgIba8qw
+	 eF7GupEiBV3WmlIJJ6kLFnAN2JW5EYml1uGrHUsgEFdejt9B0DEqXGbQuFmahvN2bQ
+	 MXW4kqtfyqm9U46fldIa3JeBoVp50hRryOjqvziAWKb+Q9gzzAUXD98G7H9pA5gE/v
+	 F7OORGHhIpmUg==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-hyfv06011401.me.com (Postfix) with ESMTPSA id 5BE2D357AE22;
+	Sat, 27 Jul 2024 00:23:39 +0000 (UTC)
+Message-ID: <d1267639-c885-4a27-ac15-b4199e38ec99@icloud.com>
+Date: Sat, 27 Jul 2024 08:23:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708091241.544262971@infradead.org> <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net> <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net> <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
- <20240710091631.GT27299@noisy.programming.kicks-ass.net> <20240710094013.GF28838@noisy.programming.kicks-ass.net>
- <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
-In-Reply-To: <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 26 Jul 2024 17:20:22 -0700
-Message-ID: <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, 
-	andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
-	oleg@redhat.com, jolsa@kernel.org, clm@meta.com, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: rfkill: Correct parameter type for
+ rfkill_set_hw_state_reason()
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240715-rfkill_fix-v1-1-a9f2d56b4716@quicinc.com>
+ <dcd0d83a-af37-4ef5-8351-a435ab115ed0@quicinc.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <dcd0d83a-af37-4ef5-8351-a435ab115ed0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: s-IoaBAszZJHQ0P83u8KIpUXIsGDRpc7
+X-Proofpoint-ORIG-GUID: s-IoaBAszZJHQ0P83u8KIpUXIsGDRpc7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-26_14,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ clxscore=1011 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407270001
 
-On Mon, Jul 22, 2024 at 12:09=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
->
-> On Wed, Jul 10, 2024 at 2:40=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 11:16:31AM +0200, Peter Zijlstra wrote:
-> >
-> > > If it were an actual sequence count, I could make it work, but sadly,
-> > > not. Also, vma_end_write() seems to be missing :-( If anything it cou=
-ld
-> > > be used to lockdep annotate the thing.
->
-> Thanks Matthew for forwarding me this discussion!
->
-> > >
-> > > Mooo.. I need to stare more at this to see if perhaps it can be made =
-to
-> > > work, but so far, no joy :/
-> >
-> > See, this is what I want, except I can't close the race against VMA
-> > modification because of that crazy locking scheme :/
->
-> Happy to explain more about this crazy locking scheme. The catch is
-> that we can write-lock a VMA only while holding mmap_lock for write
-> and we unlock all write-locked VMAs together when we drop that
-> mmap_lock:
->
-> mmap_write_lock(mm);
-> vma_start_write(vma1);
-> vma_start_write(vma2);
-> ...
-> mmap_write_unlock(mm); -> vma_end_write_all(mm); // unlocks all locked vm=
-as
->
-> This is done because oftentimes we need to lock multiple VMAs when
-> modifying the address space (vma merge/split) and unlocking them
-> individually would be more expensive than unlocking them in bulk by
-> incrementing mm->mm_lock_seq.
->
-> >
-> >
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -2146,11 +2146,58 @@ static int is_trap_at_addr(struct mm_str
-> >         return is_trap_insn(&opcode);
-> >  }
-> >
-> > -static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *=
-is_swbp)
-> > +#ifndef CONFIG_PER_VMA_LOCK
-> > +static struct uprobe *__find_active_uprobe(unsigned long bp_vaddr)
-> > +{
-> > +       return NULL;
-> > +}
-> > +#else
->
-> IIUC your code below, you want to get vma->vm_file without locking the
-> VMA. I think under RCU that would have been possible if vma->vm_file
-> were RCU-safe, which it's not (we had discussions with Paul and
-> Matthew about that in
-> https://lore.kernel.org/all/CAJuCfpHW2=3DZu+CHXL+5fjWxGk=3DCVix=3DC66ra+D=
-mXgn6r3+fsXg@mail.gmail.com/).
-> Otherwise you could store the value of vma->vm_lock_seq before
-> comparing it with mm->mm_lock_seq, then do get_file(vma->file) and
-> then compare your locally stored vm_lock_seq against vma->vm_lock_seq
-> to see if VMA got locked for modification after we got the file. So,
-> unless I miss some other race, I think the VMA locking sequence does
-> not preclude you from implementing __find_active_uprobe() but
-> accessing vma->vm_file would be unsafe without some kind of locking.
+On 2024/7/27 06:51, Jeff Johnson wrote:
+> On 7/15/2024 6:39 AM, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Change type of parameter @reason to enum rfkill_hard_block_reasons for
+>> API rfkill_set_hw_state_reason() according to its comments.
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  include/linux/rfkill.h | 5 ++---
+>>  net/rfkill/core.c      | 7 +------
+>>  2 files changed, 3 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
+>> index 373003ace639..4f7558267541 100644
+>> --- a/include/linux/rfkill.h
+>> +++ b/include/linux/rfkill.h
+>> @@ -147,7 +147,7 @@ void rfkill_destroy(struct rfkill *rfkill);
+>>   * Prefer to use rfkill_set_hw_state if you don't need any special reason.
+>>   */
+>>  bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
+>> -				bool blocked, unsigned long reason);
+>> +		bool blocked, enum rfkill_hard_block_reasons reason);
+> 
+> function parameters should align on (
+> 
+will correct it for v2
+>>  /**
+>>   * rfkill_set_hw_state - Set the internal rfkill hardware block state
+>>   * @rfkill: pointer to the rfkill class to modify.
+>> @@ -279,8 +279,7 @@ static inline void rfkill_destroy(struct rfkill *rfkill)
+>>  }
+>>  
+>>  static inline bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
+>> -					      bool blocked,
+>> -					      unsigned long reason)
+>> +		bool blocked, enum rfkill_hard_block_reasons reason)
+> 
+> function parameters should align on (
+> 
 
-Hey Suren!
+will correct it for v2
+>>  {
+>>  	return blocked;
+>>  }
+>> diff --git a/net/rfkill/core.c b/net/rfkill/core.c
+>> index 7a5367628c05..f8ed6431b2f5 100644
+>> --- a/net/rfkill/core.c
+>> +++ b/net/rfkill/core.c
+>> @@ -539,18 +539,13 @@ bool rfkill_get_global_sw_state(const enum rfkill_type type)
+>>  #endif
+>>  
+>>  bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
+>> -				bool blocked, unsigned long reason)
+>> +		bool blocked, enum rfkill_hard_block_reasons reason)
+> 
+> function parameters should align on (
+> 
+will correct it for v2
+>>  {
+>>  	unsigned long flags;
+>>  	bool ret, prev;
+>>  
+>>  	BUG_ON(!rfkill);
+>>  
+>> -	if (WARN(reason & ~(RFKILL_HARD_BLOCK_SIGNAL |
+>> -			    RFKILL_HARD_BLOCK_NOT_OWNER),
+>> -		 "hw_state reason not supported: 0x%lx", reason))
+>> -		return rfkill_blocked(rfkill);
+>> -
+> 
+> did you validate that all callers are actually passing a valid enum?
+> that is something you should describe in your commit since this is a change
+> beyond just changing the prototype
+> 
+yes. actually, ALL callers within kernel tree only use enum for the API.
+will add that description within v2.
+thanks
+>>  	spin_lock_irqsave(&rfkill->lock, flags);
+>>  	prev = !!(rfkill->hard_block_reasons & reason);
+>>  	if (blocked) {
+>>
+>> ---
+>> base-commit: 338a93cf4a18c2036b567e9f613367f7a52f2511
+>> change-id: 20240715-rfkill_fix-335afa2e88ca
+>>
+>> Best regards,
+> 
 
-I've haven't yet dug properly into this, but from quick checking
-around I think for the hot path (where this all matters), we really
-only want to get vma's underlying inode. vm_file itself is just a
-means to that end. If there is some clever way to do
-vma->vm_file->f_inode under RCU and without mmap_read_lock, that would
-be good enough, I think.
-
->
-> > +static struct uprobe *__find_active_uprobe(unsigned long bp_vaddr)
-> >  {
-> >         struct mm_struct *mm =3D current->mm;
-> >         struct uprobe *uprobe =3D NULL;
-> >         struct vm_area_struct *vma;
-> > +       MA_STATE(mas, &mm->mm_mt, bp_vaddr, bp_vaddr);
-> > +
-> > +       guard(rcu)();
-> > +
-> > +again:
-> > +       vma =3D mas_walk(&mas);
-> > +       if (!vma)
-> > +               return NULL;
-> > +
-> > +       /* vma_write_start() -- in progress */
-> > +       if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->vm_mm->mm=
-_lock_seq))
-> > +               return NULL;
-> > +
-> > +       /*
-> > +        * Completely broken, because of the crazy vma locking scheme y=
-ou
-> > +        * cannot avoid the per-vma rwlock and doing so means you're ra=
-cy
-> > +        * against modifications.
-> > +        *
-> > +        * A simple actual seqcount would'be been cheaper and more usef=
-ull.
-> > +        */
-> > +
-> > +       if (!valid_vma(vma, false))
-> > +               return NULL;
-> > +
-> > +       struct inode =3D file_inode(vma->vm_file);
-> > +       loff_t offset =3D vaddr_to_offset(vma, bp_vaddr);
-> > +
-> > +       // XXX: if (vma_seq_retry(...)) goto again;
-> > +
-> > +       return find_uprobe(inode, offset);
-> > +}
-> > +#endif
-> > +
-> > +static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *=
-is_swbp)
-> > +{
-> > +       struct uprobe *uprobe =3D __find_active_uprobe(bp_vaddr)
-> > +       struct mm_struct *mm =3D current->mm;
-> > +       struct vm_area_struct *vma;
-> > +
-> > +       if (uprobe)
-> > +               return uprobe;
-> >
-> >         mmap_read_lock(mm);
-> >         vma =3D vma_lookup(mm, bp_vaddr);
-> >
 
