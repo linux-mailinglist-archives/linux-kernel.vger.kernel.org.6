@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-264103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B0693DEFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46BA93DF10
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 13:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CFE41F22AFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25971C20DCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2024 11:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D7D8004F;
-	Sat, 27 Jul 2024 11:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF9913C3CA;
+	Sat, 27 Jul 2024 11:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IESUCHlN"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IycGFN9A"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8981F4D8D0
-	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88CB77113
+	for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 11:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722078147; cv=none; b=I3oDlFNoG72fMrJKp5nVq2p7QLNoP4mKdnvJYxQEbw+nd6lEFlsZwumT7PWNq9P29JwGqLk0/RgQbV+BLKKEB+ZHYNtioi4OoRPTaUJyf0MLis1dLJF/TQEu9P+wTykUDRmN887AbVC7Z0WUpBMagUEQvDPo0+wcLg9RtbcXr88=
+	t=1722078150; cv=none; b=nQang4pZgNW3Y+VyPMMy/8RT9er4DNyRhgesnhXWQkG12V1XUnETZ/8Y9IEoV/ETzGtxhjl0a8e3boeQy1kj+uDafhACIEHev7LtbVQh+1qDR3MiaNLwLjEvMAVy4/7IVwFITYwWZYAEpnCa4ZCAr7G8robCN67GMFue/rWUBlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722078147; c=relaxed/simple;
-	bh=kSvxvy4/yoYnf9FCBRWdJWzSutKP9ReoOQkAiZZfpWw=;
+	s=arc-20240116; t=1722078150; c=relaxed/simple;
+	bh=nhL59T6elYdLuyB0RjGQo0N9qwu/eI7fAleBo/HW70I=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ZHh218cU9Xily+djpQdQF/41ovVFuEiSkHzYIsdrp/Ayu+zfq4CjDjc6e5wRnlGPUEFerQ1webBr7TJGzsDGqHjej21XAwjtgwvLpE6JXsdWGNx1iifuOeCfqUh+lEkIpXu48MGwcP93WGnIe8JCM7+rrdsfFo44AMGfECAHBhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IESUCHlN; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=OChTs/aLVTFwaKYjDc3+8emYRy+2QLiPJrqvMhTUwdKLR5k6LVi3cPrUsLJ9LSmd9x245zWEJ7ubqbcrpNUjxbJx1UNKXuyp5wupI+EXVBbrdi2Ucb9zOvxss4e4qgoDzOSKu5lzW0E3upIzglBqzml/BrMqObRIHtT+LGDBhPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IycGFN9A; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=FG3IvHQufE/O/s5O2v8p/EyTrS09xA8nLYQquzdpLRU=; b=IESUCHlNFsxTWaa4o9gPJ5NwmH
-	o7+Yi/bI0FmoCGH58MzXqHLcfHsLekutner9ktx5A7iUJ1Q/ccv2SgIyUgxBiA3Ju61uTDDudPDTf
-	78YNwWLz5+7P+Y9iw0f2KlbXLDth5DSt8KiYWMrOqJne+gulS1kBn6YyH97NcEgy2KXCzf2tfFmwx
-	PaEk6+NSEg/gj/7PpLI455FY9tEPev01HxGkFgVcP4eKQp4Fm2h1oXHLZN3vydle+rNFQ03OqTYEH
-	TOCJ5q1d/ILn60ksKvwgGrGeCvjotECmQ1kqC1ZDOGIbhPhxrE2Z572RNjeiiqYFFkXi5wOIBJ6/7
-	ZcswPJCQ==;
+	bh=FRzZ9IuL6b8fEH7RF9UvkS800H6XvcRuToO64xLZ6Jc=; b=IycGFN9AEvXI5Nmvm/QbZAi7wN
+	0JRgGNbbT8RilcTR0njK3Iq2TK96dxfNBjyRnM9eghJ8SiaGkbvZpjecLEjl9TT7hPgWfi6RXENIS
+	hXiYkN4BqBLMwXpz8j1uS8mPbzuZNr2jQkSJrfcW9XHZc4irKl75VBvK4E/CHScLxOnl4FfKyGGE/
+	a0WF5PxlhjakrtX2oI3KPSJu7D/OfIN9tlb1ZPKY/lle9ocytCQMt861cCjlXWE+PO4q6tcAL3khu
+	rvo1P1xFUauTGRdwwcuQWHkKnQFCM9A8+FYLXdLKoBP5wMeju8dOKGtx5mwgomx77Iorsph0RbTZV
+	PkfXJfuQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
 	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sXfBg-00000004QMd-0fFo;
-	Sat, 27 Jul 2024 11:02:09 +0000
+	id 1sXfBg-00000004QMe-0fE9;
+	Sat, 27 Jul 2024 11:02:20 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id A069A3011E4; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
-Message-Id: <20240727105028.725062368@infradead.org>
+	id A4EB53018AA; Sat, 27 Jul 2024 13:02:06 +0200 (CEST)
+Message-Id: <20240727105028.864630153@infradead.org>
 User-Agent: quilt/0.65
-Date: Sat, 27 Jul 2024 12:27:37 +0200
+Date: Sat, 27 Jul 2024 12:27:38 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  peterz@infradead.org,
@@ -65,7 +65,7 @@ Cc: kprateek.nayak@amd.com,
  youssefesmat@chromium.org,
  tglx@linutronix.de,
  efault@gmx.de
-Subject: [PATCH 05/24] sched/fair: Unify pick_{,next_}_task_fair()
+Subject: [PATCH 06/24] sched: Allow sched_class::dequeue_task() to fail
 References: <20240727102732.960974693@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,131 +75,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Implement pick_next_task_fair() in terms of pick_task_fair() to
-de-duplicate the pick loop.
-
-More importantly, this makes all the pick loops use the
-state-invariant form, which is useful to introduce further re-try
-conditions in later patches.
+Change the function signature of sched_class::dequeue_task() to return
+a boolean, allowing future patches to 'fail' dequeue.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/fair.c |   60 ++++++----------------------------------------------
- 1 file changed, 8 insertions(+), 52 deletions(-)
+ kernel/sched/core.c      |    7 +++++--
+ kernel/sched/deadline.c  |    4 +++-
+ kernel/sched/fair.c      |    4 +++-
+ kernel/sched/idle.c      |    3 ++-
+ kernel/sched/rt.c        |    4 +++-
+ kernel/sched/sched.h     |    4 ++--
+ kernel/sched/stop_task.c |    3 ++-
+ 7 files changed, 20 insertions(+), 9 deletions(-)
 
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2001,7 +2001,10 @@ void enqueue_task(struct rq *rq, struct
+ 		sched_core_enqueue(rq, p);
+ }
+ 
+-void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
++/*
++ * Must only return false when DEQUEUE_SLEEP.
++ */
++inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	if (sched_core_enabled(rq))
+ 		sched_core_dequeue(rq, p, flags);
+@@ -2015,7 +2018,7 @@ void dequeue_task(struct rq *rq, struct
+ 	}
+ 
+ 	uclamp_rq_dec(rq, p);
+-	p->sched_class->dequeue_task(rq, p, flags);
++	return p->sched_class->dequeue_task(rq, p, flags);
+ }
+ 
+ void activate_task(struct rq *rq, struct task_struct *p, int flags)
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2162,7 +2162,7 @@ static void enqueue_task_dl(struct rq *r
+ 		enqueue_pushable_dl_task(rq, p);
+ }
+ 
+-static void dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
++static bool dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	update_curr_dl(rq);
+ 
+@@ -2172,6 +2172,8 @@ static void dequeue_task_dl(struct rq *r
+ 	dequeue_dl_entity(&p->dl, flags);
+ 	if (!p->dl.dl_throttled && !dl_server(&p->dl))
+ 		dequeue_pushable_dl_task(rq, p);
++
++	return true;
+ }
+ 
+ /*
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8415,7 +8415,6 @@ static void check_preempt_wakeup_fair(st
- 	resched_curr(rq);
+@@ -6865,7 +6865,7 @@ static void set_next_buddy(struct sched_
+  * decreased. We remove the task from the rbtree and
+  * update the fair scheduling stats:
+  */
+-static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
++static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	struct cfs_rq *cfs_rq;
+ 	struct sched_entity *se = &p->se;
+@@ -6937,6 +6937,8 @@ static void dequeue_task_fair(struct rq
+ dequeue_throttle:
+ 	util_est_update(&rq->cfs, p, task_sleep);
+ 	hrtick_update(rq);
++
++	return true;
  }
  
--#ifdef CONFIG_SMP
- static struct task_struct *pick_task_fair(struct rq *rq)
- {
- 	struct sched_entity *se;
-@@ -8427,7 +8426,7 @@ static struct task_struct *pick_task_fai
- 		return NULL;
- 
- 	do {
--		/* When we pick for a remote RQ, we'll not have done put_prev_entity() */
-+		/* Might not have done put_prev_entity() */
- 		if (cfs_rq->curr && cfs_rq->curr->on_rq)
- 			update_curr(cfs_rq);
- 
-@@ -8440,19 +8439,19 @@ static struct task_struct *pick_task_fai
- 
- 	return task_of(se);
- }
--#endif
- 
- struct task_struct *
- pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
--	struct cfs_rq *cfs_rq = &rq->cfs;
- 	struct sched_entity *se;
- 	struct task_struct *p;
- 	int new_tasks;
- 
- again:
--	if (!sched_fair_runnable(rq))
-+	p = pick_task_fair(rq);
-+	if (!p)
- 		goto idle;
-+	se = &p->se;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	if (!prev || prev->sched_class != &fair_sched_class)
-@@ -8464,52 +8463,14 @@ pick_next_task_fair(struct rq *rq, struc
- 	 *
- 	 * Therefore attempt to avoid putting and setting the entire cgroup
- 	 * hierarchy, only change the part that actually changes.
--	 */
--
--	do {
--		struct sched_entity *curr = cfs_rq->curr;
--
--		/*
--		 * Since we got here without doing put_prev_entity() we also
--		 * have to consider cfs_rq->curr. If it is still a runnable
--		 * entity, update_curr() will update its vruntime, otherwise
--		 * forget we've ever seen it.
--		 */
--		if (curr) {
--			if (curr->on_rq)
--				update_curr(cfs_rq);
--			else
--				curr = NULL;
--
--			/*
--			 * This call to check_cfs_rq_runtime() will do the
--			 * throttle and dequeue its entity in the parent(s).
--			 * Therefore the nr_running test will indeed
--			 * be correct.
--			 */
--			if (unlikely(check_cfs_rq_runtime(cfs_rq))) {
--				cfs_rq = &rq->cfs;
--
--				if (!cfs_rq->nr_running)
--					goto idle;
--
--				goto simple;
--			}
--		}
--
--		se = pick_next_entity(cfs_rq);
--		cfs_rq = group_cfs_rq(se);
--	} while (cfs_rq);
--
--	p = task_of(se);
--
--	/*
-+	 *
- 	 * Since we haven't yet done put_prev_entity and if the selected task
- 	 * is a different task than we started out with, try and touch the
- 	 * least amount of cfs_rqs.
- 	 */
- 	if (prev != p) {
- 		struct sched_entity *pse = &prev->se;
-+		struct cfs_rq *cfs_rq;
- 
- 		while (!(cfs_rq = is_same_group(se, pse))) {
- 			int se_depth = se->depth;
-@@ -8535,13 +8496,8 @@ pick_next_task_fair(struct rq *rq, struc
- 	if (prev)
- 		put_prev_task(rq, prev);
- 
--	do {
--		se = pick_next_entity(cfs_rq);
--		set_next_entity(cfs_rq, se);
--		cfs_rq = group_cfs_rq(se);
--	} while (cfs_rq);
--
--	p = task_of(se);
-+	for_each_sched_entity(se)
-+		set_next_entity(cfs_rq_of(se), se);
- 
- done: __maybe_unused;
  #ifdef CONFIG_SMP
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -482,13 +482,14 @@ struct task_struct *pick_next_task_idle(
+  * It is not legal to sleep in the idle task - print a warning
+  * message if some code attempts to do it:
+  */
+-static void
++static bool
+ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	raw_spin_rq_unlock_irq(rq);
+ 	printk(KERN_ERR "bad: scheduling from the idle thread!\n");
+ 	dump_stack();
+ 	raw_spin_rq_lock_irq(rq);
++	return true;
+ }
+ 
+ /*
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1483,7 +1483,7 @@ enqueue_task_rt(struct rq *rq, struct ta
+ 		enqueue_pushable_task(rq, p);
+ }
+ 
+-static void dequeue_task_rt(struct rq *rq, struct task_struct *p, int flags)
++static bool dequeue_task_rt(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	struct sched_rt_entity *rt_se = &p->rt;
+ 
+@@ -1491,6 +1491,8 @@ static void dequeue_task_rt(struct rq *r
+ 	dequeue_rt_entity(rt_se, flags);
+ 
+ 	dequeue_pushable_task(rq, p);
++
++	return true;
+ }
+ 
+ /*
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2285,7 +2285,7 @@ struct sched_class {
+ #endif
+ 
+ 	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+-	void (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
++	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+ 	void (*yield_task)   (struct rq *rq);
+ 	bool (*yield_to_task)(struct rq *rq, struct task_struct *p);
+ 
+@@ -3606,7 +3606,7 @@ extern int __sched_setaffinity(struct ta
+ extern void __setscheduler_prio(struct task_struct *p, int prio);
+ extern void set_load_weight(struct task_struct *p, bool update_load);
+ extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+-extern void dequeue_task(struct rq *rq, struct task_struct *p, int flags);
++extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ 
+ extern void check_class_changed(struct rq *rq, struct task_struct *p,
+ 				const struct sched_class *prev_class,
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -57,10 +57,11 @@ enqueue_task_stop(struct rq *rq, struct
+ 	add_nr_running(rq, 1);
+ }
+ 
+-static void
++static bool
+ dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	sub_nr_running(rq, 1);
++	return true;
+ }
+ 
+ static void yield_task_stop(struct rq *rq)
 
 
 
