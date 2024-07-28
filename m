@@ -1,156 +1,254 @@
-Return-Path: <linux-kernel+bounces-264575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF8A93E585
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B0593E596
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE5F1C20EA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6ACC28191A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67353F9FB;
-	Sun, 28 Jul 2024 13:18:55 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F37B433C4;
+	Sun, 28 Jul 2024 14:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SvkG9Blf"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazolkn19010009.outbound.protection.outlook.com [52.103.13.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419821B86C2
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 13:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722172735; cv=none; b=u/4/dQarMCH8DAJEMsljtclV6S+77c8WyCB4MMVsgVDUx0nKzLrJxMIRvBn+r97QZjbW0RKRnY6YOyqVtRIP2xbLaUZzuaG0d3u5k3HubtoK4Yb5LlObkJ8PG21dtAJMXLg6iXd5fn4CKS5zA8BN/NnpUtY7/WZncK5Rz5NQ/WQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722172735; c=relaxed/simple;
-	bh=4n7BlQFvNPXtWW3eAjZuvpHz9cMZXEKyncS/gLZlVPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EEOnnhElTWekygIh1bKHt7B/MtTb/3ny4/co4F0J33DCEILQSRJE0Ndv8MEEGDqDoiUsCa+Ei2BabCq1E7fVjT9D/OyciUmsTSTi7B7IjgMO18aek009bI82jX4CKz/Ls1PGh5GoT3RqEAaiSmBgV4P7DuiFEDm5lfjhrdr353o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46SDIoLn098749;
-	Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46SDIoTV098746
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e57e3e18-4f40-462e-959a-f6a9f19b1fe9@I-love.SAKURA.ne.jp>
-Date: Sun, 28 Jul 2024 22:18:50 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5602E64A;
+	Sun, 28 Jul 2024 14:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722175605; cv=fail; b=jPBpbWFBF0hs8HIs1mhbkLqL52ixBPPtyJuYwnKJbb3HFVDk/NaOpBmRYHfKA9EaBdlVnQ4nhLbrl1RnR2y3Tkv1eZee+JSLAKsnQgxukmmvGCHOG4784fGvhRqi/GfIFrGlu9qn85SITflvvs9zSuAeOQp2gX2p4Gbwn0F1mdQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722175605; c=relaxed/simple;
+	bh=IMMd5OpO89iUtypmw8DL4XZOAbWkPf7JXrNTJFzGjU8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=etbhiXGa1CqUhQ8UgTDkaHz8V/awN8y5IT8Pbu4CHCbj5nt2zfgihoGi/5QLQkTb0whP2zgZgevdG+sj4PYLzf/n4dfW7CBv9BV2c/R4NV0nzDxzBjCNxFfeJRp9R7Stc15bMAhsliVGlEK+vm5eWfHGXCqgxD+IE12xBQiQq4w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SvkG9Blf; arc=fail smtp.client-ip=52.103.13.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q9exg99086PP839ikpf1pTII5VnaFjgFaQ4ly9mONpMBnFPZsXiX/WEtsgy02USM9qHsvnthUk0M54Yl32WSwI6zw5ndO+zx5i8ym6aTiCHp+SCSdWzK/tOjyqwdpTwrb6Ab12jwSL073TZG6FlMrzKQleaYyWr8msOCwp9TKu5GgZbmMFGwKDB6a2i1yLxj3xVwBlbiJu9yuvGRuCmFkTmVhMK0CYKoNnd+yx61Giv06WW4crWEANRQj2dbbv1+MEOq4Cuu0B/V93aIyhQIEwmdc86PuQdfg5HAVGfeLsT5hfeDaepf+fw0LuwiGmaVI9AKwoD6UouUkUIbetzlJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wES7DO+xg70uBzMvST6fcHQAZrEWCK8KgPD+2XgwqJk=;
+ b=I4kmjKWU+NPkRdufDAhQzQw9tf5pp5l3jGJWZvDyFbYr/9QkmMBgml/1s0LygoExWLZ+7baZgtbVehx/XbI+9nhk5XfYQnMx2QrRfT9nVV8jgUXphIu8noCPs9pISCB9G9tphKOCYZiH9yOFVWa9oAT8wOJOUnv6zQtfYlZyZFGefbJu+8D9XwwD82j4ynVUrONLVK940b+tdh9xZm09FYzr+Lud5zuy1BXqIgRQ9qsum+ZRjzaqWJMwiOyBghNd3xnF08esCBHGDRQEJ9d3+0OhzOX6Arnu2l75jua1mhn+0mLlI9rxK6W5MnnKDYJo7/gAWHtLVnRfnPxKIWRkqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wES7DO+xg70uBzMvST6fcHQAZrEWCK8KgPD+2XgwqJk=;
+ b=SvkG9BlftbXiQ9m5JOjKgstsvRz+K0A+FeQHKB7nEfjsRTaZHuRgUSGH0mUcxYUO9/H3d9h9tbuVAZ6yOGgEeyTq5hEHNo0FDFBGVQhr9rHYEQB3w0AtJRXZYoS2g+sAPfwsA/O12fxB0XZJ2tT4xobyCqD4XyrD0dE8Oo4bAyw50pKzif/mA5eh9GcasDLaNT7fPh4K5pt9atjp871RoE7C5nEuZjpoNoX+b8t0tqzEh6W8cYs5bEYg0kYxGvYsGJiJgrFHYq97msB386Yu82gkzR2S7Eei8A+3w2s1CWdn3iI8Xkcqn9hRO75q7qPeO0She1USk3KSExodcmbicQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CH3PR02MB9690.namprd02.prod.outlook.com (2603:10b6:610:175::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Sun, 28 Jul
+ 2024 14:06:41 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7784.020; Sun, 28 Jul 2024
+ 14:06:41 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "ssengar@microsoft.com"
+	<ssengar@microsoft.com>, "srivatsa@csail.mit.edu" <srivatsa@csail.mit.edu>
+Subject: RE: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Thread-Topic: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Thread-Index: AQHa3lM09woqlpVK5UOgvbiXDK+uF7ILkLnQgABQwoCAAE8CIA==
+Date: Sun, 28 Jul 2024 14:06:41 +0000
+Message-ID:
+ <SN6PR02MB4157A6C0CA988FE0381F007BD4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
+ <SN6PR02MB4157BB3FF96D869D87B0A5D2D4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20240728091811.GA32127@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To:
+ <20240728091811.GA32127@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [y+WHRdEfpwSMTohWb1trkUCaHmaJuk+Y]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH3PR02MB9690:EE_
+x-ms-office365-filtering-correlation-id: 14763bf1-014c-49cc-20ae-08dcaf0e8148
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ IuOhBd2sPRKPE2oIYNmbDQ3pws8BQ2SsIH1usBXo+VDOzxkpgSp6Zm9DIloCQRinTgWdtH+jUzrPlXAHJ077MLCth/+1qQHK07ioC2+HsgDIU2xb7qEn8dDL4ektIqdFTS2uA7BogqLIE8sua8YuzEjnwa3pZhTC31xZnJn+b49swsz/uDDoDCkDc4GI0wBCMVggjjwr4eC/4YH0xAZqC0R7anGHdT7Wrl0zMU7WCzYZp8t9wAUffTH+pV6pWUtk43OHHptb1EBTzbuCUjtAUt705lRoNCfWIm7wFwXT2xqYDXnS/ltiLsvk7T1FtMNDfXgSbIFPKuncJIlub9ZaZzNWkMCgiCHWiGFSzJ1S043ZgM/snOHFhTylD63oWgSodxa6OvvgZsIFkO3EtpEg2HmHGcWTHG0j2bsDFUNpBegK0kXMjajPVJYC07Nt4K1wi4DuchzrfoMmN7m38EWaSUfNLKUt9bttMCBlURvMDaT8WlcF6CRgd1EoE52GZZ6ia13g3GwL5IaH0iGw3TQaQQCmS/E6H4ktT4UgRvAzLigbZQj5ECgIWkhaKYiqUHPVjAM9MOXP2y9fdjDE4mI3eEElvzTwYPz1OxENRk4IgtgxiFiS7ScvBGBwqba+RA5E+q2RDrWsgnqkdMk6JJZATQ==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?t7P8nP8nPqoKsEklwQzHh6jDVL4Tq65iF67bWTJ8HylBAjc1oEmegZgVBa3B?=
+ =?us-ascii?Q?X0/avBG47PCfTTRvj6JjMouimjSJRToI9fYXxUt0QdT6obFdB45E370rL4DP?=
+ =?us-ascii?Q?I5rzbpNyx2FIlHW/5C9SLoawsLu4qmpSb1EJy/NIjQ8mklZNvQZ27bhoI0oD?=
+ =?us-ascii?Q?fgFfmpuE2dkYnr+piyGGv2poGLpYsfDWOwPk9zv8k8Y/3Y7HAq6Xme5im3Ez?=
+ =?us-ascii?Q?/Lo96qawsB9ghQehYipIwB3K8L/y2RAJ7DiHOYJHpFdOYAD4ep1EGP8jPj+s?=
+ =?us-ascii?Q?wyAP4tUqspfYXChTLFAmI64IRDwFEG+mCxap+oxfc9+FXFKipvIxCRIKjLA7?=
+ =?us-ascii?Q?9+mQoqei5yQ1kZQb17+2pDDWIqjL9BypOUyJop9fx/qCFAw/qDdSNV1jT99l?=
+ =?us-ascii?Q?H97CPSA3FBsX0L5dAeYQ+n4Rv3e/1p11i7vf0ZLe6UCjunKhfRjVQlimkY9e?=
+ =?us-ascii?Q?YVaRkttjAfIIWMUG4pTMTJRQHc8Hv+aAbbd3ieJB+AEC7QMpoxJ6GkUfaKzU?=
+ =?us-ascii?Q?HkGjbSyXHEZ02lN5RViOxfgz+VtAjmJAb+rA12js7NVq5+ldAwJz1BL9cR78?=
+ =?us-ascii?Q?q16FWkNzd2wxsFAaq9EY3m7bl5XSMOe0Q3gxzjYPGEt04fl4OKhJhoQQyNIn?=
+ =?us-ascii?Q?nfX2x++Hz00IQ/mFiUhKhayEIe+IO+28Oz9W3JCqkdjj0/1a1SHdXYIj0Tol?=
+ =?us-ascii?Q?xzYWBkvVC/XAXYyKLoJHHXpCbgLqpZgjij1/3gflZNWjO8RWRnNefa05pbci?=
+ =?us-ascii?Q?tWXZDOuSFEksdjdwMp+Dv6jyKzoS4ZMvkcSYUqBDD6ZjLr5VU+fiAyJ14l7w?=
+ =?us-ascii?Q?+MfN7PW0GFzb+d+48eCrIaEHG0vuast/gZekZG6pbDZJc0fiTMmFjkMDU2xx?=
+ =?us-ascii?Q?MB4EEq7k+twLaGqEJORksLhkW+x5Dt2TrBL+yGE8x4Nbw15HR6jgnVH+S2iJ?=
+ =?us-ascii?Q?tArdpc+SymeHPukVY+g1RrNj3ygxMU9jmxBoNROqPeHpk3NB2ub64H7aBgON?=
+ =?us-ascii?Q?tNygJFhWoeYiBDujHe7pWchkgY6TdpJKhWynI5fGntbzp5HunqHA5+GSyhwP?=
+ =?us-ascii?Q?dXzKx8F1ftliOtsZZev/QSo9pLKSC8MdA3JcdC76UUZ/SqqnKpCBZDMvI7+E?=
+ =?us-ascii?Q?3cIyw7+VKSDDJmaFxm49Q30IkJJNaRuMJGL33bXogW1sD61VnJ32svcl6hEk?=
+ =?us-ascii?Q?hGfx9ALDpqn/yiScsDZONy5zRYoB85jaOaMPONhHupc2HU3CGcFlFqEREGE?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] security: tomoyo: Add default builtin-policy.h for
- default policy
-To: Michal Marek <mmarek@suse.cz>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        llvm@lists.linux.dev, Marcos Paulo de Souza <mpdesouza@suse.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling
- <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>
-References: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14763bf1-014c-49cc-20ae-08dcaf0e8148
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2024 14:06:41.2937
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB9690
 
-Hello, Michal and Masahiro. What do you think on this proposal?
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, July=
+ 28, 2024 2:18 AM
+>=20
+> On Sun, Jul 28, 2024 at 04:32:23AM +0000, Michael Kelley wrote:
+> > From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Wednesday, Jul=
+y 24,
+> 2024 10:26 PM
+> > >
+> > > Currently on a very large system with 1780 CPUs, hv_acpi_init takes
+> > > around 3 seconds to complete for all the CPUs. This is because of
+> > > sequential synic initialization for each CPU.
+> > >
+> > > Defer these tasks so that each CPU executes hv_acpi_init in parallel
+> > > to take full advantage of multiple CPUs.
+> > >
+> > > This solution saves around 2 seconds of boot time on a 1780 CPU syste=
+m,
+> > > that around 66% improvement in the existing logic.
+> > >
+> > > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > > ---
+> > >  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
+> > >  1 file changed, 30 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> > > index c857dc3975be..3395526ad0d0 100644
+> > > --- a/drivers/hv/vmbus_drv.c
+> > > +++ b/drivers/hv/vmbus_drv.c
+> > > @@ -1306,6 +1306,13 @@ static irqreturn_t vmbus_percpu_isr(int irq, v=
+oid *dev_id)
+> > >  	return IRQ_HANDLED;
+> > >  }
+> > >
+> > > +static void vmbus_percpu_work(struct work_struct *work)
+> > > +{
+> > > +	unsigned int cpu =3D smp_processor_id();
+> > > +
+> > > +	hv_synic_init(cpu);
+> > > +}
+> > > +
+> > >  /*
+> > >   * vmbus_bus_init -Main vmbus driver initialization routine.
+> > >   *
+> > > @@ -1316,7 +1323,8 @@ static irqreturn_t vmbus_percpu_isr(int irq, vo=
+id *dev_id)
+> > >   */
+> > >  static int vmbus_bus_init(void)
+> > >  {
+> > > -	int ret;
+> > > +	int ret, cpu;
+> > > +	struct work_struct __percpu *works;
+> > >
+> > >  	ret =3D hv_init();
+> > >  	if (ret !=3D 0) {
+> > > @@ -1355,12 +1363,31 @@ static int vmbus_bus_init(void)
+> > >  	if (ret)
+> > >  		goto err_alloc;
+> > >
+> > > +	works =3D alloc_percpu(struct work_struct);
+> > > +	if (!works) {
+> > > +		ret =3D -ENOMEM;
+> > > +		goto err_alloc;
+> > > +	}
+> > > +
+> > >  	/*
+> > >  	 * Initialize the per-cpu interrupt state and stimer state.
+> > >  	 * Then connect to the host.
+> > >  	 */
+> > > -	ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online=
+",
+> > > -				hv_synic_init, hv_synic_cleanup);
+> > > +	cpus_read_lock();
+> > > +	for_each_online_cpu(cpu) {
+> > > +		struct work_struct *work =3D per_cpu_ptr(works, cpu);
+> > > +
+> > > +		INIT_WORK(work, vmbus_percpu_work);
+> > > +		schedule_work_on(cpu, work);
+> > > +	}
+> > > +
+> > > +	for_each_online_cpu(cpu)
+> > > +		flush_work(per_cpu_ptr(works, cpu));
+> > > +
+> > > +	ret =3D __cpuhp_setup_state_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv=
+/vmbus:online", false,
+> > > +					     hv_synic_init, hv_synic_cleanup, false);
+> >
+> > I'd suggest using cpuhp_setup_state_nocalls_cpuslocked().  It appears t=
+o be
+> > the interface intended for users outside the cpuhotplug code, whereas
+> > __cpuhp_setup_state_cpuslocked() should be private to the cpuhotplug co=
+de.
+> >
+>=20
+> Thanks for your review.
+>=20
+> The function cpuhp_setup_state_nocalls_cpuslocked() is commonly used acro=
+ss the
+> kernel drivers hence it was a first choice for me as well. However, it in=
+cludes a
+> cpus_read_lock that we already introduced separately in above code. To av=
+oid recursive
+> locking, I opted for __cpuhp_setup_state_cpuslocked.
 
-I guess that .gitignore needs to keep builtin-policy.h included, or
-"git diff" will complain if builtin-policy.h was rebuilt due to
-changes in policy/*.conf files.
+cpuhp_setup_state_nocalls() includes the cpus_read_lock() as you describe.
+But cpuhp_setup_state_nocalls_cpuslocked() explicitly assumes that the
+cpus_read_lock() is already held, so is suitable for use in this case.  The=
+re are
+several variants with the _cpuslocked suffix, which indicates that the call=
+er
+is responsible for the cpus_read_lock().
 
-Regarding having default security/tomoyo/builtin-policy.h , is there
-a pitfall with modification time of security/tomoyo/builtin-policy.h
-and files involved in generating security/tomoyo/builtin-policy.h ?
+Michael
 
-On 2024/07/28 9:51, Marcos Paulo de Souza wrote:
-> When checking tomoyo code there is an include for a file that is not
-> included on kernel-source since it's generated at build time, and the
-> kernel-source uses git archive to create the tarball.
-> 
-> Having the source code referencing a file that is not included in the
-> tarball can confuse tools that inspect/parse code, since the file is not
-> there.
-> 
-> The builtin-policy.h added is generated from the same default policy
-> that already exists on policy/ directory, so it doesn't break the
-> current usage of that file.
-> 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> ---
-> Hello, I sent this patch because we saw some issues while running
-> clang-extract[1] on tomoyo given CVE 2024-26622. Since clang-extract
-> parses the C files it failed to find builtin-policy.h. As a bandaid, I
-> had to add
-> 	-DCONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-> 
-> to clang-extract (we feed the gcc arguments used to compile common.c got
-> from compile_commands.json on kernel-source).
-> 
-> Per my tests it works with my patch, and I don't see why this would hurt
-> to have builtin-policy.h on git, since it would regenerate the file if
-> the policy scripts are changed.
-> 
-> Please let me know if I'm missing something here.
-> 
-> Thanks!
-> 
-> [1]: https://github.com/SUSE/clang-extract
-> ---
->  security/tomoyo/.gitignore       |  1 -
->  security/tomoyo/builtin-policy.h | 13 +++++++++++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/tomoyo/.gitignore b/security/tomoyo/.gitignore
-> index 9f300cdce362..85d086c6502d 100644
-> --- a/security/tomoyo/.gitignore
-> +++ b/security/tomoyo/.gitignore
-> @@ -1,3 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -builtin-policy.h
->  policy/*.conf
-> diff --git a/security/tomoyo/builtin-policy.h b/security/tomoyo/builtin-policy.h
-> new file mode 100644
-> index 000000000000..781d35b3ccb3
-> --- /dev/null
-> +++ b/security/tomoyo/builtin-policy.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +static char tomoyo_builtin_profile[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_exception_policy[] __initdata =
-> +	"initialize_domain /sbin/modprobe from any\n"
-> +	"initialize_domain /sbin/hotplug from any\n"
-> +	"";
-> +static char tomoyo_builtin_domain_policy[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_manager[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_stat[] __initdata =
-> +	"";
-> 
-> ---
-> base-commit: 910bfc26d16d07df5a2bfcbc63f0aa9d1397e2ef
-> change-id: 20240727-tomoyo-gen-file-fcfc3a0c0f46
-> 
-> Best regards,
-
+>=20
+> One might argue that unlocking and then calling cpuhp_setup_state_nocalls=
+_cpuslocked
+> could be a solution, but I am concerned about potential race conditions, =
+as CPUs could
+> come online during this interval and in such case synic initialization fo=
+r those CPUs
+> would be missed.
+>=20
+> - Saurabh
 
