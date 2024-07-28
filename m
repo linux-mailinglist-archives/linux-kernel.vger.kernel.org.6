@@ -1,47 +1,75 @@
-Return-Path: <linux-kernel+bounces-264494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C5D93E420
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:41:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE79693E423
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76FFDB2127E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 08:41:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D32BB21224
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 08:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F6417BD9;
-	Sun, 28 Jul 2024 08:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D195D179A3;
+	Sun, 28 Jul 2024 08:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7zYoPtv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nM8vCLIG"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814E8BA34;
-	Sun, 28 Jul 2024 08:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43469168D0
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 08:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722156071; cv=none; b=Ws17uljrZID3//YtBDN77lttdHP52VoETR1eljG9PA7SyZIG+LjtzCHmYfcUsJoNQk3HYdDE9GjlcDhk2BR0NfIGebm2LsXDMTbMCXjj8ONOaymhTeONBnj4BPGXOhpSCDfNZHAb6HnL7hi+0VGP9URrC502yn4TJbpoI/DWSVA=
+	t=1722156159; cv=none; b=hkVWXBOE1RdrnQJn5Y+UsSCilm/QVBuGeIEvqd5v0UYvdqojCxMUMhKo6tXSBWk/Axt9x0vL2UTbsFCwqOHiOSir9NwNo+V8yvH20Cfn1hpxlGZ73RkLfSH15hKCmjPblHTDQ54Zd3fxnsrnAmfrIIMZbM0PU4ad2HgF4X/cgMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722156071; c=relaxed/simple;
-	bh=/Bi4KvCOpUh2vfddp26zZyy0Hwn/YMVYEAibqT+vD3Q=;
+	s=arc-20240116; t=1722156159; c=relaxed/simple;
+	bh=nOQo74S8qadh1ulGfpb1JJ1vhZaqvOIVfm45SqybAQo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZVtN8X59YEvMB+5TmUc8xwNK9QgUdNhTiBNjiqUGL94Skg2wqGHa20yC94nIVDe1qSPvITCYifgD2/bJDHOfJhCz7EbGAfbrDClm/vGxDISclDjA06cDW36cHFerXGm87E0ne5d03QeinEOXLKyPX76xwjSnc9zEB2WkH6BX/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7zYoPtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134E9C116B1;
-	Sun, 28 Jul 2024 08:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722156071;
-	bh=/Bi4KvCOpUh2vfddp26zZyy0Hwn/YMVYEAibqT+vD3Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B7zYoPtvY9KGIMHz7fnc8lzXAp9SiHOWY1WtlwLjmV0ox4mPTc9PduF/W1ynjj5rw
-	 ZmRIyRNTqTHMhj7befls2lJ7r0WmgHi/uj9Vkq3rrxth32kTX3TinmJYwQQaTmo9xT
-	 aRbrgEp1MXDRD0pUyJHscMm4WScyiIDljTbgK0JY7pqJdigBn7vS4a4+7OD1HjLB95
-	 yEYvzh0GP0Vgzrb7+tcUyqyWZoFBr1QuMCbTsLgF2JxIO11OpmxTX9IqgRaPqF4ufW
-	 kJW6rLo+vY2EN5dMa/r7Pawg6fh4ONp5DZOo06vcBOCNELg7Bfzu8l2Z/trH9MKtzX
-	 Ml0yFS43FKDUw==
-Message-ID: <27fb423a-e8f4-44c2-be1a-38d2a42a11b6@kernel.org>
-Date: Sun, 28 Jul 2024 10:41:05 +0200
+	 In-Reply-To:Content-Type; b=r60ZNkYdmAgXi33CPd39LXuTY+O4T540w41vYFXDzCIMK/hUes4AMy5vMqCSo5zkHMF0ZvfMO71adbSEPe+Ti1ZCgCnSCOYF2t/Hxd9miF9EyIECWDHhAPFqRAuZRda6RcUll/ZcoPLq2ttI8HKRBvCaBGqINxl3y63rPF/A5yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nM8vCLIG; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so7703585e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 01:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722156155; x=1722760955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hnNAOsuGEyzrJ1TKQZVRj/NeNFd4Eu7EVxsq8D6s6uM=;
+        b=nM8vCLIGtwgWhBJwJsISEopkXsYHGOwtYfcxsNk5325u/t59e9TTFxnGp2eZ8DrOsi
+         EoOXAYfArYQHmLW/PWNsVLomIbX1iJSwhEFq8a2RLPUQPVDkSZ4j6UWEM1NdDDr/vIa2
+         EOQ5AuFq2PpkFoWmEU9DnLqb9Btnf1cfCgvAqc7Fce19NF/Rm2dZ6tLCa+XOcU1LAF7/
+         CiZKT7mVBn0H1dcGKFV0272JTMS7akX/E2k15/qPWiIs+rfb3LRunmz7QXeGP+NlCFSH
+         rRSWVIQnQ0MNhU56wo+FAZkorXTxXzK3cgXSav748PGYmG8FA5w0I+PmukkVcBcOx8D8
+         GALg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722156155; x=1722760955;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hnNAOsuGEyzrJ1TKQZVRj/NeNFd4Eu7EVxsq8D6s6uM=;
+        b=ZmoCMzWbcYJ3T6PDrcaAecJeUAU+CPOhBchZDHse37FAEOVmoDu7hyPCWuBHIxiHje
+         DN8TGIGPCODEdk003UWD8B2/lVTeajh3LOc989Pm173bYFp37vojccQMk8UaxpiMP2bf
+         BCVMEw6Viu25kTXUyzThSvza7OfxBqTQmU9BLLsU8Ln0MM6zfpHZBLCgf9Xp7/jZsUeS
+         mH8rGUO0ARwanH1RDLpOXdIMTmSZYqVbmu3uP/PcUs5iRcWgIBt+V0XNrdNO5jU9g/4q
+         O+wX31FxuAInFvgu8nVLrMyumA7ls10hJ5PGFMkBCkz2XkrJXT2ar1BBxUdIjqG8pwEJ
+         Fm+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZNeLa/7Vrb+BOye3+VCjyUBgMiTbhxk9xQYdyQ2ixSannGaZK7PxGrK06xNL9BpTQ4Z3u7VGD3fGBdSC68Hakq6rTk5X3i/ambAFD
+X-Gm-Message-State: AOJu0YwqyoRuYKyPe0Yp6Enyp4OuttSC0A++r1aK/pOofXOAAJQuv0CH
+	B8blbGl13dJ43KUUS8K6P3fe59gbGgRSoufksL/1F+kZs4HN5/TwVgn5pNFDc9iGWB+0qyj2RPX
+	a
+X-Google-Smtp-Source: AGHT+IG5NCQz8SabaYTWBJxcc9u9rKTarj4mBkVksSVQJgptaYn+rBkovfs9buzmm1NxIHDClkwINg==
+X-Received: by 2002:a05:600c:2d53:b0:426:59fc:cdec with SMTP id 5b1f17b1804b1-42811da1b88mr29450245e9.21.1722156155235;
+        Sun, 28 Jul 2024 01:42:35 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42805749f46sm137690415e9.22.2024.07.28.01.42.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 01:42:34 -0700 (PDT)
+Message-ID: <4b11e61c-bed6-44ea-9f28-c7d261deaa1e@linaro.org>
+Date: Sun, 28 Jul 2024 10:42:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +77,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 2/2] iio: proximity: aw9610x: Add support for aw9610x
- proximity sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: wangshuaijie@awinic.com, lars@metafoo.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, waqar.hameed@axis.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, liweilei@awinic.com, kangjiajun@awinic.com
-References: <20240726061312.1371450-1-wangshuaijie@awinic.com>
- <20240726061312.1371450-3-wangshuaijie@awinic.com>
- <3ef6c902-b004-4aa0-96c9-dabd81a01a6a@kernel.org>
- <20240727160628.115e295e@jic23-huawei>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
+To: Alexander Reimelt <alexander.reimelt@posteo.de>, andersson@kernel.org,
+ petr.vorel@gmail.com, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240727201413.114317-1-alexander.reimelt@posteo.de>
+ <20240727201413.114317-2-alexander.reimelt@posteo.de>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -72,92 +97,67 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  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
- 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 fv0=
-In-Reply-To: <20240727160628.115e295e@jic23-huawei>
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240727201413.114317-2-alexander.reimelt@posteo.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/07/2024 17:06, Jonathan Cameron wrote:
+On 27/07/2024 22:04, Alexander Reimelt wrote:
+> International variant of the LG G4 from 2015.
 > 
->> ...
->>
->>> +static int aw9610x_read_chipid(struct aw9610x *aw9610x)
->>> +{
->>> +	unsigned char cnt = 0;
->>> +	u32 reg_val;
->>> +	int ret;
->>> +
->>> +	while (cnt < AW_READ_CHIPID_RETRIES) {
-> Why retries? 
->>> +		ret = aw9610x_i2c_read(aw9610x, REG_CHIPID, &reg_val);
->>> +		if (ret < 0) {
->>> +			cnt++;
->>> +			usleep_range(2000, 3000);
->>> +		} else {
->>> +			reg_val = FIELD_GET(AW9610X_CHIPID_MASK, reg_val);
->>> +			break;
->>> +		}
->>> +	}
->>> +
->>> +	if (reg_val == AW9610X_CHIP_ID)
->>> +		return 0;  
->>
->> So devices are detectable? Encode this in the bindings (oneOf and a
->> fallback compatible) and drop unneeded entry from ID tables.
-> 
-> Hi Krzysztof,
-> 
-> I think this is not a good idea.
-> 
-> Even though these two are detectable, this breaks if along comes a 3rd device
-> in the future which is truly compatible with one of these two parts but that
-> we don't yet know about (so can't discover). For that part we will want to
-> provide a meaningful fallback compatible.
-> 
-> It needs to fallback to either the 3 channel or the 5 channel chip and handle
-> it as appropriate. (Note that this difference is non obvious as right now the
-> code pretends there are always 5 channels and that needs fixing).
-> 
-> If the chips provided a register that told all the chip specific data like
-> how many channels, then sure making one fallback to the other would be fine
-> as future devices could use those standard registers.
-> 
-> With just an Id register, we can't discover enough.  Hence these two
-> parts should not be listed as compatible with each other.
+> Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
+> ---
 
-Sure
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
 Best regards,
 Krzysztof
