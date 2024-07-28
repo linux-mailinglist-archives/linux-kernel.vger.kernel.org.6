@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-264836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AF493E8F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A35893E8F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F882814FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1061C20F01
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2914A75804;
-	Sun, 28 Jul 2024 19:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED87B5FB95;
+	Sun, 28 Jul 2024 19:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ltQDmRo/"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfSLpVfl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7766FE16
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 19:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370912AD29;
+	Sun, 28 Jul 2024 19:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722193203; cv=none; b=RA2oQmrF8tL8JhfJrojYgeqIzrBJ5cgCkD12JTQiDRFdSrlyyo8OsG6wwLNmueZrGv2qBxdq3ziwtzVFLYzLixVA3SPehb9ksY2oWQvO8Ae1FvpWdRjlaKu6Xh/nqm+gZ3eliSwqecHGscvHLA9sIm5pgcq9LLkRUz1hlKjDcS4=
+	t=1722193348; cv=none; b=Qz8jXQCV9lExmhr7wXe6Tn25Lbeih29LZn7RhxT5dYBvqhs9wv0Ei7IGSNp32LUKB2YSWeWN9DDANGSE9Zkpi29GbfmOpN18QvWoM0bmBszG1zOlX+30kJKpek5kZJalH73NJ4W91/ZLujddV/pjuLA0oAHDCl7h7pTolTe8iQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722193203; c=relaxed/simple;
-	bh=1MyMmZ97Pppecmq9EM2Z5W/UBgCxk2y+Yc/6WxfOg2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f+scAwToXBRs856vS9G9jQf2g4+PpbCGFVyXTnOqodPojDBcA+HHLdtceub/vnBGyjlSNANI65AqawFqaeBATbjgM87/Ur9xTqhBZGWYwavdlNEB+VulE5/ZrgnmYXzvtyJ5/xF9ngpDErTZ5EKlGOnFnIQFxOdQMmXKbqr/bZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ltQDmRo/; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 02189240101
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:59:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-	t=1722193200; bh=1MyMmZ97Pppecmq9EM2Z5W/UBgCxk2y+Yc/6WxfOg2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type:Autocrypt:OpenPGP:From;
-	b=ltQDmRo/FOKt6uTnPiadITldqlg/J4KZf9v3mm93HktGcKKcX3uR4YnogZmaqOTfS
-	 qisaX2m79uzJadvXDrSI4XntTB3l/fsTNeENURQ4DjiH9ll3W61qaGHDMI6Hz5U7Gz
-	 D2S2JHTml79OnacdEpYrqvlTK4HA52mMJ2O+60MmzFgmIZUP294i1TUrBC+ytQQEDI
-	 +dYg2fADYePs31ISzig2ZJhQAMkUmssukSrPdHb9LJTDbb3HC59mbyJ9TGuc3wr4mY
-	 2tnuD0ZyX0HqEnpzw8xIcNFSFXMFT31n+4eBjzrmk1m7dmGDVEMtHZoSURNuJu0e8b
-	 sTJbihUnCPONA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4WX9ly53pMz9rxL;
-	Sun, 28 Jul 2024 20:59:58 +0200 (CEST)
-From: Alexander Reimelt <alexander.reimelt@posteo.de>
-To: Petr Vorel <petr.vorel@gmail.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
-Date: Sun, 28 Jul 2024 18:59:48 +0000
-Message-ID: <5636859.rdbgypaU67@desktop>
-In-Reply-To: <20240728151329.GA1196482@pevik>
-References:
- <20240727201413.114317-1-alexander.reimelt@posteo.de>
- <20240727201413.114317-2-alexander.reimelt@posteo.de>
- <20240728151329.GA1196482@pevik>
+	s=arc-20240116; t=1722193348; c=relaxed/simple;
+	bh=jraGcb/y+eh34BRuZ6I8inLVF3tNfDxKC+d8OD/SH/o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=flL9udenBNfGzW475C8uhS09e7thABFobg5kKCKDziYrAcNnTi739+k3F68QrabwhXac+pFyPQrDdov3t+QwMVMTXa8c8bUIxg0/vVjZYAHJch95Op5vcUQzcZW1MlcY28tc/yjFK6jZu++kkAmR/rkPFyhn3b+6CGVJaazvMLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfSLpVfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F76C4AF0C;
+	Sun, 28 Jul 2024 19:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722193347;
+	bh=jraGcb/y+eh34BRuZ6I8inLVF3tNfDxKC+d8OD/SH/o=;
+	h=From:Date:Subject:To:Cc:From;
+	b=kfSLpVflRwP1u2yIXTvDephGrWbb+cEbcoRwbX1E+AGAtxtz3lEgXySg9NlMfwFVe
+	 4C+96VYo/lO+g4dKYWfcKYGm2wEPXNexd4yZNKFpQ4vC7mZOn/FrbLu7Qc6A+4mV7m
+	 ZLAY6/DsfkNKCmpHMMHZoTV25DlWzjeZUppnhiOgaM6uc3OzFdLKeF19WJk9HZxgzf
+	 6V28y6E2gvzQjX6QokIT4kR7kGSX8ngrGE9dTkmYhOwIDM+Y3Gw9myOYvMuC8gi8Ts
+	 IDhQrvmtQTjEmhG0VM5ReO4z0i7DJAPJNP9pP5IckTUpKw/bwCEmDp/XgPRuk07cYA
+	 WdDvBwWIqeeMg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so4362842e87.1;
+        Sun, 28 Jul 2024 12:02:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlw4UG6qDPIZXWw/eqoXY9GJLNuERmJVakhVsKcaYwWVgtI5TFfMUl0ebc7Lhz9eU92g+vRRp9BLKnWWTcRNrcivkkJl65zHdpLIyx
+X-Gm-Message-State: AOJu0YwMQNP0C6uMQU764RBskZ87R4xFgIVvRMtPWSg/OmoaDM36qf6w
+	UmEiNl7O+5i4y+JrY/SUH089KvuVqlimzWMQQJAeIXcbieEBrCnLVbz2DZA0gvr5w5jzOpXWKHq
+	Aoy/txhBnzqe/DbYFdxjQuZnwC64=
+X-Google-Smtp-Source: AGHT+IEhXb6TKwB9xBnDwqhWkAYiKfnRIqRt4sqrpBI4sHFkytc6o6lyruZO7H/lqomi2fxMJutVyIDpK7a2JkX7Nys=
+X-Received: by 2002:a05:6512:251f:b0:52c:86de:cb61 with SMTP id
+ 2adb3069b0e04-5309b25a2femr4432860e87.10.1722193346229; Sun, 28 Jul 2024
+ 12:02:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-Autocrypt: addr=alexander.reimelt@posteo.de;
-  keydata=xjMEZg0fSRYJKwYBBAHaRw8BAQdAIcaNTdj3NWDe5HQPCUs6oYyQygAJWP9LCzhr+C7RwMrNG2Fs
-  ZXhhbmRlci5yZWltZWx0QHBvc3Rlby5kZcKZBBMWCgBBFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIF
-  AmYNH0kCGwMFCQWjo9cFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQHqi3OKk8uRJ8ogD9
-  EVg4zgfmC2SqXCgms6LETAzVX4CrAS8yMhyd7Md921cA/R8lhm9B96RYgA7MvFPFJb1T6JFY75Jg
-  QLXrtIE5llwHzjgEZg0fSRIKKwYBBAGXVQEFAQEHQBGDuxZLOTvppxyM4G18fSR6xzT0xkkPOia7
-  Bh6L1vAAAwEIB8J+BBgWCgAmFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIFAmYNH0kCGwwFCQWjo9cA
-  CgkQHqi3OKk8uRIa1wD8CZDdCAKXstgXY96eeSSP7MecEF5TBdmWOiVgjlEIpoEA/RnGuDaj06B1
-  F51wyGAjYXSmn5qFoNHu3yXyLUkFz1ME
-OpenPGP: url=https://posteo.de/keys/alexander.reimelt@posteo.de.asc
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 29 Jul 2024 04:01:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
+Message-ID: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v6.11-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-
-> Alexander, others have added their tags in previous versions. IMHO generally
-> it'd be worth if you carry others tags in next versions (when nothing
-> changes).
-I already replied to Krzysztof, but I messed it up and sent it only to him. 
-I'm sorry I wasted everyone's time. I didn't fully understand how the system 
-behind these tags worked until now. I should have asked earlier, but thanks 
-for pointing it out.
-
-Kind regards,
-Alexander
+Hello Linus,
 
 
+Please pull Kbuild fixes for v6.11-rc1.
+Thanks.
 
 
+The following changes since commit 5ad7ff8738b8bd238ca899df08badb1f61bcc39e:
+
+  Merge tag 'f2fs-for-6.11-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2024-07-23
+15:21:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v6.11
+
+for you to fetch changes up to 3415b10a03945b0da4a635e146750dfe5ce0f448:
+
+  kbuild: Fix '-S -c' in x86 stack protector scripts (2024-07-29 03:47:00 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v6.11
+
+ - Fix RPM package build error caused by an incorrect locale setup
+
+ - Mark modules.weakdep as ghost in RPM package
+
+ - Fix the odd combination of -S and -c in stack protector scripts, which
+   is an error with the latest Clang
+
+----------------------------------------------------------------
+Jose Ignacio Tornos Martinez (1):
+      kbuild: rpm-pkg: ghost modules.weakdep file
+
+Nathan Chancellor (1):
+      kbuild: Fix '-S -c' in x86 stack protector scripts
+
+Petr Vorel (1):
+      kbuild: rpm-pkg: Fix C locale setup
+
+ scripts/gcc-x86_32-has-stack-protector.sh | 2 +-
+ scripts/gcc-x86_64-has-stack-protector.sh | 2 +-
+ scripts/package/kernel.spec               | 2 +-
+ scripts/package/mkspec                    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+
+-- 
+Best Regards
+Masahiro Yamada
 
