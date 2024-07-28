@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-264529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B13993E482
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:30:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FAD93E485
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E471C211BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F2DB212E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEC52BB04;
-	Sun, 28 Jul 2024 10:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3727A374D1;
+	Sun, 28 Jul 2024 10:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="lbjZR01A"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/xYx9T7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2AD1863E
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336C52C69B;
+	Sun, 28 Jul 2024 10:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722162618; cv=none; b=WejyIWReaxsP4+2QiSFgo9XTR8VmkZeKj5jYROpx3bjirkIcI8ARLcHU4nfAWrizz2S+Gxi3cijnpEyHlOo0/5jy1pZzYoXd3u9aqrvjsB66ht8LizTnJV2nyjHXyPZvpwMgT5XINMT5uecVga41IAJtM4oTduhI8hYsePuGRLo=
+	t=1722162620; cv=none; b=MEdylj8WdMJhf5SBxrUcuOVB+66VPuGADSsgYvamHk1RnlNWKM8l41qdRHQzPzc9qWgv+ktQ424pto3Ed5i6xVCqm8xTdIeXoK3lWouiQK1u4QWOpsNlk+nj+ri4M6alKkcMmQ9TBUKnY2aMlHCc/2umxSY5KykyWh3oYlRu1ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722162618; c=relaxed/simple;
-	bh=ltQ3anKKiP7pr+Wvk0Q+1fGeuvz0Iyao5QbFcaA2J7k=;
+	s=arc-20240116; t=1722162620; c=relaxed/simple;
+	bh=eDWjhLzi6G1agWre6Y7l9EsOG8ksGnVzkj/CACSAyj0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mQYNPdAmYD5Eb8rm5H3r6jKG4pZ3r1eX0A4Fiwqrt7m1nRaEOlsfZ95Vi8CaFKu9AkgaOOutwrtmUPrsVdA4vOKEF1UCSwqmi4w8whaBB/ahAmL5BRKg5GsGt0rmqGeUns7QU01kNDSltETImELc3+y92WJeD5VrM0MvsWoTNEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=lbjZR01A; arc=none smtp.client-ip=193.222.135.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 46799 invoked from network); 28 Jul 2024 12:30:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
-          t=1722162605; bh=ltQ3anKKiP7pr+Wvk0Q+1fGeuvz0Iyao5QbFcaA2J7k=;
-          h=Subject:To:Cc:From;
-          b=lbjZR01AArlynDlpGYaIdgySJbFc/n2+UoWLot0POQvRPu7XD97xMFD3bKaTFOKcF
-           o3oIz73mk17tvU2HiTFX2w22MUHTD38m/eynHIrLE+FnO2xmghEVWpfbg4mtYDQDKL
-           QOVf4FpZbH0D1zaYQOZtCLiHRHXjAOEZD1ZOtTjk=
-Received: from aaen12.neoplus.adsl.tpnet.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[83.4.117.12])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <paul.e.luse@linux.intel.com>; 28 Jul 2024 12:30:05 +0200
-Message-ID: <713ce46b-8751-49fb-b61f-2eb3e19459dc@o2.pl>
-Date: Sun, 28 Jul 2024 12:30:02 +0200
+	 In-Reply-To:Content-Type; b=EVFvbq+bJ1T75Uhz/RPhV833GOrZgEAt2RtxFpGogZJp8UcxOuTOlbrujJ1w6zjy9hvzpmcbOadrB35elFqccHB/Mw238Q3EKeO86c7Uyoz74rMqlOogvOKUJS6EvVmN4iAXC86bebWBEsHReAUC2zqMsJ9DWuM2nLylHKNYW8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/xYx9T7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C7AC116B1;
+	Sun, 28 Jul 2024 10:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722162619;
+	bh=eDWjhLzi6G1agWre6Y7l9EsOG8ksGnVzkj/CACSAyj0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k/xYx9T7/I2WLfcnu+Qa5RkJFKH7BboES21hXWKrBAIClTAFCPA1Oqyli2VQYQn7h
+	 9yVsmefHU5cfToCSrPRG9wTIeOo3mD93MxzSc9NScVH/PEtZZgsgsei8bcXhXW01PW
+	 WkbOvyR8aNgRuZZXiIZayXSyK08RAWwZd3Si9fGI+0tmLcz3vo4gs2aGf4OuLgFvAu
+	 wVow3KrkyVlKuzd2cKdAlWDieWPy1zSFbfwBxUxOMBlEQNmSk0hZyZxeiBc6ACZn9H
+	 zcJCbeuVv5/ssY8PSXvoooSn0oGM/6RcYMka/BqlBsGWVdVVr+hOSsmAurOZetqJJN
+	 pO04cnEfEZNTA==
+Message-ID: <3d9f76c1-2e14-43dc-b438-5fac94ffc73e@kernel.org>
+Date: Sun, 28 Jul 2024 12:30:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,193 +49,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Filesystem corruption when adding a new RAID device
- (delayed-resync, write-mostly)
-To: Paul E Luse <paul.e.luse@linux.intel.com>
-Cc: linux-raid@vger.kernel.org, Yu Kuai <yukuai3@huawei.com>,
- linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
- regressions@lists.linux.dev,
- Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
- <ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl>
- <f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
- <20240724141906.10b4fc4e@peluse-desk5>
- <2123BF84-5F16-4938-915B-B1EE0931AC03@o2.pl>
- <20240725072742.1664beec@peluse-desk5>
-Content-Language: en-GB
-From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
- 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
- TANkZ3QqXNX2
-In-Reply-To: <20240725072742.1664beec@peluse-desk5>
+Subject: Re: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to
+ separate binding
+To: Stephan Gerhold <stephan@gerhold.net>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, alsa-devel@alsa-project.org,
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Adam Skladowski <a39.skl@gmail.com>,
+ Stephan Gerhold <stephan.gerhold@linaro.org>
+References: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+ <ZqVXUI37fNB5D0DM@gerhold.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZqVXUI37fNB5D0DM@gerhold.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 53919b6df59c911850cfe96872e6b6be
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [kfOQ]                               
+Content-Transfer-Encoding: 7bit
 
-W dniu 25.07.2024 o 16:27, Paul E Luse pisze:
-> On Thu, 25 Jul 2024 09:15:40 +0200
-> Mateusz Jończyk <mat.jonczyk@o2.pl> wrote:
->
->> Dnia 24 lipca 2024 23:19:06 CEST, Paul E Luse
->> <paul.e.luse@linux.intel.com> napisał/a:
->>> On Wed, 24 Jul 2024 22:35:49 +0200
->>> Mateusz Jończyk <mat.jonczyk@o2.pl> wrote:
->>>
->>>> W dniu 22.07.2024 o 07:39, Mateusz Jończyk pisze:
->>>>> W dniu 20.07.2024 o 16:47, Mateusz Jończyk pisze:
->>>>>> Hello,
->>>>>>
->>>>>> In my laptop, I used to have two RAID1 arrays on top of NVMe and
->>>>>> SATA SSD drives: /dev/md0 for /boot (not partitioned), /dev/md1
->>>>>> for remaining data (LUKS
->>>>>> + LVM + ext4). For performance, I have marked the RAID component
->>>>>> device for /dev/md1 on the SATA SSD drive write-mostly, which
->>>>>> "means that the 'md' driver will avoid reading from these
->>>>>> devices if at all possible" (man mdadm).
->>>>>>
->>>>>> Recently, the NVMe drive started having problems (PCI AER errors
->>>>>> and the controller disappearing), so I removed it from the
->>>>>> arrays and wiped it. However, I have reseated the drive in the
->>>>>> M.2 socket and this apparently fixed it (verified with tests).
->>>>>>
->>>>>>     $ cat /proc/mdstat
->>>>>>     Personalities : [raid1] [linear] [multipath] [raid0] [raid6]
->>>>>> [raid5] [raid4] [raid10] md1 : active raid1 sdb5[1](W)
->>>>>>           471727104 blocks super 1.2 [2/1] [_U]
->>>>>>           bitmap: 4/4 pages [16KB], 65536KB chunk
->>>>>>
->>>>>>     md2 : active (auto-read-only) raid1 sdb6[3](W) sda1[2]
->>>>>>           3142656 blocks super 1.2 [2/2] [UU]
->>>>>>           bitmap: 0/1 pages [0KB], 65536KB chunk
->>>>>>
->>>>>>     md0 : active raid1 sdb4[3]
->>>>>>           2094080 blocks super 1.2 [2/1] [_U]
->>>>>>          
->>>>>>     unused devices: <none>
->>>>>>
->>>>>> (md2 was used just for testing, ignore it).
->>>>>>
->>>>>> Today, I have tried to add the drive back to the arrays by
->>>>>> using a script that executed in quick succession:
->>>>>>
->>>>>>     mdadm /dev/md0 --add --readwrite /dev/nvme0n1p2
->>>>>>     mdadm /dev/md1 --add --readwrite /dev/nvme0n1p3
->>>>>>
->>>>>> This was on Linux 6.10.0, patched with my previous patch:
->>>>>>
->>>>>>     https://lore.kernel.org/linux-raid/20240711202316.10775-1-mat.jonczyk@o2.pl/
->>>>>>
->>>>>> (which fixed a regression in the kernel and allows it to start
->>>>>> /dev/md1 with a single drive in write-mostly mode).
->>>>>> In the background, I was running "rdiff-backup --compare" that
->>>>>> was comparing data between my array contents and a backup
->>>>>> attached via USB.
->>>>>>
->>>>>> This, however resulted in mayhem - I was unable to start any
->>>>>> program with an input-output error, etc. I used SysRQ + C to
->>>>>> save a kernel log:
->>>>>>
->>>> Hello,
->>>>
->>>> Unfortunately, hardware failure seems not to be the case.
->>>>
->>>> I did test it again on 6.10, twice, and in both cases I got
->>>> filesystem corruption (but not as severe).
->>>>
->>>> On Linux 6.1.96 it seems to be working well (also did two tries).
->>>>
->>>> Please note: in my tests, I was using a RAID component device with
->>>> a write-mostly bit set. This setup does not work on 6.9+ out of the
->>>> box and requires the following patch:
->>>>
->>>> commit 36a5c03f23271 ("md/raid1: set max_sectors during early
->>>> return from choose_slow_rdev()")
->>>>
->>>> that is in master now.
->>>>
->>>> It is also heading into stable, which I'm going to interrupt.
+On 27/07/2024 22:23, Stephan Gerhold wrote:
+> On Tue, Jul 23, 2024 at 10:33:00AM +0200, Krzysztof Kozlowski wrote:
+>> The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
+>> others: they have additional IO muxing address space and pin control.
+>> Move them to separate schema, so the original qcom,sm8250.yaml will be
+>> easier to manage.  New schema is going to grow for other platforms
+>> having more of IO muxing address spaces.
+>>
+>> Cc: Adam Skladowski <a39.skl@gmail.com>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>> .../sound/qcom,apq8016-sbc-sndcard.yaml       | 205 ++++++++++++++++++
+>> .../bindings/sound/qcom,sm8250.yaml           | 137 ------------
+>> 2 files changed, 205 insertions(+), 137 deletions(-)
+>> create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+>> new file mode 100644
+>> index 000000000000..6ad451549036
+>> [...]
+>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> index c9076dcd44c1..1d3acdc0c733 100644
+>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> @@ -27,9 +27,7 @@ properties:
+>>               - qcom,sm8650-sndcard
+>>           - const: qcom,sm8450-sndcard
+>>       - enum:
+>> -          - qcom,apq8016-sbc-sndcard
+>>           - qcom,apq8096-sndcard
+>> -          - qcom,msm8916-qdsp6-sndcard
+>>           - qcom,qcm6490-idp-sndcard
+>>           - qcom,qcs6490-rb3gen2-sndcard
+>>           - qcom,qrb5165-rb5-sndcard
+>> @@ -58,18 +56,6 @@ properties:
+>>     $ref: /schemas/types.yaml#/definitions/string
+>>     description: User visible long sound card name
+>>
+>> -  pin-switches:
+>> -    description: List of widget names for which pin switches should be created.
+>> -    $ref: /schemas/types.yaml#/definitions/string-array
+>> -
+>> -  widgets:
+>> -    description: User specified audio sound widgets.
+>> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+>> -
+> 
+> These two properties are also valid and supported on all newer
+> platforms, please keep them here! There are certain use cases where
+> these are needed independent of the platform, e.g. to control an analog
+> switch or mux connected to speaker or headphone outputs.
+> 
+> I agree that it is cleaner to move the IO muxing to a new schema though.
+> Perhaps we could define something like a shared qcom,sndcard-common.yaml
+> schema to avoid duplication for these generic properties? In the Linux
+> driver, these are handled for all platforms in sound/soc/qcom/common.c.
 
-Hello,
+This was added to the common driver code but it does not mean it is
+reasonable binding. I don't understand why for example we even accept
+here aux-devs, instead of putting them into one of DAI links.
 
-With much effort (challenging to reproduce reliably) I think have nailed down the issue to the read_balance refactoring series in 6.9:
+The pin-switches and widgets could be used, but are they? The only valid
+argument to keep them is that you added them to common driver code.
 
-86b1e613eb3b Merge tag 'md-6.9-20240301' of https://git.kernel.org/pub/scm/linux/kernel/git/song/md into for-6.9/block e81faa91a580 Merge branch 'raid1-read_balance' into md-6.9 0091c5a269ec md/raid1:
-factor out helpers to choose the best rdev from read_balance() ba58f57fdf98 md/raid1: factor out the code to manage sequential IO 9f3ced792203 md/raid1: factor out choose_bb_rdev() from read_balance()
-dfa8ecd167c1 md/raid1: factor out choose_slow_rdev() from read_balance() 31a73331752d md/raid1: factor out read_first_rdev() from read_balance() f10920762955 md/raid1-10: factor out a new helper
-raid1_should_read_first() f29841ff3b27 md/raid1-10: add a helper raid1_check_read_range() 257ac239ffcf md/raid1: fix choose next idle in read_balance() 2c27d09d3a76 md/raid1: record nonrot rdevs while
-adding/removing rdevs to conf 969d6589abcb md/raid1: factor out helpers to add rdev to conf 3a0f007b6979 md: add a new helper rdev_has_badblock()
-
-In particular, 86b1e613eb3b is definitely bad, and 13fe8e6825e4 is 95% good.
-
-I was testing with the following two commits on top of the series to make this setup work for me:
-
-commit 36a5c03f23271 ("md/raid1: set max_sectors during early return from choose_slow_rdev()") commit b561ea56a264 ("block: allow device to have both virt_boundary_mask and max segment size")
-
-After code analysis, I have noticed that the following check that was present in old
-read_balance() is not present (in equivalent form in the new code):
-
-                if (!test_bit(In_sync, &rdev->flags) &&
-                    rdev->recovery_offset < this_sector + sectors)
-                        continue;
-
-(in choose_slow_rdev() and choose_first_rdev() and possibly other functions)
-
-which would cause the kernel to read from the device being synced to before
-it is ready.
-
-In my debug patch (I'll send in a while), I have copied the check to raid1_check_read_range and it seems
-that the problems do not happen any longer with it.
-
-I'm not so sure now that this bug is limited to write-mostly though - previous tests may have been unreliable.
-
-#regzbot introduced: 13fe8e6825e4..86b1e613eb3b
-
-#regzbot monitor: https://lore.kernel.org/lkml/20240724141906.10b4fc4e@peluse-desk5/T/#m671d6d3a7eda44d39d0882864a98824f52c52917
-
-Greetings,
-
-Mateusz
+Best regards,
+Krzysztof
 
 
