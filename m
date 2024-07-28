@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-264875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0E093E993
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D1493E9AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0737C1F21552
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:18:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBBB01F21F31
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505D879945;
-	Sun, 28 Jul 2024 21:18:25 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4804E78C68;
+	Sun, 28 Jul 2024 21:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LHAyydsJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200B2757F8;
-	Sun, 28 Jul 2024 21:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ABE78B4E
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722201504; cv=none; b=UNGckq8ULgxr4jdelv9BiTs/LXmVr+4M6s4h1KsRqWlHPVVyB2ZcRUQhlA79R+F0bKzPVedtSAimaZR/f7f8dgKeMt8jOY3lsfDamcy5gmSB1kmR4BC7PuFmQryqGcFb/OH/zfQ7DZrN8HfLesAq1J/34CxGnsiSpPyH8waEUSs=
+	t=1722201532; cv=none; b=P4Uh2qh44m72Yrbk5qt4kBXAQtSjmtFx/zTkLWgx1XIFgNOlrEfkOQN7C90+xYL57DoslTzVAkJWnJ+qsgE8aDCWQuphWeW8YWqCuWYWAM8lo+0jBsgwGMgvQ+YSYy2Ry1sw3Eo8ooBhoEkPGeqBzbFaLPL7bnJ71ElOQOFQHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722201504; c=relaxed/simple;
-	bh=fkrMzGswzCO7CPU3pzXIY4sgrQ/Z3eYGrtwNukVb2dM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HgXf8hn6nImifj94ncUj3p3RAVM7Zm7kN/bquOh38qoITFg7iYXrur9cFIO94XeJx2CORjuhpCO5iEA7BCGJZ+hGXOvsXY9GeJVrTtoictxs6qEWarILj36mECSwC6f/7Y2ucoYIFzeo1vb2jNrZ0Gg1FRWvJbjv8lEWxId9E1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sYBHI-0005yh-DL; Sun, 28 Jul 2024 23:18:04 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lee@kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	dmitry.torokhov@gmail.com,
-	pavel@ucw.cz
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	ukleinek@debian.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-hwmon@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: rockchip: set hdd led labels on qnap-ts433
-Date: Sun, 28 Jul 2024 23:17:51 +0200
-Message-Id: <20240728211751.2160123-8-heiko@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240728211751.2160123-1-heiko@sntech.de>
-References: <20240728211751.2160123-1-heiko@sntech.de>
+	s=arc-20240116; t=1722201532; c=relaxed/simple;
+	bh=p6ipjOvVqF6sbK1Vn/wHSaHvySBYHhkhbaqXeUP2Q04=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rnIjyIvu9J6iStHQSwpH1WTrYkbGPWgjW8fawBB3q2HKe3oEzbueBCb6+Ki9FGkE6eV87OiVP9/Js8M3+6Pew5jDDSMtS5NlfAt/WTwO4ih03R9n0uyOL2Yh3xsvEBNf+8vPWUy7/FNc67+j0y2vLA9qUZa/SjvvDLe+G5axOmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LHAyydsJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CF4C4AF0A;
+	Sun, 28 Jul 2024 21:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722201532;
+	bh=p6ipjOvVqF6sbK1Vn/wHSaHvySBYHhkhbaqXeUP2Q04=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LHAyydsJalWoIjxDSMRu97+wFnQ1QVowDjGpa2JbcKo1Gq+JQNt9koZYp5n6dSXCv
+	 w5o6M2ftH42gXMsygOgd0M89g1rbIE8/+eDkBQHxceQF+QrlDFwxLrtHuj3rhmCxjm
+	 AnHuEU1nA/FAV246WRA/MApyVW/lqsNZiEPQfCJk=
+Date: Sun, 28 Jul 2024 14:18:51 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
+ <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov
+ <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Adrian Huang
+ <ahuang12@lenovo.com>, Jiwei Sun <sunjw10@lenovo.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of
+ KASAN shadow virtual address into one operation
+Message-Id: <20240728141851.aece5581f6e13fb6d6280bc4@linux-foundation.org>
+In-Reply-To: <20240726165246.31326-1-ahuang12@lenovo.com>
+References: <20240726165246.31326-1-ahuang12@lenovo.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The automatically generated names for the LEDs from color and function
-do not match nicely for the 4 hdds, so set them manually per the label
-property to also match the LEDs generated from the MCU.
+On Sat, 27 Jul 2024 00:52:46 +0800 Adrian Huang <adrianhuang0701@gmail.com> wrote:
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+> From: Adrian Huang <ahuang12@lenovo.com>
+> 
+> When compiling kernel source 'make -j $(nproc)' with the up-and-running
+> KASAN-enabled kernel on a 256-core machine, the following soft lockup
+> is shown:
+> 
+> ...
+>
+>         # CPU  DURATION                  FUNCTION CALLS
+>         # |     |   |                     |   |   |   |
+>           76) $ 50412985 us |    } /* __purge_vmap_area_lazy */
+>
+> ...
+>
+>      # CPU  DURATION                  FUNCTION CALLS
+>      # |     |   |                     |   |   |   |
+>        23) $ 1074942 us  |    } /* __purge_vmap_area_lazy */
+>        23) $ 1074950 us  |  } /* drain_vmap_area_work */
+> 
+>   The worst execution time of drain_vmap_area_work() is about 1 second.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-index bff21684a3970..c35c11203e903 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-@@ -50,6 +50,7 @@ led-0 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DISK;
- 			gpios = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
-+			label = "hdd1:green:disk";
- 			linux,default-trigger = "disk-activity";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&hdd1_led_pin>;
-@@ -59,6 +60,7 @@ led-1 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DISK;
- 			gpios = <&gpio1 RK_PD6 GPIO_ACTIVE_LOW>;
-+			label = "hdd2:green:disk";
- 			linux,default-trigger = "disk-activity";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&hdd2_led_pin>;
-@@ -68,6 +70,7 @@ led-2 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DISK;
- 			gpios = <&gpio1 RK_PD7 GPIO_ACTIVE_LOW>;
-+			label = "hdd3:green:disk";
- 			linux,default-trigger = "disk-activity";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&hdd3_led_pin>;
-@@ -77,6 +80,7 @@ led-3 {
- 			color = <LED_COLOR_ID_GREEN>;
- 			function = LED_FUNCTION_DISK;
- 			gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_LOW>;
-+			label = "hdd4:green:disk";
- 			linux,default-trigger = "disk-activity";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&hdd4_led_pin>;
--- 
-2.39.2
+Cool, thanks.
+
+But that's still pretty dreadful and I bet there are other workloads
+which will trigger the lockup detector in this path?
+
+(And "avoiding lockup detector warnings" isn't the objective here - the
+detector is merely a tool for identifying issues)
 
 
