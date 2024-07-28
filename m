@@ -1,119 +1,199 @@
-Return-Path: <linux-kernel+bounces-264839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E76D193E8FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:14:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B8993E90D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECE22817FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028351C21022
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C987174F;
-	Sun, 28 Jul 2024 19:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3537174F;
+	Sun, 28 Jul 2024 19:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+rOGDyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="rGk9qwRM"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D002AD29;
-	Sun, 28 Jul 2024 19:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2599374FF
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 19:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722194044; cv=none; b=I4oYpXkSYHbc4s9DtCBinXYLgpr1IMKdoNO39qrJa8pa09LhDBwQZcS+A6oTqhww0REsrJ7pjRMKpenBOsHI3TVUYnOo+44+Kxi7XbmAJPGrI1x/POrNi+YgmFDiVCLqJNMwndKECqA2/BX4pcTlOlnJaONIOCfGvks+nh9mgsY=
+	t=1722194830; cv=none; b=EzCoLj2lxVoeOP3ewhgeBwr39JUOZa0U1kismu+i8FefFsyQi8sKbZ/Tb4uGyBvxhkW5/wsM0jsjfaj9B8CMfJzWDo4J29ZHZQJ6TIwk43H2eG128exXPbQ23hXwx0PqniyDX+gQWYwCuqIz/KNqTuu0Eg+eIZTOBNNL+DOVCYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722194044; c=relaxed/simple;
-	bh=sMmbh7cUTqqovrR2AT6BBqOajFBHUkdjDZtKSwNRZH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IVNL/4RUqJmXzfqLCGUxgyh6gO3A/MqoGsTbXWYxoJoZNpDFoRmpeVWukwIUte2aJ658TQSWR3TarXcXUqIz4CszGpEpfkO9/eN3FwLyejrjbydw3NqlA/z+5jaDEsEFF7Z8p82b/c98u94ZOs45LtajYNsbY/VLUDBQi3zmwUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+rOGDyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA4DC4AF0C;
-	Sun, 28 Jul 2024 19:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722194043;
-	bh=sMmbh7cUTqqovrR2AT6BBqOajFBHUkdjDZtKSwNRZH8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=R+rOGDyCe/5nYkHqIkfoDxNCUuoXBD0w/ddqWWoF1jhS+B0Kyyuk2m3W5Q7WwKFWV
-	 HbXJ3Kegb1sa2iHUflKafhsKDBBrSjNfcZOxQmrCmqsRXuDtLezhnPmzBaeYri/RA3
-	 avGCIFWWgJX9vQri9/mHE74oVZ+ao9vDhuVVZsrPQeKzmHZ/pAd180RTlLCb2MYBXz
-	 v1JbHi8QMBQ4b5WT/KcNvvgrF8gwEhmrr3sjnfEemv8lOFspEzRQNO5IldgpTGfQX7
-	 k8aJDu0T5XZr7GDlnvV75DaOGAl+fpgBrzWXxtAqxH82LAVa4mWcwlgtcukGhKwyto
-	 u0y1ulq4tUitg==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efd530a4eso4371354e87.0;
-        Sun, 28 Jul 2024 12:14:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWhcvvic3fv9PtKB834sFxKQFCsobiDz1uO691QIlWev1vJjB7v9p9F56KYMMPTZ97pP8D+a5P1BLXWj49OQLLybzKH7/yHCyqhLTrh1r6RVYlbpQr/3WcXECdXEt9pBtyq/Cio4QdA28H8ho3aGA1VPnpiaPvC9iiwbRNQZQvxT4Dh
-X-Gm-Message-State: AOJu0YyYRudiaVrWC1CQWfbS0XFKAzBP0UfiStytc2RZq/N+xxeReu5O
-	liRPeOLiAoIHPe4XNzh5qBPApHn6pMYiOlA7dStglQnPmK57EoV5en8cbGDqaIkgkGou4fskcsN
-	BPhLzixzgxBeLvJ2bpeJucCurEEA=
-X-Google-Smtp-Source: AGHT+IEkz1TnHDlE9ler9A80e9defPOv4OL1EPJyuZN5JVOtMoef4fgodh9s71/x3g0iffQ+5rn3J1ZmWw+wvfxkaGI=
-X-Received: by 2002:a05:6512:1289:b0:52e:f95c:8b with SMTP id
- 2adb3069b0e04-5309b279f98mr4853691e87.16.1722194042594; Sun, 28 Jul 2024
- 12:14:02 -0700 (PDT)
+	s=arc-20240116; t=1722194830; c=relaxed/simple;
+	bh=EpUGQvFRZ4KiyAlMWfA/JHcNYvghKMjDTfqWuMI8C6g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HaZAWPX3EG5p7CnuC9EtupZKraO2OFziGBjrlT006KqBSH/FxpPKmu7V1G63mLld6WLGBRe8gJRz3gZZniwygojZXTaxsQfNXsLxwonYFCFyokSV7Hk2RmSXEAUwL7kGwQlCuVdlETNoelUas8aLfnOw2qX8QiKkVEaa0jXbujo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=rGk9qwRM; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42808071810so11055865e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 12:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1722194827; x=1722799627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUdl1sB28tZR2PP2RLddpsep/HItrb7ZCpaP+KMjeeg=;
+        b=rGk9qwRM3GPSqgLJKdmk/+jdGeEH1iGrUur+K7tTmGJj3Z/hKBDc9Aa3aqGBtZQ7Of
+         KsN61AKTZl7RxMrX3S8eulosVanlWyKWjC3KKgPpZkisdsaW5FGRJ30OgHe3rKwTxE6O
+         9jihE9BL5Qznl5ILQLOUuoqndODavZfwt2LC0YrT0BCuLLTHIBWaVgv9fFKtY8PDCLUS
+         MXG6wX7PEmRyrVx2Tgv1E3njIuujbtb8G57U+zpKLpkAnOSx2zn9XR8wTBX6tzBJdcq/
+         66YIcjfhRRoQpZG8HFbd7shG6mrKJr2SSCBv1nLt90PPtsIm2hcVzIsNVAOctLhUtqEl
+         +3yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722194827; x=1722799627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fUdl1sB28tZR2PP2RLddpsep/HItrb7ZCpaP+KMjeeg=;
+        b=SAOIbNxKAZl8SnQoLzRRlgYf4hnhTb0Jw00MoyNzNvbaSXhnR5ArJJ/1ZzqfJ6+jEP
+         nR5U5dWscFLby0cHTyUnFyzO5evwuZmmV/z/cp+/5zGP/WtP0riDFdZyB2pLQwAeygtB
+         X7OnpbDQG0l34+6Q3kqXC51dQ0p+qZbImymJd48RzNYRAiMpZkLlWlUQBx3gMzPkOqS5
+         YNVypaBSdRJUXp6/d1gjrQJwglc6KEdTROHZHu/ypA7kMNDQXhx54PzW+qJoo/QKCXNU
+         KETgCyN2xOajwfp3DiCU6yrms9cZcXd7OxeHm1n7TIiCBk/D+d29mqG6/tqctEaWVlRc
+         jlVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdlboOfi3zv7QPjSruMXVi1FX0TpZ0Hr3n2q94a7FgEFts5yL71YyWI3Kuuq+90pKnRj6XBMXJwCkzJ+biZQot+zdCOIXGKH+QFN8f
+X-Gm-Message-State: AOJu0Yx0R/9nfWEtssp08Pn733up21V/KgWAHI+C44K9QJ6FhumyjGLi
+	IEHoE4K2/L573IaazKkMn8MthCmrTyUL77CI2HcFoXUWOe6C7e7sJu9vkF0SJtI=
+X-Google-Smtp-Source: AGHT+IH5NzyTCXho52sC1iHeGvC2jr8euOKpCO+6PSMiHHSrYrW7Q4+o4KM35YGaayw/n2rqTKcO7A==
+X-Received: by 2002:a05:600c:1908:b0:425:7c5f:1bac with SMTP id 5b1f17b1804b1-42811da9fc3mr42071015e9.21.1722194827269;
+        Sun, 28 Jul 2024 12:27:07 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280574003bsm150167005e9.17.2024.07.28.12.27.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 12:27:06 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH] cpufreq: sched/schedutil: Remove LATENCY_MULTIPLIER
+Date: Sun, 28 Jul 2024 20:26:59 +0100
+Message-Id: <20240728192659.58115-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
-In-Reply-To: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 29 Jul 2024 04:13:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATWv-OJM0oW8qbMk-HL0GgRkYKcRt+yZadhHB3NGR22uQ@mail.gmail.com>
-Message-ID: <CAK7LNATWv-OJM0oW8qbMk-HL0GgRkYKcRt+yZadhHB3NGR22uQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix '-S -c' in x86 stack protector scripts
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, nicolas@fjasle.eu, 
-	maskray@google.com, morbo@google.com, justinstitt@google.com, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 27, 2024 at 3:05=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> After a recent change in clang to stop consuming all instances of '-S'
-> and '-c' [1], the stack protector scripts break due to the kernel's use
-> of -Werror=3Dunused-command-line-argument to catch cases where flags are
-> not being properly consumed by the compiler driver:
->
->   $ echo | clang -o - -x c - -S -c -Werror=3Dunused-command-line-argument
->   clang: error: argument unused during compilation: '-c' [-Werror,-Wunuse=
-d-command-line-argument]
->
-> This results in CONFIG_STACKPROTECTOR getting disabled because
-> CONFIG_CC_HAS_SANE_STACKPROTECTOR is no longer set.
->
-> '-c' and '-S' both instruct the compiler to stop at different stages of
-> the pipeline ('-S' after compiling, '-c' after assembling), so having
-> them present together in the same command makes little sense. In this
-> case, the test wants to stop before assembling because it is looking at
-> the textual assembly output of the compiler for either '%fs' or '%gs',
-> so remove '-c' from the list of arguments to resolve the error.
->
-> All versions of GCC continue to work after this change, along with
-> versions of clang that do or do not contain the change mentioned above.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 4f7fd4d7a791 ("[PATCH] Add the -fstack-protector option to the CFL=
-AGS")
-> Fixes: 60a5317ff0f4 ("x86: implement x86_32 stack protector")
-> Link: https://github.com/llvm/llvm-project/commit/6461e537815f7fa68cef068=
-42505353cf5600e9c [1]
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
-> I think this could go via either -tip or Kbuild?
+The current LATENCY_MULTIPLIER which has been around for nearly 20 years
+causes rate_limit_us to be always in ms range.
 
+On M1 mac mini I get 50 and 56us transition latency, but due to the 1000
+multiplier we end up setting rate_limit_us to 50 and 56ms, which gets
+capped into 2ms and was 10ms before e13aa799c2a6 ("cpufreq: Change
+default transition delay to 2ms")
 
-Applied to linux-kbuild/fixes, and included in the pull request.
-Thanks!
+On Intel I5 system transition latency is 20us but due to the multiplier
+we end up with 20ms that again is capped to 2ms.
 
+Given how good modern hardware and how modern workloads require systems
+to be more responsive to cater for sudden changes in workload (tasks
+sleeping/wakeup/migrating, uclamp causing a sudden boost or cap) and
+that 2ms is quarter of the time of 120Hz refresh rate system, drop the
+old logic in favour of providing 50% headroom.
 
+	rate_limit_us = 1.5 * latency.
 
---=20
-Best Regards
-Masahiro Yamada
+I considered not adding any headroom which could mean that we can end up
+with infinite back-to-back requests.
+
+I also considered providing a constant headroom (e.g: 100us) assuming
+that any h/w or f/w dealing with the request shouldn't require a large
+headroom when transition_latency is actually high.
+
+But for both cases I wasn't sure if h/w or f/w can end up being
+overwhelmed dealing with the freq requests in a potentially busy system.
+So I opted for providing 50% breathing room.
+
+This is expected to impact schedutil only as the other user,
+dbs_governor, takes the max(2*tick, transition_delay_us) and the former
+was at least 2ms on 1ms TICK, which is equivalent to the max_delay_us
+before applying this patch. For systems with TICK of 4ms, this value
+would have almost always ended up with 8ms sampling rate.
+
+For systems that report 0 transition latency, we still default to
+returning 1ms as transition delay.
+
+This helps in eliminating a source of latency for applying requests as
+mentioned in [1]. For example if we have a 1ms tick, most systems will
+miss sending an update at tick when updating the util_avg for a task/CPU
+(rate_limit_us will be 2ms for most systems).
+
+[1] https://lore.kernel.org/lkml/20240724212255.mfr2ybiv2j2uqek7@airbuntu/
+
+Signed-off-by: Qais Yousef <qyousef@layalina.io>
+---
+ drivers/cpufreq/cpufreq.c | 27 ++++-----------------------
+ include/linux/cpufreq.h   |  6 ------
+ 2 files changed, 4 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 04fc786dd2c0..f98c9438760c 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -575,30 +575,11 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
+ 		return policy->transition_delay_us;
+ 
+ 	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+-	if (latency) {
+-		unsigned int max_delay_us = 2 * MSEC_PER_SEC;
++	if (latency)
++		/* Give a 50% breathing room between updates */
++		return latency + (latency >> 1);
+ 
+-		/*
+-		 * If the platform already has high transition_latency, use it
+-		 * as-is.
+-		 */
+-		if (latency > max_delay_us)
+-			return latency;
+-
+-		/*
+-		 * For platforms that can change the frequency very fast (< 2
+-		 * us), the above formula gives a decent transition delay. But
+-		 * for platforms where transition_latency is in milliseconds, it
+-		 * ends up giving unrealistic values.
+-		 *
+-		 * Cap the default transition delay to 2 ms, which seems to be
+-		 * a reasonable amount of time after which we should reevaluate
+-		 * the frequency.
+-		 */
+-		return min(latency * LATENCY_MULTIPLIER, max_delay_us);
+-	}
+-
+-	return LATENCY_MULTIPLIER;
++	return USEC_PER_MSEC;
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+ 
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index d4d2f4d1d7cb..e0e19d9c1323 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -577,12 +577,6 @@ static inline unsigned long cpufreq_scale(unsigned long old, u_int div,
+ #define CPUFREQ_POLICY_POWERSAVE	(1)
+ #define CPUFREQ_POLICY_PERFORMANCE	(2)
+ 
+-/*
+- * The polling frequency depends on the capability of the processor. Default
+- * polling frequency is 1000 times the transition latency of the processor.
+- */
+-#define LATENCY_MULTIPLIER		(1000)
+-
+ struct cpufreq_governor {
+ 	char	name[CPUFREQ_NAME_LEN];
+ 	int	(*init)(struct cpufreq_policy *policy);
+-- 
+2.34.1
+
 
