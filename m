@@ -1,495 +1,223 @@
-Return-Path: <linux-kernel+bounces-264461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B39493E391
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 06:17:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB6493E39D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 06:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB76281BA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 04:17:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670E71C211AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 04:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539554A15;
-	Sun, 28 Jul 2024 04:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19429522E;
+	Sun, 28 Jul 2024 04:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzkRf7pU"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cPeNZa/7"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010011.outbound.protection.outlook.com [52.103.11.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FAB184D;
-	Sun, 28 Jul 2024 04:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722140232; cv=none; b=Daz2M7NKE64vHsAI/sWNvvjGl7bueBD8T73SymHcf5BjFH304ugr/eH2sY/BxOxDKEQlpFdh6n5yOfLWoikS5+8qNqUdWJsHhQfWbZlFKCjFUQCRI3CCw2J6yXYnD/bDZ3oG2uPm4C32MCNO+N+XmEoI8aPLHBVu9xBv9ULAv2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722140232; c=relaxed/simple;
-	bh=9Peuasc3K3VxzkfhvaDPtQUpNi7KXGgspcxkjHCWBmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=an8kgKvpBq7LstTgxAQMf/nyU/Uqvq/IZ2O3UZeoTi2+8hFRM8skTAIpfHWbqLbET/j+1HApr5jFdkwmfdUer3EDIMXQqE6aAgWAukAQ6uMhu+ObD6vITxz9fn6un65X4bBne6BP4mcKjiPFHVHPAXRyNAYxQsGX7LmXrCpm1Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzkRf7pU; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5d5d0535396so875896eaf.1;
-        Sat, 27 Jul 2024 21:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722140230; x=1722745030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cj+3tdgeStkDD7FO+SDGb05EgC47UnfTJLTqhl+o0cI=;
-        b=KzkRf7pU8OeCvkt5wqCUGMXJ5rTwC1WZa2KaFl6Z/OQVfHTHpEHZHxIwqvSAA/0VMg
-         aEF/VrUpoMKk5XHfZgIohlDdfo3fD2JyIJpODSrPWWnmAWcaaBwLNFD+k45kqMEcihZw
-         7Z4v3BCuHcpe9TUqlFvNo/Rc7mcXQbnI3AzZaXft+7vaZDX9xuH/80D4JPg/jV5MKIrp
-         OPz0035gUNwrawSoe3g/X9iF/TJGkFabQgh3BYN+QxIHPP991bPb1hqLRIojAKJEZCLs
-         yl5iKTaymMj+CvaSbA4ZTZDce5qQO4ugDujRWjKE6ZF7t84n2xPrC3+8CjFTl6Lp53pY
-         9kdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722140230; x=1722745030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cj+3tdgeStkDD7FO+SDGb05EgC47UnfTJLTqhl+o0cI=;
-        b=BrJruBUcHVw4UOD9MOJmQ6jFdUl73PQBeGZEuLcJl+rfJCbt0eqrYSrgRqQ/mt6FNf
-         dr4nj6WokkzMgqeilEqE//YiqtrF2UAoJGVuNKbMAk4l6C6TTrIiquoqltM2LdaF02al
-         avQFhCaDlKqJYpVt73T3PRKaEwijRSp0WEe/+JxuGjexzJ82tA/x4YoN93HcL/F3wjG2
-         kf3cKqIEAPI5PaRSmsgzx8rJJFyNyzZ9NZ5WmI95oQcAuv0K4gkWlbF0/HhwHMq7YpUi
-         Wu43wLx8pPzwnvpYpI3lH9X+/6fAcUWq7nk3Lt8QfQNmbrXlYz+9lvzSwXVt7hyNNLEH
-         jrAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiF1kAdg45fabArg6XvdJbTYKO9SDmdVZLsvzxnbne/VN2FpG70HQf8XmujnQx4XNoMraE2onR+iNIIv9UkwyiNNjI7hBrzyOifS5s6JpRl4I1MRI5QU2LC8ccZp/R+39fj4wFFby8
-X-Gm-Message-State: AOJu0YwaohHdfYYWrmoOqCiqMw/fGfMHe0CiyIe2q3U8Evn+PY24Q8b4
-	D2/vULasoz1flJ4E4ouMPyYJluawFRNiF0unmx4UCyF1GnsWrzLP
-X-Google-Smtp-Source: AGHT+IHP1PeEs0CToBZ8Vy5ClL8oXIJZ0zLHd+wC8dmPlzC/FL8uKkCNzovAlHV0+8X2KHHGFbrtVg==
-X-Received: by 2002:a05:6358:60ce:b0:1aa:cdba:4fa8 with SMTP id e5c5f4694b2df-1adc06717f7mr599698555d.13.1722140229432;
-        Sat, 27 Jul 2024 21:17:09 -0700 (PDT)
-Received: from [192.168.255.10] (23.105.223.42.16clouds.com. [23.105.223.42])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f817da8bsm5053279a12.27.2024.07.27.21.17.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jul 2024 21:17:08 -0700 (PDT)
-Message-ID: <7670e090-92e5-48ed-9365-e611ae1d4972@gmail.com>
-Date: Sun, 28 Jul 2024 12:17:04 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD7E1B86E5;
+	Sun, 28 Jul 2024 04:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722141149; cv=fail; b=Hbpf2AImxttz3PcJ2REbrdhaKk1KgbefLW7Mj7cynuEi7i1YQndByTtzWTJ7v5IaxVH0jafePoNe/ZJCitOoiGKramA47XxoNHcUWGAGmgA7OpVooQpLnisVmkO6jjnCUr2b33fGhZnT7TDk6/lae/aQrtKPOqEoG7jOIc06EIQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722141149; c=relaxed/simple;
+	bh=/51CqoxzI90GJovf0JKqdZFc4jQAjgRC4LioBgJ0eOo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GPV9w0+ejN1EeksDPefhqzawC/1j7DG4XENnnjJI1M4eCzClpcYnvZv+0RhvGMDCSUjjQyhUq1IAkPWgVFlFB/Ch7Ts72trj+g2RTbD68UDgQ967Aon500b73/ELyZgMj3EpqnpVVgUx1RRNgP/tS8A3Sw7EAUEMM0T7XHAH0Ys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cPeNZa/7; arc=fail smtp.client-ip=52.103.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xPiCEymRW67zQZlt1ULtF5rcpAks6FqFdDC9SLd4mNLToG6XtdjRGoVmhUutzxc8wq/2P88RvZvF1Nq2HxInHrIfbDu1ZviaLJgqvPbueGw+glqBGapmIwTxqMI4BKI73GmL3fKeC4l0DeTtSmEgbnsgRH6IGMhFdoPYKcEktodIxlE302x+XeDrXT2gp04FWPTnYdx0ZLE2jfiIbKTUUPbnELVD/LMof5xQlKk9egrw76+rx9KlTKw9/jQSJWEvAugOYDl9wn1EuS6/PD1zuiRdkHIf3ECoEkb6U4SglB1MIVcuDs+hBw3YDs/nKM8UIkLYJoGE4lTOkoLHHaP9+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+Y1D99nIgb+43Pd2UHv7QAGcFePHbFVt4HCuCwsNbso=;
+ b=EqFb5z+csF4USBpIO7GKQ4vW73Y/XL0VdP+jCL4R78FguWeMSGSOf8GRCrUG/gJy1aY6bZkVF8aKbKJ02iCmN3An7qP4sohI9AFRyoyG842xB9a7pDUaM6gMTtk7rCjRV7VTO3i0nUw05Sx+jl/ZQ6VWvWvBh4VPUWqOWTqaanNfwTK1Rl1CcB8ihHGbjd5twZo9q2lDYS6sPzW3BQS9x5NynPj71sayIyBEZbztDvuqej3t/I2VgcimfqvvVapTnmT5vko2i/WDwGgfTxW4HMzZyFspqXem0kzpswAkrPxecD/cvuzCrm9jreyLGHPBaBqAok+gQZzj8eW+FH6/dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Y1D99nIgb+43Pd2UHv7QAGcFePHbFVt4HCuCwsNbso=;
+ b=cPeNZa/7fP9TyF7XsZj7GqgDiFGZ1jarUz4i46H/mg78qmhd0dyiK4Wkrz1ZvGeFNxaZJ4FOnyUOAb+e8AbC9OyI0h/0PwSY8sXMBhsiWyRGk/VI/3+kIzc6WsZ9VSZYpzvDTXH4dAwPR8OnnKBewjRxoEvRJC325iYPLT18VLEQepFrgxv7st2flexEJG4diteS59sB2T42Hjqh83EIJ/PsmfJj441dCz2UZlcoib8eubxIRghwmogHhcVH7/LBUGVA8ZE5AaNynpkKRAtMnMSWatd93YIF5CoVVSekzmVTqvVYoKH17uWeO9iTXjY7C9+XsclmZt0cxQdil5zUmw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH7PR02MB9942.namprd02.prod.outlook.com (2603:10b6:510:2f0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Sun, 28 Jul
+ 2024 04:32:24 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7784.020; Sun, 28 Jul 2024
+ 04:32:23 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
+	<decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "ssengar@microsoft.com" <ssengar@microsoft.com>, "srivatsa@csail.mit.edu"
+	<srivatsa@csail.mit.edu>
+Subject: RE: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Thread-Topic: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
+Thread-Index: AQHa3lM09woqlpVK5UOgvbiXDK+uF7ILkLnQ
+Date: Sun, 28 Jul 2024 04:32:23 +0000
+Message-ID:
+ <SN6PR02MB4157BB3FF96D869D87B0A5D2D4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
+In-Reply-To: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [jB809l7YN8AuZq/WlU9mciHvTqCwddMl]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH7PR02MB9942:EE_
+x-ms-office365-filtering-correlation-id: 5a7674e1-51b8-4385-6dc4-08dcaebe46b0
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|19110799003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ 2PXmmMoBoc0Zr2oZsPYZ71J2ZTUc30NKM2D7pUj79i46fGAAQTACTUM9e1hRZQ+syu5G5tdmfOqxmGwMKvGLKGx7B5YKkdwKOSweILW9RhWZZX1bCDUtujJaaR2PyoLABF+/Prgua0wNe3/dsUCFtyU8DxPmxo3Fwlcb1JlwbK5whK0B9r+vlONWlr8MWZw1g7nMTgyLq+r9pucCWvJGehI72Ba+hWMTO+IaBWEy6ifjVp2TqLH5clsx4KKI+4QoZEo1k8nqK9pm9u0/SGtqhEZGmWSDvT8HthWGtcqEhPJdRF+CBWheO8zFuTbF8RduaMCFGeiwL9QrXETjX3uaXEVQ7If8yQbie00MrhPKHL/m6XZBICOjV/DgR8C0ddtEmRqvqonq6DM2ytcncaF4pS5ItlaY8pqOGcJULIb7M/Ei0uprXCxJqEzba1jyvGLQ+nGS1cbPQEBB+1iMoFu6reSSftbRYfzunxSAX8BCJcqojA5m1nDXm6+Ym3GgPufIFT/aT3IKIYqA+ADEDefS2+AFMs1i0/oJqxBO7e91DMl1wC38TKVO127k2tOqlZi6Qni0oi2dN/u3vFu5E1CcLnOb1XArR/OqmmYlfB6eg+ORWxO0KwNxjfnBZVgk4kFpGFxcVrZJvgWMtb2+D5IK/A==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?XHSGwinW4NtARYqnCaJz8FI52TrBBpz5VDK5SC7Ke+MS6QCUiHaNmBC5qaFT?=
+ =?us-ascii?Q?t6zNU2wajcw2115hxjixabT6AlrrxQaAU8PO8KAZgoA4C0AkWjLfn4sf0TL3?=
+ =?us-ascii?Q?22nAlkxfG88Ejtg7xFSrm2DriNpZRxiOCp31gDZJ0AaQFRZqIH59zds9NFrE?=
+ =?us-ascii?Q?NGaVorMM9d+3nDgtxteLWCtY/W+54xHguS9tSWp/Nps1kFe/o0Eh9dfi/apz?=
+ =?us-ascii?Q?e0gRVAkS8lx+pTFbEhgoTIpSxF2RR0hs9MXyFVrXMe5b6HK19ToMC0qmBIz0?=
+ =?us-ascii?Q?yqhKmRC/mg5Ea+WLseo23SRxdL8n6oRWUU//QPf6SjKLxVJ1SmjX5AFiGsb6?=
+ =?us-ascii?Q?lmBc5qQX2XDugcVAIDJ0G/yCrPTRa7mr4hUtaxOpYBt4jrxiJ4LxPUFWZUQi?=
+ =?us-ascii?Q?3ExMqgLg3VcngOWNJcbOyEZ34WOyNmcWpPNS8v1d0H3T+4AIPgw982iXPTx8?=
+ =?us-ascii?Q?Re3UL1nXmoECbCOv2aHttZZ6GbtV7Z/doi2D9uGZL+FXgqzL8a2GpPua6Znb?=
+ =?us-ascii?Q?9WDE7g3LofelcOIbAJbFJarZA9vnEjEzZTkTyRQsLmkgHpp8L6fR7Tt16OJh?=
+ =?us-ascii?Q?hkzWxp+vkn3fvfM5cJCekU1R6rokoex7cwvd18kA1oxC8IJPfmtQEbNTC1nZ?=
+ =?us-ascii?Q?E+1LmQL3sT0oI6iTeEGS2/Cip6av+aEODTxOUfrC9siLYoKkaay085SroEfc?=
+ =?us-ascii?Q?+hg0zZT5Y2qZ4Uv8isvFD8kQ3/v0fpJETztInMQcd6vtSq1b85UCh/RQK6/t?=
+ =?us-ascii?Q?3MfL8vuLDHPXIUXFfpNQyGDUpDNQO7kgpd84AWvaRCyld7bCa6mtGQWHzwft?=
+ =?us-ascii?Q?yt1KQM+XSBgG2rzHQYLASRNQkDa9YoAgyr0vHhBSe19Rc8Vv95hpywgSOIxE?=
+ =?us-ascii?Q?a3x0cJyaosjpMC8vQIVowLsP3/852V9NU69ixUOzZnNDWoLoPOflfpLRbtmO?=
+ =?us-ascii?Q?Pht0+ZbSQKkabNg88t3b3DPjWFIRpqxwf2oG1Al6VbEMEfsNQZI3yzi45cui?=
+ =?us-ascii?Q?ZtCn5dPSTCnynOJvbp+z6NkaT5LNIo+GQwufw6IWvyDdZ7JVeaqFkId3SX39?=
+ =?us-ascii?Q?4rLrMU+gLClSpdvI93eIojWuYtHe73elbHSh41CIoAaCE13FG3kOPEnkhcdn?=
+ =?us-ascii?Q?ZazElpsJ7jIj9nbYpHHeGVIDCK9BfTY0Oh7/jd0/xY9BXl7YeEPMiMal0JRj?=
+ =?us-ascii?Q?7st9yaX2nBxTU5/x2A7ZuBd+G9cg2s6KdBy86G6jM2nuS6QK7geGhDroFos?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: Haoyang Liu <tttturtleruss@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a7674e1-51b8-4385-6dc4-08dcaebe46b0
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2024 04:32:23.2441
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB9942
 
-
-
-On 7/27/24 11:08 PM, Haoyang Liu wrote:
-> Translate dev-tools/kcsan commit 31f605a308e6
-> ("kcsan, compiler_types: Introduce __data_racy type qualifier")
-> into Chinese and add it in dev-tools/zh_CN/index.rst
-> 
-> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Wednesday, July 24=
+, 2024 10:26 PM
+>=20
+> Currently on a very large system with 1780 CPUs, hv_acpi_init takes
+> around 3 seconds to complete for all the CPUs. This is because of
+> sequential synic initialization for each CPU.
+>=20
+> Defer these tasks so that each CPU executes hv_acpi_init in parallel
+> to take full advantage of multiple CPUs.
+>=20
+> This solution saves around 2 seconds of boot time on a 1780 CPU system,
+> that around 66% improvement in the existing logic.
+>=20
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 > ---
-> v2 -> v3: Revised some sentences based on reviewer's suggestions and updated the KTSAN url.
-> v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
-> 
->  .../translations/zh_CN/dev-tools/index.rst    |   2 +-
->  .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
->  2 files changed, 322 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> 
-> diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
-> index c540e4a7d5db..6a8c637c0be1 100644
-> --- a/Documentation/translations/zh_CN/dev-tools/index.rst
-> +++ b/Documentation/translations/zh_CN/dev-tools/index.rst
-> @@ -21,6 +21,7 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
->     testing-overview
->     sparse
->     kcov
-> +   kcsan
->     gcov
->     kasan
->     ubsan
-> @@ -32,7 +33,6 @@ Todolist:
->   - checkpatch
->   - coccinelle
->   - kmsan
-> - - kcsan
->   - kfence
->   - kgdb
->   - kselftest
-> diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> new file mode 100644
-> index 000000000000..f91283e8633c
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> @@ -0,0 +1,321 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+>  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
+>  1 file changed, 30 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index c857dc3975be..3395526ad0d0 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1306,6 +1306,13 @@ static irqreturn_t vmbus_percpu_isr(int irq, void =
+*dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>=20
+> +static void vmbus_percpu_work(struct work_struct *work)
+> +{
+> +	unsigned int cpu =3D smp_processor_id();
 > +
-> +.. include:: ../disclaimer-zh_CN.rst
+> +	hv_synic_init(cpu);
+> +}
 > +
-> +:Original: Documentation/dev-tools/kcsan.rst
-> +:Translator: 刘浩阳 Haoyang Liu <tttturtleruss@hust.edu.cn>
+>  /*
+>   * vmbus_bus_init -Main vmbus driver initialization routine.
+>   *
+> @@ -1316,7 +1323,8 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *=
+dev_id)
+>   */
+>  static int vmbus_bus_init(void)
+>  {
+> -	int ret;
+> +	int ret, cpu;
+> +	struct work_struct __percpu *works;
+>=20
+>  	ret =3D hv_init();
+>  	if (ret !=3D 0) {
+> @@ -1355,12 +1363,31 @@ static int vmbus_bus_init(void)
+>  	if (ret)
+>  		goto err_alloc;
+>=20
+> +	works =3D alloc_percpu(struct work_struct);
+> +	if (!works) {
+> +		ret =3D -ENOMEM;
+> +		goto err_alloc;
+> +	}
 > +
-> +内核并发消毒剂 （KCSAN）
-> +===========================
+>  	/*
+>  	 * Initialize the per-cpu interrupt state and stimer state.
+>  	 * Then connect to the host.
+>  	 */
+> -	ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
+> -				hv_synic_init, hv_synic_cleanup);
+> +	cpus_read_lock();
+> +	for_each_online_cpu(cpu) {
+> +		struct work_struct *work =3D per_cpu_ptr(works, cpu);
 > +
-> +内核并发消毒剂（KCSAN）是一个动态竞争检测器，依赖编译时插桩，并且使用基于观察
-> +点的采样方法来检测竞争。KCSAN 的主要目的是检测 `数据竞争`_。
+> +		INIT_WORK(work, vmbus_percpu_work);
+> +		schedule_work_on(cpu, work);
+> +	}
 > +
-> +使用
-> +----
+> +	for_each_online_cpu(cpu)
+> +		flush_work(per_cpu_ptr(works, cpu));
 > +
-> +KCSAN 受 GCC 和 Clang 支持。使用 GCC 需要版本 11 或更高，使用 Clang 也需要
-> +版本 11 或更高。
-> +
-> +为了启用 KCSAN，用如下参数配置内核::
-> +
-> +    CONFIG_KCSAN = y
-> +
-> +KCSAN 提供了几个其他的配置选项来自定义行为（见 ``lib/Kconfig.kcsan`` 中的各自的
-> +帮助文档以获取更多信息）。
-> +
-> +错误报告
-> +~~~~~~~~~~
-> +
-> +一个典型数据竞争的报告如下所示::
-> +
-> +    ==================================================================
-> +    BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
-> +
-> +    write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
-> +     test_kernel_write+0x1d/0x30
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
-> +     test_kernel_read+0x10/0x20
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    value changed: 0x00000000000009a6 -> 0x00000000000009b2
-> +
-> +    Reported by Kernel Concurrency Sanitizer on:
-> +    CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
-> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
-> +    ==================================================================
-> +
-> +报告的头部提供了一个关于竞争中涉及到的函数的简短总结。随后是竞争中的两个线程的
-> +访问类型和堆栈信息。如果 KCSAN 发现了一个值的变化，那么那个值的旧值和新值会在
-> +“value changed”这一行单独显示。
-> +
-> +另一个不太常见的数据竞争类型的报告如下所示::
-> +
-> +    ==================================================================
-> +    BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
-> +
-> +    race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes by task 515 on cpu 2:
-> +     test_kernel_rmw_array+0x71/0xd0
-> +     access_thread+0x89/0xd0
-> +     kthread+0x23e/0x260
-> +     ret_from_fork+0x22/0x30
-> +
-> +    value changed: 0x0000000000002328 -> 0x0000000000002329
-> +
-> +    Reported by Kernel Concurrency Sanitizer on:
-> +    CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
-> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
-> +    ==================================================================
-> +
-> +这个报告是当另一个竞争线程不可能被发现，但是可以从观测的内存地址的值改变而推断
-> +出来的时候生成的。这类报告总是会带有“value changed”行。这类报告的出现通常是因
-> +为在竞争线程中没有插桩，也可能是因为其他原因，比如 DMA 访问。这类报告只会在
+> +	ret =3D __cpuhp_setup_state_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmb=
+us:online", false,
+> +					     hv_synic_init, hv_synic_cleanup, false);
 
-“没有插桩” 好像不是很合适？
+I'd suggest using cpuhp_setup_state_nocalls_cpuslocked().  It appears to be
+the interface intended for users outside the cpuhotplug code, whereas
+__cpuhp_setup_state_cpuslocked() should be private to the cpuhotplug code.
 
-> +设置了内核参数 ``CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=y`` 时才会出现，而这
-> +个参数是默认启用的。
-> +
-> +选择性分析
-> +~~~~~~~~~~~~~
-> +
-> +对于一些特定的访问，函数，编译单元或者整个子系统，可能需要禁用数据竞争检测。
-> +对于静态黑名单，有如下可用的参数：
-> +
-> +* KCSAN 支持使用 ``data_race(expr)`` 注解，这个注解告诉 KCSAN 任何由访问
-> +  ``expr`` 所引起的数据竞争都应该被忽略，其产生的行为后果被认为是安全的。请查阅
-> +  `"Marking Shared-Memory Accesses" in the LKMM`_ 获得更多信息。
-> +
-> +* 与 ``data_race(...)`` 相似，可以使用类型限定符 ``__data_racy`` 来标记一个变量
-> +  ，所有访问该变量而导致的数据竞争都是故意为之并且应该被 KCSAN 忽略::
-> +
-> +    struct foo {
-> +        ...
-> +        int __data_racy stats_counter;
-> +        ...
-> +    };
-> +
-> +* 使用函数属性 ``__no_kcsan`` 可以对整个函数禁用数据竞争检测::
-> +
-> +    __no_kcsan
-> +    void foo(void) {
-> +        ...
-> +
-> +  为了动态限制该为哪些函数生成报告，查阅 `Debug 文件系统接口`_ 黑名单/白名单特性。
-> +
-> +* 为特定的编译单元禁用数据竞争检测，将下列参数加入到 ``Makefile`` 中::
-> +
-> +    KCSAN_SANITIZE_file.o := n
-> +
-> +* 为 ``Makefile`` 中的所有编译单元禁用数据竞争检测，将下列参数添加到相应的
-> +  ``Makefile`` 中::
-> +
-> +    KCSAN_SANITIZE := n
-> +
-> +.. _"Marking Shared-Memory Accesses" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
-> +
-> +此外，KCSAN 可以根据偏好设置显示或隐藏整个类别的数据竞争。可以使用如下
-> +Kconfig 参数进行更改:
-> +
-> +* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: 如果启用了该参数并且通过观测点观测
+Michael
 
-把 watchpoint 这样的专有名词放在括号里带上吧
+> +	cpus_read_unlock();
+> +	free_percpu(works);
+>  	if (ret < 0)
+>  		goto err_alloc;
+>  	hyperv_cpuhp_online =3D ret;
+> --
+> 2.43.0
+>=20
 
-> +  到一个有冲突的写操作，但是对应的内存地址中存储的值没有改变，则不会报告这起数据
-> +  竞争。
-> +
-> +* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: 假设默认情况下，不超过字大小的简
-> +  单对齐写入操作是原子的。假设这些写入操作不会受到不安全的编译器优化影响，从而导
-> +  致数据竞争。该选项使 KCSAN 不报告仅由不超过字大小的简单对齐写入操作引起
-> +  的冲突所导致的数据竞争。
-> +
-> +* ``CONFIG_KCSAN_PERMISSIVE``: 启用额外的宽松规则来忽略某些常见类型的数据竞争。
-> +  与上面的规则不同，这条规则更加复杂，涉及到值改变模式，访问类型和地址。这个
-> +  选项依赖编译选项 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=y``。请查看
-> +  ``kernel/kcsan/permissive.h`` 获取更多细节。对于只侧重于特定子系统而不是整个
-> +  内核报告的测试者和维护者，建议禁用该选项。
-> +
-> +要使用尽可能严格的规则，选择 ``CONFIG_KCSAN_STRICT=y``，这将配置 KCSAN 尽可
-> +能紧密地遵循 Linux 内核内存一致性模型（LKMM）。
-> +
-> +Debug 文件系统接口
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +文件 ``/sys/kernel/debug/kcsan`` 提供了如下接口：
-> +
-> +* 读 ``/sys/kernel/debug/kcsan`` 返回不同的运行时统计数据。
-> +
-> +* 将 ``on`` 或 ``off`` 写入 ``/sys/kernel/debug/kcsan`` 允许打开或关闭 KCSAN。
-> +
-> +* 将 ``!some_func_name`` 写入 ``/sys/kernel/debug/kcsan`` 会将
-> +  ``some_func_name`` 添加到报告过滤列表中，这将（默认）禁止报告任意一个顶层栈帧
-> +  在该列表中的数据竞争。
-
-Don't understand this?
-
-> +
-> +* 将 ``blacklist`` 或 ``whitelist`` 写入 ``/sys/kernel/debug/kcsan`` 会改变报告
-> +  过滤行为。例如，黑名单的特性可以用来过滤掉经常发生的数据竞争。白名单特性可以帮
-> +  助复现和修复测试。
-> +
-> +性能调优
-> +~~~~~~~~~~~~~
-> +
-> +影响 KCSAN 整体的性能和 bug 检测能力的核心参数是作为内核命令行参数公开的，其默认
-> +值也可以通过相应的 Kconfig 选项更改。
-> +
-> +* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): 在另一个观测点设置之前每
-> +  个 CPU 要跳过的内存操作次数。更加频繁的设置观测点将增加观察到竞争情况的可能性
-> +  。这个参数对系统整体的性能和竞争检测能力影响最显著。
-> +
-> +* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): 对于任务，观测点设置之
-> +  后暂停执行的微秒延迟。值越大，检测到竞争情况的可能性越高。
-> +
-> +* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): 对于中断，
-> +  观测点设置之后暂停执行的微秒延迟。中断对于延迟的要求更加严格，其延迟通常应该小
-> +  于为任务选择的延迟。
-> +
-> +它们可以通过 ``/sys/module/kcsan/parameters/`` 在运行时进行调整。
-> +
-> +数据竞争
-> +--------
-> +
-> +在一次执行中，如果两个内存访问存在 *冲突*，在不同的线程中并发执行，并且至少
-> +有一个访问是 *简单访问*，则它们就形成了 *数据竞争*。如果它们访问了同一个内存地址并且
-> +至少有一个是写操作，则称它们存在 *冲突*。有关更详细的讨论和定义，见
-> +`"Plain Accesses and Data Races" in the LKMM`_。
-> +
-> +.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt#n1922
-> +
-> +与 Linux 内核内存一致性模型（LKMM）的关系
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +LKMM 定义了各种内存操作的传播和排序规则，让开发者可以推理并发代码。最终这允许确
-> +定并发代码可能的执行情况并判断这些代码是否存在数据竞争。
-> +
-> +KCSAN 可以识别 *被标记的原子操作* （ ``READ_ONCE``, ``WRITE_ONCE`` , ``atomic_*``
-> +等），以及内存屏障所隐含的一部分顺序保证。启用 ``CONFIG_KCSAN_WEAK_MEMORY=y``
-> +配置，KCSAN 会对加载或存储缓冲区进行建模，并可以检测遗漏的
-> +``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``，以及所有的
-> +具有等效隐含内存屏障的 ``atomic_*`` 操作。
-> +
-> +请注意，KCSAN 不会报告所有由于缺失内存顺序而导致的数据竞争，特别是在需要内存屏障
-> +来禁止后续内存操作在屏障之前重新排序的情况下。因此，开发人员应该仔细考虑那些未
-> +被检查的内存顺序要求。
-
-Nice work!
-
-> +
-> +数据竞争以外的竞争检测
-> +---------------------------
-> +
-> +对于有着复杂并发设计的代码，竞争状况不总是表现为数据竞争。如果并发操作引起了意‘
-
-What's of the apostrophe "'" for?
-
-> +料之外的系统行为，则认为发生了竞争状况。另一方面，数据竞争是在 C 语言层面定义
-> +的。下面的宏定义可以用来检测非数据竞争的漏洞并发代码的属性。
-> +
-> +.. kernel-doc:: include/linux/kcsan-checks.h
-> +    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
-> +                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
-> +                ASSERT_EXCLUSIVE_BITS
-> +
-> +实现细节
-> +-----------
-> +
-> +KCSAN 需要观测两个并发访问。特别重要的是，我们想要（a）增加观测到竞争的机会（尤
-> +其是很少发生的竞争），以及（b）能够实际观测到这些竞争。我们可以通过（a）注入
-> +不同的延迟，以及（b）使用地址观测点（或断点）来实现。
-> +
-> +如果我们在设置了地址观察点的情况下故意延迟一个内存访问，然后观察到观察点被触发
-> +，那么两个对同一地址的访问就发生了竞争。使用硬件观察点，这是 `DataCollider
-> +<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf>`_ 中采用
-> +的方法。与 DataCollider 不同，KCSAN 不使用硬件观察点，而是依赖于编译器插装和“软
-
-插装?
-"compiler instrumenting" 为什么要翻译成插桩？
-
-> +观测点”。
-> +
-> +在 KCSAN 中，观察点是通过一种高效的编码实现的，该编码将访问类型、大小和地址存储
-> +在一个长整型变量中；使用“软观察点”的好处是具有可移植性和更大的灵活性。然后，
-> +KCSAN依赖于编译器对普通访问的插桩。对于每个插桩的普通访问：
-> +
-> +1. 检测是否存在一个复合的观测点，如果存在，并且至少有一个操作是写操作，则我们发
-
-matching, not ‘复合'
-
-> +   现了一个竞争访问。
-> +
-> +2. 如果不存在匹配的观察点，则定期的设置一个观测点并随机延迟一小段时间。
-> +
-> +3. 在延迟前检查数据值，并在延迟后重新检查数据值；如果值不匹配，我们推测存在一个
-> +   未知来源的竞争状况。
-> +
-> +为了检测普通访问和标记访问之间的数据竞争，KCSAN 也对标记访问进行标记，但仅用于
-> +检查是否存在观察点；即 KCSAN 不会在标记访问上设置观察点。通过不在标记操作上设
-> +置观察点，如果对一个变量的所有并发访问都被正确标记，KCSAN 将永远不会触发观察点
-> +，因此也不会报告这些访问。
-> +
-> +弱内存建模
-> +~~~~~~~~~~~~~~~~~~~
-
-'~' number should be double of Chinese chars. and all of marks should follow this rules.
-
-* please at least 'make html-doc' and check everything of your html file *
-
-> +
-> +KSCAN 检测由于缺失内存屏障的数据检测的方法是居于对访问重新排序的建模（使用参数
-
-it's too hard to understand this line.
-KCSAN通过建模访问重新排序（使用``CONFIG_KCSAN_WEAK_MEMORY=y``）来检测由于缺少内存屏障而导致的数据竞争？
-
-
-> +``CONFIG_KCSAN_WEAK_MEMORY=y``）。每个设置了观察点的普通内存访问也会被选择在其
-> +函数范围内进行模拟重新排序（最多一个正在进行的访问）。
-> +
-> +一旦某个访问被选择用于重新排序，它将在函数范围内与每个其他访问进行检查。如果遇
-> +到适当的内存屏障，该访问将不再被考虑进行模拟重新排序。
-> +
-> +当内存操作的结果应该由屏障排序时，KCSAN 可以检测到仅由于缺失屏障而导致的冲突的
-> +数据竞争。考虑下面的例子::
-> +
-> +    int x, flag;
-> +    void T1(void)
-> +    {
-> +        x = 1;                  // data race!
-> +        WRITE_ONCE(flag, 1);    // correct: smp_store_release(&flag, 1)
-> +    }
-> +    void T2(void)
-> +    {
-> +        while (!READ_ONCE(flag));   // correct: smp_load_acquire(&flag)
-> +        ... = x;                    // data race!
-> +    }
-> +
-> +当启用了弱内存建模，KCSAN 将考虑对 ``T1`` 中的 ``x`` 进行模拟重新排序。在写入
-> +``flag`` 之后，x再次被检查是否有并发访问：因为 ``T2`` 可以在写入
-> +``flag`` 之后继续进行，因此检测到数据竞争。如果遇到了正确的屏障， ``x`` 在正确
-> +释放 ``flag`` 后将不会被考虑重新排序，因此不会检测到数据竞争。
-> +
-> +在复杂性上的权衡以及实际的限制意味着只能检测到一部分由于缺失内存屏障而导致的数
-> +据竞争。由于当前可用的编译器支持，KCSAN 的实现仅限于建模“缓冲”（延迟访问）的
-> +效果，因为运行时不能“预取”访问。同时要注意，观测点只设置在普通访问上，这是唯
-> +一一个 KCSAN 会模拟重新排序的访问类型。这意味着标记访问的重新排序不会被建模。
-> +
-> +上述情况的一个后果是获取操作不需要屏障插桩（不需要预取）。此外，引入地址或控制
-
-acquire 也是专有名词
-
-Thanks
-Alex
-
-> +依赖的标记访问不需要特殊处理（标记访问不能重新排序，后续依赖的访问不能被预取）
-> +。
-> +
-> +关键属性
-> +~~~~~~~~~~~~~~
-> +
-> +1. **内存开销**：整体的内存开销只有几 MiB，取决于配置。当前的实现是使用一个小长
-> +   整型数组来编码观测点信息，几乎可以忽略不计。
-> +
-> +2. **性能开销**：KCSAN 的运行时旨在性能开销最小化，使用一个高效的观测点编码，在
-> +   快速路径中不需要获取任何锁。在拥有 8 个 CPU 的系统上的内核启动来说：
-> +
-> +   - 使用默认 KCSAN 配置时，性能下降 5 倍；
-> +   - 仅因运行时快速路径开销导致性能下降 2.8 倍（设置非常大的
-> +     ``KCSAN_SKIP_WATCH`` 并取消设置 ``KCSAN_SKIP_WATCH_RANDOMIZE``）。
-> +
-> +3. **注解开销**：KCSAN 运行时之外需要的注释很少。因此，随着内核的发展维护的开
-> +   销也很小。
-> +
-> +4. **检测设备的竞争写入**：由于设置观测点时会检查数据值，设备的竞争写入也可以
-> +   被检测到。
-> +
-> +5. **内存排序**：KCSAN 只了解一部分 LKMM 排序规则；这可能会导致漏报数据竞争（
-> +   假阴性）。
-> +
-> +6. **分析准确率**： 对于观察到的执行，由于使用采样策略，分析是 * 不健全 * 的
-> +   （可能有假阴性），但期望得到完整的分析（没有假阳性）。
-> +
-> +考虑的替代方案
-> +-------------------
-> +
-> +一个内核数据竞争检测的替代方法是 `Kernel Thread Sanitizer (KTSAN)
-> +<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>`_。KTSAN 是一
-> +个基于先行发生关系（happens-before）的数据竞争检测器，它显式建立内存操作之间的先
-> +后发生顺序，这可以用来确定 `数据竞争`_ 中定义的数据竞争。
-> +
-> +为了建立正确的先行发生关系，KTSAN 必须了解 LKMM 的所有排序规则和同步原语。不幸
-> +的是，任何遗漏都会导致大量的假阳性，这在包含众多自定义同步机制的内核上下文中特
-> +别有害。为了跟踪前因后果关系，KTSAN 的实现需要为每个内存位置提供元数据（影子内
-> +存），这意味着每页内存对应 4 页影子内存，在大型系统上可能会带来数十 GiB 的开销
-> +。
 
