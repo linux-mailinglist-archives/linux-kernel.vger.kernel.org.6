@@ -1,166 +1,105 @@
-Return-Path: <linux-kernel+bounces-264848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D131193E92D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:06:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5BE93E92F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8804628139D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9B81C20A40
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162A757FD;
-	Sun, 28 Jul 2024 20:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbtExgpU"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6823C6EB4A;
+	Sun, 28 Jul 2024 20:10:12 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4CC502BD
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EEC1D69E
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722197157; cv=none; b=OOh3OCMLKKWj9/DvaK7W12EKMW5ztw+Sjsv3zOQXHdJkAbMj1/Nt84LWeawOhuS8ekezdoLa4NNExafBHmOMc8H1IXncF/0mzHrIobqHFCBjQUh+OVwaSDonqpJvScYC6jAgCYeiT30XpE41RL3CyfIvXQjG53wv+VK7SdN8Nig=
+	t=1722197412; cv=none; b=G86gBWlej4jOoJAER0uz8hVCL0Bc3qwWOfRZn4Whjs30Lq+cNWVqLCZwpFioGMuHWj5ueoLxYUEtCVI33FsZdufoRAUQlSp6U7QCU7Zms3f4eBe1RdRc8kj5UQxHM4dWzBXCxrAL7j8MnyrV4MliA6jwrC9J0iQihSF1cjccxUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722197157; c=relaxed/simple;
-	bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ihBut/nkB3KiYh8su0m0B+CZ9ZQlO3k2Cjwss+vkeBWyaPPVtrrP1lXKYexx35yuTkkRW3vx4lZ6bi69sl1j8nfIoK9R++ZRsFtQ9/cRxnAKFlwuyqS20GaS6XKOh+TGVPKdvZWYKFUT0SpNBv2twUpa7MxG/imIyEMMf22soB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NbtExgpU; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfdb6122992so938354276.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 13:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722197155; x=1722801955; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-        b=NbtExgpUkz1knVd9HWgufMYvshbWKWPal27eBL46FSpycKb/nYTdeTxh0TohtQJ36A
-         2AzZiXpmrNGD+X4EESNIFxsVXWNVeOPyXbBRV/8OZSD1brZnQeRm9lYH1TocdKejFOYS
-         YfXHNQUm8xDD64zQ6Zin5zq1NT2620JufHCCk7eejxbQaoqTByeoqsVxbqDojqMT9J1g
-         C0OF9FWHTtpO2lklrRZLFemD7oO6VsUW9p08PlBG3Yca8DPRRiEb4dqUXsVoFsEa7bUf
-         KFIWRJn3qNMtVe/gLKct9WR6HKAWd4Q0L/HDI2h9TMC29+hdZkkIr2QvrEAi5yI5RORv
-         uKMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722197155; x=1722801955;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-        b=YFHyul2Hkb4RPugc6jY3Kb8kv73loPb+1deYxjVV+N4gChUnjmVIxg3JgXTIrN8Cwt
-         A+lEhMJf52rt49bnA/SYv21+kVF0BSOxdziyDGIgZGJBa+Hkeafefw1WUOV2WypXf2zF
-         iThvZFrDd+380Nn1PnP6Dkn3yPtxlcz6b2jGju3Tb5SUNTpW6gWhChk9AK2OP5T6kp3+
-         HEPEQbxpb1z9omp+woG8Vq9AyDqcsx4nGLGeJHkrhJffGA9EmmxGs5+bjL8nHqi/6ib3
-         7QkIeQyINkvlEkLKHPKSRPSbSpCBoLfxXpN6DSRO49nujzH5faQnSC6qr9F1Ar8m5P/8
-         7rGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWldqPepuPpN8OL46WE2fFTzOoZ2GY3ibDHMi3Z8RHc+HbPJgjW7CcgLrSrCNH/vnD1tr1uKlxKABbAxlxiRksagGqFIhUvMchiXEqu
-X-Gm-Message-State: AOJu0YypvM7X4H69iwGnl2JaZ3CDEwVVPzkeCZMxYgqrdGCNBT032/yw
-	uxxAwNMSd75l4FyU1tDSznHej/oXSsXg5+LGahghW70pMDB9Z3SqWwALnoS/KkcwvcMxwMqqUD/
-	cTTGzGWbjUUSKekee0+FhN1ol/4u9oRJyell7/g==
-X-Google-Smtp-Source: AGHT+IH4VuGtnxaaMubh5K8LxqivpdTRbAvbqN7TNbbLCLoKj6PCh4Ss6cSMuqSbY7Yz6HIX8oOVeIGVxbVBUgzgnio=
-X-Received: by 2002:a05:6902:c08:b0:e08:5f16:813 with SMTP id
- 3f1490d57ef6-e0b5464eb88mr5349192276.53.1722197154745; Sun, 28 Jul 2024
- 13:05:54 -0700 (PDT)
+	s=arc-20240116; t=1722197412; c=relaxed/simple;
+	bh=+Vc0/1Sv0FzZ2Vc3u0nAKXFBN0TNCL6RStYGqkU7j4U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=JNJ8whRu5ULYGbegWIF27ogaUQrjPzMxgfDexQX7XeOpTOca2+dU4aYRshWwGDPS/Nddvc2fjWKCe+vRq4c77QHkCx4TZ+FzPAkpW3cQFuxwFZMfV3qxtbT1RIz63qXaaDdVpDXGPMtZZ7NL7MmMRMrildgc78Au+rdoKPvNDF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-262-DRc-5r_cMRmYocbGRQaRxA-1; Sun, 28 Jul 2024 21:10:03 +0100
+X-MC-Unique: DRc-5r_cMRmYocbGRQaRxA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
+ 2024 21:09:17 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 28 Jul 2024 21:09:17 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Christoph Hellwig" <hch@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, "Andy Shevchenko"
+	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
+	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>
+Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqg
+Date: Sun, 28 Jul 2024 20:09:17 +0000
+Message-ID: <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
+ <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
+ <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
- <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-In-Reply-To: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sun, 28 Jul 2024 22:05:18 +0200
-Message-ID: <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, 25 Jul 2024 at 13:25, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 25-07-24, 11:21, Ulf Hansson wrote:
-> > Right.
-> >
-> > The main issue in regards to the above, is that we may end up trying
-> > to vote for different devices, which votes correspond to the same
-> > OPP/OPP-table. The one that comes first will request the OPP, the
-> > other ones will be ignored as the OPP core thinks there is no reason
-> > to already set the current OPP.
->
-> Right, but that won't happen with the diff I shared earlier where we set
-> "forced" to true. Isn't it ?
+RnJvbTogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+IFNl
+bnQ6IDI4IEp1bHkgMjAyNCAyMDo1NQ0KPiANCj4gT24gU3VuLCAyOCBKdWwgMjAyNCBhdCAxMTox
+MiwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4g
+PiBBbHRob3VnaCBtaW5fdCh0eXBlLHgseSkgc2hvdWxkIGp1c3QgYmUNCj4gPiAgICAgICAgIHR5
+cGUgX194ID0geDsNCj4gPiAgICAgICAgIHR5cGUgX195ID0geTsNCj4gPiAgICAgICAgIF9feCA8
+IF9feSA/IF9feCA6IF9feTsNCj4gPiBBYnNvbHV0ZWx5IG5vIHBvaW50IGRvaW5nIGFueXRoaW5n
+IGVsc2UuDQo+IA0KPiBJIHRyaWVkIGl0LiBEb2Vzbid0IHF1aXRlIHdvcms6DQo+IA0KPiAgIG5l
+dC9pcHY0L3Byb2MuYzogSW4gZnVuY3Rpb24g4oCYc25tcF9zZXFfc2hvd190Y3BfdWRw4oCZOg0K
+PiAgIG5ldC9pcHY0L3Byb2MuYzo0MTQ6OTogZXJyb3I6IElTTyBDOTAgZm9yYmlkcyB2YXJpYWJs
+ZSBsZW5ndGggYXJyYXkNCj4g4oCYYnVmZuKAmSBbLVdlcnJvcj12bGFdDQo+ICAgICA0MTQgfCAg
+ICAgICAgIHVuc2lnbmVkIGxvbmcgYnVmZltUQ1BVRFBfTUlCX01BWF07DQo+ICAgICAgICAgfCAg
+ICAgICAgIF5+fn5+fn5+DQouLi4NCg0KQWgsIHRoZSBjb25zdGFudHMuDQpJIHRoaW5rIHRoZXkg
+anVzdCBuZWVkIHRvIGJlIE1JTl9DT05TVCgpICh3aXRob3V0IHRoZSBjYXN0cykuDQpPbmUgbWln
+aHQgbmVlZCBhIGNhc3Qgb2Ygb25lIG9mIGl0cyBjb25zdGFudHMuDQpCdXQgbWF5YmUgdGhlIHNp
+Z25lZG5lc3MgdGVzdCBjYW4gYmUgaWdub3JlZCBpZiB0aGVyZSBpcyBhDQp0ZXN0IGZvciBpdCBi
+ZWluZyBhIGNvbnN0YW50Lg0KDQpCdXQgKGFzIHlvdSBzYWlkIGVhcmxpZXIgaW4gdGhlIHllYXIp
+IHRoYXQgc2hvdWxkIGp1c3QgYmUgTUlOKCkuDQpFeGNlcHQgdGhlcmUgYXJlIGEgZmV3IHBsYWNl
+cyB0aGF0IGlzIHVzZWQgdGhhdCBuZWVkIGNoYW5naW5nIGZpcnN0Lg0KDQoJRGF2aWQNCg0KPiAN
+Cj4gSSBndWVzcyBhbGwgb2YgdGhlc2UgY291bGQganVzdCBiZSBtYWRlIHRvIHVzZSBNSU5fVCgp
+L01BWF9UIGluc3RlYWQuDQo+IFdlJ3JlIG5vdCB0YWxraW5nIGh1bmRyZWRzIG9mIGNhc2VzLCBp
+dCBzZWVtcyB0byBiZSBqdXN0IGEgc21hbGwNCj4gaGFuZGZ1bC4NCj4gDQo+IExldCBtZSBnbyBj
+aGVjay4NCj4gDQo+ICAgICAgICAgICAgICAgIExpbnVzDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
+cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
+MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Correct.
-
->
-> > > I think that design is rather correct, just like other frameworks. Just that we
-> > > need to do only set-level for genpds and nothing else. That will have exactly
-> > > the same behavior that you want.
-> >
-> > I don't quite understand what you are proposing. Do you want to add a
-> > separate path for opp-levels?
->
-> Not separate paths, but ignore clk/regulator changes if the table belongs to a
-> genpd.
->
-> > The problem with that would be that platforms (Tegra at least) are
-> > already using a combination of opp-level and clocks.
->
-> If they are using both for a genpd's OPP table (and changes are made for both
-> opp-level and clock by the OPP core), then it should already be wrong, isn't it?
-
-They are changing the clock through the device's OPP table and the
-level (performance-state) via genpd's table (using required OPPs).
-This works fine as of today.
-
-> Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
-> aggregation happens in the genpd core), but clock setting would always reflect
-> the second caller. This should be fixed too, isn't it ?
-
-As I said before, I don't see a need for this. The recursive call to
-dev_pm_opp_set_opp() is today superfluous.
-
->
-> > To be able to call dev_pm_opp_set_opp() on the required-dev (which
-> > would be the real device in this case), we need to add it to genpd's
-> > OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
-> >
-> > The problem with this, is that the real device already has its own OPP
-> > table (with the required-OPPs pointing to genpd's OPP table), which
-> > means that we would end up adding the device to two different OPP
-> > tables.
->
-> I was terrified for a minute after reading this and the current code, as I also
-> thought there is an issue there. But I was confident that we used to take care
-> of this case separately earlier. A short dive into git logs got me to this:
->
-> commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
->
-> This should be working just fine I guess.
-
-It's working today for *opp-level* only, because of the commit above.
-That's correct.
-
-My point is that calling dev_pm_opp_set_opp() recursively from
-_set_required_opps() doesn't make sense for the single PM domain case,
-as we can't assign a required-dev for it. This leads to an
-inconsistent behaviour when managing the required-OPPs.
-
-To make the behavior consistent (and to fix the bug), I still think it
-would be better to do something along what $subject patch proposes.
-
-Kind regards
-Uffe
 
