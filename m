@@ -1,141 +1,145 @@
-Return-Path: <linux-kernel+bounces-264811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36A893E8B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162E993E8B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845A32816FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465671C215E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EB858203;
-	Sun, 28 Jul 2024 16:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7836214D;
+	Sun, 28 Jul 2024 16:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Hg5xyTC+"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVMiBQqs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F0C6FD5
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 16:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6697A35;
+	Sun, 28 Jul 2024 16:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722185846; cv=none; b=PuEdYaXs9cPjRyZd4gfJkl+tQ6KXkZG0EqJQH4VXJLvZ7Y2UvI0Y69uDZ9+ochJ6QbtJU8K8UMw+UbQfkGjN1jaRnT6Yl0XYX6vE1xqoZnlZJ1hMMmg0OROQNfHKMaeCIusoEZx7rHmcaAlYbMkyhohH4BzMwI+175+VJXQWZvw=
+	t=1722185928; cv=none; b=Fdu1KNhJc5GvY0ckliguVkzlK5qAee68Wc143I+cyCk1uE57faBWW1M9SRIZoJRTEe2Db08oFEzfeynLq4+wTrj0LMouxcC4b5pvt4Su0RZJv5LPHrYjD/uL64Dx94lyIQ0wARCnOgQ/WOBycZPnScy01rNOc5ZQpqunSQ/WIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722185846; c=relaxed/simple;
-	bh=x8snrZvy7qqfWcPL4D+4iazHY+cNsrtO96qR2r9AZxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jFIAVSErqQ3LInRBnZRWGa27YEDheUFZ7bDkohvcsNxjQ5S3LutRYtHkzXeaIPoHf6plZDrPdWiJ4z38VvdVTgBkMZVBtaPo8AwAu0cpKXcHzZoOdZJob6EiJOTR60a3eN+KLRfPrZcroIzSsWXiNlAIv9DCyn5ADZCmEATwVqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Hg5xyTC+; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so43517381fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722185842; x=1722790642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9SevfUKt73kXPb/ImW5YVNB1cegaWMrvDCx6UH1DIs=;
-        b=Hg5xyTC+HXbrpnfVE0XMhEWARRtX4vKqLxgMYwZk4e8tIdCUoTDxp4xpPjLGFpFwND
-         u/A/2hZEzqXFwAJaqazXDBJAdxh/Ww8SOfxXw9jDOq5LzMU1InywVHMVkqS8xUF1JXDP
-         FFNRPNg4r/pnI7ttjGORcpLUlCd8JyIz5z7+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722185842; x=1722790642;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g9SevfUKt73kXPb/ImW5YVNB1cegaWMrvDCx6UH1DIs=;
-        b=n3ND6BeTCehFv7I7ieeJrleXbqTdiOPYE07dPNW2e4aTT9aNtKgP0JVfGvEJYeJ3ka
-         86O0ujCFV/I+/bnxOvvjosZKK9tVbVEbxhWDu9jccOu9gyLTpyC2Jm2Svt4ALD6R6c15
-         bLm69vgSHzxDv7FPCvgHTFM3Qo2f2N+6gC4axI/S8DcJ6mRtSk+q0Nj5NI/khpfwdFSr
-         MsjS4LGQ2F0u25oU88tB6ag4U2qwD2cnmySHIZO6E3l1xf/TnrwEAOnxRFGqpylrCmGy
-         JbSqoOlWX73riPgT5/gjmh+LwvQfPZ/um8Jn6NMdhuVO6sGyudq+pClB0XbWRv3ZSfv4
-         yu6w==
-X-Gm-Message-State: AOJu0Yyfs08eQp4l+yfs4014uczyNaR3gZ4+sr2STb5FlVQERZdeBgxI
-	Ea4Rv1WYC9815uJetOTDTLsYV9XeXHAe6g7yRv33P9t8UX/8pGZcx8BIr2wc8Vx7u189/tCfiTq
-	r7QRQWg==
-X-Google-Smtp-Source: AGHT+IFSiQTk3Yykm5FaAUq4930enILDf0xksJbeiHLcAm3sMIZwQ21TsXQqcxDBIafbtuztS/iCfA==
-X-Received: by 2002:a2e:720b:0:b0:2ef:2658:98f2 with SMTP id 38308e7fff4ca-2f12ee1bcacmr37245001fa.33.1722185841456;
-        Sun, 28 Jul 2024 09:57:21 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590aa3sm4552951a12.31.2024.07.28.09.57.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 09:57:20 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a10835480bso4258425a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:57:20 -0700 (PDT)
-X-Received: by 2002:a50:a41c:0:b0:5a7:464a:ab9 with SMTP id
- 4fb4d7f45d1cf-5b020ea8da9mr3235857a12.21.1722185840503; Sun, 28 Jul 2024
- 09:57:20 -0700 (PDT)
+	s=arc-20240116; t=1722185928; c=relaxed/simple;
+	bh=XZSBk3JJomRK7hzplafWAGQGVVQ8bJDO4s0Rz73Sf+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fzq49H9qNdWzbQNuH5wL0U/PCvcSmJauH0zpCdaB5c8S+EJCpdgysUNPiVM3hk219bL/mXYpbyr4SwU4PfAxxijNT9L84n1TK+ou3VJwiqgR+8VM4uR58EuElTN+gct4VHQc2ixAg+YwaHMHhhNzTIFGgWrTfi+b9myCX14vzgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVMiBQqs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF28C116B1;
+	Sun, 28 Jul 2024 16:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722185928;
+	bh=XZSBk3JJomRK7hzplafWAGQGVVQ8bJDO4s0Rz73Sf+M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IVMiBQqsWn/Zd20bFqZklwt/OVi9tvlsUyCS8i/U+YnM4wWIUJgoIg/h9zFMujHnh
+	 NiJ4zMBchMpgqTPXNQOHvI5F51TtP4zbUXpIXbRhBs1yvXHa5vdsBrgOlnfyPkIzgY
+	 1Vo94BQBcCl7j7xDHppRRdcbo51N+RGl6VLf/20JfMQbJ9xeNrfTl3kmOlrqoqsBs1
+	 bkvse1PiDEj0EpZjxK+EAoqcdyshhDBK4XnRM5X4T1XREHI/VYimy/zDV1uZXpgPv0
+	 jcyko50/mWRXKOSsW/rW0WJoYH5iW2msdNILoGxlxwovUHtSMyX75V2aWxSbDAud2e
+	 5/AmlArVd2FHQ==
+Date: Sun, 28 Jul 2024 17:58:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: light: ltr390: Add ALS channel and support
+ for gain and resolution
+Message-ID: <20240728175841.7ca04e58@jic23-huawei>
+In-Reply-To: <20240728151957.310237-2-abhashkumarjha123@gmail.com>
+References: <20240727132735.052502ad@jic23-huawei>
+	<20240728151957.310237-1-abhashkumarjha123@gmail.com>
+	<20240728151957.310237-2-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com> <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
-In-Reply-To: <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Sun, 28 Jul 2024 09:57:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjbP7cTOYWusAS-Zg8_YbVBGrNLmJBg3wrhKN7C09CsbA@mail.gmail.com>
-Message-ID: <CAHk-=wjbP7cTOYWusAS-Zg8_YbVBGrNLmJBg3wrhKN7C09CsbA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] minmax: Simplify signedness check
-To: David Laight <David.Laight@aculab.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 28 Jul 2024 at 07:21, David Laight <David.Laight@aculab.com> wrote:
->
-> +/* Allow if both x and y are valid for either signed or unsigned compares. */
-> +#define __types_ok(x, y)                               \
-> +       ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
-> +        (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
+On Sun, 28 Jul 2024 20:49:55 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-This seems horrendous, exactly because it expands both x and y twice.
-And the "expand multiple times" was really the fundamental problem.
+>     Add new ALS channel and allow reading raw and scale values.
+>     Also provide gain and resolution configuration for ALS channel.
+>     Add automatic mode switching between the UVS and ALS channel
+>     based on which channel is being accessed.
+>     The default mode in which the sensor start is ALS mode.
+Same issue with indent as in patch 1.
 
-Why not just change the model to say it's a bitmask of "signedness
-bits", the bits are "signed ok" and "unsigned ok", and turn it into
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Later patches should not be in reply to the first one.
+Use a cover letter.
 
-  /* Signedness matches? */
-  #define __types_ok(x, y) \
-     (__signedness_bits(x) & __signedness_bits(y))
+Minor comments inline on using the enum to maintain the type of the mode
+setting.
 
-and __signedness_ok() simply does something like "1 if unsigned type,
-2 if signed type, 3 if signed positive integer".
 
-Something like (very very handwavy, very very untested):
+> ---
+>  drivers/iio/light/ltr390.c | 111 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 96 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+> index 9f00661c3..d1a259141 100644
+> --- a/drivers/iio/light/ltr390.c
+> +++ b/drivers/iio/light/ltr390.c
+> @@ -62,11 +62,17 @@
+>   */
+>  #define LTR390_WINDOW_FACTOR 1
+>  
+> +enum ltr390_mode {
+> +	LTR390_SET_ALS_MODE,
+> +	LTR390_SET_UVS_MODE,
+> +};
+> +
+>  struct ltr390_data {
+>  	struct regmap *regmap;
+>  	struct i2c_client *client;
+>  	/* Protects device from simulataneous reads */
+>  	struct mutex lock;
+> +	int mode;
+enum ltr380_mode mode;
 
-   __builtin_choose_expr(is_signed_type(typeof(x)),
-        2+__if_constexpr(x,(x)>0,0),
-        1)
+>  	int gain;
+>  	int int_time_us;
+>  };
+> @@ -94,6 +100,28 @@ static int ltr390_register_read(struct ltr390_data *data, u8 register_address)
+>  	return get_unaligned_le24(recieve_buffer);
+>  }
+>  
+> +static int ltr390_set_mode(struct ltr390_data *data, int mode)
 
-Actually, I think that "__if_constexpr()" could very well be "if known
-positive value", ie 'x' itself doesn't have to be constant, but "x>0"
-has to be a constant (the difference being that the compiler may be
-able to tell that some variable is always positive, even if it's a
-variable):
+pass in the enum lt380_mode.
 
-  #define statically_true(x) __builtin_constant_p((x),(x),0)
-  #define is_positive_value(x) statically_true((x)>=0)
+> +{
+> +	if (data->mode == mode)
+> +		return 0;
+> +
+> +	switch (mode) {
+> +	case LTR390_SET_ALS_MODE:
+> +		regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_UVS_MODE);
+> +		break;
+> +
+> +	case LTR390_SET_UVS_MODE:
+> +		regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_UVS_MODE);
+> +		break;
+> +
+> +	default:
+> +		return -EINVAL;
+Should be able to drop this if passing in the enum as the compiler can see you
+have cases for every value.
 
-and then use
+> +	}
+> +
+> +	data->mode = mode;
+> +	return 0;
+> +}
+> +
 
-   __builtin_choose_expr(is_signed_type(typeof(x)),
-        2+is_positive_value(x), 1)
-
-and yes, I realize I count zero as a positive value, but writing out
-"nonnegative()" is annoying and we never care.
-
-I guess we could say "is_unsigned_value()"?
-
-       Linus
 
