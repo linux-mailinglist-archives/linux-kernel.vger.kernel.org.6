@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-264587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DF693E5A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:25:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBD693E5AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DBE6B21968
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9601C20D1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCD34AEE0;
-	Sun, 28 Jul 2024 14:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E040B4AEE0;
+	Sun, 28 Jul 2024 14:25:39 +0000 (UTC)
 Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2544174C
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D952341A84
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722176686; cv=none; b=LXiWffumo5wIEm7gA+vDJtteW/449Qar1HhBRy2dIuDy9So0fmH0CWJw7eViX5Fhp3xeZFokDm3t6yPhxg3elomcYjjz52Mkea+zuVQfP67C7mjH6rtZvXwyw/JptE6wS7xz+LwjFQmHekdVm4Hn3cIDDx3bA5QsOF4D6a7T+mY=
+	t=1722176739; cv=none; b=Cxvc7nhfal3KnLtgyI5KJ5LaopnxEa/OMdzK9Vzsn9GiqgCDxLhbE4LO7nb3p3a7qtRYrlZJ1Vc+YJi2hALY3BakNZ/bGuBN7cGuZSxPdeC7rZUYC9VUaAfupxx39x8UIy2RJ3XoWnfCR0ISdVNPQfySGsHqP+en4as7Nd5IcXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722176686; c=relaxed/simple;
-	bh=lLxFQwdnAuRPbrJit6Ocd1M+MA5j9LSLm1WrWa6k+SA=;
+	s=arc-20240116; t=1722176739; c=relaxed/simple;
+	bh=1dbgvmdaF1nAa6KOYKC34cBRcp6an9l5zjBHwas93PM=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=dCwkLLHEBZZcLveTUe11lLKqie1Y2l69/dfMi66O8JIO/xRLyO8ryb93RSMx5goaz1fP9MWNbe5dUX60uFeQLnjgFcczg3JyySwdDaqOTaXR14CImJOmyyp+73Mnfz6O0VlKcJUKfCO0r/Pc5k/qQqC5RyuM+jKSOMisSHBBSjs=
+	 MIME-Version:Content-Type; b=i1YziI28lZQMqXmEZAbDSWlNrknG9e46qGmfNwySkKeuyjY1qnAypjSFB1lBjJ0Mk+bsAVJ6PNcfjurNGLjnePohDAxJuHxrCjy016rxa0a5Fecex5kfBGVgKm1tD0C0RrrBMFSnphQn2xLPOnognk2RQIea4H0K+TGDTwdtIOI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-277-nlUHsBjeMUSsZCF2tSpzXw-1; Sun, 28 Jul 2024 15:24:37 +0100
-X-MC-Unique: nlUHsBjeMUSsZCF2tSpzXw-1
+ uk-mta-225-Ran_uoH8NAunlrVN1XlTGw-1; Sun, 28 Jul 2024 15:25:31 +0100
+X-MC-Unique: Ran_uoH8NAunlrVN1XlTGw-1
 Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
  (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
- 2024 15:23:52 +0100
+ 2024 15:24:46 +0100
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 28 Jul 2024 15:23:52 +0100
+ id 15.00.1497.048; Sun, 28 Jul 2024 15:24:46 +0100
 From: David Laight <David.Laight@ACULAB.COM>
 To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
 CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
@@ -50,11 +50,13 @@ CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
 	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>,
 	"'linux-mm@kvack.org'" <linux-mm@kvack.org>, 'Lorenzo Stoakes'
 	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2 7/8] minmax: Use __auto_type
-Thread-Topic: [PATCH v2 7/8] minmax: Use __auto_type
-Thread-Index: Adrg+b/Mt8JjzpFvR/SgdqY3jGnUug==
-Date: Sun, 28 Jul 2024 14:23:52 +0000
-Message-ID: <431f7c45e7294d4da4f8abcd57ce7b5e@AcuMS.aculab.com>
+Subject: [PATCH v2 8/8] minmax: minmax: Add __types_ok3() and optimise defines
+ with 3 arguments
+Thread-Topic: [PATCH v2 8/8] minmax: minmax: Add __types_ok3() and optimise
+ defines with 3 arguments
+Thread-Index: Adrg+fzAGOYJcfIuRPCxFJC4Oy7+aw==
+Date: Sun, 28 Jul 2024 14:24:46 +0000
+Message-ID: <75f18af7162c4414be28a890e9504c8d@AcuMS.aculab.com>
 References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 In-Reply-To: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
@@ -73,64 +75,90 @@ Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Replacing 'typeof(x) _x =3D (x)' with '__auto_type _x =3D (x)' removes
-one expansion of 'x'.
+min3() and max3() were added to optimise nested min(x, min(y, z))
+sequences, but only moved where the expansion was requested.
+
+Add a separate implementation for 3 argument calls.
+These are never required to generate constant expressiions so
+remove that logic.
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
-New patch for v2
+v2 (was pacth 7/7):
+- Use __auto_type.
+- Use an extra __xy local to slightly reduce the expansion.
+- Fix typos in the commit message.
 
- include/linux/minmax.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ include/linux/minmax.h | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index ad57c8eddc8a..cb3515824a64 100644
+index cb3515824a64..e1e31a827547 100644
 --- a/include/linux/minmax.h
 +++ b/include/linux/minmax.h
-@@ -47,9 +47,9 @@
- #define __cmp(op, x, y)=09((x) __cmp_op_##op (y) ? (x) : (y))
+@@ -41,6 +41,11 @@
+ =09((__is_ok_signed(x) && __is_ok_signed(y)) ||=09\
+ =09 (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
 =20
- #define __cmp_once(op, x, y, unique_x, unique_y) ({=09\
--=09typeof(x) unique_x =3D (x);=09=09=09\
--=09typeof(y) unique_y =3D (y);=09=09=09\
--=09_Static_assert(__types_ok(x, y),=09=09=09\
-+=09__auto_type unique_x =3D (x);=09=09=09\
-+=09__auto_type unique_y =3D (y);=09=09=09\
-+=09_Static_assert(__types_ok(x, y),=09=09\
- =09=09#op "(" #x ", " #y ") signedness error, fix types or consider u" #op=
- "() before " #op "_t()"); \
- =09__cmp(op, unique_x, unique_y); })
++/* Check three values for min3(), max3() and clamp() */
++#define __types_ok3(x, y, z)=09=09=09=09=09=09=09\
++=09((__is_ok_signed(x) && __is_ok_signed(y) && __is_ok_signed(z)) ||=09\
++=09 (__is_ok_unsigned(x) && __is_ok_unsigned(y) && __is_ok_unsigned(z)))
++
+ #define __cmp_op_min <
+ #define __cmp_op_max >
 =20
-@@ -131,18 +131,18 @@
-  * @y: value2
+@@ -93,13 +98,25 @@
   */
- #define min_not_zero(x, y) ({=09=09=09\
--=09typeof(x) __x =3D (x);=09=09=09\
--=09typeof(y) __y =3D (y);=09=09=09\
-+=09__auto_type __x =3D (x);=09=09=09\
-+=09__auto_type __y =3D (y);=09=09=09\
- =09__x =3D=3D 0 ? __y : ((__y =3D=3D 0) ? __x : min(__x, __y)); })
+ #define umax(x, y)=09__careful_cmp(max, __zero_extend(x), __zero_extend(y)=
+)
 =20
- #define __clamp(val, lo, hi)=09\
- =09((val) >=3D (hi) ? (hi) : ((val) <=3D (lo) ? (lo) : (val)))
++#define __cmp_once3(op, x, y, z, uniq) ({=09=09=09=09\
++=09__auto_type __x_##uniq =3D (x);=09=09=09=09=09\
++=09__auto_type __y_##uniq =3D (y);=09=09=09=09=09\
++=09__auto_type __z_##uniq =3D (z);=09=09=09=09=09\
++=09__auto_type __xy_##uniq =3D __cmp(op, __x_##uniq, __y_##uniq);=09\
++=09__cmp(op, __xy_##uniq, __z_##uniq); })
++
++#define __careful_cmp3(op, x, y, z, uniq) ({=09=09=09=09\
++=09_Static_assert(__types_ok3(x, y, z),=09=09=09=09\
++=09=09#op "3(" #x ", " #y ", " #z ") signedness error");=09\
++=09__cmp_once3(op, x, y, z, uniq); })
++
+ /**
+  * min3 - return minimum of three values
+  * @x: first value
+  * @y: second value
+  * @z: third value
+  */
+-#define min3(x, y, z) min((typeof(x))min(x, y), z)
++#define min3(x, y, z) __careful_cmp3(min, x, y, z, __COUNTER__)
 =20
- #define __clamp_once(val, lo, hi, unique_val, unique_lo, unique_hi) ({=09=
-=09\
--=09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
--=09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
--=09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
--=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
-=09\
-+=09__auto_type unique_val =3D (val);=09=09=09=09=09=09\
-+=09__auto_type unique_lo =3D (lo);=09=09=09=09=09=09\
-+=09__auto_type unique_hi =3D (hi);=09=09=09=09=09=09\
-+=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
+ /**
+  * max3 - return maximum of three values
+@@ -107,7 +124,7 @@
+  * @y: second value
+  * @z: third value
+  */
+-#define max3(x, y, z) max((typeof(x))max(x, y), z)
++#define max3(x, y, z) __careful_cmp3(max, x, y, z, __COUNTER__)
+=20
+ /**
+  * min_t - return minimum of two values, using the specified type
+@@ -144,8 +161,7 @@
+ =09__auto_type unique_hi =3D (hi);=09=09=09=09=09=09\
+ =09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
 \
  =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
- =09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
+-=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
 =09\
- =09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
+-=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
 =09\
++=09_Static_assert(__types_ok3(val, lo, hi), "clamp() signedness error");=
+=09\
+ =09__clamp(unique_val, unique_lo, unique_hi); })
+=20
+ #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
 --=20
 2.17.1
 
