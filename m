@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-264863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F260993E962
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8F193E965
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A871D1F21833
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756761F21A3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4724E768EE;
-	Sun, 28 Jul 2024 20:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE6757EB;
+	Sun, 28 Jul 2024 20:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XbVKYgRf"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="i51DR0FP"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A99768E1
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDEA6BFA3;
+	Sun, 28 Jul 2024 20:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722198729; cv=none; b=oPKqzyxzSA8eFaWENmZyWHlHfFhfpbzHCmAqEsyZBW0x7z7Ac3lGD5FNQfd6KYiE9JKPVITk+ff4KZWsQM0yt47c+NL5vDD40ClLqT2YCU/iFURPlrs2ZoOm0mk9zeicCqD19vt1ahDfAyTY/NJYUxGgdOKKF10nSHNzpbqXjlQ=
+	t=1722198865; cv=none; b=PSBExsL3klMYn+1UFmnYMjq7/WKSWvik9a1Fm5CS7fSYOyvxsiT2iAk1fRiRvxK4ieBDpuydidVyJ/Q2M7wghID4xnqD2+mhBJ+ssXZT1URMbFq19rz10tAf6WZbctQKBf2MwIsSfeMqYfRyFEl7+qGOMfyaZZAupt1xxU+v73I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722198729; c=relaxed/simple;
-	bh=PZ6qzNZGWn8C9KxH7s+DQRCxNB0Hvlde5ccd3n9QFWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gB8UFd6VoLZ/j7x0esvDthryzsPpRGhtDqGvr07pGWDqvr9RrVrOCf7IkAYeTvGE+KjgS1EhtUB7mNc3m1GDOxZS7Fme8tr6ZfWPIjrw0ssCslGOaRtZXmdOcdWHmijdFg1RGtLkn02HFMUBgnbbNcqkhv4fhxLfBWk2+BU/rrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XbVKYgRf; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so3062098e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 13:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722198725; x=1722803525; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=31T/wcyGC0a1619yO1onf7qadmsMMm37OcICHwdLOJQ=;
-        b=XbVKYgRfcgJJN4fCXV7Sr/Ilr8PeBWO0l2JVoHVdR8OFUMz3FC3Xqy8bYKN+4wxHON
-         s2Rqy5dhOb/QgJ3HLgtmfKhqf0G4mfEH8WNMOo4Mb59Wr34RZN4tbm/ogkZNurtb3nSc
-         TnOS7RS1aye5cf0mbX0652UM4r5TXO1PFP1N4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722198725; x=1722803525;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=31T/wcyGC0a1619yO1onf7qadmsMMm37OcICHwdLOJQ=;
-        b=RnMwItzReFHWbppsPMcfqMjlJCElKk5knW7flDH8pkrAx6i0dHt71ZNeprSOPXOuwH
-         LZPpx2o6vDIHgg4og/RvKtWFzHEt4L6+t8Qadj9v8ysZVZvqtavBQ25Uv90awMPkLFwN
-         6gjfsZZwsUHWcJkvqPoAbw+NcEC6G52Y3dt292ltaSIfHVseU/bHEMPvlrFmMf/18XfR
-         Vsyu1ZLqcsKMQ15Av3Io0ZPw0ODB36mjk4ZBv2ovph37UlQ49i5R6Oo+sTQHuUjtvDKd
-         ESh5MUB42SFsZH3ztzkzuStV+vCXyigSy03eQ9EphoIou5wQcoJiNfZof5UkFTZd+JmO
-         WnEA==
-X-Gm-Message-State: AOJu0YykhU+LyhDKD3P5+GvScmv+FTUpPQtOofjvNRKTUqIhONK3ucD/
-	GqN1n+GHQu7QqNUcZN3g34cql4nbuRnvOywnggXnkAQbqAWYgJ5rkTYGk/zPKHK8G3n4KA6AlkC
-	IGyT3qw==
-X-Google-Smtp-Source: AGHT+IGZRgo8vWFk3sU7BdgA1MLpbGFAankrDj5OSJPuKw86FlPgI9uR5fmXgn1TyGvwi4601HbX/w==
-X-Received: by 2002:a05:6512:250d:b0:52d:9ad6:f43f with SMTP id 2adb3069b0e04-5309b259b14mr4514551e87.5.1722198725380;
-        Sun, 28 Jul 2024 13:32:05 -0700 (PDT)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab53704sm423002466b.86.2024.07.28.13.32.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 13:32:04 -0700 (PDT)
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso1057209f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 13:32:04 -0700 (PDT)
-X-Received: by 2002:a05:6000:10cb:b0:367:8e53:7fd7 with SMTP id
- ffacd0b85a97d-36b5d0d10femr3393613f8f.28.1722198723859; Sun, 28 Jul 2024
- 13:32:03 -0700 (PDT)
+	s=arc-20240116; t=1722198865; c=relaxed/simple;
+	bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O+gkFIw1gjQ/t4HVfJ11s7oyZ3azl9IrG5aQFjzwBXphjn+2Qhs0s7TiugmoAsqRR3GEHmGaBipV4ZAK9ZsLWE7HO5zAyLZepwaii+QVVLC3WhuKZqh7HAE+hO0MSFR5tteg9j6gCxjvalPXYVW+XYpQq3hLawfTZ/XAGM0oBx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=i51DR0FP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1722198854;
+	bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=i51DR0FPQkByzeUSne23A+gmvOZsOmnfse9DZfSo3XkML0X6OOXoGo7zdLKMs2NVF
+	 6VLEresW+9m+HDUV5X23DjWR68pcUzgF8W/hGRsSh92t5/IUpAGINqCBxOAp3PeSgK
+	 lIJVaBeZ9B+4EpKVWaaCcgBI3Whto55AIM601tVM=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 28 Jul 2024 22:34:11 +0200
+Subject: [PATCH] tools/nolibc: pass argc, argv and envp to constructors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <d949045abc78462ab443b38340ce5c20@AcuMS.aculab.com>
-In-Reply-To: <d949045abc78462ab443b38340ce5c20@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Sun, 28 Jul 2024 13:31:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wigkg43sZJKuRuYOzWzj9bxczE2toHNc=yxfyMM3m_kcA@mail.gmail.com>
-Message-ID: <CAHk-=wigkg43sZJKuRuYOzWzj9bxczE2toHNc=yxfyMM3m_kcA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-To: David Laight <David.Laight@aculab.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240728-nolibc-constructor-args-v1-1-36d0bf5cd4c0@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAEKrpmYC/x3MTQqDMBBA4avIrDuQxr/Qq5QuNE50oCRlJhVBc
+ neDy2/x3glKwqTwak4Q2lk5xYrnowG/TXEl5KUarLGdGa3DmL48e/Qpapa/z0lwklVxcHPohxD
+ GrnVQ659Q4OM+vz+lXGhoFyJpAAAA
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722198853; l=3307;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
+ b=fO3ZYdlbhNkNTaSL4xiuL99f6qj4NFfZ1HYJ9fIkuWRbd/5xb7hJqmOdAT9md/YFsJwDtuldr
+ jpYvQvjOkjCBsldTMUSns5YtGcEO36M964Cg+SdIvA9IeiCY00y2EnC
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sun, 28 Jul 2024 at 13:23, David Laight <David.Laight@aculab.com> wrote:
->
-> MIN() (and probably your MIN_T()) ought to have a check for
-> being a constant in order to stop misuse.
+Mirror glibc behavior for compatibility.
 
-No, we have a number of "runtime constants" that are basically
-"constants" set up at boot-time for the architecture,as pointed out by
-the powerpc people in private:
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ tools/include/nolibc/crt.h                   | 23 ++++++++++++-----------
+ tools/testing/selftests/nolibc/nolibc-test.c |  5 +++--
+ 2 files changed, 15 insertions(+), 13 deletions(-)
 
-Ie, we have arch/powerpc/include/asm/page.h:
+diff --git a/tools/include/nolibc/crt.h b/tools/include/nolibc/crt.h
+index 43b551468c2a..ac291574f6c0 100644
+--- a/tools/include/nolibc/crt.h
++++ b/tools/include/nolibc/crt.h
+@@ -13,11 +13,11 @@ const unsigned long *_auxv __attribute__((weak));
+ static void __stack_chk_init(void);
+ static void exit(int);
+ 
+-extern void (*const __preinit_array_start[])(void) __attribute__((weak));
+-extern void (*const __preinit_array_end[])(void) __attribute__((weak));
++extern void (*const __preinit_array_start[])(int, char **, char**) __attribute__((weak));
++extern void (*const __preinit_array_end[])(int, char **, char**) __attribute__((weak));
+ 
+-extern void (*const __init_array_start[])(void) __attribute__((weak));
+-extern void (*const __init_array_end[])(void) __attribute__((weak));
++extern void (*const __init_array_start[])(int, char **, char**) __attribute__((weak));
++extern void (*const __init_array_end[])(int, char **, char**) __attribute__((weak));
+ 
+ extern void (*const __fini_array_start[])(void) __attribute__((weak));
+ extern void (*const __fini_array_end[])(void) __attribute__((weak));
+@@ -29,7 +29,8 @@ void _start_c(long *sp)
+ 	char **argv;
+ 	char **envp;
+ 	int exitcode;
+-	void (* const *func)(void);
++	void (* const *ctor_func)(int, char **, char **);
++	void (* const *dtor_func)(void);
+ 	const unsigned long *auxv;
+ 	/* silence potential warning: conflicting types for 'main' */
+ 	int _nolibc_main(int, char **, char **) __asm__ ("main");
+@@ -66,16 +67,16 @@ void _start_c(long *sp)
+ 		;
+ 	_auxv = auxv;
+ 
+-	for (func = __preinit_array_start; func < __preinit_array_end; func++)
+-		(*func)();
+-	for (func = __init_array_start; func < __init_array_end; func++)
+-		(*func)();
++	for (ctor_func = __preinit_array_start; ctor_func < __preinit_array_end; ctor_func++)
++		(*ctor_func)(argc, argv, envp);
++	for (ctor_func = __init_array_start; ctor_func < __init_array_end; ctor_func++)
++		(*ctor_func)(argc, argv, envp);
+ 
+ 	/* go to application */
+ 	exitcode = _nolibc_main(argc, argv, envp);
+ 
+-	for (func = __fini_array_end; func > __fini_array_start;)
+-		(*--func)();
++	for (dtor_func = __fini_array_end; dtor_func > __fini_array_start;)
++		(*--dtor_func)();
+ 
+ 	exit(exitcode);
+ }
+diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+index 093d0512f4c5..0800b10fc3f7 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test.c
++++ b/tools/testing/selftests/nolibc/nolibc-test.c
+@@ -686,9 +686,10 @@ static void constructor1(void)
+ }
+ 
+ __attribute__((constructor))
+-static void constructor2(void)
++static void constructor2(int argc, char **argv, char **envp)
+ {
+-	constructor_test_value *= 2;
++	if (argc && argv && envp)
++		constructor_test_value *= 2;
+ }
+ 
+ int run_startup(int min, int max)
 
-   #define HPAGE_SHIFT hpage_shift
+---
+base-commit: 0db287736bc586fcd5a2925518ef09eec6924803
+change-id: 20240728-nolibc-constructor-args-68bf56ff7438
 
-and then
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-  #define HUGETLB_PAGE_ORDER      (HPAGE_SHIFT - PAGE_SHIFT)
-
-and then
-
-   #define pageblock_order         MIN_T(unsigned int,
-HUGETLB_PAGE_ORDER, MAX_PAGE_ORDER)
-
-and we really *REALLY* don't want to force the complicated "min_t()"
-(or, worse yet, "min()") functions here just because there's actually
-a variable involved.
-
-That variable gets initialized early in
-hugetlbpage_init_defaultsize(), so it's *effectively* a constant, but
-not as far as the compiler is concerned.
-
-           Linus
 
