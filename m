@@ -1,64 +1,67 @@
-Return-Path: <linux-kernel+bounces-264824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DDF93E8D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:12:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B7493E8D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67ED31C21088
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:12:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91AA4B20C72
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2C75FB95;
-	Sun, 28 Jul 2024 18:12:11 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DD35FB95;
+	Sun, 28 Jul 2024 18:13:40 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC026AD5
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 18:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D0B18EB0
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 18:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722190331; cv=none; b=mY8B7EPy+rWCiSeb7Mak+MIbMlVtGh/HayDSng30AYmxH/kPH1U9dcqtcJaBtll4g34CwadUTYkFjhqxc+vW9mEciQ8OByy9C9fIAQiMz5gp9CCDLrBGnHargWNrCVy++tB0JKeGFBejP9rgszwNmvY1PWmpCkhy40n4/+K62tA=
+	t=1722190420; cv=none; b=q8i99iLGDMdj7HF3eVSn5kDW35P1TE03mEt9Ud305qRJO2c2LFoy8Ek+HPG2Z0LIRN9gjGJm21gQTsen3CTLekgakrcvrrTLIpJBR9Rp/uR8SjrRCtP2jNssnkfeXIWOXd8mLThLHI3i6M9vNfQbqjg3H+AJTG+h4Cod588V1LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722190331; c=relaxed/simple;
-	bh=6ekOtjMHh3SMxGonjB5HyJKcJKQvDZqam9fDzjfBL/Y=;
+	s=arc-20240116; t=1722190420; c=relaxed/simple;
+	bh=H2rw0mPmYBENcvi1qXqsgEgOBIvxsSNh81rECjHH+YY=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=S0o6ShnauxoK1987DokTGGGXZplMNSQScIpCUF8ofGiI7BjlJtjCZn0jHqn34Ao82JkrxWEoYhd2dgYwARAWepVOTmP7me7v1mhgTvCBSzbN6RCg1cUTqA/TUijbfH+Y2cwwu7itRXbPeZjEKAr+UU66y59ovh8yJ1vnC9X6iFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+	 MIME-Version:Content-Type; b=Rf55Ycqn8lC00OqB6ygvzlXPqUuQSw4lGnx5Gjdul9OfMVZlUiF7DYtbC2G6M8a5vQ4vvN9vv2XKz2vkThlDr6BT8KqiUwu5fP5m4bFt1YqtigSEqY1cYYinBjBprclDx9W0HcBrSw9LYk0UY5BDw5IbSn9FrzeuW/B0jZ9ov80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-45-59jZv_FsOyOVLBfahBn_jQ-1; Sun, 28 Jul 2024 19:12:03 +0100
-X-MC-Unique: 59jZv_FsOyOVLBfahBn_jQ-1
+ uk-mta-70-rn4dB53gM8-TjpI3oUH8Gg-1; Sun, 28 Jul 2024 19:13:30 +0100
+X-MC-Unique: rn4dB53gM8-TjpI3oUH8Gg-1
 Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
  (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
- 2024 19:11:18 +0100
+ 2024 19:12:46 +0100
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 28 Jul 2024 19:11:18 +0100
+ id 15.00.1497.048; Sun, 28 Jul 2024 19:12:46 +0100
 From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
-	<axboe@kernel.dk>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"Christoph Hellwig" <hch@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, "Andy Shevchenko"
-	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
-	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
-	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes
+To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
+	<axboe@kernel.dk>, "'Matthew Wilcox (Oracle)'" <willy@infradead.org>,
+	'Christoph Hellwig' <hch@infradead.org>, 'Andrew Morton'
+	<akpm@linux-foundation.org>, 'Andy Shevchenko'
+	<andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'pedro.falcato@gmail.com'"
+	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>,
+	"'linux-mm@kvack.org'" <linux-mm@kvack.org>, 'Lorenzo Stoakes'
 	<lorenzo.stoakes@oracle.com>
-Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHA=
-Date: Sun, 28 Jul 2024 18:11:18 +0000
-Message-ID: <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
+Subject: RE: [PATCH v2 2/8] minmax: Use _Static_assert() instead of
+ static_assert()
+Thread-Topic: [PATCH v2 2/8] minmax: Use _Static_assert() instead of
+ static_assert()
+Thread-Index: Adrg+SQVeb05XypLRkeZ+5Y+23noEAAFUgAAAALT6zA=
+Date: Sun, 28 Jul 2024 18:12:46 +0000
+Message-ID: <a5c56a65a0894497b0242a0bb80860cd@AcuMS.aculab.com>
 References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
- <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b169a04caaee43c7b917a7e48470da6a@AcuMS.aculab.com>
+ <76573179-1e38-4620-bf59-6801341802b5@wanadoo.fr>
+In-Reply-To: <76573179-1e38-4620-bf59-6801341802b5@wanadoo.fr>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
@@ -75,28 +78,34 @@ Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: base64
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjggSnVseSAyMDI0IDE4OjI1DQo+IA0KPiBP
-biBTdW4sIDI4IEp1bCAyMDI0IGF0IDA3OjE4LCBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdodEBh
-Y3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+ICsjZGVmaW5lIG1pbl90KHR5cGUsIHgsIHkpICAg
-ICAgX19jYXJlZnVsX2NtcChtaW4sICh0eXBlKSh4KSwgKHR5cGUpKHkpKQ0KPiA+ICsjZGVmaW5l
-IG1heF90KHR5cGUsIHgsIHkpICAgICAgX19jYXJlZnVsX2NtcChtYXgsICh0eXBlKSh4KSwgKHR5
-cGUpKHkpKQ0KPiANCj4gVGhpcyBpcyB1bnJlbGF0ZWQgdG8geW91ciBwYXRjaCwgYnV0IHNpbmNl
-IGl0IG1vdmVzIHRoaW5ncyBhcm91bmQgYW5kDQo+IHRvdWNoZXMgdGhlc2UsIEkgcmVhY3RlZCB0
-byBpdC4uDQo+IA0KPiBXZSBzaG91bGQgKm5vdCogdXNlIF9fY2FyZWZ1bF9jbXAoKSBoZXJlLg0K
-PiANCj4gV2h5PyBCZWNhdXNlIHBhcnQgb2YgX19jYXJlZnVsX2NtcCgpIGlzIHRoZSAib25seSB1
-c2UgYXJndW1lbnRzIG9uY2UiLg0KPiANCj4gQnV0ICphbm90aGVyKiBwYXJ0IG9mIF9fY2FyZWZ1
-bF9jbXAoKSBpcyAiYmUgY2FyZWZ1bCBhYm91dCB0aGUgdHlwZXMiDQo+IGluIF9fY21wX29uY2Uo
-KS4NCj4gDQo+IEFuZCBiZWluZyBjYXJlZnVsIGFib3V0IHRoZSB0eXBlcyBpcyB3aGF0IGNhdXNl
-cyBob3JyZW5kb3VzIGV4cGFuc2lvbiwNCj4gYW5kIGlzIHBvaW50bGVzcyB3aGVuIHdlIGp1c3Qg
-Zm9yY2VkIHRoaW5ncyB0byBiZSB0aGUgc2FtZSB0eXBlLg0KPiANCj4gU28gd2Ugc2hvdWxkIHNw
-bGl0IF9fY2FyZWZ1bF9jbXAoKSBpbnRvIG9uZSB0aGF0IGRvZXMganVzdCB0aGUgImRvDQo+IG9u
-Y2UiIGFuZCBvbmUgdGhhdCB0aGVuIGFsc28gZG9lcyB0aGUgdHlwZSBjaGVja2luZy4NCi4uLg0K
-DQpZZXMgSSd2ZSBzZWVuIHRoYXQgYW5kIGxlZnQgd2VsbCBhbG9uZSA6LSkNCk9yIHJhdGhlciwg
-bGVmdCBpdCB1bnRpbCBhZnRlciBNSU4oKSBhbmQgTUFYKCkgYXJlIHVzZWQgZm9yIGNvbnN0YW50
-cy4NCg0KQWx0aG91Z2ggbWluX3QodHlwZSx4LHkpIHNob3VsZCBqdXN0IGJlDQoJdHlwZSBfX3gg
-PSB4Ow0KCXR5cGUgX195ID0geTsNCglfX3ggPCBfX3kgPyBfX3ggOiBfX3k7DQpBYnNvbHV0ZWx5
-IG5vIHBvaW50IGRvaW5nIGFueXRoaW5nIGVsc2UuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVk
-IEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5l
-cywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDI4IEp1bHkgMjAyNCAxODo1Mg0KPiAN
+Cj4gTGUgMjgvMDcvMjAyNCDDoCAxNjoxOCwgRGF2aWQgTGFpZ2h0IGEgw6ljcml0wqA6DQo+ID4g
+VGhlIHN0YXRpY19hc3NlcnQoKSB3cmFwcGVyIHByb3ZpZGVzIHRoZSB0ZXh0IG9mIHRoZSBleHBy
+ZXNzaW9uIGFzIHRoZQ0KPiA+IGVycm9yIG1lc3NhZ2UsIHRoaXMgaXNuJ3QgbmVlZGVkIGhlcmUg
+YXMgYW4gZXhwbGljaXQgbWVzc2FnZSBpcyBwcm92aWRlZC4NCj4gPiBJZiB0aGVyZSBpcyBhbiBl
+cnJvciAocXVpdGUgbGlrZWx5IGZvciBtaW4vbWF4KSB0aGUgd3JhcHBlciBhbHNvIGFkZHMNCj4g
+PiB0d28gbW9yZSBsaW5lcyBvZiBlcnJvciBvdXRwdXQgdGhhdCBqdXN0IG1ha2UgaXQgaGFyZGVy
+IHRvIHJlYWQuDQo+ID4NCj4gPiBTaW5jZSBpdCBnaXZlcyBubyBiZW5lZml0IGFuZCBhY3R1YWxs
+eSBtYWtlcyB0aGluZ3Mgd29yc2UgZGlyZWN0bHkNCj4gPiB1c2luZyBfU3RhdGljX2Fzc2VydCgp
+IGlzIG11Y2ggYmV0dGVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRGF2aWQgTGFpZ2h0IDxk
+YXZpZC5sYWlnaHRAYWN1bGFiLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjoNCj4gPiAtIE5vIGNoYW5n
+ZS4NCj4gPg0KPiA+ICAgaW5jbHVkZS9saW51eC9taW5tYXguaCB8IDggKysrKy0tLS0NCj4gPiAg
+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4NCj4g
+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9taW5tYXguaCBiL2luY2x1ZGUvbGludXgvbWlu
+bWF4LmgNCj4gPiBpbmRleCBjZWE2M2E4YWM4MGYuLmFiNjRiMmU3M2FlNSAxMDA2NDQNCj4gPiAt
+LS0gYS9pbmNsdWRlL2xpbnV4L21pbm1heC5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9taW5t
+YXguaA0KPiA+IEBAIC00OCw3ICs0OCw3IEBADQo+ID4gICAjZGVmaW5lIF9fY21wX29uY2Uob3As
+IHgsIHksIHVuaXF1ZV94LCB1bmlxdWVfeSkgKHsJXA0KPiA+ICAgCXR5cGVvZih4KSB1bmlxdWVf
+eCA9ICh4KTsJCQlcDQo+ID4gICAJdHlwZW9mKHkpIHVuaXF1ZV95ID0gKHkpOwkJCVwNCj4gPiAt
+CXN0YXRpY19hc3NlcnQoX190eXBlc19vayh4LCB5KSwJCQlcDQo+ID4gKwlfU3RhdGljX2Fzc2Vy
+dChfX3R5cGVzX29rKHgsIHkpLAkJCVwNCj4gDQo+IE5pdHBpY2ssIHNob3VsZCB0aGVyZSBiZSBh
+IHYzOiBhIHRhYiBjYW4gYmUgcmVtb3ZlZCB0byBrZWVwIHRoaW5ncyBhbGlnbmVkLg0KDQpJIHRo
+aW5rIHRoYXQgaXMgcGlja2VkIHVwIGJ5IGEgbGF0ZXIgcGF0Y2ggdG8gdGhlIHNhbWUgbGluZXMu
+DQpUaGlzIGZpbmFsIGZpbGUgbG9va3Mgb2suDQoNCglEYXZpZA0KDQo+IA0KPiA+ICAgCQkjb3Ag
+IigiICN4ICIsICIgI3kgIikgc2lnbmVkbmVzcyBlcnJvciwgZml4IHR5cGVzIG9yIGNvbnNpZGVy
+IHUiICNvcCAiKCkgYmVmb3JlICIgI29wDQo+ICJfdCgpIik7IFwNCj4gPiAgIAlfX2NtcChvcCwg
+dW5pcXVlX3gsIHVuaXF1ZV95KTsgfSkNCj4gDQo+IENKDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
+cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
+MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
 
