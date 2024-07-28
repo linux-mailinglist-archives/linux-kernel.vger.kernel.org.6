@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-264866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB7293E975
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:46:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E7493E977
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E840D280218
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676681F21544
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678F770F6;
-	Sun, 28 Jul 2024 20:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66BA7580C;
+	Sun, 28 Jul 2024 20:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FqyamZCR"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IYo4nPou"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146BD210FF;
-	Sun, 28 Jul 2024 20:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4A2210FF
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722199600; cv=none; b=BhFqgYekofZetrHRMS4rCo3DqGahM0FFuDVEfvmno7HCgGHCXigl2ZA9sQtIShg74xle7XKy/kj16Hjxjl/cH1ZqcvVIkHpZzXFWRQ9+HEHBPcB80dhDA6EbimakUr8pftlxIbgk9s7l6+CbF37p7ddQKcE6YDJB4zkBNRH5MXk=
+	t=1722200089; cv=none; b=K2shbtqKUi1YRrcVwS+KW+8jvl3QFZl4mQiTGVjVuIp8M1uIKBeEfFq5EoE1UyG5sldVsmuiNKhPLd9g3u7apkvpOy7KjCv210+QVqCKTLW47Imk0SqrB9NsO6lcDDyA8zOOxWUiUYIxMJiL5YSi1k+QMFpK210tvi1jUDO+0ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722199600; c=relaxed/simple;
-	bh=6KdzE9scZcbxit6etjhxkkmcTAnClSfn5D06NYNfgjw=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HQ8L2p++Bz6mi7TpqzjJkyjKBtP8kUif2gfdORvRMqHRDzvyGjQcjQksziVtktVD4ODHkoTXTcZ5yEm0DwIxd/idc4WsefUVAuB3AsYjJPv7BY539bCoR3wSzpNIw8PqI81DDuZ3WJufDgw2UkTLExZfjUUmdoYL/p5Kwt3k31Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FqyamZCR; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722200089; c=relaxed/simple;
+	bh=MAU1ikI6v16DyZvdLv0S92uOhVuGjagitvH5oKp7HDY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=K0r24amQcXZ95hHclbY1I7Aw4nmqbLdT7f7xRahubqLfjiqweAoQmLZXA75/mAR/KbO6ICKNh82/CuPA5TZFbJ69OTVkQFJQNylta6PAm7BxvJxCjsdiKPwtNFgFc7SpImYcy7Y06lGIaXzEapWEAR33+ixt4MJMYH4eQJQwTvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IYo4nPou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C528C116B1;
+	Sun, 28 Jul 2024 20:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722200088;
+	bh=MAU1ikI6v16DyZvdLv0S92uOhVuGjagitvH5oKp7HDY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IYo4nPouf6CpSTVS2ELBpRlKJMUdykEzMfkhbAbpA+vRb8qD8b8LWb7kYIX5MuMX/
+	 9VsqbDF5t7OpvjFDSY1cEhfxL1tTezkzfnotFa29dw905pMyKHY4sMZVSAfzkZ/6PG
+	 KQEewi5etss8oZyoxSb63zvB542jhqZwDayi2JU0=
+Date: Sun, 28 Jul 2024 13:54:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>, Shakeel
+ Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH v3 3/3] mm: page_counters: initialize usage using
+ ATOMIC_LONG_INIT() macro
+Message-Id: <20240728135447.bd5f7b44e1b7a583bfaaee36@linux-foundation.org>
+In-Reply-To: <20240726231110.GF1702603@cmpxchg.org>
+References: <20240726203110.1577216-1-roman.gushchin@linux.dev>
+	<20240726203110.1577216-4-roman.gushchin@linux.dev>
+	<20240726231110.GF1702603@cmpxchg.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722199588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+u7V2sgAjgrmdpRQ/6Wh4ELxMrn1qNMzPn25V2N94s=;
-	b=FqyamZCRHo0EDI4Zd2rkfoWEl10Vb4OEB8a4CMtv1KgAqyw4gjk5b7eTLUbEBbins1RO5T
-	U7Uzq8VayFtiDO81PtA7zDr9K9qtE5SdfmjKGq1oW4TzjnpzrBEUYZrCD63jULEHIqqX92
-	E+W6rDM21AhwCBiZWh6QCl7TGzVUhMAQVl9u6u7tz+Xmxanpf2fXFA3x8lgvk16SHSxXzz
-	5xDhXBicEC7t6xb51fnPdagHy3jfo5K2EuTBk+n+58Y5r8hJbcrx/h7o6Qt2CpdioteaZH
-	h/ZPRo/rdXqj7wcgG5VjlKuWYP8VdsUiTg1V3qEqLhUFhQSWuWuFe+2c5LbJLA==
-Date: Sun, 28 Jul 2024 22:46:28 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
- UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
- f.fainelli@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, lucas.demarchi@intel.com, masahiroy@kernel.org,
- mcgrof@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-In-Reply-To: <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
-References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
- <20240726121530.193547-1-jtornosm@redhat.com>
- <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
- <931b582808f237aa3746c5b0a96b3665@manjaro.org>
- <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
- <a520ee4da331c8edb99f2c14d22a3531@manjaro.org>
- <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
-Message-ID: <98d200777d62dc9b447557b2758613e5@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 2024-07-28 21:45, Andrew Lunn wrote:
->> Basically, the way I see it, weakdeps are the right solution for the
->> problem at hand, i.e. for the generation of the initial ramdisk with
->> all the possible PHY driver modules.
+On Fri, 26 Jul 2024 19:11:10 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+
+> On Fri, Jul 26, 2024 at 08:31:10PM +0000, Roman Gushchin wrote:
+> > When a page_counter structure is initialized, there is no need to
+> > use an atomic set operation to initialize the usage counter because
+> > at this point the structure is not visible to anybody else.
+> > ATOMIC_LONG_INIT() is what should be used in such cases.
+> > 
+> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> > ---
+> >  include/linux/page_counter.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
+> > index cf837d0f8ed1..5da11392b382 100644
+> > --- a/include/linux/page_counter.h
+> > +++ b/include/linux/page_counter.h
+> > @@ -53,7 +53,7 @@ static inline void page_counter_init(struct page_counter *counter,
+> >  				     struct page_counter *parent,
+> >  				     bool protection_support)
+> >  {
+> > -	atomic_long_set(&counter->usage, 0);
+> > +	counter->usage = (atomic_long_t)ATOMIC_LONG_INIT(0);
 > 
-> Sorry, but i still don't see how this works.
-> 
-> Say you get this one patch merged. What then? You throw all other PHY
-> drivers which don't have a weakdep out of the initramfs? That
-> potentially breaks around 200 MAC drivers who need those PHYs you have
-> discarded.
+> Pretty cool that ATOMIC_LONG_INIT() return value needs a cast to
+> atomic_long_t! ^_^
 
-Actually, no PHY drivers can be thrown out of an initial ramdisk by this
-patch, [1] simply because no PHY drivers not needed for a specific 
-system
-shouldn't be included there before, unless they were added specifically
-by the utilities that created the initial ramdisk, but that's beyond the
-dependencies that the kernel provides in /lib/modules, and beyond what
-can be obtained by automatic detection using /sys/devices on a 
-particular
-system.  That's all a result of this specific module dependency being
-unknown before, at the kernel level.
+That's because this wicked patch passed in an `int'. 
 
-In other words, this patch doesn't subtract anything.  Instead, it just
-adds a weakdep link between the lan78xx and micrel modules, so the 
-kernel
-itself can report that dependency, which may actually result in one more
-PHY driver added to a generated initial ramdisk.
+	counter->usage = ATOMIC_LONG_INIT((atomic_long_t)0);
 
-[1] 
-https://lore.kernel.org/netdev/20240724102349.430078-1-jtornosm@redhat.com/
+
 
