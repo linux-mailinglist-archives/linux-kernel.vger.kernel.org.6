@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-264503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B33C93E43A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCE793E43F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247CD281A85
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FA851C20F47
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9EC1A269;
-	Sun, 28 Jul 2024 09:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D861A28D;
+	Sun, 28 Jul 2024 09:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RquRUTN+"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yrR4xWWH"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77B82A1A4
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960B8F62
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722157739; cv=none; b=Pq0b8JkY5X3nO9tAnQYP38qUzj3/XOygTEj4KhtHcswmwyuaWuPdafnyFYxBdiojobmo90wfuzluLySX9CUMb2KXMbR5kt19wmRckDcYDqhjGtOBaNGNskfSySRJtr0MtPG4JTyuunIJPfQHRQ8UoE5Aza7mypjvuIhMRq7Er7A=
+	t=1722157971; cv=none; b=pzmmfzS3a8J85HIZiJmpZc1KQzeDSufkVeJdvKh8a7ahSL4M8TaqZyWmF4CaXwWr/Q9F5QQKLss6aPBeYLluf5l6CbIBqoNLhg75W0mp3YdF9+55JwhzL1MotC4xhttcXEQf170lp847tl4sadxTbiOsOkTuTop0k5XFzLucdtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722157739; c=relaxed/simple;
-	bh=MeUSNKuySNsYd/E47sODThiRgbvjfZMHCpIwozKMZVw=;
+	s=arc-20240116; t=1722157971; c=relaxed/simple;
+	bh=/GrOv+ZFu+oj7Vmr+AbTZmMP18uAO32U89RBktZbUjw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=svFXA8Kf3x41tjh/aCa7TyOa22D2K98dKnr1Yfx36XaDj/RJUfoWl3rC5WrZVbeYCl8KC8foBRdBqk75d88GYxgXSMNZLPFbFEjzC68OqYL0iOrqr91Ra9K4iOlWRT94JHdiRAXYzxv/UtVHmySs4bGo+IBY/3HUdN+PZPtbIbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RquRUTN+; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=Rr4KzvVN2WqM1vzc+UqxQ34k68AhiWZtao9cmdHq5q1jZU/wJUayw8o5Vh5VdYyKycNqTtg4iufB+990JU0+e9XwN2RLeYuDtN84zKLz3k66bxHk48iNysTy2FwYYg6HL0aGg9Cbkb8XEhOW0jLsUDTfyrecJUd2t+yeD8mh5LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yrR4xWWH; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428119da952so7903875e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 02:08:57 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367990aaef3so790509f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 02:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722157736; x=1722762536; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722157968; x=1722762768; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PpDyFmA0zdJQYzcRcY20UOiDQI5mUrkxPFODs9AZW0o=;
-        b=RquRUTN+OTtPRIAPD6oQieOnQDgxxDzmA9AIoxOxxwHCpmv0R9IDrOqXIDeo1k+4lC
-         kOP5ZNs4v2sdWc6mwT98xzgHbCqQxB/Lcd2u6tfW9kR1LvYD1/XPD6rBrkKVQfH3hxat
-         TdcZ9c5rO16DLi/jpWWvayVWtX8ymxDZvIE1vZJH860Yj/WA3OD1iLCUn1rFbKuWjWNK
-         0ZFV79PG3ppcE+6VfcQ1nck3ofYgwYLjUk7L3zKU5ERPeTrMYOMypxWxQTy1d/q5izqk
-         jmhmJqsiq01EWzDgmWyuJmLIKjWb9QYkreeMVLe28VzZB4cjcyLoEzi5a6iOejEDiTce
-         PE7w==
+        bh=8sNLvowTMgGkF86EscYrRJVSXEtjbqqnoumJ+2YQ72k=;
+        b=yrR4xWWHPTs9hcfXkPGuqDXp3z9ufJCuPIqv7yWR1JJt9vZsAuUze9zKo9e179FV6P
+         FDzCMVJfgJJyehLCRyinMVCQA9dWVLrEQJYeudR5+AwC1j/avWHjq4VHJvm+nru9WHgx
+         kAVHmAgmx0R37tUrl+PYV2u5XHcugj9hug9ekvsTOozmPjbHNyH7NZcpUa1OGRyqNZVp
+         IV2w82sUQj9QTzrf11yh/7BLlnBwbwGAMyr28+O40U1lQ4c99AkCE1PKFUBUvRnmSThX
+         w1Vven1g3IkNH4P0DK5ZtKUgF3xckLFA+rUXk45zp+8aDI0UWX/Utw3QhQK9G4VGLBgv
+         KUyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722157736; x=1722762536;
+        d=1e100.net; s=20230601; t=1722157968; x=1722762768;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PpDyFmA0zdJQYzcRcY20UOiDQI5mUrkxPFODs9AZW0o=;
-        b=eUQeYx69etxo5mYrPQXSlpF371kVvFde4cgd8wQFgwnXGriF5aRdWuU/ztKIZhwJnf
-         Bv0nP/AwK9bzVSRADyIDq7zwKnpwHAAILUDF2j1e1mvkZyqi5ochm7Vp5Z3zuzDHYW8/
-         mI2TBtI/o5ldgmTBUGEwjRsmSfw9av2Y4Rt7VKuMsCjhTqWIohWicdsClcUv+0HPVo94
-         Nbyi+IOZ1dyuwQS93aiCZzDOlqzxWWdNfcL0w0RrRL9eeDSgNRP810UeLtRoRJYkqyWk
-         UEL4GNf5bBDSp2ojCZI1bvodloHGhhzLsmPOBQK7OR+MYgIDkM7PCCT0GfO2wUN/Gm5P
-         nzIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzsb9Zq+khVCf3fBi2ZOMKamkA6eIPMOo9wfNTSV+qP0O7wA8/mYVHgGAGcD0b5dWY/CwXviWCRZfNHAv05KNoKI7TKZu6nk+i83Py
-X-Gm-Message-State: AOJu0Ywqy86+WC4fKCRX79Vc51CwzJqYuePVbBTR3tKh/fuqWPFR63eK
-	Rl/C8ty6EeDgVDa+AgxlLvfUx0BqLSLxUJelY8MuCTuYwBBGK41i0VW9wd22sP8=
-X-Google-Smtp-Source: AGHT+IEhJzJpgZwPfuVZYyUwH9IHBgggf/a78AG5JT2z9cT9WPyBu6r2PuYUvcUsD5+37z1z6VN1fA==
-X-Received: by 2002:a05:600c:45cb:b0:426:647b:1bf7 with SMTP id 5b1f17b1804b1-42811e1066cmr40400625e9.32.1722157736331;
-        Sun, 28 Jul 2024 02:08:56 -0700 (PDT)
+        bh=8sNLvowTMgGkF86EscYrRJVSXEtjbqqnoumJ+2YQ72k=;
+        b=muLzsY82zrkRgWClI3F4WkJI5s9B2zh8PUXlOevc4mrFNXCnvCr04CQqeOUH3Orryk
+         7tVnJ1tNZdNHvhuqS/2xGlnal/pgmkpB+4vTHtPKjGpqBoO3A6ZCSw5G4pVhFtLsQhq4
+         VCS8jWPrp5edAUG7K5aiS9ExDJ8iXTFoaNvJAJl0N88Nh28mO101VJp451cNcdve4u/T
+         nhotUcrk03WF4DucmsPXoGO8FNv4DUGX0atQZM9Zg2DgO6Vr0IY6dy0jEiTIA1pHnJCA
+         w44sCfIXVGKhWzb+hDtRv7oXbuL6RX9leBi+FjIwJemkBmgUK/XTFTyJ2TzYvx/aA2Su
+         aVuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRY5mUTT7gR9XnpKRCQtNK6Dm5yrHfgKOACxA8AodO/uY1QNr7gnnYpJobcRjmKy6p6fSMTcrUzEQY6k6xdiASbKgsXCC2+PoOOgrw
+X-Gm-Message-State: AOJu0YzpNErhsPsqosftKisT9L3F8B+y8PWQbjMs5I8K+7TytKz/DE/5
+	gEz/OQYRpx5S58JH0nRrxW2y5pDDbqn5JhbEOgBPArsslgf53PtcCHkXrW4vtx0=
+X-Google-Smtp-Source: AGHT+IFnH46iePXOd/yG/nd4uSZJPo95bdDNI4QTUeubmn9tThDXPaR8WG0juWEyYkxWfaaWPOSMcQ==
+X-Received: by 2002:a5d:5888:0:b0:367:916e:4206 with SMTP id ffacd0b85a97d-36b5d0ae8f3mr3673037f8f.46.1722157967749;
+        Sun, 28 Jul 2024 02:12:47 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fc445sm9322910f8f.48.2024.07.28.02.08.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280bea7af9sm86555335e9.15.2024.07.28.02.12.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 02:08:55 -0700 (PDT)
-Message-ID: <a5d1eab2-b4f4-47eb-a870-8b2ce1d27bb5@linaro.org>
-Date: Sun, 28 Jul 2024 11:08:54 +0200
+        Sun, 28 Jul 2024 02:12:47 -0700 (PDT)
+Message-ID: <f3772311-baf6-4d45-8678-83ff248dcbf0@linaro.org>
+Date: Sun, 28 Jul 2024 11:12:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,16 +76,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] arm64: dts: imx93-11x11-evk: Add several sound cards
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: robh+dt@kernel.org, s.hauer@pengutronix.de,
- linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
- shawnguo@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- shengjiu.wang@gmail.com, linux-kernel@vger.kernel.org, festevam@gmail.com,
- linux-imx@nxp.com, krzysztof.kozlowski+dt@linaro.org
-References: <1721897948-6306-1-git-send-email-shengjiu.wang@nxp.com>
- <172194566256.4000899.15176243632706048606.robh@kernel.org>
+Subject: Re: [PATCH v4 2/3] iio: pressure: Add driver for Sensirion SDP500
+To: pd.pstoykov@gmail.com, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240725-mainline_sdp500-v4-0-ea2f5b189958@gmail.com>
+ <20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -132,51 +132,32 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <172194566256.4000899.15176243632706048606.robh@kernel.org>
+In-Reply-To: <20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/07/2024 00:20, Rob Herring (Arm) wrote:
+On 25/07/2024 17:37, Petar Stoykov via B4 Relay wrote:
+> From: Petar Stoykov <pd.pstoykov@gmail.com>
 > 
-> On Thu, 25 Jul 2024 16:59:05 +0800, Shengjiu Wang wrote:
->> Add bt-sco, PDM microphone, XCVR sound card support.
->>
->> Shengjiu Wang (3):
->>   arm64: dts: imx93-11x11-evk: add bt-sco sound card support
->>   arm64: dts: imx93-11x11-evk: Add PDM microphone sound card support
->>   arm64: dts: imx93-11x11-evk: Add audio XCVR sound card
->>
->>  .../boot/dts/freescale/imx93-11x11-evk.dts    | 135 ++++++++++++++++++
->>  1 file changed, 135 insertions(+)
->>
->> --
->> 2.34.1
->>
->>
->>
+> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
+> accessed over I2C.
 > 
-> 
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
-> 
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
-> 
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
-> 
->   pip3 install dtschema --upgrade
-> 
-> 
-> New warnings running 'make CHECK_DTBS=y freescale/imx93-11x11-evk.dtb' for 1721897948-6306-1-git-send-email-shengjiu.wang@nxp.com:
-> 
-> arch/arm64/boot/dts/freescale/imx93-11x11-evk.dtb: pinctrl@443c0000: 'pdmgrpsleep', 'sai1grpsleep', 'spdifgrpsleep' do not match any of the regexes: 'grp$', 'pinctrl-[0-9]+'
+> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
+> ---
 
-And that's a proof that you did not test it.
+> +
+> +static const struct i2c_device_id sdp500_id[] = {
+> +	{ "sdp500" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, sdp500_id);
+> +
+> +static const struct of_device_id sdp500_of_match[] = {
+> +	{ .compatible = "sensirion,sdp500" },
+> +	{ .compatible = "sensirion,sdp510" },
 
-Is anyone in NXP testing patches before sending?
+Drop, why do you need it? I asked about this last time. Also, your OF
+table is not in sync with I2C table, so this should raise questions.
 
 Best regards,
 Krzysztof
