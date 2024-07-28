@@ -1,106 +1,123 @@
-Return-Path: <linux-kernel+bounces-264915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE293EA15
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:47:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D6C93EA1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CAC1F21A59
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22601C20E3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B80D7D06B;
-	Sun, 28 Jul 2024 22:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MXz/agCH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EA77711F;
+	Sun, 28 Jul 2024 23:00:51 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F5B5FB95
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 22:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C684C1DDE9;
+	Sun, 28 Jul 2024 23:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722206808; cv=none; b=ipHOIj7aBg3NZHKsPJPcoTJUqK/AhErJ+Zwzm8ywiWTwdNlNJlENzoD8r0L5/ARnPH511AoQ0f6Q4y6SMobqOetI/gJGP/WbcAQJet2d+Yg3ee/jKDe01pgETsuBo25jDOwQjoPmSGVjZ9ZxsyNQWNS0Krj51Frarrly0k+bN8M=
+	t=1722207650; cv=none; b=uf62ug5t2REu/rHERlnzL/vC2y42FJs90Il8+cq5sBqME2Zr3BI0qtYud4mTwT5lan4X+f/V4bBpImWBxQlt3eYtpqI3GZHbfMhnGQTNOhVfTgeoI+Ew6hzmJBGn5KATQ8K64sGXXCnT+xYDX+KOWEzQMENbu26oJxr8qJIwoCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722206808; c=relaxed/simple;
-	bh=+37D/4nCO54n90M/u+NZWBYjP0tnb9hWEUzfyevPfCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fDigM7BkpTKJmRGMmTupf9x2mu8rKg0bz1UrWtdLRkpHUgvD4ZlC5p4I648v8ImX4Do/Pgo2SYyJ1ua3Uy80AAWr6lm0RJrgumVOFsM50tV1nuGWjpAmRcc2OAlDRc9TvJ9xOttJ1FrK2/5twtS66S4euZtXpg6rKz3KDDkfndY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MXz/agCH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2ff38af8so199909b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 15:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722206805; x=1722811605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1Xqiho1AouRxLOnHmIj3zOU/N65RdIyhSd2t/vYTGc8=;
-        b=MXz/agCHZbwi9DCKAS1c7J9CCTHBpGnNN/Vk8Ny5o44HRv0o9HAFAY0zmqQm39Dm5P
-         Lk1EUgHBJncEWegHMxxDNcwdaUf0lnxBC/QBKt39WSIkg44em0Q0A+zPkmLOcRIeP1KR
-         9TOgMuvVNBkcb3Owus/aHh0fhevA28JNgAg6TrFq6kJA5X2qXmzYUZoBhrt5Cbog8Zzv
-         9DpZG52Mimj2dgyXyeepG8f7GMvaHUls9bHsjklvrFwsq3Wqx6TsygI8eP44EYa0F+OW
-         68nC4r31603r5Q5BCoPoWM8Z27zJEnu/M8vmmWGeiTUCIsuBFA78XuNKJo1CFXol+a9m
-         jOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722206805; x=1722811605;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Xqiho1AouRxLOnHmIj3zOU/N65RdIyhSd2t/vYTGc8=;
-        b=tBvGOvtW98jWtYGc7Pak0SxxzNpQJ7bezQYmBeUyhI7h/ORQgcJUKxKAFQxRmK8XLf
-         xk6hVxQ8uM2A+ms5iwWUhhT1CMy/ILS7tn5DX1FnVZzhADBUQeNhunQBL2varQi3i73r
-         hejhvNsN0fa9V+RWg6we8sklO8Gzkznj99FJAPjy/0SJCKHbhFLGSi7pPJ0ft+xZ+1mw
-         2yoF2VMhqXzKYE+t+mHrNFx74s9xsxlLWnsT2TDFyIZLM2BWKfksanD6YNFd43ssd75I
-         s7aoMU0LWwxRh3yWpmN7HsMzZUXCWxWfMD2sOh/xkJHBb6fSbjF5zsjFfUaNmg6LBthK
-         neHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSeHLRzQ1fpeQGYUtO0TVj0ffFqP89NWnwta2NRlnB2lbh1Hw/El55blsUsFgW5VOyB6JlRMEmhSiMpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtWdYCMCJ3PQwlLeZMbAl0AL8sAAi6cgqhyyEj1HXr+pvOkLA8
-	Qa5KJjJWO5ssixqoJGKjMQXM5Swde2avmTPD632RmtfJc+HCg3HneKjW+oanOao=
-X-Google-Smtp-Source: AGHT+IHKg+a0YE3GUIxnhPOnInI/3RKPsutZEg5X+UAgetWdzYR/LDdMjPmdpFW1kUTtooMwSokq1w==
-X-Received: by 2002:a17:903:234d:b0:1fc:4377:e6ea with SMTP id d9443c01a7336-1fed6cc839dmr83385505ad.9.1722206804553;
-        Sun, 28 Jul 2024 15:46:44 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1aa0dsm69378485ad.187.2024.07.28.15.46.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 15:46:44 -0700 (PDT)
-Message-ID: <f768298d-c964-466a-b8d6-ff0a8b4ca0e4@kernel.dk>
-Date: Sun, 28 Jul 2024 16:46:42 -0600
+	s=arc-20240116; t=1722207650; c=relaxed/simple;
+	bh=RQIfVFnC58mLXp5/zuBJYS7oIbZ77gjEKJWGNvnP0i8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fZNT3BT/MZejQUUe2rgf0e3Zx8AKXMBzh1z2jOSksVZ8dsydHE/knYzKT/XpasY0KS+yKUYPorSNe0GLLK2zqxf0/BSrjs4rhcGeRYp4b6j2VnM7YCyBkPT+Gn2f4l94JUqx7GHEp3v9JMYgLBvti3gDbfcKCr6grRxS4CnHF2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sYCsP-00000000485-3iwn;
+	Sun, 28 Jul 2024 23:00:30 +0000
+Date: Mon, 29 Jul 2024 00:00:23 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net v2] net: ethernet: mtk_eth_soc: drop clocks unused by
+ Ethernet driver
+Message-ID: <5f7fc409ecae7794e4f09d90437db1dd9e4e7132.1722207277.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in
- ext4_read_inline_dir
-To: syzbot <syzbot+ee5f6a9c86b42ed64fec@syzkaller.appspotmail.com>,
- adilger.kernel@dilger.ca, asml.silence@gmail.com,
- linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tytso@mit.edu
-References: <000000000000f70500061e55a074@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <000000000000f70500061e55a074@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/28/24 3:43 PM, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit e5598d6ae62626d261b046a2f19347c38681ff51
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Thu Aug 24 22:53:31 2023 +0000
-> 
->     io_uring: compact SQ/CQ heads/tails
+Clocks for SerDes and PHY are going to be handled by standalone drivers
+for each of those hardware components. Drop them from the Ethernet driver.
 
-That's obviously wrong.
+The clocks which are being removed for this patch are responsible for
+the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which are
+anyway not yet supported. Hence backwards compatibility is not an issue.
 
+Fixes: 445eb6448ed3 ("net: ethernet: mtk_eth_soc: add basic support for MT7988 SoC")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+The dt-bindings part has been taken care of already in commit
+cc349b0771dc dt-bindings: net: mediatek: remove wrongly added clocks and SerDes
+
+Changes since v1:
+Improve commit message and explain why backward compatibility is not an issue,
+as requested by Andrew Lunn. Patch content remains unchanged.
+
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+index eb1708b43aa3e..0d5225f1d3eef 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+@@ -724,12 +724,8 @@ enum mtk_clks_map {
+ 	MTK_CLK_ETHWARP_WOCPU2,
+ 	MTK_CLK_ETHWARP_WOCPU1,
+ 	MTK_CLK_ETHWARP_WOCPU0,
+-	MTK_CLK_TOP_USXGMII_SBUS_0_SEL,
+-	MTK_CLK_TOP_USXGMII_SBUS_1_SEL,
+ 	MTK_CLK_TOP_SGM_0_SEL,
+ 	MTK_CLK_TOP_SGM_1_SEL,
+-	MTK_CLK_TOP_XFI_PHY_0_XTAL_SEL,
+-	MTK_CLK_TOP_XFI_PHY_1_XTAL_SEL,
+ 	MTK_CLK_TOP_ETH_GMII_SEL,
+ 	MTK_CLK_TOP_ETH_REFCK_50M_SEL,
+ 	MTK_CLK_TOP_ETH_SYS_200M_SEL,
+@@ -800,19 +796,9 @@ enum mtk_clks_map {
+ 				 BIT_ULL(MTK_CLK_GP3) | BIT_ULL(MTK_CLK_XGP1) | \
+ 				 BIT_ULL(MTK_CLK_XGP2) | BIT_ULL(MTK_CLK_XGP3) | \
+ 				 BIT_ULL(MTK_CLK_CRYPTO) | \
+-				 BIT_ULL(MTK_CLK_SGMII_TX_250M) | \
+-				 BIT_ULL(MTK_CLK_SGMII_RX_250M) | \
+-				 BIT_ULL(MTK_CLK_SGMII2_TX_250M) | \
+-				 BIT_ULL(MTK_CLK_SGMII2_RX_250M) | \
+ 				 BIT_ULL(MTK_CLK_ETHWARP_WOCPU2) | \
+ 				 BIT_ULL(MTK_CLK_ETHWARP_WOCPU1) | \
+ 				 BIT_ULL(MTK_CLK_ETHWARP_WOCPU0) | \
+-				 BIT_ULL(MTK_CLK_TOP_USXGMII_SBUS_0_SEL) | \
+-				 BIT_ULL(MTK_CLK_TOP_USXGMII_SBUS_1_SEL) | \
+-				 BIT_ULL(MTK_CLK_TOP_SGM_0_SEL) | \
+-				 BIT_ULL(MTK_CLK_TOP_SGM_1_SEL) | \
+-				 BIT_ULL(MTK_CLK_TOP_XFI_PHY_0_XTAL_SEL) | \
+-				 BIT_ULL(MTK_CLK_TOP_XFI_PHY_1_XTAL_SEL) | \
+ 				 BIT_ULL(MTK_CLK_TOP_ETH_GMII_SEL) | \
+ 				 BIT_ULL(MTK_CLK_TOP_ETH_REFCK_50M_SEL) | \
+ 				 BIT_ULL(MTK_CLK_TOP_ETH_SYS_200M_SEL) | \
 -- 
-Jens Axboe
-
+2.45.2
 
 
