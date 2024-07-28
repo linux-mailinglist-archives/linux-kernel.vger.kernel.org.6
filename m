@@ -1,81 +1,126 @@
-Return-Path: <linux-kernel+bounces-264606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35AC93E5F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7F593E5F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DB21F2166B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD97F1C20BC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9085D8F0;
-	Sun, 28 Jul 2024 15:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63C35579F;
+	Sun, 28 Jul 2024 15:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ze9cMx+g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fF1Cyo7e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613FF1EB44;
-	Sun, 28 Jul 2024 15:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0150441C64;
+	Sun, 28 Jul 2024 15:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722180901; cv=none; b=Gj8L2Ejc3O5L4Bo/vcEL3rBgt1xBKn1x4RpfbJu8um1orUoDLV06oMI1MWmk/Unuc9UlIdXkdFSXl2uJDNKOIDOiJB9+37r8tJWWIJAbWxjwTZFiY7VbA4Tagc+itxNVI/K+EBJ7bg9KGk0dQbyP+GPkULZ+y5TSwcgdiwjs0+s=
+	t=1722181354; cv=none; b=o7/l+GWugB6+4+W/HjXkiGDwNLrVuuoOuBJF6VIU5MX3fXcGe5cKQ5F7Blp089Nhy+NcnmYhbI9KqsHz3iseRKyTg36w9DmTAJwxWersvMrZWwNEEtBGtS3K0G+tKq61W/z9OWatdY38wkznIpPCwk/RjjNmIaY6wS/fY52r2hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722180901; c=relaxed/simple;
-	bh=lmrjcP7e9I1jgSEa3HUsV/XCNO6JpPYOKydZ5MmsqEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KEKtKyPBjTlSusMOANgPsYu+lIyMqH6TlsxJKJKfAwDoP+dtnrQuWUgg8XKxg/tObKvmYt82TvduQYNCMxnXMMBIrsPSyTzoclRSY11n9iigxc9A5vqEQcUDnlYvMX0NyW5URqN5JRl9YSkgfZXb0iKnk/vbx4KPozFS5gAUNVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ze9cMx+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DF6C116B1;
-	Sun, 28 Jul 2024 15:34:57 +0000 (UTC)
+	s=arc-20240116; t=1722181354; c=relaxed/simple;
+	bh=8q5D2B9OW6lTxci4LEAhIIy1s+NJNtC4AYx42sA6Xts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PF1fCajwbKkcn4bMJJMcwffM4uJlOOQkmqpMUp2pI8PGLnr0ozTj4MQNjKVd98u2MycvD99MfQigcJQ5jngSvG3d7Je2hfM0grFpxhWgMtn/B8UpJKl9JdCJjUkZVWP2ulMxUTsfSXV6LexC0CAxTGCY+nzfV6tpLjF2LPJzdxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fF1Cyo7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011B4C116B1;
+	Sun, 28 Jul 2024 15:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722180900;
-	bh=lmrjcP7e9I1jgSEa3HUsV/XCNO6JpPYOKydZ5MmsqEA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ze9cMx+g1a8QXsXN9gNBIsmRtV1CKnKvgTyp84eypwLUf3W53VkMimYP7EQ4RhPev
-	 IL46/JaySQem1pxaqr2q+LQzuePCEJEFdA/G4SWDlAxAYVuTVGCy0OCQWtynWcC4aB
-	 XzkjwgqAL4pR/g117DsdbEG/fieWuaRwTBZGyHd8EFJnfvAnOe23vOOBOIwK1XTayq
-	 TVBPfkq3K0an7lakixfb1qmPJVYxSsD2wpvjnXSFO1K+M1d8AidoQcldELgbNdFlvr
-	 8UjNZSjIv1A48qxTMeme8RQNP3/Ddkd1Q7BWcQZgFk9b9YLvbyTGtVO/pq8ZFZYC+m
-	 xXHj0zbIW5C2w==
-Date: Sun, 28 Jul 2024 16:34:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Oleksij Rempel 
- <o.rempel@pengutronix.de>, kernel@pengutronix.de, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ti-tsc2046: use
- devm_regulator_get_enable_read_voltage()
-Message-ID: <20240728163454.5aeafbe6@jic23-huawei>
-In-Reply-To: <24ca48955e3b005620bded16aabd91aaa6997ad1.camel@gmail.com>
-References: <20240725-iio-regulator-refactor-round-4-v1-1-55e9dc1de325@baylibre.com>
-	<24ca48955e3b005620bded16aabd91aaa6997ad1.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722181353;
+	bh=8q5D2B9OW6lTxci4LEAhIIy1s+NJNtC4AYx42sA6Xts=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fF1Cyo7eX1QOiKplbmpbh0dNRqh+QJP9ls93EcvUmxzYaqgtgFl7ORfhcS4oSvgoy
+	 ck0Gucc1TiHWsyzuhxG5CW45D38fwFaLoBFJGNj/0bvAVJ/lqL6vfv6lTiDWhPDAZJ
+	 fZMCLyGTpxouT9907MqOiwJJRNAVBTCSX0V/qq1KUs1RpoHVnxj3cC9yZE+yEtux7J
+	 6yg9ofcDGdxL4KRROkSXNdcaFlPdB55R65eVXdHW/Nsp72K3XfIyUfoGpyvVuN8NZK
+	 4jeDaSTiBY2mTif6LyMCSPySgQSoAuRzKbXVuEbV7YAbsLKvWnGTGTd9gA0zY8S1Yx
+	 PJFDjM7ezug/A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.10 01/34] drm/xe/preempt_fence: enlarge the fence critical section
+Date: Sun, 28 Jul 2024 11:40:25 -0400
+Message-ID: <20240728154230.2046786-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Jul 2024 12:56:27 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+From: Matthew Auld <matthew.auld@intel.com>
 
-> On Thu, 2024-07-25 at 14:22 -0500, David Lechner wrote:
-> > Use devm_regulator_get_enable_read_voltage() to replace
-> > tsc2046_adc_configure_regulator() which does the same thing.
-> >=20
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > --- =20
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->=20
->=20
+[ Upstream commit 3cd1585e57908b6efcd967465ef7685f40b2a294 ]
 
-Applied
+It is really easy to introduce subtle deadlocks in
+preempt_fence_work_func() since we operate on single global ordered-wq
+for signalling our preempt fences behind the scenes, so even though we
+signal a particular fence, everything in the callback should be in the
+fence critical section, since blocking in the callback will prevent
+other published fences from signalling. If we enlarge the fence critical
+section to cover the entire callback, then lockdep should be able to
+understand this better, and complain if we grab a sensitive lock like
+vm->lock, which is also held when waiting on preempt fences.
+
+Signed-off-by: Matthew Auld <matthew.auld@intel.com>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240418144630.299531-2-matthew.auld@intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/xe/xe_preempt_fence.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_preempt_fence.c b/drivers/gpu/drm/xe/xe_preempt_fence.c
+index 7d50c6e89d8e7..5b243b7feb59d 100644
+--- a/drivers/gpu/drm/xe/xe_preempt_fence.c
++++ b/drivers/gpu/drm/xe/xe_preempt_fence.c
+@@ -23,11 +23,19 @@ static void preempt_fence_work_func(struct work_struct *w)
+ 		q->ops->suspend_wait(q);
+ 
+ 	dma_fence_signal(&pfence->base);
+-	dma_fence_end_signalling(cookie);
+-
++	/*
++	 * Opt for keep everything in the fence critical section. This looks really strange since we
++	 * have just signalled the fence, however the preempt fences are all signalled via single
++	 * global ordered-wq, therefore anything that happens in this callback can easily block
++	 * progress on the entire wq, which itself may prevent other published preempt fences from
++	 * ever signalling.  Therefore try to keep everything here in the callback in the fence
++	 * critical section. For example if something below grabs a scary lock like vm->lock,
++	 * lockdep should complain since we also hold that lock whilst waiting on preempt fences to
++	 * complete.
++	 */
+ 	xe_vm_queue_rebind_worker(q->vm);
+-
+ 	xe_exec_queue_put(q);
++	dma_fence_end_signalling(cookie);
+ }
+ 
+ static const char *
+-- 
+2.43.0
+
 
