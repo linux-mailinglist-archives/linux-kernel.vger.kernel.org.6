@@ -1,95 +1,154 @@
-Return-Path: <linux-kernel+bounces-264874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4EC93E985
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E023093E997
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4182812E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A242281280
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD297581F;
-	Sun, 28 Jul 2024 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="byR5GtVz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680607A15A;
+	Sun, 28 Jul 2024 21:18:25 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EC63EA9B
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003074E26;
+	Sun, 28 Jul 2024 21:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722201459; cv=none; b=W6fGHTo9I12imw2A9uDYyTSvZHrUk2r8Wezg3bxL6R7YlEjxeiTrWiGdQx1pMiOKEg6EFA8d8oWvM1jJ6EhicaSXoUUK7aNYwxF4C45mIHVTPcriBEcvEgoodoWVC4NqZe6ek+ZXMwwZthq0IRKpw+PqWd8DmhuyKqX4jPFCWDI=
+	t=1722201504; cv=none; b=SQr1AJjzm7Htw1qUQWM/j+rT99Q283IRUyMXO1j9WfHioloZo1JWdqYp++m2gZi7D845sQzwzV5vBEdd40sR/vGNGMpcaxjn2dZT4sIaZREn/b0vM34ibioJWF5FHug788Zky1RWbb9qbcVmpvFErMN0et7fgSXd/9WBcAlmIwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722201459; c=relaxed/simple;
-	bh=kPn5XB9MJ2hFzb3QbC8qO8zKz36/qxUqdCyPprX+dkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIYhIakocl8sRpJi16Y7vzI7MTCL7/kchE70fhFlKYDVImKE3VCjW7ol+Nfdih2oX+Q2bavRiah1GMfOsiTCwqJD5cPYv8jAAbuBtOjYUzqAU1TTghdc4FJGVnPUnl9ZDnEgq8W3bngfXoP+esHhsI0T0LBzmVSPkdrzvzT8piQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=byR5GtVz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qImPaow6K9GVHVx8GaOpIgdQelo0sFfSZ0Ixl6jVzdw=; b=byR5GtVzh1rHHOH3wsEEKeTCbc
-	jnoj6wMcK0tH7bb+uM0IswzzpyEjKYt6X9rnpE7OIgngvR23XHK/+cKQIdo3USsTKHzIHC+lQRCNM
-	f8fcIM5LkBAEX6vffX2loAFxUHxoLfffRye0U1rKb4dYAYqVFVNOsIwCnXdac/NZGIN47bTq9KVN4
-	wIuWUxk8GsqkhSFC3vJTFDr5T8YRxv61VhmvsWQaFlBh/gZmgebeIgfMd90tqmsaN7a6kPDd7rZTU
-	OesfKTZji1Z7OsgfiIzkjdvk45yET2ZgS1yBAL68oUDBL4pApaNbPkMZuCiQgnyHBFJCHwhiwGawx
-	o1vETHww==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYBGf-0000000CoVl-38SQ;
-	Sun, 28 Jul 2024 21:17:25 +0000
-Date: Sun, 28 Jul 2024 22:17:25 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
- large folios
-Message-ID: <Zqa1ZZrrlp5jHElW@casper.infradead.org>
-References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
- <20240728125005.c1171fa2d1beb6c1fe867d48@linux-foundation.org>
+	s=arc-20240116; t=1722201504; c=relaxed/simple;
+	bh=ZYGrFzPi2pxjX/oJDXS1AtwBl7Vn2z2wa5ciW9wKbco=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oZjUnUAIokGaxpeH+EwAL5Wl2r2dz9ffHi0cdPpjAHmAC8vafH42Dyoz3Kxocuztk0KmlmZ1in63Tijd69PeoyzmRK74rw2Rw+UEp5sAwVYmknIk3hVbNyhZSWJvJwBpQwtQtBqFo3ioQ/56a8HKtDg0tDCjT3F+SArrgCjRyFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e86192c.versanet.de ([94.134.25.44] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sYBHD-0005yh-I0; Sun, 28 Jul 2024 23:17:59 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v2 0/7] Drivers to support the MCU on QNAP NAS devices
+Date: Sun, 28 Jul 2024 23:17:44 +0200
+Message-Id: <20240728211751.2160123-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240728125005.c1171fa2d1beb6c1fe867d48@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 28, 2024 at 12:50:05PM -0700, Andrew Morton wrote:
-> On Sun, 28 Jul 2024 23:49:13 +0800 Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> > Currently, migrate_pages_batch() can lock multiple locked folios
-> > with an arbitrary order.  Although folio_trylock() is used to avoid
-> > deadlock as commit 2ef7dbb26990 ("migrate_pages: try migrate in batch
-> > asynchronously firstly") mentioned, it seems try_split_folio() is
-> > still missing.
-> 
-> Am I correct in believing that folio_lock() doesn't have lockdep coverage?
+This implements a set of drivers for the MCU used on QNAP NAS devices.
 
-Yes.  It can't; it is taken in process context and released by whatever
-context the read completion happens in (could be hard/soft irq, could be
-a workqueue, could be J. Random kthread, depending on the device driver)
-So it doesn't match the lockdep model at all.
+Of course no documentation for the serial protocol is available, so
+thankfully QNAP has a tool on their rescue-inird to talk to the MCU and
+I found interceptty [0] to listen to what goes over the serial connection.
 
-> > It was found by compaction stress test when I explicitly enable EROFS
-> > compressed files to use large folios, which case I cannot reproduce with
-> > the same workload if large folio support is off (current mainline).
-> > Typically, filesystem reads (with locked file-backed folios) could use
-> > another bdev/meta inode to load some other I/Os (e.g. inode extent
-> > metadata or caching compressed data), so the locking order will be:
-> 
-> Which kernels need fixing.  Do we expect that any code paths in 6.10 or
-> earlier are vulnerable to this?
+In general it looks like there are two different generations in general,
+an "EC" device and now this "MCU" - referenced in the strings of the
+userspace handlers for those devices.
 
-I would suggest it goes back to the introduction of large folios, but
-that's just a gut feeling based on absolutely no reading of code or
-inspection of git history.
+For the MCU "SPEC3" and "SPEC4" are listed which is configured in
+the model.conf of the device. When setting the value from SPEC4 to
+SPEC3 on my TS433, the supported commands change, but the command
+interface stays the same and especially the version command is the
+same.
+
+The binding also does not expose any interals of the device that
+might change, so hopefully there shouldn't be big roadblocks to
+support different devices, apart from possibly adapting the commands.
+
+changes in v2:
+binding:
+- rename to qnap,ts433-mcu.yaml (Krzysztof)
+- drop "preserve formatting" indicator (Krzysztof)
+- add Krzysztof's Review tag
+
+mfd:
+- fix checkpatch --strict CHECKs
+- add a MAINTAINERS entry for all qnap-mcu-parts
+
+hwmon:
+address Guenter's review comments:
+- fix checkpatch strict warnings
+  I've kept the devm_thermal_of_cooling_device_register alignment,
+  because that line is so long that aligning to the "(" would make
+  things way too long and unreadable
+- add hwmon documentation
+- spelling corrections
+- report actual pwm value, not last-set one
+- make some cmd arrays static
+- drop pwm_enable as the pwm-mode is not controllable
+- actually handle error returns from mcu commands
+- fix calculation of fan-rpm (I read my notes wrong)
+- fix temperature calculation to return millicelsius as expected
+- only bail at obviously wrong pwm values, but clamp to min,max
+- only register cooling-device if cooling-levels are available
+
+
+[0] https://github.com/geoffmeyers/interceptty
+
+Heiko Stuebner (7):
+  dt-bindings: mfd: add binding for qnap,ts433-mcu devices
+  mfd: add base driver for qnap-mcu devices
+  leds: add driver for LEDs from qnap-mcu devices
+  Input: add driver for the input part of qnap-mcu devices
+  hwmon: add driver for the hwmon parts of qnap-mcu devices
+  arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+  arm64: dts: rockchip: set hdd led labels on qnap-ts433
+
+ .../bindings/mfd/qnap,ts433-mcu.yaml          |  43 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/qnap-mcu-hwmon.rst        |  27 ++
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   |  58 +++
+ drivers/hwmon/Kconfig                         |  12 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/qnap-mcu-hwmon.c                | 375 ++++++++++++++++++
+ drivers/input/misc/Kconfig                    |  12 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/qnap-mcu-input.c           | 156 ++++++++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-qnap-mcu.c                  | 247 ++++++++++++
+ drivers/mfd/Kconfig                           |  10 +
+ drivers/mfd/Makefile                          |   2 +
+ drivers/mfd/qnap-mcu.c                        | 358 +++++++++++++++++
+ include/linux/mfd/qnap-mcu.h                  |  28 ++
+ 18 files changed, 1352 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+ create mode 100644 Documentation/hwmon/qnap-mcu-hwmon.rst
+ create mode 100644 drivers/hwmon/qnap-mcu-hwmon.c
+ create mode 100644 drivers/input/misc/qnap-mcu-input.c
+ create mode 100644 drivers/leds/leds-qnap-mcu.c
+ create mode 100644 drivers/mfd/qnap-mcu.c
+ create mode 100644 include/linux/mfd/qnap-mcu.h
+
+-- 
+2.39.2
+
 
