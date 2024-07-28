@@ -1,184 +1,114 @@
-Return-Path: <linux-kernel+bounces-264564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F087F93E520
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:47:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE30693E525
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4551F218DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:47:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C57B217A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAE94205D;
-	Sun, 28 Jul 2024 12:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEFA3D0C5;
+	Sun, 28 Jul 2024 12:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKSOfRoy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B005eqKS"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C860D2562E;
-	Sun, 28 Jul 2024 12:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C154AEE6
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 12:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722170862; cv=none; b=PqGVS48ehURadkizRablp5RPqRiahrkUPxu5/wDyrjLovCvZoBJd/gh6+oSviI9ZKuoSWoapLk6nF7x5FnjD8iXSsTDwdPIKOepiUbTLkssIJAsVzijr7ELd8NS6cEiGhgviE8oc0fGQ6/HEbMvCdaAUsdreX0ojDV1QGIVdVXk=
+	t=1722170869; cv=none; b=VI0BaH39OVXNgUL3RonYa3Ctv7wdjtjNWWu9WrulZKK9jG4sPg8xMK4nFF7MiNsfxWN3rKB6XppGoFGhOX/J7ZmA8X/Zpu5InW7cWDUBWX5yXAYD6e/8JXov8CC/xeEnWJehNLmD7FWpoXXIgxPFjkymTpHD/Fzkh24NivtuErg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722170862; c=relaxed/simple;
-	bh=7DAw1bh/7KLG2aowoCQ2qKx/EFyJdeQ1d+TtPaE81w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1G/s40lZWjiHnYTnz6NHWg7e6IXrRHlT85HBS7wGCP1xoS6zDTGdk/UNlY0lxiPGGX/gUYP3Ly1YvH0KgyPxh9yotPLAr1CkOu8UcfGWQWhXt93l7xz1qaC8f9mUHXbHxQleWLPzn5yWa9r+9oapqlZIDk5bz1TFAjfnrF6kpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKSOfRoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1214EC116B1;
-	Sun, 28 Jul 2024 12:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722170862;
-	bh=7DAw1bh/7KLG2aowoCQ2qKx/EFyJdeQ1d+TtPaE81w4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DKSOfRoyAcagm/ZCjuUtmZe1LP1/m3qOMpkt+Ja038rI7l8A3gAIiS9vTlhyRlcph
-	 q9W3Gs/md02my2rqjor8RoVRuhKeRng2CLjeuQpPwElHl4VIJ1PE8mhHy3nlfCsgPo
-	 diba//3nG7207nq7Hoz29mmSrKFjel41IEd1K+OUbqJ9ji9TOMZcPpMQo+WMhANpud
-	 6Q847BLXlRgpdKyKpfoIprH/01r3UrVLIMjJqRG5P1sgBD0Z0nzmDaGOzqSAcDzpJq
-	 76zEEQv9n49HVtrhliR31CW/giJaLvR0UAqUXFsYST53aU5H48QgjliObfxaz9+zTj
-	 RELQP2y7z3fMw==
-Date: Sun, 28 Jul 2024 15:47:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v1 2/3] mm/hugetlb: enforce that PMD PT sharing has split
- PMD PT locks
-Message-ID: <ZqY918UEsmkbIGOn@kernel.org>
-References: <20240726150728.3159964-1-david@redhat.com>
- <20240726150728.3159964-3-david@redhat.com>
+	s=arc-20240116; t=1722170869; c=relaxed/simple;
+	bh=jQsVlvUMaaYWMGPZI1Gdttyg2TqvYy5qPOD9yDMknEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=klruTQZKUw4IUQS+Iwvg+uymanTYDGkb6qqPBacPk8GaMfWCCZTo25KuQ2Uix/1/JfMDfpo1O7MV8qxIDagmSrZP8MG35WD+DkiY/cwZQ+tQJ0apQhqpXwOSyKcFeiAVhiWKFdHHHcQcdsuoJef0Rs/ecLHuVEIM9hOnZW8Ptes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B005eqKS; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so4106361a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 05:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722170866; x=1722775666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rTe6IbeoM1Sj9LYDiw9wEqY7/bJWvFvBhTNPVxZYKw=;
+        b=B005eqKSUc2tneLk430B8CRNrPRvvA86H3XZuuUaVEz6TKvkX4goKWfYHz//Qc4T4Y
+         /+i+Cqc9hjDOuOz8IBfpygGkJpCVdPhuf18x0BvWvTmaQZ055E9W396Vx1SXSbI2vjtA
+         Ie2qrfq+9IqGlZxTjXwwVxpITSt1mnvwXy0z0TvS7cKUzKos1grMFvDPCVv4rN5uSC3m
+         Pz1OFS6Rc/xDYqhIF++2/ysQTukpKWMGBYF+hWg2PLmo3XkqsKUZPgZYblcuaiOECk7w
+         c8+cwxq5jIXGUqa6HTDp7Zs0a1+2ap6kFXpdjLAsMsdyAeQ6nGaIvSNjVavueBafSC3+
+         Utgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722170866; x=1722775666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7rTe6IbeoM1Sj9LYDiw9wEqY7/bJWvFvBhTNPVxZYKw=;
+        b=AwGg6X67/T8j5Enjbzajh9aFQgsXLvOl4fj4mCWdeucV628fVC9yXC0ZrHO6UiDDva
+         dHPVMJGBWKALbwDqigBhFhwcoSTjOpyfcQKazKjp2izPUAKJSwYiHBjRtocHEy2LSzw4
+         w/dnV+r1aCYoQ2sBb48viBetvHkPxmfvcMYjSE76OJZXFBkLHTeXgrwQoESBK3OaeaCF
+         idZkSPaI3csW1nhDiYNmX4mxsH71KcIpaFsw135m0XEnWCt57zyjfTnHV++pEpXdVMXi
+         Cep9SwIZmFMDKLm3l/+KV0Sd+zu2x2oZG+PAoVsOUcV9yawpVO871vpvKTZFlzuOHknC
+         Kfow==
+X-Forwarded-Encrypted: i=1; AJvYcCUMFHl5uYuYMt5AVR3lxHl7wXweXlNI74Lqif1HcX5XZVcvMbTFS0r/DJ4zaO8Sx+APTRaHOAFMysd7bQYjgivXfQoknVYm5WBUZvCG
+X-Gm-Message-State: AOJu0YybxkaYrjNJa2/We2/O33iAzgRl4i+2fmU0MouhPCoTJUqCbDaz
+	hf5Cz+7LTOobBeBq3Hy1fAIUsquwYkXzBVC7vckZz7eN7N6Sr/Jm
+X-Google-Smtp-Source: AGHT+IFUjiSzp8/lFhIVP7/rcKcmnBPnJsRtdp8cT700sScn7ZMzY8JZZVX4IE2+b4NoGEpyaWtKeA==
+X-Received: by 2002:a17:907:7244:b0:a7a:b839:8583 with SMTP id a640c23a62f3a-a7d4013de15mr362438666b.66.1722170866492;
+        Sun, 28 Jul 2024 05:47:46 -0700 (PDT)
+Received: from Slimbook.lan (134-248-201-31.ftth.glasoperator.nl. [31.201.248.134])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad9d3cbsm381125166b.182.2024.07.28.05.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 05:47:46 -0700 (PDT)
+From: Bouke Sybren Haarsma <boukehaarsma23@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	hdegoede@redhat.com
+Cc: mripard@kernel.org,
+	luke@ljones.dev,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Bouke Sybren Haarsma <boukehaarsma23@gmail.com>
+Subject: [PATCH RESEND 0/2] drm: panel-orientation-quirks: Add quirks for AYN loki zero/max
+Date: Sun, 28 Jul 2024 14:47:29 +0200
+Message-ID: <20240728124731.168452-1-boukehaarsma23@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726150728.3159964-3-david@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 26, 2024 at 05:07:27PM +0200, David Hildenbrand wrote:
-> Sharing page tables between processes but falling back to per-MM page
-> table locks cannot possibly work.
-> 
-> So, let's make sure that we do have split PMD locks by adding a new
-> Kconfig option and letting that depend on CONFIG_SPLIT_PMD_PTLOCKS.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Add orientation quirks for AYN loki devices:
+- Ayn Loki Zero
+- Ayn Loki Max
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+The quirks have been tested by the JELOS team and ChimeraOS
+who have been patching their own kernel. This has been
+confirmed working by users in the ChimeraOS discord
+servers.
 
-> ---
->  fs/Kconfig              | 4 ++++
->  include/linux/hugetlb.h | 5 ++---
->  mm/hugetlb.c            | 8 ++++----
->  3 files changed, 10 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index a46b0cbc4d8f6..0e4efec1d92e6 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -288,6 +288,10 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
->  	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
->  	depends on SPARSEMEM_VMEMMAP
->  
-> +config HUGETLB_PMD_PAGE_TABLE_SHARING
-> +	def_bool HUGETLB_PAGE
-> +	depends on ARCH_WANT_HUGE_PMD_SHARE && SPLIT_PMD_PTLOCKS
-> +
->  config ARCH_HAS_GIGANTIC_PAGE
->  	bool
->  
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index da800e56fe590..4d2f3224ff027 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -1243,7 +1243,7 @@ static inline __init void hugetlb_cma_reserve(int order)
->  }
->  #endif
->  
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  static inline bool hugetlb_pmd_shared(pte_t *pte)
->  {
->  	return page_count(virt_to_page(pte)) > 1;
-> @@ -1279,8 +1279,7 @@ bool __vma_private_lock(struct vm_area_struct *vma);
->  static inline pte_t *
->  hugetlb_walk(struct vm_area_struct *vma, unsigned long addr, unsigned long sz)
->  {
-> -#if defined(CONFIG_HUGETLB_PAGE) && \
-> -	defined(CONFIG_ARCH_WANT_HUGE_PMD_SHARE) && defined(CONFIG_LOCKDEP)
-> +#if defined(CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING) && defined(CONFIG_LOCKDEP)
->  	struct hugetlb_vma_lock *vma_lock = vma->vm_private_data;
->  
->  	/*
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 0858a18272073..c4d94e122c41f 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -7211,7 +7211,7 @@ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  static unsigned long page_table_shareable(struct vm_area_struct *svma,
->  				struct vm_area_struct *vma,
->  				unsigned long addr, pgoff_t idx)
-> @@ -7373,7 +7373,7 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
->  	return 1;
->  }
->  
-> -#else /* !CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
-> +#else /* !CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING */
->  
->  pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
->  		      unsigned long addr, pud_t *pud)
-> @@ -7396,7 +7396,7 @@ bool want_pmd_share(struct vm_area_struct *vma, unsigned long addr)
->  {
->  	return false;
->  }
-> -#endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
-> +#endif /* CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING */
->  
->  #ifdef CONFIG_ARCH_WANT_GENERAL_HUGETLB
->  pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-> @@ -7494,7 +7494,7 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
->  /* See description above.  Architectures can provide their own version. */
->  __weak unsigned long hugetlb_mask_last_page(struct hstate *h)
->  {
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  	if (huge_page_size(h) == PMD_SIZE)
->  		return PUD_SIZE - PMD_SIZE;
->  #endif
-> -- 
-> 2.45.2
-> 
-> 
+Since there are additional Ayn Loki devices I have
+made separate matches for the devices.
 
+Bouke Sybren Haarsma (2):
+  drm: panel-orientation-quirks: Add quirk for Ayn Loki Zero
+  drm: panel-orientation-quirks: Add quirk for Ayn Loki Max
+
+ drivers/gpu/drm/drm_panel_orientation_quirks.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+
+base-commit: 668d33c9ff922c4590c58754ab064aaf53c387dd
 -- 
-Sincerely yours,
-Mike.
+2.45.2
+
 
