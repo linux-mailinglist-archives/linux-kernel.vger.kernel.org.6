@@ -1,176 +1,556 @@
-Return-Path: <linux-kernel+bounces-264887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED6B93E9B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:37:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB92893E9BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F2B281571
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:37:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA83B20DC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DC57828B;
-	Sun, 28 Jul 2024 21:37:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382E278C6D;
+	Sun, 28 Jul 2024 21:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AcQrnW8S"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A518643
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88507470
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722202648; cv=none; b=WHIfApXIInbQjjatcaeFnhQBbNBjgUUnBfgLgwXFIX5Lgk8nNt1LN7GpU7ohgwbqsTBIl5rhrkJhZbsYJlypqMuAwr9mWjV1p+dzdKE0RXPxQZrgiZVE/UkieN16EONojzm+Dh6WvYb9oiJUqWFnQS+7cpKqBQySgxlVS4mH5sk=
+	t=1722202825; cv=none; b=tlSZruc+lwROZiQhULHrS+ijNP2cVGrh4S7U0XKBAni8v5AIRAVhraFFHyf3N+kL/Cjf81c6k/6za9xtsEENwH2762o3Ibuk0KgS6GFCDarmCH8QdTYLwAtlTjba6ygT9OkRxuO6zStYX1OjYLUoLJu2HjLJGTy+XPVAL4ErRKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722202648; c=relaxed/simple;
-	bh=HgRXS5kmGOCgZxer6F6Zr5ptUDREp6JRQn2LDBkOJrE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Kp+wUw2paUegmMGp5xfi6Qqj3ELr+IqLl8Fji5VzjuSQIFf9dw3/+adqPm/tnMyPjmxZITQGnEJ7yuUSW15qYSfi/Kh2Im45EDZSO8RoXcU3MdxIswCNd3UCrBI47UnmgS4z6oeXB665Dc8efCdefoduOujWcedqgnmDvHXiuck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397052a7bcbso52458105ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:37:25 -0700 (PDT)
+	s=arc-20240116; t=1722202825; c=relaxed/simple;
+	bh=V4/iytO9vQHYeES3uHhvj/19GQV9N6HvXwa3EEW4CVg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=jk68df4q4pack1MBZhcLe0hwBVav6gghnx/cqlm8/huqTGQz9rM5nJWBzZj9B0+crnZD42eI+r/wEjUpgUpIjU4pwn+ANZI/6uhJN26E0lnVCu7xh0IM9NmTnQ/XCdeUq7cwKufECNJ0bD+oOBruBu4jpJ+viuEIQZTtYBjQ6gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AcQrnW8S; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52fc4388a64so4687129e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722202821; x=1722807621; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rwbmY660ZxjP+0gllTmpeH0ekjqFQ+Ih+cUoAAOi0AE=;
+        b=AcQrnW8StUxJ3wZgIKUQwY8CfT8HBmlWXxYAbkqaXRTPfvUl0zqfyLSaRDdM6AIsMn
+         3U3aiK53UAeUgZjAP1H4M8n/C2LRfP+Xx5W/C6arsjhYblFy2hDu6ql/wKw73bjr3cLL
+         pIZZ+9qI0fKzrb0M8opDiN/8N1Q6O+9A/dSAM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722202645; x=1722807445;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5VMs5yT871XTf/d0or5t339a635pM6lfyoSiQynkorA=;
-        b=AD43gk96RvixmFKRqVJk4fdg3dKlsdYYEj63eG9msrW5IbOzvYbBhmXgnxNmZlv3RK
-         9efvVV/s84DDA8KOOxuRu0P3rUhAQHNvfJR/Zfje7KZ/jegvPWDQC7OIBJNXV2bWXeKq
-         6YIhevv0sAXZhLiNjlDiUOAWfmqj8DsfzXiycrvGbAQt6w1rpIBZIwc/jTr5qzLrjk/1
-         sd8PgPa4V/NL3TRiYIk0zp8Ty0O/sEuEFWwdXbxsxaw5uJuyiO52ZNt16KMr7cuJfJIL
-         rs6VVS7GrbwXOenlKSEpKnU2EF1T3uziokHg7MHSRWFFkNcU2X+kNeYzGn7TfrZLuZIi
-         yYRQ==
-X-Gm-Message-State: AOJu0YxZgKoOv6weyrgOJftPwglLE2rGTeqm3j31dgTLeA6kM4DlaVli
-	vVMhlBZlWTkm/L4j7rJ7Af84akr/dZtvfHqbycsP+QwUd+R/ryjyNAK3RpPCIqO4o+MkZjOvwJo
-	llFFQunf+rP5TUq83hXsrq1FjId36IlHU4LKqmnU6WVZaP83NbwqmI4A=
-X-Google-Smtp-Source: AGHT+IGAjEeYPHCfAyETru4FvlFQIbze6r7U27mVuzr7jLjgI0LgUpwC4jQorPN3rm/yYdWuX4/gCPolQln+C37ckSAYFtyFrKVR
+        d=1e100.net; s=20230601; t=1722202821; x=1722807621;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rwbmY660ZxjP+0gllTmpeH0ekjqFQ+Ih+cUoAAOi0AE=;
+        b=bMGqtllEXBExh494ZNhrgxhaIwffMpQPyHIHPcbQaMGzqyUsFxeRxD/TE6b+rDALBE
+         9BNmsaNgop8znrefBfoe1zl6x/hLPCSykpZxKlQ+dTPBb9IyQOAXjREI2GOPgNq2polg
+         jG77p24IqnZgjoJAvTH3sqJS9U0Cqh4hxvMJtKdMFV+2drWtC+2+tYz/zPr3/mp5OxFR
+         BEvFEPOVFSYJ0KeLdbstjraapSyY0C9vMMKY3y6FNnaYtr+RzxRaWk/9tOhgmVVUuz6a
+         YCIIuO4IeHV4XR1n5hePrV4umCKwfStG/kqjhvmgvQPXww70u4SM4WUUk6QOkZr4F71d
+         xHGw==
+X-Gm-Message-State: AOJu0Yymhmr98atap+zN/xzo2ErdBuPFX4kt9rdT/o6wljEUuY/Br33G
+	kHWU3lmD7R+05fYp1I72xF81SpzxQCji45V9olftE+3vJIMSojKzrOPTFgoM4xmddHJN9wrK0pg
+	YCwSFmA==
+X-Google-Smtp-Source: AGHT+IGTaze1bTTqXXY8YaW18EJ+mm9F8NqsxsFRfxxZRulBm2Gn4y/0wLSsFhd6A6eEipX/HL6Kiw==
+X-Received: by 2002:a05:6512:2007:b0:52c:d13e:3785 with SMTP id 2adb3069b0e04-5309b280545mr3471460e87.30.1722202820057;
+        Sun, 28 Jul 2024 14:40:20 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bc42b4sm1213414e87.12.2024.07.28.14.40.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 14:40:19 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2cce8c08so33583691fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:40:19 -0700 (PDT)
+X-Received: by 2002:a05:651c:4ca:b0:2ef:1db2:c02c with SMTP id
+ 38308e7fff4ca-2f12edf9d3bmr48365001fa.10.1722202818702; Sun, 28 Jul 2024
+ 14:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c245:0:b0:382:56bd:dfbc with SMTP id
- e9e14a558f8ab-39aec2d7874mr4739325ab.2.1722202645085; Sun, 28 Jul 2024
- 14:37:25 -0700 (PDT)
-Date: Sun, 28 Jul 2024 14:37:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e45551061e558c37@google.com>
-Subject: [syzbot] [media?] [usb?] WARNING in smsusb_init_device/usb_submit_urb
-From: syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, 
-	syzkaller-bugs@googlegroups.com
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 28 Jul 2024 14:40:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+Message-ID: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+Subject: Linux 6.11-rc1
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+The merge window felt pretty normal, and the stats all look pretty
+normal too. I was expecting things to be quieter because of summer
+vacations, but that (still) doesn't actually seem to have been the
+case.
 
-syzbot found the following issue on:
+There's 12k+ regular commits (and another 850 merge commits), so as
+always the summary of this all is just my merge log. The diffstats are
+also (once again) dominated by some big hardware descriptions (another
+AMD GPU register dump accounts for ~45% of the lines in the diff, and
+some more perf event JSON descriptor files account for another 5%).
 
-HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=10eb7dad980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdd6022e793d4ad
-dashboard link: https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10893645980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10885779980000
+But if you ignore those HW dumps, the diff too looks perfectly
+regular: drivers account for a bit over half (even when not counting
+the AMD register description noise). The rest is roughly one third
+architecture updates (lots of it is dts files, so I guess I could have
+lumped that in with "more hw descriptor tables"), one third tooling
+and documentation, and one third "core kernel" (filesystems,
+networking, VM and kernel). Very roughly.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/504e81a2120c/disk-93306970.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/320d2f3e66b3/vmlinux-93306970.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/65b8e1c28010/bzImage-93306970.xz
+If you want more details, you should get the git tree, and then narrow
+things down based on interests.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
-
-smsusb:smsusb_probe: board id=15, interface number 6
-smsusb:siano_media_device_register: media controller created
-------------[ cut here ]------------
-usb 1-1: BOGUS urb xfer, pipe 3 != type 1
-WARNING: CPU: 0 PID: 42 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
-Modules linked in:
-CPU: 0 UID: 0 PID: 42 Comm: kworker/0:2 Not tainted 6.10.0-syzkaller-g933069701c1b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
-Code: 84 3c 02 00 00 e8 d5 d5 2b fd 4c 89 ef e8 dd 14 00 ff 45 89 e0 89 e9 4c 89 f2 48 89 c6 48 c7 c7 e0 8b 30 87 e8 26 c8 f1 fc 90 <0f> 0b 90 90 e9 e9 f8 ff ff e8 a7 d5 2b fd 49 81 c4 c0 05 00 00 e9
-RSP: 0018:ffffc900004d6de8 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff8881022bf600 RCX: ffffffff81194ce9
-RDX: ffff8881036a8000 RSI: ffffffff81194cf6 RDI: 0000000000000001
-RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000001
-R13: ffff8881043930a8 R14: ffff88810de96e80 R15: ffff8881022bf67c
-FS:  0000000000000000(0000) GS:ffff8881f6400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e21a0c8380 CR3: 00000001154e0000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- smsusb_submit_urb+0x288/0x410 drivers/media/usb/siano/smsusb.c:173
- smsusb_start_streaming drivers/media/usb/siano/smsusb.c:197 [inline]
- smsusb_init_device+0x856/0xe10 drivers/media/usb/siano/smsusb.c:477
- smsusb_probe+0x5e2/0x10b0 drivers/media/usb/siano/smsusb.c:575
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3679
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3679
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2e66/0x4f50 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
+              Linus
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Al Viro (1):
+    struct file leak fixes
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Alex Williamson (1):
+    VFIO updates
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Alexandre Belloni (2):
+    RTC updates
+    i3c updates
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Andreas Gruenbacher (1):
+    gfs2 updates
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Andreas Larsson (1):
+    sparc updates
 
-If you want to undo deduplication, reply with:
-#syz undup
+Andrew Morton (3):
+    MM updates
+    non-MM updates
+    misc hotfixes
+
+Anna Schumaker (1):
+    NFS client updates
+
+Ard Biesheuvel (2):
+    EFI updates
+    EFI fixes
+
+Arnd Bergmann (5):
+    SoC driver updates
+    SoC dt updates
+    SoC defconfig updates
+    arm SoC platform updates
+    asm-generic updates
+
+Bartosz Golaszewski (4):
+    power sequencing updates
+    gpio updates
+    power sequencing fixes
+    gpio fix
+
+Benjamin Tissoires (1):
+    HID updates
+
+Bjorn Andersson (3):
+    hwspinlock updates
+    remoteproc updates
+    rpmsg updates
+
+Bjorn Helgaas (1):
+    pci updates
+
+Borislav Petkov (14):
+    EDAC updates
+    RAS updates
+    x86 alternatives updates
+    x86 boot updates
+    x86 cleanups
+    x86 confidential computing updates
+    x86 uaccess update
+    x86 build update
+    misc x86 updates
+    x86 vmware updates
+    x86 cpu mitigation updates
+    x86 cpu model updates
+    x86 resource control updates
+    x86 SEV updates
+
+Casey Schaufler (1):
+    smack updates
+
+Catalin Marinas (1):
+    arm64 updates
+
+Chandan Babu (1):
+    xfs updates
+
+Christian Brauner (13):
+    misc vfs updates
+    PG_error removal updates
+    vfs module description updates
+    vfs casefolding updates
+    vfs mount API updates
+    vfs inode / dentry updates
+    vfs mount query updates
+    namespace-fs updates
+    pidfs updates
+    iomap updates
+    vfs fixes x 3
+
+Christoph Hellwig (2):
+    dma-mapping updates
+    dma-mapping fix
+
+Chuck Lever (1):
+    nfsd updates
+
+Corey Minyard (1):
+    IPMI updates
+
+Damien Le Moal (1):
+    zonefs update
+
+Daniel Thompson (1):
+    kgdb updates
+
+Dave Airlie (3):
+    drm fixes
+    drm updates
+    drm fixes
+
+Dave Jiang (1):
+    CXL updates
+
+David Kleikamp (1):
+    jfs updates
+
+David Sterba (3):
+    affs updates
+    btrfs updates
+    btrfs fix
+
+David Teigland (1):
+    dlm updates
+
+Dipen Patel (1):
+    hardware timestamp update
+
+Dmitry Torokhov (1):
+    input updates
+
+Dominik Brodowski (1):
+    PCMCIA updates
+
+Gabriel Krisman Bertazi (1):
+    unicode update
+
+Gao Xiang (2):
+    erofs updates
+    more erofs updates
+
+Geert Uytterhoeven (2):
+    m68k updates
+    auxdisplay updates
+
+Greg KH (5):
+    tty / serial updates
+    USB / Thunderbolt updates
+    staging driver updates
+    char / misc and other driver updates
+    driver core updates
+
+Guenter Roeck (1):
+    hwmon updates
+
+Helge Deller (2):
+    fbdev updates
+    parisc updates
+
+Herbert Xu (1):
+    crypto update
+
+Huacai Chen (1):
+    LoongArch updates
+
+Ilpo J=C3=A4rvinen (1):
+    x86 platform driver updates
+
+Ilya Dryomov (1):
+    ceph updates
+
+Ingo Molnar (5):
+    locking updates
+    objtool updates
+    scheduler updates
+    performance events updates
+    x86 percpu updates
+
+Ira Weiny (1):
+    libnvdimm updates
+
+Jaegeuk Kim (1):
+    f2fs updates
+
+Jakub Kicinski (2):
+    networking updates
+    networking fixes
+
+James Bottomley (1):
+    SCSI updates
+
+Jan Kara (2):
+    fsnotify fix
+    udf, ext2, isofs fixes and cleanups
+
+Jarkko Sakkinen (3):
+    tpm updates
+    keys updates
+    tpm fix
+
+Jason Donenfeld (1):
+    random number generator updates
+
+Jason Gunthorpe (2):
+    iommufd updates
+    rdma updates
+
+Jassi Brar (1):
+    mailbox updates
+
+Jens Axboe (7):
+    io_uring updates
+    block updates
+    block integrity mapping updates
+    more block updates
+    io_uring fixes
+    io_uring fixes
+    block fixes
+
+Joel Granados (2):
+    sysctl updates
+    sysctl constification
+
+John Johansen (1):
+    apparmor updates
+
+John Paul Adrian Glaubitz (1):
+    sh updates
+
+Jonathan Corbet (1):
+    documentation updates
+
+Juergen Gross (2):
+    xen updates
+    xen fixes
+
+Kees Cook (5):
+    execve updates
+    seccomp updates
+    pstore updates
+    hardening updates
+    execve fix
+
+Kent Overstreet (2):
+    bcachefs updates
+    bcachefs fixes
+
+Konstantin Komarov (1):
+    ntfs3 updates
+
+Lee Jones (3):
+    MFD updates
+    backlight updates
+    LED updates
+
+Len Brown (1):
+    turbostat updates
+
+Linus Walleij (1):
+    pin control updates
+
+Luis Chamberlain (1):
+    module update
+
+Mark Brown (6):
+    regmap updates
+    regulator updates
+    spi updates
+    regmap fix
+    regulator fixes
+    spi fixes
+
+Masahiro Yamada (2):
+    Kbuild updates
+    Kbuild fixes
+
+Masami Hiramatsu (3):
+    probes updates
+    bootconfig update
+    uprobe fix
+
+Mauro Carvalho Chehab (1):
+    media updates
+
+Michael Ellerman (1):
+    powerpc updates
+
+Michael Tsirkin (1):
+    virtio updates
+
+Micka=C3=ABl Sala=C3=BCn (2):
+    landlock updates
+    landlock fix
+
+Miguel Ojeda (1):
+    Rust updates
+
+Mike Rapoport (1):
+    memblock updates
+
+Mikulas Patocka (1):
+    device mapper updates
+
+Miquel Raynal (1):
+    MTD updates
+
+Namhyung Kim (2):
+    perf tools updates
+    perf tools fixes
+
+Namjae Jeon (1):
+    exfat updates
+
+Niklas Cassel (1):
+    ata updates
+
+Palmer Dabbelt (2):
+    RISC-V updates
+    more RISC-V updates
+
+Paolo Abeni (1):
+    networking fixes
+
+Paolo Bonzini (1):
+    kvm updates
+
+Paul McKenney (6):
+    arm byte cmpxchg
+    memory model updates
+    RCU updates
+    torture-test updates
+    KCSAN updates
+    nolibc updates
+
+Paul Moore (2):
+    selinux update
+    lsm updates
+
+Petr Mladek (2):
+    livepatching update
+    printk updates
+
+Rafael Wysocki (5):
+    thermal control updates
+    power management updates
+    ACPI updates
+    thermal control fix
+    thermal control fix
+
+Richard Weinberger (2):
+    UML updates
+    UBI and UBIFS updates
+
+Rob Herring (2):
+    devicetree updates
+    more devicetree updates
+
+Sebastian Reichel (2):
+    HSI update
+    power supply and reset updates
+
+Shuah Khan (2):
+    KUnit updates
+    kselftest updates
+
+Stephen Boyd (2):
+    clk updates
+    clk fixes
+
+Steve French (3):
+    smb client fixes
+    smb server fixes
+    more smb client updates
+
+Steven Rostedt (4):
+    tracing updates
+    ftrace updates
+    tracing tools updates
+    tracing CREDITS file update
+
+Takashi Iwai (2):
+    sound updates
+    sound fixes
+
+Takashi Sakamoto (2):
+    firewire updates
+    firewire fixes
+
+Ted Ts'o (1):
+    ext4 updates
+
+Tejun Heo (3):
+    cgroup updates
+    workqueue updates
+    workqueue fix
+
+Thomas Bogendoerfer (2):
+    MIPS updates
+    MIPS updates
+
+Thomas Gleixner (6):
+    debugobjects update
+    CPU hotplug updates
+    timer updates
+    interrupt subsystem updates
+    MSI interrupt updates
+    timer migration updates
+
+Tzung-Bi Shih (2):
+    chrome platform updates
+    chrome platform firmware update
+
+Ulf Hansson (2):
+    pmdomain updates
+    MMC updates
+
+Uwe Kleine-K=C3=B6nig (1):
+    pwm updates
+
+Vasily Gorbik (2):
+    s390 updates
+    more s390 updates
+
+Vinod Koul (3):
+    dmaengine updates
+    soundwire updates
+    phy updates
+
+Vlastimil Babka (1):
+    slab updates
+
+Will Deacon (3):
+    iommu updates
+    arm64 fixes
+    iommu fixes
+
+Wim Van Sebroeck (1):
+    watchdog updates
+
+Wolfram Sang (2):
+    i2c fixes
+    more i2c updates
+
+Yury Norov (1):
+    bitmap updates
 
