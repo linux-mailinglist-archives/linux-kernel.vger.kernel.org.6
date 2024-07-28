@@ -1,120 +1,126 @@
-Return-Path: <linux-kernel+bounces-264837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A35893E8F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E45793E8FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1061C20F01
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC831C20C91
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED87B5FB95;
-	Sun, 28 Jul 2024 19:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CD073478;
+	Sun, 28 Jul 2024 19:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfSLpVfl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJwmd+9U"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370912AD29;
-	Sun, 28 Jul 2024 19:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA4E2AD29;
+	Sun, 28 Jul 2024 19:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722193348; cv=none; b=Qz8jXQCV9lExmhr7wXe6Tn25Lbeih29LZn7RhxT5dYBvqhs9wv0Ei7IGSNp32LUKB2YSWeWN9DDANGSE9Zkpi29GbfmOpN18QvWoM0bmBszG1zOlX+30kJKpek5kZJalH73NJ4W91/ZLujddV/pjuLA0oAHDCl7h7pTolTe8iQg=
+	t=1722193769; cv=none; b=fmV1MLjVhUohdqhvy0YN8HwH6sLdKxlaClqdNBDx/H1K5GafLRZ/sHlrQneaCeQTt9IuyleZfaS3aGLHohDtdZBIoHWxNU4TGiqZKnJxZ3VN6R/RHaNKcBsZaExeHni/Ny2TX+5E8/q5RgwH5GVTfESq47sgNmuxzOGOwcgBTnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722193348; c=relaxed/simple;
-	bh=jraGcb/y+eh34BRuZ6I8inLVF3tNfDxKC+d8OD/SH/o=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=flL9udenBNfGzW475C8uhS09e7thABFobg5kKCKDziYrAcNnTi739+k3F68QrabwhXac+pFyPQrDdov3t+QwMVMTXa8c8bUIxg0/vVjZYAHJch95Op5vcUQzcZW1MlcY28tc/yjFK6jZu++kkAmR/rkPFyhn3b+6CGVJaazvMLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfSLpVfl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F76C4AF0C;
-	Sun, 28 Jul 2024 19:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722193347;
-	bh=jraGcb/y+eh34BRuZ6I8inLVF3tNfDxKC+d8OD/SH/o=;
-	h=From:Date:Subject:To:Cc:From;
-	b=kfSLpVflRwP1u2yIXTvDephGrWbb+cEbcoRwbX1E+AGAtxtz3lEgXySg9NlMfwFVe
-	 4C+96VYo/lO+g4dKYWfcKYGm2wEPXNexd4yZNKFpQ4vC7mZOn/FrbLu7Qc6A+4mV7m
-	 ZLAY6/DsfkNKCmpHMMHZoTV25DlWzjeZUppnhiOgaM6uc3OzFdLKeF19WJk9HZxgzf
-	 6V28y6E2gvzQjX6QokIT4kR7kGSX8ngrGE9dTkmYhOwIDM+Y3Gw9myOYvMuC8gi8Ts
-	 IDhQrvmtQTjEmhG0VM5ReO4z0i7DJAPJNP9pP5IckTUpKw/bwCEmDp/XgPRuk07cYA
-	 WdDvBwWIqeeMg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so4362842e87.1;
-        Sun, 28 Jul 2024 12:02:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWlw4UG6qDPIZXWw/eqoXY9GJLNuERmJVakhVsKcaYwWVgtI5TFfMUl0ebc7Lhz9eU92g+vRRp9BLKnWWTcRNrcivkkJl65zHdpLIyx
-X-Gm-Message-State: AOJu0YwMQNP0C6uMQU764RBskZ87R4xFgIVvRMtPWSg/OmoaDM36qf6w
-	UmEiNl7O+5i4y+JrY/SUH089KvuVqlimzWMQQJAeIXcbieEBrCnLVbz2DZA0gvr5w5jzOpXWKHq
-	Aoy/txhBnzqe/DbYFdxjQuZnwC64=
-X-Google-Smtp-Source: AGHT+IEhXb6TKwB9xBnDwqhWkAYiKfnRIqRt4sqrpBI4sHFkytc6o6lyruZO7H/lqomi2fxMJutVyIDpK7a2JkX7Nys=
-X-Received: by 2002:a05:6512:251f:b0:52c:86de:cb61 with SMTP id
- 2adb3069b0e04-5309b25a2femr4432860e87.10.1722193346229; Sun, 28 Jul 2024
- 12:02:26 -0700 (PDT)
+	s=arc-20240116; t=1722193769; c=relaxed/simple;
+	bh=zT+SnmbtFeF/fvHrxsBtPteublxfAX+cKI1ux8yhDmM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=og6R10nPsK3ayzjOOVd/4ouUkrJ5ri218NgdSdYPUJy0IM1Z5qrVfIOHxHYjAV6vO4dWNR7VrPcfwHHUF3FSpd01P7BX3lCSeA5q97S2kuMkwJSmcU4LFLQSO4d4Ti7+wgNJIwb4ChB7V+NGXA5z4YOj7or5rGbKBhG5csqH9eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJwmd+9U; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04150796so4578968e87.3;
+        Sun, 28 Jul 2024 12:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722193765; x=1722798565; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z6vY6a+UKismis/SRDyc4ybX+UEQqHZsmxRFnBfXOXs=;
+        b=AJwmd+9UiWyIWnN6bNLj0vETtUTDNOttBVgQujWaaxf5DjTeZi/3zKkCoCQBvt18tB
+         h17ToVoZA9mERg62v6feH9S2jlIzmBhVJ6t5LBnTi8J1M4wNhe0sajSCSUCJAQItwyGn
+         phBVuXvOuODj7ASB0gT0m6PF0a73zz1jR5aMykKnbahrGYp2Sj3vJlG9GgcPOL/OD2JQ
+         NBeonf3E1PQUDsS+duZwIu7bwG/e56HrMjSyKf0D8oklDxUPCcuxKAWx9vl+rzGtQAYG
+         OaBmjI85b49aZyICTPFAxn6hHI1qxhm1KzcNLCILc/prYldUgeMyRx3DtE0N1VvZQl7f
+         68cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722193765; x=1722798565;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6vY6a+UKismis/SRDyc4ybX+UEQqHZsmxRFnBfXOXs=;
+        b=GtCCEk57eaN7IV50p1mN2+wB2FbI95dSrMUC1gIPapY17yImQBEIGNr08s/TrCqIOw
+         tmGzEoE13qG6/Wgu3OzloMLg1tuDCG43QHBzAPDJm8FFwK/e9fmKGaHudG8GEy9S6Jaz
+         9smGR5xc+oIOYBQGIOtIbyhQDaaK9d2cPUbvVMUpgXRyau+E9OHIqLAfVPTS7DIF5HBG
+         xgZveN/jZvpCFsMXiX7IM5lfr7bcV/toHOOQORRGSo7ClkL5QHFq/hv1Um8hLS5LXWY0
+         9BAU/cI5XW9bpXmV+0UYVvHAxGehkIzBMTQRvjnCBlifHRPcRHe5jUlZsxbvkpXtQ7Wv
+         CG+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzqQOLDHftESciGr70ZvwT8RjdGNc5TmqivUky9Toy92XSkpguZUvnyY6proN0EqMqvqkue2FeZvrcriuQWcWDGn784MsZ9Ul4+g==
+X-Gm-Message-State: AOJu0YxWd1OCYqFS6XK2Y0PW6ljUfgUehQdAZnSBucr8H99oRLpi8T0e
+	iPPWxndLiziiBBnNPasu2VHwri/tXhTg4j8tY3Ruynx/oX6rTWDiK2RZ3guZvokizkuTSqH76fn
+	53qKJKKrNMDPFQfTw0rhEzBnxyWiMb5Tg
+X-Google-Smtp-Source: AGHT+IGixSuGf4VOHXLIMPxkM9HL+BeZhH5ZjPhG3tH9I3A5HsmUVZRkbDNAQyDAmnjQoZdztXrE1f7mpIOtPaJoBD4=
+X-Received: by 2002:a19:2d5b:0:b0:52e:f367:709b with SMTP id
+ 2adb3069b0e04-5309b2c3056mr3133888e87.42.1722193765214; Sun, 28 Jul 2024
+ 12:09:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 29 Jul 2024 04:01:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
-Message-ID: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v6.11-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 28 Jul 2024 14:09:14 -0500
+Message-ID: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
+Subject: Why do very few filesystems have umount helpers
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello Linus,
+I noticed that nfs has a umount helper (/sbin/umount.nfs) as does hfs
+(as does /sbin/umount.udisks2).  Any ideas why those are the only
+three filesystems have them but other fs don't?
+
+Since umount does not notify the filesystem on unmount until
+references are closed (unless you do "umount --force") and therefore
+the filesystem is only notified at kill_sb time, an easier approach to
+fixing some of the problems where resources are kept around too long
+(e.g. cached handles or directory entries etc. or references on the
+mount are held) may be to add a mount helper which notifies the fs
+(e.g. via fs specific ioctl) when umount has begun.   That may be an
+easier solution that adding a VFS call to notify the fs when umount
+begins.   As you can see from fs/namespace.c there is no mount
+notification normally (only on "force" unmounts)
+
+        /*
+         * If we may have to abort operations to get out of this
+         * mount, and they will themselves hold resources we must
+         * allow the fs to do things. In the Unix tradition of
+         * 'Gee thats tricky lets do it in userspace' the umount_begin
+         * might fail to complete on the first run through as other tasks
+         * must return, and the like. Thats for the mount program to worry
+         * about for the moment.
+         */
+
+        if (flags & MNT_FORCE && sb->s_op->umount_begin) {
+                sb->s_op->umount_begin(sb);
+        }
 
 
-Please pull Kbuild fixes for v6.11-rc1.
-Thanks.
+Any thoughts on why those three fs are the only cases where there are
+umount helpers? And why they added them?
 
+I do notice umount failures (which can cause the subsequent mount to
+fail) on some of our functional test runs e.g. generic/043 and
+generic/044 often fail to Samba with
 
-The following changes since commit 5ad7ff8738b8bd238ca899df08badb1f61bcc39e:
+     QA output created by 043
+    +umount: /mnt-local-xfstest/scratch: target is busy.
+    +mount error(16): Device or resource busy
 
-  Merge tag 'f2fs-for-6.11-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2024-07-23
-15:21:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v6.11
-
-for you to fetch changes up to 3415b10a03945b0da4a635e146750dfe5ce0f448:
-
-  kbuild: Fix '-S -c' in x86 stack protector scripts (2024-07-29 03:47:00 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v6.11
-
- - Fix RPM package build error caused by an incorrect locale setup
-
- - Mark modules.weakdep as ghost in RPM package
-
- - Fix the odd combination of -S and -c in stack protector scripts, which
-   is an error with the latest Clang
-
-----------------------------------------------------------------
-Jose Ignacio Tornos Martinez (1):
-      kbuild: rpm-pkg: ghost modules.weakdep file
-
-Nathan Chancellor (1):
-      kbuild: Fix '-S -c' in x86 stack protector scripts
-
-Petr Vorel (1):
-      kbuild: rpm-pkg: Fix C locale setup
-
- scripts/gcc-x86_32-has-stack-protector.sh | 2 +-
- scripts/gcc-x86_64-has-stack-protector.sh | 2 +-
- scripts/package/kernel.spec               | 2 +-
- scripts/package/mkspec                    | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Ideas?
 
 
 -- 
-Best Regards
-Masahiro Yamada
+Thanks,
+
+Steve
 
