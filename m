@@ -1,292 +1,141 @@
-Return-Path: <linux-kernel+bounces-264810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9AF93E8AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:55:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36A893E8B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC2B1F21884
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845A32816FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C556358203;
-	Sun, 28 Jul 2024 16:55:10 +0000 (UTC)
-Received: from avasout-peh-001.plus.net (avasout-peh-001.plus.net [212.159.14.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EB858203;
+	Sun, 28 Jul 2024 16:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Hg5xyTC+"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1F66FD5
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.159.14.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F0C6FD5
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 16:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722185710; cv=none; b=F+Bf6+Xw004Hr/VC7Hv39wIDCuYKX6v/hYao78CW433ZdfY/shpGvVx7dF7PZd4dq0pQNg1P5EB19NvuKh4CNocM1Fz5Da4Joy98tJVwsLu5HeOaTAeQHoukeSkaeL0otOCAfOntWsoq3rIzayqhAd0UYfR/Hp8DhkNxfOxMd5k=
+	t=1722185846; cv=none; b=PuEdYaXs9cPjRyZd4gfJkl+tQ6KXkZG0EqJQH4VXJLvZ7Y2UvI0Y69uDZ9+ochJ6QbtJU8K8UMw+UbQfkGjN1jaRnT6Yl0XYX6vE1xqoZnlZJ1hMMmg0OROQNfHKMaeCIusoEZx7rHmcaAlYbMkyhohH4BzMwI+175+VJXQWZvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722185710; c=relaxed/simple;
-	bh=PtDjrUISr60QwUXFMvRLPZKnXjOG+fGuxAPi1ubpbwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObJFL97pGNw3JDt4oDl5++lz1uR42EZoskf6pgP0vCD/j6lhk7tDicmbePi/lx/X6GunkcXCsBgzWQNZwaiGUdDtqLu+k7GV3eHr2J+Z+RIHzo0I5TDDlyWkQ33meLWJiZoDZjwTsNtwQcymMGGPDU9k12ADbVFrBMJd5WkdJFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=durendal.co.uk; spf=none smtp.mailfrom=durendal.co.uk; arc=none smtp.client-ip=212.159.14.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=durendal.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=durendal.co.uk
-Received: from localhost ([146.198.41.26])
-	by smtp with ESMTPA
-	id Y77isWfWbLOPVY77jsybKP; Sun, 28 Jul 2024 17:51:57 +0100
-X-Clacks-Overhead: "GNU Terry Pratchett"
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.4 cv=UsvANPwB c=1 sm=1 tr=0 ts=66a6772d
- a=uPaVN7U6Dr8slOeZeejB6w==:117 a=uPaVN7U6Dr8slOeZeejB6w==:17
- a=kj9zAlcOel0A:10 a=nKSMVCQS0CXgLSExdPYA:9 a=CjuIK1q_8ugA:10
-X-AUTH: gnulinux@:2500
-Date: Sun, 28 Jul 2024 17:51:54 +0100
-From: Rob <rob@durendal.co.uk>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Christian Heusel <christian@heusel.eu>, Borislav Petkov <bp@alien8.de>,
-	regressions@lists.linux.dev, x86@kernel.org,
-	Joerg Roedel <joro@8bytes.org>, Tony Luck <tony.luck@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Paul Menzel <pmenzel@molgen.mpg.de>, Lyude Paul <lyude@redhat.com>
-Subject: Re: [PATCH] x86/apic: Remove logical destination mode for 64-bit
-Message-ID: <ZqZ3Kp2NVctgstxs@vendhya2>
-References: <5e08cab0-c6b5-4169-8d42-ddb0ffb4a6c9@heusel.eu>
- <20240725105029.GAZqIt9aLsIaG7JqN5@fat_crate.local>
- <12df8b45-6100-4c8b-b82a-a6a75bed2e05@heusel.eu>
- <87a5i4whoz.ffs@tglx>
- <ZqQSmw51ihns03ob@vendhya2>
- <ZqQl79UhhSQ5IobX@vendhya2>
- <8734nvuvrs.ffs@tglx>
- <ZqTufKvJKvotC-o_@vendhya2>
- <87cymyua9j.ffs@tglx>
- <877cd5u671.ffs@tglx>
+	s=arc-20240116; t=1722185846; c=relaxed/simple;
+	bh=x8snrZvy7qqfWcPL4D+4iazHY+cNsrtO96qR2r9AZxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jFIAVSErqQ3LInRBnZRWGa27YEDheUFZ7bDkohvcsNxjQ5S3LutRYtHkzXeaIPoHf6plZDrPdWiJ4z38VvdVTgBkMZVBtaPo8AwAu0cpKXcHzZoOdZJob6EiJOTR60a3eN+KLRfPrZcroIzSsWXiNlAIv9DCyn5ADZCmEATwVqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Hg5xyTC+; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so43517381fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722185842; x=1722790642; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9SevfUKt73kXPb/ImW5YVNB1cegaWMrvDCx6UH1DIs=;
+        b=Hg5xyTC+HXbrpnfVE0XMhEWARRtX4vKqLxgMYwZk4e8tIdCUoTDxp4xpPjLGFpFwND
+         u/A/2hZEzqXFwAJaqazXDBJAdxh/Ww8SOfxXw9jDOq5LzMU1InywVHMVkqS8xUF1JXDP
+         FFNRPNg4r/pnI7ttjGORcpLUlCd8JyIz5z7+Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722185842; x=1722790642;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g9SevfUKt73kXPb/ImW5YVNB1cegaWMrvDCx6UH1DIs=;
+        b=n3ND6BeTCehFv7I7ieeJrleXbqTdiOPYE07dPNW2e4aTT9aNtKgP0JVfGvEJYeJ3ka
+         86O0ujCFV/I+/bnxOvvjosZKK9tVbVEbxhWDu9jccOu9gyLTpyC2Jm2Svt4ALD6R6c15
+         bLm69vgSHzxDv7FPCvgHTFM3Qo2f2N+6gC4axI/S8DcJ6mRtSk+q0Nj5NI/khpfwdFSr
+         MsjS4LGQ2F0u25oU88tB6ag4U2qwD2cnmySHIZO6E3l1xf/TnrwEAOnxRFGqpylrCmGy
+         JbSqoOlWX73riPgT5/gjmh+LwvQfPZ/um8Jn6NMdhuVO6sGyudq+pClB0XbWRv3ZSfv4
+         yu6w==
+X-Gm-Message-State: AOJu0Yyfs08eQp4l+yfs4014uczyNaR3gZ4+sr2STb5FlVQERZdeBgxI
+	Ea4Rv1WYC9815uJetOTDTLsYV9XeXHAe6g7yRv33P9t8UX/8pGZcx8BIr2wc8Vx7u189/tCfiTq
+	r7QRQWg==
+X-Google-Smtp-Source: AGHT+IFSiQTk3Yykm5FaAUq4930enILDf0xksJbeiHLcAm3sMIZwQ21TsXQqcxDBIafbtuztS/iCfA==
+X-Received: by 2002:a2e:720b:0:b0:2ef:2658:98f2 with SMTP id 38308e7fff4ca-2f12ee1bcacmr37245001fa.33.1722185841456;
+        Sun, 28 Jul 2024 09:57:21 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590aa3sm4552951a12.31.2024.07.28.09.57.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 09:57:20 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a10835480bso4258425a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:57:20 -0700 (PDT)
+X-Received: by 2002:a50:a41c:0:b0:5a7:464a:ab9 with SMTP id
+ 4fb4d7f45d1cf-5b020ea8da9mr3235857a12.21.1722185840503; Sun, 28 Jul 2024
+ 09:57:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <877cd5u671.ffs@tglx>
-X-CMAE-Envelope: MS4xfOjCNNLoBDkg1oT302jRlY8EeyabyZWpGe6WHICHQEk1jB4lwYskHOi+/ceW9Yeq/i8a7EOn6JBDHt/MHWyWIRzXqMzeRnIplUl55YtpESqHW98OUEI/
- KVsM9Y0NTuwn3tNJ4TAOPNV5EeNiODbRvltFKyfixWx57x135pEOZdj/Br+gNjDE6YrARLqoLm+1CQ==
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com> <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
+In-Reply-To: <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sun, 28 Jul 2024 09:57:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjbP7cTOYWusAS-Zg8_YbVBGrNLmJBg3wrhKN7C09CsbA@mail.gmail.com>
+Message-ID: <CAHk-=wjbP7cTOYWusAS-Zg8_YbVBGrNLmJBg3wrhKN7C09CsbA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] minmax: Simplify signedness check
+To: David Laight <David.Laight@aculab.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-* Thomas Gleixner (tglx@linutronix.de) wrote:
->Logical destination mode of the local APIC is used for systems with up to
->8 CPUs. It has an advantage over physical destination mode as it allows to
->target multiple CPUs at once with IPIs.
+On Sun, 28 Jul 2024 at 07:21, David Laight <David.Laight@aculab.com> wrote:
 >
->That advantage was definitely worth it when systems with up to 8 CPUs
->were state of the art for servers and workstations, but that's history.
->
->Aside of that there are systems which fail to work with logical destination
->mode as the ACPI/DMI quirks show and there are AMD Zen1 systems out there
->which fail when interrupt remapping is enabled. The latter can be cured by
->firmware updates, but not all OEMs distribute the required changes.
->
->Physical destination mode is guaranteed to work because it is the only way
->to get a CPU up and running via the INIT/INIT/STARTUP sequence.
->
->As the number of CPUs keeps increasing, logical destination mode becomes a
->less used code path so there is no real good reason to keep it around.
->
->Therefore remove logical destination mode support for 64-bit and default to
->physical destination mode.
+> +/* Allow if both x and y are valid for either signed or unsigned compares. */
+> +#define __types_ok(x, y)                               \
+> +       ((__is_ok_signed(x) && __is_ok_signed(y)) ||    \
+> +        (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
 
-Thanks Chris for applying the patch for me.
+This seems horrendous, exactly because it expands both x and y twice.
+And the "expand multiple times" was really the fundamental problem.
 
-Thomas - The patched kernel boots successfully.  I held off updating the 
-BIOS so there can be no ambiguity.
+Why not just change the model to say it's a bitmask of "signedness
+bits", the bits are "signed ok" and "unsigned ok", and turn it into
 
-Thanks,
+  /* Signedness matches? */
+  #define __types_ok(x, y) \
+     (__signedness_bits(x) & __signedness_bits(y))
 
-Rob
+and __signedness_ok() simply does something like "1 if unsigned type,
+2 if signed type, 3 if signed positive integer".
 
->
->Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->---
-> arch/x86/include/asm/apic.h         |    8 --
-> arch/x86/kernel/apic/apic_flat_64.c |  119 ++----------------------------------
-> 2 files changed, 7 insertions(+), 120 deletions(-)
->
->--- a/arch/x86/include/asm/apic.h
->+++ b/arch/x86/include/asm/apic.h
->@@ -345,20 +345,12 @@ extern struct apic *apic;
->  * APIC drivers are probed based on how they are listed in the .apicdrivers
->  * section. So the order is important and enforced by the ordering
->  * of different apic driver files in the Makefile.
->- *
->- * For the files having two apic drivers, we use apic_drivers()
->- * to enforce the order with in them.
->  */
-> #define apic_driver(sym)					\
-> 	static const struct apic *__apicdrivers_##sym __used		\
-> 	__aligned(sizeof(struct apic *))			\
-> 	__section(".apicdrivers") = { &sym }
->
->-#define apic_drivers(sym1, sym2)					\
->-	static struct apic *__apicdrivers_##sym1##sym2[2] __used	\
->-	__aligned(sizeof(struct apic *))				\
->-	__section(".apicdrivers") = { &sym1, &sym2 }
->-
-> extern struct apic *__apicdrivers[], *__apicdrivers_end[];
->
-> /*
->--- a/arch/x86/kernel/apic/apic_flat_64.c
->+++ b/arch/x86/kernel/apic/apic_flat_64.c
->@@ -8,129 +8,25 @@
->  * Martin Bligh, Andi Kleen, James Bottomley, John Stultz, and
->  * James Cleverdon.
->  */
->-#include <linux/cpumask.h>
-> #include <linux/export.h>
->-#include <linux/acpi.h>
->
->-#include <asm/jailhouse_para.h>
-> #include <asm/apic.h>
->
-> #include "local.h"
->
->-static struct apic apic_physflat;
->-static struct apic apic_flat;
->-
->-struct apic *apic __ro_after_init = &apic_flat;
->-EXPORT_SYMBOL_GPL(apic);
->-
->-static int flat_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
->-{
->-	return 1;
->-}
->-
->-static void _flat_send_IPI_mask(unsigned long mask, int vector)
->-{
->-	unsigned long flags;
->-
->-	local_irq_save(flags);
->-	__default_send_IPI_dest_field(mask, vector, APIC_DEST_LOGICAL);
->-	local_irq_restore(flags);
->-}
->-
->-static void flat_send_IPI_mask(const struct cpumask *cpumask, int vector)
->-{
->-	unsigned long mask = cpumask_bits(cpumask)[0];
->-
->-	_flat_send_IPI_mask(mask, vector);
->-}
->-
->-static void
->-flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
->-{
->-	unsigned long mask = cpumask_bits(cpumask)[0];
->-	int cpu = smp_processor_id();
->-
->-	if (cpu < BITS_PER_LONG)
->-		__clear_bit(cpu, &mask);
->-
->-	_flat_send_IPI_mask(mask, vector);
->-}
->-
->-static u32 flat_get_apic_id(u32 x)
->+static u32 physflat_get_apic_id(u32 x)
-> {
-> 	return (x >> 24) & 0xFF;
-> }
->
->-static int flat_probe(void)
->+static int physflat_probe(void)
-> {
-> 	return 1;
-> }
->
->-static struct apic apic_flat __ro_after_init = {
->-	.name				= "flat",
->-	.probe				= flat_probe,
->-	.acpi_madt_oem_check		= flat_acpi_madt_oem_check,
->-
->-	.dest_mode_logical		= true,
->-
->-	.disable_esr			= 0,
->-
->-	.init_apic_ldr			= default_init_apic_ldr,
->-	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
->-
->-	.max_apic_id			= 0xFE,
->-	.get_apic_id			= flat_get_apic_id,
->-
->-	.calc_dest_apicid		= apic_flat_calc_apicid,
->-
->-	.send_IPI			= default_send_IPI_single,
->-	.send_IPI_mask			= flat_send_IPI_mask,
->-	.send_IPI_mask_allbutself	= flat_send_IPI_mask_allbutself,
->-	.send_IPI_allbutself		= default_send_IPI_allbutself,
->-	.send_IPI_all			= default_send_IPI_all,
->-	.send_IPI_self			= default_send_IPI_self,
->-	.nmi_to_offline_cpu		= true,
->-
->-	.read				= native_apic_mem_read,
->-	.write				= native_apic_mem_write,
->-	.eoi				= native_apic_mem_eoi,
->-	.icr_read			= native_apic_icr_read,
->-	.icr_write			= native_apic_icr_write,
->-	.wait_icr_idle			= apic_mem_wait_icr_idle,
->-	.safe_wait_icr_idle		= apic_mem_wait_icr_idle_timeout,
->-};
->-
->-/*
->- * Physflat mode is used when there are more than 8 CPUs on a system.
->- * We cannot use logical delivery in this case because the mask
->- * overflows, so use physical mode.
->- */
-> static int physflat_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
-> {
->-#ifdef CONFIG_ACPI
->-	/*
->-	 * Quirk: some x86_64 machines can only use physical APIC mode
->-	 * regardless of how many processors are present (x86_64 ES7000
->-	 * is an example).
->-	 */
->-	if (acpi_gbl_FADT.header.revision >= FADT2_REVISION_ID &&
->-		(acpi_gbl_FADT.flags & ACPI_FADT_APIC_PHYSICAL)) {
->-		printk(KERN_DEBUG "system APIC only can use physical flat");
->-		return 1;
->-	}
->-
->-	if (!strncmp(oem_id, "IBM", 3) && !strncmp(oem_table_id, "EXA", 3)) {
->-		printk(KERN_DEBUG "IBM Summit detected, will use apic physical");
->-		return 1;
->-	}
->-#endif
->-
->-	return 0;
->-}
->-
->-static int physflat_probe(void)
->-{
->-	return apic == &apic_physflat || num_possible_cpus() > 8 || jailhouse_paravirt();
->+	return 1;
-> }
->
-> static struct apic apic_physflat __ro_after_init = {
->@@ -146,7 +42,7 @@ static struct apic apic_physflat __ro_af
-> 	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
->
-> 	.max_apic_id			= 0xFE,
->-	.get_apic_id			= flat_get_apic_id,
->+	.get_apic_id			= physflat_get_apic_id,
->
-> 	.calc_dest_apicid		= apic_default_calc_apicid,
->
->@@ -166,8 +62,7 @@ static struct apic apic_physflat __ro_af
-> 	.wait_icr_idle			= apic_mem_wait_icr_idle,
-> 	.safe_wait_icr_idle		= apic_mem_wait_icr_idle_timeout,
-> };
->+apic_driver(apic_physflat);
->
->-/*
->- * We need to check for physflat first, so this order is important.
->- */
->-apic_drivers(apic_physflat, apic_flat);
->+struct apic *apic __ro_after_init = &apic_physflat;
->+EXPORT_SYMBOL_GPL(apic);
+Something like (very very handwavy, very very untested):
 
--- 
-Rob Newcater
+   __builtin_choose_expr(is_signed_type(typeof(x)),
+        2+__if_constexpr(x,(x)>0,0),
+        1)
+
+Actually, I think that "__if_constexpr()" could very well be "if known
+positive value", ie 'x' itself doesn't have to be constant, but "x>0"
+has to be a constant (the difference being that the compiler may be
+able to tell that some variable is always positive, even if it's a
+variable):
+
+  #define statically_true(x) __builtin_constant_p((x),(x),0)
+  #define is_positive_value(x) statically_true((x)>=0)
+
+and then use
+
+   __builtin_choose_expr(is_signed_type(typeof(x)),
+        2+is_positive_value(x), 1)
+
+and yes, I realize I count zero as a positive value, but writing out
+"nonnegative()" is annoying and we never care.
+
+I guess we could say "is_unsigned_value()"?
+
+       Linus
 
