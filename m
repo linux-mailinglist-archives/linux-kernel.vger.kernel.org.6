@@ -1,347 +1,127 @@
-Return-Path: <linux-kernel+bounces-264913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2DF93EA11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AD193EA13
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BC982813BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E7FAB21625
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD9383CD9;
-	Sun, 28 Jul 2024 22:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619B67E563;
+	Sun, 28 Jul 2024 22:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jG5eTec7"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FMiAHxl5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDE980BF2;
-	Sun, 28 Jul 2024 22:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722206729; cv=fail; b=BVWQbKYIjLT+ysECxyRUeLrc5SCvCoETsrvWY83X0cN83O+KTrNYCOpJGTURFUfoRKBvAWnzVf944kYNaJq24G0TFGQvi1BJc8XM5vNHKF//679pez/0cFirpcno56JB7fbtM8Y8VZU1tpX9UwKtY7ZMA8j6uAYItR/a2e5ztRk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722206729; c=relaxed/simple;
-	bh=Gfiuhf1x10vOfLqQFYGDJDpyMwXhX8B1cl0yt6Di5JM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N9PEdsGr0EbtFIhYackjbvHzlr5BX29ahLfArG4EGrOWnwLlOXbrX7YaS/Gs4bCnm2KNsc20bePqsmXohqSQKjPGDUGwTUZXwThnAFP00ZiDc/2rPWl8QfbaXoP6EyP0dH8x6d8u4+nALcaSUbHzjojA3ZnuSC7q8j3HpCOLQYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jG5eTec7; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PVCtArZ+4ogPJSx6EcmjmFagevdZWoihZFedPMkQspGILol+za7xoE5m/3rjBOvhwwq1DAfTBIGPW84sPL8b0IXc27qIXWJck8+FanJTTlbmuvu3g1CN43LXVnCgoYIpiHk8KuBrvhCEborIclugA8RnMyNkN86/Vv03Q0i4LC6LhvUfoKIxA8n2nzy8ClIuGDPNNQ1CSe372ble5xShf6O3cftsN98f5xmOiHSkB14N5Nwuyihrmp4yRA3HAE4hQuMRpbcvdjEOojkBy3HmdETeh38GpMmROXiqgQ9OIxZmluiN2dKv2ywMu+zwOh47JwcmohaGqU13FEAkTdiAsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BNhySSY7sJdkTbpwdHnepRwQDVNL5WJN/z17jFv9MUw=;
- b=QvxhknOcJB1+xIyfwdOrIFzVKTvLNUKkIglO6fRWmn6uIoipF/RwY3Tpxg7S+XU01wGAml4jGSj5vVnwmmtB+E91Tpo8q4hL5m+bz4s+4qzMNDxJ4vkhzFAkStyvzC8+8LVQLbE3nERqp3CvUAKHcZKqrr8SjSLjluLYaNdd819pVG7q9COrqPmFLzHLRhv5n43yKd+IcdtlROQa22ca4mBD1D4AfxP5ZN5mkeqVJK9d7dvB2c/s+eHgKh1ArPJ+hTjAtk6irzkSgC6/10WEalgOYedNkZmc1y70o8w+2kIZf9kkQVOJKqQ4IEhxxSR5H8wPuhsDy9cJiwPLu4MzXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BNhySSY7sJdkTbpwdHnepRwQDVNL5WJN/z17jFv9MUw=;
- b=jG5eTec7NaUPf9r/G4ZnxAiaoTUmE+zsavMW1Q5yWWic715H6CE3Skv1WfHJzsLkbCcO712BY1hl6FjOV4c9Hd56WAE7na0I3xKD1tJigjq525md66bS6789tpThIDz5lKI/1Mf9i8Y5NVs/EBVJi59JBPZKiP4kC5eS/kCf7iK6fI/p5A53b4KN7Jh2fL+YoxpUtaNaMRt/FZkkg4lUXuJxSbPURRFu4+ObBN0ao7OGoHeQ0GsKKrvoA875pmsxxoaEUqBhssY66KVybvkRTVxR1JZ/3CXFDI355vTwFZvntZy7mRC0Zx8Y0X3kdRvjyJ8iqFWsjGs9R2Gg7DbJyw==
-Received: from BL1PR13CA0100.namprd13.prod.outlook.com (2603:10b6:208:2b9::15)
- by SJ1PR12MB6028.namprd12.prod.outlook.com (2603:10b6:a03:489::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Sun, 28 Jul
- 2024 22:45:21 +0000
-Received: from BL6PEPF00020E62.namprd04.prod.outlook.com
- (2603:10b6:208:2b9:cafe::19) by BL1PR13CA0100.outlook.office365.com
- (2603:10b6:208:2b9::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28 via Frontend
- Transport; Sun, 28 Jul 2024 22:45:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF00020E62.mail.protection.outlook.com (10.167.249.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Sun, 28 Jul 2024 22:45:20 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 28 Jul
- 2024 15:45:12 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 28 Jul
- 2024 15:45:11 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 28 Jul 2024 15:45:10 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH v10 9/9] iommu/tegra241-cmdqv: Limit CMDs for guest owned VINTF
-Date: Sun, 28 Jul 2024 15:44:54 -0700
-Message-ID: <36795f48022361769fc22f15309299f92a415c54.1722206275.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1722206275.git.nicolinc@nvidia.com>
-References: <cover.1722206275.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02277B3FA;
+	Sun, 28 Jul 2024 22:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722206745; cv=none; b=lCvzzYxxevZ5AeeVV5RdR8dxsVOQQjsopmXDD73ybOx69TtfX+nbCVur+D5Z60MNt6dlv34/eV1QpgvRAkysrN0PzHwFW5sl2OMIXNE2RY7lFG3oVSdsxuAcJ0E4dG9lrAt77vbgN6vANBBLLQujuUP4Tt8NSY55mnh+DmA48Tc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722206745; c=relaxed/simple;
+	bh=O1xXYGl00L4DvJO1d7fD0JL5ThPUNdGMnSjG2CF9xU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n9X54sYnNscQTKqL910e6pdcjHL92Y5Sv7DwyyMzv2MrU8JamgROYoEoRijLe17fg51GVrsdvJJpukVAcBrhArcfPFDaDPMzvIvYluZTZwZpncusDlNlaAoxZ7skkdIUKp+XDh8FXOy+26wA/lfC6pFcZnT+KXDpxThEPqprU+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FMiAHxl5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722206740;
+	bh=fdCcSFS34XOl6p8GwbWWemwHvbTEXMBsd/hmSHxACRs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FMiAHxl507bZapTrOGfC21o1rcsBH29cbwZCY48tERqbf9FfWx2Ld8afKMxSn0dUH
+	 ndQHKVcq2xIMJdbH9+hEV6HlRXL1h/K3hqvE76YqJs0nPUc28rNX0+zQWWXJRqtfYF
+	 cTTj1JXwG5LQyURDqAHCzA5iL1inL0UBJj2ZE34YtdFfp6vlW/6OqLvo3vmpdDSVwy
+	 dNDxnWOoQ26NqT/bkkmjAgqMrkOXpE4Gv0dVjFxVXY1s/1FDhaPH0ZFne2WY8+NWSI
+	 HChOrMW17Iqwz+pX7lS3TIoGKD7G6yDs/XbkN7LuB+uoZKcRNP2K5hWKHN0nRvDgD9
+	 jP5A0QVE4RAcQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WXGmN4FCXz4x6n;
+	Mon, 29 Jul 2024 08:45:40 +1000 (AEST)
+Date: Mon, 29 Jul 2024 08:45:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Wei Yang <richard.weiyang@gmail.com>, Yury
+ Norov <yury.norov@gmail.com>
+Subject: Re: linux-next: manual merge of the mm tree with Linus' tree
+Message-ID: <20240729084539.4c501073@canb.auug.org.au>
+In-Reply-To: <20240729084117.3fd74b2c@canb.auug.org.au>
+References: <20240729084117.3fd74b2c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E62:EE_|SJ1PR12MB6028:EE_
-X-MS-Office365-Filtering-Correlation-Id: 796aa0ce-6b70-4cdc-b00d-08dcaf56f5a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xpNgy9O1Tb/uyCq1rhABmlBuCon1NhRXwGbLEyNLw3nJi5gYPwUXkB0RLSb2?=
- =?us-ascii?Q?YYqkMQo87vQ7JoW6JY2IQnvmBponC/4HRUNjASsnCbvXa0j3U5k2xJ/tpQTJ?=
- =?us-ascii?Q?pezg140WwCBjPLFF+TSQ6SUJhZb+U1kbxMDfnah07Xk2mA0LxwmjOZ4HaXjh?=
- =?us-ascii?Q?EiCN3ggDz0JFFHduJfW/Ce8dyiEjwqXShF5O+cPapi8Re61p5Jv+iH1aj3YN?=
- =?us-ascii?Q?oZxns86oYbk6MFWchEfMC89y31LepYg1FnsjpGaPchbFkWMjZM1uBIoHEo6I?=
- =?us-ascii?Q?7gFIjbjogCQA9XhfjOZK61ONzFQ09EzhRImF/20naWLmzwfqiwPWz8rSyV1w?=
- =?us-ascii?Q?bwfYMm4/YowgHunKuP30mo1KiG4UL6dwnTyMYHbO2Cblow+R/nPrMyzKf7O1?=
- =?us-ascii?Q?x006oBIgMEpEhQdtNOkLcjYFx1MLAJ1GiFS1AmR+Po7V/QyHppatTAq+52jO?=
- =?us-ascii?Q?aj7yZgH+ir8X1Uj+NTudlRO9wEZDT4H9qoqwh6Lx7QUxTjfCwudGS9y828sv?=
- =?us-ascii?Q?xWe3mmIaYyT8Z0yup2I/WyQf9AU9+klVZVcevUkEg7WlRIXa2QMtFh3NY7CQ?=
- =?us-ascii?Q?ZphWYel9F2lahCwA6VCR53IPg+U5rAWmQ9UisvZs+5E8zG05JkVJNTb0LAAF?=
- =?us-ascii?Q?7CIG9Xsf4oTBcdPJm1tIhT/mM0XIeu+sXkCBh8ubpoKAFG3Jk2CspH9LBGhg?=
- =?us-ascii?Q?ZweXczFDsrMgmgZl7Jw6zBotkOL7FXIA6DYHwzhT4EZjKQA64ThwUJ2rBfAI?=
- =?us-ascii?Q?302WtE1iEEFWhQ94A5Nf/oLk4vQoK1Ry0J34Dl9KeZs0vpBb/MjVcBUpuOV4?=
- =?us-ascii?Q?YodTOkb2i2oWdAOa0szCnAykoORvMEiU8lPaa84a9iS5PqdN1asttEn2NaQ1?=
- =?us-ascii?Q?pWx0eXFFiXclU9KaNyP0aOc7g2f/6Anjf5IbgcHTYDcbDjSfkzgOr+tK4qo7?=
- =?us-ascii?Q?J8rm9ogWtoj+x0jPd07hG9wyOQVbzh9JurTFJz5d5pR+Cga8STjo4LOmyIII?=
- =?us-ascii?Q?QsPqK6R4HJk4+w7GhDro+nUTgdIaTF0Khok6wPYNp8mukpvRXh5vOWzqRj1H?=
- =?us-ascii?Q?/2DcawUNNT1GDld1kzqppOwQoRWdJDhE9BT7ihKhoSC7fApIpORIK+VlaA5G?=
- =?us-ascii?Q?JREIY4vKMX215KuHSeGeieVc4Qh7HUg1GOikJawlU0zhnWB5MfFBHVMSWnub?=
- =?us-ascii?Q?RySJsV0c7G3aisO3C3cUTbXX0htZHbxB5zGkRmwtgLR8HhJMyYC7zbj5QXP/?=
- =?us-ascii?Q?+Bpvd6z8+mXFuSOTcYg6VtBbDrq+Lw92E9GeR8uB2uLtfRkkSZ4jtayr8Xz5?=
- =?us-ascii?Q?/V9wXAVGA67sAtBhTLz0HD3zlzae3qjtoL1AobiafG7cdn/D7OHCK6UrdKSb?=
- =?us-ascii?Q?pitkF7ajVcLVaxjD+x8LQPsQ1+uVTrRNvzIsfV64HXDY3Au/t24XBdU330X/?=
- =?us-ascii?Q?pBifkKdnl1XCKgP1li1xlYE8XnOeiodA?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2024 22:45:20.1620
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 796aa0ce-6b70-4cdc-b00d-08dcaf56f5a4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E62.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6028
+Content-Type: multipart/signed; boundary="Sig_/g3+aBa6kmipLyt.b7nnUy.r";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When VCMDQs are assigned to a VINTF owned by a guest (HYP_OWN bit unset),
-only TLB and ATC invalidation commands are supported by the VCMDQ HW. So,
-add a new helper to scan the input cmd to make sure it is supported when
-selecting a queue, though this assumes that SMMUv3 driver will only add
-the same type of commands into an arm_smmu_cmdq_batch as it does today.
+--Sig_/g3+aBa6kmipLyt.b7nnUy.r
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Note that the guest VM shouldn't have HYP_OWN bit being set regardless of
-guest kernel driver writing it or not, i.e. the hypervisor running in the
-host OS should wire this bit to zero when trapping a write access to this
-VINTF_CONFIG register from a guest kernel.
+Hi all,
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 22 +++++++-----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  3 +-
- .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 35 ++++++++++++++++++-
- 3 files changed, 49 insertions(+), 11 deletions(-)
+On Mon, 29 Jul 2024 08:41:17 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the mm tree got a conflict in:
+>=20
+>   tools/testing/radix-tree/bitmap.c
+> (renamed to tools/testing/shared/bitmap.c in the mm-unstable branch of
+> the mm tree).
+>=20
+> between commit:
+>=20
+>   692a68ee9c3c ("radix tree test suite: put definition of bitmap_clear() =
+into lib/bitmap.c")
+>=20
+> from Linus' tree and commit:
+>=20
+>   28b9ae6595be ("tools: separate out shared radix-tree components")
+>=20
+> from the mm-unstable branch of the mm tree.
+>=20
+> I fixed it up (I deleted the file) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 18d940c65e2ca..8ff8e264d5e7c 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -336,12 +336,13 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- 	return 0;
- }
- 
--static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
-+static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu,
-+					       u8 opcode)
- {
- 	struct arm_smmu_cmdq *cmdq = NULL;
- 
- 	if (smmu->impl && smmu->impl->get_secondary_cmdq)
--		cmdq = smmu->impl->get_secondary_cmdq(smmu);
-+		cmdq = smmu->impl->get_secondary_cmdq(smmu, opcode);
- 
- 	return cmdq ?: &smmu->cmdq;
- }
-@@ -889,7 +890,7 @@ static int __arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
- 	}
- 
- 	return arm_smmu_cmdq_issue_cmdlist(
--		smmu, arm_smmu_get_cmdq(smmu), cmd, 1, sync);
-+		smmu, arm_smmu_get_cmdq(smmu, ent->opcode), cmd, 1, sync);
- }
- 
- static int arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
-@@ -905,10 +906,13 @@ static int arm_smmu_cmdq_issue_cmd_with_sync(struct arm_smmu_device *smmu,
- }
- 
- static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
--				     struct arm_smmu_cmdq_batch *cmds)
-+				     struct arm_smmu_cmdq_batch *cmds,
-+				     u8 opcode)
- {
-+	WARN_ON_ONCE(!opcode);
-+
- 	cmds->num = 0;
--	cmds->cmdq = arm_smmu_get_cmdq(smmu);
-+	cmds->cmdq = arm_smmu_get_cmdq(smmu, opcode);
- }
- 
- static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
-@@ -1195,7 +1199,7 @@ static void arm_smmu_sync_cd(struct arm_smmu_master *master,
- 		},
- 	};
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, CMDQ_OP_CFGI_CD);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.cfgi.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(smmu, &cmds, &cmd);
-@@ -2046,7 +2050,7 @@ static int arm_smmu_atc_inv_master(struct arm_smmu_master *master,
- 
- 	arm_smmu_atc_inv_to_cmd(ssid, 0, 0, &cmd);
- 
--	arm_smmu_cmdq_batch_init(master->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(master->smmu, &cmds, CMDQ_OP_ATC_INV);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.atc.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(master->smmu, &cmds, &cmd);
-@@ -2084,7 +2088,7 @@ int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
- 	if (!atomic_read(&smmu_domain->nr_ats_masters))
- 		return 0;
- 
--	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds, CMDQ_OP_ATC_INV);
- 
- 	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
- 	list_for_each_entry(master_domain, &smmu_domain->devices,
-@@ -2166,7 +2170,7 @@ static void __arm_smmu_tlb_inv_range(struct arm_smmu_cmdq_ent *cmd,
- 			num_pages++;
- 	}
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, cmd->opcode);
- 
- 	while (iova < end) {
- 		if (smmu->features & ARM_SMMU_FEAT_RANGE_INV) {
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 367f5e160af4e..c7f34a5c31f3f 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -633,7 +633,8 @@ struct arm_smmu_strtab_cfg {
- struct arm_smmu_impl {
- 	int (*device_reset)(struct arm_smmu_device *smmu);
- 	void (*device_remove)(struct arm_smmu_device *smmu);
--	struct arm_smmu_cmdq *(*get_secondary_cmdq)(struct arm_smmu_device *smmu);
-+	struct arm_smmu_cmdq *(*get_secondary_cmdq)(struct arm_smmu_device *smmu,
-+			       u8 opcode);
- };
- 
- #ifdef CONFIG_TEGRA241_CMDQV
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 891302fb20901..13c57a5fb758c 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -143,6 +143,7 @@ struct tegra241_vcmdq {
-  * struct tegra241_vintf - Virtual Interface
-  * @idx: Global index in the CMDQV
-  * @enabled: Enable status
-+ * @hyp_own: Owned by hypervisor (in-kernel)
-  * @cmdqv: Parent CMDQV pointer
-  * @lvcmdqs: List of logical VCMDQ pointers
-  * @base: MMIO base address
-@@ -151,6 +152,7 @@ struct tegra241_vintf {
- 	u16 idx;
- 
- 	bool enabled;
-+	bool hyp_own;
- 
- 	struct tegra241_cmdqv *cmdqv;
- 	struct tegra241_vcmdq **lvcmdqs;
-@@ -300,8 +302,25 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
- 
- /* Command Queue Function */
- 
-+static bool tegra241_vintf_support_cmd(struct tegra241_vintf *vintf, u8 opcode)
-+{
-+       /* Hypervisor-owned VINTF can execute any command in its VCMDQs */
-+	if (READ_ONCE(vintf->hyp_own))
-+		return true;
-+
-+	/* Guest-owned VINTF must check against the list of supported CMDs */
-+	switch (opcode) {
-+	case CMDQ_OP_TLBI_NH_ASID:
-+	case CMDQ_OP_TLBI_NH_VA:
-+	case CMDQ_OP_ATC_INV:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static struct arm_smmu_cmdq *
--tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-+tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu, u8 opcode)
- {
- 	struct tegra241_cmdqv *cmdqv =
- 		container_of(smmu, struct tegra241_cmdqv, smmu);
-@@ -316,6 +335,10 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
- 	if (!READ_ONCE(vintf->enabled))
- 		return NULL;
- 
-+	/* Unsupported CMD go for smmu->cmdq pathway */
-+	if (!tegra241_vintf_support_cmd(vintf, opcode))
-+		return NULL;
-+
- 	/*
- 	 * Select a LVCMDQ to use. Here we use a temporal solution to
- 	 * balance out traffic on cmdq issuing: each cmdq has its own
-@@ -405,12 +428,22 @@ static int tegra241_vintf_hw_init(struct tegra241_vintf *vintf, bool hyp_own)
- 	tegra241_vintf_hw_deinit(vintf);
- 
- 	/* Configure and enable VINTF */
-+	/*
-+	 * Note that HYP_OWN bit is wired to zero when running in guest kernel,
-+	 * whether enabling it here or not, as !HYP_OWN cmdq HWs only support a
-+	 * restricted set of supported commands.
-+	 */
- 	regval = FIELD_PREP(VINTF_HYP_OWN, hyp_own);
- 	writel(regval, REG_VINTF(vintf, CONFIG));
- 
- 	ret = vintf_write_config(vintf, regval | VINTF_EN);
- 	if (ret)
- 		return ret;
-+	/*
-+	 * As being mentioned above, HYP_OWN bit is wired to zero for a guest
-+	 * kernel, so read it back from HW to ensure that reflects in hyp_own
-+	 */
-+	vintf->hyp_own = !!(VINTF_HYP_OWN & readl(REG_VINTF(vintf, CONFIG)));
- 
- 	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++) {
- 		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx]) {
--- 
-2.43.0
+Actually, due to this and the conflict in
+tools/testing/radix-tree/Makefile, I decided to drop the
+mm tree for one more day while it gets sorted out.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/g3+aBa6kmipLyt.b7nnUy.r
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmamyhMACgkQAVBC80lX
+0GxIFgf/XXP8wsZeAsbOBoY+8yt5+QcRqinB0UdrxwJWRQoG9nivxwZipLkwv52h
+6FDefyO59PFT7ppyxa1Yr0D7hTSkoroS0HaA4dbVf23DGvtdzX/8E8DplNRtWkvZ
+jyoOZUkA22HkhggMSV6f2grd111kXPOFFGgcy9/hdKK4x+CvU4+nvFr2KPSy+Q4g
+zZs/BI0w/m+2soOY8DHZ51uEdhpvUnv63cA+WI+yPL2znJRb0MMW3E62eSRbS+V+
+uOC5u6y1WkJOXNQCjBYs0cb9/4v/jqwC+L114NXhysyc+/J4umXwFBT+uBFbYxzB
+zSjvwAnyvaSlktuQp4I7FqcWMl2V7w==
+=mqZ5
+-----END PGP SIGNATURE-----
+
+--Sig_/g3+aBa6kmipLyt.b7nnUy.r--
 
