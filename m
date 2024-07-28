@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-264898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAF293E9F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BF493E9F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5B7B20F8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7691C2134F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04179DC5;
-	Sun, 28 Jul 2024 22:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r9/jcQzM"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3827B3E1;
+	Sun, 28 Jul 2024 22:14:13 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE2678274
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 22:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A347A158
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 22:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722204728; cv=none; b=MSP9LeRzIDQ5PjyoR2puA4gcxYE5aBSTY9gFNSu82aoBavVOkU3/sggaEtroHKRFDh+lCCF7W/Kq4if+NIr8HNmKlpw22+6LDdiI0qA9/z2d0b1SiZBM3E8heCXMWXv5GKGJezjVMmEQcIwHyAntycEHJBJ96rUXTk1YyeGqm18=
+	t=1722204852; cv=none; b=a6HliZ7rYrFO6bLU2VM6Iiy/f4Kv0YJEykiructtVH7YB+8AF4CzXz1RilX1OTyEFMiScZ9xij/Wg17JzM5HmcaxmByCjUkWPki6z1Ruq+2thX6dkImbHCNn6DXUGu+wb7h6I9M0JMLsG8qigGOJ8288XmnlsfFsMisFh4GnSP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722204728; c=relaxed/simple;
-	bh=DqneCZNJdHpYHvrS9Jea1NsFauLawRGSdqgZl2Mgg4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ThPIway1b+XRnMbwxhqDP6GfAF8jpLvZBQabqM7soMs2b05x1svptwkQ3ZZOE9hp/ZDUedZAGNl6iTHR8grATd9JwZLlQ1S/HPLM3Cbg8faFELuK0NFd3mHSe+FIWE76Cz+m6L6BKW3IbNAbYb8PsvWGItWC6oTJP9CNk5YnsSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r9/jcQzM; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722204717; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Y8tZ5sw0h13MXZSP5byipzmW9HMCzdG2caajKfL5w7w=;
-	b=r9/jcQzMp1vdIG3nxlyiepXK7vlyHvwETa+PC6kbgilQcxjtdsLDir84PTItHRev/evAlhypVb08NudrjqR8IDo2sAcOjleafDYDUxqGGbYTjLvKlJyOwEI9ei8AGMrRO/siYqkIAyUQIT7PhLoSDRNB+oG9KIXgsBIgc13rGoI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032019045;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0WBS6vcy_1722204715;
-Received: from 30.27.96.125(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBS6vcy_1722204715)
-          by smtp.aliyun-inc.com;
-          Mon, 29 Jul 2024 06:11:57 +0800
-Message-ID: <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
-Date: Mon, 29 Jul 2024 06:11:54 +0800
+	s=arc-20240116; t=1722204852; c=relaxed/simple;
+	bh=B0EGmmjI8WlEceYL4vqP8Yj6mQFWXhv9JrhFRfagic0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ncFMIy8yLRRyOPx/YcTh+Hd1V9rfKPRwWwouLbImwYmbciKmtj5/KbY/Si7p/CIQmBWulcYwa+SxAge7VeGGUxyKPtFwzD9qMy6+gYhUzRDcyx03dpSePR87th2ieoMlR8gfXV5hacz13po0TWVEfyz4Mr45nBp788s5zJo0W2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-227-JC2wg0YkNCiYh_J5XzjyaQ-1; Sun, 28 Jul 2024 23:14:01 +0100
+X-MC-Unique: JC2wg0YkNCiYh_J5XzjyaQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
+ 2024 23:13:16 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 28 Jul 2024 23:13:16 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Christoph Hellwig" <hch@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, "Andy Shevchenko"
+	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
+	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>
+Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqg///x1wD//+6RQIAAFn6A///XzcA=
+Date: Sun, 28 Jul 2024 22:13:15 +0000
+Message-ID: <b89b80c7060c43f8a937b8021b4fd7cb@AcuMS.aculab.com>
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
+ <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
+ <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
+ <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+ <d949045abc78462ab443b38340ce5c20@AcuMS.aculab.com>
+ <CAHk-=wigkg43sZJKuRuYOzWzj9bxczE2toHNc=yxfyMM3m_kcA@mail.gmail.com>
+In-Reply-To: <CAHk-=wigkg43sZJKuRuYOzWzj9bxczE2toHNc=yxfyMM3m_kcA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
- large folios
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
- <Zqa8NTqKuXkTxzBw@casper.infradead.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <Zqa8NTqKuXkTxzBw@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Hi,
+RnJvbTogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+IFNl
+bnQ6IDI4IEp1bHkgMjAyNCAyMTozMg0KPiANCj4gT24gU3VuLCAyOCBKdWwgMjAyNCBhdCAxMzoy
+MywgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4g
+PiBNSU4oKSAoYW5kIHByb2JhYmx5IHlvdXIgTUlOX1QoKSkgb3VnaHQgdG8gaGF2ZSBhIGNoZWNr
+IGZvcg0KPiA+IGJlaW5nIGEgY29uc3RhbnQgaW4gb3JkZXIgdG8gc3RvcCBtaXN1c2UuDQo+IA0K
+PiBObywgd2UgaGF2ZSBhIG51bWJlciBvZiAicnVudGltZSBjb25zdGFudHMiIHRoYXQgYXJlIGJh
+c2ljYWxseQ0KPiAiY29uc3RhbnRzIiBzZXQgdXAgYXQgYm9vdC10aW1lIGZvciB0aGUgYXJjaGl0
+ZWN0dXJlLGFzIHBvaW50ZWQgb3V0IGJ5DQo+IHRoZSBwb3dlcnBjIHBlb3BsZSBpbiBwcml2YXRl
+Og0KPiANCj4gSWUsIHdlIGhhdmUgYXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL3BhZ2UuaDoNCj4g
+DQo+ICAgICNkZWZpbmUgSFBBR0VfU0hJRlQgaHBhZ2Vfc2hpZnQNCj4gDQo+IGFuZCB0aGVuDQo+
+IA0KPiAgICNkZWZpbmUgSFVHRVRMQl9QQUdFX09SREVSICAgICAgKEhQQUdFX1NISUZUIC0gUEFH
+RV9TSElGVCkNCj4gDQo+IGFuZCB0aGVuDQo+IA0KPiAgICAjZGVmaW5lIHBhZ2VibG9ja19vcmRl
+ciAgICAgICAgIE1JTl9UKHVuc2lnbmVkIGludCwNCj4gSFVHRVRMQl9QQUdFX09SREVSLCBNQVhf
+UEFHRV9PUkRFUikNCj4gDQo+IGFuZCB3ZSByZWFsbHkgKlJFQUxMWSogZG9uJ3Qgd2FudCB0byBm
+b3JjZSB0aGUgY29tcGxpY2F0ZWQgIm1pbl90KCkiDQo+IChvciwgd29yc2UgeWV0LCAibWluKCki
+KSBmdW5jdGlvbnMgaGVyZSBqdXN0IGJlY2F1c2UgdGhlcmUncyBhY3R1YWxseQ0KPiBhIHZhcmlh
+YmxlIGludm9sdmVkLg0KPiANCj4gVGhhdCB2YXJpYWJsZSBnZXRzIGluaXRpYWxpemVkIGVhcmx5
+IGluDQo+IGh1Z2V0bGJwYWdlX2luaXRfZGVmYXVsdHNpemUoKSwgc28gaXQncyAqZWZmZWN0aXZl
+bHkqIGEgY29uc3RhbnQsIGJ1dA0KPiBub3QgYXMgZmFyIGFzIHRoZSBjb21waWxlciBpcyBjb25j
+ZXJuZWQuDQoNCk9rLCBidXQgdGhvc2UgY2FuJ3QgYmUgdXNlZCBhcyBhcnJheSBzaXplcyBvciBj
+b25zdGFudHMuDQpTbyB0aGUgdGVtcG9yYXJpZXMgZG9uJ3QgbWF0dGVyLg0KRG9uJ3QgdGhleSBq
+dXN0IHdvcmsgd2l0aCBtaW4oKSAtIGlmIG5vdCB3aGVyZSBpcyB0aGUgc2lnbmVkbmVzIG1pc21h
+dGNoPw0KDQpQZXJoYXBzIHdlIHdhbnQ6DQoJbWluKCkgLSB0ZW1wb3Jhcmllcywgc2lnbmVkbmVz
+cyBjaGVjay4NCgltaW5fdCgpIC0gdGVtcG9yYXJpZXMgb2YgZ2l2ZW4gdHlwZSwgbWF5YmUgY2hl
+Y2sgc2l6ZSBub3QgcmVkdWNlZD8NCglNSU4oKSAtIG5vIHRlbXBvcmFyaWVzLCBubyBzaWduZWRu
+ZXNzIGNoZWNrLCBvbmx5IHZhbGlkIGZvciBjb25zdGFudHMuDQoJX21pbigpIC0gdGVtcG9yYXJp
+ZXMsIG5vIHNpZ25lZG5lc3MgY2hlY2suDQoJX01JTigpIC0gbm8gdGVtcG9yYXJpZXMsIG5vIHNp
+Z25lZG5lc3MgY2hlY2ssIHZhcmlhYmxlcyBhbGxvd2VkLg0KDQpJJ20gbm90IHN1cmUgd2hlcmUg
+eW91ciBNSU5fVCgpIGZpdHMgaW4gdGhlIGFib3ZlLg0KDQpQZXJzb25hbGx5IEkgdGhpbmsgbWlu
+X3QoKSB3YXMgYSBtaXN0YWtlLg0KT25seSBvbmUgaW5wdXQgY2FuIG5lZWQgYSBjYXN0IGFuZCBh
+biBleHBsaWNpdCBjYXN0IHdvdWxkIGJlIHNhZmVyLg0KDQoJRGF2aWQNCg0KPiANCj4gICAgICAg
+ICAgICBMaW51cw0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9h
+ZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBO
+bzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-On 2024/7/29 05:46, Matthew Wilcox wrote:
-> On Sun, Jul 28, 2024 at 11:49:13PM +0800, Gao Xiang wrote:
->> It was found by compaction stress test when I explicitly enable EROFS
->> compressed files to use large folios, which case I cannot reproduce with
->> the same workload if large folio support is off (current mainline).
->> Typically, filesystem reads (with locked file-backed folios) could use
->> another bdev/meta inode to load some other I/Os (e.g. inode extent
->> metadata or caching compressed data), so the locking order will be:
-> 
-> Umm.  That is a new constraint to me.  We have two other places which
-> take the folio lock in a particular order.  Writeback takes locks on
-> folios belonging to the same inode in ascending ->index order.  It
-> submits all the folios for write before moving on to lock other inodes,
-> so it does not conflict with this new constraint you're proposing.
-
-BTW, I don't believe it's a new order out of EROFS, if you consider
-ext4 or ext2 for example, it will also use sb_bread() (buffer heads
-on bdev inode to trigger some meta I/Os),
-
-e.g. take ext2 for simplicity:
-   ext2_readahead
-     mpage_readahead
-      ext2_get_block
-        ext2_get_blocks
-          ext2_get_branch
-             sb_bread     <-- get some metadata using for this data I/O
-
-> 
-> The other place is remap_file_range().  Both inodes in that case must be
-> regular files,
->          if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
->                  return -EINVAL;
-> so this new rule is fine.
-> 
-> Does anybody know of any _other_ ordering constraints on folio locks?  I'm
-> willing to write them down ...
-
-Personally I don't think out any particular order between two folio
-locks acrossing different inodes, so I think folio batching locking
-always needs to be taken care.
-
-> 
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 20cb9f5f7446..a912e4b83228 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1483,7 +1483,8 @@ static inline int try_split_folio(struct folio *folio, struct list_head *split_f
->>   {
->>   	int rc;
->>   
->> -	folio_lock(folio);
->> +	if (!folio_trylock(folio))
->> +		return -EAGAIN;
->>   	rc = split_folio_to_list(folio, split_folios);
->>   	folio_unlock(folio);
->>   	if (!rc)
-> 
-> This feels like the best quick fix to me since migration is going to
-> walk the folios in a different order from writeback.  I'm surprised
-> this hasn't already bitten us, to be honest.
-
-My stress workload explicitly triggers compaction and other EROFS
-read loads, I'm not sure if others just test like this too, but:
-https://lore.kernel.org/r/20240418001356.95857-1-mcgrof@kernel.org
-
-seems like a similar load.
-
-Thanks,
-Gao Xiang
-
-> 
-> (ie I don't think this is even necessarily connected to the new
-> ordering constraint; I think migration and writeback can already
-> deadlock)
 
