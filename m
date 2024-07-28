@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-264509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEE193E44C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A352D93E44F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1345D1F212D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3051A1F21506
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096528DD1;
-	Sun, 28 Jul 2024 09:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A505524A08;
+	Sun, 28 Jul 2024 09:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGpqabrT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iMCcTFIN"
+Received: from msa.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC531CFA9;
-	Sun, 28 Jul 2024 09:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101A5168D0;
+	Sun, 28 Jul 2024 09:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722158575; cv=none; b=AYpmHL+vwnLBbv3xtVP3ENktLS1KxL5S5lTgUCwb6Xqcp427bZQSZbNTMFr2Pg9KuiHJXuZb5sEDcDR+RBm8kQcBOUVPYsrzveo+wxnZG6cPYER43pSb/ELGV7LHo0L2Ook9eCg2IPZNF9Al55YVOZCivMVTtoBQyDAzWTk+m6k=
+	t=1722159059; cv=none; b=LptCZkZABjDZ7dX/X/nrFtvxO3y8wJTPMwiNeey7gP2DQW97jdZkQte791AFMm0I03nNgjEDM6UlRrJzL+OM/LF3UL594dnU367qNafebXBMsmElVtZbxRAIR8mmcjwHr13ZLV4uM7IGjzcncEVEZKOK5wSsucMWmfedwbLk84M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722158575; c=relaxed/simple;
-	bh=FgU7FBJsu3CA2q0gEsB+H8HSbPtAsX5dLkzDj863OPQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FUoMYPWnqDI7B7y9EYJDyHpyJJhn/sedyeFpKe9MZFzyJLK54wcwvNBJ4Zy1fHbXgGORbeyRoM2Iuzo/5qOplV/nfhY9AoIGv9MJh7ZyA3x6eoL3RMqHPH11ZIo6CzJNORjIL3IJ+Ow9hedB6vslt4ytSdLr37Fh0KgRQb5ab1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGpqabrT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BEAC4AF0E;
-	Sun, 28 Jul 2024 09:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722158575;
-	bh=FgU7FBJsu3CA2q0gEsB+H8HSbPtAsX5dLkzDj863OPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GGpqabrTtXjEWgKAHJfefGPE9MVm8cKKxafXlRJhDfxk/a3etchQaVHou5R0uSEaX
-	 zEUOpaxUGBPDSBCC5bYKchuZxurG8+n8Igs50mahBPvt9nOTsk1IQZIuIPkcrawUW8
-	 6DRsxtvOQwKM+LfNsrAP3SJ+GmzS5f7Yf+29T4IMVIGF2KNDJi7DZVnQ3GgX0zCywr
-	 PVebCj55yPxVyjdy+UdKAACcdoJzJUhzKvnGiqAZml/tE8clsO3mq/ERjfeF+yZckX
-	 ZHljbJZz8PRZA8TZ7u68Y8QunEpEULel/YdbTH0Hf0OfZBHQAWy5+Xq3KHGUQpmeFa
-	 znoS+UfCl08Gw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sY07A-00G2Rl-Ou;
-	Sun, 28 Jul 2024 10:22:52 +0100
-Date: Sun, 28 Jul 2024 10:22:53 +0100
-Message-ID: <87zfq150r6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Miguel Luis <miguel.luis@oracle.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 6.10 14/16] irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
-In-Reply-To: <20240728004739.1698541-14-sashal@kernel.org>
-References: <20240728004739.1698541-1-sashal@kernel.org>
-	<20240728004739.1698541-14-sashal@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722159059; c=relaxed/simple;
+	bh=Sb6PagWHJopb5flWw28N+nQdK1mZdEL89WZHCedwF5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Weq4+mYpqTTnjXQktoZsERFOe19BqeId+y3gJxB6M4CesbggUViEKG1RoZ4UsNbDhhopHJJFZNnj/kMt+OEViQgxjBHg8yMfNFJosvL+CdbOgS/rz0xHWOR2AdbxBJMUizR4mdkyIzlbnweQjvba0udT6TRgrhQpwLPtw5tItDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iMCcTFIN; arc=none smtp.client-ip=80.12.242.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Y0EnstIRknYGvY0EnslPAy; Sun, 28 Jul 2024 11:30:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722159049;
+	bh=B6QN6fZDyLaAGWpJB5Hz98gt3ufWWIQxuTRONW6K2yU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=iMCcTFIN9zsxxGG7VwNX/IkPMpuh8n1OGy+Mf/hH+WoVMcYVdnTXySOrKexl+UdY1
+	 PWXTUbVpazId8NxTpeCCCOVEqFYsOMmahJ9Q/cjnddkYd7/0oC8lKenW69Z23+EO8W
+	 khdmeNvI/NKSagL4WVPyAVoN2ElOGUzrkEiyjPaYn8Gzjwb492vybUq/rxYIPEeDoz
+	 eR3y0TmgYEoYnoc/mL5uqYfAwasKvB1ztnc8drkv8FpGvnK0VCrEu//Wej6w2E48li
+	 iU/0Dw/OIvzTRrhThd2jh52YexSC9FeDKspKd71qRMQUPRBzQPkS5jZt0tYTuhM9be
+	 PAPd+KB/v0Vwg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 28 Jul 2024 11:30:49 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <42ba79ad-3354-448d-ae03-6f68d51f46c5@wanadoo.fr>
+Date: Sun, 28 Jul 2024 11:30:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sashal@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, james.morse@arm.com, gshan@redhat.com, miguel.luis@oracle.com, rmk+kernel@armlinux.org.uk, Jonathan.Cameron@huawei.com, catalin.marinas@arm.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] ALSA: timer: Introduce virtual userspace-driven
+ timers
+To: Ivan Orlov <ivan.orlov0322@gmail.com>, perex@perex.cz, tiwai@suse.com,
+ corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, aholzinger@gmx.de
+References: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
+ <20240726074750.626671-4-ivan.orlov0322@gmail.com>
+ <0576f5dd-656b-4085-8c8d-b0f845875f0f@wanadoo.fr>
+ <3ab0aa72-4f89-4911-8546-ce17f362c981@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <3ab0aa72-4f89-4911-8546-ce17f362c981@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 28 Jul 2024 01:47:31 +0100,
-Sasha Levin <sashal@kernel.org> wrote:
+Le 28/07/2024 à 10:51, Ivan Orlov a écrit :
+> On 7/28/24 07:59, Christophe JAILLET wrote:
+>> Le 26/07/2024 à 09:47, Ivan Orlov a écrit :
+>>> Implement two ioctl calls in order to support virtual userspace-driven
+>>> ALSA timers.
+>>>
+>>> The first ioctl is SNDRV_TIMER_IOCTL_CREATE, which gets the
+>>> snd_utimer_info struct as a parameter and returns a file descriptor of
+>>> a virtual timer. It also updates the `id` field of the snd_utimer_info
+>>> struct, which provides a unique identifier for the timer (basically,
+>>> the subdevice number which can be used when creating timer instances).
+>>>
+>>> This patch also introduces a tiny id allocator for the userspace-driven
+>>> timers, which guarantees that we don't have more than 128 of them in the
+>>> system.
+>>>
+>>> Another ioctl is SNDRV_TIMER_IOCTL_TRIGGER, which allows us to trigger
+>>> the virtual timer (and calls snd_timer_interrupt for the timer under
+>>> the hood), causing all of the timer instances binded to this timer to
+>>> execute their callbacks.
+>>>
+>>> The maximum amount of ticks available for the timer is 1 for the sake of
+>>> simplification of the userspace API. 'start', 'stop', 'open' and 'close'
+>>> callbacks for the userspace-driven timers are empty since we don't
+>>> really do any hardware initialization here.
+>>>
+>>> Suggested-by: Axel Holzinger <aholzinger@gmx.de>
+>>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+>>> ---
+>>
+>> ...
+>>
+>>> +#ifdef CONFIG_SND_UTIMER
+>>> +/*
+>>> + * Since userspace-driven timers are passed to userspace, we need to 
+>>> have an identifier
+>>> + * which will allow us to use them (basically, the subdevice number 
+>>> of udriven timer).
+>>> + *
+>>> + * We have a pool of SNDRV_UTIMERS_MAX_COUNT ids from 0 to 
+>>> (SNDRV_UTIMERS_MAX_COUNT - 1).
+>>> + * When we take one of them, the corresponding entry in 
+>>> snd_utimer_ids becomes true.
+>>> + */
+>>> +static bool snd_utimer_ids[SNDRV_UTIMERS_MAX_COUNT];
+>>> +
+>>> +static void snd_utimer_put_id(struct snd_utimer *utimer)
+>>> +{
+>>> +    int timer_id = utimer->id;
+>>> +
+>>> +    snd_BUG_ON(timer_id < 0 || timer_id >= SNDRV_UTIMERS_MAX_COUNT);
+>>> +    snd_utimer_ids[timer_id] = false;
+>>> +}
+>>> +
+>>> +static int snd_utimer_take_id(void)
+>>> +{
+>>> +    size_t i;
+>>> +
+>>> +    for (i = 0; i < SNDRV_UTIMERS_MAX_COUNT; i++) {
+>>> +        if (!snd_utimer_ids[i]) {
+>>> +            snd_utimer_ids[i] = true;
+>>> +            return i;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    return -EBUSY;
+>>> +}
+>>
+>> Also the bitmap API could be useful here.
+>>
 > 
-> From: James Morse <james.morse@arm.com>
-> 
-> [ Upstream commit fa2dabe57220e6af78ed7a2f7016bf250a618204 ]
-> 
-> gic_acpi_match_gicc() is only called via gic_acpi_count_gicr_regions().
-> It should only count the number of enabled redistributors, but it
-> also tries to sanity check the GICC entry, currently returning an
-> error if the Enabled bit is set, but the gicr_base_address is zero.
-> 
-> Adding support for the online-capable bit to the sanity check will
-> complicate it, for no benefit. The existing check implicitly depends on
-> gic_acpi_count_gicr_regions() previous failing to find any GICR regions
-> (as it is valid to have gicr_base_address of zero if the redistributors
-> are described via a GICR entry).
-> 
-> Instead of complicating the check, remove it. Failures that happen at
-> this point cause the irqchip not to register, meaning no irqs can be
-> requested. The kernel grinds to a panic() pretty quickly.
-> 
-> Without the check, MADT tables that exhibit this problem are still
-> caught by gic_populate_rdist(), which helpfully also prints what went
-> wrong:
-> | CPU4: mpidr 100 has no re-distributor!
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/20240529133446.28446-14-Jonathan.Cameron@huawei.com
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Awesome, will use it in V2.
 
-Please drop this. It has no purpose being backported to stable.
+Hmm, maybe DEFINE_IDA(), ida_alloc_max() and ida_free() would be even 
+better.
 
-Thanks,
+CJ
 
-	M.
+> 
+> Thank you!
+> 
+> 
 
--- 
-Without deviation from the norm, progress is not possible.
 
