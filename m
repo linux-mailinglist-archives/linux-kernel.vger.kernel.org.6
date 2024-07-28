@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-264584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D7293E5A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:21:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9962293E5A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590021C20CA0
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD467B20A0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954D147F6B;
-	Sun, 28 Jul 2024 14:21:32 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAF847F6B;
+	Sun, 28 Jul 2024 14:22:24 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F53224DC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1C939FFE
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722176492; cv=none; b=rsICHphIKTO5VwhXiqF97v4UZI8gzjiwsUzNVObDtOuCUa1iBDh+o8dcf/4NL3mWzEttbnHTzo0eGsjrIa1CQce/NMFLyAa+P+ENJ22MREA/Xob/bhe+ZJXur+760WbYiQWw0E1gwt6wYUsmUqFFntTy97FswtZQHfUKr8f7FNs=
+	t=1722176544; cv=none; b=KNdYSQ9dxWc7LVM+JYy3zUk9LPmN7jQ4wIQZrcqItTLxO9Z2n+tpymVufsZ81/IumCYCMemfW1jLk57MoLjeWtjJFLIAP2HXPX0VyERRDVcClUo7Dcwhw11A7gnRiaqVAXvtuEeI9K0C5jOjQ/6wf2bnVcgozDQBpDMP9K306ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722176492; c=relaxed/simple;
-	bh=ykQS/edmALW5ljsOYoJ0rfRiirxSWs7UOZic33Q3p7A=;
+	s=arc-20240116; t=1722176544; c=relaxed/simple;
+	bh=dTucdDYiXIZVZl/15Og0dB3SqMzYWkLnvO7HIcNkJR4=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=P3/AlvDnD13RQNwZGSw/vbBxn5zyE2QpnB4z5thkImo2h3fQjiLMze8vHxIYjhJcsp5j0fCiR8KW5M0woT+2SLYbxkjPtkWM3dXPcMfr2X7ygUuj6iIAk31Np8aMCqnALfQRcGtV4TCKFapkrk5/LRZfk1KGhy0ilpJDW2ag700=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+	 MIME-Version:Content-Type; b=boHBpc2A+muOP7NnmngCpxJGLzIhDv/cztqb2Tzab2+4bMH2rG7vZ/X5qUjkaezshN3U0CceHdYs2I4BYj6gHlXagR+PtvvNLo/1ZEewN7J15YMY0166rXy+aMTuvCLT2EzagU0LKPVpEJWjjpu9ewRtypSSV0+GWY5L1MYWWEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-240-gyu3qikDN8SBJ-lv0Ijmhg-1; Sun, 28 Jul 2024 15:21:25 +0100
-X-MC-Unique: gyu3qikDN8SBJ-lv0Ijmhg-1
+ uk-mta-55-06CRokqUOX-KjYRbAhL1jw-1; Sun, 28 Jul 2024 15:22:11 +0100
+X-MC-Unique: 06CRokqUOX-KjYRbAhL1jw-1
 Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
  (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
- 2024 15:20:41 +0100
+ 2024 15:21:27 +0100
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 28 Jul 2024 15:20:41 +0100
+ id 15.00.1497.048; Sun, 28 Jul 2024 15:21:27 +0100
 From: David Laight <David.Laight@ACULAB.COM>
 To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
 CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
@@ -50,11 +50,13 @@ CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
 	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>,
 	"'linux-mm@kvack.org'" <linux-mm@kvack.org>, 'Lorenzo Stoakes'
 	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2 4/8] minmax: Simplify signedness check
-Thread-Topic: [PATCH v2 4/8] minmax: Simplify signedness check
-Thread-Index: Adrg+WoBXlsaZZWKRzqVZpRDUvrsDQ==
-Date: Sun, 28 Jul 2024 14:20:41 +0000
-Message-ID: <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
+Subject: [PATCH v2 5/8] minmax: Factor out the zero-extension logic from
+ umin/umax.
+Thread-Topic: [PATCH v2 5/8] minmax: Factor out the zero-extension logic from
+ umin/umax.
+Thread-Index: Adrg+YXyDMjC+R5zRZ+wfV++JCCsqA==
+Date: Sun, 28 Jul 2024 14:21:27 +0000
+Message-ID: <3e11fa68f33b4fb5beec1fc3f41b123e@AcuMS.aculab.com>
 References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 In-Reply-To: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
@@ -73,73 +75,55 @@ Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-It is enough to check that both 'x' and 'y' are valid for either
-a signed compare or an unsigned compare.
-For unsigned they must be an unsigned type or a positive constant.
-For signed they must be signed after unsigned char/short are promoted.
-
-Order the expressions to avoid warnings about comparisons that are
-always true.
+The '+ 0u + 0ul + 0ull' to zero extend to 64bit on both 32bit and
+64bit systems was replicated 4 times.
+Factor out and then join up some 'not overlong' lines.
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
-Changes for v2:
-- Wrap is_signed_type() to avoid issues with pointer types because
-  (foo *)1 isn't a compile time constant.
-- Remove the '+ 0' from __is_ok_unsigned().
-  This converted 'bool' to 'int' to avoid a compiler warning and is no
-  longer needed because of the implicit conversion dome by ?:.
+v2 - no change
 
- include/linux/minmax.h | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ include/linux/minmax.h | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index ab64b2e73ae5..b9b5348a3879 100644
+index b9b5348a3879..a0c948ad576d 100644
 --- a/include/linux/minmax.h
 +++ b/include/linux/minmax.h
-@@ -8,7 +8,7 @@
- #include <linux/types.h>
+@@ -72,22 +72,26 @@
+  */
+ #define max(x, y)=09__careful_cmp(max, x, y)
 =20
- /*
-- * min()/max()/clamp() macros must accomplish three things:
-+ * min()/max()/clamp() macros must accomplish several things:
-  *
-  * - Avoid multiple evaluations of the arguments (so side-effects like
-  *   "x++" happen only once) when non-constant.
-@@ -26,19 +26,20 @@
- #define __typecheck(x, y) \
- =09(!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
-=20
--/* is_signed_type() isn't a constexpr for pointer types */
--#define __is_signed(x) =09=09=09=09=09=09=09=09\
--=09__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),=09\
--=09=09is_signed_type(typeof(x)), 0)
-+#define __is_signed(x) \
-+=09__if_constexpr((typeof(x))1, is_signed_type(typeof(x)), 0)
-=20
--/* True for a non-negative signed int constant */
--#define __is_noneg_int(x)=09\
--=09(__builtin_choose_expr(__is_constexpr(x) && __is_signed(x), x, -1) >=3D=
- 0)
-+/* Allow unsigned compares against non-negative signed constants. */
-+#define __is_ok_unsigned(x) \
-+=09((!__is_signed((x)) ? 0 : __if_constexpr(x, x, -1)) >=3D 0)
-=20
--#define __types_ok(x, y) =09=09=09=09=09\
--=09(__is_signed(x) =3D=3D __is_signed(y) ||=09=09=09\
--=09=09__is_signed((x) + 0) =3D=3D __is_signed((y) + 0) ||=09\
--=09=09__is_noneg_int(x) || __is_noneg_int(y))
-+/* Check for signed after promoting unsigned char/short to int */
-+#define __is_ok_signed(x) __is_signed((x) + 0)
++/*
++ * Zero extend a non-negative value to 64bits.
++ * Undefined for negative values.
++ * The extension to 64 bits is often optimised away.
++ */
++#define __zero_extend(x) ((x) + 0u + 0ul + 0ull)
 +
-+/* Allow if both x and y are valid for either signed or unsigned compares.=
- */
-+#define __types_ok(x, y)=09=09=09=09\
-+=09((__is_ok_signed(x) && __is_ok_signed(y)) ||=09\
-+=09 (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
+ /**
+  * umin - return minimum of two non-negative values
+- *   Signed types are zero extended to match a larger unsigned type.
+  * @x: first value
+  * @y: second value
+  */
+-#define umin(x, y)=09\
+-=09__careful_cmp(min, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
++#define umin(x, y)=09__careful_cmp(min, __zero_extend(x), __zero_extend(y)=
+)
 =20
- #define __cmp_op_min <
- #define __cmp_op_max >
+ /**
+  * umax - return maximum of two non-negative values
+  * @x: first value
+  * @y: second value
+  */
+-#define umax(x, y)=09\
+-=09__careful_cmp(max, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
++#define umax(x, y)=09__careful_cmp(max, __zero_extend(x), __zero_extend(y)=
+)
+=20
+ /**
+  * min3 - return minimum of three values
 --=20
 2.17.1
 
