@@ -1,96 +1,78 @@
-Return-Path: <linux-kernel+bounces-264883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D1493E9AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:20:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C0193E9B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBBB01F21F31
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33FF1C2061D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4804E78C68;
-	Sun, 28 Jul 2024 21:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F1C7B3F3;
+	Sun, 28 Jul 2024 21:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LHAyydsJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGp6Qb0e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ABE78B4E
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172C378C9A;
+	Sun, 28 Jul 2024 21:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722201532; cv=none; b=P4Uh2qh44m72Yrbk5qt4kBXAQtSjmtFx/zTkLWgx1XIFgNOlrEfkOQN7C90+xYL57DoslTzVAkJWnJ+qsgE8aDCWQuphWeW8YWqCuWYWAM8lo+0jBsgwGMgvQ+YSYy2Ry1sw3Eo8ooBhoEkPGeqBzbFaLPL7bnJ71ElOQOFQHx0=
+	t=1722201549; cv=none; b=cLk0OEQPHwdqb5YglOsSQ5xNAIZPrGvazHDnnCZLPeVB3ZpJHncRSy8j2t0QAxh6x+EgJCZpj918o1WvI2gH1iLTIthWF/nMRKXAty4QstHEBqtARi416AnBxbjoTymnRGIAacg8N4iH5pEvLxtaZ5KR8eR5kFuWewPi7hGU0RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722201532; c=relaxed/simple;
-	bh=p6ipjOvVqF6sbK1Vn/wHSaHvySBYHhkhbaqXeUP2Q04=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rnIjyIvu9J6iStHQSwpH1WTrYkbGPWgjW8fawBB3q2HKe3oEzbueBCb6+Ki9FGkE6eV87OiVP9/Js8M3+6Pew5jDDSMtS5NlfAt/WTwO4ih03R9n0uyOL2Yh3xsvEBNf+8vPWUy7/FNc67+j0y2vLA9qUZa/SjvvDLe+G5axOmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LHAyydsJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CF4C4AF0A;
-	Sun, 28 Jul 2024 21:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722201532;
-	bh=p6ipjOvVqF6sbK1Vn/wHSaHvySBYHhkhbaqXeUP2Q04=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LHAyydsJalWoIjxDSMRu97+wFnQ1QVowDjGpa2JbcKo1Gq+JQNt9koZYp5n6dSXCv
-	 w5o6M2ftH42gXMsygOgd0M89g1rbIE8/+eDkBQHxceQF+QrlDFwxLrtHuj3rhmCxjm
-	 AnHuEU1nA/FAV246WRA/MApyVW/lqsNZiEPQfCJk=
-Date: Sun, 28 Jul 2024 14:18:51 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
- <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov
- <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Adrian Huang
- <ahuang12@lenovo.com>, Jiwei Sun <sunjw10@lenovo.com>
-Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of
- KASAN shadow virtual address into one operation
-Message-Id: <20240728141851.aece5581f6e13fb6d6280bc4@linux-foundation.org>
-In-Reply-To: <20240726165246.31326-1-ahuang12@lenovo.com>
-References: <20240726165246.31326-1-ahuang12@lenovo.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722201549; c=relaxed/simple;
+	bh=XheBFlkaJtpYXUWNkw3sBcPXmuLv3WIPyq8m3s4X54Y=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kPeAoG/flimOZ8prFNCkqr0Z7ugCBg578vpJG9s2Ujx62N0Ue39B62ppcSgmVDtFWT7/yKnru7zLMux20qMKZOIDpHAH9cgEibUrUwU59rzPuNgT+nPlBEnqVcLRdmwpIForvSG5j3Zp2VHyvP/rQk2My5M/o7PmKjs14s/XQBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGp6Qb0e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A33DDC116B1;
+	Sun, 28 Jul 2024 21:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722201548;
+	bh=XheBFlkaJtpYXUWNkw3sBcPXmuLv3WIPyq8m3s4X54Y=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RGp6Qb0eWBWWE3en6cMiOuIaRInX7AbuSbVaEz9iF7LKDNn1wGQ8QIeVgCr8r+VZD
+	 mD4OyMmOPqVbcvIO863Ja0nUx/aDtdgH6BNReTi/DCA8DRq6VXaNzIR6C3I1GPruKP
+	 MmkfU65o9YKmb12gZLJH+EJ1gsWlyZs+LsMBI0nCSTSX3pUjp9eTRtgon1/jw8R2MA
+	 GXsfb7sF8WtHdQbUhSsOJRRl9SLOT+LBRvLvmhU9HqBgUuEe9sqmCMG+wM8FmqzYIj
+	 ZEXSOLsJL5FWGE41Sg9v9N8wIPyKapcm/9M6dIiXjtJGWOSr3ztj47q1b9ia6jRhJe
+	 x3LIlPVpaLq6w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9155CC4333D;
+	Sun, 28 Jul 2024 21:19:08 +0000 (UTC)
+Subject: Re: [GIT PULL] Kbuild fixes for v6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
+References: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAK7LNAQa+SNKqYtvqQT+QPcH8NW2sD+JxOShNzZrfRzRWRUXtg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.11
+X-PR-Tracked-Commit-Id: 3415b10a03945b0da4a635e146750dfe5ce0f448
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a0c04bd55a467aee3eb647555343ad6971106e86
+Message-Id: <172220154858.7359.2264170309744314492.pr-tracker-bot@kernel.org>
+Date: Sun, 28 Jul 2024 21:19:08 +0000
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sat, 27 Jul 2024 00:52:46 +0800 Adrian Huang <adrianhuang0701@gmail.com> wrote:
+The pull request you sent on Mon, 29 Jul 2024 04:01:49 +0900:
 
-> From: Adrian Huang <ahuang12@lenovo.com>
-> 
-> When compiling kernel source 'make -j $(nproc)' with the up-and-running
-> KASAN-enabled kernel on a 256-core machine, the following soft lockup
-> is shown:
-> 
-> ...
->
->         # CPU  DURATION                  FUNCTION CALLS
->         # |     |   |                     |   |   |   |
->           76) $ 50412985 us |    } /* __purge_vmap_area_lazy */
->
-> ...
->
->      # CPU  DURATION                  FUNCTION CALLS
->      # |     |   |                     |   |   |   |
->        23) $ 1074942 us  |    } /* __purge_vmap_area_lazy */
->        23) $ 1074950 us  |  } /* drain_vmap_area_work */
-> 
->   The worst execution time of drain_vmap_area_work() is about 1 second.
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.11
 
-Cool, thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a0c04bd55a467aee3eb647555343ad6971106e86
 
-But that's still pretty dreadful and I bet there are other workloads
-which will trigger the lockup detector in this path?
+Thank you!
 
-(And "avoiding lockup detector warnings" isn't the objective here - the
-detector is merely a tool for identifying issues)
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
