@@ -1,166 +1,170 @@
-Return-Path: <linux-kernel+bounces-264538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314F693E4AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1889E93E4B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A622B20E3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889291F21708
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5AC38397;
-	Sun, 28 Jul 2024 10:59:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC891374FF;
+	Sun, 28 Jul 2024 11:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="cfI+ZzDr"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F252374C3
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D6C1A269
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 11:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722164366; cv=none; b=TOvs4jjeVSht2N4NsajbGfzRxQWCaGZ8hxMjp+5PFuGghFgdXlsaHgEdrKhWEDDmHdt+djfMgtA6KNbtrunn2Tsy8xe5rEzUH4c7LN+TwE1gnCEC18e6AnQT/ILJH0KKtWJT8zZpvlemlB/cakSnHpEVaJtW8gcFjnDXX1Mw6ms=
+	t=1722164470; cv=none; b=mAzJRPvvmOGWvLyQQjR2YME6+sFK0v2Bwx+mDriC4ARLanj+VCjavLoF5aHhHTsu4vXHHulNXAC0WlX7oQugIoUyqKRhFf5LZnFQbSv8BxYfi0Mpg3OyEn/phLMcuEfjLDrHLn/P/7kbkLDQSwdbG956qH0uvaV/CWp7lRdGSvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722164366; c=relaxed/simple;
-	bh=L5n/teUly+VhlDIHgY8NFPwJerFVZTdMhj6Y+8ATqO0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fEFU7rwUnPdHmSzjO7z5mp4aCrhixClANpTj52cQ8Fcrw1LAUrwFEUVA5eJieSfhXOfS+bTBm75NcXG2JmfFINmKnXig1R4GiD6r+LHuQc2RKZrR5ea8Ql35Mh5R36hIEd/JjQEXU7928W6YWQ+ma7nOWj8+mx7kZ/QW2Rdssg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8c78cc66so368821239f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 03:59:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722164364; x=1722769164;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eO5R0suCgYtLIjc7tDRTV2e1d+A0wsuCRHJAT80Iy9k=;
-        b=Px0j9TC4mPuw9o0NsL/1juevayR9NGN8TA0x7g6Z0Qqj9YzPzyduLWc2QEAZeHp3AM
-         3TgPqcgAHQY4xo7Khg7lX4km0oNKV/BWjBNxpF5rdPTORTYc2QCvexInjM9VjgeOPA8G
-         kbJKXsZrU7UhECieaAmd08qB3uzRZf6KxS9vaMGSPAM7u8JDSsR19G/1J+FQzAaBLDE5
-         2vZY3wVqSzrw1HEL3UG0/7qOreMhvhgZRqdN+Dt7LFdXtChaZ217DZel7UK3PqfSrXsM
-         SyJyLyGIBte2GKDciFrnp14pQfQ1V+LLGt9pODzG81fikWYDcWjt652wkjrTuDOz2NGn
-         +r7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQwUWd4BMt1awWuxwBovXdn0nNOh57XSAimLn4PuGw3eEeavCx6hbd+PVqIwmLvMvu7VMbeo9oNksRR3A/6o9/K5W7C5cFvVPXzCm1
-X-Gm-Message-State: AOJu0YwEzpLAubypeTux7UT2NWxgdJNSX8bQ27M8BI7F1hPkeWvGOwmB
-	6Ga9E+uHG3igJH9ZzF0ea6C1NLgLNSF36VGUEolylKRxwDcquToLKarMm0ryKF2brKmkcvwhoCw
-	ZYTciY1CGgF8jVyjWN5yJ3IqrWMFxGSoArsTdmWd8xr2iqdx4xaN9rFc=
-X-Google-Smtp-Source: AGHT+IG0y/n1OBmMV/Drhh6iWdVJYOIiShAoLM//doOnvqeGCesvssXf3CpnV0ObDHEmUwJm2MfHqZcgS/pBgYGDdEVvHAi96RN4
+	s=arc-20240116; t=1722164470; c=relaxed/simple;
+	bh=dirLK5k1HkpMZ5zGrZ7l0jdQX2uduij58/0xP7Up9jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ru3lR8qu7F5pntEyEPhSUo5kNm29R8HkDoo+S/eWu9ew/ckD27h8KKXdLpgdtN8D3N62JtX7ghDXDrO+9W2CLNdQSKPmtnBNSxG8SfbAbM15X4Mvn0qjy9KZqG3T0bQDEXsex9RDGIJLKTzZHrSVWTvai/QSdzJfr9dxoPEQ+CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=cfI+ZzDr; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id DBC604346D;
+	Sun, 28 Jul 2024 11:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1722164458; bh=dirLK5k1HkpMZ5zGrZ7l0jdQX2uduij58/0xP7Up9jo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=cfI+ZzDrLd9LDK5lRERLgVrJe3PzqqymMWyMIzlJxA9+cPJU1tsRs9G9Cw+8Helnc
+	 UdaAr5qQ2Gfl9AKvis7ZNVk/xSnFiKHPLHNtUfUBiyNJfA2y9ieF4gtyDhia+EenNL
+	 GxrZini9wluGWLOFOz7dJ3aoci1c/9JakMYBgKaOxeryl8iNv3LhC5c5bjIvra30xF
+	 EOjPR8/Mxsu/vthT02nUbRrxFOI/EE+7FoHqx55y9SKrdTOSA6sUz9rZ4B+FBAdvtT
+	 /x/l80FeFpzuv6GK5dnl+71jSXS/PkAq/alChPaMB4UdLJdV8t/qNAhx8tab2BuES7
+	 eeNYelBOsoH0Q==
+Message-ID: <3cd6bf37-f335-470b-9b3f-25628067e0f1@marcan.st>
+Date: Sun, 28 Jul 2024 20:00:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:37a6:b0:4c0:a8a5:81f5 with SMTP id
- 8926c6da1cb9f-4c64629a61cmr216886173.4.1722164364441; Sun, 28 Jul 2024
- 03:59:24 -0700 (PDT)
-Date: Sun, 28 Jul 2024 03:59:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000300fca061e4ca372@google.com>
-Subject: [syzbot] [mm?] KCSAN: data-race in compact_zone / isolate_migratepages_block
- (4)
-From: syzbot <syzbot+763baa6ce76de5853e63@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    2f8c4f506285 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b56f19980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7398409c79c30d03
-dashboard link: https://syzkaller.appspot.com/bug?extid=763baa6ce76de5853e63
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6165da49b7f1/disk-2f8c4f50.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/74fed2ebd154/vmlinux-2f8c4f50.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/32a1190d3a94/bzImage-2f8c4f50.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+763baa6ce76de5853e63@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in compact_zone / isolate_migratepages_block
-
-read to 0xffff88823fffab98 of 8 bytes by task 32 on cpu 0:
- update_cached_migrate mm/compaction.c:506 [inline]
- isolate_migratepages_block+0x24e7/0x2740 mm/compaction.c:1358
- isolate_migratepages mm/compaction.c:2194 [inline]
- compact_zone+0x1e1e/0x2930 mm/compaction.c:2641
- kcompactd_do_work mm/compaction.c:3112 [inline]
- kcompactd+0x4e0/0xd40 mm/compaction.c:3211
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-write to 0xffff88823fffab98 of 8 bytes by task 15939 on cpu 1:
- compact_zone+0x23a6/0x2930 mm/compaction.c:2649
- compact_zone_order mm/compaction.c:2806 [inline]
- try_to_compact_pages+0x388/0x920 mm/compaction.c:2862
- __alloc_pages_direct_compact+0x6f/0x1e0 mm/page_alloc.c:3651
- __alloc_pages_slowpath+0x236/0xd70 mm/page_alloc.c:4246
- __alloc_pages_noprof+0x26d/0x360 mm/page_alloc.c:4709
- alloc_pages_mpol_noprof+0xb1/0x1e0 mm/mempolicy.c:2263
- alloc_pages_noprof+0xe1/0x100 mm/mempolicy.c:2343
- vm_area_alloc_pages mm/vmalloc.c:3584 [inline]
- __vmalloc_area_node mm/vmalloc.c:3660 [inline]
- __vmalloc_node_range_noprof+0x719/0xef0 mm/vmalloc.c:3841
- __kvmalloc_node_noprof+0x121/0x170 mm/util.c:675
- ip_set_alloc+0x1f/0x30 net/netfilter/ipset/ip_set_core.c:256
- hash_netiface_create+0x273/0x730 net/netfilter/ipset/ip_set_hash_gen.h:1568
- ip_set_create+0x359/0x8a0 net/netfilter/ipset/ip_set_core.c:1104
- nfnetlink_rcv_msg+0x4a9/0x570 net/netfilter/nfnetlink.c:302
- netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2550
- nfnetlink_rcv+0x16c/0x15b0 net/netfilter/nfnetlink.c:664
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x593/0x670 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x5cc/0x6e0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x140/0x180 net/socket.c:745
- ____sys_sendmsg+0x312/0x410 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x1e9/0x280 net/socket.c:2680
- __do_sys_sendmsg net/socket.c:2689 [inline]
- __se_sys_sendmsg net/socket.c:2687 [inline]
- __x64_sys_sendmsg+0x46/0x50 net/socket.c:2687
- x64_sys_call+0x26f8/0x2e00 arch/x86/include/generated/asm/syscalls_64.h:47
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x00000000001c0c00 -> 0x00000000001c1c00
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 15939 Comm: syz.1.2769 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-==================================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drivers/perf: apple_m1: add known PMU events
+To: Marc Zyngier <maz@kernel.org>, Yangyu Chen <cyy@cyyself.name>
+Cc: linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Janne Grunau <j@jannau.net>,
+ Asahi Lina <lina@asahilina.net>, asahi@lists.linux.dev,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <tencent_D6474BDCDD18AA90A0C656BE704136ED2807@qq.com>
+ <86bk3yjqkn.wl-maz@kernel.org>
+ <tencent_B732B857317E21CB8D887CBF8228DAA78E08@qq.com>
+ <86a5jijign.wl-maz@kernel.org>
+From: Hector Martin <marcan@marcan.st>
+Content-Language: en-US
+In-Reply-To: <86a5jijign.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2024/06/19 1:58, Marc Zyngier wrote:
+> On Tue, 18 Jun 2024 16:56:48 +0100,
+> Yangyu Chen <cyy@cyyself.name> wrote:
+>>
+>>
+>>
+>>> On Jun 18, 2024, at 22:03, Marc Zyngier <maz@kernel.org> wrote:
+>>>
+>>> On Tue, 18 Jun 2024 14:49:48 +0100,
+>>> Yangyu Chen <cyy@cyyself.name> wrote:
+>>>>
+>>>> This patch adds known PMU events that can be found on /usr/share/kpep in
+>>>> macOS. The m1_pmu_events and m1_pmu_event_affinity are generated from
+>>>> the script [1], which consumes the plist file from Apple. And then added
+>>>> these events to m1_pmu_perf_map and m1_pmu_event_attrs with Apple's
+>>>> documentation [2].
+>>>>
+>>>> Link: https://github.com/cyyself/m1-pmu-gen [1]
+>>>> Link: https://developer.apple.com/download/apple-silicon-cpu-optimization-guide/ [2]
+>>>
+>>> This needs registration, and is thus impossible to freely visit.
+>>>
+>>>> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+>>>
+>>> What is the licence applicable to the original source file? Does it
+>>> explicitly allow redistribution in any form?
+>>>
+>>
+>> Oh. It's my fault. Sorry for the trouble caused.
+> 
+> No trouble on my side. I'm just painfully aware that this is a legal
+> landmine, and that what is perfectly allowed in one country may be a
+> punishable offence in another. And since I'm not a lawyer, I want to
+> see crystal clear things in writing.
+> 
+>>
+>>>
+>>> Other than the licensing concern, why should we bloat the kernel with
+>>> more of this stuff when everything is moving towards a bunch of JSON
+>>> files (tools/perf/pmu-events/arch/arm64).
+>>>
+>>
+>> Thanks for this hint. So, the thing to do might be to provide a
+>> generator that consumes Apple files and then generates a kernel
+>> patch for Linux perf tools to use rather than provide such details
+>> directly in the source code as you said from [1].
+>>
+>> Link: https://lore.kernel.org/lkml/87czn18zev.wl-maz@kernel.org/ [1]
+> 
+> Even better: teach the perf tool to directly consume the plist file,
+> but don't distribute the file or its content. People owning such a
+> machine can fish the file from the machine itself (or the installer
+> can extract it from the OS image as if it was firmware data).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Maz,
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+That would be a waste of time. Facts about hardware are not
+copyrightable. I see absolutely nothing objectionable in this patch. It
+doesn't matter where the information was sourced as long as it was
+legitimately available to the person (which it was, as long as they were
+running macOS on one of these machines).
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Let's look at the license for the ARMv8-A ARM:
 
-If you want to undo deduplication, reply with:
-#syz undup
+> Proprietary Notice
+> This document is protected by copyright and other related rights and the practice or implementation of the information contained
+> in this document may be protected by one or more patents or pending patent applications. No part of this document may be
+> reproduced in any form by any means without the express prior written permission of Arm. No license, express or implied, by
+> estoppel or otherwise to any intellectual property rights is granted by this document unless specifically stated.
+
+There is absolutely nothing in there granting a license to use the
+information in the document and things like register names in Linux or
+any other OS. And yet we can do that, because those things aren't
+copyrightable. It would defeat the entire point of the documentation if
+you could not use it, even though there is in fact no explicit copyright
+grant to allow you to use it. It is not needed.
+
+The same exact logic applies here. The macOS license does not grant us
+the right to reproduce portions of macOS, but that is completely
+irrelevant because the portion "reproduced" in the form of this patch is
+not, at all, copyrightable. If it were we would have much bigger issues
+and all kinds of code in Linux would be a copyvio. The fact that there
+was some automation involved in generating the patch contents is
+entirely irrelevant, as long as the output does not keep a copyright
+interest from the author of the input.
+
+I also have an actual lawyer's opinion that register names are not
+copyrightable, which further corroborates this interpretation.
+
+As far as I'm concerned this can be merged as is.
+
+Acked-by: Hector Martin <marcan@marcan.st>
+
+- Hector
 
