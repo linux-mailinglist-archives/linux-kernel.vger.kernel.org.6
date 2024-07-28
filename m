@@ -1,133 +1,224 @@
-Return-Path: <linux-kernel+bounces-264599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF9693E5D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:24:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC7693E5DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26ABA281663
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:24:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7751C20D2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEA15914C;
-	Sun, 28 Jul 2024 15:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0663F58AC4;
+	Sun, 28 Jul 2024 15:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hQNdLsIl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGu3J8UF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60FB51C4A
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84C47F6B;
+	Sun, 28 Jul 2024 15:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722180249; cv=none; b=mhISH8gF6lOmmyZFx7BoQ8yqQUPLrKJ4+AX7CbEdwseEKazvkxC64jSYmidYj3++dwa+OqsRUOsQkNfrEmLoFZzOiuMwQOy3V6QehJFn2VSLm3LVO/V8cwPP1knOZsYz6gg05MLJ8p6jEg2pKyYSKNvPq7/0dhtmijvByRAE9Nw=
+	t=1722180517; cv=none; b=jci7jl97x9DlDf9W5w3y+lySjEnrByH975/wrhN0dSvSv3RLMnxCRbmmjWJ+rtSPW6XBE3oFqImBK9jJmQxgNwwMYxMNDgJUKijfDxf/sqY6mHQ6sOi+dkPCF+BnSirWtn0S4PS+5Lm9NNfHHzwJvIqyDJLG0mS2yFaCcw1W3C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722180249; c=relaxed/simple;
-	bh=IOwAsnqgHoluJc7mNb67jddHNZA6RYbBXNw2KHo1ji0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxEX9cvPdcaMBq7NT5JKxLuO5u69JLk4XTWHQItvvYdnQ6IokWRaUGCwXSXYIXwnS1FCt7ZNr/tNR6A4BIzv8cX+3MikAFo0t4u3i1+q6C5UI1Zhaocty5eqYBCyxrbC6rTn24NYQEHQQHwjQTHyGKFevNaAu5g5/j2QPELTucw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hQNdLsIl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722180246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5bC7CjlZdsdHI4lvHiT2ExOZBWJ7XMhmuhfoptCNZqw=;
-	b=hQNdLsIlItzkDPG97Tbgc91BSAXRd13R7qk49ma8jTRuMSI12RSyrJiwPceiWt3TLMpdp3
-	ksLdXYkyy6KcayM02HZYy8/l4ugr+KqoMoJnhScN1mMWOtVO5M7HkoQEJvh4EI723MoZv6
-	aYvqX8vgOQzR4OMIRwuveSkxf6GpQvM=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-cNZn_8WAPieNnGFmoikc3Q-1; Sun, 28 Jul 2024 11:24:00 -0400
-X-MC-Unique: cNZn_8WAPieNnGFmoikc3Q-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ef23a67c5bso26799621fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 08:24:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722180239; x=1722785039;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5bC7CjlZdsdHI4lvHiT2ExOZBWJ7XMhmuhfoptCNZqw=;
-        b=Hpc58ouSE8ilyAFDd+4w/3JitARl+RjWO3OuvfQTfZ7JVa8x3SCJ27jAby5tzwTdwC
-         qNu8fPpt1HR+ytZ7TBLUP2Xzbdcnsa1fvtEzWY3Cc3bd3Qx9kVC4YvIm1UwWVswDS4SC
-         iWOjeSqNOIHZs5W42FHD8vgBdBsmGjyd9Iq7fs+Tz2doUIVJkkleovTqvv6yy0kltGL7
-         vMiL1auJrR2Dw/4TGfc/lyvMgSKD9j91JuYV3ZZpSCT4OgT3kF2YgMG9YB70sZY+OopG
-         AjuzHaMBtsW5UZlw0mNqwuoRvhD0ZI/4izs+PyPH0hguOeFIPo6mZNzRsI319DXu/sWj
-         kndA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf+Zvbiu+XlWn9IGx7CLdWuSR39cjY9Vu/3BUX1RFtlrncpRhSRFVyPscybT94+hdfAOXMGCllB6qwz23M5o7p0EuaVgYNxc6ztu18
-X-Gm-Message-State: AOJu0YzV7yOPXiyqWKch+Yc5JbgjrwP9k1crgSulZZXMMN71zsel+Kf8
-	jkvAlbWS648S0t+c80MiC5uCRMQfa3J4gcuvwMeLsdY0bHwghty4A8zK5DKjgSDbMZjogQE4SqN
-	fU5Bqo1Sx4JHWTNxKSGLVIEN2dLKBqfV9MEHIMgQOJN9pxjTqtjo0M9w/KM7gsQ==
-X-Received: by 2002:a2e:be22:0:b0:2ef:1c0a:9b94 with SMTP id 38308e7fff4ca-2f12edfddc0mr34329471fa.16.1722180238924;
-        Sun, 28 Jul 2024 08:23:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEU13tBt+N37F7ob3Jx0ruuvo8+dsNp9muZtzaqjHOl31gS3qTrnO0jECcjoxvWesNrjNQyHQ==
-X-Received: by 2002:a2e:be22:0:b0:2ef:1c0a:9b94 with SMTP id 38308e7fff4ca-2f12edfddc0mr34329181fa.16.1722180238084;
-        Sun, 28 Jul 2024 08:23:58 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:55d:98c4:742e:26be:b52d:dd54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428054b9196sm147521925e9.0.2024.07.28.08.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 08:23:57 -0700 (PDT)
-Date: Sun, 28 Jul 2024 11:23:49 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Chashper, David" <chashper@amazon.com>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>,
-	"Christopher S . Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH] ptp: Add vDSO-style vmclock support
-Message-ID: <20240728111746-mutt-send-email-mst@kernel.org>
-References: <20240725081502-mutt-send-email-mst@kernel.org>
- <f55e6dfc4242d69eed465f26d6ad7719193309dc.camel@infradead.org>
- <20240725082828-mutt-send-email-mst@kernel.org>
- <db786be69aed3800f1aca71e8c4c2a6930e3bb0b.camel@infradead.org>
- <20240725083215-mutt-send-email-mst@kernel.org>
- <98813a70f6d3377d3a9d502fd175be97334fcc87.camel@infradead.org>
- <20240726174958.00007d10@Huawei.com>
- <811E8A25-3DBC-452D-B594-F9B7B0B61335@infradead.org>
- <20240728062521-mutt-send-email-mst@kernel.org>
- <9817300C-9280-4CC3-B9DB-37D24C8C20B5@infradead.org>
+	s=arc-20240116; t=1722180517; c=relaxed/simple;
+	bh=C8GVXeI1Gt1K6GoxCquQ+a0F+j83p8v7uKm+CXsEl2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QZj4MMqtpJ4Pa9yWbHwF/tBg8ruFIvsYuhMyKICAxvgbacQtOdp1CYDPbslbdiCkExCSi0Yet0P00MUwNbM3tGM9jUWVvUZ6cAZ1erwqXcj4V0SkhBwpEZ01Nl/Rp5W+GGfOnmzxd0x+DH/RSokSMzfbYI8HdsOKJZ1XWF0xVf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGu3J8UF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1E3C116B1;
+	Sun, 28 Jul 2024 15:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722180516;
+	bh=C8GVXeI1Gt1K6GoxCquQ+a0F+j83p8v7uKm+CXsEl2g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YGu3J8UFox5vhGu40TJg76U28BxKhBmLfiDb2V2Fo32bU8WL9odw5IsNMI1uNHFh5
+	 EEvdjCmd6HBowdA74PHQZVfgSGxJpmZwBHDCh8Dkn1H0MRnOguffww9+aZzfU7aLqS
+	 9+kq40hW83wxM7REdgLOA9gfJKpYT0AtLD+MVgUYJ2srFSPe1IH55LjpO75ZdbXqnc
+	 95tHf3M7QV/05qjAq3QEvY6KhQJOeB8a0dZ+thc455PwmvDFsafgX4PWMXiCh6RwXN
+	 3OnNQhFvg1C9s4MDMR+STb8FboNNe7Zb0VkEsuywbMVXm27dllT/Lqexu8J7NCWi+W
+	 DwBaB+UqN+21g==
+Date: Sun, 28 Jul 2024 16:28:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org>
+Cc: pd.pstoykov@gmail.com, linux-iio@vger.kernel.org, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: pressure: Add driver for Sensirion SDP500
+Message-ID: <20240728162828.3c9cc118@jic23-huawei>
+In-Reply-To: <20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
+References: <20240725-mainline_sdp500-v4-0-ea2f5b189958@gmail.com>
+	<20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9817300C-9280-4CC3-B9DB-37D24C8C20B5@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 28, 2024 at 02:07:01PM +0100, David Woodhouse wrote:
-> On 28 July 2024 11:37:04 BST, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> >Glad you asked :)
-> 
-> Heh, I'm not sure I'm so glad. Did I mention I hate ACPI? Perhaps it's still not too late for me just to define a DT binding and use PRP0001 for it :)
-> 
-> >Long story short, QEMUVGID is indeed out of spec, but it works
-> >both because of guest compatibility with ACPI 1.0, and because no one
-> >much uses it.
-> 
-> 
-> I think it's reasonable enough to follow that example and use AMZNVCLK (or QEMUVCLK, but there seems little point in both) then?
+On Thu, 25 Jul 2024 17:37:28 +0200
+Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org> wrote:
 
-I'd stick to spec. If you like puns, QEMUC10C maybe?
+> From: Petar Stoykov <pd.pstoykov@gmail.com>
+> 
+> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
+> accessed over I2C.
+> 
+> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
+Hi Petar,
 
+Some really trivial things inline + Krzysztof's comment.
+
+Rather than go around again, I'll tidy them up as follows and apply this series
+to the testing branch of iio.git
+
+Thanks,
+
+Jonathan
+
+
+diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp500.c
+index 77d7e68f5dea..6ff32e3fa637 100644
+--- a/drivers/iio/pressure/sdp500.c
++++ b/drivers/iio/pressure/sdp500.c
+@@ -62,7 +62,7 @@ static int sdp500_read_raw(struct iio_dev *indio_dev,
+ 
+                received_crc = rxbuf[2];
+                calculated_crc = crc8(sdp500_crc8_table, rxbuf,
+-                       sizeof(rxbuf) - 1, 0x00);
++                                     sizeof(rxbuf) - 1, 0x00);
+                if (received_crc != calculated_crc) {
+                        dev_err(data->dev,
+                                "calculated crc = 0x%.2X, received 0x%.2X",
+@@ -123,7 +123,7 @@ static int sdp500_probe(struct i2c_client *client)
+        i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+ 
+        ret = devm_iio_device_register(dev, indio_dev);
+-       if (ret < 0)
++       if (ret)
+                return dev_err_probe(dev, ret, "Failed to register indio_dev");
+ 
+        return 0;
+@@ -137,7 +137,6 @@ MODULE_DEVICE_TABLE(i2c, sdp500_id);
+ 
+ static const struct of_device_id sdp500_of_match[] = {
+        { .compatible = "sensirion,sdp500" },
+-       { .compatible = "sensirion,sdp510" },
+        { }
+ };
+ MODULE_DEVICE_TABLE(of, sdp500_of_match);
+
+>  st_pressure-$(CONFIG_IIO_BUFFER) += st_pressure_buffer.o
+> diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp500.c
+> new file mode 100644
+> index 000000000000..77d7e68f5dea
+> --- /dev/null
+> +++ b/drivers/iio/pressure/sdp500.c
+> @@ -0,0 +1,157 @@
+...
+
+> +
+> +static int sdp500_read_raw(struct iio_dev *indio_dev,
+> +			  struct iio_chan_spec const *chan,
+> +			  int *val, int *val2, long mask)
+> +{
+> +	int ret;
+> +	u8 rxbuf[SDP500_READ_SIZE];
+> +	u8 received_crc, calculated_crc;
+> +	struct sdp500_data *data = iio_priv(indio_dev);
+> +	struct i2c_client *client = to_i2c_client(data->dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> +		if (ret < 0) {
+> +			dev_err(data->dev, "Failed to receive data");
+> +			return ret;
+> +		}
+> +		if (ret != SDP500_READ_SIZE) {
+> +			dev_err(data->dev, "Data is received wrongly");
+> +			return -EIO;
+> +		}
+> +
+> +		received_crc = rxbuf[2];
+> +		calculated_crc = crc8(sdp500_crc8_table, rxbuf,
+> +			sizeof(rxbuf) - 1, 0x00);
+
+align just after (
+
+> +		if (received_crc != calculated_crc) {
+> +			dev_err(data->dev,
+> +				"calculated crc = 0x%.2X, received 0x%.2X",
+> +				calculated_crc, received_crc);
+> +			return -EIO;
+> +		}
+> +
+> +		*val = get_unaligned_be16(rxbuf);
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 1;
+> +		*val2 = 60;
+> +
+> +		return IIO_VAL_FRACTIONAL;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct iio_info sdp500_info = {
+> +	.read_raw = &sdp500_read_raw,
+> +};
+> +
+> +static int sdp500_probe(struct i2c_client *client)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct sdp500_data *data;
+> +	struct device *dev = &client->dev;
+> +	int ret;
+> +	u8 rxbuf[SDP500_READ_SIZE];
+> +
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +			"Failed to get and enable regulator\n");
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	/* has to be done before the first i2c communication */
+> +	crc8_populate_msb(sdp500_crc8_table, SDP500_CRC8_POLYNOMIAL);
+> +
+> +	data = iio_priv(indio_dev);
+> +	data->dev = dev;
+> +
+> +	indio_dev->name = "sdp500";
+> +	indio_dev->channels = sdp500_channels;
+> +	indio_dev->info = &sdp500_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->num_channels = ARRAY_SIZE(sdp500_channels);
+> +
+> +	ret = sdp500_start_measurement(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to start measurement");
+> +
+> +	/* First measurement is not correct, read it out to get rid of it */
+> +	i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> +
+> +	ret = devm_iio_device_register(dev, indio_dev);
+> +	if (ret < 0)
+if (ret) is more consistent with other handling in the driver (and my preference
+in general for checking IIO core code calls).
+
+> +		return dev_err_probe(dev, ret, "Failed to register indio_dev");
+> +
+> +	return 0;
+> +}
 
