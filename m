@@ -1,225 +1,104 @@
-Return-Path: <linux-kernel+bounces-264647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CE893E6B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:51:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A7493E6C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A3B1F23903
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24099281BB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD4E7F487;
-	Sun, 28 Jul 2024 15:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C781140369;
+	Sun, 28 Jul 2024 15:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcexLlmO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZWQWIA2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF776F2E8;
-	Sun, 28 Jul 2024 15:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996B978C83
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 15:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722181592; cv=none; b=CpC8XW8vsgckVnLQJZILtOK1BlmIGL/6ZnfDBF5ETgzLZNYC9WCgFenBJaNl+gqcxbouCNyOtYCJ6lI8Bx03JWUoU1TI6++VgMi77SJqF7Akj/OYxIvTnhiO1jUAfBL8nY8rQhP7TkRVJ6JoRuZUN83EZFMsgbb2Jk4RSip/u/Y=
+	t=1722181632; cv=none; b=JekFcvrcEm6ZALpgXZ61+VBXOrBh0OGPsvOsegsmFbwLQjyq1Pd4q+uyDMZb755sCeugKupP7OPs7nhMdZVaMKj2gnUBjdwuq7WFvVO1MzYkHsgJWcWj//XXncLfqMdqOCGtnugoLmR2C0g9N009QPioCF5QnJjJkzzhkONi0Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722181592; c=relaxed/simple;
-	bh=w8CUFLcEnvdNvj4DgpNvBdCJq5FCKEwyXyCM9msZQF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n5tNXHbboB4ncaX/tac1u2LyM7PGSWUPjwu1PJn6qPhKbSSYs/3NTkUFXBR3AOd9hgaaYoTvJ9YGl0yjPyehH/JFtwBYEHEyI11oje8iMVitmA13540RQrxKvgZODFTu1i2xORVVGxCzZXzYxeCUz4ae7Lt/B38vsPPEQL07htI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcexLlmO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38876C4AF0B;
-	Sun, 28 Jul 2024 15:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722181591;
-	bh=w8CUFLcEnvdNvj4DgpNvBdCJq5FCKEwyXyCM9msZQF8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VcexLlmOMKkl6guCSH2R3oMs53GXRvILoWd9+4g3wn2LIu0mOhuW3bByEaJoxD6b+
-	 GrRF5HP+uEgmw3QQYdzqqlSNOa5APIa5pUgcJomZiOn4dTE6YtzwDR8B00wqUFgGrx
-	 LUlangzY7odG85zlUp+7CWzJI0KWX1CLm5wdEIPI5MHuzSlmxzSgPulez3yH0R09wD
-	 BTda3MCOlnplsVfGgMywSzhiT5C7WoNeR3dBEuiq9bgMj6vuRTKUJbnp9Z0xXlNCHK
-	 vqV7klxUfHSA15vqfW4KPQDTqWypgvPt+wCCgJEhoQkx8jLsGVQ7lnNSdePG+poLOz
-	 TAYvg/aYkOc9g==
-Date: Sun, 28 Jul 2024 16:46:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
- biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
- semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] iio: pressure: bmp280: Use bulk read for
- humidity calibration data
-Message-ID: <20240728164621.16615ce6@jic23-huawei>
-In-Reply-To: <20240725231039.614536-2-vassilisamir@gmail.com>
-References: <20240725231039.614536-1-vassilisamir@gmail.com>
-	<20240725231039.614536-2-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722181632; c=relaxed/simple;
+	bh=jg9TuuMt2qdO/frE72GsxGgRR6DhfDVw1Nc/K1dVGTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KPimLtCYm7scoHjK5k6dXfmdt+Wm+VkUpSQ/NJqp23STVYokMQ6M7uOq0AtWb+qezZvkgShgqSyOHRpBToTdNDP32DtIuHVyekj79SeTDeSAKUgr4njS8C9vna3hxt9Bwpv5ijsRNJLl1d676+5UlAfYqxtkkFOGOCeEKSfWl0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZWQWIA2; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722181630; x=1753717630;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=jg9TuuMt2qdO/frE72GsxGgRR6DhfDVw1Nc/K1dVGTE=;
+  b=HZWQWIA2G145R+JthR3O8ZZSmADu7UuIvsUguavP2NoFcqsTPpZ/UaFF
+   lnqLtdJSjfSB4IvFC6PGFo4vJnB8VwrwQGvhbpr8TONQSw4CnsqVljTQR
+   h1guJTnbNz0nD42fcov+cGeJOcmA7g+a1dLuWgCtbJi98qYwNmg7umWft
+   2XTf9Ktg3bmkRbymsQbXRRbeexwA1WTEhntz78bBli/3ZOvZLs/WsQ2Lx
+   iy8Xm4IZkhggXj97QdAU08v74idq115GJkSdqZxazEORS0k6LsVeQoBxh
+   WGxKtRpKNxP7qIg+ksdZVTch9z3Hc6J6owmR6zx2G4J/fg3cgJXUJlS0O
+   A==;
+X-CSE-ConnectionGUID: /GMc8M5lSVqWujss8zqHyw==
+X-CSE-MsgGUID: /dOleHBbSY20yUc2c8HPOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="42447346"
+X-IronPort-AV: E=Sophos;i="6.09,244,1716274800"; 
+   d="scan'208";a="42447346"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2024 08:47:10 -0700
+X-CSE-ConnectionGUID: s7JnBuJtTKeWidR/pQSuEg==
+X-CSE-MsgGUID: OoqXKrZHS8eQ4PfGHrLznQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,244,1716274800"; 
+   d="scan'208";a="54321294"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 28 Jul 2024 08:47:09 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sY670-000qvO-1G;
+	Sun, 28 Jul 2024 15:47:06 +0000
+Date: Sun, 28 Jul 2024 23:46:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vivek Kasireddy <vivek.kasireddy@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: drivers/dma-buf/udmabuf.o: warning: objtool:
+ get_sg_table.isra.0+0x94: unreachable instruction
+Message-ID: <202407282344.RDPzYUGa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 26 Jul 2024 01:10:33 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5437f30d3458ad36e83ab96088d490ebfee844d8
+commit: 0c8b91ef5100eaed3d64123ac91ac4739fccf15c udmabuf: add back support for mapping hugetlb pages
+date:   2 weeks ago
+config: loongarch-randconfig-r121-20240728 (https://download.01.org/0day-ci/archive/20240728/202407282344.RDPzYUGa-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240728/202407282344.RDPzYUGa-lkp@intel.com/reproduce)
 
-> Convert individual reads to a bulk read for the humidity calibration data.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407282344.RDPzYUGa-lkp@intel.com/
 
-One comment inline.  Short version is move that complicated field start enum
-next to the code so we don't need to say so much for it to make sense.
+All warnings (new ones prefixed by >>):
 
-> ---
->  drivers/iio/pressure/bmp280-core.c | 62 ++++++++++--------------------
->  drivers/iio/pressure/bmp280.h      |  6 +++
->  2 files changed, 27 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 3deaa57bb3f5..d5e5eb22667a 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -118,6 +118,12 @@ enum bmp580_odr {
->   */
->  enum { T1, T2, T3, P1, P2, P3, P4, P5, P6, P7, P8, P9 };
->  
-> +/*
-> + * These enums are used for indexing into the array of humidity parameters
-> + * for BME280.
-
-I was thinking of a comment that also mentioned the overlap. Perhaps something like
-...
+>> drivers/dma-buf/udmabuf.o: warning: objtool: get_sg_table.isra.0+0x94: unreachable instruction
 
 
-Index of the byte containing the start of each humidity parameter. Some
-parameters stretch across multiple bytes including into the start of the byte
-where another humidity parameter begins. Unaligned be/le accesses are used
-to allow fields to be extracted with FIELD_GET(). 
+objdump-func vmlinux.o get_sg_table.isra.0:
 
-Or, just refer to the field layout being complex and to see
-bme280_read_calib function.
-
-Actually come to think of it, just move this enum down there so it
-is local to the code and the usage is more obvious / comment less important.
-
-> + */
-> +enum { H2 = 0, H3 = 2, H4 = 3, H5 = 4, H6 = 6 };
-> +
->  enum {
->  	/* Temperature calib indexes */
->  	BMP380_T1 = 0,
-> @@ -344,6 +350,7 @@ static int bme280_read_calib(struct bmp280_data *data)
->  {
->  	struct bmp280_calib *calib = &data->calib.bmp280;
->  	struct device *dev = data->dev;
-> +	s16 h4_upper, h4_lower;
->  	unsigned int tmp;
->  	int ret;
->  
-> @@ -352,14 +359,6 @@ static int bme280_read_calib(struct bmp280_data *data)
->  	if (ret)
->  		return ret;
->  
-> -	/*
-> -	 * Read humidity calibration values.
-> -	 * Due to some odd register addressing we cannot just
-> -	 * do a big bulk read. Instead, we have to read each Hx
-> -	 * value separately and sometimes do some bit shifting...
-> -	 * Humidity data is only available on BME280.
-> -	 */
-> -
->  	ret = regmap_read(data->regmap, BME280_REG_COMP_H1, &tmp);
->  	if (ret) {
->  		dev_err(dev, "failed to read H1 comp value\n");
-> @@ -368,43 +367,24 @@ static int bme280_read_calib(struct bmp280_data *data)
->  	calib->H1 = tmp;
->  
->  	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H2,
-> -			       &data->le16, sizeof(data->le16));
-> -	if (ret) {
-> -		dev_err(dev, "failed to read H2 comp value\n");
-> -		return ret;
-> -	}
-> -	calib->H2 = sign_extend32(le16_to_cpu(data->le16), 15);
-> -
-> -	ret = regmap_read(data->regmap, BME280_REG_COMP_H3, &tmp);
-> -	if (ret) {
-> -		dev_err(dev, "failed to read H3 comp value\n");
-> -		return ret;
-> -	}
-> -	calib->H3 = tmp;
-> -
-> -	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H4,
-> -			       &data->be16, sizeof(data->be16));
-> +			       data->bme280_humid_cal_buf,
-> +			       sizeof(data->bme280_humid_cal_buf));
->  	if (ret) {
-> -		dev_err(dev, "failed to read H4 comp value\n");
-> +		dev_err(dev, "failed to read humidity calibration values\n");
->  		return ret;
->  	}
-> -	calib->H4 = sign_extend32(((be16_to_cpu(data->be16) >> 4) & 0xff0) |
-> -				  (be16_to_cpu(data->be16) & 0xf), 11);
->  
-> -	ret = regmap_bulk_read(data->regmap, BME280_REG_COMP_H5,
-> -			       &data->le16, sizeof(data->le16));
-> -	if (ret) {
-> -		dev_err(dev, "failed to read H5 comp value\n");
-> -		return ret;
-> -	}
-> -	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK, le16_to_cpu(data->le16)), 11);
-> -
-> -	ret = regmap_read(data->regmap, BME280_REG_COMP_H6, &tmp);
-> -	if (ret) {
-> -		dev_err(dev, "failed to read H6 comp value\n");
-> -		return ret;
-> -	}
-> -	calib->H6 = sign_extend32(tmp, 7);
-> +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
-> +	calib->H3 = data->bme280_humid_cal_buf[H3];
-> +	h4_upper = FIELD_GET(BME280_COMP_H4_GET_MASK_UP,
-> +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-> +	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, h4_upper);
-> +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
-> +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-> +	calib->H4 = sign_extend32(h4_upper | h4_lower, 11);
-> +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
-> +			get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
-> +	calib->H6 = data->bme280_humid_cal_buf[H6];
->  
->  	return 0;
->  }
-> diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
-> index ccacc67c1473..9bea0b84d2f4 100644
-> --- a/drivers/iio/pressure/bmp280.h
-> +++ b/drivers/iio/pressure/bmp280.h
-> @@ -257,8 +257,13 @@
->  #define BME280_REG_COMP_H5		0xE5
->  #define BME280_REG_COMP_H6		0xE7
->  
-> +#define BME280_COMP_H4_GET_MASK_UP	GENMASK(15, 8)
-> +#define BME280_COMP_H4_PREP_MASK_UP	GENMASK(11, 4)
-> +#define BME280_COMP_H4_MASK_LOW		GENMASK(3, 0)
->  #define BME280_COMP_H5_MASK		GENMASK(15, 4)
->  
-> +#define BME280_CONTIGUOUS_CALIB_REGS	7
-> +
->  #define BME280_OSRS_HUMIDITY_MASK	GENMASK(2, 0)
->  #define BME280_OSRS_HUMIDITY_SKIP	0
->  #define BME280_OSRS_HUMIDITY_1X		1
-> @@ -423,6 +428,7 @@ struct bmp280_data {
->  		/* Calibration data buffers */
->  		__le16 bmp280_cal_buf[BMP280_CONTIGUOUS_CALIB_REGS / 2];
->  		__be16 bmp180_cal_buf[BMP180_REG_CALIB_COUNT / 2];
-> +		u8 bme280_humid_cal_buf[BME280_CONTIGUOUS_CALIB_REGS];
->  		u8 bmp380_cal_buf[BMP380_CALIB_REG_COUNT];
->  		/* Miscellaneous, endianness-aware data buffers */
->  		__le16 le16;
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
