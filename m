@@ -1,255 +1,98 @@
-Return-Path: <linux-kernel+bounces-264835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5419393E8EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AF493E8F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA6C281934
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F882814FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4E8757F8;
-	Sun, 28 Jul 2024 18:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2914A75804;
+	Sun, 28 Jul 2024 19:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJ6Fzakj"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ltQDmRo/"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5AA53AC;
-	Sun, 28 Jul 2024 18:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7766FE16
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 19:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722192787; cv=none; b=OQ1hAqWRvXgxjw1Dr7H9PtKPISQwSYPDQRrgS1/9CHxVgXdWwVSdgDm9YX/zSyq3MaCxDrL3JW4zSgMpkFcjU6ZOIu33doftl+9aV/CjKrCkOA2nGeXHtDDMvSblODfHzc8Ecp7HpO7KHYOUnijnX5L78hXbICoLX8iQFVyK3bw=
+	t=1722193203; cv=none; b=RA2oQmrF8tL8JhfJrojYgeqIzrBJ5cgCkD12JTQiDRFdSrlyyo8OsG6wwLNmueZrGv2qBxdq3ziwtzVFLYzLixVA3SPehb9ksY2oWQvO8Ae1FvpWdRjlaKu6Xh/nqm+gZ3eliSwqecHGscvHLA9sIm5pgcq9LLkRUz1hlKjDcS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722192787; c=relaxed/simple;
-	bh=PPREMhC5736ADe8UjUj7yOVHwR1uO6w7vYqpo8l6SzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lftrWYSO+Op+FpE61rq4PDzqKXK+vN1ZF2z8P038t679OwSLKANIxQlfQeqY67SsXAYdQs08dJNxt+mm7IwYHi4wDeXzQHv/GPic3OFzi/ROtMHHXKcWHm0q92Vikue2+L6uzoFIKhpDTp97XNWqe2HpV0gEcHZH0SqKZbADrSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJ6Fzakj; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0875778facso1207688276.3;
-        Sun, 28 Jul 2024 11:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722192785; x=1722797585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+WaFwUhUy7huwacOsYHZwdSyihUsKnDhkCHGxr+gg2M=;
-        b=RJ6FzakjqLqJvGSjc4irmshpPsI+/KrXGgxVErb/pvnTMvk3JfWZ+qi9d54Pxn3cuA
-         mcBDDMaxWyPZVTa+FhpbcYnL/f12HSDBLvfkq/vgfRbzMpYTcDzGXvkfZGBZVmyZs8nR
-         gWtwxwDi4e4jujYJ62Urecih/rSrkVCeQRtJdWnVuNftH4w+XTge0LzwyOi0QpIMmRC9
-         knTGCU0r2jOs6SuGlhsi3Wf3gzn1fBAoY5YaS6r9FzxlKjkJBrgQSz8j8scqXPMPALJC
-         xrwjjdJ7rjD6GGuoygLjnYCXWuJHvsscFyQFg1JP7mN4w+tiEwXu8lmeAEpdwrgVJ4EV
-         q/Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722192785; x=1722797585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+WaFwUhUy7huwacOsYHZwdSyihUsKnDhkCHGxr+gg2M=;
-        b=pEOQbBVdyBYtF/U4tckeCXaz5ejZW4igLwhG34+Hv7ZP3TwkBLjJEPcmqfvSSssL1q
-         f7HRPScmmAfOzZ4+WmaG197E3O1ez2904GqwC3Gs9xu0oNnKwy7csRFRSd9vJ0Q1DgNl
-         Zq4+t0825kGzxemmZGGb2gwax0Vvm/6zBickrLJZsuDsHd0SpNG5ZGghfamB5hDsPKLl
-         nYFHvhPjSrkO/113PREbi7n93Vm62ZG9w/7LpSQJzKDdYUfMVez7ienUSTaistyF71wQ
-         9RAsU5ZrqmxMvhxrLji73NwbMcCh0dm2jg6YsK89bOk6IwJjAYQ3014GbzwngtoGGiut
-         DBEg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ekoQHL5W86kEZYxnfa3ZmdTcjFs06BsBIfIu1Q97FDiq0FaFi9kutlQ9F08Q31hBbR58s7x7Ugx9EN2QjVdWV0UFoxYMx8TolFP5MUPRptTWKEX9P0To1eW3oXp27fKZ9AiltsWXdMXOxBEOrPO2FHWAEF/OB6p00rerRXqy21q3ArcQuXLv+coX+ZYl4L31WVSpoL+ETPjF09CoutzCRXTQioVbePnwv9iz
-X-Gm-Message-State: AOJu0YwARApF2BQBlv2nchwk0RRGv8kpiHXUe1uxwDAxfPT2C96N1W44
-	DC/aFqfHz3gC7Kb2aM8qnqidbl6H1ezwA7zpCJlESb5SIZH0CmUEtFyu18zLiGG7Vkq8bVnlEGb
-	b+K7bhLblXUsZ/NU4eSRTGC8kRds=
-X-Google-Smtp-Source: AGHT+IFTRoCPd34HHWfTgIQNU+sTEkr3o4CgrkzGKLra2JgW08IJHV2eZgSUAorTK4dr8M4YsaVo8uy6TqxmtUJfv/0=
-X-Received: by 2002:a25:854f:0:b0:e08:70e7:91d3 with SMTP id
- 3f1490d57ef6-e0b546070aamr5384474276.56.1722192784965; Sun, 28 Jul 2024
- 11:53:04 -0700 (PDT)
+	s=arc-20240116; t=1722193203; c=relaxed/simple;
+	bh=1MyMmZ97Pppecmq9EM2Z5W/UBgCxk2y+Yc/6WxfOg2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+scAwToXBRs856vS9G9jQf2g4+PpbCGFVyXTnOqodPojDBcA+HHLdtceub/vnBGyjlSNANI65AqawFqaeBATbjgM87/Ur9xTqhBZGWYwavdlNEB+VulE5/ZrgnmYXzvtyJ5/xF9ngpDErTZ5EKlGOnFnIQFxOdQMmXKbqr/bZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ltQDmRo/; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 02189240101
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:59:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+	t=1722193200; bh=1MyMmZ97Pppecmq9EM2Z5W/UBgCxk2y+Yc/6WxfOg2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:Autocrypt:OpenPGP:From;
+	b=ltQDmRo/FOKt6uTnPiadITldqlg/J4KZf9v3mm93HktGcKKcX3uR4YnogZmaqOTfS
+	 qisaX2m79uzJadvXDrSI4XntTB3l/fsTNeENURQ4DjiH9ll3W61qaGHDMI6Hz5U7Gz
+	 D2S2JHTml79OnacdEpYrqvlTK4HA52mMJ2O+60MmzFgmIZUP294i1TUrBC+ytQQEDI
+	 +dYg2fADYePs31ISzig2ZJhQAMkUmssukSrPdHb9LJTDbb3HC59mbyJ9TGuc3wr4mY
+	 2tnuD0ZyX0HqEnpzw8xIcNFSFXMFT31n+4eBjzrmk1m7dmGDVEMtHZoSURNuJu0e8b
+	 sTJbihUnCPONA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4WX9ly53pMz9rxL;
+	Sun, 28 Jul 2024 20:59:58 +0200 (CEST)
+From: Alexander Reimelt <alexander.reimelt@posteo.de>
+To: Petr Vorel <petr.vorel@gmail.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
+Date: Sun, 28 Jul 2024 18:59:48 +0000
+Message-ID: <5636859.rdbgypaU67@desktop>
+In-Reply-To: <20240728151329.GA1196482@pevik>
+References:
+ <20240727201413.114317-1-alexander.reimelt@posteo.de>
+ <20240727201413.114317-2-alexander.reimelt@posteo.de>
+ <20240728151329.GA1196482@pevik>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-1-amery.hung@bytedance.com>
- <20240710212555.1617795-5-amery.hung@bytedance.com> <CAGxU2F7wCUR-KhDRBopK+0gv=bM0PCKeWM87j1vEYmbvhO8WHQ@mail.gmail.com>
-In-Reply-To: <CAGxU2F7wCUR-KhDRBopK+0gv=bM0PCKeWM87j1vEYmbvhO8WHQ@mail.gmail.com>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Sun, 28 Jul 2024 11:52:54 -0700
-Message-ID: <CAMB2axNUZa221WKTjLt0G5KNdtkAbm20ViDZRGBh6pL9y3wosg@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 04/14] af_vsock: generalize bind table functions
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, bryantan@vmware.com, 
-	vdasa@vmware.com, pv-drivers@vmware.com, dan.carpenter@linaro.org, 
-	simon.horman@corigine.com, oxffffaa@gmail.com, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Autocrypt: addr=alexander.reimelt@posteo.de;
+  keydata=xjMEZg0fSRYJKwYBBAHaRw8BAQdAIcaNTdj3NWDe5HQPCUs6oYyQygAJWP9LCzhr+C7RwMrNG2Fs
+  ZXhhbmRlci5yZWltZWx0QHBvc3Rlby5kZcKZBBMWCgBBFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIF
+  AmYNH0kCGwMFCQWjo9cFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQHqi3OKk8uRJ8ogD9
+  EVg4zgfmC2SqXCgms6LETAzVX4CrAS8yMhyd7Md921cA/R8lhm9B96RYgA7MvFPFJb1T6JFY75Jg
+  QLXrtIE5llwHzjgEZg0fSRIKKwYBBAGXVQEFAQEHQBGDuxZLOTvppxyM4G18fSR6xzT0xkkPOia7
+  Bh6L1vAAAwEIB8J+BBgWCgAmFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIFAmYNH0kCGwwFCQWjo9cA
+  CgkQHqi3OKk8uRIa1wD8CZDdCAKXstgXY96eeSSP7MecEF5TBdmWOiVgjlEIpoEA/RnGuDaj06B1
+  F51wyGAjYXSmn5qFoNHu3yXyLUkFz1ME
+OpenPGP: url=https://posteo.de/keys/alexander.reimelt@posteo.de.asc
 
-On Tue, Jul 23, 2024 at 7:40=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
-.com> wrote:
->
-> On Wed, Jul 10, 2024 at 09:25:45PM GMT, Amery Hung wrote:
-> >From: Bobby Eshleman <bobby.eshleman@bytedance.com>
-> >
-> >This commit makes the bind table management functions in vsock usable
-> >for different bind tables. Future work will introduce a new table for
-> >datagrams to avoid address collisions, and these functions will be used
-> >there.
-> >
-> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
-> >---
-> > net/vmw_vsock/af_vsock.c | 34 +++++++++++++++++++++++++++-------
-> > 1 file changed, 27 insertions(+), 7 deletions(-)
-> >
-> >diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-> >index acc15e11700c..d571be9cdbf0 100644
-> >--- a/net/vmw_vsock/af_vsock.c
-> >+++ b/net/vmw_vsock/af_vsock.c
-> >@@ -232,11 +232,12 @@ static void __vsock_remove_connected(struct vsock_=
-sock *vsk)
-> >       sock_put(&vsk->sk);
-> > }
-> >
-> >-static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
-> >+static struct sock *vsock_find_bound_socket_common(struct sockaddr_vm *=
-addr,
-> >+                                                 struct list_head *bind=
-_table)
-> > {
-> >       struct vsock_sock *vsk;
-> >
-> >-      list_for_each_entry(vsk, vsock_bound_sockets(addr), bound_table) =
-{
-> >+      list_for_each_entry(vsk, bind_table, bound_table) {
-> >               if (vsock_addr_equals_addr(addr, &vsk->local_addr))
-> >                       return sk_vsock(vsk);
-> >
-> >@@ -249,6 +250,11 @@ static struct sock *__vsock_find_bound_socket(struc=
-t sockaddr_vm *addr)
-> >       return NULL;
-> > }
-> >
-> >+static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
-> >+{
-> >+      return vsock_find_bound_socket_common(addr, vsock_bound_sockets(a=
-ddr));
-> >+}
-> >+
-> > static struct sock *__vsock_find_connected_socket(struct sockaddr_vm *s=
-rc,
-> >                                                 struct sockaddr_vm *dst=
-)
-> > {
-> >@@ -671,12 +677,18 @@ static void vsock_pending_work(struct work_struct =
-*work)
-> >
-> > /**** SOCKET OPERATIONS ****/
-> >
-> >-static int __vsock_bind_connectible(struct vsock_sock *vsk,
-> >-                                  struct sockaddr_vm *addr)
-> >+static int vsock_bind_common(struct vsock_sock *vsk,
-> >+                           struct sockaddr_vm *addr,
-> >+                           struct list_head *bind_table,
-> >+                           size_t table_size)
-> > {
-> >       static u32 port;
-> >       struct sockaddr_vm new_addr;
-> >
-> >+      if (WARN_ONCE(table_size < VSOCK_HASH_SIZE,
-> >+                    "table size too small, may cause overflow"))
-> >+              return -EINVAL;
-> >+
->
-> I'd add this in another commit.
->
-> >       if (!port)
-> >               port =3D get_random_u32_above(LAST_RESERVED_PORT);
-> >
-> >@@ -692,7 +704,8 @@ static int __vsock_bind_connectible(struct
-> >vsock_sock *vsk,
-> >
-> >                       new_addr.svm_port =3D port++;
-> >
-> >-                      if (!__vsock_find_bound_socket(&new_addr)) {
-> >+                      if (!vsock_find_bound_socket_common(&new_addr,
-> >+                                                          &bind_table[V=
-SOCK_HASH(addr)])) {
->
-> Can we add a macro for `&bind_table[VSOCK_HASH(addr)])` ?
->
+Hello,
 
-Definitely. I will add the following macro:
+> Alexander, others have added their tags in previous versions. IMHO generally
+> it'd be worth if you carry others tags in next versions (when nothing
+> changes).
+I already replied to Krzysztof, but I messed it up and sent it only to him. 
+I'm sorry I wasted everyone's time. I didn't fully understand how the system 
+behind these tags worked until now. I should have asked earlier, but thanks 
+for pointing it out.
 
-#define vsock_bound_sockets_in_table(bind_table, addr) \
-        (&bind_table[VSOCK_HASH(addr)])
+Kind regards,
+Alexander
 
-> >                               found =3D true;
-> >                               break;
-> >                       }
-> >@@ -709,7 +722,8 @@ static int __vsock_bind_connectible(struct vsock_soc=
-k *vsk,
-> >                       return -EACCES;
-> >               }
-> >
-> >-              if (__vsock_find_bound_socket(&new_addr))
-> >+              if (vsock_find_bound_socket_common(&new_addr,
-> >+                                                 &bind_table[VSOCK_HASH=
-(addr)]))
-> >                       return -EADDRINUSE;
-> >       }
-> >
-> >@@ -721,11 +735,17 @@ static int __vsock_bind_connectible(struct vsock_s=
-ock *vsk,
-> >        * by AF_UNIX.
-> >        */
-> >       __vsock_remove_bound(vsk);
-> >-      __vsock_insert_bound(vsock_bound_sockets(&vsk->local_addr), vsk);
-> >+      __vsock_insert_bound(&bind_table[VSOCK_HASH(&vsk->local_addr)], v=
-sk);
-> >
-> >       return 0;
-> > }
-> >
-> >+static int __vsock_bind_connectible(struct vsock_sock *vsk,
-> >+                                  struct sockaddr_vm *addr)
-> >+{
-> >+      return vsock_bind_common(vsk, addr, vsock_bind_table, VSOCK_HASH_=
-SIZE + 1);
->
-> What about using ARRAY_SIZE(x) ?
->
-> BTW we are using that size just to check it, but all the arrays we use
-> are statically allocated, so what about a compile time check like
-> BUILD_BUG_ON()?
->
 
-I will remove the table_size check you mentioned earlier and the
-argument here as the arrays are allocated statically like you
-mentioned.
 
-If you think this check may be a good addition, I can add a
-BUILD_BUG_ON() in the new vsock_bound_sockets_in_table() macro.
 
-Thanks,
-Amery
-
-> Thanks,
-> Stefano
->
->
-> >+}
-> >+
-> > static int __vsock_bind_dgram(struct vsock_sock *vsk,
-> >                             struct sockaddr_vm *addr)
-> > {
-> >--
-> >2.20.1
-> >
->
 
