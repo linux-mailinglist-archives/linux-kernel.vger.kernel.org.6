@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-264789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0B193E868
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:29:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC3C93E86B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D854B1C21709
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2551F21B04
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4671418F2D6;
-	Sun, 28 Jul 2024 16:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281A318FC6B;
+	Sun, 28 Jul 2024 16:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPD+TsJe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVjP2bDn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF0778C68;
-	Sun, 28 Jul 2024 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C8018F2F6;
+	Sun, 28 Jul 2024 16:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722183014; cv=none; b=th+A7iT7LS4/2fd+A3n65PSMgdGuEoSmyxKQSSJLzZ7Dw19kSe63wBAYuWHzscypvZIQ6F/K7Oga7hm+/1hxxugGG25u2pOssCTXaLEHTGSWNDP9YcIsupD8G7nRkBKfcazidyCbksOrB/UcLdraann7IXRT2+/mzSyH2v03xYc=
+	t=1722183016; cv=none; b=oFJGJw8hqQN3ebjypk1DJtcuOicyzrdZOMmSY2ZiBDgFMll8ouv659GDYiT0olZoNIAaGCePlAQkbbBf8RYYLffVDIEeapwim6QSWHpCP1lAp0z5DD/I3A8tU6DyLH7NkfwRU+ciEoWNqOd054ou63VKdkDYLd1WcXwDAceQ8YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722183014; c=relaxed/simple;
-	bh=IiKPslQhoPMkXdwWwmKfLu5ZsNAFZC3dSPSZhdALLlI=;
+	s=arc-20240116; t=1722183016; c=relaxed/simple;
+	bh=Mbi6RhR6aJ+6JApKJEYaRlVBNaqkSekKs3pFS5l7UzA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=erBmGuaydQbVfxu1XWA3NTvU6Ite8go3Nwu/5d+fOivSVsml2f1oOpUIDh4w1NV0Hi5rm4Lvk65F57ZISwlDnybrPIe9i5seFjCRI9fwq56gEYRl7db9NJwzB7S0GoT9EdZo1/GiZRdnhIKjyGKRGNy2rDCfGOe4s0BAVu/phgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPD+TsJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE8EC4AF0B;
-	Sun, 28 Jul 2024 16:10:13 +0000 (UTC)
+	 MIME-Version; b=Xl3LyPiGhcIEn0TmZ2yTdGhonQgiARL68F2Sot7SXazU/MNz4f05yVe+TkjJ3nqkkd0LZ+oQRWpi4/uR+7rCWHsRUdN5linDYWc1LYGMVIh7vnl3pcoR3uzZrnfg5osz24gc5D/JwBMGSFzFxsWi4/qluH46mpqogbkiUCco2mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVjP2bDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBB8C32782;
+	Sun, 28 Jul 2024 16:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722183014;
-	bh=IiKPslQhoPMkXdwWwmKfLu5ZsNAFZC3dSPSZhdALLlI=;
+	s=k20201202; t=1722183016;
+	bh=Mbi6RhR6aJ+6JApKJEYaRlVBNaqkSekKs3pFS5l7UzA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jPD+TsJe19aRoP0UL7tNYCdd8l3enpmTk4ayJ49uDNRxiXx8MWTQgDznPfDon0S5n
-	 xpkRGVVX7ur1RupQ+etSuWkYZ0Bsjb1Sf+j6GCxZ6GyZ8r+9kym9YScr+Q4iS9rIAR
-	 dnESb1AmL8uLMJBi6nDF1s10galQl9newfdvuLyppujnRbRl98pd47eDa9DRMGX44Y
-	 z4pieomoDW+5EyEMpv9enFTTECOh33nlBatjFSDluzeIU0LE3pqUSICZ5Dapw91HFA
-	 Rp34/pe3ps44/hEoDMlwEZ/OtqieS0ek8dYCG+0xjwp0dxdG+KdiPWz1muX1Bj2AQl
-	 wWBFqgN5jx6Vg==
+	b=UVjP2bDnVIC0LyT2VvWKkUm9JkJDGx1rXYg2kWFkvzSK7QOE3N6wm4xHETHCXTAyJ
+	 z4tSjZKL9rGO+QQqmawl+ToUytdgH/nOOg47FFrq06U43L87FmFkEJYGQjUIAIH6A3
+	 ZtZtnGQHV8VZAH2cC+JtGsiKUX6MUqQj+a0rE67XEkVifQ2MJhADjQ/JQb5amgcDwS
+	 uQU/d45ACUmQX7nty8f3/jw54+SLwELzK+SoMa9F7zanZLPDl83jtyLFfWP6pXHOxx
+	 IT6CWhA8WBrfCTtZE1CpsSsWYOIjZUUjm/kCOtfgLC8G2wve5WGT2hYx8rr6OAyTqX
+	 3zLiWEJu+mt3A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Sasha Levin <sashal@kernel.org>,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 07/11] MIPS: Loongson64: DTS: Fix msi node for ls7a
-Date: Sun, 28 Jul 2024 12:09:40 -0400
-Message-ID: <20240728160954.2054068-7-sashal@kernel.org>
+	mahesh@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 08/11] PCI/AER: Disable AER service on suspend
+Date: Sun, 28 Jul 2024 12:09:41 -0400
+Message-ID: <20240728160954.2054068-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240728160954.2054068-1-sashal@kernel.org>
 References: <20240728160954.2054068-1-sashal@kernel.org>
@@ -68,34 +66,66 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.10.223
 Content-Transfer-Encoding: 8bit
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 98a9e2ac3755a353eefea8c52e23d5b0c50f3899 ]
+[ Upstream commit 5afc2f763edc5daae4722ee46fea4e627d01fa90 ]
 
-Add it to silent warning:
-arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5: Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cells' found, but node is not an interrupt provider
-arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts:32.31-40.4: Warning (interrupt_provider): /bus@10000000/msi-controller@2ff00000: Missing '#interrupt-cells' in interrupt provider
-arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
+If the link is powered off during suspend, electrical noise may cause
+errors that are logged via AER.  If the AER interrupt is enabled and shares
+an IRQ with PME, that causes a spurious wakeup during suspend.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Disable the AER interrupt during suspend to prevent this.  Clear error
+status before re-enabling IRQ interrupts during resume so we don't get an
+interrupt for errors that occurred during the suspend/resume process.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=209149
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=216295
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218090
+Link: https://lore.kernel.org/r/20240416043225.1462548-2-kai.heng.feng@canonical.com
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+[bhelgaas: drop pci_ancestor_pr3_present() etc, commit log]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pcie/aer.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts b/arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts
-index c945f8565d543..fb180cb2b8e2c 100644
---- a/arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts
-+++ b/arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dts
-@@ -33,6 +33,7 @@ msi: msi-controller@2ff00000 {
- 		compatible = "loongson,pch-msi-1.0";
- 		reg = <0 0x2ff00000 0 0x8>;
- 		interrupt-controller;
-+		#interrupt-cells = <1>;
- 		msi-controller;
- 		loongson,msi-base-vec = <64>;
- 		loongson,msi-num-vecs = <192>;
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index d58b02237075c..974d56644973f 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -1373,6 +1373,22 @@ static int aer_probe(struct pcie_device *dev)
+ 	return 0;
+ }
+ 
++static int aer_suspend(struct pcie_device *dev)
++{
++	struct aer_rpc *rpc = get_service_data(dev);
++
++	aer_disable_rootport(rpc);
++	return 0;
++}
++
++static int aer_resume(struct pcie_device *dev)
++{
++	struct aer_rpc *rpc = get_service_data(dev);
++
++	aer_enable_rootport(rpc);
++	return 0;
++}
++
+ /**
+  * aer_root_reset - reset Root Port hierarchy or RCEC
+  * @dev: pointer to Root Port or RCEC
+@@ -1431,6 +1447,8 @@ static struct pcie_port_service_driver aerdriver = {
+ 	.service	= PCIE_PORT_SERVICE_AER,
+ 
+ 	.probe		= aer_probe,
++	.suspend	= aer_suspend,
++	.resume		= aer_resume,
+ 	.remove		= aer_remove,
+ };
+ 
 -- 
 2.43.0
 
