@@ -1,203 +1,127 @@
-Return-Path: <linux-kernel+bounces-264821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0238093E8CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:57:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E657D93E8D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7F1281613
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80B67B21360
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0355F873;
-	Sun, 28 Jul 2024 17:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="mZ2tl6cI"
-Received: from sonic310-14.consmr.mail.bf2.yahoo.com (sonic310-14.consmr.mail.bf2.yahoo.com [74.6.135.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F84A5F873;
+	Sun, 28 Jul 2024 17:57:31 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3682628D
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 17:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BE21DDE9
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 17:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722189416; cv=none; b=RCLcOS885tuljPDnfJz4n9/VWhHKpq44uh6mYrsxBW4M1FIaSh2QFCt5FXbDAnUDdSf7X7FyIjTVPXf4c7Bo11/EE2tUu9pwks/dczs2ekGfvEvFlV+DfaI0OYRZ9YPUaixmbouvpUiT4/B+uYhy6tEZvuAQihps+RKuB1DouHo=
+	t=1722189450; cv=none; b=TIGY5knNnj7F2pbsuLZ83Ovw5vhra71gvMj7lFERXDnBv6szQEpdGrTHIL7DcbkPM4e75ruvXsu+fYCQ8q/GsHeeBophbseVMUsHGnNZUGTdqMlFC57Q1AuAwDuNIviPb4ji0ZovtZjFvZVyYzPNhpV/+dl73Hk8xzgazPPyRT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722189416; c=relaxed/simple;
-	bh=Du8Y9uBFN2tQMITWqJ91SXQ4qbHuflV6EP952aYsQkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VJ18kXHVaFfJkToOLZD9iwTRT70dIKwwkyxyGrbcikaC9QIgHBiIzZDxljVAjpWCamoUjgUyQr5h5JbtREv4djjZ4+xSkL1rWyL4XjlHPPwsD/Xkf+VNjCQDoJnjwboUh3+PglEACpfuQbUN8svwS8cITOk/Btl5PTurI5MSAsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=mZ2tl6cI; arc=none smtp.client-ip=74.6.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1722189408; bh=gpS1CAjF2E4BxdNrrAF/J2gaU07mwhcUgr8cl9LhRqU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=mZ2tl6cIIhLUTSkO5OpoRBmzCxxvwBsw6kQBcMu5+kvb63DwvASuAWGNxd16V1hB0soNQipIoR66K7bDDgmndg9/ewOrgZ8oZBAS9buAQdm9d/K7iSLqH8uNXWaG//LIJpi9ngYA0YNFJogR1mMT0hobPryG+N1ayLr4YOVhkSzQA6tkKl7Y2foUcmXKBCp9sN68zkEo8lkQS4gNsTsQNTW6L4tGQC8b2so4dQ1AXjZmw7Q3SUl/y3XiFDWm3udPZz2im0rnX6N12zUATdqPsOG++7he1FeicU6S61CBLhRLZ8NrJwdgJ1uk0tOVEb6zGM0OFCPs8kBs0zYpQdmViw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1722189408; bh=OiFV++KQs7Y7s1ITwj6AGrZp4j3hUF+f+zAaN7i7FIy=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=BvxHUUF7sWUA5OBu5t2gSRuEuHlNtZW9xQOCKrs4ORAzh+yllVKYeuL18wXncZXj7OPElKQrWsw/k3a6FQI36nUeU5BPKzlYc/A1JijySBWXFaYqcXSwql9Nz+C0iovePFWAFJ7H55i3DzruS3vXIk0Q4tOGUZgxthk8fFX/EASuZXKQNtaDVUbwvVVAPTMA1+9vKm6mpJH6IoycA1lPb2jUPPT/cCGGnx0iE7u5zEpqL/Xi6UEYgWsjIG4I6aneX2F7wFpk6KPEW2atGIz8uJNe3EdMD621rLaw17/1mCvkrwAJprZQ/fSB2cEiJBGHmNiE0vtBqoJgucT9Wfu54g==
-X-YMail-OSG: mHWGCJoVM1nkZXocxjVy9omjFtFVVqYPnfP7N89sVNXjdIXtn8m7jW5NPnI.HvU
- OZkWBcQMnDw.hE5F0xvNpT53dI0e7H_3KM.QVWUEtLGNTapBhB.1X3M8SIspriUxDRwFmM_0grOZ
- mcg2I35imGpW416CXDAQ8nFatyXAE0rrzag0WEpOfPham3djlDX57qHlPpP7JHqTA9um7wose3k4
- P7HZnpujMxNrzs3Fizq8MrrRTuK5sFiUxGsBhfmBkykPxbEL14rmXf_JxXhZ1N_U3kHSWdQJprqE
- DVC8DcorNRGrOlIDlZP_119T_stZeGERevgRRfTJ8okEeoMuyb3sf7k6yJ9tdma8XOu7yz8.Tt10
- TVZixkCKtC5UoGnygzINcev4qiwY31ewglmVNp0JzOPDdOTaEwJMQgVQOJeh9UfOCPIzX3s8Oedk
- 2qfTRBNFXhg8fiEkZ1ObW7hARRDhVkvcyuFooafYPA3xTdNYPY969YwskCKSvGliO_4GG1lPvwDa
- 3d1oSJ2FoGtoMbdN7s20Fd8QqhWoTCjQsOz6crwv5BaMis8tgu2AzhAKf10HAO7WjDyWzKh.QZK9
- duNUc23KS26hlABSXw5mwYyNGxssaMLJ64G_4SCyQmhMXxq_qyzwwlfiZbC5lnkVlbkmVjUOazcq
- rqQAcnvKyWDSIcgGNVLicBE93yiLYqVzCCM7I71CfD1mMs8gCQP6U8rGI_jfmbG4mS4mzya2Q9FU
- tt9lPgadEl97s8tEcVA4wSrcDhRwUIGfNmXkx3nSk_zbeDfSydbzM4mBBfQqDfzi5lQOp_RnTGpR
- tkbpGD8oLBdjsBkCdiuyWe0S6T2wssmPkfyWx7xtIq.DZRqsZ.kGzaI0UgGJLVzx8KFDCQhCpeAM
- gI9MLbw0e7S1naO6dDrDEJqz5dYtTlvxEN.ZYGu7gMAYKvxfceQ1RQvvCZdyzWyhfmLxgymHcemz
- O80zlFLb8Dczy6Og2mwqCKmZsAKlnOtDA7coOuqvoojzwkBFE.JtT8sPqJDa48wj7JSnQ9J4gCPf
- kPINIjyNDa_fNqsNiOaQqPriY5qMThxGPmjH_BDJ5YaXLceo74dwlWXZthmmx3tnphxFNFJvHbNu
- 1L68hj57yIteRl7xJbHO1y26wPg8ikgK8xqRLY.cMgKkfrIrjhgaGSF5Dv_iw7b9v0z1UT6YXxQl
- MC1cH5mR.gxLRYg.o9KM7wGjFPmy.c6cCe0jviXQq7d2u0Wsv73A6E_paP9gWZQGjCxwv9zwLOCO
- pgUNhxfW598.mb9PeTohQEFfRD3D5aOgHKWRWppTQ1YhRZtimZ.C3LEv7VsZQBYyCt4GFToFYI2Y
- F09SZ4JKP.OgA.YAzks9ywpORikL95_BQ.YDRM7KZ8Ru8ymNhufRrU2Y96tpPpaRwv8u1jMMtyHu
- JpJcBLLC53GibcD8.FPG_vYfGE.3M89sqf3piHGIBOv20M9hiJCawptCgA3HpD08cScPUuBovrhl
- 6JPWqXG2CWdRvMGf8o0vam1EDkditnkrUhPPQJiBk_vxDURPPhjqzRjqvA0Kzsz_ix9eyFAd6Q8M
- trkUk3u3thTTlISZnLUS2aH2M6cHfcD_cU6GtS4dqJ5qkC.Xsw8HGv4DxZPPf4rIT._kNVR_Nfxy
- oyA92anPQo0QeBSEmViUYPfEEPOZjsTAHZRcKEHBH_8h2NQTteccYpFDHXbfYyzLx34ZHiF3EzPc
- wxj8abTJhJOVNH0S.qL_bzjq_aG6NeyqWgMO.CfM_vIHSMgO5DbiGsHr4844XhoBYUuSnw8lK548
- Sa7FSlTQQMd70MaNDRSRoRO_rf87LxEGVJ38ujxoLCPBwhXkrkg3XIGzxemk_HKeYLn5Xkk7eCFS
- hkKzkBO0BLRM6b5BdTEiA6DrmNJSAYdBIL2wXrO9C52QkEZSJcKKV6ioMxFZois4tVDgSakWAT7Z
- SaSvQK8hwfdUIOCqdlvenvRAC1zwFLBlUN8jxKeDPFQq2m.qk3QNdK.j7PLKQwJdwavyekKQIbgy
- Q7nfysHdM4VkWDx80aqGjmxD2mpjKIsAUaBAU0mUtW2dkL7SE_MEsBx9W0O.D6aRU1UK.p4iwmvs
- ZFoGb2lPEgRjwbUxq22EmnX0C1wWT9ZYRm8Y6BcX3zyrET964TcCAHYh_Q2ypZXOQNPn2AML80Q7
- SWSDx6TwIYrwAHnZkKrsArU9Llfq9983AP.sHweDcx.LRBTGVP9V7.LBOhNPmkyayWk_79MJdEUY
- jXxcdXKysy3mZp13kPx5mJcbvmGneknrOy2LUZnLus7GgrTPgjsI-
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: 5f97efd9-8a37-4423-8a3f-53f03f8484a7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Sun, 28 Jul 2024 17:56:48 +0000
-Received: by hermes--production-bf1-7bd4f49c5c-lhqxz (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4f618d9c1cfa518165b2e17e4ffeaa47;
-          Sun, 28 Jul 2024 17:56:44 +0000 (UTC)
-From: nerdopolis <bluescreen_avenger@verizon.net>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jirislaby@kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Subject: Re: When /dev/console is a disconnected /dev/ttyS0,
- TCGETS on /dev/console results in EIO (Even if TIOCCONS is called on a PTY)
-Date: Sun, 28 Jul 2024 13:56:43 -0400
-Message-ID: <1831764.TLkxdtWsSY@nerdopolis2>
-In-Reply-To: <2169369.OBFZWjSADL@nerdopolis2>
-References: <8411114.T7Z3S40VBb.ref@nerdopolis2> <114770592.nniJfEyVGO@nerdopolis2>
- <2169369.OBFZWjSADL@nerdopolis2>
+	s=arc-20240116; t=1722189450; c=relaxed/simple;
+	bh=MF7uqUQrnnHaKcTgTs4jzivn1J/Pg/1eb7JY6+0uSgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fmn5ugAiGPyWJbeudAXT+Om+ShvueIOk9GWi+PEFSPqeR17jx26Z60qq8mw6NLGMO9PpcLa7lLJ9BwZGPATf2+ECVmUD6OJuv0KeHw9FEF1N63MpDFXqdeO7l46Y6CQB1RKmHhXe7PPwWZmRBxmo+PjcnnmLujrntM2iQDAQUSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e0874f138aeso908751276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:57:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722189446; x=1722794246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zcg9LIQXoJDKfkFjcw9/cA1s5xsMs520Cc5HCM8x/aA=;
+        b=UEyGQt8TaGbWudLC8S+HbsacdG2KgwKma41aZQ1bn1vgwYlxtnBiyoHB6iDTY09jZh
+         t41pfHoGHXUHx7mnpuZ7L9Y+ZqWqCMVLXRrd5I2ytS+DlpU0CabxLOHb+L0bMzXqtkve
+         QQZQELzEgljv4w4J3B6Zqw6HbsxgcXR8lcQnk+uHwuKMjP6lEpSb5m9tGGUpPRTSNFoS
+         oXSzb4iW9Dv+PIaOHGnSVubPubHCP+i/vfjSCebfObMWniqNDofPI6PlWnf6HCToUXQE
+         Ltz7u5y+6WVFdrw0cu/+pwvdLbmIDoCe5lJB0qpoIiSgUeti1ZxbkeufizQIQQmZb/2Y
+         z9IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXq8roQnfMi/SKf8ujJZIC7ICUz4Z1/4620QDbkPujvkqvtWg07uMILiroL+Rpe338UTatcqusjWB2UvIu/D4tlVnAuBihL4IlRUWez
+X-Gm-Message-State: AOJu0YyOB3eVe66t+fuD3kj9vnZIxfieQuZVZWTzhkFOXaYFG0d1F/OI
+	cq1VSnP7K1gBMGCzVVz99W+mMziYxHwv0XU4hxPO6lGC6y/g72uI4WpKsY4M
+X-Google-Smtp-Source: AGHT+IEDuzUge6/4PFU6LLI/nqJDasYtX9m7M1LmFm4mb/RaWW5ARkJbi5mt2TkqJ9PzsaWtEAgWtA==
+X-Received: by 2002:a05:6902:2d05:b0:dfe:fac8:b890 with SMTP id 3f1490d57ef6-e0b54548bcemr3935651276.28.1722189446375;
+        Sun, 28 Jul 2024 10:57:26 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2a70d174sm1513555276.47.2024.07.28.10.57.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 10:57:24 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65fe1239f12so8589897b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:57:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyKaZFGw2UQiu9tnaROUpZdt3a5V1kx21sJSjfPFyXFcRIqVzBvkEFh3UQZUOshAlNsMgpT6d0pCeVphDG5WVWcXB5rI0XbDT1848p
+X-Received: by 2002:a05:690c:a85:b0:648:857c:1530 with SMTP id
+ 00721157ae682-67a0919aebcmr45656887b3.34.1722189444496; Sun, 28 Jul 2024
+ 10:57:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <902a9bf3-9404-44e8-9063-03da3168146a@lucifer.local> <CAHk-=wjCV+RmhWjh2Dsdki6FfqZDkM9JMQ=Qw9zGmGQD=ir6cw@mail.gmail.com>
+ <b8722427-cf1e-459f-8bad-04f89fb5ffc6@lucifer.local> <CAHk-=whsMPLro6RDY7GrjvXpy+WYPOL-AW5jrzwZ8P4GPBHxag@mail.gmail.com>
+ <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
+In-Reply-To: <137646a7-7017-490d-be78-5bd5627609c3@lucifer.local>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 28 Jul 2024 19:57:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXCuF4ikx7uR_fG=EAPOf+1T0JoHTMOyqfS6eUcvS-piw@mail.gmail.com>
+Message-ID: <CAMuHMdXCuF4ikx7uR_fG=EAPOf+1T0JoHTMOyqfS6eUcvS-piw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] minmax: reduce compilation time
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, David Laight <David.Laight@aculab.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>, 
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, July 24, 2024 11:17:54 PM EDT nerdopolis wrote:
-> On Thursday, July 18, 2024 7:52:15 AM EDT nerdopolis wrote:
-> > On Friday, July 12, 2024 8:59:58 AM EDT Greg KH wrote:
-> > > On Fri, Jul 12, 2024 at 08:52:15AM -0400, nerdopolis wrote:
-> > > > Hi
-> > > > 
-> > > > Background:--------------------------------------------------------------------
-> > > > This issue becomes evident on VT-less kernels. As when there is no /dev/tty0
-> > > > device, the console defaults to being /dev/ttyS0 instead. Although this can
-> > > > also be replicated if booting a standard kernel with 'console=ttyS0' and ensure
-> > > > nothing is plugged into /dev/ttyS0.
-> > > > 
-> > > > This issue prevents systemd from logging to the console.
-> > > > systemd when logging to /dev/console, long story short it calls isatty() on
-> > > > /dev/console, and when /dev/console is actually /dev/ttyS0, and nothing is
-> > > > connected to /dev/ttyS0, isatty() fails on /dev/console due to an input/output
-> > > > error, causing systemd to not log the console output, because it rejects
-> > > > /dev/console as not being a terminal.
-> > > > 
-> > > > 
-> > > > This is noticed on a VT-less system with Plymouth. Plymouth calls the TIOCCONS
-> > > > ioctl on a pty device it requests, to redirect console output, and in newer
-> > > > versions, it displays the console logs on its own without the assistance of a
-> > > > VT.
-> > > > 
-> > > > This part of it works, Plymouth is able to 'see' what gets written to
-> > > > /dev/console, log output from processes that write to /dev/console directly
-> > > > (for example 'echo hi > /dev/console") do appear in plymouth's
-> > > > /var/log/boot.log, it is just that systemd is not writing to /dev/console
-> > > > because isatty() fails to report /dev/console as a tty device.
-> > > > 
-> > > > The alternate fix in for systemds https://github.com/systemd/systemd/pull/33690[1]
-> > > > is believed to be that when TIOCCONS is called on a PTY, or another terminal
-> > > > device, that trying to call TCGETS on /dev/console should no longer result
-> > > > in an error.
-> > > > 
-> > > > 
-> > > > Replicating the issue:---------------------------------------------------------
-> > > > 
-> > > > This program replicates it:
-> > > > -------------------------------------------------------------------------------
-> > > > #include <stdio.h>
-> > > > #include <fcntl.h>
-> > > > #include <unistd.h>
-> > > > #include <errno.h>
-> > > > #include <string.h>
-> > > > 
-> > > > int main(void)
-> > > > {
-> > > >         int fd;
-> > > > 
-> > > >         if (getuid() != 0) {
-> > > >                 printf("Must be root\n");
-> > > >                 return 1;
-> > > >         }
-> > > > 
-> > > >         fd = open ("/dev/console", O_RDONLY);
-> > > >         if (!isatty(fd)) {
-> > > >                 printf("err on /dev/console: %s\n", strerror(errno));
-> > > >         }
-> > > >         return 0;
-> > > > }
-> > > > -------------------------------------------------------------------------------
-> > > > 
-> > > > When the kernel console is /dev/ttyS0 and /dev/ttySO has no device connected,
-> > > > it prints "err on /dev/console: Input/output error"
-> > > > 
-> > > > When I strace it, the relevant line is:
-> > > > ioctl(3</dev/console<char 5:1>>, TCGETS, 0x7f...) = -1 EIO (Input/output error)
-> > > 
-> > > Do you have a proposed kernel change for this that solves this for your
-> > > tests here?
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > > 
-> > Hi
-> > 
-> > Sorry if this is a duplicate, I accidentally had rich text sending turned on,
-> > and did not realize until too late. Anyway, to answer the question, unfortunately
-> > I have been unable to come up with a fix on my own 
-> > 
-> Would the fix be to make /sys/class/tty/console/active report the terminal
-> that TIOCCONS was called against? I am probably wrong there.
-> > Thanks
-> > 
-> 
-> 
-Hi.
+Hi Lorenzo,
 
-So I was doing some grepping, and throwing in printk's in places, and then I
-realized  that the ttynull driver. Turning it on, as it was disabled by default
-in the base config I was using from Debian, and then booting with
-console=ttynull causes /dev/console to work when systemd logs to it, and then
-Plymouth when it calls TIOCCONS on its pty, the log messages makes it to the
-pty. (The proper systemd status messages are now working again on VT-less
-systems without the need for /dev/ttyS0 to be active)
+On Fri, Jul 26, 2024 at 8:57=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Fri, Jul 26, 2024 at 11:24:09AM GMT, Linus Torvalds wrote:
+> > On Fri, 26 Jul 2024 at 11:13, Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > 5,447,539       ./arch/x86/xen/setup.o.pre
+> >
+> > Can you perhaps do some kind of "max expansion" on all the
+> > preprocessor files (you seem to have done it by changing the ".c.o"
+> > rule to just spit it out as "o.pre", which sounds fine).
+>
+> Yeah I simply hacked in a gcc -E, ugly but effective, e.g. prepending
+> cmd_cc_o_c in scripts/Makefile.build with:
+>
+> cmd_cc_o_c =3D $(CC) $(c_flags) -E $< > $@.pre; \
 
-So I think I found the solution. 
+Kbuild already knows how to build a preprocessed file (.i),
+so making any .o depend on its .i should work, too?
 
-I think the only thing I have to ask from here is if there is a way to enable
-the ttynull driver by default with a config option, so I don't have to boot
-with console=ttynull in all my command lines
+Or am I missing something?
 
-Thanks
+Gr{oetje,eeting}s,
 
-Thanks
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
