@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-264549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA8E93E4FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CC993E4FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6B31F21A26
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6601C209D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E8E3D984;
-	Sun, 28 Jul 2024 11:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9371043AD7;
+	Sun, 28 Jul 2024 11:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exCTy/SZ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFAGVz9Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC318EAD0;
-	Sun, 28 Jul 2024 11:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21C4205D
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 11:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722167701; cv=none; b=DrQpiMcJPq9Ar/deB4n7AyQ61iYf/mQzizx42mRO9VkvLg/ZD5lX+zGsG8Yl3GQOOA+3dHJxiL6R4n+Hjvyc9s2p4140YJ+CtB16EdEQyIAs7YfZF5M0T32z0B3hmyzGh3Tsvq8iPVIFSkuNN6eN74m3SSOtE+k9MhHU7hHa7eU=
+	t=1722167711; cv=none; b=mjBP2nDUFF3CxUMJqm7Tf+J3mYkUiI3OQr3IXwa9476/1+oycNWA4WpR1IJfEbDm60JU6PF8ejEvTE3D1dRrgYAby+Rl6yX1eBnAcrxzFgARVO3oWe6AisermfiEfEGQXnLd9rQNAInnLBH4H3S9v4UJQbr9b5s1iVbOggYdpIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722167701; c=relaxed/simple;
-	bh=ebEmE6yxa72kDlnAPNumxA/Rzcxn7AaMkp24552T6fw=;
+	s=arc-20240116; t=1722167711; c=relaxed/simple;
+	bh=IBz57s74vuSUyAAr3ijmdcIIYCDfWCz8eKghNS3oOYE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s8tOT9YUPYWKqcDkl3WOHHhxzlhTXrM6D6psefmhFWLhYaNHKIIXCJJ8gLYV9TBuRhtHmDFHA67hILRrJpFt6KrFO1DET1vEJTT72nXDu8sX4wlpkvXYVC71ZVWKO280tCyKDC3WnoysOinKxV4MTfNWIvd/VNsx0OCRy3SqvP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exCTy/SZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36874d7f70bso196314f8f.1;
-        Sun, 28 Jul 2024 04:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722167698; x=1722772498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8xmpSOBK68vpqOxcO8IAsD8IIZwNUgCDMrjM2ilo6Vo=;
-        b=exCTy/SZZwCcq43wzF+bWPFz6OI4duQ1LX8byf8gQDA3JkghLuU1iIzB1GuZhAhDGI
-         zNNAkjMC85JfXtWa7env/R8fO3YXv14XqtmKlVWAz41V/sdNFUszIAT76NxYA3H5NKCR
-         yqbGt0ZxJXy2poch/H49L6TL9hMkBSyjhEGjGDLcS36z2EMYQjtke4eukFVSY2JzFU2J
-         nhPNuOSipEPiVRjJENRC0zxzBVRVSlLccBWufEPgg3/BB22JY/XpfmCXpxLlwJBUadoC
-         d84MRnCralpW+3nmHmUsyufrNuGxACpbnWfQX9pXFhSD0LotHQ5HcmyuR94LegEKgGUK
-         RQAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722167698; x=1722772498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xmpSOBK68vpqOxcO8IAsD8IIZwNUgCDMrjM2ilo6Vo=;
-        b=FGJ3NAvTdCJrYRa57U++c4n72gy4oIKHoqsfwvaK4yNFRiwKTiLv6nSAPFn+uBre0C
-         P59Y4ac8gcYJuMs7paizHjhQD3N1aosahbi5FTmGDpqdf5uvK2CcwbbkYgHJMfKZOb4O
-         Emc5LS84G1oeDoarkuqbP/QNNweQJaKykjs6CpAjKy+sHAPGtUu4yp3f6JIVOgYkxsRN
-         z/od/gYLTpV6+BXHh84PsYCgwgX8nZaSeEvb+njg6434Lf1hQUivwNhdSc/vBvkqK+sX
-         HnV/+E6FSPOtU3HvYwgNw3lvsOsnCsFPQ7+RP9x2jbXhDyWCtN5PFmyeXpBRvAAWzhd5
-         5/+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5j8B+jL2j6tGgmnYBctiTqapQrHQo/lCbq1cVT8wmFbWJu92MyFmz9RZTunvBDLldAeMnrsJk9m/HIIdM@vger.kernel.org, AJvYcCVmLqExAcxul6peAzdURLhhNffNUfq2oCzyZvrJJiGRssSxl3Nv9oiwxiSd66l/DtQv48FjqB1ZxQE=@vger.kernel.org, AJvYcCWL28nHjdKHKSKqhjc9uQDeq6dnXhxaK1rJHkpi9Yu+U/Zki55HIOaWxWjdsjUPhLWSLpWo2AGXfGcrN4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTj5prkQCkXLo9V7i7Cv+dDCGa5e7bVjwXTsqnYb8aM4yh8ffS
-	9peUjtEkyb2BGL1egBkt/ob+Axz1ADWYKzAXyF/wTOJSVHVP6pPD
-X-Google-Smtp-Source: AGHT+IGVymRTomVtW5etCRWyLm9nm566X+zs1ZwGWNnf1O596eq4IbUw3D6Gl+lQ4o8znDqETUm+TA==
-X-Received: by 2002:a5d:64c4:0:b0:366:ea51:be79 with SMTP id ffacd0b85a97d-36b34e4dbdemr4718187f8f.6.1722167697727;
-        Sun, 28 Jul 2024 04:54:57 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:1d00:5943:7f74:2af0? ([2a01:4b00:d20e:7300:1d00:5943:7f74:2af0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36863d87sm9643407f8f.110.2024.07.28.04.54.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 04:54:57 -0700 (PDT)
-Message-ID: <b9ac0ee3-18af-459d-958e-3b8122e7bb9d@gmail.com>
-Date: Sun, 28 Jul 2024 12:54:55 +0100
+	 In-Reply-To:Content-Type; b=UjTy1CNb+5ANJLsvMCB9Vfs5fGE1BLCdb4mlToBhfR58q3muPPG0cdR9L3WTQSEgfxVSv7EPeHKLpm9dG/duH/DgTFDD511db5hVJitOUGgtt70CsQREue+qxFGsF5X1R2XS143YggCIaC73r6cYr3i7kn+eOo+b43HBcA2Asxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFAGVz9Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D871EC116B1;
+	Sun, 28 Jul 2024 11:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722167711;
+	bh=IBz57s74vuSUyAAr3ijmdcIIYCDfWCz8eKghNS3oOYE=;
+	h=Date:Subject:To:List-Id:Cc:References:From:In-Reply-To:From;
+	b=CFAGVz9Zcx4aV+t6eliOFJFzNfhWdqF6v9jQ8c03li3ZwmUKkMBXkF7E3wbh79q46
+	 PxfwUXyA9ZMBAMMCmpw+vflv+y40Gnshz8/eGsG7JO+vTUyv3a1DXVM9EHg3WwsLcC
+	 lhyG+vB7NQpbAfO1wFPsZQGm56BpgOKpQ8e0YOk7fZJ6PqiFUZuVZKke0bc1U1JyTs
+	 pquBNX3H2W0rm/YhiMO5KP9K9bxexCWFAuvg1tlXMCvHXa2BxZEeP81qNsqprPpyYM
+	 wWA49uvZpqSSGw7igAjIGxYZ5eCdU9EDf1fIJ1scnn1Qt/VklGCCddfXndv9F+vk7T
+	 DBxHq5D0LjtDA==
+Message-ID: <91308a58-f70c-4b28-95e5-d64a1f12f252@kernel.org>
+Date: Sun, 28 Jul 2024 13:55:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +49,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, perex@perex.cz,
- tiwai@suse.com, corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, aholzinger@gmx.de
-References: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
- <20240726074750.626671-4-ivan.orlov0322@gmail.com>
- <0576f5dd-656b-4085-8c8d-b0f845875f0f@wanadoo.fr>
- <3ab0aa72-4f89-4911-8546-ce17f362c981@gmail.com>
- <42ba79ad-3354-448d-ae03-6f68d51f46c5@wanadoo.fr>
- <08bdc510-da39-42d4-a104-9c7119d082ea@gmail.com>
- <c73da5fd-51a9-4744-9687-0ebc56c34fca@wanadoo.fr>
+Subject: Re: [PATCH 4/5] soc: hisilicon: kunpeng_hccs: support low power
+ feature for specified HCCS
+To: Huisong Li <lihuisong@huawei.com>, xuwei5@hisilicon.com
+Cc: linux-kernel@vger.kernel.org, soc@kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jonathan.Cameron@Huawei.com,
+ liuyonglong@huawei.com
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+ <20240718071134.31155-5-lihuisong@huawei.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <c73da5fd-51a9-4744-9687-0ebc56c34fca@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240718071134.31155-5-lihuisong@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 7/28/24 11:29, Christophe JAILLET wrote:
-> 
-> I may be wrong but I think that ida allocates hunks for 1024 bits (128 
-> bytes * 8) at a time. (see [1])
-> 
-> So with this extra sape and the sapce for the xarray, it would waste a 
-> few bytes of memory, yes.
-> 
-> With ida, there is also some locking that may be unnecessary (but harmless)
-> 
-> 
-> Hoping, I got it right, here are a few numbers:
-> 
-> On a x86_64, with allmodconfig:
-> 
-> Your initial patch:
->     text       data        bss        dec        hex    filename
->    55020       1783        268      57071       deef    sound/core/timer.o
-> 
-> With ida:
->    54763       1631        116      56510       dcbe    sound/core/timer.o
-> + 128 bytes of runtime memory allocation
-> 
-> With bitmap:
->    54805       1535        132      56472       dc98    sound/core/timer.o
-> 
-> 
-> I think that the code would be slightly more elegant with ida, but 
-> implementing it with a bitmap does not add that much complexity.
-> 
+On 18/07/2024 09:11, Huisong Li wrote:
+> This patch add the low power feature for specified HCCS by increasing
 
-Ah, alright, I agree that the code would be cleaner when using IDA, and 
-such a small memory overhead won't be significant/noticeable. I'm going 
-to use IDA in the V2 instead of bitmap API, thank you so much for 
-pointing me to it (I was wondering if the Kernel has a generic ID 
-allocator and now I finally know it does :) ).
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-Thank you!
+> and decrasing the lane number of these HCCS ports on platform.
+> 
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/soc/hisilicon/Kconfig        |   7 +-
+>  drivers/soc/hisilicon/kunpeng_hccs.c | 377 ++++++++++++++++++++++++++-
+>  drivers/soc/hisilicon/kunpeng_hccs.h |  14 +
+>  3 files changed, 394 insertions(+), 4 deletions(-)
 
--- 
-Kind regards,
-Ivan Orlov
+...
+
+
+> +static struct kobj_attribute pm_types_attr =
+> +		__ATTR(support_pm_types, 0444, support_pm_types_show, NULL);
+>  
+>  static ssize_t used_types_show(struct kobject *kobj,
+>  			       struct kobj_attribute *attr, char *buf)
+> @@ -1213,11 +1551,46 @@ static struct kobj_attribute used_types_attr =
+>  static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
+>  {
+>  	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	sysfs_remove_file(&hdev->dev->kobj, &pm_types_attr.attr);
+> +
+> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
+> +		return;
+> +
+> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_attr.attr);
+> +	sysfs_remove_file(&hdev->dev->kobj, &inc_lane_attr.attr);
+>  }
+>  
+>  static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
+>  {
+> -	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	int ret;
+> +
+> +	ret = sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sysfs_create_file(&hdev->dev->kobj, &pm_types_attr.attr);
+
+Where is the ABI documentation?
+
+Best regards,
+Krzysztof
 
 
