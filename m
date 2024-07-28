@@ -1,114 +1,153 @@
-Return-Path: <linux-kernel+bounces-264782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CA593E853
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9948993E842
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533551C216FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5532A282CB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5BE18D4C0;
-	Sun, 28 Jul 2024 16:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F371891D9;
+	Sun, 28 Jul 2024 16:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SF4aJjtP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="im4CjrhP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3777118D4B4;
-	Sun, 28 Jul 2024 16:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE54188CA5;
+	Sun, 28 Jul 2024 16:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722182983; cv=none; b=ENzxkVdaASRPnvsGof0DcdItBw4jlVI6egVKJR4iAgys44HyyGOjSfgsiA1viEmhqHAkghcQCs2ZycWjwYSxbjZsBUGvh35+3yAiqNMGWGSzJNBWB3tsb2z2zS3OtvJTHNZ8cJG/K4rEqSalAmcZ0vHDdE7YHOwcyE6tSLLnIt8=
+	t=1722182966; cv=none; b=RVIkafDFj2ZrFrlbHLJ/pBrr2QOdUFb7lewqmyv8Df5s4r5Xh1Ai/C/EGZObIhDHHGsC65k0vTJkdJKphWt5+q/UKG0DTJwOfgMitM9jq4Y2UKYVwYHRAVTVREflTxeacjcMruEN3tEVG0MbvUNy3E04H8HPFVUzQXx7lnn1gcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722182983; c=relaxed/simple;
-	bh=3M1mydcj+1vt01K91UiclDWJtHhgmUtBXw6S4fzmyT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/Jgr4VruR3nE5R/Kceo+SXe8C2E9WLfyf/Kl+LZ7U8eWpIQPlpHxtGY+kXc9n1VfZHUAIkyeqkVoJUt8jZyW6ED/RVLnPd3HKHPNs60q9ghkrkHf2YsZBLj44EVGxqUwG+y9OoMuaOmymJgon90Ti0fCDW0C1n96OJX+I/nc9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SF4aJjtP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC42DC4AF0A;
-	Sun, 28 Jul 2024 16:09:41 +0000 (UTC)
+	s=arc-20240116; t=1722182966; c=relaxed/simple;
+	bh=DG5ulTQk+MG42W/U9N7gwMfUOg5bBXfQjT06OCk3/gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MswCC8Wem19limuAtLTRDEG02PlUAEKPt9uYujT/mWSTxhsd0edOKaAtz5ejGskjW2zusqMpXiiPvUN3xeFEymSSup+l8vKFx+imj6COu6pq2l1CehRN+OyiBe7KRIRLbIYfGvbRC7iqCogcy72Wq6Cl60PGdSJQFdPltTZaMfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=im4CjrhP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAF8C4AF0B;
+	Sun, 28 Jul 2024 16:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722182983;
-	bh=3M1mydcj+1vt01K91UiclDWJtHhgmUtBXw6S4fzmyT4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SF4aJjtPvZi1TMTLw/I1druNiT34YWA8pU87lwWCThhUT3HZOTZpSqxCeKtSuSuCx
-	 G1urTeYsJFZHZlrsjVhY1neRA/pRpklIWOoWP9JNOAt/P6p7gi7XCt3N+I4L4doXkr
-	 cAchkT6J/dw/RlCAvzOJq2ngp+rjQwhZ00geUlNGeYR8gBwkhoUDFGP5nn8yC8Z7cX
-	 vLXcH01w9zF3OSeZ8j3/8vf2czSF9/dVIGR72jZzd6TB5rqY3BNIWX5PYRXZ7ZvlU+
-	 mCBSd/rwSAQJRYrMNMCMiuhyfBtKY6F5KXI1oAQyB0P1/ADpI7p0EDFpjI+xvSWaPf
-	 C4cI5KUckgQag==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Takashi Iwai <tiwai@suse.de>,
-	syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com,
-	Sasha Levin <sashal@kernel.org>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	kl@kl.wtf,
-	peter.ujfalusi@linux.intel.com,
-	xristos.thes@gmail.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 13/13] ALSA: usb: Fix UBSAN warning in parse_audio_unit()
-Date: Sun, 28 Jul 2024 12:08:55 -0400
-Message-ID: <20240728160907.2053634-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728160907.2053634-1-sashal@kernel.org>
-References: <20240728160907.2053634-1-sashal@kernel.org>
+	s=k20201202; t=1722182965;
+	bh=DG5ulTQk+MG42W/U9N7gwMfUOg5bBXfQjT06OCk3/gE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=im4CjrhPvqFwYPU1Bu6w63799uYd6O5rZtIJ6BhQuOdLumaKqNe4Bh11bcbhzbGLp
+	 CEtXZ74kja4cSjQNU0CqtAD82PX5To1LxBCq4DWOXhB8cGmvgDLYAHGY45bL+hRhw1
+	 WqoSLo1aVW2fnrWCcbS+7/hHz25izTdL9pj4c4DIJavkqw4fhNkozWOvz2okFPbemC
+	 jE09xSPhmZuVLf8utl+gcSM0SgTgPtdkKNHgQZeafbIiIdpP7qFxmWAJNOQtb7b+7/
+	 CymffrCDTsXR3tXkTdcn1e+tnOymfF+IpzE48gPcDpLu3MAkE9h9bWHW+o/LmlQoQH
+	 iTpPa83HsGdcQ==
+Date: Sun, 28 Jul 2024 17:09:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to
+ new configuration
+Message-ID: <20240728170915.26b4a01d@jic23-huawei>
+In-Reply-To: <20240725231039.614536-8-vassilisamir@gmail.com>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+	<20240725231039.614536-8-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.164
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Takashi Iwai <tiwai@suse.de>
+On Fri, 26 Jul 2024 01:10:39 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-[ Upstream commit 2f38cf730caedaeacdefb7ff35b0a3c1168117f9 ]
+> This commit intends to add the old BMP085 sensor to the new IRQ interface
+> of the sensor consistence. No functional changes intended.
+> 
+> The BMP085 sensor is equivalent with the BMP180 with the only difference of
+> BMP085 having an extra interrupt pin to inform about an End of Conversion.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Trivial comments inline + as the build bot pointed out you can't use data from
+one array to fill the other.
 
-A malformed USB descriptor may pass the lengthy mixer description with
-a lot of channels, and this may overflow the 32bit integer shift
-size, as caught by syzbot UBSAN test.  Although this won't cause any
-real trouble, it's better to address.
+Jonathan
 
-This patch introduces a sanity check of the number of channels to bail
-out the parsing when too many channels are found.
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 72 +++++++++++++++++++++++-------
+>  drivers/iio/pressure/bmp280-i2c.c  |  4 +-
+>  drivers/iio/pressure/bmp280-spi.c  |  4 +-
+>  drivers/iio/pressure/bmp280.h      |  1 +
+>  4 files changed, 60 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 4238f37b7805..e4d017358b68 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -3104,13 +3104,19 @@ static irqreturn_t bmp085_eoc_irq(int irq, void *d)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static int bmp085_fetch_eoc_irq(struct device *dev,
+> -				const char *name,
+> -				int irq,
+> -				struct bmp280_data *data)
+> +static int bmp085_trigger_probe(struct iio_dev *indio_dev)
+>  {
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	struct device *dev = data->dev;
+> +	struct fwnode_handle *fwnode;
+>  	unsigned long irq_trig;
+> -	int ret;
+> +	int ret, irq;
+> +
+> +	fwnode = dev_fwnode(data->dev);
+> +	if (!fwnode)
+> +		return -ENODEV;
+> +
+> +	irq = fwnode_irq_get(fwnode, 0);
+>  
+>  	irq_trig = irqd_get_trigger_type(irq_get_irq_data(irq));
+>  	if (irq_trig != IRQF_TRIGGER_RISING) {
+> @@ -3120,13 +3126,12 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
+>  
+>  	init_completion(&data->done);
+>  
+> -	ret = devm_request_threaded_irq(dev,
+> -			irq,
+> -			bmp085_eoc_irq,
+> -			NULL,
+> -			irq_trig,
+> -			name,
+> -			data);
+> +	ret = devm_request_irq(dev,
+> +			       irq,
+> +			       bmp085_eoc_irq,
+> +			       irq_trig,
+> +			       indio_dev->name,
+> +			       data);
+Whilst here, put some of those parameters on the same line (staying below
+80 chars).
 
-Reported-by: syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/0000000000000adac5061d3c7355@google.com
-Link: https://patch.msgid.link/20240715123619.26612-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/usb/mixer.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index d818eee53c90a..f10634dc118d6 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1985,6 +1985,13 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
- 		bmaControls = ftr->bmaControls;
- 	}
- 
-+	if (channels > 32) {
-+		usb_audio_info(state->chip,
-+			       "usbmixer: too many channels (%d) in unit %d\n",
-+			       channels, unitid);
-+		return -EINVAL;
-+	}
-+
- 	/* parse the source unit */
- 	err = parse_audio_unit(state, hdr->bSourceID);
- 	if (err < 0)
--- 
-2.43.0
+>  	if (ret) {
+>  		/* Bail out without IRQ but keep the driver in place */
+>  		dev_err(dev, "unable to request DRDY IRQ\n");
+> @@ -3137,6 +3142,44 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
+>  	return 0;
+>  }
+>  
+> +const struct bmp280_chip_info bmp085_chip_info = {
+> +	.id_reg = bmp180_chip_info.id_reg,
+As the build bot has pointed out you can't do this.
+Annoying but just duplicate the original structure with whatever
+changes you need.
 
 
