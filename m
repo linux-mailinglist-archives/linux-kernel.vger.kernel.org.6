@@ -1,388 +1,176 @@
-Return-Path: <linux-kernel+bounces-264888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAC293E9BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EED6B93E9B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3D802817A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F2B281571
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BFD7C6D4;
-	Sun, 28 Jul 2024 21:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngfS4ksB"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DC57828B;
+	Sun, 28 Jul 2024 21:37:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9FE12B94;
-	Sun, 28 Jul 2024 21:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A518643
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722202658; cv=none; b=EwOvj4qMAEVRhLeiOXAm33MH8LOTztQQeE1uGEMqxdoDz0mEAoRpHjA58tVZvW/z+cvh3aKqPQkYBJahgwAtqM/teI2yA6wRO+4Hz1xU+Tn8WM3ezmzPzuSq+25KsuazfoY3piVm2jHmg6fgy3S777bxKgkhkV8QiGCP+xnOtU8=
+	t=1722202648; cv=none; b=WHIfApXIInbQjjatcaeFnhQBbNBjgUUnBfgLgwXFIX5Lgk8nNt1LN7GpU7ohgwbqsTBIl5rhrkJhZbsYJlypqMuAwr9mWjV1p+dzdKE0RXPxQZrgiZVE/UkieN16EONojzm+Dh6WvYb9oiJUqWFnQS+7cpKqBQySgxlVS4mH5sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722202658; c=relaxed/simple;
-	bh=2Sn68X7uDls3sP1EZexTSLlGYbfSYXNz2o7k80QTDUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lkq7CpsxufqsfV9wnRolkQ55dU+ESVrxkndRzuaOrQLqxWrkhbBMDrrLUYHiya4D3e9qqTnUrmcQ4CvtzkwoCO5zEDXlY9kcG4YFCfrxqcINcivcS94znqzD8U2bE9GRXqf4O2ZDnHQf3dgVdK5qx/F5WcCzeYiI3dgOUuqH1A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngfS4ksB; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0885b4f1d5so1275167276.1;
-        Sun, 28 Jul 2024 14:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722202656; x=1722807456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K9cFCXNlBUwwoGYk4agpmfzd90AIjSqmRZ4wGHZIvL4=;
-        b=ngfS4ksBEQprRybEaUydabCt7dMpXXLj3dQO38xieO6SAqstF0qDJo4vlq/+ALTzW4
-         CKEzHupnesmyqsZxkWvcuBKupdRQ4eZHY/y4JG0mVUctnN/H9fobwcmnJFRLR+shZDjb
-         weE//EL4Syo16G7FgMXYmbIPiY5Tcz8dC9qOXneJARkxACl1dThzUeB6NRQq1dEfVlFI
-         yQGdTHjyxQq7r8N1h3T8bYO0NFtQzzvZRbfcd1FhhggHieCNiq2GA8rKqabMcBA0aLz6
-         h6sjrdNoMIk5dHmAomojGvzhYHzzdITOxaG5wIVXc/QtSo2j8t0cOIW7hBienHCk2qoT
-         Mjjw==
+	s=arc-20240116; t=1722202648; c=relaxed/simple;
+	bh=HgRXS5kmGOCgZxer6F6Zr5ptUDREp6JRQn2LDBkOJrE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Kp+wUw2paUegmMGp5xfi6Qqj3ELr+IqLl8Fji5VzjuSQIFf9dw3/+adqPm/tnMyPjmxZITQGnEJ7yuUSW15qYSfi/Kh2Im45EDZSO8RoXcU3MdxIswCNd3UCrBI47UnmgS4z6oeXB665Dc8efCdefoduOujWcedqgnmDvHXiuck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397052a7bcbso52458105ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:37:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722202656; x=1722807456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K9cFCXNlBUwwoGYk4agpmfzd90AIjSqmRZ4wGHZIvL4=;
-        b=JbxJS0461mIa95J9wjhDi1L+bhadVkhFGbwWZg84MIMYcqXlQzrl543/T2PMgyNV3E
-         sn5DkT9SuwzIOp/EXvxpD/YHVVDPb273NcP6V/HsbVPP3RUQ+Dwv42KaVgDvfebn0Jw4
-         jjC4Y5Vs/B6lRhzb+OlWkMekUip6MmkXIQc5PFWOdUZKFhZlYBHDn3+RXgeek9p3cSj2
-         fi2fjHrfjK1tg/CsxdfzObKCfQDfLiVCH3YxNgYC3i1uGldJs4y/vZsSXVxN/k8zL3QP
-         luXyiFaYRE7pssO7VQW1C7e1IwDXeNAFKqg34giI0BMlKfoQE6+/BY5miBS8rDj1P4St
-         tP5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBWXgRq7ZmM1ueIniiN7kfNyaKqy2xH1/ZYWOham3LHS3XT27w0Bz8sbpjfwI7m+yRDSKQJ5bLiHNdTd7XX9ln6CdM0GUx+sQ9WttrQ+mmIOfZYS4J3ShjCK4XQfyoyeH3xBtmmEoaM30okCjIqq3XyMp/PmnT8vxCQ2iW+o2sPOGdxFASfkENqv5yzft2BpzLvdKJinnMM6obCVzx4kiFE+dJIkwFhF6/EEFm
-X-Gm-Message-State: AOJu0Yw/cNNZZdu8djkaRH+ImJENc3nAygNwKKd94kPdllQytx5hpReA
-	KLIuN5kzNKEC4odb4Zc5EEP6SrLZrAKrP5sB88SNkoVPlx/Ac3r5FavEPdCxfbywwClwF9MekIe
-	DGJW3CACbTdoVEY9RKKto6MnjUbc=
-X-Google-Smtp-Source: AGHT+IFVP55gj+sT0MrYRVitmwH+mCztNmVoK2xGhUz6Qlhx2dO5zlQtp2zqP2YBKFY/JMujHOiS1/r6Ulhctp/0vN4=
-X-Received: by 2002:a05:6902:240e:b0:e06:6e0c:5e0 with SMTP id
- 3f1490d57ef6-e0b5459ca5dmr5791170276.38.1722202655671; Sun, 28 Jul 2024
- 14:37:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722202645; x=1722807445;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5VMs5yT871XTf/d0or5t339a635pM6lfyoSiQynkorA=;
+        b=AD43gk96RvixmFKRqVJk4fdg3dKlsdYYEj63eG9msrW5IbOzvYbBhmXgnxNmZlv3RK
+         9efvVV/s84DDA8KOOxuRu0P3rUhAQHNvfJR/Zfje7KZ/jegvPWDQC7OIBJNXV2bWXeKq
+         6YIhevv0sAXZhLiNjlDiUOAWfmqj8DsfzXiycrvGbAQt6w1rpIBZIwc/jTr5qzLrjk/1
+         sd8PgPa4V/NL3TRiYIk0zp8Ty0O/sEuEFWwdXbxsxaw5uJuyiO52ZNt16KMr7cuJfJIL
+         rs6VVS7GrbwXOenlKSEpKnU2EF1T3uziokHg7MHSRWFFkNcU2X+kNeYzGn7TfrZLuZIi
+         yYRQ==
+X-Gm-Message-State: AOJu0YxZgKoOv6weyrgOJftPwglLE2rGTeqm3j31dgTLeA6kM4DlaVli
+	vVMhlBZlWTkm/L4j7rJ7Af84akr/dZtvfHqbycsP+QwUd+R/ryjyNAK3RpPCIqO4o+MkZjOvwJo
+	llFFQunf+rP5TUq83hXsrq1FjId36IlHU4LKqmnU6WVZaP83NbwqmI4A=
+X-Google-Smtp-Source: AGHT+IGAjEeYPHCfAyETru4FvlFQIbze6r7U27mVuzr7jLjgI0LgUpwC4jQorPN3rm/yYdWuX4/gCPolQln+C37ckSAYFtyFrKVR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-1-amery.hung@bytedance.com>
- <20240710212555.1617795-6-amery.hung@bytedance.com> <pghfa4vh7vb7sggelop5asuyj6bqtq4rbgm2q3bdslcoeicihj@6arcanemghjo>
-In-Reply-To: <pghfa4vh7vb7sggelop5asuyj6bqtq4rbgm2q3bdslcoeicihj@6arcanemghjo>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Sun, 28 Jul 2024 14:37:24 -0700
-Message-ID: <CAMB2axNL_O3Twksi+ROUz0B298A-xQ_EYsgYzc2jLRbpikrdJQ@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 05/14] af_vsock: use a separate dgram bind table
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, bryantan@vmware.com, 
-	vdasa@vmware.com, pv-drivers@vmware.com, dan.carpenter@linaro.org, 
-	simon.horman@corigine.com, oxffffaa@gmail.com, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+X-Received: by 2002:a92:c245:0:b0:382:56bd:dfbc with SMTP id
+ e9e14a558f8ab-39aec2d7874mr4739325ab.2.1722202645085; Sun, 28 Jul 2024
+ 14:37:25 -0700 (PDT)
+Date: Sun, 28 Jul 2024 14:37:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e45551061e558c37@google.com>
+Subject: [syzbot] [media?] [usb?] WARNING in smsusb_init_device/usb_submit_urb
+From: syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 7:41=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
-.com> wrote:
->
-> On Wed, Jul 10, 2024 at 09:25:46PM GMT, Amery Hung wrote:
-> >From: Bobby Eshleman <bobby.eshleman@bytedance.com>
-> >
-> >This commit adds support for bound dgram sockets to be tracked in a
-> >separate bind table from connectible sockets in order to avoid address
-> >collisions. With this commit, users can simultaneously bind a dgram
-> >socket and connectible socket to the same CID and port.
-> >
-> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
-> >---
-> > net/vmw_vsock/af_vsock.c | 103 +++++++++++++++++++++++++++++----------
-> > 1 file changed, 76 insertions(+), 27 deletions(-)
-> >
-> >diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-> >index d571be9cdbf0..ab08cd81720e 100644
-> >--- a/net/vmw_vsock/af_vsock.c
-> >+++ b/net/vmw_vsock/af_vsock.c
-> >@@ -10,18 +10,23 @@
-> >  * - There are two kinds of sockets: those created by user action (such=
- as
-> >  * calling socket(2)) and those created by incoming connection request =
-packets.
-> >  *
-> >- * - There are two "global" tables, one for bound sockets (sockets that=
- have
-> >- * specified an address that they are responsible for) and one for conn=
-ected
-> >- * sockets (sockets that have established a connection with another soc=
-ket).
-> >- * These tables are "global" in that all sockets on the system are plac=
-ed
-> >- * within them. - Note, though, that the bound table contains an extra =
-entry
-> >- * for a list of unbound sockets and SOCK_DGRAM sockets will always rem=
-ain in
-> >- * that list. The bound table is used solely for lookup of sockets when=
- packets
-> >- * are received and that's not necessary for SOCK_DGRAM sockets since w=
-e create
-> >- * a datagram handle for each and need not perform a lookup.  Keeping S=
-OCK_DGRAM
-> >- * sockets out of the bound hash buckets will reduce the chance of coll=
-isions
-> >- * when looking for SOCK_STREAM sockets and prevents us from having to =
-check the
-> >- * socket type in the hash table lookups.
-> >+ * - There are three "global" tables, one for bound connectible (stream=
- /
-> >+ * seqpacket) sockets, one for bound datagram sockets, and one for conn=
-ected
-> >+ * sockets. Bound sockets are sockets that have specified an address th=
-at
-> >+ * they are responsible for. Connected sockets are sockets that have
-> >+ * established a connection with another socket. These tables are "glob=
-al" in
-> >+ * that all sockets on the system are placed within them. - Note, thoug=
-h,
-> >+ * that the bound tables contain an extra entry for a list of unbound
-> >+ * sockets. The bound tables are used solely for lookup of sockets when=
- packets
-> >+ * are received.
-> >+ *
-> >+ * - There are separate bind tables for connectible and datagram socket=
-s to avoid
-> >+ * address collisions between stream/seqpacket sockets and datagram soc=
-kets.
-> >+ *
-> >+ * - Transports may elect to NOT use the global datagram bind table by
-> >+ * implementing the ->dgram_bind() callback. If that callback is implem=
-ented,
-> >+ * the global bind table is not used and the responsibility of bound da=
-tagram
-> >+ * socket tracking is deferred to the transport.
-> >  *
-> >  * - Sockets created by user action will either be "client" sockets tha=
-t
-> >  * initiate a connection or "server" sockets that listen for connection=
-s; we do
-> >@@ -116,6 +121,7 @@
-> > static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
-> > static void vsock_sk_destruct(struct sock *sk);
-> > static int vsock_queue_rcv_skb(struct sock *sk, struct sk_buff *skb);
-> >+static bool sock_type_connectible(u16 type);
-> >
-> > /* Protocol family. */
-> > struct proto vsock_proto =3D {
-> >@@ -152,21 +158,25 @@ static DEFINE_MUTEX(vsock_register_mutex);
-> >  * VSocket is stored in the connected hash table.
-> >  *
-> >  * Unbound sockets are all put on the same list attached to the end of =
-the hash
-> >- * table (vsock_unbound_sockets).  Bound sockets are added to the hash =
-table in
-> >- * the bucket that their local address hashes to (vsock_bound_sockets(a=
-ddr)
-> >- * represents the list that addr hashes to).
-> >+ * tables (vsock_unbound_sockets/vsock_unbound_dgram_sockets).  Bound s=
-ockets
-> >+ * are added to the hash table in the bucket that their local address h=
-ashes to
-> >+ * (vsock_bound_sockets(addr) and vsock_bound_dgram_sockets(addr) repre=
-sents
-> >+ * the list that addr hashes to).
-> >  *
-> >- * Specifically, we initialize the vsock_bind_table array to a size of
-> >- * VSOCK_HASH_SIZE + 1 so that vsock_bind_table[0] through
-> >- * vsock_bind_table[VSOCK_HASH_SIZE - 1] are for bound sockets and
-> >- * vsock_bind_table[VSOCK_HASH_SIZE] is for unbound sockets.  The hash =
-function
-> >- * mods with VSOCK_HASH_SIZE to ensure this.
-> >+ * Specifically, taking connectible sockets as an example we initialize=
- the
-> >+ * vsock_bind_table array to a size of VSOCK_HASH_SIZE + 1 so that
-> >+ * vsock_bind_table[0] through vsock_bind_table[VSOCK_HASH_SIZE - 1] ar=
-e for
-> >+ * bound sockets and vsock_bind_table[VSOCK_HASH_SIZE] is for unbound s=
-ockets.
-> >+ * The hash function mods with VSOCK_HASH_SIZE to ensure this.
-> >+ * Datagrams and vsock_dgram_bind_table operate in the same way.
-> >  */
-> > #define MAX_PORT_RETRIES        24
-> >
-> > #define VSOCK_HASH(addr)        ((addr)->svm_port % VSOCK_HASH_SIZE)
-> > #define vsock_bound_sockets(addr) (&vsock_bind_table[VSOCK_HASH(addr)])
-> >+#define vsock_bound_dgram_sockets(addr) (&vsock_dgram_bind_table[VSOCK_=
-HASH(addr)])
-> > #define vsock_unbound_sockets     (&vsock_bind_table[VSOCK_HASH_SIZE])
-> >+#define vsock_unbound_dgram_sockets     (&vsock_dgram_bind_table[VSOCK_=
-HASH_SIZE])
-> >
-> > /* XXX This can probably be implemented in a better way. */
-> > #define VSOCK_CONN_HASH(src, dst)                             \
-> >@@ -182,6 +192,8 @@ struct list_head vsock_connected_table[VSOCK_HASH_SI=
-ZE];
-> > EXPORT_SYMBOL_GPL(vsock_connected_table);
-> > DEFINE_SPINLOCK(vsock_table_lock);
-> > EXPORT_SYMBOL_GPL(vsock_table_lock);
-> >+static struct list_head vsock_dgram_bind_table[VSOCK_HASH_SIZE + 1];
-> >+static DEFINE_SPINLOCK(vsock_dgram_table_lock);
-> >
-> > /* Autobind this socket to the local address if necessary. */
-> > static int vsock_auto_bind(struct vsock_sock *vsk)
-> >@@ -204,6 +216,9 @@ static void vsock_init_tables(void)
-> >
-> >       for (i =3D 0; i < ARRAY_SIZE(vsock_connected_table); i++)
-> >               INIT_LIST_HEAD(&vsock_connected_table[i]);
-> >+
-> >+      for (i =3D 0; i < ARRAY_SIZE(vsock_dgram_bind_table); i++)
-> >+              INIT_LIST_HEAD(&vsock_dgram_bind_table[i]);
-> > }
-> >
-> > static void __vsock_insert_bound(struct list_head *list,
-> >@@ -271,13 +286,28 @@ static struct sock *__vsock_find_connected_socket(=
-struct sockaddr_vm *src,
-> >       return NULL;
-> > }
-> >
-> >-static void vsock_insert_unbound(struct vsock_sock *vsk)
-> >+static void __vsock_insert_dgram_unbound(struct vsock_sock *vsk)
-> >+{
-> >+      spin_lock_bh(&vsock_dgram_table_lock);
-> >+      __vsock_insert_bound(vsock_unbound_dgram_sockets, vsk);
-> >+      spin_unlock_bh(&vsock_dgram_table_lock);
-> >+}
-> >+
-> >+static void __vsock_insert_connectible_unbound(struct vsock_sock *vsk)
-> > {
-> >       spin_lock_bh(&vsock_table_lock);
-> >       __vsock_insert_bound(vsock_unbound_sockets, vsk);
-> >       spin_unlock_bh(&vsock_table_lock);
-> > }
-> >
-> >+static void vsock_insert_unbound(struct vsock_sock *vsk)
-> >+{
-> >+      if (sock_type_connectible(sk_vsock(vsk)->sk_type))
-> >+              __vsock_insert_connectible_unbound(vsk);
-> >+      else
-> >+              __vsock_insert_dgram_unbound(vsk);
-> >+}
-> >+
-> > void vsock_insert_connected(struct vsock_sock *vsk)
-> > {
-> >       struct list_head *list =3D vsock_connected_sockets(
-> >@@ -289,6 +319,14 @@ void vsock_insert_connected(struct vsock_sock *vsk)
-> > }
-> > EXPORT_SYMBOL_GPL(vsock_insert_connected);
-> >
-> >+static void vsock_remove_dgram_bound(struct vsock_sock *vsk)
-> >+{
-> >+      spin_lock_bh(&vsock_dgram_table_lock);
-> >+      if (__vsock_in_bound_table(vsk))
-> >+              __vsock_remove_bound(vsk);
-> >+      spin_unlock_bh(&vsock_dgram_table_lock);
-> >+}
-> >+
-> > void vsock_remove_bound(struct vsock_sock *vsk)
-> > {
-> >       spin_lock_bh(&vsock_table_lock);
-> >@@ -340,7 +378,10 @@ EXPORT_SYMBOL_GPL(vsock_find_connected_socket);
-> >
-> > void vsock_remove_sock(struct vsock_sock *vsk)
-> > {
-> >-      vsock_remove_bound(vsk);
-> >+      if (sock_type_connectible(sk_vsock(vsk)->sk_type))
-> >+              vsock_remove_bound(vsk);
-> >+      else
-> >+              vsock_remove_dgram_bound(vsk);
->
-> Can we try to be consistent, for example we have vsock_insert_unbound()
-> which calls internally sock_type_connectible(), while
-> vsock_remove_bound() is just for connectible sockets. It's a bit
-> confusing.
+Hello,
 
-I agree with you. I will make the style more consistent by keeping
-vsock_insert_unbound() only work on connectible sockets.
+syzbot found the following issue on:
 
->
-> >       vsock_remove_connected(vsk);
-> > }
-> > EXPORT_SYMBOL_GPL(vsock_remove_sock);
-> >@@ -746,11 +787,19 @@ static int __vsock_bind_connectible(struct vsock_s=
-ock *vsk,
-> >       return vsock_bind_common(vsk, addr, vsock_bind_table, VSOCK_HASH_=
-SIZE + 1);
-> > }
-> >
-> >-static int __vsock_bind_dgram(struct vsock_sock *vsk,
-> >-                            struct sockaddr_vm *addr)
-> >+static int vsock_bind_dgram(struct vsock_sock *vsk,
-> >+                          struct sockaddr_vm *addr)
->
-> Why we are renaming this?
+HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=10eb7dad980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdd6022e793d4ad
+dashboard link: https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10893645980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10885779980000
 
-I will keep the original __vsock_bind_dgram() for consistency.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/504e81a2120c/disk-93306970.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/320d2f3e66b3/vmlinux-93306970.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/65b8e1c28010/bzImage-93306970.xz
 
->
-> > {
-> >-      if (!vsk->transport || !vsk->transport->dgram_bind)
-> >-              return -EINVAL;
-> >+      if (!vsk->transport || !vsk->transport->dgram_bind) {
->
-> Why this condition?
->
-> Maybe a comment here is needed because I'm lost...
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
 
-We currently use !vsk->transport->dgram_bind to determine if this is
-VMCI dgram transport. Will add a comment explaining this.
-
->
-> >+              int retval;
-> >+
-> >+              spin_lock_bh(&vsock_dgram_table_lock);
-> >+              retval =3D vsock_bind_common(vsk, addr, vsock_dgram_bind_=
-table,
-> >+                                         VSOCK_HASH_SIZE);
->
-> Should we use VSOCK_HASH_SIZE + 1 here?
->
-> Using ARRAY_SIZE(x) should avoid this problem.
-
-Yes. The size here is wrong. I will remove the size check (the
-discussion is in patch 4).
-
-Thanks,
-Amery
+smsusb:smsusb_probe: board id=15, interface number 6
+smsusb:siano_media_device_register: media controller created
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 3 != type 1
+WARNING: CPU: 0 PID: 42 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Modules linked in:
+CPU: 0 UID: 0 PID: 42 Comm: kworker/0:2 Not tainted 6.10.0-syzkaller-g933069701c1b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Code: 84 3c 02 00 00 e8 d5 d5 2b fd 4c 89 ef e8 dd 14 00 ff 45 89 e0 89 e9 4c 89 f2 48 89 c6 48 c7 c7 e0 8b 30 87 e8 26 c8 f1 fc 90 <0f> 0b 90 90 e9 e9 f8 ff ff e8 a7 d5 2b fd 49 81 c4 c0 05 00 00 e9
+RSP: 0018:ffffc900004d6de8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8881022bf600 RCX: ffffffff81194ce9
+RDX: ffff8881036a8000 RSI: ffffffff81194cf6 RDI: 0000000000000001
+RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000001
+R13: ffff8881043930a8 R14: ffff88810de96e80 R15: ffff8881022bf67c
+FS:  0000000000000000(0000) GS:ffff8881f6400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e21a0c8380 CR3: 00000001154e0000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ smsusb_submit_urb+0x288/0x410 drivers/media/usb/siano/smsusb.c:173
+ smsusb_start_streaming drivers/media/usb/siano/smsusb.c:197 [inline]
+ smsusb_init_device+0x856/0xe10 drivers/media/usb/siano/smsusb.c:477
+ smsusb_probe+0x5e2/0x10b0 drivers/media/usb/siano/smsusb.c:575
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3679
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3679
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e66/0x4f50 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->
->
-> >+              spin_unlock_bh(&vsock_dgram_table_lock);
-> >+
-> >+              return retval;
-> >+      }
-> >
-> >       return vsk->transport->dgram_bind(vsk, addr);
-> > }
-> >@@ -781,7 +830,7 @@ static int __vsock_bind(struct sock *sk, struct sock=
-addr_vm *addr)
-> >               break;
-> >
-> >       case SOCK_DGRAM:
-> >-              retval =3D __vsock_bind_dgram(vsk, addr);
-> >+              retval =3D vsock_bind_dgram(vsk, addr);
-> >               break;
-> >
-> >       default:
-> >--
-> >2.20.1
-> >
->
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
