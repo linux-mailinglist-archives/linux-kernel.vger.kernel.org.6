@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-264642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A09F93E6A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7089F93E5F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79AAAB2136D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B07281744
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06F913B792;
-	Sun, 28 Jul 2024 15:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVm8DtU5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ED25579F;
+	Sun, 28 Jul 2024 15:41:21 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031D413B285;
-	Sun, 28 Jul 2024 15:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12554F215;
+	Sun, 28 Jul 2024 15:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722181517; cv=none; b=Sq7LDAdosTJRjGWXgd2B2SJ4ttC28JuGXcfq+YL+a2VBM04k2V6wdqg/seVCad4f0peERCxPt9bOHoZWmrIyg/Nu6X+bKsCzVAGqc2OshPimf3rx5KLSgvk9zFj6qcSgtXN7/Wh8tpDNEggjouqw0q1QEnpL/r17eGaZVTAC3QQ=
+	t=1722181281; cv=none; b=DhWsXTUAg4XumKQZC9HSGKl0ruXhL+HE3lsH0btpmMCIxuudSyI00nWM/jTQ4veVo7/3Gt4AwaYEUEHThG13Jr3PEomp2E5XT31Qf5GY56nwjRsvqIZtGVQaZ6je9oUssvVFCdUPeuI+Rz10+Xq7d+e1zplCKl4gpoMhhNgknfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722181517; c=relaxed/simple;
-	bh=bW8puwp8UG1FE5R0NW0YGF8HexNK9uU3nHZPanPzjUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ucg/TJU9OaGfesB0Wc39wvhsEKZznK/YqldDUwBhZDGFMHrjJePVb0ANzs1X+TMRllhrWIKRa+scHnXAJ553d3o62K8unsCznk9ISrb89A4Oncd8ZMqkPrLads1prvum/VLhTXRgxI7SHkuJYEA/74ladMxKSJNibQwYULdsSHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVm8DtU5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02193C116B1;
-	Sun, 28 Jul 2024 15:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722181516;
-	bh=bW8puwp8UG1FE5R0NW0YGF8HexNK9uU3nHZPanPzjUI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UVm8DtU5o8N/OdbJj9lgzpNYb2Ps1FcUHuMG9pVhJ2Ql6fNd5DW6MUDhoOFJ5+zPS
-	 pnuIqz6LtlPUQM2MWZeWtBroZl9VA7rR3lZrdvGnRDyK9BsSJ4xLH0rqRUweK98dsE
-	 WAwkGt4wUhk1aIG9k12YxouJBXBFrC4rERVJ5iP1WeNkLYm7ye/+BTnH65m4GI1QaI
-	 R1GTAEF1vzmBfxmhx4LhXcgpU6jP+z/N0HIJlbGng7PEPCJTn12I0adxx4ZceAqdFV
-	 2Nt7VL3vQmtgN/joSwBEwPIiQ1YO80KozmPOfUacoJqR7gPtsU8jxltxrx7fa1LrIQ
-	 WZyqK3uu+UA5Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Benjamin Coddington <bcodding@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Anna Schumaker <Anna.Schumaker@Netapp.com>,
-	Sasha Levin <sashal@kernel.org>,
-	chuck.lever@oracle.com,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 34/34] SUNRPC: Fix a race to wake a sync task
-Date: Sun, 28 Jul 2024 11:40:58 -0400
-Message-ID: <20240728154230.2046786-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728154230.2046786-1-sashal@kernel.org>
-References: <20240728154230.2046786-1-sashal@kernel.org>
+	s=arc-20240116; t=1722181281; c=relaxed/simple;
+	bh=ksdJ4pIbuBBrLnAd1xHGxqIcxA26yp0jMfuzneHZk5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQ5NysgqK8JN739ab/IsId1KaNOAHd1ffMwK9Im87BPiwLuJAw1WYxACEbhYeXuVSjYCaWJSOwQ3XWSSTyLd5RLsKatfvS3fLRkyYxBLVVQfCyAqHlTWl0cZzowKMTReFJeSBb7n4tYQLWQ9ebheqBZzthsfBgRAe4R9BoIkwVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4A5B8100DA1A1;
+	Sun, 28 Jul 2024 17:41:09 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 15E73357A53; Sun, 28 Jul 2024 17:41:09 +0200 (CEST)
+Date: Sun, 28 Jul 2024 17:41:09 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <ZqZmleIHv1q3WvsO@wunner.de>
+References: <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
+ <20240511043832.GD4162345@black.fi.intel.com>
+ <20240511054323.GE4162345@black.fi.intel.com>
+ <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
+ <ZkUcihZR_ZUUEsZp@wunner.de>
+ <20240516083017.GA1421138@black.fi.intel.com>
+ <20240516100315.GC1421138@black.fi.intel.com>
+ <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
+ <ZnvWTo1M_z0Am1QC@wunner.de>
+ <20240626085945.GA1532424@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.10.2
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626085945.GA1532424@black.fi.intel.com>
 
-From: Benjamin Coddington <bcodding@redhat.com>
+On Wed, Jun 26, 2024 at 11:59:45AM +0300, Mika Westerberg wrote:
+> On Wed, Jun 26, 2024 at 10:50:22AM +0200, Lukas Wunner wrote:
+> > On Mon, Jun 24, 2024 at 11:58:46AM -0400, Esther Shimanovich wrote:
+> > > On Wed, May 15, 2024 at 4:45???PM Lukas Wunner <lukas@wunner.de> wrote:
+> > > > Could you add this to the command line:
+> > > >   thunderbolt.dyndbg ignore_loglevel log_buf_len=10M
+> > > >
+> > > > and this to your kernel config:
+> > > >   CONFIG_DYNAMIC_DEBUG=y
+> > > >
+> > > > You should see "... is associated with ..." messages in dmesg.
+> > > 
+> > > I tried Lukas's patches again, after enabling the Thunderbolt driver
+> > > in the config and also verbose messages, so that I can see
+> > > "thunderbolt:" messages, but it still never reaches the
+> > > tb_pci_notifier_call function. I don't see "associated with" in any of
+> > > the logs. The config on the image I am testing does not have the
+> > > thunderbolt driver enabled by default, so this patch wouldn't help my
+> > > use case even if I did manage to get it to work.
+> > 
+> > Mika, what do you make of this?  Are the ChromeBooks in question
+> > using ICM-based tunneling instead of native tunneling?  I thought
+> > this is all native nowadays and ICM is only used on older (pre-USB4)
+> > products.
+> 
+> I think these are not Chromebooks. They are "regular" PCs with
+> Thunderbolt 3 host controller which is ICM as you suggest.
+> 
+> There is still Maple Ridge and Tiger Lake (non-Chrome) that are ICM
+> (firmware based connection manager) that are USB4 but everything after
+> that is software based connection manager.
 
-[ Upstream commit ed0172af5d6fc07d1b40ca82f5ca3979300369f7 ]
+Even with ICM, the DROM of the root switch seems to be retrieved:
 
-We've observed NFS clients with sync tasks sleeping in __rpc_execute
-waiting on RPC_TASK_QUEUED that have not responded to a wake-up from
-rpc_make_runnable().  I suspect this problem usually goes unnoticed,
-because on a busy client the task will eventually be re-awoken by another
-task completion or xprt event.  However, if the state manager is draining
-the slot table, a sync task missing a wake-up can result in a hung client.
+  icm_start()
+    tb_switch_add()
+      tb_drom_read()
 
-We've been able to prove that the waker in rpc_make_runnable() successfully
-calls wake_up_bit() (ie- there's no race to tk_runstate), but the
-wake_up_bit() call fails to wake the waiter.  I suspect the waker is
-missing the load of the bit's wait_queue_head, so waitqueue_active() is
-false.  There are some very helpful comments about this problem above
-wake_up_bit(), prepare_to_wait(), and waitqueue_active().
+Assuming the DROM contains proper PCIe Upstream and Downstream Adapter
+Entries, all the data needed to at least associate the PCIe Adapters
+on the root switch should be there.  So I'm surprised Esther is not
+seeing *any* messages.
 
-Fix this by inserting smp_mb__after_atomic() before the wake_up_bit(),
-which pairs with prepare_to_wait() calling set_current_state().
+Do the DROMs on ICM root switches generally lack PCIe Upstream and
+Downstream Adapter Entries?
+What am I missing?
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/sunrpc/sched.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
-index 6debf4fd42d4e..cef623ea15060 100644
---- a/net/sunrpc/sched.c
-+++ b/net/sunrpc/sched.c
-@@ -369,8 +369,10 @@ static void rpc_make_runnable(struct workqueue_struct *wq,
- 	if (RPC_IS_ASYNC(task)) {
- 		INIT_WORK(&task->u.tk_work, rpc_async_schedule);
- 		queue_work(wq, &task->u.tk_work);
--	} else
-+	} else {
-+		smp_mb__after_atomic();
- 		wake_up_bit(&task->tk_runstate, RPC_TASK_QUEUED);
-+	}
- }
- 
- /*
--- 
-2.43.0
-
+Lukas
 
