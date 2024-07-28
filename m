@@ -1,95 +1,63 @@
-Return-Path: <linux-kernel+bounces-264867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E7493E977
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AAC93E978
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676681F21544
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3D11F2156B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66BA7580C;
-	Sun, 28 Jul 2024 20:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IYo4nPou"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFB176EEA;
+	Sun, 28 Jul 2024 20:55:35 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4A2210FF
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AACD210FF;
+	Sun, 28 Jul 2024 20:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722200089; cv=none; b=K2shbtqKUi1YRrcVwS+KW+8jvl3QFZl4mQiTGVjVuIp8M1uIKBeEfFq5EoE1UyG5sldVsmuiNKhPLd9g3u7apkvpOy7KjCv210+QVqCKTLW47Imk0SqrB9NsO6lcDDyA8zOOxWUiUYIxMJiL5YSi1k+QMFpK210tvi1jUDO+0ho=
+	t=1722200135; cv=none; b=bytriDhGulUx6rIMalQyZkuewUZZVP5zkvKE7PFNBbS5SiVh+3dTLLpTMLUY2oDTQWrxXT4ekHWbCUYMZkiPGxFxlAPEvAaCPOO7+6VzP1s3nhVK8lYft+NL1Qg4NzHsAWDjO1sj396iew8pbHkGEvri1Yc5viL7CQZS6rT9NFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722200089; c=relaxed/simple;
-	bh=MAU1ikI6v16DyZvdLv0S92uOhVuGjagitvH5oKp7HDY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=K0r24amQcXZ95hHclbY1I7Aw4nmqbLdT7f7xRahubqLfjiqweAoQmLZXA75/mAR/KbO6ICKNh82/CuPA5TZFbJ69OTVkQFJQNylta6PAm7BxvJxCjsdiKPwtNFgFc7SpImYcy7Y06lGIaXzEapWEAR33+ixt4MJMYH4eQJQwTvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IYo4nPou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C528C116B1;
-	Sun, 28 Jul 2024 20:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722200088;
-	bh=MAU1ikI6v16DyZvdLv0S92uOhVuGjagitvH5oKp7HDY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IYo4nPouf6CpSTVS2ELBpRlKJMUdykEzMfkhbAbpA+vRb8qD8b8LWb7kYIX5MuMX/
-	 9VsqbDF5t7OpvjFDSY1cEhfxL1tTezkzfnotFa29dw905pMyKHY4sMZVSAfzkZ/6PG
-	 KQEewi5etss8oZyoxSb63zvB542jhqZwDayi2JU0=
-Date: Sun, 28 Jul 2024 13:54:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>, Shakeel
- Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH v3 3/3] mm: page_counters: initialize usage using
- ATOMIC_LONG_INIT() macro
-Message-Id: <20240728135447.bd5f7b44e1b7a583bfaaee36@linux-foundation.org>
-In-Reply-To: <20240726231110.GF1702603@cmpxchg.org>
-References: <20240726203110.1577216-1-roman.gushchin@linux.dev>
-	<20240726203110.1577216-4-roman.gushchin@linux.dev>
-	<20240726231110.GF1702603@cmpxchg.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722200135; c=relaxed/simple;
+	bh=zLZ+M95dVj4dNiEjfw5D8KnQMx79CFYqrSVyAQ4Rfp4=;
+	h=From:Subject:Date:Message-ID:To; b=p7LPFT0XM1tuOo4MQUjFU+0hQQoWHESUVlKCY62FHLPX2cS7HWPyg9ONJSM9waALc5qWoX1oOkilLgIsdvnQtndkjf1ym0XNJYZFdDBgu/IWOMSuCKTJN5dhz9K4/wRTadjaHqv5De4h9NQyoGz9kA3Axb1Tut1It8UknOiqT4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6733C116B1;
+	Sun, 28 Jul 2024 20:55:34 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.6.43-rt38
+Date: Sun, 28 Jul 2024 20:54:51 -0000
+Message-ID: <172220009175.319684.8526468036795448618@demetrius.lan>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 26 Jul 2024 19:11:10 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+Hello RT-list!
 
-> On Fri, Jul 26, 2024 at 08:31:10PM +0000, Roman Gushchin wrote:
-> > When a page_counter structure is initialized, there is no need to
-> > use an atomic set operation to initialize the usage counter because
-> > at this point the structure is not visible to anybody else.
-> > ATOMIC_LONG_INIT() is what should be used in such cases.
-> > 
-> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> > ---
-> >  include/linux/page_counter.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
-> > index cf837d0f8ed1..5da11392b382 100644
-> > --- a/include/linux/page_counter.h
-> > +++ b/include/linux/page_counter.h
-> > @@ -53,7 +53,7 @@ static inline void page_counter_init(struct page_counter *counter,
-> >  				     struct page_counter *parent,
-> >  				     bool protection_support)
-> >  {
-> > -	atomic_long_set(&counter->usage, 0);
-> > +	counter->usage = (atomic_long_t)ATOMIC_LONG_INIT(0);
-> 
-> Pretty cool that ATOMIC_LONG_INIT() return value needs a cast to
-> atomic_long_t! ^_^
+I'm pleased to announce the 6.6.43-rt38 stable release.
 
-That's because this wicked patch passed in an `int'. 
+You can get this release via the git tree at:
 
-	counter->usage = ATOMIC_LONG_INIT((atomic_long_t)0);
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v6.6-rt
+  Head SHA1: 3adbcdc26bf4773f6871f705fe440b9c5c4cd7db
+
+Or to build 6.6.43-rt38 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.43.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.43-rt38.patch.xz
 
 
+Enjoy!
+Clark
 
