@@ -1,162 +1,106 @@
-Return-Path: <linux-kernel+bounces-264456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D7D93E37A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 05:13:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77BC93E37D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 05:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 074A21C211AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 03:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A94D1F22074
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 03:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184024685;
-	Sun, 28 Jul 2024 03:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F7E3C24;
+	Sun, 28 Jul 2024 03:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMuYGk90"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LUjuwFRV"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86DA1878;
-	Sun, 28 Jul 2024 03:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BE41878
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 03:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722136418; cv=none; b=AlesSz3mrVTFAQg7B69DU+Jc2gqw1oHEvUtExP4e5WudwsrnXU8BMmLZp+zCLzjOSTL3Y9UZ56fR7JwEzQoJ8tQA7b++hv8u2n7HwF3aI1VWdN4uv8PBAcF1HM484gYYKYiTuDhac6nBjTxnwpc8Lkl0I6TehAXwaW36lBFUWmU=
+	t=1722136624; cv=none; b=fopVSw+CRiC/o2mjxXjfbUJQL5pHKS05pnTjUHBPhC0UvmqGCPc5lsnMU0Pgs9yXInNz5WdiXyvOoN8XpfzAXXeFavV7ccnxS5Tps+oFZ2Ws6+Lf68QwE768a8c3MrFDx/lUAD4bNlJQgp8IbRMXsH5lemB72kIVSGsTbLQcPwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722136418; c=relaxed/simple;
-	bh=dxAiWiD2kN5NPOYoa1Wg9mD6ZtfxLFrPDEAvSnCXYvU=;
+	s=arc-20240116; t=1722136624; c=relaxed/simple;
+	bh=qEo/9Or08UvAowho9Zrgf+1Yho0yllWXoK4yuUDNzfc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YZd9ovaxi0dumc+NzyX7o9lTEpr1d36CDv3xwfjtw3VjR6Gn273cUN+Dy0FEhMSxZQgkF1v7IGzXF7Fk7SPsC/XGSYzvaH/wzNqUlTkLMXim5PPd7ujaOXeO3JXzCAfo/l0BzvSXCJUn9InS6VnWUT/Hjh6JN8Nxdccu3tB/JHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMuYGk90; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efe4c7c16so3399021e87.0;
-        Sat, 27 Jul 2024 20:13:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=NM/X5FZONUkpC0mhplRlRTrpf9e16LR93SzAM1m4S9k4T0xm9rBCQDzEC+tLHB7a2vBR1b7fAy9zV+xq46nZwLt5gvsoPMwJIdRdJ4o7Nqy0//UZ4TaLE6ph9n26BXbhdjRtdlMMGc/JXUUvZ2woemQKwspCtS6cW5j/UxDv2n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LUjuwFRV; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2ed59200so29811151fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722136415; x=1722741215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P1a761+r7QAGh3/ol80lxTwi2CiAb1Lq7e0V/KssodI=;
-        b=cMuYGk90fdOBg/vWHUJDqNBSNpRvTh+CxDL38uCXmqE6jKcb5+vHxfXdO/lH3xpr8v
-         bGFSii4dTk/WUGOp5P4zDrxoUgyMIll6oB9vp5Epa9I8ub+sFX6AGcs3Lnz6kajSvXTd
-         h8J6Vc3LmTzVHrFLUeGTy/eXagBmijQlYhg8bhalXkJW461NCfurq911diceCvROlrTq
-         fQaWV8Qbbww78dqoFZkzDP3eCnD2PZ0yb3eEn9jxtRRuNo9qGpynIWy5vRRx4stPSFzL
-         Ak89MFZ3yu4GH9Q3U8T5RUAZfNadnXixb1/Dg/jVl79PcNNLGx3cn7FC/V/ST8kF2spJ
-         WMgw==
+        d=linux-foundation.org; s=google; t=1722136621; x=1722741421; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLxdjUr3nZZ/xXHM7u/PpsffYwjEQJpfVQzmD3d51LU=;
+        b=LUjuwFRVifsR1qSoDn38whwavZjhO3yukhWgqH6Jn5/X+XhZ8USP5xDP4jzeaJQx9J
+         QQdnc92errqf9EakbGO89Zvw4tC/xh24YHlNY2DGk0nGMLXWifKsDILjO7XU1/JiOnpj
+         VA4hckaKx97Tx2WZPlDIC8y6USNLEPgAsnH2g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722136415; x=1722741215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P1a761+r7QAGh3/ol80lxTwi2CiAb1Lq7e0V/KssodI=;
-        b=ktcdL313c1m8cYrLStisPliVHY69lKq7vOgvCTY7WmMzmXqiubVgt9bh2AmOLC5ItH
-         TTEks2Cb+MzxysKP+ZtIdVdWGLju2Wax7gVjcwwtCU+Wf7SGX32vFt60p101e7MEt15n
-         D/tDqrMsirT/Jy5EImyhVLx0Nqhgnvqk3N479yYio0VWKwVWiCfQ7vKx0qPbEzFyN9y3
-         hHqfPJXuCyJONJ7za95h+lo5H9OlAE7MgOD8TZ4a5ZhYONOrZT/PnBrVSN47AVIIpxAw
-         5e+lx1y38Hh+KXyQwCT+1aUQtgXNJ/roqmo3FyiZUJZw1sMTIULQfVIF6MR9lwchG2jc
-         a5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGxxdos/3EOpeb1l19KDXtNXj30yoKv0KLAJG6v5SGv9SXrxUuUXtIee6GyGOujk+BlTXA39FYo3+apyTNs7ytiBF77Od/xdxCHvTOsXH8baKI8uJk1RrNaZ7cbjOJQ1Ijpa4YuMlA7o43Deb3NJqYX4IUkQgBzNlAAwXfXrtBMHiL
-X-Gm-Message-State: AOJu0YyzcJp4kdx3CJMkTyzFTAAb7oS19ACSbOOE5ttSVVVqSJiTwAzO
-	s8f0TXM6qHuEeuTWqln/VjcRdugL847c8kv1a1aPwPlzxs/4SpkCiZDXsBGqRrc9epJXSPPIBtd
-	Uycj382Hi0Y+1qNj1bQEmU4GsVqe7
-X-Google-Smtp-Source: AGHT+IHwdJ/GGFwNwHrHqImp87bRmzlbCkmdBesKSKpVIxf1IZOyEMy384mSKBlU42fWO/aAdLYebQartIGMAqBrChM=
-X-Received: by 2002:a05:6512:280d:b0:52e:fa98:d89c with SMTP id
- 2adb3069b0e04-5309b26ac72mr2697514e87.14.1722136414377; Sat, 27 Jul 2024
- 20:13:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722136621; x=1722741421;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KLxdjUr3nZZ/xXHM7u/PpsffYwjEQJpfVQzmD3d51LU=;
+        b=q9VyyrbsHba97PWCXmPauEXf0x8yMRM1YvUB3PzeR8PdHCLdC7vsuenhaHXzAiqXJZ
+         BVjfHX5s+n8GjB99bxScMyOCmM9NOXY+ZFKpY+DdScr4ATdc87dfz05RwTN+V8IVWQWH
+         TGSl/nUzXXpCduFNH3WVchBtYf5yppPT6ODyL7/y524u5up3DDZ5PRfHdcZCsQ022MZq
+         /g6h67ePlK0C03RM44Vq5pnYK8YeiuKhDxVajl1fFfXU6PgKUrUCnNPWwpuJyh/lRDU5
+         5+ue78xwNzFeSlrJMbr6mr8gAA3faPc2r70GP/sHlGLxhrxsiwUjVac1IVI4D3FLwdAj
+         wzxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2PvCll3klxoZYGOpjXfnRNMQ+azw/obmqsPjP1G2zz3m6weh61/rsN+FjDz50tnDkpJiveABV9I+ufw2UDcWLZHqkjWkps9RmNmNg
+X-Gm-Message-State: AOJu0Yx2LuSiv3nmoumNWp/PIdbdM0RJh+g+902sG6QzjrVEclChzITG
+	CiG4Jn+DjNAJ+NBrMep345XnuVNIGlSr6p88VZ7jsebJEkhNgTgtHA+k75cxdB2NpZBTRkglVFi
+	9LUk4dg==
+X-Google-Smtp-Source: AGHT+IHxQKKmvaIh8Xo7LteA0uZfHwAXzlWy0lWLL1lrJM5UrctCrgu/VYxtLu/3Q8ik6yLWNLQ6Zg==
+X-Received: by 2002:a2e:9091:0:b0:2ef:26dc:efb3 with SMTP id 38308e7fff4ca-2f12ee031cfmr25481611fa.2.1722136620796;
+        Sat, 27 Jul 2024 20:17:00 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf30224sm8520151fa.46.2024.07.27.20.17.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Jul 2024 20:17:00 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so29063111fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2024 20:17:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0ehBenShAABD7U8EJx3+HQuIGncVd17CbrlwX8UZZFDFtvQbe7N6WmdxzQWhEAx+RMlz9YFtcAS5bwtvmdzwe27GuCE1DvAuMWCF8
+X-Received: by 2002:a2e:9bcf:0:b0:2ef:1d79:cae7 with SMTP id
+ 38308e7fff4ca-2f12ee14eb5mr26336921fa.14.1722136619815; Sat, 27 Jul 2024
+ 20:16:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
- <CAMzpN2hRVzWOF5YDvE8pPKfogdcuou8REsY+uXzkdORnFn=buQ@mail.gmail.com> <CAK7LNARjggcomzGMgHxuYE=Lm0_zsZS5dvjo3g4tjKJaM2oydg@mail.gmail.com>
-In-Reply-To: <CAK7LNARjggcomzGMgHxuYE=Lm0_zsZS5dvjo3g4tjKJaM2oydg@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Sat, 27 Jul 2024 23:13:23 -0400
-Message-ID: <CAMzpN2i6_-tiYKuXgq0ppowtfB8JipZvkMLmT8Mn02YE5shC5g@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix '-S -c' in x86 stack protector scripts
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, nicolas@fjasle.eu, 
-	maskray@google.com, morbo@google.com, justinstitt@google.com, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
+References: <CAH2r5msuLY9XywuKvnggezTdjCBQx8HDfYhHNstS-Yijz15sdg@mail.gmail.com>
+In-Reply-To: <CAH2r5msuLY9XywuKvnggezTdjCBQx8HDfYhHNstS-Yijz15sdg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 27 Jul 2024 20:16:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgS+TLGrPpcL4fy+NRRyuXbd-mJed50sXoqsPR0w75Oig@mail.gmail.com>
+Message-ID: <CAHk-=wgS+TLGrPpcL4fy+NRRyuXbd-mJed50sXoqsPR0w75Oig@mail.gmail.com>
+Subject: Re: [GIT PULL] SMB3 client fixes
+To: Steve French <smfrench@gmail.com>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 27, 2024 at 10:36=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
+On Sat, 27 Jul 2024 at 17:35, Steve French <smfrench@gmail.com> wrote:
 >
-> On Sun, Jul 28, 2024 at 5:43=E2=80=AFAM Brian Gerst <brgerst@gmail.com> w=
-rote:
-> >
-> > On Fri, Jul 26, 2024 at 2:05=E2=80=AFPM Nathan Chancellor <nathan@kerne=
-l.org> wrote:
-> > >
-> > > After a recent change in clang to stop consuming all instances of '-S=
-'
-> > > and '-c' [1], the stack protector scripts break due to the kernel's u=
-se
-> > > of -Werror=3Dunused-command-line-argument to catch cases where flags =
-are
-> > > not being properly consumed by the compiler driver:
-> > >
-> > >   $ echo | clang -o - -x c - -S -c -Werror=3Dunused-command-line-argu=
-ment
-> > >   clang: error: argument unused during compilation: '-c' [-Werror,-Wu=
-nused-command-line-argument]
-> > >
-> > > This results in CONFIG_STACKPROTECTOR getting disabled because
-> > > CONFIG_CC_HAS_SANE_STACKPROTECTOR is no longer set.
-> > >
-> > > '-c' and '-S' both instruct the compiler to stop at different stages =
-of
-> > > the pipeline ('-S' after compiling, '-c' after assembling), so having
-> > > them present together in the same command makes little sense. In this
-> > > case, the test wants to stop before assembling because it is looking =
-at
-> > > the textual assembly output of the compiler for either '%fs' or '%gs'=
-,
-> > > so remove '-c' from the list of arguments to resolve the error.
-> > >
-> > > All versions of GCC continue to work after this change, along with
-> > > versions of clang that do or do not contain the change mentioned abov=
-e.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 4f7fd4d7a791 ("[PATCH] Add the -fstack-protector option to the=
- CFLAGS")
-> > > Fixes: 60a5317ff0f4 ("x86: implement x86_32 stack protector")
-> > > Link: https://github.com/llvm/llvm-project/commit/6461e537815f7fa68ce=
-f06842505353cf5600e9c [1]
-> > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > > ---
-> > > I think this could go via either -tip or Kbuild?
-> > >
-> > > Perhaps this is an issue in the clang commit mentioned in the message
-> > > above since it deviates from GCC (Fangrui is on CC here) but I think =
-the
-> > > combination of these options is a little dubious to begin with, hence
-> > > this change.
-> >
-> > As part of my stack protector cleanup series, I found that these
-> > scripts can simply be removed.  I can repost those patches as a
-> > standalone cleanup.
-> >
-> > https://lore.kernel.org/lkml/20240322165233.71698-1-brgerst@gmail.com/
-> >
-> > Brian Gerst
->
-> Judging from the Fixes tags, Nathan meant this patch is
-> a back-port candidate so that the latest LLVM can be used for stable kern=
-els.
->
-> You are making big changes, and do you mean they can be back-ported?
+> Please pull the following changes since commit
+> 33c9de2960d347c06d016c2c07ac4aa855cd75f0:
 
-I was referring to just the first two patches of that series.  That
-said, it would be simpler to take Nathan's fix for backporting.
+Hmm. I  got this twice.
 
-Brian Gerst
+After looking closely at the _almost_ identical emails, I assume the
+re-send was because the first one was html and was rejected by the
+lists?
+
+But in case there was something else going on, and the second email
+was supposed to be another pull request (perhaps for the server
+side?), please holler.
+
+             Linus
 
