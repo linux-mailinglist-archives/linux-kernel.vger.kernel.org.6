@@ -1,159 +1,106 @@
-Return-Path: <linux-kernel+bounces-264808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC2193E8A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:37:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C5B93E8AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD521C21711
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDD01C208F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227B57CBA;
-	Sun, 28 Jul 2024 16:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC9F58203;
+	Sun, 28 Jul 2024 16:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFfN+Uz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=traphandler.com header.i=@traphandler.com header.b="lw0QRYcc"
+Received: from smtpout5.mo537.mail-out.ovh.net (smtpout5.mo537.mail-out.ovh.net [51.210.91.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E955A35;
-	Sun, 28 Jul 2024 16:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EDE6FD5
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 16:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.210.91.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722184655; cv=none; b=MlbcwEcOEgxvagR4g+J8UJn8l20WW43zaZGl79Ooy4RqfZxGxdUpSCibbGlFDQFJvBAsb4FafC8rWWkKkUXib6O3ZXutFFRfy7r7QA8x2wkAwKYDaeU1+Gm7AsMi1NECmoqLL6kPbFZj2uuvwCpQ/m3nyY3sbN6LUzEwuVdBM18=
+	t=1722185602; cv=none; b=pJ6q7rzdAVuZcUsATQhnp2W51tT/vXlvofFGV/WqB4Hv2gla3rPdCE7dxUFTTE/hivZ8GfGNMLGz+csWrP//t/FlDhuYY9eIhybWgHhs5+Dx5QpC24KR/Wvp90O+jsS0ibChOqURmPv3CsQ42Ob1TexQEo5tQm+F4KZ22L/FqYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722184655; c=relaxed/simple;
-	bh=ZIIHf+HwBIHRbom7T8jcOcH7zIjW/YploDXNxkI/jxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dHmtiJ2Xd7DLAt6jG+dMdfU6lPujUIJcE1KoCgpTWdw6JnKdpHQJ1NsuO0XpcB08vxsqWEtEtp3xAgyYQ7AY7y9j4Dtd/ZEiLEjRCVe+gJKJGk08UC9/yTiJQeog3sjAFZ6OlB61YylO/vUn//2ulxzyXqbaCupefkFhvK0MsI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFfN+Uz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B25CC116B1;
-	Sun, 28 Jul 2024 16:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722184654;
-	bh=ZIIHf+HwBIHRbom7T8jcOcH7zIjW/YploDXNxkI/jxo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lFfN+Uz90m/oAmvHUgbe5h8IlyqbbrDPC39jgTE3wmO2Xqpsw1AYiD0+AKLiBi5Rx
-	 RSTCrPHgMxOl8tQAN7cFk9c24t6J0ESXojkVAmsdO2yI8ANDVKIL6y7+i5WPy++9b4
-	 NJQUgr7mSDOCSiqVvau46e8GxDa/mb3OIeesawUb1IQ/EIEzqlTOIxhB2d3ufbl7qE
-	 ub4XclWf/2oTPqubnf9cNbAkIKJvEGplu0z39SGx6+NXnHBQnj+vEkNtbdoYqzkYtQ
-	 cDOh0QW2rERW2mqaKmG3Bshn86Fstm2jEsZCfHbXj3KORaWUfSC89b1RoP14y3IF9X
-	 METthFbf2KV3w==
-Date: Sun, 28 Jul 2024 17:37:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH 5/5] docs: iio: ad7380: add support for single-ended
- parts
-Message-ID: <20240728173725.45043f11@jic23-huawei>
-In-Reply-To: <20240726-ad7380-add-single-ended-chips-v1-5-2d628b60ccd1@baylibre.com>
-References: <20240726-ad7380-add-single-ended-chips-v1-0-2d628b60ccd1@baylibre.com>
-	<20240726-ad7380-add-single-ended-chips-v1-5-2d628b60ccd1@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722185602; c=relaxed/simple;
+	bh=/j9nfoD9jiYLN2GLB20m7UrXn9VwOI/bQpvYlw9tUqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U3Ow9zDz2HGn9tXSu/sPTFxd44U9AS6r1X5riVG+EFV/aSOvuhsFWtQIu2YwU1MDRhcQGiRmOCVuW+/fdkHXW/LJn+i05LIAwyGGHFShfizkDhjxqIgzI/3qcJx7Z4/g3DHYrasg6R2Xu74kyfm6b82Y3cwDy94SeaucN1d9l0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=traphandler.com; spf=pass smtp.mailfrom=traphandler.com; dkim=pass (2048-bit key) header.d=traphandler.com header.i=@traphandler.com header.b=lw0QRYcc; arc=none smtp.client-ip=51.210.91.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=traphandler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=traphandler.com
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
+	by mo537.mail-out.ovh.net (Postfix) with ESMTPS id 4WX6l93ZxDzyTD;
+	Sun, 28 Jul 2024 16:44:05 +0000 (UTC)
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
+        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <nichen@iscas.ac.cn>; Sun, 28 Jul 2024 16:44:05 +0000 (UTC)
+Received: from pro2.mail.ovh.net (unknown [10.108.9.98])
+	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4WX6l91L70z86Jq;
+	Sun, 28 Jul 2024 16:44:05 +0000 (UTC)
+Received: from [192.168.1.15] (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 28 Jul
+ 2024 18:44:04 +0200
+Message-ID: <34f987be-6e9d-487b-b051-adde23470da1@traphandler.com>
+Date: Sun, 28 Jul 2024 18:44:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] watchdog: rzn1: Convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, <wim@linux-watchdog.org>,
+	<linux@roeck-us.net>, <tzungbi@kernel.org>, <phil.edworthy@renesas.com>
+CC: <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240716031137.400502-1-nichen@iscas.ac.cn>
+Content-Language: en-US
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+In-Reply-To: <20240716031137.400502-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DAG3EX1.emp2.local (172.16.2.21) To DAG1EX1.emp2.local
+ (172.16.2.1)
+DKIM-Signature: v=1; a=rsa-sha256; d=traphandler.com;
+ s=ovhemp997128-selector1; c=relaxed/relaxed; t=1722185045;
+ h=from:to:subject:date; bh=RM6RMt85mDyx4dQWv3n20UgwxMngxxsG38Ef+hrdcn0=;
+ b=lw0QRYccc4Mz3ieykarQSbDEMBbT5aNOm1fmxtFHhIGclU6nUeriFiq8Z7MKy9chHsxJBV8sEgJGXnvRr4pv5M8f+j1gk9Ngd/KTzcdXmzEF2w+I9ax0hu6R4AkOvBiZQpYnU6Aj4DCIewkdHL7RmcT+LtezcMSgUtdL9GA9cX3J7DT+cDYIeKv4yjjBAbhqOdV4QwT72bj3pZhzBdnfi/gsqLgcDOVMtxZRQ1tICSo4W1K5wM2RhC6GjSAwkKf2qjAH/qDW902wKoXyvKFlOP8VYauwcTnkKb/8WBICvm/rb/FwM65xVRwHRRWANQ9oQBOElOO26KPTVFZUUMq9ig==
+X-Ovh-Tracer-Id: 8454663876436900315
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjedtgddutdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthejredttddvjeenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhephfffgfdtffdvleehjefhtdefkeelhfehgefhffeugefgudektdeffeetleelkefgnecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehnihgthhgvnhesihhstggrshdrrggtrdgtnhdprhgtphhtthhopehtiihunhhgsghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhmsehlihhnuhigqdifrghttghhughoghdrohhrghdprhgtphhtthhopehphhhilhdrvggufihorhhthhihsehrvghnvghsrghsrdgtohhmpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+ gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfigrthgthhguohhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehfeejpdhmohguvgepshhmthhpohhuth
 
-On Fri, 26 Jul 2024 17:20:10 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
 
-> The AD7380 family has some compatible single-ended chips: AD7386/7/8(-4).
-> These single-ended chips have a  2:1 multiplexer in front of each ADC.
-> They also include additional configuration registers that allow for either
-> manual selection or automatic switching (sequencer mode), of the
-> multiplexer inputs. Add a section to describe this.
+On 16/07/2024 05:11, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
 > 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Just one trivial missing space.
-
-Nice patch set. Thanks,
-
-Jonathan
-
-
+> Fixes: d65112f58464 ("watchdog: Add Renesas RZ/N1 Watchdog driver")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 > ---
->  Documentation/iio/ad7380.rst | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
+>   drivers/watchdog/rzn1_wdt.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-> index 061cd632b5df..81dfa39519fb 100644
-> --- a/Documentation/iio/ad7380.rst
-> +++ b/Documentation/iio/ad7380.rst
-> @@ -17,10 +17,16 @@ The following chips are supported by this driver:
->  * `AD7381 <https://www.analog.com/en/products/ad7381.html>`_
->  * `AD7383 <https://www.analog.com/en/products/ad7383.html>`_
->  * `AD7384 <https://www.analog.com/en/products/ad7384.html>`_
-> +* `AD7386 <https://www.analog.com/en/products/ad7386.html>`_
-> +* `AD7387 <https://www.analog.com/en/products/ad7387.html>`_
-> +* `AD7388 <https://www.analog.com/en/products/ad7388.html>`_
->  * `AD7380-4 <https://www.analog.com/en/products/ad7380-4.html>`_
->  * `AD7381-4 <https://www.analog.com/en/products/ad7381-4.html>`_
->  * `AD7383-4 <https://www.analog.com/en/products/ad7383-4.html>`_
->  * `AD7384-4 <https://www.analog.com/en/products/ad7384-4.html>`_
-> +* `AD7386-4 <https://www.analog.com/en/products/ad7386-4.html>`_
-> +* `AD7387-4 <https://www.analog.com/en/products/ad7387-4.html>`_
-> +* `AD7388-4 <https://www.analog.com/en/products/ad7388-4.html>`_
->  
->  
->  Supported features
-> @@ -69,6 +75,42 @@ must restart iiod using the following command:
->  
->  	root:~# systemctl restart iiod
->  
-> +Channel selection and sequencer (single-end chips only)
-> +-------------------------------------------------------
-> +
-> +Single-ended chips of this family (ad7386/7/8(-4)) have a 2:1 multiplexer in
-> +front of each ADC. They also include additional configuration registers that
-allow for either manual selection or automatic switching (sequencer mode),of the
-space after ,
-plus adjust the wrap as that'll make it 81 chars I think.
+> diff --git a/drivers/watchdog/rzn1_wdt.c b/drivers/watchdog/rzn1_wdt.c
+> index 980c1717adb5..7d3192d34afd 100644
+> --- a/drivers/watchdog/rzn1_wdt.c
+> +++ b/drivers/watchdog/rzn1_wdt.c
+> @@ -140,9 +140,9 @@ static int rzn1_wdt_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	wdt->clk_rate_khz = clk_rate / 1000;
+> -	wdt->wdtdev.info = &rzn1_wdt_info,
+> -	wdt->wdtdev.ops = &rzn1_wdt_ops,
+> -	wdt->wdtdev.status = WATCHDOG_NOWAYOUT_INIT_STATUS,
+> +	wdt->wdtdev.info = &rzn1_wdt_info;
+> +	wdt->wdtdev.ops = &rzn1_wdt_ops;
+> +	wdt->wdtdev.status = WATCHDOG_NOWAYOUT_INIT_STATUS;
+>   	wdt->wdtdev.parent = dev;
+>   	/*
+>   	 * The period of the watchdog cannot be changed once set
 
-> +multiplexer inputs.
-> +
-> +From an IIO point of view, all inputs are exported, i.e ad7386/7/8
-> +export 4 channels and ad7386-4/7-4/8-4 export 8 channels.
-> +
-> +Inputs ``AinX0`` of multiplexers correspond to the first half of IIO channels (i.e
-> +0-1 or 0-3) and inputs ``AinX1`` correspond to second half (i.e 2-3 or 4-7).
-> +Example for AD7386/7/8 (2 channels parts):
-> +
-> +.. code-block::
-> +
-> +	   IIO   | AD7386/7/8
-> +	         |         +----------------------------
-> +	         |         |     _____        ______
-> +	         |         |    |     |      |      |
-> +	voltage0 | AinA0 --|--->|     |      |      |
-> +	         |         |    | mux |----->| ADCA |---
-> +	voltage2 | AinA1 --|--->|     |      |      |
-> +	         |         |    |_____|      |_____ |
-> +	         |         |     _____        ______
-> +	         |         |    |     |      |      |
-> +	voltage1 | AinB0 --|--->|     |      |      |
-> +	         |         |    | mux |----->| ADCB |---
-> +	voltage3 | AinB1 --|--->|     |      |      |
-> +	         |         |    |_____|      |______|
-> +	         |         |
-> +	         |         +----------------------------
-> +
-> +
-> +When enabling sequencer mode, the effective sampling rate is divided by two.
->  
->  Unimplemented features
->  ----------------------
-> 
-
+reviewed-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
