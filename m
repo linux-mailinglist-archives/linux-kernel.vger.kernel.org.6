@@ -1,204 +1,166 @@
-Return-Path: <linux-kernel+bounces-264847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5D193E929
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:05:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D131193E92D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14D8281548
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:05:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8804628139D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4A16EB4A;
-	Sun, 28 Jul 2024 20:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4162A757FD;
+	Sun, 28 Jul 2024 20:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eQU+gg7x"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbtExgpU"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1133B669
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4CC502BD
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722197102; cv=none; b=sulmvuzQrOTL+NBgm2/owKcAB9Bx9WFgY7Yaof75ztIOVtC6EwVgIZG/NUshEVGD6/WeSnyIGaNGpD71RgRYfZTyrUAX+s0uz7TGtIeR906ruPcfgEiEzvgDAXtSgXayep1xvXNA0tMKOVfaeIejimn7GaAxTznGWYnAWkVbNPc=
+	t=1722197157; cv=none; b=OOh3OCMLKKWj9/DvaK7W12EKMW5ztw+Sjsv3zOQXHdJkAbMj1/Nt84LWeawOhuS8ekezdoLa4NNExafBHmOMc8H1IXncF/0mzHrIobqHFCBjQUh+OVwaSDonqpJvScYC6jAgCYeiT30XpE41RL3CyfIvXQjG53wv+VK7SdN8Nig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722197102; c=relaxed/simple;
-	bh=Bsj0UcPfpB7hsVmHQPrCq7EkmORTzj6ABABBOiIL6PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Des2d+dCv5BPfE0MDuXe49ex1vscWkg6RUbzTeiWJxTtETUaK9PvarANKrp3pVKJHGgIFgjXofH00Tva73FMrvC68KpUWmeKeu/j95yzm6In2HNQ8yt9Xgp6I1EcFvGGYursTwRo5aVAzFHrO7h9vyLNu2lNp75PVJr4pNZnhwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eQU+gg7x; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=MCvo
-	EexRWvzr5vwoIEx3DiejdjXigMU83QfwTn8Akzk=; b=eQU+gg7xBDtm1ujcr+iJ
-	JMWH4PcWdQZvChMN6yRg6FRz8IJP/eQKH/HWYMusdRZjegszXDpJXr198nT3CvjP
-	lungRmbJEmMzdtLAfsi7/TNTbR/O/Sy8uN+J+hLWEcE/BBxrKVOE9sUcMcSPKlBU
-	pMOSgJPCEtz551LAWByu+cZwitJxRLQPkfYnRU3wTBCes1pn39NeAzhZNAAbdv1H
-	uRU9mobrcdzPyRt9mp1fmyr+4r7R4pzpS8nVEBg0NrQu86Ynx4AiUiAogbRw8CfG
-	HORoAtaXhjqrXzU01Nmycv1hPXsK+eESj4IfQOaFEK26jQ6DQvYODryAznHQXcX2
-	3Q==
-Received: (qmail 3889717 invoked from network); 28 Jul 2024 22:04:57 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jul 2024 22:04:57 +0200
-X-UD-Smtp-Session: l3s3148p1@1QI0QlQeFo4ujnsv
-Date: Sun, 28 Jul 2024 22:04:56 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: smbus: Send alert notifications to all devices
- if source not found
-Message-ID: <ZqakaAn3f9Kg6Lgy@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>,
-	Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <20220110172857.2980523-3-linux@roeck-us.net>
+	s=arc-20240116; t=1722197157; c=relaxed/simple;
+	bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ihBut/nkB3KiYh8su0m0B+CZ9ZQlO3k2Cjwss+vkeBWyaPPVtrrP1lXKYexx35yuTkkRW3vx4lZ6bi69sl1j8nfIoK9R++ZRsFtQ9/cRxnAKFlwuyqS20GaS6XKOh+TGVPKdvZWYKFUT0SpNBv2twUpa7MxG/imIyEMMf22soB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NbtExgpU; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfdb6122992so938354276.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 13:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722197155; x=1722801955; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
+        b=NbtExgpUkz1knVd9HWgufMYvshbWKWPal27eBL46FSpycKb/nYTdeTxh0TohtQJ36A
+         2AzZiXpmrNGD+X4EESNIFxsVXWNVeOPyXbBRV/8OZSD1brZnQeRm9lYH1TocdKejFOYS
+         YfXHNQUm8xDD64zQ6Zin5zq1NT2620JufHCCk7eejxbQaoqTByeoqsVxbqDojqMT9J1g
+         C0OF9FWHTtpO2lklrRZLFemD7oO6VsUW9p08PlBG3Yca8DPRRiEb4dqUXsVoFsEa7bUf
+         KFIWRJn3qNMtVe/gLKct9WR6HKAWd4Q0L/HDI2h9TMC29+hdZkkIr2QvrEAi5yI5RORv
+         uKMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722197155; x=1722801955;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
+        b=YFHyul2Hkb4RPugc6jY3Kb8kv73loPb+1deYxjVV+N4gChUnjmVIxg3JgXTIrN8Cwt
+         A+lEhMJf52rt49bnA/SYv21+kVF0BSOxdziyDGIgZGJBa+Hkeafefw1WUOV2WypXf2zF
+         iThvZFrDd+380Nn1PnP6Dkn3yPtxlcz6b2jGju3Tb5SUNTpW6gWhChk9AK2OP5T6kp3+
+         HEPEQbxpb1z9omp+woG8Vq9AyDqcsx4nGLGeJHkrhJffGA9EmmxGs5+bjL8nHqi/6ib3
+         7QkIeQyINkvlEkLKHPKSRPSbSpCBoLfxXpN6DSRO49nujzH5faQnSC6qr9F1Ar8m5P/8
+         7rGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWldqPepuPpN8OL46WE2fFTzOoZ2GY3ibDHMi3Z8RHc+HbPJgjW7CcgLrSrCNH/vnD1tr1uKlxKABbAxlxiRksagGqFIhUvMchiXEqu
+X-Gm-Message-State: AOJu0YypvM7X4H69iwGnl2JaZ3CDEwVVPzkeCZMxYgqrdGCNBT032/yw
+	uxxAwNMSd75l4FyU1tDSznHej/oXSsXg5+LGahghW70pMDB9Z3SqWwALnoS/KkcwvcMxwMqqUD/
+	cTTGzGWbjUUSKekee0+FhN1ol/4u9oRJyell7/g==
+X-Google-Smtp-Source: AGHT+IH4VuGtnxaaMubh5K8LxqivpdTRbAvbqN7TNbbLCLoKj6PCh4Ss6cSMuqSbY7Yz6HIX8oOVeIGVxbVBUgzgnio=
+X-Received: by 2002:a05:6902:c08:b0:e08:5f16:813 with SMTP id
+ 3f1490d57ef6-e0b5464eb88mr5349192276.53.1722197154745; Sun, 28 Jul 2024
+ 13:05:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8IlNrYKcF1dSXsNz"
-Content-Disposition: inline
-In-Reply-To: <20220110172857.2980523-3-linux@roeck-us.net>
+References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+ <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
+ <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+ <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
+In-Reply-To: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Sun, 28 Jul 2024 22:05:18 +0200
+Message-ID: <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 25 Jul 2024 at 13:25, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 25-07-24, 11:21, Ulf Hansson wrote:
+> > Right.
+> >
+> > The main issue in regards to the above, is that we may end up trying
+> > to vote for different devices, which votes correspond to the same
+> > OPP/OPP-table. The one that comes first will request the OPP, the
+> > other ones will be ignored as the OPP core thinks there is no reason
+> > to already set the current OPP.
+>
+> Right, but that won't happen with the diff I shared earlier where we set
+> "forced" to true. Isn't it ?
 
---8IlNrYKcF1dSXsNz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Correct.
 
-On Mon, Jan 10, 2022 at 09:28:57AM -0800, Guenter Roeck wrote:
-> If a SMBUs alert is received and the originating device is not found,
-> the reason may be that the address reported on the SMBus alert address
-> is corrupted, for example because multiple devices asserted alert and
-> do not correctly implement SMBus arbitration.
->=20
-> If this happens, call alert handlers on all devices connected to the
-> given I2C bus, in the hope that this cleans up the situation. Retry
-> twice before giving up.
+>
+> > > I think that design is rather correct, just like other frameworks. Just that we
+> > > need to do only set-level for genpds and nothing else. That will have exactly
+> > > the same behavior that you want.
+> >
+> > I don't quite understand what you are proposing. Do you want to add a
+> > separate path for opp-levels?
+>
+> Not separate paths, but ignore clk/regulator changes if the table belongs to a
+> genpd.
+>
+> > The problem with that would be that platforms (Tegra at least) are
+> > already using a combination of opp-level and clocks.
+>
+> If they are using both for a genpd's OPP table (and changes are made for both
+> opp-level and clock by the OPP core), then it should already be wrong, isn't it?
 
-High level question: why the retry? Did you experience address
-collisions going away on the second try? My guess is that they would be
-mostly persistent, so we could call smbus_do_alert_force() right away?
+They are changing the clock through the device's OPP table and the
+level (performance-state) via genpd's table (using required OPPs).
+This works fine as of today.
 
->=20
-> This change reliably fixed the problem on a system with multiple devices
-> on a single bus. Example log where the device on address 0x18 (ADM1021)
-> and on address 0x4c (ADM7461A) both had the alert line asserted:
->=20
-> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
-> smbus_alert 3-000c: no driver alert()!
-> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
-> smbus_alert 3-000c: no driver alert()!
-> lm90 3-0018: temp1 out of range, please check!
-> lm90 3-0018: Disabling ALERT#
-> lm90 3-0029: Everything OK
-> lm90 3-002a: Everything OK
-> lm90 3-004c: temp1 out of range, please check!
-> lm90 3-004c: temp2 out of range, please check!
-> lm90 3-004c: Disabling ALERT#
->=20
-> Fixes: b5527a7766f0 ("i2c: Add SMBus alert support")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/i2c/i2c-smbus.c | 38 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 36 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
-> index 533c885b99ac..f48cec19db41 100644
-> --- a/drivers/i2c/i2c-smbus.c
-> +++ b/drivers/i2c/i2c-smbus.c
-> @@ -65,6 +65,32 @@ static int smbus_do_alert(struct device *dev, void *ad=
-drp)
->  	return ret;
->  }
-> =20
-> +/* Same as above, but call back all drivers with alert handler */
-> +
-> +static int smbus_do_alert_force(struct device *dev, void *addrp)
-> +{
-> +	struct i2c_client *client =3D i2c_verify_client(dev);
-> +	struct alert_data *data =3D addrp;
-> +	struct i2c_driver *driver;
-> +
-> +	if (!client || (client->flags & I2C_CLIENT_TEN))
-> +		return 0;
-> +
-> +	/*
-> +	 * Drivers should either disable alerts, or provide at least
-> +	 * a minimal handler. Lock so the driver won't change.
-> +	 */
-> +	device_lock(dev);
-> +	if (client->dev.driver) {
-> +		driver =3D to_i2c_driver(client->dev.driver);
-> +		if (driver->alert)
-> +			driver->alert(client, data->type, data->data);
-> +	}
-> +	device_unlock(dev);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * The alert IRQ handler needs to hand work off to a task which can issue
->   * SMBus calls, because those sleeping calls can't be made in IRQ contex=
-t.
-> @@ -74,6 +100,7 @@ static irqreturn_t smbus_alert(int irq, void *d)
->  	struct i2c_smbus_alert *alert =3D d;
->  	struct i2c_client *ara;
->  	unsigned short prev_addr =3D 0;	/* Not a valid address */
-> +	int retries =3D 0;
-> =20
->  	ara =3D alert->ara;
-> =20
-> @@ -111,8 +138,15 @@ static irqreturn_t smbus_alert(int irq, void *d)
->  		 * Note: This assumes that a driver with alert handler handles
->  		 * the alert properly and clears it if necessary.
->  		 */
-> -		if (data.addr =3D=3D prev_addr && status !=3D -EBUSY)
-> -			break;
-> +		if (data.addr =3D=3D prev_addr && status !=3D -EBUSY) {
-> +			/* retry once */
-> +			if (retries++)
-> +				break;
-> +			device_for_each_child(&ara->adapter->dev, &data,
-> +					      smbus_do_alert_force);
-> +		} else {
-> +			retries =3D 0;
-> +		}
->  		prev_addr =3D data.addr;
->  	}
-> =20
-> --=20
-> 2.33.0
->=20
+> Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
+> aggregation happens in the genpd core), but clock setting would always reflect
+> the second caller. This should be fixed too, isn't it ?
 
---8IlNrYKcF1dSXsNz
-Content-Type: application/pgp-signature; name="signature.asc"
+As I said before, I don't see a need for this. The recursive call to
+dev_pm_opp_set_opp() is today superfluous.
 
------BEGIN PGP SIGNATURE-----
+>
+> > To be able to call dev_pm_opp_set_opp() on the required-dev (which
+> > would be the real device in this case), we need to add it to genpd's
+> > OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
+> >
+> > The problem with this, is that the real device already has its own OPP
+> > table (with the required-OPPs pointing to genpd's OPP table), which
+> > means that we would end up adding the device to two different OPP
+> > tables.
+>
+> I was terrified for a minute after reading this and the current code, as I also
+> thought there is an issue there. But I was confident that we used to take care
+> of this case separately earlier. A short dive into git logs got me to this:
+>
+> commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
+>
+> This should be working just fine I guess.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmampGgACgkQFA3kzBSg
-KbarNRAAhWYjGkjFtwzTbgUtNhqIATHVLIeMeWA7bhONRowH4/pbEA6JNyjJrC82
-JN4ai+YA7v8dEohlyEqRmUWcNGbDR5JmkIHG8uPMP0c19FwgrgVjmdSRsCvXODg0
-AcWAsUi8uXdCdxKRVIYtnUOqgF/u9/dq6sHw8+kccZR6ZXhJkN46UJinwGXGPprt
-vV53P4h1eaMjOwtnWV69SxZ/xj7wxVdWkYXSmsx1fuFBp2dy8mHikWNsqcRix7Ll
-XS8U+To92H4CzV6jE9oP2wROOC0z/wmtVnQnceU1C7VVP3/Jr7GG5qoHIXw4KfAC
-21vdRVptUB8e6VWEzx/dhDx4ChziILDl25FFAzd/oy2dFOaqcWTfs0i63g/galVb
-hjhVLHk8xdayovt8n0XJcRvTwC+S6Ks8rc9CxwXmCXUj1A9QiR61Dgf4yKHwbsqF
-95q6NtSvtK8BNS3yEAg1TOyEVKP9Zzl3thoewNZblvVgFML3O7do3waw/CK+eehE
-VAIqd4gEaXD7+xft81GD6Va0VVwxQHARTAxsPfTsQ92mmKAqgDkcyV4KXs3ykrek
-wubj5YvaGb0+4jy+1mB3vHNcQ2GiWv0gRQA9cN3zi6tRnMpRJ/OB4PEHNOVsqxAe
-Nriy8sHbVLTH494ohgZKuGJcUXbuPQ5+rsmrHEy0HiQ+xJJi3UY=
-=tMwr
------END PGP SIGNATURE-----
+It's working today for *opp-level* only, because of the commit above.
+That's correct.
 
---8IlNrYKcF1dSXsNz--
+My point is that calling dev_pm_opp_set_opp() recursively from
+_set_required_opps() doesn't make sense for the single PM domain case,
+as we can't assign a required-dev for it. This leads to an
+inconsistent behaviour when managing the required-OPPs.
+
+To make the behavior consistent (and to fix the bug), I still think it
+would be better to do something along what $subject patch proposes.
+
+Kind regards
+Uffe
 
