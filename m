@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-264838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E45793E8FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76D193E8FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC831C20C91
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECE22817FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 19:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CD073478;
-	Sun, 28 Jul 2024 19:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C987174F;
+	Sun, 28 Jul 2024 19:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJwmd+9U"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+rOGDyC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA4E2AD29;
-	Sun, 28 Jul 2024 19:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D002AD29;
+	Sun, 28 Jul 2024 19:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722193769; cv=none; b=fmV1MLjVhUohdqhvy0YN8HwH6sLdKxlaClqdNBDx/H1K5GafLRZ/sHlrQneaCeQTt9IuyleZfaS3aGLHohDtdZBIoHWxNU4TGiqZKnJxZ3VN6R/RHaNKcBsZaExeHni/Ny2TX+5E8/q5RgwH5GVTfESq47sgNmuxzOGOwcgBTnI=
+	t=1722194044; cv=none; b=I4oYpXkSYHbc4s9DtCBinXYLgpr1IMKdoNO39qrJa8pa09LhDBwQZcS+A6oTqhww0REsrJ7pjRMKpenBOsHI3TVUYnOo+44+Kxi7XbmAJPGrI1x/POrNi+YgmFDiVCLqJNMwndKECqA2/BX4pcTlOlnJaONIOCfGvks+nh9mgsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722193769; c=relaxed/simple;
-	bh=zT+SnmbtFeF/fvHrxsBtPteublxfAX+cKI1ux8yhDmM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=og6R10nPsK3ayzjOOVd/4ouUkrJ5ri218NgdSdYPUJy0IM1Z5qrVfIOHxHYjAV6vO4dWNR7VrPcfwHHUF3FSpd01P7BX3lCSeA5q97S2kuMkwJSmcU4LFLQSO4d4Ti7+wgNJIwb4ChB7V+NGXA5z4YOj7or5rGbKBhG5csqH9eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJwmd+9U; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04150796so4578968e87.3;
-        Sun, 28 Jul 2024 12:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722193765; x=1722798565; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z6vY6a+UKismis/SRDyc4ybX+UEQqHZsmxRFnBfXOXs=;
-        b=AJwmd+9UiWyIWnN6bNLj0vETtUTDNOttBVgQujWaaxf5DjTeZi/3zKkCoCQBvt18tB
-         h17ToVoZA9mERg62v6feH9S2jlIzmBhVJ6t5LBnTi8J1M4wNhe0sajSCSUCJAQItwyGn
-         phBVuXvOuODj7ASB0gT0m6PF0a73zz1jR5aMykKnbahrGYp2Sj3vJlG9GgcPOL/OD2JQ
-         NBeonf3E1PQUDsS+duZwIu7bwG/e56HrMjSyKf0D8oklDxUPCcuxKAWx9vl+rzGtQAYG
-         OaBmjI85b49aZyICTPFAxn6hHI1qxhm1KzcNLCILc/prYldUgeMyRx3DtE0N1VvZQl7f
-         68cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722193765; x=1722798565;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6vY6a+UKismis/SRDyc4ybX+UEQqHZsmxRFnBfXOXs=;
-        b=GtCCEk57eaN7IV50p1mN2+wB2FbI95dSrMUC1gIPapY17yImQBEIGNr08s/TrCqIOw
-         tmGzEoE13qG6/Wgu3OzloMLg1tuDCG43QHBzAPDJm8FFwK/e9fmKGaHudG8GEy9S6Jaz
-         9smGR5xc+oIOYBQGIOtIbyhQDaaK9d2cPUbvVMUpgXRyau+E9OHIqLAfVPTS7DIF5HBG
-         xgZveN/jZvpCFsMXiX7IM5lfr7bcV/toHOOQORRGSo7ClkL5QHFq/hv1Um8hLS5LXWY0
-         9BAU/cI5XW9bpXmV+0UYVvHAxGehkIzBMTQRvjnCBlifHRPcRHe5jUlZsxbvkpXtQ7Wv
-         CG+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzqQOLDHftESciGr70ZvwT8RjdGNc5TmqivUky9Toy92XSkpguZUvnyY6proN0EqMqvqkue2FeZvrcriuQWcWDGn784MsZ9Ul4+g==
-X-Gm-Message-State: AOJu0YxWd1OCYqFS6XK2Y0PW6ljUfgUehQdAZnSBucr8H99oRLpi8T0e
-	iPPWxndLiziiBBnNPasu2VHwri/tXhTg4j8tY3Ruynx/oX6rTWDiK2RZ3guZvokizkuTSqH76fn
-	53qKJKKrNMDPFQfTw0rhEzBnxyWiMb5Tg
-X-Google-Smtp-Source: AGHT+IGixSuGf4VOHXLIMPxkM9HL+BeZhH5ZjPhG3tH9I3A5HsmUVZRkbDNAQyDAmnjQoZdztXrE1f7mpIOtPaJoBD4=
-X-Received: by 2002:a19:2d5b:0:b0:52e:f367:709b with SMTP id
- 2adb3069b0e04-5309b2c3056mr3133888e87.42.1722193765214; Sun, 28 Jul 2024
- 12:09:25 -0700 (PDT)
+	s=arc-20240116; t=1722194044; c=relaxed/simple;
+	bh=sMmbh7cUTqqovrR2AT6BBqOajFBHUkdjDZtKSwNRZH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IVNL/4RUqJmXzfqLCGUxgyh6gO3A/MqoGsTbXWYxoJoZNpDFoRmpeVWukwIUte2aJ658TQSWR3TarXcXUqIz4CszGpEpfkO9/eN3FwLyejrjbydw3NqlA/z+5jaDEsEFF7Z8p82b/c98u94ZOs45LtajYNsbY/VLUDBQi3zmwUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+rOGDyC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA4DC4AF0C;
+	Sun, 28 Jul 2024 19:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722194043;
+	bh=sMmbh7cUTqqovrR2AT6BBqOajFBHUkdjDZtKSwNRZH8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R+rOGDyCe/5nYkHqIkfoDxNCUuoXBD0w/ddqWWoF1jhS+B0Kyyuk2m3W5Q7WwKFWV
+	 HbXJ3Kegb1sa2iHUflKafhsKDBBrSjNfcZOxQmrCmqsRXuDtLezhnPmzBaeYri/RA3
+	 avGCIFWWgJX9vQri9/mHE74oVZ+ao9vDhuVVZsrPQeKzmHZ/pAd180RTlLCb2MYBXz
+	 v1JbHi8QMBQ4b5WT/KcNvvgrF8gwEhmrr3sjnfEemv8lOFspEzRQNO5IldgpTGfQX7
+	 k8aJDu0T5XZr7GDlnvV75DaOGAl+fpgBrzWXxtAqxH82LAVa4mWcwlgtcukGhKwyto
+	 u0y1ulq4tUitg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efd530a4eso4371354e87.0;
+        Sun, 28 Jul 2024 12:14:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhcvvic3fv9PtKB834sFxKQFCsobiDz1uO691QIlWev1vJjB7v9p9F56KYMMPTZ97pP8D+a5P1BLXWj49OQLLybzKH7/yHCyqhLTrh1r6RVYlbpQr/3WcXECdXEt9pBtyq/Cio4QdA28H8ho3aGA1VPnpiaPvC9iiwbRNQZQvxT4Dh
+X-Gm-Message-State: AOJu0YyYRudiaVrWC1CQWfbS0XFKAzBP0UfiStytc2RZq/N+xxeReu5O
+	liRPeOLiAoIHPe4XNzh5qBPApHn6pMYiOlA7dStglQnPmK57EoV5en8cbGDqaIkgkGou4fskcsN
+	BPhLzixzgxBeLvJ2bpeJucCurEEA=
+X-Google-Smtp-Source: AGHT+IEkz1TnHDlE9ler9A80e9defPOv4OL1EPJyuZN5JVOtMoef4fgodh9s71/x3g0iffQ+5rn3J1ZmWw+wvfxkaGI=
+X-Received: by 2002:a05:6512:1289:b0:52e:f95c:8b with SMTP id
+ 2adb3069b0e04-5309b279f98mr4853691e87.16.1722194042594; Sun, 28 Jul 2024
+ 12:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 28 Jul 2024 14:09:14 -0500
-Message-ID: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
-Subject: Why do very few filesystems have umount helpers
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+References: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
+In-Reply-To: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 29 Jul 2024 04:13:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATWv-OJM0oW8qbMk-HL0GgRkYKcRt+yZadhHB3NGR22uQ@mail.gmail.com>
+Message-ID: <CAK7LNATWv-OJM0oW8qbMk-HL0GgRkYKcRt+yZadhHB3NGR22uQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Fix '-S -c' in x86 stack protector scripts
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, nicolas@fjasle.eu, 
+	maskray@google.com, morbo@google.com, justinstitt@google.com, kees@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I noticed that nfs has a umount helper (/sbin/umount.nfs) as does hfs
-(as does /sbin/umount.udisks2).  Any ideas why those are the only
-three filesystems have them but other fs don't?
-
-Since umount does not notify the filesystem on unmount until
-references are closed (unless you do "umount --force") and therefore
-the filesystem is only notified at kill_sb time, an easier approach to
-fixing some of the problems where resources are kept around too long
-(e.g. cached handles or directory entries etc. or references on the
-mount are held) may be to add a mount helper which notifies the fs
-(e.g. via fs specific ioctl) when umount has begun.   That may be an
-easier solution that adding a VFS call to notify the fs when umount
-begins.   As you can see from fs/namespace.c there is no mount
-notification normally (only on "force" unmounts)
-
-        /*
-         * If we may have to abort operations to get out of this
-         * mount, and they will themselves hold resources we must
-         * allow the fs to do things. In the Unix tradition of
-         * 'Gee thats tricky lets do it in userspace' the umount_begin
-         * might fail to complete on the first run through as other tasks
-         * must return, and the like. Thats for the mount program to worry
-         * about for the moment.
-         */
-
-        if (flags & MNT_FORCE && sb->s_op->umount_begin) {
-                sb->s_op->umount_begin(sb);
-        }
-
-
-Any thoughts on why those three fs are the only cases where there are
-umount helpers? And why they added them?
-
-I do notice umount failures (which can cause the subsequent mount to
-fail) on some of our functional test runs e.g. generic/043 and
-generic/044 often fail to Samba with
-
-     QA output created by 043
-    +umount: /mnt-local-xfstest/scratch: target is busy.
-    +mount error(16): Device or resource busy
-
-Ideas?
+On Sat, Jul 27, 2024 at 3:05=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> After a recent change in clang to stop consuming all instances of '-S'
+> and '-c' [1], the stack protector scripts break due to the kernel's use
+> of -Werror=3Dunused-command-line-argument to catch cases where flags are
+> not being properly consumed by the compiler driver:
+>
+>   $ echo | clang -o - -x c - -S -c -Werror=3Dunused-command-line-argument
+>   clang: error: argument unused during compilation: '-c' [-Werror,-Wunuse=
+d-command-line-argument]
+>
+> This results in CONFIG_STACKPROTECTOR getting disabled because
+> CONFIG_CC_HAS_SANE_STACKPROTECTOR is no longer set.
+>
+> '-c' and '-S' both instruct the compiler to stop at different stages of
+> the pipeline ('-S' after compiling, '-c' after assembling), so having
+> them present together in the same command makes little sense. In this
+> case, the test wants to stop before assembling because it is looking at
+> the textual assembly output of the compiler for either '%fs' or '%gs',
+> so remove '-c' from the list of arguments to resolve the error.
+>
+> All versions of GCC continue to work after this change, along with
+> versions of clang that do or do not contain the change mentioned above.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 4f7fd4d7a791 ("[PATCH] Add the -fstack-protector option to the CFL=
+AGS")
+> Fixes: 60a5317ff0f4 ("x86: implement x86_32 stack protector")
+> Link: https://github.com/llvm/llvm-project/commit/6461e537815f7fa68cef068=
+42505353cf5600e9c [1]
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+> I think this could go via either -tip or Kbuild?
 
 
--- 
-Thanks,
+Applied to linux-kbuild/fixes, and included in the pull request.
+Thanks!
 
-Steve
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
