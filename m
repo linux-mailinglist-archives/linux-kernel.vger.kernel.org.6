@@ -1,126 +1,220 @@
-Return-Path: <linux-kernel+bounces-264304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDEA93E19A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 02:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A612B93E19E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 02:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32AB6B216AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 00:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620A0281AD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 00:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1001FB5;
-	Sun, 28 Jul 2024 00:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA66257D;
+	Sun, 28 Jul 2024 00:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSxIt1Fg"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQ9eu14+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD472382;
-	Sun, 28 Jul 2024 00:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EFCA32;
+	Sun, 28 Jul 2024 00:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722126923; cv=none; b=eyU8i29oJuruJYWE+lcrtxtJUQChgQfkR6hO6Qmwob1TDB5wBRFJxYBNBdSm9LBKEfYTMvlYBaCR8VCh6NXpj1Fyx4qn1ciH33YnxJhGRaRRsYaBvpKOq91dx2XkGPizoeZXJ6UBOYe4O15mwAUPkG+ey3DQ0tyuyAf2ZN5G3IA=
+	t=1722127662; cv=none; b=q38kHAUyo4x84IZfkw2uznzfja6Y9gZJ7G1R4nwv4D6FLbFRzZZqN60cZKKKnPTUg14bWQP+k7vQ9qwx0yVNEaYIHf3cNgHYe+uxnv9osCUEXkqAISUhKKCfydb2xwetK72/mbBitlPJL1bnaNzKuipsFYcvzs4HCL/TJKX0HYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722126923; c=relaxed/simple;
-	bh=aO61I0v/qao+UoDLht3IIF69/kCgfI5KNSjSzGL3zVE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=i4Ab0SUe5aLUBuRbKSSNfyRO+QGBr/mB9DpyxL8kCEznug1wF6cMqHIz7AXUmnJNoqYrD4+5cWJzErAdfRpFSq8CZKw+hXWE6893IU4omySX2X/FdSCfLujKy5Kti7WC21qeP2Pf8nuA484VOUqLHxIYDzA+S0SZjOWPNvtBHeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YSxIt1Fg; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f040733086so27005121fa.1;
-        Sat, 27 Jul 2024 17:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722126920; x=1722731720; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vHrFGGQW7WEzTSEJx91bUUFVGQDkOrk8pgkc3hN4gDo=;
-        b=YSxIt1Fg6OGyPsojhcRcdQJ1UyxO5ZdLpmOMuEtoTYffTNjzPgvtcEGXfXkV/hqerx
-         ySnx5LD7PwWgtHfvmg00skvkwzK8rTT2XCTo6cB3iTnvyPXhiLeZI5uY1FcCej+b65Y6
-         B5MwoJVhw8NvwwgXNLEhDAME5hMW3QCmXDcD7r5DRhnCkzhCkfkOO74zy5eQG58WlIR9
-         feJ0dVPjgOT/wieWpVKg66CyUl1JbOAvO6dol2DFeMMOs94mgdghEBBb5KzOo3nFtaJu
-         KuDlc7SFYvKO8x2aH+gKPfo8YwoSj6j7A5yLtkQPWAZ7YZV0K+/Yu0qRoTvtyqLzfYV/
-         SqOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722126920; x=1722731720;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vHrFGGQW7WEzTSEJx91bUUFVGQDkOrk8pgkc3hN4gDo=;
-        b=hq336Jaykp1+cagYxGkBkTzkRRMn6v9sPy26MK5Eh7HE/TV1Fks+L9vqWB34Sr/x8M
-         utth5Su6+T/IWZmvVNEebZFXS8vPuRq3lFvPRykHDAoCxS9obAxy8RFJhxMvqEhCiRIr
-         Wftn/F9iJxQtTMa4cIVT2OBkVUDZwUT9CGtm1/Ybrc+bZ8LifFAwh948azTYOabm2fjk
-         M+qgN5T3raPnCLUV38xVU8R69T/+l3HEIwuI2hbxnj4+3R4B9wxxEDp9UjV8eiOMe4TI
-         xyuDx6ONYcsTPQhGaR0lTNdUluNaQbJS+yvu+TpMszOe34yu8z4ZCUG3eNTLZ9ok7tbV
-         G19A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFhT2NBXnuxYzxajR8T/wrz2qDMiWN4FYPezlUv3W3fRJNdgYxbDARwIqQbs/wK0aWAjHkgy4zZ7HLnMPWjWs7wbaF0ay1+im4GnvY
-X-Gm-Message-State: AOJu0YxKj1donXSQsR38VxnSH0I88NbRlRaA3Ayy0Mhk7t56vuG8fSUV
-	81pQuDJ4hutGIDkWHZGpKu8pp+mpvxFnO5pLgP1HgFFOz0GdAqikcgCPIKKDXJ3V3CFOQ3qpcL/
-	h9FaHOXhjQnUI8LpPbeBjW7CTx3ySeLBC
-X-Google-Smtp-Source: AGHT+IE82gkxjoYFy4bOVPvVzjh6TvGugjLGrSDLaYbXJUpwjmRXOPO0mNF2jMhxmdepoA7J7DqZT3PqLq8KBlfRsEA=
-X-Received: by 2002:ac2:4bd1:0:b0:52e:9b92:4999 with SMTP id
- 2adb3069b0e04-5309b269ae5mr3149605e87.2.1722126919483; Sat, 27 Jul 2024
- 17:35:19 -0700 (PDT)
+	s=arc-20240116; t=1722127662; c=relaxed/simple;
+	bh=6GVrstaQLaIQb6kxuJeSsZibR8Kd7ku9m1ZJHzAaFt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GSFBE/4QelDzzN/7sFGYTpAn6UH6MjdkmSMOc3qfOpk3elzcjDanZ6p9Xt/6RcyIhHeM/jbm9/7kkpsngJ2RAnHM9CcSsj1xrZMlkZM07QJom2ET838iLayIpXfzptH6diKH+pH7cpDhLq4q79qurQaFy/37U9dbpTVgHmsTIoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQ9eu14+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D24C32781;
+	Sun, 28 Jul 2024 00:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722127662;
+	bh=6GVrstaQLaIQb6kxuJeSsZibR8Kd7ku9m1ZJHzAaFt4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZQ9eu14+vRIBf808ytWLhTISFwV4zmmaIzt+3XUQfyH5HW6QrpqFY6eT7p0tbEL7B
+	 zHrR67Y8aGGniVJSp8TuSiVJ9f539A2vr4nkSgwrc0L+FuF/8jUSEOZdn02S8Y99ap
+	 qy3JXgBVH1rmSZpdYYWTHe+/iVxle/yTKydxPBQjDiLI1eC1+G5R+iCrijiVTU5Gya
+	 7UEYSIC3F9769yZV/SuWc8jDwWELyY3D7zGqy/DbLxTR+D/fYjPZ+fLZlwSIVvVu++
+	 UVX3NEJ9wgXii3Navp9D2C91K1ii1+2t95/IIwnNtJZwaqkSdsyZahfGI0UbhZeYRZ
+	 +HRjMoaGhTo4Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	gregkh@linuxfoundation.org
+Subject: [PATCH AUTOSEL 6.10 01/16] regmap: kunit: Fix memory leaks in gen_regmap() and gen_raw_regmap()
+Date: Sat, 27 Jul 2024 20:47:18 -0400
+Message-ID: <20240728004739.1698541-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 27 Jul 2024 19:35:08 -0500
-Message-ID: <CAH2r5msuLY9XywuKvnggezTdjCBQx8HDfYhHNstS-Yijz15sdg@mail.gmail.com>
-Subject: [GIT PULL] SMB3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-33c9de2960d347c06d016c2c07ac4aa855cd75f0:
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-  Merge tag '6.11-rc-part1-smb3-client-fixes' of
-git://git.samba.org/sfrench/cifs-2.6 (2024-07-21 15:23:39 -0700)
+[ Upstream commit c3820641da87442251e0c00b6874ef1022da8f58 ]
 
-are available in the Git repository at:
+- Use kunit_kcalloc() to allocate the defaults table so that it will be
+  freed when the test case ends.
+- kfree() the buf and *data buffers on the error paths.
+- Use kunit_add_action_or_reset() instead of kunit_add_action() so that
+  if it fails it will call regmap_exit().
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.11-rc-smb-client-fixes-part2
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Link: https://msgid.link/r/20240411103724.54063-1-rf@opensource.cirrus.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/base/regmap/regmap-kunit.c | 72 +++++++++++++++++++-----------
+ 1 file changed, 45 insertions(+), 27 deletions(-)
 
-for you to fetch changes up to b6f6a7aa689f1c255e06fee3ca13c9f9e5c12780:
-
-  smb3: add dynamic trace point for session setup key expired failures
-(2024-07-26 12:34:50 -0500)
-
-----------------------------------------------------------------
-Six smb3 client fixes
-- fix for potential null pointer use in init cifs
-- three additional dynamic trace points to improve debugging of some
-common scenarios
-- two SMB1 fixes (one addressing reconnect with POSIX extensions, one
-a mount parsing error)
-
-There are some additional patches SMB3.1.1 compression improvements
-and a locking fix that are still being debugged and are not included
-in this P/R
-----------------------------------------------------------------
-Steve French (6):
-      cifs: fix potential null pointer use in destroy_workqueue in
-init_cifs error path
-      cifs: fix reconnect with SMB1 UNIX Extensions
-      cifs: mount with "unix" mount option for SMB1 incorrectly handled
-      smb3: add dynamic tracepoint for reflink errors
-      smb3: add four dynamic tracepoints for copy_file_range and reflink
-      smb3: add dynamic trace point for session setup key expired failures
-
- fs/smb/client/cifsfs.c  |   8 +++---
- fs/smb/client/connect.c |  24 ++++++++++++++++-
- fs/smb/client/smb2ops.c |  20 +++++++++++++-
- fs/smb/client/smb2pdu.c |   8 +++++-
- fs/smb/client/trace.h   | 150
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 203 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
+index be32cd4e84da4..292e86f601978 100644
+--- a/drivers/base/regmap/regmap-kunit.c
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -145,9 +145,9 @@ static struct regmap *gen_regmap(struct kunit *test,
+ 	const struct regmap_test_param *param = test->param_value;
+ 	struct regmap_test_priv *priv = test->priv;
+ 	unsigned int *buf;
+-	struct regmap *ret;
++	struct regmap *ret = ERR_PTR(-ENOMEM);
+ 	size_t size;
+-	int i;
++	int i, error;
+ 	struct reg_default *defaults;
+ 
+ 	config->cache_type = param->cache;
+@@ -172,15 +172,17 @@ static struct regmap *gen_regmap(struct kunit *test,
+ 
+ 	*data = kzalloc(sizeof(**data), GFP_KERNEL);
+ 	if (!(*data))
+-		return ERR_PTR(-ENOMEM);
++		goto out_free;
+ 	(*data)->vals = buf;
+ 
+ 	if (config->num_reg_defaults) {
+-		defaults = kcalloc(config->num_reg_defaults,
+-				   sizeof(struct reg_default),
+-				   GFP_KERNEL);
++		defaults = kunit_kcalloc(test,
++					 config->num_reg_defaults,
++					 sizeof(struct reg_default),
++					 GFP_KERNEL);
+ 		if (!defaults)
+-			return ERR_PTR(-ENOMEM);
++			goto out_free;
++
+ 		config->reg_defaults = defaults;
+ 
+ 		for (i = 0; i < config->num_reg_defaults; i++) {
+@@ -190,12 +192,19 @@ static struct regmap *gen_regmap(struct kunit *test,
+ 	}
+ 
+ 	ret = regmap_init_ram(priv->dev, config, *data);
+-	if (IS_ERR(ret)) {
+-		kfree(buf);
+-		kfree(*data);
+-	} else {
+-		kunit_add_action(test, regmap_exit_action, ret);
+-	}
++	if (IS_ERR(ret))
++		goto out_free;
++
++	/* This calls regmap_exit() on failure, which frees buf and *data */
++	error = kunit_add_action_or_reset(test, regmap_exit_action, ret);
++	if (error)
++		ret = ERR_PTR(error);
++
++	return ret;
++
++out_free:
++	kfree(buf);
++	kfree(*data);
+ 
+ 	return ret;
+ }
+@@ -1497,9 +1506,9 @@ static struct regmap *gen_raw_regmap(struct kunit *test,
+ 	struct regmap_test_priv *priv = test->priv;
+ 	const struct regmap_test_param *param = test->param_value;
+ 	u16 *buf;
+-	struct regmap *ret;
++	struct regmap *ret = ERR_PTR(-ENOMEM);
+ 	size_t size = (config->max_register + 1) * config->reg_bits / 8;
+-	int i;
++	int i, error;
+ 	struct reg_default *defaults;
+ 
+ 	config->cache_type = param->cache;
+@@ -1515,15 +1524,16 @@ static struct regmap *gen_raw_regmap(struct kunit *test,
+ 
+ 	*data = kzalloc(sizeof(**data), GFP_KERNEL);
+ 	if (!(*data))
+-		return ERR_PTR(-ENOMEM);
++		goto out_free;
+ 	(*data)->vals = (void *)buf;
+ 
+ 	config->num_reg_defaults = config->max_register + 1;
+-	defaults = kcalloc(config->num_reg_defaults,
+-			   sizeof(struct reg_default),
+-			   GFP_KERNEL);
++	defaults = kunit_kcalloc(test,
++				 config->num_reg_defaults,
++				 sizeof(struct reg_default),
++				 GFP_KERNEL);
+ 	if (!defaults)
+-		return ERR_PTR(-ENOMEM);
++		goto out_free;
+ 	config->reg_defaults = defaults;
+ 
+ 	for (i = 0; i < config->num_reg_defaults; i++) {
+@@ -1536,7 +1546,8 @@ static struct regmap *gen_raw_regmap(struct kunit *test,
+ 			defaults[i].def = be16_to_cpu(buf[i]);
+ 			break;
+ 		default:
+-			return ERR_PTR(-EINVAL);
++			ret = ERR_PTR(-EINVAL);
++			goto out_free;
+ 		}
+ 	}
+ 
+@@ -1548,12 +1559,19 @@ static struct regmap *gen_raw_regmap(struct kunit *test,
+ 		config->num_reg_defaults = 0;
+ 
+ 	ret = regmap_init_raw_ram(priv->dev, config, *data);
+-	if (IS_ERR(ret)) {
+-		kfree(buf);
+-		kfree(*data);
+-	} else {
+-		kunit_add_action(test, regmap_exit_action, ret);
+-	}
++	if (IS_ERR(ret))
++		goto out_free;
++
++	/* This calls regmap_exit() on failure, which frees buf and *data */
++	error = kunit_add_action_or_reset(test, regmap_exit_action, ret);
++	if (error)
++		ret = ERR_PTR(error);
++
++	return ret;
++
++out_free:
++	kfree(buf);
++	kfree(*data);
+ 
+ 	return ret;
+ }
 -- 
-Thanks,
+2.43.0
 
-Steve
 
