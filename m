@@ -1,86 +1,96 @@
-Return-Path: <linux-kernel+bounces-264854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB6C93E934
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4304F93E938
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247D11C20B40
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD271F21140
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699C7581B;
-	Sun, 28 Jul 2024 20:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UGnXsJvc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6136EB73;
+	Sun, 28 Jul 2024 20:23:43 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA9C763EE;
-	Sun, 28 Jul 2024 20:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8B622071
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 20:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722197705; cv=none; b=cVyesOXe5VgktbldVKBt+I+eboOgjOC+O50Zdsh3heIyYZzLsTXlqKJiKlnfUujgOtsf04pmxE3pAzjKchqOW4ebmpqgNQ+TngX/IzGP++wg4w/5KSqgYeI+zdMDnd6XtH6NN7+ybi/sbVPwRALuDOnJYYa0jM/G11+95/0Wfjc=
+	t=1722198222; cv=none; b=Fi4yT7izuTjDbTFmF5q3oy3XmuejlNVn3wDn0T5NWYGQrfMpE3Q7Xv5TiOkh8rQ0my6nYPj4r8ZVm5RK1EVqLvFB4dAbUH6pC4lDFVfJQ0sR7ZOOeYIFddVkGC0wEAlnA/pYAjaf+XiYgABQ6Acl5bY8Wqee3W/+pFGowolMbuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722197705; c=relaxed/simple;
-	bh=JqrZP+bJZ7QEfiDfTGUWnpQxHpc2DZA59kC1iw6Omq4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HdKWjM2yisNXlcJS/xHtMeXggossVapKfUc2oArC8kpzME8I33RZ5AsMS98dizr4Pis18CO9OctqXEP+nvua6Eg1PeLzHBc8qXKOY9zB5CeIF0Ou9ERiYUgKsMkJnqIaPw+jGhDTtfGsF5mxrOSwwcg/S8/IE9HxggNwZ0dYz7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UGnXsJvc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A859C4AF09;
-	Sun, 28 Jul 2024 20:15:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722197704;
-	bh=JqrZP+bJZ7QEfiDfTGUWnpQxHpc2DZA59kC1iw6Omq4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UGnXsJvcVJyJdK08D4CH+K+6YJOy7gd0yDun6gYhDUZo6XOLsLpYpROhVwwZbRS4A
-	 Nu6Gl2KFnI1H4O1H5QuUDwE0LNkzErEYykpfgZe47n9DzMhAm9PhOx9vaWMGmqleh/
-	 UktPPtqSZ2L9hX8OLR3JI4VFCLmgniUDm7rOxbPs=
-Date: Sun, 28 Jul 2024 13:15:03 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil
- Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook
- <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>, SeongJae Park
- <sj@kernel.org>, Shuah Khan <shuah@kernel.org>, Brendan Higgins
- <brendanhiggins@google.com>, David Gow <davidgow@google.com>, Rae Moar
- <rmoar@google.com>
-Subject: Re: [PATCH v3 6/7] tools: separate out shared radix-tree components
-Message-Id: <20240728131503.18f2f41bc15d2fdaddf5fc75@linux-foundation.org>
-In-Reply-To: <d5905fa6f25b159a156a5a6a87c5b1ac25568c5b.1721648367.git.lorenzo.stoakes@oracle.com>
-References: <cover.1721648367.git.lorenzo.stoakes@oracle.com>
-	<d5905fa6f25b159a156a5a6a87c5b1ac25568c5b.1721648367.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722198222; c=relaxed/simple;
+	bh=xLbJUwkxsmqFTG8Y/Is5iZHwCy7pBeenRc6dfDwIR9g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=K5hW759n4V77fWvTY8viJetgm3H1IxksenTsUjsb22BvH6UABJz+iuB6WOxLH+dBMkPmqUkUqV9XxbvXDOwM+0JmVdohgXEfJcK69pEx/i675kxYDIZkQ2X/eePLgOTR2GIizCdpCmB2loaGy6dk3DMEW110Tx9hWYaPLHTJtMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-107-IglUVtuWPzO5IDwbWfar6Q-1; Sun, 28 Jul 2024 21:23:36 +0100
+X-MC-Unique: IglUVtuWPzO5IDwbWfar6Q-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
+ 2024 21:22:48 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 28 Jul 2024 21:22:48 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Christoph Hellwig" <hch@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, "Andy Shevchenko"
+	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Arnd Bergmann <arnd@kernel.org>,
+	"Jason@zx2c4.com" <Jason@zx2c4.com>, "pedro.falcato@gmail.com"
+	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>
+Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqg///x1wD//+6RQA==
+Date: Sun, 28 Jul 2024 20:22:48 +0000
+Message-ID: <d949045abc78462ab443b38340ce5c20@AcuMS.aculab.com>
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
+ <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
+ <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
+ <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+In-Reply-To: <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Mon, 22 Jul 2024 12:50:24 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Li4NCj4gQnV0IEknbSBpbmNsaW5lZCB0byBqdXN0IGRvIHRoYXQgdG9vLiBCaXRlIHRoZSBidWxs
+ZXQsIGdldCByaWQgb2YgdGhlDQo+IHdob2xlICJoYXMgdG8gYmUgYSBDIGNvbnN0YW50IGV4cHJl
+c3Npb24iIHBhaW4uDQoNCkF0IGxlYXN0IHlvdSBjYW4gJ2p1c3QgZG8gaXQnIDotKQ0KDQpJSVJD
+IHNvbWUgb2YgdGhlIE1JTigpIG5lZWQgdG8gYmUgbWluKCkgYW5kIG90aGVycyBhcmUgdXNlZCBm
+b3INCmNvbnN0YW50cyBzbyB3b3VsZCBuZWVkIGFuIGluaXRpYWwgI2lmbmRlZiBNSU4gdGVzdCB0
+byBtYWludGFpbg0KYmlzZWN0aW9uIHdpdGhvdXQgaGF2aW5nIGEgc2luZ2xlIHBhdGNoIHRoYXQg
+Y2hhbmdlcyBhbGwgdGhlDQpmaWxlcyBhdCBvbmNlLg0KDQpNSU4oKSAoYW5kIHByb2JhYmx5IHlv
+dXIgTUlOX1QoKSkgb3VnaHQgdG8gaGF2ZSBhIGNoZWNrIGZvcg0KYmVpbmcgYSBjb25zdGFudCBp
+biBvcmRlciB0byBzdG9wIG1pc3VzZS4NClBlcmhhcHMganVzdDoNCiNkZWZpbmUgTUlOKHgseSkg
+XA0KCShfX2J1aWx0aW5fY2hvb3NlX2V4cHIoKHgpKyh5KSwgMCwgMCkgKyAoKHgpIDwgKHl9ID8g
+KHgpIDogKHkpKSkNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
+QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
+aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-> The core components contained within the radix-tree tests which provide
-> shims for kernel headers and access to the maple tree are useful for
-> testing other things, so separate them out and make the radix tree tests
-> dependent on the shared components.
-> 
-> This lays the groundwork for us to add VMA tests of the newly introduced
-> vma.c file.
-> 
-> ...
->
->  tools/testing/{radix-tree => shared}/bitmap.c |  0
-
-Some merge issues have popped up - people have been messing around with
-the radix tree test code and not telling us.  I'll drop the v3 series -
-please redo and resend against 6.11-rc1?
-
-Thanks.
 
