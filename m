@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-264864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8F193E965
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:34:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB7293E975
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756761F21A3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E840D280218
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE6757EB;
-	Sun, 28 Jul 2024 20:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678F770F6;
+	Sun, 28 Jul 2024 20:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="i51DR0FP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FqyamZCR"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDEA6BFA3;
-	Sun, 28 Jul 2024 20:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146BD210FF;
+	Sun, 28 Jul 2024 20:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722198865; cv=none; b=PSBExsL3klMYn+1UFmnYMjq7/WKSWvik9a1Fm5CS7fSYOyvxsiT2iAk1fRiRvxK4ieBDpuydidVyJ/Q2M7wghID4xnqD2+mhBJ+ssXZT1URMbFq19rz10tAf6WZbctQKBf2MwIsSfeMqYfRyFEl7+qGOMfyaZZAupt1xxU+v73I=
+	t=1722199600; cv=none; b=BhFqgYekofZetrHRMS4rCo3DqGahM0FFuDVEfvmno7HCgGHCXigl2ZA9sQtIShg74xle7XKy/kj16Hjxjl/cH1ZqcvVIkHpZzXFWRQ9+HEHBPcB80dhDA6EbimakUr8pftlxIbgk9s7l6+CbF37p7ddQKcE6YDJB4zkBNRH5MXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722198865; c=relaxed/simple;
-	bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O+gkFIw1gjQ/t4HVfJ11s7oyZ3azl9IrG5aQFjzwBXphjn+2Qhs0s7TiugmoAsqRR3GEHmGaBipV4ZAK9ZsLWE7HO5zAyLZepwaii+QVVLC3WhuKZqh7HAE+hO0MSFR5tteg9j6gCxjvalPXYVW+XYpQq3hLawfTZ/XAGM0oBx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=i51DR0FP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722198854;
-	bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=i51DR0FPQkByzeUSne23A+gmvOZsOmnfse9DZfSo3XkML0X6OOXoGo7zdLKMs2NVF
-	 6VLEresW+9m+HDUV5X23DjWR68pcUzgF8W/hGRsSh92t5/IUpAGINqCBxOAp3PeSgK
-	 lIJVaBeZ9B+4EpKVWaaCcgBI3Whto55AIM601tVM=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 28 Jul 2024 22:34:11 +0200
-Subject: [PATCH] tools/nolibc: pass argc, argv and envp to constructors
+	s=arc-20240116; t=1722199600; c=relaxed/simple;
+	bh=6KdzE9scZcbxit6etjhxkkmcTAnClSfn5D06NYNfgjw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HQ8L2p++Bz6mi7TpqzjJkyjKBtP8kUif2gfdORvRMqHRDzvyGjQcjQksziVtktVD4ODHkoTXTcZ5yEm0DwIxd/idc4WsefUVAuB3AsYjJPv7BY539bCoR3wSzpNIw8PqI81DDuZ3WJufDgw2UkTLExZfjUUmdoYL/p5Kwt3k31Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FqyamZCR; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240728-nolibc-constructor-args-v1-1-36d0bf5cd4c0@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAEKrpmYC/x3MTQqDMBBA4avIrDuQxr/Qq5QuNE50oCRlJhVBc
- neDy2/x3glKwqTwak4Q2lk5xYrnowG/TXEl5KUarLGdGa3DmL48e/Qpapa/z0lwklVxcHPohxD
- GrnVQ659Q4OM+vz+lXGhoFyJpAAAA
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722198853; l=3307;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=CeA4ugbXitVgz5NHikDyzwTb7Ve1XT9KHPr0qiXuhG4=;
- b=fO3ZYdlbhNkNTaSL4xiuL99f6qj4NFfZ1HYJ9fIkuWRbd/5xb7hJqmOdAT9md/YFsJwDtuldr
- jpYvQvjOkjCBsldTMUSns5YtGcEO36M964Cg+SdIvA9IeiCY00y2EnC
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722199588;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N+u7V2sgAjgrmdpRQ/6Wh4ELxMrn1qNMzPn25V2N94s=;
+	b=FqyamZCRHo0EDI4Zd2rkfoWEl10Vb4OEB8a4CMtv1KgAqyw4gjk5b7eTLUbEBbins1RO5T
+	U7Uzq8VayFtiDO81PtA7zDr9K9qtE5SdfmjKGq1oW4TzjnpzrBEUYZrCD63jULEHIqqX92
+	E+W6rDM21AhwCBiZWh6QCl7TGzVUhMAQVl9u6u7tz+Xmxanpf2fXFA3x8lgvk16SHSxXzz
+	5xDhXBicEC7t6xb51fnPdagHy3jfo5K2EuTBk+n+58Y5r8hJbcrx/h7o6Qt2CpdioteaZH
+	h/ZPRo/rdXqj7wcgG5VjlKuWYP8VdsUiTg1V3qEqLhUFhQSWuWuFe+2c5LbJLA==
+Date: Sun, 28 Jul 2024 22:46:28 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
+ UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
+ f.fainelli@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, lucas.demarchi@intel.com, masahiroy@kernel.org,
+ mcgrof@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
+ module
+In-Reply-To: <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
+References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
+ <20240726121530.193547-1-jtornosm@redhat.com>
+ <b96d9801-d370-4ddd-97fd-5eac2a2656f4@lunn.ch>
+ <931b582808f237aa3746c5b0a96b3665@manjaro.org>
+ <3e895811-ad23-4687-b440-5375ad2af2ff@lunn.ch>
+ <a520ee4da331c8edb99f2c14d22a3531@manjaro.org>
+ <3a3f49b5-45b2-4999-a364-60d035bbd11f@lunn.ch>
+Message-ID: <98d200777d62dc9b447557b2758613e5@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Mirror glibc behavior for compatibility.
+On 2024-07-28 21:45, Andrew Lunn wrote:
+>> Basically, the way I see it, weakdeps are the right solution for the
+>> problem at hand, i.e. for the generation of the initial ramdisk with
+>> all the possible PHY driver modules.
+> 
+> Sorry, but i still don't see how this works.
+> 
+> Say you get this one patch merged. What then? You throw all other PHY
+> drivers which don't have a weakdep out of the initramfs? That
+> potentially breaks around 200 MAC drivers who need those PHYs you have
+> discarded.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/include/nolibc/crt.h                   | 23 ++++++++++++-----------
- tools/testing/selftests/nolibc/nolibc-test.c |  5 +++--
- 2 files changed, 15 insertions(+), 13 deletions(-)
+Actually, no PHY drivers can be thrown out of an initial ramdisk by this
+patch, [1] simply because no PHY drivers not needed for a specific 
+system
+shouldn't be included there before, unless they were added specifically
+by the utilities that created the initial ramdisk, but that's beyond the
+dependencies that the kernel provides in /lib/modules, and beyond what
+can be obtained by automatic detection using /sys/devices on a 
+particular
+system.  That's all a result of this specific module dependency being
+unknown before, at the kernel level.
 
-diff --git a/tools/include/nolibc/crt.h b/tools/include/nolibc/crt.h
-index 43b551468c2a..ac291574f6c0 100644
---- a/tools/include/nolibc/crt.h
-+++ b/tools/include/nolibc/crt.h
-@@ -13,11 +13,11 @@ const unsigned long *_auxv __attribute__((weak));
- static void __stack_chk_init(void);
- static void exit(int);
- 
--extern void (*const __preinit_array_start[])(void) __attribute__((weak));
--extern void (*const __preinit_array_end[])(void) __attribute__((weak));
-+extern void (*const __preinit_array_start[])(int, char **, char**) __attribute__((weak));
-+extern void (*const __preinit_array_end[])(int, char **, char**) __attribute__((weak));
- 
--extern void (*const __init_array_start[])(void) __attribute__((weak));
--extern void (*const __init_array_end[])(void) __attribute__((weak));
-+extern void (*const __init_array_start[])(int, char **, char**) __attribute__((weak));
-+extern void (*const __init_array_end[])(int, char **, char**) __attribute__((weak));
- 
- extern void (*const __fini_array_start[])(void) __attribute__((weak));
- extern void (*const __fini_array_end[])(void) __attribute__((weak));
-@@ -29,7 +29,8 @@ void _start_c(long *sp)
- 	char **argv;
- 	char **envp;
- 	int exitcode;
--	void (* const *func)(void);
-+	void (* const *ctor_func)(int, char **, char **);
-+	void (* const *dtor_func)(void);
- 	const unsigned long *auxv;
- 	/* silence potential warning: conflicting types for 'main' */
- 	int _nolibc_main(int, char **, char **) __asm__ ("main");
-@@ -66,16 +67,16 @@ void _start_c(long *sp)
- 		;
- 	_auxv = auxv;
- 
--	for (func = __preinit_array_start; func < __preinit_array_end; func++)
--		(*func)();
--	for (func = __init_array_start; func < __init_array_end; func++)
--		(*func)();
-+	for (ctor_func = __preinit_array_start; ctor_func < __preinit_array_end; ctor_func++)
-+		(*ctor_func)(argc, argv, envp);
-+	for (ctor_func = __init_array_start; ctor_func < __init_array_end; ctor_func++)
-+		(*ctor_func)(argc, argv, envp);
- 
- 	/* go to application */
- 	exitcode = _nolibc_main(argc, argv, envp);
- 
--	for (func = __fini_array_end; func > __fini_array_start;)
--		(*--func)();
-+	for (dtor_func = __fini_array_end; dtor_func > __fini_array_start;)
-+		(*--dtor_func)();
- 
- 	exit(exitcode);
- }
-diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-index 093d0512f4c5..0800b10fc3f7 100644
---- a/tools/testing/selftests/nolibc/nolibc-test.c
-+++ b/tools/testing/selftests/nolibc/nolibc-test.c
-@@ -686,9 +686,10 @@ static void constructor1(void)
- }
- 
- __attribute__((constructor))
--static void constructor2(void)
-+static void constructor2(int argc, char **argv, char **envp)
- {
--	constructor_test_value *= 2;
-+	if (argc && argv && envp)
-+		constructor_test_value *= 2;
- }
- 
- int run_startup(int min, int max)
+In other words, this patch doesn't subtract anything.  Instead, it just
+adds a weakdep link between the lan78xx and micrel modules, so the 
+kernel
+itself can report that dependency, which may actually result in one more
+PHY driver added to a generated initial ramdisk.
 
----
-base-commit: 0db287736bc586fcd5a2925518ef09eec6924803
-change-id: 20240728-nolibc-constructor-args-68bf56ff7438
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+[1] 
+https://lore.kernel.org/netdev/20240724102349.430078-1-jtornosm@redhat.com/
 
