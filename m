@@ -1,156 +1,201 @@
-Return-Path: <linux-kernel+bounces-264375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B2893E263
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 03:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C09F393E265
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 03:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C74A1F21BC3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2FB1F217DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 01:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674B19007F;
-	Sun, 28 Jul 2024 00:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE3B847B;
+	Sun, 28 Jul 2024 00:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCc+rtrC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="C35G3yS2";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mtfbOC9C"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E3619006D;
-	Sun, 28 Jul 2024 00:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53136FD5;
+	Sun, 28 Jul 2024 00:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722127817; cv=none; b=Yvuj9lOz5EbJvnSeLXvhWdVqmiftHNGYtMSyyta/s2fJ4Ohh+Ou9LOfcxdE3RxtkSFu5p20lhcEaoaYkkSIYXVIXu8Q7G3j7POJdOlWnbRG9YQcG4puPLidl5R6GMQiqTEaLG5RhIogc61oaVFxesIByaXgFIJinfI1wwcHmxNE=
+	t=1722127913; cv=none; b=Q06/R9nqjviZDw815tIqC8wObMEekU6rEyXrkCULUuwGgn9DiAv1lKxyG8XrCdn5TTNKnrVsp6fuhKdytCelUbLH2dZZrP2S7+19K9DaFWUV13JYgquyPkQi1RQORt+dVEmhUF38bb/BDE8apAIl3b4MiE7xvkC2ElbKgOjyFI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722127817; c=relaxed/simple;
-	bh=iUu8uRfZlQAYF+nvzko7diJlChUItsfTwEICYfckrG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jnJEcpffFZPo0ELBkIKBDTqqlAsoSQRzqCGTe5anQle0lz4a4uujFsX7tWHPmU2T1CZnXLkBqPlQr/F8KGKFemakAIrWtsrBBBcHl8G+DP1fJOcEvuovWuzhmF2hxL1DnzsUmNVlmXpJnjk3z4fGvUiI8KivJD8AHsxQW3ZXNFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCc+rtrC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAA8C4AF07;
-	Sun, 28 Jul 2024 00:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722127817;
-	bh=iUu8uRfZlQAYF+nvzko7diJlChUItsfTwEICYfckrG8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vCc+rtrCQG/r+XxRnL0vuyr3nlyUh+RCDF6i9xhi8N/IlgL4CwnQGKXUS29l/+WoT
-	 Gg6kV7IRTgfjWy26iVg0L1T+b1T9ugy2VepomeNPWG8w7msmlcNklQcItwVKZktqVq
-	 zkLFX4R/2Ro7jZPsfOZTN4HAxIZZwASjJ5oG6ebFMPtrnzvaBqEikTaYBWgCfDzLep
-	 1TLea4ByzNp6NcaMhmmIL1Bbl96uLiettdRr3nDe2/HjyVETCQQ1RxxoYFeupLQRTH
-	 +W70wuZoHI1/3OuL14u1bP1Ete61KZWUlQnSpfn+cOgJASJKe8xiZ46gE+JGslWaFd
-	 i9ciZJ/33FQ3Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 2/2] ACPI: SBS: manage alarm sysfs attribute through psy core
-Date: Sat, 27 Jul 2024 20:50:13 -0400
-Message-ID: <20240728005013.1709163-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728005013.1709163-1-sashal@kernel.org>
-References: <20240728005013.1709163-1-sashal@kernel.org>
+	s=arc-20240116; t=1722127913; c=relaxed/simple;
+	bh=QuNYQ5Rxf4SFUDj6mc+dZjtjbj/x4rBn0uVU72yFcAA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pe2iYas2Gix8M+N/XnfDg6CHnkw8fkdgBCRaeWwYfgfkc25erhTANVJjITxX4XmjufmRzv31OXJsjAOHBp0M5nEayEFNtFzPEQZdcXXDDBXYyaZkayxNMUPD5r29a+x4H4qksnXwMwDdd8uwZuXmalgnLDQUWdlzLLf/HXUyv0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=C35G3yS2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mtfbOC9C; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CC99B21C3B;
+	Sun, 28 Jul 2024 00:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722127909; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K5ueq3FoJocMKyR/0Hi0c1XApOql0EEmP83iDFnPsUA=;
+	b=C35G3yS2L48DItjt3laWRp9nY71pJ3iRfFfiDfzURFsgVqphD+lHbQrD5jO44U7zkr5YWP
+	muH71nIPWkuPAL3zfQ3Qg0WCezySy1ePTTlv6QYOgwi5QomDSf3wf292lnSitrOg7vgvgF
+	lX9GiPc6r7ZypEa6gvDSma4kFZnkY8s=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=mtfbOC9C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722127908; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K5ueq3FoJocMKyR/0Hi0c1XApOql0EEmP83iDFnPsUA=;
+	b=mtfbOC9CXdBCBTZc5C33RxZcISSsxRGaY33SuuMoFfwLAvEojDdXLmWCicEf27qxtj7v8C
+	huy3oVSEGDj3o8NIlJkiCLqUnuX5GcfefMB/Lm/Nyj8klSIjychT92Dvk/3HibA09+msEf
+	Nup97/6fb41NPE98asmdH6jmnj8HkVo=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58C801379A;
+	Sun, 28 Jul 2024 00:51:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UZvZCSSWpWY5XAAAD6G6ig
+	(envelope-from <mpdesouza@suse.com>); Sun, 28 Jul 2024 00:51:48 +0000
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+Date: Sat, 27 Jul 2024 21:51:40 -0300
+Subject: [PATCH RFC] security: tomoyo: Add default builtin-policy.h for
+ default policy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.281
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
+X-B4-Tracking: v=1; b=H4sIABuWpWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNz3ZL83PzKfN301DzdtMycVN205LRk40SDZIM0EzMloK6CotS0zAq
+ widFKQW7OSrG1tQCJ50m4ZgAAAA==
+To: Kentaro Takeda <takedakn@nttdata.co.jp>, 
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ llvm@lists.linux.dev, Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722127906; l=2533;
+ i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
+ bh=QuNYQ5Rxf4SFUDj6mc+dZjtjbj/x4rBn0uVU72yFcAA=;
+ b=GqCX4MdOTflpcoUQsgYUwn6pHWOeVY8vo5195KVBI2khlZAZtj9jNhJC4TbbyLRX//AQc1bIR
+ QY2CfDoNmoTDsfvcLsNag6+mzLtzL7Xizp3FQvplE9nQnmmBVfdNOVw
+X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
+ pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CC99B21C3B
+X-Spam-Score: -6.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-6.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim]
 
-From: Thomas Weißschuh <linux@weissschuh.net>
+When checking tomoyo code there is an include for a file that is not
+included on kernel-source since it's generated at build time, and the
+kernel-source uses git archive to create the tarball.
 
-[ Upstream commit 6bad28cfc30988a845fb3f59a99f4b8a4ce8fe95 ]
+Having the source code referencing a file that is not included in the
+tarball can confuse tools that inspect/parse code, since the file is not
+there.
 
-Let the power supply core register the attribute.
+The builtin-policy.h added is generated from the same default policy
+that already exists on policy/ directory, so it doesn't break the
+current usage of that file.
 
-This ensures that the attribute is created before the device is
-announced to userspace, avoiding a race condition.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
- drivers/acpi/sbs.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+Hello, I sent this patch because we saw some issues while running
+clang-extract[1] on tomoyo given CVE 2024-26622. Since clang-extract
+parses the C files it failed to find builtin-policy.h. As a bandaid, I
+had to add
+	-DCONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
 
-diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-index 6e88224f60f09..4aa55d8d43859 100644
---- a/drivers/acpi/sbs.c
-+++ b/drivers/acpi/sbs.c
-@@ -80,7 +80,6 @@ struct acpi_battery {
- 	u16 spec;
- 	u8 id;
- 	u8 present:1;
--	u8 have_sysfs_alarm:1;
- };
- 
- #define to_acpi_battery(x) power_supply_get_drvdata(x)
-@@ -465,12 +464,18 @@ static ssize_t acpi_battery_alarm_store(struct device *dev,
- 	return count;
- }
- 
--static const struct device_attribute alarm_attr = {
-+static struct device_attribute alarm_attr = {
- 	.attr = {.name = "alarm", .mode = 0644},
- 	.show = acpi_battery_alarm_show,
- 	.store = acpi_battery_alarm_store,
- };
- 
-+static struct attribute *acpi_battery_attrs[] = {
-+	&alarm_attr.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(acpi_battery);
-+
- /* --------------------------------------------------------------------------
-                                  Driver Interface
-    -------------------------------------------------------------------------- */
-@@ -512,7 +517,10 @@ static int acpi_battery_read(struct acpi_battery *battery)
- static int acpi_battery_add(struct acpi_sbs *sbs, int id)
- {
- 	struct acpi_battery *battery = &sbs->battery[id];
--	struct power_supply_config psy_cfg = { .drv_data = battery, };
-+	struct power_supply_config psy_cfg = {
-+		.drv_data = battery,
-+		.attr_grp = acpi_battery_groups,
-+	};
- 	int result;
- 
- 	battery->id = id;
-@@ -542,10 +550,6 @@ static int acpi_battery_add(struct acpi_sbs *sbs, int id)
- 		goto end;
- 	}
- 
--	result = device_create_file(&battery->bat->dev, &alarm_attr);
--	if (result)
--		goto end;
--	battery->have_sysfs_alarm = 1;
-       end:
- 	printk(KERN_INFO PREFIX "%s [%s]: Battery Slot [%s] (battery %s)\n",
- 	       ACPI_SBS_DEVICE_NAME, acpi_device_bid(sbs->device),
-@@ -557,11 +561,8 @@ static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
- {
- 	struct acpi_battery *battery = &sbs->battery[id];
- 
--	if (battery->bat) {
--		if (battery->have_sysfs_alarm)
--			device_remove_file(&battery->bat->dev, &alarm_attr);
-+	if (battery->bat)
- 		power_supply_unregister(battery->bat);
--	}
- }
- 
- static int acpi_charger_add(struct acpi_sbs *sbs)
+to clang-extract (we feed the gcc arguments used to compile common.c got
+from compile_commands.json on kernel-source).
+
+Per my tests it works with my patch, and I don't see why this would hurt
+to have builtin-policy.h on git, since it would regenerate the file if
+the policy scripts are changed.
+
+Please let me know if I'm missing something here.
+
+Thanks!
+
+[1]: https://github.com/SUSE/clang-extract
+---
+ security/tomoyo/.gitignore       |  1 -
+ security/tomoyo/builtin-policy.h | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/security/tomoyo/.gitignore b/security/tomoyo/.gitignore
+index 9f300cdce362..85d086c6502d 100644
+--- a/security/tomoyo/.gitignore
++++ b/security/tomoyo/.gitignore
+@@ -1,3 +1,2 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-builtin-policy.h
+ policy/*.conf
+diff --git a/security/tomoyo/builtin-policy.h b/security/tomoyo/builtin-policy.h
+new file mode 100644
+index 000000000000..781d35b3ccb3
+--- /dev/null
++++ b/security/tomoyo/builtin-policy.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++static char tomoyo_builtin_profile[] __initdata =
++	"";
++static char tomoyo_builtin_exception_policy[] __initdata =
++	"initialize_domain /sbin/modprobe from any\n"
++	"initialize_domain /sbin/hotplug from any\n"
++	"";
++static char tomoyo_builtin_domain_policy[] __initdata =
++	"";
++static char tomoyo_builtin_manager[] __initdata =
++	"";
++static char tomoyo_builtin_stat[] __initdata =
++	"";
+
+---
+base-commit: 910bfc26d16d07df5a2bfcbc63f0aa9d1397e2ef
+change-id: 20240727-tomoyo-gen-file-fcfc3a0c0f46
+
+Best regards,
 -- 
-2.43.0
+Marcos Paulo de Souza <mpdesouza@suse.com>
 
 
