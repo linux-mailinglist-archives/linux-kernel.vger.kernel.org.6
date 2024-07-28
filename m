@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-264685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6D193E711
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:02:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867DD93E70C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5424AB2211F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:02:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135F8B22E40
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FC1137775;
-	Sun, 28 Jul 2024 15:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5C14AD19;
+	Sun, 28 Jul 2024 15:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhqfLsOQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyIrBEYE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B815A13213A;
-	Sun, 28 Jul 2024 15:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0DA12F5B1;
+	Sun, 28 Jul 2024 15:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722181775; cv=none; b=ovGkRMJpCckgl2Mb4WyJUqIxdnyUsxzQqOeH3tg++OaeQvMok+aOV/vbjiDgS5j06h7G/iaFc81OBwD2WegCkTnrr83dhqeVHM+X3sXTdbzWZkcX7OFexAV8DoewRvsRtxBjnwH7A8eWiGRaQeHn433JYNX9pf4+NJq5NXtQrjA=
+	t=1722181752; cv=none; b=fXhjcn3aYxy7bAiZiP720c7lw4KmDesJ+aqikyNiqdYf7N8DFIwLr7492+wCZ/4V9d6hwPiwNGP8830QWXY6A/DUTf6yGrsEJLaDVjHE21KlH2dhJFfT2DkEYTOQgrD1sgLzxD1QuI59yYua37JD3t8tUCs6WL/rSLBLPmI8fu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722181775; c=relaxed/simple;
-	bh=rwRXqfy8vZGIuCyCYCq3SkLuG1Y6Rh0rlUUNXg9Wgc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B6dUrId7Tw//9iUSGU3zHopuTh0oFLXbLeg1FLigiusY+6NxmoSQfxcRovL6/5EbJz+2W5Ke9QkIE7/UHF/E2czfDlGHohQU6a8PwC7qUvgt+gd7fnDXQ8XGnQoXsTzQue684z/b3d7ap+cOEqor2pjah/br7qxr5ofgGH6jomc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhqfLsOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA2FC4AF0A;
-	Sun, 28 Jul 2024 15:49:33 +0000 (UTC)
+	s=arc-20240116; t=1722181752; c=relaxed/simple;
+	bh=TSQSBTiv/2tz4tLXVZIEtWMiDsRu5Y4rPKZ1Gx8SvuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XXuzyv47YY5UIJrAIq+SRhg/h4/W4b2QaqMDMO915j7FXUzVYuALY/ejeBY9Lb3xgWFJhxFTPY2H8atmUJeCQfgsAL69E/oIJLqUty93JM4wHrKvADLQ5MTjxe3h214qvNB+noj0Wt+bAMfuPA69hXoBsqxk2r4upGpFkYyED5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyIrBEYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED0EC32782;
+	Sun, 28 Jul 2024 15:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722181775;
-	bh=rwRXqfy8vZGIuCyCYCq3SkLuG1Y6Rh0rlUUNXg9Wgc8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AhqfLsOQUWAO1oQ8koi5deIPLUrcGXDuq4eUUMyE17lY9XxZ35gI7QDaUp5Kfx3of
-	 mp1CY3S8kb9m/zYPV7pCavZ7pJBnKL95b2ZdP3UnG99NXz0UQFiGOf3qSLLivzv8Cg
-	 60mPEbtzruJwwUjCPK+swXbZtxG166voQgxQgJcR+c2ZYSEjwdkUGJRo0c4iEpyPjP
-	 /+Zt5Q+XzAD+pgVr2ko/AXH6wIdhkOept6xX3Dx4oXbYU8rJekwCE1wdxHlrLAkaej
-	 nvIVdMmEYDWZaD4NZGqFoKigMKbRPzm68oDgF3M+FNi7rdx09Di14QDDJbENtJnHbf
-	 I87dIf7LGxd4w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ma Jun <Jun.Ma2@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <sashal@kernel.org>,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	Hawking.Zhang@amd.com,
-	tao.zhou1@amd.com,
-	kevinyang.wang@amd.com,
-	YiPeng.Chai@amd.com,
-	Stanley.Yang@amd.com,
-	candice.li@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.15 02/10] drm/amdgpu: Fix the null pointer dereference to ras_manager
-Date: Sun, 28 Jul 2024 11:49:00 -0400
-Message-ID: <20240728154927.2050160-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728154927.2050160-1-sashal@kernel.org>
-References: <20240728154927.2050160-1-sashal@kernel.org>
+	s=k20201202; t=1722181752;
+	bh=TSQSBTiv/2tz4tLXVZIEtWMiDsRu5Y4rPKZ1Gx8SvuY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uyIrBEYEYhLgvg9eta9eIhVHOeIVaBo/7tKpJvgZfTTjwZJUR4LV9HeWCnFNwzyEv
+	 3EXWRoQqVSGomasgrNomsMJJ6SYg4K7jqIge3h2iGJnXbVbGx5hhcK1sNstYylLn0b
+	 jqiscyt+BO+RKMzYnpW4npZUrWbrch9PL9n+sXtIRb4234zM4NmzM8PVq5ML67fbP1
+	 WAa5BN0H6Ak5xWdg27LEj4ACbQ7Hg1n3UhpxXicMAlm6+I49RA6+wlTbGNRl/REG39
+	 D7qF68RsclHLMyL0OUHLTsG3zL8HTFF/p3Iu/VQYzIUpshbvSLRKX9E2KJmRquXcnB
+	 ibxlOoH+J3DYg==
+Date: Sun, 28 Jul 2024 16:49:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] iio: pressure: bmp280: Add support for bmp280
+ soft reset
+Message-ID: <20240728164901.1f325aa2@jic23-huawei>
+In-Reply-To: <20240725231039.614536-3-vassilisamir@gmail.com>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+	<20240725231039.614536-3-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.164
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Ma Jun <Jun.Ma2@amd.com>
+On Fri, 26 Jul 2024 01:10:34 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-[ Upstream commit 4c11d30c95576937c6c35e6f29884761f2dddb43 ]
+> The BM(P/E)28x devices have an option for soft reset which is also
+> recommended by the Bosch Sensortech BME2 Sensor API to be used before the
+> initial configuration of the device.
+> 
+> Link: https://github.com/boschsensortec/BME280_SensorAPI/blob/bme280_v3.5.1/bme280.c#L429
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Trivial passing comment seeing as you are going do be doing a v3 anyway.
 
-Check ras_manager before using it
+Jonathan
 
-Signed-off-by: Ma Jun <Jun.Ma2@amd.com>
-Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 28 ++++++++++++++++++++++++++++
+>  drivers/iio/pressure/bmp280.h      |  3 +++
+>  2 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index d5e5eb22667a..acbc33aacc09 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -963,6 +963,32 @@ static const unsigned long bme280_avail_scan_masks[] = {
+>  	0
+>  };
+>  
+> +static int bmp280_preinit(struct bmp280_data *data)
+> +{
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, BMP280_REG_RESET, BMP280_RST_SOFT_CMD);
+> +	if (ret) {
+> +		dev_err(data->dev, "Failed to reset device.\n");
+> +		return ret;
+Is this only ever called from probe?
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-index c963b87014b69..92a4f07858785 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -1509,12 +1509,15 @@ static void amdgpu_ras_interrupt_process_handler(struct work_struct *work)
- int amdgpu_ras_interrupt_dispatch(struct amdgpu_device *adev,
- 		struct ras_dispatch_if *info)
- {
--	struct ras_manager *obj = amdgpu_ras_find_obj(adev, &info->head);
--	struct ras_ih_data *data = &obj->ih_data;
-+	struct ras_manager *obj;
-+	struct ras_ih_data *data;
- 
-+	obj = amdgpu_ras_find_obj(adev, &info->head);
- 	if (!obj)
- 		return -EINVAL;
- 
-+	data = &obj->ih_data;
-+
- 	if (data->inuse == 0)
- 		return 0;
- 
--- 
-2.43.0
+If so, return dev_err_probe() which will save a few lines of code.
+
+> +	}
+> +
+> +	usleep_range(data->start_up_time, data->start_up_time + 500);
+> +
+> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+> +	if (ret) {
+> +		dev_err(data->dev, "Failed to read status register.\n");
+> +		return ret;
+> +	}
+> +	if (reg & BMP280_REG_STATUS_IM_UPDATE) {
+> +		dev_err(data->dev, "Failed to copy NVM contents.\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int bmp280_chip_config(struct bmp280_data *data)
+>  {
+>  	u8 osrs = FIELD_PREP(BMP280_OSRS_TEMP_MASK, data->oversampling_temp + 1) |
+> @@ -1079,6 +1105,7 @@ const struct bmp280_chip_info bmp280_chip_info = {
+>  	.read_temp = bmp280_read_temp,
+>  	.read_press = bmp280_read_press,
+>  	.read_calib = bmp280_read_calib,
+> +	.preinit = bmp280_preinit,
+>  
+>  	.trigger_handler = bmp280_trigger_handler,
+>  };
+> @@ -1196,6 +1223,7 @@ const struct bmp280_chip_info bme280_chip_info = {
+>  	.read_press = bmp280_read_press,
+>  	.read_humid = bme280_read_humid,
+>  	.read_calib = bme280_read_calib,
+> +	.preinit = bmp280_preinit,
+>  
+>  	.trigger_handler = bme280_trigger_handler,
+>  };
+> diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> index 9bea0b84d2f4..a9f220c1f77a 100644
+> --- a/drivers/iio/pressure/bmp280.h
+> +++ b/drivers/iio/pressure/bmp280.h
+> @@ -205,6 +205,9 @@
+>  #define BMP280_REG_CONFIG		0xF5
+>  #define BMP280_REG_CTRL_MEAS		0xF4
+>  #define BMP280_REG_STATUS		0xF3
+> +#define BMP280_REG_STATUS_IM_UPDATE	BIT(0)
+> +#define BMP280_REG_RESET		0xE0
+> +#define BMP280_RST_SOFT_CMD		0xB6
+>  
+>  #define BMP280_REG_COMP_TEMP_START	0x88
+>  #define BMP280_COMP_TEMP_REG_COUNT	6
 
 
