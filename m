@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-264897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704CE93E9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CAF293E9F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E2EB2151A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:10:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5B7B20F8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 22:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AFF7BAF4;
-	Sun, 28 Jul 2024 22:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04179DC5;
+	Sun, 28 Jul 2024 22:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AA1UCaBW"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r9/jcQzM"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D55914C;
-	Sun, 28 Jul 2024 22:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE2678274
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 22:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722204631; cv=none; b=nCYUbBEp/oDtr0ttX281uSqJcoimmKiy8vFyzWXblXb5YUYm9wboXdWJiCmrS0JxPql+S3cJ3yjt9Ql3NXlOKA39aq02Rg2/SRVNdm7aF7/Y05pLHaLEUMfT0vil+gJLo0/fJ5/SIp9EzqMaH3O8G7U4cHZ/GmKc3MjQRbR88iw=
+	t=1722204728; cv=none; b=MSP9LeRzIDQ5PjyoR2puA4gcxYE5aBSTY9gFNSu82aoBavVOkU3/sggaEtroHKRFDh+lCCF7W/Kq4if+NIr8HNmKlpw22+6LDdiI0qA9/z2d0b1SiZBM3E8heCXMWXv5GKGJezjVMmEQcIwHyAntycEHJBJ96rUXTk1YyeGqm18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722204631; c=relaxed/simple;
-	bh=C0yaa1HeosGSTqketDfd4qkVnRf7BT0xSouoh4lDdU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qBMC9M9+QaPcXZLslZ8JKjlcaEjbwfFA+kVrRNrhhJ+SYk+gzcO44amLNJq95PxVZrKXWumXlMyJLxTTko2xlgZi1ZYlaw24xvWmyCOX0jdUmYzOKxTs+fbLG35fc6+ha0fG/28i4SP8HJkp/AF3GeYR7ESyp4Buja7zBgy0dxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AA1UCaBW; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db19caec60so2123231b6e.1;
-        Sun, 28 Jul 2024 15:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722204629; x=1722809429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8WFV5A19fkh+7kPhwlaDnoT0oehdraQfB5oPegY2HlQ=;
-        b=AA1UCaBWEGFQ7PdbJM0FoNdQc2fSFryKQ+UojCPJTpPLm0YM2sMGiRrimW2385ydyy
-         q+EndZVLl4JsF7mxysEMAJk7TURmBLpH56khwUJhd6sagZf4gzGIZe5yJRbebPDA5UlZ
-         OYQGug1lpyDxJGGb906byop6Rt8aAiNKUV529hOalyhpcT9W9OMH8+c9GWkgIew9CJHw
-         FYisErZoU2p05AKr7fJsWA3tpYwy0tXYE+pDAzuSTvX0r9huUGpHrkKi3ext8PMBiiyk
-         3DYtLpHUGbwsJaXQqX2djfq+LvmZwCduyQ2UQjfoh6YlhOtaZcnONEcAHGCsWmtrU+vY
-         mBPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722204629; x=1722809429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8WFV5A19fkh+7kPhwlaDnoT0oehdraQfB5oPegY2HlQ=;
-        b=jHgA0DWvwYGOaoSSKtyXHyfSe08XK6It+iW+otZ1HqJo+oDnxf0ByM2STntGn57pyA
-         79ZUDlzxb9fO8J5LPq0YrlentFLCSQEFYavSYA0wbD/i559s/vPwp/ZpDudWs/px8MgY
-         PgHQMY9j5y7X2Q3r8jBr6nzL1s2QwN+xI8uPQhi+uQzQNagqtBHWmlMYWAh308o+bqy5
-         zIytYO6BOcsr0vAXSXwBfoHQ6ewxKnGlqnUUwP/9BhWAdOJoFS5EpGPfoX8ljk7BKH8F
-         99D4BpJb0xieUFNH5OBDCYX35y9jLfGuG0DX9jcRRI7i/ELBjWMsU2y5KkMaAENTqzz8
-         LYDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc42BPnVFxnX4kKkut76LbgqxNbOOaUcegHeU+gaD1emzaZA6co6bt3hO9KZJ9otHhjLNMR7glwA10fGMMv64bf348r9lCXghVjPshX1hDS0d3Kuza4Y/UyXDO/LXY8n8L5ZTybmf1fCeWjRA/zOxw3l4YfKSy71EUy75Lc9lAbMg5XhAM6YhJrY82Xr0NENrNf6X0kpHAvN9FYhxzMpcaZCBrdjQ8ff2Aj50M
-X-Gm-Message-State: AOJu0YwsbNgsevqFQ/YVrhKyhAeUVxyDGGH0oQV3ZbhJYlk4GmH8/dlJ
-	dPGYSbjYSKg0Vpkbc2YoioAgrXSsmDNCIL5ExVUaj77/+45+2k57Ey5YdBHEe/c+slyFwJff8nF
-	6Y9Mvb63ITbk2hyu5zTxb4uGPQpw=
-X-Google-Smtp-Source: AGHT+IEw3+98/dkX5bsc3y2qs7kudwyMQ2dCtR9MHudb1vAPFedzvStonePBepA4fNU+r5zlDt7zwcHjsI0akqPOZ5U=
-X-Received: by 2002:a05:6870:169c:b0:261:52d:1aef with SMTP id
- 586e51a60fabf-267d4f5b2f5mr8312222fac.49.1722204629420; Sun, 28 Jul 2024
- 15:10:29 -0700 (PDT)
+	s=arc-20240116; t=1722204728; c=relaxed/simple;
+	bh=DqneCZNJdHpYHvrS9Jea1NsFauLawRGSdqgZl2Mgg4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ThPIway1b+XRnMbwxhqDP6GfAF8jpLvZBQabqM7soMs2b05x1svptwkQ3ZZOE9hp/ZDUedZAGNl6iTHR8grATd9JwZLlQ1S/HPLM3Cbg8faFELuK0NFd3mHSe+FIWE76Cz+m6L6BKW3IbNAbYb8PsvWGItWC6oTJP9CNk5YnsSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r9/jcQzM; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722204717; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Y8tZ5sw0h13MXZSP5byipzmW9HMCzdG2caajKfL5w7w=;
+	b=r9/jcQzMp1vdIG3nxlyiepXK7vlyHvwETa+PC6kbgilQcxjtdsLDir84PTItHRev/evAlhypVb08NudrjqR8IDo2sAcOjleafDYDUxqGGbYTjLvKlJyOwEI9ei8AGMrRO/siYqkIAyUQIT7PhLoSDRNB+oG9KIXgsBIgc13rGoI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032019045;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0WBS6vcy_1722204715;
+Received: from 30.27.96.125(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBS6vcy_1722204715)
+          by smtp.aliyun-inc.com;
+          Mon, 29 Jul 2024 06:11:57 +0800
+Message-ID: <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
+Date: Mon, 29 Jul 2024 06:11:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-3-amery.hung@bytedance.com> <8d7dc8cb-0211-8e20-2391-c16d266b8be6@salutedevices.com>
-In-Reply-To: <8d7dc8cb-0211-8e20-2391-c16d266b8be6@salutedevices.com>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Sun, 28 Jul 2024 15:10:18 -0700
-Message-ID: <CAMB2axPA6hEHJ_xm-aperc3kb221kK4RpL848pgY_sL+8RBFHA@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 02/14] af_vsock: refactor transport lookup code
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: stefanha@redhat.com, sgarzare@redhat.com, mst@redhat.com, 
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, 
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com, 
-	bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
-	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, 
-	bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
+ large folios
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
+ <Zqa8NTqKuXkTxzBw@casper.infradead.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <Zqa8NTqKuXkTxzBw@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 11:41=E2=80=AFPM Arseniy Krasnov
-<avkrasnov@salutedevices.com> wrote:
->
-> Hi
->
-> +static const struct vsock_transport *
-> +vsock_connectible_lookup_transport(unsigned int cid, __u8 flags)
->                                                       ^^^ may be just 'u8=
-' ?
-> +{
-> +       const struct vsock_transport *transport;
->                                        ^^^ do we really need this variabl=
-e now?
->                                        May be shorter like:
->                                        if (A)
->                                            return transport_local;
->                                        else if (B)
->                                            return transport_g2h;
->                                        else
->                                            return transport_h2g;
+Hi,
 
-Looks good to me. Will change it in the next version.
+On 2024/7/29 05:46, Matthew Wilcox wrote:
+> On Sun, Jul 28, 2024 at 11:49:13PM +0800, Gao Xiang wrote:
+>> It was found by compaction stress test when I explicitly enable EROFS
+>> compressed files to use large folios, which case I cannot reproduce with
+>> the same workload if large folio support is off (current mainline).
+>> Typically, filesystem reads (with locked file-backed folios) could use
+>> another bdev/meta inode to load some other I/Os (e.g. inode extent
+>> metadata or caching compressed data), so the locking order will be:
+> 
+> Umm.  That is a new constraint to me.  We have two other places which
+> take the folio lock in a particular order.  Writeback takes locks on
+> folios belonging to the same inode in ascending ->index order.  It
+> submits all the folios for write before moving on to lock other inodes,
+> so it does not conflict with this new constraint you're proposing.
+
+BTW, I don't believe it's a new order out of EROFS, if you consider
+ext4 or ext2 for example, it will also use sb_bread() (buffer heads
+on bdev inode to trigger some meta I/Os),
+
+e.g. take ext2 for simplicity:
+   ext2_readahead
+     mpage_readahead
+      ext2_get_block
+        ext2_get_blocks
+          ext2_get_branch
+             sb_bread     <-- get some metadata using for this data I/O
+
+> 
+> The other place is remap_file_range().  Both inodes in that case must be
+> regular files,
+>          if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
+>                  return -EINVAL;
+> so this new rule is fine.
+> 
+> Does anybody know of any _other_ ordering constraints on folio locks?  I'm
+> willing to write them down ...
+
+Personally I don't think out any particular order between two folio
+locks acrossing different inodes, so I think folio batching locking
+always needs to be taken care.
+
+> 
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 20cb9f5f7446..a912e4b83228 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -1483,7 +1483,8 @@ static inline int try_split_folio(struct folio *folio, struct list_head *split_f
+>>   {
+>>   	int rc;
+>>   
+>> -	folio_lock(folio);
+>> +	if (!folio_trylock(folio))
+>> +		return -EAGAIN;
+>>   	rc = split_folio_to_list(folio, split_folios);
+>>   	folio_unlock(folio);
+>>   	if (!rc)
+> 
+> This feels like the best quick fix to me since migration is going to
+> walk the folios in a different order from writeback.  I'm surprised
+> this hasn't already bitten us, to be honest.
+
+My stress workload explicitly triggers compaction and other EROFS
+read loads, I'm not sure if others just test like this too, but:
+https://lore.kernel.org/r/20240418001356.95857-1-mcgrof@kernel.org
+
+seems like a similar load.
 
 Thanks,
-Amery
+Gao Xiang
 
-> +
-> +       if (vsock_use_local_transport(cid))
-> +               transport =3D transport_local;
-> +       else if (cid <=3D VMADDR_CID_HOST || !transport_h2g ||
-> +                (flags & VMADDR_FLAG_TO_HOST))
-> +               transport =3D transport_g2h;
-> +       else
-> +               transport =3D transport_h2g;
-> +
-> +       return transport;
-> +}
-> +
->
-> Thanks
+> 
+> (ie I don't think this is even necessarily connected to the new
+> ordering constraint; I think migration and writeback can already
+> deadlock)
 
