@@ -1,223 +1,143 @@
-Return-Path: <linux-kernel+bounces-264561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382C593E519
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F9893E50C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B8AFB21526
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44A01F21804
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4EF3D96D;
-	Sun, 28 Jul 2024 12:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1C93FB01;
+	Sun, 28 Jul 2024 12:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GvLNZsTJ"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.43])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="svThna/8"
+Received: from mail-40140.protonmail.ch (mail-40140.protonmail.ch [185.70.40.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BF72F30
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5126829A1;
+	Sun, 28 Jul 2024 12:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722170536; cv=none; b=oHN8uRA7K/Gw9qZ62qikyVGyhAKM+JFUHM1qjSttFR9rym0AvrweRWF+wTvcyVHQEWtor19pGPkX0rk+5Z3dcCDy1rxVe4rywRdAA1PJMkugkReRN0zl66ELQNAA2sU5IP+kvJPGcAUUM7AcLzuCmWah6nUyN15P6TSgR1uXDh4=
+	t=1722169597; cv=none; b=boPzfnm6REETLhKa3Asx/P47/iR6CLvTnbl4OPlQXr3SSr1H9R1XenBPoPCsGHwW4kM28Sby6osBNWHzp2UJxi0LYalR6oo8IP/GVFTPZQSdHbTRZ+LAPyUrJhHg5HegdhiUFXP2ujbdwaIlg2yfutZwbfYvOOhxUrIRaJnK0Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722170536; c=relaxed/simple;
-	bh=SidrVGYKHpC978EUeJKgZWSuRev+UYQ71gdky32vYkg=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=fvOhXfJp4Cmd/sS24GDNNMu5aK1lBuxqaZXXrXWBZZIxgIi1zrCkWCE5NmAme2Pk37VnwkHQKDxFyPP4YfGq1YEcnqvqGS/b2GcJiux9peMep+dFIlNNRQ3avFWMJn8BO82+T+8eKHqFGB3NxAa4FkgpOAHPcSHz/c4uMMhpKnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GvLNZsTJ; arc=none smtp.client-ip=43.163.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722170525; bh=SidrVGYKHpC978EUeJKgZWSuRev+UYQ71gdky32vYkg=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=GvLNZsTJnTfILCHWlLx9RHKUNZ3ZJYI1Tewor9TB0YdmxQ8n7uq1TpmmbZzNagAW4
-	 KIGKhwt6oo95sx5178qGZllpdCX3eqETzVVlN7qnr0Q14HrOMa/JnmUYRHple20sUJ
-	 LPhz3ia5HndaTq4A+SYgPYT/0IstLxTjVjfIXpN4=
-Received: from smtpclient.apple ([2408:8207:18a4:5580:d941:3a80:b9d0:b3e8])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 4ECA6652; Sun, 28 Jul 2024 20:19:44 +0800
-X-QQ-mid: xmsmtpt1722169184tua4rv5o8
-Message-ID: <tencent_4EB8343AF079090E68933A46E362C740850A@qq.com>
-X-QQ-XMAILINFO: M5WvXNp9ZPrQx8VdMOd2WQP5s20NKSGBlUvTE94OjMinKrwZfvZRAilFaeD4X9
-	 UmKHm4/XpcahgGiccaQfJHxQXbujJWfoHMWbIa5fj7jDEtmTklLEzZIQvyf3s5OBQ6MwnW/4aCAD
-	 Xui8Q03DZSyurBcd5ZplcAmqm9TjjnET5qNpAH1AJX6jS/Bk+wSqL9RAQBFeXMjXIBesIbqyyaTE
-	 En+DFHKEnFSUWaPpXyl5r2m44TewSqOKkG4hUzdoMkPFml7VRbIijKy63jwLG3u+Nzn1d9novxIx
-	 LXb6TbLwe930xHq8wM/5S8QvX9vHcJB1gwwUByvJ2J5trXuqDI+habMtST9cDQdAJ/DNpu86v2ko
-	 aBkVhQ82KM2Mf/5qGIa7CEq+EvSgdfPnwyxjN0M6yM0vZFuSLKA3TViEfy+fi0iFJ/oTvFlXyq9t
-	 RgPFNoIJyBXyWPS/5sZkVmh1rIUIkyuD9W7fGqEbEu0auMrtduWFy3tZPzZM9MternTNzVQ4cDyW
-	 50TgftmNFTI3hrfPMcUu1bfEXL6sy0PCyTvfWQ8dtOk8774xBgeoiJ/4hbExHDbtfZRqU4vqRiWo
-	 aMbRv+bpG1ETzqprZWjhp4qabr40sC146FTZNZBmypZlQlTzknBbmbY49VdW/3uCUXtiTDY1nicS
-	 dYvamFIc0Dlw2VRMWc5InVjVdiCWJsbbxOGYPgbZbBm8/yWwhvoLKhNfHz4hj6j1rwxnzVew3C2n
-	 7AsIX5gdLVMSU2xPkOnOK6IP2VzsAPlZOsqB9iDMROaBTWMbq5zH5ERN10uugYNB3chIwhld05Br
-	 DF1WTsGbGJ3UtY7RYNl7tEUOG4RHjJbCwmqHJYIDR0CSZY9UjCX+NIJGdH3pWR/kNMl7/6Xd3aG7
-	 +sc1BiNXO8zTA8MihBDkI8FBt0HTERZkxHPmR7DPgHj4QWBUnQyxxOZvNmTu7Ngm5NlLoKM4L4Do
-	 /hgM2hUKfn+jqXRVoKTqXMC0tNscCInlFQL+pS1dp5yvCOzfr3wDJ+7k2i4+7U
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1722169597; c=relaxed/simple;
+	bh=MAxeEGmgS9693J0PQhUIRbfqko2MsleF4u/sBRGsb4Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CiI5SQT825/AkgJViCIzGeXZKVF7jYUzBj4CJKq8PH5g7of0PGrN3tizq822RTSh1+2gyyZYDCNtmObyja0Rvh96ZV+WO95BpquzmfMLS+1NK5gQl7ucj5bhSYMIfsaclzI0x5FQXqJ41teS6A4d9dzUiLb1onSmyxsC5HzF8W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=svThna/8; arc=none smtp.client-ip=185.70.40.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1722169588; x=1722428788;
+	bh=74jrJoeOKYDJalJmIabOoA19hszvpDADNvzc31C/j48=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=svThna/84zGaTHZ4yVuXTMAPuIKprGMAJgK7BKsrz/2IJ3mtALCljNiP7PKoeeloi
+	 9UZK7bQDnEYP7Dxy6bvH59KKLXVBUJkRVGmyGb+at+aSem6UZgzWEHL6xDkBKhbDLB
+	 Fw/RczRop40p2PrH0pe1myvGS8NUKQ9J4b523FNjndbt6c4n318/c4Hpy+Ph5sWmmq
+	 5ffzHo++EXN+j7+C1xr07rOYxCWzkxOilSJ9guvUci4RdebBwq6G2LmqP69+1DRSu3
+	 bR37HpKHPxJ+cuuM3DDa8i82S0Emn4il8DmdF67z2h38/7ZqwoSIZBdhKvTO71HqrQ
+	 D0Y68FqqhpLrQ==
+Date: Sun, 28 Jul 2024 12:26:21 +0000
+To: o-takashi@sakamocchi.jp, clemens@ladisch.de
+From: Edmund Raile <edmund.raile@protonmail.com>
+Cc: tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, edmund.raile@protonmail.com, stable@vger.kernel.org
+Subject: [PATCH v2 0/2] ALSA: firewire-lib: restore process context workqueue to prevent deadlock
+Message-ID: <20240728122614.329544-1-edmund.raile@protonmail.com>
+Feedback-ID: 43016623:user:proton
+X-Pm-Message-ID: 7405776f7170639ffa300581e17a2b4f23d866bf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v1] drivers/perf: apple_m1: add known PMU events
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <3cd6bf37-f335-470b-9b3f-25628067e0f1@marcan.st>
-Date: Sun, 28 Jul 2024 20:19:34 +0800
-Cc: Marc Zyngier <maz@kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Janne Grunau <j@jannau.net>,
- Asahi Lina <lina@asahilina.net>,
- asahi@lists.linux.dev,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <5B6B1F56-C104-4054-A008-1075271D2121@cyyself.name>
-References: <tencent_D6474BDCDD18AA90A0C656BE704136ED2807@qq.com>
- <86bk3yjqkn.wl-maz@kernel.org>
- <tencent_B732B857317E21CB8D887CBF8228DAA78E08@qq.com>
- <86a5jijign.wl-maz@kernel.org>
- <3cd6bf37-f335-470b-9b3f-25628067e0f1@marcan.st>
-To: Hector Martin <marcan@marcan.st>
-X-Mailer: Apple Mail (2.3774.600.62)
 
+This patchset serves to prevent a deadlock between
+process context and softIRQ context:
 
+A. In the process context
+    * (lock A) Acquiring spin_lock by snd_pcm_stream_lock_irq() in
+               snd_pcm_status64()
+    * (lock B) Then attempt to enter tasklet
 
-> On Jul 28, 2024, at 19:00, Hector Martin <marcan@marcan.st> wrote:
->=20
->=20
-> On 2024/06/19 1:58, Marc Zyngier wrote:
->> On Tue, 18 Jun 2024 16:56:48 +0100,
->> Yangyu Chen <cyy@cyyself.name> wrote:
->>>=20
->>>=20
->>>=20
->>>> On Jun 18, 2024, at 22:03, Marc Zyngier <maz@kernel.org> wrote:
->>>>=20
->>>> On Tue, 18 Jun 2024 14:49:48 +0100,
->>>> Yangyu Chen <cyy@cyyself.name> wrote:
->>>>>=20
->>>>> This patch adds known PMU events that can be found on =
-/usr/share/kpep in
->>>>> macOS. The m1_pmu_events and m1_pmu_event_affinity are generated =
-from
->>>>> the script [1], which consumes the plist file from Apple. And then =
-added
->>>>> these events to m1_pmu_perf_map and m1_pmu_event_attrs with =
-Apple's
->>>>> documentation [2].
->>>>>=20
->>>>> Link: https://github.com/cyyself/m1-pmu-gen [1]
->>>>> Link: =
-https://developer.apple.com/download/apple-silicon-cpu-optimization-guide/=
- [2]
->>>>=20
->>>> This needs registration, and is thus impossible to freely visit.
->>>>=20
->>>>> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
->>>>=20
->>>> What is the licence applicable to the original source file? Does it
->>>> explicitly allow redistribution in any form?
->>>>=20
->>>=20
->>> Oh. It's my fault. Sorry for the trouble caused.
->>=20
->> No trouble on my side. I'm just painfully aware that this is a legal
->> landmine, and that what is perfectly allowed in one country may be a
->> punishable offence in another. And since I'm not a lawyer, I want to
->> see crystal clear things in writing.
->>=20
->>>=20
->>>>=20
->>>> Other than the licensing concern, why should we bloat the kernel =
-with
->>>> more of this stuff when everything is moving towards a bunch of =
-JSON
->>>> files (tools/perf/pmu-events/arch/arm64).
->>>>=20
->>>=20
->>> Thanks for this hint. So, the thing to do might be to provide a
->>> generator that consumes Apple files and then generates a kernel
->>> patch for Linux perf tools to use rather than provide such details
->>> directly in the source code as you said from [1].
->>>=20
->>> Link: https://lore.kernel.org/lkml/87czn18zev.wl-maz@kernel.org/ [1]
->>=20
->> Even better: teach the perf tool to directly consume the plist file,
->> but don't distribute the file or its content. People owning such a
->> machine can fish the file from the machine itself (or the installer
->> can extract it from the OS image as if it was firmware data).
->=20
-> Maz,
->=20
-> That would be a waste of time. Facts about hardware are not
-> copyrightable. I see absolutely nothing objectionable in this patch. =
-It
-> doesn't matter where the information was sourced as long as it was
-> legitimately available to the person (which it was, as long as they =
-were
-> running macOS on one of these machines).
->=20
-> Let's look at the license for the ARMv8-A ARM:
->=20
->> Proprietary Notice
->> This document is protected by copyright and other related rights and =
-the practice or implementation of the information contained
->> in this document may be protected by one or more patents or pending =
-patent applications. No part of this document may be
->> reproduced in any form by any means without the express prior written =
-permission of Arm. No license, express or implied, by
->> estoppel or otherwise to any intellectual property rights is granted =
-by this document unless specifically stated.
->=20
-> There is absolutely nothing in there granting a license to use the
-> information in the document and things like register names in Linux or
-> any other OS. And yet we can do that, because those things aren't
-> copyrightable. It would defeat the entire point of the documentation =
-if
-> you could not use it, even though there is in fact no explicit =
-copyright
-> grant to allow you to use it. It is not needed.
->=20
-> The same exact logic applies here. The macOS license does not grant us
-> the right to reproduce portions of macOS, but that is completely
-> irrelevant because the portion "reproduced" in the form of this patch =
-is
-> not, at all, copyrightable. If it were we would have much bigger =
-issues
-> and all kinds of code in Linux would be a copyvio. The fact that there
-> was some automation involved in generating the patch contents is
-> entirely irrelevant, as long as the output does not keep a copyright
-> interest from the author of the input.
->=20
-> I also have an actual lawyer's opinion that register names are not
-> copyrightable, which further corroborates this interpretation.
->=20
-> As far as I'm concerned this can be merged as is.
+B. In the softIRQ context
+    * (lock B) Enter tasklet
+    * (lock A) Attempt to acquire spin_lock by snd_pcm_stream_lock_irqsave(=
+) in
+               snd_pcm_period_elapsed()
 
-Even if there are no copyright concerns, as you said from [1], I
-think I should remove the lines in m1_pmu_event_attrs and then patch
-userspace Linux-perf tools with the definitions in the JSON file.
+? tasklet_unlock_spin_wait
+ </NMI>
+ <TASK>
+ohci_flush_iso_completions firewire_ohci
+amdtp_domain_stream_pcm_pointer snd_firewire_lib
+snd_pcm_update_hw_ptr0 snd_pcm
+snd_pcm_status64 snd_pcm
 
-Since I haven't received any other advice on copyright concerns, I
-am still waiting for other suggestions before submitting the patch
-revision.
+? native_queued_spin_lock_slowpath
+ </NMI>
+ <IRQ>
+_raw_spin_lock_irqsave
+snd_pcm_period_elapsed snd_pcm
+process_rx_packets snd_firewire_lib
+irq_target_callback snd_firewire_lib
+handle_it_packet firewire_ohci
+context_tasklet firewire_ohci
 
-Thanks,
-Yangyu Chen
+The issue has been reported as a regression of kernel 5.14:
+Link: https://lore.kernel.org/regressions/kwryofzdmjvzkuw6j3clftsxmoolynljz=
+txqwg76hzeo4simnl@jn3eo7pe642q/T/#u
+("[REGRESSION] ALSA: firewire-lib: snd_pcm_period_elapsed deadlock with
+Fireface 800")
 
-[1] =
-https://lore.kernel.org/lkml/dbf17fa6-1af6-467b-8b3d-dca8476dc785@marcan.s=
-t/
+Commit 7ba5ca32fe6e ("ALSA: firewire-lib: operate for period elapse event
+in process context") removed the process context workqueue from
+amdtp_domain_stream_pcm_pointer() and update_pcm_pointers() to remove
+its overhead.
+Commit b5b519965c4c ("ALSA: firewire-lib: obsolete workqueue for period
+update") belongs to the same patch series and removed
+the now-unused workqueue entirely.
 
->=20
-> Acked-by: Hector Martin <marcan@marcan.st>
->=20
-> - Hector
+Though being observed on RME Fireface 800, this issue would affect all
+Firewire audio interfaces using ohci amdtp + pcm streaming.
+
+ALSA streaming, especially under intensive CPU load will reveal this issue
+the soonest due to issuing more hardIRQs, with time to occurrence ranging
+from 2 secons to 30 minutes after starting playback.
+
+to reproduce the issue:
+direct ALSA playback to the device:
+  mpv --audio-device=3Dalsa/sysdefault:CARD=3DFireface800 Spor-Ignition.fla=
+c
+Time to occurrence: 2s to 30m
+Likelihood increased by:
+  - high CPU load
+    stress --cpu $(nproc)
+  - switching between applications via workspaces
+    tested with i915 in Xfce
+PulsaAudio / PipeWire conceal the issue as they run PCM substream
+without period wakeup mode, issuing less hardIRQs.
+
+Backport note:
+Also applies to and fixes on (tested):
+6.10.2, 6.9.12, 6.6.43, 6.1.102, 5.15.164
+
+Edmund Raile (2):
+  ALSA: firewire-lib: restore workqueue for process context
+  ALSA: firewire-lib: prevent deadlock between process and softIRQ
+    context
+
+ sound/firewire/amdtp-stream.c | 36 ++++++++++++++++++++++-------------
+ sound/firewire/amdtp-stream.h |  1 +
+ 2 files changed, 24 insertions(+), 13 deletions(-)
+
+--=20
+2.45.2
+
 
 
