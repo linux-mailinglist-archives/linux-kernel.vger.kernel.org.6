@@ -1,185 +1,131 @@
-Return-Path: <linux-kernel+bounces-264472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9819493E3B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 08:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30ED93E3DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837C21C211C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 06:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6732B1F21B0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96065AD2F;
-	Sun, 28 Jul 2024 06:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E328F6C;
+	Sun, 28 Jul 2024 07:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzc1DnWl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="n2s+v4TB"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11728472;
-	Sun, 28 Jul 2024 06:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C838C07
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 07:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722147856; cv=none; b=kHsnRwp5/OUQlACW8s+KI85kwnKV8tC43Xj2XCet9TzCuhRz/JrHJNVYtfGxt75JDjWGipUxx7n3iQll4cR2p9iymKwFzW8WuURVYmq7A7bIO1/kcK8xxoh74Ew6gBRQf95BTJzOIXZvYXSYRtcFVs7i0pcrYj4PYJu39KDAn+o=
+	t=1722150185; cv=none; b=jKWtt0FxnStVE3VkGJNMsHCPaeCqHroocRybM3/UhQJXXGQGRJMUc98e4lSYb3oBi93fsWDBJTcxB6ONjczOpXZFc2Z5UbATVIRpv6AJ7D52ONE+cbUrK3jKv9p+QSZq2TLgRjWbY1xhtNhVvBbnQrfDeOnQDCRzSoKES1gRxIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722147856; c=relaxed/simple;
-	bh=ImUcFjkydUuUQ924R1A8XHHR0JWttQhOnZzfzif7Bps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFfr+XduzpQz5eXlWe6rToiIqsqfVyyjN4K4U/nS8lBxblmY1TU6FfSnxaHAzTPEvfSSjjA5Fu45eiho/YoPQ1Wa+NDI11oyyjAZV2tUblWuFDDl660b4s9fNL7UiqvyQfK9S6RM2JWgV5rqCQwaqSNxNsAGV3yRoU0GgmqPMkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzc1DnWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C96C4AF13;
-	Sun, 28 Jul 2024 06:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722147856;
-	bh=ImUcFjkydUuUQ924R1A8XHHR0JWttQhOnZzfzif7Bps=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hzc1DnWlvCokjGQVKqGosmjJyGR4DBzSa3OkWfuY//4qYtqgrrUbc7fKm6Dq65WzK
-	 XAn+Uq/EupMRiJHSr0AavfJNyZef9YipKozM/wBSdPvMLrM7cdIx3xMW8O9WfBN9c4
-	 1Q4OVaWU8Vrv9oIPTTIOWUmZDEyJgfg7Oh0KXfCHLqYnID72JxfnAQDzP8uVeyIuwt
-	 kAh08P8UYRHYf7cWC+9B9PgA/Q/1LiSAEmG7sFM/QIc82xxFA+7LzkSxlQOqzYmhHW
-	 TS8vPBsmRE+1WyENydDzPoRN3xjgPVvt5/0N38MiYkPKyHAAPCT+tGhbiZ6pTPbJIF
-	 LKzQAhX11+G8g==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f136e23229so4181761fa.1;
-        Sat, 27 Jul 2024 23:24:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHV5D01eQZZj7NuUALIJ/nTB8pFArQZ4Mly/PyA32s8gidDfXTfUz96vXrtUXypBkdjeB/GgTW/w2FMHeZb7UbWS1o8E916xpo8KJshzXwcnUgs+qLj4RYxi5uphbdDiJaKKfdRtyjUgPSsA/RabRKIOfq+A9C0rigUMCmopHOiITV
-X-Gm-Message-State: AOJu0YxUri4vSpHurcuvuutXoXA4K25PuEOwf+k4eamtStpToqB+d5eB
-	x63zu+ZKDTvqhELbBEkE8/Pv7dF34PVhp85sHLmERvZOjAq0JX9YeHQnwVGI38aZHk8d7zP/hNh
-	p84qyaVCHAGrCUp1n9T1aIE2icPI=
-X-Google-Smtp-Source: AGHT+IEWKcl1IkDbAMgGyH1XvzNtiqtMNP8K6l6mTC7aGLzr2Nlspyt0qPyssjl/o8jZ6fH+Ozsru7FESzZ58JbySS4=
-X-Received: by 2002:a2e:9091:0:b0:2ef:29b7:18a7 with SMTP id
- 38308e7fff4ca-2f12ee5bc21mr25237531fa.37.1722147854960; Sat, 27 Jul 2024
- 23:24:14 -0700 (PDT)
+	s=arc-20240116; t=1722150185; c=relaxed/simple;
+	bh=3Lk9QPyMjT9AnKkiVgkQCgIDyaFJvAhKIDHQPfRcwlY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=UVNmuTU5fUZZ7KGabSMS+6de2QNp9RjR4qEG7mYyPi2YBzX9VCrNfgCwEQTOxRolYS6k7ufMOg353A9ox1icAxYFz7J3vIGHP8uw0UDNkqWAUFwXmhrOLBXDbLVevJIxVJLRVlGZd3ghAXq62WRhE4dL69wOH+iH2tKLyzVrLZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=n2s+v4TB; arc=none smtp.client-ip=43.163.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722150171; bh=QQl161VCYfjUgThuPFuSEUJUlLukZjLOJrg+mhVqy2Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=n2s+v4TBcLUMc8fmsg6HJx58OaS2pjNcm+zKX9HqiSLfQxv7rG8onkIoypckFIZmG
+	 92gXhDD6o2q3c5ckxGGEHhbOxUnfp+TGRFb8MVYCFoX164SlQe+RcUCCC8l7PcOcwQ
+	 /0HtLeZ5CRGqXaui+9BrXzr/w63t94n/VAoQEMsw=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id C5F88673; Sun, 28 Jul 2024 14:49:31 +0800
+X-QQ-mid: xmsmtpt1722149371tru2iibxu
+Message-ID: <tencent_31BC2C256D0C94CCEAB2EEA6CC8478066D0A@qq.com>
+X-QQ-XMAILINFO: MntsAqBg2ZZ5rPXIuQ7DVnC8wDnc+MU1oNslEGGFRp8Hy0Pgss1RYgkd0i2sOF
+	 +vhY9n43sGcEZGP0F2BC42YH8DAbSLJ9sy25AGOlFWks2/2yajTovj5htv2jeBMeuTjYsQdeBAwj
+	 B0eoTZWcOKeSJ6SvAD424A4R68Kn+5WMtT1HcTU9ZcrUmO4xQA5sZbrK3aQ6aKztmMD8DHe0t7lw
+	 px9JimLw0VZPFS/p21ezdPpHry5Ueki4u/Hzb8fFxxyB96Me310rLHKoJTe2RPayYjXCJLVK+u2c
+	 wqw6OpDmn4OoX2+s6/db0Fqf2f2lwNhRgJRx2uRY/tiey/sXXJturT7mSNBhOHntPwPskr86OSE0
+	 m3Uk4BcI9+MztL7lM3QdIqZ3Rg7y2G+mPkdCAK/x6w8cagVuDGU9EleFXPGtXJl+F83iMsfje0OL
+	 Wp0Ry5dMHIqRqsx9Kr7vpFgEDhAoLOGM5sfei0oeVcY/IVAModAKdCo7jhD1OpHNAa4Kcl3Uu9as
+	 0FdoWFg48TSK4hk1HoP6YBnBhcqnCGUzHUhMuQX5zw4KMfTpikE3pURmXSc3WJTwFQ24y61/lFdC
+	 dV1FElnkeNDAna7LHzp6MrvRSY5wLJcSMoT11ipbT09VTkeGDrvEzcwmjGElrRb+YGoof9tYQJR7
+	 pomiOIGF96VPNyrtYH1oGIyyuTVLmPatULVfqJYJVN1ij4n20TaT8qSZVvFqUVdZtEUyz9fbhTkA
+	 PpDLYaKxTGFytUsRGf2cIM2WV9KyjdqMW/qgFAVB/Tlcp7S0nyraeaitZInOcncyJHcoyxNQ2oz4
+	 RPW1KpckEdsYJ7GQsOpb4kW8D4BDdwESe8pzWrwMpl1SbaGqYrVngV1UqD/XrVWKt1UECgSw1Gr4
+	 9ReUgQexOwsK8+KtxCya4N/znyu7rp0wyofv+0ShJEvtLMq8ZZCTI=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a14d8ac9af3a2a4fd0c8@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_folio_end_all_writers
+Date: Sun, 28 Jul 2024 14:49:31 +0800
+X-OQ-MSGID: <20240728064931.3461960-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000008a971a061dde1f74@google.com>
+References: <0000000000008a971a061dde1f74@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
- <CAMzpN2hRVzWOF5YDvE8pPKfogdcuou8REsY+uXzkdORnFn=buQ@mail.gmail.com>
- <CAK7LNARjggcomzGMgHxuYE=Lm0_zsZS5dvjo3g4tjKJaM2oydg@mail.gmail.com> <CAMzpN2i6_-tiYKuXgq0ppowtfB8JipZvkMLmT8Mn02YE5shC5g@mail.gmail.com>
-In-Reply-To: <CAMzpN2i6_-tiYKuXgq0ppowtfB8JipZvkMLmT8Mn02YE5shC5g@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 28 Jul 2024 15:23:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQiL=swKikuquFW9BrTftxNGHkwhLZVqQq3oNTYByEDxA@mail.gmail.com>
-Message-ID: <CAK7LNAQiL=swKikuquFW9BrTftxNGHkwhLZVqQq3oNTYByEDxA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix '-S -c' in x86 stack protector scripts
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, nicolas@fjasle.eu, 
-	maskray@google.com, morbo@google.com, justinstitt@google.com, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 28, 2024 at 12:13=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wr=
-ote:
->
-> On Sat, Jul 27, 2024 at 10:36=E2=80=AFPM Masahiro Yamada <masahiroy@kerne=
-l.org> wrote:
-> >
-> > On Sun, Jul 28, 2024 at 5:43=E2=80=AFAM Brian Gerst <brgerst@gmail.com>=
- wrote:
-> > >
-> > > On Fri, Jul 26, 2024 at 2:05=E2=80=AFPM Nathan Chancellor <nathan@ker=
-nel.org> wrote:
-> > > >
-> > > > After a recent change in clang to stop consuming all instances of '=
--S'
-> > > > and '-c' [1], the stack protector scripts break due to the kernel's=
- use
-> > > > of -Werror=3Dunused-command-line-argument to catch cases where flag=
-s are
-> > > > not being properly consumed by the compiler driver:
-> > > >
-> > > >   $ echo | clang -o - -x c - -S -c -Werror=3Dunused-command-line-ar=
-gument
-> > > >   clang: error: argument unused during compilation: '-c' [-Werror,-=
-Wunused-command-line-argument]
-> > > >
-> > > > This results in CONFIG_STACKPROTECTOR getting disabled because
-> > > > CONFIG_CC_HAS_SANE_STACKPROTECTOR is no longer set.
-> > > >
-> > > > '-c' and '-S' both instruct the compiler to stop at different stage=
-s of
-> > > > the pipeline ('-S' after compiling, '-c' after assembling), so havi=
-ng
-> > > > them present together in the same command makes little sense. In th=
-is
-> > > > case, the test wants to stop before assembling because it is lookin=
-g at
-> > > > the textual assembly output of the compiler for either '%fs' or '%g=
-s',
-> > > > so remove '-c' from the list of arguments to resolve the error.
-> > > >
-> > > > All versions of GCC continue to work after this change, along with
-> > > > versions of clang that do or do not contain the change mentioned ab=
-ove.
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: 4f7fd4d7a791 ("[PATCH] Add the -fstack-protector option to t=
-he CFLAGS")
-> > > > Fixes: 60a5317ff0f4 ("x86: implement x86_32 stack protector")
-> > > > Link: https://github.com/llvm/llvm-project/commit/6461e537815f7fa68=
-cef06842505353cf5600e9c [1]
-> > > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > > > ---
-> > > > I think this could go via either -tip or Kbuild?
-> > > >
-> > > > Perhaps this is an issue in the clang commit mentioned in the messa=
-ge
-> > > > above since it deviates from GCC (Fangrui is on CC here) but I thin=
-k the
-> > > > combination of these options is a little dubious to begin with, hen=
-ce
-> > > > this change.
-> > >
-> > > As part of my stack protector cleanup series, I found that these
-> > > scripts can simply be removed.  I can repost those patches as a
-> > > standalone cleanup.
-> > >
-> > > https://lore.kernel.org/lkml/20240322165233.71698-1-brgerst@gmail.com=
-/
-> > >
-> > > Brian Gerst
-> >
-> > Judging from the Fixes tags, Nathan meant this patch is
-> > a back-port candidate so that the latest LLVM can be used for stable ke=
-rnels.
-> >
-> > You are making big changes, and do you mean they can be back-ported?
->
-> I was referring to just the first two patches of that series.  That
-> said, it would be simpler to take Nathan's fix for backporting.
+in cow_file_range, only ret == 0 means succuess
 
+#syz test: upstream b1bc554e009e
 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index d62c96f00ff8..a82acc9df20f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -762,7 +762,8 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 offset,
+ 		return ret;
+ 	}
+ 
+-	extent_clear_unlock_delalloc(inode, offset, end, NULL, &cached,
++	if (ret == 0)
++		extent_clear_unlock_delalloc(inode, offset, end, NULL, &cached,
+ 				     clear_flags,
+ 				     PAGE_UNLOCK | PAGE_START_WRITEBACK |
+ 				     PAGE_END_WRITEBACK);
+@@ -1043,8 +1044,15 @@ static void compress_file_range(struct btrfs_work *work)
+ 		ret = cow_file_range_inline(inode, start, end, total_compressed,
+ 					    compress_type, folios[0], false);
+ 	if (ret <= 0) {
+-		if (ret < 0)
++		if (ret < 0) {
++			unsigned long clear_flags = EXTENT_DELALLOC | EXTENT_DELALLOC_NEW |
++					 EXTENT_DEFRAG | EXTENT_DO_ACCOUNTING | EXTENT_LOCKED;
+ 			mapping_set_error(mapping, -EIO);
++			extent_clear_unlock_delalloc(inode, start, end, NULL, NULL,
++				     clear_flags,
++				     PAGE_UNLOCK | PAGE_START_WRITEBACK |
++				     PAGE_END_WRITEBACK);
++		}
+ 		goto free_pages;
+ 	}
+ 
+@@ -1361,7 +1369,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+ 		/* lets try to make an inline extent */
+ 		ret = cow_file_range_inline(inode, start, end, 0,
+ 					    BTRFS_COMPRESS_NONE, NULL, false);
+-		if (ret <= 0) {
++		if (ret == 0) {
+ 			/*
+ 			 * We succeeded, return 1 so the caller knows we're done
+ 			 * with this page and already handled the IO.
+@@ -1369,8 +1377,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+ 			 * If there was an error then cow_file_range_inline() has
+ 			 * already done the cleanup.
+ 			 */
+-			if (ret == 0)
+-				ret = 1;
++			ret = 1;
+ 			goto done;
+ 		}
+ 	}
 
-Even the first two patches are not trivial.
-
-The second patch 02/16:
-https://lore.kernel.org/lkml/20240322165233.71698-3-brgerst@gmail.com/
-
-is completely removing scripts/gcc-x86_64-has-stack-protector.sh,
-
-
-In fact, I also noticed it was a workaround for old buggy compilers.
-I attempted to do the equivalent clean up, then it was rejected.
-https://lore.kernel.org/lkml/1541992013-18657-1-git-send-email-yamada.masah=
-iro@socionext.com/
-
-It was 6 years ago, so the situation might have changed.
-Good luck.
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
