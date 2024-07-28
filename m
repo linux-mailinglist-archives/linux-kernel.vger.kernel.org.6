@@ -1,131 +1,187 @@
-Return-Path: <linux-kernel+bounces-264474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30ED93E3DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F34293E3B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 08:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6732B1F21B0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26F51F21A4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 06:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E328F6C;
-	Sun, 28 Jul 2024 07:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C86B644;
+	Sun, 28 Jul 2024 06:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="n2s+v4TB"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tLyXTU/w"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C838C07
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 07:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2976C8BEC;
+	Sun, 28 Jul 2024 06:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722150185; cv=none; b=jKWtt0FxnStVE3VkGJNMsHCPaeCqHroocRybM3/UhQJXXGQGRJMUc98e4lSYb3oBi93fsWDBJTcxB6ONjczOpXZFc2Z5UbATVIRpv6AJ7D52ONE+cbUrK3jKv9p+QSZq2TLgRjWbY1xhtNhVvBbnQrfDeOnQDCRzSoKES1gRxIk=
+	t=1722149559; cv=none; b=kuP5fhDkyZdTENn4Xb5UIrk/IhpZB2X/QYcW1KLNiaOq/mP/DtVdxXvtGoiynFdHJIvlVcc2caqBdGvSVMjB5jsOjtjlx8qrSIIG5Zg7VwZ2GGlZcsXy3HgVdMH67PPH12w6cjJEVY8Za2hfP5oQhnKBVcFmzOgKe9nvVRI5TB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722150185; c=relaxed/simple;
-	bh=3Lk9QPyMjT9AnKkiVgkQCgIDyaFJvAhKIDHQPfRcwlY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=UVNmuTU5fUZZ7KGabSMS+6de2QNp9RjR4qEG7mYyPi2YBzX9VCrNfgCwEQTOxRolYS6k7ufMOg353A9ox1icAxYFz7J3vIGHP8uw0UDNkqWAUFwXmhrOLBXDbLVevJIxVJLRVlGZd3ghAXq62WRhE4dL69wOH+iH2tKLyzVrLZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=n2s+v4TB; arc=none smtp.client-ip=43.163.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722150171; bh=QQl161VCYfjUgThuPFuSEUJUlLukZjLOJrg+mhVqy2Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=n2s+v4TBcLUMc8fmsg6HJx58OaS2pjNcm+zKX9HqiSLfQxv7rG8onkIoypckFIZmG
-	 92gXhDD6o2q3c5ckxGGEHhbOxUnfp+TGRFb8MVYCFoX164SlQe+RcUCCC8l7PcOcwQ
-	 /0HtLeZ5CRGqXaui+9BrXzr/w63t94n/VAoQEMsw=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id C5F88673; Sun, 28 Jul 2024 14:49:31 +0800
-X-QQ-mid: xmsmtpt1722149371tru2iibxu
-Message-ID: <tencent_31BC2C256D0C94CCEAB2EEA6CC8478066D0A@qq.com>
-X-QQ-XMAILINFO: MntsAqBg2ZZ5rPXIuQ7DVnC8wDnc+MU1oNslEGGFRp8Hy0Pgss1RYgkd0i2sOF
-	 +vhY9n43sGcEZGP0F2BC42YH8DAbSLJ9sy25AGOlFWks2/2yajTovj5htv2jeBMeuTjYsQdeBAwj
-	 B0eoTZWcOKeSJ6SvAD424A4R68Kn+5WMtT1HcTU9ZcrUmO4xQA5sZbrK3aQ6aKztmMD8DHe0t7lw
-	 px9JimLw0VZPFS/p21ezdPpHry5Ueki4u/Hzb8fFxxyB96Me310rLHKoJTe2RPayYjXCJLVK+u2c
-	 wqw6OpDmn4OoX2+s6/db0Fqf2f2lwNhRgJRx2uRY/tiey/sXXJturT7mSNBhOHntPwPskr86OSE0
-	 m3Uk4BcI9+MztL7lM3QdIqZ3Rg7y2G+mPkdCAK/x6w8cagVuDGU9EleFXPGtXJl+F83iMsfje0OL
-	 Wp0Ry5dMHIqRqsx9Kr7vpFgEDhAoLOGM5sfei0oeVcY/IVAModAKdCo7jhD1OpHNAa4Kcl3Uu9as
-	 0FdoWFg48TSK4hk1HoP6YBnBhcqnCGUzHUhMuQX5zw4KMfTpikE3pURmXSc3WJTwFQ24y61/lFdC
-	 dV1FElnkeNDAna7LHzp6MrvRSY5wLJcSMoT11ipbT09VTkeGDrvEzcwmjGElrRb+YGoof9tYQJR7
-	 pomiOIGF96VPNyrtYH1oGIyyuTVLmPatULVfqJYJVN1ij4n20TaT8qSZVvFqUVdZtEUyz9fbhTkA
-	 PpDLYaKxTGFytUsRGf2cIM2WV9KyjdqMW/qgFAVB/Tlcp7S0nyraeaitZInOcncyJHcoyxNQ2oz4
-	 RPW1KpckEdsYJ7GQsOpb4kW8D4BDdwESe8pzWrwMpl1SbaGqYrVngV1UqD/XrVWKt1UECgSw1Gr4
-	 9ReUgQexOwsK8+KtxCya4N/znyu7rp0wyofv+0ShJEvtLMq8ZZCTI=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a14d8ac9af3a2a4fd0c8@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_folio_end_all_writers
-Date: Sun, 28 Jul 2024 14:49:31 +0800
-X-OQ-MSGID: <20240728064931.3461960-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000008a971a061dde1f74@google.com>
-References: <0000000000008a971a061dde1f74@google.com>
+	s=arc-20240116; t=1722149559; c=relaxed/simple;
+	bh=w4VBB9LsLEaXL66z8li/akJJRFq8/zQyhynB6iTnz1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XiGr3g1Bp+A+mWg7/K1IZzW0jglXE6F+ygOzDYpBvfC6cUqNfmyZoRZw4nreP4rt0zbUn7+fF5buMmTO4zYsLfDTOLtOuMyhIElzrEMVTahxxf5M/OxpzDwgCRbMbUg3JsZvJenTKWrMqQ2vZfeFw3IRlWkrnuvdmjepEh8wqIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tLyXTU/w; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id XxlfsACLZx5lnXxlgszGbA; Sun, 28 Jul 2024 08:52:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722149554;
+	bh=OFUunbe0HaG1IV8wUY0jJuTqlXVNzTwhJ7cRVKBT2/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tLyXTU/wdkPEVD/Wa24n5UbJo/Fam9aRnKNXNKKNvoSj6WVk07y9er1HlF9zGFr1I
+	 qoi/kmVv3uJllZLmH8pJ7tLr1Ak1nmpR4/vsRH4JS43nbqRiT5nytrQmWaBFEI5mnV
+	 kzZfYSVXIV2cGJ96JmU4R8pCdCNSbzyw5YhDlPVjkbxJACyaDdRzIvzRqgGDNVUB3j
+	 EZCWo1U8XCTPI0SFpw0QRqcA9hXCURyAkKXSfJ6rxmkQPpYUr9/w0FkLqhdrQ8nUoX
+	 I2cKpb03fR/dFfQPv6unAMH1saSZ/DBNQNJN3WFJAs5IzV80t6f5bDcpPZJIBRaODl
+	 pLkqj/2vHYkGg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 28 Jul 2024 08:52:34 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <6b0a39f4-1a0c-4e3e-955e-31bbb33ba54a@wanadoo.fr>
+Date: Sun, 28 Jul 2024 08:52:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] ALSA: timer: Introduce virtual userspace-driven
+ timers
+To: Ivan Orlov <ivan.orlov0322@gmail.com>, perex@perex.cz, tiwai@suse.com,
+ corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, aholzinger@gmx.de
+References: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
+ <20240726074750.626671-4-ivan.orlov0322@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240726074750.626671-4-ivan.orlov0322@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-in cow_file_range, only ret == 0 means succuess
+Le 26/07/2024 à 09:47, Ivan Orlov a écrit :
+> Implement two ioctl calls in order to support virtual userspace-driven
+> ALSA timers.
+> 
+> The first ioctl is SNDRV_TIMER_IOCTL_CREATE, which gets the
+> snd_utimer_info struct as a parameter and returns a file descriptor of
+> a virtual timer. It also updates the `id` field of the snd_utimer_info
+> struct, which provides a unique identifier for the timer (basically,
+> the subdevice number which can be used when creating timer instances).
+> 
+> This patch also introduces a tiny id allocator for the userspace-driven
+> timers, which guarantees that we don't have more than 128 of them in the
+> system.
+> 
+> Another ioctl is SNDRV_TIMER_IOCTL_TRIGGER, which allows us to trigger
+> the virtual timer (and calls snd_timer_interrupt for the timer under
+> the hood), causing all of the timer instances binded to this timer to
+> execute their callbacks.
+> 
+> The maximum amount of ticks available for the timer is 1 for the sake of
+> simplification of the userspace API. 'start', 'stop', 'open' and 'close'
+> callbacks for the userspace-driven timers are empty since we don't
+> really do any hardware initialization here.
+> 
+> Suggested-by: Axel Holzinger <aholzinger@gmx.de>
+> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> ---
 
-#syz test: upstream b1bc554e009e
+Hi,
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d62c96f00ff8..a82acc9df20f 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -762,7 +762,8 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 offset,
- 		return ret;
- 	}
- 
--	extent_clear_unlock_delalloc(inode, offset, end, NULL, &cached,
-+	if (ret == 0)
-+		extent_clear_unlock_delalloc(inode, offset, end, NULL, &cached,
- 				     clear_flags,
- 				     PAGE_UNLOCK | PAGE_START_WRITEBACK |
- 				     PAGE_END_WRITEBACK);
-@@ -1043,8 +1044,15 @@ static void compress_file_range(struct btrfs_work *work)
- 		ret = cow_file_range_inline(inode, start, end, total_compressed,
- 					    compress_type, folios[0], false);
- 	if (ret <= 0) {
--		if (ret < 0)
-+		if (ret < 0) {
-+			unsigned long clear_flags = EXTENT_DELALLOC | EXTENT_DELALLOC_NEW |
-+					 EXTENT_DEFRAG | EXTENT_DO_ACCOUNTING | EXTENT_LOCKED;
- 			mapping_set_error(mapping, -EIO);
-+			extent_clear_unlock_delalloc(inode, start, end, NULL, NULL,
-+				     clear_flags,
-+				     PAGE_UNLOCK | PAGE_START_WRITEBACK |
-+				     PAGE_END_WRITEBACK);
-+		}
- 		goto free_pages;
- 	}
- 
-@@ -1361,7 +1369,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 		/* lets try to make an inline extent */
- 		ret = cow_file_range_inline(inode, start, end, 0,
- 					    BTRFS_COMPRESS_NONE, NULL, false);
--		if (ret <= 0) {
-+		if (ret == 0) {
- 			/*
- 			 * We succeeded, return 1 so the caller knows we're done
- 			 * with this page and already handled the IO.
-@@ -1369,8 +1377,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 			 * If there was an error then cow_file_range_inline() has
- 			 * already done the cleanup.
- 			 */
--			if (ret == 0)
--				ret = 1;
-+			ret = 1;
- 			goto done;
- 		}
- 	}
+...
+
+> diff --git a/sound/core/Kconfig b/sound/core/Kconfig
+> index b970a1734647..3cf82641fc67 100644
+> --- a/sound/core/Kconfig
+> +++ b/sound/core/Kconfig
+> @@ -251,6 +251,17 @@ config SND_JACK_INJECTION_DEBUG
+>   	  Say Y if you are debugging via jack injection interface.
+>   	  If unsure select "N".
+>   
+> +config SND_UTIMER
+> +	bool "Enable support for userspace-controlled virtual timers"
+> +	depends on SND_TIMER
+> +	help
+> +	  Say Y to enable the support of userspace-controlled timers. These
+> +	  timers are purely virtual, and they are supposed to be triggered
+> +	  from userspace. They could be quite useful when synchronizing the
+> +	  sound timing with userspace applications (for instance, when sending
+> +	  data through snd-aloop).
+> +
+
+Unneeded extra new line.
+
+> +
+>   config SND_VMASTER
+>   	bool
+>   
+
+...
+
+> +static void snd_utimer_free(struct snd_utimer *utimer)
+> +{
+> +	snd_timer_free(utimer->timer);
+> +	snd_utimer_put_id(utimer);
+
+Missing kfree(utimer->name); ?
+
+> +	kfree(utimer);
+> +}
+
+...
+
+> +static int snd_utimer_create(struct snd_utimer_info *utimer_info,
+> +			     struct snd_utimer **r_utimer)
+> +{
+> +	struct snd_utimer *utimer;
+> +	struct snd_timer *timer;
+> +	struct snd_timer_id tid;
+> +	int utimer_id;
+> +	int err = 0;
+> +	char *timer_name;
+> +
+> +	utimer = kzalloc(sizeof(*utimer), GFP_KERNEL);
+> +	if (!utimer)
+> +		return -ENOMEM;
+> +
+> +	timer_name = kzalloc(SNDRV_UTIMER_NAME_LEN, GFP_KERNEL);
+
+kasprintf(GFP_KERNEL, "snd-utimer%d", utimer_id); ?
+and SNDRV_UTIMER_NAME_LEN becomes useless too.
+
+In snd_timer_new() it is copied in a char[64] anyway, and if utimer_id 
+is small, we could even save a few bytes of memory.
+
+CJ
+
+> +	if (!timer_name) {
+> +		kfree(utimer);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* We hold the ioctl lock here so we won't get a race condition when allocating id */
+> +	utimer_id = snd_utimer_take_id();
+> +	if (utimer_id < 0) {
+> +		err = utimer_id;
+> +		goto err_take_id;
+> +	}
+> +
+> +	sprintf(timer_name, "snd-utimer%d", utimer_id);
+> +	utimer->name = timer_name;
+> +	utimer->id = utimer_id;
+
+...
 
 
