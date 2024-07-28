@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-264775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9948993E842
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A984893E856
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5532A282CB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6C41C2165B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F371891D9;
-	Sun, 28 Jul 2024 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A9E3EA9B;
+	Sun, 28 Jul 2024 16:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="im4CjrhP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kij7pyed"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE54188CA5;
-	Sun, 28 Jul 2024 16:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3399417756;
+	Sun, 28 Jul 2024 16:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722182966; cv=none; b=RVIkafDFj2ZrFrlbHLJ/pBrr2QOdUFb7lewqmyv8Df5s4r5Xh1Ai/C/EGZObIhDHHGsC65k0vTJkdJKphWt5+q/UKG0DTJwOfgMitM9jq4Y2UKYVwYHRAVTVREflTxeacjcMruEN3tEVG0MbvUNy3E04H8HPFVUzQXx7lnn1gcc=
+	t=1722182997; cv=none; b=Tqd0E7oAw/3ibnvVES58gJTTMl5Jske28TcgzsAzQqaWEIQEG5G1J4TMXFMw3mAWh/Tg5So8fmVU1IshVbbu9DIl5PShfugjKWSIrYVIHRXSnArmDHrT1723aKVOv+pGC4mQnASEJ3xbDI0nVQ9nn7rl1aj5F5fA8yo+oCLQ0UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722182966; c=relaxed/simple;
-	bh=DG5ulTQk+MG42W/U9N7gwMfUOg5bBXfQjT06OCk3/gE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MswCC8Wem19limuAtLTRDEG02PlUAEKPt9uYujT/mWSTxhsd0edOKaAtz5ejGskjW2zusqMpXiiPvUN3xeFEymSSup+l8vKFx+imj6COu6pq2l1CehRN+OyiBe7KRIRLbIYfGvbRC7iqCogcy72Wq6Cl60PGdSJQFdPltTZaMfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=im4CjrhP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAF8C4AF0B;
-	Sun, 28 Jul 2024 16:09:19 +0000 (UTC)
+	s=arc-20240116; t=1722182997; c=relaxed/simple;
+	bh=HMeSELUynsvJYfgBIX/+wU3WRg7Ji9njsKv3FGSyVTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U7aXpLLtei2TJ4CQPETk3nP92XEwTF1JAcZfoI+VnGCNffzy/Jc6Yy3Cogk5CiIo0Xgz1RYN8BcHLFiswgrLEOp2SAxxmxQJts1iZhSuO+Eox8HSZbBA7ZmGuzp9qIvuIpsZRxUrIgzrtzGJ76S85ZXGuUstKKLij6WUNyr3C5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kij7pyed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08541C32782;
+	Sun, 28 Jul 2024 16:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722182965;
-	bh=DG5ulTQk+MG42W/U9N7gwMfUOg5bBXfQjT06OCk3/gE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=im4CjrhPvqFwYPU1Bu6w63799uYd6O5rZtIJ6BhQuOdLumaKqNe4Bh11bcbhzbGLp
-	 CEtXZ74kja4cSjQNU0CqtAD82PX5To1LxBCq4DWOXhB8cGmvgDLYAHGY45bL+hRhw1
-	 WqoSLo1aVW2fnrWCcbS+7/hHz25izTdL9pj4c4DIJavkqw4fhNkozWOvz2okFPbemC
-	 jE09xSPhmZuVLf8utl+gcSM0SgTgPtdkKNHgQZeafbIiIdpP7qFxmWAJNOQtb7b+7/
-	 CymffrCDTsXR3tXkTdcn1e+tnOymfF+IpzE48gPcDpLu3MAkE9h9bWHW+o/LmlQoQH
-	 iTpPa83HsGdcQ==
-Date: Sun, 28 Jul 2024 17:09:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
- biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
- semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to
- new configuration
-Message-ID: <20240728170915.26b4a01d@jic23-huawei>
-In-Reply-To: <20240725231039.614536-8-vassilisamir@gmail.com>
-References: <20240725231039.614536-1-vassilisamir@gmail.com>
-	<20240725231039.614536-8-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722182997;
+	bh=HMeSELUynsvJYfgBIX/+wU3WRg7Ji9njsKv3FGSyVTs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Kij7pyedyvAjSCTXmbAMrE4zAcA2iavekMkTw3dcrD2PTzlQwDhoG7VPtloqZX3h4
+	 /6Xv0+Qj1Aoo7zpMYw7zZFBiiz2yIR5+jMkwP1C877xUZEuTcCy6TwaFSVzUpfv2PH
+	 SVzycjGmIQmXaTeK8nhKDQQKVgxxAseshEy77hJWSD5Re3gw2HrJuAiutNNUoS0eLh
+	 k1DtVF/lAmak3FXKlLmurDqntMj5zotCPlxjCY4zNrvBwHagfRx2pENsAan2+yK6xD
+	 lyEfBHWxbn/i+VtBsytrTGT2pqr//DBHSIHs3VU7sP7GDfFyNePPSVNfJ1PMmulbci
+	 hx66uU6fhpq6w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Andy Gospodarek <gospo@broadcom.com>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 01/11] PCI: Add ACS quirk for Broadcom BCM5760X NIC
+Date: Sun, 28 Jul 2024 12:09:34 -0400
+Message-ID: <20240728160954.2054068-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.223
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Jul 2024 01:10:39 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+From: Ajit Khaparde <ajit.khaparde@broadcom.com>
 
-> This commit intends to add the old BMP085 sensor to the new IRQ interface
-> of the sensor consistence. No functional changes intended.
-> 
-> The BMP085 sensor is equivalent with the BMP180 with the only difference of
-> BMP085 having an extra interrupt pin to inform about an End of Conversion.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Trivial comments inline + as the build bot pointed out you can't use data from
-one array to fill the other.
+[ Upstream commit 524e057b2d66b61f9b63b6db30467ab7b0bb4796 ]
 
-Jonathan
+The Broadcom BCM5760X NIC may be a multi-function device.
 
-> ---
->  drivers/iio/pressure/bmp280-core.c | 72 +++++++++++++++++++++++-------
->  drivers/iio/pressure/bmp280-i2c.c  |  4 +-
->  drivers/iio/pressure/bmp280-spi.c  |  4 +-
->  drivers/iio/pressure/bmp280.h      |  1 +
->  4 files changed, 60 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 4238f37b7805..e4d017358b68 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -3104,13 +3104,19 @@ static irqreturn_t bmp085_eoc_irq(int irq, void *d)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int bmp085_fetch_eoc_irq(struct device *dev,
-> -				const char *name,
-> -				int irq,
-> -				struct bmp280_data *data)
-> +static int bmp085_trigger_probe(struct iio_dev *indio_dev)
->  {
-> +	struct bmp280_data *data = iio_priv(indio_dev);
-> +	struct device *dev = data->dev;
-> +	struct fwnode_handle *fwnode;
->  	unsigned long irq_trig;
-> -	int ret;
-> +	int ret, irq;
-> +
-> +	fwnode = dev_fwnode(data->dev);
-> +	if (!fwnode)
-> +		return -ENODEV;
-> +
-> +	irq = fwnode_irq_get(fwnode, 0);
->  
->  	irq_trig = irqd_get_trigger_type(irq_get_irq_data(irq));
->  	if (irq_trig != IRQF_TRIGGER_RISING) {
-> @@ -3120,13 +3126,12 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
->  
->  	init_completion(&data->done);
->  
-> -	ret = devm_request_threaded_irq(dev,
-> -			irq,
-> -			bmp085_eoc_irq,
-> -			NULL,
-> -			irq_trig,
-> -			name,
-> -			data);
-> +	ret = devm_request_irq(dev,
-> +			       irq,
-> +			       bmp085_eoc_irq,
-> +			       irq_trig,
-> +			       indio_dev->name,
-> +			       data);
-Whilst here, put some of those parameters on the same line (staying below
-80 chars).
+While it does not advertise an ACS capability, peer-to-peer transactions
+are not possible between the individual functions. So it is ok to treat
+them as fully isolated.
 
->  	if (ret) {
->  		/* Bail out without IRQ but keep the driver in place */
->  		dev_err(dev, "unable to request DRDY IRQ\n");
-> @@ -3137,6 +3142,44 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
->  	return 0;
->  }
->  
-> +const struct bmp280_chip_info bmp085_chip_info = {
-> +	.id_reg = bmp180_chip_info.id_reg,
-As the build bot has pointed out you can't do this.
-Annoying but just duplicate the original structure with whatever
-changes you need.
+Add an ACS quirk for this device so the functions can be in independent
+IOMMU groups and attached individually to userspace applications using
+VFIO.
+
+[kwilczynski: commit log]
+Link: https://lore.kernel.org/linux-pci/20240510204228.73435-1-ajit.khaparde@broadcom.com
+Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/quirks.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 60a469bdc7e3e..39c42a1e8d9a3 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4945,6 +4945,10 @@ static const struct pci_dev_acs_enabled {
+ 	{ PCI_VENDOR_ID_BROADCOM, 0x1750, pci_quirk_mf_endpoint_acs },
+ 	{ PCI_VENDOR_ID_BROADCOM, 0x1751, pci_quirk_mf_endpoint_acs },
+ 	{ PCI_VENDOR_ID_BROADCOM, 0x1752, pci_quirk_mf_endpoint_acs },
++	{ PCI_VENDOR_ID_BROADCOM, 0x1760, pci_quirk_mf_endpoint_acs },
++	{ PCI_VENDOR_ID_BROADCOM, 0x1761, pci_quirk_mf_endpoint_acs },
++	{ PCI_VENDOR_ID_BROADCOM, 0x1762, pci_quirk_mf_endpoint_acs },
++	{ PCI_VENDOR_ID_BROADCOM, 0x1763, pci_quirk_mf_endpoint_acs },
+ 	{ PCI_VENDOR_ID_BROADCOM, 0xD714, pci_quirk_brcm_acs },
+ 	/* Amazon Annapurna Labs */
+ 	{ PCI_VENDOR_ID_AMAZON_ANNAPURNA_LABS, 0x0031, pci_quirk_al_acs },
+-- 
+2.43.0
 
 
