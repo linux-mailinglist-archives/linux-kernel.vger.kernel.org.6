@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-264477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217E093E3E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:13:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC52893E3E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A211F21802
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705DF1F218C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB1DAD51;
-	Sun, 28 Jul 2024 07:13:21 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B285EC2E9;
+	Sun, 28 Jul 2024 07:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpMnS7YG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16F08C07
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 07:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E085B2570;
+	Sun, 28 Jul 2024 07:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722150801; cv=none; b=Wpc04D6epxWFQqUg3g/oK2Kaoo+aawpwj9CJhuGS9/hzJsuqJbgfFgBVpeA4EIgfTVtY0k4yzMb94TB3840t6TtxZnc8PlFzQZnM9ws/XX5rex3skZrCoXSR7xq9PtyKiCz4S817d+PVEGBYdZZnlzKaIfgTDVrfucbsWYmL2vE=
+	t=1722151113; cv=none; b=RtomcmTGXKdGqDLS4zyD8wWjJNhTJeUMh1H1P357wLwJQgowT8yjeXyXxEs9oa60DFpPEqH61ym9szEsiSqSAxDsijvveYpbr/GhI4HF2BWd7+ZDiUuD2Iems7OCo/UZ09dHXtJIrUekTwEG8bSCEvBvin/nXWj/otiMabhUiek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722150801; c=relaxed/simple;
-	bh=7oum0ZDrEN3qwiUq8AXhZ20yryiL9I0AYm7niNRppK8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=CYeRxf+mCll0fQHgy/io+bb63WYXHIy0dLSSjM2y+jZt7Zn2lDNkUtUZZr7dDPoeMuzDHiivByTs0c+phZgUYjuY3bnSFAHDM5AqQmKUW09u1aIJ4iF3wYphc7Y8EdL1PHvWMJDIAVGk/zwOGR6B5D8iTOU3QqZyURjVeha1DIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 57F3464A3D0A;
-	Sun, 28 Jul 2024 09:13:10 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id zBbUua_PVi0O; Sun, 28 Jul 2024 09:13:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id E064564A3D19;
-	Sun, 28 Jul 2024 09:13:09 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lMyUS_RjfNGb; Sun, 28 Jul 2024 09:13:09 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C633664A3D0A;
-	Sun, 28 Jul 2024 09:13:09 +0200 (CEST)
-Date: Sun, 28 Jul 2024 09:13:09 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: torvalds <torvalds@linux-foundation.org>
-Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <2116767413.129257.1722150789677.JavaMail.zimbra@nod.at>
-In-Reply-To: <CAHk-=wjK1ZLk8TjejsRfDUH2Jp4=FPfD_GQU9z-m=bm75+jBMw@mail.gmail.com>
-References: <896050924.123729.1722027514568.JavaMail.zimbra@nod.at> <CAHk-=wjK1ZLk8TjejsRfDUH2Jp4=FPfD_GQU9z-m=bm75+jBMw@mail.gmail.com>
-Subject: Re: [GIT PULL] UBI and UBIFS updates for v6.11-rc1
+	s=arc-20240116; t=1722151113; c=relaxed/simple;
+	bh=sowjuugZXaxlM/D0SnpRi0wuYt0TKl1lXVH9UI1bHd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2Iv24FGsDjVIhGlqbDEvEVtEin+vjjAsKpRF3cM4aFJSR99wYRt5CiwvC2GJXzr3+jI2h2B9+nsawjH/XL4ST/HEWBSp4Sn75H0kYUo9/KKxGl1+EWy3hmkyBb4sOJTLXXqpXGMoLPfXFK23gfITaJNCehCMo8E0cr3+2DD6Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpMnS7YG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDF6C116B1;
+	Sun, 28 Jul 2024 07:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722151112;
+	bh=sowjuugZXaxlM/D0SnpRi0wuYt0TKl1lXVH9UI1bHd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QpMnS7YGlAahC1hLNy52G+1r8C5lA3r2WZXSjrY/s4xXVmq3Ly7pRSSF+O/YwyelT
+	 a7xQByMbRoAzBeG0ef/mIOdCqzgXo9iRifQaXsylYdhnnDHlrul3geiU35CdyvxgUX
+	 FA6FNTBSgOkRfjAICaWfMjQT7GNTwojsaJq+GYPPmgzvybGieiAJzEO4WW6bGIlZVE
+	 68RFU2g6uon4+YUgefrsTtXTHBsbOOr03Z2u5RW0JgYsXjKeIQzgNKiefk/NJrtLSR
+	 vM1vgrFn699O6b4SraT6lwk/ZZoYDuwHziOrsY2unukCkMUo/SFfz28cu66ymJGYYA
+	 YQ9DQXfDjNP8w==
+Date: Sun, 28 Jul 2024 08:18:21 +0100
+From: Simon Horman <horms@kernel.org>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, saeedm@nvidia.com, anthony.l.nguyen@intel.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andrew@lunn.ch, corbet@lwn.net, linux-doc@vger.kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	horatiu.vultur@microchip.com, ruanjinjie@huawei.com,
+	steen.hegelund@microchip.com, vladimir.oltean@nxp.com,
+	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
+	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
+	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
+	linux@bigler.io
+Subject: Re: [PATCH net-next v5 00/14] Add support for OPEN Alliance
+ 10BASE-T1x MACPHY Serial Interface
+Message-ID: <20240728071821.GC1625564@kernel.org>
+References: <20240726123907.566348-1-Parthiban.Veerasooran@microchip.com>
+ <20240726162451.GR97837@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: UBI and UBIFS updates for v6.11-rc1
-Thread-Index: 399OxDQ8G3+rh6/2Fi4Vrri1xYbQxg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726162451.GR97837@kernel.org>
 
-Linus,
+On Fri, Jul 26, 2024 at 05:24:51PM +0100, Simon Horman wrote:
+> On Fri, Jul 26, 2024 at 06:08:53PM +0530, Parthiban Veerasooran wrote:
+> > This patch series contain the below updates,
+> > - Adds support for OPEN Alliance 10BASE-T1x MACPHY Serial Interface in the
+> >   net/ethernet/oa_tc6.c.
+> >   Link to the spec:
+> >   -----------------
+> >   https://opensig.org/download/document/OPEN_Alliance_10BASET1x_MAC-PHY_Serial_Interface_V1.1.pdf
+> > 
+> > - Adds driver support for Microchip LAN8650/1 Rev.B1 10BASE-T1S MACPHY
+> >   Ethernet driver in the net/ethernet/microchip/lan865x/lan865x.c.
+> >   Link to the product:
+> >   --------------------
+> >   https://www.microchip.com/en-us/product/lan8650
+> 
+> ...
+> 
+> This is not a review of this patchset, but to set expectations:
+> 
+> ## Form letter - net-next-closed
+> 
+> (Adapted from text by Jakub)
+> 
+> The merge window for v6.11 has begun and therefore net-next is closed
+> for new drivers, features, code refactoring and optimizations.
+> We are currently accepting bug fixes only.
+> 
+> Please repost when net-next reopens after 15th July.
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "torvalds" <torvalds@linux-foundation.org>
-> Does nobody actually check the build output?
->=20
->  WARNING: modpost: drivers/mtd/ubi/ubi: section mismatch in
-> reference: ubi_init+0x170 (section: .init.text) -> ubiblock_exit
-> (section: .exit.text)
->=20
-> and yes, this may be harmless on x86 (and several other
-> architectures), because the exit.text is dropped at runtime because
-> dropping it at link time will cause problems for altinstructions.
->=20
-> BUT.
->=20
-> The warning is very real, because on *other* architectures, the
-> EXIT_TEXT sections may never be linked in at all, because something
-> that is built-in never gets unloaded, so it never has a module exit.
->=20
-> So __exit literally exists so that the code can be thrown away when not u=
-sed.
->=20
-> And now you're calling it from a non-exit place.
->=20
-> End result: the warning exists for a reason, and it looks like commit
-> 72f3d3daddd7 ("mtd: ubi: Restore missing cleanup on ubi_init() failure
-> path") is just broken.
->=20
-> I could try to fix this up in the merge, but honestly, the fact that
-> apparently nobody bothered to even look at the new warning means that
-> I just consider this whole pull completely buggered.
->=20
-> I refuse to pull garbage that our build system very clearly warns about.
+Sorry, I'm not sure why I wrote the 15th, I meant the 29th.
 
-The issue was detected and fixed two weeks ago:
-https://lore.kernel.org/linux-mtd/20240713073519.25325-1-richard@nod.at/
-
-But I forgot to include my very own patch.
-So, the failure is totally on my side, I'm sorry for that.
-
-Do you allow me sending an updated pull requested?
-
-Thanks,
-//richard
+> RFC patches sent for review only are welcome at any time.
+> 
+> See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+> --
+> pw-bot: defer
+> 
 
