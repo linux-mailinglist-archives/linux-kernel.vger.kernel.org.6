@@ -1,256 +1,162 @@
-Return-Path: <linux-kernel+bounces-264536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDB493E4A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:50:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEE093E4A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6EF281616
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:50:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B794B21101
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D6D374CC;
-	Sun, 28 Jul 2024 10:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60ED374C4;
+	Sun, 28 Jul 2024 10:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="i2UfbhI5"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPe2UObM"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D59628DC1
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820F08BE7;
+	Sun, 28 Jul 2024 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722163807; cv=none; b=CU8HUUtNM885Q/Rb/pka1zFvw27gQK6xZJpZzqavSyUIdOs6sdgphnYDRu/UPmCFb3BZuA72cSOi8igTju1+cfO8mwtc2jDSw+V0K4FpLlbtToSLVif+9jOzhIFXT8bty2tQvcl6s4mrlf3RHESD/z/9eMkeZP+pNO9IzNMYp9k=
+	t=1722164144; cv=none; b=APYj5DW0SjbJxUCpt7kBrsGlcK1hI6bVLuDpp6jorASnIkr+EM+bQNYNkdhW4PZ/+WkGFEmWN02udngRakNTSHueCn/mD19pzgXTXaYG1cvQW0DdfCjPZIt3l43pntVtVfzDBDler9o/S3cFu71fKnzwzNTbPWhJGGj4YTGeHs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722163807; c=relaxed/simple;
-	bh=EoYaL+mLJByPrinJnBR2J5nYwvdm6u0KzhxQwIuie9A=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fsSKd5bErvKVB3rEH66WCS57/oc0fohnmt1+vOMZFMiwarVZ0SXFB9UqNK4LH+EQE74nO+bUtgH425LSt1LwHdDajosfTPUp/MtfRP17cA73lJH4jr8dpP3H9XyJyZ4zb2zby9Jb9yjcRM+IgjCf6CMfBu1L6HEAOf1xgRnAcZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=i2UfbhI5; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so363333866b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 03:50:04 -0700 (PDT)
+	s=arc-20240116; t=1722164144; c=relaxed/simple;
+	bh=AO3ANZGwYlvPW60ri3QboTRjAJTqnJc/8tMPlmXUxz8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=k8KtKAZ2F7M8uqtGo9zoRqWB+xAIhEq2RvjV4rjvAY8YYzvrI2iDTUirVWFN4ZNPCTRUj3TIQSwfPfCOPejv01+AkjX/MvevUcSlxiCdBS9fbMRw5HYbzNOucKbuGMQvMgRy504CbngaOk36k2Os1ZclHJsRl0WnxCcjrZay+hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPe2UObM; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc5549788eso16544575ad.1;
+        Sun, 28 Jul 2024 03:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722163803; x=1722768603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=09/k60kZWNc6aqMN9cbd3E96NZpZdb40JpW7ARPp7ik=;
-        b=i2UfbhI5xr22sEneRmQRjliVERHrP9NiFDgpXPHaFpUNc++vhPNvU3sRFJZKgkZIlC
-         k7TG9kjK5S7sRjc+MyfVX7i6ooyJHqNyBDm/y9h0/3C8CLVtzJLubA98i0/QRaPB1I6N
-         Vl9bZ/K08cHyXTRBoH5fm0pl6Co5g8owmOn+pJDHNOwwL36dqB6lwuCQhB8AcbFk4fmc
-         8o8tGz4sfmdZYhWBzsEZfbrDaDKmLclu3tSeB9Z0qhvsQZNLLmf+PslTD2zIAjqy9pGW
-         F+D0/vek2cmUhjeJ3VMkO1iIgO15SL5jtdp0+3QQTmq1cY6xoR3tnslLLt4n/ruCceVa
-         xJqg==
+        d=gmail.com; s=20230601; t=1722164142; x=1722768942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DqWBgWElavqY7wtWZRfzFWrTNHwzIbu4PnT54eW9R3E=;
+        b=aPe2UObMmvWB8IK5SFcf3WxE2VZs7JtUUvP6lFMvKSTa5FMDN6t1DWyfVbitCQwdzW
+         LkjMEDzpi+PcOcGRPTQgp4PPkwlxKU85t6p/dbdNCt0QzO7y6I4voZ9DZA2UfK9SNuu5
+         tIV6DVupxEzzpin0JkTg0sq5+6zzCfbJQXugFs5N6/EOjLRAGyy6lyXRHtZTOtJEjPNr
+         OwcC20cR0R5y+lo6Q5iZChsF/VBtxl3Gncyw6EoY+PjogrxvuBkbjwNLtF6PIf0ckV4j
+         bCnsvxdhpHgfEp3hwzmx+GWKdHnGRX0+wgR5KkNpLfOAbuYh9R2NTxOT/s74Uo57aWlG
+         l1Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722163803; x=1722768603;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=09/k60kZWNc6aqMN9cbd3E96NZpZdb40JpW7ARPp7ik=;
-        b=rmXUX1+XONEK6TllAT59Aa6gEuHcITvq0lqOJjsxUD26lepOdFfOxBSWdzzesjcAvV
-         C7MVUvZDHWIVAZRbc/6WM9e4n3zpeu95hZ0hnWqVti7TsYIZWQSp8WvprENnujnen6b3
-         XmAWDr/zusMyRzdNJ6iDqAZmxJxq8sNYpvN2AkVpqGOtH1ddkQuVma00k5pK9u2Cto29
-         8sNeLpQCauOj8WqFhICfzhQ3HIc0Kwcc9LEPVMnH+GYC5QhCd36vc7aArx3JxSrfwH4H
-         4sID6fx1h64yA8fk1D+mSMLTSTzjLbhIl3p929OvWKJWp03gKZX7gHhO+lWLs55gIU6R
-         gljg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlqWNdMsvc0WPO5Sc2j0mnPL1qtoOmHDpc8eT1BBluX9zIEwecAnBzJDXwC15ok4xYZjmoTW7BZlQ3RigVBOgUAbnuwgB+9zQLujyC
-X-Gm-Message-State: AOJu0Yz6XOagjydIgT7KYhYlyZd4eQ7cym7Q03VtZnd8DGLAwRNnZein
-	P0PJbz5I1DODy9iH67kQIjG6rT8GLro1uqliPL0RwAuoXaJTVopun1Rzrcvgsn3GodhQTVNYkXP
-	kVv9IZX4KX37cK/Bqu/mhnqwl1blNq5Eun/861g==
-X-Google-Smtp-Source: AGHT+IF7iV4aj1iGM8VKKufqx8ukGL7Ctkzc7F5g55X0WhODVsuBbmrl6ZsbAl2rIFwuUbPuJ+W/jhWfJJ1rABEn/24=
-X-Received: by 2002:a17:906:c115:b0:a7d:35d7:4aa9 with SMTP id
- a640c23a62f3a-a7d4005781dmr321416866b.34.1722163802681; Sun, 28 Jul 2024
- 03:50:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722164142; x=1722768942;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DqWBgWElavqY7wtWZRfzFWrTNHwzIbu4PnT54eW9R3E=;
+        b=xBQrKO8/NbybFwi4Rprpgrxs1GttwmFjWtHvuuCmPCSuphHSM6R+l36LtG1qsoGqeW
+         t78dngMJc6tOEPckEwZs1cFdxi6yzdt8q9ax0ozwQRLLGbaHpAUohGv3R7N78SFUS/0n
+         AGJ/bwVPNdg6d/xpB5GGC3Cya0GX/um3wLBF+ZZu7wxzTGKiPEsalkHihUAXCV4uqv7O
+         0XzJvTrBSVhk8Z9up9x3yDAsV5GTd0WC8gq0wPazT8t0dAdd4wa9JAUKeMSgUEo5nPsA
+         +9s+ZPJXv3G4g9+nJWHmGlBnOfss8/GKQwcMRzfwOmllaSPSgDqP3DIGnxQd2j74Tel5
+         69Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF8rGnB87/6A5S6osmShGCQQ/m8gWs+kLWbyEJ6Osuo4bEby2rexKIr9HeKJfAyFTILo6/p0KUUD/WL74AXAMhoscTTX+p/EEk7Z1G4kiQFNPT8e3YHxVf3lVtQya/wc/lfu0F
+X-Gm-Message-State: AOJu0YwVoPcSjKxao/iknze+mXbabQPT7KoIYyMsnqKQNIXl7KMy20AS
+	gTVoupltavAo960QFcHqYvcYn0cDCvusegj4YVFJTp3SlITWzxXh
+X-Google-Smtp-Source: AGHT+IGzXuZ1BhxG7GGEAUuxZTP2VXBnxlPfrBkK95JR+XYXeZjfoWa8Spn8JHu0gzaNoQrbpl1b7g==
+X-Received: by 2002:a17:903:32d1:b0:1f8:5a64:b468 with SMTP id d9443c01a7336-1ff048a0510mr69511105ad.47.1722164141677;
+        Sun, 28 Jul 2024 03:55:41 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f2b80bsm62775345ad.205.2024.07.28.03.55.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 03:55:41 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: razor@blackwall.org,
+	agospoda@redhat.com,
+	syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net] net: Fix data race around dev->flags in netif_is_bond_master
+Date: Sun, 28 Jul 2024 19:54:29 +0900
+Message-Id: <20240728105429.2223-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000e9f499061c6d4d7a@google.com>
+References: <000000000000e9f499061c6d4d7a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Sun, 28 Jul 2024 12:49:51 +0200
-Message-ID: <CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com>
-Subject: RCU stalls and GPFs in ceph/netfs
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+BUG: KCSAN: data-race in __dev_change_flags / is_upper_ndev_bond_master_filter
 
-in the last few days, I have been chasing a 6.10 regression. After
-updating one of our servers from 6.9.10 to 6.10.1, I found various
-problems that may or may not be caused by the same code change
-(abbreviated):
+read-write to 0xffff888112d970b0 of 4 bytes by task 4888 on cpu 0:
+ __dev_change_flags+0x9a/0x410 net/core/dev.c:8755
+ rtnl_configure_link net/core/rtnetlink.c:3321 [inline]
+ rtnl_newlink_create net/core/rtnetlink.c:3518 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x121e/0x1690 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x85e/0x910 net/core/rtnetlink.c:6635
+ netlink_rcv_skb+0x12c/0x230 net/netlink/af_netlink.c:2564
+ rtnetlink_rcv+0x1c/0x30 net/core/rtnetlink.c:6653
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x58d/0x660 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x5ca/0x6e0 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x140/0x180 net/socket.c:745
+ ____sys_sendmsg+0x312/0x410 net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmsg+0x1e9/0x280 net/socket.c:2668
+ __do_sys_sendmsg net/socket.c:2677 [inline]
+ __se_sys_sendmsg net/socket.c:2675 [inline]
+ __x64_sys_sendmsg+0x46/0x50 net/socket.c:2675
+ x64_sys_call+0xb25/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-[  108.043488] WARNING: CPU: 0 PID: 2860 at fs/ceph/caps.c:3386
-ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
-[  108.043498] Modules linked in:
-[  108.043500] CPU: 0 PID: 2860 Comm: rsync Not tainted 6.10.1-cm4all1-vm+ #117
-[  108.043505] RIP: 0010:ceph_put_wrbuffer_cap_refs+0x1bb/0x1f0
-[  108.043526] Call Trace:
-[  108.043573]  ? ceph_put_wrbuffer_cap_refs+0x27/0x1f0
-[  108.043575]  ceph_invalidate_folio+0x9a/0xc0
-[  108.043577]  truncate_cleanup_folio+0x52/0x90
-[  108.043583]  truncate_inode_pages_range+0xfe/0x400
-[  108.043585]  ? __rseq_handle_notify_resume+0x25b/0x480
-[  108.043589]  ? vfs_read+0x246/0x340
+read to 0xffff888112d970b0 of 4 bytes by task 11 on cpu 1:
+ netif_is_bond_master include/linux/netdevice.h:5020 [inline]
+ is_upper_ndev_bond_master_filter+0x2b/0xb0 drivers/infiniband/core/roce_gid_mgmt.c:275
+ ib_enum_roce_netdev+0x124/0x1d0 drivers/infiniband/core/device.c:2310
+ ib_enum_all_roce_netdevs+0x8a/0x100 drivers/infiniband/core/device.c:2337
+ netdevice_event_work_handler+0x15b/0x3c0 drivers/infiniband/core/roce_gid_mgmt.c:626
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3329
+ worker_thread+0x526/0x720 kernel/workqueue.c:3409
+ kthread+0x1d1/0x210 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-[  108.043705] BUG: kernel NULL pointer dereference, address: 0000000000000356
-[  108.043948] #PF: supervisor write access in kernel mode
-[  108.044166] #PF: error_code(0x0002) - not-present page
-[  108.044341] PGD 0 P4D 0
-[  108.044465] Oops: Oops: 0002 [#1] SMP PTI
-[  108.048393] Call Trace:
-[  108.050002]  ? ceph_put_snap_context+0xf/0x30
-[  108.050178]  ceph_invalidate_folio+0xa2/0xc0
-[  108.050356]  truncate_cleanup_folio+0x52/0x90
-[  108.050532]  truncate_inode_pages_range+0xfe/0x400
-[  108.050711]  ? __rseq_handle_notify_resume+0x25b/0x480
-[  108.050896]  ? vfs_read+0x246/0x340
+value changed: 0x00001002 -> 0x00000202
 
-[  104.587469] Oops: general protection fault, probably for
-non-canonical address 0xe01ffbf110207cde: 0000 [#1] SMP KASAN PTI
-[  104.588429] KASAN: maybe wild-memory-access in range
-[0x00ffff888103e6f0-0x00ffff888103e6f7]
-[  104.588663] CPU: 6 PID: 2882 Comm: php-cgi8.1 Not tainted
-6.10.1-cm4all1-vm+ #120
-[  104.591880] Call Trace:
-[  104.592015]  <TASK>
-[  104.592207]  ? die_addr+0x3c/0xa0
-[  104.592411]  ? exc_general_protection+0x113/0x200
-[  104.592650]  ? asm_exc_general_protection+0x22/0x30
-[  104.592876]  ? netfs_alloc_request+0x761/0xbd0
-[  104.593099]  ? netfs_read_folio+0x11f/0xad0
-[  104.593318]  ? netfs_read_folio+0xf6/0xad0
-[  104.593498]  ? filemap_get_read_batch+0x2dd/0x650
-[  104.593677]  ? __pfx_netfs_read_folio+0x10/0x10
-[  104.593854]  filemap_read_folio+0xb2/0x210
-[  104.594042]  ? __pfx_filemap_read_folio+0x10/0x10
-[  104.594226]  ? __pfx_stack_trace_save+0x10/0x10
-[  104.594417]  ? stack_depot_save_flags+0x24/0x690
-[  104.594616]  filemap_get_pages+0xaf8/0x1200
-[  104.594821]  ? __pfx_filemap_get_pages+0x10/0x10
-[  104.595012]  ? _raw_spin_lock+0x7a/0xd0
+According to KCSAN report, there is a read/write race between 
+__dev_change_flags and netif_is_bond_master for dev->flags. Therefore, 
+should change to use READ_ONCE() when reading dev->flags.
 
- rcu: INFO: rcu_sched self-detected stall on CPU
- rcu:         7-....: (2099 ticks this GP)
-idle=4874/1/0x4000000000000000 softirq=1503/1503 fqs=1049
- rcu:         (t=2100 jiffies g=4053 q=344 ncpus=16)
- CPU: 7 PID: 3443 Comm: php-was Not tainted 6.9.0-vm+ #139
- Call Trace:
-  <IRQ>
-  ? rcu_dump_cpu_stacks+0xed/0x170
-  ? rcu_sched_clock_irq+0x558/0xbc0
-  ? __smp_call_single_queue+0x8b/0xe0
-  ? update_process_times+0x69/0xa0
-  ? tick_nohz_handler+0x87/0x120
-  ? __pfx_tick_nohz_handler+0x10/0x10
-  ? __hrtimer_run_queues+0x110/0x250
-  ? hrtimer_interrupt+0xf6/0x230
-  ? __sysvec_apic_timer_interrupt+0x51/0x120
-  ? sysvec_apic_timer_interrupt+0x60/0x80
-  </IRQ>
-  <TASK>
-  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-  ? __xas_next+0xc6/0xe0
-  filemap_get_read_batch+0x163/0x240
-  filemap_get_pages+0x9a/0x5c0
-  filemap_read+0xd9/0x310
-  ? __ceph_get_caps+0xd5/0x580
-  ? __ceph_caps_issued_mask+0x156/0x210
+Reported-by: syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com
+Fixes: 8a7fbfab4be3 ("netxen: write IP address to firmware when using bonding")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ include/linux/netdevice.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-These servers have Ceph mounts with fscache.
-
-At first, it looked like these bugs could be triggered easily and I
-did a bisect; however the WARNING in Ceph code went away, and going
-back further in the git history made reproducing the problem less
-likely. I tried KASAN but it didn't give any more information.
-
-After a few dead ends (due to some false "good" commits), the bisect
-arrived at your commit 2e9d7e4b984a61 ("mm: Remove the PG_fscache
-alias for PG_private_2"). This commit easily reproduces the RCU stalls
-on my server. The preceding commit 2ff1e97587f4d3 ("netfs: Replace
-PG_fscache by setting folio->private and marking dirty") never did,
-not even after an hour of rebooting and retrying.
-
-This is how the RCU stall looks like on 2e9d7e4b984a61:
-
- rcu: INFO: rcu_sched self-detected stall on CPU
- rcu:         6-....: (46220 ticks this GP)
-idle=4bfc/1/0x4000000000000000 softirq=1594/1594 fqs=21190
- rcu:         (t=46221 jiffies g=2577 q=7220 ncpus=16)
- CPU: 6 PID: 3119 Comm: wordpress-manag Not tainted
-6.9.0-rc6-vm-00004-gae678317b95e #160
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
- RIP: 0010:filemap_get_read_batch+0x7b/0x240
- Code: 48 c7 44 24 30 00 00 00 00 48 89 e7 e8 ee d4 99 00 48 85 c0 0f
-84 bf 00 00 00 48 89 c7 48 81 ff 06 04 00 00 0f 84 fd 00 00 00 <48> 81
-ff 02 04 00 00 0f 84 ca 00 00 00 48 3b 6c 24 08 0f 82 97 00
- RSP: 0018:ffffbb2500fef8f8 EFLAGS: 00000296
- RAX: ffffefa30509c740 RBX: ffffbb2500fefa50 RCX: 0000000000000000
- RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffefa30509c740
- RBP: 0000000000000003 R08: 0000000000000000 R09: ffffbb2500fefaec
- R10: ffff9acb4a77ec80 R11: 0000000000000000 R12: ffffbb2500fefc58
- R13: ffff9acb5c381d00 R14: 0000000000000000 R15: ffffbb2500fefc80
- FS:  00007f5f6b6eeb80(0000) GS:ffff9ad64ef80000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00005623dea2b3d8 CR3: 000000011b658003 CR4: 00000000001706b0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <IRQ>
-  ? rcu_dump_cpu_stacks+0xed/0x170
-  ? rcu_sched_clock_irq+0x558/0xbc0
-  ? __smp_call_single_queue+0x8b/0xe0
-  ? update_process_times+0x69/0xa0
-  ? tick_nohz_handler+0x87/0x120
-  ? __pfx_tick_nohz_handler+0x10/0x10
-  ? __hrtimer_run_queues+0x110/0x250
-  ? hrtimer_interrupt+0xf6/0x230
-  ? __sysvec_apic_timer_interrupt+0x51/0x120
-  ? sysvec_apic_timer_interrupt+0x60/0x80
-  </IRQ>
-  <TASK>
-  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-  ? filemap_get_read_batch+0x7b/0x240
-  ? filemap_get_read_batch+0x163/0x240
-  filemap_get_pages+0x9a/0x5c0
-  ? __call_rcu_common.constprop.0+0x87/0x220
-  filemap_read+0xd9/0x310
-  ? __ceph_get_caps+0xd5/0x580
-  ? terminate_walk+0x95/0x100
-  ? path_openat+0xca3/0xf10
-  ceph_read_iter+0x3e1/0x620
-  vfs_read+0x23a/0x330
-  ksys_read+0x63/0xe0
-  do_syscall_64+0x66/0x100
-  ? __alloc_pages+0x176/0x2e0
-  ? __count_memcg_events+0x4e/0xb0
-  ? __pte_offset_map_lock+0x60/0xe0
-  ? __mod_memcg_lruvec_state+0x89/0x110
-  ? __lruvec_stat_mod_folio+0x41/0x70
-  ? do_anonymous_page+0x6dc/0x840
-  ? __handle_mm_fault+0x936/0x1250
-  ? __count_memcg_events+0x4e/0xb0
-  ? handle_mm_fault+0xa2/0x2a0
-  ? do_user_addr_fault+0x308/0x5d0
-  ? exc_page_fault+0x62/0x120
-  ? irqentry_exit_to_user_mode+0x40/0xf0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-When that happens, the process is at 100% CPU usage, but gdb/strace
-cannot attach, and /proc/PID/stack is empty. I tried "perf record" and
-found the process was busy-looping inside filemap_get_pages(), calling
-filemap_get_read_batch() over and over, saw some xas_ calls but
-nothing else.
-
-Your commit 2e9d7e4b984a61 is too obscure for me, I don't know that
-part of the kernel, and I can't imagine how it can cause such a
-regression, but maybe you have an idea?
-
-I can get you more information or try patches with more debugging code
-if you want.
-
-Max
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 607009150b5f..5c95d7925b3f 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -5043,7 +5043,7 @@ static inline bool netif_is_macvlan_port(const struct net_device *dev)
+ 
+ static inline bool netif_is_bond_master(const struct net_device *dev)
+ {
+-	return dev->flags & IFF_MASTER && dev->priv_flags & IFF_BONDING;
++	return READ_ONCE(dev->flags) & IFF_MASTER && dev->priv_flags & IFF_BONDING;
+ }
+ 
+ static inline bool netif_is_bond_slave(const struct net_device *dev)
+--
 
