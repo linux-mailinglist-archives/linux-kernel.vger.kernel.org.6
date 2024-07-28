@@ -1,164 +1,238 @@
-Return-Path: <linux-kernel+bounces-264499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B1493E431
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C1A93E434
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A5B281735
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC31281AA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B539E17C61;
-	Sun, 28 Jul 2024 09:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF29182C5;
+	Sun, 28 Jul 2024 09:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5jDSVHQ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBMU8rQg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3ED1877
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C011877;
+	Sun, 28 Jul 2024 09:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722157231; cv=none; b=Frf2/cSkOrG0hZuKQkFOXy2+qg0uCmk4F7br/bej9IAr2DBbmQ3wDC2e4u+KWWnZ5AdH1rOdHPWVMWWbhEjXLOOQiXhnT5PF68sE2VuCp7M1WD8PmKVXYHQtIcWwxWuBhQ75Rlf7vQ8EPJ8IkEuL0AJ6W50UG8fueRWd5/bkHQA=
+	t=1722157441; cv=none; b=FfNDeEL685elRHb3BdMmzZ1HgcOLKjt3LwOKgIt4MpJhCCsrvDibIHb8uDPtvMxX0/HjDKrRMbAMeA1XJjWiKe6ZaWueV5fL6tYpR2VMvgpVNolZF8IydThHNcb1oF3AMomQc0aO3di+KNKLIsk4zKwKk+aR2uV29e7zFOrSdxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722157231; c=relaxed/simple;
-	bh=ujZadsmAlrryVH7s65HYoO1mYAguj/qF1c1WDAZXUNA=;
+	s=arc-20240116; t=1722157441; c=relaxed/simple;
+	bh=QxM94LwGA2JdJecwH8apfoLuglqSOMOVfCkvfiW9i/4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BSKQsFpcfAKvczsMt0N3HeefzydO+paC9D4+DPaPY4R+eoQUpowtESLc3KutlyPOZC3cB3E0tWcm2J/pex5auA9ykgiCVeaRfvlScPY5VeuShz/VY8v/UO7c4lT4JxihxJfconKuIkEbTqyP7tU+FE+S8WCMA1P6ilCK529SbJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5jDSVHQ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52efd8807aaso3979423e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 02:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722157228; x=1722762028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6f5NLazh5in+pBW1g2Mr1FfXjDf+1KVwju14XjPZipY=;
-        b=m5jDSVHQ/7nYBPbULFODlDx5RNfX+bPGEVk8Rz1KsvgtOYAPQ7KzGEkGCKFWekLCbZ
-         BkO20CZACgQHPqMqW9z/5zxSgMtOKELAV6cUJgpCRGY9f5keA40pN8EMUU+xjUJYrTFf
-         k/nyfmrDF0PDJ4h5izyjMyBZG3aW6+RwDjhN5HTwt5g9Z6Ci+Qa7O8MYrN6d1QmrD+2D
-         LVC9kkIOxi8rIQQ+zNiwyL6l2gvgVLaLMpLkyOic8OzchMDn3Mqga9ldcpVJpJ0OFTzv
-         wiPTgfBDbtd9C4hTC/jFWwrhLFIhRQ0ywcw1LxfJSLtMl55/lEzq+L/DZn+lVH3AJ8iZ
-         1msw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722157228; x=1722762028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6f5NLazh5in+pBW1g2Mr1FfXjDf+1KVwju14XjPZipY=;
-        b=niBKn5NS1NyCnK7oyyQxCScVHYymmCyz9mZMDBwpN6m/4cdTR6uHCkdgo1/xUus7iU
-         xDE0Of6nFQLLPhdtYVFJP6MGq0IOQNRYzq0Fjp1f46r9rsjpivfxyfb+qsFB9Qi9F5/J
-         XJ1Fytmg2eiDWP8TU4MSfhC8Xmwvrr4cx8yTwr8ImvK7zhrdbtJj/FZ+Fzx+eu38/jAG
-         6Acd/0nQwTl+ZSCBeOW6v7Ih64PYvuOUlzw0+IIR+xClfRUio3ZmphcEMCSpBVWm40Ee
-         Qo6uxDDuMW6trzUXzlHedhmqtcI30aF7Tbd+BCtjidQDyUQWyWDV3E8Kle+Xg73D5sSs
-         EFvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9syuy2LZ+8MEASnRjIcEAU+ZUbacGn0/B3P6n7eBXK5Uw3wYKLmdlywEovv3QS2Iq4bFjc4lnRxvoda5a2pr6aOBKIoYPugzg5ldA
-X-Gm-Message-State: AOJu0YwAPQw2zg3O3brrZ4DxMjwHw0JUu5M6WItjnDz8EHPHd6tSKYUo
-	zUltFDH+rqN87IDY138z59kbivlss1QYaEAoXRF5uwatFZ0i4P4sTPHw6LAhTG4M2C2MAEg+Iv5
-	bHkZtomsC9SMpSUOWWeK4R1sTyUE=
-X-Google-Smtp-Source: AGHT+IEfop4MZgYbfVkRogoHTR4KMymOl6FhVvJxTvvhSjTnQU3NGW/LLFKLzyslu/yA++LpMhjdErtPrP41LklzyHI=
-X-Received: by 2002:a05:6512:1104:b0:52f:89aa:c344 with SMTP id
- 2adb3069b0e04-5309b26b828mr3724527e87.16.1722157227182; Sun, 28 Jul 2024
- 02:00:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=gGgSvEufozgKNNX9OWtKMEZsr2tooDLOFP1tQ+cu2ZMl5CO9IvCOIJj31tjSBS69aoazL+z7Ivx71WnMn497IN1VPpZBJtzg8IdGkjalwNKgyi85fvl5Fo/+6dvXxRtn/lb4PuyfvJMO7WbBqJApxLj8OYAXuubnbFHFtWxjvaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBMU8rQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8EE4C4AF09;
+	Sun, 28 Jul 2024 09:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722157440;
+	bh=QxM94LwGA2JdJecwH8apfoLuglqSOMOVfCkvfiW9i/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vBMU8rQg/66YMODUCisd2/xQ0kKep+z0VohpL24KTfO4sKFxbA9s1O8M2UH/6x2Yb
+	 8ekByf6TX1yFzHQVLDf3YKHjQvnwQ0kflQZIQoPHMUwOShW4fTdXbAAt5iqfzrmfRY
+	 nLNEa+WAYcHnBdFpgACSdyTdA0ben4B3eSqp7zjMSV2q4TkG/Nrqmt49ErlHr/pNUN
+	 bJ3EDPv3ac5EwKIF/ERyqs2XmuFnY6R+u40xevC9KvKn8jz7UnsmcBqVNXMcPdgV2I
+	 5YY8F1938N0z/IiV49sP1RklkRJEwUl+OSf1/ny2By6hjmP5VbD24n6UxItS4n1SWR
+	 PkQSi6QhWLY8g==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f01993090so3886440e87.2;
+        Sun, 28 Jul 2024 02:04:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqhXIc9n2DAZocDpGpOLdJ9RZ09mxIKD3wrev79HeRnq6yAa5dnMinjLFmZS782Oy04Ik3PgJK5L+eeMNuT/SFoYDvRuVIsGy0lfaEJgCUesoBnKOZ3/Bl+sftO9xeRE007rqn79LmHRVIh9eglnB2AuL7sSNrRYmqT4PDDaU/aSIPSuIeeQ2DOg==
+X-Gm-Message-State: AOJu0Yxkqc3aFPpgLzEHr7zy6+ZEnI5E2VU6HkILn3DyidyjBjAw9auO
+	B0BcMS531CEw9+CVWl5IPEe38Tv+GQfhdzjzg26Ouv1HzFSMuW1QCddQiF5QkNaAfkZQrBiFFyi
+	eWwuK8vH3IgRqrEn/XTYlISGjn34=
+X-Google-Smtp-Source: AGHT+IEA8iKtDLPkOIolC2s6x/f3cSR63CivhHgQ0vStJfRCj7P7AJL1bEamf+xWVVK8nbJy2NaOQncDu9LXWbZTqgU=
+X-Received: by 2002:ac2:54b7:0:b0:52c:db06:ee60 with SMTP id
+ 2adb3069b0e04-5309b2bb677mr2809814e87.41.1722157439567; Sun, 28 Jul 2024
+ 02:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726104848.2756962-1-leitao@debian.org>
-In-Reply-To: <20240726104848.2756962-1-leitao@debian.org>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Sun, 28 Jul 2024 18:00:14 +0900
-Message-ID: <CAC5umygxnq=h1H2CCeprzaggu_A4DxZia3EEBTYk7sb72OnQFA@mail.gmail.com>
-Subject: Re: [PATCH] fault-injection: Enhance failcmd to exit on non-hex
- address input
-To: Breno Leitao <leitao@debian.org>
-Cc: akpm@linux-foundation.org, leit@meta.com, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240722090622.16524-1-petr.pavlu@suse.com> <20240722090622.16524-2-petr.pavlu@suse.com>
+ <CAK7LNATG-kYuxGgzC7e-BbTPMnSH+MCAEVOXoQkdGYH9xLincA@mail.gmail.com> <90416ccc-8537-489c-ac15-78aacbcb42b0@suse.com>
+In-Reply-To: <90416ccc-8537-489c-ac15-78aacbcb42b0@suse.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 28 Jul 2024 18:03:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARMR1Pn3Rj6fC-u3qQC4jQGrasD1mqxg-8qPNPdTy61gw@mail.gmail.com>
+Message-ID: <CAK7LNARMR1Pn3Rj6fC-u3qQC4jQGrasD1mqxg-8qPNPdTy61gw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] module: Split modules_install compression and
+ in-kernel decompression
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-2024=E5=B9=B47=E6=9C=8826=E6=97=A5(=E9=87=91) 19:50 Breno Leitao <leitao@de=
-bian.org>:
+On Thu, Jul 25, 2024 at 9:59=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
 >
-> The failcmd.sh script in the fault-injection toolkit does not currently
-> validate whether the provided address is in hexadecimal format. This can
-> lead to silent failures if the address is sourced from places like
-> `/proc/kallsyms`, which omits the '0x' prefix, potentially causing users
-> to operate under incorrect assumptions.
+> On 7/22/24 12:23, Masahiro Yamada wrote:
+> > On Mon, Jul 22, 2024 at 6:07=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com=
+> wrote:
+> >>
+> >> The kernel configuration allows specifying a module compression mode. =
+If
+> >> one is selected then each module gets compressed during
+> >> 'make modules_install' and additionally one can also enable support fo=
+r
+> >> a respective direct in-kernel decompression support. This means that t=
+he
+> >> decompression support cannot be enabled without the automatic compress=
+ion.
+> >>
+> >> Some distributions, such as the (open)SUSE family, use a signer servic=
+e for
+> >> modules. A build runs on a worker machine but signing is done by a sep=
+arate
+> >> locked-down server that is in possession of the signing key. The build
+> >> invokes 'make modules_install' to create a modules tree, collects
+> >> information about the modules, asks the signer service for their signa=
+ture,
+> >> appends each signature to the respective module and compresses all mod=
+ules.
+> >>
+> >> When using this arrangment, the 'make modules_install' step produces
+> >> unsigned+uncompressed modules and the distribution's own build recipe =
+takes
+> >> care of signing and compression later.
+> >>
+> >> The signing support can be currently enabled without automatically sig=
+ning
+> >> modules during 'make modules_install'. However, the in-kernel decompre=
+ssion
+> >> support can be selected only after first enabling automatic compressio=
+n
+> >> during this step.
+> >>
+> >> To allow only enabling the in-kernel decompression support without the
+> >> automatic compression during 'make modules_install', separate the
+> >> compression options similarly to the signing options, as follows:
+> >>
+> >>> Enable loadable module support
+> >> [*] Module compression
+> >>       Module compression type (GZIP)  --->
+> >> [*]   Automatically compress all modules
+> >> [ ]   Support in-kernel module decompression
+> >>
+> >> * "Module compression" (MODULE_COMPRESS) is a new main switch for the
+> >>   compression/decompression support. It replaces MODULE_COMPRESS_NONE.
+> >> * "Module compression type" (MODULE_COMPRESS_<type>) chooses the
+> >>   compression type, one of GZ, XZ, ZSTD.
+> >> * "Automatically compress all modules" (MODULE_COMPRESS_ALL) is a new
+> >>   option to enable module compression during 'make modules_install'. I=
+t
+> >>   defaults to Y.
+> >> * "Support in-kernel module decompression" (MODULE_DECOMPRESS) enables
+> >>   in-kernel decompression.
+> >>
+> >> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> >> ---
+> >
+> >
+> >
+> > My preference is to add
+> >  CONFIG_MODULE_DECOMPRESS_GZIP
+> >  CONFIG_MODULE_DECOMPRESS_XZ
+> >  CONFIG_MODULE_DECOMPRESS_ZSTD
+> > instead of
+> >  CONFIG_MODULE_COMPRESS_ALL.
+> >
+> >
+> >
+> >
+> > For example,
+> >
+> >
+> > if MODULE_DECOMPRESS
+> >
+> > config MODULE_DECOMPRESS_GZIP
+> >        bool "Support in-kernel GZIP decompression for module"
+> >        default MODULE_COMPRESS_GZIP
+> >
+> > config MODULE_DECOMPRESS_XZ
+> >        bool "Support in-kernel XZ decompression for module"
+> >        default MODULE_COMPRESS_XZ
+> >
+> > config MODULE_DECOMPRESS_ZSTD
+> >        bool "Support in-kernel ZSTD decompression for module"
+> >        default MODULE_COMPRESS_ZSTD
+> >
+> > endif
+> >
+> >
+> >
+> >
+> >
+> > OR, maybe
+> >
+> >
+> >
+> > config MODULE_DECOMPRESS_GZIP
+> >        bool "Support in-kernel GZIP decompression for module"
+> >        select MODULE_DECOMPRESS
+> >
+> > config MODULE_DECOMPRESS_XZ
+> >        bool "Support in-kernel XZ decompression for module"
+> >        select MODULE_DECOMPRESS
+> >
+> > config MODULE_DECOMPRESS_ZSTD
+> >        bool "Support in-kernel ZSTD decompression for module"
+> >        select MODULE_DECOMPRESS
+> >
+> > config MODULE_DECOMPRESS
+> >        bool
+> >
+> >
+> >
+> >
+> > You can toggle MODULE_COMPRESS_GZIP and
+> > MODULE_DECOMPRESS_GZIP independently
 >
-> Introduce a new function, `exit_if_not_hex`, which checks the format of
-> the provided address and exits with an error message if the address is
-> not a valid hexadecimal number.
->
-> This enhancement prevents users from running the command with
-> improperly formatted addresses, thus improving the robustness and
-> usability of the failcmd tool.
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  tools/testing/fault-injection/failcmd.sh | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->  mode change 100644 =3D> 100755 tools/testing/fault-injection/failcmd.sh
->
-> diff --git a/tools/testing/fault-injection/failcmd.sh b/tools/testing/fau=
-lt-injection/failcmd.sh
-> old mode 100644
-> new mode 100755
-> index 78dac34264be..234d49fc49d9
-> --- a/tools/testing/fault-injection/failcmd.sh
-> +++ b/tools/testing/fault-injection/failcmd.sh
-> @@ -64,6 +64,14 @@ ENVIRONMENT
->  EOF
->  }
->
-> +exit_if_not_hex() {
-> +    local value=3D"$1"
-> +    if ! [[ $value =3D~ ^0x[0-9a-fA-F]+$ ]]; then
-> +        echo "Error: The provided value '$value' is not a valid hexadeci=
-mal number."
+> I can implement this, but what would be a use case to enable multiple mod=
+ule
+> decompression types in the kernel?
 
-It is better to write error messages to standard error rather than
-standard output.
 
-Other than that I think it's good.
+I just thought there is a possibility where the singer service A
+compresses modules in GZIP, and the singer service B in XZ, etc.
 
-> +        exit 1
-> +    fi
-> +}
-> +
->  if [ $UID !=3D 0 ]; then
->         echo must be run as root >&2
->         exit 1
-> @@ -160,18 +168,22 @@ while true; do
->                 shift 2
->                 ;;
->         --require-start)
-> +               exit_if_not_hex "$2"
->                 echo $2 > $FAULTATTR/require-start
->                 shift 2
->                 ;;
->         --require-end)
-> +               exit_if_not_hex "$2"
->                 echo $2 > $FAULTATTR/require-end
->                 shift 2
->                 ;;
->         --reject-start)
-> +               exit_if_not_hex "$2"
->                 echo $2 > $FAULTATTR/reject-start
->                 shift 2
->                 ;;
->         --reject-end)
-> +               exit_if_not_hex "$2"
->                 echo $2 > $FAULTATTR/reject-end
->                 shift 2
->                 ;;
-> --
-> 2.43.0
+If the compression type is predictable at the Kbuild time,
+it is fine.
+
+
+
+
 >
+> >
+> >
+> > Of course, the current kernel/module/decompress.c does not
+> > work when multiple (or zero) CONFIG_MODULE_DECOMPRESS_* is
+> > enabled. It needs a little modification.
+>
+> One issue is with the file /sys/module/compression which shows the module
+> decompression type supported by the kernel. If multiple types are allowed=
+ then
+> I think they should all get listed there. This could however create some
+> compatibility problems. For instance, kmod reads this file and currently
+> expects to find exactly one type, so it would need updating as well.
+
+
+OK, understood. Then,
+
+Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
