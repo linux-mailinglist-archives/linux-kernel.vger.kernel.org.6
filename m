@@ -1,124 +1,174 @@
-Return-Path: <linux-kernel+bounces-264711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAD293E76A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:09:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECF093E76E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED5728362B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:09:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A82BB22954
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E39F188CC1;
-	Sun, 28 Jul 2024 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9BD5EE8D;
+	Sun, 28 Jul 2024 15:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdEllnmp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmvJU13X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946B4188CA9;
-	Sun, 28 Jul 2024 15:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7830E3EA9B;
+	Sun, 28 Jul 2024 15:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722181877; cv=none; b=pN4cdNc64JlDAL1izFoGVmBYTB2+2h5/n9rPzyZ9vlAEeIX90dIc58sj9vXeNwKqX2Cg2IfWiODC9DG1lqylDlFDt0Vcb7p5OFQCwmqnZOgaDc0HGbnnlUUBXfrk7tMbiNTZTcvxrH1g1kLpEnXysuD4MO6ffs58Vd1gK+bz1Fs=
+	t=1722182254; cv=none; b=hswDWLrkaiLb5Z3Mk2kD2LJ9WzF5UHFytvo7DTqahMiJT1/dxntMPQL9ElRLI0zgrNgUEXdSW9gnrcUrq8KAQzMdLMWRsxhSSl89qVjogOQiULeeOkrpuXnJpR6FexPbUypOchRWhOqy9Y4CynGKXDrIMiLkLcaKfApUCY1xAaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722181877; c=relaxed/simple;
-	bh=SwC3DXWMQkHyaE4FsbLFHk4mNXw3o8n03RoNhtkQyVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rPKOBpAn73lxmgwZ1DHsy59PXz/CfbLWWRmXRat6iOcbaqcLQERmwYtQjAPnhrgMHaAW/P2hSQOjrmGJyiPeeGtAsG+FthGPJ3LNlVGd4HL9j17fzWZjkq/Qx6OHuwNeq99Ozee1nVsjmTUOjlB+YP3xd64geDDLZjMWRZmmv/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdEllnmp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9886BC116B1;
-	Sun, 28 Jul 2024 15:51:14 +0000 (UTC)
+	s=arc-20240116; t=1722182254; c=relaxed/simple;
+	bh=XjPWs3XZAYVRfacXl3+Xy0bIqT1C+XEC+Fe3jXsbfyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=btLN2IkJVfu0kUvU62na+YNQJnqAH5l0hti+8C0bDAiFagYw4ZAfwwM8wsrGOX4f0I9NJm56hp/+rxXDrF4B2EVr1tD0sxkiAzUy8lfUZRRWw8bzZB5I2xMR/zxCEpQExADQ1vDZ3f3udQ3w2zE0MNic5OhAywRTYMZGhRlZF+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmvJU13X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D48C116B1;
+	Sun, 28 Jul 2024 15:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722181877;
-	bh=SwC3DXWMQkHyaE4FsbLFHk4mNXw3o8n03RoNhtkQyVE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pdEllnmp6yqUZ433/PgoIVM7FfV7L6WB6p4En0SugjC54uOzhmzHfK8+CoY9Kuu8b
-	 BcmUjex8rXVH4emnQmWQhBxIegx09JbMzc7IvDnGNtJCvkQ/iWdoKu8gqz/l8y9+Qx
-	 jqJ2H8wU94mVrwX/+FsmzhLtIq14dmlXaLdU0ufJS1g00d03o3qnT6G0A1iuZk84CV
-	 LgId9zmTRRWYRUe43uNlQGv3NZErPsr2Pci/1QsUHr0wvOaV0JATXSyKBO716RBZqs
-	 LfUmyxtsyUCIwtwF4v81xSTr6VpBIYMeOOZeNZRaacsp6asiW/4zZOKStYDLPfi3+d
-	 sjCYKXughtAtw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Benjamin Coddington <bcodding@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Anna Schumaker <Anna.Schumaker@Netapp.com>,
-	Sasha Levin <sashal@kernel.org>,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	chuck.lever@oracle.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 5/5] SUNRPC: Fix a race to wake a sync task
-Date: Sun, 28 Jul 2024 11:51:00 -0400
-Message-ID: <20240728155103.2050728-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728155103.2050728-1-sashal@kernel.org>
-References: <20240728155103.2050728-1-sashal@kernel.org>
+	s=k20201202; t=1722182254;
+	bh=XjPWs3XZAYVRfacXl3+Xy0bIqT1C+XEC+Fe3jXsbfyU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MmvJU13XQs8tsHu+Z1WCmY5c7B3qUSM/VT50uFsrJbNlVy/gB+2hb6qsO5UCbUOOR
+	 b5GI8ZFMOOFeliufKV6xfuPqGpdbVDP+L1HwkcBT31lUwaj9PIN/efn3/c4qofKtNV
+	 PDGNAT+I/Ns/r/9mhNs/hkLyT9j7+j2/I/Bh5b1B5AknoNjEu4rvNY9DFopAB5xD+Z
+	 DO6fqNeZ2woPrkK8UD9HEXWs3SqxUwLQIxlZtZpLt7WSvW3B/5352960iCO0qXw9hJ
+	 lTwWe0BU7P4jd/FHAkjQ9hdR22pHYwHfqKBdVQZW3a1BUS+H6QKL+OUF9BFuM19ssb
+	 8hkEw5+9f5QdQ==
+Date: Sun, 28 Jul 2024 16:57:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <20240728165724.75153d08@jic23-huawei>
+In-Reply-To: <20240725231039.614536-5-vassilisamir@gmail.com>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+	<20240725231039.614536-5-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.319
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Benjamin Coddington <bcodding@redhat.com>
+On Fri, 26 Jul 2024 01:10:36 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-[ Upstream commit ed0172af5d6fc07d1b40ca82f5ca3979300369f7 ]
+> This commit adds forced mode support in sensors BMP28x, BME28x, BMP3xx
+> and BMP58x. Sensors BMP18x and BMP085 are old and do not support this
+> feature so their operation is not affected at all.
+> 
+> Essentially, up to now, the rest of the sensors were used in normal mode
+> all the time. This means that they are continuously doing measurements
+> even though these measurements are not used. Even though the sensor does
+> provide PM support, to cover all the possible use cases, the sensor needs
+> to go into sleep mode and wake up whenever necessary.
+> 
+> This commit, adds sleep and forced mode support. Essentially, the sensor
+> sleeps all the time except for when a measurement is requested. When there
+> is a request for a measurement, the sensor is put into forced mode, starts
+> the measurement and after it is done we read the output and we put it again
+> in sleep mode.
+> 
+> For really fast and more deterministic measurements, the triggered buffer
+> interface can be used, since the sensor is still used in normal mode for
+> that use case.
+> 
+> This commit does not add though support for DEEP STANDBY, Low Power NORMAL
+> and CONTINUOUS modes, supported only by the BMP58x version.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+One question inline about the corner case of buffered capture in progress
+when the machine is suspended.  We'd like the device to carry on feeding
+us data on resume. Does that happen?
 
-We've observed NFS clients with sync tasks sleeping in __rpc_execute
-waiting on RPC_TASK_QUEUED that have not responded to a wake-up from
-rpc_make_runnable().  I suspect this problem usually goes unnoticed,
-because on a busy client the task will eventually be re-awoken by another
-task completion or xprt event.  However, if the state manager is draining
-the slot table, a sync task missing a wake-up can result in a hung client.
+Jonathan
 
-We've been able to prove that the waker in rpc_make_runnable() successfully
-calls wake_up_bit() (ie- there's no race to tk_runstate), but the
-wake_up_bit() call fails to wake the waiter.  I suspect the waker is
-missing the load of the bit's wait_queue_head, so waitqueue_active() is
-false.  There are some very helpful comments about this problem above
-wake_up_bit(), prepare_to_wait(), and waitqueue_active().
 
-Fix this by inserting smp_mb__after_atomic() before the wake_up_bit(),
-which pairs with prepare_to_wait() calling set_current_state().
+>  	.trigger_handler = bmp380_trigger_handler,
+> @@ -2085,6 +2239,64 @@ static int bmp580_preinit(struct bmp280_data *data)
+>  	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
+>  }
+>  
+> +static const u8 bmp580_operation_mode[] = { BMP580_MODE_SLEEP,
+> +					    BMP580_MODE_FORCED,
+> +					    BMP580_MODE_NORMAL };
+> +
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/sunrpc/sched.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
-index 9af919364a001..92d88aa62085b 100644
---- a/net/sunrpc/sched.c
-+++ b/net/sunrpc/sched.c
-@@ -349,8 +349,10 @@ static void rpc_make_runnable(struct workqueue_struct *wq,
- 	if (RPC_IS_ASYNC(task)) {
- 		INIT_WORK(&task->u.tk_work, rpc_async_schedule);
- 		queue_work(wq, &task->u.tk_work);
--	} else
-+	} else {
-+		smp_mb__after_atomic();
- 		wake_up_bit(&task->tk_runstate, RPC_TASK_QUEUED);
-+	}
- }
- 
- /*
--- 
-2.43.0
+> +
+> +static int bmp580_wait_conv(struct bmp280_data *data)
+> +{
+> +	/*
+> +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
+> +	 * characteristics
+> +	 */
+> +	const int time_conv_press[] = { 0, 1050, 1785, 3045, 5670, 10920, 21420,
+> +					42420, 84420};
+> +	const int time_conv_temp[] = { 0, 1050, 1105, 1575, 2205, 3465, 6090,
+> +				       11340, 21840};
+space before }
 
+Also stick a static in front of them or Colin will ;)
+Aim being to makes sure they aren't pointlessly allocated on the stack
+if the compiler doesn't do something clever with them.
+
+> +	int meas_time;
+> +
+> +	meas_time = 4000 + time_conv_temp[data->oversampling_temp] +
+> +			   time_conv_press[data->oversampling_press];
+> +
+> +	usleep_range(meas_time, meas_time * 12 / 10);
+> +
+> +	return 0;
+> +}
+>
+>  
+> +/* Keep compatibility with future generations of the sensor */
+> +static int bmp180_set_mode(struct bmp280_data *data, enum bmp280_op_mode mode)
+> +{
+> +	return 0;
+> +}
+> +
+> +/* Keep compatibility with future generations of the sensor */
+> +static int bmp180_wait_conv(struct bmp280_data *data)
+> +{
+> +	return 0;
+> +}
+> +
+> +/* Keep compatibility with future generations of the sensor */
+
+What does this comment mean?  I'm in favour of course, but don't understand
+why it is here and above the stub calls.
+
+
+> @@ -2825,6 +3048,9 @@ static int bmp280_runtime_suspend(struct device *dev)
+>  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct bmp280_data *data = iio_priv(indio_dev);
+>  
+> +	data->chip_info->set_mode(data, BMP280_SLEEP);
+
+What happens if the device is in buffered mode and you suspend?
+I'd expect to see the power mode stashed somewhere and restored in resume.
+
+> +
+> +	usleep_range(2500, 3000);
+>  	return regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
+>  }
+>  
 
