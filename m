@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-264828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A507D93E8DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BDD93E8DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 20:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1BE28179F
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A1C1F21733
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F04B61674;
-	Sun, 28 Jul 2024 18:26:35 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458506F067;
+	Sun, 28 Jul 2024 18:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mKJ18isf"
+Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570A21DA2F
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 18:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9AC2E859;
+	Sun, 28 Jul 2024 18:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722191194; cv=none; b=J/310BsTpyTdBy6L0PrIrrrYG8EntEgie4Z5jXPs58DYh5lyBimZktS4xcsyHxUjMwc+WESe9ekvB3Ikg7DrO8MBxdX+Co5BptCA5I5GIKCZebohipMLQoObSL8HBe3IVQuqFjChCdQ+0yt40bPYbBHhBc3Xk3Jimwd07Sam+W0=
+	t=1722191416; cv=none; b=Y1K1LPaFAQ6JaKa4EsLJqIJPaqn7ad3swl2/oRgbtBEk3NlgNAdCXxSUqgfpOrIdhDOG6TDkjSgT5UIf/TDWOtmV2kjG79CDHzl29lUBWd7I3YilMhRMU3RgN6L2UtOHUjDhLFQKsvtvd1cvfTiLG9ApMn3JIPGmF2oIk77BQNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722191194; c=relaxed/simple;
-	bh=KggwzapIfmAFqTuE7JcNe8da/F4Js7wgWrt135l+6Fk=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=i8k2DTUp0Lq91Vtmg84nC5m/PVggaXyQksbTo2+PbbOqq+bjedMAX8B6T7Ezph+oLUstrmyUMHru00onkn5IVhWKMUB3JVSY+v4KHRb4DpIE4G2Xv5Qe8gXCGV/9CBvq2A3TrqYBEaYeyUIEyJXg8YtL33jmA9toO8CMZbauyh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 1C1706196A48;
-	Sun, 28 Jul 2024 20:26:29 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id qqol4RTJmMAz; Sun, 28 Jul 2024 20:26:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id AE22261966B5;
-	Sun, 28 Jul 2024 20:26:28 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id y3fOQJaduj84; Sun, 28 Jul 2024 20:26:28 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 8D1F764A3D3B;
-	Sun, 28 Jul 2024 20:26:28 +0200 (CEST)
-Date: Sun, 28 Jul 2024 20:26:28 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>
-Message-ID: <589372570.132198.1722191188516.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UBI and UBIFS updates for v6.11-rc1, take 2
+	s=arc-20240116; t=1722191416; c=relaxed/simple;
+	bh=Po+jf59OgWZe7ga6gwE7Q3SbHfhVlVjb7CMLEJgb/90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LRJnB1EMKp5tCemcqE48vZpuo9B02ADKgPYbBj8x+lgAXACXO+rFLPYihPeIKyseMjhltDqn9L+6VXgSKkz44r/QWBVNRUdgkLH+Dx9yPVTTzJMcv7TKslSBF8ejYAmPEX1xy5VwRgN4fF167sVQEhbC8KTh+EGbG4MUPwT9ZXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mKJ18isf; arc=none smtp.client-ip=80.12.242.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Y8ehskV3jYjQzY8ehsdEJs; Sun, 28 Jul 2024 20:30:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722191406;
+	bh=aHRr46GwE+uyksv7tBA8rAadSHSqFFR/MCO6+hVj1uk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=mKJ18isfp/UdJbLq8eTjt5hzxV/dfxabgAVcoQ2rAdaQF3R2TphCNVVEvEyk7Crnq
+	 Qa47ZnqQyvVssPt0mh70NxxDhTdVxbh6U5Kq+q8Om4oYsNuLzV7hJyUqhjUfjVGYjh
+	 ktORbHXZsHJjr88ahzm48Wztm+4qlsNiUEYicMzECtX6+dXg6vVy1kDBAo/tzDMtMa
+	 XWacCL7jCB+tYoz34cMJRn68ge5VqW7guGKORGI4/2+z96jdEG0wINVC/J3H/u5D/8
+	 zw6jamr2TE3F4WOQOc8EE0z73bxTWSBhNYe63fqPJm4NxNCbZ1nHY4KjXg4W4k1KZ9
+	 3cuLhiiu6jpoQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 28 Jul 2024 20:30:06 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Helge Deller <deller@gmx.de>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] fbdev/hpfb: Fix an error handling path in hpfb_dio_probe()
+Date: Sun, 28 Jul 2024 20:29:47 +0200
+Message-ID: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Index: 2zpJ3pnBqpNE8uOWpNZblj1nRl4weA==
-Thread-Topic: UBI and UBIFS updates for v6.11-rc1, take 2
+Content-Transfer-Encoding: 8bit
 
-Linus,
+If an error occurs after request_mem_region(), a corresponding
+release_mem_region() should be called, as already done in the remove
+function.
 
-As discussed, this is the updated PR for v6.11-rc1, it includes
-the section mismatch fix.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+*Not* even compile tested only.
+I don't know on what architecture it relies on.
 
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
+So it is provided as-is
+---
+ drivers/video/fbdev/hpfb.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+diff --git a/drivers/video/fbdev/hpfb.c b/drivers/video/fbdev/hpfb.c
+index 66fac8e5393e..87b8dcdc1cf3 100644
+--- a/drivers/video/fbdev/hpfb.c
++++ b/drivers/video/fbdev/hpfb.c
+@@ -342,12 +342,17 @@ static int hpfb_dio_probe(struct dio_dev *d, const struct dio_device_id *ent)
+ 	}
+ 	printk(KERN_INFO "Topcat found at DIO select code %d "
+ 	       "(secondary id %02x)\n", d->scode, (d->id >> 8) & 0xff);
+-	if (hpfb_init_one(paddr, vaddr)) {
+-		if (d->scode >= DIOII_SCBASE)
+-			iounmap((void *)vaddr);
+-		return -ENOMEM;
+-	}
++	if (hpfb_init_one(paddr, vaddr))
++		goto err_unmap;
++
+ 	return 0;
++
++err_unmap:
++	if (d->scode >= DIOII_SCBASE)
++		iounmap((void *)vaddr);
++	release_mem_region(d->resource.start, resource_size(&d->resource));
++
++	return -ENOMEM;
+ }
+ 
+ static void hpfb_remove_one(struct dio_dev *d)
+-- 
+2.45.2
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/ubifs-for-linus-6.11-rc1-take2
-
-for you to fetch changes up to 92a286e90203ce3e6c3a6d945fa36da419c3671f:
-
-  ubi: Fix ubi_init() ubiblock_exit() section mismatch (2024-07-28 20:08:25 +0200)
-
-----------------------------------------------------------------
-This pull request contains updates (actually, just fixes) for UBI and UBIFS:
-
-- Many fixes for power-cut issues by Zhihao Cheng
-- Another ubiblock error path fix
-- ubiblock section mismatch fix
-- Misc fixes all over the place
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      mtd: ubi: avoid expensive do_div() on 32-bit machines
-
-Ben Hutchings (1):
-      mtd: ubi: Restore missing cleanup on ubi_init() failure path
-
-Chen Ni (1):
-      ubifs: add check for crypto_shash_tfm_digest
-
-Fedor Pchelkin (1):
-      ubi: eba: properly rollback inside self_check_eba
-
-Jeff Johnson (1):
-      ubifs: fix kernel-doc warnings
-
-Li Nan (1):
-      ubi: block: fix null-pointer-dereference in ubiblock_create()
-
-Ricardo B. Marliere (1):
-      mtd: ubi: make ubi_class constant
-
-Richard Weinberger (1):
-      ubi: Fix ubi_init() ubiblock_exit() section mismatch
-
-ZhaoLong Wang (1):
-      ubifs: correct UBIFS_DFS_DIR_LEN macro definition and improve code clarity
-
-Zhihao Cheng (10):
-      ubifs: Fix unattached xattr inode if powercut happens after deleting
-      ubifs: Don't add xattr inode into orphan area
-      Revert "ubifs: ubifs_symlink: Fix memleak of inode->i_link in error path"
-      ubifs: Remove insert_dead_orphan from replaying orphan process
-      ubifs: Fix adding orphan entry twice for the same inode
-      ubifs: Move ui->data initialization after initializing security
-      ubifs: Fix space leak when powercut happens in linking tmpfile
-      ubifs: Fix unattached inode when powercut happens in creating
-      ubifs: dbg_orphan_check: Fix missed key type checking
-      ubifs: Fix inconsistent inode size when powercut happens during appendant writing
-
- drivers/mtd/ubi/block.c |   9 +--
- drivers/mtd/ubi/build.c |   7 ++-
- drivers/mtd/ubi/debug.c |   4 +-
- drivers/mtd/ubi/eba.c   |   3 +-
- drivers/mtd/ubi/nvmem.c |   6 +-
- drivers/mtd/ubi/ubi.h   |   4 +-
- fs/ubifs/compress.c     |   2 +
- fs/ubifs/debug.c        |   4 +-
- fs/ubifs/debug.h        |   7 ++-
- fs/ubifs/dir.c          |  91 ++++++++++++++++------------
- fs/ubifs/file.c         |   2 +-
- fs/ubifs/find.c         |   8 +--
- fs/ubifs/journal.c      |  16 +++--
- fs/ubifs/lprops.c       |   2 +-
- fs/ubifs/lpt.c          |   1 +
- fs/ubifs/master.c       |   5 +-
- fs/ubifs/orphan.c       | 155 ++++++++----------------------------------------
- fs/ubifs/replay.c       |   1 +
- fs/ubifs/sysfs.c        |   6 +-
- fs/ubifs/ubifs.h        |  14 +----
- fs/ubifs/xattr.c        |   2 +-
- 21 files changed, 135 insertions(+), 214 deletions(-)
 
