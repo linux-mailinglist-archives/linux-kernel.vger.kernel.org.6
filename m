@@ -1,172 +1,164 @@
-Return-Path: <linux-kernel+bounces-264498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457DB93E42E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B1493E431
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8092281A39
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 08:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A5B281735
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E802182C5;
-	Sun, 28 Jul 2024 08:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B539E17C61;
+	Sun, 28 Jul 2024 09:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLlcXe+A"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5jDSVHQ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA28F9F8;
-	Sun, 28 Jul 2024 08:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3ED1877
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 09:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722156689; cv=none; b=I4UqpMY8w/20tbkssJxIiAlBvc9ZJr98+JKKKKNNVJMqOr/PoFd04Tcnphke57aKEpmCRzbiiGaZhf/mthrEzePaL97/YR6lCliHV5MkvY35bEt6HjYWF21gIbUjQD1IN6mUuKktxzwqEnG1VIuXjJeii1ZZF3KKt3c+JP+YCkg=
+	t=1722157231; cv=none; b=Frf2/cSkOrG0hZuKQkFOXy2+qg0uCmk4F7br/bej9IAr2DBbmQ3wDC2e4u+KWWnZ5AdH1rOdHPWVMWWbhEjXLOOQiXhnT5PF68sE2VuCp7M1WD8PmKVXYHQtIcWwxWuBhQ75Rlf7vQ8EPJ8IkEuL0AJ6W50UG8fueRWd5/bkHQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722156689; c=relaxed/simple;
-	bh=g3TcyyJ7JcBB/E3uMfjnrlxTshswPbPUgcCxLenzVo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pqhT4thRvn74jFf8//suNWcksn12O1iPRpnW8K9mHP3cOcq/0axIq/VaHYmuG5zIanaGJu1d8xCEHCynR8qIaQpGBtn0dW3bqG1yfuL7MjNsT0DML/g22Yf6Krxfs3FE84xGqNUTCmPTum5WetkIAb1RiMT0e7LVPOxCHX9rFzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLlcXe+A; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1722157231; c=relaxed/simple;
+	bh=ujZadsmAlrryVH7s65HYoO1mYAguj/qF1c1WDAZXUNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSKQsFpcfAKvczsMt0N3HeefzydO+paC9D4+DPaPY4R+eoQUpowtESLc3KutlyPOZC3cB3E0tWcm2J/pex5auA9ykgiCVeaRfvlScPY5VeuShz/VY8v/UO7c4lT4JxihxJfconKuIkEbTqyP7tU+FE+S8WCMA1P6ilCK529SbJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5jDSVHQ; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368633ca4ffso161239f8f.0;
-        Sun, 28 Jul 2024 01:51:27 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52efd8807aaso3979423e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 02:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722156686; x=1722761486; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3fFRJsv0r9FOhit89mGrjjDOTjioZ+AI5gd5+LyCXTE=;
-        b=dLlcXe+AG+9k5qyre6XTOBbv5eub9BN1MCKG/B34OcmBRH5wvleEM+qBkIYlv0d2+n
-         YViEvYVoWyGamQ4ie645HxUQUNtOqtndCwb6bdwF754xp21GDrUNggnZUOR8MW64BA/f
-         UW3YG8FS9v3Nj2YaGCyp1zGw3zCYH5tKRd6vDsnZVvTbmcaT6OuXWbEOdEE7I+4liwd0
-         lD6afYIUB8XcuUKqmaI0KiW5q+HD87Al8vp4pXS0hCMpVWi5yMsGkfCaHcyl62vWWNi4
-         ea2QTJ/UbEad5cPFHzxkSd637JfM8KDSbCTaP4dj7pyICleXw7qWP3kzlSIgN8Oxvk2E
-         o9Hg==
+        d=gmail.com; s=20230601; t=1722157228; x=1722762028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6f5NLazh5in+pBW1g2Mr1FfXjDf+1KVwju14XjPZipY=;
+        b=m5jDSVHQ/7nYBPbULFODlDx5RNfX+bPGEVk8Rz1KsvgtOYAPQ7KzGEkGCKFWekLCbZ
+         BkO20CZACgQHPqMqW9z/5zxSgMtOKELAV6cUJgpCRGY9f5keA40pN8EMUU+xjUJYrTFf
+         k/nyfmrDF0PDJ4h5izyjMyBZG3aW6+RwDjhN5HTwt5g9Z6Ci+Qa7O8MYrN6d1QmrD+2D
+         LVC9kkIOxi8rIQQ+zNiwyL6l2gvgVLaLMpLkyOic8OzchMDn3Mqga9ldcpVJpJ0OFTzv
+         wiPTgfBDbtd9C4hTC/jFWwrhLFIhRQ0ywcw1LxfJSLtMl55/lEzq+L/DZn+lVH3AJ8iZ
+         1msw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722156686; x=1722761486;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fFRJsv0r9FOhit89mGrjjDOTjioZ+AI5gd5+LyCXTE=;
-        b=Y9vVaEAGaUwXYJpOj0IsfeZXxTd4JS8ktgpSgY1wjM8rTzASBNc93NFsGdUvD+TBWe
-         /TJnwXsrWLpX0dQHAOfs656EQbTZCtU4N7Uw92Eb/IpAd++YwupdTKhizAw935brEY0o
-         l2svGuko2JzqK+y5E1W4xtxQ9IO9zPc6ZvWTM28k2ge5Gol4OYvV2Vxf1s5HiJOrjCKz
-         +Qbeqs4/VGdmdjqgOivLBNOMtiANLca6K743yz+16R2YmlPA+gYcBBBB5ZONHowC+v/J
-         LKb0t2tXP03oGaVGLlFE2JmdqG4VpGy9GaoFNFosPdzQBLEYs1Z3j+1sPesZlJlYsdn7
-         b53w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFZrbatPkyPitp80rY5Ln0/ukHULISJCvj3V+8rGKU18Mys9aNeFO0UjqYXz3Fy9hhqGgwIKGhA92na2Ka@vger.kernel.org, AJvYcCWa0gIjP/aUsasQwHYKWlyu+usoAqBxaJbKJxrQk/jkdZhZp6RXHSelPOdKQJ7+8vBf+CcAMip7CtQ=@vger.kernel.org, AJvYcCXHW/L3NLuiH+GyzAtRkQ1sz369UQt6BLXcI8eZs/ntlkylnALVV9BqOV7uA9tsCTdJtZwPd6rrNb1mOUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwR8vpo9T2JIcVfpc25nyzt6nrK+Tp1wWt+s9k4OOtvGZg/KiA
-	U1lrbo9h8yoOOxHhEXpDfChQvlWfI0wMH2jDekpndx2ia6BskqYnm5fPEA==
-X-Google-Smtp-Source: AGHT+IE2CQTvhsLw/8YVxTpgFvbiZTQhmvsE1mktJzUgo+gPEAzzuyUz4oP1+K8+oWH5h54sSNn3Rw==
-X-Received: by 2002:a05:600c:3b21:b0:424:ac9f:5c61 with SMTP id 5b1f17b1804b1-428057706aemr45784535e9.3.1722156686173;
-        Sun, 28 Jul 2024 01:51:26 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:1d00:5943:7f74:2af0? ([2a01:4b00:d20e:7300:1d00:5943:7f74:2af0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280ca10aa6sm86140805e9.26.2024.07.28.01.51.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 01:51:25 -0700 (PDT)
-Message-ID: <3ab0aa72-4f89-4911-8546-ce17f362c981@gmail.com>
-Date: Sun, 28 Jul 2024 09:51:24 +0100
+        d=1e100.net; s=20230601; t=1722157228; x=1722762028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6f5NLazh5in+pBW1g2Mr1FfXjDf+1KVwju14XjPZipY=;
+        b=niBKn5NS1NyCnK7oyyQxCScVHYymmCyz9mZMDBwpN6m/4cdTR6uHCkdgo1/xUus7iU
+         xDE0Of6nFQLLPhdtYVFJP6MGq0IOQNRYzq0Fjp1f46r9rsjpivfxyfb+qsFB9Qi9F5/J
+         XJ1Fytmg2eiDWP8TU4MSfhC8Xmwvrr4cx8yTwr8ImvK7zhrdbtJj/FZ+Fzx+eu38/jAG
+         6Acd/0nQwTl+ZSCBeOW6v7Ih64PYvuOUlzw0+IIR+xClfRUio3ZmphcEMCSpBVWm40Ee
+         Qo6uxDDuMW6trzUXzlHedhmqtcI30aF7Tbd+BCtjidQDyUQWyWDV3E8Kle+Xg73D5sSs
+         EFvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9syuy2LZ+8MEASnRjIcEAU+ZUbacGn0/B3P6n7eBXK5Uw3wYKLmdlywEovv3QS2Iq4bFjc4lnRxvoda5a2pr6aOBKIoYPugzg5ldA
+X-Gm-Message-State: AOJu0YwAPQw2zg3O3brrZ4DxMjwHw0JUu5M6WItjnDz8EHPHd6tSKYUo
+	zUltFDH+rqN87IDY138z59kbivlss1QYaEAoXRF5uwatFZ0i4P4sTPHw6LAhTG4M2C2MAEg+Iv5
+	bHkZtomsC9SMpSUOWWeK4R1sTyUE=
+X-Google-Smtp-Source: AGHT+IEfop4MZgYbfVkRogoHTR4KMymOl6FhVvJxTvvhSjTnQU3NGW/LLFKLzyslu/yA++LpMhjdErtPrP41LklzyHI=
+X-Received: by 2002:a05:6512:1104:b0:52f:89aa:c344 with SMTP id
+ 2adb3069b0e04-5309b26b828mr3724527e87.16.1722157227182; Sun, 28 Jul 2024
+ 02:00:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, perex@perex.cz,
- tiwai@suse.com, corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, aholzinger@gmx.de
-References: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
- <20240726074750.626671-4-ivan.orlov0322@gmail.com>
- <0576f5dd-656b-4085-8c8d-b0f845875f0f@wanadoo.fr>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <0576f5dd-656b-4085-8c8d-b0f845875f0f@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240726104848.2756962-1-leitao@debian.org>
+In-Reply-To: <20240726104848.2756962-1-leitao@debian.org>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Date: Sun, 28 Jul 2024 18:00:14 +0900
+Message-ID: <CAC5umygxnq=h1H2CCeprzaggu_A4DxZia3EEBTYk7sb72OnQFA@mail.gmail.com>
+Subject: Re: [PATCH] fault-injection: Enhance failcmd to exit on non-hex
+ address input
+To: Breno Leitao <leitao@debian.org>
+Cc: akpm@linux-foundation.org, leit@meta.com, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/28/24 07:59, Christophe JAILLET wrote:
-> Le 26/07/2024 à 09:47, Ivan Orlov a écrit :
->> Implement two ioctl calls in order to support virtual userspace-driven
->> ALSA timers.
->>
->> The first ioctl is SNDRV_TIMER_IOCTL_CREATE, which gets the
->> snd_utimer_info struct as a parameter and returns a file descriptor of
->> a virtual timer. It also updates the `id` field of the snd_utimer_info
->> struct, which provides a unique identifier for the timer (basically,
->> the subdevice number which can be used when creating timer instances).
->>
->> This patch also introduces a tiny id allocator for the userspace-driven
->> timers, which guarantees that we don't have more than 128 of them in the
->> system.
->>
->> Another ioctl is SNDRV_TIMER_IOCTL_TRIGGER, which allows us to trigger
->> the virtual timer (and calls snd_timer_interrupt for the timer under
->> the hood), causing all of the timer instances binded to this timer to
->> execute their callbacks.
->>
->> The maximum amount of ticks available for the timer is 1 for the sake of
->> simplification of the userspace API. 'start', 'stop', 'open' and 'close'
->> callbacks for the userspace-driven timers are empty since we don't
->> really do any hardware initialization here.
->>
->> Suggested-by: Axel Holzinger <aholzinger@gmx.de>
->> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
->> ---
-> 
-> ...
-> 
->> +#ifdef CONFIG_SND_UTIMER
->> +/*
->> + * Since userspace-driven timers are passed to userspace, we need to 
->> have an identifier
->> + * which will allow us to use them (basically, the subdevice number 
->> of udriven timer).
->> + *
->> + * We have a pool of SNDRV_UTIMERS_MAX_COUNT ids from 0 to 
->> (SNDRV_UTIMERS_MAX_COUNT - 1).
->> + * When we take one of them, the corresponding entry in 
->> snd_utimer_ids becomes true.
->> + */
->> +static bool snd_utimer_ids[SNDRV_UTIMERS_MAX_COUNT];
->> +
->> +static void snd_utimer_put_id(struct snd_utimer *utimer)
->> +{
->> +    int timer_id = utimer->id;
->> +
->> +    snd_BUG_ON(timer_id < 0 || timer_id >= SNDRV_UTIMERS_MAX_COUNT);
->> +    snd_utimer_ids[timer_id] = false;
->> +}
->> +
->> +static int snd_utimer_take_id(void)
->> +{
->> +    size_t i;
->> +
->> +    for (i = 0; i < SNDRV_UTIMERS_MAX_COUNT; i++) {
->> +        if (!snd_utimer_ids[i]) {
->> +            snd_utimer_ids[i] = true;
->> +            return i;
->> +        }
->> +    }
->> +
->> +    return -EBUSY;
->> +}
-> 
-> Also the bitmap API could be useful here.
-> 
+2024=E5=B9=B47=E6=9C=8826=E6=97=A5(=E9=87=91) 19:50 Breno Leitao <leitao@de=
+bian.org>:
+>
+> The failcmd.sh script in the fault-injection toolkit does not currently
+> validate whether the provided address is in hexadecimal format. This can
+> lead to silent failures if the address is sourced from places like
+> `/proc/kallsyms`, which omits the '0x' prefix, potentially causing users
+> to operate under incorrect assumptions.
+>
+> Introduce a new function, `exit_if_not_hex`, which checks the format of
+> the provided address and exits with an error message if the address is
+> not a valid hexadecimal number.
+>
+> This enhancement prevents users from running the command with
+> improperly formatted addresses, thus improving the robustness and
+> usability of the failcmd tool.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  tools/testing/fault-injection/failcmd.sh | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  mode change 100644 =3D> 100755 tools/testing/fault-injection/failcmd.sh
+>
+> diff --git a/tools/testing/fault-injection/failcmd.sh b/tools/testing/fau=
+lt-injection/failcmd.sh
+> old mode 100644
+> new mode 100755
+> index 78dac34264be..234d49fc49d9
+> --- a/tools/testing/fault-injection/failcmd.sh
+> +++ b/tools/testing/fault-injection/failcmd.sh
+> @@ -64,6 +64,14 @@ ENVIRONMENT
+>  EOF
+>  }
+>
+> +exit_if_not_hex() {
+> +    local value=3D"$1"
+> +    if ! [[ $value =3D~ ^0x[0-9a-fA-F]+$ ]]; then
+> +        echo "Error: The provided value '$value' is not a valid hexadeci=
+mal number."
 
-Awesome, will use it in V2.
+It is better to write error messages to standard error rather than
+standard output.
 
-Thank you!
+Other than that I think it's good.
 
-
--- 
-Kind regards,
-Ivan Orlov
-
+> +        exit 1
+> +    fi
+> +}
+> +
+>  if [ $UID !=3D 0 ]; then
+>         echo must be run as root >&2
+>         exit 1
+> @@ -160,18 +168,22 @@ while true; do
+>                 shift 2
+>                 ;;
+>         --require-start)
+> +               exit_if_not_hex "$2"
+>                 echo $2 > $FAULTATTR/require-start
+>                 shift 2
+>                 ;;
+>         --require-end)
+> +               exit_if_not_hex "$2"
+>                 echo $2 > $FAULTATTR/require-end
+>                 shift 2
+>                 ;;
+>         --reject-start)
+> +               exit_if_not_hex "$2"
+>                 echo $2 > $FAULTATTR/reject-start
+>                 shift 2
+>                 ;;
+>         --reject-end)
+> +               exit_if_not_hex "$2"
+>                 echo $2 > $FAULTATTR/reject-end
+>                 shift 2
+>                 ;;
+> --
+> 2.43.0
+>
 
