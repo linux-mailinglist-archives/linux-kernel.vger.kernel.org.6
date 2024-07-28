@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-264547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D642993E4DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E8C93E4E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 13:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C41C1F2195E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FBC1C2122D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505238DE1;
-	Sun, 28 Jul 2024 11:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108A53BB24;
+	Sun, 28 Jul 2024 11:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WDP/o5Zc"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ciuQ5fNJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A4B2F36
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 11:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429DC3C466;
+	Sun, 28 Jul 2024 11:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722167184; cv=none; b=PpcqUBs9uaZhN4D8glr1Cx4l/pCjiYwINFHegjHnRQunJuWSVC7kuujWGZoejYetLpyBIT2ejbo0fUn5lEcRQsxHlzYLDfbljEGxiZcWnCg+LZuBX+atbO7mokNHY0TwEzi7nx2FxqxTWB1tUAA4KyZUd4Xkt9q9lLU78LOA7ro=
+	t=1722167203; cv=none; b=f7hbbZ0/giZftBDbrnzJXoJmD5nPJ8A8txX7mO4tPPebMTmCAW+raVnqKLywOaUEqLT2NegWi9MeFcV9dtZ96ENp8u2lOIBMWA3JHh4+XcRdmu+L0eBuDXc9PZ4facmQCthvkKBnjfk2ajJQLMVlpXnHTSDzUSD58NgcYJYpJWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722167184; c=relaxed/simple;
-	bh=+z87nA1Y00AL4sMT64kGifYWqtgmhO1S1figOc16cqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2XvMykAyRoAIwV8vpfLXTXqB3bTuzHWVmjcyERT2jRZ8b32bz01RNiznXExY1Kx/aPXdpqW7byakkp2F/P2IXXKchEp03xZD9i2s24JKNTw35bYfJd4sqelbYsqiBw6HnnUNITORErMwlvhpHwEio3WgNUwwA+8zAWQsCv0Rtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WDP/o5Zc; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=+z87
-	nA1Y00AL4sMT64kGifYWqtgmhO1S1figOc16cqE=; b=WDP/o5ZcRr1U3dhiLhkH
-	nrk6gQzo9F+t3A0ylOxEq/p9bmj+aJK7pjZ6X+VP/Qit8Nvkcdi3ClZQrJmSWIrA
-	tf+fkGtQN6AB8AuXKnkurJq2EDn3HjKtM0zOMD5SlH/+AWc59ykQn2/ehlFtvf9r
-	P4wT0KFTBVpSyDwCDdQJ/twnnAkwU3ECL0FIYZjKcWSCIQV8hDqAYAjIZe013JEh
-	UDcQ7n8KfY5/1a4MLyyiu4fuwJ74/UTNM6JoMnRVbScOSfW+2Ugb2QSrj83Xjk3X
-	S6ib1l3/eqk6i7zuC3Ini2/A+/XdG2gQ7VMKXQFqupHfPGXYRu7yjyMAFeibjQD9
-	3Q==
-Received: (qmail 3798994 invoked from network); 28 Jul 2024 13:46:08 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jul 2024 13:46:08 +0200
-X-UD-Smtp-Session: l3s3148p1@ul9RSk0e7ocujnsv
-Date: Sun, 28 Jul 2024 13:46:08 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Aleksandr Mishin <amishin@t-argos.ru>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Zhang Shurong <zhang_shurong@foxmail.com>,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH] staging: ks7010: Remove unused driver
-Message-ID: <ZqYvgNHQSb638mQ3@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Aleksandr Mishin <amishin@t-argos.ru>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Zhang Shurong <zhang_shurong@foxmail.com>,
-	lvc-project@linuxtesting.org
-References: <20240728052552.GA8748@matrix-ESPRIMO-P710>
+	s=arc-20240116; t=1722167203; c=relaxed/simple;
+	bh=yygPUstBZwisSVr9S9BFcnYH3+3NoHJF1btJ9ZzlpBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0Yxl0uwMoG0q/aejCjOapBmHAb20fchA3kfz0vk1I089VeFbHS/EfE4A9gnoKwOzHD6rVTb+jYXYSrsb9swxvokfCVGVFNGhBFbovPu1uCyH8xH1Uc8qg+DPLU2DvStgCMwC5jrl9pIJhU4guoqW3T6j+u8kewsozrr646igmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ciuQ5fNJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AECFC116B1;
+	Sun, 28 Jul 2024 11:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722167202;
+	bh=yygPUstBZwisSVr9S9BFcnYH3+3NoHJF1btJ9ZzlpBk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ciuQ5fNJyVCg3/AzYwvqJ18m4ijgKSunhz/g1weN4V5rmC5m4ahfYxrSWri1+f4uW
+	 S+8CyYKf2MiCxQBbzLVsUZrl9lWlCAAPMt1JsMTgZL+JmFgRJeapYvyZ9UgLJNfO7W
+	 cSH/YUjUDSgGYJlisD4Y7GJh42DtbU+bRL+jgkxOMBs1RGEoVoZdoA+ncUg6hBvKPd
+	 nnh6jo+WWEP1+Yu3+pcoY6XDX3zo7v/1j5HPigi5tQhSfSHyMNrLuxHyHPLoXqemFt
+	 25+AW50Tk7PO7sVxpBVPx0MgdsIk0QSQvtnuy/vm1xB2ggEnRpEDqEGjPt//LKX2A9
+	 NWFgn8iHYZy2w==
+Message-ID: <66ffa58a-2d4e-45bb-91e9-be486a99b14f@kernel.org>
+Date: Sun, 28 Jul 2024 13:46:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QoiuYAprfMstUV9a"
-Content-Disposition: inline
-In-Reply-To: <20240728052552.GA8748@matrix-ESPRIMO-P710>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: renesas,pwm-rcar: Add r8a779h0
+ support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240725193803.14130-4-wsa+renesas@sang-engineering.com>
+ <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240725193803.14130-5-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 25/07/2024 21:38, Wolfram Sang wrote:
+> Document support for the PWM timers in the Renesas R-Car V4M (R8A779H0)
+> SoC.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 
---QoiuYAprfMstUV9a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Sun, Jul 28, 2024 at 07:25:52AM +0200, Philipp Hortmann wrote:
-> Wolfram contributed this driver in 2016. He is not using it anymore and
-> confirmed it to be removed.
->=20
-> It is hard to find hardware around the globe. When it is offered it is
-> expensive and performance is low.
+Best regards,
+Krzysztof
 
-=2E.. using interfaces which are long deprecated.
-
->=20
-> Remove unused driver.
->=20
-> Link: https://lore.kernel.org/linux-staging/igi27iwrzg3ovgj3sym4gsi45timp=
-kt4vkl5ss5dbftdzat6p4@ctxcjocvunpt/
-> Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---QoiuYAprfMstUV9a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmamL3wACgkQFA3kzBSg
-KbbfhQ//XY7wcD/9Jb3I3oEcjLpo4SG1DZCLTtcmdwv9fOrS7oyXO+H8Z8gLsNOJ
-wxfJMt24UmDSNusOm4BstQGYRZSeETD3F6WmNgqunP/okjFEDAhjxpixrT3n7PNF
-FNVqyG/7Uc0VBz3T0sp8Z8K2jZ/1LHmlN3wm6eEcEB8MGTaHKnoAW4UPX/9f+mhw
-TkVqEzFUSpFf19fi4TEoWsvKo1EmX4gs5yNlXRrxLFUUyddG5ty8/3Y8pZ+lIXR8
-qYtW7V2ZqzzbDs3NPW1T6wlvwbQ5NV6TV/AQ8mlB07TO187uNZohJKMyeNUj5tHO
-jAg7jJw2RmamGYolGTN/Sy8H0DAjJ9h4tuwOwfXP87DiCHHfSgOtIzb7HbbYHooy
-8/VW4lnyraiJEwdb27OC0NjrPSkThqLx5lZlPpUQdqNX2wssTq6y0EIKb7j4IGRQ
-DvNnGfjwQSKW8m2x39DoCYGNHbko30nq10Ilqu+/kG4ui9eKGUn24VEEhi3mPUgb
-UJYfC+Occq/RcFCVxQ+28ftFop6K4loWss42Q0tREIBP51cgIBhBmfD5Z8QzlyZj
-n6cQt758kLnDeS4JHfrffaLZbE3XR8dayS0gGO+P84M72aurcXAZh5kr9brt1G19
-L/+OeFpvPvjtWvLiyAkLfFoBG6RUQ9UGpVmBo16We0JXRpeDCAQ=
-=Rnmf
------END PGP SIGNATURE-----
-
---QoiuYAprfMstUV9a--
 
