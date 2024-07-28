@@ -1,172 +1,174 @@
-Return-Path: <linux-kernel+bounces-264607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFAD93E5F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACBC93E5FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF031F2153E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5643E28176A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AB454645;
-	Sun, 28 Jul 2024 15:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E535381B;
+	Sun, 28 Jul 2024 15:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A6UXQDK1"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504EF4F215;
-	Sun, 28 Jul 2024 15:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbcBhcob"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085541C64;
+	Sun, 28 Jul 2024 15:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722181227; cv=none; b=QFfkDV480t9/gA+fHdfbP+gcfwp2dICu8veyhgtIpe7gNUR8UkEYTIQEHdnTXIcmzUHzweq4k7lKmD6x4auVLvJpxgaPSfz9LFEzt2yFQZM4sn9HmhZ1rYxx4cx/0LQFdm+vwfUdve4bU3VlI9IFilkQA7jaiXhXsRkWX0ljOHw=
+	t=1722181359; cv=none; b=i4Rt0y1prrd1OiUKAtWctAtH5rsV+/z+P5OyI6kDdE4LKEu89pGxQhoiyWmHnnhBx0T9HPNOa5cLE34r9FzrdyXfl4eW0AbVH1IZbjnb4WiQKT9NDhbiWALQ5yJ3rXYRq9POGn33TpFEmvxQk6yM3KCUkzEvgQzceXB8LMNTiYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722181227; c=relaxed/simple;
-	bh=8D3E0F4RnRkRSDwtwrjP45yZo9yq5sp/csJk6zHXvTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ng3LORr7GINOrKKZz8wirW6KdxPRpC7hsWMwa/gAvP4GmOaweumieLwy9qGbcScZ8obxPJDKRi6Auy0Sik3aMCmzVoHsZHIGhE++le1tDDox+czmgkD9FifJ0rHtF3cFxqrBBQN81A2vVpiY6R5gf/tCFGltGu8YuK9ltQdGnaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A6UXQDK1; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id D029120B7165; Sun, 28 Jul 2024 08:40:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D029120B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722181225;
-	bh=lPXXCeDXmSH05tbxe02TX4INPx+mbErPHQUqfsylHXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A6UXQDK1O3IC3YhojHwMw02D1H0Xg14EGG3jm+WU8L5OlK7mDpUEsA6WJsWXIO9DI
-	 hni2BbmsIfXfVcXvqA51Mnmap5zMOzUazWXTJzEly1r5lHuiKeImeOakWQdGzvovtw
-	 M8DPcgtOixLFrnmQxxbxpLOBboV3SIOXs8uQP0fA=
-Date: Sun, 28 Jul 2024 08:40:25 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ssengar@microsoft.com" <ssengar@microsoft.com>,
-	"srivatsa@csail.mit.edu" <srivatsa@csail.mit.edu>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Deferring per cpu tasks
-Message-ID: <20240728154025.GA17111@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1721885164-6962-1-git-send-email-ssengar@linux.microsoft.com>
- <SN6PR02MB4157BB3FF96D869D87B0A5D2D4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20240728091811.GA32127@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157A6C0CA988FE0381F007BD4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1722181359; c=relaxed/simple;
+	bh=FR6ZHIVNzRpIwImRqh2JQDTV5HWYxLHkbIVgP0YcBxc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FpRGEujGEdpfHk/KflSRvZ1FBL0s1U362PlGiwfx76vwzMcpII8GfRFQCa469UTgMlF1fbWS9DJ0JPg1J371Xg4JNhY/zxRbpwBMT7QOPe7RV4gZ5xJO3NI7jFTdA8Fj8cIpYZMpeGrsR+DBvMz9QyRAjpFymIZ3CzLp1hm5r6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbcBhcob; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A86C116B1;
+	Sun, 28 Jul 2024 15:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722181359;
+	bh=FR6ZHIVNzRpIwImRqh2JQDTV5HWYxLHkbIVgP0YcBxc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KbcBhcobBL+yztXhVtG0tss5xwZ853gsqnvnC/vC+cko9B84nmf811Mli4r4KZB8H
+	 ZuQBhP58fMIz+sFkVwxxMaHYINbmKgrqDtmqSQRIJyXBjWJf1LHqlog/uIY4ZwRWE0
+	 f/OV8aUS2QkirM2WkNeP+VR+Xe2w9K6m4a7GvalagpL4HeSNO3Ex3E6QPVzfLecSXZ
+	 Aue5WyF+fyc+PTb9bQRc0aDit5JzmcSwcnN5Sj2toHEMh4tCr+hD5uhyQvxRw4k0qi
+	 SZYywSJfTUQT/odU2cDXB/fdmD/gU+jW1LecIdfNE2mfYlKYRAyjSdYA3c6uCdmXD9
+	 Nb1NAPpiAMXsQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Sung-huai Wang <danny.wang@amd.com>,
+	Robin Chen <robin.chen@amd.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Sasha Levin <sashal@kernel.org>,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	hersenxs.wu@amd.com,
+	dennis.chan@amd.com,
+	alex.hung@amd.com,
+	hamza.mahfooz@amd.com,
+	chuntao.tso@amd.com,
+	george.shen@amd.com,
+	Bhawanpreet.Lakha@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.10 02/34] drm/amd/display: Handle HPD_IRQ for internal link
+Date: Sun, 28 Jul 2024 11:40:26 -0400
+Message-ID: <20240728154230.2046786-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240728154230.2046786-1-sashal@kernel.org>
+References: <20240728154230.2046786-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157A6C0CA988FE0381F007BD4B62@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 28, 2024 at 02:06:41PM +0000, Michael Kelley wrote:
-> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, July 28, 2024 2:18 AM
-> > 
-> > On Sun, Jul 28, 2024 at 04:32:23AM +0000, Michael Kelley wrote:
-> > > From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Wednesday, July 24,
-> > 2024 10:26 PM
-> > > >
-> > > > Currently on a very large system with 1780 CPUs, hv_acpi_init takes
-> > > > around 3 seconds to complete for all the CPUs. This is because of
-> > > > sequential synic initialization for each CPU.
-> > > >
-> > > > Defer these tasks so that each CPU executes hv_acpi_init in parallel
-> > > > to take full advantage of multiple CPUs.
-> > > >
-> > > > This solution saves around 2 seconds of boot time on a 1780 CPU system,
-> > > > that around 66% improvement in the existing logic.
-> > > >
-> > > > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > > > ---
-> > > >  drivers/hv/vmbus_drv.c | 33 ++++++++++++++++++++++++++++++---
-> > > >  1 file changed, 30 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > > > index c857dc3975be..3395526ad0d0 100644
-> > > > --- a/drivers/hv/vmbus_drv.c
-> > > > +++ b/drivers/hv/vmbus_drv.c
-> > > > @@ -1306,6 +1306,13 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
-> > > >  	return IRQ_HANDLED;
-> > > >  }
-> > > >
-> > > > +static void vmbus_percpu_work(struct work_struct *work)
-> > > > +{
-> > > > +	unsigned int cpu = smp_processor_id();
-> > > > +
-> > > > +	hv_synic_init(cpu);
-> > > > +}
-> > > > +
-> > > >  /*
-> > > >   * vmbus_bus_init -Main vmbus driver initialization routine.
-> > > >   *
-> > > > @@ -1316,7 +1323,8 @@ static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
-> > > >   */
-> > > >  static int vmbus_bus_init(void)
-> > > >  {
-> > > > -	int ret;
-> > > > +	int ret, cpu;
-> > > > +	struct work_struct __percpu *works;
-> > > >
-> > > >  	ret = hv_init();
-> > > >  	if (ret != 0) {
-> > > > @@ -1355,12 +1363,31 @@ static int vmbus_bus_init(void)
-> > > >  	if (ret)
-> > > >  		goto err_alloc;
-> > > >
-> > > > +	works = alloc_percpu(struct work_struct);
-> > > > +	if (!works) {
-> > > > +		ret = -ENOMEM;
-> > > > +		goto err_alloc;
-> > > > +	}
-> > > > +
-> > > >  	/*
-> > > >  	 * Initialize the per-cpu interrupt state and stimer state.
-> > > >  	 * Then connect to the host.
-> > > >  	 */
-> > > > -	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
-> > > > -				hv_synic_init, hv_synic_cleanup);
-> > > > +	cpus_read_lock();
-> > > > +	for_each_online_cpu(cpu) {
-> > > > +		struct work_struct *work = per_cpu_ptr(works, cpu);
-> > > > +
-> > > > +		INIT_WORK(work, vmbus_percpu_work);
-> > > > +		schedule_work_on(cpu, work);
-> > > > +	}
-> > > > +
-> > > > +	for_each_online_cpu(cpu)
-> > > > +		flush_work(per_cpu_ptr(works, cpu));
-> > > > +
-> > > > +	ret = __cpuhp_setup_state_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online", false,
-> > > > +					     hv_synic_init, hv_synic_cleanup, false);
-> > >
-> > > I'd suggest using cpuhp_setup_state_nocalls_cpuslocked().  It appears to be
-> > > the interface intended for users outside the cpuhotplug code, whereas
-> > > __cpuhp_setup_state_cpuslocked() should be private to the cpuhotplug code.
-> > >
-> > 
-> > Thanks for your review.
-> > 
-> > The function cpuhp_setup_state_nocalls_cpuslocked() is commonly used across the
-> > kernel drivers hence it was a first choice for me as well. However, it includes a
-> > cpus_read_lock that we already introduced separately in above code. To avoid recursive
-> > locking, I opted for __cpuhp_setup_state_cpuslocked.
-> 
-> cpuhp_setup_state_nocalls() includes the cpus_read_lock() as you describe.
-> But cpuhp_setup_state_nocalls_cpuslocked() explicitly assumes that the
-> cpus_read_lock() is already held, so is suitable for use in this case.  There are
-> several variants with the _cpuslocked suffix, which indicates that the caller
-> is responsible for the cpus_read_lock().
->
+From: Sung-huai Wang <danny.wang@amd.com>
 
-Thank you for the clarification. I will fix this up in v2.
+[ Upstream commit 239b31bd5c3fef3698440bf6436b2068c6bb08a3 ]
 
-- Saurabh
+[Why]
+TCON data is corrupted after electro static discharge test.
+Once the TCON data get corrupted, they will get themselves
+reset and send HPD_IRQ to source side.
+
+[How]
+Support HPD_IRQ for internal link, and restore the PSR/Replay setup.
+
+Reviewed-by: Robin Chen <robin.chen@amd.com>
+Acked-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
+Signed-off-by: Sung-huai Wang <danny.wang@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .../dc/link/protocols/link_dp_irq_handler.c   | 25 ++++++++++++-------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_irq_handler.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_irq_handler.c
+index 0fcf0b8530acf..659b8064d3618 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_irq_handler.c
++++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_irq_handler.c
+@@ -373,6 +373,7 @@ bool dp_handle_hpd_rx_irq(struct dc_link *link,
+ 	union device_service_irq device_service_clear = {0};
+ 	enum dc_status result;
+ 	bool status = false;
++	bool allow_active = false;
  
+ 	if (out_link_loss)
+ 		*out_link_loss = false;
+@@ -427,12 +428,6 @@ bool dp_handle_hpd_rx_irq(struct dc_link *link,
+ 		return false;
+ 	}
+ 
+-	if (handle_hpd_irq_psr_sink(link))
+-		/* PSR-related error was detected and handled */
+-		return true;
+-
+-	handle_hpd_irq_replay_sink(link);
+-
+ 	/* If PSR-related error handled, Main link may be off,
+ 	 * so do not handle as a normal sink status change interrupt.
+ 	 */
+@@ -454,9 +449,8 @@ bool dp_handle_hpd_rx_irq(struct dc_link *link,
+ 	 * If we got sink count changed it means
+ 	 * Downstream port status changed,
+ 	 * then DM should call DC to do the detection.
+-	 * NOTE: Do not handle link loss on eDP since it is internal link*/
+-	if ((link->connector_signal != SIGNAL_TYPE_EDP) &&
+-			dp_parse_link_loss_status(
++	 */
++	if (dp_parse_link_loss_status(
+ 					link,
+ 					&hpd_irq_dpcd_data)) {
+ 		/* Connectivity log: link loss */
+@@ -465,6 +459,11 @@ bool dp_handle_hpd_rx_irq(struct dc_link *link,
+ 					sizeof(hpd_irq_dpcd_data),
+ 					"Status: ");
+ 
++		if (link->psr_settings.psr_feature_enabled)
++			edp_set_psr_allow_active(link, &allow_active, true, false, NULL);
++		else if (link->replay_settings.replay_allow_active)
++			edp_set_replay_allow_active(link, &allow_active, true, false, NULL);
++
+ 		if (defer_handling && has_left_work)
+ 			*has_left_work = true;
+ 		else
+@@ -477,6 +476,14 @@ bool dp_handle_hpd_rx_irq(struct dc_link *link,
+ 		dp_trace_link_loss_increment(link);
+ 	}
+ 
++	if (*out_link_loss == false) {
++		if (handle_hpd_irq_psr_sink(link))
++			/* PSR-related error was detected and handled */
++			return true;
++
++		handle_hpd_irq_replay_sink(link);
++	}
++
+ 	if (link->type == dc_connection_sst_branch &&
+ 		hpd_irq_dpcd_data.bytes.sink_cnt.bits.SINK_COUNT
+ 			!= link->dpcd_sink_count)
+-- 
+2.43.0
+
 
