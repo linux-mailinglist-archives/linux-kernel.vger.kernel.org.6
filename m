@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-264582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD7F93E5A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B0793E5A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB4AB20FE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:19:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85D28B21A03
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2773E46434;
-	Sun, 28 Jul 2024 14:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ADF46434;
+	Sun, 28 Jul 2024 14:20:44 +0000 (UTC)
 Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20823224DC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5EA224DC
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722176379; cv=none; b=Q+GxHd/mxz1Qi1U7+JOft1RJ8/5ortGbx04wEzMADkNlr+FOgo4Oyf6jRrMZOIkH/WxHTGh/2jOrHaikHbmbQFu6twVUREYkLPa3b74jZfScT52UsVHip1ATojc3DANp9REP5RFQlKfCWcfO96QZhUCCl43NOceERoFnTVuF30s=
+	t=1722176443; cv=none; b=hRLV1RSg5t/SlV20MyKO/d3CWw5gy48/3XY4OqLb7A0G1Cbav46gMIEH6IJXJxEZQ8K5zi58AZQ15P2xGbGBqTHvUcdDVtNnEzyHzx5zSl0ulinst+UK65L7DanEzY5QMA+WgM4km49N8b7/OxcXUGcYnTkV1qTnWNXwUxa5aOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722176379; c=relaxed/simple;
-	bh=MuvoUgdtghS6rQkUL1LMIng5Fy8TT6pQDoAeXgc4g8Y=;
+	s=arc-20240116; t=1722176443; c=relaxed/simple;
+	bh=DCcbZwPczLti18O5aV/kiKBtWPntq5y66aaO5tNPqbE=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=UK6Q3Xf5XzuhP9e9SlXuwlQ+VmBKl7JEpPIXr2txyc0FVnuz2c2TIUwGzebqTXK+HO6GedpehUhu1AlWjb/lRVF22aXba5Gh/7VQ8vQeIp4ye6taG9ZSqhjFhLPnI3b9dDqDTfH9ay3CUKil4VhcO6/jmVrdtPRIWRyno8ElS2k=
+	 MIME-Version:Content-Type; b=mnoJLNzOg/fHl/txfBBRyyGAP8s7yr3y/h0XM9YPkXV83qv4Y/fzWggKWg8wd6qTa3g0xUk7ruiOG6biBa3W4eTSia2xIixEK8MY9hHFB+jxzPv/+U8jgtObc3+3YZ3ji2ODVZn968cP6UYtl2sEGVd0Pj6Gv2e7vs0F/A86s8U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-44-u0K9Dgy5NXe-98MhLF4xEg-1; Sun, 28 Jul 2024 15:19:32 +0100
-X-MC-Unique: u0K9Dgy5NXe-98MhLF4xEg-1
+ uk-mta-176-ASX4DscfNW6QCi1PP5Mc6g-1; Sun, 28 Jul 2024 15:20:36 +0100
+X-MC-Unique: ASX4DscfNW6QCi1PP5Mc6g-1
 Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
  (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
- 2024 15:18:47 +0100
+ 2024 15:19:52 +0100
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 28 Jul 2024 15:18:47 +0100
+ id 15.00.1497.048; Sun, 28 Jul 2024 15:19:52 +0100
 From: David Laight <David.Laight@ACULAB.COM>
 To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
 CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
@@ -50,13 +50,13 @@ CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
 	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>,
 	"'linux-mm@kvack.org'" <linux-mm@kvack.org>, 'Lorenzo Stoakes'
 	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2 2/8] minmax: Use _Static_assert() instead of
- static_assert()
-Thread-Topic: [PATCH v2 2/8] minmax: Use _Static_assert() instead of
- static_assert()
-Thread-Index: Adrg+SQVeb05XypLRkeZ+5Y+23noEA==
-Date: Sun, 28 Jul 2024 14:18:47 +0000
-Message-ID: <b169a04caaee43c7b917a7e48470da6a@AcuMS.aculab.com>
+Subject: [PATCH v2 3/8] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Topic: [PATCH v2 3/8] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Index: Adrg+UWL9B3xHw3xQ5CeKplMo1TYvg==
+Date: Sun, 28 Jul 2024 14:19:52 +0000
+Message-ID: <2e12aefe29884e578283129411e1df26@AcuMS.aculab.com>
 References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 In-Reply-To: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
@@ -75,55 +75,49 @@ Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-The static_assert() wrapper provides the text of the expression as the
-error message, this isn't needed here as an explicit message is provided.
-If there is an error (quite likely for min/max) the wrapper also adds
-two more lines of error output that just make it harder to read.
+__if_constexpr(expr, if_const, if_not_const) returns 'if_const' if 'expr'
+is a 'constant integer expression' otherwise 'if_not_const'.
+The two values may have different types.
 
-Since it gives no benefit and actually makes things worse directly
-using _Static_assert() is much better.
+__is_constexpr(expr) is equivalent to __if_constexpr(expr, 1, 0).
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
 v2:
-- No change.
+- Don't change __is_constexpr()
 
- include/linux/minmax.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/compiler.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index cea63a8ac80f..ab64b2e73ae5 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -48,7 +48,7 @@
- #define __cmp_once(op, x, y, unique_x, unique_y) ({=09\
- =09typeof(x) unique_x =3D (x);=09=09=09\
- =09typeof(y) unique_y =3D (y);=09=09=09\
--=09static_assert(__types_ok(x, y),=09=09=09\
-+=09_Static_assert(__types_ok(x, y),=09=09=09\
- =09=09#op "(" #x ", " #y ") signedness error, fix types or consider u" #op=
- "() before " #op "_t()"); \
- =09__cmp(op, unique_x, unique_y); })
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2594553bb30b..35d5b2fa4786 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -242,6 +242,23 @@ static inline void *offset_to_ptr(const int *off)
+ /* &a[0] degrades to a pointer: a different type from an array */
+ #define __must_be_array(a)=09BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
 =20
-@@ -137,11 +137,11 @@
- =09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
- =09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
- =09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
--=09static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
-+=09_Static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
- =09=09=09(lo) <=3D (hi), true),=09=09=09=09=09\
- =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
--=09static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=09=
-\
--=09static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=09=
-\
-+=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
-=09\
-+=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
-=09\
- =09__clamp(unique_val, unique_lo, unique_hi); })
-=20
- #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
++/**
++ * __if_constexpr - Check whether an expression is an 'integer
++ *=09=09constant expression'
++ * @expr: Expression to test, not evaluated, can be a pointer
++ * @if_const: return value if constant
++ * @if_not_const: return value if not constant
++ *
++ * The return values @if_const and @if_not_const can have different types.
++ *
++ * Relies on typeof(x ? NULL : ptr_type) being ptr_type and
++ * typeof(x ? (void *)y : ptr_type) being 'void *'.
++ */
++#define __if_constexpr(expr, if_const, if_not_const)=09=09\
++       _Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0,=09\
++=09=09char *: (if_const),=09=09=09=09\
++=09=09void *: (if_not_const))
++
+ /*
+  * This returns a constant expression while determining if an argument is
+  * a constant expression, most importantly without evaluating the argument=
+.
 --=20
 2.17.1
 
