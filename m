@@ -1,280 +1,388 @@
-Return-Path: <linux-kernel+bounces-264885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1766093E9B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:30:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D254B93E9B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD781F21120
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB0CB21799
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE11978281;
-	Sun, 28 Jul 2024 21:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263185914C;
+	Sun, 28 Jul 2024 21:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="H9VcSYNL"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AegzNYdP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HIUWeODf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9E2171CC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4CA7470
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722202191; cv=none; b=p/11nqZb2t4l5Qem0XouLBG25gmT07xufCZxydlQ9R0GECIQ1E2xTpERuJ2DNvUTkYFIeqqsjVPVFl6dfNKr3evs9bCxbHvHiCh92FOeniey54hOcwVVwF3cSvFK6C+Ie8SfziuZVgYwd08fpXlNJlzggorJDRZVZTLjdjN9Lds=
+	t=1722202244; cv=none; b=oarG/smreRRjbeO74CBT61mHXmmtBKC8zN1Dlumu5jh56nONF465KfFBbHC4ozzTKyXXC8T3Cce2K70Bcs24T05gKm2KSlJBWyfP2hqOGTYPObqdeIK0JANnU+RG8138zkA0vg3Ca5F9d6iYlQPLi+RwOztCu1Ce3bnXsB/sTG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722202191; c=relaxed/simple;
-	bh=eh7UOb0gpwvmRc/U0nM38o+Rf1CDu8haYM4fvwZiuuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyl7bzHIkpWjWImrQvOVyaxk8HrsYJPoaS4Tsag2oBWfGqCn8VRJ5xkJxWr97JjEpoA9sKSaAekboXoyS3Cy9FhcwIV3NwQJmwMaNkkSPXiADRB6TVQHSqVK6E8MB1Aj8lCRwm4OBOEZqalSuOjxwMQjQaA7aCAMng50gGkXjFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=H9VcSYNL; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-785862fdd46so30238a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1722202189; x=1722806989; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=068DTb7U3GP+TGu0Qp5p0q4bxI1cSTdW1IWK0tXmmHM=;
-        b=H9VcSYNLo+6qu5CU4aomvZhBwjhfHC7w0STNJ03XdZje2IiCIU7p1+Xp0BtYjG+qwE
-         NtWW2/aPzf4gJgN932XkrH8EE3JYgFbGhK5ybRpFb3LZYuXT/0A2IE7QHuptefyHVlXA
-         Fh9SiPw8K0pOguD6jTZ18PKF/BZhOK/RJKGgtuhxSGhaisw3eHSA1MQOU+hoDphHHXzH
-         r4VAe8AQrPAiaI7Vvgr6kJqesnp56QcvtqbA1VzgceTzovo4ZSna0NxTVwbWTzWQSEFF
-         n6HOLPgWF3X2QfMyFb28qaYKIgegMCY1fQU6OI0ykUf6cLBpycrRMHSR9XjGA1cDL5V8
-         wt0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722202189; x=1722806989;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=068DTb7U3GP+TGu0Qp5p0q4bxI1cSTdW1IWK0tXmmHM=;
-        b=f8BL4kG56jeHLqUU4zf1Obhrp84ufz93FAmZYk4HbFAIpRyt19tQ3DhuxcM6CeqIEu
-         kkWekucUEniXiFullulpOb7qgeDBjYjZGJhImKDgd7egMQD7x/qPEleFPJqDLxPHP6wg
-         yZBlhThLBiauhaJpPBYWr2Q0rtSqqYg2cna+5xJYi8gsMBjFG2rOpDP4OErLxWWtnhua
-         FZ47Kr3+pQH9v0vGtmLdCDE+/bGEcJps6f5IBBOwYYWw10TL01cr5dvP0GIRzw/KnujI
-         BRdx0hc7IulnE8mSaBE75mOQD240pL9D99cjODiuxXraoj3qd2rTTTFBSmDt+oqzAiA+
-         luqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwvts6fnNE+8UYXPVKHnVAutFoaDBUOqFsvM29bYwqiXK/M5rZPfVwtltx/KtjAn89P5vIgEnKKi0BMl70vU+qN+oziIJuqHqS0Ds1
-X-Gm-Message-State: AOJu0Yxe0juUHjpoaJzzCF97qn3LSnUa723auj8WlsgeAUGm1jZA3nhV
-	cfNBr/yTIECRXWgsljVdj/jylVAT/129WwTf7wyA8mtlHnEVp5WQlEHvkmfSlkA=
-X-Google-Smtp-Source: AGHT+IHqPaezX3BPHyjcEbrdPXpuQZ0UQyPyHD01eJ06JdV8rZkIEtL2lDeBP5dT54WROrrc6TEhiQ==
-X-Received: by 2002:a05:6a20:3d91:b0:1c4:a20e:7a8c with SMTP id adf61e73a8af0-1c4a20e859dmr5512134637.4.1722202189103;
-        Sun, 28 Jul 2024 14:29:49 -0700 (PDT)
-Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead7115a1sm5704594b3a.46.2024.07.28.14.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 14:29:48 -0700 (PDT)
-Date: Sun, 28 Jul 2024 14:29:44 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>,
-	clang-built-linux <clang-built-linux@googlegroups.com>,
-	zhuqiuer <zhuqiuer1@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: vfp: Use asm volatile in fmrx/fmxr macros
-Message-ID: <Zqa4SAyPKPuaXdgg@mozart.vkv.me>
-References: <92a00580828a1bdf96e7e36545f6d229809af04f.1722154575.git.calvin@wbinvd.org>
- <CAMj1kXFT3RFW7oPg5pc=bXCqBrzx9amAyR1dZpiqaLKu-5GXpQ@mail.gmail.com>
+	s=arc-20240116; t=1722202244; c=relaxed/simple;
+	bh=WvDLWZXNj7JvefON5oN/oI6hLOY2sERSFpKQzRgTBzc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=heETyEG+lFzljh0WAz5IVSK+qVH/by5SOstxPBTG/ySbkl9fjxhYtHU10CAZxLCxNHRt5I6Q7YJsSK2CwlT+1HOMidKeMbzE1FLYvz2gPLkkzxCUG6JQTpqBTn6u1d2AoBzazJPxffoca3Sk4HTc+DVFrIO3Y2muHLC0rpjArzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AegzNYdP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HIUWeODf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722202239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mkxxkg5G+QCKXORXqfQheO8NG7nyryepkIDctyVjL18=;
+	b=AegzNYdPO9Dp5Bc+D6MKm89CRgP4G7VK8YM4UOapwi48YT73TQMImAqqNPI+pb/bhW4SiF
+	u5gihWQl7/F2P6Aas4XOm9Oc26OSa1zirtRfBFKKxTjXlPPy5YvEQ2XBozDvxu81qaKzAs
+	9F5OvEBt1BEHKY3yVLuRzeolv69QTKdroB8whPxJ4F99T2s+2ycxYmF6BVLmp+6PbcYfdI
+	pAn2D94xL/Ut83lQAm7EMOWtd9XTeKNAqVh2BQ1/mKF5HYVURWly0taDCZRpixCAqR9ovg
+	YQSHbke+10OrsYNiG+8wcIX0mBZE+M8cJh9KXTOW2G3tThALTOujkzEM+Xs/kg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722202239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mkxxkg5G+QCKXORXqfQheO8NG7nyryepkIDctyVjL18=;
+	b=HIUWeODfButgjkayOEsDjAdS9bXa8TqVjTMQe5l2xrxZ0Y25r7JiWt3jvB0dPIgALGPkt3
+	hcIy1oeuSfjmPkDw==
+To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+ youssefesmat@chromium.org, efault@gmx.de
+Subject: Re: [RFC PATCH 24/24] sched/time: Introduce CLOCK_THREAD_DVFS_ID
+In-Reply-To: <20240727105031.053611186@infradead.org>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105031.053611186@infradead.org>
+Date: Sun, 28 Jul 2024 23:30:38 +0200
+Message-ID: <874j89tda9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFT3RFW7oPg5pc=bXCqBrzx9amAyR1dZpiqaLKu-5GXpQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Sunday 07/28 at 19:09 +0200, Ard Biesheuvel wrote:
-> (cc Arnd, Nathan, zhuqiuer)
-> 
-> On Sun, 28 Jul 2024 at 10:21, Calvin Owens <calvin@wbinvd.org> wrote:
-> > <snip>
-> >
-> > Crudely grepping for vmsr/vmrs instructions in the otherwise nearly
-> > idential text for vfp_support_entry() makes the problem obvious:
-> >
-> >     vmlinux.llvm.good [0xc0101cb8] <+48>:  vmrs   r7, fpexc
-> >     vmlinux.llvm.good [0xc0101cd8] <+80>:  vmsr   fpexc, r0
-> >     vmlinux.llvm.good [0xc0101d20] <+152>: vmsr   fpexc, r7
-> >     vmlinux.llvm.good [0xc0101d38] <+176>: vmrs   r4, fpexc
-> >     vmlinux.llvm.good [0xc0101d6c] <+228>: vmrs   r0, fpscr
-> >     vmlinux.llvm.good [0xc0101dc4] <+316>: vmsr   fpexc, r0
-> >     vmlinux.llvm.good [0xc0101dc8] <+320>: vmrs   r0, fpsid
-> >     vmlinux.llvm.good [0xc0101dcc] <+324>: vmrs   r6, fpscr
-> >     vmlinux.llvm.good [0xc0101e10] <+392>: vmrs   r10, fpinst
-> >     vmlinux.llvm.good [0xc0101eb8] <+560>: vmrs   r10, fpinst2
-> >
-> >     vmlinux.llvm.bad  [0xc0101cb8] <+48>:  vmrs   r7, fpexc
-> >     vmlinux.llvm.bad  [0xc0101cd8] <+80>:  vmsr   fpexc, r0
-> >     vmlinux.llvm.bad  [0xc0101d20] <+152>: vmsr   fpexc, r7
-> >     vmlinux.llvm.bad  [0xc0101d30] <+168>: vmrs   r0, fpscr
-> >     vmlinux.llvm.bad  [0xc0101d50] <+200>: vmrs   r6, fpscr  <== BOOM!
-> >     vmlinux.llvm.bad  [0xc0101d6c] <+228>: vmsr   fpexc, r0
-> >     vmlinux.llvm.bad  [0xc0101d70] <+232>: vmrs   r0, fpsid
-> >     vmlinux.llvm.bad  [0xc0101da4] <+284>: vmrs   r10, fpinst
-> >     vmlinux.llvm.bad  [0xc0101df8] <+368>: vmrs   r4, fpexc
-> >     vmlinux.llvm.bad  [0xc0101e5c] <+468>: vmrs   r10, fpinst2
-> >
-> > I think LLVM's reordering is valid as the code is currently written: the
-> > compiler doesn't know the instructions have side effects in hardware.
-> >
-> > Fix by using "asm volatile" in fmxr() and fmrx(), so they cannot be
-> > reordered with respect to each other. The original compiler now produces
-> > working kernels on my hardware with DYNAMIC_DEBUG=n.
-> >
-> > This is the relevant piece of the diff of the vfp_support_entry() text,
-> > from the original oopsing kernel to a working kernel with this patch:
-> >
-> >          vmrs r0, fpscr
-> >          tst r0, #4096
-> >          bne 0xc0101d48
-> >          tst r0, #458752
-> >          beq 0xc0101ecc
-> >          orr r7, r7, #536870912
-> >          ldr r0, [r4, #0x3c]
-> >          mov r9, #16
-> >         -vmrs r6, fpscr
-> >          orr r9, r9, #251658240
-> >          add r0, r0, #4
-> >          str r0, [r4, #0x3c]
-> >          mvn r0, #159
-> >          sub r0, r0, #-1207959552
-> >          and r0, r7, r0
-> >          vmsr fpexc, r0
-> >          vmrs r0, fpsid
-> >         +vmrs r6, fpscr
-> >          and r0, r0, #983040
-> >          cmp r0, #65536
-> >          bne 0xc0101d88
-> >
-> > Fixes: 4708fb041346 ("ARM: vfp: Reimplement VFP exception entry in C code")
-> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> > ---
-> >  arch/arm/vfp/vfpinstr.h | 48 ++++++++++++++++++++++-------------------
-> >  1 file changed, 26 insertions(+), 22 deletions(-)
-> >
-> 
-> Thanks for the patch, and for the excellent analysis.
-> 
-> Note that this fix has been proposed in the past, as well as another
-> one addressing the same issue, but we've been incredibly sloppy
-> getting it merged.
-> 
-> https://lore.kernel.org/linux-arm-kernel/20240410024126.21589-2-zhuqiuer1@huawei.com/
-> https://lore.kernel.org/linux-arm-kernel/20240318093004.117153-2-ardb+git@google.com/
+On Sat, Jul 27 2024 at 12:27, Peter Zijlstra wrote:
+> In order to measure thread time in a DVFS world, introduce
+> CLOCK_THREAD_DVFS_ID -- a copy of CLOCK_THREAD_CPUTIME_ID that slows
+> down with both DVFS scaling and CPU capacity.
+>
+> The clock does *NOT* support setting timers.
 
-Ah sorry for missing that, I searched for the symptom not the cure.
+That's not the only limitation. See below.
 
-> What both of us appear to have missed is that there are two versions
-> of these routines, which should either be dropped (as they are
-> obsolete now that the minimum binutils version is 2.25) or fixed up as
-> well, as you do below.
-> 
-> Anyone have any thoughts on using a memory clobber as opposed to
-> volatile? I think volatile means that the access cannot be elided, but
-> it is unclear to me whether that implies any ordering. A 'memory'
-> clobber implies that globally visible state is updated, which seems
-> like a stronger guarantee to me.
+> Useful for both SCHED_DEADLINE and the newly introduced
+> sched_attr::sched_runtime usage for SCHED_NORMAL.
 
-My thinking was that if 'asm volatile' is sufficient, it will suppress
-less optimization than the clobber, since the clobber might force the
-compiler to assume unrelated memory could have been modified when it
-really never is. But I'm not sure about that.
+Can this please have an explanation about the usage of the previously
+reserved value of 0x7 in the lower 3 bits?
 
-Out of curiousity, I tried it both ways with the same compiler just now,
-the only tiny difference in the emitted vfp_support_entry() is here:
+>   *
+>   * Bit 2 indicates whether a cpu clock refers to a thread or a process.
+>   *
+> - * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or FD=3.
+> + * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or DVSF=3
+>   *
+> - * A clockid is invalid if bits 2, 1, and 0 are all set.
+> + * (DVFS is PERTHREAD only)
 
-	--- /volatile	2024-07-28 13:28:59.890505404 -0700
-	+++ /memclobber	2024-07-28 13:28:59.890505404 -0700
-	 str r0, [r5, #0x4]
-	 vmrs r7, fpexc
-	 tst r7, #1073741824
-	 bne 0xc0101d28
-	 orr r7, r7, #1073741824
-	 bic r0, r7, #-2147483648
-	 vmsr fpexc, r0
-	+ldr r8, [pc, #0x26c]
-	 ldr r0, [r5, #0x8]
-	-ldr r8, [pc, #0x268]
-	 add r6, r5, #224
-	 ldr r0, [r8, r0, lsl #2]
-	 cmp r0, r6
-	 beq 0xc0101d18
+This drops the information about the FD usage. Something like:
+
+/*
+ * Bit fields within a clockid:
+ *
+ * Bit 31:3 hold either a pid or a file descriptor.
+ *
+ * Bit 2  Bit 1  Bit 0
+ *   0      0      0     Per process	CPUCLOCK_PROF
+ *   0      0      1     Per process	CPUCLOCK_VIRT
+ *   0      1      0     Per process	CPUCLOCK_SCHED
+ *   0      1      1     Posixclock FD	CLOCKFD
+ *   1      0      0     Per thread	CPUCLOCK_PROF
+ *   1      0      1     Per thread	CPUCLOCK_VIRT
+ *   1      1      0     Per thread	CPUCLOCK_SCHED
+ *   1      1      1     Per thread	CPUCLOCK_DVSF
+ *
+ * CPUCLOCK_DVSF is per thread only and shares the type code in Bit 1:0
+ * with CLOCKFD. CLOCKFD uses a file descriptor to access dynamically
+ * registered POSIX clocks (e.g. PTP hardware clocks).
+ */
+
+should be clear enough, no?
+
+But, all of this is wishful thinking because the provided implementation
+only works for:
+
+      sys_clock_getres(CLOCK_THREAD_DVFS_ID, ...)
+
+which falls back to thread_cpu_clock_getres().
+
+The variant which has the TID encoded in bit 31:3 and the type in bit
+2:0 fails the test in pid_for_clock():
+
+        if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
+		return NULL;
+
+Worse for sys_clock_gettime(). That fails in both cases for the very
+same reason.
+
+See the uncompiled delta patch below for a cure of that and the rest of
+my comments.
+
+>   #define CPUCLOCK_PROF		0
+>   #define CPUCLOCK_VIRT		1
+>   #define CPUCLOCK_SCHED		2
+>  +#define CPUCLOCK_DVFS		3
+>   #define CPUCLOCK_MAX		3
+>   #define CLOCKFD			CPUCLOCK_MAX
+>   #define CLOCKFD_MASK		(CPUCLOCK_PERTHREAD_MASK|CPUCLOCK_CLOCK_MASK)
+
+With that DVFS addition CPUCLOCK_MAX is misleading at best. See delta
+patch.
+
+> +
+> +	rq = task_rq_lock(p, &rf);
+> +	/*
+> +	 * Must be ->curr _and_ ->on_rq.  If dequeued, we would
+> +	 * project cycles that may never be accounted to this
+> +	 * thread, breaking clock_gettime().
+
+Must be? For what? I assume you want to say:
+
+     Update the runtime if the task is the current task and on the
+     runqueue. The latter is important because if current is dequeued,
+     ....
+
+> +	 */
+> +	if (task_current(rq, p) && task_on_rq_queued(p)) {
+> +		prefetch_curr_exec_start(p);
+> +		update_rq_clock(rq);
+> +		p->sched_class->update_curr(rq);
+> +	}
+> +	ns = p->se.sum_dvfs_runtime;
+> +	task_rq_unlock(rq, p, &rf);
+> @@ -1664,6 +1668,11 @@ static int thread_cpu_timer_create(struc
+>  	timer->it_clock = THREAD_CLOCK;
+>  	return posix_cpu_timer_create(timer);
+>  }
+> +static int thread_dvfs_cpu_clock_get(const clockid_t which_clock,
+> +				struct timespec64 *tp)
+
+Please align the second line properly with the argument in the first line.
 
 Thanks,
-Calvin
 
-> In any case, let's work together to get /some/ version of this fix merged asap.
-> 
-> > diff --git a/arch/arm/vfp/vfpinstr.h b/arch/arm/vfp/vfpinstr.h
-> > index 3c7938fd40aa..32090b0fb250 100644
-> > --- a/arch/arm/vfp/vfpinstr.h
-> > +++ b/arch/arm/vfp/vfpinstr.h
-> > @@ -64,33 +64,37 @@
-> >
-> >  #ifdef CONFIG_AS_VFP_VMRS_FPINST
-> >
-> > -#define fmrx(_vfp_) ({                 \
-> > -       u32 __v;                        \
-> > -       asm(".fpu       vfpv2\n"        \
-> > -           "vmrs       %0, " #_vfp_    \
-> > -           : "=r" (__v) : : "cc");     \
-> > -       __v;                            \
-> > - })
-> > -
-> > -#define fmxr(_vfp_,_var_)              \
-> > -       asm(".fpu       vfpv2\n"        \
-> > -           "vmsr       " #_vfp_ ", %0" \
-> > -          : : "r" (_var_) : "cc")
-> > +#define fmrx(_vfp_) ({                         \
-> > +       u32 __v;                                \
-> > +       asm volatile (".fpu     vfpv2\n"        \
-> > +                     "vmrs     %0, " #_vfp_    \
-> > +                    : "=r" (__v) : : "cc");    \
-> > +       __v;                                    \
-> > +})
-> > +
-> > +#define fmxr(_vfp_, _var_) ({                  \
-> > +       asm volatile (".fpu     vfpv2\n"        \
-> > +                     "vmsr     " #_vfp_ ", %0" \
-> > +                    : : "r" (_var_) : "cc");   \
-> > +})
-> >
-> >  #else
-> >
-> >  #define vfpreg(_vfp_) #_vfp_
-> >
-> > -#define fmrx(_vfp_) ({                 \
-> > -       u32 __v;                        \
-> > -       asm("mrc p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmrx   %0, " #_vfp_    \
-> > -           : "=r" (__v) : : "cc");     \
-> > -       __v;                            \
-> > - })
-> > -
-> > -#define fmxr(_vfp_,_var_)              \
-> > -       asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr   " #_vfp_ ", %0" \
-> > -          : : "r" (_var_) : "cc")
-> > +#define fmrx(_vfp_) ({                                         \
-> > +       u32 __v;                                                \
-> > +       asm volatile ("mrc p10, 7, %0, " vfpreg(_vfp_) ","      \
-> > +                     "cr0, 0 @ fmrx    %0, " #_vfp_            \
-> > +                    : "=r" (__v) : : "cc");                    \
-> > +       __v;                                                    \
-> > +})
-> > +
-> > +#define fmxr(_vfp_, _var_) ({                                  \
-> > +       asm volatile ("mcr p10, 7, %0, " vfpreg(_vfp_) ","      \
-> > +                     "cr0, 0 @ fmxr    " #_vfp_ ", %0"         \
-> > +                    : : "r" (_var_) : "cc");                   \
-> > +})
-> >
-> >  #endif
-> >
-> > --
-> > 2.39.2
-> >
+        tglx
+---
+
+--- a/include/linux/posix-timers_types.h
++++ b/include/linux/posix-timers_types.h
+@@ -9,27 +9,42 @@
+ /*
+  * Bit fields within a clockid:
+  *
+- * The most significant 29 bits hold either a pid or a file descriptor.
++ * Bit 31:3 hold either a PID/TID or a file descriptor.
+  *
+- * Bit 2 indicates whether a cpu clock refers to a thread or a process.
++ * Bit 2  Bit 1  Bit 0
++ *   0      0      0     Per process	CPUCLOCK_PROF
++ *   0      0      1     Per process	CPUCLOCK_VIRT
++ *   0      1      0     Per process	CPUCLOCK_SCHED
++ *   0      1      1     Posixclock FD	CLOCKFD
++ *   1      0      0     Per thread	CPUCLOCK_PROF
++ *   1      0      1     Per thread	CPUCLOCK_VIRT
++ *   1      1      0     Per thread	CPUCLOCK_SCHED
++ *   1      1      1     Per thread	CPUCLOCK_DVSF
+  *
+- * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or DVSF=3
+- *
+- * (DVFS is PERTHREAD only)
++ * CPUCLOCK_DVSF is per thread only and shares the type code in Bit 1:0
++ * with CLOCKFD. CLOCKFD uses a file descriptor to access dynamically
++ * registered POSIX clocks (e.g. PTP hardware clocks).
+  */
++
+ #define CPUCLOCK_PID(clock)		((pid_t) ~((clock) >> 3))
+-#define CPUCLOCK_PERTHREAD(clock) \
+-	(((clock) & (clockid_t) CPUCLOCK_PERTHREAD_MASK) != 0)
++#define CPUCLOCK_PERTHREAD(clock)	(((clock) & (clockid_t) CPUCLOCK_PERTHREAD_MASK) != 0)
+ 
+-#define CPUCLOCK_PERTHREAD_MASK	4
+-#define CPUCLOCK_WHICH(clock)	((clock) & (clockid_t) CPUCLOCK_CLOCK_MASK)
+-#define CPUCLOCK_CLOCK_MASK	3
+ #define CPUCLOCK_PROF		0
+ #define CPUCLOCK_VIRT		1
+ #define CPUCLOCK_SCHED		2
+-#define CPUCLOCK_DVFS		3
+-#define CPUCLOCK_MAX		3
+-#define CLOCKFD			CPUCLOCK_MAX
++#define CPUCLOCK_SAMPLE_MAX	(CPUCLOCK_SCHED + 1)
++
++#define CPUCLOCK_CLOCK_MASK	3
++#define CPUCLOCK_PERTHREAD_MASK	4
++#define CPUCLOCK_WHICH(clock)	((clock) & (clockid_t) CPUCLOCK_CLOCK_MASK)
++
++/*
++ * CPUCLOCK_DVFS and CLOCKFD share the type code in bit 1:0. CPUCLOCK_DVFS
++ * does not belong to the sampling clocks and does not allow timers to be
++ * armed on it.
++ */
++#define CPUCLOCK_DVFS		CPUCLOCK_SAMPLE_MAX
++#define CLOCKFD			CPUCLOCK_DVFS
+ #define CLOCKFD_MASK		(CPUCLOCK_PERTHREAD_MASK|CPUCLOCK_CLOCK_MASK)
+ 
+ #ifdef CONFIG_POSIX_TIMERS
+@@ -55,7 +70,7 @@ struct posix_cputimer_base {
+  * Used in task_struct and signal_struct
+  */
+ struct posix_cputimers {
+-	struct posix_cputimer_base	bases[CPUCLOCK_MAX];
++	struct posix_cputimer_base	bases[CPUCLOCK_SAMPLE_MAX];
+ 	unsigned int			timers_active;
+ 	unsigned int			expiry_active;
+ };
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5413,9 +5413,10 @@ unsigned long long task_sched_dvfs_runti
+ 
+ 	rq = task_rq_lock(p, &rf);
+ 	/*
+-	 * Must be ->curr _and_ ->on_rq.  If dequeued, we would
+-	 * project cycles that may never be accounted to this
+-	 * thread, breaking clock_gettime().
++	 * Update the runtime if the task is the current task and on the
++	 * runqueue. The latter is important because if current is
++	 * dequeued, we would project cycles that may never be accounted to
++	 * this thread, breaking clock_gettime().
+ 	 */
+ 	if (task_current(rq, p) && task_on_rq_queued(p)) {
+ 		prefetch_curr_exec_start(p);
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -54,13 +54,13 @@ int update_rlimit_cpu(struct task_struct
+ /*
+  * Functions for validating access to tasks.
+  */
+-static struct pid *pid_for_clock(const clockid_t clock, bool gettime)
++static struct pid *__pid_for_clock(const clockid_t clock, const clockid_t maxclock, bool gettime)
+ {
+ 	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
+ 	const pid_t upid = CPUCLOCK_PID(clock);
+ 	struct pid *pid;
+ 
+-	if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
++	if (CPUCLOCK_WHICH(clock) > maxclock)
+ 		return NULL;
+ 
+ 	/*
+@@ -94,12 +94,17 @@ static struct pid *pid_for_clock(const c
+ 	return pid_has_task(pid, PIDTYPE_TGID) ? pid : NULL;
+ }
+ 
++static inline struct pid *pid_for_clock(const clockid_t clock, bool gettime)
++{
++	return __pid_for_clock(clock, CPUCLOCK_SCHED, gettime);
++}
++
+ static inline int validate_clock_permissions(const clockid_t clock)
+ {
+ 	int ret;
+ 
+ 	rcu_read_lock();
+-	ret = pid_for_clock(clock, false) ? 0 : -EINVAL;
++	ret = __pid_for_clock(clock, CPUCLOCK_DVFS, false) ? 0 : -EINVAL;
+ 	rcu_read_unlock();
+ 
+ 	return ret;
+@@ -344,7 +349,7 @@ static u64 cpu_clock_sample_group(const
+ {
+ 	struct thread_group_cputimer *cputimer = &p->signal->cputimer;
+ 	struct posix_cputimers *pct = &p->signal->posix_cputimers;
+-	u64 samples[CPUCLOCK_MAX];
++	u64 samples[CPUCLOCK_SAMPLE_MAX];
+ 
+ 	if (!READ_ONCE(pct->timers_active)) {
+ 		if (start)
+@@ -365,7 +370,7 @@ static int posix_cpu_clock_get(const clo
+ 	u64 t;
+ 
+ 	rcu_read_lock();
+-	tsk = pid_task(pid_for_clock(clock, true), clock_pid_type(clock));
++	tsk = pid_task(__pid_for_clock(clock, CPUCLOCK_DVFS, true), clock_pid_type(clock));
+ 	if (!tsk) {
+ 		rcu_read_unlock();
+ 		return -EINVAL;
+@@ -864,7 +869,7 @@ static void collect_posix_cputimers(stru
+ 	struct posix_cputimer_base *base = pct->bases;
+ 	int i;
+ 
+-	for (i = 0; i < CPUCLOCK_MAX; i++, base++) {
++	for (i = 0; i < CPUCLOCK_SAMPLE_MAX; i++, base++) {
+ 		base->nextevt = collect_timerqueue(&base->tqhead, firing,
+ 						    samples[i]);
+ 	}
+@@ -901,7 +906,7 @@ static void check_thread_timers(struct t
+ 				struct list_head *firing)
+ {
+ 	struct posix_cputimers *pct = &tsk->posix_cputimers;
+-	u64 samples[CPUCLOCK_MAX];
++	u64 samples[CPUCLOCK_SAMPLE_MAX];
+ 	unsigned long soft;
+ 
+ 	if (dl_task(tsk))
+@@ -979,7 +984,7 @@ static void check_process_timers(struct
+ {
+ 	struct signal_struct *const sig = tsk->signal;
+ 	struct posix_cputimers *pct = &sig->posix_cputimers;
+-	u64 samples[CPUCLOCK_MAX];
++	u64 samples[CPUCLOCK_SAMPLE_MAX];
+ 	unsigned long soft;
+ 
+ 	/*
+@@ -1098,7 +1103,7 @@ task_cputimers_expired(const u64 *sample
+ {
+ 	int i;
+ 
+-	for (i = 0; i < CPUCLOCK_MAX; i++) {
++	for (i = 0; i < CPUCLOCK_SAMPLE_MAX; i++) {
+ 		if (samples[i] >= pct->bases[i].nextevt)
+ 			return true;
+ 	}
+@@ -1121,7 +1126,7 @@ static inline bool fastpath_timer_check(
+ 	struct signal_struct *sig;
+ 
+ 	if (!expiry_cache_is_inactive(pct)) {
+-		u64 samples[CPUCLOCK_MAX];
++		u64 samples[CPUCLOCK_SAMPLE_MAX];
+ 
+ 		task_sample_cputime(tsk, samples);
+ 		if (task_cputimers_expired(samples, pct))
+@@ -1146,7 +1151,7 @@ static inline bool fastpath_timer_check(
+ 	 * delays with signals actually getting sent are expected.
+ 	 */
+ 	if (READ_ONCE(pct->timers_active) && !READ_ONCE(pct->expiry_active)) {
+-		u64 samples[CPUCLOCK_MAX];
++		u64 samples[CPUCLOCK_SAMPLE_MAX];
+ 
+ 		proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic,
+ 					   samples);
+@@ -1669,7 +1674,7 @@ static int thread_cpu_timer_create(struc
+ 	return posix_cpu_timer_create(timer);
+ }
+ static int thread_dvfs_cpu_clock_get(const clockid_t which_clock,
+-				struct timespec64 *tp)
++				     struct timespec64 *tp)
+ {
+ 	return posix_cpu_clock_get(THREAD_DVFS_CLOCK, tp);
+ }
 
