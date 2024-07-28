@@ -1,129 +1,101 @@
-Return-Path: <linux-kernel+bounces-264533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3260A93E496
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD7B93E49B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D976F1F21710
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E531F216D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917052C6BB;
-	Sun, 28 Jul 2024 10:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA23376E6;
+	Sun, 28 Jul 2024 10:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gK8LzaY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="MrjuEAza"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C825638382;
-	Sun, 28 Jul 2024 10:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A3E29CE6
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 10:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722162852; cv=none; b=M3vZhL/L9P4MsdzAGE3YpiBllDsS+YXzuEEBBJt+uh9UlfNd5IFou8NTOqqILakzIEeNdNBOhTf1MCoxEr7XTXgnD3pxo91OWY5U3dkPX+fGTiKe+LbMQqZFDfyRXaYygq8d3ecJQXIyL8cl/yO4px1lFc1Cfd+CTj68Akcdf7M=
+	t=1722163038; cv=none; b=lrrSuK9JX2/s94J/Otq+RR/O+uv94j8h49zw0gZ68Nj9+ULZcIBe1eQYK9hAtLr0ypdy4FVIAE7qGz9CJppco/4byW8T+ySVbquXf1kzh0g8BXzIPkx7MGZaO71xF7r4hNxg0GJcMbt1GbzyBXxr2UbZNb+zciyLG45X2Wa70mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722162852; c=relaxed/simple;
-	bh=NjoLF9IWa5VVNreEq2JBC/4UqxuX8lm9q3lxSxaPe6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdQBZfGtAgknJfQK8WaSorZ8Jmun3PcFlFeSCzd6Oj6cmGVTCQ+hxRXKnLvuacHzoqegdrLpF3UPu3L87zvW0oL9+VFA8NJyMINOIvgQGRGT8KP2beLyMRGpaTVtGIEa5Qbdda+48TdUQ9ZzLYkxA5jB4IrIOVwfO6K7uarrfAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gK8LzaY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D488C116B1;
-	Sun, 28 Jul 2024 10:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722162852;
-	bh=NjoLF9IWa5VVNreEq2JBC/4UqxuX8lm9q3lxSxaPe6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gK8LzaY4b3ZdLb8a35WuRxmXJ+39Q0y7mJ8Lm8H02wipBrTQ2HGh+1yp6JBR/1eU+
-	 blbL/Uw5iLQY4FJKYbPVQz5+kN0+Eyx2EGqFealCVXT7B3kxRzsgv/msI2ubrIl7UF
-	 YYwWTZOv5W6UgUFTC8AQhU06Z/q33t22JqKq4mmh14OeiF9ym5whQHZT/YKdY34jY3
-	 2DH4v2RwIA/exAyYWxCKnpj1kMLbcRpCsdfsLTKzFQ2LVxVoa6g/Hk9wWQ4xKTVdb6
-	 owv7Gg5Xcp87lYL3us0wOQ/DVezAJa8H8jLaksKuJg/HxDq7RoFQ0aCWR4zSUeGl01
-	 hsUyYT04wCnIQ==
-Message-ID: <61b71935-0743-4e51-8221-0afc3f0e7b9f@kernel.org>
-Date: Sun, 28 Jul 2024 12:34:06 +0200
+	s=arc-20240116; t=1722163038; c=relaxed/simple;
+	bh=VSQZUQRsh6tb++bgERR7+cIgD3X5k9ByH1RTlxLNfRA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BHqDN6+5XsUox2BWxHaPwRfA08+sPGzyVHLHvlWrRbeaMslzWUbu61Nmw2ZQn7NRxPhXjZ6qn22SgThplUIUtCXfx6PEv0k7sn+dEp1nnvtvn4/npBP1dkJ0i1BwMhoB5zGi1diGsRrmp1S/P3RYt8hIr9RhQPNQZkrpYg5HDog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=MrjuEAza; arc=none smtp.client-ip=193.222.135.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 42027 invoked from network); 28 Jul 2024 12:37:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1722163027; bh=iktQfLVfo5uemDyHcZpaFp8tjax4KZZs1j7D2Ojd3uY=;
+          h=From:To:Cc:Subject;
+          b=MrjuEAzaLyvMJFAMd2XToE52gMrUFpD7wmwWZy9rYk8ZmZ7GTBwNryPZnCXUOsN+M
+           1iKgAzNzugyODegvuQUXt0AnpkXxN1bxLrATXCxIci1msjj0TtXvxqZgq03zwuaVpB
+           5UvMJznjutb/BFIrUSh61qzykQ381RGkaQu5oQfA=
+Received: from aaen12.neoplus.adsl.tpnet.pl (HELO localhost.localdomain) (mat.jonczyk@o2.pl@[83.4.117.12])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with SMTP
+          for <linux-raid@vger.kernel.org>; 28 Jul 2024 12:37:06 +0200
+From: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+To: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Song Liu <song@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] [DEBUG] md/raid1: check recovery_offset in raid1_check_read_range
+Date: Sun, 28 Jul 2024 12:36:34 +0200
+Message-Id: <20240728103634.208234-1-mat.jonczyk@o2.pl>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
+References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: iio: adc: ad7380: add single-ended
- compatible parts
-To: Julien Stephan <jstephan@baylibre.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240726-ad7380-add-single-ended-chips-v1-0-2d628b60ccd1@baylibre.com>
- <20240726-ad7380-add-single-ended-chips-v1-1-2d628b60ccd1@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240726-ad7380-add-single-ended-chips-v1-1-2d628b60ccd1@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 2f2b5c119b9786ddc6624fe8163a95cc
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [sXPU]                               
 
-On 26/07/2024 17:20, Julien Stephan wrote:
-> Adding ad7386/7/8 single-ended compatible parts, and the corresponding
-> ad7386-4/7-4/8-4 4 channels.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml | 13 +++++++++++++
+This should fix the filesystem corruption during RAID resync.
 
-FWIW, since ordering is already broken:
+Checking this condition in raid1_check_read_range is not ideal, but this
+is only a debug patch.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/lkml/20240724141906.10b4fc4e@peluse-desk5/T/#m671d6d3a7eda44d39d0882864a98824f52c52917
+Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Cc: Song Liu <song@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ drivers/md/raid1-10.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
+index 2ea1710a3b70..4ab896e8cb12 100644
+--- a/drivers/md/raid1-10.c
++++ b/drivers/md/raid1-10.c
+@@ -252,6 +252,10 @@ static inline int raid1_check_read_range(struct md_rdev *rdev,
+ 	sector_t first_bad;
+ 	int bad_sectors;
+ 
++	if (!test_bit(In_sync, &rdev->flags) &&
++	    rdev->recovery_offset < this_sector + *len)
++		return 0;
++
+ 	/* no bad block overlap */
+ 	if (!is_badblock(rdev, this_sector, *len, &first_bad, &bad_sectors))
+ 		return *len;
+-- 
+2.25.1
 
 
