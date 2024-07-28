@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-264514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8F693E45E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE7B93E467
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFEB91C2100A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087D71C20992
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5F29CE5;
-	Sun, 28 Jul 2024 09:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E081E38382;
+	Sun, 28 Jul 2024 10:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="rhAwMFsS"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="s1hwEqD6"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A7E1B86E5;
-	Sun, 28 Jul 2024 09:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC0321342;
+	Sun, 28 Jul 2024 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722160393; cv=none; b=jg5l1IkwTFfjv7FYvbT7p75pVkXe7lfCEd7np3jHOV60R/xddRdRYjaptPf4a9aNVzso76Aje+E9qe+oi8d0B1NasrmZ3q7ZV1f7zpbMSRS6iyabePne7RP4d72es7+MXIIGsL9oQLNVp5j+lN8bO3dvyZ3mScvEgNG3wqE/qDQ=
+	t=1722161418; cv=none; b=TvtL1ICxkmuzO1FSwE9RnkQ/tyKY+osdHFmVwvh/UO2/WE/XrYZSvyOzAw7KzRkjdduLH1aGcJcHyHRQT04OC10zur66+cQZvG2dRQpwI2oH8CxvEOOvvkeKzKnslxhntFtNW+qWBTUx5WBhXwfeCwWMz5bg9pRCU2CicDanm+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722160393; c=relaxed/simple;
-	bh=3AcKYeHStSY26BRXBtN8D7kEzi8OVJl4q/LQdH9NRvw=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=D3us6IshAsLbCot68iHWTMo894K1KRO3+xy6E5N/bczCrSIwAIOS3RfE53lGT0hBzmz1MBD09bgSFWAhiltT52J+bmF1a34mhyke7JW9zraKwKEqDrE0Gu5dsOZCkAB84r7o5Tk3EMSEfbjpJ6CP6VP3eUJiePV21ExueM64fow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=rhAwMFsS; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722161418; c=relaxed/simple;
+	bh=x0bBD9VMDQBhEWwLY3QCg17KVE+zIpFt5v2/PoyQ0k0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DnCwHw9tzrXVb7C574YPDtEXxtnqIEXLLi4J2VecJqnfW+i8cDAmjpyJHuiq4v7df/YclwASmD8OtkLQMR/mhnlsRWAswyvFjFSiJwZjnYF6jiC1fGl4ZAQPSSOOjEcQCUvQMajwX7hk7tTpiDkouaMyfUYcDignnYnBsyQrUBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=s1hwEqD6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1722161406;
+	bh=x0bBD9VMDQBhEWwLY3QCg17KVE+zIpFt5v2/PoyQ0k0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=s1hwEqD6MmUPasGnt5gY/2nk0/CuESSIIMEMTkY0MmMZlqFAWGUFr848IUmeuoz2M
+	 gC8Ri6E96snDE0ODg95RMpjWGNlcIszByZ4CcO8a0lic+sLvy71A4IaajGxIQJNgju
+	 smwxMnSTyaw+BSW8/0eVri3LTKo0ep/wRRjDy2OU=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 00/12] tools/nolibc: improve LLVM/clang support
+Date: Sun, 28 Jul 2024 12:09:54 +0200
+Message-Id: <20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722160389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F44zS9z0DG/3T7ddI7rng0IKCHRFy5Lk6PukoVKvy20=;
-	b=rhAwMFsSRfy4z9PdzOJGA+HV0QRy9hyYbDhbkF9IRZti/4LLrm0CUlPZ1teiFIT5GV+7Cc
-	HAH6Xf77uuFjOyGvJjUuvqqUapNFV45WFiSn9rEe4lwebWRns58Gsv2Ozs8DAmf98yElQc
-	3nLAqmiOeSHYdC5FQpbr6+A3SYZGs6IIOndb+H0Napf0KTijttu9LU5KHXz+vhHhZYAksq
-	7xa6yrWwxyW5Wkw6T2S7esA7Jt7nDWFQItuYXCsNv54nybwQajL37zymSQ+MeGkxfvR4nR
-	GYsN69l3J9UBySJS6Y19Mpbf4NeV5q53JUvw4Zfu3B1OK38aIr52joZSQ76RlA==
-Date: Sun, 28 Jul 2024 11:53:08 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, andrew@lunn.ch,
- UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
- f.fainelli@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, lucas.demarchi@intel.com, mcgrof@kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-In-Reply-To: <CAK7LNARg-xxm3FecQ654OnxcMGtc8BjsXmZsymaNKnr_6sM=zw@mail.gmail.com>
-References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
- <20240726121530.193547-1-jtornosm@redhat.com>
- <CAK7LNARg-xxm3FecQ654OnxcMGtc8BjsXmZsymaNKnr_6sM=zw@mail.gmail.com>
-Message-ID: <fa9fa543c4c8ca4e8ec54744e2e07efb@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-B4-Tracking: v=1; b=H4sIAPIYpmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNz3bz8nMykZN2cnLJcXeO0xBQzC1NLgxSTZCWgjoKi1LTMCrBp0bG
+ 1tQDPUqwAXQAAAA==
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722161405; l=2200;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=x0bBD9VMDQBhEWwLY3QCg17KVE+zIpFt5v2/PoyQ0k0=;
+ b=V8IOWfC++1JtxVFue3jJ6NdCthJ0k5Vn7r8Is23DKBP56CfLiqlo1Ir9ZErzISRcmESJ91wvz
+ 0vaV5J38jMuD8HZQTKhnfCLr79ZGXcTS3I2NYoNweGxwWu51nDqxnby
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hello Masahiro,
+The current support for LLVM and clang in nolibc and its testsuite is
+very limited.
 
-On 2024-07-28 09:37, Masahiro Yamada wrote:
-> On Fri, Jul 26, 2024 at 9:15 PM Jose Ignacio Tornos Martinez
-> <jtornosm@redhat.com> wrote:
->> > What this does appear to do is differentiate between 'pre' which will
->> > load the kernel module before it is requested. Since there is no 'pre'
->> > for this, it seems pointless whacking this mole.
->> Precisely, we need to fix the lan78xx case with micrel phy (and other
->> possible phy modules) too, due to the commented issue generating 
->> initramfs
->> in order to include the phy module.
->> 
->> > What to me make more sense it to look at all the existing 'pre'
->> > drivers and determine if they can be converted to use this macro.
->> Of course, now that we have the possibility we can do this with other 
->> cases
->> that have been already detected (and fixed with a softdep pre) and 
->> others
->> still not detected (if anyone apart from lan78xx).
-> 
-> I am not familiar with MAC/PHY interface, but perhaps the
-> situation might be different on internal/external PHYs?
-> 
-> I do not know if "micrel" is an internal or an external PHY, though.
-> 
-> [1] internal PHY
-> 
-> Commit e57cf3639c323eeed05d3725fd82f91b349adca8 moved the
-> internal PHY code from drivers/net/usb/lan78xx.c
-> to drivers/net/phy/microchip.c
-> 
-> So, lan78xx.ko is likely to use microchip.ko
-> 
-> Perhaps, is the following useful?
-> 
->   MODULE_WEAKDEP("microchip");    /* internal PHY */
-> 
-> Or, is this the case for MODULE_SOFTDEP()?
-> 
-> [2] external PHY
-> 
-> When an external PHY device is connected, the MAC/PHY combination is
-> pretty much board-specific. We may end up with
-> a bunch of MODULE_WEAKDEP().
-> 
-> The second question is, is it so important to enable network
-> at the initramfs time? Personally, I am fine with having network
-> drivers in the root file system.
-> 
-> Is this useful when the root file system is nfs or something?
+* Various architectures plain do not compile
+* The user *has* to specify "-Os" otherwise the program crashes
+* Cross-compilation of the tests does not work
+* Using clang is not wired up in run-tests.sh
 
-The troubles happen when the driver is probed during the initial
-ramdisk stage, e.g. when a machine is rebooted with a USB adapter
-plugged in.  If the required dependent PHY driver module isn't also
-found in the initial ramdisk, probing the main driver may actually
-fail or (hopefully not) end up in some strange state.
+This series extends this support.
 
-If you have time, I'd suggest that you go through the following
-related discussions, which should provide further clarification
-and additional examples of such issues with initial ramdisks and
-additional driver modules:
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (12):
+      tools/nolibc: use clang-compatible asm syntax in arch-arm.h
+      tools/nolibc: limit powerpc stack-protector workaround to GCC
+      tools/nolibc: move entrypoint specifics to compiler.h
+      tools/nolibc: use attribute((naked)) if available
+      selftests/nolibc: report failure if no testcase passed
+      selftests/nolibc: avoid passing NULL to printf("%s")
+      selftests/nolibc: determine $(srctree) first
+      selftests/nolibc: setup objtree without Makefile.include
+      selftests/nolibc: add support for LLVM= parameter
+      selftests/nolibc: add cc-option compatible with clang cross builds
+      selftests/nolibc: run-tests.sh: avoid overwriting CFLAGS_EXTRA
+      selftests/nolibc: run-tests.sh: allow building through LLVM
 
-- 
-https://lore.kernel.org/linux-modules/04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org/
-- 
-https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org/T/#u
-- 
-https://lore.kernel.org/dri-devel/fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org/T/#u
+ tools/include/nolibc/arch-aarch64.h          |  4 ++--
+ tools/include/nolibc/arch-arm.h              |  8 ++++----
+ tools/include/nolibc/arch-i386.h             |  4 ++--
+ tools/include/nolibc/arch-loongarch.h        |  4 ++--
+ tools/include/nolibc/arch-mips.h             |  4 ++--
+ tools/include/nolibc/arch-powerpc.h          |  6 +++---
+ tools/include/nolibc/arch-riscv.h            |  4 ++--
+ tools/include/nolibc/arch-s390.h             |  4 ++--
+ tools/include/nolibc/arch-x86_64.h           |  4 ++--
+ tools/include/nolibc/compiler.h              | 12 ++++++++++++
+ tools/testing/selftests/nolibc/Makefile      | 27 ++++++++++++++++-----------
+ tools/testing/selftests/nolibc/nolibc-test.c |  4 ++--
+ tools/testing/selftests/nolibc/run-tests.sh  | 20 ++++++++++++++++----
+ 13 files changed, 67 insertions(+), 38 deletions(-)
+---
+base-commit: 0db287736bc586fcd5a2925518ef09eec6924803
+change-id: 20240727-nolibc-llvm-3fad68590d4c
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
