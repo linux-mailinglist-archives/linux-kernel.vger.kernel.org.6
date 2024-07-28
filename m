@@ -1,224 +1,197 @@
-Return-Path: <linux-kernel+bounces-264600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC7693E5DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0E693E5E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 17:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7751C20D2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5922824D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 15:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0663F58AC4;
-	Sun, 28 Jul 2024 15:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E40157333;
+	Sun, 28 Jul 2024 15:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGu3J8UF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lLEZN+j4"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84C47F6B;
-	Sun, 28 Jul 2024 15:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C1A47F6B
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 15:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722180517; cv=none; b=jci7jl97x9DlDf9W5w3y+lySjEnrByH975/wrhN0dSvSv3RLMnxCRbmmjWJ+rtSPW6XBE3oFqImBK9jJmQxgNwwMYxMNDgJUKijfDxf/sqY6mHQ6sOi+dkPCF+BnSirWtn0S4PS+5Lm9NNfHHzwJvIqyDJLG0mS2yFaCcw1W3C8=
+	t=1722180571; cv=none; b=BByCTzerz5OJmsoXI95JqHO4FsURT3FlgG3sqW8yZuMx/i5x6lP1xZueo6nRnoix5z91G/BixeCDnciAy8r08GUFAE7dOLT2KeHBcJPROck/xnngvtiFn5CaOfrabt0xPH/td5Lvns7/JejNl5L3MuBJxZicyCxOVm9BiF7118Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722180517; c=relaxed/simple;
-	bh=C8GVXeI1Gt1K6GoxCquQ+a0F+j83p8v7uKm+CXsEl2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QZj4MMqtpJ4Pa9yWbHwF/tBg8ruFIvsYuhMyKICAxvgbacQtOdp1CYDPbslbdiCkExCSi0Yet0P00MUwNbM3tGM9jUWVvUZ6cAZ1erwqXcj4V0SkhBwpEZ01Nl/Rp5W+GGfOnmzxd0x+DH/RSokSMzfbYI8HdsOKJZ1XWF0xVf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGu3J8UF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1E3C116B1;
-	Sun, 28 Jul 2024 15:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722180516;
-	bh=C8GVXeI1Gt1K6GoxCquQ+a0F+j83p8v7uKm+CXsEl2g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YGu3J8UFox5vhGu40TJg76U28BxKhBmLfiDb2V2Fo32bU8WL9odw5IsNMI1uNHFh5
-	 EEvdjCmd6HBowdA74PHQZVfgSGxJpmZwBHDCh8Dkn1H0MRnOguffww9+aZzfU7aLqS
-	 9+kq40hW83wxM7REdgLOA9gfJKpYT0AtLD+MVgUYJ2srFSPe1IH55LjpO75ZdbXqnc
-	 95tHf3M7QV/05qjAq3QEvY6KhQJOeB8a0dZ+thc455PwmvDFsafgX4PWMXiCh6RwXN
-	 3OnNQhFvg1C9s4MDMR+STb8FboNNe7Zb0VkEsuywbMVXm27dllT/Lqexu8J7NCWi+W
-	 DwBaB+UqN+21g==
-Date: Sun, 28 Jul 2024 16:28:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org>
-Cc: pd.pstoykov@gmail.com, linux-iio@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: pressure: Add driver for Sensirion SDP500
-Message-ID: <20240728162828.3c9cc118@jic23-huawei>
-In-Reply-To: <20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
-References: <20240725-mainline_sdp500-v4-0-ea2f5b189958@gmail.com>
-	<20240725-mainline_sdp500-v4-2-ea2f5b189958@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722180571; c=relaxed/simple;
+	bh=snbKvQiQwX9p4F4uFMVThi/BGL0Bl9ZClA+6AS0YOh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p/WQ10m/YJL8W0Jv5Nt9LqEmY43R1fMXT97R8Vu9JKPfVqNpiGX3G4JKgdzKLI7cpDNTcZfXBLxOQkACGqe6pgnXyeiirNSe88aaqhC+nbl9KL388fidQXsLz/nQ+OKJjdeRyVr5DVkVapC/rHkxDU0Ow6JHsHTwcCw9ESPuZto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lLEZN+j4; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722180566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hQhmC8xdv28YX/UUjbioyIpWdbinTpv06ZDMyyHEVbw=;
+	b=lLEZN+j4/3ryP0CVzY/3Cfa4ylonXexUmcPKuHy+UYLM/xYIFm84ivacMAZ6la0q7iDnVY
+	sbSUbbbrElcV6hnLEaaa7dhLdJgC8LkLue6XB0Etg2ud/TEsxx0Z//sEBnsGtYVYmbGLgf
+	F6SNfw4bNrXS+HpMuedOYuJN7qg3MoU=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH v5 0/2] drm/loongson: Introduce component framework support
+Date: Sun, 28 Jul 2024 23:28:56 +0800
+Message-ID: <20240728152858.346211-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 25 Jul 2024 17:37:28 +0200
-Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org> wrote:
+Introduce component framework to bind modules and to avoid potential
+cyclic dependency problem.
 
-> From: Petar Stoykov <pd.pstoykov@gmail.com>
-> 
-> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
-> accessed over I2C.
-> 
-> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
-Hi Petar,
+v1 -> v2:
+	* Squash patch 0002 and patch 0003 into one
+	* Fill typos and improve commit message
 
-Some really trivial things inline + Krzysztof's comment.
+v2 -> v3:
+	* Squash all patch into one
+	* Create another platform device as drm proxy master.
+	* Make LSDC PCI driver as a subcomponent as well.
 
-Rather than go around again, I'll tidy them up as follows and apply this series
-to the testing branch of iio.git
+v3 -> v4:
+	* Split sharable structure from struct lsdc_device.
+	* Make LSDC as a subcomponent.
 
-Thanks,
+v4 -> v5:
+	* Split to two patch.
+	* Fix typos and cleanup.
 
-Jonathan
+Tested with ls3a6000+ls7a2000, dmesg | grep loongson:
+
+[   10.357813] loongson.lsdc 0000:00:06.1: Found LS7A2000 bridge chipset, revision: 2
+[   10.370737] loongson.lsdc 0000:00:06.1: i2c-6(sda pin mask=1, scl pin mask=2) created
+[   10.466747] loongson.lsdc 0000:00:06.1: i2c-7(sda pin mask=4, scl pin mask=8) created
+[   10.479231] loongson.lsdc 0000:00:06.1: lsdc.output.agent.0 probed, type: HDMI-or-VGA
+[   10.507553] loongson.lsdc 0000:00:06.1: lsdc.output.agent.1 probed, type: HDMI
+[   11.595162] loongson.loonggpu 0000:00:06.0: LoongGPU(TM) PCI driver probed
+[   11.699961] loongson.drm.proxy loongson.drm.proxy: probed
+[   11.717768] loongson.lsdc 0000:00:06.1: [drm] Dedicated vram start: 0xe0020000000, size: 256MiB
+[   11.727041] loongson.lsdc 0000:00:06.1: [drm] dc: 400MHz, gmc: 1200MHz, gpu: 480MHz
+[   11.735138] loongson.drm.proxy loongson.drm.proxy: bound lsdc.output.agent.0 (ops lsdc_output_component_ops [loongson])
+[   11.746343] loongson.drm.proxy loongson.drm.proxy: bound lsdc.output.agent.1 (ops lsdc_output_component_ops [loongson])
+[   11.763218] loongson.lsdc 0000:00:06.1: lsdc irq: 61
+[   11.768258] loongson.drm.proxy loongson.drm.proxy: bound 0000:00:06.1 (ops lsdc_pci_component_ops [loongson])
+[   11.778138] loongson.lsdc 0000:00:06.1: [drm] LoongGPU(TM): LG110, revision: 0, Host: LS7A2000
+[   11.786711] loongson.lsdc 0000:00:06.1: [drm] LoongGPU(TM) irq: 62
+[   11.792853] loongson.drm.proxy loongson.drm.proxy: bound 0000:00:06.0 (ops loonggpu_pci_component_ops [loongson])
+[   11.843337] loongson.lsdc 0000:00:06.1: [drm] VRAM: 16384 pages ready
+[   11.849757] loongson.lsdc 0000:00:06.1: [drm] GTT: 32768 pages ready
+[   11.856399] [drm] Initialized loongson 1.0.0 for 0000:00:06.1 on minor 1
+[   11.931176] loongson.lsdc 0000:00:06.1: [drm] fb0: loongsondrmfb frame buffer device
+[   11.963180] loongson: total 4 drivers registered
+[   16.040603] loongson.lsdc 0000:00:06.1: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=none:owns=io+mem
 
 
-diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp500.c
-index 77d7e68f5dea..6ff32e3fa637 100644
---- a/drivers/iio/pressure/sdp500.c
-+++ b/drivers/iio/pressure/sdp500.c
-@@ -62,7 +62,7 @@ static int sdp500_read_raw(struct iio_dev *indio_dev,
- 
-                received_crc = rxbuf[2];
-                calculated_crc = crc8(sdp500_crc8_table, rxbuf,
--                       sizeof(rxbuf) - 1, 0x00);
-+                                     sizeof(rxbuf) - 1, 0x00);
-                if (received_crc != calculated_crc) {
-                        dev_err(data->dev,
-                                "calculated crc = 0x%.2X, received 0x%.2X",
-@@ -123,7 +123,7 @@ static int sdp500_probe(struct i2c_client *client)
-        i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
- 
-        ret = devm_iio_device_register(dev, indio_dev);
--       if (ret < 0)
-+       if (ret)
-                return dev_err_probe(dev, ret, "Failed to register indio_dev");
- 
-        return 0;
-@@ -137,7 +137,6 @@ MODULE_DEVICE_TABLE(i2c, sdp500_id);
- 
- static const struct of_device_id sdp500_of_match[] = {
-        { .compatible = "sensirion,sdp500" },
--       { .compatible = "sensirion,sdp510" },
-        { }
- };
- MODULE_DEVICE_TABLE(of, sdp500_of_match);
+Tested with ls3a5000+ls7a1000, dmesg | grep loongson:
 
->  st_pressure-$(CONFIG_IIO_BUFFER) += st_pressure_buffer.o
-> diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp500.c
-> new file mode 100644
-> index 000000000000..77d7e68f5dea
-> --- /dev/null
-> +++ b/drivers/iio/pressure/sdp500.c
-> @@ -0,0 +1,157 @@
-...
+[   10.887229] loongson.lsdc 0000:00:06.1: Found LS7A1000 bridge chipset, revision: 1
+[   10.907694] loongson.lsdc 0000:00:06.1: i2c-6(sda pin mask=1, scl pin mask=2) created
+[   10.940652] loongson.lsdc 0000:00:06.1: i2c-7(sda pin mask=4, scl pin mask=8) created
+[   10.973292] loongson.lsdc 0000:00:06.1: lsdc.output.agent.0 probed, type: DVO
+[   10.993424] loongson.lsdc 0000:00:06.1: lsdc.output.agent.1 probed, type: DVO
+[   11.011791] loongson.drm.proxy loongson.drm.proxy: probed
+[   11.048820] loongson.lsdc 0000:00:06.1: [drm] Dedicated vram start: 0xe0030000000, size: 64MiB
+[   11.087580] loongson.lsdc 0000:00:06.1: [drm] dc: 264MHz, gmc: 529MHz, gpu: 529MHz
+[   11.095885] loongson.drm.proxy loongson.drm.proxy: bound lsdc.output.agent.0 (ops lsdc_output_component_ops [loongson])
+[   11.106794] loongson.drm.proxy loongson.drm.proxy: bound lsdc.output.agent.1 (ops lsdc_output_component_ops [loongson])
+[   11.128480] loongson.lsdc 0000:00:06.1: lsdc irq: 55
+[   11.135618] loongson.drm.proxy loongson.drm.proxy: bound 0000:00:06.1 (ops lsdc_pci_component_ops [loongson])
+[   11.146096] loongson.lsdc 0000:00:06.1: [drm] VRAM: 4096 pages ready
+[   11.152492] loongson.lsdc 0000:00:06.1: [drm] GTT: 32768 pages ready
+[   11.159720] [drm] Initialized loongson 1.0.0 for 0000:00:06.1 on minor 0
+[   11.243566] loongson.lsdc 0000:00:06.1: [drm] fb0: loongsondrmfb frame buffer device
+[   11.285817] loongson: total 4 drivers registered
 
-> +
-> +static int sdp500_read_raw(struct iio_dev *indio_dev,
-> +			  struct iio_chan_spec const *chan,
-> +			  int *val, int *val2, long mask)
-> +{
-> +	int ret;
-> +	u8 rxbuf[SDP500_READ_SIZE];
-> +	u8 received_crc, calculated_crc;
-> +	struct sdp500_data *data = iio_priv(indio_dev);
-> +	struct i2c_client *client = to_i2c_client(data->dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
-> +		if (ret < 0) {
-> +			dev_err(data->dev, "Failed to receive data");
-> +			return ret;
-> +		}
-> +		if (ret != SDP500_READ_SIZE) {
-> +			dev_err(data->dev, "Data is received wrongly");
-> +			return -EIO;
-> +		}
-> +
-> +		received_crc = rxbuf[2];
-> +		calculated_crc = crc8(sdp500_crc8_table, rxbuf,
-> +			sizeof(rxbuf) - 1, 0x00);
 
-align just after (
+Tested with builtin debugfs interface:
 
-> +		if (received_crc != calculated_crc) {
-> +			dev_err(data->dev,
-> +				"calculated crc = 0x%.2X, received 0x%.2X",
-> +				calculated_crc, received_crc);
-> +			return -EIO;
-> +		}
-> +
-> +		*val = get_unaligned_be16(rxbuf);
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = 1;
-> +		*val2 = 60;
-> +
-> +		return IIO_VAL_FRACTIONAL;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_info sdp500_info = {
-> +	.read_raw = &sdp500_read_raw,
-> +};
-> +
-> +static int sdp500_probe(struct i2c_client *client)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct sdp500_data *data;
-> +	struct device *dev = &client->dev;
-> +	int ret;
-> +	u8 rxbuf[SDP500_READ_SIZE];
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +			"Failed to get and enable regulator\n");
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	/* has to be done before the first i2c communication */
-> +	crc8_populate_msb(sdp500_crc8_table, SDP500_CRC8_POLYNOMIAL);
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->dev = dev;
-> +
-> +	indio_dev->name = "sdp500";
-> +	indio_dev->channels = sdp500_channels;
-> +	indio_dev->info = &sdp500_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->num_channels = ARRAY_SIZE(sdp500_channels);
-> +
-> +	ret = sdp500_start_measurement(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to start measurement");
-> +
-> +	/* First measurement is not correct, read it out to get rid of it */
-> +	i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
-> +
-> +	ret = devm_iio_device_register(dev, indio_dev);
-> +	if (ret < 0)
-if (ret) is more consistent with other handling in the driver (and my preference
-in general for checking IIO core code calls).
+[root@fedora 0]# cd /sys/kernel/debug/dri/0000\:00\:06.1/
+[root@fedora 0000:00:06.1]# ls
+benchmark  clients  crtc-1     framebuffer  HDMI-A-1          mm     vram_mm
+bos        clocks   encoder-0  gem_names    HDMI-A-2          name
+chips      crtc-0   encoder-1  gtt_mm       internal_clients  state
 
-> +		return dev_err_probe(dev, ret, "Failed to register indio_dev");
-> +
-> +	return 0;
-> +}
+[root@fedora 0000:00:06.1]# cat bos
+bo[0000][0000000033d33c9c]: size:     8112KiB VRAM offset:        0
+bo[0001][0000000059581d0a]: size:     8112KiB VRAM offset:   7ec000
+bo[0002][00000000e7eec263]: size:       16KiB VRAM offset:        0
+bo[0003][00000000d4fb6ef2]: size:       16KiB VRAM offset:  fff8000
+Pinned BO size: VRAM: 8128KiB, GTT: 0 KiB
+
+[root@fedora 0000:00:06.1]# cat chips
+Running on cpu 0xc0, cpu revision: 0x11
+Contained in: LS7A2000 bridge chipset
+
+[root@fedora 0000:00:06.1]# cat benchmark
+Copy bo of 8100KiB 60 times from GTT to GTT in 48ms: 10125MB/s
+Copy bo of 8100KiB 60 times from GTT to VRAM in 104ms: 4673MB/s
+Copy bo of 8100KiB 60 times from VRAM to GTT in 13480ms: 36MB/s
+
+
+Also run IGT kms_flip and fbdev tests, no obvious problems found.
+
+Sui Jingfeng (2):
+  drm/loongson: Introduce component framework support
+  drm/loongson: Add dummy gpu driver as a subcomponent
+
+ drivers/gpu/drm/loongson/Makefile             |   5 +
+ drivers/gpu/drm/loongson/loonggpu_pci_drv.c   | 163 +++++++++
+ drivers/gpu/drm/loongson/loonggpu_pci_drv.h   |  35 ++
+ drivers/gpu/drm/loongson/loongson_device.c    |  30 ++
+ drivers/gpu/drm/loongson/loongson_drv.c       | 299 +++++++++++++++
+ drivers/gpu/drm/loongson/loongson_drv.h       | 108 ++++++
+ drivers/gpu/drm/loongson/loongson_module.c    |  84 ++++-
+ drivers/gpu/drm/loongson/loongson_module.h    |  32 ++
+ drivers/gpu/drm/loongson/lsdc_benchmark.c     |  12 +-
+ drivers/gpu/drm/loongson/lsdc_benchmark.h     |   2 +-
+ drivers/gpu/drm/loongson/lsdc_crtc.c          |   4 +-
+ drivers/gpu/drm/loongson/lsdc_debugfs.c       |  41 +--
+ drivers/gpu/drm/loongson/lsdc_drv.c           | 346 +++++-------------
+ drivers/gpu/drm/loongson/lsdc_drv.h           |  89 +----
+ drivers/gpu/drm/loongson/lsdc_gem.c           |  42 ++-
+ drivers/gpu/drm/loongson/lsdc_gem.h           |  13 +
+ drivers/gpu/drm/loongson/lsdc_gfxpll.c        |  33 +-
+ drivers/gpu/drm/loongson/lsdc_gfxpll.h        |   3 +-
+ drivers/gpu/drm/loongson/lsdc_i2c.c           |  55 ++-
+ drivers/gpu/drm/loongson/lsdc_i2c.h           |  21 +-
+ drivers/gpu/drm/loongson/lsdc_output.c        | 183 +++++++++
+ drivers/gpu/drm/loongson/lsdc_output.h        |  33 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a1000.c |   6 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a2000.c |  20 +-
+ drivers/gpu/drm/loongson/lsdc_pixpll.c        |   4 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c         |   4 +-
+ drivers/gpu/drm/loongson/lsdc_ttm.c           |  70 ++--
+ drivers/gpu/drm/loongson/lsdc_ttm.h           |   4 +-
+ 28 files changed, 1233 insertions(+), 508 deletions(-)
+ create mode 100644 drivers/gpu/drm/loongson/loonggpu_pci_drv.c
+ create mode 100644 drivers/gpu/drm/loongson/loonggpu_pci_drv.h
+ create mode 100644 drivers/gpu/drm/loongson/loongson_drv.c
+ create mode 100644 drivers/gpu/drm/loongson/loongson_drv.h
+ create mode 100644 drivers/gpu/drm/loongson/lsdc_output.c
+
+-- 
+2.43.0
+
 
