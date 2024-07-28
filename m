@@ -1,186 +1,143 @@
-Return-Path: <linux-kernel+bounces-264513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B9293E458
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8F693E45E
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B956DB212A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFEB91C2100A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349232868D;
-	Sun, 28 Jul 2024 09:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5F29CE5;
+	Sun, 28 Jul 2024 09:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKv9R1yJ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="rhAwMFsS"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA54D534;
-	Sun, 28 Jul 2024 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A7E1B86E5;
+	Sun, 28 Jul 2024 09:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722159785; cv=none; b=MwXUW0/g6hEY2UYa9JCyBtJhMWtn5UaIwUQPW7pKOigIAkaCb9Nzz04/abdjeXoColuTtlwXiUNYR530ThvidkOimi5IX0e8QpXupymNNKfwRcgrvnvjgz5shNFOxoRAGdtOBunMZ/i/TwVxWvbLtQCEaJNfP71zQJhrQdoO4Fo=
+	t=1722160393; cv=none; b=jg5l1IkwTFfjv7FYvbT7p75pVkXe7lfCEd7np3jHOV60R/xddRdRYjaptPf4a9aNVzso76Aje+E9qe+oi8d0B1NasrmZ3q7ZV1f7zpbMSRS6iyabePne7RP4d72es7+MXIIGsL9oQLNVp5j+lN8bO3dvyZ3mScvEgNG3wqE/qDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722159785; c=relaxed/simple;
-	bh=9K9MXRLy14iUiCrEGnTxwO4GHEMMBJM/TWlBGTNncw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IauXfzmrKmXnUZ+TEmdhaq746B5JQz1kGb06t3LW9HkkoiR8G/Ga+k4USZCn5c6VvzL0bBcHMmFqJZkwP1ZB8/6xc0cYMPaRYgWDSJx5JbAYDeKgmlgFm7DKBOd6iQezUgth28bdIvhrZc6eb/kKIoRjhgDHm8I8yjZ05kPZbnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKv9R1yJ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3684e2d0d8bso153983f8f.2;
-        Sun, 28 Jul 2024 02:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722159782; x=1722764582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9R5xGNkFmRHXQYQVczCGuGgKp6enXGudOPKY559vV0=;
-        b=JKv9R1yJw0ZWTPqullZp8IoIlxa5CJbVj+aME0LZii7NQ3XOh8D1M0X56BDmr+Dinp
-         k4RWZY5Ty53uatOKDeKP3XWmrGWYQGEQWJz0KNlDdZ5q4LaOn9DKmzZoHWCM7W2K3DGx
-         L5tc2wN/bj6lzTx8JgPaSzN9CTkO1f8H4r4pVA83G72xINiMyZtRJYPYq/GqYlIzfbSX
-         BupLmRfMuiFNnTqt8EKLAC2tA7i6IqM3iLK5e6fzY9hpT6/n8HSJUMPPdRSh+EU9QCDE
-         V2QsAW30iTtTo2vszUmEDGlgQoJ4LcQZXQG7ArqoyaMiGkgdtX2vgrTB4ZX0Le/FERbr
-         NKGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722159782; x=1722764582;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9R5xGNkFmRHXQYQVczCGuGgKp6enXGudOPKY559vV0=;
-        b=De4h/zaOirNmOwb+jE5ykqz/yC8tyKunp1MQXlTGVUHFR+tdHqewQnmdDOAQSjJDWC
-         paC+Uu4ume4P4T+Lr0R/txw9ao/ttSE6jJIAIL/MI7MrjejuC8VZNrQQywuuFYi/OWf+
-         7TT/RVLGaImjpYohoDIv6gp/ulhq2IBzrCwoVxCoJJYBv62Ft1tDalwaT7bhJOi1JhY3
-         3LsAu9xsvJNRcHzM8uxz8W8Djz76Hr5PLneTeB9Bqbq3ywgAX8lJ6E2DaapSmJo/JQAE
-         GScjJtNyYRacSPiyzaQiVBsdnk9dHU+CykExAYOFVv7GZQaIpmaABXpClO/j/gXgcvML
-         lZhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS2rqynQub6flRBwnVDXtHjanQLEKOZesDFpZhck1OoowOe6YKNHwjbuHACJXep6/K6JOVp11Fykc=@vger.kernel.org, AJvYcCVDyEBLMcJLGoqkC3TVdm2/qmQ2xJEv7cbESTjPy+Xy2+5UF4IrviXkwSBH6bsCVCI940kaAbFyDRuyHI4=@vger.kernel.org, AJvYcCWFBHWKc1SmNOwFtPGen+5n8hi8myCZYaj0zh12ktEdyYIUew9Cd1JkZVeyJL3waD+WSHdB7UEIahwjowg4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZyTtlo2tOnFtGlE3KUQUrgebzAegHl+95b/wN1MY50g+ipVSI
-	YbvNDEURKJu15z5ZNyrBRRZCmPk0FLjzxboc9Fq0XQVUmWXYsE0J
-X-Google-Smtp-Source: AGHT+IF0WJW3BoGEGaqc9cO7GiIyCqUsu2oYeZbpHD83HDKoLKAjZ517/zvYX82M9eQIDym4SKhzuQ==
-X-Received: by 2002:adf:fa8d:0:b0:36b:36aa:a14e with SMTP id ffacd0b85a97d-36b36aaa367mr3154327f8f.8.1722159781970;
-        Sun, 28 Jul 2024 02:43:01 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:1d00:5943:7f74:2af0? ([2a01:4b00:d20e:7300:1d00:5943:7f74:2af0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857db6sm9441245f8f.73.2024.07.28.02.43.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jul 2024 02:43:01 -0700 (PDT)
-Message-ID: <08bdc510-da39-42d4-a104-9c7119d082ea@gmail.com>
-Date: Sun, 28 Jul 2024 10:42:59 +0100
+	s=arc-20240116; t=1722160393; c=relaxed/simple;
+	bh=3AcKYeHStSY26BRXBtN8D7kEzi8OVJl4q/LQdH9NRvw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=D3us6IshAsLbCot68iHWTMo894K1KRO3+xy6E5N/bczCrSIwAIOS3RfE53lGT0hBzmz1MBD09bgSFWAhiltT52J+bmF1a34mhyke7JW9zraKwKEqDrE0Gu5dsOZCkAB84r7o5Tk3EMSEfbjpJ6CP6VP3eUJiePV21ExueM64fow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=rhAwMFsS; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, perex@perex.cz,
- tiwai@suse.com, corbet@lwn.net, broonie@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, aholzinger@gmx.de
-References: <20240726074750.626671-1-ivan.orlov0322@gmail.com>
- <20240726074750.626671-4-ivan.orlov0322@gmail.com>
- <0576f5dd-656b-4085-8c8d-b0f845875f0f@wanadoo.fr>
- <3ab0aa72-4f89-4911-8546-ce17f362c981@gmail.com>
- <42ba79ad-3354-448d-ae03-6f68d51f46c5@wanadoo.fr>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <42ba79ad-3354-448d-ae03-6f68d51f46c5@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722160389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F44zS9z0DG/3T7ddI7rng0IKCHRFy5Lk6PukoVKvy20=;
+	b=rhAwMFsSRfy4z9PdzOJGA+HV0QRy9hyYbDhbkF9IRZti/4LLrm0CUlPZ1teiFIT5GV+7Cc
+	HAH6Xf77uuFjOyGvJjUuvqqUapNFV45WFiSn9rEe4lwebWRns58Gsv2Ozs8DAmf98yElQc
+	3nLAqmiOeSHYdC5FQpbr6+A3SYZGs6IIOndb+H0Napf0KTijttu9LU5KHXz+vhHhZYAksq
+	7xa6yrWwxyW5Wkw6T2S7esA7Jt7nDWFQItuYXCsNv54nybwQajL37zymSQ+MeGkxfvR4nR
+	GYsN69l3J9UBySJS6Y19Mpbf4NeV5q53JUvw4Zfu3B1OK38aIr52joZSQ76RlA==
+Date: Sun, 28 Jul 2024 11:53:08 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, andrew@lunn.ch,
+ UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
+ f.fainelli@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, lucas.demarchi@intel.com, mcgrof@kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
+ module
+In-Reply-To: <CAK7LNARg-xxm3FecQ654OnxcMGtc8BjsXmZsymaNKnr_6sM=zw@mail.gmail.com>
+References: <bcc81ea0-78e1-476e-928c-b873a064b479@lunn.ch>
+ <20240726121530.193547-1-jtornosm@redhat.com>
+ <CAK7LNARg-xxm3FecQ654OnxcMGtc8BjsXmZsymaNKnr_6sM=zw@mail.gmail.com>
+Message-ID: <fa9fa543c4c8ca4e8ec54744e2e07efb@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 7/28/24 10:30, Christophe JAILLET wrote:
-> Le 28/07/2024 à 10:51, Ivan Orlov a écrit :
->> On 7/28/24 07:59, Christophe JAILLET wrote:
->>> Le 26/07/2024 à 09:47, Ivan Orlov a écrit :
->>>> Implement two ioctl calls in order to support virtual userspace-driven
->>>> ALSA timers.
->>>>
->>>> The first ioctl is SNDRV_TIMER_IOCTL_CREATE, which gets the
->>>> snd_utimer_info struct as a parameter and returns a file descriptor of
->>>> a virtual timer. It also updates the `id` field of the snd_utimer_info
->>>> struct, which provides a unique identifier for the timer (basically,
->>>> the subdevice number which can be used when creating timer instances).
->>>>
->>>> This patch also introduces a tiny id allocator for the userspace-driven
->>>> timers, which guarantees that we don't have more than 128 of them in 
->>>> the
->>>> system.
->>>>
->>>> Another ioctl is SNDRV_TIMER_IOCTL_TRIGGER, which allows us to trigger
->>>> the virtual timer (and calls snd_timer_interrupt for the timer under
->>>> the hood), causing all of the timer instances binded to this timer to
->>>> execute their callbacks.
->>>>
->>>> The maximum amount of ticks available for the timer is 1 for the 
->>>> sake of
->>>> simplification of the userspace API. 'start', 'stop', 'open' and 
->>>> 'close'
->>>> callbacks for the userspace-driven timers are empty since we don't
->>>> really do any hardware initialization here.
->>>>
->>>> Suggested-by: Axel Holzinger <aholzinger@gmx.de>
->>>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
->>>> ---
->>>
->>> ...
->>>
->>>> +#ifdef CONFIG_SND_UTIMER
->>>> +/*
->>>> + * Since userspace-driven timers are passed to userspace, we need 
->>>> to have an identifier
->>>> + * which will allow us to use them (basically, the subdevice number 
->>>> of udriven timer).
->>>> + *
->>>> + * We have a pool of SNDRV_UTIMERS_MAX_COUNT ids from 0 to 
->>>> (SNDRV_UTIMERS_MAX_COUNT - 1).
->>>> + * When we take one of them, the corresponding entry in 
->>>> snd_utimer_ids becomes true.
->>>> + */
->>>> +static bool snd_utimer_ids[SNDRV_UTIMERS_MAX_COUNT];
->>>> +
->>>> +static void snd_utimer_put_id(struct snd_utimer *utimer)
->>>> +{
->>>> +    int timer_id = utimer->id;
->>>> +
->>>> +    snd_BUG_ON(timer_id < 0 || timer_id >= SNDRV_UTIMERS_MAX_COUNT);
->>>> +    snd_utimer_ids[timer_id] = false;
->>>> +}
->>>> +
->>>> +static int snd_utimer_take_id(void)
->>>> +{
->>>> +    size_t i;
->>>> +
->>>> +    for (i = 0; i < SNDRV_UTIMERS_MAX_COUNT; i++) {
->>>> +        if (!snd_utimer_ids[i]) {
->>>> +            snd_utimer_ids[i] = true;
->>>> +            return i;
->>>> +        }
->>>> +    }
->>>> +
->>>> +    return -EBUSY;
->>>> +}
->>>
->>> Also the bitmap API could be useful here.
->>>
->>
->> Awesome, will use it in V2.
+Hello Masahiro,
+
+On 2024-07-28 09:37, Masahiro Yamada wrote:
+> On Fri, Jul 26, 2024 at 9:15 PM Jose Ignacio Tornos Martinez
+> <jtornosm@redhat.com> wrote:
+>> > What this does appear to do is differentiate between 'pre' which will
+>> > load the kernel module before it is requested. Since there is no 'pre'
+>> > for this, it seems pointless whacking this mole.
+>> Precisely, we need to fix the lan78xx case with micrel phy (and other
+>> possible phy modules) too, due to the commented issue generating 
+>> initramfs
+>> in order to include the phy module.
+>> 
+>> > What to me make more sense it to look at all the existing 'pre'
+>> > drivers and determine if they can be converted to use this macro.
+>> Of course, now that we have the possibility we can do this with other 
+>> cases
+>> that have been already detected (and fixed with a softdep pre) and 
+>> others
+>> still not detected (if anyone apart from lan78xx).
 > 
-> Hmm, maybe DEFINE_IDA(), ida_alloc_max() and ida_free() would be even 
-> better.
+> I am not familiar with MAC/PHY interface, but perhaps the
+> situation might be different on internal/external PHYs?
 > 
+> I do not know if "micrel" is an internal or an external PHY, though.
+> 
+> [1] internal PHY
+> 
+> Commit e57cf3639c323eeed05d3725fd82f91b349adca8 moved the
+> internal PHY code from drivers/net/usb/lan78xx.c
+> to drivers/net/phy/microchip.c
+> 
+> So, lan78xx.ko is likely to use microchip.ko
+> 
+> Perhaps, is the following useful?
+> 
+>   MODULE_WEAKDEP("microchip");    /* internal PHY */
+> 
+> Or, is this the case for MODULE_SOFTDEP()?
+> 
+> [2] external PHY
+> 
+> When an external PHY device is connected, the MAC/PHY combination is
+> pretty much board-specific. We may end up with
+> a bunch of MODULE_WEAKDEP().
+> 
+> The second question is, is it so important to enable network
+> at the initramfs time? Personally, I am fine with having network
+> drivers in the root file system.
+> 
+> Is this useful when the root file system is nfs or something?
 
-It looks like IDA allocator uses XArrays under the hood to allocate ids 
-between 0 and INT_MAX... Considering the fact, that we currently could 
-have up to 128 userspace-driven timers in the system, using XArrays 
-seems a bit redundant, and I believe bitmap approach would be more 
-efficient. What do you think?
+The troubles happen when the driver is probed during the initial
+ramdisk stage, e.g. when a machine is rebooted with a USB adapter
+plugged in.  If the required dependent PHY driver module isn't also
+found in the initial ramdisk, probing the main driver may actually
+fail or (hopefully not) end up in some strange state.
 
--- 
-Kind regards,
-Ivan Orlov
+If you have time, I'd suggest that you go through the following
+related discussions, which should provide further clarification
+and additional examples of such issues with initial ramdisks and
+additional driver modules:
 
+- 
+https://lore.kernel.org/linux-modules/04e0676b0e77c5eb69df6972f41d77cdf061265a.1721906745.git.dsimic@manjaro.org/
+- 
+https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org/T/#u
+- 
+https://lore.kernel.org/dri-devel/fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org/T/#u
 
