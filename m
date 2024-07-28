@@ -1,217 +1,175 @@
-Return-Path: <linux-kernel+bounces-264452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7079493E366
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 04:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16D193E36C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 04:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF101C2115B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 02:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8894B282093
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 02:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2C32566;
-	Sun, 28 Jul 2024 02:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F89320C;
+	Sun, 28 Jul 2024 02:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBsCIBt6"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWYY1JO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989CC1B86D3;
-	Sun, 28 Jul 2024 02:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DD3257D;
+	Sun, 28 Jul 2024 02:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722133445; cv=none; b=e48F1sh1A3ZS7JWbFRVmrB1mQAfpeU1s6koa4GQwBVq3coIOUKN7PGNsNWwiIKHZlEegQ/WlX1Bb0FeEInogBdlC6PBOUpieZHVnyG/W4cD6Q9UKBBma4s67IUHvoflMuMFy4NyYxw5cJW2SZI5ukcc9ezfCLSLdrxgRW9SG5RM=
+	t=1722134004; cv=none; b=Xs69yIFVjoIDPBWoEP2oeBKN9iyRzgRzhEEmVwgxj+WxhaR3EFtPqPkJb0wy3Q4bXxgia4TSa7Ko8/utd/e3T8BAeD0ur3G+ClBKWU5S4b8/5yHcW2wkHb8/jm7uPLA6RBRd6R6XG8xKy0jR2yUSE/5TDtTftDZFKXzzxSL9Ei4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722133445; c=relaxed/simple;
-	bh=1dEFsQlY+4vl8jp39r5uy2Ph6lojgCgMyFxpYlWjZsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eAz/1xO56x44s8MmroYsGZfU20d6+NimXTtcWxw9Ea09CQ4rz1pO54xDCFxGpCYh/qW7j3GPfX+V0clsa5V/lJeIMpdv/SSW0cf5/a3BLLR7rhAqTI25LC4Hh3uX2TbFc4SqqBbcdvsRn3cvZM3Fg4suFoH/cmxHQC+sMLqS76I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBsCIBt6; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso1747033a91.0;
-        Sat, 27 Jul 2024 19:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722133440; x=1722738240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=03KrJauELnCqn3OXhsRWxMpJ9KPdl1LCMT2XKA6LW2E=;
-        b=lBsCIBt6QuzDc159hDb88vqlIlZxV5SAAjZC8opFJTtiS1TJjCKbPrW//XyX6lw9O3
-         TfrLW1O04tmHlqHFSV6sdr9RdqzuhbwjGVcSAhMtFjSRQtNYn2EXyxANko6HYpfogiiy
-         W/pfxIfThAyOknmjMyCdj5VR3ZL7q5Hr0cxasG0W4yMDDwcWB8uITniLEpJ7yB001ZXR
-         fwZl+EkOULooD/eY4XoJsV1lPSkxSkX56xTrfFb2zpUU/y24O99pD9GAPsmdjBOvI3iq
-         J8wMICkIbqsNdiioOmdNUCcgV2R244IN1Qr1fgcSPbUqkbzySxXecy/Yq+O1sUy1db21
-         kXYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722133440; x=1722738240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=03KrJauELnCqn3OXhsRWxMpJ9KPdl1LCMT2XKA6LW2E=;
-        b=nEOk8LREfbq1kU5pX/IP47zpsBqdyvvdfy2ewf8dI0M1cBlUljJl/SBUaL9qznhhAw
-         7jTKZUzz/s6OD5zaO1oQgkXJcpFWINLujZ5LVfOXFhJkF+MMBXKXczlMHLjwoJKLP/Mc
-         1dTzg3Hdx0R3hzVix0YC0wTZUl+ZSKEhcfp9PEawEBfcTJYtbba3Zkuw8GS1oJGB/n8T
-         fX1c0OccuH8ugTKgsyFWGVyiKqFVhDWSctXhZZJHoT7SQfxLRsU92pZYJFqzv+5v+tKR
-         kv3CCWiXJQfudOu4VSHEbVKNakDPfAG8ibOLhs4abZMiucyT+fz8UodKyjs0ASEjeek4
-         wgLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgVvCEc8SqSE0xQjc9Kwy2ExtynlAPf/vPr4iTXt4AHGtcWX76OGW8ktpAGNKpLIExVlz7a2Dy20zmoZp77YVeLucfQaClBtl1p0Ze
-X-Gm-Message-State: AOJu0YwCdPDsFPR8+PVWVpP0wHzDeJxdf7gQN2vWWlIAwVFVuW138dMX
-	nWlhIxQxJpWpTio5HpvHNpvS7+vdvUhnAbGbuQeWQqQEfPdSzjQGbEUVCvJa0CA=
-X-Google-Smtp-Source: AGHT+IGjIj4UC0mBovjZRdel01Wu7l/UPkkgIZLEqMzc2jcYaauxrVQUctnhOcAey2OuEB1LbvQrkw==
-X-Received: by 2002:a17:90b:4c10:b0:2ca:8b71:21f4 with SMTP id 98e67ed59e1d1-2cf7e1ec893mr4674920a91.18.1722133439697;
-        Sat, 27 Jul 2024 19:23:59 -0700 (PDT)
-Received: from [192.168.255.10] (23.105.223.42.16clouds.com. [23.105.223.42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb7389fafsm8048254a91.1.2024.07.27.19.23.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jul 2024 19:23:59 -0700 (PDT)
-Message-ID: <d5e63e2a-c203-4c55-bbfe-537f5dd0b494@gmail.com>
-Date: Sun, 28 Jul 2024 10:23:54 +0800
+	s=arc-20240116; t=1722134004; c=relaxed/simple;
+	bh=dvLYb2AwjmxROoaz81uFJ5THSLzFLGjVRrpOpr4/xIQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mmwjBB8X7Y3EJuPVJPgIhwjIjxG8x1D20BNvz8HlGYfoHRiduVK9NbUKTzsqm+Q0MZPZLl9hrA1Gf3rPGLBFeZIN2oXHeKEB0gLlWFGW+DcuFZd6zFw+QJVBOL8XvRolLu5eHyktWeRZtODGMVmvT8lCIxPVycHiLDieEv/3/AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWYY1JO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF16C4AF0C;
+	Sun, 28 Jul 2024 02:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722134004;
+	bh=dvLYb2AwjmxROoaz81uFJ5THSLzFLGjVRrpOpr4/xIQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sWYY1JO2TwB0Cg6/ZQiz90RAdgAul5x+S86ZarZXdT+wFisp0SVUUvUHeMWRgF7/S
+	 V81/7RKwDFZj3G45dsYBUtrM/DYV9ZSfOAU2Xe/odkAn1RfCS/lanAzNQcRBVgQfEX
+	 mWIi2/Awt9Q3GtnNYIT5bltTJdCvRJjhdui1NXwuryv/9sKwuJPQZqVBmgwMuHMY0o
+	 iLGf9kb8GzgpPEr14yM5sFdLVVP8lDBNACuT1q7hf9Ra2ODFqcB/oS8YM7mGSH5pa4
+	 qxoq3O8zZq30wk4CZz+4u9oizw8qORAeQEKCsDUA4hG4Mi8dL4cazYfKR6AyhT46Up
+	 KdHVGHica/6FA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso30679511fa.2;
+        Sat, 27 Jul 2024 19:33:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWOc5kW80gsOcYnVTUfANaZJByysv7Xwuy7pse98PBGA50ODsOTWW6b5NpnZZnXbbgdcUGfNEy9QJNqvNn8UchIhLdoPfkXSnFodFlxufDbySIWlomygaR7+h+efa9UjkT7BX478h4nFzpJu8F4/GirSPzmnc+SvJaQuS/98QczI6ER
+X-Gm-Message-State: AOJu0Yzav/Iya+Ddgg/l/ionLYjgOubaeWJHW1QF3Xyfiu0qAqCZXAAP
+	z5ke1IQgNCv69l+ZWu7UcJ9HidSel7LThXfzs1B6cPHf2CRlFdYcQk2d6gd6pdbzRyAqqVEal7o
+	WoIIdWKr5J6wtLdpCYLJp4pep9V8=
+X-Google-Smtp-Source: AGHT+IF59mcPwmvHW5QIoNaU+VzASfC7TmJjeT9xXOw59vY0+rH1OwuY+pAGrYokLOLpn1+H+PfOljD/LCA+qPuGRKc=
+X-Received: by 2002:a05:6512:3611:b0:52c:dd3d:85af with SMTP id
+ 2adb3069b0e04-5309b27a53emr2456906e87.25.1722134002858; Sat, 27 Jul 2024
+ 19:33:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: add the translation of
- kbuild/headers_install.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20240726145754.2598197-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240726145754.2598197-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
+In-Reply-To: <20240726-fix-x86-stack-protector-tests-v1-1-a30fe80e8925@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 28 Jul 2024 11:32:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASdVHz4961=NWxiXuxj-wEFozLMaXivBwse96PVO=49LA@mail.gmail.com>
+Message-ID: <CAK7LNASdVHz4961=NWxiXuxj-wEFozLMaXivBwse96PVO=49LA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Fix '-S -c' in x86 stack protector scripts
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, nicolas@fjasle.eu, 
+	maskray@google.com, morbo@google.com, justinstitt@google.com, kees@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-LGTM,
-Reviewed-by: Alex Shi <alexs@kernel.org>
-
-On 7/26/24 10:57 PM, Dongliang Mu wrote:
-> Finish the translation of kbuild/headers_install.rst and
-> kbuild/index.rst, then add kbuild into zh_CN/index.rst.
-> 
-> Update to commit 5b67fbfc32b5 ("Merge tag 'kbuild-v5.7' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild")
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+On Sat, Jul 27, 2024 at 3:05=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> After a recent change in clang to stop consuming all instances of '-S'
+> and '-c' [1], the stack protector scripts break due to the kernel's use
+> of -Werror=3Dunused-command-line-argument to catch cases where flags are
+> not being properly consumed by the compiler driver:
+>
+>   $ echo | clang -o - -x c - -S -c -Werror=3Dunused-command-line-argument
+>   clang: error: argument unused during compilation: '-c' [-Werror,-Wunuse=
+d-command-line-argument]
+>
+> This results in CONFIG_STACKPROTECTOR getting disabled because
+> CONFIG_CC_HAS_SANE_STACKPROTECTOR is no longer set.
+>
+> '-c' and '-S' both instruct the compiler to stop at different stages of
+> the pipeline ('-S' after compiling, '-c' after assembling), so having
+> them present together in the same command makes little sense. In this
+> case, the test wants to stop before assembling because it is looking at
+> the textual assembly output of the compiler for either '%fs' or '%gs',
+> so remove '-c' from the list of arguments to resolve the error.
+>
+> All versions of GCC continue to work after this change, along with
+> versions of clang that do or do not contain the change mentioned above.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 4f7fd4d7a791 ("[PATCH] Add the -fstack-protector option to the CFL=
+AGS")
+> Fixes: 60a5317ff0f4 ("x86: implement x86_32 stack protector")
+> Link: https://github.com/llvm/llvm-project/commit/6461e537815f7fa68cef068=
+42505353cf5600e9c [1]
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 > ---
->  Documentation/translations/zh_CN/index.rst    |  2 +-
->  .../zh_CN/kbuild/headers_install.rst          | 39 +++++++++++++++++++
->  .../translations/zh_CN/kbuild/index.rst       | 35 +++++++++++++++++
->  3 files changed, 75 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/kbuild/headers_install.rst
->  create mode 100644 Documentation/translations/zh_CN/kbuild/index.rst
-> 
-> diff --git a/Documentation/translations/zh_CN/index.rst b/Documentation/translations/zh_CN/index.rst
-> index 20b9d4270d1f..7574e1673180 100644
-> --- a/Documentation/translations/zh_CN/index.rst
-> +++ b/Documentation/translations/zh_CN/index.rst
-> @@ -89,10 +89,10 @@ TODOList:
->     admin-guide/index
->     admin-guide/reporting-issues.rst
->     userspace-api/index
-> +   内核构建系统 <kbuild/index>
->  
->  TODOList:
->  
-> -* 内核构建系统 <kbuild/index>
->  * 用户空间工具 <tools/index>
->  
->  也可参考独立于内核文档的 `Linux 手册页 <https://www.kernel.org/doc/man-pages/>`_ 。
-> diff --git a/Documentation/translations/zh_CN/kbuild/headers_install.rst b/Documentation/translations/zh_CN/kbuild/headers_install.rst
-> new file mode 100644
-> index 000000000000..50ab819a7f96
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/kbuild/headers_install.rst
-> @@ -0,0 +1,39 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/kbuild/headers_install.rst
-> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +============================
-> +导出内核头文件供用户空间使用
-> +============================
-> +
-> +"make headers_install" 命令以适合于用户空间程序的形式导出内核头文件。
-> +
-> +Linux 内核导出的头文件描述了用户空间程序尝试使用内核服务的 API。这些内核
-> +头文件被系统的 C 库（例如 glibc 和 uClibc）用于定义可用的系统调用，以及
-> +与这些系统调用一起使用的常量和结构。C 库的头文件包括来自 linux 子目录的
-> +内核头文件。系统的 libc 头文件通常被安装在默认位置 /usr/include，而内核
-> +头文件在该位置的子目录中（主要是 /usr/include/linux 和 /usr/include/asm）。
-> +
-> +内核头文件向后兼容，但不向前兼容。这意味着使用旧内核头文件的 C 库构建的程序
-> +可以在新内核上运行（尽管它可能无法访问新特性），但使用新内核头文件构建的程序
-> +可能无法在旧内核上运行。
-> +
-> +"make headers_install" 命令可以在内核源代码的顶层目录中运行（或使用标准
-> +的树外构建）。它接受两个可选参数::
-> +
-> +  make headers_install ARCH=i386 INSTALL_HDR_PATH=/usr
-> +
-> +ARCH 表明为其生成头文件的架构，默认为当前架构。导出内核头文件的 linux/asm
-> +目录是基于特定平台的，要查看支持架构的完整列表，使用以下命令::
-> +
-> +  ls -d include/asm-* | sed 's/.*-//'
-> +
-> +INSTALL_HDR_PATH 表明头文件的安装位置，默认为 "./usr"。
-> +
-> +该命令会在 INSTALL_HDR_PATH 中自动创建创建一个 'include' 目录，而头文件
-> +会被安装在 INSTALL_HDR_PATH/include 中。
-> +
-> +内核头文件导出的基础设施由 David Woodhouse <dwmw2@infradead.org> 维护。
-> \ No newline at end of file
-> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-> new file mode 100644
-> index 000000000000..b9feb56b846a
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
-> @@ -0,0 +1,35 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/kbuild/index
-> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +============
-> +内核编译系统
-> +============
-> +
-> +.. toctree::
-> +    :maxdepth: 1
-> +
-> +    headers_install
-> +
-> +TODO:
-> +
-> +- kconfig-language
-> +- kconfig-macro-language
-> +- kbuild
-> +- kconfig
-> +- makefiles
-> +- modules
-> +- issues
-> +- reproducible-builds
-> +- gcc-plugins
-> +- llvm
-> +
-> +.. only::  subproject and html
-> +
-> +   目录
-> +   =====
-> +
-> +   * :ref:`genindex`
+> I think this could go via either -tip or Kbuild?
+>
+> Perhaps this is an issue in the clang commit mentioned in the message
+> above since it deviates from GCC (Fangrui is on CC here) but I think the
+> combination of these options is a little dubious to begin with, hence
+> this change.
+
+
+I agree.
+
+I can offer to pick up this to kbuild/fixes.
+
+
+If this goes somewhere else,
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+
+
+> ---
+>  scripts/gcc-x86_32-has-stack-protector.sh | 2 +-
+>  scripts/gcc-x86_64-has-stack-protector.sh | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/gcc-x86_32-has-stack-protector.sh b/scripts/gcc-x86_=
+32-has-stack-protector.sh
+> index 825c75c5b715..9459ca4f0f11 100755
+> --- a/scripts/gcc-x86_32-has-stack-protector.sh
+> +++ b/scripts/gcc-x86_32-has-stack-protector.sh
+> @@ -5,4 +5,4 @@
+>  # -mstack-protector-guard-reg, added by
+>  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D81708
+>
+> -echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -c -m32 -O0=
+ -fstack-protector -mstack-protector-guard-reg=3Dfs -mstack-protector-guard=
+-symbol=3D__stack_chk_guard - -o - 2> /dev/null | grep -q "%fs"
+> +echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -m32 -O0 -f=
+stack-protector -mstack-protector-guard-reg=3Dfs -mstack-protector-guard-sy=
+mbol=3D__stack_chk_guard - -o - 2> /dev/null | grep -q "%fs"
+> diff --git a/scripts/gcc-x86_64-has-stack-protector.sh b/scripts/gcc-x86_=
+64-has-stack-protector.sh
+> index 75e4e22b986a..f680bb01aeeb 100755
+> --- a/scripts/gcc-x86_64-has-stack-protector.sh
+> +++ b/scripts/gcc-x86_64-has-stack-protector.sh
+> @@ -1,4 +1,4 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+>
+> -echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -c -m64 -O0=
+ -mcmodel=3Dkernel -fno-PIE -fstack-protector - -o - 2> /dev/null | grep -q=
+ "%gs"
+> +echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -m64 -O0 -m=
+cmodel=3Dkernel -fno-PIE -fstack-protector - -o - 2> /dev/null | grep -q "%=
+gs"
+>
+> ---
+> base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
+> change-id: 20240726-fix-x86-stack-protector-tests-b542b1b9416b
+>
+> Best regards,
+> --
+> Nathan Chancellor <nathan@kernel.org>
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
