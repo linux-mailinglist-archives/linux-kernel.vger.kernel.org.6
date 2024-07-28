@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-264531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071C093E48E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:32:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6438993E492
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 12:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9400AB20EDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:32:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC4B4B20FE2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 10:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1302C1A2;
-	Sun, 28 Jul 2024 10:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BAC2C69B;
+	Sun, 28 Jul 2024 10:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaNOv1Eh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqChQ7to"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42503BA20;
-	Sun, 28 Jul 2024 10:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22602BAE3;
+	Sun, 28 Jul 2024 10:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722162718; cv=none; b=VdJKLrfvUyu4qBCWUbQWNL5MU1a1N/xmCeFmqAjGR49fkc8Kfqx180aRVYgWTVuJZokwahQStso/inJeNIHm57NroLgx/ivVcDQNQoYbt9R+vqab7h7MCfrOGHLfir+V7VAr/gMhdKXIHQcxYz79YUWokQYP3yx0kGc4rcELTb8=
+	t=1722162831; cv=none; b=ElKSJZ9JT44XxQZPFlTlmfGp4V501JvSQtK6pD5UVAAW5VjANpxOVn3VTqlq3k5HhsKypZH7selzq+LI9g92NoEKu7Gb06dDvhVe3jyaRJ+yneZim9gw6uy2h+efJcDE/eztIyb29kITlVefFLUw5brHpN0AE8lQSTqvaEwa/No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722162718; c=relaxed/simple;
-	bh=BMRSblR934AdpnWQpAjlrspDYQyMCJ5zSvB///CEgfU=;
+	s=arc-20240116; t=1722162831; c=relaxed/simple;
+	bh=M+9ZkOB6S8ekUi3Me6QftP/4qTchoGELwu1fdP4Lawo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mYgp4cAgecDUL4JF2WoSeAyUlD5c9ZxAB5kIKucevVCB59toJJoeDzyq2zUFPtxzQzLVfwas8zlgN5zdrbIPcSnY7/JL91zWTtceW1lBXtWMZfNJIOOdMu/LxLhSYPNsurWkGpF+fnSC1QkqfstN9WZBdtIOBBa2W3I83GT7ZUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaNOv1Eh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F699C4AF0A;
-	Sun, 28 Jul 2024 10:31:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nCxgF1fQP4ZGUq5WEz+hg4aN/rkpwxgtU10UzN63s2F6dkkG/bqu5UdWB4ZaS1wsMVRMhw7ABbpygb0cWtx294r+9MnSgWuyHFcwH0KYUoJvWcwwDRL0VGXHShCv9b/dFiVFggbaf+94wBnmq1dgHVdTT0VbY00Rd9/rvuwGLh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqChQ7to; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04E2C116B1;
+	Sun, 28 Jul 2024 10:33:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722162717;
-	bh=BMRSblR934AdpnWQpAjlrspDYQyMCJ5zSvB///CEgfU=;
+	s=k20201202; t=1722162830;
+	bh=M+9ZkOB6S8ekUi3Me6QftP/4qTchoGELwu1fdP4Lawo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DaNOv1EhFvepmO6ofxXNgNjnpEGCGzbhPmDgHmYqsJYMR7jvA2/etNSAY2iz4OIYc
-	 aP/5IipCja8HG6IoVrN6/nkEWN+qpwlk5s6+HHLz4GJn+c8kzEN1jdP/Jfah1f7XSw
-	 ZcJ4wzZPHfL6JCKWz3VNwLtuV8vIrYOHrgIzdx8Pg3nq1RFlf51/16JIUXK5Zo7wBe
-	 LAb3ekoneauYDsDPoKLWp6c6tiZPX8YIR3IhjKC/7FBD5AXo1AymcKP1n7BdjMEqKV
-	 Gg/AOyflhmw9F2kczII8BZ3FlxMpBN/4jCp+e2/bezlncxtdXLQlQBTGq43zRvLpQ4
-	 FTD0rE1paXJQQ==
-Message-ID: <6165e455-6101-44c7-b9eb-e21c6a917357@kernel.org>
-Date: Sun, 28 Jul 2024 12:31:51 +0200
+	b=UqChQ7toMqoqMa+mslKHeALD8d+sFHEqdQ/6yTHfSF+kfvuxOH+M7wiqViTGDbD/m
+	 UbVZ1oltGc0XpS7jwWo7QtW2te5jXVYD3j1QlLvGwy6m31GWT9VJkcVlBSXoh4n6nL
+	 DCtrXA6Z5kDH68vSGDHuaRqk5TV4KlJFqN2TMzqf63Ek8MMVhar6/a6Te2K2wJR3mt
+	 yicN6DwtYuEtYCLo/+85t27tgPLXRKbv4r5SST8kykwvQrgloivigSc/jaHg7Sr2+r
+	 U9QhFlbe74pclhy9y0oe7HNPyEUdvhhCuk87+rm9aDSLqn3ap1+d/sJTseQwqq1b8I
+	 wXm10UQRIV5/Q==
+Message-ID: <de376c7a-d141-44c6-9cc3-c800443e36b6@kernel.org>
+Date: Sun, 28 Jul 2024 12:33:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: clock: qcom: Add GPLL9 support on
- gcc-sc8180x
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
- <20240725-gcc-sc8180x-fixes-v1-2-576a55fe4780@quicinc.com>
+Subject: Re: [PATCH 1/5] dt-bindings: iio: adc: ad7380: add single-ended
+ compatible parts
+To: Julien Stephan <jstephan@baylibre.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240726-ad7380-add-single-ended-chips-v1-0-2d628b60ccd1@baylibre.com>
+ <20240726-ad7380-add-single-ended-chips-v1-1-2d628b60ccd1@baylibre.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,18 +107,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240725-gcc-sc8180x-fixes-v1-2-576a55fe4780@quicinc.com>
+In-Reply-To: <20240726-ad7380-add-single-ended-chips-v1-1-2d628b60ccd1@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/07/2024 13:33, Satya Priya Kakitapalli wrote:
-> Add the missing GPLL9 which is required for the gcc sdcc2 clock.
+On 26/07/2024 17:20, Julien Stephan wrote:
+> Adding ad7386/7/8 single-ended compatible parts, and the corresponding
+> ad7386-4/7-4/8-4 4 channels.
 > 
-> Fixes: 0fadcdfdcf57 ("dt-bindings: clock: Add SC8180x GCC binding")
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 > ---
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> index 899b777017ce..bd19abb867d9 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> @@ -15,10 +15,17 @@ description: |
+>    * https://www.analog.com/en/products/ad7381.html
+>    * https://www.analog.com/en/products/ad7383.html
+>    * https://www.analog.com/en/products/ad7384.html
+> +  * https://www.analog.com/en/products/ad7386.html
+> +  * https://www.analog.com/en/products/ad7387.html
+> +  * https://www.analog.com/en/products/ad7388.html
+>    * https://www.analog.com/en/products/ad7380-4.html
+>    * https://www.analog.com/en/products/ad7381-4.html
+>    * https://www.analog.com/en/products/ad7383-4.html
+>    * https://www.analog.com/en/products/ad7384-4.html
+> +  * https://www.analog.com/en/products/ad7386-4.html
+> +  * https://www.analog.com/en/products/ad7387-4.html
+> +  * https://www.analog.com/en/products/ad7388-4.html
+> +
+>  
+>  $ref: /schemas/spi/spi-peripheral-props.yaml#
+>  
+> @@ -29,10 +36,16 @@ properties:
+>        - adi,ad7381
+>        - adi,ad7383
+>        - adi,ad7384
+> +      - adi,ad7386
+> +      - adi,ad7387
+> +      - adi,ad7388
+>        - adi,ad7380-4
+>        - adi,ad7381-4
+>        - adi,ad7383-4
+>        - adi,ad7384-4
+> +      - adi,ad7386-4
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Lists are ordered alphabetically. Do not add new entries to the end of
+the lists (like in your commit "add support for ad738x-4 4") because
+that is conflict prone.
 
 Best regards,
 Krzysztof
