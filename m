@@ -1,188 +1,309 @@
-Return-Path: <linux-kernel+bounces-264483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D9D93E3FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59B993E3FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37D94B2126C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F5F281BAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 07:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C84C144;
-	Sun, 28 Jul 2024 07:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQqv/Um5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3800610A09;
+	Sun, 28 Jul 2024 07:54:29 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878828C09
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 07:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C26F8F62
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 07:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722152766; cv=none; b=rJgYk3JBt98lsZdPp+6Nd2t6goTI+K6qziMQoeemw9wmPN9tWQCZiYNT/pseT0WBHkNmvynbyiF+xUMp66YnO/e1/W9YdjlFdg6+3Rj2JaC9A/ZSU/bEobrvYnelOgICcew5+kV3H5NQsjMr/Wnu5ifxdFK4sz9L7iO15h/7VyQ=
+	t=1722153268; cv=none; b=C3wzPgH+NF+M5w89kK4rjemDRURo70e4ZeyUZJkoVlYdfQnr9yHF13AnGct+k90V4m9/FkvYUCXW3nwJkyejoIlVwkL7AMzI8l3MVgi5IEillq4Mz/Rk/p6QB3lV2QXL8sdgtQE2e8ziwLUuLaRI3MzZzZIvMSG1tKHZy5vBg8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722152766; c=relaxed/simple;
-	bh=iBvRhHhsfX5P/iKTnOx29nZSFG5/+5JfbERy4ly5nEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gz8k/auw7be1FJCIaglH5Z0jSL7EItXFkUMEIyUTuKuDYlTCOdaPmh+ve8O+sJZ5ivNc9cJRMl0/EsINJO3Jb5lUMRGImkx1QYdAldAEqS68ItC8XImBepDfBYZSH74/mpb3FteKOipwzT52wYuSXIs5MxVrRIURJ+5uFOFh7eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQqv/Um5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722152763; x=1753688763;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=iBvRhHhsfX5P/iKTnOx29nZSFG5/+5JfbERy4ly5nEk=;
-  b=IQqv/Um54ushb+ZIMyyDm0zYZZ/+vqNvUwQD/AN89MN6GH4cHU5UitlJ
-   W2M/cX7AV7VE0bkNFkNcg/+vlL2/eeYhed5xs1ksoZL11aTQYLw530i2K
-   3t8X0/xj9j3Y3ZGZDrIXF3JczVFQf+0ipZ8lOhcUPeoK2ZhWi4W8/Sv+3
-   FPTnLCcrIpnvLLKGantGuC2a37YDNbsmtpKwqJ2qAtGwmaZjwIKkOUJzQ
-   9480Pq7tOcgCmR5ms2hpQaUBthCPREMuV6KQ9OjoTu4g4lFhYW43zxq4v
-   KEEeYopbAv/15sjt5QSesW67DgSOQC8RAZyK/5HUNaRvxhT2UuQVj/Qp0
-   A==;
-X-CSE-ConnectionGUID: /lfpsJPKQfaQjk5Axx485g==
-X-CSE-MsgGUID: +Dk0Dk1rRTSPzmYjAEoqPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11146"; a="31291437"
-X-IronPort-AV: E=Sophos;i="6.09,243,1716274800"; 
-   d="scan'208";a="31291437"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2024 00:46:02 -0700
-X-CSE-ConnectionGUID: 87D2YE3BTY+IyFn98x3vVQ==
-X-CSE-MsgGUID: yMJ/o/KOSmWd3pkKOt329w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,243,1716274800"; 
-   d="scan'208";a="53574640"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 28 Jul 2024 00:45:58 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sXybJ-000qcq-2B;
-	Sun, 28 Jul 2024 07:45:53 +0000
-Date: Sun, 28 Jul 2024 15:45:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: kernel/iomem.c:18:32: sparse: sparse: cast truncates bits from
- constant value (38400000050e becomes 50e)
-Message-ID: <202407281541.d1dk2Bne-lkp@intel.com>
+	s=arc-20240116; t=1722153268; c=relaxed/simple;
+	bh=kcgTXQ3ksT3kQX2MNm4FHUC5QhHbMbx3nIv9zF+Hl+I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AJI8F0r4fehC5UCeyobWmiu1pi3GsuAZXLQS8GwBBA5QL31Rjw+2o7hUb5VkTAcYh+FC8A4yq/cK8scyerYd2iYSwfVzuHninnY3YTQNUlQZ3QEegVtdZCxuLEZRSvC/PfmSyRoBdZ5Lz/Z/M3gOcpZ4E/L6wKx+xKt3Pcmv5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f95058fb9so232735839f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 00:54:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722153265; x=1722758065;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EmD2retsie/O4j2fZQsePJKA5vLuuXflPmVKf9YI57E=;
+        b=dKKa50hK1TNEp4y9VZ35wrhp535iQMpNgsuOAr/kKzfKm0hR0yu5Mln6UhdUk6M8ln
+         JrqtATU3TNhRJ7mTOPsGKpMmBxfZXM08bJZvcnXUQLpRdY8AxMWPp0EQabSDv/fq+wKz
+         qpOGYO7Por59wobsGjIdwA5eYoR2zXgMalI4FdXjsA7aV21+gtk3Gc0K4byYTZkmngud
+         T3RSNJGhey/NKkGrb2UbqloI/b+vzdtGNiix1QQOn63R565Gvi6qPz875iJ79ryo9r6c
+         amoRhBfmAAIUgrGAVEGt0GSIF+iapZJyD7yXf2a4cvFYQB6W1ivpqmIIiZp8obiKMIth
+         iuvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOxcNSmprtVB/D85nmhFZU3l7La8qlgQ8Xj4GmqN7uCGURG3zkbWdobTTG2rZyLmkeFH4RDB6F/B/YU9UgRjZL3q9+0v3dZrRNhLfZ
+X-Gm-Message-State: AOJu0YzQwzaXt6FCVmMQr4S/wm8o/xdsiXhXU93wfQQ3pyX1JihcURcB
+	9NoWxoUkFyRgfI+HnQ5/g9VJl9V4os0qYoM4OPV3vbqHtSHa2WjaUAMcOIC0042w/x9dRaWcuFK
+	56ZF6HdAvg/I3+qvz+wa1DEPevBGKSeFDf4YuKn0psXQzQbE2xQPf6HM=
+X-Google-Smtp-Source: AGHT+IFado6zFZJuZ1WWyIxYZ4FKQB1T6qKCNAsZI6QafSibrz+J7eYpj9msnDTCE7GJh9QbZsDqdmwm81flnWLOdwikpwKLsmyj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6638:2395:b0:4c2:90d0:b311 with SMTP id
+ 8926c6da1cb9f-4c6442dbc4bmr166000173.3.1722153264847; Sun, 28 Jul 2024
+ 00:54:24 -0700 (PDT)
+Date: Sun, 28 Jul 2024 00:54:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000099a654061e4a0d97@google.com>
+Subject: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_read_inline_dir
+From: syzbot <syzbot+ee5f6a9c86b42ed64fec@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5437f30d3458ad36e83ab96088d490ebfee844d8
-commit: 0453c9a78015cb2219cda7239d881f4e3137bff8 sh: mm: convert to GENERIC_IOREMAP
-date:   12 months ago
-config: sh-randconfig-r133-20240727 (https://download.01.org/0day-ci/archive/20240728/202407281541.d1dk2Bne-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240728/202407281541.d1dk2Bne-lkp@intel.com/reproduce)
+Hello,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407281541.d1dk2Bne-lkp@intel.com/
+syzbot found the following issue on:
 
-sparse warnings: (new ones prefixed by >>)
-   kernel/iomem.c:113:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *[assigned] addr @@     got void [noderef] __iomem * @@
-   kernel/iomem.c:113:22: sparse:     expected void *[assigned] addr
-   kernel/iomem.c:113:22: sparse:     got void [noderef] __iomem *
-   kernel/iomem.c:116:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *[assigned] addr @@     got void [noderef] __iomem * @@
-   kernel/iomem.c:116:22: sparse:     expected void *[assigned] addr
-   kernel/iomem.c:116:22: sparse:     got void [noderef] __iomem *
->> kernel/iomem.c:18:32: sparse: sparse: cast truncates bits from constant value (38400000050e becomes 50e)
-   kernel/iomem.c: note: in included file (through include/linux/gfp.h, include/linux/xarray.h, include/linux/radix-tree.h, ...):
-   include/linux/mmzone.h:1997:40: sparse: sparse: self-comparison always evaluates to false
---
-   arch/sh/boards/board-sh7785lcr.c:298:13: sparse: sparse: symbol 'init_sh7785lcr_IRQ' was not declared. Should it be static?
-   arch/sh/boards/board-sh7785lcr.c:322:11: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned char *p @@     got void [noderef] __iomem * @@
-   arch/sh/boards/board-sh7785lcr.c:322:11: sparse:     expected unsigned char *p
-   arch/sh/boards/board-sh7785lcr.c:322:11: sparse:     got void [noderef] __iomem *
->> arch/sh/boards/board-sh7785lcr.c:328:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got unsigned char *p @@
-   arch/sh/boards/board-sh7785lcr.c:328:17: sparse:     expected void volatile [noderef] __iomem *addr
-   arch/sh/boards/board-sh7785lcr.c:328:17: sparse:     got unsigned char *p
-   arch/sh/boards/board-sh7785lcr.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/spi/spi-sh-sci.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/scatterlist.h, include/linux/spi/spi.h):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/spi/spi-nxp-fspi.c:513:25: sparse: sparse: cast from restricted __be32
-   drivers/spi/spi-nxp-fspi.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/scsi/aacraid/rx.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/scsi/aacraid/nark.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/scsi/aacraid/rkt.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/scsi/aacraid/sa.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
---
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: restricted __le32 degrades to integer
-   drivers/scsi/aacraid/src.c:146:34: sparse: sparse: cast to restricted __le32
-   drivers/scsi/aacraid/src.c:507:54: sparse: sparse: restricted __le16 degrades to integer
-   drivers/scsi/aacraid/src.c:545:57: sparse: sparse: bad assignment (+=) to restricted __le32
-   drivers/scsi/aacraid/src.c:552:57: sparse: sparse: bad assignment (+=) to restricted __le32
-   drivers/scsi/aacraid/src.c:560:49: sparse: sparse: bad assignment (+=) to restricted __le32
-   drivers/scsi/aacraid/src.c:563:55: sparse: sparse: bad assignment (+=) to restricted __le32
-   drivers/scsi/aacraid/src.c:804:15: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/scsi/aacraid/src.c:804:15: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got char * @@
-   drivers/scsi/aacraid/src.c:804:15: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/scsi/aacraid/src.c:804:15: sparse:     got char *
-   drivers/scsi/aacraid/src.c:804:15: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/scsi/aacraid/src.c:806:9: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/scsi/aacraid/src.c:806:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got char * @@
-   drivers/scsi/aacraid/src.c:806:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/scsi/aacraid/src.c:806:9: sparse:     got char *
-   drivers/scsi/aacraid/src.c:806:9: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/scsi/aacraid/src.c: note: in included file (through arch/sh/include/asm/io.h, include/linux/io.h, include/linux/irq.h, ...):
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
->> include/asm-generic/io.h:1089:41: sparse: sparse: cast truncates bits from constant value (384000000506 becomes 506)
+HEAD commit:    910bfc26d16d Merge tag 'rust-6.11' of https://github.com/R..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11989e55980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=ee5f6a9c86b42ed64fec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ddcb03980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11cb739d980000
 
-vim +18 kernel/iomem.c
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/863d9befadf0/disk-910bfc26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/431d0c4adec0/vmlinux-910bfc26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5be5e371ff13/bzImage-910bfc26.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e479ea98ade5/mount_0.gz
 
-5981690ddb8f72 Dan Williams 2018-03-29  14  
-5981690ddb8f72 Dan Williams 2018-03-29  15  #ifndef arch_memremap_wb
-5981690ddb8f72 Dan Williams 2018-03-29  16  static void *arch_memremap_wb(resource_size_t offset, unsigned long size)
-5981690ddb8f72 Dan Williams 2018-03-29  17  {
-5981690ddb8f72 Dan Williams 2018-03-29 @18  	return (__force void *)ioremap_cache(offset, size);
-5981690ddb8f72 Dan Williams 2018-03-29  19  }
-5981690ddb8f72 Dan Williams 2018-03-29  20  #endif
-5981690ddb8f72 Dan Williams 2018-03-29  21  
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ee5f6a9c86b42ed64fec@syzkaller.appspotmail.com
 
-:::::: The code at line 18 was first introduced by commit
-:::::: 5981690ddb8f72f9546a2d017a914cf56095fc1f memremap: split devm_memremap_pages() and memremap() infrastructure
+EXT4-fs error (device loop0): ext4_readdir:260: inode #2: block 16: comm syz-executor279: path /0/bus: bad entry in directory: rec_len is smaller than minimal - offset=980, inode=0, rec_len=0, size=1024 fake=0
+==================================================================
+BUG: KASAN: slab-use-after-free in ext4_read_inline_data fs/ext4/inline.c:209 [inline]
+BUG: KASAN: slab-use-after-free in ext4_read_inline_dir+0x48b/0xdf0 fs/ext4/inline.c:1483
+Read of size 68 at addr ffff88802a4e151a by task syz-executor279/5219
 
-:::::: TO: Dan Williams <dan.j.williams@intel.com>
-:::::: CC: Dan Williams <dan.j.williams@intel.com>
+CPU: 0 UID: 0 PID: 5219 Comm: syz-executor279 Not tainted 6.10.0-syzkaller-12857-g910bfc26d16d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ ext4_read_inline_data fs/ext4/inline.c:209 [inline]
+ ext4_read_inline_dir+0x48b/0xdf0 fs/ext4/inline.c:1483
+ ext4_readdir+0x3bb/0x3500 fs/ext4/dir.c:158
+ iterate_dir+0x57a/0x810 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:407 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe67f0194e3
+Code: c1 66 0f 1f 44 00 00 48 83 c4 08 48 89 ef 5b 5d e9 72 2b fb ff 66 90 b8 ff ff ff 7f 48 39 c2 48 0f 47 d0 b8 d9 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8
+RSP: 002b:00007ffdc89962e8 EFLAGS: 00000293 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 0000555584be0770 RCX: 00007fe67f0194e3
+RDX: 0000000000008000 RSI: 0000555584be0770 RDI: 0000000000000005
+RBP: 0000555584be0744 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000293 R12: ffffffffffffffb8
+R13: 0000000000000016 R14: 0000555584be0740 R15: 0000000000000001
+ </TASK>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Allocated by task 5211:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
+ skb_clone+0x20c/0x390 net/core/skbuff.c:2071
+ dev_queue_xmit_nit+0x419/0xc10 net/core/dev.c:2313
+ xmit_one net/core/dev.c:3576 [inline]
+ dev_hard_start_xmit+0x15f/0x7e0 net/core/dev.c:3596
+ sch_direct_xmit+0x2b6/0x5f0 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3809 [inline]
+ __dev_queue_xmit+0x1a7f/0x3e90 net/core/dev.c:4389
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:235
+ ip_local_out net/ipv4/ip_output.c:129 [inline]
+ __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:535
+ __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
+ tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
+ tcp_write_xmit+0x18b4/0x6a10 net/ipv4/tcp_output.c:2829
+ __tcp_push_pending_frames+0x9b/0x360 net/ipv4/tcp_output.c:3014
+ tcp_sendmsg_locked+0x43b1/0x4e10 net/ipv4/tcp.c:1322
+ tcp_sendmsg+0x30/0x50 net/ipv4/tcp.c:1354
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x1a6/0x270 net/socket.c:745
+ sock_write_iter+0x2dd/0x400 net/socket.c:1160
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5211:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4548
+ packet_rcv+0x16e/0x13e0 net/packet/af_packet.c:2290
+ dev_queue_xmit_nit+0xad4/0xc10 net/core/dev.c:2345
+ xmit_one net/core/dev.c:3576 [inline]
+ dev_hard_start_xmit+0x15f/0x7e0 net/core/dev.c:3596
+ sch_direct_xmit+0x2b6/0x5f0 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3809 [inline]
+ __dev_queue_xmit+0x1a7f/0x3e90 net/core/dev.c:4389
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:235
+ ip_local_out net/ipv4/ip_output.c:129 [inline]
+ __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:535
+ __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
+ tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
+ tcp_write_xmit+0x18b4/0x6a10 net/ipv4/tcp_output.c:2829
+ __tcp_push_pending_frames+0x9b/0x360 net/ipv4/tcp_output.c:3014
+ tcp_sendmsg_locked+0x43b1/0x4e10 net/ipv4/tcp.c:1322
+ tcp_sendmsg+0x30/0x50 net/ipv4/tcp.c:1354
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x1a6/0x270 net/socket.c:745
+ sock_write_iter+0x2dd/0x400 net/socket.c:1160
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802a4e1500
+ which belongs to the cache skbuff_head_cache of size 240
+The buggy address is located 26 bytes inside of
+ freed 240-byte region [ffff88802a4e1500, ffff88802a4e15f0)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2a4e1
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000000 ffff888017eba780 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000000c000c 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 5211, tgid 5211 (sshd), ts 82218906288, free_ts 82218584264
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3442
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4700
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
+ skb_clone+0x20c/0x390 net/core/skbuff.c:2071
+ dev_queue_xmit_nit+0x419/0xc10 net/core/dev.c:2313
+ xmit_one net/core/dev.c:3576 [inline]
+ dev_hard_start_xmit+0x15f/0x7e0 net/core/dev.c:3596
+ sch_direct_xmit+0x2b6/0x5f0 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3809 [inline]
+ __dev_queue_xmit+0x1a7f/0x3e90 net/core/dev.c:4389
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:235
+ ip_local_out net/ipv4/ip_output.c:129 [inline]
+ __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:535
+ __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
+page last free pid 5213 tgid 5213 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2612
+ skb_free_frag include/linux/skbuff.h:3383 [inline]
+ skb_free_head net/core/skbuff.c:1094 [inline]
+ skb_release_data+0x6b2/0x880 net/core/skbuff.c:1123
+ skb_release_all net/core/skbuff.c:1188 [inline]
+ __kfree_skb+0x55/0x70 net/core/skbuff.c:1202
+ tcp_rcv_established+0x10a5/0x2020 net/ipv4/tcp_input.c:6135
+ tcp_v4_do_rcv+0x96d/0xc70 net/ipv4/tcp_ipv4.c:1909
+ tcp_v4_rcv+0x2dbd/0x37f0 net/ipv4/tcp_ipv4.c:2344
+ ip_protocol_deliver_rcu+0x22b/0x440 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ ip_local_deliver net/ipv4/ip_input.c:254 [inline]
+ dst_input include/net/dst.h:460 [inline]
+ ip_sublist_rcv_finish+0x3be/0x4f0 net/ipv4/ip_input.c:580
+ ip_list_rcv_finish net/ipv4/ip_input.c:631 [inline]
+ ip_sublist_rcv+0x75d/0xab0 net/ipv4/ip_input.c:639
+ ip_list_rcv+0x42b/0x480 net/ipv4/ip_input.c:674
+ __netif_receive_skb_list_ptype net/core/dev.c:5703 [inline]
+ __netif_receive_skb_list_core+0x95a/0x980 net/core/dev.c:5751
+ __netif_receive_skb_list net/core/dev.c:5803 [inline]
+ netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5895
+ gro_normal_list include/net/gro.h:515 [inline]
+ napi_complete_done+0x310/0x8e0 net/core/dev.c:6246
+ virtqueue_napi_complete drivers/net/virtio_net.c:694 [inline]
+ virtnet_poll+0x2c99/0x3870 drivers/net/virtio_net.c:2826
+
+Memory state around the buggy address:
+ ffff88802a4e1400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802a4e1480: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+>ffff88802a4e1500: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88802a4e1580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+ ffff88802a4e1600: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
