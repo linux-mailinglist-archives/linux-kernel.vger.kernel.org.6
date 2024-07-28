@@ -1,388 +1,388 @@
-Return-Path: <linux-kernel+bounces-264886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D254B93E9B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:30:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAC293E9BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 23:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB0CB21799
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3D802817A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 21:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263185914C;
-	Sun, 28 Jul 2024 21:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BFD7C6D4;
+	Sun, 28 Jul 2024 21:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AegzNYdP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HIUWeODf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngfS4ksB"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4CA7470
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 21:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9FE12B94;
+	Sun, 28 Jul 2024 21:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722202244; cv=none; b=oarG/smreRRjbeO74CBT61mHXmmtBKC8zN1Dlumu5jh56nONF465KfFBbHC4ozzTKyXXC8T3Cce2K70Bcs24T05gKm2KSlJBWyfP2hqOGTYPObqdeIK0JANnU+RG8138zkA0vg3Ca5F9d6iYlQPLi+RwOztCu1Ce3bnXsB/sTG0=
+	t=1722202658; cv=none; b=EwOvj4qMAEVRhLeiOXAm33MH8LOTztQQeE1uGEMqxdoDz0mEAoRpHjA58tVZvW/z+cvh3aKqPQkYBJahgwAtqM/teI2yA6wRO+4Hz1xU+Tn8WM3ezmzPzuSq+25KsuazfoY3piVm2jHmg6fgy3S777bxKgkhkV8QiGCP+xnOtU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722202244; c=relaxed/simple;
-	bh=WvDLWZXNj7JvefON5oN/oI6hLOY2sERSFpKQzRgTBzc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=heETyEG+lFzljh0WAz5IVSK+qVH/by5SOstxPBTG/ySbkl9fjxhYtHU10CAZxLCxNHRt5I6Q7YJsSK2CwlT+1HOMidKeMbzE1FLYvz2gPLkkzxCUG6JQTpqBTn6u1d2AoBzazJPxffoca3Sk4HTc+DVFrIO3Y2muHLC0rpjArzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AegzNYdP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HIUWeODf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722202239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mkxxkg5G+QCKXORXqfQheO8NG7nyryepkIDctyVjL18=;
-	b=AegzNYdPO9Dp5Bc+D6MKm89CRgP4G7VK8YM4UOapwi48YT73TQMImAqqNPI+pb/bhW4SiF
-	u5gihWQl7/F2P6Aas4XOm9Oc26OSa1zirtRfBFKKxTjXlPPy5YvEQ2XBozDvxu81qaKzAs
-	9F5OvEBt1BEHKY3yVLuRzeolv69QTKdroB8whPxJ4F99T2s+2ycxYmF6BVLmp+6PbcYfdI
-	pAn2D94xL/Ut83lQAm7EMOWtd9XTeKNAqVh2BQ1/mKF5HYVURWly0taDCZRpixCAqR9ovg
-	YQSHbke+10OrsYNiG+8wcIX0mBZE+M8cJh9KXTOW2G3tThALTOujkzEM+Xs/kg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722202239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mkxxkg5G+QCKXORXqfQheO8NG7nyryepkIDctyVjL18=;
-	b=HIUWeODfButgjkayOEsDjAdS9bXa8TqVjTMQe5l2xrxZ0Y25r7JiWt3jvB0dPIgALGPkt3
-	hcIy1oeuSfjmPkDw==
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
- youssefesmat@chromium.org, efault@gmx.de
-Subject: Re: [RFC PATCH 24/24] sched/time: Introduce CLOCK_THREAD_DVFS_ID
-In-Reply-To: <20240727105031.053611186@infradead.org>
-References: <20240727102732.960974693@infradead.org>
- <20240727105031.053611186@infradead.org>
-Date: Sun, 28 Jul 2024 23:30:38 +0200
-Message-ID: <874j89tda9.ffs@tglx>
+	s=arc-20240116; t=1722202658; c=relaxed/simple;
+	bh=2Sn68X7uDls3sP1EZexTSLlGYbfSYXNz2o7k80QTDUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lkq7CpsxufqsfV9wnRolkQ55dU+ESVrxkndRzuaOrQLqxWrkhbBMDrrLUYHiya4D3e9qqTnUrmcQ4CvtzkwoCO5zEDXlY9kcG4YFCfrxqcINcivcS94znqzD8U2bE9GRXqf4O2ZDnHQf3dgVdK5qx/F5WcCzeYiI3dgOUuqH1A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngfS4ksB; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0885b4f1d5so1275167276.1;
+        Sun, 28 Jul 2024 14:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722202656; x=1722807456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K9cFCXNlBUwwoGYk4agpmfzd90AIjSqmRZ4wGHZIvL4=;
+        b=ngfS4ksBEQprRybEaUydabCt7dMpXXLj3dQO38xieO6SAqstF0qDJo4vlq/+ALTzW4
+         CKEzHupnesmyqsZxkWvcuBKupdRQ4eZHY/y4JG0mVUctnN/H9fobwcmnJFRLR+shZDjb
+         weE//EL4Syo16G7FgMXYmbIPiY5Tcz8dC9qOXneJARkxACl1dThzUeB6NRQq1dEfVlFI
+         yQGdTHjyxQq7r8N1h3T8bYO0NFtQzzvZRbfcd1FhhggHieCNiq2GA8rKqabMcBA0aLz6
+         h6sjrdNoMIk5dHmAomojGvzhYHzzdITOxaG5wIVXc/QtSo2j8t0cOIW7hBienHCk2qoT
+         Mjjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722202656; x=1722807456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K9cFCXNlBUwwoGYk4agpmfzd90AIjSqmRZ4wGHZIvL4=;
+        b=JbxJS0461mIa95J9wjhDi1L+bhadVkhFGbwWZg84MIMYcqXlQzrl543/T2PMgyNV3E
+         sn5DkT9SuwzIOp/EXvxpD/YHVVDPb273NcP6V/HsbVPP3RUQ+Dwv42KaVgDvfebn0Jw4
+         jjC4Y5Vs/B6lRhzb+OlWkMekUip6MmkXIQc5PFWOdUZKFhZlYBHDn3+RXgeek9p3cSj2
+         fi2fjHrfjK1tg/CsxdfzObKCfQDfLiVCH3YxNgYC3i1uGldJs4y/vZsSXVxN/k8zL3QP
+         luXyiFaYRE7pssO7VQW1C7e1IwDXeNAFKqg34giI0BMlKfoQE6+/BY5miBS8rDj1P4St
+         tP5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBWXgRq7ZmM1ueIniiN7kfNyaKqy2xH1/ZYWOham3LHS3XT27w0Bz8sbpjfwI7m+yRDSKQJ5bLiHNdTd7XX9ln6CdM0GUx+sQ9WttrQ+mmIOfZYS4J3ShjCK4XQfyoyeH3xBtmmEoaM30okCjIqq3XyMp/PmnT8vxCQ2iW+o2sPOGdxFASfkENqv5yzft2BpzLvdKJinnMM6obCVzx4kiFE+dJIkwFhF6/EEFm
+X-Gm-Message-State: AOJu0Yw/cNNZZdu8djkaRH+ImJENc3nAygNwKKd94kPdllQytx5hpReA
+	KLIuN5kzNKEC4odb4Zc5EEP6SrLZrAKrP5sB88SNkoVPlx/Ac3r5FavEPdCxfbywwClwF9MekIe
+	DGJW3CACbTdoVEY9RKKto6MnjUbc=
+X-Google-Smtp-Source: AGHT+IFVP55gj+sT0MrYRVitmwH+mCztNmVoK2xGhUz6Qlhx2dO5zlQtp2zqP2YBKFY/JMujHOiS1/r6Ulhctp/0vN4=
+X-Received: by 2002:a05:6902:240e:b0:e06:6e0c:5e0 with SMTP id
+ 3f1490d57ef6-e0b5459ca5dmr5791170276.38.1722202655671; Sun, 28 Jul 2024
+ 14:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240710212555.1617795-1-amery.hung@bytedance.com>
+ <20240710212555.1617795-6-amery.hung@bytedance.com> <pghfa4vh7vb7sggelop5asuyj6bqtq4rbgm2q3bdslcoeicihj@6arcanemghjo>
+In-Reply-To: <pghfa4vh7vb7sggelop5asuyj6bqtq4rbgm2q3bdslcoeicihj@6arcanemghjo>
+From: Amery Hung <ameryhung@gmail.com>
+Date: Sun, 28 Jul 2024 14:37:24 -0700
+Message-ID: <CAMB2axNL_O3Twksi+ROUz0B298A-xQ_EYsgYzc2jLRbpikrdJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next v6 05/14] af_vsock: use a separate dgram bind table
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, bryantan@vmware.com, 
+	vdasa@vmware.com, pv-drivers@vmware.com, dan.carpenter@linaro.org, 
+	simon.horman@corigine.com, oxffffaa@gmail.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 27 2024 at 12:27, Peter Zijlstra wrote:
-> In order to measure thread time in a DVFS world, introduce
-> CLOCK_THREAD_DVFS_ID -- a copy of CLOCK_THREAD_CPUTIME_ID that slows
-> down with both DVFS scaling and CPU capacity.
+On Tue, Jul 23, 2024 at 7:41=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
+.com> wrote:
 >
-> The clock does *NOT* support setting timers.
+> On Wed, Jul 10, 2024 at 09:25:46PM GMT, Amery Hung wrote:
+> >From: Bobby Eshleman <bobby.eshleman@bytedance.com>
+> >
+> >This commit adds support for bound dgram sockets to be tracked in a
+> >separate bind table from connectible sockets in order to avoid address
+> >collisions. With this commit, users can simultaneously bind a dgram
+> >socket and connectible socket to the same CID and port.
+> >
+> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
+> >---
+> > net/vmw_vsock/af_vsock.c | 103 +++++++++++++++++++++++++++++----------
+> > 1 file changed, 76 insertions(+), 27 deletions(-)
+> >
+> >diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> >index d571be9cdbf0..ab08cd81720e 100644
+> >--- a/net/vmw_vsock/af_vsock.c
+> >+++ b/net/vmw_vsock/af_vsock.c
+> >@@ -10,18 +10,23 @@
+> >  * - There are two kinds of sockets: those created by user action (such=
+ as
+> >  * calling socket(2)) and those created by incoming connection request =
+packets.
+> >  *
+> >- * - There are two "global" tables, one for bound sockets (sockets that=
+ have
+> >- * specified an address that they are responsible for) and one for conn=
+ected
+> >- * sockets (sockets that have established a connection with another soc=
+ket).
+> >- * These tables are "global" in that all sockets on the system are plac=
+ed
+> >- * within them. - Note, though, that the bound table contains an extra =
+entry
+> >- * for a list of unbound sockets and SOCK_DGRAM sockets will always rem=
+ain in
+> >- * that list. The bound table is used solely for lookup of sockets when=
+ packets
+> >- * are received and that's not necessary for SOCK_DGRAM sockets since w=
+e create
+> >- * a datagram handle for each and need not perform a lookup.  Keeping S=
+OCK_DGRAM
+> >- * sockets out of the bound hash buckets will reduce the chance of coll=
+isions
+> >- * when looking for SOCK_STREAM sockets and prevents us from having to =
+check the
+> >- * socket type in the hash table lookups.
+> >+ * - There are three "global" tables, one for bound connectible (stream=
+ /
+> >+ * seqpacket) sockets, one for bound datagram sockets, and one for conn=
+ected
+> >+ * sockets. Bound sockets are sockets that have specified an address th=
+at
+> >+ * they are responsible for. Connected sockets are sockets that have
+> >+ * established a connection with another socket. These tables are "glob=
+al" in
+> >+ * that all sockets on the system are placed within them. - Note, thoug=
+h,
+> >+ * that the bound tables contain an extra entry for a list of unbound
+> >+ * sockets. The bound tables are used solely for lookup of sockets when=
+ packets
+> >+ * are received.
+> >+ *
+> >+ * - There are separate bind tables for connectible and datagram socket=
+s to avoid
+> >+ * address collisions between stream/seqpacket sockets and datagram soc=
+kets.
+> >+ *
+> >+ * - Transports may elect to NOT use the global datagram bind table by
+> >+ * implementing the ->dgram_bind() callback. If that callback is implem=
+ented,
+> >+ * the global bind table is not used and the responsibility of bound da=
+tagram
+> >+ * socket tracking is deferred to the transport.
+> >  *
+> >  * - Sockets created by user action will either be "client" sockets tha=
+t
+> >  * initiate a connection or "server" sockets that listen for connection=
+s; we do
+> >@@ -116,6 +121,7 @@
+> > static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
+> > static void vsock_sk_destruct(struct sock *sk);
+> > static int vsock_queue_rcv_skb(struct sock *sk, struct sk_buff *skb);
+> >+static bool sock_type_connectible(u16 type);
+> >
+> > /* Protocol family. */
+> > struct proto vsock_proto =3D {
+> >@@ -152,21 +158,25 @@ static DEFINE_MUTEX(vsock_register_mutex);
+> >  * VSocket is stored in the connected hash table.
+> >  *
+> >  * Unbound sockets are all put on the same list attached to the end of =
+the hash
+> >- * table (vsock_unbound_sockets).  Bound sockets are added to the hash =
+table in
+> >- * the bucket that their local address hashes to (vsock_bound_sockets(a=
+ddr)
+> >- * represents the list that addr hashes to).
+> >+ * tables (vsock_unbound_sockets/vsock_unbound_dgram_sockets).  Bound s=
+ockets
+> >+ * are added to the hash table in the bucket that their local address h=
+ashes to
+> >+ * (vsock_bound_sockets(addr) and vsock_bound_dgram_sockets(addr) repre=
+sents
+> >+ * the list that addr hashes to).
+> >  *
+> >- * Specifically, we initialize the vsock_bind_table array to a size of
+> >- * VSOCK_HASH_SIZE + 1 so that vsock_bind_table[0] through
+> >- * vsock_bind_table[VSOCK_HASH_SIZE - 1] are for bound sockets and
+> >- * vsock_bind_table[VSOCK_HASH_SIZE] is for unbound sockets.  The hash =
+function
+> >- * mods with VSOCK_HASH_SIZE to ensure this.
+> >+ * Specifically, taking connectible sockets as an example we initialize=
+ the
+> >+ * vsock_bind_table array to a size of VSOCK_HASH_SIZE + 1 so that
+> >+ * vsock_bind_table[0] through vsock_bind_table[VSOCK_HASH_SIZE - 1] ar=
+e for
+> >+ * bound sockets and vsock_bind_table[VSOCK_HASH_SIZE] is for unbound s=
+ockets.
+> >+ * The hash function mods with VSOCK_HASH_SIZE to ensure this.
+> >+ * Datagrams and vsock_dgram_bind_table operate in the same way.
+> >  */
+> > #define MAX_PORT_RETRIES        24
+> >
+> > #define VSOCK_HASH(addr)        ((addr)->svm_port % VSOCK_HASH_SIZE)
+> > #define vsock_bound_sockets(addr) (&vsock_bind_table[VSOCK_HASH(addr)])
+> >+#define vsock_bound_dgram_sockets(addr) (&vsock_dgram_bind_table[VSOCK_=
+HASH(addr)])
+> > #define vsock_unbound_sockets     (&vsock_bind_table[VSOCK_HASH_SIZE])
+> >+#define vsock_unbound_dgram_sockets     (&vsock_dgram_bind_table[VSOCK_=
+HASH_SIZE])
+> >
+> > /* XXX This can probably be implemented in a better way. */
+> > #define VSOCK_CONN_HASH(src, dst)                             \
+> >@@ -182,6 +192,8 @@ struct list_head vsock_connected_table[VSOCK_HASH_SI=
+ZE];
+> > EXPORT_SYMBOL_GPL(vsock_connected_table);
+> > DEFINE_SPINLOCK(vsock_table_lock);
+> > EXPORT_SYMBOL_GPL(vsock_table_lock);
+> >+static struct list_head vsock_dgram_bind_table[VSOCK_HASH_SIZE + 1];
+> >+static DEFINE_SPINLOCK(vsock_dgram_table_lock);
+> >
+> > /* Autobind this socket to the local address if necessary. */
+> > static int vsock_auto_bind(struct vsock_sock *vsk)
+> >@@ -204,6 +216,9 @@ static void vsock_init_tables(void)
+> >
+> >       for (i =3D 0; i < ARRAY_SIZE(vsock_connected_table); i++)
+> >               INIT_LIST_HEAD(&vsock_connected_table[i]);
+> >+
+> >+      for (i =3D 0; i < ARRAY_SIZE(vsock_dgram_bind_table); i++)
+> >+              INIT_LIST_HEAD(&vsock_dgram_bind_table[i]);
+> > }
+> >
+> > static void __vsock_insert_bound(struct list_head *list,
+> >@@ -271,13 +286,28 @@ static struct sock *__vsock_find_connected_socket(=
+struct sockaddr_vm *src,
+> >       return NULL;
+> > }
+> >
+> >-static void vsock_insert_unbound(struct vsock_sock *vsk)
+> >+static void __vsock_insert_dgram_unbound(struct vsock_sock *vsk)
+> >+{
+> >+      spin_lock_bh(&vsock_dgram_table_lock);
+> >+      __vsock_insert_bound(vsock_unbound_dgram_sockets, vsk);
+> >+      spin_unlock_bh(&vsock_dgram_table_lock);
+> >+}
+> >+
+> >+static void __vsock_insert_connectible_unbound(struct vsock_sock *vsk)
+> > {
+> >       spin_lock_bh(&vsock_table_lock);
+> >       __vsock_insert_bound(vsock_unbound_sockets, vsk);
+> >       spin_unlock_bh(&vsock_table_lock);
+> > }
+> >
+> >+static void vsock_insert_unbound(struct vsock_sock *vsk)
+> >+{
+> >+      if (sock_type_connectible(sk_vsock(vsk)->sk_type))
+> >+              __vsock_insert_connectible_unbound(vsk);
+> >+      else
+> >+              __vsock_insert_dgram_unbound(vsk);
+> >+}
+> >+
+> > void vsock_insert_connected(struct vsock_sock *vsk)
+> > {
+> >       struct list_head *list =3D vsock_connected_sockets(
+> >@@ -289,6 +319,14 @@ void vsock_insert_connected(struct vsock_sock *vsk)
+> > }
+> > EXPORT_SYMBOL_GPL(vsock_insert_connected);
+> >
+> >+static void vsock_remove_dgram_bound(struct vsock_sock *vsk)
+> >+{
+> >+      spin_lock_bh(&vsock_dgram_table_lock);
+> >+      if (__vsock_in_bound_table(vsk))
+> >+              __vsock_remove_bound(vsk);
+> >+      spin_unlock_bh(&vsock_dgram_table_lock);
+> >+}
+> >+
+> > void vsock_remove_bound(struct vsock_sock *vsk)
+> > {
+> >       spin_lock_bh(&vsock_table_lock);
+> >@@ -340,7 +378,10 @@ EXPORT_SYMBOL_GPL(vsock_find_connected_socket);
+> >
+> > void vsock_remove_sock(struct vsock_sock *vsk)
+> > {
+> >-      vsock_remove_bound(vsk);
+> >+      if (sock_type_connectible(sk_vsock(vsk)->sk_type))
+> >+              vsock_remove_bound(vsk);
+> >+      else
+> >+              vsock_remove_dgram_bound(vsk);
+>
+> Can we try to be consistent, for example we have vsock_insert_unbound()
+> which calls internally sock_type_connectible(), while
+> vsock_remove_bound() is just for connectible sockets. It's a bit
+> confusing.
 
-That's not the only limitation. See below.
+I agree with you. I will make the style more consistent by keeping
+vsock_insert_unbound() only work on connectible sockets.
 
-> Useful for both SCHED_DEADLINE and the newly introduced
-> sched_attr::sched_runtime usage for SCHED_NORMAL.
+>
+> >       vsock_remove_connected(vsk);
+> > }
+> > EXPORT_SYMBOL_GPL(vsock_remove_sock);
+> >@@ -746,11 +787,19 @@ static int __vsock_bind_connectible(struct vsock_s=
+ock *vsk,
+> >       return vsock_bind_common(vsk, addr, vsock_bind_table, VSOCK_HASH_=
+SIZE + 1);
+> > }
+> >
+> >-static int __vsock_bind_dgram(struct vsock_sock *vsk,
+> >-                            struct sockaddr_vm *addr)
+> >+static int vsock_bind_dgram(struct vsock_sock *vsk,
+> >+                          struct sockaddr_vm *addr)
+>
+> Why we are renaming this?
 
-Can this please have an explanation about the usage of the previously
-reserved value of 0x7 in the lower 3 bits?
+I will keep the original __vsock_bind_dgram() for consistency.
 
->   *
->   * Bit 2 indicates whether a cpu clock refers to a thread or a process.
->   *
-> - * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or FD=3.
-> + * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or DVSF=3
->   *
-> - * A clockid is invalid if bits 2, 1, and 0 are all set.
-> + * (DVFS is PERTHREAD only)
+>
+> > {
+> >-      if (!vsk->transport || !vsk->transport->dgram_bind)
+> >-              return -EINVAL;
+> >+      if (!vsk->transport || !vsk->transport->dgram_bind) {
+>
+> Why this condition?
+>
+> Maybe a comment here is needed because I'm lost...
 
-This drops the information about the FD usage. Something like:
+We currently use !vsk->transport->dgram_bind to determine if this is
+VMCI dgram transport. Will add a comment explaining this.
 
-/*
- * Bit fields within a clockid:
- *
- * Bit 31:3 hold either a pid or a file descriptor.
- *
- * Bit 2  Bit 1  Bit 0
- *   0      0      0     Per process	CPUCLOCK_PROF
- *   0      0      1     Per process	CPUCLOCK_VIRT
- *   0      1      0     Per process	CPUCLOCK_SCHED
- *   0      1      1     Posixclock FD	CLOCKFD
- *   1      0      0     Per thread	CPUCLOCK_PROF
- *   1      0      1     Per thread	CPUCLOCK_VIRT
- *   1      1      0     Per thread	CPUCLOCK_SCHED
- *   1      1      1     Per thread	CPUCLOCK_DVSF
- *
- * CPUCLOCK_DVSF is per thread only and shares the type code in Bit 1:0
- * with CLOCKFD. CLOCKFD uses a file descriptor to access dynamically
- * registered POSIX clocks (e.g. PTP hardware clocks).
- */
+>
+> >+              int retval;
+> >+
+> >+              spin_lock_bh(&vsock_dgram_table_lock);
+> >+              retval =3D vsock_bind_common(vsk, addr, vsock_dgram_bind_=
+table,
+> >+                                         VSOCK_HASH_SIZE);
+>
+> Should we use VSOCK_HASH_SIZE + 1 here?
+>
+> Using ARRAY_SIZE(x) should avoid this problem.
 
-should be clear enough, no?
-
-But, all of this is wishful thinking because the provided implementation
-only works for:
-
-      sys_clock_getres(CLOCK_THREAD_DVFS_ID, ...)
-
-which falls back to thread_cpu_clock_getres().
-
-The variant which has the TID encoded in bit 31:3 and the type in bit
-2:0 fails the test in pid_for_clock():
-
-        if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
-		return NULL;
-
-Worse for sys_clock_gettime(). That fails in both cases for the very
-same reason.
-
-See the uncompiled delta patch below for a cure of that and the rest of
-my comments.
-
->   #define CPUCLOCK_PROF		0
->   #define CPUCLOCK_VIRT		1
->   #define CPUCLOCK_SCHED		2
->  +#define CPUCLOCK_DVFS		3
->   #define CPUCLOCK_MAX		3
->   #define CLOCKFD			CPUCLOCK_MAX
->   #define CLOCKFD_MASK		(CPUCLOCK_PERTHREAD_MASK|CPUCLOCK_CLOCK_MASK)
-
-With that DVFS addition CPUCLOCK_MAX is misleading at best. See delta
-patch.
-
-> +
-> +	rq = task_rq_lock(p, &rf);
-> +	/*
-> +	 * Must be ->curr _and_ ->on_rq.  If dequeued, we would
-> +	 * project cycles that may never be accounted to this
-> +	 * thread, breaking clock_gettime().
-
-Must be? For what? I assume you want to say:
-
-     Update the runtime if the task is the current task and on the
-     runqueue. The latter is important because if current is dequeued,
-     ....
-
-> +	 */
-> +	if (task_current(rq, p) && task_on_rq_queued(p)) {
-> +		prefetch_curr_exec_start(p);
-> +		update_rq_clock(rq);
-> +		p->sched_class->update_curr(rq);
-> +	}
-> +	ns = p->se.sum_dvfs_runtime;
-> +	task_rq_unlock(rq, p, &rf);
-> @@ -1664,6 +1668,11 @@ static int thread_cpu_timer_create(struc
->  	timer->it_clock = THREAD_CLOCK;
->  	return posix_cpu_timer_create(timer);
->  }
-> +static int thread_dvfs_cpu_clock_get(const clockid_t which_clock,
-> +				struct timespec64 *tp)
-
-Please align the second line properly with the argument in the first line.
+Yes. The size here is wrong. I will remove the size check (the
+discussion is in patch 4).
 
 Thanks,
+Amery
 
-        tglx
----
 
---- a/include/linux/posix-timers_types.h
-+++ b/include/linux/posix-timers_types.h
-@@ -9,27 +9,42 @@
- /*
-  * Bit fields within a clockid:
-  *
-- * The most significant 29 bits hold either a pid or a file descriptor.
-+ * Bit 31:3 hold either a PID/TID or a file descriptor.
-  *
-- * Bit 2 indicates whether a cpu clock refers to a thread or a process.
-+ * Bit 2  Bit 1  Bit 0
-+ *   0      0      0     Per process	CPUCLOCK_PROF
-+ *   0      0      1     Per process	CPUCLOCK_VIRT
-+ *   0      1      0     Per process	CPUCLOCK_SCHED
-+ *   0      1      1     Posixclock FD	CLOCKFD
-+ *   1      0      0     Per thread	CPUCLOCK_PROF
-+ *   1      0      1     Per thread	CPUCLOCK_VIRT
-+ *   1      1      0     Per thread	CPUCLOCK_SCHED
-+ *   1      1      1     Per thread	CPUCLOCK_DVSF
-  *
-- * Bits 1 and 0 give the type: PROF=0, VIRT=1, SCHED=2, or DVSF=3
-- *
-- * (DVFS is PERTHREAD only)
-+ * CPUCLOCK_DVSF is per thread only and shares the type code in Bit 1:0
-+ * with CLOCKFD. CLOCKFD uses a file descriptor to access dynamically
-+ * registered POSIX clocks (e.g. PTP hardware clocks).
-  */
-+
- #define CPUCLOCK_PID(clock)		((pid_t) ~((clock) >> 3))
--#define CPUCLOCK_PERTHREAD(clock) \
--	(((clock) & (clockid_t) CPUCLOCK_PERTHREAD_MASK) != 0)
-+#define CPUCLOCK_PERTHREAD(clock)	(((clock) & (clockid_t) CPUCLOCK_PERTHREAD_MASK) != 0)
- 
--#define CPUCLOCK_PERTHREAD_MASK	4
--#define CPUCLOCK_WHICH(clock)	((clock) & (clockid_t) CPUCLOCK_CLOCK_MASK)
--#define CPUCLOCK_CLOCK_MASK	3
- #define CPUCLOCK_PROF		0
- #define CPUCLOCK_VIRT		1
- #define CPUCLOCK_SCHED		2
--#define CPUCLOCK_DVFS		3
--#define CPUCLOCK_MAX		3
--#define CLOCKFD			CPUCLOCK_MAX
-+#define CPUCLOCK_SAMPLE_MAX	(CPUCLOCK_SCHED + 1)
-+
-+#define CPUCLOCK_CLOCK_MASK	3
-+#define CPUCLOCK_PERTHREAD_MASK	4
-+#define CPUCLOCK_WHICH(clock)	((clock) & (clockid_t) CPUCLOCK_CLOCK_MASK)
-+
-+/*
-+ * CPUCLOCK_DVFS and CLOCKFD share the type code in bit 1:0. CPUCLOCK_DVFS
-+ * does not belong to the sampling clocks and does not allow timers to be
-+ * armed on it.
-+ */
-+#define CPUCLOCK_DVFS		CPUCLOCK_SAMPLE_MAX
-+#define CLOCKFD			CPUCLOCK_DVFS
- #define CLOCKFD_MASK		(CPUCLOCK_PERTHREAD_MASK|CPUCLOCK_CLOCK_MASK)
- 
- #ifdef CONFIG_POSIX_TIMERS
-@@ -55,7 +70,7 @@ struct posix_cputimer_base {
-  * Used in task_struct and signal_struct
-  */
- struct posix_cputimers {
--	struct posix_cputimer_base	bases[CPUCLOCK_MAX];
-+	struct posix_cputimer_base	bases[CPUCLOCK_SAMPLE_MAX];
- 	unsigned int			timers_active;
- 	unsigned int			expiry_active;
- };
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5413,9 +5413,10 @@ unsigned long long task_sched_dvfs_runti
- 
- 	rq = task_rq_lock(p, &rf);
- 	/*
--	 * Must be ->curr _and_ ->on_rq.  If dequeued, we would
--	 * project cycles that may never be accounted to this
--	 * thread, breaking clock_gettime().
-+	 * Update the runtime if the task is the current task and on the
-+	 * runqueue. The latter is important because if current is
-+	 * dequeued, we would project cycles that may never be accounted to
-+	 * this thread, breaking clock_gettime().
- 	 */
- 	if (task_current(rq, p) && task_on_rq_queued(p)) {
- 		prefetch_curr_exec_start(p);
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -54,13 +54,13 @@ int update_rlimit_cpu(struct task_struct
- /*
-  * Functions for validating access to tasks.
-  */
--static struct pid *pid_for_clock(const clockid_t clock, bool gettime)
-+static struct pid *__pid_for_clock(const clockid_t clock, const clockid_t maxclock, bool gettime)
- {
- 	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
- 	const pid_t upid = CPUCLOCK_PID(clock);
- 	struct pid *pid;
- 
--	if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
-+	if (CPUCLOCK_WHICH(clock) > maxclock)
- 		return NULL;
- 
- 	/*
-@@ -94,12 +94,17 @@ static struct pid *pid_for_clock(const c
- 	return pid_has_task(pid, PIDTYPE_TGID) ? pid : NULL;
- }
- 
-+static inline struct pid *pid_for_clock(const clockid_t clock, bool gettime)
-+{
-+	return __pid_for_clock(clock, CPUCLOCK_SCHED, gettime);
-+}
-+
- static inline int validate_clock_permissions(const clockid_t clock)
- {
- 	int ret;
- 
- 	rcu_read_lock();
--	ret = pid_for_clock(clock, false) ? 0 : -EINVAL;
-+	ret = __pid_for_clock(clock, CPUCLOCK_DVFS, false) ? 0 : -EINVAL;
- 	rcu_read_unlock();
- 
- 	return ret;
-@@ -344,7 +349,7 @@ static u64 cpu_clock_sample_group(const
- {
- 	struct thread_group_cputimer *cputimer = &p->signal->cputimer;
- 	struct posix_cputimers *pct = &p->signal->posix_cputimers;
--	u64 samples[CPUCLOCK_MAX];
-+	u64 samples[CPUCLOCK_SAMPLE_MAX];
- 
- 	if (!READ_ONCE(pct->timers_active)) {
- 		if (start)
-@@ -365,7 +370,7 @@ static int posix_cpu_clock_get(const clo
- 	u64 t;
- 
- 	rcu_read_lock();
--	tsk = pid_task(pid_for_clock(clock, true), clock_pid_type(clock));
-+	tsk = pid_task(__pid_for_clock(clock, CPUCLOCK_DVFS, true), clock_pid_type(clock));
- 	if (!tsk) {
- 		rcu_read_unlock();
- 		return -EINVAL;
-@@ -864,7 +869,7 @@ static void collect_posix_cputimers(stru
- 	struct posix_cputimer_base *base = pct->bases;
- 	int i;
- 
--	for (i = 0; i < CPUCLOCK_MAX; i++, base++) {
-+	for (i = 0; i < CPUCLOCK_SAMPLE_MAX; i++, base++) {
- 		base->nextevt = collect_timerqueue(&base->tqhead, firing,
- 						    samples[i]);
- 	}
-@@ -901,7 +906,7 @@ static void check_thread_timers(struct t
- 				struct list_head *firing)
- {
- 	struct posix_cputimers *pct = &tsk->posix_cputimers;
--	u64 samples[CPUCLOCK_MAX];
-+	u64 samples[CPUCLOCK_SAMPLE_MAX];
- 	unsigned long soft;
- 
- 	if (dl_task(tsk))
-@@ -979,7 +984,7 @@ static void check_process_timers(struct
- {
- 	struct signal_struct *const sig = tsk->signal;
- 	struct posix_cputimers *pct = &sig->posix_cputimers;
--	u64 samples[CPUCLOCK_MAX];
-+	u64 samples[CPUCLOCK_SAMPLE_MAX];
- 	unsigned long soft;
- 
- 	/*
-@@ -1098,7 +1103,7 @@ task_cputimers_expired(const u64 *sample
- {
- 	int i;
- 
--	for (i = 0; i < CPUCLOCK_MAX; i++) {
-+	for (i = 0; i < CPUCLOCK_SAMPLE_MAX; i++) {
- 		if (samples[i] >= pct->bases[i].nextevt)
- 			return true;
- 	}
-@@ -1121,7 +1126,7 @@ static inline bool fastpath_timer_check(
- 	struct signal_struct *sig;
- 
- 	if (!expiry_cache_is_inactive(pct)) {
--		u64 samples[CPUCLOCK_MAX];
-+		u64 samples[CPUCLOCK_SAMPLE_MAX];
- 
- 		task_sample_cputime(tsk, samples);
- 		if (task_cputimers_expired(samples, pct))
-@@ -1146,7 +1151,7 @@ static inline bool fastpath_timer_check(
- 	 * delays with signals actually getting sent are expected.
- 	 */
- 	if (READ_ONCE(pct->timers_active) && !READ_ONCE(pct->expiry_active)) {
--		u64 samples[CPUCLOCK_MAX];
-+		u64 samples[CPUCLOCK_SAMPLE_MAX];
- 
- 		proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic,
- 					   samples);
-@@ -1669,7 +1674,7 @@ static int thread_cpu_timer_create(struc
- 	return posix_cpu_timer_create(timer);
- }
- static int thread_dvfs_cpu_clock_get(const clockid_t which_clock,
--				struct timespec64 *tp)
-+				     struct timespec64 *tp)
- {
- 	return posix_cpu_clock_get(THREAD_DVFS_CLOCK, tp);
- }
+
+>
+>
+> >+              spin_unlock_bh(&vsock_dgram_table_lock);
+> >+
+> >+              return retval;
+> >+      }
+> >
+> >       return vsk->transport->dgram_bind(vsk, addr);
+> > }
+> >@@ -781,7 +830,7 @@ static int __vsock_bind(struct sock *sk, struct sock=
+addr_vm *addr)
+> >               break;
+> >
+> >       case SOCK_DGRAM:
+> >-              retval =3D __vsock_bind_dgram(vsk, addr);
+> >+              retval =3D vsock_bind_dgram(vsk, addr);
+> >               break;
+> >
+> >       default:
+> >--
+> >2.20.1
+> >
+>
 
