@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-264583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B0793E5A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:20:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D7293E5A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85D28B21A03
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:20:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590021C20CA0
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 14:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ADF46434;
-	Sun, 28 Jul 2024 14:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954D147F6B;
+	Sun, 28 Jul 2024 14:21:32 +0000 (UTC)
 Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5EA224DC
-	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F53224DC
+	for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 14:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722176443; cv=none; b=hRLV1RSg5t/SlV20MyKO/d3CWw5gy48/3XY4OqLb7A0G1Cbav46gMIEH6IJXJxEZQ8K5zi58AZQ15P2xGbGBqTHvUcdDVtNnEzyHzx5zSl0ulinst+UK65L7DanEzY5QMA+WgM4km49N8b7/OxcXUGcYnTkV1qTnWNXwUxa5aOI=
+	t=1722176492; cv=none; b=rsICHphIKTO5VwhXiqF97v4UZI8gzjiwsUzNVObDtOuCUa1iBDh+o8dcf/4NL3mWzEttbnHTzo0eGsjrIa1CQce/NMFLyAa+P+ENJ22MREA/Xob/bhe+ZJXur+760WbYiQWw0E1gwt6wYUsmUqFFntTy97FswtZQHfUKr8f7FNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722176443; c=relaxed/simple;
-	bh=DCcbZwPczLti18O5aV/kiKBtWPntq5y66aaO5tNPqbE=;
+	s=arc-20240116; t=1722176492; c=relaxed/simple;
+	bh=ykQS/edmALW5ljsOYoJ0rfRiirxSWs7UOZic33Q3p7A=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=mnoJLNzOg/fHl/txfBBRyyGAP8s7yr3y/h0XM9YPkXV83qv4Y/fzWggKWg8wd6qTa3g0xUk7ruiOG6biBa3W4eTSia2xIixEK8MY9hHFB+jxzPv/+U8jgtObc3+3YZ3ji2ODVZn968cP6UYtl2sEGVd0Pj6Gv2e7vs0F/A86s8U=
+	 MIME-Version:Content-Type; b=P3/AlvDnD13RQNwZGSw/vbBxn5zyE2QpnB4z5thkImo2h3fQjiLMze8vHxIYjhJcsp5j0fCiR8KW5M0woT+2SLYbxkjPtkWM3dXPcMfr2X7ygUuj6iIAk31Np8aMCqnALfQRcGtV4TCKFapkrk5/LRZfk1KGhy0ilpJDW2ag700=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-176-ASX4DscfNW6QCi1PP5Mc6g-1; Sun, 28 Jul 2024 15:20:36 +0100
-X-MC-Unique: ASX4DscfNW6QCi1PP5Mc6g-1
+ uk-mta-240-gyu3qikDN8SBJ-lv0Ijmhg-1; Sun, 28 Jul 2024 15:21:25 +0100
+X-MC-Unique: gyu3qikDN8SBJ-lv0Ijmhg-1
 Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
  (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 28 Jul
- 2024 15:19:52 +0100
+ 2024 15:20:41 +0100
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 28 Jul 2024 15:19:52 +0100
+ id 15.00.1497.048; Sun, 28 Jul 2024 15:20:41 +0100
 From: David Laight <David.Laight@ACULAB.COM>
 To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
 CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
@@ -50,13 +50,11 @@ CC: 'Linus Torvalds' <torvalds@linuxfoundation.org>, 'Jens Axboe'
 	<pedro.falcato@gmail.com>, 'Mateusz Guzik' <mjguzik@gmail.com>,
 	"'linux-mm@kvack.org'" <linux-mm@kvack.org>, 'Lorenzo Stoakes'
 	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2 3/8] compiler.h: Add __if_constexpr(expr, if_const,
- if_not_const)
-Thread-Topic: [PATCH v2 3/8] compiler.h: Add __if_constexpr(expr, if_const,
- if_not_const)
-Thread-Index: Adrg+UWL9B3xHw3xQ5CeKplMo1TYvg==
-Date: Sun, 28 Jul 2024 14:19:52 +0000
-Message-ID: <2e12aefe29884e578283129411e1df26@AcuMS.aculab.com>
+Subject: [PATCH v2 4/8] minmax: Simplify signedness check
+Thread-Topic: [PATCH v2 4/8] minmax: Simplify signedness check
+Thread-Index: Adrg+WoBXlsaZZWKRzqVZpRDUvrsDQ==
+Date: Sun, 28 Jul 2024 14:20:41 +0000
+Message-ID: <74e0b027a908461da879b69b0e12c0de@AcuMS.aculab.com>
 References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 In-Reply-To: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
@@ -75,49 +73,73 @@ Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-__if_constexpr(expr, if_const, if_not_const) returns 'if_const' if 'expr'
-is a 'constant integer expression' otherwise 'if_not_const'.
-The two values may have different types.
+It is enough to check that both 'x' and 'y' are valid for either
+a signed compare or an unsigned compare.
+For unsigned they must be an unsigned type or a positive constant.
+For signed they must be signed after unsigned char/short are promoted.
 
-__is_constexpr(expr) is equivalent to __if_constexpr(expr, 1, 0).
+Order the expressions to avoid warnings about comparisons that are
+always true.
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
-v2:
-- Don't change __is_constexpr()
+Changes for v2:
+- Wrap is_signed_type() to avoid issues with pointer types because
+  (foo *)1 isn't a compile time constant.
+- Remove the '+ 0' from __is_ok_unsigned().
+  This converted 'bool' to 'int' to avoid a compiler warning and is no
+  longer needed because of the implicit conversion dome by ?:.
 
- include/linux/compiler.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ include/linux/minmax.h | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 2594553bb30b..35d5b2fa4786 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -242,6 +242,23 @@ static inline void *offset_to_ptr(const int *off)
- /* &a[0] degrades to a pointer: a different type from an array */
- #define __must_be_array(a)=09BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index ab64b2e73ae5..b9b5348a3879 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -8,7 +8,7 @@
+ #include <linux/types.h>
 =20
-+/**
-+ * __if_constexpr - Check whether an expression is an 'integer
-+ *=09=09constant expression'
-+ * @expr: Expression to test, not evaluated, can be a pointer
-+ * @if_const: return value if constant
-+ * @if_not_const: return value if not constant
-+ *
-+ * The return values @if_const and @if_not_const can have different types.
-+ *
-+ * Relies on typeof(x ? NULL : ptr_type) being ptr_type and
-+ * typeof(x ? (void *)y : ptr_type) being 'void *'.
-+ */
-+#define __if_constexpr(expr, if_const, if_not_const)=09=09\
-+       _Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0,=09\
-+=09=09char *: (if_const),=09=09=09=09\
-+=09=09void *: (if_not_const))
-+
  /*
-  * This returns a constant expression while determining if an argument is
-  * a constant expression, most importantly without evaluating the argument=
-.
+- * min()/max()/clamp() macros must accomplish three things:
++ * min()/max()/clamp() macros must accomplish several things:
+  *
+  * - Avoid multiple evaluations of the arguments (so side-effects like
+  *   "x++" happen only once) when non-constant.
+@@ -26,19 +26,20 @@
+ #define __typecheck(x, y) \
+ =09(!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
+=20
+-/* is_signed_type() isn't a constexpr for pointer types */
+-#define __is_signed(x) =09=09=09=09=09=09=09=09\
+-=09__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),=09\
+-=09=09is_signed_type(typeof(x)), 0)
++#define __is_signed(x) \
++=09__if_constexpr((typeof(x))1, is_signed_type(typeof(x)), 0)
+=20
+-/* True for a non-negative signed int constant */
+-#define __is_noneg_int(x)=09\
+-=09(__builtin_choose_expr(__is_constexpr(x) && __is_signed(x), x, -1) >=3D=
+ 0)
++/* Allow unsigned compares against non-negative signed constants. */
++#define __is_ok_unsigned(x) \
++=09((!__is_signed((x)) ? 0 : __if_constexpr(x, x, -1)) >=3D 0)
+=20
+-#define __types_ok(x, y) =09=09=09=09=09\
+-=09(__is_signed(x) =3D=3D __is_signed(y) ||=09=09=09\
+-=09=09__is_signed((x) + 0) =3D=3D __is_signed((y) + 0) ||=09\
+-=09=09__is_noneg_int(x) || __is_noneg_int(y))
++/* Check for signed after promoting unsigned char/short to int */
++#define __is_ok_signed(x) __is_signed((x) + 0)
++
++/* Allow if both x and y are valid for either signed or unsigned compares.=
+ */
++#define __types_ok(x, y)=09=09=09=09\
++=09((__is_ok_signed(x) && __is_ok_signed(y)) ||=09\
++=09 (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
+=20
+ #define __cmp_op_min <
+ #define __cmp_op_max >
 --=20
 2.17.1
 
