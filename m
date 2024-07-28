@@ -1,203 +1,325 @@
-Return-Path: <linux-kernel+bounces-264749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948CE93E7F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC0093E7C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 18:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF948B23118
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:19:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85FE9B22493
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 16:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFDA1487C9;
-	Sun, 28 Jul 2024 16:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4443143754;
+	Sun, 28 Jul 2024 16:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqLp0XfL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuvU4MO0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC461474BF;
-	Sun, 28 Jul 2024 16:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CD46EB7D;
+	Sun, 28 Jul 2024 16:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722182867; cv=none; b=NFgrjYO1Y+K9eoE0tOBZRIJqybtFcOFXJLl3lA/J2F1UJL5uY7pScUZUQoEy5YMb2/P73f2N+WKsm6Wo3NpsngFOIs2t7Z4bWN/e5ZrPHJ+2Uos5kKN70ZzlegEdBLywgADvaXFX3lWW8f5GIqAQWX0BZSmVxtO8Nd3Wuo/A2B8=
+	t=1722182822; cv=none; b=FqzdbSVTO5/+QS7sFLFH/QDrL5DnK0wpH0oQFStdM5c1iZA9uN/SP80TRuVMuTIevaRMaRWTXUcD7cebNLXnH2zPoNO4IuiPsJFVdOJ1lrwdXoetvfU82MMuFTMMfGkCfA1BkAyAFbbr0Drc6qFTy4JpqlPXshwYJ4Sxp9nldNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722182867; c=relaxed/simple;
-	bh=tc7Q2652ZMIEOPS5MNHx9cQPp9+1nuTGz4jxfW0TMhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mV5Qfwlb+4EKP2VSBNode3Tc7mZQHMwHcbp8Z+RRMUs3d7J6mF01itEGmlJK3bxQEa4v/i6yDtVG304OKao8PLsnceknEeMaqDCj5FNoLxFHgTYpnXvBV++SYSGi+0xLgAGO0zmA1F7dFrTrrC/RnUEEc1uGWpVSF4JGHxvQA6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqLp0XfL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40224C116B1;
-	Sun, 28 Jul 2024 16:07:44 +0000 (UTC)
+	s=arc-20240116; t=1722182822; c=relaxed/simple;
+	bh=BMwezFOuUeXzj9V/f3Nbnw4+zQyy48Ewrt//fCqB2LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sOgI6diS6C0BWHrqR5Mn7OSXOl0t16Q49NaHGRLuHOfmklPZq4BFopPv7BO6FsGmnrAKocHxxFoEotC51WchcLz+ryGuir4JXinZg1pHhT0oRbmHQvDM9V32Djq643wgYpuWqYYFUCz+omw5eSaAMKw0hX78R6+iSD22QZUMdmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuvU4MO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552A0C32782;
+	Sun, 28 Jul 2024 16:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722182866;
-	bh=tc7Q2652ZMIEOPS5MNHx9cQPp9+1nuTGz4jxfW0TMhY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iqLp0XfL9rtqeJ+FLKmkNXJ3KI1IwF14If14t8VKjT0bSSEfpDiGhhDuiMkaCz1bp
-	 cq673U4okkruKufVgaryFfn1sYXHHK0DIW2/6ZiX0toUituEdqybupSjDUW+Q5wZkJ
-	 Bws1X4EIYsfxuqxTjfZ42u4yn8OnXoZIMq9AtNCyCtllUQHz6yYuFyTWcGiS6YQ5GG
-	 ukKLQcPwUlX57T8Qg5OKmtLtzQi9zp1dBaruFAmUbW3a5tPXZBEByE3TwcdTM+Dvg3
-	 DPhoyqycJqdMgNd1KuKcQFAV9v9GLv3RUkrhNelhkpZpvEcLd8KPYiEP8pRbzRWNrj
-	 rXReB39F/WFYg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-	Achal Verma <a-verma1@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Sasha Levin <sashal@kernel.org>,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	manivannan.sadhasivam@linaro.org,
-	cassel@kernel.org,
-	fancer.lancer@gmail.com,
-	u.kleine-koenig@pengutronix.de,
-	yoshihiro.shimoda.uh@renesas.com,
-	dlemoal@kernel.org,
-	amishin@t-argos.ru,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 13/17] PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)
-Date: Sun, 28 Jul 2024 12:06:49 -0400
-Message-ID: <20240728160709.2052627-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240728160709.2052627-1-sashal@kernel.org>
-References: <20240728160709.2052627-1-sashal@kernel.org>
+	s=k20201202; t=1722182821;
+	bh=BMwezFOuUeXzj9V/f3Nbnw4+zQyy48Ewrt//fCqB2LY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SuvU4MO0/ctD32n6vV7YOcJm9jjqv2WhXA+rblXJofyk7rctqoPDinQqQ6I6uGs7W
+	 WQdQCj4OE1EVquaC28Q6yiK8yCPcRYxi7QonoFVl/dDAR4ekw8VKTXQWB44+pxPFzJ
+	 MF80zYYymscf2FxRYv1Z7EWqEhbdcm3ng8hM3lQtm+TDwi7T6O1GrXG2kp6j8G3xgj
+	 DW07kzDvQENryD9tKjk6wYJ8MCwpLIkvQUeBGHZPpEzQSSk4tFk8RU0KxBPbc67zCC
+	 I6oB7caa1g/4kwpRgaY/sWA6HQgL5IiwvshpaDWVNJK5tyaJTNyOgy/wRv5Y9kCaHM
+	 uJ2TlQkibrlRQ==
+Date: Sun, 28 Jul 2024 17:06:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <20240728170650.649839e7@jic23-huawei>
+In-Reply-To: <20240725231039.614536-7-vassilisamir@gmail.com>
+References: <20240725231039.614536-1-vassilisamir@gmail.com>
+	<20240725231039.614536-7-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.43
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+On Fri, 26 Jul 2024 01:10:38 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-[ Upstream commit 86f271f22bbb6391410a07e08d6ca3757fda01fa ]
+> The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> a trigger for when there are data ready in the sensor for pick up.
+> 
+> This use case is used along with NORMAL_MODE in the sensor, which allows
+> the sensor to do consecutive measurements depending on the ODR rate value.
+> 
+> The trigger pin can be configured to be open-drain or push-pull and either
+> rising or falling edge.
+> 
+> No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> values.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Hi Vasileios,
 
-Errata #i2037 in AM65x/DRA80xM Processors Silicon Revision 1.0
-(SPRZ452D_July 2018_Revised December 2019 [1]) mentions when an
-inbound PCIe TLP spans more than two internal AXI 128-byte bursts,
-the bus may corrupt the packet payload and the corrupt data may
-cause associated applications or the processor to hang.
+A few minor things inline, including a suggestion that perhaps the trigger_probe()
+functions can be combined to reduce duplication. That would use a
+__bmp280_trigger_probe(struct iio_dev *, struct iio_trigger_ops *,
+                       + some function pointers).
 
-The workaround for Errata #i2037 is to limit the maximum read
-request size and maximum payload size to 128 bytes. Add workaround
-for Errata #i2037 here.
+Perhaps it's not worth it - I didn't try writing the actual code!
 
-The errata and workaround is applicable only to AM65x SR 1.0 and
-later versions of the silicon will have this fixed.
+Jonathan
 
-[1] -> https://www.ti.com/lit/er/sprz452i/sprz452i.pdf
+> ---
+>  drivers/iio/pressure/bmp280-core.c   | 309 ++++++++++++++++++++++++++-
+>  drivers/iio/pressure/bmp280-regmap.c |   2 +-
+>  drivers/iio/pressure/bmp280.h        |  23 +-
+>  3 files changed, 328 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 4a8d2ed4a9c4..4238f37b7805 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -37,12 +37,14 @@
 
-Link: https://lore.kernel.org/linux-pci/16e1fcae-1ea7-46be-b157-096e05661b15@siemens.com
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Achal Verma <a-verma1@ti.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/controller/dwc/pci-keystone.c | 44 ++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index cf3836561316d..4908666d5a95f 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -34,6 +34,11 @@
- #define PCIE_DEVICEID_SHIFT	16
- 
- /* Application registers */
-+#define PID				0x000
-+#define RTL				GENMASK(15, 11)
-+#define RTL_SHIFT			11
-+#define AM6_PCI_PG1_RTL_VER		0x15
-+
- #define CMD_STATUS			0x004
- #define LTSSM_EN_VAL		        BIT(0)
- #define OB_XLAT_EN_VAL		        BIT(1)
-@@ -104,6 +109,8 @@
- 
- #define to_keystone_pcie(x)		dev_get_drvdata((x)->dev)
- 
-+#define PCI_DEVICE_ID_TI_AM654X		0xb00c
-+
- struct ks_pcie_of_data {
- 	enum dw_pcie_device_mode mode;
- 	const struct dw_pcie_host_ops *host_ops;
-@@ -527,7 +534,11 @@ static int ks_pcie_start_link(struct dw_pcie *pci)
- static void ks_pcie_quirk(struct pci_dev *dev)
- {
- 	struct pci_bus *bus = dev->bus;
-+	struct keystone_pcie *ks_pcie;
-+	struct device *bridge_dev;
- 	struct pci_dev *bridge;
-+	u32 val;
-+
- 	static const struct pci_device_id rc_pci_devids[] = {
- 		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2HK),
- 		 .class = PCI_CLASS_BRIDGE_PCI_NORMAL, .class_mask = ~0, },
-@@ -539,6 +550,11 @@ static void ks_pcie_quirk(struct pci_dev *dev)
- 		 .class = PCI_CLASS_BRIDGE_PCI_NORMAL, .class_mask = ~0, },
- 		{ 0, },
- 	};
-+	static const struct pci_device_id am6_pci_devids[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654X),
-+		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
-+		{ 0, },
-+	};
- 
- 	if (pci_is_root_bus(bus))
- 		bridge = dev;
-@@ -560,10 +576,36 @@ static void ks_pcie_quirk(struct pci_dev *dev)
- 	 */
- 	if (pci_match_id(rc_pci_devids, bridge)) {
- 		if (pcie_get_readrq(dev) > 256) {
--			dev_info(&dev->dev, "limiting MRRS to 256\n");
-+			dev_info(&dev->dev, "limiting MRRS to 256 bytes\n");
- 			pcie_set_readrq(dev, 256);
- 		}
- 	}
-+
-+	/*
-+	 * Memory transactions fail with PCI controller in AM654 PG1.0
-+	 * when MRRS is set to more than 128 bytes. Force the MRRS to
-+	 * 128 bytes in all downstream devices.
-+	 */
-+	if (pci_match_id(am6_pci_devids, bridge)) {
-+		bridge_dev = pci_get_host_bridge_device(dev);
-+		if (!bridge_dev && !bridge_dev->parent)
-+			return;
-+
-+		ks_pcie = dev_get_drvdata(bridge_dev->parent);
-+		if (!ks_pcie)
-+			return;
-+
-+		val = ks_pcie_app_readl(ks_pcie, PID);
-+		val &= RTL;
-+		val >>= RTL_SHIFT;
-+		if (val != AM6_PCI_PG1_RTL_VER)
-+			return;
-+
-+		if (pcie_get_readrq(dev) > 128) {
-+			dev_info(&dev->dev, "limiting MRRS to 128 bytes\n");
-+			pcie_set_readrq(dev, 128);
-+		}
-+	}
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_ANY_ID, PCI_ANY_ID, ks_pcie_quirk);
- 
--- 
-2.43.0
+
+> +static irqreturn_t bmp380_irq_thread_handler(int irq, void *p)
+> +{
+> +	struct iio_dev *indio_dev = p;
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	unsigned int int_ctrl;
+> +	int ret;
+> +
+> +	scoped_guard(mutex, &data->lock) {
+> +		ret = regmap_read(data->regmap, BMP380_REG_INT_STATUS, &int_ctrl);
+> +		if (ret)
+> +			return IRQ_NONE;
+> +	}
+> +
+> +	if (FIELD_GET(BMP380_INT_STATUS_DRDY, int_ctrl))
+> +		iio_trigger_poll_nested(data->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bmp380_trigger_probe(struct iio_dev *indio_dev)
+
+Two of these functions are very similar.  Perhaps define a common
+function that takes a function call for int config, the ops, and
+interrupt handler as arguments then add device specific
+calls that use that.
+
+
+
+> +{
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	struct fwnode_handle *fwnode;
+> +	int ret, irq, irq_type;
+> +	struct irq_data *desc;
+> +
+> +	fwnode = dev_fwnode(data->dev);
+> +	if (!fwnode)
+> +		return -ENODEV;
+> +
+> +	irq = fwnode_irq_get(fwnode, 0);
+> +	if (!irq) {
+> +		dev_err(data->dev, "No interrupt found\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	desc = irq_get_irq_data(irq);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	irq_type = irqd_get_trigger_type(desc);
+> +	switch (irq_type) {
+> +	case IRQF_TRIGGER_RISING:
+> +		data->trig_active_high = true;
+> +		break;
+> +	case IRQF_TRIGGER_FALLING:
+> +		data->trig_active_high = false;
+> +		break;
+> +	default:
+> +		dev_err(data->dev, "Invalid interrupt type specified\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	data->trig_open_drain = fwnode_property_read_bool(fwnode,
+> +							  "int-open-drain");
+> +
+> +	ret = bmp380_int_config(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> +					    indio_dev->name,
+> +					    iio_device_id(indio_dev));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = &bmp380_trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, data);
+> +
+> +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> +					bmp380_irq_thread_handler, IRQF_ONESHOT,
+> +					indio_dev->name, indio_dev);
+> +	if (ret) {
+> +		dev_err(data->dev, "request irq failed\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_iio_trigger_register(data->dev, data->trig);
+> +	if (ret) {
+> +		dev_err(data->dev, "iio trigger register failed\n");
+> +		return ret;
+> +	}
+> +
+> +	indio_dev->trig = iio_trigger_get(data->trig);
+> +
+> +	return 0;
+> +}
+> +
+> +
+
+one blank line only.
+
+>  static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+>  {
+>  	struct iio_poll_func *pf = p;
+> @@ -1854,6 +1998,7 @@ const struct bmp280_chip_info bmp380_chip_info = {
+>  	.wait_conv = bmp380_wait_conv,
+>  	.preinit = bmp380_preinit,
+>  
+> +	.trigger_probe = bmp380_trigger_probe,
+>  	.trigger_handler = bmp380_trigger_handler,
+>  };
+>  EXPORT_SYMBOL_NS(bmp380_chip_info, IIO_BMP280);
+> @@ -2390,6 +2535,154 @@ static int bmp580_chip_config(struct bmp280_data *data)
+>  	return 0;
+>  }
+>
+
+...
+
+> +static irqreturn_t bmp580_irq_thread_handler(int irq, void *p)
+> +{
+> +	struct iio_dev *indio_dev = p;
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	unsigned int int_ctrl;
+> +	int ret;
+> +
+> +	scoped_guard(mutex, &data->lock) {
+
+Indent wrong.
+
+> +	ret = regmap_read(data->regmap, BMP580_REG_INT_STATUS, &int_ctrl);
+> +	if (ret)
+> +		return IRQ_NONE;
+> +	}
+> +
+> +	if (FIELD_GET(BMP580_INT_STATUS_DRDY_MASK, int_ctrl))
+> +		iio_trigger_poll_nested(data->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bmp580_trigger_probe(struct iio_dev *indio_dev)
+> +{
+...
+
+> +
+> +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> +					    indio_dev->name,
+> +					    iio_device_id(indio_dev));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = &bmp580_trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, data);
+> +
+> +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> +					bmp580_irq_thread_handler, IRQF_ONESHOT,
+> +					indio_dev->name, indio_dev);
+> +	if (ret) {
+> +		dev_err(data->dev, "request irq failed\n");
+
+Only in probe paths I think, so return dev_err_probe() thoughout these
+trigger setup callbacks.
+
+
+
+> +}
+
+> diff --git a/drivers/iio/pressure/bmp280-regmap.c b/drivers/iio/pressure/bmp280-regmap.c
+> index d27d68edd906..cccdf8fc6c09 100644
+> --- a/drivers/iio/pressure/bmp280-regmap.c
+> +++ b/drivers/iio/pressure/bmp280-regmap.c
+> @@ -109,7 +109,7 @@ static bool bmp380_is_writeable_reg(struct device *dev, unsigned int reg)
+>  	case BMP380_REG_FIFO_WATERMARK_LSB:
+>  	case BMP380_REG_FIFO_WATERMARK_MSB:
+>  	case BMP380_REG_POWER_CONTROL:
+> -	case BMP380_REG_INT_CONTROL:
+> +	case BMP380_REG_INT_CTRL:
+
+Unrelated change.  I'm also not sure it's worth making.
+
+>  	case BMP380_REG_IF_CONFIG:
+>  	case BMP380_REG_ODR:
+>  	case BMP380_REG_OSR:
+> diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> index f5d192509d61..754eda367941 100644
+> --- a/drivers/iio/pressure/bmp280.h
+> +++ b/drivers/iio/pressure/bmp280.h
+> @@ -55,8 +55,17 @@
+>  #define BMP580_CMD_NVM_WRITE_SEQ_1	0xA0
+>  #define BMP580_CMD_SOFT_RESET		0xB6
+>  
+> +#define BMP580_INT_STATUS_DRDY_MASK	BIT(0)
+>  #define BMP580_INT_STATUS_POR_MASK	BIT(4)
+>  
+> +#define BMP580_INT_SOURCE_DRDY		BIT(0)
+> +
+> +#define BMP580_INT_CONFIG_MASK		GENMASK(3, 0)
+> +#define BMP580_INT_CONFIG_LATCH		BIT(0)
+> +#define BMP580_INT_CONFIG_LEVEL		BIT(1)
+> +#define BMP580_INT_CONFIG_OPEN_DRAIN	BIT(2)
+> +#define BMP580_INT_CONFIG_INT_EN	BIT(3)
+> +
+>  #define BMP580_STATUS_CORE_RDY_MASK	BIT(0)
+>  #define BMP580_STATUS_NVM_RDY_MASK	BIT(1)
+>  #define BMP580_STATUS_NVM_ERR_MASK	BIT(2)
+> @@ -117,7 +126,7 @@
+>  #define BMP380_REG_OSR			0x1C
+>  #define BMP380_REG_POWER_CONTROL	0x1B
+>  #define BMP380_REG_IF_CONFIG		0x1A
+> -#define BMP380_REG_INT_CONTROL		0x19
+> +#define BMP380_REG_INT_CTRL		0x19
+As above.
+
+Jonathan
 
 
