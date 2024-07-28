@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-264508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B2693E44B
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FEE193E44C
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 11:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB561F217DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1345D1F212D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2024 09:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A1225622;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096528DD1;
 	Sun, 28 Jul 2024 09:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jcuV/9wP"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGpqabrT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6337A125C1;
-	Sun, 28 Jul 2024 09:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC531CFA9;
+	Sun, 28 Jul 2024 09:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722158575; cv=none; b=QQrrX9mX6SI1XMR20pCsI0S5hOeo83mJ7gkj24hVf6PlFtnu6h5Jsi8PNgph8H8M4iWAgo1NSPSeFrn7d5DnzHrzdAzJBO1f7FebNP5JTpbLzzBkyA21GMxmN5oRW48dwRyDLV7xG9LpNWVzUXZYvgKovVzJF9tydPU16DP7/3s=
+	t=1722158575; cv=none; b=AYpmHL+vwnLBbv3xtVP3ENktLS1KxL5S5lTgUCwb6Xqcp427bZQSZbNTMFr2Pg9KuiHJXuZb5sEDcDR+RBm8kQcBOUVPYsrzveo+wxnZG6cPYER43pSb/ELGV7LHo0L2Ook9eCg2IPZNF9Al55YVOZCivMVTtoBQyDAzWTk+m6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722158575; c=relaxed/simple;
-	bh=pKPoRcyLgFmUfKmvWcMUDesZzv4UgLstY5CBC8wJYPQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=iPeibySVFFkK1OVJjLlHozTtRZEiwB6zet8ZkHJH0YkmfYJcvJBq2FZT1sK8ji5iWrOkVnynyKUDlzbw6/aHdHnrxjPa5S3AFYgZXxlqGUPF7+RjLBwwycFgh9f4IA9jHbtrW0ZZUGbDGbHalJ9gTfytXRd2NHEdhc7cisR0S2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jcuV/9wP; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	bh=FgU7FBJsu3CA2q0gEsB+H8HSbPtAsX5dLkzDj863OPQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FUoMYPWnqDI7B7y9EYJDyHpyJJhn/sedyeFpKe9MZFzyJLK54wcwvNBJ4Zy1fHbXgGORbeyRoM2Iuzo/5qOplV/nfhY9AoIGv9MJh7ZyA3x6eoL3RMqHPH11ZIo6CzJNORjIL3IJ+Ow9hedB6vslt4ytSdLr37Fh0KgRQb5ab1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGpqabrT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BEAC4AF0E;
+	Sun, 28 Jul 2024 09:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722158575;
+	bh=FgU7FBJsu3CA2q0gEsB+H8HSbPtAsX5dLkzDj863OPQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GGpqabrTtXjEWgKAHJfefGPE9MVm8cKKxafXlRJhDfxk/a3etchQaVHou5R0uSEaX
+	 zEUOpaxUGBPDSBCC5bYKchuZxurG8+n8Igs50mahBPvt9nOTsk1IQZIuIPkcrawUW8
+	 6DRsxtvOQwKM+LfNsrAP3SJ+GmzS5f7Yf+29T4IMVIGF2KNDJi7DZVnQ3GgX0zCywr
+	 PVebCj55yPxVyjdy+UdKAACcdoJzJUhzKvnGiqAZml/tE8clsO3mq/ERjfeF+yZckX
+	 ZHljbJZz8PRZA8TZ7u68Y8QunEpEULel/YdbTH0Hf0OfZBHQAWy5+Xq3KHGUQpmeFa
+	 znoS+UfCl08Gw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sY07A-00G2Rl-Ou;
+	Sun, 28 Jul 2024 10:22:52 +0100
+Date: Sun, 28 Jul 2024 10:22:53 +0100
+Message-ID: <87zfq150r6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	James Morse <james.morse@arm.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Miguel Luis <miguel.luis@oracle.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 6.10 14/16] irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
+In-Reply-To: <20240728004739.1698541-14-sashal@kernel.org>
+References: <20240728004739.1698541-1-sashal@kernel.org>
+	<20240728004739.1698541-14-sashal@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722158570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wxC1L2UkggJx7nsQkOlJrzsacVr10erig70wWiY/uR8=;
-	b=jcuV/9wPwXfRCcpE8DEDzv9SOcbqZrxlh+XqjFjXu8Arv2XpLkS000GS3lPLJsvVinXwUL
-	2W3pnmR1mI+C5TbPgAI7n35wdGry12a3n5ttyGuloVhwGllN5SES6astjsUU5CTGo1dszx
-	k/ReKKKiJsSdXyGK2lTLnmyshpJAO+Ng1Hw2tLoA4MrvbmBYkNpCK6J51KxFYRZGDGyink
-	vmoIHY6d2bh3z40Q2JLShQyuKX21t7R4MSIKTGHF3xWvpFqb+csMGOTHdt+l6U9ilAtbGc
-	YQmEgYK7jGOuEagzcXjP0dlJe+G6Tu3nsOT/i+0uVaMCUKSMOC9ZhFYB6balGw==
-Date: Sun, 28 Jul 2024 11:22:48 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: heiko@sntech.de, krzk+dt@kernel.org, robh@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add Cool Pi CM5
- GenBook
-In-Reply-To: <20240728082004.36575-2-andyshrk@163.com>
-References: <20240728082004.36575-1-andyshrk@163.com>
- <20240728082004.36575-2-andyshrk@163.com>
-Message-ID: <99e5b9275d6c7750e916e83b9191e965@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sashal@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, james.morse@arm.com, gshan@redhat.com, miguel.luis@oracle.com, rmk+kernel@armlinux.org.uk, Jonathan.Cameron@huawei.com, catalin.marinas@arm.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello Andy,
+On Sun, 28 Jul 2024 01:47:31 +0100,
+Sasha Levin <sashal@kernel.org> wrote:
+> 
+> From: James Morse <james.morse@arm.com>
+> 
+> [ Upstream commit fa2dabe57220e6af78ed7a2f7016bf250a618204 ]
+> 
+> gic_acpi_match_gicc() is only called via gic_acpi_count_gicr_regions().
+> It should only count the number of enabled redistributors, but it
+> also tries to sanity check the GICC entry, currently returning an
+> error if the Enabled bit is set, but the gicr_base_address is zero.
+> 
+> Adding support for the online-capable bit to the sanity check will
+> complicate it, for no benefit. The existing check implicitly depends on
+> gic_acpi_count_gicr_regions() previous failing to find any GICR regions
+> (as it is valid to have gicr_base_address of zero if the redistributors
+> are described via a GICR entry).
+> 
+> Instead of complicating the check, remove it. Failures that happen at
+> this point cause the irqchip not to register, meaning no irqs can be
+> requested. The kernel grinds to a panic() pretty quickly.
+> 
+> Without the check, MADT tables that exhibit this problem are still
+> caught by gic_populate_rdist(), which helpfully also prints what went
+> wrong:
+> | CPU4: mpidr 100 has no re-distributor!
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Tested-by: Miguel Luis <miguel.luis@oracle.com>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Marc Zyngier <maz@kernel.org>
+> Link: https://lore.kernel.org/r/20240529133446.28446-14-Jonathan.Cameron@huawei.com
+> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-On 2024-07-28 10:20, Andy Yan wrote:
-> Add Cool Pi CM5 GenBook, a laptop powered by RK3588.
-> 
-> Cool Pi GenBook works with a carrier board connect
-> with CM5.
-> 
-> Signed-off-by: Andy Yan <andyshrk@163.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Descripte it as Cool Pi CM5 GenBook
-> 
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index 1ef09fbfdfaf..a9bfb87e69f5 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -96,6 +96,14 @@ properties:
->            - const: coolpi,pi-cm5
->            - const: rockchip,rk3588
-> 
-> +      - description: Cool Pi CM5 GenBook
-> +        items:
-> +          - enum:
-> +              - coolpi,genbook
+Please drop this. It has no purpose being backported to stable.
 
-This should also follow the "dependency graph" naming approach, so it
-should be named "coolpi,pi-cm5-genbook" instead.  It would also make
-the naming scheme future-proof for some other SoM that could possibly
-be made available for the GenBook in the future, for which the new
-identifier would be "coolpi,pi-XYZ-genbook".
+Thanks,
 
-Though, the "pi-" part in "coolpi,pi-cm5-genbook" seems redundant to
-me, but it's already present in all related Cool Pi identifiers, e.g.
-"coolpi,pi-cm5-evb", so including the leading "pi-" here as well is
-obviously required for consistency.
+	M.
 
-Oh, and I somehow managed to miss this in my earlier repose, which
-would have saved you from sending another version of this series.
-I'm sorry for that.
-
-> +          - const: coolpi,pi-cm5
-> +          - const: rockchip,rk3588
-> +
-> +
->        - description: Cool Pi 4 Model B
->          items:
->            - const: coolpi,pi-4b
+-- 
+Without deviation from the norm, progress is not possible.
 
