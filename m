@@ -1,126 +1,178 @@
-Return-Path: <linux-kernel+bounces-265390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E41193F08A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EFA93F091
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC671C22082
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C8D1F225B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C239313D890;
-	Mon, 29 Jul 2024 08:59:55 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735F413DDCD;
+	Mon, 29 Jul 2024 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CanKCy4e"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE2813D61A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BAD84DFE
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722243595; cv=none; b=bFEdGkphiS3+dor3uiD1T1XdSJh+/EmPqDLAs5mpHigGW3eJqFQ5YeX2tnQW2srPuaNLcySsbgER/2sEQUCAGP8+gp42Cgu4c5tLT0bmYj9lhECFOCf9EY2Vz/GDd+11/aZOPA5GocPwJ5Itfso6GlLPx2j1BT5w+PmN6Ib1KjU=
+	t=1722243728; cv=none; b=DcOzD+TzpIFFgOkJdT2JCMCTu0JNRWDBU9SfAWqhM/9QE4l0qgNSG8AeKo3Yny26pCCodWnvzJvTCwPlKf0plflCFktsSEQedGyUvaHI4sYbR20V3t6MYJA7G2Aw2mIt8XK4W+THlYSZ1IJs+mC04jrBWfdn4tYzThcc5/9VQEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722243595; c=relaxed/simple;
-	bh=hqP6sq1/siyRJmm9dsWrEVc2i6yocHnZtpXtRLDSdZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjGjyI3olGU3nN44AgVVESBx1fJlw4lEyiP6VawraTxVLJaMK+Rk/AwNGx9xxiX44nO7jsEe2ESNePEnmkAA4LSwutRM0/TnG/lGkhckZrEli/BDKOBmpHw1g9YfYsbhSqPJWfLd75YwL1XKUKEoL+OWBGoI/6gLCgylV+6jHBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efaae7edfso3511848e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:59:53 -0700 (PDT)
+	s=arc-20240116; t=1722243728; c=relaxed/simple;
+	bh=p+Q7HMNfNEC+Eu29iPw6j+62HUX/9UJFi/4nW9MpsLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CywEc1FrMfHNGlpToZqXN67Fhz9PHIfF9fhQB2SpsaqvXBcRri3oLkp1R1+it189QPVUwtBYN03gc1SmU5MrS/gRAqg8sQx0BVe2zPn6MZhGGSBFqhTYh72FA9cyevy+iRCH5wxTSnqyITyIKI6g/mcNSkuLstYvVs5OTmBIw5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=CanKCy4e; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7aed340daso19602406d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722243725; x=1722848525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yW1OO+skBc1eCv7kSQixud2h2uSiGX+bRNa0JQW8fcc=;
+        b=CanKCy4ecAmWcD9E/VN3Kgy8thITCHF2C1To5Gop8yOQ/AQOrvHWsGJo2eGxUTW3qW
+         PByGHSBJVAVXFUl7W54Qw8A94lbkNhEhGfumYld1I7Bp62GNe5E41qS5VItyK/mG3dIv
+         6Ka14rRy5ayKiaFfzfMZNF64+GB/Jw6Jf8LO4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722243592; x=1722848392;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Btq8WMKjgNpVVLDFTZNgyEl08+t6K7ENAhPfv6Aq530=;
-        b=BGrJxrZsNX8D+i4XZAyLs4ZM9w2CWF2d/t1yUZ4Ki3JLDqLYQNnMaxBwbvNsiF3fry
-         P5wqJWqjkv9g1YZlwBf1EmoRSHxUm6awLOxu5OzWy9QWojiUJCSp0SmzFXBp/5T4WPCf
-         jBdY2IKfDR75xoMBTjDnwZV3OcMrvaEYLGmMb4S7IpXyKcV5WfZMpVap71t/3xomfwO4
-         gRBgTLnXmdYnEFMPALtDIBXow/v8rZ0NVXafPln1ZB0AVSiwrFgPjAOb0IYMhTnUAPoB
-         o3Ji8g3gt97dN1BmQ/8LEmEFxcgKKHW9J24Enl5kAqkMkfkAxgpsb9lKTWZAj8FDqFjy
-         QMoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT96QhRG5PhAWQ8S504YizD4LdwYGntUFAyt67HDniGM/oeeqsds97e0eGHZE000yN1bEf3BOWyipxy+cVI5YnhiylNyPlxO2Fvy7A
-X-Gm-Message-State: AOJu0Yz/Ffq9ynvXDWjta/3OoRMussyU6068E/VhdxkVu+6DziEyILpU
-	gbIgn0weOF97J4ujH9ZtM+pLzK8pCe+u3uv77M3Vc7ZddimkG59FGYga6g==
-X-Google-Smtp-Source: AGHT+IF+4IAf7BzBLdUo0RNHSy7X2NfHyL8QoPDcZSgA1EY8OEN8n+wJjXXBN5taC2c3aCr6mO5BZg==
-X-Received: by 2002:a05:6512:4009:b0:52c:88d7:ae31 with SMTP id 2adb3069b0e04-5309b2c361amr4694182e87.48.1722243591329;
-        Mon, 29 Jul 2024 01:59:51 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acac615c0sm478657466b.97.2024.07.29.01.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 01:59:50 -0700 (PDT)
-Date: Mon, 29 Jul 2024 01:59:46 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: akpm@linux-foundation.org, leit@meta.com,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fault-injection: Enhance failcmd to exit on non-hex
- address input
-Message-ID: <ZqdaAn0s8J3fZ15u@gmail.com>
-References: <20240726104848.2756962-1-leitao@debian.org>
- <CAC5umygxnq=h1H2CCeprzaggu_A4DxZia3EEBTYk7sb72OnQFA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1722243725; x=1722848525;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yW1OO+skBc1eCv7kSQixud2h2uSiGX+bRNa0JQW8fcc=;
+        b=pVjSu61QVyjp9wfpEG7yMMmAmHvX8XYZskSY7RNtECTj0Zeu1kxhmrKSoamXr4GAWh
+         IghPDZVhZOxMLjs+jCZIbvYLH4bsMKLsZ6gOjnqG9ZBabY2ou3IkFblyNjJTaJKj6gfp
+         UjunvHI5rduV0anYhfyRfim3W0zTPXY4EM/a8vm78nEMSR6NJRfeKM+V7/Xa2E9Buwhy
+         co15hEp9+HpiGEHPn/PGqkv3oqrvoD/Z71uF1PLqIOFHlSC4TNYhXvOSSIsvQtBiCyYQ
+         XxDvoSNjedQQeYZFjhZ74CVt5v3hi2MZJq1YREiT0+vbg7OgC6zUCIsRYpI5T1hrrCDb
+         pXWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW78V3iqEGAsMuKadmbGO0J12FmUm7Ekfunv9DsecvUHy4Eh6tY3tyiEKxGmTXgMNR7CVDty00qtqzEiGBn3zRB/9vc4LWXaDPcvbI5
+X-Gm-Message-State: AOJu0Yw3Rd7TLGkjzk2pLx8o2mXlaVm6X4kkCgwtzgK2GTyCwIMwyxKs
+	idY0b7XGmXQl6c/UIQ3y2MsGmSV5lxXczgUHFrJMnozetF3od2Ctyn8RvyX5wQ==
+X-Google-Smtp-Source: AGHT+IGfVpIWeoLiZdliqYD6w6MUHUy5e1ltf8zZbU1y1lynDYoJKE4YmHmc0uMuWNlwhLCGFfNsjg==
+X-Received: by 2002:ad4:5be5:0:b0:6b0:9479:cdd7 with SMTP id 6a1803df08f44-6bb55acbe54mr103099816d6.54.1722243724747;
+        Mon, 29 Jul 2024 02:02:04 -0700 (PDT)
+Received: from [10.176.68.61] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8d81e2sm49047726d6.25.2024.07.29.02.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jul 2024 02:02:04 -0700 (PDT)
+Message-ID: <225279b3-882b-4d97-b7f4-08129c1f05a7@broadcom.com>
+Date: Mon, 29 Jul 2024 11:01:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC5umygxnq=h1H2CCeprzaggu_A4DxZia3EEBTYk7sb72OnQFA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P Wi-Fi device
+To: Jacobe Zang <jacobe.zang@wesion.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de"
+ <heiko@sntech.de>, "kvalo@kernel.org" <kvalo@kernel.org>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "efectn@protonmail.com" <efectn@protonmail.com>,
+ "dsimic@manjaro.org" <dsimic@manjaro.org>,
+ "jagan@edgeble.ai" <jagan@edgeble.ai>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "arend@broadcom.com" <arend@broadcom.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
+ <megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "minipli@grsecurity.net" <minipli@grsecurity.net>,
+ "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+ "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+ Nick Xie <nick@khadas.com>
+References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
+ <20240729070102.3770318-3-jacobe.zang@wesion.com>
+ <1724f480-369d-4b4a-9384-1c6b33b00433@kernel.org>
+ <TYZPR03MB7001247E93FB6473128FEB2480B72@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <TYZPR03MB7001247E93FB6473128FEB2480B72@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Akinobu,
-
-On Sun, Jul 28, 2024 at 06:00:14PM +0900, Akinobu Mita wrote:
-> 2024年7月26日(金) 19:50 Breno Leitao <leitao@debian.org>:
-
-> > +exit_if_not_hex() {
-> > +    local value="$1"
-> > +    if ! [[ $value =~ ^0x[0-9a-fA-F]+$ ]]; then
-> > +        echo "Error: The provided value '$value' is not a valid hexadecimal number."
+On 7/29/2024 10:17 AM, Jacobe Zang wrote:
+>>> Add clocks and clock-names for brcm4329-fmac.
+>>
+>> Why? Which devices have it? If only your newest addon, then squash the
+>> patches and add appropriate allOf:if:then disallowing the clocks for
+>> others. Or maybe all of them have it? Why commit msg does not explain
+>> anything about the hardware?
 > 
-> It is better to write error messages to standard error rather than
-> standard output.
+> Alright... Becuase of the datasheet said hardware has one LPO clock input. So
+> I will add allOf:if:then for this specific hardware
 
-Agree. I've sent a V2 with your proposed change. Thanks!
+Maybe this can help clarifying the commit message. All Broadcom wireless 
+chips have this clock input, but often the chip end up on a wifi module 
+that may or may not provide the clock. From chip perspective the clock 
+input is always present, but it is optional as the chip can also use an 
+internal clock.
 
-> Other than that I think it's good.
+As such I would not choose to make this specific to this AP6275P 
+hardware (just my 2 cents).
 
-Thanks.
-
-By the way, this file seems unmaintained by looking at MAINTAINERS.
-Would you mind if I send something as:
-
-
-Author: Breno Leitao <leitao@debian.org>
-Date:   Mon Jul 29 01:53:44 2024 -0700
-
-    failcmd: Add script file in MAINTAINERS
-    
-    failcmd is one of the main interfaces to fault injection framework, but,
-    it is not listed under FAULT INJECTION SUPPORT entry in MAINTAINERS.
-    This is unfortunate, since git-send-email doesn't find emails to send
-    the patches to, forcing the user to try to guess who maintains it.
-    
-    Akinobu Mita seems to be actively maintaining it, so, let's add the file
-    under FAULT INJECTION SUPPORT section.
-    
-    Signed-off-by: Breno Leitao <leitao@debian.org>
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0748d6bd0c4f..11f3ef0b5ffd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8388,6 +8388,7 @@ M:	Akinobu Mita <akinobu.mita@gmail.com>
- S:	Supported
- F:	Documentation/fault-injection/
- F:	lib/fault-inject.c
-+F:	tools/testing/fault-injection/
- 
- FBTFT Framebuffer drivers
- L:	dri-devel@lists.freedesktop.org
+Regards,
+Arend
 
