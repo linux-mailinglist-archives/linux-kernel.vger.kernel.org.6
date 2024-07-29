@@ -1,139 +1,235 @@
-Return-Path: <linux-kernel+bounces-265881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE4593F733
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:02:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FE993F72D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3898B20AD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41EF41F22750
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C721514F8;
-	Mon, 29 Jul 2024 14:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E5214F9E9;
+	Mon, 29 Jul 2024 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cq8TufW6"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IrINZfpH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3WOkdpF+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IrINZfpH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3WOkdpF+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD6D2D05D
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E77E2D05D;
+	Mon, 29 Jul 2024 14:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261736; cv=none; b=sE17qAi/oIn9sDoRHcReYms3j4obsJiNq/ypOVcgdqAMTkjDQ6dYed0rD6anVLFVdGJm4diOk+qSeAHLku0VvvHZpBO6QyCUko0hKxDUkSHOiOUjwcvUWUhV8Z14e01v0eR7ChtO7wH55XfqbcV/zVMOy9jp2l3y4WMsrC8pgIU=
+	t=1722261710; cv=none; b=j2UXMSwaG10zib2K+qpRITHS4IUe7UpQM8xDGXljYCxTbpFFvErfyVFJoGEhzHTJJ3nz6RevRm9EXghq3i5dNTjz6Vc4F5ZAQhV1MLRxqs8YbQiHUR/wzrKGM8+0wtC6yNvwVO26vcqIW+dWZVcuvG7KSktGErTuBpa5WViSB8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261736; c=relaxed/simple;
-	bh=55XENsnNCk84FLNa+lraTuZ6bEgW732leOZMMeH2J88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y7OMiFUhCLyLihgCMwfT2GQAQoas0W5whSWQxm1E2clHPDbcCdX/LyWNRzx5KPDfmNsLI7cZ7whpQ8SeAB56CUJPBAW8hGE073pMfxbJiVxbR9y8cOled2PgTZYoT012mepQf+K23MBHK1Dc2SIkaNzOAXId5SosiVEHiIJ4N8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cq8TufW6; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3687fd09251so1407074f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 07:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722261733; x=1722866533; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BmtHBomoMa6GjrD4GHzO5YGBhc3NcYaKKlfZd4lImTc=;
-        b=Cq8TufW6HY6VjApUxJAiacfY6MGeHxS8O2nQSBlHxtSKCH54cfqxs9eSBmVhma5alY
-         SBGQ1YBcsXZpDz4+nNmw2GqjxJa3SNZgtHJrJm70HSVw/HEiqbUOMX/OSRnhDhsOPogx
-         DckvY8jSafUnmxCMLY1xAa1KuBMp//ndZgti5XJUuKqidDl4Jq1UXb0wuVKhYqWW5sC1
-         /z/ufP8D9e5Y4Uq3d9toMLffcAHMAIZTxvFfBPPRrHiyrVURt4/jzjU3QGtDQeexVsrT
-         gz/FopY20ksusRG+XzHdIJJ9syfTYQ5vh3jYb1aBkgOrlyxvsMAuHX5/0jm3PmKnzqg+
-         7GWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722261733; x=1722866533;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BmtHBomoMa6GjrD4GHzO5YGBhc3NcYaKKlfZd4lImTc=;
-        b=npSkwv9mL9IFzPQZnhO6TRV2U0w6mP52cAJtJuhjxyi+VBu20s9z2voHoZrnnpzHtJ
-         LtojpR3etyIIsvcyzJIt9FtG16tmlJNnEx9ts/lsIu90HiDWhLyNVCUl6iC00xuObwKt
-         1tgX2zqeRSvHFFEXaEFWt1SFRnmPm68Hsf4Uip3WjtoGkJ4ksKD5mb+hhfTh9FR+aE1k
-         cfbqWuP/K+fBjwEEx0gwidnH8X7yKDo34vP1iRMZRrhhnvcJOR03v0PnI5irwgPo34e1
-         WuvmT9xkXOJw25r9NcYF8qHsh4BuGm6/4rGkrV4VadQVuMCi6WcqOikDe+i2MkmopQ5v
-         1DgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWSthYtBfyDdhePOK7XH06FkIOeirWan1Avw+lNrTVhF6itABoyUUTFFpGihUwvm/7RxmMx1/W06QrKBFkBOG19DfwUUDpTZQeU4SO
-X-Gm-Message-State: AOJu0Yz1bEn7oin3SG/3TkdeB9yHO1zgjA/ndSiG0OWCFpXrssbq54Hv
-	S4q05xLqemJpWam0T3Hf1rgQkSHLrFairMTbgCsuE2uhOHCt1p6fz2Z8tPuWTMY=
-X-Google-Smtp-Source: AGHT+IGV0v4M42FoTYGpDxA/2lFq7kTxKgkZ753sgQBpfRFo1ZH43NSLN1QY9dJKGrzBR6PmH5CHCw==
-X-Received: by 2002:adf:fa0f:0:b0:368:3717:10c7 with SMTP id ffacd0b85a97d-36b5cee324fmr4444568f8f.4.1722261721007;
-        Mon, 29 Jul 2024 07:02:01 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b368709fdsm12283163f8f.116.2024.07.29.07.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 07:02:00 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>,
-	Shreyas NC <shreyas.nc@intel.com>,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] soundwire: stream: fix programming slave ports for non-continous port maps
-Date: Mon, 29 Jul 2024 16:01:57 +0200
-Message-ID: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722261710; c=relaxed/simple;
+	bh=Owl1OIYHTF1V7vBi+ynNO4a2/eEjNT+ebMKM+3035nY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lMA/EiW4qEhUF4h1mBEpeUQUJhUeJIPJqHYeR1FEne3fQAE6DfppSJvmT5uKquxWxzQmq5h9z2cOP0YGsW7S5uQ5WvqtVsSZDj4tnFMnTm5EDJseqShe+Hbonu7yreZoPfSUSht7IMHxWg9qoqNg3OjxGANuYssscB8/+YgPsYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IrINZfpH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3WOkdpF+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IrINZfpH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3WOkdpF+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DE4F1F79C;
+	Mon, 29 Jul 2024 14:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722261705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVUaDTmjkCvHr7RP0q30ab62OmQ9BCMWl7SWblWp8s8=;
+	b=IrINZfpHyOirkmYdkMv//TJS4yGUZXypou2+5iQYWlugWn1Uc+D9Ed19fLVqsSA6vEJptD
+	O4lcLp/NKqFXa0BYGhthlriAf3Yb4usNz7R+EMo9lmSyf7z8eYIKos9KqiIFHslY2Uf1I0
+	4axwNyI47wBBODaFJfdm1+es9ZAj5GI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722261705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVUaDTmjkCvHr7RP0q30ab62OmQ9BCMWl7SWblWp8s8=;
+	b=3WOkdpF+CXlLXxDvkfBPxteGUv/PobJEePzDlOl5xdue++MpRCMDnstWj1O2gnRUwA48ub
+	Mgcw6ZVckHaxFPBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722261705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVUaDTmjkCvHr7RP0q30ab62OmQ9BCMWl7SWblWp8s8=;
+	b=IrINZfpHyOirkmYdkMv//TJS4yGUZXypou2+5iQYWlugWn1Uc+D9Ed19fLVqsSA6vEJptD
+	O4lcLp/NKqFXa0BYGhthlriAf3Yb4usNz7R+EMo9lmSyf7z8eYIKos9KqiIFHslY2Uf1I0
+	4axwNyI47wBBODaFJfdm1+es9ZAj5GI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722261705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVUaDTmjkCvHr7RP0q30ab62OmQ9BCMWl7SWblWp8s8=;
+	b=3WOkdpF+CXlLXxDvkfBPxteGUv/PobJEePzDlOl5xdue++MpRCMDnstWj1O2gnRUwA48ub
+	Mgcw6ZVckHaxFPBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5023313A9E;
+	Mon, 29 Jul 2024 14:01:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id X1khEsmgp2Z+YAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 29 Jul 2024 14:01:45 +0000
+Date: Mon, 29 Jul 2024 16:02:22 +0200
+Message-ID: <87h6c89tzl.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net,
+	broonie@kernel.org,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr,
+	Axel Holzinger <aholzinger@gmx.de>
+Subject: Re: [PATCH v2 3/4] ALSA: timer: Introduce virtual userspace-driven timers
+In-Reply-To: <20240729085905.6602-4-ivan.orlov0322@gmail.com>
+References: <20240729085905.6602-1-ivan.orlov0322@gmail.com>
+	<20240729085905.6602-4-ivan.orlov0322@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de,wanadoo.fr];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,lwn.net,kernel.org,vger.kernel.org,wanadoo.fr,gmx.de];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -1.60
 
-Two bitmasks in 'struct sdw_slave_prop' - 'source_ports' and
-'sink_ports' - define which ports to program in
-sdw_program_slave_port_params().  The masks are used to get the
-appropriate data port properties ('struct sdw_get_slave_dpn_prop') from
-an array.
+On Mon, 29 Jul 2024 10:59:04 +0200,
+Ivan Orlov wrote:
+> --- a/include/uapi/sound/asound.h
+> +++ b/include/uapi/sound/asound.h
+(snip)
+> +/*
+> + * This structure describes the userspace-driven timer. Such timers are purely virtual,
+> + * and can only be triggered from software (for instance, by userspace application).
+> + */
+> +struct snd_utimer_info {
+> +	/*
+> +	 * To pretend being a normal timer, we need to know the frame rate and
+> +	 * the period size in frames.
+> +	 */
+> +	snd_pcm_uframes_t frame_rate;
+> +	snd_pcm_uframes_t period_size;
 
-Bitmasks can be non-continuous or can start from index different than 0,
-thus when looking for matching port property for given port, we must
-iterate over mask bits, not from 0 up to number of ports.
+The units in timer API should be independent from PCM.
+So use the explicit type such as __u64 here (so that you don't need
+the compat ioctl conversion, too).
 
-This fixes allocation and programming slave ports, when a source or sink
-masks start from further index.
+> +	unsigned int id;
+> +};
 
-Fixes: f8101c74aa54 ("soundwire: Add Master and Slave port programming")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/soundwire/stream.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+We often put some reserved fields for future extension.
+But I'm not sure whether it's needed at this time for this kind of
+simple interface, though.
 
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index 7aa4900dcf31..f275143d7b18 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
- 					    unsigned int port_num)
- {
- 	struct sdw_dpn_prop *dpn_prop;
--	u8 num_ports;
-+	unsigned long mask;
- 	int i;
- 
- 	if (direction == SDW_DATA_DIR_TX) {
--		num_ports = hweight32(slave->prop.source_ports);
-+		mask = slave->prop.source_ports;
- 		dpn_prop = slave->prop.src_dpn_prop;
- 	} else {
--		num_ports = hweight32(slave->prop.sink_ports);
-+		mask = slave->prop.sink_ports;
- 		dpn_prop = slave->prop.sink_dpn_prop;
- 	}
- 
--	for (i = 0; i < num_ports; i++) {
-+	for_each_set_bit(i, &mask, 32) {
- 		if (dpn_prop[i].num == port_num)
- 			return &dpn_prop[i];
- 	}
--- 
-2.43.0
+>  #define SNDRV_TIMER_IOCTL_PVERSION	_IOR('T', 0x00, int)
+>  #define SNDRV_TIMER_IOCTL_NEXT_DEVICE	_IOWR('T', 0x01, struct snd_timer_id)
+>  #define SNDRV_TIMER_IOCTL_TREAD_OLD	_IOW('T', 0x02, int)
+> @@ -990,6 +1005,8 @@ struct snd_timer_status {
+>  #define SNDRV_TIMER_IOCTL_CONTINUE	_IO('T', 0xa2)
+>  #define SNDRV_TIMER_IOCTL_PAUSE		_IO('T', 0xa3)
+>  #define SNDRV_TIMER_IOCTL_TREAD64	_IOW('T', 0xa4, int)
+> +#define SNDRV_TIMER_IOCTL_CREATE	_IOWR('T', 0xa5, struct snd_utimer_info)
+> +#define SNDRV_TIMER_IOCTL_TRIGGER	_IO('T', 0xa6)
 
+Once after adding the new API, don't forget to bump the protocol
+version defined in SNDRV_TIMER_VERSION.
+
+> --- a/sound/core/timer.c
+> +++ b/sound/core/timer.c
+(snip)
+> +#ifdef CONFIG_SND_UTIMER
+> +/*
+> + * Since userspace-driven timers are passed to userspace, we need to have an identifier
+> + * which will allow us to use them (basically, the subdevice number of udriven timer).
+> + */
+> +DEFINE_IDA(snd_utimer_ids);
+
+Missing static.
+
+> +static int snd_utimer_create(struct snd_utimer_info *utimer_info,
+> +			     struct snd_utimer **r_utimer)
+> +{
+(snip)
+> +	err = snd_timer_new(NULL, utimer->name, &tid, &timer);
+> +	if (err < 0) {
+> +		pr_err("Can't create userspace-driven timer\n");
+> +		goto err_timer_new;
+> +	}
+> +
+> +	timer->module = THIS_MODULE;
+> +	timer->hw = timer_hw;
+> +	timer->hw.resolution = NANO / utimer_info->frame_rate * utimer_info->period_size;
+
+A sanity check is definitely needed for parameters like this.
+e.g. you'd hit a zero-division Oops with this code.
+Also, the resolution should be neither too small nor too high.
+
+> +static int snd_utimer_ioctl_create(struct file *file,
+> +				   struct snd_utimer_info __user *_utimer_info)
+> +{
+> +	struct snd_utimer *utimer;
+> +	struct snd_utimer_info *utimer_info;
+> +	int err;
+> +
+> +	utimer_info = memdup_user(_utimer_info, sizeof(*utimer_info));
+> +	if (IS_ERR(utimer_info))
+> +		return PTR_ERR(no_free_ptr(utimer_info));
+
+no_free_ptr() is used only for the automatic cleanup stuff.
+
+> +static int snd_utimer_ioctl_create(struct file *file,
+> +				   struct snd_utimer_info __user *_utimer_info)
+> +{
+> +	return -EINVAL;
+
+Better to keep -ENOTTY?
+
+
+thanks,
+
+Takashi
 
