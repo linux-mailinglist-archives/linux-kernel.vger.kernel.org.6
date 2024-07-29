@@ -1,125 +1,208 @@
-Return-Path: <linux-kernel+bounces-266078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F793FA67
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF88593FA6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355271C2237D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975FB283B02
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26679150981;
-	Mon, 29 Jul 2024 16:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EC215DBB6;
+	Mon, 29 Jul 2024 16:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="nFLP2IPC"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i5DUlSjW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1119ECC;
-	Mon, 29 Jul 2024 16:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DDB8172D;
+	Mon, 29 Jul 2024 16:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269743; cv=none; b=NRDvc+VTgTT8n28EvfKscQNBQKjauOIp14sVO29LpHci4cH35gL0BesZOS6O8v4dOJKQghckBZWrRTsulMIcNq37Qeu4C/EGPkloh+kL/lGpyey20rCK0FHljapKcM+6ijnU1W1nkfcSB7/PCPcm34l4TohRzMGTcByTh6SkSPE=
+	t=1722269785; cv=none; b=AiowrehwtMg8jDbnq7hM7vbKm1OkURegpYmIZGICh9M24ZoWHQpMQ6Dh5eqY5LCgHktY/SaVd1esjIKKKmp/HdvmTfytmgelGv+VzkqxqtJ+f7dHSeg96CLdqUHWjkB3wcbt3smPmYJzdaEW9L8/6UEeZJ7bge3Cw4m1EWcuHck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269743; c=relaxed/simple;
-	bh=e25RnGm3UUfzN+5y7ZyHo2fNUQbHueNz+JQ13IN92Q8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BjOv3FAjPxF60X9DdcBfiaBSIvlCP51yEDKQ2bXsEPur0LetjQop+b80FXFm0oU3dl8igg/rOXgTxdzbocAyIVHxiCABy88lyCOuJn/9TIv15gblAig1jgjOAZPU+JDzh/R14HfH0GnYDQ8AXSPCzWLoZci6unopKCfH4TWWMjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=nFLP2IPC; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TFGMTM019487;
-	Mon, 29 Jul 2024 11:15:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=qRzBBbqoXOWQyyYO
-	JMgkXOAR8+qV4bh0yhqqlwUEGVA=; b=nFLP2IPC2OwvDdvbC44c7L85phYx/Lz+
-	aavMdD6RmN/mkSRX9N/a/bUz9SiEI/Gg8FU/yEC6Wer/XZhFH5B2HaG6h13TIlK9
-	Hv5PxrNsPRikZ1+KD9tvgX/KSBLh6ELrdJRQKEXU2Kj6yT3HUfpvTrNxgGh3GSZf
-	sxAV7mvY8g9GK1CcwAPM9r1bb2+ELpuCFgPBy4m9IKu0GMHQu2GmBXFm6V320GBr
-	9Qnl33OzKSErJRGAIJgtqS0bISnI/eeCT3IcnMJBvSmY53ae1ZrIVyviFifosaju
-	0So/5sAQVTNF0KRbzZz88NWQvW0/PlFQzjFKjwzafkvbi0xuW4KZLQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40mwajtbgb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:15:36 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 17:15:34 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 29 Jul 2024 17:15:34 +0100
-Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 3E6F6820244;
-	Mon, 29 Jul 2024 16:15:34 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        "Simon
- Trimmer" <simont@opensource.cirrus.com>
-Subject: [PATCH] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
-Date: Mon, 29 Jul 2024 16:15:32 +0000
-Message-ID: <20240729161532.147893-1-simont@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722269785; c=relaxed/simple;
+	bh=O5xu19o258Ib04orIyiSUj8L179KeCKaavNUzMnaTCk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lUU2X9ykLjCLMD+cYSg9fYsV2olj6H3KojZ5DG4zBeMJ0qmGwg5r2fwkUX8Y6u6T2NA+4L4Ae3sUZKff/Kph9w3Y2uKeARQetOBF3jBhujhGZwWHfXpEZroUuZJETpxC++j9vwQ2iVKkICDzcEoyHUdxULyOcbzdpWJvgvXuVr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i5DUlSjW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O5xu19o258Ib04orIyiSUj8L179KeCKaavNUzMnaTCk=; b=i5DUlSjWGWtpIhmIGok/hhU54z
+	WFjemev1q9Q/drK1OMBqq0pgqMtMLGvd7y6Sso4Xpah7fZ0dY8ebtLzmDhpd6ubopv+74EYXkuTvC
+	iyZOYGjiYn2AhfWQCa1rcbdgSv5xuAer8UYcFDfTFT+Y+FYYGYVPXTExGV4c2tuXB/VzYXTlYK4vZ
+	gbBet/s5qziuK36X8BBUGDgnpPHDi3YUnhaZ8ZbqB756tuFEAG0BbXsMbPmIiYO+KysYmPS+WNsrH
+	IZOiZd1rD2Flw6w0krWvZGnYAdCkOi6bk84wUGQH4Ohszy54gblvOXQzZKLCpr3YczdPVmWU7mhg9
+	9wuC2OnA==;
+Received: from [2001:8b0:10b:5:4b1f:b2b1:6fd8:9dfe] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYT2i-0000000DkwQ-3gcu;
+	Mon, 29 Jul 2024 16:16:12 +0000
+Message-ID: <a471215e85b1d59f9214ce081f5ca1f2ed6a75ef.camel@infradead.org>
+Subject: Re: [PATCH v3] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
+ <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>, 
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
+ David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
+ <abuehaze@amazon.com>,  "Christopher S . Hall"
+ <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>, John
+ Stultz <jstultz@google.com>,  netdev@vger.kernel.org, Stephen Boyd
+ <sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, qemu-devel <qemu-devel@nongnu.org>, Simon
+ Horman <horms@kernel.org>
+Date: Mon, 29 Jul 2024 17:16:11 +0100
+In-Reply-To: <20240729113320-mutt-send-email-mst@kernel.org>
+References: <e3164fc80e21336cbf13e24f98c9e5706afb77ab.camel@infradead.org>
+	 <20240729113320-mutt-send-email-mst@kernel.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-VwTlaoX6quXk8Rk7E7vw"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: JDXsPmEN9C12lN1Lyq9L7W6c4TiV9wzo
-X-Proofpoint-ORIG-GUID: JDXsPmEN9C12lN1Lyq9L7W6c4TiV9wzo
-X-Proofpoint-Spam-Reason: safe
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-A number of laptops have gone to market with old firmware versions that
-export controls that have since been hidden, but we can't just install a
-newer firmware because the firmware for each product is customized and
-qualified by the OEM. The issue is that alsactl save and restore has no
-idea what controls are good to persist which can lead to
-misconfiguration.
 
-As the ALSA controls for the firmware coefficients are not used in
-normal operation they can all be hidden, but add a kernel parameter so
-that they can be re-enabled for debugging.
+--=-VwTlaoX6quXk8Rk7E7vw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic CS35L56 amplifier")
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
----
- sound/pci/hda/cs35l56_hda.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Mon, 2024-07-29 at 11:33 -0400, Michael S. Tsirkin wrote:
+> you said you will use __le here?
 
-diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-index 96d3f13c5abf..1494383b22c9 100644
---- a/sound/pci/hda/cs35l56_hda.c
-+++ b/sound/pci/hda/cs35l56_hda.c
-@@ -23,6 +23,10 @@
- #include "hda_cs_dsp_ctl.h"
- #include "hda_generic.h"
- 
-+static bool expose_dsp_controls;
-+module_param(expose_dsp_controls, bool, 0444);
-+MODULE_PARM_DESC(expose_dsp_controls, "Expose firmware controls as ALSA controls 0=no (default), 1=yes");
-+
-  /*
-   * The cs35l56_hda_dai_config[] reg sequence configures the device as
-   *  ASP1_BCLK_FREQ = 3.072 MHz
-@@ -758,6 +762,9 @@ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *mas
- 
- 	cs35l56_hda_create_controls(cs35l56);
- 
-+	if (expose_dsp_controls)
-+		cs35l56_hda_add_dsp_controls(cs35l56);
-+
- #if IS_ENABLED(CONFIG_SND_DEBUG)
- 	cs35l56->debugfs_root = debugfs_create_dir(dev_name(cs35l56->base.dev), sound_debugfs_root);
- 	cs_dsp_init_debugfs(&cs35l56->cs_dsp, cs35l56->debugfs_root);
--- 
-2.43.0
+I hadn't intended to bother until we add the virtio discovery and
+negotiation paths; it would basically be cosmetic for now.
 
+Although I *will* do so with the QEMU side before posting the latest
+version of that patch.
+
+--=-VwTlaoX6quXk8Rk7E7vw
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNzI5MTYxNjExWjAvBgkqhkiG9w0BCQQxIgQgdKPpCRc1
+gHz1WeSgswpm9cELCpMPtJwmYfF8cfl+nB8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBoyo9r0qsmA4cyTozUk990cv8s3dQktILe
+YEQhYQuGF5u2fAZW1FH+ynMtJBtEL5VF4aHEBS7BbaK374cB8lHRPS4ttEWb7v0c5FQ2Sm4SaJpK
+Unco1IRKCVNQItxK1X4SSpWwYwqd9qK5d1Ct519BCa0GBK4mUlsD6wP/u5cv+AMHrG1HKqyilYnJ
+BUJ2oXIhO2tSnUM38VauYA5c9VEsRdAHfbsJHSMDGdReFE2ziv5hTaZqCE6mYaQHpueemFviTd9g
+evBegb02EjlUTDrqC1LBWTWP2JJsjHA0fo9Q2t79+OJ84gWnLtY0pjXf7lxfb7GnprDxCHXHXaeg
+nmyjJtI/4qlFhlEcr9U7/psLBS0XyErpRB09cpBbSRMP+Gcmsm5HmIgzNRyoDZGw8yy7yrNZLu08
+CzGJEPY4TqjdfwDo6VMcdN5F2T7HsPDSyF/G6pPylwsecOiZbyjH+QMvAOnkS0Opj2PgBVXGqrMu
+J22+0thau1juVnSxjpwMrpDE52A+VF2bWzv1Igc+SwEGGVCPtnEKcMes1G+9k686Ro4zg1eDucgK
+VCFSAMeJJMMfHSoDzn0DiCshKwCtT1Q7xyNAjAiAF1dyDLMIc/8pb+YkV/Cc/s0CTIdfL4aJ04Zb
+XW2979EhYdbP2LHtr0H1Fay0aLhqymkpyGdC9Ih3FAAAAAAAAA==
+
+
+--=-VwTlaoX6quXk8Rk7E7vw--
 
