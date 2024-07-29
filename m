@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-266344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5A893FE72
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:40:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3CD93FE75
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A361F23DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346D5B21994
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCB5188CC0;
-	Mon, 29 Jul 2024 19:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k98QF0TB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46320188CB8;
+	Mon, 29 Jul 2024 19:42:52 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92517187858;
-	Mon, 29 Jul 2024 19:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5D214A0B7;
+	Mon, 29 Jul 2024 19:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282037; cv=none; b=cGoMwfutE4vv8ruOu2CthTjZHjDltSXfKFNoLJRxVcDQHQwhWez5fKIeI8FBybITdPKr2Xww107oIPgnsKHy2rrIVoinuVz1k5Uv7CNuBeVSP6ETKjwkigS858yuI2u7n1VY9suQd6pLDSCbS62B1Spb8+ko8RvzI2qYyy98nRs=
+	t=1722282171; cv=none; b=eubKGIqvhFVWMP8DLZCEGpQcC5ktmc7ZwXazfxGCIsPbn+UJKZFraygJhksFD3eQ0wHRKQ0aIT/pmHElQi1/m5iovZzpBNAUbiq2RKrPKfQuuZAZF9MHy07kOdaGec6oTlTLYuCnKjF+P/cxSLu/NbX5vQ0FOzsBeUAj8+WbcRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282037; c=relaxed/simple;
-	bh=SBQ2pH87hA0aDlWEhXjDb2G7eJUp6np1Zn/k71CFvCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ksbqpZokCgIkwmOxnCCT0+KhugONJ4/5EKiV8nqq7BiBi23OoV41NX5HhfDxzpNgCPc0Xoyq3uopPRvra+WoTMnxSUE0RJM90Ffknv5KiIuqnhuKI/3qPtPNDdlJlkodKuFGOygKGiS0Acf6EW4vp1u277ysq1O7IVWeMEBaxkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k98QF0TB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28EF5C32786;
-	Mon, 29 Jul 2024 19:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722282037;
-	bh=SBQ2pH87hA0aDlWEhXjDb2G7eJUp6np1Zn/k71CFvCE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k98QF0TB/OGdFu8g7+GgDbj6VjlbTXhQXIaNhxgRzQSFYQiTprTp0ZxMP/TgBukuM
-	 cfdY5vBZSqllwf4v7NUAouDeWHKMGVIDk+9cCKO1KXFQMtFrhlbzZF4nxulsk6WNEH
-	 sl9o9H7H0W4YmTZISeChBIOsVX2YYaN6QbUXHjsflfDJkC1uG/7JbsJ8Io19uHl0Xy
-	 GsdC7imSCUD7V7cVycqpa7JyxoxMBjzNLmKgpWexNqzDVuO/XPGT+ATIWcOjrYupOY
-	 CxfxD2ma3lcx8zT+H+xCkvRgwMVi+jDTx8yYMXl9aMo5LqDCr0xFHRcW1IgLlGdSkJ
-	 cRLZg85bkiq/w==
-Date: Mon, 29 Jul 2024 20:40:30 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, nuno.sa@analog.com,
- dlechner@baylibre.com, corbet@lwn.net, marcelo.schmitt1@gmail.com, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v6 0/7] Add support for AD4000 series of ADCs
-Message-ID: <20240729204030.038e4aa3@jic23-huawei>
-In-Reply-To: <172227614374.120386.3055005856415965055.b4-ty@kernel.org>
-References: <cover.1719686465.git.marcelo.schmitt@analog.com>
-	<172227614374.120386.3055005856415965055.b4-ty@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722282171; c=relaxed/simple;
+	bh=zQrrcm10kCvHi/oNW5hQkCQZGwRU9jvj2iAUgOU+jWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiXCegapJcm0D3vueXtj1xKqKsaMCdzY6op8RtFVk0TgMd7tLf16eNx3F2qmJgEEWbDqXXrmE9Inq6SUL5aaZDei6faerLnwKNj7QT9cAYV6OonGbhI90OurZdjzrU0FHfFI1WruUglijV1phapkMjrXeEOX7YAOQddK4Dkf9qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sYWGQ-000000005b2-2xLz;
+	Mon, 29 Jul 2024 19:42:34 +0000
+Date: Mon, 29 Jul 2024 20:42:26 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Bc-bocun Chen <bc-bocun.chen@mediatek.com>,
+	Sam Shih <Sam.Shih@mediatek.com>,
+	Weijie Gao <Weijie.Gao@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: pcs: add helper module for standalone
+ drivers
+Message-ID: <ZqfwogNXxmAL1WB2@makrotopia.org>
+References: <ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org>
+ <Zqd8z+/TL22OJ1iu@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqd8z+/TL22OJ1iu@shell.armlinux.org.uk>
 
-On Mon, 29 Jul 2024 19:02:23 +0100
-Mark Brown <broonie@kernel.org> wrote:
+Hi Russell,
 
-> On Sat, 29 Jun 2024 16:04:00 -0300, Marcelo Schmitt wrote:
-> > This patch series extends the SPI bitbang, gpio, and spi-engine controllers to
-> > support configurable MOSI line idle states.
-> > It then introduces the ad4000 driver which uses the MOSI idle configuration to
-> > provide improved support for the AD4000 series of ADCs.
-> > Documentation is added describing the new extension to the SPI protocol.
-> > The currently supported wiring modes for AD4000 devices were documented under
-> > IIO documentation directory.
-> > 
-> > [...]  
-> 
-> Applied to
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-> 
-> Thanks!
-> 
-> [1/7] spi: Enable controllers to extend the SPI protocol with MOSI idle configuration
->       commit: f58872f45c36ded048bccc22701b0986019c24d8
-> [2/7] spi: bitbang: Implement support for MOSI idle state configuration
->       commit: 320f6693097bf89d67f9cabad24a2b911e23073f
-> [3/7] spi: spi-gpio: Add support for MOSI idle state configuration
->       commit: 927d382c7efbcc2206c31fa2f672fa264c0f1d5b
-> [4/7] spi: spi-axi-spi-engine: Add support for MOSI idle configuration
->       commit: a62073f4b2164028fc7c5ae45ceba10c9326cd91
-Hi Mark,
+thank you for commenting on this patch. Please help me understand which
+direction I should work towards to see support for the MT7988 SoC
+Ethernet in future kernels, see my questions below.
 
-Any chance of a tag + you seem to have also picked up the ADC dt binding.
-Patch 5/7. dt-bindings: iio: adc: Add AD4000
-which I'm assuming was not intentional.
-
-I think I only need the definition of SPI_MOSI_IDLE_HIGH
-for 5-7 to build fine.
-
-If needed, I can use a local value for that in the driver and
-we can follow up with a patch using the main define once the trees
-come together upstream.
-
-Jonathan
-
-
+On Mon, Jul 29, 2024 at 12:28:15PM +0100, Russell King (Oracle) wrote:
+> On Thu, Jul 25, 2024 at 01:44:49PM +0100, Daniel Golle wrote:
+> > +static void devm_pcs_provider_release(struct device *dev, void *res)
+> > +{
+> > +	struct pcs_standalone *pcssa = (struct pcs_standalone *)res;
+> > +
+> > +	mutex_lock(&pcs_mutex);
+> > +	list_del(&pcssa->list);
+> > +	mutex_unlock(&pcs_mutex);
 > 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
-> 
-> Thanks,
-> Mark
-> 
+> This needs to do notify phylink if the PCS has gone away, but the
+> locking for this would be somewhat difficult (because pcs->phylink
+> could change if the PCS changes.) That would need to be solved
+> somehow.
 
+From my understanding the only way the PCS would "go away" is by
+rmmod, which is prevented by the usage counter if still in use by the
+Ethernet driver (removal of instances by using unbind in sysfs is
+prevented by .suppress_bind_attrs).
+
+I understand that Ethernet MAC and PCS both being built-into the SoC may
+not be the only case we may want to support in the long run, but it is
+the case for the MT7988 SoC which I'd like to see supported in upstream
+Linux.
+
+So imho this is something quite hypothetical which can be prevented by
+setting .suppress_bind_attrs and bumping the module usage counter, as
+those are not really dedicated devices on some kind of hotplug-able bus
+what-so-ever, but all just components built-into the SoC itself. They
+won't just go away. At least in case of the SoC I'm looking at.
+
+If you have other use-cases in mind which this infrastructure should be
+suitable for, it'd be helpful if you would spell them out.
+
+If your criticism was meant to be directed towards the whole idea of
+using standlone drivers for the PCS units of the SoC then the easiest
+would of course be to just not do that and instead keep handling the
+PCS as part of the Ethernet driver.
+
+The main reason why I like the idea of the PCS driver being separate is
+because it is not even needed on older platforms, and those are quite
+resource constraint so it would be a waste to carry all the USXGMII
+logic, let's say, on devices with MT7621 or even MT7628.
+
+However, there are of course other ways to achieve nearly the same, such
+as Kconfig symbols which select parts of the driver to be included or
+not.
+
+Hence my question: Do you think it is worth going down this road and
+introducing standalone PCS drivers, given that the infrastructure
+requirements include graceful removal of any PCS instance?
+
+Also note that the same situation (things which may "go away") applies
+to PHYs (as in: drivers/phy, not drivers/net/phy) as well, and I don't
+see this being addressed for any of the in-SoC Ethernet controllers
+supported by the kernel.
+
+I was hoping for clarification regarding this but never received a
+reply, see https://lkml.org/lkml/2024/2/7/101
+
+And what about used instances of drivers/pinctrl, drivers/reset,
+drivers/clk, ...? Should a SoC Ethernet driver be built in a way that
+all those may gracefully "go away" as well?
+
+I'm totally up to work on improving the overall situation there, but
+it'd be good to know which direction I should be aiming for.
+(as in: pre-removal call-back functions? just setting
+.suppress_bind_attrs for all drivers/phy/ and such by default? extending
+phylink itself to handle drivers/phy instances and their disappearance,
+as well as potentially more than one PCS instance per net_device? ...)
+
+> > [...]
+> > +	device_link_add(dev, pcssa->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> 
+> This is really not a nice solution when one has a network device that
+> has multiple interfaces. This will cause all interfaces on that device
+> to be purged from the system when a PCS for one of the interfaces
+> goes away. If the system is using NFS-root, that could result in the
+> rootfs being lost. We should handle this more gracefully.
+
+"DL_FLAG_AUTOREMOVE_CONSUMER causes the device link to be automatically
+purged when the consumer fails to probe or later unbinds."
+(from Documentation/driver-api/device_link.rst)
+
+The consumer is the Ethernet driver in this case. Hence the automatic
+purge is only applied in case the Ethernet device goes away, and meanwhile
+it would prevent the PCS driver from being rmmod'ed (which in my case is
+the only way for the PCS to "disappear").
+
+Also note that the same flag is used in pcs-rzn1-miic.c as well.
+
+
+Thank you for your patiente and helping me to understand how to proceed.
+
+
+Cheers
+
+
+Daniel
 
