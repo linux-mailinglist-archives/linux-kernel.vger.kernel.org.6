@@ -1,123 +1,175 @@
-Return-Path: <linux-kernel+bounces-264952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C5293EA87
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9693EA88
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23842816E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96222814BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 01:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B17E4315B;
-	Mon, 29 Jul 2024 01:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6132475808;
+	Mon, 29 Jul 2024 01:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="mFPDK6Yr"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVq9ZAzc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5532A3D978;
-	Mon, 29 Jul 2024 01:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9534A4F20E;
+	Mon, 29 Jul 2024 01:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722215856; cv=none; b=dsZzhn+G94kk3SZmOaVxLbaZ/K3/mKijxbrM9C9gl1dHH0naPAUvAsqs8JkBoJFoqqLtTytkM6ZdHxJSFarzWCTqoYl478vKIztnLishtFsSugNiplHbvA4oOJCLlEHBCYloTv3QQgJLfCv5pHB8jUycA/RzxDGbBy4h+ODxAPI=
+	t=1722216118; cv=none; b=e7FeUz1E3H4WWz+y4iuUvkOcyuIXLBZIqhHmn5B77iMGm0QbKa4zdo1EW6mgyatXLTuWJ2PFRO24F+plhQLZdX+q6jcUtHIey84DtKO7kEFHI7tSU+NqkofZZBNiMd36LSMLmz48pnHIv4p9Jvan8X5tIkShEewP33h9NoT13kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722215856; c=relaxed/simple;
-	bh=eTbtsv2iQDDLS8TIblrPeEiyMCqxozNUsxIY48jO6yQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J/2mxxdKaxxqHNeiEHAwX6fr+9pKCaYliFkN2BNcrvuvFumqnpk0L6SmMD3OjHkedrytKPFsKS3vs+xRwuh10dmRBRIRG0SvUUpNyzlYu+YRDC3sQrSbEZrlYbLM46HDBe7TuarrRfR5b9g1rYOXVxRxLXgvQJnY5rQeK7mVUL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=mFPDK6Yr; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1722215846;
-	bh=aUrFfDFmD5KIKv3jz80Iad9Jg4vDE1/Msd0Yw2YSF08=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=mFPDK6Yr3iMsM0daTCQB8XQTk9qCQvyZR6AUj9dJY87DABrlHpKW3jkEjgbsVwGTZ
-	 oX1O7B9MytNzlcbpajL6HML9l3B4+30QdpUj91c0kme73XiOyAbEypQ9XAk1YLVA05
-	 7jZ5z90JJVrjnYpq8zE2eMQxgFGtrHDlJMBlGQLcZRO+jk/ZtoLQWOuVFYfu9yud2X
-	 dMifVSMrTnSvP6YtmuQmLMxLKuFnGHfjcCgwI7g48wTi5qihGwr9lU9xyQLYy4CIAf
-	 T8FpqEjCCHuRASJKzcyqKAbxi9NARvYe1RKpIIYf8m5ZPXqw7a7/VGdkH7D8/uDYL/
-	 Gb3IoAuCTVBUw==
-Received: from [192.168.68.112] (unknown [118.211.93.69])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E99A466B02;
-	Mon, 29 Jul 2024 09:17:23 +0800 (AWST)
-Message-ID: <6d73dcf20c726ad59e2aa16e507af17b3af59c42.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v5 0/2] Add Meta(Facebook) Catalina BMC(AST2600)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Potin Lai <potin.lai.pt@gmail.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Patrick Williams
- <patrick@stwcx.xyz>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,  Cosmo Chou
- <cosmo.chou@quantatw.com>, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, Conor Dooley <conor+dt@kernel.org>, Potin
- Lai <potin.lai@quantatw.com>, Joel Stanley <joel@jms.id.au>, Conor Dooley
- <conor.dooley@microchip.com>
-Date: Mon, 29 Jul 2024 10:47:22 +0930
-In-Reply-To: <172199921421.1507234.14901757413141840919.robh@kernel.org>
-References: <20240726-potin-catalina-dts-v5-0-8f02305af527@gmail.com>
-	 <172199921421.1507234.14901757413141840919.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1722216118; c=relaxed/simple;
+	bh=fcJW5gJLnuodeIWxC2Kn1Lk9LfB+ENVDoYCigF2EHbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHgMhkZe9ZKMbf9OIeF5u4vcF4kkqeO+/OMo9ss/ZRJ9AAe904UDe/MHvPq4ZXjczC8ICtWK/TI0AriX1IxqOGwGMnJ/PFqOxJtDihlK2pE1k7TVuRSawvHJtbS4BgKvOyxh2rO4+bb/8ljYBSlAom1b5AOt1Ws177WyjSwNsEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVq9ZAzc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918A7C116B1;
+	Mon, 29 Jul 2024 01:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722216118;
+	bh=fcJW5gJLnuodeIWxC2Kn1Lk9LfB+ENVDoYCigF2EHbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iVq9ZAzclkJiCHb7miMCuGS8neNsccB40NVmVYAEgQCaDAuFKdFG4d6HVvPF2EX1O
+	 tqfyhE4QV2rMAfODaEaGA71oiY6IfJak8bFyYT/4PH63IrYxV0TE9rLplcodkEGSbe
+	 jxzv/ka+EW7D/0qrESyGE0ajyWI1boRsxocoPmnR+w2XjK3eCUjO7vYF56lmrx4n2U
+	 4V+K66dwqITY7fNtfH2gfB6b/FiV6h8L5XFrLDeezDy19Una14jnJ7CgwA991iYRNX
+	 BdnGGZnQ05vVqmUiGveXtXZWnkmY98rzFBslYR1Pirwqnbxl9tG6eJUeJbmwfME/TQ
+	 QaIPs2yk7X5iA==
+Date: Sun, 28 Jul 2024 18:21:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
+	jolsa@kernel.org, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Dump off-cpu samples directly
+Message-ID: <ZqbutBvHOJ0SPd64@google.com>
+References: <20240726102826.787004-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240726102826.787004-1-howardchu95@gmail.com>
 
-Hi Potin,
+Hello Howard,
 
-On Fri, 2024-07-26 at 08:09 -0500, Rob Herring (Arm) wrote:
-> On Fri, 26 Jul 2024 18:26:48 +0800, Potin Lai wrote:
-> > Add Linux device tree entry related to Meta(Facebook) Catalina specific
-> > devices connected to BMC(AST2600) SoC.
->=20
-...
->=20
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->=20
->   pip3 install dtschema --upgrade
->=20
->=20
-> New warnings running 'make CHECK_DTBS=3Dy aspeed/aspeed-bmc-facebook-cata=
-lina.dtb' for 20240726-potin-catalina-dts-v5-0-8f02305af527@gmail.com:
->=20
->=20
-...
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@100/i2c-mux@70/i2c@2/pwm@21: failed to match any schema with co=
-mpatible: ['maxim,max31790']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@100/i2c-mux@70/i2c@2/pwm@27: failed to match any schema with co=
-mpatible: ['maxim,max31790']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@100/i2c-mux@70/i2c@3/vrm@60: failed to match any schema with co=
-mpatible: ['isil,raa228004']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@100/i2c-mux@70/i2c@3/vrm@61: failed to match any schema with co=
-mpatible: ['isil,raa228004']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@100/i2c-mux@70/i2c@3/vrm@62: failed to match any schema with co=
-mpatible: ['isil,raa228004']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/apb/bus@1=
-e78a000/i2c@400/ipmb@10: failed to match any schema with compatible: ['ipmb=
--dev']
-...
+On Fri, Jul 26, 2024 at 06:28:21PM +0800, Howard Chu wrote:
+> As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+> 
+> Currently, off-cpu samples are dumped when perf record is exiting. This
+> results in off-cpu samples being after the regular samples. This patch
+> series makes possible dumping off-cpu samples on-the-fly, directly into
+> perf ring buffer. And it dispatches those samples to the correct format
+> for perf.data consumers.
 
-The snipped errors are mostly from the DTSI, but these errors above are
-specific to your DTS. Can you please address them?
+Thanks for your work!
 
-Andrew
+But I'm not sure we need a separate event for offcpu-time-direct.  If we
+fix the format for the direct event, we can adjust the format of offcpu-
+time when it dumps at the end.
+
+Anyway, as far as I can see you don't need to fill the sample info in
+the offcpu-time-direct manually in your BPF program.  Because the
+bpf_perf_event_output() will call perf_event_output() which fills all
+the sample information according to the sample_type flags.
+
+Well.. it'll set IP to the schedule function, but it should be ok.
+(updating IP using CALLCHAIN like in off_cpu_write() is a kinda hack and
+not absoluately necessary, probably I can get rid of it..  Let's go with
+simple for now.)
+
+So I think what you need is to ensure it has the uncessary flags.  And
+the only info it needs to fill is the time between the previous schedule
+and this can be added to the raw data.
+
+Thanks,
+Namhyung
+
+> 
+> Changes in v3:
+>  - Add off-cpu-thresh argument
+>  - Process direct off-cpu samples in post
+> 
+> Changes in v2:
+>  - Remove unnecessary comments.
+>  - Rename function off_cpu_change_type to off_cpu_prepare_parse
+> 
+> Before:
+> ```
+>      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+>      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+>      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+> 
+> sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+> 	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+> 	    585690935cca [unknown] (/usr/bin/sshd)
+> ```
+> 
+> After:
+> ```
+>             perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+>             perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+>          swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>          swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time-direct: 
+> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> 	    7fff24e862d8 [unknown] ([unknown])
+> 
+> 
+>     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time-direct: 
+> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> 	    7fff24e862d8 [unknown] ([unknown])
+> 
+> 
+>          swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>      dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+> ```
+> 
+> Howard Chu (5):
+>   perf record off-cpu: Add direct off-cpu event
+>   perf record off-cpu: Dumping samples in BPF
+>   perf record off-cpu: processing of embedded sample
+>   perf record off-cpu: save embedded sample type
+>   perf record off-cpu: Add direct off-cpu test
+> 
+>  tools/perf/builtin-record.c             |   2 +
+>  tools/perf/builtin-script.c             |   2 +-
+>  tools/perf/tests/builtin-test.c         |   1 +
+>  tools/perf/tests/shell/record_offcpu.sh |  29 +++++
+>  tools/perf/tests/tests.h                |   1 +
+>  tools/perf/tests/workloads/Build        |   1 +
+>  tools/perf/tests/workloads/offcpu.c     |  16 +++
+>  tools/perf/util/bpf_off_cpu.c           |  53 ++++++++-
+>  tools/perf/util/bpf_skel/off_cpu.bpf.c  | 143 ++++++++++++++++++++++++
+>  tools/perf/util/evsel.c                 |  16 ++-
+>  tools/perf/util/evsel.h                 |  13 +++
+>  tools/perf/util/header.c                |  12 ++
+>  tools/perf/util/off_cpu.h               |   1 +
+>  tools/perf/util/record.h                |   1 +
+>  tools/perf/util/session.c               |  23 +++-
+>  15 files changed, 309 insertions(+), 5 deletions(-)
+>  create mode 100644 tools/perf/tests/workloads/offcpu.c
+> 
+> -- 
+> 2.45.2
+> 
 
