@@ -1,152 +1,163 @@
-Return-Path: <linux-kernel+bounces-266218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2452E93FC97
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6B793FC9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41A51F22E23
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A69961F22B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1374B1741C6;
-	Mon, 29 Jul 2024 17:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4911741D1;
+	Mon, 29 Jul 2024 17:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PK8gALIu"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ReAUEGxt"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDAA15ECCD;
-	Mon, 29 Jul 2024 17:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D551586DB;
+	Mon, 29 Jul 2024 17:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722275211; cv=none; b=aJf6GyBndIqoCsB711ImTnd2HOIZ9rXFMXxJnGAWlT5CiVMvKk0iJcRiHN/VswHgeyp07T0+6j70asmHTrH4YBNhjGXrHD0I0mBuf1/+hJMCIxUAxO202NY8l5xZSpKkgBjnmtI3FJmxLYj3ZbePlgI4fZV5LribwYMaQ1c0Sx0=
+	t=1722275234; cv=none; b=FuE0q0vkoCFDNHDi2Dr5HonINbxaI4Yqmdg0hAmoflW/Sp2uU4rPpfFejKVKO4ckMSIAhxtmoROSZ8Bm9xeV7M0cphY1+yMiEcfuAsZEpxt+mlzWToK6sB/pkh5ARmL7zadmuL78l8Hg0lg6V12iVQhkMMB7atMQ1vN1M0QVqbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722275211; c=relaxed/simple;
-	bh=NHpWIQMM4KnFG3Grot6gzP7D8MYKTYzIjdAEdp8aiCU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lma0TO8HwKo2qFV9yJhd4jqNSggaCwfEGUd197Fk6y1EZX2nEogXrv0+hXM/f0CKnpLQBG6UzQNHdP/kvQGhzSPYoIKnObQanZGfi2axy+4/rf3wC3fkQqR9YhMJ3ga+JYdZVL2/Njw1Mlw7ApC0Vu5Je0UCb99XRfjnBJphm9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PK8gALIu; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc611a0f8cso21576165ad.2;
-        Mon, 29 Jul 2024 10:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722275209; x=1722880009; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iDMRENFOTmb9Quk1ZGoV/8u9O28UUgs55EcrP9/qbI0=;
-        b=PK8gALIufO64Gz7K85iPw7Dd5rzk7h+CzonqHFJM6MjW7fkoqzTvJIU/touuZurXqX
-         oKfpM9oYAqoZIiQKQgjiHvv8xdazlojccfDQeNRnHmxPviylLr9QFhnZOKKdpjK/YX/P
-         6a184OWkKgfpRdGeedfJalJk0DWipLC+hYl6gaxah1yrNw+ILvg9Z7o6IdXYNnjD9h3O
-         AvceEU0jW8rl3KsSz7eaxewQoiVC6Ev4PuyjTxp7BIZ/zZGycBbOSDs9vNV+nCCv3J6y
-         HCYyxrL9EmyK8yaD0irxZ7AC46MBA+rT2lmsToAd12G5JZlxYEscMtt8Ben1bknYrT4v
-         /88A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722275209; x=1722880009;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iDMRENFOTmb9Quk1ZGoV/8u9O28UUgs55EcrP9/qbI0=;
-        b=Cfc6Vc1Ju8bYvKoEUCJSGMGrwWnLuETqv70nrBhl+23lnSscTs7Zch7qLXTVHGL0Kk
-         SBzGnZGTEdrQYvvHPZIZdq7GzGm531Jez8diF9h4K0+JD6L04n3u6fuScwv9pDODHDC1
-         5FCDYsV09HgWVWwFgReL7j9qaZ3on5u0++F3j4fn2OzDsPl1cLmcoF9q3SAgwENrjei/
-         /2XqZhTmxpQUpE/aIe/2IEko9jHOesNr55WIY1pPBb7Z1Rj/tVIDaM9oVWTXry89hity
-         iRI1tRap8+vBX2+bvf6yja/kyAK0Di9T7JYggYDnMxGfffTTTYIXZEJqah0lHPVAAn2A
-         0rVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVy77yG3kESoZ7jNrQRHeoEublOReKt4UcVci+q7UZyJM1EBRnItvjlHy0Mah1RK4wjdCPxrl1+UYh8IftV20aWcEMUcyISARYx+P5lQnLX3bIXPSvptZXGnR5qC1R9fphz7m3GLrgR
-X-Gm-Message-State: AOJu0YxFF7dJ4QIptiy/Y4u+8Ur2QoqR8+9H6fsPGf5t7oI1ISGEaP+T
-	nphiKt8DSGsk5WSP+03HTt3zAWo8ZrNsQJ8FYBnuS9ht0Qgld/vI
-X-Google-Smtp-Source: AGHT+IEPbuRb9okWNmz2XKujzM6ZvOBYpgEojc8nnMdhbjBvhCURiHt9M80et6ldWMjh9rgb8Vlw2Q==
-X-Received: by 2002:a17:903:2446:b0:1fd:6848:bc2d with SMTP id d9443c01a7336-1ff04810ffcmr65874485ad.20.1722275209046;
-        Mon, 29 Jul 2024 10:46:49 -0700 (PDT)
-Received: from embed-PC.. ([106.205.109.112])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d28d4dsm85991045ad.101.2024.07.29.10.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 10:46:48 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	rbmarliere@gmail.com,
-	christophe.jaillet@wanadoo.fr,
-	Chris.Wulff@biamp.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: gadget: u_audio: Use C99 syntax for array initializers
-Date: Mon, 29 Jul 2024 23:16:39 +0530
-Message-Id: <20240729174639.446105-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722275234; c=relaxed/simple;
+	bh=7Om3ODn9VgUsv6KoF/UQ6Qe4kCE3KXW2IjsBgTVvlZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6a519B113G+LLEdreguVXtPkzNVZpsic4YlSQNAW3mWKYMPUpNiSlXzY5PKfu5y2xZb37smzIfCMN5czC+twWqOl/tuU3P0ZagjoxL4ZZq49mbtNo8FX6M47kuwyB6xCacOiK6Yhb08S/CcITDK3u9W7B9oLRmtC+67c5npDz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ReAUEGxt; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0FDEC240004;
+	Mon, 29 Jul 2024 17:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722275227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U7fNaR3Si9Hb8iaQsNpePBd6lFS0aqRooFO9ICBRT6I=;
+	b=ReAUEGxtlZGTFRnKKv+eQmmuWANOKIM8OrRr4qBPC9rm6/VgnHeX4EIqucyK9jfNBG5i4w
+	2kgzXlgk9h5m3oT+ebpnbJSDbUMoqTbAogMBj07ehK0yQBe+QerolhoOVNU1xlRpaaLI89
+	VkE467iO8OZuuVhS2Um2m6sQiEK4sXETyUu2Kl58OE10Lzz7ExxtO7VrbPyYDhPlyk6sCz
+	ZKREfirGXAw6cHnxy7D2JiVTs4oueVL04zrr/KBT35iNX4pmeOf0ee41xepRAYUIGKybCt
+	KuTn/jZIBHoTWpMdrxXRukAYOaL2hJklCoCO2ieNJV5nfHVANivZmpGb2LgbKQ==
+Message-ID: <87d70267-0305-4f4d-a7e2-7d1f8855e14c@bootlin.com>
+Date: Mon, 29 Jul 2024 19:47:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2 2/3] selftests/bpf: convert test_dev_cgroup to
+ test_progs
+To: Alan Maguire <alan.maguire@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729-convert_dev_cgroup-v2-0-4c1fc0520545@bootlin.com>
+ <20240729-convert_dev_cgroup-v2-2-4c1fc0520545@bootlin.com>
+ <30ef4e63-02be-4691-b85b-e98c18d59e57@oracle.com>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <30ef4e63-02be-4691-b85b-e98c18d59e57@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-Convert array initializers to C99 syntax by adding the '=' after each
-designated initializer. This change resolves warnings from smatch
-about obsolete array initializers.
+Hello Alan, thanks for the review
 
-drivers/usb/gadget/function/u_audio.c:1117:20:warning: obsolete array initializer, use C99 syntax
-drivers/usb/gadget/function/u_audio.c:1124:28:warning: obsolete array initializer, use C99 syntax
-drivers/usb/gadget/function/u_audio.c:1131:19:warning: obsolete array initializer, use C99 syntax
-drivers/usb/gadget/function/u_audio.c:1138:27:warning: obsolete array initializer, use C99 syntax
-drivers/usb/gadget/function/u_audio.c:1145:25:warning: obsolete array initializer, use C99 syntax
+On 7/29/24 19:29, Alan Maguire wrote:
+> On 29/07/2024 09:20, Alexis Lothoré (eBPF Foundation) wrote:
+>> test_dev_cgroup is defined as a standalone test program, and so is not
+>> executed in CI.
+>>
+>> Convert it to test_progs framework so it is tested automatically in CI, and
+>> remove the old test. In order to be able to run it in test_progs, /dev/null
+>> must remain usable, so change the new test to test operations on devices
+>> 1:3 as valid, and operations on devices 1:5 (/dev/zero) as invalid.
+>>
+>> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> 
+> A few small suggestions but looks great!
+> 
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
- drivers/usb/gadget/function/u_audio.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[...]
 
-diff --git a/drivers/usb/gadget/function/u_audio.c b/drivers/usb/gadget/function/u_audio.c
-index 89af0feb7512..47a1990743d8 100644
---- a/drivers/usb/gadget/function/u_audio.c
-+++ b/drivers/usb/gadget/function/u_audio.c
-@@ -1114,35 +1114,35 @@ static int u_audio_rate_get(struct snd_kcontrol *kcontrol,
- }
- 
- static struct snd_kcontrol_new u_audio_controls[]  = {
--  [UAC_FBACK_CTRL] {
-+[UAC_FBACK_CTRL] = {
-     .iface =        SNDRV_CTL_ELEM_IFACE_PCM,
-     .name =         "Capture Pitch 1000000",
-     .info =         u_audio_pitch_info,
-     .get =          u_audio_pitch_get,
-     .put =          u_audio_pitch_put,
-   },
--	[UAC_P_PITCH_CTRL] {
-+	[UAC_P_PITCH_CTRL] = {
- 		.iface =        SNDRV_CTL_ELEM_IFACE_PCM,
- 		.name =         "Playback Pitch 1000000",
- 		.info =         u_audio_pitch_info,
- 		.get =          u_audio_pitch_get,
- 		.put =          u_audio_pitch_put,
- 	},
--  [UAC_MUTE_CTRL] {
-+[UAC_MUTE_CTRL] = {
- 		.iface =	SNDRV_CTL_ELEM_IFACE_MIXER,
- 		.name =		"", /* will be filled later */
- 		.info =		u_audio_mute_info,
- 		.get =		u_audio_mute_get,
- 		.put =		u_audio_mute_put,
- 	},
--	[UAC_VOLUME_CTRL] {
-+	[UAC_VOLUME_CTRL] = {
- 		.iface =	SNDRV_CTL_ELEM_IFACE_MIXER,
- 		.name =		"", /* will be filled later */
- 		.info =		u_audio_volume_info,
- 		.get =		u_audio_volume_get,
- 		.put =		u_audio_volume_put,
- 	},
--	[UAC_RATE_CTRL] {
-+	[UAC_RATE_CTRL] = {
- 		.iface =	SNDRV_CTL_ELEM_IFACE_PCM,
- 		.name =		"", /* will be filled later */
- 		.access =	SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
+>> +	unlink(path);
+>> +	ret = mknod(path, mode, makedev(dev_major, dev_minor));
+>> +	ASSERT_EQ(ret, expected_ret, "mknod");
+> no need to unlink unless "if (!ret)"
+
+Indeed, you are right.
+
+[...]
+
+>> +	skel = dev_cgroup__open_and_load();
+>> +	if (!ASSERT_OK_PTR(skel, "load program"))
+>> +		goto cleanup_cgroup;
+>> +
+>> +	if (!ASSERT_OK(bpf_prog_attach(bpf_program__fd(skel->progs.bpf_prog1),
+>> +				       cgroup_fd, BPF_CGROUP_DEVICE, 0),
+>> +		       "attach_program"))
+> 
+> I'd suggest using bpf_program__attach_cgroup() here as you can assign
+> the link in the skeleton; see prog_tests/cgroup_v1v2.c.
+
+Ah yes, thanks for the hint !
+
+
+>> +		goto cleanup_progs;
+>> +
+>> +	if (test__start_subtest("deny-mknod"))
+>> +		test_mknod("/dev/test_dev_cgroup_zero", S_IFCHR, 1, 5, -EPERM);
+>> +
+> 
+> nit: group with other deny subtests.
+
+ACK
+
+>> +	if (test__start_subtest("allow-mknod"))
+>> +		test_mknod("/dev/test_dev_cgroup_null", S_IFCHR, 1, 3, 0);
+>> +
+>> +	if (test__start_subtest("allow-read"))
+>> +		test_read("/dev/urandom", buf, TEST_BUFFER_SIZE, TEST_BUFFER_SIZE);
+>> +
+> 
+> Nit: should we have a separate garbage buffer for the successful
+> /dev/urandom read? We're not validating buffer contents anywhere but we
+> will overwrite our test string I think and it'll end up non-null terminated.
+
+True, but since the tests aren't performing any string operation on it, is it
+really a big deal ? I can even switch the string to a byte array, if it can
+prevent any mistake.
+
+If that's ok for you, I can bring all the suggestions discussed here in a new
+revision and keep your review tag.
+
+Thanks,
+
+Alexis
+
+> 
+> Alan
+
 -- 
-2.34.1
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
