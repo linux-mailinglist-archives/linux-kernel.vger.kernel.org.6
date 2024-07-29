@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-265034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA8C93EBB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED71C93EBBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 05:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB81B20F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A7D1C214FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 03:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8E7F7CA;
-	Mon, 29 Jul 2024 02:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759F48063C;
+	Mon, 29 Jul 2024 03:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj4r7rka"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xJ/0a1P0"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E69768EF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4693E2B9D2;
+	Mon, 29 Jul 2024 03:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722221723; cv=none; b=Y84/w0bCVYLu2FZ6Gn4kQw72SFTV9WyxtUiIoAA9L681/6iK1aSWRTi2YGdBQsMUdG5rwMJKlbbLG7nPaOG9NiPQhdriv4pCahiDOl3eFybz/1orhAKggcsKWzHPbqLlshItV0f3L2nQAise1IE2C7szGfdjFgVddyBmARVc3Pg=
+	t=1722222123; cv=none; b=o9IPcO1lVVGfmQu11ai4/lEU7y7vRvndqm77Pc+GYsEa4eUPCiRMEE4+3NFOT5/B9JZ6HmLuBpnuyRxaLkZ7SRS1xHf1HK338SEuprDyOA0dTt9EdvOUKT8IVuI3KJJX1qWJnVS7KZEshHCZdfgE1YmzeGYaSNZApTLq/Z5hx0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722221723; c=relaxed/simple;
-	bh=j0H9QTslhDV/5VOLLPEqODcRjE2Iv8/sMBXxP93cwAE=;
+	s=arc-20240116; t=1722222123; c=relaxed/simple;
+	bh=ejK+JLHw98fyL4yw9lBzd9vdjVs1PyEJPzes0fN3DzE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WkIwZ4xWENSQNC6X2+0EAefxv1//XxBTjyBamvP5k1Gi55Ub8zut8OVu22HdQgrUTCMkSdoLSPxuZ+2PfCruPjicHHW43KVv+tN6feIRKKRf1ilgEWLEyjsuzUMe3oZfuauUNSHGyJRfIZFrG6VIhJmkuC1lU8Y343C7mTSI5xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj4r7rka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F1CC116B1;
-	Mon, 29 Jul 2024 02:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722221722;
-	bh=j0H9QTslhDV/5VOLLPEqODcRjE2Iv8/sMBXxP93cwAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dj4r7rka0FGQFqHB84aUDOzhgWy8SwFLLIdtdfXUs5/De9VnuveIpCx9mVeYKPe4/
-	 7/D/FNItBs8tqIgMzrOI/Y0zVC/hlzfiZ5ZtkjZk9RwG2m7IiuOZJZSjzd8kBu6w5C
-	 2KpKIlpfMASv2f8LCknVfp6BQTZGZVxP0fjcdgsS9wY5/pYFXAtnfyrJey9kjYRJJD
-	 JWxfcwhR63NpxR8FuI51dbYEDD9s6GpAWaQ/dhIQqB6KVljPZ+71lWOUJ6zek8xuMR
-	 bQSOhr4VoQ6OCDtfCFyZ5eNUiQKgce56TnPZvYZAvyz+zn1RvWoBuomAc5aY9g6NoI
-	 P7hSIqf5jrbPA==
-Message-ID: <44d5de6d-bd0f-4dd8-bf9b-281f68769714@kernel.org>
-Date: Mon, 29 Jul 2024 10:55:18 +0800
+	 In-Reply-To:Content-Type; b=InZr2uACIAbIVtrug2Cem0HiTYAcT4LReY98anvns/H/URUvSwQBaLcCVFSoVp8Up9BgZasr4a+NMwHgFFunt97IKlYOLT+MR1SFcD5E7XdiBbxWGurwUJiSasej1bavem88BNq/HpInDcjPMjEWxazgomdp05L65qv/N4bX23M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xJ/0a1P0; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ca823522-fe78-4eb7-ae1d-b017d16e39fe@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722222119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9wqau/zSknzCnsohqqshMiTMDATCIJu7G0AysZkCDg=;
+	b=xJ/0a1P0NwUNNMLY6DohbukOFlCjl5lRE89SJL1joXlE8aGAxS5D9t45QWPahYN2fzjZfv
+	p8Q5R/c1tXLpuC7784AJnVdCdqfTi74D920vJy8uLEGQYmqMsB+FwSqUaG9paPfQKJO6Pl
+	aJbeS7+79P91ANxNHHLtZgO+JAF2WtE=
+Date: Mon, 29 Jul 2024 11:01:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: sysfs: support atgc_enabled
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: liujinbao1 <jinbaoliu365@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- liujinbao1 <liujinbao1@xiaomi.com>
-References: <20240221073249.1710026-1-jinbaoliu365@gmail.com>
- <a2bf5d3e-6727-44d7-b1a0-3b1bcc7edad1@kernel.org>
- <ZqRotoF2iDcx2MZF@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZqRotoF2iDcx2MZF@google.com>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Christoph Hellwig <hch@infradead.org>, David Sterba <dsterba@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, kreijack@inwind.it,
+ Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Youling Tang <tangyouling@kylinos.cn>
+References: <ZqJwa2-SsIf0aA_l@infradead.org>
+ <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
+ <ZqKreStOD-eRkKZU@infradead.org>
+ <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
+ <ZqOs84hdYkSV_YWd@infradead.org> <20240726152237.GH17473@twin.jikos.cz>
+ <20240726175800.GC131596@mit.edu> <ZqPmPufwqbGOTyGI@infradead.org>
+ <20240727145232.GA377174@mit.edu>
+ <23862652-a702-4a5d-b804-db9ee9f6f539@linux.dev>
+ <20240729024412.GD377174@mit.edu>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <20240729024412.GD377174@mit.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/7/27 11:25, Jaegeuk Kim wrote:
-> On 07/26, Chao Yu wrote:
->> On 2024/2/21 15:32, liujinbao1 wrote:
->>> From: liujinbao1 <liujinbao1@xiaomi.com>
->>>
->>> When we add "atgc" to the fstab table, ATGC is not immediately enabled.
->>> There is a 7-day time threshold, and we can use "atgc_enabled" to
->>> show whether ATGC is enabled.
+On 29/07/2024 10:44, Theodore Ts'o wrote:
+> On Mon, Jul 29, 2024 at 09:46:17AM +0800, Youling Tang wrote:
+>> 1. Previous version implementation: array mode (see link 1) :
+>>     Advantages:
+>>     - Few changes, simple principle, easy to understand code.
+>>     Disadvantages:
+>>     - Each modified module needs to maintain an array, more code.
 >>
->> Oh, I missed to reply on this patch, what about adding this readonly
->> atgc_enabled sysfs entry into /sys/fs/f2fs/<dev>/stat/ directory?
-> 
-> It looks like not stat.
-
-Okay,
-
-Reviewed-by: Chao Yu <chao@kernel.org>
+>> 2. Current implementation: explicit call subinit in initcall (see link 2) :
+>>     Advantages:
+>>     - Direct use of helpes macros, the subinit call sequence is
+>>       intuitive, and the implementation is relatively simple.
+>>     Disadvantages:
+>>     - helper macros need to be implemented compared to array mode.
+>>
+>> 3. Only one module_subinit per file (not implemented, see link 3) :
+>>     Advantage:
+>>     - No need to display to call subinit.
+>>     Disadvantages:
+>>     - Magic order based on Makefile makes code more fragile,
+>>     - Make sure that each file has only one module_subinit,
+>>     - It is not intuitive to know which subinits the module needs
+>>       and in what order (grep and Makefile are required),
+>>     - With multiple subinits per module, it would be difficult to
+>>       define module_{subinit, subexit} by MODULE, and difficult to
+>>       rollback when initialization fails (I haven't found a good way
+>>       to do this yet).
+>>
+>>
+>> Personally, I prefer the implementation of method two.
+> But there's also method zero --- keep things the way they are, and
+> don't try to add a new astraction.
+>
+> Advantage:
+>
+>   -- Code has worked for decades, so it is very well tested
+>   -- Very easy to understand and maintain
+>
+> Disadvantage
+>
+>   --- A few extra lines of C code.
+The number of lines of code is not important, the main point is to
+better ensure that subexit runs in the reverse order of subinit when
+init fails.
 
 Thanks,
+Youling.
 
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: liujinbao1 <liujinbao1@xiaomi.com>
->>> ---
->>>    Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
->>>    fs/f2fs/sysfs.c                         | 8 ++++++++
->>>    2 files changed, 14 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
->>> index 36c3cb547901..8597dfaef700 100644
->>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->>> @@ -564,6 +564,12 @@ Description:	When ATGC is on, it controls age threshold to bypass GCing young
->>>    		candidates whose age is not beyond the threshold, by default it was
->>>    		initialized as 604800 seconds (equals to 7 days).
->>> +What:		/sys/fs/f2fs/<disk>/atgc_enabled
->>> +Date:		Feb 2024
->>> +Contact:	"Jinbao Liu" <liujinbao1@xiaomi.com>
->>> +Description:	It represents whether ATGC is on or off. The value is 1 which
->>> +               indicates that ATGC is on, and 0 indicates that it is off.
->>> +
->>>    What:		/sys/fs/f2fs/<disk>/gc_reclaimed_segments
->>>    Date:		July 2021
->>>    Contact:	"Daeho Jeong" <daehojeong@google.com>
->>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>> index 417fae96890f..0915872abd97 100644
->>> --- a/fs/f2fs/sysfs.c
->>> +++ b/fs/f2fs/sysfs.c
->>> @@ -143,6 +143,12 @@ static ssize_t pending_discard_show(struct f2fs_attr *a,
->>>    				&SM_I(sbi)->dcc_info->discard_cmd_cnt));
->>>    }
->>> +static ssize_t atgc_enabled_show(struct f2fs_attr *a,
->>> +		struct f2fs_sb_info *sbi, char *buf)
->>> +{
->>> +	return sysfs_emit(buf, "%d\n", sbi->am.atgc_enabled ? 1 : 0);
->>> +}
->>> +
->>>    static ssize_t gc_mode_show(struct f2fs_attr *a,
->>>    		struct f2fs_sb_info *sbi, char *buf)
->>>    {
->>> @@ -1017,6 +1023,7 @@ F2FS_GENERAL_RO_ATTR(encoding);
->>>    F2FS_GENERAL_RO_ATTR(mounted_time_sec);
->>>    F2FS_GENERAL_RO_ATTR(main_blkaddr);
->>>    F2FS_GENERAL_RO_ATTR(pending_discard);
->>> +F2FS_GENERAL_RO_ATTR(atgc_enabled);
->>>    F2FS_GENERAL_RO_ATTR(gc_mode);
->>>    #ifdef CONFIG_F2FS_STAT_FS
->>>    F2FS_GENERAL_RO_ATTR(moved_blocks_background);
->>> @@ -1144,6 +1151,7 @@ static struct attribute *f2fs_attrs[] = {
->>>    	ATTR_LIST(atgc_candidate_count),
->>>    	ATTR_LIST(atgc_age_weight),
->>>    	ATTR_LIST(atgc_age_threshold),
->>> +	ATTR_LIST(atgc_enabled),
->>>    	ATTR_LIST(seq_file_ra_mul),
->>>    	ATTR_LIST(gc_segment_mode),
->>>    	ATTR_LIST(gc_reclaimed_segments),
+>
+> which we need to weigh against the other choices.
+>
+>        	      	       	       	   - Ted
+
 
