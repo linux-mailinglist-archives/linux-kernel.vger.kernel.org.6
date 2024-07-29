@@ -1,202 +1,185 @@
-Return-Path: <linux-kernel+bounces-265299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EBF93EF41
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:59:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787ED93EF44
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83AFBB20BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 07:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EA5281173
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74BA1304AD;
-	Mon, 29 Jul 2024 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1509F13213C;
+	Mon, 29 Jul 2024 08:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zHQiCVl2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OsM0jrxM"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3D12D1FA;
-	Mon, 29 Jul 2024 07:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E4685260
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722239974; cv=none; b=pyXxmFygqyfPwE4L6uXONB1nlA6Ud9ZaWRHBxyFxnj6nbrYYWfxiIewH03epx3IUrOG9BE3/gqQjNdlytqnVeyQJ4Ix31HdWhRq6Y/Y5in8+ZDmWQxHA2GZiCXg6FDUiv409axZYrc7+/SToAR39tF+S97XiAW8F3BYnhhMDqzI=
+	t=1722240017; cv=none; b=JiuI3Gp2GnIdLydAME1AFn90uHuINX96JaXSTiKdgvU79oy/tPOcyWTcnshSM/z0SsEWnP+knzPimCpv1FHGOv41DnHvmZB3pyaB0dJNL4xUa6Jwy0NtEj0uP2dC9jOLgdnnKVwDHIvUiTtkdAWFnI6LomW4N6uApamlLbyOPwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722239974; c=relaxed/simple;
-	bh=fzVSMdR2QxHZlMfsS7rulnJXcfjo/rELHom0IR6qjsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COy28pfC63Rp2hFbIRlA/UFKrXpIr3OLmSKGgZ1qrr4jxL/lSEWmFApcZ4iZk/EmzDFn9tMmD8pXJRWAJqmgRO89QYWG3fvlD+vqwk6ObilsMZBhEk3TWcZetqjH0i7Z3p4avYg6dzpCQTR5no1UILxb1lWUtx10f1ovQiZpcnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zHQiCVl2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722239970;
-	bh=fzVSMdR2QxHZlMfsS7rulnJXcfjo/rELHom0IR6qjsE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=zHQiCVl2n0w7TV43R1MMuAInYVtVCnw5Mls9c6zb7s742CpKptJrfechxO3jWcbPD
-	 aWLabwPjjBXHbXY8b86v83LeK3T7Pj3zPoni9gM5JbcmCTPFvMlheP4Ygacl58Fvus
-	 R2bPjPNa+ISI1dkutCDNA9ATWs5Ie3vmdxOrJ6Wa2TXn1EU7p5x3KeJB1hAOgv46tm
-	 SO+nH7Qs/oW1yWEkaTzfid3X4a4cjzCNLgm7SqDNUVQgSmHGFEMpPDvRL2YdpeYMoq
-	 vG36aU6ca4xoQbq82O8OqP61VbSbXeUpsSZOqKvRrJitTpa/7fcAAzH/QrAKxvKUu1
-	 tVgTtLwPfVwJg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1324A37809CE;
-	Mon, 29 Jul 2024 07:59:30 +0000 (UTC)
-Message-ID: <51f0f4f3-11a5-4d74-981e-3f24f8475c7f@collabora.com>
-Date: Mon, 29 Jul 2024 09:59:29 +0200
+	s=arc-20240116; t=1722240017; c=relaxed/simple;
+	bh=gqig0ULABc5QTf6gdBxiwlVkiMz++/xWAu8P9nXm+Yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2ATgEVsMM0GVLk/dvg4EyXGOXpjeTjTy0YgYeV8GgTMw/ckU3Mn8A+HA9pdFmzEQUhrJTf4XAHzjEDiUwqA8m6Bwcs3AsTz3LsjwFWc1g0gj0Ai/q0dCVaogNhB5qDNE0qqj4LwtUj9awiPxBeKjrgkOcleGjDiWNYA2tK5dvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OsM0jrxM; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc569440e1so25048465ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 01:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722240015; x=1722844815; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IZwZqPvJh4AbxW6ByMaS8C6OygwvpLTFq0TUS9PMs9s=;
+        b=OsM0jrxMcH1lzh5QcMOB8asjIQc+QjfBL6uJpRQY7BT2U8y97ZbvC0oFrfMsWmv1A1
+         KYKbk8lRImvcqG2z1pMAzSSSJRF6yjtgWNA4hwcMhpbLqOz2el+WBK1Pb2lRc62iaUO2
+         Afemw2GzVTUfO+gd9DDWp+vdTL+WoXfPjuPnVBtacl3XtiaRqi8lDgb9sLmLJgPDZLQV
+         UnmtWJlLN08QwnriLB2ZDWP6TK+bItfnt+Tz8EBuMDaVwflXPDnpwDdMmDoZqa6kSSIs
+         AlpUoplVANwRnNjSM4V/Fz/n7jSnik2MaG38d0IRaysUuEtmSQPZSX+llSncB5mxObto
+         DOlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722240015; x=1722844815;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZwZqPvJh4AbxW6ByMaS8C6OygwvpLTFq0TUS9PMs9s=;
+        b=KlqKMjKR20n7jzgsAJXrZPJTa/ZvDVo0kt05ogcmr0eLwT81dIABr8Gh+Y2oTuXqPp
+         xd43lyvChrD4HlitPEzJCWSyHZU3CG+tBvDf0xjZ0m+NrvPgGYQHej2E5BBKOew+wr1F
+         9rd9H/viSJ5diezObvUPUen9oI0xx8Y453lJ7kPe5zA0VfPPXejEDsitB/BCC/rRg+XN
+         vqRGIb1LdbsQs4wHyJMskzMkAQx0UCZ1KTiEL6h88EqDHzvTY+zRyIy7NMSuz5Ll0Wdk
+         y0UqeOBmT9RfA+qdbBCmUZM6YVnET8oF5w3iXB6OLyrVnWuQV7Z2yl5TyCkESt8ou+aw
+         BFmA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6rAv2GfUay/WqxMafjRpdze7Q319lQ8norn/SMAHxkIAtqG85Ud3FNHLai+m3G7zFCS9zX4TbqMcroDHlwILYEJaYgICpyrLfylQP
+X-Gm-Message-State: AOJu0Yw9YqLa7/ntAnTiuh26fXlX3CobrDvHVfiLPuvKwZ/xFItM2Xyp
+	saiCRt1jI97UKDzCl1Q/agZ17uUWvfqNdOSiOJD2zNFA/O2I13jHl0x7n0J0YQ==
+X-Google-Smtp-Source: AGHT+IGw6ntMSIZXrn+M7V9oFM6znOqalhya3M3rym9hvcc6pLj47+SXg29jXV6DF+nKd83PCONWsA==
+X-Received: by 2002:a17:903:22c2:b0:1fb:6663:b647 with SMTP id d9443c01a7336-1ff047e4486mr112315185ad.3.1722240014693;
+        Mon, 29 Jul 2024 01:00:14 -0700 (PDT)
+Received: from thinkpad ([117.213.101.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fbd8d4sm76322585ad.271.2024.07.29.01.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 01:00:14 -0700 (PDT)
+Date: Mon, 29 Jul 2024 13:30:06 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, robh@kernel.org
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org, ahalaney@redhat.com, srk@ti.com
+Subject: Re: [PATCH v2] PCI: j721e: Disable INTx mapping and swizzling
+Message-ID: <20240729080006.GA8698@thinkpad>
+References: <20240726135903.1255825-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
- controller
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
- <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
- <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
- <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240726135903.1255825-1-s-vadapalli@ti.com>
 
-Il 26/07/24 17:11, Chen-Yu Tsai ha scritto:
-> On Fri, Jul 26, 2024 at 8:11 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
->>> Hi,
->>>
->>> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
->>> <nfraprado@collabora.com> wrote:
->>>>
->>>> Currently if the xhci1 controller happens to probe before the pcie1
->>>> controller then it fails with the following errors:
->>>>
->>>> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
->>>> xhci-mtk 11290000.usb: can't setup: -110
->>>> xhci-mtk: probe of 11290000.usb failed with error -110
->>>>
->>>> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
->>>> clock, although exactly why this pcie clock is needed for the usb
->>>> controller is still unknown. Add the clock to the xhci1 controller so it
->>>> always probes successfully and use a placeholder clock name for it.
->>>>
->>>> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
->>>> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
->>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>
->>> So I asked MediaTek about this, and it seems the correct thing to do is
->>> disable USB 3 on this host controller using the following snippet. The
->>> snippet is copy-pasted from our issue tracker and won't apply directly.
->>>
->>> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
->>> is used only for USB 2.0 on an M.2 slot.
->>>
->>
->> Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
->>
->> I agree about disabling it on specific boards that use only the USB 2.0 lines of
->> this controller, but doing that globally looks wrong... and looks like being a
->> workaround for an error that gets solved with adding a clock as well.
->>
->> In short, the question is: why would that be the correct thing to do?
+On Fri, Jul 26, 2024 at 07:29:03PM +0530, Siddharth Vadapalli wrote:
+> Since the configuration of INTx (Legacy Interrupt) is not supported, set
+> the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
+>   of_irq_parse_pci: failed with rc=-22
+> when the pcieport driver attempts to setup INTx for the Host Bridge via
+> "pci_assign_irq()". The device-tree node of the Host Bridge doesn't
+> contain Legacy Interrupts. As a result, Legacy Interrupts are searched for
+> in the MSI Interrupt Parent of the Host Bridge with the help of
+> "of_irq_parse_raw()". Since the MSI Interrupt Parent of the Host Bridge
+> uses 3 interrupt cells while Legacy Interrupts only use 1, the search
+> for Legacy Interrupts is terminated prematurely by the "of_irq_parse_raw()"
+> function with the -EINVAL error code (rc=-22).
 > 
-> We can disable it in mt8195-cherry.dtsi then?
+> Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+> Cc: stable@vger.kernel.org
+> Reported-by: Andrew Halaney <ahalaney@redhat.com>
+> Tested-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-That device does not use this controller, so yes we can disable it, but that still
-doesn't resolve the issue pointed out by Nicolas...!
+TBH, I'm not comfortable with this change. Because, the INTx compatibility
+_should_ come from the platform description (in this case DT) and not the
+driver. The default map_irq() function is supposed to check the existence of
+INTx and correctly report it. In this case the issue is, the platform is not
+supporting INTx, but of_irq_parse_pci() reports a dubious error:
 
-Please note that the issue that he sees doesn't happen only on Tomato, but also on
-other MediaTek MT8195/MT8395 boards - and applying this commit makes disabling the
-controller, or disabling the USB 3 lines on the controller, kinda redundant, as
-this will effectively fix probing it... but again, fixing the actual issue with
-this controller is something that must be done.
+'of_irq_parse_pci: failed with rc=-22'
 
-Disabling the controller on Tomato is a different topic - here we are discussing
-about fixing the issue, and that will happen, again, on any board that has this
-controller enabled with USB3 lines. :-)
+instead of the actual error:
 
-So, unless there is any specific reason for which applying this commit is a bad
-idea, or any alternative fix to this that is better than the proposed one, and
-not a workaround... I'm applying this one.
+`of_irq_parse_pci: no interrupt-map found, INTx interrupts not available'
 
-Cheers,
-Angelo
+So I would say that the fix is in of_irq_parse_pci() implementation.
+of_irq_parse_pci() is supposed to find whether the PCIe controller is supporting
+INTx or not by parsing the 'interrupt-{map/extended}' properties till host
+bridge/controller node. But this API along with of_irq_parse_raw(), just walks
+up the tree till the top level interrupt controller and checks for INTx, which
+just feels wrong (that's why you are getting -EINVAL because of #interrupt-cells
+mismatch).
 
+I looked into the implementation over the weekend, but I'm not quite sure how to
+fix it though.
+
+Rob, perhaps you have any idea?
+
+- Mani
+
+> ---
 > 
-> ChenYu
+> Hello,
 > 
->> Cheers,
->> Angelo
->>
->>>
->>> ChenYu
->>>
->>> index 8b7307cdefc6..2dac9f706a58
->>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>> @@ -1447,6 +1447,7 @@
->>>                                         "xhci_ck";
->>>                           mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->>>                           wakeup-source;
->>> +                       mediatek,u3p-dis-msk = <0x1>;
->>>                           status = "disabled";
->>>                   };
->>>
->>>> ---
->>>>    arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
->>>>    1 file changed, 8 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>> index 2ee45752583c..cc5169871f1c 100644
->>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->>>> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
->>>>                                    <&topckgen CLK_TOP_SSUSB_P1_REF>,
->>>>                                    <&apmixedsys CLK_APMIXED_USB1PLL>,
->>>>                                    <&clk26m>,
->>>> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
->>>> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
->>>> +                                /*
->>>> +                                 * This clock is required due to a hardware
->>>> +                                 * bug. The 'frmcnt_ck' clock name is used as a
->>>> +                                 * placeholder.
->>>> +                                 */
->>>> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
->>>>                           clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
->>>> -                                     "xhci_ck";
->>>> +                                     "xhci_ck", "frmcnt_ck";
->>>>                           mediatek,syscon-wakeup = <&pericfg 0x400 104>;
->>>>                           wakeup-source;
->>>>                           status = "disabled";
->>>>
->>>> ---
->>>> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
->>>> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
->>>>
->>>> Best regards,
->>>> --
->>>> Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>>
->>>>
->>
->>
->>
+> This patch is based on commit
+> 1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+> of Mainline Linux.
+> 
+> v1:
+> https://lore.kernel.org/r/20240724065048.285838-1-s-vadapalli@ti.com
+> Changes since v1:
+> - Added "Cc: stable@vger.kernel.org" in the commit message.
+> - Based on Bjorn's feedback at:
+>   https://lore.kernel.org/r/20240724162304.GA802428@bhelgaas/
+>   the $subject and commit message have been updated. Additionally, the
+>   comment in the driver has also been updated to specify "INTx" instead of
+>   "Legacy Interrupts".
+> - Collected Tested-by tag from Andrew Halaney <ahalaney@redhat.com>:
+>   https://lore.kernel.org/r/vj6vtjphpmqv6hcblaalr2m4bwjujjwvom6ca4bjdzcmgazyaa@436unrb2lav7/
+> 
+> Patch has been tested on J721e-EVM and J784S4-EVM.
+> 
+> Regards,
+> Siddharth.
+> 
+>  drivers/pci/controller/cadence/pci-j721e.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 85718246016b..eaa6cfeb03c7 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -417,6 +417,10 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+>  		if (!bridge)
+>  			return -ENOMEM;
+>  
+> +		/* INTx is not supported */
+> +		bridge->map_irq = NULL;
+> +		bridge->swizzle_irq = NULL;
+> +
+>  		if (!data->byte_access_allowed)
+>  			bridge->ops = &cdns_ti_pcie_host_ops;
+>  		rc = pci_host_bridge_priv(bridge);
+> -- 
+> 2.40.1
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
