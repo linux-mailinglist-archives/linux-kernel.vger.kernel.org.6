@@ -1,115 +1,150 @@
-Return-Path: <linux-kernel+bounces-265877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECF293F726
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:00:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEB693F72F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF851C21D78
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949AF281624
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21F11494CE;
-	Mon, 29 Jul 2024 14:00:42 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A3F148826;
+	Mon, 29 Jul 2024 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HFLC0eGQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682CF548F7
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 14:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A843154BE0;
+	Mon, 29 Jul 2024 14:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261642; cv=none; b=BRZsDqveSfwLDW8bSHxeBmgpk0QC9ACOaajC6v5cCcXuC5kckNpjoAhBb2hdNRoQJ3PTeyDU/ZPJ21OGiVBr+MTpPVSaq3P5S026/Kj8cB/ig7N/DA12PEW8Fg4ZdzsaGhqGnJI3zy4Gx+pIV2ACIT45LTwwOyi7TuUDXkSAUT8=
+	t=1722261714; cv=none; b=H9TZ5agX5RIDEms9nZBbg42TYqnCCo+O2raW6yp12sD+4wpQpCzH5Wvpgiaajp3DlG8sXAG+gfmQgq56w+N8QfjT3bm/TVz8aL9RcjfRtscM+jHfw3KwWbMYeJ7CgmVE4DgrzNynORsRge+1PRjlYRAB8d2gImGNeauVsp7pmVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261642; c=relaxed/simple;
-	bh=+C5G98ln9+yx+wffTmDJJVxVlUYlMvWGxLtHHJag82s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ABrlITc6pva2j3wDqndqGpNkyKF6tagXNcBMlBq0WXGPMg1auAsPhweW+7p5B44q8WHTgIubcwq3f1hiEzgXX5c3mTw69emH7lFGtkI+6VbgXMeCd7F34NBTbD0W9Zg2d8GhuxZHRqcqtKyLcIotc25Cqureol2eN/G9NUlz1aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz5t1722261605t0effs2
-X-QQ-Originating-IP: 6T+RBtkSm//PVU4kzjr+8BMsfYPy91XnEsOyGvF5Y5U=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 29 Jul 2024 22:00:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11452189067432365742
-From: WangYuli <wangyuli@uniontech.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	Jingwen.Chen2@amd.com,
-	suhui@nfschina.com,
-	dan.carpenter@linaro.org,
-	bokun.zhang@amd.com,
-	wangyuli@uniontech.com,
-	chongli2@amd.com,
-	Luqmaan.Irshad@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	shaoyang@uniontech.com,
-	hongao@uniontech.com,
-	wenlunpeng <wenlunpeng@uniontech.com>
-Subject: [PATCH v2] drm/amd/amdgpu: Properly tune the size of struct
-Date: Mon, 29 Jul 2024 22:00:00 +0800
-Message-ID: <D51E93EE77EF1231+20240729140000.890760-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1722261714; c=relaxed/simple;
+	bh=Y1Nevpy7uyu+oEQw6udVEHNAduDwy+JCJe65utQ5wiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqbM/CNyAhiwwNbwoX7bAv9GpoJfYAJyeaLXEsIPwvSFDmnbOuEQpD7FNXZ3ucXI3nczTY1BVlw21nSkHD0QNBdpq1/14ixcznhE9glvvih6DTSusEO2fWYl5ml7OROG+h25praYKjmLlmi25QYZATHndEG1ZAkD9B1xuco7+BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HFLC0eGQ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722261712; x=1753797712;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y1Nevpy7uyu+oEQw6udVEHNAduDwy+JCJe65utQ5wiQ=;
+  b=HFLC0eGQC+4giwxnhs1CfSRuJYVQqBfO335Vn/GdsXUWNy5fAdq6xDiA
+   WAL9T2Tuvp9PqF1RxA9wH5Wr36qwX1wTem1FaoewUkeSib70TstjeGXem
+   PdHkvZ+TyAeRCnIACkJ7iS0ipfWIpa+CXlJezDcoNEdxvPlK8R6KcwzXq
+   ZYU1wDojqN4Yxa4jG/NCLleAEKqvCLbodjB5FrRfhNzydon0BFcL9svni
+   9y7Q/wClKITcWE9lcOdv9Bbzxig9VzNCnyKd9paNIhwS1zz3ZTijjc1v3
+   N8m3AvWoeP2Fz44iIjAHUIyCCt8LQF6BMrUv9fTmKXeFeTqf1xePYkOB/
+   A==;
+X-CSE-ConnectionGUID: B2Te7/SdTYGIgSkEZq8vqQ==
+X-CSE-MsgGUID: Z779Oy8yRdGUd+X8GdT2bQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="30603370"
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="30603370"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 07:01:52 -0700
+X-CSE-ConnectionGUID: WrsHn0OKRsq82MOfpFclQg==
+X-CSE-MsgGUID: HNG9f+BxTTS5qEhc3zVxbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="54235294"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 29 Jul 2024 07:01:48 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sYQwc-000rjw-1m;
+	Mon, 29 Jul 2024 14:01:46 +0000
+Date: Mon, 29 Jul 2024 22:01:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v10 8/9] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <202407292157.BauV7TPf-lkp@intel.com>
+References: <ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc@nvidia.com>
 
-The struct assertion is failed because sparse cannot parse
-`#pragma pack(push, 1)` and `#pragma pack(pop)` correctly.
-GCC's output is still 1-byte-aligned. No harm to memory layout.
+Hi Nicolin,
 
-The error can be filtered out by sparse-diff, but sometimes
-multiple lines queezed into one, making the sparse-diff thinks
-its a new error. I'm trying to aviod this by fixing errors.
+kernel test robot noticed the following build warnings:
 
-Link: https://lore.kernel.org/all/20230620045919.492128-1-suhui@nfschina.com/
-Fixes: 1721bc1b2afa ("drm/amdgpu: Update VF2PF interface")
-Signed-off-by: Su Hui <suhui@nfschina.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: wenlunpeng <wenlunpeng@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.11-rc1 next-20240729]
+[cannot apply to joro-iommu/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-index fb2b394bb9c5..6e9eeaeb3de1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
-@@ -213,7 +213,7 @@ struct amd_sriov_msg_pf2vf_info {
- 	uint32_t gpu_capacity;
- 	/* reserved */
- 	uint32_t reserved[256 - AMD_SRIOV_MSG_PF2VF_INFO_FILLED_SIZE];
--};
-+} __packed;
- 
- struct amd_sriov_msg_vf2pf_info_header {
- 	/* the total structure size in byte */
-@@ -273,7 +273,7 @@ struct amd_sriov_msg_vf2pf_info {
- 	uint32_t mes_info_size;
- 	/* reserved */
- 	uint32_t reserved[256 - AMD_SRIOV_MSG_VF2PF_INFO_FILLED_SIZE];
--};
-+} __packed;
- 
- /* mailbox message send from guest to host  */
- enum amd_sriov_mailbox_request_message {
+url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommu-arm-smmu-v3-Issue-a-batch-of-commands-to-the-same-cmdq/20240729-072957
+base:   linus/master
+patch link:    https://lore.kernel.org/r/ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc%40nvidia.com
+patch subject: [PATCH v10 8/9] iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20240729/202407292157.BauV7TPf-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project ccae7b461be339e717d02f99ac857cf0bc7d17fc)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240729/202407292157.BauV7TPf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407292157.BauV7TPf-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Function parameter or struct member 'vintfs' not described in 'tegra241_cmdqv'
+>> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Excess struct member 'vtinfs' description in 'tegra241_cmdqv'
+
+
+vim +186 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+
+   160	
+   161	/**
+   162	 * struct tegra241_cmdqv - CMDQ-V for SMMUv3
+   163	 * @smmu: SMMUv3 device
+   164	 * @base: MMIO base address
+   165	 * @irq: IRQ number
+   166	 * @num_vintfs: Total number of VINTFs
+   167	 * @num_vcmdqs: Total number of VCMDQs
+   168	 * @num_lvcmdqs_per_vintf: Number of logical VCMDQs per VINTF
+   169	 * @vintf_ids: VINTF id allocator
+   170	 * @vtinfs: List of VINTFs
+   171	 */
+   172	struct tegra241_cmdqv {
+   173		struct arm_smmu_device smmu;
+   174	
+   175		void __iomem *base;
+   176		int irq;
+   177	
+   178		/* CMDQV Hardware Params */
+   179		u16 num_vintfs;
+   180		u16 num_vcmdqs;
+   181		u16 num_lvcmdqs_per_vintf;
+   182	
+   183		struct ida vintf_ids;
+   184	
+   185		struct tegra241_vintf **vintfs;
+ > 186	};
+   187	
+
 -- 
-2.43.4
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
