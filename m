@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-265919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2624093F7B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:25:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7D993F7B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05851F20FC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CB31C219C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFA7188CAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E7118786D;
 	Mon, 29 Jul 2024 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="blT9bINO"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ou+Rt7bI"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABF0186E2E;
-	Mon, 29 Jul 2024 14:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFAA1862A9;
+	Mon, 29 Jul 2024 14:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262894; cv=none; b=IC1ZdKW/br53l7pRdeRa4oXPuLnPmokogo96QR0jE7MZL1AtF/q6R6LDiSkKZY1cVDJXURu+iLOEdsiCZv7owkWZsN9wONSdMaw4464rPvXC02TsjfweNp31VzK7uHrm58iBkIAi62QohVbd4YSMNdpGCpZObzbmIak5MDlWgP0=
+	t=1722262893; cv=none; b=LmNPk7m+K1jnip1Wta5A8YNj9KS/+rwE38VnH29DdK9pMCUQYBeKNxEcO8sIXUWyDio4+WvbalveyJP5YYpfD45/QtA4HBOh2inmff2Qcnk+eizm+Q/BzolD113HcSacMvDhpnoNktYZBkyGzP0eoITCpiErEynUKb4rBQHEY4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262894; c=relaxed/simple;
-	bh=RuyLvw/h+OQQyELNwgwUqFWsLnM0a4DzBBIRdu/rvnQ=;
+	s=arc-20240116; t=1722262893; c=relaxed/simple;
+	bh=EfqIxpeHcxquG/A6osWSWsmqDV5LJmj/1Fp0aeEDa5s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ntEplR8gcMQv4DCCarEBfMHqW4aihi1RfTCbhVBZ3lPp/PR3M3ETUas0PlxJ7l62M7w8s0ULXl/9vE2i6S6B/ACVaWU9JK4cs1+e1YpVMN27pgzO9y3CPL1zodb8RZyd4hvrY4Ksf7GKtacGK/LmAYUAqrJLy4gZCyzpFOUO+Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=blT9bINO; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version; b=kNDXLIgnnOt+nyi8c/B1wO46HtBLT1ORgmWNTbDHCu4QJKWnIccSW31QtIXPr2jeBeoPU7Avch3O4smDwOpbmy6wyHKQvOLVelNsfIzTYTwgUrbXv6Dwhgqw18oyHdSGuZM493/nVTS6+k1crbgPozt9JvVoUGSSiwR0WLHZKfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ou+Rt7bI; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 20A06240009;
+Received: by mail.gandi.net (Postfix) with ESMTPA id CD458240002;
 	Mon, 29 Jul 2024 14:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722262889;
+	t=1722262890;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FjqvInV++CElrxkmHy5Fprr8fbtF8RDwM+F8J2U6FCo=;
-	b=blT9bINO0h9Sj/5UKq8Mw6GMNM9k7Gk1dFojZrr8xeE79IMXP6NDEbdpw6a6Re4iCy1Mtp
-	Um6oDqA7/qXTFnZy3OlcTjuumS1fMxU9KTcBWZo8oVRvAv8TQ/OlsFiP/1lvYePxRqVUC3
-	kfaQTNLa/DFfOQFXaq5ZNSPfTFqyP1e93iKGWeLjgfbikqGApjsT3CNXtCRa9R66v40Djx
-	Nl/fLi2KEimx3o4QG0gwy4ZO/noFQ6DFOdkviKDVNRgQCBurUKk86e3278ZjcikK8EWz5H
-	IrlCFyfumX3GDAmFe/34iTOhcqMvIykiIVm5ttnmJmunHqd41lMNFuRpKXT+yA==
+	bh=hvpSGkwLO+E6MOzmOnoPAe/sppi5mCag/x8MKSW8BQ8=;
+	b=Ou+Rt7bI8I3SxCvhwt/hrnWJHz5TAmU7OouVUtnRVrZzwmv/p2ueIDzrFiTzw3OXLnrUZq
+	l0HClrTqVPbvkFOaRkFY1vv7l9udUXCCI/wscCeKjcrjTcY12mKF1nLjML76JY4/BZF5W9
+	MEzP08FvDn8LFBaD9hxhd4v2NTE9zDvGYDXFv4bH6YaF8ylG3ZuZcaPobT8YyWi5L0dvgy
+	6VjeZNaK18rYXZt2xOakpCZmz0TgU3S/upfld+xkJl3zD04CjNYnBW9jAS9gHQs3dMUFb7
+	dNBGII68Jioi52KwGFb4M2ExAtfk2m9hP9BRdaf0j6trslB6lV/x7jLwaBdORw==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v1 20/36] soc: fsl: cpm1: qmc: Remove unneeded parenthesis
-Date: Mon, 29 Jul 2024 16:20:49 +0200
-Message-ID: <20240729142107.104574-21-herve.codina@bootlin.com>
+Subject: [PATCH v1 21/36] soc: fsl: cpm1: qmc: Fix 'transmiter' typo
+Date: Mon, 29 Jul 2024 16:20:50 +0200
+Message-ID: <20240729142107.104574-22-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240729142107.104574-1-herve.codina@bootlin.com>
 References: <20240729142107.104574-1-herve.codina@bootlin.com>
@@ -73,49 +73,38 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-checkpatch.pl raises the following issue in several places
-  CHECK: Unnecessary parenthesis around ...
+checkpatch.pl raises the following issue
+  CHECK: 'transmiter' may be misspelled - perhaps 'transmitter'?
 
-Remove them.
+Indeed, fix it.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 44bd9b949770..04466e735302 100644
+index 04466e735302..2d54d7400d2d 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -359,8 +359,8 @@ int qmc_chan_set_param(struct qmc_chan *chan, const struct qmc_chan_param *param
+@@ -1715,7 +1715,7 @@ static int qmc_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_disable_intr;
  
- 	switch (param->mode) {
- 	case QMC_HDLC:
--		if ((param->hdlc.max_rx_buf_size % 4) ||
--		    (param->hdlc.max_rx_buf_size < 8))
-+		if (param->hdlc.max_rx_buf_size % 4 ||
-+		    param->hdlc.max_rx_buf_size < 8)
- 			return -EINVAL;
+-	/* Enable transmiter and receiver */
++	/* Enable transmitter and receiver */
+ 	qmc_setbits32(qmc->scc_regs + SCC_GSMRL, SCC_GSMRL_ENR | SCC_GSMRL_ENT);
  
- 		qmc_write16(chan->qmc->scc_pram + QMC_GBL_MRBLR,
-@@ -1152,7 +1152,7 @@ static int qmc_check_chans(struct qmc *qmc)
- 	if (ret)
- 		return ret;
+ 	platform_set_drvdata(pdev, qmc);
+@@ -1742,7 +1742,7 @@ static void qmc_remove(struct platform_device *pdev)
+ {
+ 	struct qmc *qmc = platform_get_drvdata(pdev);
  
--	if ((info.nb_tx_ts > 64) || (info.nb_rx_ts > 64)) {
-+	if (info.nb_tx_ts > 64 || info.nb_rx_ts > 64) {
- 		dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned not supported\n");
- 		return -EINVAL;
- 	}
-@@ -1161,7 +1161,7 @@ static int qmc_check_chans(struct qmc *qmc)
- 	 * If more than 32 TS are assigned to this serial, one common table is
- 	 * used for Tx and Rx and so masks must be equal for all channels.
- 	 */
--	if ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) {
-+	if (info.nb_tx_ts > 32 || info.nb_rx_ts > 32) {
- 		if (info.nb_tx_ts != info.nb_rx_ts) {
- 			dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned are not equal\n");
- 			return -EINVAL;
+-	/* Disable transmiter and receiver */
++	/* Disable transmitter and receiver */
+ 	qmc_setbits32(qmc->scc_regs + SCC_GSMRL, 0);
+ 
+ 	/* Disable interrupts */
 -- 
 2.45.0
 
