@@ -1,204 +1,142 @@
-Return-Path: <linux-kernel+bounces-266329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71FE93FE37
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:27:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A99793FE46
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656B51F22AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398791C22746
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAF918734B;
-	Mon, 29 Jul 2024 19:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599DD187562;
+	Mon, 29 Jul 2024 19:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VliUM/b6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="f7J9uxb/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s69QFT0M";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u5FK5zBv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wmWryF3F"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC89F84D34;
-	Mon, 29 Jul 2024 19:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F98374CC
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281224; cv=none; b=AlEfnpSOL9sorJ8KpIhqfofM7nYj2bTljBaRUlYc1EfiWzjK/DmoZHamOHWpVS/90skFAatjDcs9WqExlmAGkHCl0JvcEzM69QUEERFpMHe3jNeWhWld+d7qFgbo8lBwF7QPnJP2n0giG5ohxRnk13MIQoYiR0w03S33rAhL4xo=
+	t=1722281505; cv=none; b=KYKcNHede2QCQIOUBjqLdkS6bl+CqTnMeTHM4mbHtucqmaP3RNJbIQqqSo3VU346s3s9TjSk1e4sQ3kzqqbajAqhhw3V6uqSIpsZEi6DUxwtETlPwBqCWkD1koFK+tuzf/LOrZWF4OLKqIJ/1Q57cRJzNkfYJvZq7LaMr4hlc5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281224; c=relaxed/simple;
-	bh=cvfsAHSi0d/dgRWJetm1h/PLtW/nC7SPpo8BdBSh174=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lyru3wwB3y7W8Ihhr4tTr+Kzq/3hMY8i6vjbAqPBPiBqGDiDpb+JfOBCtID1c3Zab0aO6AWasylcuSw7TrSXZStVJqua4KI3fH3EhNgf0ZVBltTlDdQWYHuHVeSf1StwVrIDsFDGaw1yRm4Qc0sjkG1yWD05i8a90uv59EmYNHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VliUM/b6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=f7J9uxb/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s69QFT0M; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u5FK5zBv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EEAB11F7B7;
-	Mon, 29 Jul 2024 19:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722281220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ap1CzPaQNwLMZeEIW6gyKI8pGrm9CZN65+dOLmY4P3U=;
-	b=VliUM/b6VWpb27ZaZ24e37m5yPfrVX8wD6h+TLPdru4kSlwBpSU+e/fgbFAkVimaJqhZlu
-	T3ULJjgsuCPaTyb06A4EoT9IczZh7saH9TYDFe4bxDgVqagPzFVk0SuFx+aHbpNtcuw7Dp
-	dOMq01hobuaYyrw4DKLZ1FZ5N4/tjzs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722281220;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ap1CzPaQNwLMZeEIW6gyKI8pGrm9CZN65+dOLmY4P3U=;
-	b=f7J9uxb/14xDOSETXcQHsbDNG6dnajRdOnwdZKTKLGMLaTd1u9eajxFj2e4q7tr5tfW7qJ
-	Cn7JiCGsSRZQurAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722281218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ap1CzPaQNwLMZeEIW6gyKI8pGrm9CZN65+dOLmY4P3U=;
-	b=s69QFT0M1jaEEoIyemRP4nmXu+g4fEQed9H+o23IMdvnXyiYpCsknxXNTDK/zt7opkpOuK
-	NKyHcKPslD23f/IUTt84ZingYVyWWjdOIup2Acghq77j11I6GXqNz/pgWre+/Tfsg2dUaw
-	ZtuI+Z5z04epmG+tuTLyo5HIeBZkAjQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722281218;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ap1CzPaQNwLMZeEIW6gyKI8pGrm9CZN65+dOLmY4P3U=;
-	b=u5FK5zBv/I7ikIqK/JCXDhj8aV0EV/O3VeWTBQvrzIBtrpA8NTWYoQAYPShS72vW33kDZb
-	E4jpYECuYeoj7cCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C1229138A7;
-	Mon, 29 Jul 2024 19:26:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Opr7LQLtp2YYPAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 29 Jul 2024 19:26:58 +0000
-Date: Mon, 29 Jul 2024 21:27:34 +0200
-Message-ID: <87jzh49exl.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
-In-Reply-To: <019d01dae1da$bc32b1d0$34981570$@opensource.cirrus.com>
-References: <20240729161532.147893-1-simont@opensource.cirrus.com>
-	<019d01dae1da$bc32b1d0$34981570$@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1722281505; c=relaxed/simple;
+	bh=8DvLD3KNC0DqFNTImhzjq0hN3fSBpCJ1567YwRbCNeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpDiR7JtUFw1WynQjvR7iWa+Mv8daWKCk2AZJblnLfYeoJvahexUhFKwVkaktBqcjwNppnvQ+ixEosUMHELF5coJVVoCImSI5CZPH+NXquV2mK+6QUp6jpkYJzwi1Eb3qea+iXtSBnIZb+2LHQoQP4HD+tozCoxZX940QwcLd84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wmWryF3F; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1d5f6c56fso242475385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:31:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1722281502; x=1722886302; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WKpZ7eoB/ekqBlUQuyzYfj8JL7Mxd5CfjCI/+gU/Xwo=;
+        b=wmWryF3FxXLf1MAQ08DJwT7XZ6yCoLrgxmX70kxKWV/wrLRAloq5LYc/NNZ2ONCSFc
+         zm66mlxSMj3YAmhINK014JFAfcEIaGoo0kKDGnn5r4yNngi055iMI+xShcbWwhOOuwDK
+         YfYeg+2B5ErOE616uZ761NKLCsi4yQBkU6o5i5O5ezrbM7WfldBTQNv220iYidFxK7Cb
+         kk883Mc/R2/JPZrwaSbl2g9GkMQm/wk8zjrod5coCP23kUc5vc0GvR4vcuIklx/Ojio7
+         2D/MkD7MXB9JE2uii4cfaoi1uFgbdc8r0GyyBKFBwRDuJCMIydrFL3iswqMN5DhLyFIR
+         kEYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722281502; x=1722886302;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKpZ7eoB/ekqBlUQuyzYfj8JL7Mxd5CfjCI/+gU/Xwo=;
+        b=PRRCIJkZAmN+oMBDRMy4fAsUviQ9906LpUp/HL/FvwQAlQvgBWQIbk3/kj6Aldd5mB
+         PUkmqwO14uqDfsJanaz8uAWIJf8kLOVX60HkKuzJo8clKh2x5XzUoCzwAKIyIG9aighM
+         98Bb7xaNOlugTVbBNRDTvVXjleq62fMSh8gwF1VaB96quTgElxWXq60o5IoQoQ82rLhc
+         nGudw3P/fu9DvwBjoque5kHD1asUYLiVujRa9OweSPS8tI1XGd17DU4dnuasXs8RxN5x
+         tSIMdfP86Ilw3xQCcrbq/HlY+Qot8ljvU5TqlrNb8PXr55UMDbO4eLzsNGZXzaRelcbq
+         ZyVw==
+X-Gm-Message-State: AOJu0YyN8rtuEcZDF42tOeaXzHnWzkQoE7khyHoBLAccK6UwdDR7JFs8
+	yuMBRStKQQKMMK/vtGYlwj2da1crZ0L6VDH43Eb5fAhrOSzJ+3Idz+lG8faS2w==
+X-Google-Smtp-Source: AGHT+IHKj69NMiL8iPsxcayl/FDa6E4pMMW32p3BOf6R+t+eMdwk5/XWNxzareH4deutnHZuOldRng==
+X-Received: by 2002:a05:620a:394e:b0:7a1:e93c:ccee with SMTP id af79cd13be357-7a1e93cd124mr973596885a.11.1722281501916;
+        Mon, 29 Jul 2024 12:31:41 -0700 (PDT)
+Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b5003sm564386985a.43.2024.07.29.12.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 12:31:41 -0700 (PDT)
+Date: Mon, 29 Jul 2024 15:31:38 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-usb@vger.kernel.org, mchehab@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [media?] [usb?] WARNING in
+ smsusb_init_device/usb_submit_urb
+Message-ID: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
+References: <000000000000e45551061e558c37@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,alsa-project.org:email,suse.com:email,cirrus.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000e45551061e558c37@google.com>
 
-On Mon, 29 Jul 2024 19:14:13 +0200,
-Simon Trimmer wrote:
+On Sun, Jul 28, 2024 at 02:37:25PM -0700, syzbot wrote:
+> Hello,
 > 
-> Apologies Takashi - can you ignore this one please? It will need a V2
-
-Sure.
-
-
-thanks,
-
-Takashi
-
+> syzbot found the following issue on:
 > 
-> > -----Original Message-----
-> > From: Simon Trimmer <simont@opensource.cirrus.com>
-> > Sent: Monday, July 29, 2024 5:16 PM
-> > To: tiwai@suse.com
-> > Cc: linux-sound@vger.kernel.org; alsa-devel@alsa-project.org; linux-
-> > kernel@vger.kernel.org; patches@opensource.cirrus.com; Simon Trimmer
-> > <simont@opensource.cirrus.com>
-> > Subject: [PATCH] ALSA: hda: cs35l56: Stop creating ALSA controls for
-> firmware
-> > coefficients
-> > 
-> > A number of laptops have gone to market with old firmware versions that
-> > export controls that have since been hidden, but we can't just install a
-> > newer firmware because the firmware for each product is customized and
-> > qualified by the OEM. The issue is that alsactl save and restore has no
-> > idea what controls are good to persist which can lead to
-> > misconfiguration.
-> > 
-> > As the ALSA controls for the firmware coefficients are not used in
-> > normal operation they can all be hidden, but add a kernel parameter so
-> > that they can be re-enabled for debugging.
-> > 
-> > Fixes: 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic
-> CS35L56
-> > amplifier")
-> > Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
-> > ---
-> >  sound/pci/hda/cs35l56_hda.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-> > index 96d3f13c5abf..1494383b22c9 100644
-> > --- a/sound/pci/hda/cs35l56_hda.c
-> > +++ b/sound/pci/hda/cs35l56_hda.c
-> > @@ -23,6 +23,10 @@
-> >  #include "hda_cs_dsp_ctl.h"
-> >  #include "hda_generic.h"
-> > 
-> > +static bool expose_dsp_controls;
-> > +module_param(expose_dsp_controls, bool, 0444);
-> > +MODULE_PARM_DESC(expose_dsp_controls, "Expose firmware controls as
-> > ALSA controls 0=no (default), 1=yes");
-> > +
-> >   /*
-> >    * The cs35l56_hda_dai_config[] reg sequence configures the device as
-> >    *  ASP1_BCLK_FREQ = 3.072 MHz
-> > @@ -758,6 +762,9 @@ static int cs35l56_hda_bind(struct device *dev, struct
-> > device *master, void *mas
-> > 
-> >  	cs35l56_hda_create_controls(cs35l56);
-> > 
-> > +	if (expose_dsp_controls)
-> > +		cs35l56_hda_add_dsp_controls(cs35l56);
-> > +
-> >  #if IS_ENABLED(CONFIG_SND_DEBUG)
-> >  	cs35l56->debugfs_root = debugfs_create_dir(dev_name(cs35l56-
-> > >base.dev), sound_debugfs_root);
-> >  	cs_dsp_init_debugfs(&cs35l56->cs_dsp, cs35l56->debugfs_root);
-> > --
-> > 2.43.0
+> HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10eb7dad980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdd6022e793d4ad
+> dashboard link: https://syzkaller.appspot.com/bug?extid=85e3ddbf0ddbfbc85f1e
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10893645980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10885779980000
 > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/504e81a2120c/disk-93306970.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/320d2f3e66b3/vmlinux-93306970.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/65b8e1c28010/bzImage-93306970.xz
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com
+> 
+> smsusb:smsusb_probe: board id=15, interface number 6
+> smsusb:siano_media_device_register: media controller created
+> ------------[ cut here ]------------
+> usb 1-1: BOGUS urb xfer, pipe 3 != type 1
+> WARNING: CPU: 0 PID: 42 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+
+> Call Trace:
+>  <TASK>
+>  smsusb_submit_urb+0x288/0x410 drivers/media/usb/siano/smsusb.c:173
+>  smsusb_start_streaming drivers/media/usb/siano/smsusb.c:197 [inline]
+>  smsusb_init_device+0x856/0xe10 drivers/media/usb/siano/smsusb.c:477
+>  smsusb_probe+0x5e2/0x10b0 drivers/media/usb/siano/smsusb.c:575
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git 933069701c1b
+
+Index: usb-devel/drivers/media/usb/siano/smsusb.c
+===================================================================
+--- usb-devel.orig/drivers/media/usb/siano/smsusb.c
++++ usb-devel/drivers/media/usb/siano/smsusb.c
+@@ -410,10 +410,10 @@ static int smsusb_init_device(struct usb
+ 		struct usb_endpoint_descriptor *desc =
+ 				&intf->cur_altsetting->endpoint[i].desc;
+ 
+-		if (desc->bEndpointAddress & USB_DIR_IN) {
++		if (usb_endpoint_is_bulk_in(desc)) {
+ 			dev->in_ep = desc->bEndpointAddress;
+ 			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
+-		} else {
++		} else if (usb_endpoint_is_bulk_out(desc)) {
+ 			dev->out_ep = desc->bEndpointAddress;
+ 		}
+ 	}
+
 
