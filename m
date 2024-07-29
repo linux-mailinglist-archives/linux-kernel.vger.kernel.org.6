@@ -1,195 +1,174 @@
-Return-Path: <linux-kernel+bounces-265777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC1E93F5D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:47:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057FE93F5D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9BC1F24F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC381283478
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145CB154454;
-	Mon, 29 Jul 2024 12:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD5F14E2E2;
+	Mon, 29 Jul 2024 12:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vl9Hj31U"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2MD6yGo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027D14F9ED
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD00148848;
+	Mon, 29 Jul 2024 12:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722257206; cv=none; b=NFmdi6UeuyRbUMf0NRaSJU9tV2u8E4T8YK0KtK2v4h8qcDIInBIVQ3ouxf00XCEX9IM/aZJNo3v9yFzQRmbzC8ZcxeK0TRuB4cw/jtkL/1vhzQAdDYm2xbUGLGmsBXpeBMTQG2s93krG7Z+72TZYDO3zoL/9CYOl/N++KZmVuZk=
+	t=1722257201; cv=none; b=AhI7MzxFMGrpoGK+NOr3By8a3B7eUMrm4ucGt8Et3YiVzqVPYCqNuWvxbXvmRJoNI/j4TsJsZ9SiGU6+yyXg2+0vAU04vWZLMDPBTyMFRDWrb7CKomW+fLXrXHwAty8M631h5Q0Cw/DziafbnGY7DpL1y0orEjo0hC0BJKPZOZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722257206; c=relaxed/simple;
-	bh=IpoG1lr/gzkzVwJgoRWnmNxi6CMwEU4ctEbjih6yxYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gdnbpxzrYCZzHWDdkn9d3OqUpkF5zU7GlpLQkUDNZTDtfkN5Yg6Tl9kPsZ3mW0efps+9HosIjvnA40ye8Ad9hj8Rd1pJRkePRWK84YBHINs2lyPS7XVFqhZG7dnPMOBhwWpauqZb2rfgzkHOwPfEqAapBsaXY6h0cgJDBgahoPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vl9Hj31U; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc3447fso5094065a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 05:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722257202; x=1722862002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xw9owQO3ke8d+y01UUou/ic5P0UC0KrCWnrceDha0Ug=;
-        b=Vl9Hj31Ukjh+0XXek70d4b3McD1qt96OPDKBaQrTpsfTO9oyL7oJw4b+nGr1pAE/SS
-         MD76Sbx1JqSacRpsK5EyA68f/dZsfA5ENvNjvmdmgFGCttwFpbzSVJdAf3puhbV/4zGI
-         0Wy0n2Ln2qqeSL2YJA/QgaYy2vb2kcKW1nTXXsk2cDxjILfUTlbAxbXO4UY9Blc2m2vK
-         s48wIutlKm5AhKQyzTUEeBmt2RbHrXVoDMSIJtCzmZipawRnCpPHGQoF6f8GD2JLrs6e
-         wqHJc0nccSfk7QI2WHFubBNWvBHEKCxKjHdhBuzCOsKifOqAPuQmz+JoREvV0llUbZnr
-         c1XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722257202; x=1722862002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xw9owQO3ke8d+y01UUou/ic5P0UC0KrCWnrceDha0Ug=;
-        b=p3wVMg9OTrqI1lgS3nc+D4Zlp7haKeYJ8DOpbRI9gbLPKzDwBHF9ubVuwNVMwJEb6w
-         H0noqEFo6xR/MEQUxA/hTTsmqtwuq3eYV4GsoK3rGTc+CFmkOqljGhNIymUOdJ1VimpK
-         NfXvSRZKSxGApklXGLifZv1zewH1Iiy3PdJvdnvH+k0glzCkb/PqG9xfnjfd2rczzPRI
-         ulGyaA6sDIemfqS3aHDdSeX5d+mcgwCUdqsPzL/4uIDG0gAWCCo7/DGTMKT8VR9rrxfE
-         n9K+m221Kx/sxJO3CJwLJ9xKFOM5NYiy2jogf8un2w1DxeoFYqny4qBpCcKJdJX51+mM
-         QPMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs/u05XpENWGyM0w3J/849MQ6LYZ7nzg5XCH1hoa/tzvRxTGAYr2k44nTspf6eLCywF+Owy69QWOn1y+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRklszGAq+XmvQHVGrD3MkCfKNP1C8NYyiTq5ad9OKD9yN6BfE
-	8JEqY0o9OrO1v9KjPUhp6B86MMnXDIoBhvU544cTZ/c2ID/cEN7Q0k5V6L623cSvDhaW0W9w62L
-	bTv1PSvzM+Wa+XlZFm4s2Y4nFtPxOnq3HC+2+Hw==
-X-Google-Smtp-Source: AGHT+IHinY1JfNv/mvpMM5Yfya33RSJgmSSwyZAu9jSx+bnpuWuKGvwHZZBD/MV0VUfT3CqvD4NAwzRkoPIdWhAyZ+w=
-X-Received: by 2002:a17:907:2d86:b0:a77:b0a4:7d88 with SMTP id
- a640c23a62f3a-a7d3fdb79e8mr659217566b.10.1722257202254; Mon, 29 Jul 2024
- 05:46:42 -0700 (PDT)
+	s=arc-20240116; t=1722257201; c=relaxed/simple;
+	bh=6kuIL0AeDzmBuC5cBa38lI0juIYq77BoPdCcXKxB0Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ru1Z21UA/NCaHZOVI1lqFzwJtZ8iY40BcsFGjsoXF32lpTnq4Mk4YRC4vVsfOuRdOMzY2nD2ixHrQTmBZ2lPV5fklkgYQpn78CXId0uHdsAb6bUAJD86Ieb43aAAjQkfD9XtmnRBs91bP57Ufnx12wrlRpCBmv3O+daEBs4x+LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2MD6yGo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FD4C32786;
+	Mon, 29 Jul 2024 12:46:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722257201;
+	bh=6kuIL0AeDzmBuC5cBa38lI0juIYq77BoPdCcXKxB0Og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J2MD6yGoN6iYlqejpeL0zt2VeBiCbeGlIX5v3SvNGr59l/BdPYJU8+pYh4UwSpLRg
+	 f2L+l+3mkY4vyjopBWDdYvEjP9wrsbUTgAt9bcit4XfUbAB71fcaNL5tewNBRJ/DVU
+	 Wco++7Fliqz1Vn7V2rCWEuGaESPT0wfZWmJneAiIDWpo89LQYwVHcVA7MJugA4g31S
+	 cTrRRapug8rkcz0QJCnn11wqP4hbomWiM2FP/3olg+JelviBAneO8bmBa0CxW67WRp
+	 Fu58v9j8FSG7geQTXMUh1CNNmAwdG/+X/znQpc7BYIGdbhqtByZxjcSOch38YQCTeB
+	 ZC3z7uD70nkDA==
+Date: Mon, 29 Jul 2024 13:46:37 +0100
+From: Filipe Manana <fdmanana@kernel.org>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-26905: btrfs: fix data races when accessing the
+ reserved amount of block reserves
+Message-ID: <ZqePLSiplMVebl39@debian0.Home>
+References: <2024041746-CVE-2024-26905-69f0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
- <20240704-add-mtk-isp-3-0-support-v5-3-bfccccc5ec21@baylibre.com> <647738c5c776a9ec07615e67094c4141fdf051eb.camel@mediatek.com>
-In-Reply-To: <647738c5c776a9ec07615e67094c4141fdf051eb.camel@mediatek.com>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Mon, 29 Jul 2024 14:46:29 +0200
-Message-ID: <CAEHHSvYqT5-s57FijOf+SfLYF4znjaseazxiY-07jVHs09iK6Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 sensor interface
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, =?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	=?UTF-8?B?TG91aXMgS3VvICjpg63lvrflr6cp?= <louis.kuo@mediatek.com>, 
-	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com" <pnguyen@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024041746-CVE-2024-26905-69f0@gregkh>
 
-Le jeu. 18 juil. 2024 =C3=A0 04:44, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck=
-.hu@mediatek.com> a =C3=A9crit :
->
-> Hi, Julien:
->
-> On Thu, 2024-07-04 at 15:36 +0200, Julien Stephan wrote:
-> >
-> > External email : Please do not click links or open attachments until yo=
-u have verified the sender or the content.
-> >  From: Louis Kuo <louis.kuo@mediatek.com>
-> >
-> > This will add the mediatek ISP3.0 seninf (sensor interface) driver foun=
-d
-> > on several Mediatek SoCs such as the mt8365.
-> >
-> > Then seninf module has 4 physical CSI-2 inputs. Depending on the soc th=
-ey
-> > may not be all connected.
-> >
-> > Signed-off-by: Louis Kuo <louis.kuo@mediatek.com>
-> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
-> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---
->
-> [snip]
->
-> > +static const struct mtk_seninf_conf seninf_8365_conf =3D {
-> > +.model =3D "mtk-camsys-3.0",
-> > +.nb_inputs =3D 4,
-> > +.nb_muxes =3D 6,
-> > +.nb_outputs =3D 4,
-> > +};
-> > +
->
-> I think you should directly define these value as symbols because now
-> only support one SoC.
->
-> #define MODEL     "mtk-camsys-3.0"
-> #define INPUT_NR  4
-> #define MUTEX_NR  6
-> #define OUTPUT_NR 4
->
-> Because we don't know which SoC would be upstream later, maybe the next
-> SoC would be
->
-> static const struct mtk_seninf_conf seninf_83xx_conf =3D {
->         .model =3D "mtk-camsys-3.0",
->         .nb_inputs =3D 4,
->         .nb_muxes =3D 6,
->         .nb_outputs =3D 4,
->         .support_xxx =3D true;
-> };
->
-> then model, nb_inputs, nb_muxes, and nb_outputs has no difference, so
-> it's not necessary to define them as variable. So define them as
-> constant now, and when next SoC upstream, then we know which one would
-> be variable.
->
+On Wed, Apr 17, 2024 at 12:29:20PM +0200, Greg Kroah-Hartman wrote:
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> btrfs: fix data races when accessing the reserved amount of block reserves
+> 
 
-Hi CK,
+Greg, can you clarify why is this being classified as a CVE?
 
-Thank you for your feedback on this series.
-We already discussed this in an early version of the series (see
-https://lore.kernel.org/all/2dd412f0-86cb-3ae0-305d-0e8192b9128a@collabora.=
-com/).
-I also discussed with internal teams in Mediatek about the folder
-architecture. If this is not a red flag for you, I 'll let it as is.
+This is another similar instance of what I reported here:
 
-I will fix other comments you did and that I forgot to add in previous vers=
-ions.
+https://lore.kernel.org/lkml/Zkt48ug3KKOTQk42@debian0.Home/
 
-Cheers
-Julien
+It's a fix to silence KCSAN about a harmless race.
+I see no way a malicious user could use this to do anything harmful.
+It doesn't have functional issues either.
 
-> Regards,
-> CK
->
->
->
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including it=
-s
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or beli=
-eve
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+Thanks.
+
+> At space_info.c we have several places where we access the ->reserved
+> field of a block reserve without taking the block reserve's spinlock
+> first, which makes KCSAN warn about a data race since that field is
+> always updated while holding the spinlock.
+> 
+> The reports from KCSAN are like the following:
+> 
+>   [117.193526] BUG: KCSAN: data-race in btrfs_block_rsv_release [btrfs] / need_preemptive_reclaim [btrfs]
+> 
+>   [117.195148] read to 0x000000017f587190 of 8 bytes by task 6303 on cpu 3:
+>   [117.195172]  need_preemptive_reclaim+0x222/0x2f0 [btrfs]
+>   [117.195992]  __reserve_bytes+0xbb0/0xdc8 [btrfs]
+>   [117.196807]  btrfs_reserve_metadata_bytes+0x4c/0x120 [btrfs]
+>   [117.197620]  btrfs_block_rsv_add+0x78/0xa8 [btrfs]
+>   [117.198434]  btrfs_delayed_update_inode+0x154/0x368 [btrfs]
+>   [117.199300]  btrfs_update_inode+0x108/0x1c8 [btrfs]
+>   [117.200122]  btrfs_dirty_inode+0xb4/0x140 [btrfs]
+>   [117.200937]  btrfs_update_time+0x8c/0xb0 [btrfs]
+>   [117.201754]  touch_atime+0x16c/0x1e0
+>   [117.201789]  filemap_read+0x674/0x728
+>   [117.201823]  btrfs_file_read_iter+0xf8/0x410 [btrfs]
+>   [117.202653]  vfs_read+0x2b6/0x498
+>   [117.203454]  ksys_read+0xa2/0x150
+>   [117.203473]  __s390x_sys_read+0x68/0x88
+>   [117.203495]  do_syscall+0x1c6/0x210
+>   [117.203517]  __do_syscall+0xc8/0xf0
+>   [117.203539]  system_call+0x70/0x98
+> 
+>   [117.203579] write to 0x000000017f587190 of 8 bytes by task 11 on cpu 0:
+>   [117.203604]  btrfs_block_rsv_release+0x2e8/0x578 [btrfs]
+>   [117.204432]  btrfs_delayed_inode_release_metadata+0x7c/0x1d0 [btrfs]
+>   [117.205259]  __btrfs_update_delayed_inode+0x37c/0x5e0 [btrfs]
+>   [117.206093]  btrfs_async_run_delayed_root+0x356/0x498 [btrfs]
+>   [117.206917]  btrfs_work_helper+0x160/0x7a0 [btrfs]
+>   [117.207738]  process_one_work+0x3b6/0x838
+>   [117.207768]  worker_thread+0x75e/0xb10
+>   [117.207797]  kthread+0x21a/0x230
+>   [117.207830]  __ret_from_fork+0x6c/0xb8
+>   [117.207861]  ret_from_fork+0xa/0x30
+> 
+> So add a helper to get the reserved amount of a block reserve while
+> holding the lock. The value may be not be up to date anymore when used by
+> need_preemptive_reclaim() and btrfs_preempt_reclaim_metadata_space(), but
+> that's ok since the worst it can do is cause more reclaim work do be done
+> sooner rather than later. Reading the field while holding the lock instead
+> of using the data_race() annotation is used in order to prevent load
+> tearing.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-26905 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Fixed in 6.1.83 with commit 995e91c9556c
+> 	Fixed in 6.6.23 with commit 82220b1835ba
+> 	Fixed in 6.7.11 with commit c44542093525
+> 	Fixed in 6.8 with commit e06cc89475ed
+> 
+> Please see https://www.kernel.org for a full list of currently supported
+> kernel versions by the kernel community.
+> 
+> Unaffected versions might change over time as fixes are backported to
+> older supported kernel versions.  The official CVE entry at
+> 	https://cve.org/CVERecord/?id=CVE-2024-26905
+> will be updated if fixes are backported, please check that for the most
+> up to date information about this issue.
+> 
+> 
+> Affected files
+> ==============
+> 
+> The file(s) affected by this issue are:
+> 	fs/btrfs/block-rsv.h
+> 	fs/btrfs/space-info.c
+> 
+> 
+> Mitigation
+> ==========
+> 
+> The Linux kernel CVE team recommends that you update to the latest
+> stable kernel version for this, and many other bugfixes.  Individual
+> changes are never tested alone, but rather are part of a larger kernel
+> release.  Cherry-picking individual commits is not recommended or
+> supported by the Linux kernel community at all.  If however, updating to
+> the latest release is impossible, the individual changes to resolve this
+> issue can be found at these commits:
+> 	https://git.kernel.org/stable/c/995e91c9556c8fc6028b474145a36e947d1eb6b6
+> 	https://git.kernel.org/stable/c/82220b1835baaebf4ae2e490f56353a341a09bd2
+> 	https://git.kernel.org/stable/c/c44542093525699a30c307dae1ea5a1b03b3302f
+> 	https://git.kernel.org/stable/c/e06cc89475eddc1f3a7a4d471524256152c68166
 
