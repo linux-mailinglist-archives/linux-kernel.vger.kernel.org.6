@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-265490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067F193F1D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 030A693F1DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3171F22166
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8751F2239D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59D0143752;
-	Mon, 29 Jul 2024 09:50:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58821422C7;
-	Mon, 29 Jul 2024 09:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B60144D16;
+	Mon, 29 Jul 2024 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="K+tMnX/h"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E72013C69A;
+	Mon, 29 Jul 2024 09:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246653; cv=none; b=lQ0SFnyIlqYF/p4zWgpyZ+lQgurrCOhvWXIpwh6LYai2A/f5qzajS3UXSbbgcXyw1m/0WPvKS+iBBiBT7+x5VrTemudXaDDkc2bv2RyYYunezg4d/C8rHdRySZx7ZUKUBHSfWQHYG2ZY/aE60pMNwko9skvi4Fgynogn1hOHa1I=
+	t=1722246696; cv=none; b=ACBmnHzSdk0NKhB4Yt7KD8zo3kvUMA9pDgq7t6KfL4fIT++TFmfsXO/Irj5u92UIFtEHLxpZi5Ouj61uSwX1zugi7EJ3AmMAZ0ib0GMpJ7VlrYgYPQwMdax7834V7leL+qrgD/9o6AsmKb0O+PQqQ9Qfefmy7YYoE9a7v5TDpwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246653; c=relaxed/simple;
-	bh=vnBJjS/Nkhu1Zs0dAazWe/voq1rP6YchWhpCNKQVKhs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fGUSkVwsKJtE1V6rTtC2SfwMcZEBEYDDWbFyt6OLzvHjao0sLaohQ446doZ+pGHih4iBrPzWa+Eg4KHpXe+rzmDC92g6UHf9HoEGpxisTNQ2A/SKCMvM37ZVanmkY3Gbegt8QscW9QFbtVBq34dHNDpbMqazDXTBo+juwSP9r/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D0E81007;
-	Mon, 29 Jul 2024 02:51:15 -0700 (PDT)
-Received: from [10.57.78.240] (unknown [10.57.78.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BBC63F64C;
-	Mon, 29 Jul 2024 02:50:48 -0700 (PDT)
-Message-ID: <2cbb3467-1b49-4c86-9fad-9c75ce7d9c8f@arm.com>
-Date: Mon, 29 Jul 2024 11:50:40 +0200
+	s=arc-20240116; t=1722246696; c=relaxed/simple;
+	bh=2kGsOd+ZwJrV7UsrgURsmloJIJIXbumlQwR7uJ9i/k8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ujqEitWr+mJNS2hSZiDCrT53yksDzjjaTguhiprOghWRhBL0AyrUnaj1DdgBRie1/61VWYDHL3h7bGRSkx9V5ECSvBnkNdrl8F4OqLBoaZlgnyaF5fpRr50OHNKUipsnkyf4a73y3F+OSiLnSNOb+7LSgDnHobJhwNRKTRCCnro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=K+tMnX/h; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46T92RpN023245;
+	Mon, 29 Jul 2024 05:51:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=ZB/kns7KnoBYOA7us37Us+BiYr4
+	OwWgyx2Jl8wKA6cA=; b=K+tMnX/hw9OUdWB59pPsG6/n0eKx0xlezwOF1R0wUNb
+	7kcLz4ts5h8e7uMvJUkH9/CyhYmzalBgXr2utAlScK5bhLg0Ce5WBPSU2CjLaucG
+	8oggNtZpu9+EiLaEMRG1MUrIyiuQP7iz76EUBQxLmc56glazjeE/pRRG94O7KjWK
+	pB2lAmDoeoc0DQkPwX7KpEfZItUFHM3LTfKsDQk+zVJEkglxkXsRadzm+tU4OxCL
+	jx1rqsxhY0WTbjteo5hUvBQb4d2cGp5HsGQxtZZDMpGyC6AyIGCG3vx285xHTCFd
+	JCSu3YBZf6d4hKjxROz4LsDN4SUPEuaCMymWOfd4N3Q==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 40ndy4kp49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 05:51:10 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 46T9p9m1019209
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 29 Jul 2024 05:51:09 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 29 Jul
+ 2024 05:51:08 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 29 Jul 2024 05:51:08 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.170])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 46T9orqV024934;
+	Mon, 29 Jul 2024 05:50:56 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dragos
+ Bogdan <dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] *** Add ADF4378 Support ***
+Date: Mon, 29 Jul 2024 12:50:42 +0300
+Message-ID: <20240729095047.25040-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sched/fair: Use all little CPUs for CPU-bound workload
-From: Pierre Gondois <pierre.gondois@arm.com>
-To: stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
- Lukasz Luba <Lukasz.Luba@arm.com>
-Cc: linux-kernel@vger.kernel.org, Qais Yousef <qyousef@layalina.io>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>
-References: <20231206090043.634697-1-pierre.gondois@arm.com>
- <999a6c1d-c21d-4d16-a2a2-6d0b6e7df9a5@arm.com>
-Content-Language: en-US
-In-Reply-To: <999a6c1d-c21d-4d16-a2a2-6d0b6e7df9a5@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: WfTrWBVtyBvav83w-7AhZCiZttAJMHcS
+X-Proofpoint-GUID: WfTrWBVtyBvav83w-7AhZCiZttAJMHcS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290066
 
-Hello Sasha,
-Would it be possible to pick this patch for the 6.1 stable branch ?
-Or is there something I should do for this purpose ?
+Add support for ADF4378 high performance, ultra-low jitter, integer-N
+phased locked loop (PLL) with an integrated voltage controlled
+oscillator (VCO) and system reference (SYSREF) retimer ideally
+suited for data converter and mixed signal front end (MxFE) clock
+applications.
 
-Regards,
-Pierre
+The main difference between ADF4377 and ADF4378 is that the second one
+provides only one output frequency channel which is enable/disabled via
+one GPIO. 
 
-On 6/25/24 15:25, Pierre Gondois wrote:
-> Hello stable folk,
-> 
-> This patch was merged as:
->     commit 3af7524b1419 ("sched/fair: Use all little CPUs for CPU-bound workloads")
-> into 6.7, improving the following:
->     commit 0b0695f2b34a ("sched/fair: Rework load_balance()")
-> 
-> Would it be possible to port it to the 6.1 stable branch ?
-> The patch should apply cleanly by cherry-picking onto v6.1.94,
-> 
-> Regards,
-> Pierre
-> 
-> 
-> On 12/6/23 10:00, Pierre Gondois wrote:
->> Running n CPU-bound tasks on an n CPUs platform:
->> - with asymmetric CPU capacity
->> - not being a DynamIq system (i.e. having a PKG level sched domain
->>     without the SD_SHARE_PKG_RESOURCES flag set)
->> might result in a task placement where two tasks run on a big CPU
->> and none on a little CPU. This placement could be more optimal by
->> using all CPUs.
->>
->> Testing platform:
->> Juno-r2:
->> - 2 big CPUs (1-2), maximum capacity of 1024
->> - 4 little CPUs (0,3-5), maximum capacity of 383
->>
->> Testing workload ([1]):
->> Spawn 6 CPU-bound tasks. During the first 100ms (step 1), each tasks
->> is affine to a CPU, except for:
->> - one little CPU which is left idle.
->> - one big CPU which has 2 tasks affine.
->> After the 100ms (step 2), remove the cpumask affinity.
->>
->> Before patch:
->> During step 2, the load balancer running from the idle CPU tags sched
->> domains as:
->> - little CPUs: 'group_has_spare'. Cf. group_has_capacity() and
->>     group_is_overloaded(), 3 CPU-bound tasks run on a 4 CPUs
->>     sched-domain, and the idle CPU provides enough spare capacity
->>     regarding the imbalance_pct
->> - big CPUs: 'group_overloaded'. Indeed, 3 tasks run on a 2 CPUs
->>     sched-domain, so the following path is used:
->>     group_is_overloaded()
->>     \-if (sgs->sum_nr_running <= sgs->group_weight) return true;
->>
->>     The following path which would change the migration type to
->>     'migrate_task' is not taken:
->>     calculate_imbalance()
->>     \-if (env->idle != CPU_NOT_IDLE && env->imbalance == 0)
->>     as the local group has some spare capacity, so the imbalance
->>     is not 0.
->>
->> The migration type requested is 'migrate_util' and the busiest
->> runqueue is the big CPU's runqueue having 2 tasks (each having a
->> utilization of 512). The idle little CPU cannot pull one of these
->> task as its capacity is too small for the task. The following path
->> is used:
->> detach_tasks()
->> \-case migrate_util:
->>     \-if (util > env->imbalance) goto next;
->>
->> After patch:
->> As the number of failed balancing attempts grows (with
->> 'nr_balance_failed'), progressively make it easier to migrate
->> a big task to the idling little CPU. A similar mechanism is
->> used for the 'migrate_load' migration type.
->>
->> Improvement:
->> Running the testing workload [1] with the step 2 representing
->> a ~10s load for a big CPU:
->> Before patch: ~19.3s
->> After patch: ~18s (-6.7%)
->>
->> Similar issue reported at:
->> https://lore.kernel.org/lkml/20230716014125.139577-1-qyousef@layalina.io/
->>
->> v1:
->> https://lore.kernel.org/all/20231110125902.2152380-1-pierre.gondois@arm.com/
->> v2:
->> https://lore.kernel.org/all/20231124153323.3202444-1-pierre.gondois@arm.com/
->>
->> Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
->> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
->> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
->> Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
->> ---
->>
->> Notes:
->>       v2:
->>       - Used Vincent's approach.
->>       v3:
->>       - Updated commit message.
->>       - Added Reviewed-by tags
->>
->>    kernel/sched/fair.c | 2 +-
->>    1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index d7a3c63a2171..9481b8cff31b 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -9060,7 +9060,7 @@ static int detach_tasks(struct lb_env *env)
->>    		case migrate_util:
->>    			util = task_util_est(p);
->>    
->> -			if (util > env->imbalance)
->> +			if (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
->>    				goto next;
->>    
->>    			env->imbalance -= util;
-> 
+Both the driver and the bindings are updated to reflect that difference.
+
+Antoniu Miclaus (2):
+  dt-bindings: iio: adf4377: add adf4378 support
+  iio: frequency: adf4377: add adf4378 support
+
+ .../bindings/iio/frequency/adi,adf4377.yaml   | 10 ++++++
+ drivers/iio/frequency/adf4377.c               | 35 +++++++++++++++----
+ 2 files changed, 38 insertions(+), 7 deletions(-)
+
+-- 
+2.45.2
+
 
