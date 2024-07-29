@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-264934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B7793EA57
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:38:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17C993EA59
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A9C1C214D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD5A2817E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39363D60;
-	Mon, 29 Jul 2024 00:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45994404;
+	Mon, 29 Jul 2024 00:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zzc9FjTp"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ly8cUIxU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEE9817
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 00:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969B801;
+	Mon, 29 Jul 2024 00:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722213475; cv=none; b=a7KS1WJkpkKlESBmOwlbKpZKaBuof7YUGQQ5kcSJ7GsEzvcGFdDyjRk7jJtNxGd4G5CRwI3icHQWNTIo0QhYmSjLCQFeJoKWTRfSL2s1eBl60xmBibep3czdXOhNDbLB7GlZoQ6oH9IjlpdBt7OvC2dIG5uy95RIYjaFo/Ph2go=
+	t=1722213689; cv=none; b=UC/FPziWiFJIxZByBgLPKn+CzMCTokCJOY7vs1BiTBYq3dkq4zHB+Z5K3BCP4iJRA7OTKtJbkN5kdR4gaZEvq+lDYkUgaeus14HG8JsD7GQhe4tXF7bnTrN4oYE4LIkvDes3DtfZAQFMhhAODAs0tZ03IAKUp/s4blY9A28VhFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722213475; c=relaxed/simple;
-	bh=XgeSIz+XfbTtXVtUjbJV2VQHBXpmwBkdKyJpRDYLYhY=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b1p/CPcfZfCaCLnd/DBQPi5OWc5uJoUjKLb+yxfaluC2JU+/bv3x0Liu/xXxM5783QOf7kJyhlUZ4hcwa7FTK3jqJWVBts+xICmUdk12NnJ4ivIxele3YlSOZsnxE1hJMFEwe1+oClq3ERUOnZmUQAI4LcxxB0227nnTH0+oeFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Zzc9FjTp; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-83120879efcso503062241.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2024 17:37:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722213472; x=1722818272; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XgeSIz+XfbTtXVtUjbJV2VQHBXpmwBkdKyJpRDYLYhY=;
-        b=Zzc9FjTpsYqbo7ponCSgwvz8Ju/1dnhB49OXH1L9BqBzqnWH3yvQKgjWZ7lgDUcdDB
-         UmeXoKMl1wS1/QLkxXn2vxvAM4rv5Pr1WFFyob6tdneFtqiNSx2XUFAJwU5TFf2kng+5
-         dIZyLYUs6gsO1DoGlOU1dgKAlfwO2mNJkiRdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722213472; x=1722818272;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XgeSIz+XfbTtXVtUjbJV2VQHBXpmwBkdKyJpRDYLYhY=;
-        b=gqimvvrGCyZYJCZDQgShUTyFHItrwINYILqXVPRdoRr6q7/8A9KKlKdLeVwnQLDmRf
-         zaSUZojcTLByM3pdm/EosLDeGzpLasdJLmzcojgugwLu18im+ldUcQLfY/38VjU+RRjA
-         cjDbYhFf78yH1ev8WrepRd2lmCvTjG59IGNNWFAZUbb5zFJvUvUYkZ5Yarfzv82D6nHZ
-         1Xrg/9mj3efG+rXSHMd4sZ1IbhOMsZ4TxjX3VyG9vaMXkAsKCzeoU8bMFIEUr/pdqijX
-         tV/GOQGTgFURYHTtrArG/ht+hyF31NZNY9mDswBNxEOAlSLD3bQs248U9q/XnCEyjE+W
-         pXbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUSn8FFdmRZVONmA9YPg5GNnRMJHQLgQhnpHsu0jOaYad0oG2WxXungGRpHX98plisx173IESk1dJHs8ND1Q1RK4+ogKXQJuCnvAQU
-X-Gm-Message-State: AOJu0Yxmrf2kFaLOhIbIZcciRq4PYicigMRpD63WX4isMw+FC7Tuvjns
-	GxwafyYixMxzxbd+Lb4qh2nslGoFDRLW4TPeMcSb2NMn8SZg90vMuO/gzrrRZQf7KPbj4ZMtpZW
-	1us2TnzSi0liwIH+5I8t6S3mwZmh1OoYrfWXz
-X-Google-Smtp-Source: AGHT+IHnc0qYQ/QNoYPa3JLfKJgzufSGeqO7zfkvsDu+SwHrgNq6HfC27UO1CGigP8NDR74vS4JR3C3+McMA5IKTJV0=
-X-Received: by 2002:a05:6102:3e90:b0:493:e66a:793f with SMTP id
- ada2fe7eead31-493fa4594bemr3339662137.23.1722213472288; Sun, 28 Jul 2024
- 17:37:52 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 28 Jul 2024 17:37:51 -0700
+	s=arc-20240116; t=1722213689; c=relaxed/simple;
+	bh=sAsPq2kSVX16B4RkNsWZBq68YMl3ERbCE29JZAvQGgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sKcL74lwJdpVbWGkPwmCOPyKRxgoS8jIdajyKouu7QkANcWgEM6Dm/e0Kw17xrQ8pH3PT5559KACovakzVy8Tnjfl6rqBGymrL2bI7mPgTj1Yk5TOtwx8vhbWEuy2SRCLGkfrqiONfQTH5ZLocWtGZfmsDIzSf0NfiW/19qjHsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ly8cUIxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B846C32782;
+	Mon, 29 Jul 2024 00:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722213688;
+	bh=sAsPq2kSVX16B4RkNsWZBq68YMl3ERbCE29JZAvQGgc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ly8cUIxU40XpUCig/C5lPqJ0OWmsDPFjgZG2uekfMa1ccIL0HqkuxrpO7Q2i5Afyy
+	 kK+WmCdKCLeV7enZvR0S30Leil7FyNodpyFrpo47vfGrAYLEIU6GzALfhrKfoZ+m2K
+	 Nk5QpLjhVm64GzDLfGU0AZ0we1Z6F+8cXKOAGO3w3gbkmpNMrMcldoZRY+b8wKtYcd
+	 f7AUxuLroE03mstyViOOoAK6QibxKgl5BIKoPsBlhZrQmE28hIKA7dOGStwGIJvi55
+	 L6TD0BdNTx/oeJF4aleUMX9jsHGtHpqNlJmO/DuvAisRud15eBQ4T/Md7qtmU/YfwQ
+	 bSjW73WjjYIQg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH 0/4] perf ftrace: Add 'profile' subcommand (v1)
+Date: Sun, 28 Jul 2024 17:41:23 -0700
+Message-ID: <20240729004127.238611-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240725220450.131245-1-quic_abhinavk@quicinc.com>
-References: <20240725220450.131245-1-quic_abhinavk@quicinc.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Sun, 28 Jul 2024 17:37:51 -0700
-Message-ID: <CAE-0n52kAq4=Cbdjg8JFVJ9a9ww-cLkUwcJ4BNBP9McXeaSxeQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/dp: reset the link phy params before link training
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, 
-	neil.armstrong@linaro.org, abel.vesa@linaro.org, 
-	Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Abhinav Kumar (2024-07-25 15:04:50)
-> Before re-starting link training reset the link phy params namely
-> the pre-emphasis and voltage swing levels otherwise the next
-> link training begins at the previously cached levels which can result
-> in link training failures.
->
-> Fixes: 8ede2ecc3e5e ("drm/msm/dp: Add DP compliance tests on Snapdragon Chipsets")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
+Hello,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+This is an attempt to extend perf ftrace command to show a kernel function
+profile using the function_graph tracer.  This is useful to see detailed
+info like total, average, max time (in usec) and number of calls for each
+function.
+
+  $ sudo perf ftrace profile -- sync | head
+  # Total (us)   Avg (us)   Max (us)      Count   Function
+      7638.372   7638.372   7638.372          1   __do_sys_sync
+      7638.059   7638.059   7638.059          1   ksys_sync
+      5893.959   1964.653   3747.963          3   iterate_supers
+      5214.181    579.353   1688.752          9   schedule
+      3585.773     44.269   3537.329         81   sync_inodes_one_sb
+      3566.179     44.027   3537.078         81   sync_inodes_sb
+      1976.901    247.113   1968.070          8   filemap_fdatawait_keep_errors
+      1974.367    246.796   1967.895          8   __filemap_fdatawait_range
+      1935.407     37.219   1157.627         52   folio_wait_writeback
+
+While the kernel also provides the similar functionality IIRC under
+CONFIG_FUNCTION_PROFILER, it's often not enabled on disto kernels so I
+implemented it in user space.
+
+Also it can support function filters like 'perf ftrace trace' so users
+can focus on some target functions and change the buffer size if needed.
+
+  $ sudo perf ftrace profile -h
+  
+   Usage: perf ftrace [<options>] [<command>]
+      or: perf ftrace [<options>] -- [<command>] [<options>]
+      or: perf ftrace {trace|latency|profile} [<options>] [<command>]
+      or: perf ftrace {trace|latency|profile} [<options>] -- [<command>] [<options>]
+  
+      -a, --all-cpus        System-wide collection from all CPUs
+      -C, --cpu <cpu>       List of cpus to monitor
+      -G, --graph-funcs <func>
+                            Trace given functions using function_graph tracer
+      -g, --nograph-funcs <func>
+                            Set nograph filter on given functions
+      -m, --buffer-size <size>
+                            Size of per cpu buffer, needs to use a B, K, M or G suffix.
+      -N, --notrace-funcs <func>
+                            Do not trace given functions
+      -p, --pid <pid>       Trace on existing process id
+      -s, --sort <key>      Sort result by key: total (default), avg, max, count, name.
+      -T, --trace-funcs <func>
+                            Trace given functions using function tracer
+      -v, --verbose         Be more verbose
+          --tid <tid>       Trace on existing thread id (exclusive to --pid)
+
+
+The code is also available in 'perf/ftrace-profile-v1' branch at
+git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (4):
+  perf ftrace: Add 'tail' option to --graph-opts
+  perf ftrace: Factor out check_ftrace_capable()
+  perf ftrace: Add 'profile' command
+  perf ftrace: Add -s/--sort option to profile sub-command
+
+ tools/perf/Documentation/perf-ftrace.txt |  48 ++-
+ tools/perf/builtin-ftrace.c              | 439 +++++++++++++++++++++--
+ tools/perf/util/ftrace.h                 |   3 +
+ 3 files changed, 463 insertions(+), 27 deletions(-)
+
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
