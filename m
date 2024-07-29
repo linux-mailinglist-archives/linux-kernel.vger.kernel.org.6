@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-265791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8D893F5FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6109D93F600
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA08B226C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3EFAB237A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF49C1494AC;
-	Mon, 29 Jul 2024 12:58:35 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106471494CE;
+	Mon, 29 Jul 2024 12:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AhqHR+ii"
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB28148826
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F894148FE1
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722257915; cv=none; b=AitdcW3scz1Q25OSc/2z2zbxkE42P5mI0wIyNLJI5BX600UWvpmQu1b6qc2CneMDXray5vYrd7PcANGpiLt5v5r4sWWET3H6oc9io2aWoCeaog5jDtOY0Op6jWOIAw9CW5NtUuCE0ZwDcqp1cM52zvQk1U4xxhH6EtiPIhK5oSY=
+	t=1722257952; cv=none; b=aTJVsVM0amACUTCb7ZkpBslsI6KKqZlKEMAyIbMrdDfeVTID6GO604al5vxCkI+e4E/d5dznUdhXd4H2YutzaCjZsL72LCt8UI017hHNNqAm6++Dz29tGZZhoUGqQovEjmX2vpgpxnbDRh5E9wZLP9E35NpY9vXzlvAGsEBmeXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722257915; c=relaxed/simple;
-	bh=aaIeuc+dtQ03nN6NOvfTSDegfJz4w8kApyIznXrcVkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JsiSUChyF+yfUQ5uFFEDYO595Z+kW6C4sTneiStVEc0hj6MpuOOxeOvHlX/sr2pmDbNEaRDpdtEK203YkEyDxfHLKfIFfKjqljEwnl5InPWb4B0AEgMB0qiIqWNlkxXC8W1jp0YXLhPNGHhjA/ooe/huphYpVvRGkeEqNXYDfe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46TCwToP039528;
-	Mon, 29 Jul 2024 21:58:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
- Mon, 29 Jul 2024 21:58:29 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46TCwTD2039524
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 29 Jul 2024 21:58:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <90a8e819-988a-4f16-831c-71a0f4631e96@I-love.SAKURA.ne.jp>
-Date: Mon, 29 Jul 2024 21:58:30 +0900
+	s=arc-20240116; t=1722257952; c=relaxed/simple;
+	bh=XKlc+8CoEMY68SA5HD1dhDI2QZ6bqbXTxL8bJTXP9hQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ng8iUnYoD/MRFF7M4sh5xi2EQUCCGe2sxv/KLbhYLz9DfvQ3sY1zCgS6n4mXkAMvN0VGrYcVWx1RuGkrV2k3MLHnkUKstGrNEyYDrsw8ntn95CRji5RpE6eQVgIAs/mDnKzLC7u5Ruw3HijUN5HtuKPYu+LAe90Q0yjJfuwzSUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AhqHR+ii; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXdj422JYzVL3;
+	Mon, 29 Jul 2024 14:59:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722257944;
+	bh=8o4uEwOWvS/IvVBdL4/r7RNFUAox5TLdYs6gG1vGhNw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AhqHR+iibp0LjZzsZbjZq375eAvCBEWiV3MnaYwIGbug0amZd59JD84Ntcj6rtjQz
+	 qSVEnep2nrA3Itccm29AHZr44fbnQnQmNT3yaX/sJYAn8T0/3+XodIcOCXff76icHI
+	 zmY+6iczo5/F5ewctOx87Bz8GUrfW+gk8t2XAr3A=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXdj33Z78zB8T;
+	Mon, 29 Jul 2024 14:59:03 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	keyrings@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
+Date: Mon, 29 Jul 2024 14:58:46 +0200
+Message-ID: <20240729125846.1043211-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] profiling: remove prof_cpu_mask
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <5e42ce13-3203-4431-b984-57d702837015@I-love.SAKURA.ne.jp>
- <CAHk-=wgs52BxT4Zjmjz8aNvHWKxf5_ThBY4bYL1Y6CTaNL2dTw@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHk-=wgs52BxT4Zjmjz8aNvHWKxf5_ThBY4bYL1Y6CTaNL2dTw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On 2024/07/28 1:54, Linus Torvalds wrote:
-> On Sat, 27 Jul 2024 at 04:00, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> We could replace alloc_cpumask_var() with zalloc_cpumask_var() and
->> call cpumask_copy() from create_proc_profile() on only UP kernels, for
->> profile_online_cpu() calls cpumask_set_cpu() as needed via
->> cpuhp_setup_state(CPUHP_AP_ONLINE_DYN) on SMP kernels. But this patch
->> removes prof_cpu_mask because it seems unnecessary.
-> 
-> So I like this one a lot more, but it actually makes me wonder: could
-> we just remove the horrid per-cpu profile flip buffers entirely?
+A process can modify its parent's credentials with
+KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+doesn't take into account all possible access controls.
 
-I dropped "profiling: initialize prof_cpu_mask from profile_online_cpu()" from
-my tree so that someone can take this patch. Andrew, can you take this patch?
-Whether somebody notices performance/accuracy problem by removing the horrid
-per-cpu profile flip buffers will be attempted by a separate patch.
+Enforce the same access checks as for impersonating a process.
 
-> 
-> This code predates the whole "we have _real_ profiling", and dates
-> back to literally two decades ago.
-> 
-> It's there due to ancient NUMA concerns on old SGI Altix hardware in 2004:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=ad02973d42f6b538c7ed76c7c0a5ae8560f65913
-> 
-> and I think it's past time to just take all this code out of its misery.
-> 
-> Nobody sane should use the old profile code for any real work any
-> more. I'd be more than happy to just remove all the magic code and see
-> if anybody even notices..
-> 
->                   Linus
+The current credentials checks are untouch because they check against
+EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Fixes: ee18d64c1f63 ("KEYS: Add a keyctl to install a process's session keyring on its parent [try #6]")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20240729125846.1043211-1-mic@digikod.net
+---
+ security/keys/keyctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index ab927a142f51..511bf79fa14c 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -21,6 +21,7 @@
+ #include <linux/security.h>
+ #include <linux/uio.h>
+ #include <linux/uaccess.h>
++#include <linux/ptrace.h>
+ #include <keys/request_key_auth-type.h>
+ #include "internal.h"
+ 
+@@ -1687,6 +1688,10 @@ long keyctl_session_to_parent(void)
+ 	    !gid_eq(pcred->sgid, mycred->egid))
+ 		goto unlock;
+ 
++	/* The child must be allowed to impersonate its parent process. */
++	if (!ptrace_may_access(parent, PTRACE_MODE_ATTACH_REALCREDS))
++		goto unlock;
++
+ 	/* the keyrings must have the same UID */
+ 	if ((pcred->session_keyring &&
+ 	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+2.45.2
 
 
