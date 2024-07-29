@@ -1,637 +1,273 @@
-Return-Path: <linux-kernel+bounces-265608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CF593F3AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A541293F3B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79F3285026
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78A41C218C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6876145B0C;
-	Mon, 29 Jul 2024 11:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3VqvZBx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AE2145B06;
+	Mon, 29 Jul 2024 11:11:02 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FAD145B03
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1BF145A0A;
+	Mon, 29 Jul 2024 11:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722251444; cv=none; b=bHQLWaw6yA37mAjB2Z7Werd0z66EeMYR+OfPvDGPFA3/q71+cT5XqN0//gYSgpR+4lM/jcbwZQcC0JbDRr8HiTofev2LE5Zf6epQoFgjMgtCSEHiZtGye725H83wghcqXH1hJjKfzF0/r+yEIbyTHeJqolMGbMq2pvfFIhDYLmw=
+	t=1722251461; cv=none; b=XSpOebKzl+QGSGfM3YSg1ZY1wtGdFZxzaR5AgJZ+o80etYA3FWHe6scCdYpBPkydkz6agVUjIjXwJUEqqWQvz5l+YqXMc/XI3vAMzdRntlSSNy7xALyI7G++6uklnMwmwJzW5V5xazJ2kyYF4gZHCV4uo5PmWfnhytiIL7c5t4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722251444; c=relaxed/simple;
-	bh=vQ8t/JYMBWYxqOxwzc/oQrWk6W2MtN5PZd/gMviaVwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RTf1WcnDbp0e7LF75txc6ZMajBDoeUl8eufkGs0wLBY5xh27qrfGI53sS3txlMTXT/gdP0ZKVI5UhFVFsRK+gyl9vElNyNyteDbcLSzzA9vcK+OzwV12zOpq8IDKNNjOwPE2HRoibCnFEUZ56RkcWjNXMO7RyJvd6qaRk7X2Yus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3VqvZBx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA060C32786;
-	Mon, 29 Jul 2024 11:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722251444;
-	bh=vQ8t/JYMBWYxqOxwzc/oQrWk6W2MtN5PZd/gMviaVwM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e3VqvZBx4FzOzArpk7I0ypfEV5FDtT/ARs1H255JFdO/PdQEpqaV07R8MllKz5sIF
-	 DvOMr6V3tMIL5c2qvH562YcUfngLcWvbkHj2jzDEuF+hgRa7kRIIdwcaa4TbqiCzYb
-	 NTURnvOQEmtGG5HyL1cVxNsfAkYL8jIeTfRf7IstbS7+n0OCdiJOz9U1cPPQOZxrLr
-	 iFngPae+0ukcezXKbAwsOi5Q9KjCz+CY3DPlhqzR84pqplpjAELbtTBmibTjV1R5Na
-	 VldQWjzwgNVbD01Tqcu2SgBSZzJ+f78B1MGhi3QT3bjTpbQWGjj4qlcKZeB3OiVp7P
-	 IR/xFjDTtisyw==
-Date: Mon, 29 Jul 2024 13:10:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Shiju Jose <shiju.jose@huawei.com>, Alex =?UTF-8?B?QmVubsOpZQ==?=
- <alex.bennee@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>, Philippe
- =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Beraldo Leal <bleal@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, Igor Mammedov
- <imammedo@redhat.com>, Markus Armbruster <armbru@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, Thomas Huth <thuth@redhat.com>, "Wainer dos
- Santos Moschetta" <wainersm@redhat.com>, <linux-kernel@vger.kernel.org>,
- <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v3 7/7] acpi/ghes: extend arm error injection logic
-Message-ID: <20240729131037.2506686a@foz.lan>
-In-Reply-To: <20240726142225.00000bdd@Huawei.com>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<89e8a63b5e54409dd9bc4e7f4f4c12290838371b.1721630625.git.mchehab+huawei@kernel.org>
-	<20240726142225.00000bdd@Huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722251461; c=relaxed/simple;
+	bh=SJ//61zs9YkpjXbm861D0K8GgZ1Ki0bah6gnhT2Kb+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Um9+NapZh0fDG6a9ficR7BMaARM29ZKajVRtiBmLhdArSkOOy71f3HsXnOYDf1rlMo05/G+f6Vr4pxP5t8BbrhxMTEorMt6/I/Li4kOA8LqaOoygTSfh0QFctYzRTS5mCAfBTODBK78N3ic7BDEHE2qxMVcZ6CBx6q6JWASsJ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WXbBT34HRzyNwn;
+	Mon, 29 Jul 2024 19:05:53 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8BE72140135;
+	Mon, 29 Jul 2024 19:10:49 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 19:10:48 +0800
+Message-ID: <f7be9126-e153-cfa6-2c16-f99bc89c5430@huawei.com>
+Date: Mon, 29 Jul 2024 19:10:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] irqchip: Remove asmlinkage for *handle_irq() functions
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <tglx@linutronix.de>, <maz@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<shc_work@mail.ru>, <linusw@kernel.org>, <kaloz@openwrt.org>,
+	<aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+	<rogerq@kernel.org>, <tony@atomide.com>, <joey.gouly@arm.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>
+References: <20240729024752.1250618-1-ruanjinjie@huawei.com>
+ <ZqdjUZCiQFl-_UMM@J2N7QTR9R3>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZqdjUZCiQFl-_UMM@J2N7QTR9R3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Em Fri, 26 Jul 2024 14:22:25 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
 
-> On Mon, 22 Jul 2024 08:45:59 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
->=20
-> > Enrich CPER error injection logic for ARM processor to allow
-> > setting values to  from UEFI 2.10 tables N.16 and N.17.
-> >=20
-> > It should be noticed that, with such change, all arguments are
-> > now optional, so, once QMP is negotiated with:
-> >=20
-> > 	{ "execute": "qmp_capabilities" }
-> >=20
-> > the simplest way to generate a cache error is to use:
-> >=20
-> > 	{ "execute": "arm-inject-error" }
-> >=20
-> > Also, as now PEI is mapped into an array, it is possible to
-> > inject multiple errors at the same CPER record with:
-> >=20
-> > 	{ "execute": "arm-inject-error", "arguments": {
-> > 	   "error": [ {"type": [ "cache-error" ]},
-> > 		      {"type": [ "tlb-error" ]} ] } }
-> >=20
-> > This would generate both cache and TLB errors, using default
-> > values for other fields.
-> >=20
-> > As all fields from ARM Processor CPER are now mapped, all
-> > types of CPER records can be generated with the new QAPI.
-> >=20
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org> =20
-> If you are happy to smash this into patch 4 then also take ownership
-> of the result and change the author as I wrote almost none of the code
-> that ended up in the result as only the GHESv2 stuff was mind
-> even before you joined this effort - the rest was Shiju's
->=20
-> If you want, I'm fine with a co-developed on the result
 
-Ok, I'll fold both patches.
+On 2024/7/29 17:39, Mark Rutland wrote:
+> On Mon, Jul 29, 2024 at 10:47:52AM +0800, Jinjie Ruan wrote:
+>> Since commit 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C"),
+>> the gic_handle_irq() is only called by C functions.
+>>
+>> And since commit a7b0872e964c ("irq: arm: perform irqentry in entry code"),
+>> aic_handle(), aic5_handle(), clps711x_irqh(), davinci_cp_intc_handle_irq(),
+>> ft010_irqchip_handle_irq(), ixp4xx_handle_irq(), omap_intc_handle_irq(),
+>> sa1100_handle_irq() and fpga_handle_irq() are only called by C functions.
+>>
+>> So remove the asmlinkages.
+> 
+> This commit message isn't quite right -- GICv3 can also be used on 32-bit arm,
+> and so even after commit 064dbfb41691 it could be called from assembly until
+> commit a7b0872e964c.
 
-> > ---
-> >  hw/acpi/ghes.c                  | 168 +++++++-------
-> >  hw/arm/arm_error_inject.c       | 399 +++++++++++++++++++++++++++++++-
-> >  hw/arm/arm_error_inject_stubs.c |  20 +-
-> >  include/hw/acpi/ghes.h          |  40 +++-
-> >  qapi/arm-error-inject.json      | 250 +++++++++++++++++++-
-> >  tests/lcitool/libvirt-ci        |   2 +-
-> >  6 files changed, 778 insertions(+), 101 deletions(-)
-> >=20
-> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > index ebf1b812aaaa..afd1d098a7e3 100644
-> > --- a/hw/acpi/ghes.c
-> > +++ b/hw/acpi/ghes.c =20
->=20
-> > +    build_append_int_noprefix(table, err.running_state, 4);
-> > +
-> > +    /* PSCI state: only valid when running state is zero  */
-> > +    build_append_int_noprefix(table, err.psci_state, 4);
-> > +
-> > +    for (i =3D 0; i < err.err_info_num; i++) {
-> > +        /* ARM Propcessor error information */
-> > +        /* Version */
-> > +        build_append_int_noprefix(table, 0, 1);
-> > +
-> > +        /*  Length */
-> > +        build_append_int_noprefix(table, ACPI_GHES_ARM_CPER_PEI_LENGTH=
-, 1);
-> > +
-> > +        /* Validation Bits */
-> > +        build_append_int_noprefix(table, err.pei[i].validation, 2); =20
->=20
-> Maybe drop some comments when the data being written makes it obvious?
+You are right! ARCH_AIROHA and ARCH_VIRT also use GICv3.
 
-The current change preserves the already existing coding style of ghes.c.=20
-See, for instance acpi_ghes_generic_error_data(). There, except for=20
-revision, all other comments are obvious. From my side, I prefer to have=20
-this patch preserving the same style.
+> 
+> I think it'd be better to say:
+> 
+>   Currently, all architectures with set_handle_irq() call the root irqchip
+>   handler from C code, so there's no need for these to be asmlinkage.
+> 
+>   Remove asmlinkage for all handlers registered with set_handle_irq().
+> 
+>> Fixes: 064dbfb41691 ("arm64: entry: convert IRQ+FIQ handlers to C")
+>> Fixes: a7b0872e964c ("irq: arm: perform irqentry in entry code")
+> 
+> This is a cleanup, not a fix. Please don't add Fixes tags unless this
+> fixes a real functional issue.
+> 
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> With the commit message cleaned up and the fixes tags gone:
 
-Yet, if agreed, we can later send a cleanup patch dropping all obvious
-comments at once.
+Thank you! I'll update it.
 
-> > +
-> > +        /* Type */
-> > +        build_append_int_noprefix(table, err.pei[i].type, 1);
-> > +
-> > +        /* Multiple error count */
-> > +        build_append_int_noprefix(table, err.pei[i].multiple_error, 2);
-> > +
-> > +        /* Flags  */
-> > +        build_append_int_noprefix(table, err.pei[i].flags, 1);
-> > +
-> > +        /* Error information  */
-> > +        build_append_int_noprefix(table, err.pei[i].error_info, 8);
-> > +
-> > +        /* Virtual fault address  */
-> > +        build_append_int_noprefix(table, err.pei[i].virt_addr, 8);
-> > +
-> > +        /* Physical fault address  */
-> > +        build_append_int_noprefix(table, err.pei[i].phy_addr, 8);
-> > +    }
-> > +
-> > +    for (i =3D 0; i < err.context_info_num; i++) {
-> > +        /* ARM Propcessor error context information */
-> > +        /* Version */
-> > +        build_append_int_noprefix(table, 0, 2);
-> > +
-> > +        /* Validation type */
-> > +        build_append_int_noprefix(table, err.context[i].type, 2);
-> > +
-> > +        /* Register array size */
-> > +        build_append_int_noprefix(table, err.context[i].size * 8, 4);
-> > +
-> > +        /* Register array (byte 8 of Context info) */
-> > +        for (j =3D 0; j < err.context[i].size; j++) {
-> > +            build_append_int_noprefix(table, err.context[i].array[j], =
-8);
-> > +        }
-> >      } =20
->=20
-> > diff --git a/hw/arm/arm_error_inject.c b/hw/arm/arm_error_inject.c
-> > index 1da97d5d4fdc..67f1c77546b9 100644
-> > --- a/hw/arm/arm_error_inject.c
-> > +++ b/hw/arm/arm_error_inject.c
-> > @@ -10,23 +10,408 @@ =20
->=20
-> > +
-> > +/* Handle ARM Context */
-> > +static ArmContext *qmp_arm_context(uint16_t *context_info_num,
-> > +                                   uint32_t *context_length,
-> > +                                   bool has_context,
-> > +                                   ArmProcessorContextList const *cont=
-ext_list)
-> > +{
-> > +    ArmProcessorContextList const *next;
-> > +    ArmContext *context =3D NULL;
-> > +    uint16_t i, j, num, default_type;
-> > +
-> > +    default_type =3D get_default_context_type();
-> > +
-> > +    if (!has_context) {
-> > +        *context_info_num =3D 0;
-> > +        *context_length =3D 0;
-> > +
-> > +        return NULL;
-> > +    }
-> > +
-> > +    /* Calculate sizes */
-> > +    num =3D 0;
-> > +    for (next =3D context_list; next; next =3D next->next) {
-> > +        uint32_t n_regs =3D 0;
-> > +
-> > +        if (next->value->has_q_register) {
-> > +            uint64List *reg =3D next->value->q_register;
-> > +
-> > +            while (reg) {
-> > +                n_regs++;
-> > +                reg =3D reg->next;
-> > +            }
-> > +
-> > +            if (next->value->has_minimal_size &&
-> > +                                        next->value->minimal_size < n_=
-regs) { =20
-> I'd align just after (
-> > +
-> > +static uint8_t *qmp_arm_vendor(uint32_t *vendor_num, bool has_vendor_s=
-pecific,
-> > +                               uint8List const *vendor_specific_list)
-> > +{
-> > +    uint8List const *next =3D vendor_specific_list;
-> > +    uint8_t *vendor =3D NULL, *p; =20
->=20
-> vendor always set before use.
-
-True. Will remove the assignment to NULL.
-
-> > +
-> > +    if (!has_vendor_specific) {
-> > +        return NULL;
-> > +    }
-> > +
-> > +    *vendor_num =3D 0;
-> > +
-> > +    while (next) {
-> > +        next =3D next->next;
-> > +        (*vendor_num)++;
-> > +    }
-> > +
-> > +    vendor =3D g_malloc(*vendor_num);
-> > +
-> > +    p =3D vendor;
-> > +    next =3D vendor_specific_list;
-> > +    while (next) {
-> > +        *p =3D next->value;
-> > +        next =3D next->next;
-> > +        p++;
-> > +    }
-> > +
-> > +    return vendor;
-> > +}
-> > diff --git a/qapi/arm-error-inject.json b/qapi/arm-error-inject.json
-> > index 430e6cea6b60..2a314830fe60 100644
-> > --- a/qapi/arm-error-inject.json
-> > +++ b/qapi/arm-error-inject.json =20
->=20
-> > +
-> > +##
-> > +# @ArmProcessorErrorInformation:
-> > +#
-> > +# Contains ARM processor error information (PEI) data according with U=
-EFI
-> > +# CPER table N.17.
-> > +#
-> > +# @validation:
-> > +#       Valid validation bits for error-info section.
-> > +#       Argument is optional. If not specified, those flags will be en=
-abled:
-> > +#       first-error-cap and propagated.
-> > +#
-> > +# @type:
-> > +#       ARM processor error types to inject. Argument is mandatory.
-> > +#
-> > +# @multiple-error:
-> > +#       Indicates whether multiple errors have occurred.
-> > +#       Argument is optional. If not specified and @validation not enf=
-orced, =20
->=20
-> forced probably rather than enforced.
-
-Changed everywhere at this patch.
-
->=20
-> > +#       this field will be marked as invalid at CPER record.. =20
-> . only
->=20
-> Good to mention the odd encoding of 0 =3D single error, 1 =3D multiple (l=
-ost count)
-> 2+ =3D actual count of errors
-
-Added.
-
->=20
-> > +#
-> > +# @flags:
-> > +#       Indicates flags that describe the error attributes.
-> > +#       Argument is optional. If not specified and defaults to
-> > +#       first-error and propagated.
-> > +#
-> > +# @error-info:
-> > +#       Error information structure is specific to each error type.
-> > +#       Argument is optional, and its value depends on the PEI type(s).
-> > +#       If not defined, the default depends on the type:
-> > +#       - for cache-error: 0x0091000F;
-> > +#       - for tlb-error: 0x0054007F;
-> > +#       - for bus-error: 0x80D6460FFF;
-> > +#       - for micro-arch-error: 0x78DA03FF;
-> > +#       - if multiple types used, this bit is disabled from @validatio=
-n bits.
-> > +#
-> > +# @virt-addr:
-> > +#       Virtual fault address associated with the error.
-> > +#       Argument is optional. If not specified and @validation not enf=
-orced,
-> > +#       this field will be marked as invalid at CPER record..
-> > +#
-> > +# @phy-addr:
-> > +#       Physical fault address associated with the error.
-> > +#       Argument is optional. If not specified and @validation not enf=
-orced,
-> > +#       this field will be marked as invalid at CPER record..
-> > +#
-> > +# Since: 9.1
-> > +##
-> > +{ 'struct': 'ArmProcessorErrorInformation',
-> > +  'data': { '*validation': ['ArmPeiValidationBits'],
-> > +            'type': ['ArmProcessorErrorType'],
-> > +            '*multiple-error': 'uint16',
-> > +            '*flags': ['ArmProcessorFlags'],
-> > +            '*error-info': 'uint64',
-> > +            '*virt-addr':  'uint64',
-> > +            '*phy-addr': 'uint64'}
-> > +}
-> > +
-> > +##
-> > +# @ArmProcessorContext:
-> > +#
-> > +# Provide processor context state specific to the ARM processor archit=
-ecture,
-> > +# According with UEFI 2.10 CPER table N.21.
-> > +# Argument is optional.If not specified, no context will be used. =20
->                           ^ space
-> > +#
-> > +# @type:
-> > +#       Contains an integer value indicating the type of context state=
- being
-> > +#       reported.
-> > +#       Argument is optional. If not defined, it will be set to be EL1=
- register
-> > +#       for the emulation, e. g.:
-> > +#       - on arm32: AArch32 EL1 context registers;
-> > +#       - on arm64: AArch64 EL1 context registers.
-> > +#
-> > +# @register:
-> > +#       Provides the contents of the actual registers or raw data, dep=
-ending
-> > +#       on the context type.
-> > +#       Argument is optional. If not defined, it will fill the first r=
-egister
-> > +#       with 0xDEADBEEF, and the other ones with zero. =20
-> We could fill this in with a valid snap shot I think?  It' just a set of =
-CPU registers.
-> Obviously content would be pretty random and meaningless given the
-> error isn't correlated with particular activity (as we triggered it) but =
-maybe would
-> useful for testing the parsing?
-
-I considered this as well, but the goal of having a default context set
-is just to check if OS is properly receiving/handling such data.
-
-If we use an EL1 context register dump, instead of a fixed default:
-
-1. the values will be pretty much random, and, as you said, not related
-   with a real issue - so probably the values will be bogus anyway;
-2. there won't be an easy way to identify if the OS is handling it
-   the right way, as there won't be any way to associate the value sent
-   to BIOS/Kernel with an expected behavior. With a fixed value, one can=20
-   check if 0xDEADBEEF is the first thing that happens at the context
-   dump;
-3. If one wants to simulate a real hardware error, he can instead send a
-   proper set of register values;
-4. the default to report EL1 context register may not be what it is
-   wanted for tests.
-
-> Perhaps that's a job for the future as we will want to be able to overrid=
-e it
-> anyway.
-
-This can already be overridden:
-
-	$ qemu_einj.py arm --ctx-array 0xffee,0xdeadbeef,0xabbabaa,0x0,0xbeafdeed
-		 {"QMP": {"version": {"qemu": {"micro": 50, "minor": 0, "major": 9}, "pac=
-kage": "v9.0.0-2620-g8e5b224ee328-dirty"}, "capabilities": ["oob"]}}
-	{ "execute": "qmp_capabilities" }=20
-		 {"return": {}}
-	{ "execute": "arm-inject-error", "arguments": {"error": [{"type": ["cache-=
-error"]}], "context": [{"register": [65518, 3735928559, 180071338, 0, 31991=
-96909]}]} }
-
-[   52.044695] {3}[Hardware Error]:     PC is imprecise
-[   52.044909] {3}[Hardware Error]:   Context info structure 0:
-[   52.045147] {3}[Hardware Error]:    register context type: AArch64 EL1 c=
-ontext registers
-[   52.045500] {3}[Hardware Error]:    00000000: 0000ffee 00000000 deadbeef=
- 00000000
-[   52.045866] {3}[Hardware Error]:    00000010: 0abbabaa 00000000 00000000=
- 00000000
-[   52.046184] {3}[Hardware Error]:    00000020: beafdeed 00000000 00000000=
- 00000000
-
-And other types of register dump can also be set, like:
-
-	$ qemu_einj.py arm --ctx-array 0xffee,0xdeadbeef,0xabbabaa,0x0,0xbeafdeed =
---ctx-type 7
-		 {"QMP": {"version": {"qemu": {"micro": 50, "minor": 0, "major": 9}, "pac=
-kage": "v9.0.0-2620-g8e5b224ee328-dirty"}, "capabilities": ["oob"]}}
-	{ "execute": "qmp_capabilities" }=20
-		 {"return": {}}
-	{ "execute": "arm-inject-error", "arguments": {"error": [{"type": ["cache-=
-error"]}], "context": [{"type": 7, "register": [65518, 3735928559, 18007133=
-8, 0, 3199196909]}]} }
-		 {"return": {}}
-
-[  172.693339] {4}[Hardware Error]:   Context info structure 0:
-[  172.693643] {4}[Hardware Error]:    register context type: AArch64 EL3 c=
-ontext registers
-[  172.694050] {4}[Hardware Error]:    00000000: 0000ffee 00000000 deadbeef=
- 00000000
-[  172.694445] {4}[Hardware Error]:    00000010: 0abbabaa 00000000 00000000=
- 00000000
-[  172.694859] {4}[Hardware Error]:    00000020: beafdeed 00000000 00000000=
- 00000000
-
-So, one can replicate any context needed - preferably reproducing a real
-real error condition that happened on some hardware.
-
->=20
-> > +#
-> > +# @minimal-size:
-> > +#       Argument is optional. If provided, define the minimal size of =
-the
-> > +#       context register array. The actual size is defined by checking=
- the
-> > +#       number of register values plus the content of this field (if u=
-sed),
-> > +#       ensuring that each processor context information structure arr=
-ay is
-> > +#       padded with zeros if the size is not a multiple of 16 bytes.
-> > +#
-> > +# Since: 9.1
-> > +##
-> > +{ 'struct': 'ArmProcessorContext',
-> > +  'data': { '*type': 'uint16',
-> > +            '*minimal-size': 'uint32',
-> > +            '*register': ['uint64']}
-> >  }
-> > =20
-> >  ##
-> >  # @arm-inject-error:
-> >  #
-> > -# Inject ARM Processor error.
-> > +# Inject ARM Processor error with data to be filled accordign with UEF=
-I 2.10
-> > +# CPER table N.16.
-> >  #
-> > -# @errortypes: ARM processor error types to inject
-> > +# @validation:
-> > +#       Valid validation bits for ARM processor CPER.
-> > +#       Argument is optional. If not specified, the default is
-> > +#       calculated based on having the corresponding arguments filled.
-> > +#
-> > +# @affinity-level:
-> > +#       Error affinity level for errors that can be attributed to a sp=
-ecific
-> > +#       affinity level.
-> > +#       Argument is optional. If not specified and @validation not enf=
-orced,
-> > +#       this field will be marked as invalid at CPER record. =20
-> As below.
->=20
-> > +#
-> > +# @mpidr-el1:
-> > +#       Processor=E2=80=99s unique ID in the system.
-> > +#       Argument is optional. If not specified, it will use the cpu mp=
-idr
-> > +#       field from the emulation data. If zero and @validation is not
-> > +#       enforced, this field will be marked as invalid at CPER record.=
- =20
-> The zero case is obscure enough I'd be tempted to say that if we want
-> to test that then we will override the validation field.
->
-> The logic will end up simpler and still allow the same level of corner
-> case testing for no valid mpidr (which is really odd if it occurs!)
-
-The zero case may happen if the MPIDR CPU field inside the emulation is
-not properly by QEMU arm32/64 specific machine.=20
-
-I opted to make it explicit, as this happened to me on some of my
-tests. So I ended adding the check and this comment.
-
-> > +#
-> > +# @midr-el1:  Identification info of the chip
-> > +#       Argument is optional. If not specified, it will use the cpu mp=
-idr
-> > +#       field from the emulation data. If zero and @validation is not
-> > +#       enforced, this field will be marked as invalid at CPER record.=
- =20
->=20
-> Same as above.
->=20
-> > +#
-> > +# @running-state:
-> > +#       Indicates the running state of the processor.
-> > +#       Argument is optional. If not specified and @validation not enf=
-orced,
-> > +#       this field will be marked as invalid at CPER record. =20
->=20
-> Fun corners of the spec.  Can't allow bit0 of this and psci-state.
-> We should perhaps enforce that? I don't think we need to inject completely
-> invalid states (just corners of what is valid).
-
-The logic there is already checking it, filling psci-state only if
-the bit is not set.
-
->=20
-> > +#
-> > +# @psci-state:
-> > +#       Provides PSCI state of the processor, as defined in ARM PSCI d=
-ocument.
-> > +#       Argument is optional. If not specified, it will use the cpu po=
-wer
-> > +#       state field from the emulation data. =20
-> Hmm. Do you think validation is meant to cover this? Is it under running-=
-state?
-
-IMO, the right filling of it according with the spec should be enforced,
-with this logic:
-
-    if (!has_psci_state) {
-        psci_state =3D armcpu->power_state;
-    }
-
-    if (has_running_state) {
-        while (running_state_list) {
-            running_state |=3D BIT(running_state_list->value);
-            running_state_list =3D running_state_list;
-        }
-
-        if (running_state) {
-            psci_state =3D 0;
-        }
-    }
-
-    error.psci_state =3D psci_state;
-
-    if (has_validation) {
-...
-    } else {
-...
-        if (running_state) {
-            validation |=3D BIT(ARM_PROCESSOR_VALIDATION_BITS_RUNNING_STATE=
-_VALID);
-        }
-    }
-
-E.g.:
-
-- if running_state is enforced, psci_state will be zero;
-- if not enforced:
-	- if not defined: use CPU-defined power_state;
-	- otherwise, use the value passed via QMP.
-
-I'm changing the code to do the above, as there were some errors at the
-check logic.
-
->=20
-> > +#
-> > +# @context:
-> > +#       Contains an array of processor context registers.
-> > +#       Argument is optional. If not specified, no context will be add=
-ed.
-> > +#
-> > +# @vendor-specific:
-> > +#       Contains a byte array of vendor-specific data.
-> > +#       Argument is optional. If not specified, no vendor-specific data
-> > +#       will be added.
-> > +#
-> > +# @error:
-> > +#       Contains an array of ARM processor error information (PEI) sec=
-tions.
-> > +#       Argument is optional. If not specified, defaults to a single
-> > +#       Program Error Information record defaulting to type=3Dcache-er=
-ror.
-> >  #
-> >  # Features:
-> >  #
-> > @@ -44,6 +262,16 @@
-> >  # Since: 9.1
-> >  ##
-> >  { 'command': 'arm-inject-error',
-> > -  'data': { 'errortypes': ['ArmProcessorErrorType'] },
-> > +  'data': {
-> > +    '*validation': ['ArmProcessorValidationBits'],
-> > +    '*affinity-level': 'uint8',
-> > +    '*mpidr-el1': 'uint64',
-> > +    '*midr-el1': 'uint64',
-> > +    '*running-state':  ['ArmProcessorRunningState'],
-> > +    '*psci-state': 'uint32',
-> > +    '*context': ['ArmProcessorContext'],
-> > +    '*vendor-specific': ['uint8'],
-> > +    '*error': ['ArmProcessorErrorInformation']
-> > +  },
-> >    'features': [ 'unstable' ]
-> >  } =20
-
-Thanks,
-Mauro
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> Mark.
+> 
+>> ---
+>> v2:
+>> - Also fix for arm32 irqchip as Thomas suggested.
+>> - Add Suggested-by.
+>> ---
+>>  drivers/irqchip/irq-atmel-aic.c       | 3 +--
+>>  drivers/irqchip/irq-atmel-aic5.c      | 3 +--
+>>  drivers/irqchip/irq-clps711x.c        | 2 +-
+>>  drivers/irqchip/irq-davinci-cp-intc.c | 3 +--
+>>  drivers/irqchip/irq-ftintc010.c       | 2 +-
+>>  drivers/irqchip/irq-gic-v3.c          | 2 +-
+>>  drivers/irqchip/irq-ixp4xx.c          | 3 +--
+>>  drivers/irqchip/irq-omap-intc.c       | 3 +--
+>>  drivers/irqchip/irq-sa11x0.c          | 3 +--
+>>  drivers/irqchip/irq-versatile-fpga.c  | 2 +-
+>>  10 files changed, 10 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-atmel-aic.c b/drivers/irqchip/irq-atmel-aic.c
+>> index 4631f6847953..3839ad79ad31 100644
+>> --- a/drivers/irqchip/irq-atmel-aic.c
+>> +++ b/drivers/irqchip/irq-atmel-aic.c
+>> @@ -57,8 +57,7 @@
+>>  
+>>  static struct irq_domain *aic_domain;
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -aic_handle(struct pt_regs *regs)
+>> +static void __exception_irq_entry aic_handle(struct pt_regs *regs)
+>>  {
+>>  	struct irq_domain_chip_generic *dgc = aic_domain->gc;
+>>  	struct irq_chip_generic *gc = dgc->gc[0];
+>> diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+>> index 145535bd7560..c0f55dc7b050 100644
+>> --- a/drivers/irqchip/irq-atmel-aic5.c
+>> +++ b/drivers/irqchip/irq-atmel-aic5.c
+>> @@ -67,8 +67,7 @@
+>>  
+>>  static struct irq_domain *aic5_domain;
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -aic5_handle(struct pt_regs *regs)
+>> +static void __exception_irq_entry aic5_handle(struct pt_regs *regs)
+>>  {
+>>  	struct irq_chip_generic *bgc = irq_get_domain_generic_chip(aic5_domain, 0);
+>>  	u32 irqnr;
+>> diff --git a/drivers/irqchip/irq-clps711x.c b/drivers/irqchip/irq-clps711x.c
+>> index e731e0784f7e..806ebb1de201 100644
+>> --- a/drivers/irqchip/irq-clps711x.c
+>> +++ b/drivers/irqchip/irq-clps711x.c
+>> @@ -69,7 +69,7 @@ static struct {
+>>  	struct irq_domain_ops	ops;
+>>  } *clps711x_intc;
+>>  
+>> -static asmlinkage void __exception_irq_entry clps711x_irqh(struct pt_regs *regs)
+>> +static void __exception_irq_entry clps711x_irqh(struct pt_regs *regs)
+>>  {
+>>  	u32 irqstat;
+>>  
+>> diff --git a/drivers/irqchip/irq-davinci-cp-intc.c b/drivers/irqchip/irq-davinci-cp-intc.c
+>> index 7482c8ed34b2..f4f8e9fadbbf 100644
+>> --- a/drivers/irqchip/irq-davinci-cp-intc.c
+>> +++ b/drivers/irqchip/irq-davinci-cp-intc.c
+>> @@ -116,8 +116,7 @@ static struct irq_chip davinci_cp_intc_irq_chip = {
+>>  	.flags		= IRQCHIP_SKIP_SET_WAKE,
+>>  };
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -davinci_cp_intc_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry davinci_cp_intc_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	int gpir, irqnr, none;
+>>  
+>> diff --git a/drivers/irqchip/irq-ftintc010.c b/drivers/irqchip/irq-ftintc010.c
+>> index 359efc1d1be7..b91c358ea6db 100644
+>> --- a/drivers/irqchip/irq-ftintc010.c
+>> +++ b/drivers/irqchip/irq-ftintc010.c
+>> @@ -125,7 +125,7 @@ static struct irq_chip ft010_irq_chip = {
+>>  /* Local static for the IRQ entry call */
+>>  static struct ft010_irq_data firq;
+>>  
+>> -static asmlinkage void __exception_irq_entry ft010_irqchip_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry ft010_irqchip_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	struct ft010_irq_data *f = &firq;
+>>  	int irq;
+>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>> index c19083bfb943..0efa3443c323 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -930,7 +930,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
+>>  	__gic_handle_nmi(irqnr, regs);
+>>  }
+>>  
+>> -static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
+>>  		__gic_handle_irq_from_irqsoff(regs);
+>> diff --git a/drivers/irqchip/irq-ixp4xx.c b/drivers/irqchip/irq-ixp4xx.c
+>> index 5fba907b9052..f23b02f62a5c 100644
+>> --- a/drivers/irqchip/irq-ixp4xx.c
+>> +++ b/drivers/irqchip/irq-ixp4xx.c
+>> @@ -105,8 +105,7 @@ static void ixp4xx_irq_unmask(struct irq_data *d)
+>>  	}
+>>  }
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -ixp4xx_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry ixp4xx_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	struct ixp4xx_irq *ixi = &ixirq;
+>>  	unsigned long status;
+>> diff --git a/drivers/irqchip/irq-omap-intc.c b/drivers/irqchip/irq-omap-intc.c
+>> index dc82162ba763..ad84a2f03368 100644
+>> --- a/drivers/irqchip/irq-omap-intc.c
+>> +++ b/drivers/irqchip/irq-omap-intc.c
+>> @@ -325,8 +325,7 @@ static int __init omap_init_irq(u32 base, struct device_node *node)
+>>  	return ret;
+>>  }
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -omap_intc_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry omap_intc_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	extern unsigned long irq_err_count;
+>>  	u32 irqnr;
+>> diff --git a/drivers/irqchip/irq-sa11x0.c b/drivers/irqchip/irq-sa11x0.c
+>> index 31c202a1ae62..9d0b80271949 100644
+>> --- a/drivers/irqchip/irq-sa11x0.c
+>> +++ b/drivers/irqchip/irq-sa11x0.c
+>> @@ -127,8 +127,7 @@ static int __init sa1100irq_init_devicefs(void)
+>>  
+>>  device_initcall(sa1100irq_init_devicefs);
+>>  
+>> -static asmlinkage void __exception_irq_entry
+>> -sa1100_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry sa1100_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	uint32_t icip, icmr, mask;
+>>  
+>> diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+>> index 5018a06060e6..ca471c6fee99 100644
+>> --- a/drivers/irqchip/irq-versatile-fpga.c
+>> +++ b/drivers/irqchip/irq-versatile-fpga.c
+>> @@ -128,7 +128,7 @@ static int handle_one_fpga(struct fpga_irq_data *f, struct pt_regs *regs)
+>>   * Keep iterating over all registered FPGA IRQ controllers until there are
+>>   * no pending interrupts.
+>>   */
+>> -static asmlinkage void __exception_irq_entry fpga_handle_irq(struct pt_regs *regs)
+>> +static void __exception_irq_entry fpga_handle_irq(struct pt_regs *regs)
+>>  {
+>>  	int i, handled;
+>>  
+>> -- 
+>> 2.34.1
+>>
+> 
 
