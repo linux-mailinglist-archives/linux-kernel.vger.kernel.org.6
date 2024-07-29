@@ -1,275 +1,161 @@
-Return-Path: <linux-kernel+bounces-265455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89E893F173
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4392E93F181
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D182C1C208F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5109B223C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9323113E032;
-	Mon, 29 Jul 2024 09:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBCF1420DF;
+	Mon, 29 Jul 2024 09:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ae8VY5io"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ivz3633o"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5477581F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165FA13DBB1;
+	Mon, 29 Jul 2024 09:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722246400; cv=none; b=jv8Tzh5xEkyfV3gJqhajshQpxoXLMCoZqLMLNv1gTNVlc7ulf1YG3ZaqhnGuoM+/v0UW5/VuFAkLP51SJsbOdVyj3F6vvaMV3aq6hmLMoy1idf33JwPqB8AjZBJp8p7zLGPlAfwYvDIeXEhAXM59LS2NIWkV1QWTvIWSSS5AjCM=
+	t=1722246449; cv=none; b=WXI37Wqo4qA8og3Nq/Nbi2cjfqj6q4tCbrVmb5mmigGG/w1cK++8vL0xeAKgHM6IacZLSI6ye1l/pnfQhqJGfJeYXDYskChaRIf15Fee7ii9xBGw3m1Z1AWgzZi1Z6dLkes89uIO8VVsWWCgIosiBUCnb9PUIOVb7BRubdfXmYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722246400; c=relaxed/simple;
-	bh=1zUqEV9uKWRKbZcOJDccWIU6L3YJKgdXBhzCtbMiD/Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MvRoBUKWUZKL2jpbcQpzxEXtZnWtXhk+rCtcgHBGXZOtitXTjqsP6oDI6qYPJI2A1OwArwmCIT2GoOEDABc0BH+1gvM4r5HxQMfPkZ2EH46Ihq+zwNPJfc1LqfBGui7iacfCfYN/oGninp/soZi+rVzYS/Xv0YnCNld9oBY88Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ae8VY5io; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722246398; x=1753782398;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=1zUqEV9uKWRKbZcOJDccWIU6L3YJKgdXBhzCtbMiD/Q=;
-  b=Ae8VY5iouofESI16AhggnTBVy0gXEQDTnsro24lnCaRSVE7DvADCxxaj
-   CMunLcrS2emUNBuGoFQkKaLPdtcHP/G1hAO7eb5nRqJKZ83aiQzVn7Pac
-   z852vtuF1uGzmRLffAqpj2ClihxPf/g5XU99B2TjUxlSQ4EubIr8/VxAZ
-   Sg/bAX0VEWq+EwVZv1d4AqCxdDlCTe4dQEsSJMlwMdbwAQ3FeGhgMIzEG
-   tMVSNnKGbeb/hqb89dy9qUO0hqbpjPrKVTQD3cGXoNgC7TUfdV4QMJTWC
-   D7vZwJBf2ghwweESLZ8u0lD/Lq2eLcgJQC1Z2lU8BXtcWuwOvE+N77JMn
-   w==;
-X-CSE-ConnectionGUID: +wG80K6cTqq66lmkD6Gryw==
-X-CSE-MsgGUID: /vebVpaMSoWR9R1ceh+S/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="31383584"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="31383584"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:46:37 -0700
-X-CSE-ConnectionGUID: SM/v6pFrQteiKFWjdaCc/g==
-X-CSE-MsgGUID: La5a1TbPQWSP1Dj6lWav+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="53884755"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.185])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:46:34 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Xinhui
- Pan <Xinhui.Pan@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>
-Subject: Re: [PATCH v2 1/2] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
-In-Reply-To: <20240726-amdgpu-edid-bios-v2-1-8a0326654253@weissschuh.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240726-amdgpu-edid-bios-v2-0-8a0326654253@weissschuh.net>
- <20240726-amdgpu-edid-bios-v2-1-8a0326654253@weissschuh.net>
-Date: Mon, 29 Jul 2024 12:46:30 +0300
-Message-ID: <877cd4zg21.fsf@intel.com>
+	s=arc-20240116; t=1722246449; c=relaxed/simple;
+	bh=HNIbBQm01jXPtQXTe3CcpuHXrwUo9KYaV3exGuzXmXo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=CvXjsohXMZYQaWMhyJ7uEP+IZpFpq1uhur6JykwpCDvP/4Q5CzsSOx2tV+IE0/8sd8DJf3XjVVxXDJxD+rwcloDSYp9PivIl7FaYW7jNJ6p4CIFXFoRRML3kVmwyhAOCijyDK5m+Eqe+Z+mqPj6oWvlTE2qFX6PnBVxUPzUX4zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ivz3633o; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46T0K33K018457;
+	Mon, 29 Jul 2024 09:47:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Pxxdc/pYVKgzVeeMdjjBXMbhXRjZr78T908e+MFmHB0=; b=ivz3633oyDfDv3j7
+	onp5fU+isjOxou4O8FhRvN3pLugQHzFQg6EeehW4PORw9ROtL8kgtoT3mcgS3EaA
+	xAqhkI/nMXLyMcw9WXrGYgnxFkT6sz3TH5SCvXWXIWl+AHQa2AZso1Ui3D/v2mtz
+	5L/aqmKbYS0QFU3KwY3fOPy/ucayCXdMEsVT+dvBtSFlk7JuRekd0dc8kpu+Mbph
+	XCWIyianmPszYXpx40zl6JwdgK0c9Q/W/4ysnjfP6DdAcvt9Q8O1Sii7IVYWdXPI
+	kZCWKuGSnyB46XcXm/F2EXjB9QUbw9xBdEbyEnT12LDNJL268r3TOGhXcTVWN0Fb
+	wI8dng==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrfxkqrm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 09:47:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46T9lJYH022094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 09:47:19 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 02:47:13 -0700
+Message-ID: <21c86552-4719-4e60-ab7e-9df3d732df46@quicinc.com>
+Date: Mon, 29 Jul 2024 17:47:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: describe the Qualcomm SGMII PHY
+ for QCS9100
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-v2-0-5ffeb16252db@quicinc.com>
+ <20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-v2-1-5ffeb16252db@quicinc.com>
+ <1486c975-3cc8-46b9-b049-1df4dfed0040@kernel.org>
+ <8ef27923-03ed-44d2-bfa3-6efc75f8d6be@quicinc.com>
+In-Reply-To: <8ef27923-03ed-44d2-bfa3-6efc75f8d6be@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tg_MxtNkXlRMhuqreJSbhio9BbFLijZw
+X-Proofpoint-ORIG-GUID: tg_MxtNkXlRMhuqreJSbhio9BbFLijZw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_07,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 malwarescore=0
+ bulkscore=0 phishscore=0 clxscore=1011 mlxscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290065
 
-On Fri, 26 Jul 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
-> Instead of manually passing around 'struct edid *' and its size,
-> use 'struct drm_edid', which encapsulates a validated combination of
-> both.
->
-> As the drm_edid_ can handle NULL gracefully, the explicit checks can be
-> dropped.
->
-> Also save a few characters by transforming '&array[0]' to the equivalent
-> 'array' and using 'max_t(int, ...)' instead of manual casts.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
->  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
->  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 17 ++++++-----------
->  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
->  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
->  8 files changed, 14 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu=
-/drm/amd/amdgpu/amdgpu_connectors.c
-> index bd0fbdc5f55d..344e0a9ee08a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
-> @@ -249,11 +249,7 @@ amdgpu_connector_find_encoder(struct drm_connector *=
-connector,
->  static struct edid *
->  amdgpu_connector_get_hardcoded_edid(struct amdgpu_device *adev)
->  {
-> -	if (adev->mode_info.bios_hardcoded_edid) {
-> -		return kmemdup((unsigned char *)adev->mode_info.bios_hardcoded_edid,
-> -			       adev->mode_info.bios_hardcoded_edid_size, GFP_KERNEL);
-> -	}
-> -	return NULL;
-> +	return drm_edid_duplicate(drm_edid_raw(adev->mode_info.bios_hardcoded_e=
-did));
->  }
->=20=20
->  static void amdgpu_connector_get_edid(struct drm_connector *connector)
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_mode.h
-> index d002b845d8ac..5e3faefc5510 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-> @@ -51,6 +51,7 @@ struct amdgpu_encoder;
->  struct amdgpu_router;
->  struct amdgpu_hpd;
->  struct edid;
-> +struct drm_edid;
->=20=20
->  #define to_amdgpu_crtc(x) container_of(x, struct amdgpu_crtc, base)
->  #define to_amdgpu_connector(x) container_of(x, struct amdgpu_connector, =
-base)
-> @@ -326,8 +327,7 @@ struct amdgpu_mode_info {
->  	/* FMT dithering */
->  	struct drm_property *dither_property;
->  	/* hardcoded DFP edid from BIOS */
-> -	struct edid *bios_hardcoded_edid;
-> -	int bios_hardcoded_edid_size;
-> +	const struct drm_edid *bios_hardcoded_edid;
->=20=20
->  	/* firmware flags */
->  	u32 firmware_flags;
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_vkms.c
-> index 6415d0d039e1..e5f508d34ed8 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> @@ -549,7 +549,7 @@ static int amdgpu_vkms_sw_fini(void *handle)
->=20=20
->  	adev->mode_info.mode_config_initialized =3D false;
->=20=20
-> -	kfree(adev->mode_info.bios_hardcoded_edid);
-> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
->  	kfree(adev->amdgpu_vkms_output);
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/gpu=
-/drm/amd/amdgpu/atombios_encoders.c
-> index ebf83fee43bb..8defca3705d5 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
-> @@ -2064,23 +2064,18 @@ amdgpu_atombios_encoder_get_lcd_info(struct amdgp=
-u_encoder *encoder)
->  				case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
->  					fake_edid_record =3D (ATOM_FAKE_EDID_PATCH_RECORD *)record;
->  					if (fake_edid_record->ucFakeEDIDLength) {
-> -						struct edid *edid;
-> +						const struct drm_edid *edid;
 
-Bikeshedding follows, up to you and the AMD maintainers to decide
-whether it matters.
 
-I know it's a bit verbose, but personally I've named the struct drm_edid
-variables drm_edid everywhere when making conversions, just to make a
-clear distinction from struct edid. And I like the fact that it forces
-you to account for every place the variable is used, in particular
-passing it to functions that don't have type safety e.g. kfree().
+On 7/11/2024 11:52 AM, Tengfei Fan wrote:
+> 
+> 
+> On 7/10/2024 6:13 PM, Krzysztof Kozlowski wrote:
+>> On 09/07/2024 17:15, Tengfei Fan wrote:
+>>> Document the Qualcomm SGMII PHY for the QCS9100 platforms.
+>>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>>> move to use SCMI resources and it will have new sa8775p-related device
+>>> tree. Consequently, introduce "qcom,qcs9100-dwmac-sgmii-phy" to describe
+>>> non-SCMI based the Qualcomm SGMII PHY.
+>>>
+>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>> ---
+>>>   
+>>> .../devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml        
+>>> | 5 ++++-
+>>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>>> index b9107759b2a5..74ec4579c0d6 100644
+>>> --- 
+>>> a/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>>> +++ 
+>>> b/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>>> @@ -15,7 +15,10 @@ description:
+>>>   properties:
+>>>     compatible:
+>>> -    const: qcom,sa8775p-dwmac-sgmii-phy
+>>> +    items:
+>>
+>> items is not needed here, this could be an enum directly.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Thanks Krzysztof!
+> 
+> In the next version patch series, I will check all the patch series, 
+> using an enum instead od items.
 
->  						int edid_size;
->=20=20
->  						if (fake_edid_record->ucFakeEDIDLength =3D=3D 128)
->  							edid_size =3D fake_edid_record->ucFakeEDIDLength;
->  						else
->  							edid_size =3D fake_edid_record->ucFakeEDIDLength * 128;
-> -						edid =3D kmemdup(&fake_edid_record->ucFakeEDIDString[0],
-> -							       edid_size, GFP_KERNEL);
-> -						if (edid) {
-> -							if (drm_edid_is_valid(edid)) {
-> -								adev->mode_info.bios_hardcoded_edid =3D edid;
-> -								adev->mode_info.bios_hardcoded_edid_size =3D edid_size;
-> -							} else {
-> -								kfree(edid);
-> -							}
-> -						}
-> +						edid =3D drm_edid_alloc(fake_edid_record->ucFakeEDIDString, edid_s=
-ize);
-> +						if (drm_edid_valid(edid))
-> +							adev->mode_info.bios_hardcoded_edid =3D edid;
-> +						else
-> +							drm_edid_free(edid);
->  						record +=3D struct_size(fake_edid_record,
->  								      ucFakeEDIDString,
->  								      edid_size);
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore all the current patches here.
+Thank you for your input.
 
-It also makes review easier because you don't have to check what goes on
-outside of the patch context here. It just won't build.
+> 
+>>
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd=
-/amdgpu/dce_v10_0.c
-> index dddb5fe16f2c..742adbc460c9 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
-> @@ -2846,7 +2846,7 @@ static int dce_v10_0_sw_fini(void *handle)
->  {
->  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
->=20=20
-> -	kfree(adev->mode_info.bios_hardcoded_edid);
-> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
->=20=20
->  	drm_kms_helper_poll_fini(adev_to_drm(adev));
->=20=20
-> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd=
-/amdgpu/dce_v11_0.c
-> index 11780e4d7e9f..8d46ebadfa46 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
-> @@ -2973,7 +2973,7 @@ static int dce_v11_0_sw_fini(void *handle)
->  {
->  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
->=20=20
-> -	kfree(adev->mode_info.bios_hardcoded_edid);
-> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
->=20=20
->  	drm_kms_helper_poll_fini(adev_to_drm(adev));
->=20=20
-> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/=
-amdgpu/dce_v6_0.c
-> index 05c0df97f01d..f08dc6a3886f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-> @@ -2745,7 +2745,7 @@ static int dce_v6_0_sw_fini(void *handle)
->  {
->  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
->=20=20
-> -	kfree(adev->mode_info.bios_hardcoded_edid);
-> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
->=20=20
->  	drm_kms_helper_poll_fini(adev_to_drm(adev));
->=20=20
-> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/=
-amdgpu/dce_v8_0.c
-> index dc73e301d937..a6a3adf2ae13 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
-> @@ -2766,7 +2766,7 @@ static int dce_v8_0_sw_fini(void *handle)
->  {
->  	struct amdgpu_device *adev =3D (struct amdgpu_device *)handle;
->=20=20
-> -	kfree(adev->mode_info.bios_hardcoded_edid);
-> +	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
->=20=20
->  	drm_kms_helper_poll_fini(adev_to_drm(adev));
-
---=20
-Jani Nikula, Intel
+-- 
+Thx and BRs,
+Tengfei Fan
 
