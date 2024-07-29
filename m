@@ -1,152 +1,174 @@
-Return-Path: <linux-kernel+bounces-265847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ACA93F6BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA3D93F6BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6400C1C2161D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD8E1C21A3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B496E1487CC;
-	Mon, 29 Jul 2024 13:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6EB1494BF;
+	Mon, 29 Jul 2024 13:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRdk4mvF"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="XMV3eulV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SZEGU5YX"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8705B8C06
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD308C06;
+	Mon, 29 Jul 2024 13:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722259956; cv=none; b=cMOOBqEpm0xY7UKCZAf4YzozgCgkEbSb/0saIQSQTziBdOnTBjOVc+3zQdsqC8tN+sLDPJixwXsmyIUpwVb5q8axx+6iPugkQiLzUQ+kk7Ff2ZUHRzYdF0wL52zDDvPgRg9xdpLk8RDE2qtZh5HQGyb1gr6/G6Y4cAGmW2Obbf8=
+	t=1722260004; cv=none; b=Uiq+6wszG/zGi7+MKRt6ps9uuXH1Qu4eJcI8g7UFYL023m8DumWxbrkHVTb2lKjKtYfg2pYteATsaVEUAXCAatyTn6uwm1XspRVTMhohwvVoaQhzwii8941TVRi1Er+2F1sPs5kIhU0tyuFac9VFcyAG3yNyB5CdFbwNmEP7bTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722259956; c=relaxed/simple;
-	bh=FORGH31FVY36dwbf1bsEa9eg79lwKPk1j59XV5rC67A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gf+6f6ZsKTqH1LiECcJCv/0eOulyyuk+tuznbNyAWROgGlygpf60QT7LVPpbGZvLSyrw6QCfP4A+vs7tFUlpHshmVQHqCal/7gnbmwisLrkdXZdzevZOuvxPawsVLPqhKooVy3Jr8LVHeGfuxlGLTQSWmNUlUIpihqZ4YYfXZHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRdk4mvF; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efdf02d13so5369341e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722259953; x=1722864753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YbRjAHQtUB3Dfr8gxrGGpoQyBA89PQB8SKva9HnXgRk=;
-        b=MRdk4mvF5d3UaIeKXnzkZTMlol3JKuOlEk5TaAWga9MqpX44IQx4cZN4NLcj+HzbD6
-         Uj/FQ9RxPScW/Q5npUJJdpqEI4x6nSsLIyL7JSgSBFr6d9z86ZGd7Vpg246VmtEUT1Z+
-         B85TUCLxg2JRTqt/UqLJPGwqLIQQG/kv3HqV3whIsQEJsOPLRTbGLst5DHocfjOzxU20
-         zI+PHIDSNzgVe80aL6k7QS15N7NtCUUozFrhAwn1yPMjis41x5mRojfuEZK4RB7/8MIb
-         Rlkfu5HCdmF65itqIFn2/NWDETwPCCIDG1TXJnsjv+UgKvmMXKLjSPROnxx/Utu+X1/U
-         g93Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722259953; x=1722864753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YbRjAHQtUB3Dfr8gxrGGpoQyBA89PQB8SKva9HnXgRk=;
-        b=nBmnNKb5trz37AXwmrGg8oNk2o9cmarwbTQNFxTR1UzplzXf/CcKhhU3tH0HZ1c3qY
-         mH4uJvKqLlPgR/UH91QqndY+7BDWZ4mYJ4N2+GKzXiQLdIxTedOSyn1nJSqLAG+cX8uZ
-         5n7vsiLai/ETcm1vd6KlKaSURAt9s35fGS4IfokKgf7QDffgfYjONId8vZp0VrscVDjE
-         a7gbj1fIJInYZnCxdNDc4Ofz4A84VjTyk/+EX9+oNNysBKnM4Bs2LeLA+xs9jyzWBiLG
-         2EluZpg2GpmtwdJdye7AA5yHFfGIpJzmOBewqgtED/tyDB98m76Op6EYv6WbSsFCeI9K
-         9tEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVffjhFH0FCkjzVqLbA4BssqO/EJGR9lfhhoeej0BDCwCegRifxuBxvGnXE/UAYECn/ccvdqtQdHFIo9UnLVxQeSBexoJm3n54YSoFp
-X-Gm-Message-State: AOJu0YxgeGEiYIUg7y9bdpSXx0EiKNtm4jSJqFW4sjLpPS1ot4RoU2l/
-	RQVCprioy6gh/5GhTeIuKQD02Xm08itzZOfFFJ2t7coOWuT5cvLHAH/D3AUmQEWt/WO43ZSnlgr
-	HaXeZV2vWqCuikWd0ubmz6OYeY/A=
-X-Google-Smtp-Source: AGHT+IE71KUp2UUw2nzU+qFo3xxkx15j6FcheRdalU9a6Wo0DAliW7C/B2RxOZOo+MHMdZNXOuTl+qDdqcspqNW0Q7Q=
-X-Received: by 2002:ac2:4bc7:0:b0:52c:84ac:8fa2 with SMTP id
- 2adb3069b0e04-5309b269275mr7252892e87.7.1722259952209; Mon, 29 Jul 2024
- 06:32:32 -0700 (PDT)
+	s=arc-20240116; t=1722260004; c=relaxed/simple;
+	bh=wKJN1owZ+Xw9GBWfIxQQnbL/vvcRCbzNJTXcvYPQVjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/aKXSg4b8J7wSsKcUBEAq6eLMoXPSuWLkiUxdqpYoopPcVTAr7ufBknkDHAt+175GHknIwv0FwQSzy3w7ZWlHv6w2dwyLCSQAvqr65Hcd7JxXvyB02GeJuzrVG0DfaJOmFqXl1A28aC8u4/S5OURrW0r5q/NtLal6AiPvmuk0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=XMV3eulV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SZEGU5YX; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 51962114011C;
+	Mon, 29 Jul 2024 09:33:20 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 29 Jul 2024 09:33:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1722260000; x=
+	1722346400; bh=1+7cREE5qD3aSshiacIOspAADyLJzFXs1PLzuYNurzM=; b=X
+	MV3eulVSGUhfCfUKTrIf2KFxN4rOoC+v+QEFpdrtkfXf67nepSQrlUgjf7R51fRY
+	qRBT8ywxoLUesu0eDWhaAyrHW8yLAGOIWKk0v4QOsLTyS4jAY63REqoBtyT0iJsy
+	XnL007ygTcLPsAopg+rapuaQgtZImm2tx6udSNoFXVung+tnOj63hycpOs8HtWxO
+	Yr1kczAj1InG8j9mMjAwp+9DXZsWAmn7FoEMsxcBErtbMg9WDRa2kjHYadl1HkhX
+	coNDO2N0iDGz2oOIrH7vzfR5dW5D1K8M2QjHkYlFFYrZrw9rTsb+CGJv00X99LFh
+	z1uWNjXsAygshkiY+ctZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722260000; x=1722346400; bh=1+7cREE5qD3aSshiacIOspAADyLJ
+	zFXs1PLzuYNurzM=; b=SZEGU5YXP44yG7ap+3e/dJsHH3qMhcgKipRlBIQpfEhw
+	u8h39dwkqZ0czFETqf3jF0Naxkes1qwC2NqcLQpf860GPOg1H8RglS78wK29AVd2
+	Kyv8ZCb8NybikoCtjJKR2sUwKO13b3iEhYjaNlRq8UdpED81OmAkhAvsmWpJ4dxc
+	UxhZCAllvU5OAfrJ8EFdnKsGwZ5kmVR8JIk0ilx5zOo/qfM4gt07ujLHXfbGDOeh
+	I7tH6oGxXgfud2ahO0kx+S7nbqI90GOexbCePZ//NQdcNc4Gw2gEQem9ovnA8Fxx
+	Z1V+5mOteLQfI/eSZTaIrzojcUg7+lM4MCEGQ5TLyw==
+X-ME-Sender: <xms:IJqnZl5EnwHg-9RTJidoI2Iy2q1pgOtI6ieHJqrV238ihKPy11cEFA>
+    <xme:IJqnZi6s2ppTb4G6poX0JpxlxHYaQIy5S2p5Ut5BPwzp2WXt7WDJ9mYPThacv01hR
+    QLpKML3LEpjqsepjyY>
+X-ME-Received: <xmr:IJqnZsf7lPsy5Am4IcqF9EckkL5PplkzJUgVo_tB727x4fOs1Hd6J5RNHYDELzuV5Ou00srgy4gpbivGZx80bm22KMyTdSAQBEKZ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgdeiiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
+    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfette
+    fgkedvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:IJqnZuJp--rOkoprGSVLVZCxsQFpanPph1pBFES0fdMJK4hmDbKi_A>
+    <xmx:IJqnZpLlyMJMHf2fCkSuUD9acirkIre1UpGxgpOyhtxlZLv8R_jrhg>
+    <xmx:IJqnZnyHSS3-RyoQiZJrwxuhAVYw-r_g8MJZSZkW3c-aOSEvpRyf1A>
+    <xmx:IJqnZlKp9TgFIbM57PJN4N0BUFLmIfolD7yHOY2PbQ-W1QJobwBx2A>
+    <xmx:IJqnZuqdHz4UnR6g3Ut7hz_h9bfgvgJTrfTkaSZLxHKc6DPd9A38P9HH>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Jul 2024 09:33:16 -0400 (EDT)
+Date: Mon, 29 Jul 2024 22:33:12 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: "edmund.raile" <edmund.raile@proton.me>
+Cc: linux-sound@vger.kernel.org, stable@vger.kernel.org, tiwai@suse.com,
+	clemens@ladisch.de, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] ALSA: firewire-lib: restore process context
+ workqueue to prevent deadlock
+Message-ID: <20240729133312.GA122247@workstation.local>
+Mail-Followup-To: "edmund.raile" <edmund.raile@proton.me>,
+	linux-sound@vger.kernel.org, stable@vger.kernel.org, tiwai@suse.com,
+	clemens@ladisch.de, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+References: <ora25phw5xyiog2z5xmlkrwvgffpwjq27algi6hqjs7s76b2qg@wbgokl2mblbq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
- <ZqcRqxGaJsAwZD3C@casper.infradead.org> <CANzGp4J3et+yo8v8iDngvAb3nrn-gSDh0_j0=65OEiw9jKJbPQ@mail.gmail.com>
- <ZqeRO9gedIPcbm3E@casper.infradead.org>
-In-Reply-To: <ZqeRO9gedIPcbm3E@casper.infradead.org>
-From: Chuanhua Han <chuanhuahan@gmail.com>
-Date: Mon, 29 Jul 2024 21:32:20 +0800
-Message-ID: <CANzGp4JobgUNCUXrv-kXw_NFBCNp7pO9bGwUBJxMDjca8P7G-w@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
- zRAM-like swapfile
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	ying.huang@intel.com, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
-	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
-	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ora25phw5xyiog2z5xmlkrwvgffpwjq27algi6hqjs7s76b2qg@wbgokl2mblbq>
 
-Matthew Wilcox <willy@infradead.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=8829=E6=
-=97=A5=E5=91=A8=E4=B8=80 20:55=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Jul 29, 2024 at 02:36:38PM +0800, Chuanhua Han wrote:
-> > Matthew Wilcox <willy@infradead.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=8829=
-=E6=97=A5=E5=91=A8=E4=B8=80 11:51=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Fri, Jul 26, 2024 at 09:46:17PM +1200, Barry Song wrote:
-> > > > -                     folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABL=
-E, 0,
-> > > > -                                             vma, vmf->address, fa=
-lse);
-> > > > +                     folio =3D alloc_swap_folio(vmf);
-> > > >                       page =3D &folio->page;
-> > >
-> > > This is no longer correct.  You need to set 'page' to the precise pag=
-e
-> > > that is being faulted rather than the first page of the folio.  It wa=
-s
-> > > fine before because it always allocated a single-page folio, but now =
-it
-> > > must use folio_page() or folio_file_page() (whichever has the correct
-> > > semantics for you).
-> > >
-> > > Also you need to fix your test suite to notice this bug.  I suggest
-> > > doing that first so that you know whether you've got the calculation
-> > > correct.
-> >
-> > >
-> > >
-> > This is no problem now, we support large folios swapin as a whole, so
-> > the head page is used here instead of the page that is being faulted.
-> > You can also refer to the current code context, now support large
-> > folios swapin as a whole, and previously only support small page
-> > swapin is not the same.
->
-> You have completely failed to understand the problem.  Let's try it this
-> way:
->
-> We take a page fault at address 0x123456789000.
-> If part of a 16KiB folio, that's page 1 of the folio at 0x123456788000.
-> If you now map page 0 of the folio at 0x123456789000, you've
-> given the user the wrong page!  That looks like data corruption.
-The user does not get the wrong data because we are mapping the whole,
-and for 16KiB folio, we map 16KiB through the page table.
->
-> The code in
->         if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-> as Barry pointed out will save you -- but what if those conditions fail?
-> What if the mmap has been mremap()ed and the folio now crosses a PMD
-> boundary?  mk_pte() will now be called on the wrong page.
-These special cases have been dealt with in our patch. For mthp's
-large folio, mk_pte uses head page to construct pte.
+On Mon, Jul 29, 2024 at 10:16:04AM +0000, edmund.raile wrote:
+> > $ git revert -s b5b519965c4c
+> Yes, 5b5 can be removed via revert, but what is the difference in
+> effect? Just time saving?
+
+The title of commit generated by git-revert could be helpful when reading
+history of changes later. The code change is itself important, while the
+history of changes often assists developers to work between several
+trees.
+
+> > $ git revert -s 7ba5ca32fe6e
+> This one I'd like to ask you about:
+> The original inline comment in amdtp-stream.c
+> amdtp_domain_stream_pcm_pointer()
+> ```
+> // This function is called in software IRQ context of
+> // period_work or process context.
+> //
+> // When the software IRQ context was scheduled by software IRQ
+> // context of IT contexts, queued packets were already handled.
+> // Therefore, no need to flush the queue in buffer furthermore.
+> //
+> // When the process context reach here, some packets will be
+> // already queued in the buffer. These packets should be handled
+> // immediately to keep better granularity of PCM pointer.
+> //
+> // Later, the process context will sometimes schedules software
+> // IRQ context of the period_work. Then, no need to flush the
+> // queue by the same reason as described in the above
+> ```
+> (let's call the above v1) was replaced with
+> ```
+> // In software IRQ context, the call causes dead-lock to disable the tasklet
+> // synchronously.
+> ```
+> on occasion of 7ba5ca32fe6e (let's call this v2).
+> 
+> I sought to replace it with
+> ```
+> // use wq to prevent deadlock between process context spin_lock
+> // of snd_pcm_stream_lock_irq() in snd_pcm_status64() and
+> // softIRQ context spin_lock of snd_pcm_stream_lock_irqsave()
+> // in snd_pcm_period_elapsed()
+> ```
+> to prevent this issue from occurring again (let's call this v3).
+> 
+> Should I include v1, v3 or a combination of v1 and v3 in my next patch?
+
+I think we pay enough attention to regenerate the deadlock, thus v3 is a
+good choice. But the cause of deadlock in the above description is a bit
+wrong. It is typical AB/BA deadlock, like:
+
+Thread 0:
+1. Acquire stream lock by calling 'snd_pcm_stream_lock_irq()' or so
+2. Wait until running tasklet finishes by calling 'tasklet_disable_in_atomic()'
+   (actually at tasklet_unlock_spin_wait())
+
+Thread 1:
+1. Launch tasklet
+2. Wait until the stream lock released
+
+The softIRQ context does not related to any type of lock in sound
+subsystem essentially.
 
 
---=20
-Thanks,
-Chuanhua
+Thanks
+
+Takashi Sakamoto
 
