@@ -1,225 +1,147 @@
-Return-Path: <linux-kernel+bounces-265708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4D793F4AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:56:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D025893F4B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4042281E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:56:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364E5B20E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C3414659A;
-	Mon, 29 Jul 2024 11:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14476146586;
+	Mon, 29 Jul 2024 11:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VlRVDaIi"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LIk9IW3s"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999A114600F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E08145FF4
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722254172; cv=none; b=b0D/IXwRSTPT4h5TvkRNsp8SapsJSnrMZ7Jh+mHgjnxX6fRgBSAj6elhtdyx567Y402cWBgPJej5kqwQwnp3Lw+Nr3/DBjZhdLQ5hykJWWou4AL7j0RBnPGO0JlrVpbOXcgkAOf3/r9YBUxowEiVrC24GH+Vhdj4U50uYujz7Mk=
+	t=1722254244; cv=none; b=Cf9mfQiNQI25k9vL5R3SMqbg+2PmVaYaih/IdBdO6SENMVG23f7b7W0JqfFZ6On/fNPoMY05lsp+f5jMznDvO42+T0jEIfKZ+x0q/xReOOW7ay98Rb2+RsA2a56Avjeh4Qm+hYum0mzooNIEfOgC5Lzoe+5L8+0nlGUWu0Y13ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722254172; c=relaxed/simple;
-	bh=i9I3/N05FbGwbs91KpB69t9soACd1NmRqKErtbYjxfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IoJexm9wn79p8eaH4eOd9S6NiwnWFUUUgQgsj/7NVGZMR8UKg2hY9ldQrXwdwp+alnXOAgOyPxjO/2couBi7DUqaVvB1MXpHpWoLhPMD8fWw524HhdcqbDAHiz+LHdXnvYB7F/TKWBom+7LW284pwQw3RYxXUoVVDNBayR8bGbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VlRVDaIi; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso39936081fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:56:10 -0700 (PDT)
+	s=arc-20240116; t=1722254244; c=relaxed/simple;
+	bh=x3XhPLsCtjDy70nhvPuPtYCSM145dpQSHE7ynV+IkpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jl1MZlfkSPkUnjnyjNyvXThH1b5e8bNQ9yLg6E3GUWJ5Iu6Yj7sjVhlf9MBJCuusUKfIWQLzhyA8FRwFZx93zEbARHe1dhf6vZxSu/UaOK6q7twMFyHLIOc/zcRIOsOKoxR6HeQeQMaq5575K6+ZmYKJllPkliq5iLmyJGYvrFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LIk9IW3s; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso11490a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:57:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1722254169; x=1722858969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6lqilmYMNLKW9grtztpOwsuGdNvh+NjmMFJBCfbrWzM=;
-        b=VlRVDaIidmvG9OURb/KvjjAUO1JQpyAogP87mz5A39PExXtoJLaS80MFW87AudAGDh
-         82HtdsxbcFvU1qamlNyf02qOXYtI5ccc6x2bfSMOvcp0h/w1p/EVgz59iQxvF/c9x59P
-         hcyAt7YpLrvckKtjHIzktQG6VxFbsOCl/VwVE=
+        d=google.com; s=20230601; t=1722254241; x=1722859041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/+A9yn1Vu3zA/NqT+R60GqDVDjMj6eEkOom2C/kDD3s=;
+        b=LIk9IW3sCQqxWE5eyzh0zMAn7KTdiSv6YkWmautxeHEcFcv/TSjGr5uOjNC42KXsEE
+         wspM+abvXGlbN1OvIV9p6+UR9mJVqNG9vThdc27v0wxA4rWOkfghtzVKBnpH8WC0VymM
+         MuBerAap7drwXeRnz5WuiZCGhevgxjosWeWogNV5yDSdk1jk7GpH+qstJitePys7oaoF
+         uVcyaO7zsOe/I6O+ZnuiYhIrTcj5yVWG9UEI9siV8Jru2B2lPP/8N4Ksd+uqPLYH3Yke
+         GxNC/ZPoxXB4NhPTP1eqCMsn92I3if11zACEm3TYX/6dFEZTQs336zU10ETZDI3WOUZ3
+         XncA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722254169; x=1722858969;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6lqilmYMNLKW9grtztpOwsuGdNvh+NjmMFJBCfbrWzM=;
-        b=GS3BXGfIL05nlvsPYRLCk6tcg05oWU6eqQwFCMCvkzK/tEy4MFIWJgSLsSEPX+chCg
-         cSprOdfBDmJ8+d/zFeXWtQAunLD2u94DNgWbml41d6SE/isbskbNquxSAXVl7kqWnsvD
-         49zrqomtJwH9klrIFU8AV7KwiIHgvKwVpI8eK6yxBCuFUImZ4tTXIZYRNOKrWuia7A5T
-         ztjsg4ilC8Do+dJXbEnC1uu0UiAjs/nklZjstP+9uXKxl+lf+d77m9mUBMq97STuz5IT
-         XifEdnlxTVKmHXvBS+ezut4dmTU18/erwwYUtNZdGrzG4JtISfPBugNSZ6/afzU6Xu67
-         E0kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjurJNFW1UwXdCNyiuU9jEB5Yn71JaI5zLzE3fsfKPjNP3FylxEjPe9dXdeU+HK3IkhSZAEWGX7deys7WEjb92Ct3rWfKchkL3hOpm
-X-Gm-Message-State: AOJu0Yw3SXwxaqUkLDH0xJp1L8TcaEiYt+Y25/OSIG8DWPrJigAha9Zu
-	9AOTruOOh//AzvXBUZHH8/zULRmDhPTeZTwufOS7zT7x85XPaDH9h1xgqiftC5U=
-X-Google-Smtp-Source: AGHT+IEJSwMOihyNplXaU0oXw+JPkRM618PqXZc6xYxwDAEuy3NmLkQA4X67+R5kP5xzh5UzltTrZw==
-X-Received: by 2002:a2e:a78d:0:b0:2ef:2dfe:f058 with SMTP id 38308e7fff4ca-2f12ee2eac5mr44883831fa.42.1722254168694;
-        Mon, 29 Jul 2024 04:56:08 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03cf30aacsm12885391fa.48.2024.07.29.04.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 04:56:08 -0700 (PDT)
-Date: Mon, 29 Jul 2024 12:56:06 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"jiri@resnulli.us" <jiri@resnulli.us>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"rkannoth@marvell.com" <rkannoth@marvell.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v25 08/13] rtase: Implement net_device_ops
-Message-ID: <ZqeDVl5rGXfEjv4m@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Justin Lai <justinlai0215@realtek.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"jiri@resnulli.us" <jiri@resnulli.us>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"rkannoth@marvell.com" <rkannoth@marvell.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-References: <20240729062121.335080-1-justinlai0215@realtek.com>
- <20240729062121.335080-9-justinlai0215@realtek.com>
- <ZqdvAmRc3sBzDFYI@LQ3V64L9R2>
- <f55076d3231f40dead386fe6d7de58c9@realtek.com>
+        d=1e100.net; s=20230601; t=1722254241; x=1722859041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/+A9yn1Vu3zA/NqT+R60GqDVDjMj6eEkOom2C/kDD3s=;
+        b=uE4vYAv20JpfTgwRznsOz62h2b0B+hA84i6O+ZGrFRc7F9CIqKopQt1gE2pIOMXq2U
+         abNlPU0vqPDCq2d67JkwLqvo+9G0XRcdSQ83pXR1FUHePsuEELi3/6FGqsYehVwIsAqa
+         iCe8hwOJpGLXpk5cAjVCRCo2m21zfaCEOKUGffF8cIY4UQ0ZYEoC4sJJna4uVVPrrMAz
+         /jsPbUmY/fBPis1qkpsu+KAkB6loIDkZzDQv68iEEITdDjTng9O1Mh+bEyy0dawKfdLQ
+         AbX6qk/t/aR6TLRKABMq7DKpsxTMNeCQXNuowFFDV8eKVi1qmJqK/M0rINs9wKwg3zR+
+         /Fjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdlsrnqzMyESWEmnDYjQmuqQSKqlUJiuSvxhICPnif0Acb6M8ZqcwzXa925z412iAV78d38+3XmBO0fLNRvnq3w9CxOmFalFlR6P1z
+X-Gm-Message-State: AOJu0YwqJ5EoAEWz0KZMD6n18gGGq5JK4WuReyVzxA+KNVE4EFMZ4/uY
+	teK+L8KW66o2QaO3PSR9tTR/khJb6Hv8qILVQ/bUqDT0OFr6H1XIvrBsZ8sdorn/B9VrLUZtVUc
+	L6wk9+nF3uZ9+kCaIMIgFtzxkrS57BMLpVpmN
+X-Google-Smtp-Source: AGHT+IFGfho3sbTHKT0xwhEjvTYuUpNnNy70RSsdxIvCATXOU/6B+Ko3DwMfC7CFyPef0u/zrB+lS4UagH+FLbCyDvg=
+X-Received: by 2002:a05:6402:3585:b0:5a0:d4ce:59a6 with SMTP id
+ 4fb4d7f45d1cf-5affc67d570mr338128a12.2.1722254240674; Mon, 29 Jul 2024
+ 04:57:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f55076d3231f40dead386fe6d7de58c9@realtek.com>
+References: <20240725175714.1769080-1-patrykd@google.com> <ZqcQ3rjY6Wu4lU6t@google.com>
+In-Reply-To: <ZqcQ3rjY6Wu4lU6t@google.com>
+From: Patryk Duda <patrykd@google.com>
+Date: Mon, 29 Jul 2024 13:57:09 +0200
+Message-ID: <CAMxeMi3864MhJvaH16mw5hHKzYnoRWpZWnxJJuWm9bSKiTojWQ@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_proto: Lock device when updating
+ MKBP version
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 11:39:03AM +0000, Justin Lai wrote:
-> > On Mon, Jul 29, 2024 at 02:21:16PM +0800, Justin Lai wrote:
-> > > 1. Implement .ndo_set_rx_mode so that the device can change address
-> > > list filtering.
-> > > 2. Implement .ndo_set_mac_address so that mac address can be changed.
-> > > 3. Implement .ndo_change_mtu so that mtu can be changed.
-> > > 4. Implement .ndo_tx_timeout to perform related processing when the
-> > > transmitter does not make any progress.
-> > > 5. Implement .ndo_get_stats64 to provide statistics that are called
-> > > when the user wants to get network device usage.
-> > > 6. Implement .ndo_vlan_rx_add_vid to register VLAN ID when the device
-> > > supports VLAN filtering.
-> > > 7. Implement .ndo_vlan_rx_kill_vid to unregister VLAN ID when the
-> > > device supports VLAN filtering.
-> > > 8. Implement the .ndo_setup_tc to enable setting any "tc" scheduler,
-> > > classifier or action on dev.
-> > > 9. Implement .ndo_fix_features enables adjusting requested feature
-> > > flags based on device-specific constraints.
-> > > 10. Implement .ndo_set_features enables updating device configuration
-> > > to new features.
-> > >
-> > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> > > ---
-> > >  .../net/ethernet/realtek/rtase/rtase_main.c   | 235 ++++++++++++++++++
-> > >  1 file changed, 235 insertions(+)
-> > >
-> > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > index 8fd69d96219f..80673fa1e9a3 100644
-> > 
-> > [...]
-> > 
-> > > +static void rtase_dump_state(const struct net_device *dev) {
-> > 
-> > [...]
-> > 
-> > > +
-> > > +     netdev_err(dev, "tx_packets %lld\n",
-> > > +                le64_to_cpu(counters->tx_packets));
-> > > +     netdev_err(dev, "rx_packets %lld\n",
-> > > +                le64_to_cpu(counters->rx_packets));
-> > > +     netdev_err(dev, "tx_errors %lld\n",
-> > > +                le64_to_cpu(counters->tx_errors));
-> > > +     netdev_err(dev, "rx_errors %d\n",
-> > > +                le32_to_cpu(counters->rx_errors));
-> > > +     netdev_err(dev, "rx_missed %d\n",
-> > > +                le16_to_cpu(counters->rx_missed));
-> > > +     netdev_err(dev, "align_errors %d\n",
-> > > +                le16_to_cpu(counters->align_errors));
-> > > +     netdev_err(dev, "tx_one_collision %d\n",
-> > > +                le32_to_cpu(counters->tx_one_collision));
-> > > +     netdev_err(dev, "tx_multi_collision %d\n",
-> > > +                le32_to_cpu(counters->tx_multi_collision));
-> > > +     netdev_err(dev, "rx_unicast %lld\n",
-> > > +                le64_to_cpu(counters->rx_unicast));
-> > > +     netdev_err(dev, "rx_broadcast %lld\n",
-> > > +                le64_to_cpu(counters->rx_broadcast));
-> > > +     netdev_err(dev, "rx_multicast %d\n",
-> > > +                le32_to_cpu(counters->rx_multicast));
-> > > +     netdev_err(dev, "tx_aborted %d\n",
-> > > +                le16_to_cpu(counters->tx_aborted));
-> > > +     netdev_err(dev, "tx_underun %d\n",
-> > > +                le16_to_cpu(counters->tx_underun));
-> > 
-> > You use le64/32/16_to_cpu here for all stats, but below in rtase_get_stats64, it
-> > is only used for tx_errors.
-> > 
-> > The code should probably be consistent? Either you do or don't need to use
-> > them?
-> > 
-> > > +}
-> > > +
-> > [...]
-> > > +
-> > > +static void rtase_get_stats64(struct net_device *dev,
-> > > +                           struct rtnl_link_stats64 *stats) {
-> > > +     const struct rtase_private *tp = netdev_priv(dev);
-> > > +     const struct rtase_counters *counters;
-> > > +
-> > > +     counters = tp->tally_vaddr;
-> > > +
-> > > +     dev_fetch_sw_netstats(stats, dev->tstats);
-> > > +
-> > > +     /* fetch additional counter values missing in stats collected by driver
-> > > +      * from tally counter
-> > > +      */
-> > > +     rtase_dump_tally_counter(tp);
-> > > +     stats->rx_errors = tp->stats.rx_errors;
-> > > +     stats->tx_errors = le64_to_cpu(counters->tx_errors);
-> > > +     stats->rx_dropped = tp->stats.rx_dropped;
-> > > +     stats->tx_dropped = tp->stats.tx_dropped;
-> > > +     stats->multicast = tp->stats.multicast;
-> > > +     stats->rx_length_errors = tp->stats.rx_length_errors;
-> > 
-> > See above; le64_to_cpu for tx_errors, but not the rest of the stats. Why?
-> 
-> The rtase_dump_state() function is primarily used to dump certain hardware
-> information. Following discussions with Jakub, it was suggested that we
-> should design functions to accumulate the 16-bit and 32-bit counter values
-> to prevent potential overflow issues due to the limited size of the
-> counters. However, the final decision was to temporarily refrain from
-> reporting 16-bit and 32-bit counter information. Additionally, since
-> tx_packet and rx_packet data are already provided through tstat, we
-> ultimately opted to modify it to the current rtase_get_stats64() function.
+On Mon, Jul 29, 2024 at 5:47=E2=80=AFAM Tzung-Bi Shih <tzungbi@kernel.org> =
+wrote:
+>
+> On Thu, Jul 25, 2024 at 05:57:13PM +0000, Patryk Duda wrote:
+> > The cros_ec_get_host_command_version_mask() function requires that the
+> > caller must have ec_dev->lock mutex before calling it. This requirement
+> > was not met and as a result it was possible that two commands were sent
+> > to the device at the same time.
+>
+> To clarify:
+> - What would happen if multiple cros_ec_get_host_command_version_mask() c=
+alls
+>   at the same time?
+In the best case, MCU will receive both commands glued together and
+will ignore them.
+It will result in a timeout in the kernel. In the worst case, request
+and/or response buffers will be
+corrupted.
 
-Your response was a bit confusing, but after re-reading the code I
-think I understand now that I misread the code above.
+> - What are the callees?  I'm trying to understand the source of paralleli=
+sm.
+This is a race between interrupt handling and ioctl call from userspace
 
-The answer seems to be that tx_errors is accumulated in
-rtase_counters (which needs le*_to_cpu), but the other counters are
-accumulated in tp->stats which do not need le*_to_cpu because they
-are already being accounted in whatever endianness the CPU uses.
+Handling interrupt path
+cros_ec_irq_thread()
+cros_ec_handle_event()
+cros_ec_get_next_event() - Queries host command version without taking
+ec_dev->lock mutex first
+cros_ec_get_host_command_version_mask()
+cros_ec_send_command()
+cros_ec_xfer_command()
+cros_ec_uart_pkt_xfer()
 
-OK.
+Command from userspace
+cros_ec_chardev_ioctl()
+cros_ec_chardev_ioctl_xcmd()
+cros_ec_cmd_xfer() - Locks ec_dev->lock mutex before sending command
+cros_ec_send_command()
+cros_ec_xfer_command()
+cros_ec_uart_pkt_xfer()
+
+>
+> Also, the patch also needs an unlock at [1].
+>
+> [1]: https://elixir.bootlin.com/linux/v6.10/source/drivers/platform/chrom=
+e/cros_ec_proto.c#L819
+
+Yeah. I'll fix it in v2
+
+>
+> > The problem was observed while using UART backend which doesn't use any
+> > additional locks, unlike SPI backend which locks the controller until
+> > response is received.
+>
+> Is it a general issue if multiple commands send to EC at a time?  If yes,=
+ it
+> should serialize that in the UART transportation.
+
+Host Commands only support one command at a time. It's enforced by 'lock' m=
+utex
+from cros_ec_device structure. We just need to use it properly.
 
