@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-265436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D9293F132
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:33:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4DE93F134
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A68D285963
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39921C209C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBEF13D291;
-	Mon, 29 Jul 2024 09:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8D713D291;
+	Mon, 29 Jul 2024 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wTjnsjyc"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dgz5M7nY"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120B6B667;
-	Mon, 29 Jul 2024 09:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF452F5A;
+	Mon, 29 Jul 2024 09:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245602; cv=none; b=cWsBH6xwGMscTwQiXCIJcvH58Hd5cyhoptUN/YvkAJlwCti/fa9dLZs990N7QGQpjuIXl8cnCFy+IPVDSfFWPFz4BKHLleZtDwAISINc9d+gyMUHVwJ70rYYOXyNT52mVuByPHL6gP/vRd3E4XKzOwbUUKFIAIiopavavoEPW1w=
+	t=1722245639; cv=none; b=Y9fJafHoaYr1uEmgq99zmVf8uxFhkeK2dY5ux4NzqsGq2l5uMjWKYwGztpYwauSjW4AT/hnYgtUnImb5a6ZUHXHEbJmxN8Lpi0fPBRo1IBdnqVVJO2w6CjTQHAU2PLZeJmJF4x0TDuOoMvVX2xIbnEAdGcFrkPQ+X8lCcnrAveE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245602; c=relaxed/simple;
-	bh=eLtXGh0GNrE0GjB2gfA9Puv6Yku+pwVZoF3jaTnn9iQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skoUk3eLrVep1aacfzZvpHerYB6V3ieZ8we7o7heGEXyZn2J5G1zvCGgLR3bRvKPhjylZdmVXNmXHDTNeGIca97k006ZXAljjTKXVRKSgfuiJHpDE7KH0uYjaJA5KEtIwdlcoZD+B476YbJcUZvQaMP0We7La55Opt5jP+XRhAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wTjnsjyc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD8E545A;
-	Mon, 29 Jul 2024 11:32:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722245553;
-	bh=eLtXGh0GNrE0GjB2gfA9Puv6Yku+pwVZoF3jaTnn9iQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wTjnsjyc1kECtkioC5DBaOj0ifg26xDHoKtE1O3FBON6vtPaPLT2BDXU3U0L1hicR
-	 G/Mk2+6AxMMwY2YKxSR459dM36yHjCC88IansIf4z9ZYzAc1hOwbxHJ/ymI3vR3BFL
-	 PfAW13rL+iQVdbiM/BV+8XtV22JxloMKqHLtx+rI=
-Date: Mon, 29 Jul 2024 12:32:59 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: imx-mipi-csis: avoid logging while holding
- spinlock
-Message-ID: <20240729093259.GB2320@pendragon.ideasonboard.com>
-References: <20240723060909.534584-1-matthias.fend@emfend.at>
- <20240726104255.GH14252@pendragon.ideasonboard.com>
- <3e38bf09-734d-4cbf-a0a5-b01cd1998037@emfend.at>
+	s=arc-20240116; t=1722245639; c=relaxed/simple;
+	bh=LtwMctIoW35Cjmp4m333CqztOaLR5iM9IC6IWGkwdG0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SbI25W40xZJfxu1Cu+UIeWGHNQGt1aGz9VKtS55QB5E/qcsSN22KDauTJSDicoVMf9Z9KF9mNxpx5UhfzbUrDh+a9iAQeIwVpzuIW0iP7zOht5+ahh2eOb/pK0k5vMYAuFh+SaGOow5uXpQBLvbpKdzPdCWkRnGtkuxRBOSRcQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dgz5M7nY; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722245607; x=1722850407; i=markus.elfring@web.de;
+	bh=LtwMctIoW35Cjmp4m333CqztOaLR5iM9IC6IWGkwdG0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=dgz5M7nYkdUgDwK9phzTsFPm82VqCRTScEFyXZ0xCLqYRMM495yzwB56/yhyJQzJ
+	 utDkk5YveJBb48QPLlxsKqUAEM2KzRvdVSij0hZBOS6eu01sz04R1o2uISiZVPdt7
+	 2Ck1DFvaPaVkLFMSwux0P69orXfcfr7Q1dOp+YMGZzxNBG/DHhwlRy6Po+3O8jkAx
+	 GbD8rHu/h1wsukr0fFfCwQ3TbaI/Sw3TAQXGnIRwWNUMxbV/++JKhJSx1zzg2Ga6Y
+	 Z3J1Y8YSH5YzIDNBs9ABAvicf5ZT0CKwJnOc4aWa+3JOstiys+ba8O+RFmA8koS/7
+	 lHAbaQZZeH3SXYP2dw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Melaj-1rxvwQ2dnR-00ex4k; Mon, 29
+ Jul 2024 11:33:27 +0200
+Message-ID: <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
+Date: Mon, 29 Jul 2024 11:33:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3e38bf09-734d-4cbf-a0a5-b01cd1998037@emfend.at>
+User-Agent: Mozilla Thunderbird
+To: Justin Lai <justinlai0215@realtek.com>, netdev@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jiri Pirko <jiri@resnulli.us>, Joe Damato <jdamato@fastly.com>,
+ Larry Chiu <larry.chiu@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>,
+ Simon Horman <horms@kernel.org>
+References: <20240729062121.335080-2-justinlai0215@realtek.com>
+Subject: Re: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
+ this module
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240729062121.335080-2-justinlai0215@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tB92qHy0RNzSNawe8kxkUW5GhwESMFSlcQ1cESk5ZZ4Of7efVBs
+ MpxT3NuHDgREIG7J+UhvBS9QgANRTn6hYnkylxliG8vbz2lNiVszASzScSwLaH8JjceTUAS
+ zTjCZjach2O33wF1WM6e0gZthuNAqgF7fdyL0pS+Sh3NfcAtUHG544SIQWApFYIvCM4qk5+
+ f2Jq3Kyu4swk9QplPzXVQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:R2nTMJm2YdQ=;luShWSeSJNHJqAC+E4H/cuxFJB7
+ 9p6+upHxXudW8NPBviaqQ536/urKnv6CccruDWpL1nP5dLq6xq4BlPjiimr/KdBXlLZY0yO3V
+ aANQA2HuhydGJJ9S1K/JfW08my5ftIIuhMMZxQrsEhcXEbAU8Ua0fDm+p7KVddnIpg5gvtbcx
+ Jqmp/btNBKE0x47xEVXxtS4Qdz3mVtOTQCz7WPcOjToVmA2gRd5kyl7BW9hMdBLbX6Tr2nzQS
+ 4aFTqB+r3hGOimtyfPEYVDygBJqjf4bl5cL5pYdtVfNt8ENRUnI9D88oodAiKB30b8hpuAqkR
+ HEm1Y1Y9j356iUMAPOz6I16zWbVmuvAslzd8ZgDsxDcV8vmO5SG8is9B1ASgqn41TABwsYcEu
+ 6xt1pDgg9RU/HXuK7lqpHhZowT9eeSQmEGjqULPfKmXJ2QEuj/gHAUAiyp1z5x9G60aRrG2R2
+ T1Caee/NRA+m5mujxlQv3dTnMNNp6Amuwc1J24n1qOtlUM4YgfrFzkjn83JzA/UUh5d21xP2a
+ sgltc7Hf0RAdze0dNStaZHPVVn56eZPw68PBDOhOUTdyQHllEgaZfnIixqsF1JsyK4rbb1X0t
+ iV9vrBPITtmWF1VsqIFodQVCdxqA9moLApd1pTwBAb+IVGVWbnDxI7pRdMCQGBtLfe7tLk7yw
+ D/U3NmDFpjN1n9kje5PyR9R2bJAmO0CtvqZKaZoFFUJz6MXk/T+1Lbgr3aGVmGPjbfJZGmtmn
+ kRhvBxpJMMvbUB+JZ/Is6A9x8XV75RPw3j9ncY/O5O+Df0JzI3hS6Fh2RgwXCJ74ZWrL+AU2K
+ 2Ska7KTpkoNsZqFvkQ5QECWQ==
 
-On Fri, Jul 26, 2024 at 02:16:07PM +0200, Matthias Fend wrote:
-> Hi Laurent,
-> 
-> Am 26.07.2024 um 12:42 schrieb Laurent Pinchart:
-> > Hi Matthias,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Tue, Jul 23, 2024 at 08:09:08AM +0200, Matthias Fend wrote:
-> >> Refactor mipi_csis_log_counters() to prevent calling dev_info() while
-> >> IRQs are disabled. This reduces crucial IRQs off time to a bare minimum.
-> > 
-> > Should we add
-> > 
-> > Cc: stable@vger.kernel.org
-> > 
-> > to get this backported to stable kernels ?
-> 
-> Hard for me to tell. Since this problem only occurs when you explicitly 
-> trigger the debug output from this driver, it probably only affects very 
-> few end users. So I'm not sure if a backport would be worth it.
+=E2=80=A6
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
+> @@ -0,0 +1,338 @@
+=E2=80=A6
+> +#ifndef _RTASE_H_
+> +#define _RTASE_H_
+=E2=80=A6
 
-I slept over it and decided not to Cc stable.
+I suggest to omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-> >> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> >> ---
-> >>   drivers/media/platform/nxp/imx-mipi-csis.c | 9 ++++++---
-> >>   1 file changed, 6 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> >> index f49b06978f14..0c34d316ed29 100644
-> >> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> >> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> >> @@ -857,18 +857,21 @@ static void mipi_csis_log_counters(struct mipi_csis_device *csis, bool non_error
-> >>   {
-> >>   	unsigned int num_events = non_errors ? MIPI_CSIS_NUM_EVENTS
-> >>   				: MIPI_CSIS_NUM_EVENTS - 8;
-> >> +	unsigned int counters[MIPI_CSIS_NUM_EVENTS];
-> >>   	unsigned long flags;
-> >>   	unsigned int i;
-> >>   
-> >>   	spin_lock_irqsave(&csis->slock, flags);
-> >> +	for (i = 0; i < num_events; ++i)
-> >> +		counters[i] =  csis->events[i].counter;
-> >> +	spin_unlock_irqrestore(&csis->slock, flags);
-> >>   
-> >>   	for (i = 0; i < num_events; ++i) {
-> >> -		if (csis->events[i].counter > 0 || csis->debug.enable)
-> >> +		if (counters[i] > 0 || csis->debug.enable)
-> >>   			dev_info(csis->dev, "%s events: %d\n",
-> >>   				 csis->events[i].name,
-> >> -				 csis->events[i].counter);
-> >> +				 counters[i]);
-> > 
-> > The last two lines now fit in a single line. No need for a v2, I'll
-> > rewrap the code myself, and add the Cc line if you think that's a good
-> > idea.
-> 
-> Thanks! Regarding Cc, I would like to leave it up to you; you have the 
-> necessary experience and overview to judge that.
-> 
-> ~Matthias
-> 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> >>   	}
-> >> -	spin_unlock_irqrestore(&csis->slock, flags);
-> >>   }
-> >>   
-> >>   static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
-
--- 
 Regards,
-
-Laurent Pinchart
+Markus
 
