@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-265033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8353793EBB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA8C93EBB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 04:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E577281652
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB81B20F4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A157F7CA;
-	Mon, 29 Jul 2024 02:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8E7F7CA;
+	Mon, 29 Jul 2024 02:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+3HO33a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj4r7rka"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18442768EF
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E69768EF
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 02:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722221692; cv=none; b=Xqug7gtLdSc8cRFnIwBCANw1hYgA1om0wCl23ztnIZIfy62CaOyEKyNE0owRX1vJsBnoVlL/vEer1h9a0Qz/0HWT7c/AeinKmWXPiWequIuaK5yCEQBUtVrYv+0p71RZH4hBUiNbGdSD936w/yqO1pWw6gIIGsaw9mmk3wvd8Rs=
+	t=1722221723; cv=none; b=Y84/w0bCVYLu2FZ6Gn4kQw72SFTV9WyxtUiIoAA9L681/6iK1aSWRTi2YGdBQsMUdG5rwMJKlbbLG7nPaOG9NiPQhdriv4pCahiDOl3eFybz/1orhAKggcsKWzHPbqLlshItV0f3L2nQAise1IE2C7szGfdjFgVddyBmARVc3Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722221692; c=relaxed/simple;
-	bh=CxoLcnEcwOVtU1sK4vdRlZkJkyUaqBQg4RZqDYGsewc=;
+	s=arc-20240116; t=1722221723; c=relaxed/simple;
+	bh=j0H9QTslhDV/5VOLLPEqODcRjE2Iv8/sMBXxP93cwAE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C6uUTU2PbSBiBcsUBMh0RQ6+rT6ZrzvbupPcQVqQEIUUv8j1qKqUTd7NjqW6eXkRC1UyJHmgRtVtccXmdFUh/T7O0I5g1CfqaBBSzch1t6TqEplrAx0HkJA0cnkqYiuCvrAanERtKMnTwhKaM2bJWGPvECiNdxhLJ5T4Vkp3bVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+3HO33a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA7BC116B1;
-	Mon, 29 Jul 2024 02:54:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=WkIwZ4xWENSQNC6X2+0EAefxv1//XxBTjyBamvP5k1Gi55Ub8zut8OVu22HdQgrUTCMkSdoLSPxuZ+2PfCruPjicHHW43KVv+tN6feIRKKRf1ilgEWLEyjsuzUMe3oZfuauUNSHGyJRfIZFrG6VIhJmkuC1lU8Y343C7mTSI5xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj4r7rka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F1CC116B1;
+	Mon, 29 Jul 2024 02:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722221691;
-	bh=CxoLcnEcwOVtU1sK4vdRlZkJkyUaqBQg4RZqDYGsewc=;
+	s=k20201202; t=1722221722;
+	bh=j0H9QTslhDV/5VOLLPEqODcRjE2Iv8/sMBXxP93cwAE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t+3HO33axhe4bI77zQ7MMUu9NHRW2zqAhWCzNCGNupsn9Xqru9T7dLBfxCJXuDhLg
-	 xW5vS/sN/7jlZe+hWiTzDkmBgZFOqDxM4LhoImfgz/+RTdvnfk4pif3yk0Lmzu1moW
-	 dDZQJjkDQ1juI1cWVrO4+W6ZVPGhLo34mXn53tteyCtjx1Zqb6GbWDvhnAWF9eucBY
-	 Z46hGqzKls8vSZks2XGCLNo0DEUheNEr/goct9SySfk6Q4NuXLav5hQYfbDY/aAwFu
-	 fg8Tx/R2XukD+mQQIryc6nTGSgRB3vcSoj2yf9m+7ks2Pcl9Ttqnbe6+mAFhjp4m6K
-	 IYNJNt08u7rtg==
-Message-ID: <74dbb5f1-1565-4971-ae5c-c176d62cfa8f@kernel.org>
-Date: Mon, 29 Jul 2024 10:54:46 +0800
+	b=dj4r7rka0FGQFqHB84aUDOzhgWy8SwFLLIdtdfXUs5/De9VnuveIpCx9mVeYKPe4/
+	 7/D/FNItBs8tqIgMzrOI/Y0zVC/hlzfiZ5ZtkjZk9RwG2m7IiuOZJZSjzd8kBu6w5C
+	 2KpKIlpfMASv2f8LCknVfp6BQTZGZVxP0fjcdgsS9wY5/pYFXAtnfyrJey9kjYRJJD
+	 JWxfcwhR63NpxR8FuI51dbYEDD9s6GpAWaQ/dhIQqB6KVljPZ+71lWOUJ6zek8xuMR
+	 bQSOhr4VoQ6OCDtfCFyZ5eNUiQKgce56TnPZvYZAvyz+zn1RvWoBuomAc5aY9g6NoI
+	 P7hSIqf5jrbPA==
+Message-ID: <44d5de6d-bd0f-4dd8-bf9b-281f68769714@kernel.org>
+Date: Mon, 29 Jul 2024 10:55:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,39 +49,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: don't traverse directory blocks after EOF
+Subject: Re: [PATCH] f2fs: sysfs: support atgc_enabled
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20240712073415.227226-1-chao@kernel.org>
- <ZqKDnpzwX85RyGaa@google.com>
- <c2b7d0cd-ea10-4e25-829c-53967927bd03@kernel.org>
- <ZqRpHOJyWU3Sn8Ma@google.com>
+Cc: liujinbao1 <jinbaoliu365@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ liujinbao1 <liujinbao1@xiaomi.com>
+References: <20240221073249.1710026-1-jinbaoliu365@gmail.com>
+ <a2bf5d3e-6727-44d7-b1a0-3b1bcc7edad1@kernel.org>
+ <ZqRotoF2iDcx2MZF@google.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZqRpHOJyWU3Sn8Ma@google.com>
+In-Reply-To: <ZqRotoF2iDcx2MZF@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/7/27 11:27, Jaegeuk Kim wrote:
+On 2024/7/27 11:25, Jaegeuk Kim wrote:
 > On 07/26, Chao Yu wrote:
->> On 2024/7/26 0:55, Jaegeuk Kim wrote:
->>> On 07/12, Chao Yu wrote:
->>>> All directory blocks are within the scope of i_size, so let's limit
->>>> the end_block to just check valid dirent blocks.
+>> On 2024/2/21 15:32, liujinbao1 wrote:
+>>> From: liujinbao1 <liujinbao1@xiaomi.com>
 >>>
->>> Do we really need this?
+>>> When we add "atgc" to the fstab table, ATGC is not immediately enabled.
+>>> There is a 7-day time threshold, and we can use "atgc_enabled" to
+>>> show whether ATGC is enabled.
 >>
->> f2fs_readdir() and f2fs_empty_dir() uses dir_blocks() for upper boundary,
->> this patch aligns find_in_level() w/ them.
->>
->> Also, it can avoid grabbing never used page cache across EOF.
->>
->> So, we can consider taking this patch?
+>> Oh, I missed to reply on this patch, what about adding this readonly
+>> atgc_enabled sysfs entry into /sys/fs/f2fs/<dev>/stat/ directory?
 > 
-> I'm wondering whether the current code has a bug or not.
+> It looks like not stat.
 
-I think it's not a bug, but, in corner case it may waste memory and
-cause a bit performance reduction.
+Okay,
+
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
 
@@ -90,53 +88,58 @@ Thanks,
 >> Thanks,
 >>
 >>>
->>>>
->>>> Meanwhile, it uses dir_blocks() instead of variable for cleanup in
->>>> __f2fs_find_entry().
->>>>
->>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>> ---
->>>>    fs/f2fs/dir.c | 6 ++++--
->>>>    1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index 02c9355176d3..d4591c215f07 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->>>>    	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
->>>>    	unsigned int nbucket, nblock;
->>>>    	unsigned int bidx, end_block;
->>>> +	unsigned long last_block;
->>>>    	struct page *dentry_page;
->>>>    	struct f2fs_dir_entry *de = NULL;
->>>>    	pgoff_t next_pgofs;
->>>>    	bool room = false;
->>>>    	int max_slots;
->>>> +	last_block = dir_blocks(dir);
->>>>    	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
->>>>    	nblock = bucket_blocks(level);
->>>>    	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
->>>>    			       le32_to_cpu(fname->hash) % nbucket);
->>>>    	end_block = bidx + nblock;
->>>> +	end_block = min_t(unsigned int, end_block, last_block);
->>>>    	while (bidx < end_block) {
->>>>    		/* no need to allocate new dentry pages to all the indices */
->>>> @@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
->>>>    					 const struct f2fs_filename *fname,
->>>>    					 struct page **res_page)
->>>>    {
->>>> -	unsigned long npages = dir_blocks(dir);
->>>>    	struct f2fs_dir_entry *de = NULL;
->>>>    	unsigned int max_depth;
->>>>    	unsigned int level;
->>>> @@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
->>>>    		goto out;
->>>>    	}
->>>> -	if (npages == 0)
->>>> +	if (dir_blocks(dir) == 0)
->>>>    		goto out;
->>>>    	max_depth = F2FS_I(dir)->i_current_depth;
->>>> -- 
->>>> 2.40.1
+>>> Signed-off-by: liujinbao1 <liujinbao1@xiaomi.com>
+>>> ---
+>>>    Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
+>>>    fs/f2fs/sysfs.c                         | 8 ++++++++
+>>>    2 files changed, 14 insertions(+)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> index 36c3cb547901..8597dfaef700 100644
+>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> @@ -564,6 +564,12 @@ Description:	When ATGC is on, it controls age threshold to bypass GCing young
+>>>    		candidates whose age is not beyond the threshold, by default it was
+>>>    		initialized as 604800 seconds (equals to 7 days).
+>>> +What:		/sys/fs/f2fs/<disk>/atgc_enabled
+>>> +Date:		Feb 2024
+>>> +Contact:	"Jinbao Liu" <liujinbao1@xiaomi.com>
+>>> +Description:	It represents whether ATGC is on or off. The value is 1 which
+>>> +               indicates that ATGC is on, and 0 indicates that it is off.
+>>> +
+>>>    What:		/sys/fs/f2fs/<disk>/gc_reclaimed_segments
+>>>    Date:		July 2021
+>>>    Contact:	"Daeho Jeong" <daehojeong@google.com>
+>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>> index 417fae96890f..0915872abd97 100644
+>>> --- a/fs/f2fs/sysfs.c
+>>> +++ b/fs/f2fs/sysfs.c
+>>> @@ -143,6 +143,12 @@ static ssize_t pending_discard_show(struct f2fs_attr *a,
+>>>    				&SM_I(sbi)->dcc_info->discard_cmd_cnt));
+>>>    }
+>>> +static ssize_t atgc_enabled_show(struct f2fs_attr *a,
+>>> +		struct f2fs_sb_info *sbi, char *buf)
+>>> +{
+>>> +	return sysfs_emit(buf, "%d\n", sbi->am.atgc_enabled ? 1 : 0);
+>>> +}
+>>> +
+>>>    static ssize_t gc_mode_show(struct f2fs_attr *a,
+>>>    		struct f2fs_sb_info *sbi, char *buf)
+>>>    {
+>>> @@ -1017,6 +1023,7 @@ F2FS_GENERAL_RO_ATTR(encoding);
+>>>    F2FS_GENERAL_RO_ATTR(mounted_time_sec);
+>>>    F2FS_GENERAL_RO_ATTR(main_blkaddr);
+>>>    F2FS_GENERAL_RO_ATTR(pending_discard);
+>>> +F2FS_GENERAL_RO_ATTR(atgc_enabled);
+>>>    F2FS_GENERAL_RO_ATTR(gc_mode);
+>>>    #ifdef CONFIG_F2FS_STAT_FS
+>>>    F2FS_GENERAL_RO_ATTR(moved_blocks_background);
+>>> @@ -1144,6 +1151,7 @@ static struct attribute *f2fs_attrs[] = {
+>>>    	ATTR_LIST(atgc_candidate_count),
+>>>    	ATTR_LIST(atgc_age_weight),
+>>>    	ATTR_LIST(atgc_age_threshold),
+>>> +	ATTR_LIST(atgc_enabled),
+>>>    	ATTR_LIST(seq_file_ra_mul),
+>>>    	ATTR_LIST(gc_segment_mode),
+>>>    	ATTR_LIST(gc_reclaimed_segments),
 
