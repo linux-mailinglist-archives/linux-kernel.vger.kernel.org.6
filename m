@@ -1,198 +1,152 @@
-Return-Path: <linux-kernel+bounces-266034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E27B93F994
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:36:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F4093F9AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E51282D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13077282EEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14FD15921B;
-	Mon, 29 Jul 2024 15:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B861215A84D;
+	Mon, 29 Jul 2024 15:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZUKDmVH"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTURE0NX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9431F1494CA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E3313BC3F
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267362; cv=none; b=leEHsVdpAoLZKCi/mVc00T4ctbEmsnIywS0WBYhgSfR4rRDWjb2++mH14uEBwusyIjVdjkaQvcZ7d5f8NexGE448NWHVsav6R7kX6zZVbsrhXaPd8rWwL6QQ7TpKzgpAAHmt/KJyZP7vt5D8qTStaPYoUsYAHMNczOqxX27pYnc=
+	t=1722267542; cv=none; b=ntyI3U/3oq8TbwEEAlL0QABr4kGkzL4RNuHMd6RP3ifDz41d9JvYJ3Ea1+9SEyi1wV22ni4LcJnoinrQHjtFtknRikMnWTRGY7CYE7PN1vsJbZ7OJ86Q0WnkShbZt3wF6PXl35LUgDPmHNlL3P0liA9zg6iIxNmsEtnqIG4+brM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267362; c=relaxed/simple;
-	bh=OSgiIctFBG71PBIruKSdysdvSsvvf8L97+jvmFIa5Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TyCWBnEnFlWg+TwuQAPu48tat89PHeHwVIQHBSkByTrggQpVbRbth2nzxjnI6qG5fly0HZbbMJ2cFeV5VOb2xvzhnEzWseLPhIAk6Dh1HPwENEpsUpq7rdGADr67QMSl7y+tYmqb2fATIpqMyzm7IeKi+YEL6wOdfP+A89JKv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZUKDmVH; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d19c525b5so2108527b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722267360; x=1722872160; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R3oyZEs5pd+yus/xSJY0J3CYufbcoKy2KGG+eQ20D0A=;
-        b=NZUKDmVHTczyf4cMuG78JA4eV1iEUP2BnF7aEvQWxC9TD3zbB0St3VPXkC0zNbcpSk
-         wFeRwNfuoUXpkTvK10t8OpISLAELOFh7FYqZxcEnn9K0nUBPFX6ZOt0lNJxhSlSMgrwo
-         MvB8c4+zYHzX+nbfIhDlZ+/VVTnIk6l+s4E5t1Vvx11zbExGgFtfX957FKgFTn49yCJd
-         BYCTfpPZcHkZ1j8bxZ/xe7930+Kkjvn1HpBr5RlYYCMaT/+C12XiiC7Z0vdUPcIonR4B
-         26LIVu90MBFy8/LzTrFRK+GLb605kPXjV+8jpUMzgsvdOyCV6oRm9iz2Utcz7Dps+7pC
-         EknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722267360; x=1722872160;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R3oyZEs5pd+yus/xSJY0J3CYufbcoKy2KGG+eQ20D0A=;
-        b=dNddzDJTVsOkETvwrU9IZbWO55UN9PgiPJ6gutMhyivbnfRdfxRCguQcrgj5EPvJHB
-         Y/HGNmMPQWABGiLe9Zs3QvzzlXcaZ2o9DAgP4GKBRK38yw9bO2OaQt5hHO89Bbej3gAb
-         hhV1uRHQC5uVkbYLa4VwIN3K/NNOxyiU/1nLIjn/GobZQy3yb9b4p+96c6WqE3UcoDUU
-         QKULP1BKU0+GyWU2F5xx6L8bhJN//RnJF2Si+nw2p9y5GNvg8JfoIO/651bbxSewLwxs
-         meuKiTVbBASzgZIeGkmOqTAnocTMFCfvqGNKZWinwONBjUAAD/T6GDZQYZmBQ60kVrdz
-         Pksg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIoF7JqwuEBkOS0ROSWb4EmHz+AhSI52cPuWTw5sONW4Bp+Qi23/UqFe9Z+OuyMPtfmfMcTM8L0Gwt/lvb0IhDRJSqzuByU6T4+62I
-X-Gm-Message-State: AOJu0YzKwjVcN/HQFR/hJBtwbOXl0DDXbY9cBGXM2kbVKP28gk2dFuJ8
-	FRrKbz3dcg5PGqdnuIu+NaYjLua0Wk6fhu9Y3hyz5BPC/aI5FKysR6kJXSZZIgo=
-X-Google-Smtp-Source: AGHT+IFv84T5GiiA/Y8AELuClni1irIXmvrexGVaWXq7ByE0ZTiWAk3x3pV3qNV4LBt5YfUQwHgEqw==
-X-Received: by 2002:a05:6a21:3414:b0:1c0:eb1e:868e with SMTP id adf61e73a8af0-1c4a12aed16mr5789802637.19.1722267359947;
-        Mon, 29 Jul 2024 08:35:59 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:b771:7ecc:900e:e070])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fccb63sm84195465ad.284.2024.07.29.08.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 08:35:59 -0700 (PDT)
-Date: Mon, 29 Jul 2024 09:35:56 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
- i.MX7ULP
-Message-ID: <Zqe23DlboRPSXiQO@p14s>
-References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
- <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com>
+	s=arc-20240116; t=1722267542; c=relaxed/simple;
+	bh=O6QAspJHeXVwExOooCgkOhCym34IUm1sotkydfLGmgI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ImZCXIP18/4G8LqsqxJrii8MnMRAOOBCVwPjC5LBtzcP739YHxO7mxbLsuoncoSbpMT7Y9tqAFZIe92J80whwfCtqpvqrzFCGC0qbTRI94rOArfztxXtixtzA1Vy8ZIxLqLFtixlhMyW+wH6uJoDKF/xQXF3g0dElpH55H4YwPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTURE0NX; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722267541; x=1753803541;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=O6QAspJHeXVwExOooCgkOhCym34IUm1sotkydfLGmgI=;
+  b=KTURE0NXDE4fK8XdXaiR+s5Sn7ODeYB/HrHg0s4xRqjll/O4kBDluOD/
+   /8EkS8ZCMxaEUwxFaBf0vA+yv6+M+z8HcDfQg+6pmVQd5ifC+c0U38qrq
+   AG0lXHnsDxpJyvgGOvd096yQ4y3kWtla+wO3twi9N7lFoeyIUHBEcnJnZ
+   bpHxcQ4dyymspNXGomvl2qtcRjSgPZiwV+j/O0fNajS6nxJr3W1cizoD2
+   RVxjft6pyQP4KiB55E3c0zDAYYeM+Ve8E/MV+1h8T3g8Z17+Q9NsLv3iZ
+   ZHEsmvPd27BRwKXWj23OrwV7WjU9RNJ6Tv0FjVkpYZl5O7m+ZC0/wJ0wK
+   w==;
+X-CSE-ConnectionGUID: qI6YXHrASwunP5XHMkVaPQ==
+X-CSE-MsgGUID: KXEBvDbWRbGD4GT1CsOzFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="22938814"
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="22938814"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:39:00 -0700
+X-CSE-ConnectionGUID: fDDQZKOnT3a7CFWNFWeBMQ==
+X-CSE-MsgGUID: lmQR161gQ5GhKhYtR7uq4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="53667278"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:38:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 29 Jul 2024 18:38:52 +0300 (EEST)
+To: Palmer Dabbelt <palmer@rivosinc.com>
+cc: bhelgaas@google.com, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Greg KH <gregkh@linuxfoundation.org>, bhe@redhat.com, 
+    alison.schofield@intel.com, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] resource: Elide a conversion warning on 32-bit
+In-Reply-To: <20240729151652.15063-2-palmer@rivosinc.com>
+Message-ID: <77953469-413b-13e4-72fb-c92b7b1c6dd1@linux.intel.com>
+References: <20240729151652.15063-2-palmer@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jul 19, 2024 at 04:49:04PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Mon, 29 Jul 2024, Palmer Dabbelt wrote:
+
+> From: Palmer Dabbelt <palmer@rivosinc.com>
 > 
-> The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The i.MX7ULP Linux
-> poweroff and restart rely on rpmsg driver to send a message to Cortex-M4
-> firmware. Then Cortex-A7 could poweroff or restart by Cortex-M4 to
-> configure the i.MX7ULP power controller properly.
+> I recently ended up with a warning on some compilers along the lines of
 > 
-> However the reboot and restart kernel common code use atomic notifier,
-> so with blocking tx mailbox will trigger kernel dump, because of
-> blocking mailbox will use wait_for_completion_timeout. In such case,
-> linux no need to wait for completion.
+>       CC      kernel/resource.o
+>     In file included from include/linux/ioport.h:16,
+>                      from kernel/resource.c:15:
+>     kernel/resource.c: In function 'gfr_start':
+>     include/linux/minmax.h:49:37: error: conversion from 'long long unsigned int' to 'resource_size_t' {aka 'unsigned int'} changes value from '17179869183' to '4294967295' [-Werror=overflow]
+>        49 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+>           |                                     ^
+>     include/linux/minmax.h:52:9: note: in expansion of macro '__cmp_once_unique'
+>        52 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+>           |         ^~~~~~~~~~~~~~~~~
+>     include/linux/minmax.h:161:27: note: in expansion of macro '__cmp_once'
+>       161 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
+>           |                           ^~~~~~~~~~
+>     kernel/resource.c:1829:23: note: in expansion of macro 'min_t'
+>      1829 |                 end = min_t(resource_size_t, base->end,
+>           |                       ^~~~~
+>     kernel/resource.c: In function 'gfr_continue':
+>     include/linux/minmax.h:49:37: error: conversion from 'long long unsigned int' to 'resource_size_t' {aka 'unsigned int'} changes value from '17179869183' to '4294967295' [-Werror=overflow]
+>        49 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+>           |                                     ^
+>     include/linux/minmax.h:52:9: note: in expansion of macro '__cmp_once_unique'
+>        52 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+>           |         ^~~~~~~~~~~~~~~~~
+>     include/linux/minmax.h:161:27: note: in expansion of macro '__cmp_once'
+>       161 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
+>           |                           ^~~~~~~~~~
+>     kernel/resource.c:1847:24: note: in expansion of macro 'min_t'
+>      1847 |                addr <= min_t(resource_size_t, base->end,
+>           |                        ^~~~~
+>     cc1: all warnings being treated as errors
 > 
-> Current patch is to use non-blocking tx mailbox channel when system
-> is going to poweroff or restart.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> which this elides via an extra cast.
+
+I think you should describe the configuration which triggers this a bit 
+more here because it's not just about 32-bit build but also requires 
+MAX_PHYSMEM_BITS to be larger than 32.
+
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 36 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
+> Not sure if there's a better way to do this, but I didn't see any
+> reports yet and my tester is failing so I figured it'd be best to get
+> something on the lists.
+> ---
+>  kernel/resource.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 01cf1dfb2e87..e1abf110abc9 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
->  #include <linux/workqueue.h>
-> @@ -114,6 +115,7 @@ struct imx_rproc {
->  	u32				entry;		/* cpu start address */
->  	u32				core_index;
->  	struct dev_pm_domain_list	*pd_list;
-> +	struct sys_off_data		data;
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 14777afb0a99..6459561b746e 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1845,7 +1845,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
+>  	 */
+>  	return addr > addr - size &&
+>  	       addr <= min_t(resource_size_t, base->end,
+> -			     (1ULL << MAX_PHYSMEM_BITS) - 1);
+> +			     (resource_size_t)((1ULL << MAX_PHYSMEM_BITS) - 1));
 
-What is this for?  I don't see it used in this patch.
+So this effectively casts away 2 bits hiding the warning? It would be 
+more proper to limit it with RESOURCE_SIZE_MAX instead of casting the 
+bits away if that's the intention of this code (of which I'm not sure).
 
->  };
->  
->  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-> @@ -1050,6 +1052,22 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
->  	return 0;
->  }
->  
-> +static int imx_rproc_sys_off_handler(struct sys_off_data *data)
-> +{
-> +	struct rproc *rproc = data->cb_data;
-> +	int ret;
-> +
-> +	imx_rproc_free_mbox(rproc);
-> +
-> +	ret = imx_rproc_xtr_mbox_init(rproc, false);
-> +	if (ret) {
-> +		dev_err(&rproc->dev, "Failed to request non-blocking mbox\n");
-> +		return NOTIFY_BAD;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
->  static int imx_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1104,6 +1122,24 @@ static int imx_rproc_probe(struct platform_device *pdev)
->  	if (rproc->state != RPROC_DETACHED)
->  		rproc->auto_boot = of_property_read_bool(np, "fsl,auto-boot");
->  
-> +	if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4")) {
-> +		ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_POWER_OFF_PREPARE,
-> +						    SYS_OFF_PRIO_DEFAULT,
-> +						    imx_rproc_sys_off_handler, rproc);
+And why are you fixing just one line when there is another similar
+expression?
 
-Why does the mailbox needs to be set up again when the system is going down...
+-- 
+ i.
 
-> +		if (ret) {
-> +			dev_err(dev, "register power off handler failure\n");
-> +			goto err_put_clk;
-> +		}
-> +
-> +		ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART_PREPARE,
-> +						    SYS_OFF_PRIO_DEFAULT,
-> +						    imx_rproc_sys_off_handler, rproc);
-
-... and why does it need to be free'd when the system is going up?
-
-> +		if (ret) {
-> +			dev_err(dev, "register restart handler failure\n");
-> +			goto err_put_clk;
-> +		}
-> +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret) {
->  		dev_err(dev, "rproc_add failed\n");
-> 
-> -- 
-> 2.37.1
-> 
-> 
 
