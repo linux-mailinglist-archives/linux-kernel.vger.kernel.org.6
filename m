@@ -1,103 +1,140 @@
-Return-Path: <linux-kernel+bounces-265359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8147893F000
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFB593F002
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B4D283434
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B5B1F22C9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E55813D265;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CE713D501;
 	Mon, 29 Jul 2024 08:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRCCFarN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyZzHb2v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EF013C8EA
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2047713C9A7;
+	Mon, 29 Jul 2024 08:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722242275; cv=none; b=bXC4uDi/1DZbq3S0nVaVMkkqCACRo133T5uGtwTuIx/rcX9oVDS2fqaTlWC3EJwsy2emGHIL/yqQ/jv+CV3ygqzVNoaOJh6BAmdtESDjdbDCYO57N7HMO1WIVRCXgrIhXRkc1XNC5uLmzTzSIa/cnWyA3PtOVgdBlQqHxqKrF90=
+	t=1722242276; cv=none; b=QR+ZypUqQRaXeEhtCKrtVsk5MiP3U9+NVtkSS/mrIXl/GrQdn4Rz2gAaUeaCkgimuGHMJIvWwZvfFJ1XshR5YJXOsMWhfRbnD6zxHyl5Ltam1oq7f8IC250HFZwUnZ0O8Pye1fHxr+F5764FimD9/LAI87gAh2h44BRFJEwm3Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722242275; c=relaxed/simple;
-	bh=GI3xTCo0pG2dP3L5UUNP9YcWsnxFUDpXFdZJ95t0k38=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wg8hYA5kM7HhuBQZmvcOEhp2d9dWzJzZWJKVtphNN1tLuCY/bSah4A7BWOTmebZ2fvbhc+uGBHhlHDgoVsmsAWTuSlKjX/mo2qNj7pCWAAv15wb5uiqMCW2MV939blPsVnRw7KXYsRPEZgIjLARlrYHa0jacVi8wElsoxZIUL0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRCCFarN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722242273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EG8W45Ypb7DOiKwZMCGHslPdEIU08Mt9VFtOVJoxdWk=;
-	b=jRCCFarNqQaN8YL+YuUKaYqxC4DO/7W+4MaMFwNcC4fByTQLLOy1z//T0h5fCK5TzkggHO
-	fBa+w0Rs1RQaQedwXc/8g1N/Snfa0uXGEebsbxzM4EK/QsgC6uwkcXXw+9ppTT5y0nMBNH
-	LB2U0ti9fC7t0XHR/ZzPLEQJmxJpEb0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-483-PCCetDi_NwygAmM2KFHI6g-1; Mon,
- 29 Jul 2024 04:37:48 -0400
-X-MC-Unique: PCCetDi_NwygAmM2KFHI6g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF9FA19560A2;
-	Mon, 29 Jul 2024 08:37:46 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.136])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 63C241955D42;
-	Mon, 29 Jul 2024 08:37:41 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: andrew@lunn.ch
-Cc: UNGLinuxDriver@microchip.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	gregkh@linuxfoundation.org,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	lucas.demarchi@intel.com,
-	mcgrof@kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
-Date: Mon, 29 Jul 2024 10:37:38 +0200
-Message-ID: <20240729083739.11360-1-jtornosm@redhat.com>
-In-Reply-To: <fc40244c-b26f-421e-8387-98c7f9f0c8ca@lunn.ch>
-References: <fc40244c-b26f-421e-8387-98c7f9f0c8ca@lunn.ch>
+	s=arc-20240116; t=1722242276; c=relaxed/simple;
+	bh=V9wFi+MX2139fI/I1jgkjhCzse15vxUwsNcBTc5sszY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GRYn3Pg7d7KmKz+I/xhXyFMUrQsbTLxvFncydDUULd+zpxn3XQn6v75G+wTkdUzRwNYTk9wl/Ohdo0fn3yGDcpim/EgQbtCKNTN+wEhW9cRENlnHLlUvQIdZh151k1PxYJ8Pc1OvzgK1w3s8mrKxY/F51jDeBfRdRq8BFnNuyNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IyZzHb2v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFB0C32786;
+	Mon, 29 Jul 2024 08:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722242276;
+	bh=V9wFi+MX2139fI/I1jgkjhCzse15vxUwsNcBTc5sszY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=IyZzHb2vH+E0LTpNKmwOtI8sgfUgguJwCTeV4822DeBWr4CbUrjTG5SC8J5ZFvpEc
+	 TEvSLqKME1VRrCbO+syepVH2Xkmon0CPp/bYSQFFHRAqaGjhN7E3it70evYv+2wGMO
+	 u7wPFcvYoD/OzWnG1W3G6vr+hvCv0+UW3/t16rG9HExpH8yxq2WlLKgVbhViMQZ0Gg
+	 0pgL2cXiw3vzFOA58XRr5q2LksCMp092sdfLxGzQUNcDIPPfOsQyC9/VoZP/mwK27q
+	 ql6zVEBL8dLi61HyVykxhhh+YOKynyy/JnJFEqp2rc8+BpZdtUirGmOOTS0BUlSiDU
+	 odE1ktcY5KaOw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 29 Jul 2024 10:37:48 +0200
+Subject: [PATCH] iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/ 16K
+ pages
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240729-topic-845_gpu_smmu-v1-1-8e372abbde41@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANtUp2YC/x3MQQqAIBBA0avIrBPMLKOrRITZWLOoRDOC6O5Jy
+ 7f4/4GIgTBCxx4IeFGkY88oCwZ2NfuCnOZskEIqoWXDz8OT5a2qx8WnMW5b4mbSVeu0EWVlIYc
+ +oKP7n/bD+360dp+KZAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Joerg Roedel <joro@8bytes.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, iommu@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722242271; l=2469;
+ i=konradybcio@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=2WVG4OVq/a0X1nt/OAVRPPSlDahdsoGHbN6xyxn5/YE=;
+ b=hGjcIevB0Wn7lOG4ywLtp4lmqnr4qxzsOJxqCNiUIqZyUhcghFBYu93Rj0DFKYBbHubGFVdV1
+ +URYCL6jDIQCy6PVA0crNynhwSa+8s061yIQ2CyNJ2CeSxTik1wPU/H
+X-Developer-Key: i=konradybcio@kernel.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Hello Andrew,
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-I like the idea from Jakub, reading the associated phy from the hardware
-in some way, although reading your last comments I don't know if it could
-be possible for all the cases.
-Let me ask you about this to understand better, if present,
-always reading /sys/bus/mdio_bus/devices/*/phy_id,
-could it be enough to get the possible related phy? 
-And after this get the related phy module?
+SDM845's Adreno SMMU is unique in that it actually advertizes support
+for 16K (and 32M) pages, which doesn't hold for newer SoCs.
 
-Thanks
+This however, seems either broken in the hardware implementation, the
+hypervisor middleware that abstracts the SMMU, or there's a bug in the
+Linux kernel somewhere down the line that nobody managed to track down.
 
-Best regards
-José Ignacio
+Booting SDM845 with 16K page sizes and drm/msm results in:
+
+*** gpu fault: ttbr0=0000000000000000 iova=000100000000c000 dir=READ
+type=TRANSLATION source=CP (0,0,0,0)
+
+right after loading the firmware. The GPU then starts spitting out
+illegal intstruction errors, as it's quite obvious that it got a
+bogus pointer.
+
+Hide 16K support on SDM845's Adreno SMMU to work around this.
+
+Reported-by: Sumit Semwal <sumit.semwal@linaro.org>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+There's a mismatch in sender/committer addresses but that's "fine":
+https://lore.kernel.org/linux-usb/2024072734-scenic-unwilling-71ea@gregkh/
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+index 36c6b36ad4ff..d25825c05817 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+@@ -338,6 +338,15 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
+ 	return 0;
+ }
+ 
++static int qcom_adreno_smmuv2_cfg_probe(struct arm_smmu_device *smmu)
++{
++	/* SDM845 Adreno SMMU advertizes 16K pages support, but something is broken */
++	if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm845-smmu-v2"))
++		smmu->features &= ~ARM_SMMU_FEAT_FMT_AARCH64_16K;
++
++	return 0;
++}
++
+ static void qcom_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx)
+ {
+ 	struct arm_smmu_s2cr *s2cr = smmu->s2crs + idx;
+@@ -436,6 +445,7 @@ static const struct arm_smmu_impl sdm845_smmu_500_impl = {
+ 
+ static const struct arm_smmu_impl qcom_adreno_smmu_v2_impl = {
+ 	.init_context = qcom_adreno_smmu_init_context,
++	.cfg_probe = qcom_adreno_smmuv2_cfg_probe,
+ 	.def_domain_type = qcom_smmu_def_domain_type,
+ 	.alloc_context_bank = qcom_adreno_smmu_alloc_context_bank,
+ 	.write_sctlr = qcom_adreno_smmu_write_sctlr,
+
+---
+base-commit: 931a3b3bccc96e7708c82b30b2b5fa82dfd04890
+change-id: 20240726-topic-845_gpu_smmu-ab738f7a013c
+
+Best regards,
+-- 
+Konrad Dybcio <konradybcio@kernel.org>
 
 
