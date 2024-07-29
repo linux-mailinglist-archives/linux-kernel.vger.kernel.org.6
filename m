@@ -1,193 +1,145 @@
-Return-Path: <linux-kernel+bounces-265338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CC793EFBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE4393EFC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3143C1F22C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0CB285E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397F713BC05;
-	Mon, 29 Jul 2024 08:19:58 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2111.outbound.protection.outlook.com [40.107.215.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918E913CA9C;
+	Mon, 29 Jul 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NS3YyOZC"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D1B328B6;
-	Mon, 29 Jul 2024 08:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.111
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722241197; cv=fail; b=sdl0IDHlsF/gnosK9HxRmOtEGLkkP/63BsMyqCTMJgcXQTQjKyVxixNbLeSThf1IqlJwkU+1JaH4pLk2KgFu3KhhYdVh30JYO1Jn1g9MsH90sIMhIjlGOT2e1OdrjxkwAmmAOKfDIUj1WJjL9eqRT+ezittGOiy27Fzl417Zb9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722241197; c=relaxed/simple;
-	bh=ynvL4yYDJGvadQp1Si5+3bWDGjniikfdq2bUYxBcvxc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=htDF7fFORTIqR9Ndj/5PeUNxIHiZO66KvVvA7UPTZI2md9JxlFB0cUf8HfiKt5JP2WuHZC2QEh6lpHiAxgVXVZ7sK58DgqkOTuTshtrf42ZPalUnfEYLYHaE0yIEpvnoylTbt+w8wvypkodHaPOxxxA2gyESeR3wwJASDAYRqrI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fXzNay+aWAJhwJz2z/1T68cn75hff0Evecg6wkB46wWRMjJha835tUbd2eYjpcIjVVsCckoas3xNlFOyhUm0UtN6YG+T5RU//uNm8iVC/xYQWwFiyqSFXUKvGTh0gEf34OwyYDEky6bqTpsxImkg18uqZl+2uMqS75P3p+6lwiuFBCt9HBgfQEVIt9uybhPFHL/vNZ/5T4CCEgycMwB2bngt2X0Ee6sms6d3hECO1tqEeKZI6+u7fnbhvUAp6oJIt3C+pQR2ox9gl5xGxkJ+rZDmbQOH47kmPmPArpUk86nbaUBSlVjaiQXA5jQM0c6i3IqnQyEMlgOuFYLsiEiY/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ynvL4yYDJGvadQp1Si5+3bWDGjniikfdq2bUYxBcvxc=;
- b=TlcBpNKuD1F6HU2KQpo8l3Trt8KoSyoMVaZI2lsnaWAjcbkLeB01bE4qeqAo9wI/cXNaKdNX+h7+ufHeRYJ58t9YtkgELLx83WkiRXWMFXAOU3s0XvVsfMtf/xLvlF9u3Y5lDMbFHW7bHuojU7WlzeXyegFQ/QmESpBun7WXbWBW+9QuNPZp93YhuS7WORMzcaoopJOm+9jb2X79SEekrM/pS08iHyxqelOPjiSJC9ilSRdAzFeBFYGQ9NtVkwWm65qZgp9AWoOaaq9uVrUfANewtU55yqyIUheyEhtwkCqCEtBJ+fIwJIrKoQNDaXZ0Nx/cQn9Je9tu78ICbXE03A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by JH0PR03MB7927.apcprd03.prod.outlook.com (2603:1096:990:34::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29; Mon, 29 Jul
- 2024 08:19:50 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7784.020; Mon, 29 Jul 2024
- 08:19:50 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"heiko@sntech.de" <heiko@sntech.de>, "kvalo@kernel.org" <kvalo@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>
-CC: "efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org"
-	<dsimic@manjaro.org>, "jagan@edgeble.ai" <jagan@edgeble.ai>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
-	<megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
-	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net"
-	<minipli@grsecurity.net>, "brcm80211@lists.linux.dev"
-	<brcm80211@lists.linux.dev>, "brcm80211-dev-list.pdl@broadcom.com"
-	<brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
-Subject: Re: [PATCH v4 5/5] wifi: brcmfmac: add flag for random seed during
- firmware download
-Thread-Topic: [PATCH v4 5/5] wifi: brcmfmac: add flag for random seed during
- firmware download
-Thread-Index: AQHa4YUri4oXxg65yUKyQCOpF8AgybINWuIAgAABicc=
-Date: Mon, 29 Jul 2024 08:19:50 +0000
-Message-ID:
- <TYZPR03MB7001E3C50010694E5F12756080B72@TYZPR03MB7001.apcprd03.prod.outlook.com>
-References: <20240729070102.3770318-1-jacobe.zang@wesion.com>
- <20240729070102.3770318-6-jacobe.zang@wesion.com>
- <1c1fe7ec-1d6b-46ce-a90d-29ca6be01109@broadcom.com>
-In-Reply-To: <1c1fe7ec-1d6b-46ce-a90d-29ca6be01109@broadcom.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|JH0PR03MB7927:EE_
-x-ms-office365-filtering-correlation-id: 0df7d244-8bfc-4cd8-8a43-08dcafa737a7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?m/BHa7FY3RAEL/E9MOcp6fNWJ0Cg8ZUTacSThmS4hf8AefmSD3DPivLowd?=
- =?iso-8859-1?Q?uQmkeqTvSx2J+tczYqZTghN8DOL946k6kC39zyBPKrTa8O3D+VxZjNnRR1?=
- =?iso-8859-1?Q?BMLUffTbxNt/GjzSVLX87axfB/NNy2ZcIbl0pVjWskn17w+1cdUeX0Jic+?=
- =?iso-8859-1?Q?/zrQtFXcqpMBXQtTjBftboCFulD+l69pwvt2dv49llWdm6rmecaQv9eden?=
- =?iso-8859-1?Q?pCs/5fMZqLiVojYlUiJQfzzPKSQQra/EXAhroziBITdbNR0WOhEbbGYeVB?=
- =?iso-8859-1?Q?xO5xphlNCEQ8uZh7eEiE6e1qOu8ljbTPSADtfeXQrxTtTCUkomNa2RsfoM?=
- =?iso-8859-1?Q?NwpcflO4rj3VvxwlQP03s+D8L5hEPVF0T1u8roZFNciH37PU30dWKC/mzp?=
- =?iso-8859-1?Q?pq3UZ13jbhwkEjTqRowIl5WcdoZ+fLppPaM8gfnHkrBOKlTdGnprLT0OwK?=
- =?iso-8859-1?Q?G2qkRGsC6DeG3wtkAirkVFG54B/N7bJ3IeDZnAaEY11AkdQQnpc5lNGg5z?=
- =?iso-8859-1?Q?grqTKnOdiv8UEfW2peDttqdZmBiTsFHt1Eyh7jztxV30iSw/Qk7R02AK5H?=
- =?iso-8859-1?Q?syeAZChLV797ZwkIf6HuyDfs5Vr/Rpf3r8zHtdj8K22KEBrsDMMUpChRU8?=
- =?iso-8859-1?Q?saxFufuK+qtbzbTrk+CYFA4/ysuzdpibLqhMp2yGfH61cWQS6+/TUW97qE?=
- =?iso-8859-1?Q?w+SbzI4QTZLFFt5CvahIVom0A3Vxy2e37Y5vQH+4GWKyIj4nHfoSXq9dxS?=
- =?iso-8859-1?Q?oyGespf9ZtiNC6HwMkUGUA/6eSR8zDQITCnynvtDdbJVHT9zLsxiayBd1r?=
- =?iso-8859-1?Q?lkR968PH3wgUIlaTZcXd2b3Eeis1cticK9npt5rIopqTa6gkfltPGNrkOD?=
- =?iso-8859-1?Q?RXPbCDQjte7GAUyvfXLb5NZpW4iup2BrdNIDTKeFs7QNLnWWaVPpNXTBJf?=
- =?iso-8859-1?Q?IUj1dHSsaKTQrx7/Q8Fd3/omXjJhzLgtxND2cKfynghdb4jgVAQecXm+Dr?=
- =?iso-8859-1?Q?72++irmFktyQYFU2BnDZc29nP8fVP0QUsTm3jjlkxt4kRmYMNiU3X08KJL?=
- =?iso-8859-1?Q?9P21LqT8ehZoh6p+MvJlq/WeoQ+R3ZvTK7BTojlH4ydZ+rJqnZQ/yMXSPi?=
- =?iso-8859-1?Q?XFpp/giKhGa+iPEiWi8967mNMxev1+5JuY4euBVbhGLCXvqViyUunJBXxj?=
- =?iso-8859-1?Q?1tSE6nwZGAsoUhyhb27jANbHsJHDFMkOs60WssHF80IsM0Sp9CDSozLkbq?=
- =?iso-8859-1?Q?6X8vPpMyEdGveQy/atWXlhqPKftkuiQd0mpWUSanlEPReTTN0WszMB4jKr?=
- =?iso-8859-1?Q?qrfoK4VyZZ/ruh/REUWRenYDBNTQPGBFozy98qM04WYSaTO524ceiFi2ux?=
- =?iso-8859-1?Q?SQ/RMa7XZ9PjaW0Wk+HMKR4f5cs+wiZ/fibdauv6ucUi5qXpNtMaFSsvjM?=
- =?iso-8859-1?Q?0efz0aOeLkOKPt0tdrOhDBGN84NkVAbZD4X9pDBxbfDVZkAQa4jD2fLgeL?=
- =?iso-8859-1?Q?Y=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?xzBe1DKibPWhZ0UXkLTibtV2sx0tije927iCvlS2k215oh77zLtQ6Mn86W?=
- =?iso-8859-1?Q?3n+bJT2i205fr13aLjOr8m0JmGl+pFgwCkwowrJtUWPyGtKZ/byFBP78Kd?=
- =?iso-8859-1?Q?eXz3hR7sdcfUMwUATinb18xI/a9jX8CTy+JtJw4KqyZ1zX2EjuA+U+h1vI?=
- =?iso-8859-1?Q?KZYgPQi0vMhlg+Fa+LFTWR8G7xXK/HJN0NBDX82LShNVZeBuIkwnddn7bA?=
- =?iso-8859-1?Q?gPiJXoUNyXjSpQxDKptOhcq6DESnmRaAIJf8zwXKI1WSkQD6mh3SmWo5NZ?=
- =?iso-8859-1?Q?rx1Nm0rtXWR+NsMozfOqziAajzaZZjd1gkQjbu2s/RWTcKqKNdL8QyBp7S?=
- =?iso-8859-1?Q?Y5eTrS+xAg361bdF0kCGo70yktFZM8mNk28mHcrgwk6fpC+8iePUXDP+JO?=
- =?iso-8859-1?Q?lWnrpz3nwA6SDUGqzQDIZZpxZU+HN2tNUeVamghDwufhaw2s7ALQ5Uer/d?=
- =?iso-8859-1?Q?MdRAhJWSoLbwUy5SjdIev0scbavrZ99KF7nH7qT0fRmADCkYBBGbjgevMn?=
- =?iso-8859-1?Q?GF8kkOTrsc6m1UUaz5JNOF4f45y+FsEg7Zz44c88YCJ2p7f+tQTDfKAGhu?=
- =?iso-8859-1?Q?bPcwIHBnZh1cGKqGX2TYADYPGzZ2ZGhWAsHLAey/XRITtZ7oh8c5gwtbvm?=
- =?iso-8859-1?Q?RA4evTnXAHjH8Lqm2/C1rGdjP2m/yhFwwhoOKDhYgEq6FaZm8JHtA8pHao?=
- =?iso-8859-1?Q?uqnpANAmfMseIC794o+TgI3PAaUy++DFoy45rJLckhGUu77PnfknhL7ys7?=
- =?iso-8859-1?Q?cHAhtAU3PXepXbv4ufIPRZXz8xaU1BAQYoMU0u4K0qFfmTXrpECUBmafHE?=
- =?iso-8859-1?Q?3Co5plLnaYKt79CWFof/5nQH7FDMqNjFzAmkggmuf6+UvuScvBgP+kUHWS?=
- =?iso-8859-1?Q?HTO0KoGNoW1J6Ql/AidHbdPUsKuUqu80UtHBhbxyUNeNessPG9I+9xN+8d?=
- =?iso-8859-1?Q?9hx7oMaUP+Em9oTSuQjCOKFOEPrn9INRcLmPEiFww4ce2odlm2TMAwwvue?=
- =?iso-8859-1?Q?pRbAqAHwd4HcYnbwFepFtXsYtG6xElsgzE37fg7jGS/Hk5Wm+5Mo3pXNBk?=
- =?iso-8859-1?Q?Prjs1Nt4HnIkTAOOA8Z9myR0EwpAj0kwfVKuyNtepc6ye7ja7KSqQ3zZti?=
- =?iso-8859-1?Q?ea5QDEaU7h7rs7ORpOMsN82SzdT4LqXB6eWT0R9s30GjY+5IlhYLjkcH2Y?=
- =?iso-8859-1?Q?dz6f+UpbMR9m21YN8ooARQLnS2F7aDw6UU36uHWM9IdYOvfX2/dsSCUBp9?=
- =?iso-8859-1?Q?gnAPrjhT1Wiqhx4bNBTsPPc1xmc8w/Ug+oCYjkkLnU5AKg5Vyp4ANpzyvX?=
- =?iso-8859-1?Q?e23dbVNF+LxXod25riOq27jRlDAgXQG4Ev6DHDQW+emNAGcslxker0cGHo?=
- =?iso-8859-1?Q?x+Lsf9D1gYi8UUc47shHCKLrXXyesaGlqD7FEoiQOyB7oz1DF5MwbHgpDn?=
- =?iso-8859-1?Q?LSQ2eGufIDL5lcLYJ9RrcHETgpnidnQJdwH4cn6qO1h9FTb/kKwuMTVDlM?=
- =?iso-8859-1?Q?VosLhhFHxIdD/TksrwDZbEvdkt/CuAKXw37B9DDief2yrL0X5rh3OqZ/n4?=
- =?iso-8859-1?Q?GEDgyeOJkXqyAi1PHEqyqO5cW1IaybztRS0Ydd7e/S1wCoUv6AmO/uLsc7?=
- =?iso-8859-1?Q?Ee0wW3Ohg7agz4ClpbCFp5AxY/fgZQWoH8?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8E13B293;
+	Mon, 29 Jul 2024 08:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722241250; cv=none; b=mWN1ibFpl+WQaciZyzgYQB7brWoPTPyXiO0pbBE2csbdEWTid+EVgbAe5fDiWJbU6N9CvwEOJGpjwiJMwG6rn8OqbvWtP1/anykmgosyOUBq+Hud8joSX3B3EiT5VjwKnfSvKdtoRuWmoA7wUAutKOHPuFmiPxz8OHDWq3EgCSA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722241250; c=relaxed/simple;
+	bh=gWoeHDWBYkw/Cf56KlItPlCKBTInWP9tVziNZNVhVCU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oDgPhU146vVq9/4vxz8RWrVlPkjQwvjhjESDQ8rVigg4xJm2fGUoln35Vi5jJD2WcXuxPaVkrgtEznSvSng5KcM7fqCAIkhhJQubipiX9Ir5prq335xwahCgeUU3/6tOXrk8lnYib9C9pBEYTtpVh3CqEkY5jBlgcxGQQzCjPd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NS3YyOZC; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 780B36000D;
+	Mon, 29 Jul 2024 08:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722241239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4fFVFGlNlnhAQFPV1Z/aOZg6AK32ftL61u05vs63M2Q=;
+	b=NS3YyOZCFEM4bt1F94deQta+9coiy50AP9gFL20P+aGsCP5EI4TJZrRfJN8FL+QyBEvNam
+	gMmPySqvhhZNQQgs7p3PtrZ9I5rX9YDaBQfmSZsPdWJHX8ha6T7eMZdTjWLZlTSx8GZ8SC
+	jInwIguj0sx8hdLk3LmBuBYHVotKbuf1PiBhLQ76qSnud63ymAxw++Y0hC99X/wA/dfHHd
+	4dbF8hVRMdjaWRGVzGlP4KTMtThOXe2orfbLr3o3LxiZqKmP3CUELxnz4tnVCtkqITOCYj
+	ZyCKO7Z+dg3Q6PLrdOm4HCAWsnQ5RqtQfcPgI33rsnanaWE72mEjoXOAtlNUUA==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v2 0/3] selftests/bpf: convert test_dev_cgroup to
+ test_progs
+Date: Mon, 29 Jul 2024 10:20:28 +0200
+Message-Id: <20240729-convert_dev_cgroup-v2-0-4c1fc0520545@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0df7d244-8bfc-4cd8-8a43-08dcafa737a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2024 08:19:50.7682
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mA6jmNQ9+lxFto4+P6SWc9yOu3lr1JXbqOzw3kvwKkxJaLugzRLdiZuQvMN0g/Zes5jc4UP68w9EF3oUX2ma2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7927
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMxQp2YC/22NwQqDMBAFf0X23JQYU5We/I8iYjarBtpEkjRYx
+ H9vkB57HIY3b4dA3lCAe7GDp2SCcTaDuBSAy2hnYkZnBsGF5I2oGDqbyMdBUxpw9u69slrWUnF
+ dNVM5Qh6uniazndEHqHVilrYIfTaLCdH5z/mWytP/wrd/4VQyzgS2qLRsG5SyU87Fp7FXdC/oj
+ +P4AsPyG8jAAAAA
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: alexis.lothore@bootlin.com
 
->> Providing the random seed to firmware was tied to the fact that the=0A=
->> device has a valid OTP, which worked for some Apple chips. However,=0A=
->> it turns out the BCM43752 device also needs the random seed in order=0A=
->> to get firmware running. Suspect it is simply tied to the firmware=0A=
->> branch used for the device. Introducing a mechanism to allow setting=0A=
->> it for a device through the device table.=0A=
->=0A=
-> Not exactly what I meant by using my patch "as is". I would have kept=0A=
-> the two patches separate, but it is not a deal breaker for me.=0A=
-=0A=
-Oh..so the correct approach should be for me to split this commit separatel=
-y?=0A=
-=0A=
----=0A=
-Best Regards=0A=
-Jacobe=
+Hello,
+this small series aims to integrate test_dev_cgroup in test_progs so it
+could be run automatically in CI. The new version brings a few differences
+with the current one:
+- test now uses directly syscalls instead of wrapping commandline tools
+  into system() calls
+- test_progs manipulates /dev/null (eg: redirecting test logs into it), so
+  disabling access to it in the bpf program confuses the tests. To fix this,
+  the first commit modifies the bpf program to allow access to char devices
+  1:3 (/dev/null), and disable access to char devices 1:5 (/dev/zero)
+- once test is converted, add a small subtest to also check for device type
+  interpretation (char or block)
+- paths used in mknod tests are now in /dev instead of /tmp: due to the CI
+  runner organisation and mountpoints manipulations, trying to create nodes
+  in /tmp leads to errors unrelated to the test (ie, mknod calls refused by
+  kernel, not the bpf program). I don't understand exactly the root cause
+  at the deepest point (all I see in CI is an -ENXIO error on mknod when trying to
+  create the node in tmp, and I can not make sense out of it neither
+  replicate it locally), so I would gladly take inputs from anyone more
+  educated than me about this.
+
+The new test_progs part has been tested in a local qemu environment as well
+as in upstream CI:
+
+ ./test_progs -a cgroup_dev
+ 47/1    cgroup_dev/deny-mknod:OK
+ 47/2    cgroup_dev/allow-mknod:OK
+ 47/3    cgroup_dev/deny-mknod-wrong-type:OK
+ 47/4    cgroup_dev/allow-read:OK
+ 47/5    cgroup_dev/allow-write:OK
+ 47/6    cgroup_dev/deny-read:OK
+ 47/7    cgroup_dev/deny-write:OK
+ 47      cgroup_dev:OK
+ Summary: 1/7 PASSED, 0 SKIPPED, 0 FAILED
+
+---
+Changes in v2:
+- directly pass expected ret code to subtests instead of boolean pass/not
+  pass
+- fix faulty fd check in subtest expected to fail on open
+- fix wrong subtest name
+- pass test buffer and corresponding size to read/write subtests
+- use correct series prefix
+- Link to v1: https://lore.kernel.org/r/20240725-convert_dev_cgroup-v1-0-2c8cbd487c44@bootlin.com
+
+---
+Alexis Lothoré (eBPF Foundation) (3):
+      selftests/bpf: do not disable /dev/null device access in cgroup dev test
+      selftests/bpf: convert test_dev_cgroup to test_progs
+      selftests/bpf: add wrong type test to cgroup dev
+
+ tools/testing/selftests/bpf/.gitignore             |   1 -
+ tools/testing/selftests/bpf/Makefile               |   2 -
+ .../testing/selftests/bpf/prog_tests/cgroup_dev.c  | 113 +++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/dev_cgroup.c     |   4 +-
+ tools/testing/selftests/bpf/test_dev_cgroup.c      |  85 ----------------
+ 5 files changed, 115 insertions(+), 90 deletions(-)
+---
+base-commit: 3e9fef7751a84a7d02bbe14a67d3a5d301cbd156
+change-id: 20240723-convert_dev_cgroup-6464b0d37f1a
+
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
