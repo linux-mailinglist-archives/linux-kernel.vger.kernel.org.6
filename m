@@ -1,251 +1,129 @@
-Return-Path: <linux-kernel+bounces-266540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5483B940163
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:52:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3559940165
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785041C21D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:52:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D591B21CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D809518F2C0;
-	Mon, 29 Jul 2024 22:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4092B18FC69;
+	Mon, 29 Jul 2024 22:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agfj04Yn"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dut9vJj3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094CF824AD;
-	Mon, 29 Jul 2024 22:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4CD18D4CA
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722293528; cv=none; b=FkPXOSjZjjSA0gsBAbOKjATzITXG7PJ+1KqmFKIyMv9L+Qoys228Zodckh/z26rXd6SwcjuASrjEZ1QIfXuqX4XPIJouBnNKruFszrAukiJg31CStXB6QMLksb3xixF76CfWN4SuGrQ38uNTvCe01JFYCDV+C6KvchO9yL6Nc+I=
+	t=1722293530; cv=none; b=YoxUCXXpovbqr2Iy+rvwRAUJN9OBMgMDz/1ZheXTx6n90Ej3qNlTP457JmOgLR9HYWkeH9knA7244kWrTNLM8yM5s44ZKFBLMSqIB72G1Rsil9qdmyNmI7bNuO29qOlWfJXEV/zmYSAMlWFiYFJ6Abb03FzfZEaIhAQq9F0gsYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722293528; c=relaxed/simple;
-	bh=jtcBiybF18rrhoGoJIJZVMTIuu4MOYpa6C8hIZbgkFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXTobOUYCBJuSGxHE4Uf4KnQSvKe+UyghhdvukjCJej96zCWA54jT22FwFfFbTW5fZMAqEuWKNRWikmFk25rqtsdm5Wt0bK3Expi8F0zW0rkyEG3hFNF+J+ye6n6lsXcC+QmuQvVQDRzMTzjqCDBlUSXKWio3RAlgAjzdiWm18Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=agfj04Yn; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso1647565276.3;
-        Mon, 29 Jul 2024 15:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722293524; x=1722898324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gg5HeEiGHzT8hT6f5/evSH/gSzb5Mo4puYNGhy7jr5U=;
-        b=agfj04YnbKN5N478SFAzsYlFasD9ypv8qdLWT5wZ7Tma5jt8aU8cT++iF8mOiJdo9b
-         yGTY98UTOLLqtuXnMSAiiBY7SA3kkuIhELfAKrT+lPmWUsWqMSXQt8pyRd3Ked3zj/fc
-         c7Q53EdZmwdS2K0wssx4PdaTOE0oVADp3jPJjl0QlxKO85FhwhBLxNnwUlqYlVAoyUUJ
-         A09JgayC02fE/cTyfi9X4FKnorX0nfhC/P7jNIR4MEg/idT4q7XgfkF6et444HX69Oj3
-         O3Ip71ihrzVEHc4fvgF6GTfLajV9G99xgcmugYz8f0rLJxlY7156x6W3jvGZGR13XbHg
-         HzAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722293524; x=1722898324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gg5HeEiGHzT8hT6f5/evSH/gSzb5Mo4puYNGhy7jr5U=;
-        b=rEcLRUj1vk54N0MGmOVZtkfMHdQWYlfZc6CkNj8j+spBHhD15H+0bNBrJD0HEhuIHW
-         9XB7s7/oX5lvgVxdzNn8I+n/PD9lpyAIE2vqKuvtPJOfyKCa951swUfA08ZR4fi0CfWu
-         RB8V3EztPB+AXTP75hgqfG5vu0XlRCoKuebfk4eEcAfpby83J2eVencQHKUzc4cdxUiv
-         SaQOQFyRwy95l4XQZJ/txmBoQz8XuAP5M6rX7VIwdnnr4y1N9U99a66jG0jq50o4yC9Y
-         gxq28qFFGkJ58BgMBUz5Ar6uqmyJ/+8yBBpmMOE5pc6kxgsv4Lc3XlWkIpDt58rnCPQx
-         SV4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWREFPvkaXBiAKz5hlHwaF9RdIemcy4J6ww+djhAZOtuHcPVO8dA5VU1cBWyHreNbh0kAuURIbAikolEosyMZMSfJrVYmvcPtEUY5UVXPXYTr1e9FgBAhzjqsa+DpqADM7QzcQsSaMAOA19xtntMI1A7eb+cr2gJ/sCYKrPnnGS6K+O5cCEJH3Ele6AQ9f2+1USgw65hFJnhA27LvniM69tSaiqk/wEWgiocgdM
-X-Gm-Message-State: AOJu0YwFwel12BGXuZVyKwS6YAcJOTT4IWmkyRfnVHJ0XWaytlCtASAF
-	j1stjye2WyhBZ+c3RElCtZQFPfhMOibSNYQTlfeUvPtrXs56cY7WgWR46B2ibthhL1vFJZwNK9w
-	TuM2Po06K/SEijBD5q4Hgozo+Tfo=
-X-Google-Smtp-Source: AGHT+IFp1maKkseHyDEiVQrlMWP8F7GBiHqFsuJ7fcviqwFGiyOAHy2I1TSLKaLeQ7ojbPuZs/dqshqB1RUfEPRFJvM=
-X-Received: by 2002:a25:dfc4:0:b0:e0b:1241:cc19 with SMTP id
- 3f1490d57ef6-e0b544cbe9dmr10355797276.32.1722293523937; Mon, 29 Jul 2024
- 15:52:03 -0700 (PDT)
+	s=arc-20240116; t=1722293530; c=relaxed/simple;
+	bh=ancUfdbymKu5ygqur2XdPXpMNAsblcqDSvNTOQNnBeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dQxFu0qpJqsB/AF9max4ZvhmqQ8ai9Rh5LCjKWABZeC5wFtPfzAW+dFoqBxMgEL2gll4xA1Z4rAbXAYjEzvfFZv9T21Xh4B4n3rZrHg71qqLC4yyIm4gEuDtamBL3JsqerWgtJMBOTU5C9PyFJHtqrcQm3cxaHCU5u+N3+94XXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dut9vJj3; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722293529; x=1753829529;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ancUfdbymKu5ygqur2XdPXpMNAsblcqDSvNTOQNnBeE=;
+  b=Dut9vJj3wzHW8g84ArgKLfmvkeSGNgBsKjBG3fDid22xIhj3BEuK+Sxi
+   VJmO4OxmYLOVMsVcaVcBEIOfAGh8lsCOwqXUIOpmFSFa9vZ8CjcZ08+Qa
+   UmTmNK/sbXBsejdbfwPJLqg/83JIdF1/CaZuD00R/RLnWd3wEkeE17/ZP
+   P9Tqq2BkVtw66V2fAcNMkc0/5yPRvbjvi03zEZmh4zMtr71qs0BkYwYDu
+   HhNNXZSZUsk1iBs1KfAMbHmBNzfSN/Zv6eEkmHdEuSRfRjG59KkV1liiC
+   os3QZB8GfCUK2DhwB9POe5QBQkTdVFA454jpXs4ea4roulW31d9E7B8Fe
+   w==;
+X-CSE-ConnectionGUID: 33/sJFSnQS2KyA9GEzgvAg==
+X-CSE-MsgGUID: zoCnIctNQNewt0DqZaYdZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20228991"
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="20228991"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 15:52:08 -0700
+X-CSE-ConnectionGUID: FPzRSpk3Ssur722Q8WBs3Q==
+X-CSE-MsgGUID: j/maIhMDQ6CnZJZm4LxmBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="54925186"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 29 Jul 2024 15:52:06 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sYZDn-000s9i-2I;
+	Mon, 29 Jul 2024 22:52:03 +0000
+Date: Tue, 30 Jul 2024 06:51:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [tip:irq/core 23/30] drivers/irqchip/irq-armada-370-xp.c:263:37:
+ error: use of undeclared identifier 'd'
+Message-ID: <202407300645.8EAO5dys-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-8-amery.hung@bytedance.com> <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
-In-Reply-To: <e1647f5f-5056-5cf0-e81c-5ef71fd6efd0@salutedevices.com>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Mon, 29 Jul 2024 15:51:52 -0700
-Message-ID: <CAMB2axMXzcxrFr+zWV6CFJxDrKwH+U85F7dkeXfJjAO10EmSAg@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 07/14] virtio/vsock: add common datagram
- send path
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: stefanha@redhat.com, sgarzare@redhat.com, mst@redhat.com, 
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, 
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com, 
-	bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
-	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, 
-	bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com, kernel@sberdevices.ru
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jul 29, 2024 at 1:12=E2=80=AFPM Arseniy Krasnov
-<avkrasnov@salutedevices.com> wrote:
->
-> Hi,
->
-> > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/vi=
-rtio_transport_common.c
-> > index a1c76836d798..46cd1807f8e3 100644
-> > --- a/net/vmw_vsock/virtio_transport_common.c
-> > +++ b/net/vmw_vsock/virtio_transport_common.c
-> > @@ -1040,13 +1040,98 @@ int virtio_transport_shutdown(struct vsock_sock=
- *vsk, int mode)
-> >  }
-> >  EXPORT_SYMBOL_GPL(virtio_transport_shutdown);
-> >
-> > +static int virtio_transport_dgram_send_pkt_info(struct vsock_sock *vsk=
-,
-> > +                                             struct virtio_vsock_pkt_i=
-nfo *info)
-> > +{
-> > +     u32 src_cid, src_port, dst_cid, dst_port;
-> > +     const struct vsock_transport *transport;
-> > +     const struct virtio_transport *t_ops;
-> > +     struct sock *sk =3D sk_vsock(vsk);
-> > +     struct virtio_vsock_hdr *hdr;
-> > +     struct sk_buff *skb;
-> > +     void *payload;
-> > +     int noblock =3D 0;
-> > +     int err;
-> > +
-> > +     info->type =3D virtio_transport_get_type(sk_vsock(vsk));
-> > +
-> > +     if (info->pkt_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE)
-> > +             return -EMSGSIZE;
->
-> Small suggestion, i think we can check for packet length earlier ? Before
-> info->type =3D ...
+Hi Marek,
 
-Certainly.
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
->
-> > +
-> > +     transport =3D vsock_dgram_lookup_transport(info->remote_cid, info=
-->remote_flags);
-> > +     t_ops =3D container_of(transport, struct virtio_transport, transp=
-ort);
-> > +     if (unlikely(!t_ops))
-> > +             return -EFAULT;
-> > +
-> > +     if (info->msg)
-> > +             noblock =3D info->msg->msg_flags & MSG_DONTWAIT;
-> > +
-> > +     /* Use sock_alloc_send_skb to throttle by sk_sndbuf. This helps a=
-void
-> > +      * triggering the OOM.
-> > +      */
-> > +     skb =3D sock_alloc_send_skb(sk, info->pkt_len + VIRTIO_VSOCK_SKB_=
-HEADROOM,
-> > +                               noblock, &err);
-> > +     if (!skb)
-> > +             return err;
-> > +
-> > +     skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
-> > +
-> > +     src_cid =3D t_ops->transport.get_local_cid();
-> > +     src_port =3D vsk->local_addr.svm_port;
-> > +     dst_cid =3D info->remote_cid;
-> > +     dst_port =3D info->remote_port;
-> > +
-> > +     hdr =3D virtio_vsock_hdr(skb);
-> > +     hdr->type       =3D cpu_to_le16(info->type);
-> > +     hdr->op         =3D cpu_to_le16(info->op);
-> > +     hdr->src_cid    =3D cpu_to_le64(src_cid);
-> > +     hdr->dst_cid    =3D cpu_to_le64(dst_cid);
-> > +     hdr->src_port   =3D cpu_to_le32(src_port);
-> > +     hdr->dst_port   =3D cpu_to_le32(dst_port);
-> > +     hdr->flags      =3D cpu_to_le32(info->flags);
-> > +     hdr->len        =3D cpu_to_le32(info->pkt_len);
->
-> There is function 'virtio_transport_init_hdr()' in this file, may be reus=
-e it ?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+head:   e626fcbaa9b67e4488ea437e0e8a5657e707d5f8
+commit: f72976cd7f0e16639f29398d5fe5ab1b03789b42 [23/30] irqchip/armada-370-xp: Use consistent name for struct irq_data variables
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240730/202407300645.8EAO5dys-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240730/202407300645.8EAO5dys-lkp@intel.com/reproduce)
 
-Will do.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407300645.8EAO5dys-lkp@intel.com/
 
->
-> > +
-> > +     if (info->msg && info->pkt_len > 0) {
->
-> If pkt_len is 0, do we really need to send such packets ? Because for con=
-nectible
-> sockets, we ignore empty OP_RW packets.
+All errors (new ones prefixed by >>):
 
-Thanks for pointing this out. I think virtio dgram should also follow that.
+>> drivers/irqchip/irq-armada-370-xp.c:263:37: error: use of undeclared identifier 'd'
+           irq_data_update_effective_affinity(d, cpumask_of(cpu));
+                                              ^
+   1 error generated.
 
->
-> > +             payload =3D skb_put(skb, info->pkt_len);
-> > +             err =3D memcpy_from_msg(payload, info->msg, info->pkt_len=
-);
-> > +             if (err)
-> > +                     goto out;
-> > +     }
-> > +
-> > +     trace_virtio_transport_alloc_pkt(src_cid, src_port,
-> > +                                      dst_cid, dst_port,
-> > +                                      info->pkt_len,
-> > +                                      info->type,
-> > +                                      info->op,
-> > +                                      info->flags,
-> > +                                      false);
->
-> ^^^ For SOCK_DGRAM, include/trace/events/vsock_virtio_transport_common.h =
-also should
-> be updated?
 
-Can you elaborate what needs to be changed?
+vim +/d +263 drivers/irqchip/irq-armada-370-xp.c
 
-Thank you,
-Amery
+   250	
+   251	static int mpic_msi_set_affinity(struct irq_data *irq_data, const struct cpumask *mask, bool force)
+   252	{
+   253		unsigned int cpu;
+   254	
+   255		if (!force)
+   256			cpu = cpumask_any_and(mask, cpu_online_mask);
+   257		else
+   258			cpu = cpumask_first(mask);
+   259	
+   260		if (cpu >= nr_cpu_ids)
+   261			return -EINVAL;
+   262	
+ > 263		irq_data_update_effective_affinity(d, cpumask_of(cpu));
+   264	
+   265		return IRQ_SET_MASK_OK;
+   266	}
+   267	
 
->
-> > +
-> > +     return t_ops->send_pkt(skb);
-> > +out:
-> > +     kfree_skb(skb);
-> > +     return err;
-> > +}
-> > +
-> >  int
-> >  virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
-> >                              struct sockaddr_vm *remote_addr,
-> >                              struct msghdr *msg,
-> >                              size_t dgram_len)
-> >  {
-> > -     return -EOPNOTSUPP;
-> > +     /* Here we are only using the info struct to retain style uniform=
-ity
-> > +      * and to ease future refactoring and merging.
-> > +      */
-> > +     struct virtio_vsock_pkt_info info =3D {
-> > +             .op =3D VIRTIO_VSOCK_OP_RW,
-> > +             .remote_cid =3D remote_addr->svm_cid,
-> > +             .remote_port =3D remote_addr->svm_port,
-> > +             .remote_flags =3D remote_addr->svm_flags,
-> > +             .msg =3D msg,
-> > +             .vsk =3D vsk,
-> > +             .pkt_len =3D dgram_len,
-> > +     };
-> > +
-> > +     return virtio_transport_dgram_send_pkt_info(vsk, &info);
-> >  }
-> >  EXPORT_SYMBOL_GPL(virtio_transport_dgram_enqueue);
-> >
-> > --
-> > 2.20.1
->
-> Thanks, Arseniy
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
