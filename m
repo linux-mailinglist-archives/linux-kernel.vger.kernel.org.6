@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-266112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE2793FB41
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:33:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F9D93FB44
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5601A1F21E41
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:33:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB4DB23A5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8187A188CCF;
-	Mon, 29 Jul 2024 16:27:17 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7592F186E4A;
+	Mon, 29 Jul 2024 16:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="aLpAgmYr"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6305E15CD77
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7150038B;
+	Mon, 29 Jul 2024 16:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722270437; cv=none; b=VtHv0grf2d0agXFuJReCKF6/5cLiWQ7mQu/hpXmfxEMMRZFgmnkEsIzX0UCW2bIYrrowLWy6rERXbSvAjL6jNtJ8jqhN1yi3kL+CrhYnVtvjQFZXEHEefYtDW++rFgyENOZPHrbXSuP68qC2PGTYUF2T/i2uPc+BbSn6kb/kqE8=
+	t=1722270467; cv=none; b=GHQ4J4AerBrnAoMMu33EGgunJ8hTMhIe5bTZD+XbIUYyWVqW1UP26H53eOqsdMaSUjaFEMl0QlxU4tIvZ8dXGxIoyFCynzcHgq3ugoEfSv/eG9qh8qnGk71LKwJnZa3/ZDCGKe0harcZH83LfLplkwHCFJWdWmLl7MAkBFpOcNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722270437; c=relaxed/simple;
-	bh=XyxfFeP5fO+sBfnPBCeVxwj+AqqvbJt3nXJoI8+pVjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqY7KorkGbwMZ7QpyzKhBRpvuclQy2u79IfwxslmiLesEefhiu2UT/OfaSuIUZR2WA2BA64Fe++PQztMLApQLjpQmCioGs4o5CqPHw+6FNWOyeNQzpRyE0/NDd+VYlJAwfRG9T38zu5TdfeYnXAmdof+DJKtyAaUFXn7V7KUzhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso3321925a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:27:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722270434; x=1722875234;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gbCJuyqdHkjYO3agTQ/GQTTLIxGsDUT83KqTY72Y3tc=;
-        b=bx66LdgBOPcCfuZPVi5WffeoDBcntMvLWNTwvGYDPkVwQDJQoQWXTEwh1MBuoGjStV
-         Y3MszXgwkJ8i+lfmKReGriZO90AKe63FEVqbWLSZi8I30go31abqlx+hvJ2oTzsMz6Li
-         lCBNoHl4tlopz1JXrvZAdaIKtql9JNFL54t/Xtclgxhy18W7zI9uOUzXrw6PhsY6FZig
-         skd2ai3tPd37hA4fDbryNUmZfoFB8KqTPoAHp/tp6zUo0C2y2/UpkN6JS9fR/m+2FPgJ
-         svCzMekXYzlBrHn7LXG9CWrVmhnXEkvqfFDVRIJpQvizFMdsXBb+6FHjIC9A44sX5ZhN
-         srtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZx6kITVnImfXW4DeABB2g8QzwfG+omuuobs1jkUlLZyfzRkcGxxgNLqb/ueyiXUaYurZIIsjE8j4/GYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRITaxnslkLAjHKls20NzOOA8VXZN1Lw8HEXPpzcHcemlVrgrf
-	V0QYRt1vDIj7jQa6UIcf8Kno5Zy3ZwbxeUbbUAEU4DeS9NHT0FJ3
-X-Google-Smtp-Source: AGHT+IFXSX8L1dgH10M41AmyAELmchc9pARJkJLkZ6W/vXjHZOGzSM9Bi8qyOQH/NkhatuVzkrtRPw==
-X-Received: by 2002:a17:906:fe42:b0:a7a:cc10:667c with SMTP id a640c23a62f3a-a7d3ff9f305mr476837966b.16.1722270433325;
-        Mon, 29 Jul 2024 09:27:13 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4d27csm530090666b.46.2024.07.29.09.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 09:27:13 -0700 (PDT)
-Date: Mon, 29 Jul 2024 09:27:10 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: jpoimboe@kernel.org, mingo@redhat.com, x86@kernel.org,
-	tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH v3 00/10] x86/bugs: Separate config for mitigations
-Message-ID: <ZqfC3me0aC3N1iUQ@gmail.com>
-References: <20240422165830.2142904-1-leitao@debian.org>
- <20240729092102.GAZqde_tdP_Ca-chhl@fat_crate.local>
+	s=arc-20240116; t=1722270467; c=relaxed/simple;
+	bh=GMOU0nWXi1RZGZDpMeeNhQfdCnLFvO8S3h1WIqsGnV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GZ2gMSZN26XSkLk0tH6/hoTs+XSiR6ybOl4b2QKP7CAq+Js3fl+6kfKWKVjXtn9qKqdiTk/tPMT6iamDp+EdtTnAPTQYcWjO5/varU76Cy2srs6GtwxZD0m5UPM/+xmnq3a1zliL/Gsc1PNQM0Wi47wH2vrECDsgyOGKja1/YS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=aLpAgmYr reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 2a6812c7d9d45ca8; Mon, 29 Jul 2024 18:27:43 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id E675E77357F;
+	Mon, 29 Jul 2024 18:27:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722270463;
+	bh=GMOU0nWXi1RZGZDpMeeNhQfdCnLFvO8S3h1WIqsGnV0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=aLpAgmYrUj0s5Ulor8+Y1CmjWDCqIQoeLwCBw1bySVEcWRN558/gemYRn/rylH7AX
+	 pIHoiDNmP3DORR2/MhJ1rVXgQosI0j9gwSzl4j6Bv1yNZgafd2sTh9Hb6kf0Ulp0QP
+	 mEW4T43MHG5bRrg2ie2xRBA3AwB4yJX7vOxmSlfviWLwh69QF8qo+KBuCPLODYCGbQ
+	 akRJYSOEu9jYsLQ5YdvhorbQB3wi9LLFl9zEdYuQHZLYo+780WtOwQbV7f+McJ4SEt
+	 FoVcKc6wRyWut3sNm/RO/7lgeO10y6FT/Penx3eTjJQPPhuGcvyJ8lBcHb4WsoCJSk
+	 wy0YlK/PAx22A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>
+Subject:
+ [PATCH v1 3/3] thermal: sysfs: Refine the handling of trip hysteresis changes
+Date: Mon, 29 Jul 2024 18:27:25 +0200
+Message-ID: <5508466.Sb9uPGUboI@rjwysocki.net>
+In-Reply-To: <1960840.taCxCBeP46@rjwysocki.net>
+References: <1960840.taCxCBeP46@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729092102.GAZqde_tdP_Ca-chhl@fat_crate.local>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrjedvgddutddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4
 
-Hello Borislav,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Mon, Jul 29, 2024 at 11:21:02AM +0200, Borislav Petkov wrote:
-> On Mon, Apr 22, 2024 at 09:58:14AM -0700, Breno Leitao wrote:
-> > Breno Leitao (10):
-> >   x86/bugs: Add a separate config for GDS
-> >   x86/bugs: Add a separate config for MDS
-> >   x86/bugs: Add a separate config for TAA
-> >   x86/bugs: Add a separate config for MMIO Stable Data
-> >   x86/bugs: Add a separate config for L1TF
-> >   x86/bugs: Add a separate config for RETBLEED
-> >   x86/bugs: Add a separate config for Spectre v1
-> >   x86/bugs: Add a separate config for SRBDS
-> >   x86/bugs: Add a separate config for Spectre V2
-> >   x86/bugs: Add a separate config for SSB
-> > 
-> >  arch/x86/Kconfig           | 117 +++++++++++++++++++++++++++++++++++--
-> >  arch/x86/kernel/cpu/bugs.c |  46 +++++++++------
-> >  2 files changed, 140 insertions(+), 23 deletions(-)
-> 
-> Ok, rest looks ok. You can send a new version with all feedback addressed.
+Change trip_point_hyst_store() and replace thermal_zone_trip_updated()
+with thermal_zone_set_trip_hyst() to follow the trip_point_temp_store()
+code pattern for more consistency.
 
-Thanks for reviewing it.
+No intentional functional impact.
 
-I will send a v4, where I will drop MITIGATION_GDS_FORCE, and keep only
-MITIGATION_GDS Kconfig config entry.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.h  |    4 ++--
+ drivers/thermal/thermal_sysfs.c |    4 ++--
+ drivers/thermal/thermal_trip.c  |    6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-Thanks,
---breno
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -258,11 +258,11 @@ const char *thermal_trip_type_name(enum
+ void thermal_zone_set_trips(struct thermal_zone_device *tz);
+ int thermal_zone_trip_id(const struct thermal_zone_device *tz,
+ 			 const struct thermal_trip *trip);
+-void thermal_zone_trip_updated(struct thermal_zone_device *tz,
+-			       const struct thermal_trip *trip);
+ int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+ void thermal_zone_trip_down(struct thermal_zone_device *tz,
+ 			    const struct thermal_trip *trip);
++void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
++				struct thermal_trip *trip, int hyst);
+ 
+ /* sysfs I/F */
+ int thermal_zone_create_device_groups(struct thermal_zone_device *tz);
+Index: linux-pm/drivers/thermal/thermal_sysfs.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_sysfs.c
++++ linux-pm/drivers/thermal/thermal_sysfs.c
+@@ -153,9 +153,9 @@ trip_point_hyst_store(struct device *dev
+ 	mutex_lock(&tz->lock);
+ 
+ 	if (hyst != trip->hysteresis) {
+-		WRITE_ONCE(trip->hysteresis, hyst);
++		thermal_zone_set_trip_hyst(tz, trip, hyst);
+ 
+-		thermal_zone_trip_updated(tz, trip);
++		__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
+ 	}
+ 
+ 	mutex_unlock(&tz->lock);
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -118,11 +118,11 @@ int thermal_zone_trip_id(const struct th
+ 	return trip_to_trip_desc(trip) - tz->trips;
+ }
+ 
+-void thermal_zone_trip_updated(struct thermal_zone_device *tz,
+-			       const struct thermal_trip *trip)
++void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
++				struct thermal_trip *trip, int hyst)
+ {
++	WRITE_ONCE(trip->hysteresis, hyst);
+ 	thermal_notify_tz_trip_change(tz, trip);
+-	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
+ }
+ 
+ void thermal_zone_set_trip_temp(struct thermal_zone_device *tz,
+
+
+
 
