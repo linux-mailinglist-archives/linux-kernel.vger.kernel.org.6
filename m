@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-265579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC2093F314
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:47:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F27B93F331
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997431F228AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:47:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE095B22A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0BF14372D;
-	Mon, 29 Jul 2024 10:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrN6V29a"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EAC14532B;
+	Mon, 29 Jul 2024 10:51:27 +0000 (UTC)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE51B13D281
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 10:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B983C144317;
+	Mon, 29 Jul 2024 10:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250053; cv=none; b=s8K/7ZMitMp4rndMq9LrB3VtccyotlmzyRCgSsr4wiE8zPrlbK+lV2L5kMVmJThS3a8CNwB4X8X+TrWiL4AizmyPxB21P+nyMVkXt+rj/f2DinCdEYB/o1E+OEr6XXPXZxK/iIJvAJcsWEcJoV4wFeTkp0udLyL0mH/mzixUEYg=
+	t=1722250287; cv=none; b=kHQHdpTO3LA+hc1b00H8boQOMJuvoiiUUhsxtuQ/RyOLCyXgJW6rPETTMfvogkpAiHwxPHTm1c3DQjNDJ+qaOy6chgMTsSsUCHt8GzB1e+7nf0ESWpG8hzRtcYgIbP6CZRR/7LdpldE36OZVqU+eof0L1MpDp1zLta0oSAiPeF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250053; c=relaxed/simple;
-	bh=1A9s1tSbmgkwPr+21mNtSsIaonsXbvUU//hWrE2epnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZKc+Ga9zDO+tx3ZXXYDCFMdb4twMAT0Zu3Otn4KKf1We9mQ5xMYpiommOwLgkCB2DXce9TMLGWyWBNlPysNv5Xnu/9nmPkx6k5+kTjl3qNIvd1JuDENsRDu2cY60x+GCiNuYjZjV/PqNAsABE7Mq8WxhTgaDnj3W1sLXNpwuUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrN6V29a; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722250287; c=relaxed/simple;
+	bh=zGJnGWYZ7EWY8CVbBpCUAQmjpZmDiSPSQq4l1T54FLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUX9lCQ+LxBYYXHJ5OeRSg9ceG408eqqVb0LJ5SU8I+Xj/Jy7frwGPE1FdmOx/WBVyrnbsnoQbruuzj6RjjXu8JjoZyZx2ciiL+22+OgmkvLRpprWJ7ZmHK8lZqLq83wZsinAqszTKfAaYWALVjBrcl0T7rsEYXwiRivd5kawdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70943713472so551885a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 03:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722250050; x=1722854850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tOt+y8/Gt/rabaByfeyl/jxGLEMzEbqTr7urP1FN1Vk=;
-        b=DrN6V29aYpFcIK4H9ZoeXtmPMBRkAu8P/H43jsF9DAT1p1lc/3Iar4wyGvY4Fj/QBP
-         IT4K2zHM9M/9rQkIVo3QiLA9RuiGnlZXb1opLiZaLejJj4xWRM7XPOwyV8t9ZUbSd29w
-         6eHOLhQ2Zi56ubsLe0AT938f1l/44h3IAWNZDmJA0hCyEcObr9FHvCjCmeOSVSELDuQN
-         LdKity808ucAljtlCnX9aqe4VP0S8/bsf9K8Nf64duNaWjENLhJJoA69HlV6WxfSdORB
-         houQ4S+LKAPO4VZRAsNSAMh7s5S1s1N7IYmeDV9OZ/NDYLRDLf9ZdKqh5Y0PwZ/rEX9x
-         fAJQ==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f136e23229so13663331fa.1;
+        Mon, 29 Jul 2024 03:51:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722250050; x=1722854850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tOt+y8/Gt/rabaByfeyl/jxGLEMzEbqTr7urP1FN1Vk=;
-        b=AKHsd2s3xjanZ+183ncfX04k4rEpaSINhlHkD+lb37xh3xfgGcA5YEnXMzS0q7+FsV
-         deZzVIsVcWp66QvQYxukU60obLgGMpYjP+mVVujA80L/CBF1ooEjH68+Qi/+nfQd5xLb
-         tquGqvPlppB/CCrNTr7tYDIsWNcnpdZoXLjpNzL6XXioRijpDHAX4DNBYQCD9rLjZyUq
-         6FtWBa5wvxSsE2S2ccCqH+y9aap+fDVVq03sUECWO/C/GHdV9zx7TpW2eMpquJsxj938
-         ntmEJ7WYNzNKlo+5ymoY3+KMCov+MRMATq3MC6D8tlz5u3yQjjORELfQqVg9BGh/C9ti
-         nimw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOw0MWXEadwv6OrurFsvX4Ju5TI5UwqJ5SrvZ+Zp0s9F00mpbHc5wfrbKDzGe8jFZHTlNzhw9tawep7mA/Z/3RIynJIjkmb2yB14eT
-X-Gm-Message-State: AOJu0Yzo18j7ntPQ0HFRuOfAMhNIYnoYUNZm3pR+S3ReSTtKv605+Ctc
-	ScceVCJ7xnzEjc9BqQ5z7fgWN7HhooVmNke5X2/uC3d5yWrPPJyCYyHraIpk8sddRtO7O74kwCv
-	9D90OBw+SGP+0pATublcWlGnHhZE=
-X-Google-Smtp-Source: AGHT+IGUjcNYXZ2CwwZJnzS49Koq4hi2VhOuLor26wGWWOEHNRfs+sCErQPZ3ETtsAriHZcN7UnN75EpoSIWZ8LlW0k=
-X-Received: by 2002:a05:6870:200b:b0:260:eae3:5ec2 with SMTP id
- 586e51a60fabf-267d4ddc7dfmr11377624fac.26.1722250049693; Mon, 29 Jul 2024
- 03:47:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722250284; x=1722855084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3pP0Lh+laS6unIhE0krPz6Y+HdhVEFBvDP/EvaPXHqM=;
+        b=SdvsN4e8Aw88hgN6Tb9M0PT9ExT16OaVmrbrDt7d2lUlvE65Yom+49CnC9R9ZNnOFM
+         x6ndbbV4nfvyL1Ct/bWIgVgagKCPEye30Uu+4WhTo7zM94492Sm6B9NbopD4jHW0mjyN
+         CX7gyJNnOVT9fRejFlGp+Sm7zoJyzJk6S2hwKaL8/cgNBWDplt0T65C9pg3+y67YX1Hq
+         3cNGlC6Yv0km67jZE3SjiaYc0gyN9DmHru5Zts0Olq6vV3EC7sPYMmSVrqaQFkHXhSxV
+         lBgsm1Nwb2/IR0A4MXEbYn+4X9RRwobiQtbKEHkN+wuE9t6Wp2iPqOpvdi10AcARFdIh
+         Hm/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRElpix06cdYdB4r9hVwsrG9ZDIlvKB3uWRPdV6fA1jXPPdJMhft+S1wjGEUYcUX5XMCSLwRnoNq7dLkLSAo+pRHU12mxKezFeVdpsJzcnk8J72MDK508ygOOVIn7v6sHyeOaM
+X-Gm-Message-State: AOJu0YyZAp17dTjTvUua9XMSrs6EVAvUjABLrbwdoi5reqB2vZXQ8h3w
+	JtqfMc3bBcaQjVy4YrhRi/Am+0ZkafS5ZUrOSrq9SCWU/E3/wyP4
+X-Google-Smtp-Source: AGHT+IG7DOXpnGVrzl8yFanT4BJ+eg0ZYAuTgZEhIZ6CNxYaTxh67tq81+R+cYS5e81s7KvWjozq/w==
+X-Received: by 2002:a2e:a271:0:b0:2ee:88d8:e807 with SMTP id 38308e7fff4ca-2f12ee066e5mr43440681fa.16.1722250283627;
+        Mon, 29 Jul 2024 03:51:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6578344fsm5572264a12.91.2024.07.29.03.51.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 03:51:22 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: leit@meta.com,
+	Chris Mason <clm@fb.com>,
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: skbuff: Skip early return in skb_unref when debugging
+Date: Mon, 29 Jul 2024 03:47:40 -0700
+Message-ID: <20240729104741.370327-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209011759.398021-1-qyousef@layalina.io> <20231209011759.398021-3-qyousef@layalina.io>
- <CAB8ipk9+4p29iE8HSiRrcc8DanCcO2U3+HRVY5LXLJRWXFMpOw@mail.gmail.com> <20240724213530.akr2ghuzabz3mfxw@airbuntu>
-In-Reply-To: <20240724213530.akr2ghuzabz3mfxw@airbuntu>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Mon, 29 Jul 2024 18:47:18 +0800
-Message-ID: <CAB8ipk-PwCvaAaRQSnCsybBTz_9xGw6aqsn+4p3PM8Amz3OedQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] sched/fair: Generalize misfit lb by adding a misfit reason
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>, 
-	Wei Wang <wvw@google.com>, Rick Yiu <rickyiu@google.com>, Chung-Kai Mei <chungkai@google.com>, 
-	Xuewen Yan <xuewen.yan@unisoc.com>, John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Qais
+This patch modifies the skb_unref function to skip the early return
+optimization when CONFIG_DEBUG_NET is enabled. The change ensures that
+the reference count decrement always occurs in debug builds, allowing
+for more thorough checking of SKB reference counting.
 
-On Thu, Jul 25, 2024 at 5:35=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
-rote:
->
-> Hi Xuewen
->
-> On 07/17/24 16:26, Xuewen Yan wrote:
-> > Hi Qais
-> >
-> > On Sat, Dec 9, 2023 at 9:19=E2=80=AFAM Qais Yousef <qyousef@layalina.io=
-> wrote:
->
-> > > @@ -11008,6 +11025,7 @@ static struct rq *find_busiest_queue(struct l=
-b_env *env,
-> > >                  * average load.
-> > >                  */
-> > >                 if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
-> > > +                   rq->misfit_reason =3D=3D MISFIT_PERF &&
-> >
-> > In Android, I found this would cause a task loop to change the CPUs.
-> > Maybe this should be removed. Because for the same capacity cpus, we
-> > should skip this cpu when nr_running=3D1.
->
-> Could you explain a bit more? Are you saying this is changing the behavio=
-r for
-> some use case? The check will ensure this path is only triggered for misf=
-it
-> upmigration. Which AFAICT the only reason why this path was added.
->
-> The problem is that to implement another misfit reason, the check for
-> capacity_greater() is not true except for MISFIT_PERF. For MISFIT_POWER, =
-we
-> want the CPU to be smaller.
+Previously, when the SKB's reference count was 1 and CONFIG_DEBUG_NET
+was not set, the function would return early after a memory barrier
+(smp_rmb()) without decrementing the reference count. This optimization
+assumes it's safe to proceed with freeing the SKB without the overhead
+of an atomic decrement from 1 to 0.
 
-Sorry, it was my mistake.
-After debugging, I found that there was a problem with my handling of
-MISFIT_PERF.
-But it is true that due to the influence of rt and irq load,
-capacity_greater() sometimes does cause some confusion.
-Sometimes we find that due to the different capacities between small
-cores, a misfit task will migrate several times between small cores,
-for example:
-If capacity_cpu3 > capacity_cpu2 > capacity_cpu1 >capacity_cpu0,
-the misfit task may migrate as follows: cpu0->cpu1->cpu2->cpu3.
-I don't know if this migration is really necessary, but it does cause
-me some confusion.
+With this change:
+- In non-debug builds (CONFIG_DEBUG_NET not set), behavior remains
+  unchanged, preserving the performance optimization.
+- In debug builds (CONFIG_DEBUG_NET set), the reference count is always
+  decremented, even when it's 1, allowing for consistent behavior and
+  potentially catching subtle SKB management bugs.
 
-Thanks!
+This modification enhances debugging capabilities for networking code
+without impacting performance in production kernels. It helps kernel
+developers identify and diagnose issues related to SKB management and
+reference counting in the network stack.
 
->
-> I think Vincent is working on a better way to handle all of this now.
->
-> >
-> > >                     !capacity_greater(capacity_of(env->dst_cpu), capa=
-city) &&
-> > >                     nr_running =3D=3D 1)
-> > >                         continue;
+Cc: Chris Mason <clm@fb.com>
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ include/linux/skbuff.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 29c3ea5b6e93..cf8f6ce06742 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1225,7 +1225,7 @@ static inline bool skb_unref(struct sk_buff *skb)
+ {
+ 	if (unlikely(!skb))
+ 		return false;
+-	if (likely(refcount_read(&skb->users) == 1))
++	if (!IS_ENABLED(CONFIG_DEBUG_NET) && likely(refcount_read(&skb->users) == 1))
+ 		smp_rmb();
+ 	else if (likely(!refcount_dec_and_test(&skb->users)))
+ 		return false;
+-- 
+2.43.0
+
 
