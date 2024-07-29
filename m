@@ -1,179 +1,264 @@
-Return-Path: <linux-kernel+bounces-265448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31A293F15E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:38:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072DF93F164
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0CE1C21C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28BF21C21CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 09:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB41B14036D;
-	Mon, 29 Jul 2024 09:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9450D13E8B6;
+	Mon, 29 Jul 2024 09:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZrOVh4hq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy6/F8Vt"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6C778B4E;
-	Mon, 29 Jul 2024 09:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B3B78B4E;
+	Mon, 29 Jul 2024 09:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245899; cv=none; b=F+YLsrYyYCnzauIpf+bsCNuYT9by4mMT5hqa0t5tiPKDdYeVtF4FXC0dyEnJ0nZAcx2lmRlQB+xYAw6SrWLyq+4gDSacisnDBSO9dBpiTwKrwkR0/XxN27Auzb6LS9PIEmZg1De0CxLMCoBcPfyeY8Va9god6Mi/Z2EKw0eGsT8=
+	t=1722246005; cv=none; b=RJ1x7Vqg+UYHjEz6lSCBkia801Owfu90Zn2x4TFzp1NzZ9K2D0aJNfCbPh58E5oa5Egs7a3Rmg5sV/zUadD1RLNde/JUfIiGzPiTIygw0oYSQpxnEJ4CRGnRsWbsQW36qFQg20ScSbyHlHZaHPwCeoMMEd7dOca7MXONw9qyNqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245899; c=relaxed/simple;
-	bh=6sWnXud9P85ib8ufCmqhXtUqgGoURmUP09U905hOr4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=upGAnXFOA1AKAwJcftwNXnuy7nhoY7SRm7ZwIEVC+pCdR/dNFQ+JtNbeGLA6C68IOMh9VTLyfF4HUUAB3kaS1U3CwOLb+bUZHuyJCQLsWqDjm/qPti9OLZdllmVne1OEZlDRTTApuNxwoSSzusfbwes0f66woMFiObHHpv8d5qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZrOVh4hq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46SNFngQ030779;
-	Mon, 29 Jul 2024 09:38:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R3DuZyTIPM+eAkEnapQy5bueU7+MV+bnyZV02KN0a68=; b=ZrOVh4hqVbIJWyFo
-	VZAtWQ6y5ICGxz2ZE/zvks2yptENpNQio8aCFWSx6emuv7Cmmw5c95UDeWmtn0Hm
-	tCZR8sgp+FlDT5q/kiXS8Mh25qDEykkHEeOT9KDgg2YxeQRMBL7OOkrryoWQuO1r
-	gHdryfYGDV84+AvjoPm20pAMH/5qV1IDwb382P30pzdVVBE7gq1l98FkddoVxCpJ
-	7Z4PlrX72wIKZIR1YqGY0imRyUYRr1oIs+hL/qAu7FpceUny9PR+/Nsi7P/rdY0K
-	MvGi6ma1VYrezu/cBKyFzPo3ZTpgnn9PA0vvuENd0/gXXKh3Pnsvotgb8qKvoF+W
-	y02NOQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mrytuna5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:38:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46T9c73H024169
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:38:07 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 02:38:01 -0700
-Message-ID: <108d2cf4-2b17-4ce1-80aa-988e36de533d@quicinc.com>
-Date: Mon, 29 Jul 2024 17:37:59 +0800
+	s=arc-20240116; t=1722246005; c=relaxed/simple;
+	bh=v5CVpGXRECC7xxZl4Fle2Mk+XUxzkpObh9lVcLfvV1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uiecYG1XnNlGngT4/5+BkoAV5fvcy88BNLOhZ6PETidMZAYf5a2qolHiG0HsLx3erHNEtTTjhRMSXZxDWY6KDM8GEgzkBiet28H1VwKXC3ayya7N05nAIkkN0EoDQGMMJcjXce2WeJbB4p1GBsaKnN9z2S2KciZOM4dcYiCoMag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy6/F8Vt; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f6b8b7d85bso1083101e0c.1;
+        Mon, 29 Jul 2024 02:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722246003; x=1722850803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qqJ/zR4THD+IIHEf2QepwtOw7uhTMsZvKiU8UBFA/vA=;
+        b=Hy6/F8VtnhtrOCV2FcTRgE7DJhYeh4iicv6moqk0NBUCCguz3q8gBXdr5hNVQDDpPe
+         4Jf4RfdgpdVdDBqdbVM63THXs7wNtEvHu4Soh9xwnEyMt0YsIhfv7lHA0Br6CMz2kD42
+         Tv9cflDOKZv2yHKwJiWhiB4SHxerMTkEXW3k8viedFu5sdIQdpr535Okz5nVaDnAKx8i
+         nXSEg4YMt3Da4m9FaNV4E8OlNhSgSO4VGezLaV2wWQeuXKishWjneh8cENxyO/gd7w6k
+         fjyOfuUef7U65kVD5zng3s/8DKwmSlk2BcAQZKHuLEdNo2w+1WgDkJndJ4PmnFM8vOd/
+         WhTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722246003; x=1722850803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qqJ/zR4THD+IIHEf2QepwtOw7uhTMsZvKiU8UBFA/vA=;
+        b=XAF2DT/f0Q9KHo2YxJEd3Gjw5BDOODfDfIavdG6KI/Xuy4lWw3hCSVBlBJR6gKn3dO
+         azN+N/slHgwVOhCCe1QD/3sNN8I2MVn2m+i+Dl+6lyWChOiu+N3zVZgahaw9rr2hU6/2
+         pheE+6YUlefvM4luOwThZWXHkCyk2NyS2vn7bJ3i1XqG0n6b2/cArhGwVxh6RbyJcpNC
+         qdWjDESigtGo0YwF/QlEsEqyOVXiaNIcdAhqhL8r/CAry3/jlSu+NOEqA+6cXTVL1PV/
+         71iVnb7W7CaCbnpNbhefl4M4ZfKJVhUpXCM1GYxg312hv59lVgHdOpGbvPGa1QpbZxtn
+         u7qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh0yEv6EWT33NDfUQXF9wwNt2yLEGp1egoOm8wKJSoqelv2IPUaDRVqq4BXjvIRcO5RdU4HCzxtGNNJS5bgz6RftV7yf2WNDtekBAWMZlY0iDi1CSkkqEQi9E4neA00G493KVk10e42GrJch2eeAmYHu2mqNwcvlah3TU2RtXAbkmU6qBpvJO9KlvI0FX+yXnEzpONw6viKnkQ8s7+ZzfVNI6td2vx
+X-Gm-Message-State: AOJu0YyOzYJjzmni7eHUHBc9fsnL1GTkm3LFRSQn0Xaw+5vro9+72DwC
+	13DXt16Xrkuhgdb0P0tRLE1cvCl6/sH2uzQW0kz70XygmLnZ4JLxkqLf/dj8pBJ8M3yUybno4w/
+	ZAo18+UZUOGfblmaXwb15ZGfQ3Ic=
+X-Google-Smtp-Source: AGHT+IHJOw3LYL+pc0QeWca13CNB+qj11UjJq1kTH+3jSlVQYnx+/46EaOcVohMn+/9cRGfpWpZzHXtBAp0ZZa7aFWg=
+X-Received: by 2002:a05:6122:459e:b0:4f5:23e4:b7c with SMTP id
+ 71dfb90a1353d-4f6e66f6614mr7603498e0c.0.1722246002839; Mon, 29 Jul 2024
+ 02:40:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings
- for QCS9100
-To: Rob Herring <robh@kernel.org>
-CC: Trilok Soni <quic_tsoni@quicinc.com>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        "Kishon Vijay
- Abraham I" <kishon@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240709-document_qcs9100_usb_hs_phy_compatible-v2-1-c84fbbafa9d6@quicinc.com>
- <20240710162745.GA3212156-robh@kernel.org>
- <3b8684f0-c89d-1a76-6bc5-93ced59dc51c@quicinc.com>
- <51302de0-5e4c-4e2a-85a0-e22549baa13c@quicinc.com>
- <20240711200354.GA2482879-robh@kernel.org>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20240711200354.GA2482879-robh@kernel.org>
+References: <20240715125438.553688-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240715125438.553688-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUvfAqJR6=4MG3hXC6cn1AnKz7+RAp4GG1jvdwOctgNzQ@mail.gmail.com>
+ <CA+V-a8uBL-2DeAtu6BnF37Loe_fT6PNbAx=8O9acTR1Ey2zRrg@mail.gmail.com> <CAMuHMdU3ijNmw8nfTHbrsX28ASwO=pTaMaODPg1PUr9x5kPibg@mail.gmail.com>
+In-Reply-To: <CAMuHMdU3ijNmw8nfTHbrsX28ASwO=pTaMaODPg1PUr9x5kPibg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 29 Jul 2024 10:38:00 +0100
+Message-ID: <CA+V-a8vDKDsEOnPONgo7Q4fKX==VdCwUfXcrQqEMU+VQmEb0fg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Uy67C5vQlgEaIe1ALIPFJy3iwFF2f_Jm
-X-Proofpoint-GUID: Uy67C5vQlgEaIe1ALIPFJy3iwFF2f_Jm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_07,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- mlxscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290065
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
+On Mon, Jul 29, 2024 at 9:14=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Sat, Jul 27, 2024 at 12:51=E2=80=AFPM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Fri, Jul 26, 2024 at 3:53=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Mon, Jul 15, 2024 at 2:56=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> > >
+> > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit) =
+     \
+> > > > +       [_id] =3D { \
+> > >
+> > > Indexing by _id means the reset array will be very sparse.  E.g. the
+> > > innocent-looking r9a09g057_resets[] with only a single entry takes
+> > > 600 bytes:
+> > >
+> > >     $ nm -S drivers/clk/renesas/r9a09g057-cpg.o | grep r9a09g057_rese=
+ts
+> > >     0000000000000038 0000000000000258 r r9a09g057_resets
+> > >
+> > Agreed.
+> >
+> > > So please pack the array here, and either unpack it while making the
+> > > priv->resets copy, or implement translation ("look-up") from ID to
+> > > packed index in rzv2h_cpg_reset_xlate().
+> > >
+> > OK, I will implement the below:
+> >
+> > #define PACK_RESET(_resindex, _resbit, _monindex, _monbit)    \
+> >     (((_resindex) << 24) | ((_resbit) << 16) | ((_monindex) << 8) | (_m=
+onbit))
+> >
+> > #define DEF_RST(_resindex, _resbit, _monindex, _monbit)    \
+> >     PACK_RESET(_resindex, _resbit, _monindex, _monbit)
+> >
+> > #define GET_RESET_INDEX(x)    (((x) >> 24) & 0xFF)
+> > #define GET_RESET_BIT(x)    (((x) >> 16) & 0xFF)
+> > #define GET_MON_INDEX(x)    (((x) >> 8) & 0xFF)
+> > #define GET_MON_BIT(x)        ((x) & 0xFF)
+> >
+> > static int rzv2h_cpg_reset_xlate(struct reset_controller_dev *rcdev,
+> >                  const struct of_phandle_args *reset_spec)
+> > {
+> >     struct rzv2h_cpg_priv *priv =3D rcdev_to_priv(rcdev);
+> >     unsigned int id =3D reset_spec->args[0];
+> >     u8 rst_index =3D id / 16;
+> >     u8 rst_bit =3D id % 16;
+> >     unsigned int i;
+> >
+> >     for (i =3D 0; i < rcdev->nr_resets; i++) {
+> >         u8 cur_index =3D GET_RESET_INDEX(priv->resets[i]);
+> >         u8 cur_bit =3D GET_RESET_BIT(priv->resets[i]);
+> >
+> >         if (rst_index =3D=3D cur_index && rst_bit =3D=3D cur_bit)
+> >             return i;
+> >     }
+> >
+> >     return -EINVAL;
+> > }
+> >
+> > Let me know if this is OK, or to avoid looping in xlate maybe we can
+> > have a packed entry in the resets property of DT by this way we can
+> > avoid having the resets array all together?
+>
+> Sorry for being unclear. I did not mean packing the fields in the struct
+> into a single word, but packing the entries in the r9a09g057_resets[]
+> array.  Using the rzv2h_reset structure is fine.
+>
+> With:
+>
+>     #define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit)    =
+   \
+>             [_id] =3D { \
+>                     .reset_index =3D (_resindex), \
+>                     .reset_bit =3D (_resbit), \
+>                     .mon_index =3D (_monindex), \
+>                     .mon_bit =3D (_monbit), \
+>             }
+>
+>     #define DEF_RST(_resindex, _resbit, _monindex, _monbit) \
+>             DEF_RST_BASE(RST_ID((_resindex), (_resbit)), _resindex,
+> _resbit, _monindex, _monbit)
+>
+>     static const struct rzv2h_reset r9a09g057_resets[] __initconst =3D {
+>         DEF_RST(9, 5, 4, 6),            /* SCIF_0_RST_SYSTEM_N */
+>     };
+>
+> is expanded into an array of 150 entries (9 * 16 + 5 =3D 149 empty entrie=
+s
+> followed by the SCIF_0_RST_SYSTEM_N entry), which is wasteful.
+> Over time the array will be filled more, but I expect there will still
+> be lots of unused entries.
+>
+> Hence I suggest to drop the "[id]":
+>
+>    - define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit)    =
+   \
+>    -       [_id] =3D { \
+>    +#define DEF_RST(_resindex, _resbit, _monindex, _monbit)       \
+>    +       { \
+>                    .reset_index =3D (_resindex), \
+>                     .reset_bit =3D (_resbit), \
+>                     .mon_index =3D (_monindex), \
+>                     .mon_bit =3D (_monbit), \
+>             }
+>    -
+>    -#define DEF_RST(_resindex, _resbit, _monindex, _monbit) \
+>    -        DEF_RST_BASE(RST_ID((_resindex), (_resbit)), _resindex,
+> _resbit, _monindex, _monbit)
+>
+> Then r9a09g057_resets[] will contain only non-empty entries, at the
+> expense of no longer being able to index it directly by reset ID.
+> To solve the indexing, there are two options.
+>
+> Option A: Translate from reset ID to real index during lookup, like
+>           you do in the rzv2h_cpg_reset_xlate() above:
+>
+>     static int rzv2h_cpg_reset_xlate(struct reset_controller_dev *rcdev,
+>                      const struct of_phandle_args *reset_spec)
+>     {
+>         struct rzv2h_cpg_priv *priv =3D rcdev_to_priv(rcdev);
+>         unsigned int id =3D reset_spec->args[0];
+>         u8 rst_index =3D id / 16;
+>         u8 rst_bit =3D id % 16;
+>         unsigned int i;
+>
+>         for (i =3D 0; i < rcdev->nr_resets; i++) {
+>             if (rst_index =3D=3D priv->resets[i].reset_index &&
+>                 rst_bit =3D=3D ->resets[i].reset_bit)
+>                 return i;
+>         }
+>
+>         return -EINVAL;
+>     }
+>
+> Option B: "Unpack" rzv2h_cpg_info.resets[] during copying in
+>           rzv2h_cpg_probe():
+>
+>     priv->resets =3D devm_kcalloc(dev, max_num_reset_ids,
+>                                  sizeof(*priv->resets), GFP_KERNEL);
+>     for (i =3D 0; i < ARRAY_SIZE(info->resets); i++) {
+>             id =3D RST_ID(info->resets[i].reset_index, info->resets[i].re=
+set_bit);
+>             priv->resets[id] =3D info->resets[i];
+>     }
+>
+> BTW, for option B (and for the current code in v4),
+> rzv2h_cpg_reset_xlate() should validate that the entry is non-empty.
+>
+> I hope this is more clear?
+>
+Yes, thanks for the clarification. I will go with option A, so we
+don't waste memory.
 
-On 7/12/2024 4:03 AM, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 06:05:57PM +0800, Aiqun Yu (Maria) wrote:
->>
->>
->> On 7/11/2024 12:45 AM, Trilok Soni wrote:
->>> On 7/10/2024 9:27 AM, Rob Herring wrote:
->>>> On Tue, Jul 09, 2024 at 08:46:19PM +0800, Tengfei Fan wrote:
->>>>> Document the compatible string for USB phy found in Qualcomm QCS9100
->>>>> SoC.
->>>>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
->>>>> platform use non-SCMI resource. In the future, the SA8775p platform will
->>>>> move to use SCMI resources and it will have new sa8775p-related device
->>>>> tree. Consequently, introduce "qcom,qcs9100-usb-hs-phy" to describe
->>>>> non-SCMI based USB phy.
->>>>>
->>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>>> ---
->>>>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
->>>>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
->>>>> While the QCS9100 platform is still in the early design stage, the
->>>>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
->>>>> mounts the QCS9100 SoC instead of the SA8775p SoC.
->>>>>
->>>>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
->>>>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
->>>>> The QCS9100 device tree patches will be pushed after all the device tree
->>>>> bindings and device driver patches are reviewed.
->>>>
->>>> I'm not convinced this is not just pointless churn. Aren't we going to 
->>>> end up with 2 compatible strings for everything? SCMI should just change 
->>>> the providers, but otherwise the consumers are the same. I suppose if 
->>>> clocks are abstracted into power-domains (an abuse IMO) then the 
->>>> bindings change.
->>>>
->>>> Why do we need to support both SCMI and not-SCMI for the same chip?
->>>
->>> IOT SKU of this SOC is using the non-SCMI solution and Auto SKU
->>> of this SOC is using the SCMI based solution due to additional
->>> safety requirements. 
->>
->> More add-on information, IOT SKU which have qcs9100 soc mounted will
->> have firmware releases which support non-scmi solution.
->> And AUTO SKU which mounted with SA8775p will have different firmware
->> releases which support SCMI solution.
-> 
-> Yes, I understand the difference. My question is why should upstream 
-> support that? Normally, I wouldn't notice or care, but the churn of 
-> renaming everything makes me notice. Why do the maintainers need to 
-> review all these extra changes because QCom couldn't figure out their 
-> plans?
-> 
-> So after you duplicate all the compatible strings, what's next? Changing 
-> all the SA8775p bindings which is an ABI break? Presumably, some 
-> bindings may not change at all? In that case, you don't need any rename.
-> I have no visibility into what's coming next, so please educate me.
-> 
-> The minimal amount of changes here is you are stuck with the existing 
-> identifiers for the non-SCMI SKU. Then you can add a "new SoC" for the 
-> SCMI SKU. You might not like the names now, but you picked them and are 
-
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Let's close this session and ignore all the current patches here.
-Thank you for your input.
-> kind of stuck with them.
-> 
-> Rob
-
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+Cheers,
+Prabhakar
 
