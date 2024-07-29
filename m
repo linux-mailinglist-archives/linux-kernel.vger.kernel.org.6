@@ -1,91 +1,136 @@
-Return-Path: <linux-kernel+bounces-265595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36CC93F36A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:58:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D023693F3A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C013282778
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EF21F227D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B722014535F;
-	Mon, 29 Jul 2024 10:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTnr8hs9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7E51459EB;
+	Mon, 29 Jul 2024 11:07:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EAC145336;
-	Mon, 29 Jul 2024 10:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BEA145330;
+	Mon, 29 Jul 2024 11:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250705; cv=none; b=pavgfnQsj1hVzb4uJ58hPlj1jqIxXauoNHnThUXNbkhf5ZvJ560vbANzFNTaq633NthtiB2GJsCHThYrcE08+tAudE0IF/cs6Gcxxf/X3IDTdXggla+GjiK/0qgT33UUUzamYpM0h3KAyP24dBDOZE/j0r1JLY/HUpeivv4ub64=
+	t=1722251259; cv=none; b=pjRNJKlclkQNkBVcpMZeualECALgX/twXrAmGftUnkcL9zV52egKzlqBuIAKn2ouyxFAbgneovbdJiPgYXLkb061qfzMwAy0/sPcPzeykEeuU+uWnoBFFgfump5kW7Ii+VvgtwFyxdD/UbVdGgNNMXQqC+FGjT9HL614QxnwlE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250705; c=relaxed/simple;
-	bh=fiO7i6mqpUoxi+7/v5/Nsp0Jyzn13Vgei+tT64/9Oc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=da1QrJdUy2dgygn7+b1HL2y1VIS2m8MlhXQ386Qtrmf26R6z3oh2OzGzAdD2BWQ7z4Ma9Jg57KLwSeU+iReKO64QCDuaotvA0xHRMpcfKjwhOuQUSarXtgdp8fUh/HnU4bw90wDjnGxlwrx1NClVDSC4TAkjFGisC6/JtFXSj+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTnr8hs9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28353C32786;
-	Mon, 29 Jul 2024 10:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722250704;
-	bh=fiO7i6mqpUoxi+7/v5/Nsp0Jyzn13Vgei+tT64/9Oc8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FTnr8hs963bf+s/GC/SiQ3wKb4CybEglWNWxa2vPrt/dDL1h4RUK2idHolx96Imob
-	 iaOn8wn4bERXPvtHGz60oiNa096GpUa1jh+4x6uMm5AmqFkDPspLb3wYDIJQ/kWvSj
-	 ZCVaGMBB70acehcIQW/029V0EFKJH8Dlsl7nmfRIqw5b3DgC1+r20VPUrePG1+C+LW
-	 H8qHOUKPTt2MMwRp14PGL4eWiYWlm3hox35PAefTM4dpoL1LAoqKHg3/2jupBboFTL
-	 V3inzvMN4PBetFYLf1GLad6SrAA6qTuukIVoppF4JF1GNiKMXpPhTix6miH3eWUQJL
-	 0UjfhM7s42CZA==
-From: Christian Brauner <brauner@kernel.org>
-To: mohitpawar@mitaoe.ac.in
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fixed: fs: file_table_c: Missing blank line warnings and struct declaration improved
-Date: Mon, 29 Jul 2024 12:57:58 +0200
-Message-ID: <20240729-ausnahmen-wohlverdient-24693ce88363@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
-References: <linux-fsdevel@vger.kernel.org> <20240727072134.130962-1-mohitpawar@mitaoe.ac.in> <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
+	s=arc-20240116; t=1722251259; c=relaxed/simple;
+	bh=IlzjjbKuscioRgN75zrYa65Sy7nNdLJ7VKwCkRuRfTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BzuyswMwAEIgj9sHHkpN84phNma2w+PCsmr35Dy/m+OCXV1uB214riLoJbBiqAJXYZ95cTL1USZ1R8OwpcWVxcpuKT86HeHgnT+F9+3sIg0OPTgTlZPnE9yVGHf+KmxIpeGY/Zww4xtHDeOq/hkrfoIU3aozCaeblkaZgp2kpfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WXbD85qLJz4f3jcn;
+	Mon, 29 Jul 2024 19:07:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 96CD21A0568;
+	Mon, 29 Jul 2024 19:07:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.26])
+	by APP2 (Coremail) with SMTP id Syh0CgAXAcD0d6dmKGe9AA--.7666S2;
+	Mon, 29 Jul 2024 19:07:33 +0800 (CST)
+From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+To: tj@kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiujianfeng@huawei.com
+Subject: [PATCH -next] cgroup/pids: Avoid spurious event notification
+Date: Mon, 29 Jul 2024 10:58:24 +0000
+Message-Id: <20240729105824.3665753-1-xiujianfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1052; i=brauner@kernel.org; h=from:subject:message-id; bh=fiO7i6mqpUoxi+7/v5/Nsp0Jyzn13Vgei+tT64/9Oc8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQtL90V9PtY1yxO7vWn1RRMnr89qTlR+rDJy59i9vzep pNCjx+c2lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARM3NGhi0PfdcfXPxntr1U +NxHv/3ubv93r7U67uyaVTqLTUo7D7AzMkzNkjueIHXiG6/2i38pR/zu1ty5cyPPf+P6J2+2qwl pW/ECAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAXAcD0d6dmKGe9AA--.7666S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uryDWr48JF4xXF4xuFW5GFg_yoW8uw1Dp3
+	ZxAFyrKrZ5J3Z09wn5J3srZFyfWa93WrZ8CF4rJ34ftw42kr1YganFkF1UZr1UZFy7u3sF
+	qF4Yvay5J34j9rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
-On Sat, 27 Jul 2024 12:51:34 +0530, mohitpawar@mitaoe.ac.in wrote:
-> Fixed-
-> 	WARNING: Missing a blank line after declarations
-> 	WARNING: Missing a blank line after declarations
-> 	Declaration format: improved struct file declaration format
-> 
-> 
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Currently when a process in a group forks and fails due to it's
+parent's max restriction, all the cgroups from 'pids_forking' to root
+will generate event notifications but only the cgroups from
+'pids_over_limit' to root will increase the counter of PIDCG_MAX.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Consider this scenario: there are 4 groups A, B, C,and D, the
+relationships are as follows, and user is watching on C.pids.events.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+root->A->B->C->D
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+When a process in D forks and fails due to B.max restriction, the
+user will get a spurious event notification because when he wakes up
+and reads C.pids.events, he will find that the content has not changed.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+To address this issue, only the cgroups from 'pids_over_limit' to root
+will have their PIDCG_MAX counter increased and event notifications
+generated.
 
-[1/1] Fixed: fs: file_table_c: Missing blank line warnings and struct declaration improved
-      https://git.kernel.org/vfs/vfs/c/0268eb6ea276
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ kernel/cgroup/pids.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
+index f5cb0ec45b9d..1c8c9f76ff0e 100644
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -244,7 +244,6 @@ static void pids_event(struct pids_cgroup *pids_forking,
+ 		       struct pids_cgroup *pids_over_limit)
+ {
+ 	struct pids_cgroup *p = pids_forking;
+-	bool limit = false;
+ 
+ 	/* Only log the first time limit is hit. */
+ 	if (atomic64_inc_return(&p->events_local[PIDCG_FORKFAIL]) == 1) {
+@@ -257,15 +256,11 @@ static void pids_event(struct pids_cgroup *pids_forking,
+ 	    cgrp_dfl_root.flags & CGRP_ROOT_PIDS_LOCAL_EVENTS)
+ 		return;
+ 
+-	for (; parent_pids(p); p = parent_pids(p)) {
+-		if (p == pids_over_limit) {
+-			limit = true;
+-			atomic64_inc(&p->events_local[PIDCG_MAX]);
+-			cgroup_file_notify(&p->events_local_file);
+-		}
+-		if (limit)
+-			atomic64_inc(&p->events[PIDCG_MAX]);
++	atomic64_inc(&pids_over_limit->events_local[PIDCG_MAX]);
++	cgroup_file_notify(&pids_over_limit->events_local_file);
+ 
++	for (p = pids_over_limit; parent_pids(p); p = parent_pids(p)) {
++		atomic64_inc(&p->events[PIDCG_MAX]);
+ 		cgroup_file_notify(&p->events_file);
+ 	}
+ }
+-- 
+2.34.1
+
 
