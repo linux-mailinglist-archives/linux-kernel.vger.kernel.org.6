@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-266003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7563D93F911
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A5F93F90E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2861F22E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E271C21C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42529156243;
-	Mon, 29 Jul 2024 15:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A9815624D;
+	Mon, 29 Jul 2024 15:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eY+PTrMO"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzC56+RB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB02B155A39
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13F33C24;
+	Mon, 29 Jul 2024 15:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722265612; cv=none; b=Um7uo33+rGT6d+QlG/Y9iH7ZMS4C6q8Ul1X8gjjVBtkBjSfZI9gJSvMPZHaP18z1Q+ZK5t0AAgQqo09wMws6I6SCRq6HQI8X2EFW9nDkAScoWptJv3yckooy/YY2uYKxsSwrty++GyNgmHIqm5gjqXDwdVuBPMDV2e3Dg5/khAY=
+	t=1722265575; cv=none; b=J915uJPJLBki41YeEiQrfMmmTFUYM/IsIqPl12qqQ7xXvE/9R5dZ0ST3j3VP/qHW14XPv5kDE0ymOuefHeQzQmEnH1uJUz/bBaQ05Jv/0yvFv3jR8K8bzrGBIo8jg5QieLZN9XU2EhlnXACjo/V5wDuP94kf16y5zG11tC/RU6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722265612; c=relaxed/simple;
-	bh=781BTajwd1hR5wMvp7cNX2jVIl1+v4PLz5QlLHtL65Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b5vu/FNwZR5E/eS5I0voqoPotIvWzkRjS6Bs9kRZlgysWDp8fQ2SfmN7jAfMZ5M4anHQb4hreDOzKxSclZG22Z5lh2dji+85h2eGDFTrBKdmufplHNpVnWDmkPRQhTPVCHXlGPLk48401qj/EzrLNakH1pwYylPxQAIWSdOM36c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eY+PTrMO; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so14353a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 08:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722265609; x=1722870409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pjeV+QbI7gHUjUzBxliN0skQAqi9SzoY7gAurGQjZfU=;
-        b=eY+PTrMO3YlPC5ImRAFguy1j2nwObF8c+R5wgsRaTx6QMj2pgakQzJblyBHjF5iZrs
-         qEnxDZASnU7ydfA/oFwDqRMfRxeHxLIUWMGUIyM+ugv81XCFt+l/WVpV4oCP4ucj0ZIB
-         gu2TYI8J8AQqZK4YFrIBvrpnmKg0aNa2QlaDuf5uc2zwoCwhK9ZZi6q4GlBc8bPpMYzG
-         fGnYozhSbWZ9XA/nmbAM7nJhqoJi8VPck51WY/gMufuVsE8LcNLYprDjWrqwkO35cJgd
-         2L1kH3hoImgZsPPlF0KKzCxwp+s4X3HOTX0H6pY9osuYRCpnBVwVErnpcesi4qTaxS3y
-         A0Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722265609; x=1722870409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pjeV+QbI7gHUjUzBxliN0skQAqi9SzoY7gAurGQjZfU=;
-        b=PCECfeiP2VUv5ge4zlwPIHKk01vvu9qGX+7dPQlOQevgVZtsPi7L6iOi6OodfykfRC
-         1w5U6jppXfsWi9t6yEoFM1eXd/xhKkwY4ptybW4NEPm3hlESncRncebXOMdI4QxOeyJy
-         79SyhXF0pBOTKbTG8peQUmGG+GWW798TVj/yuip0i5Psi/s7zYV2442MHpKXptF22J4f
-         SuCgfRfwEFD7NiBhFli2eRUDqLqruWxfpmFBypX5OdoXByqGXW7ydoW4hAlfaCZdbeBH
-         OiEaW72J+6ek+pK2xRFd77UtJcpBUwtaI8uFK0Xt8vUY2zJWCgErfzOR1m1JmOedXAjy
-         LBKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM1KivSqFdMhXzuw9sM6q/ybTgp8zOqyVwsUu4YaSeAs5YqNGfzPJSiDWKQ2hyN+Jczee/+uG3TTjTqo94KQd9WIxHRm8DPUSmKGmq
-X-Gm-Message-State: AOJu0Yz4O4jkUmQuD3whC97zz89P2meCD+gGA78LFEItts2azzXWaaud
-	tpHifrU7LLSvfQw8ZGfZvSw5MTPuZ0LaECaIymPGpsTVPI7qkF8Q4e7jFybPQbigCpudtHnS1nJ
-	3yip7REycG0u8jxZDJqZCDBYXx95D/wYKvwnw
-X-Google-Smtp-Source: AGHT+IH/E3Ay7rs5IsVTjtz/VV0d41Am4qW4KdRIkN3yQqDjl1N+gfsf12Fmr2lEmADi+ZEOo8Nafsdq91obb/8Gjzo=
-X-Received: by 2002:a05:6402:50cd:b0:58b:90c6:c59e with SMTP id
- 4fb4d7f45d1cf-5b40d96bac1mr6385a12.7.1722265608535; Mon, 29 Jul 2024 08:06:48
- -0700 (PDT)
+	s=arc-20240116; t=1722265575; c=relaxed/simple;
+	bh=dty+BTPh9Wqu8ZsRUupJ1Mht41LlDdpIwBe9xI+zdGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPX1X+3/DoHsVsfYpRz0fVA1GNLdgQn4T8YWpCmKdPGMtY3H/nPRsvw7StURu7wvCHhKXzmRwrdWBgcCF0+7EzrWB7AIn1qay0lSM46P2KwIHb30+wMzqFMBW1cz9OuHHsdikOzYCtu1OKF6UD/2IBQsEK6admF1ZIe4c3xZqrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzC56+RB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A21C32786;
+	Mon, 29 Jul 2024 15:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722265575;
+	bh=dty+BTPh9Wqu8ZsRUupJ1Mht41LlDdpIwBe9xI+zdGo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gzC56+RBJ9BBUtP2m70LR+UevtVVjajVzJiSqIjd30SP8VM4bma8EnYxzOssPXolX
+	 o8W5+PJ0JwBBtkggKm9j8V9LvTtttzMbmd8+zaOWaXlCmuj0A0F/nZgcXVFhR8WMeM
+	 pR2Rso0jz6hRz1xd5twr4MCVPWvXJOMLi8SepQXAVps654GMPbmB82soUOnN+M47lN
+	 I6vcVMfDg1bAaMu783vb/pJBCaSzdW/6qon/sEY/moPzsWz9UX5eGeFnsFty0TKzNX
+	 T70JD4yQJIUzLYXGQzj0yZrwIOs56fjzLSErzaZE+PyIv6+8JKplAG25Ajo+ObMjLk
+	 jkGwjZ8D1L7uw==
+Message-ID: <bff687dc-5e21-4879-b771-762d0daceb44@kernel.org>
+Date: Mon, 29 Jul 2024 17:06:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net>
-In-Reply-To: <20240729.rayi3Chi9aef@digikod.net>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 29 Jul 2024 17:06:10 +0200
-Message-ID: <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] ARM: dts: qcom: add generic compat string to RPM
+ glink channels
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org>
+ <20240729-fix-smd-rpm-v1-3-99a96133cc65@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729-fix-smd-rpm-v1-3-99a96133cc65@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 5:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
-> > On Mon, Jul 29, 2024 at 4:09=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
-> > > > On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > > A process can modify its parent's credentials with
-> > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  =
-This
-> > > > > doesn't take into account all possible access controls.
-> > > > >
-> > > > > Enforce the same access checks as for impersonating a process.
-> > > > >
-> > > > > The current credentials checks are untouch because they check aga=
-inst
-> > > > > EUID and EGID, whereas ptrace_may_access() checks against UID and=
- GID.
-> > > >
-> > > > FWIW, my understanding is that the intended usecase of
-> > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
-> > > > new_session" and "e4crypt new_session") want to be able to change t=
-he
-> > > > keyring of the parent process that spawned them (which I think is
-> > > > usually a shell?); and Yama LSM, which I think is fairly widely use=
-d
-> > > > at this point, by default prevents a child process from using
-> > > > PTRACE_MODE_ATTACH on its parent.
-> > >
-> > > About Yama, the patched keyctl_session_to_parent() function already
-> > > check if the current's and the parent's credentials are the same befo=
-re
-> > > this new ptrace_may_access() check.
-> >
-> > prepare_exec_creds() in execve() always creates new credentials which
-> > are stored in bprm->cred and then later committed in begin_new_exec().
-> > Also, fork() always copies the credentials in copy_creds().
-> > So the "mycred =3D=3D pcred" condition in keyctl_session_to_parent()
-> > basically never applies, I think.
-> > Also: When that condition is true, the whole operation is a no-op,
-> > since if the credentials are the same, then the session keyring that
-> > the credentials point to must also be the same.
->
-> Correct, it's not a content comparison.  We could compare the
-> credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
-> guess this should not be performance sensitive.
+On 29/07/2024 13:04, Dmitry Baryshkov wrote:
+> Add the generic qcom,smd-rpm compatible to RPM nodes to follow the
+> schema (and to allow automatic driver loading in a sane way).
+> 
+> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
 
-Yeah, though I guess keyctl_session_to_parent() is already kind of
-doing that for the UID information; and for LSMs that would mean
-adding an extra LSM hook?
+That's nowhere a fix or please share some details what is the bug being
+fixed here.
+
+Best regards,
+Krzysztof
+
 
