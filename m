@@ -1,207 +1,248 @@
-Return-Path: <linux-kernel+bounces-266169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3117093FBE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:56:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882A993FBF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B160A1F22496
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 16:56:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE871C21F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563B315F3EA;
-	Mon, 29 Jul 2024 16:56:00 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D9E15ECF7;
+	Mon, 29 Jul 2024 17:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KPxbFS6L";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ax8+8y8C"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A2A15EFC0
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 16:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722272159; cv=none; b=IS2b/LG9naxbvx+zRyTY1Bk3E6PDOJevmG9nbsYqQk+JqoQ0JUMvJY9u0I6vTiKn1xkOLLiKsaYHFQYr+omq5mSkFOCkqQowu3KslM7oZmnDmK2DMhFnIFConfLJWMsYJ3tI5dlI/Jw1xHSiazSze4uJP9/Cs2KcxcY+ZOhXUtA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722272159; c=relaxed/simple;
-	bh=GBcQxEcm76aRw5bm5m7TK9aRH3OcNZY833zuwx7b+Ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=srT7iqhhytrzcgnsgm7VVdSret5u9Gn0renuuV+uWFAdqwKMo43OXvUR5KVUv92MrcusoMBQI9WSY4kAxiiCwNhGTrXbFFpWhTEEseSP6XLCkAlQaFkqAHMf7AVe9+vd9NpkOux4UxSog/aixq07mbFIkuN2N2irShImIwnxJQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a10835480bso5572015a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 09:55:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722272156; x=1722876956;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pInQiHS1SIzp/gP7f63T6ThFWloDP+HBPBas+N8DhlI=;
-        b=rBtFIMLWHEqUQO3bKUDBWhJWjPhaCp88v4XUdLsGESUc8N/o/2ZCkXHGJBVTsk5bKl
-         bprvHMtlqS2k4vDs+Xlb2CVBSGaQXKzgpdNgshZzCC+rN3ldmyWwZUtngVpVmWwME1s8
-         D71V1/bUzzsauUUmO53MlVt4Xr5RyJzu9+9KDSgPB5Kmm1MTO+S/hGR/Js4PiaUh+WEN
-         Bx8Yn8KTKL7PruSd18wpSMB+/pfhWG6adl9Z5OePrEA9yzuUADbH36jPs+eQxAWaIeVX
-         aHX7RbaPHRQ3jX6KnIGkO7ExROP1qxgSDbc5WtgcQ6vz0cjwysKp4wAFUGkpk2K0VTqE
-         tROQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBYAEYSQeUYbOM2xjh47dIZiWA3HnSbINRc8DwMwOZPViVmLRFVjxKGpQDMc536ooDoKdt8AEhLzjA/jz+edGBDcg/a77toZm8GHN1
-X-Gm-Message-State: AOJu0YzuFErNjrBpNkPxUmWFzcNGlRoAr6srijbSLLn2EjDmbYwGw0I9
-	MYNXH/3/QYCodi0gHySkxMQ7QZeygxfCYPnBIZmSYVa1aM9fhbqf
-X-Google-Smtp-Source: AGHT+IF9nMyWswyCHwij8Zvuwt8VRzAnVK4GY2dn8OzlZ3itNwyWmyv8AqHsXb/XQ+UlJW8H6JM8lw==
-X-Received: by 2002:a05:6402:3546:b0:5a2:2b56:e08e with SMTP id 4fb4d7f45d1cf-5b020cbe0a3mr6143374a12.18.1722272156078;
-        Mon, 29 Jul 2024 09:55:56 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac64eb3cb8sm5929111a12.77.2024.07.29.09.55.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 09:55:55 -0700 (PDT)
-Date: Mon, 29 Jul 2024 09:55:53 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Wei Liu <wei.liu@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Adrian Huang <ahuang12@lenovo.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/apic: Add retry mechanism to add_pin_to_irq_node()
-Message-ID: <ZqfJmUF8sXIyuSHN@gmail.com>
-References: <20240729140604.2814597-1-leitao@debian.org>
- <874j8889ch.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0B67603A;
+	Mon, 29 Jul 2024 17:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722272425; cv=fail; b=IJPtesxwAbQQ4+mCS/xKRbkddcKjJhsrMtUmUsraicnEVY3m6UA7aAM7YsZbbmD1qRMd/IPjnPyAxIQItPlVumG/fV3BbJIQIox4fIAEWSm2aZLRryUS7rz9k4eT+50qF5FEGH4Q1sS9N74YPyv5oTdjF1ST6st2jhhspjhI3JU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722272425; c=relaxed/simple;
+	bh=OXjRi7/LLPWmpLfjv0YiKvCkMAltJ4B5mdWB0xVIorM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Aqp7iIA8Jg7VuMlHsVKYWxh1P5xlYpNZgprxvPYIFhxlgyVXFwoEx6ua4w/CVz0ck6dEcuuE1bG/WsgqZuuI2tyshAedRnfZnGsBFYZTmIkNJco5fVoNl/BC+lRQDJsVUOSfWhFFJgWMwUM4SFGj+dHGqVWoACZne+b0uRJeHmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KPxbFS6L; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ax8+8y8C; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TFMdlq018589;
+	Mon, 29 Jul 2024 16:59:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=rjmn3a5oP3+8lcdISnkKpZw6fJ+a6zOvYpBanNQbXfU=; b=
+	KPxbFS6LOONK8Fors2PnATrM2g7FwuEfzZwanCyyRtHf8OIf/d/PUtuspgFBwMJC
+	w3HfukDFQbHhYQoj98oZ22Ze5jkKBdjcYgdBrYwGsm4WFhDxG2XBQMcXbiFnIU0a
+	swM9OVwyPtrPUoQADB7CdFnOG8vglZ/+GkF/CiQVpQNbgMa9ElYjUueaTjA+O60C
+	x5BUTjoE1BpzyEBdzG1+K5Wu7qbFU5hbBCw9nfoq6PhX177AjFgtoCPH91RyUZl8
+	cjPZYZ6gpx5UvUvVmW++mnY9nKyVoZs52DjrEvB5yJyVprwhnuEXSKAYAbE5myIJ
+	ZM4RLdQx0vsdM0OvuZU0Fg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40mrs8k3e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 16:59:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46TFg9Di012285;
+	Mon, 29 Jul 2024 16:59:54 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2049.outbound.protection.outlook.com [104.47.70.49])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40nkh5fsm0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 16:59:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XmacqUvWOdkeNANhuB2fvVUWl3TjrGi+oThI8Z5y5tAA5q3rtzK3GOFWJnxBT5AWewiHW+Lt9piWSkBysuXJkciUH7wM6XnsuDgRMqyUKIFb9vb2+n5s6D5kd5vNMvP+Yp58pBUaE7AokN+PcTeQvAtQQ3uSYOyiR5soJHBvcxJzS6UqQdMz37lgu+GTXQdpFe3WQZpOpDP5fqQ8sFvUnOYvK+FHrVhycNCwtpj14G65UQSTyOMWs5Poszk7pDU2m1lrnG/0t7BKopBgORW5s+yuxljbpYvL/Plrw8bhPPLSMwPE0xEy76MctGjf47tYJZCvd17PregeXuKhp4uB2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rjmn3a5oP3+8lcdISnkKpZw6fJ+a6zOvYpBanNQbXfU=;
+ b=RO/UHt5KZpWo0h7etxExvImAfeNsaipoGXJ5fDDis1WtgyVEDmfZslgWKzcSW9SECdmuk1mOJDytsaXZFhmMuiYw1WheFLCU1unoGH+JVVy3kgSh5MjkS1ntCcgnG7enQhJp38G2N5hLjHC4ts+cxxqp/g9nPgAKBpCNRq9+nD8y0HmS4rxIn20lnxidssOiimovbaPFtOGxg9ADVNRfyuqFTPGcuaKiunPTacBH3bR0qJi4kFW0uDqNvqG+rVXMp0ZYn0qoRZXPEM1hNUStD9fM9RBIAsr6liYAqzYbUq+arnvhZHCVYawOxCwvknepw8oad7UD+vXROzHpycrt7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rjmn3a5oP3+8lcdISnkKpZw6fJ+a6zOvYpBanNQbXfU=;
+ b=ax8+8y8CLkhDfpcqhlE8yXD7sYN1hW/KQixkg9azR0ai2aA+3cq5OX29Ab4EtSuQLDV7L4KGuoegU9KrAsh9Qf3GfDUdR5YQLv1sftkmVoKeKslJVQ1IyMTbdTS33k2T0VmJxEIsCWZsc9yPwPDW6L/kQAI3rYKbGFbyxgQyj5k=
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com (2603:10b6:208:30e::22)
+ by DM6PR10MB4170.namprd10.prod.outlook.com (2603:10b6:5:213::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Mon, 29 Jul
+ 2024 16:59:51 +0000
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f]) by BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f%7]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 16:59:51 +0000
+Message-ID: <39781c99-95db-4c48-b363-a482a426e3b0@oracle.com>
+Date: Mon, 29 Jul 2024 17:59:44 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2 1/3] selftests/bpf: do not disable /dev/null
+ device access in cgroup dev test
+To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
+ <alexis.lothore@bootlin.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,
+        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240729-convert_dev_cgroup-v2-0-4c1fc0520545@bootlin.com>
+ <20240729-convert_dev_cgroup-v2-1-4c1fc0520545@bootlin.com>
+Content-Language: en-GB
+From: Alan Maguire <alan.maguire@oracle.com>
+In-Reply-To: <20240729-convert_dev_cgroup-v2-1-4c1fc0520545@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P189CA0035.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5dd::14) To BLAPR10MB5267.namprd10.prod.outlook.com
+ (2603:10b6:208:30e::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874j8889ch.ffs@tglx>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5267:EE_|DM6PR10MB4170:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea472db7-c78a-4bd7-44ac-08dcafefdcae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cTBvVllobEJkU1V3NmV3cy91RzJicmVmaTdvc1FnUHU0eEdUL2d4RHBuWjQz?=
+ =?utf-8?B?RGl1aHVPR0FyRW43RFN1bVZiV3M2QnVLMFY1bWhVWEhVaWZ6bXhsZXVpam5U?=
+ =?utf-8?B?a29ieHc1cWI2TGdidUpsdlc2dXFZb2JGUGhKb200SHB4SEZhazZ6dkRiZjNF?=
+ =?utf-8?B?dnI0dWtsLzVrVnc3YldJVDNyWDZMYjAxNzRaWFVRbkV4WHFQcW5WM0g2VHJu?=
+ =?utf-8?B?UHFUcTVuZHhkaUlVUEp6eGxKSFBmQjdqMmVMSzNyQ04xanhhK0dhSklZUGdk?=
+ =?utf-8?B?cER6c1l1eDNlY2JpN3JOVEpjc3BwQmNTMktQTVBKNXFqSExYNkd0K2FJM20v?=
+ =?utf-8?B?Tm5IemY1a0hSOThCNUVlODJUa2ZCdW9KUDFWTlpOYzBnbE5ZZ2dJS0FaNmNu?=
+ =?utf-8?B?bWxzWDE3ZDlGcWErbElvc0t1WHlZUW5xR0wvcVBjVHZVbkQ4cWxkWmFNSDAw?=
+ =?utf-8?B?UVVGQVFJU0dzbDBTYnM3bDZZbUdSc2F4aW43WmpQT0Nqa1JLcElGUFRHSTB3?=
+ =?utf-8?B?dEs0cmxsVE9RRDBlUFArV3pxd0FwRnd2akpkYy9YSXdBVWNxMHdpR2FvQzg5?=
+ =?utf-8?B?WFdVUk5EczdydmIxblJGcjAvMEVzZ1UzU3AwYkJXSEU2SUNSb3VuZGRpNk1v?=
+ =?utf-8?B?MHN4V3Q2NGp3OVcwTjFyQ1F1REc4VW04SHp5UVM4T1RsREVhNTA5b2ZIcVRX?=
+ =?utf-8?B?VExvdXRqdVdIOXZkem9Lak16T1VyM1c3UjcrZUx6VmJJUXgwZTQxOUVDT0Fl?=
+ =?utf-8?B?WnJDRWtWMm5VdmdkZVZCQnFXWDJuUm8wZWxkd05hNzhUYmF4bFh0eElqWTMy?=
+ =?utf-8?B?UFJKcXJCZ3dvNnBucEYvVU9VUFBSM0dCdDNnT09IaGRzRGpFUm1CUUwvYkZt?=
+ =?utf-8?B?ZUZ1L0RUY2pTUnNUbDdGVUJxaG80RUIrU1kzY3I3bkV4Zmo5WVJWdDJ2Wjhm?=
+ =?utf-8?B?UGxhWlFGKyt6TldHTzR1YkxtOFQ3N2NHWE9hWldVSWk3b0JadFVZRVBCVEdo?=
+ =?utf-8?B?SGo2RnRCcDhzdC9OYjdkRmRRdGZIa1hCSUJmSUcxU1EwQ2gyaG9QZFpxYUVM?=
+ =?utf-8?B?SnBXdmc3RGtuVUZQUG1qK3h3dXpNcEdsZFhxTXZZUEdHR3NQTW1RZ0dUeVRJ?=
+ =?utf-8?B?Y1dnOXNyOFh4NEJHSUw3TzArV0piSXdPMm84TGM4bEtrY05OaGhSd1JCRm5F?=
+ =?utf-8?B?d3JqQ2xOUFRvRkpTODFUdHErbmxJOHpnbS84Z2ZreEJWU0pBemQ3Q21lem9C?=
+ =?utf-8?B?ZTBzb0s2TnJ6L3ZVLzdhTDlRdUNJaFN4Y3RlaXRodytPVExLdmVmRUZvS3hh?=
+ =?utf-8?B?K1MrZGxhUWhldXAyS29XeXVrSWdvVDlGTVB6dm9IWWNsdWJ4aW10aUxyZGNr?=
+ =?utf-8?B?UVNHbFhMK0gvd3drMk1wY3JrR3pPTmNTU253ZVBpb3N5R29WNzJ3UWxyb0hk?=
+ =?utf-8?B?aHRLSDlxcDN2bG84UitxTWM5aHJ2b0N0MXlsdENIWlRhMUk3STRtaGhhV0pO?=
+ =?utf-8?B?NllIWE9lVmVlVUpOV3dmbXlXQmkvUlNrRDk5OU11MGJQR1lEcDErRkgrYnh3?=
+ =?utf-8?B?Nld3azBCeERMeXZDVUZ1QjU2UDB0NkFiRmNIT1Vnek9zQTVweWlNNGY1MEJV?=
+ =?utf-8?B?Ukw1RmZaZFFlNjJDVjhDME5yVlNodTJIWGFsNGE4S3pJdVJEYXB4YlhheU9S?=
+ =?utf-8?B?N3J2eDdTOFcwbTVUbWI0ZnNrUGJzUGdnRTRjVy9qVkdWWnJLWGJReE8xK1Fp?=
+ =?utf-8?B?K3BVQTZ5SitxVDZQVkQ3MDViMndtVmw5WFpYaWhYYkxMSmFrbjJ2R1FhbEw2?=
+ =?utf-8?B?TCtNaGtaL3BXTncrNUZ5cWZ5b1NjNkZNOE5NTFl2N2szQVJ0N3haaThtREJa?=
+ =?utf-8?Q?STA4tD8UZ6IdD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5267.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bWNnTFIzT3FWdVluR1craW02a0NrZ2pycE4vYkVJNll6VXVQNGV5ZVBZRy9J?=
+ =?utf-8?B?ak00TE9YU3h0L01rUGIyeTVXa3N6Mk50WGI5cVJSRVh2SVpDNFdiYS8ySk9S?=
+ =?utf-8?B?d3pUVXpVNXZ3MDUxOGJ1TTNQTWNiMVZmUTRUMFczNGFpMVllR04xZitQUXpQ?=
+ =?utf-8?B?Z0JMcGRmZ3lTZytmYWdQbXFiY0xaQUJUNm84TTJBdXRVYVRrMkt2MUZiWDhT?=
+ =?utf-8?B?ZDhzd1d4N3F2NWJtdDc2RHRqM2ZXSlQxWEkzR2hPV3F2Y1RYNUk1WXkyTi9U?=
+ =?utf-8?B?S2YxbVV0akREZ3NLZUxScHJIWFZRTnlsYlhxK1VpbE5kYitsZkdrcDBDTGVH?=
+ =?utf-8?B?THZ6RUM2RTh2bWZ1K0xUcUYwZElMWkNERDhxb2xVNExVVjJYUk9QK2wvZnZE?=
+ =?utf-8?B?N2RrK2FzRUdaUTFFVEEyRTAyRXV4WUdLOUNERU9PMXBKc3FWL2Rmc2NKUjl3?=
+ =?utf-8?B?TlVVaXZOUEhjdHF3Q1RMcnpGMEh0OVQyTzdXejlwOHU4dlVKNzJzT3FrSTZV?=
+ =?utf-8?B?Njh0TE13TVBpWm1obTRhVU9vTVd6Q1BxYStmdG1Td3VXL1FPcTdrOUNVNTlR?=
+ =?utf-8?B?N2NycVVoc2trK3JTZElFVnZhenZqWVhPK3EvU2ljY0xmMHNmdkJ2T0x5UDR4?=
+ =?utf-8?B?V0xUY1MxbjJGMUxBOUh2RnVqT2lNeWNOcTZ0emdpUDc2b3Q1OHE2czJLOFdB?=
+ =?utf-8?B?VkpzalNXRWhiWittQ1BObUJqSW5ST0pwSEJoeEw2blZKWHlEZFJsWlFRSE5q?=
+ =?utf-8?B?Z1NoeDlwV21YYkIxTmdjREppNTViamU5MG1GTUJ4NFhsZDlTNHI2OUZJMm80?=
+ =?utf-8?B?RmRvYWpuR01zWVBDTGpwUHJyMGhBYnJXVEpTSEYwS0tEcEQ4bXZyc2ZENU5S?=
+ =?utf-8?B?SkQwczRscGFET2VTdzNRd3VOT1hqUy9HdkRRTE5qZ3Z2SVFrcWZuVzV6ME95?=
+ =?utf-8?B?RGlrRmJydDBIMk1iSlEwbUx0dVJ2NGVyZUlNeWZkck1TWlpvZkk5eHpEVXRJ?=
+ =?utf-8?B?dFRydS9mbmZlYis2UVRMS0RsSDFhek9HWktORDVlV0VoMjRWTEJYeUpBRjFT?=
+ =?utf-8?B?dDNOMVkzVlpSZUsvcGR6bmxjelBpb2lUYVNxcWZYM3J2dENYREFnL3p2RHRp?=
+ =?utf-8?B?RVp0RWdwdDFUdnRETkYzOXNOb2ZzYXN0dDVSZXAvMENIQ0psSk1DRnJPS2U2?=
+ =?utf-8?B?TThqTnMzcmFBaHZuQXRWeXlzajE0NGVFaFAvRC9YSlloRzVFMHI4cVJ2eUtr?=
+ =?utf-8?B?amVINE9JVWJwMGR5eHZWZnZNNGpIcU9YV2cyanlaV3k3K01ya3NzdEhjNnEz?=
+ =?utf-8?B?NjYwTlhXa0ZjRkQ1R0JSK0NXNWhlN3RBYm80RHp4VytRK1I3VEdRRFo3cmg2?=
+ =?utf-8?B?QlF4MGd5Nlh4L3c3ZnliOFVFSjY4QVhLWFhvSmZqOUgrSlU5ZU1TbXRYK2xt?=
+ =?utf-8?B?Qk5hYWFZQ3l2b05peFEzUjlad2JDbnFlZDRFSnV1enFtaFJLSzBzZTdIV3l4?=
+ =?utf-8?B?MDFJNVd1ZVJ1RWxMRjhtSFh0K2owY0hKZUNmcUxzL2t4VHdiUmJNRzYyNU5L?=
+ =?utf-8?B?M1hnVi82OStrZlFzR040cXF4bjI1SURUTDdJYjZCYW81SFVmOXlVS0hBbDV2?=
+ =?utf-8?B?d0huVUMxSDY1MmNqa3Z5QlMyempqS3RzRDJNRlBPdFFMc3hYVmh1SGVrSC9H?=
+ =?utf-8?B?YWlzOTBEYmRqaFlnQkI4eVZTMG80Z1k1U0x5VU1IcDdMWFZEZ0NGazRucWd1?=
+ =?utf-8?B?NnRBSkRUOFk5UlpMN3lzNitKVk5XdzNLVXNIT2ZLb2s4N0k4SGNHMW5zc0Na?=
+ =?utf-8?B?OFpVT0xWZ0tkZU1HdjlXZE5OWkVYUTlmejMvNDJWQ1BPMDE2Zi9jRDg3aDJN?=
+ =?utf-8?B?bUc2dWNXcFdIK3Raays2dG16RmpvYkVCY1pMUXZOOEF4eGFxOCtHWVVvUHR3?=
+ =?utf-8?B?cTQwdWRZc3hDdkJNTGFoYlMyRGJmNzJSbE10bTVvT1hldWJ6bGQ3d09aZEhw?=
+ =?utf-8?B?ZHpBRE0rUmM2VS8xanNjakFkMDZnNWlnTmNMN0FUdHg3djVXZU05M3ZIVWFU?=
+ =?utf-8?B?VlJwVndTeDlucGNxL1JRcTZTam1HUnlWZnBCUjBMR2hrcjQ0T2orZHFWMklE?=
+ =?utf-8?B?cTFXZ3ZFNlJUT0I3VFN5NUNmaW04TTMxZ2ZkUlpuQUI2UlkyVTR1K0NCR2Q3?=
+ =?utf-8?Q?PGt0H4r0SpSK/FlVUOzdjqY=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	DEtgQBh1zQLBfhv6XqZNFv3nSoC8BqYby9I68LxOsefVuOHsifJ/6a0JmbFiIpuQ06IfUWO4ch+S/XiQj18GSyYfMwpdmLkRoJtyWqDkhfX30hByjtbJ4KgBdpaTZYAAo6rlqPvetpgtzCQYUg9SrCOKZZq6pvMnaO2RBujpBEF88KerJuJd4huokfNqXRf2M5qvESGAeJnA+G1Hsn8JwciqmBR0ZhRY4N/lBfBnIQaY6YoVIdSRO6mLnz3m19iZuEak5DU/gH+nMargp2p3oWDP0l5xtb0+rjOnxJ+irbbiYHWcCXyIyZ4JCwwmF3uLojg5KqBcG8kwlRB+1b9iXyFktsXrDYEqZFQ0P81UyN5rlUdSTVx0Hx+SLjdlhvFjBonJI5s7IvJ2LJ/kTUWV/gDsaVpE5WTw4Pgl5Mg3daXcqcMe8hCMweWHd5vkEqmI5EuMGmrx7dRjxVcucQcMcjreSV5R2jvor9NyrEhackA9tu3dId4pf8bizYpvC1uE4Oxiyp9AW2UbsO/gqU0s8Sj4ZBxL19JewNptTk0XHSNB5cZZnOJoR/366lnyN5X2QXI/gSSyg44OKC/vZelm44jFqzBPQ6Lkz1oGepCmAVc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea472db7-c78a-4bd7-44ac-08dcafefdcae
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5267.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 16:59:51.5953
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +KiRzGvNuv14Fhtb3+LrPUtCdnqvZIseckjOVgE+QNzUa2ubaVmLbl7H0eQXio2kcv1hAP3gQR9xThQx6mJ+Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4170
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_15,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2407290114
+X-Proofpoint-GUID: ELJH5BKj2mZtL2TMLDCO9tmoWwEiYDit
+X-Proofpoint-ORIG-GUID: ELJH5BKj2mZtL2TMLDCO9tmoWwEiYDit
 
-Hello Thomas,
-
-On Mon, Jul 29, 2024 at 06:13:34PM +0200, Thomas Gleixner wrote:
-> On Mon, Jul 29 2024 at 07:06, Breno Leitao wrote:
-> > I've been running some experiments with failslab fault injector running
-> > to detect a different problem, and the machine always crash with the
-> > following stack:
-> >
-> > 	can not alloc irq_pin_list (-1,0,20)
-> > 	Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
-> >
-> > 	Call Trace:
-> > 	 panic
-> > 	   _printk
-> > 	   panic_smp_self_stop
-> > 	   rcu_is_watching
-> > 	   intel_irq_remapping_free
+On 29/07/2024 09:20, Alexis Lothoré (eBPF Foundation) wrote:
+> test_dev_cgroup currently loads a small bpf program allowing any access on
+> urandom and zero devices, disabling access to any other device. It makes
+> migrating this test to test_progs impossible, since this one manipulates
+> extensively /dev/null.
 > 
-> This completely lacks context. When does this happen? What's the system
-> state? What has intel_irq_remapping_free() to do with the allocation path?
-
-Sorry, let me clarify it a bit better:
-
-1) This happens when the machine is booted up, and being under stress
-2) This happens when I have failslab fault injection enabled.
-3) The machine crashes after hitting this error.
-4) This is reproducible with `stress-ng` using the `--aggressive` parameter
-5) This is the full stack (sorry for not decoding the stack, but if you
-   need it, I am more than happy to give you a decoded stack)
-
-
- 04:12:34  can not alloc irq_pin_list (-1,0,20)
-           Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed
-           CPU: 11 UID: 0 PID: 335023 Comm: stress-ng-dev Kdump: loaded Tainted: G S          E    N 6.10.0-12563-gdb0610128a16 #48
-
-           Call Trace:
-            <TASK>
-            panic+0x4e9/0x590
-            ? _printk+0xb3/0xe0
-            ? panic_smp_self_stop+0x70/0x70
-            ? rcu_is_watching+0xe/0xb0
-            ? intel_irq_remapping_free+0x30/0x30
-            ? __add_pin_to_irq_node+0xf4/0x2d0
-            ? rcu_is_watching+0xe/0xb0
-            mp_irqdomain_alloc+0x9ab/0xa80
-            ? IO_APIC_get_PCI_irq_vector+0x850/0x850
-            ? __kmalloc_cache_node_noprof+0x1e0/0x360
-            ? mutex_lock_io_nested+0x1420/0x1420
-            irq_domain_alloc_irqs_locked+0x25d/0x8d0
-            __irq_domain_alloc_irqs+0x80/0x110
-            mp_map_pin_to_irq+0x645/0x890
-            ? __acpi_get_override_irq+0x350/0x350
-            ? mutex_lock_io_nested+0x1420/0x1420
-            ? lockdep_hardirqs_on_prepare+0x400/0x400
-            ? mp_map_gsi_to_irq+0xe6/0x1b0
-            acpi_register_gsi_ioapic+0xe6/0x150
-            ? acpi_unregister_gsi_ioapic+0x40/0x40
-            ? mark_held_locks+0x9f/0xe0
-            ? _raw_spin_unlock_irq+0x24/0x50
-            hpet_open+0x313/0x480
-            misc_open+0x306/0x420
-            chrdev_open+0x218/0x660
-            ? __unregister_chrdev+0xe0/0xe0
-            ? security_file_open+0x3d4/0x740
-            do_dentry_open+0x4a1/0x1300
-            ? __unregister_chrdev+0xe0/0xe0
-            vfs_open+0x7e/0x350
-            path_openat+0xb46/0x2740
-            ? kernel_tmpfile_open+0x60/0x60
-            ? lock_acquire+0x1e4/0x650
-            do_filp_open+0x1af/0x3e0
-            ? path_openat+0x2740/0x2740
-            ? do_raw_spin_lock+0x12d/0x270
-            ? spin_bug+0x1d0/0x1d0
-            ? _raw_spin_unlock+0x29/0x40
-            ? alloc_fd+0x1e6/0x640
-            do_sys_openat2+0x117/0x150
-            ? build_open_flags+0x450/0x450
-            ? lock_downgrade+0x690/0x690
-            __x64_sys_openat+0x11f/0x1d0
-            ? __x64_sys_open+0x1a0/0x1a0
-            ? do_syscall_64+0x36/0x190
-            do_syscall_64+0x6e/0x190
-            entry_SYSCALL_64_after_hwframe+0x4b/0x53
-           RIP: 0033:0x7f6c406fd784
-           Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 d6 88 f8 ff 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c e8 28 89 f8 ff 8b 44
-           RSP: 002b:00007fff72413a70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-           RAX: ffffffffffffffda RBX: 00007f6c408c43a8 RCX: 00007f6c406fd784
-           RDX: 0000000000000800 RSI: 000055759a5fc910 RDI: 00000000ffffff9c
-           RBP: 000055759a5fc910 R08: 0000000000000000 R09: 0000000000000001
-           R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000800
-           R13: 00007fff72413c90 R14: 000055759a5fc910 R15: 00007f6c408c43a8
-            </TASK>
-
-> > This happens because add_pin_to_irq_node() function would panic if
-> > adding a pin to an IRQ failed due to -ENOMEM (which was injected by
-> > failslab fault injector).  I've been running with this patch in my test
-> > cases in order to be able to pick real bugs, and I thought it might be a
-> > good idea to have it upstream also, so, other people trying to find real
-> > bugs don't stumble upon this one. Also, this makes sense in a real
-> > world(?), when retrying a few times might be better than just
-> > panicking.
+> Allow /dev/null manipulation in dev_cgroup program to make its usage in
+> test_progs framework possible. Update test_dev_cgroup.c as well to match
+> this change while it has not been removed.
 > 
-> While it seems to make sense, the reality is that this is mostly early
-> boot code. If there is a real world memory allocation failure during
-> early boot then retries will not help at all.
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> ---
+>  tools/testing/selftests/bpf/progs/dev_cgroup.c |  4 ++--
+>  tools/testing/selftests/bpf/test_dev_cgroup.c  | 18 +++++++++---------
 
-This is not happening at early boot, this is reproducible when running
-stress-ng in this aggressive mode.
+Not a big deal, but I found it a bit confusing that this file was
+modified then deleted in patch 2. Would it work having patch 1 stop
+building the standalone test/remove it and .gitignore entry, patch 2
+updating progs/dev_cgroup.c to allow /dev/zero, /dev/urandom access,
+patch 3 add cgroup_dev.c test support, and patch 4 add the device type
+subtest? Or are there issues with doing things that way? Thanks!
 
-Since I have failslab injecting a kmalloc fault,
-__add_pin_to_irq_noder() returns -ENOMEM, which causes the undesired
-panic().
-
-> > Introduce a retry mechanism that attempts to add the pin up to 3 times
-> > before giving up and panicking. This should improve the robustness of
-> > the IO-APIC code in the face of transient errors.
-> 
-> I'm absolutely not convinced by this loop heuristic. That's just a bad
-> hack.
-
-I will not disagree with you here, but I need to use this patch in order
-to be able t keep the system not panicking and stable while fault
-injecting slab errors and trying to reproduce a real bug in the network
-stack.
-
-Thanks for the review,
---breno
+Alan
 
