@@ -1,123 +1,152 @@
-Return-Path: <linux-kernel+bounces-266358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A2B93FEAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADB193FEAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6906B21D10
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62861C21D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB83A187348;
-	Mon, 29 Jul 2024 20:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD9B161321;
+	Mon, 29 Jul 2024 20:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG+EurpQ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPQ46c/C"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97D973466;
-	Mon, 29 Jul 2024 20:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C64C43152
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 20:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722283228; cv=none; b=DfcVHfhQbi/g7xUkItMqxYP+oKLe7zrErLXR+e9Kv8BajxXneIrRqn9OZ8P9VCWJ5UB+H53Qy8beoY3NnOiVpmmcFXO3n31irTeMIxIf1FQ02V5IXgM8a7+avckOseb0RJ86fMJtEe8kCH+9C+ECATI2MMo5mBiBWrN9GOGd5os=
+	t=1722283399; cv=none; b=PpCVYnL6ygUkl0LUMdSgKaMDF2/GmJyRxj4pjtgvdbczFG80eSfaHLLhr2lKHGDJgTqDOaZSadZnLucBs8rR5gJCesDqVGC8V2uzT3N+ihSKJcFS6NneCOOvvkK+pWBdteNQjyWDufYxnLAkgAnfxPOcOe8NZa2OmT6gr/A85z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722283228; c=relaxed/simple;
-	bh=C2Lpz4N0X8waVL7qIFIfw3p1BGaPYs+PheP+sqFqMUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUcq7wb3EtwOIXVteUiTCmBPX0f5eCffxYcsJiXF1XOHM+kPSZo8eFAXoQsBwNkWENiM9VqbXulx6C2ySx/l15FV65uAoSkZ+ti/Kg7SMsNh4EcOpCD+xvdxCvDjS1H1+Ge9Uol/MGCEspFVtMY2umtTTQmPSUbA4T2LzVUDkrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FG+EurpQ; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1722283399; c=relaxed/simple;
+	bh=sH3OxyjISoV9gmzP4kGzgGw1Gd/8+8tJoyV1r0EshMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vp16qMdf2laa01uF169sLJcQYRZetwBN4QFci00fbjaSgC6O7Q+8NqrKRjgn23JGYxwG03fNjK2zHYTCP6Dw416EZzt2kAJrNNRdXIV6i8o3ndowARR1IzrIAT0y671YjLzH/CWyo6Dh7qbTmErH8gWjmD430Aalz+/om1LlMNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPQ46c/C; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc6a017abdso21044835ad.0;
-        Mon, 29 Jul 2024 13:00:24 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c661e75ff6so2710573eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722283224; x=1722888024; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N7diD9YNWJdflXMg0pyESRcp/QtgJub9rwz7KcBMStI=;
-        b=FG+EurpQbmI3SSIymqGxYI83MgD60Dj4ghQCic7CAY4tLVxAAOcDMOB42rwPLpC8w1
-         UQXyD3HCkc+yQQZ/7+BShr2Z8Tav7zddj0RTowNvOPa/f15bsGwfSdWAMbydD5xL+BNZ
-         LMAra9u3mpP6U/yW9gycaHPRh723TXc1bh8e0mgOfdP7haEEwQQDi+RLOQZWlRB3IXKC
-         dFYPJ9QutUVx6xw6z/7sW51tcvAjrmLWGwd6APXAsovWSzgnkBWckdeJVIX+rmJmAOJP
-         bqdFoHTj4WC4XNGQHClDTPMGDhzMhomIvoVqioEe1V0xABFiHyOlxtr1Lculck7qTAMU
-         Ypng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722283224; x=1722888024;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722283396; x=1722888196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N7diD9YNWJdflXMg0pyESRcp/QtgJub9rwz7KcBMStI=;
-        b=sRdNW2MJ08N6mXPbPQIXT8UNYqUsEY3El1mvHVkW3WHquk/DRpSHzyMxuBV6GrewrF
-         yp0g4fOdHbjxECDDDAaTdXO05k12i0Xhgu8JxbJwVT4tXzDkkpQVU5KK8B460MyTrMrZ
-         Gtl7Z04mYmmiSQhriZ84W1fjfUwiXZeZBadMcu3eIc1njF0gw77HtXIth9U022ObyKKz
-         nicXBSJq+Db9buoQGf46t5IOfLbJDLvfu3/8cf4awHC/zUZnQxg4meDGIrZXMKIkT+OE
-         Oeo22E+b3aMpGlnyzf8Hqc0AlOTPwTQb4Orrv6ctKlHKSOZPOJAu+ZMPcI1yCv43nTcQ
-         8Jqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpTKqREoTsEKDL8PpOcJJY3ogLVe/kqEtr8RYGODOfkmIf4JfR2yow0gyPfGQ2iu0EEEbsEcqNx9g9Mg==@vger.kernel.org, AJvYcCX5fnhD7oIhplAP5NPuh/13jWrFg9IZppB4TQ7idzXeQClHZ8WRoXO0KMKaWKIGASlOL6/EvMOoYKV6NFem@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6wxJmW5TvMIHSy5ORzSbUKtlmcV0k/8xJzsxtQIn9P3evlHn1
-	CmR6gO0yaeRwWe+h6ZRxrx1FrkOBkF6l3J12+ffRq4bAR9DFrgItZm5Tgg==
-X-Google-Smtp-Source: AGHT+IEqRUbcfibcxrQeu5Whs1HlVLHdvJXwsmuZi7g9QuR6WO5EXEU0Gv5opZOvpI5/Gdjpf+wGrQ==
-X-Received: by 2002:a17:902:e5ca:b0:1fb:3d7:1d01 with SMTP id d9443c01a7336-1ff048e4fd6mr71587505ad.59.1722283223962;
-        Mon, 29 Jul 2024 13:00:23 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f53a:d352:6282:526b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7f66esm87435085ad.15.2024.07.29.13.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 13:00:23 -0700 (PDT)
-Date: Mon, 29 Jul 2024 13:00:16 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH (resend)] Input: MT - limit max slots
-Message-ID: <Zqf00C_eOBwcEiWG@google.com>
-References: <f9b4ff23-ee3e-418f-b65d-c40fe28fbba8@I-love.SAKURA.ne.jp>
- <2024072930-badge-trilogy-c041@gregkh>
- <Zqe76gATYUcDVLaG@google.com>
- <CAHk-=wgweFg4hOus9rhDEa437kpkdV88cvmOHeZWwhgSa5ia1g@mail.gmail.com>
- <ZqfYfIp3n7Qfo1-Q@google.com>
- <CAHk-=wiT8RzFUVXe=r3S9dfCpV+FhARgtb5SxLDSOKCJKCLOZA@mail.gmail.com>
- <Zqfg8FW-SFFedebo@google.com>
- <CAHk-=wg4peLPGB+Lyvdtwxe6nVeprvTbZiO8_=E8-R_M+VyWow@mail.gmail.com>
- <ZqfpgmmLgKti0Xrf@google.com>
- <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
+        bh=uDq1Gdt3n+usFmiUTBcsV00Y3w2xz3JMkPDIMEdofYk=;
+        b=YPQ46c/CE3f0zNN3prQ0OtHUMPAFdSnCMsgdP0F1gwvcGQjLzi3rmj7EBdFdvnrCUq
+         MWxnXntp738ii3VeRlu9TQYabg+q4ekrHemIGWWaO/HSMDCr1CCdn1TAks7w8sxpgOtB
+         J9YumCR5XQfoDYwS0clZ5/O4PQP2bbV+TLFwXON9SZ4v3KEYSBYlrKG7meJX/EAeq1Kw
+         Q519g8bOumIqcH4nSDEfqkt09jKLPpIa4g5C+O/WUcTD5DIGENNePmOxPCL6UEAzdePs
+         u2eGAeQm5lbyKc2r+IsRA6K3yr96L+OFS2VwD3O8Q3wQwEmv0EACs8fRzBh3wyGj8bVd
+         +Bsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722283396; x=1722888196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uDq1Gdt3n+usFmiUTBcsV00Y3w2xz3JMkPDIMEdofYk=;
+        b=AGBFtpDsjsTOTO6hZUGDAqLIJ/FqRyo1G6w738r+blmyH5p8jkjLGJggw5Qld6we/2
+         clnJrP0bZu+siRqv8vi9JJx01dxL/+jGPDYZeBdpnF21cYEpkGXrGlnvJXl1Vod7ecB1
+         PRbNFP0pFlvq9Rrn8LqmERKyY45k3cOJM86ncORNp6qS0hXViJ+z15xiarP+hHEwI+BK
+         Y6+xkTqbek1c7p3cu4iwR5bQ/A+NtEmI2ui0NWPRwOP1UCTG9NkcfRqrjvasWiHB5wwS
+         q6qcLJFBkFKST196pAT0G4IjB60jB0JZ5fcawdUoDyLPQ3jVKca2lILoxJFHwTr5Vwxj
+         U6VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNuvTIu/tFMNvpr5XuIjqam/Ye5Ln5dW1a4DB5LMfhnMHxmVaeFmjpeGPRf0Iu/hh6j7iJq1KaGHpkCGiQ3VZ1ra/eh6vhLUFURqYx
+X-Gm-Message-State: AOJu0Yzt8F2CFFi8kpxwrTAsEvprmOQZJea9bvfJ6+1q/u8Bf6biAL78
+	BqjOIX0J6pzdRm7iRjS8Z4CNLPxxck+wSUgTGulqR46DZbH+ra5x3HhSFfFxOG1AeiS0MlO6GV/
+	ZwwmsYw7kRHuqA9V5xihiA+EBwDw=
+X-Google-Smtp-Source: AGHT+IGbZo8tM4Jx81FtIJRkLT4fg5oCgMI5kCyd+x+xfpAEG9W3DAU19E1zTOQK5uTv4avib9PWrMnP0uS+k/fDFa4=
+X-Received: by 2002:a05:6358:d26:b0:1aa:b9ec:50ca with SMTP id
+ e5c5f4694b2df-1adcbf03d0cmr1459541055d.25.1722283396404; Mon, 29 Jul 2024
+ 13:03:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgo9iEZ20wB4rOpt6h36Dymudqf6HXww1N094bVoqyMmg@mail.gmail.com>
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-4-21cnbao@gmail.com>
+ <ZqcRqxGaJsAwZD3C@casper.infradead.org> <CAGsJ_4xQkPtw1Cw=2mcRjpTdp-c9tSFCuW_U6JKzJ3zHGYQWrA@mail.gmail.com>
+ <CAGsJ_4wxUZAysyg3cCVnHhOFt5SbyAMUfq3tJcX-Wb6D4BiBhA@mail.gmail.com>
+ <ZqePwtX4b18wiubO@casper.infradead.org> <CAGsJ_4zXfYT4KxBnLx1F8tpK-5s6PX3PQ7wf7tteuzEyKS+ZPQ@mail.gmail.com>
+ <ZqexmNIc00Xlwy2c@casper.infradead.org>
+In-Reply-To: <ZqexmNIc00Xlwy2c@casper.infradead.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 30 Jul 2024 08:03:05 +1200
+Message-ID: <CAGsJ_4yqLVvCUFpHjWmNAYvPRMzGK8JJWYMXJLR7d9UhKp+QDA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] mm: support large folios swapin as a whole for
+ zRAM-like swapfile
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com, Chuanhua Han <hanchuanhua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 12:27:05PM -0700, Linus Torvalds wrote:
-> On Mon, 29 Jul 2024 at 12:12, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >
-> > OK, if you want to have limits be it. You probably want to lower from
-> > 1024 to 128 or something, because with 1024 slots the structure will be
-> > larger than one page and like I said mt->red table will be 4Mb.
-> 
-> So this is why subsystem maintainers should be involved and helpful.
-> It's hard to know what practical limits are.
-> 
-> That said, a 4MB allocation for some test code is nothing.
-> 
-> And yes, if syzbot hits other cases where the input layer just takes
-> user input without any limit sanity checking, those should be fixed
-> *too*.
+On Tue, Jul 30, 2024 at 3:13=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Jul 30, 2024 at 01:11:31AM +1200, Barry Song wrote:
+> > for this zRAM case, it is a new allocated large folio, only
+> > while all conditions are met, we will allocate and map
+> > the whole folio. you can check can_swapin_thp() and
+> > thp_swap_suitable_orders().
+>
+> YOU ARE DOING THIS WRONGLY!
+>
+> All of you anonymous memory people are utterly fixated on TLBs AND THIS
+> IS WRONG.  Yes, TLB performance is important, particularly with crappy
+> ARM designs, which I know a lot of you are paid to work on.  But you
+> seem to think this is the only consideration, and you're making bad
+> design choices as a result.  It's overly complicated, and you're leaving
+> performance on the table.
+>
+> Look back at the results Ryan showed in the early days of working on
+> large anonymous folios.  Half of the performance win on his system came
+> from using larger TLBs.  But the other half came from _reduced software
+> overhead_.  The LRU lock is a huge problem, and using large folios cuts
+> the length of the LRU list, hence LRU lock hold time.
+>
+> Your _own_ data on how hard it is to get hold of a large folio due to
+> fragmentation should be enough to convince you that the more large folios
+> in the system, the better the whole system runs.  We should not decline t=
+o
+> allocate large folios just because they can't be mapped with a single TLB=
+!
 
-Hmm, maybe the checks should go into drivers/input/misc/uinput.c which
-is the only place that allows userspace to create input device instances
-and drive them rather than into input core logic because all other
-devices are backed by real hardware.
+I am not convinced. for a new allocated large folio, even alloc_anon_folio(=
+)
+of do_anonymous_page() does the exactly same thing
 
-Thanks.
+alloc_anon_folio()
+{
+        /*
+         * Get a list of all the (large) orders below PMD_ORDER that are en=
+abled
+         * for this vma. Then filter out the orders that can't be allocated=
+ over
+         * the faulting address and still be fully contained in the vma.
+         */
+        orders =3D thp_vma_allowable_orders(vma, vma->vm_flags,
+                        TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
+        orders =3D thp_vma_suitable_orders(vma, vmf->address, orders);
 
--- 
-Dmitry
+}
+
+you are not going to allocate a mTHP for an unaligned address for a new
+PF.
+Please point out where it is wrong.
+
+Thanks
+Barry
 
