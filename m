@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-265186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543A193EDB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414B793EDB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 08:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD0E1F22167
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4072821B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 06:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5706784FA0;
-	Mon, 29 Jul 2024 06:57:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FD2119
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1013184FAC;
+	Mon, 29 Jul 2024 06:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y2lGS09b"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088522119
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722236264; cv=none; b=kpTCPfxiqGdW3NGeOFePX/CdMdoUMdQzWd/S0X5tCTBGQsqNp6mpqdb3UnYy4/9B4XkLpiVpAp/leoNGSK9xutijAktyXZBGDkpL/HRDKW/WHy98o8y2tEOaGYaoWDl88XRhV/cLb2tSWvlvsVTL02JyYHWBBbC6al1Q+QMRMpc=
+	t=1722236349; cv=none; b=Sw098IOABK/zLhZzdi3/Mo5PE+Cogz7XqiackpfB0QOgJeF8f+yar5kqghV0pOq+ydFJr1Joywyh8dlExqy9aG+7UzIOXDOP4c+Kl56A1t2deKlPNsTqBihDIae34HwFFZxMBbbrxhaS5Iad9rrxojoZXc/Z4yHUhu9kkXz4Vdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722236264; c=relaxed/simple;
-	bh=/iqyysy/rTjDouQo1CLuY4iDF0GK5hSsOCm8rEgNPl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PbKXi1I2uJC8PjFxBpNfppQY3PoMpOEG0ObwsCe9IBGbFnuKXjsHSui4IDA6/FxpGSSyO/SkVikfe7CE/eTROhCSyv1tOjk0u3GtO0atNXnS+YVWZi6N9IJIV7H6mxMplqaZwgZGn8I7FupWUuQmcxY3bYUKjt2BSzlTlN63+uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3503FEC;
-	Sun, 28 Jul 2024 23:58:07 -0700 (PDT)
-Received: from [10.162.41.10] (a077893.blr.arm.com [10.162.41.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EE283F64C;
-	Sun, 28 Jul 2024 23:57:39 -0700 (PDT)
-Message-ID: <f71502d2-d216-4377-965f-21583dd7dc31@arm.com>
-Date: Mon, 29 Jul 2024 12:27:36 +0530
+	s=arc-20240116; t=1722236349; c=relaxed/simple;
+	bh=1cv/1ReaA2D0soxwMq6cYRYxpIcLJH+dDH6Ctd7iF5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B7Xwm53KUgAu+UNpxvGSpPfRXAoSKx6lPt/S72VEfRKH1OfnTnv8ALMs9VmNCXv0NfOv2vAGPIVtrY08xmH/MK6BmY1W4oYLxFp4JBncLSQy6Ledq3ku6mG9e+LNJ4Lbd9h+jdEOipZyH7knlis/o3dWpEu+i98iBJoqeThnWJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y2lGS09b; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qMnAg
+	qz5utWZu6iGhNxZV1JaRMw2eNLw6IaRXRPszgk=; b=Y2lGS09bGUNCXBd5EvKXD
+	PnLX9Vz2A0zg4U6lEfrMGLubHwD17OK+6Z5UlZuHIzyGIw6ZggYIVk9M68kVEMS4
+	pIUZOX/BI8GDGo6ewgQL7b785CP+mq6Hyt106ONlHDK3zWYbvjoQ6IoTbOlbJ42F
+	VqsrIJLFuQai9H1VK1qrJw=
+Received: from localhost.localdomain (unknown [111.48.69.247])
+	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wD3X051Padm2W56Ew--.54492S2;
+	Mon, 29 Jul 2024 14:57:58 +0800 (CST)
+From: oushixiong1025@163.com
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm: Add the missing symbol '.'
+Date: Mon, 29 Jul 2024 14:57:56 +0800
+Message-Id: <20240729065756.123788-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/sparse: return right away if sparsemap_buf is null
-To: Mike Rapoport <rppt@kernel.org>, Leesoo Ahn <lsahn@ooseel.net>
-Cc: Leesoo Ahn <lsahn@wewakecorp.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240726071023.4078055-1-lsahn@wewakecorp.com>
- <ZqY81pf9dvl6mvg9@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <ZqY81pf9dvl6mvg9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3X051Padm2W56Ew--.54492S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZFW3uw4UJr1kAry8Gw13CFg_yoWfXrX_u3
+	W7WwsrJrZrA3sFvFnIvanFqF9Fka4Y9F48Gw4vga4ftw12yw13JF4qgrsavr1DGw48AF98
+	tanrXr17ZFnrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8dOz7UUUUU==
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRorD2XAmeWNiwAAs8
 
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/drm_probe_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 7/28/24 18:13, Mike Rapoport wrote:
-> On Fri, Jul 26, 2024 at 04:10:23PM +0900, Leesoo Ahn wrote:
->> sparse_buffer_fini(..) takes the following actions even though the value of
->> sparsemap_buf is NULL,
->> 1. calculate size of sparsemap buffer (which is meaningless).
->> 2. set sparsemap_buf variable to NULL (although it is already NULL).
->>
->> These steps are unnecessary if the variable, sparsemap_buf is NULL.
->>
->> Refactor the function to return right away if the variable is NULL.
->> Hence, it doesn't need to take further actions.
-> 
-> sparse_buffer_fini() is called a few times on init so saving a jump (if at
-> all) does not worth the churn.
+diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
+index bb49d552e671..285290067056 100644
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -888,7 +888,7 @@ EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
+  * disabled. Polling is re-enabled by calling drm_kms_helper_poll_enable().
+  *
+  * If however, the polling was never initialized, this call will trigger a
+- * warning and return
++ * warning and return.
+  *
+  * Note that calls to enable and disable polling must be strictly ordered, which
+  * is automatically the case when they're only call from suspend/resume
+-- 
+2.25.1
 
-Agreed, this is not worth the churn given there could be just a single
-call instance for sparse_buffer_fini(), either in normal or error path
-in sparse_init_nid().
-
->  
->> Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
->> ---
->>  mm/sparse.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/sparse.c b/mm/sparse.c
->> index e4b830091d13..091e4bc2f72c 100644
->> --- a/mm/sparse.c
->> +++ b/mm/sparse.c
->> @@ -469,9 +469,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
->>  
->>  static void __init sparse_buffer_fini(void)
->>  {
->> -	unsigned long size = sparsemap_buf_end - sparsemap_buf;
->> +	unsigned long size;
->>  
->> -	if (sparsemap_buf && size > 0)
->> +	if (!sparsemap_buf)
->> +		return;
->> +
->> +	size = sparsemap_buf_end - sparsemap_buf;
->> +	if (size > 0)
->>  		sparse_buffer_free(size);
->>  	sparsemap_buf = NULL;
->>  }
->> -- 
->> 2.34.1
->>
->>
-> 
 
