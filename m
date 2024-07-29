@@ -1,322 +1,256 @@
-Return-Path: <linux-kernel+bounces-265851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337BD93F6CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E99B93F6DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5406C1C21646
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AE8281966
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB34A14A61A;
-	Mon, 29 Jul 2024 13:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9479C14E2E2;
+	Mon, 29 Jul 2024 13:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFFpJ1aG"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jmooqYQ5"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A9149DFF;
-	Mon, 29 Jul 2024 13:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BBD149015
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 13:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260180; cv=none; b=drqC9DcyRZEFCVCbWYmZHwRBfGYjglUwTrAHV0JFvwfoCILGg7GVKiqonDo3NdUQKdcLL75RGw8fKkcriDcfNXXW5xXG/2jdlNQ7OenVPNCE/OA0/bDUNpj3SYcPaFIqOf07f0Qp7U/MnStSOLlHd2La5y3X6r/jYBMm/MHtuIk=
+	t=1722260426; cv=none; b=qSIe9RkL5l0eENr+osoPzdkJmmIBUfgLoxxQ1yN4j0cMMketyeOU95qQMfH6zMeIaS2VWppk13z/fAKTHQl/CJBfYr/i0lHwHh+WsbK56SBwNRT5OcJvJYcDOPjCJnLo6Yx1OJOegWZ/UGrUmyZ/88t0GBxNCaic0p3Ngi8yBOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260180; c=relaxed/simple;
-	bh=QVTT06NNPJliH92NkECNKiURoA0/tmAa44n9BUdRjRk=;
+	s=arc-20240116; t=1722260426; c=relaxed/simple;
+	bh=m5Lwugng7Q3IhOI9RCpRkt2R9HhMleNT/XtcE9TngtU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKUC57G7zNYVaKkSZwCQilt1fHMC8ySY53J0CsxckXZSuQnU2M15Xq6Q0CD0NykGKWXv9Q8X7evVoxfOmCumQysLJSxKlS2eSWEQnkACRMA2zBz0Pft23vnokPKtq6PB8N1nGEYpi3VtC5ds2XOjfn4TMVgWb9gs0rK0VwltTcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFFpJ1aG; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e04196b7603so1806966276.0;
-        Mon, 29 Jul 2024 06:36:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=fon6XiIAOfkq80GOOeq89bgtORX45Qklez//TdtiQ7uI4rNt89AeSa3ssd7McNzyMKh3M0Wcc7qdnhfvqX9dnis62px1Le1GQ7HloH0jyg8GlhYtRszNw7PWQVhCda8n70EXL3TOCb2SY7uDoX1D6QEh0p0Mq3vWadl9hyeFYYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jmooqYQ5; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b7af49e815so20875436d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 06:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722260178; x=1722864978; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722260423; x=1722865223; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iCkAVJGO0Qq0npx1C9YnKPikcp6fVMOWG8vPQWN7D0Y=;
-        b=KFFpJ1aGFRGii4f1cOjLznzKsPXzsyo05nNzn/wojOIbc3Gcr4EtjjPGn8tL2sM95n
-         Zr4r11IYLsVtqkY46czyk2XYze/z2c2OKB/19b4ccJDul4SGdz7pexPOZuG2LJlOe7yB
-         iY0vSswK+ZzO/jyoQyiz9+/3bp6Sf9LGDu6j5e6/LAJLiEUM88XgNtFrjwCWbcAUlUar
-         LQDg0RLdZixzQZ5zjfyB1x4urzIyq0/ebY0AauQMLSA70UyrQI65RevGec1z5V0sJf3E
-         mhAMu7afij8O3DhBcH3r4f+QBYyC0GkjoYkMvqmgs4WREa17T0Yj2wgTrlvcCI4iWNRq
-         T6AQ==
+        bh=9OybnryKVs2UqunE+HbITQkTW5YxjXd43/aMmkgTPKM=;
+        b=jmooqYQ5AVyVgMWlo93EqrBoGXuY8fuA/XqtpdnplqyjvcMTXgjVgmzbeV59/Sbte/
+         egjC522M/pSwRvUTnV8gQOL9x6bO3bxvxTPxB9p9TyGgU928J+5xYfrO4E8WPdQ14v2j
+         0xQMn739N0RpKQZ3C5qQyzWoUNTP9+4s6DR7EM4a64jEvjgIMoCxjFkYC4unXIY8BASh
+         iTb6edNvryXQVLRRRPwRGyIjYbk4Zo65V7AlKM8obzTOY0andq68If86XR5hfs+IYMIQ
+         J83H9eO5m2O31pPPtmC1le9zcFXpciCqPS9NqFWS/bhKsdLPvfMaTpPMQzpFrdFTTEWx
+         krDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722260178; x=1722864978;
+        d=1e100.net; s=20230601; t=1722260423; x=1722865223;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iCkAVJGO0Qq0npx1C9YnKPikcp6fVMOWG8vPQWN7D0Y=;
-        b=vxno4KNkkVN5MD0o0Bj9JraVBVZ7CGI492uiaVeL7r0CrKOPzclwKEP+yARqK+3pl3
-         NUTFqqEzDzVtnWebahnSOmitoYfeVblV1ZYjVl4DQauDmbsHa3RLR/rw/45ngZE9V31l
-         Zs3z7EKNfEqzCO9xyQKwgjxqiCr/SWrW5YWqINDvdoaXyrLRDO15wnIuIUMnnB/HehMy
-         yPhecLOUB4H4CTXLKJsAH2p3zFrh6Ln/hAJKT1XxnGIZvGepNe7/t0Tui8qx/AREUCTW
-         aRbvi6FCckaRqHobsf22jee27R9706kW+dcB9upUjlhyoB3p8KrMCLM0JRAyUqPizOco
-         vC+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmEDzy2sLsmdvS3yJEVEJbtA3qeANE6qxtx9ABE1usVYVO+VcEE2KdWK8c2P9Oa+5bE7b3r21it6z6O+dMoIWU2floc6mUnS7ZYTgIrWN6x7ru0dY/URzY9jMRPF/q48iTr6ZQjCJyd2VwunHKDw==
-X-Gm-Message-State: AOJu0YwWr3CraM/omFMfzhUEklzdf+R+zcDda9CmC2WJIyPREHI4LwLZ
-	VG6OEq5jcySKKCwbk0w9NwH0i5zJhQTY5/PZ1jeh88PqQ8WA6fTpZfgo9yzdkgQFUEKOO1gF6lQ
-	fVWpllvyObgwpG7DbCLOcEEwx3IuWvHULdEA=
-X-Google-Smtp-Source: AGHT+IGaof0SFl/BiJyegHanTKpqjq+1dtgN8EzD5KFww/rzyLz/Wg+sEHD2v8X8lTsVxBKbxAuJ9dZnpA4b7mOURW0=
-X-Received: by 2002:a05:6902:15ca:b0:e0b:3f83:54e4 with SMTP id
- 3f1490d57ef6-e0b54402037mr7210260276.6.1722260178196; Mon, 29 Jul 2024
- 06:36:18 -0700 (PDT)
+        bh=9OybnryKVs2UqunE+HbITQkTW5YxjXd43/aMmkgTPKM=;
+        b=bbr3NkxtT0IH4nexSDEXXGOl8bHD8UF92YsEpZ69PQZW8ufD2SMhRVdNI1gNwFiF29
+         4FCaQjoSSTuuDOYriaY9HCiIVBUjTchGWb1AkvyCOnzrTDFQd3aim0KDeViUHoK4nGuj
+         3rLijlSz69Sd311dFbHfVUqYQ//SWThjHv/NP9yqLertVyKG8Nu9uCOsTtjBjmt1HOAO
+         M08UZzSHgIYtyO8Wz8YSerOXTC8ISkg5Xoan0cAr40UBezTHD3CG3IhRtnD7VvAG4hQ+
+         rFbY8GG7gjjZX2Iss4pIyRDNE4FhBsb06ZQ04GuMNHrqIMbi3FnzUk16ujkxAfSMOi7N
+         MIdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2f6Jov7SaqQ9aMKreCa2IX2zvTEsO+B09ZpbyIGmrE+WW03BLmiRQQpV8XgqJwzmir5Jh9Cb14Q+1MzbKGDHx2y5aA2kUR0HwjS2P
+X-Gm-Message-State: AOJu0YyOxgAn4sZ2jEqV6nQ1F6nlIJDtIqCTDnHx5ZJqdqkHuK5iOnq6
+	BsDCIQBOuOio0lWXJGEq2ShcU9Cag4u0lyWnDBwoJ/zX16adYI6Md97Xt/YaGqNE3c0Bj2ODfyv
+	7FwPza5H3sYUoMDRFmhvtAgCOiietXF18iKa0wg==
+X-Google-Smtp-Source: AGHT+IGSawRp512TpjUvjVB4Ov7SQcRSb7iRQeyOf4EprnazA+zHIHl6RfmOfDlEMz9/ziMVEreqiWeoj15Jc4GLZnA=
+X-Received: by 2002:a05:6214:1d2e:b0:6b7:42aa:3358 with SMTP id
+ 6a1803df08f44-6bb55a7cb75mr88544056d6.31.1722260423344; Mon, 29 Jul 2024
+ 06:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726102826.787004-1-howardchu95@gmail.com>
- <20240726102826.787004-2-howardchu95@gmail.com> <CAP-5=fWi_FhQahxsKOaqdMp9agZqC3obHR_mo78+Ms9v1wZavg@mail.gmail.com>
-In-Reply-To: <CAP-5=fWi_FhQahxsKOaqdMp9agZqC3obHR_mo78+Ms9v1wZavg@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Mon, 29 Jul 2024 21:36:07 +0800
-Message-ID: <CAH0uvojbGkQKnvSi7gqtLVJQs2xxO2zBOLCukBiOKKPy7O0uFw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] perf record off-cpu: Add direct off-cpu event
-To: Ian Rogers <irogers@google.com>
-Cc: namhyung@kernel.org, acme@kernel.org, adrian.hunter@intel.com, 
-	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240704-add-mtk-isp-3-0-support-v5-0-bfccccc5ec21@baylibre.com>
+ <20240704-add-mtk-isp-3-0-support-v5-4-bfccccc5ec21@baylibre.com> <85c54f0b1b8bb5d9026c67109a3526fd95cc013b.camel@mediatek.com>
+In-Reply-To: <85c54f0b1b8bb5d9026c67109a3526fd95cc013b.camel@mediatek.com>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Mon, 29 Jul 2024 15:40:09 +0200
+Message-ID: <CAEHHSvZ2etjPKq0MqHYD=hjs19Yy+DJLwXGGorJK7q2tW2dfRQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 camsv
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, =?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com" <pnguyen@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Ian,
-
-On Sat, Jul 27, 2024 at 7:49=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
+Le jeu. 18 juil. 2024 =C3=A0 04:54, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck=
+.hu@mediatek.com> a =C3=A9crit :
 >
-> On Fri, Jul 26, 2024 at 3:28=E2=80=AFAM Howard Chu <howardchu95@gmail.com=
-> wrote:
+> Hi, Julien:
+>
+> On Thu, 2024-07-04 at 15:36 +0200, Julien Stephan wrote:
 > >
-> > Add direct off-cpu event called "offcpu-time-direct". Add a threshold t=
-o
-> > dump direct off-cpu samples, "--off-cpu-thresh". Default value of
-> > --off-cpu-thresh is UULONG_MAX(no direct off-cpu samples), and
-> > --off-cpu-thresh's unit is milliseconds.
+> > External email : Please do not click links or open attachments until yo=
+u have verified the sender or the content.
+> >  From: Phi-bang Nguyen <pnguyen@baylibre.com>
 > >
-> > Bind fds and sample_id in off_cpu_start()
+> > This driver provides a path to bypass the SoC ISP so that image data
+> > coming from the SENINF can go directly into memory without any image
+> > processing. This allows the use of an external ISP.
 > >
-> > Note that we add "offcpu-time-direct" event using parse_event(), becaus=
-e we
-> > need to make it no-inherit, otherwise perf_event_open() will fail.
-> >
-> > Introduce sample_type_embed, indicating the sample_type of a sample
-> > embedded in BPF output. More discussions in later patches.
-> >
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > [Paul Elder fix irq locking]
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 > > ---
-> >  tools/perf/builtin-record.c   |  2 ++
-> >  tools/perf/util/bpf_off_cpu.c | 53 ++++++++++++++++++++++++++++++++++-
-> >  tools/perf/util/off_cpu.h     |  1 +
-> >  tools/perf/util/record.h      |  1 +
-> >  4 files changed, 56 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > index a94516e8c522..708d48d309d6 100644
-> > --- a/tools/perf/builtin-record.c
-> > +++ b/tools/perf/builtin-record.c
-> > @@ -3325,6 +3325,7 @@ static struct record record =3D {
-> >                 .ctl_fd              =3D -1,
-> >                 .ctl_fd_ack          =3D -1,
-> >                 .synth               =3D PERF_SYNTH_ALL,
-> > +               .off_cpu_thresh      =3D ULLONG_MAX,
-> >         },
-> >         .tool =3D {
-> >                 .sample         =3D process_sample_event,
-> > @@ -3557,6 +3558,7 @@ static struct option __record_options[] =3D {
-> >                             "write collected trace data into several da=
-ta files using parallel threads",
-> >                             record__parse_threads),
-> >         OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu anal=
-ysis"),
-> > +       OPT_U64(0, "off-cpu-thresh", &record.opts.off_cpu_thresh, "time=
- threshold(in ms) for dumping off-cpu events"),
-> >         OPT_END()
-> >  };
-> >
-> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
-u.c
-> > index 6af36142dc5a..905a11c96c5b 100644
-> > --- a/tools/perf/util/bpf_off_cpu.c
-> > +++ b/tools/perf/util/bpf_off_cpu.c
-> > @@ -13,6 +13,7 @@
-> >  #include "util/cgroup.h"
-> >  #include "util/strlist.h"
-> >  #include <bpf/bpf.h>
-> > +#include <internal/xyarray.h>
-> >
-> >  #include "bpf_skel/off_cpu.skel.h"
-> >
-> > @@ -45,10 +46,12 @@ static int off_cpu_config(struct evlist *evlist)
-> >                 .size   =3D sizeof(attr), /* to capture ABI version */
-> >         };
-> >         char *evname =3D strdup(OFFCPU_EVENT);
-> > +       char off_cpu_direct_event[64];
-> >
-> >         if (evname =3D=3D NULL)
-> >                 return -ENOMEM;
-> >
-> > +       /* off-cpu event in the end */
-> >         evsel =3D evsel__new(&attr);
-> >         if (!evsel) {
-> >                 free(evname);
-> > @@ -65,12 +68,22 @@ static int off_cpu_config(struct evlist *evlist)
-> >         free(evsel->name);
-> >         evsel->name =3D evname;
-> >
-> > +       /* direct off-cpu event */
-> > +       snprintf(off_cpu_direct_event, sizeof(off_cpu_direct_event), "b=
-pf-output/no-inherit=3D1,name=3D%s/", OFFCPU_EVENT_DIRECT);
-> > +       if (parse_event(evlist, off_cpu_direct_event)) {
-> > +               pr_err("Failed to open off-cpu event\n");
-> > +               return -1;
-> > +       }
-> > +
-> >         return 0;
-> >  }
-> >
-> >  static void off_cpu_start(void *arg)
-> >  {
-> >         struct evlist *evlist =3D arg;
-> > +       struct evsel *evsel;
-> > +       struct perf_cpu pcpu;
-> > +       int i, err;
-> >
-> >         /* update task filter for the given workload */
-> >         if (!skel->bss->has_cpu && !skel->bss->has_task &&
-> > @@ -86,6 +99,27 @@ static void off_cpu_start(void *arg)
-> >                 bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
-> >         }
-> >
-> > +       /* sample id and fds in BPF's perf_event_array can only be set =
-after record__open() */
-> > +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT_DIRECT=
-);
-> > +       if (evsel =3D=3D NULL) {
-> > +               pr_err("%s evsel not found\n", OFFCPU_EVENT_DIRECT);
-> > +               return;
-> > +       }
-> > +
-> > +       if (evsel->core.id)
-> > +               skel->bss->sample_id =3D evsel->core.id[0];
-> > +
-> > +       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
-> > +               err =3D bpf_map__update_elem(skel->maps.offcpu_output,
-> > +                                          &pcpu.cpu, sizeof(__u32),
-> > +                                          xyarray__entry(evsel->core.f=
-d, pcpu.cpu, 0),
-> > +                                          sizeof(__u32), BPF_ANY);
-> > +               if (err) {
-> > +                       pr_err("Failed to update perf event map for dir=
-ect off-cpu dumping\n");
-> > +                       return;
-> > +               }
-> > +       }
-> > +
-> >         skel->bss->enabled =3D 1;
-> >  }
-> >
-> > @@ -130,14 +164,24 @@ int off_cpu_prepare(struct evlist *evlist, struct=
- target *target,
-> >  {
-> >         int err, fd, i;
-> >         int ncpus =3D 1, ntasks =3D 1, ncgrps =3D 1;
-> > +       __u64 offcpu_thresh;
-> >         struct strlist *pid_slist =3D NULL;
-> >         struct str_node *pos;
-> > +       struct evsel *evsel;
-> >
-> >         if (off_cpu_config(evlist) < 0) {
-> >                 pr_err("Failed to config off-cpu BPF event\n");
-> >                 return -1;
-> >         }
-> >
-> > +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT_DIRECT=
-);
-> > +       if (evsel =3D=3D NULL) {
-> > +               pr_err("%s evsel not found\n", OFFCPU_EVENT_DIRECT);
-> > +               return -1 ;
-> > +       }
-> > +
-> > +       evsel->sample_type_embed =3D OFFCPU_SAMPLE_TYPES;
-> > +
-> >         skel =3D off_cpu_bpf__open();
-> >         if (!skel) {
-> >                 pr_err("Failed to open off-cpu BPF skeleton\n");
-> > @@ -250,7 +294,6 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
-arget *target,
-> >         }
-> >
-> >         if (evlist__first(evlist)->cgrp) {
-> > -               struct evsel *evsel;
-> >                 u8 val =3D 1;
-> >
-> >                 skel->bss->has_cgroup =3D 1;
-> > @@ -272,6 +315,14 @@ int off_cpu_prepare(struct evlist *evlist, struct =
-target *target,
-> >                 }
-> >         }
-> >
-> > +       offcpu_thresh =3D opts->off_cpu_thresh;
-> > +
-> > +       if (opts->off_cpu_thresh !=3D ULLONG_MAX)
-> > +               offcpu_thresh =3D opts->off_cpu_thresh * 1000000; /* of=
-f-cpu-thresh is in ms */
 >
-> nit: In this comment, it's not clear if you are referring to the
-> option or the variable. In modern languages it is usual to have some
-> kind of "duration" type. As we're using u64s I'd be tempted to add a
-> "_ms" suffix, just to make clear what the units for the time are. I
-> think that'd make this:
-> offcpu_thresh_ms =3D opts->off_cpu_thresh_ns * 1000000
-
-I'll do this, but in microseconds as you requested in another review.
-
-Thanks,
-Howard
-
+> [snip]
 >
-> Thanks,
-> Ian
+> > +static int mtk_cam_vb2_start_streaming(struct vb2_queue *vq,
+> > +       unsigned int count)
+> > +{
+> > +struct mtk_cam_dev *cam =3D vb2_get_drv_priv(vq);
+> > +struct mtk_cam_dev_buffer *buf;
+> > +struct mtk_cam_video_device *vdev =3D
+> > +vb2_queue_to_mtk_cam_video_device(vq);
+> > +struct device *dev =3D cam->dev;
+> > +const struct v4l2_pix_format_mplane *fmt =3D &vdev->format;
+> > +int ret;
+> > +unsigned long flags;
+> > +
+> > +if (pm_runtime_get_sync(dev) < 0) {
+> > +dev_err(dev, "failed to get pm_runtime\n");
+> > +pm_runtime_put_autosuspend(dev);
+> > +return -1;
+> > +}
+> > +
+> > +(*cam->hw_functions->mtk_cam_setup)(cam, fmt->width, fmt->height,
+> > +fmt->plane_fmt[0].bytesperline, vdev->fmtinfo->code);
+> > +
+> > +
+> > +/* Enable CMOS and VF */
+> > +mtk_cam_cmos_vf_enable(cam, true, true);
+> > +
+> > +mutex_lock(&cam->op_lock);
+> > +
+> > +ret =3D mtk_cam_verify_format(cam);
+> > +if (ret < 0)
+> > +goto fail_unlock;
+> > +
+> > +/* Start streaming of the whole pipeline now*/
+> > +if (!cam->pipeline.start_count) {
+> > +ret =3D media_pipeline_start(vdev->vdev.entity.pads,
+> > +   &cam->pipeline);
+> > +if (ret) {
+> > +dev_err(dev, "failed to start pipeline:%d\n", ret);
+> > +goto fail_unlock;
+> > +}
+> > +}
+> > +
+> > +/* Media links are fixed after media_pipeline_start */
+> > +cam->stream_count++;
+> > +
+> > +cam->sequence =3D (unsigned int)-1;
+> > +
+> > +/* Stream on the sub-device */
+> > +ret =3D v4l2_subdev_call(&cam->subdev, video, s_stream, 1);
+> > +if (ret)
+> > +goto fail_no_stream;
+> > +
+> > +mutex_unlock(&cam->op_lock);
+> > +
+> > +/* Create dummy buffer */
+> > +cam->dummy_size =3D fmt->plane_fmt[0].sizeimage;
+> > +
+> > +cam->dummy.vaddr =3D dma_alloc_coherent(cam->dev, cam->dummy_size,
+> > +      &cam->dummy.daddr, GFP_KERNEL);
 >
+> Dummy buffer cost much in DRAM footprint. I think we can get rid of
+> this dummy buffer. If no buffer is queued from user space, call
+> mtk_camsv30_cmos_vf_hw_disable() to stop write data into DRAM. After
+> buffer is queued from user space, call mtk_camsv30_cmos_vf_hw_enable()
+> to start write data into DRAM.
+>
+
+Hi CK,
+
+IMHO it does not cost that much. A long time ago, we tried to remove
+it, but we faced an issue (can't remember what :/).
+Moreover, some other driver already uses the dummy buffer
+implementation, if I am not wrong.
+
+Cheers
+Julien
+
+> Regards,
+> CK
+>
+> > +if (!cam->dummy.vaddr) {
+> > +ret =3D -ENOMEM;
+> > +goto fail_no_buffer;
+> > +}
 > > +
-> > +       skel->bss->offcpu_thresh =3D offcpu_thresh;
-> > +       skel->bss->sample_type   =3D OFFCPU_SAMPLE_TYPES;
+> > +/* update first buffer address */
 > > +
-> >         err =3D off_cpu_bpf__attach(skel);
-> >         if (err) {
-> >                 pr_err("Failed to attach off-cpu BPF skeleton\n");
-> > diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
-> > index 2dd67c60f211..a349f8e300e0 100644
-> > --- a/tools/perf/util/off_cpu.h
-> > +++ b/tools/perf/util/off_cpu.h
-> > @@ -9,6 +9,7 @@ struct perf_session;
-> >  struct record_opts;
-> >
-> >  #define OFFCPU_EVENT  "offcpu-time"
-> > +#define OFFCPU_EVENT_DIRECT  "offcpu-time-direct"
-> >
-> >  #define OFFCPU_SAMPLE_TYPES  (PERF_SAMPLE_IDENTIFIER | PERF_SAMPLE_IP =
-| \
-> >                               PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
-> > diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-> > index a6566134e09e..3c11416e6627 100644
-> > --- a/tools/perf/util/record.h
-> > +++ b/tools/perf/util/record.h
-> > @@ -79,6 +79,7 @@ struct record_opts {
-> >         int           synth;
-> >         int           threads_spec;
-> >         const char    *threads_user_spec;
-> > +       u64           off_cpu_thresh;
-> >  };
-> >
-> >  extern const char * const *record_usage;
-> > --
-> > 2.45.2
-> >
+> > +/* added the buffer into the tracking list */
+> > +spin_lock_irqsave(&cam->irqlock, flags);
+> > +if (list_empty(&cam->buf_list)) {
+> > +(*cam->hw_functions->mtk_cam_update_buffers_add)(cam, &cam->dummy);
+> > +cam->is_dummy_used =3D true;
+> > +} else {
+> > +buf =3D list_first_entry_or_null(&cam->buf_list,
+> > +       struct mtk_cam_dev_buffer,
+> > +       list);
+> > +(*cam->hw_functions->mtk_cam_update_buffers_add)(cam, buf);
+> > +cam->is_dummy_used =3D false;
+> > +}
+> > +spin_unlock_irqrestore(&cam->irqlock, flags);
+> > +
+> > +return 0;
+> > +
+> > +fail_no_buffer:
+> > +mutex_lock(&cam->op_lock);
+> > +v4l2_subdev_call(&cam->subdev, video, s_stream, 0);
+> > +fail_no_stream:
+> > +cam->stream_count--;
+> > +if (cam->stream_count =3D=3D 0)
+> > +media_pipeline_stop(vdev->vdev.entity.pads);
+> > +fail_unlock:
+> > +mutex_unlock(&cam->op_lock);
+> > +mtk_cam_vb2_return_all_buffers(cam, VB2_BUF_STATE_QUEUED);
+> > +
+> > +return ret;
+> > +}
+> > +
+>
+> ************* MEDIATEK Confidentiality Notice ********************
+> The information contained in this e-mail message (including any
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be
+> conveyed only to the designated recipient(s). Any use, dissemination,
+> distribution, printing, retaining or copying of this e-mail (including it=
+s
+> attachments) by unintended recipient(s) is strictly prohibited and may
+> be unlawful. If you are not an intended recipient of this e-mail, or beli=
+eve
+> that you have received this e-mail in error, please notify the sender
+> immediately (by replying to this e-mail), delete any and all copies of
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
 
