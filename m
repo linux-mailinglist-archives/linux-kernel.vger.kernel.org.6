@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-264928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-264929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343DE93EA48
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CC093EA4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 02:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57CA281A1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CF61C214D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 00:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5641B86E7;
-	Mon, 29 Jul 2024 00:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D6F3236;
+	Mon, 29 Jul 2024 00:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Moa8aFWW"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFIGtnSN"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866373236;
-	Mon, 29 Jul 2024 00:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5F801;
+	Mon, 29 Jul 2024 00:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722213016; cv=none; b=aBVymoM+E7X0R+nOzNVU+Z2BlfKl/sVFBaOYy5zsIFhbgHZ/nSc8qykDi7D81zg8gQC4VJqYzRoYoyt4cHl97BxwOBUNwGzb7L0JDYoHJaRad6s7rt3OGoZrGs5UUDOmmx+tfPFPjh4U6YtgKA4VRhAmRi6dvD7cEnbK62b47io=
+	t=1722213074; cv=none; b=u28XOlK1nteSC725nhm81OEePiSIcIb1ZRHXP91tzohh7Hk9xKlnYwqe+z4qgOKWRuy+YJlRbSIZImAuGWIBfrffZE02t5TaxFp0O+/WjNzvR2VIyAseQPqDDbVjjfhhURyvZmF0VNcj+ZSXtL7R+Vkr2jkf1S5brY+5/O9Q8AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722213016; c=relaxed/simple;
-	bh=XYMOpml3C5GDgzl3g6BpnDlx9xx8mV3x43adr2kwVIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RATlI0LsIo7g9EPVnHCC6mf9WZ1HKL38fhiL9JuFwPFDgJCQM7e6msQedsA07NxghUiYD5kUzj49o/0Nx062LPhogjnyRwclAdj+RoHK2k/gRqJgpk0Wzl8Qx0D6okChMDZ2VnE52Yz40lisXp2W7fjXHII44l3TSYV7orvs3LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Moa8aFWW; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722213074; c=relaxed/simple;
+	bh=Xc4hKw3D1lAjfW6UbY4tqXzP6Rz5Sl374JIAo7L476A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FNL5n6RmgqN5Lvw2UVqUJc0Q3sTn6YEeOpQ2iJRZ06Q5fahudU4fx/E458agbkNy2qq+lIVg/Y7E0gOj26ZTWuBxSICnvgXGzbCbiHJUw40x5fdfNomgkWbX/gcgzHPVNPdWJ/h/1A3jIIYzwmWTRYH7ooy0de44OCywT0NSs4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFIGtnSN; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc5296e214so18120255ad.0;
-        Sun, 28 Jul 2024 17:30:15 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc491f9b55so16394995ad.3;
+        Sun, 28 Jul 2024 17:31:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722213015; x=1722817815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Opeic96XTBMCyByaALutlHM6zcHKHgHEzMs2e1m4Lfk=;
-        b=Moa8aFWW7jQVRHqirLjRMZjttie6/2dTNLVjTL/P1kIpKe5yNfUJNkeeBzkhS2zxTE
-         anU8jjPRKs+U/+cW4UtufsQuGhcTYvKHweZGsfecJhKqL+lyXiUxb7R8kOG56B7hpIp0
-         ew8OFTEXXGSHtJaQAupmm2WekkqWABcWloBPSerMor5AlDBrLL92Zu6G5Yvcd0vgpaI5
-         tDghpcJZWxzu4/q8LLl0PM86sORH+rns+wCKqm5A23UGEdj8tcnGRhG863ePEq4Y6C7L
-         ecBQ5tbEm0XbQ4iFqMhHnRabHfd6T/IO8BUoWCSi88JzvWRUwUlV1mLXa8O11ZThVlcK
-         04IQ==
+        d=gmail.com; s=20230601; t=1722213072; x=1722817872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=//rZSeQzRqiNvQXtTT/CtjiYP4SkwNBAGmcV9pM3b3A=;
+        b=fFIGtnSNx5GZ0UV9FYRGbLuFjENrUNdYBGhhGXbZHr0SBzhoquOOQqt/5TnYtJV8vU
+         KBqmVnPa0LpdEejjXahx3WUq+NonxTD+RlcNi/sgszWSJlRvPL2fEAtZgb/3YnbDaztf
+         pne7+o3YMfehUpLjLwy3HFtSJKPjFaWxuE/D/JU8GnSdr5aeWaKbLiSxwQeUYqz9afkn
+         IcXtDLjk9Ou35Vc+naRYmk3bp0bg+tHsxwU17ZovtxZL+sqCx1j+adxVS4Hgye3WUXdW
+         8vd1RxvyjW36qpoMEDepHE0ZX+w0TbxOg1fsE38Iay4O1xtLjOCpem1+rd/ykrbAT+AR
+         PZLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722213015; x=1722817815;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Opeic96XTBMCyByaALutlHM6zcHKHgHEzMs2e1m4Lfk=;
-        b=SV4aJGtV/PrmIHnTwX/Ja99GT4Nz34x6ldC0vL3iEm/1mxzeHgT6aXI3UuujelOkgx
-         0upW67thrDtmYOIeaOAFIJ36Mg6lyoVXS0ncs9buA7qr9uap2/oKs6b29/Fy3jk5GrPI
-         GkFW7wmGbLORBBy3Kp7rvjXdJ+UlwWyCexWUxWEG+AfmIbMEPxV9/jbH/WgNkYB72CE6
-         lvAx2sS04IKryIkEC4A/Dfc6XExTQUBktXV6Xja9WqSfwPP8Jotv22Z5kVd3gS7CRi+T
-         4jvW3OdjUfa4tQ/YqtrQGpuYewamds3Cx0KxBp5PinpcHyTgIDOhZRXMB8n4IpuY9q4K
-         HJUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOXBDTDq8SqC+BfSV/rufcoDTULtkoyy4MsdHpfJK8+N2e9KJ6ACmam48mXWtWDdlO/J+flLRuDwZRbD2AK156rs2Sxmkijb5xwlifI4y6KTJ52bP9Y/Q5T86cvn80nYF0ud/Lyf6b1l0WMw9r
-X-Gm-Message-State: AOJu0Yw5xuWV4j49PM3HFIK0olXhWSsvu2d1Fj/gigGbZSF1Rs7cw6QY
-	AG2aTIcwCiVmbCDNZJNzJxsgEv0FzcZzTQy31wXEFr2CCS8TITiR
-X-Google-Smtp-Source: AGHT+IFTxQ1xdZ0oHDAXAUAqiVZdWgvMYud0INEFpKgWhhBamj0oLm+zG+tRIwOkz238UYUndsFolw==
-X-Received: by 2002:a17:903:2a85:b0:1fb:9b91:d7be with SMTP id d9443c01a7336-1ff047dd5d1mr80371945ad.9.1722213014585;
-        Sun, 28 Jul 2024 17:30:14 -0700 (PDT)
-Received: from arch.. ([2804:1b3:a700:11b8:26ee:9aff:fe39:f350])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fcb33dsm70062395ad.281.2024.07.28.17.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 17:30:14 -0700 (PDT)
-From: Artur Alves <arturacb@gmail.com>
-To: quic_jjohnson@quicinc.com
-Cc: akpm@linux-foundation.org,
-	andrealmeid@riseup.net,
-	arturacb@gmail.com,
-	brendan.higgins@linux.dev,
-	davidgow@google.com,
-	diego.daniel.professional@gmail.com,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	n@nfraprado.net,
-	rmoar@google.com,
-	vinicius@nukelet.com
-Subject: Re: [PATCH 1/1] lib/llist_kunit.c: add KUnit tests for llist
-Date: Sun, 28 Jul 2024 21:30:07 -0300
-Message-ID: <20240729003007.147984-1-arturacb@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <d1a7c02f-2a13-4319-be33-fc7f613b7e8a@quicinc.com>
-References: <d1a7c02f-2a13-4319-be33-fc7f613b7e8a@quicinc.com>
+        d=1e100.net; s=20230601; t=1722213072; x=1722817872;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=//rZSeQzRqiNvQXtTT/CtjiYP4SkwNBAGmcV9pM3b3A=;
+        b=FtkfxWNoMdUc/bSIclYNkLgcPABzhCIAsIIbod5BBxFQ17pKZFyiBRctWov2UGO/JV
+         aGfaRcYVxbB2DEsvsfQyvS25XROPhnt/C7Y+1V6ECRWwtQCUFInHlTT8n+Ur8hg7LC66
+         eYrQq/cm2N5cKlkyxdGxQ8JSSFJ9totgIPCka4oum8EWAs3p9BLWv/ehR22naAfMxww0
+         eV/n6xK+O2hCpqSagqIey+ubUVfm+6C68EKpXvICLU5A+fXHzJ6Kr+UOPYYtQtxGVF3i
+         f0LDBEGFO2RFGvgwIegT1JDeOdCcO93mjPE39F+gHx41o7/SnOSRSnJE9MJJ/VJ947EU
+         dogg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2kq5U0GyFkR4KOlWLaiPmispKc/DD/wf/cw/u94QCF4kjl7p3PYA4jpYD5xHcI+u5r8VnGiHEZSueqzz6D7MqUgjX2mE8ZPm0yxiNLpWRJxstKr0JmLgJDHWNqAIwqGVrlvo/fCWc
+X-Gm-Message-State: AOJu0YxQg+qbR828YPbL7QqgYKa+oxaD4DDMoixb68Nd35GE4q8c9ytc
+	sVxzkGYGo23TfNxyo4uyGh/PfQ9wbdIdgzxwZbpepGcetBpShY/YpBtVOA==
+X-Google-Smtp-Source: AGHT+IF3ydjuFMap6YZ8wj1ug5kT5DXKw4roCiOqxwvp+ZaYsJ/dih12zUlCSoV1xp3bFRu+o/wHBg==
+X-Received: by 2002:a17:902:f684:b0:1fb:396c:7541 with SMTP id d9443c01a7336-1ff0481b580mr44070775ad.16.1722213072151;
+        Sun, 28 Jul 2024 17:31:12 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f85868sm70212225ad.238.2024.07.28.17.31.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jul 2024 17:31:11 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f5886c83-27c2-475d-b75a-4ad107d039ed@roeck-us.net>
+Date: Sun, 28 Jul 2024 17:31:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] i2c: smbus: Handle stuck alerts
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220110172857.2980523-1-linux@roeck-us.net>
+ <ZqajBUknxDaMp5wy@shikoro>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZqajBUknxDaMp5wy@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jeff,
+On 7/28/24 12:59, Wolfram Sang wrote:
+> Hi Guenter,
+> 
+> as I mentioned before I now have to deal with SMBusAlert as well and had
+> a chance to review and test this series. When developing the SMBAlert
+> trigger mechanism for the i2c testunit, I also experienced the interrupt
+> storm and your patches helped. See later mails for details.
+> 
+>> Note that there is one situation which is not addressed by this set of
+>> patches: If the corrupted address points to yet another device with alert
+>> handler on the same bus, the alert handler of that device will be called.
+>> If it is not a source of the alert, we are back to the original problem.
+>> I do not know how to address this case.
+> 
+> I think this can only work if we require .alert-handlers to start with a
+> sanity check to make sure their device really raised an interrupt
+> condition. And then return either -EBUSY or 0, similar to IRQ_HANDLED or
+> IRQ_NONE. Or?
+> 
 
-I was unaware of this commit, I'm going to fix this issue to ensure no
-warnings are introduced. 
+I think so, but I am not sure if it is worth the effort. It would require
+changing the API, and each driver supporting alert callbacks would have
+to implement code to detect if it actually got an interrupt.
 
-Now I'm also aware of two patches that reorganize KUnit tests ([1], [2]).
-I'll take these into account for the revised version.
+Thanks,
+Guenter
 
-Thanks for your reply.
-
-Artur Alves
-
-[1] https://lore.kernel.org/linux-kselftest/20240720181025.work.002-kees@kernel.org/
-[2] https://lore.kernel.org/linux-kselftest/20240724201354.make.730-kees@kernel.org/
 
