@@ -1,1107 +1,296 @@
-Return-Path: <linux-kernel+bounces-265748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6AD193F583
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B93993F582
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710E1282DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA851C21FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED1014A4F5;
-	Mon, 29 Jul 2024 12:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DEA149E16;
+	Mon, 29 Jul 2024 12:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ca2yArAx"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LxcKquUF"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77731148856;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBB1148857;
 	Mon, 29 Jul 2024 12:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256473; cv=none; b=ROc45xtnFkVtStwuyv6bkA0ySvJ9f0IQtgPsgYtVSO7E/lTGzIvyJ0OUZcK4c3S5csfQNxEgPN6OzLqECTCyK74XRHtikTD36rKk6nvNI8hmnvd+CTDoxlTshzhsRr/WF1Mox+JtwcOo9rkkknTF9UCwOJXqWkCMrqh1irqX/9w=
+	t=1722256472; cv=none; b=mUiEmfE+25qR7rj90c7Pym1ZEKShDKwCJr6++YifVa4Intgnh4+XVFepDgfj0Y7fWq8kt3i8dScJhqqqAzameuMbhK60U+mN8f5H8AaPv7jd0TAMyUIaIyUq8syFhKJxfznxEVftEIZXvvMlubYkVfMHmBXrHSoKCYC/5QguV9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256473; c=relaxed/simple;
-	bh=qqKHG/Uy5cH7+DH5QFqsdylDvTqWfKKgXY/fImeU5Vw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NQA0VItVt2sv0h3imsFAJ/qo7o+aaUqo2ev2sA/oyhWMBva7Q1abit3WW7jM/o54JoNQiX+2IVv2uAJCb86WtnoLZwURk6/7jnC9K8z6VsKpkM1J6H/dwZe151QMKnYdmfLLqJVP2yqXnfUBCcaSNYZK0u+aZFXS8pYMZyjRchw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ca2yArAx; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so483893166b.2;
-        Mon, 29 Jul 2024 05:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722256469; x=1722861269; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=URdCsVRYzMoEYdKLFQaW58axjPYYNSSxXjeC0AG6T+M=;
-        b=Ca2yArAx2C76HnnxrQCadLhDD+L1H53y1bFzhV5NfuPhFbyohZk99faFmRzAbaCjU0
-         hmxudHJuQrVhAiiCaMINTyZr/h2svH5GxC/ZhaTnpM+MnB1QLz8wpr18OcQ540lQ8kGl
-         5Lg1r/whxMMib36+ogpM2fzSf7xA5R7FhTI+LZ8BqnRA7gZr4gNTT2XIYfxEUMrc/uwg
-         cIi6Cj9EiT1LFdTOZIX5RwQAvQhvUFhFhJmQBpBpm0DOx3XXqnsY9G0kYlGbcd9VXk2P
-         ljYgJ+HmljbYU03svdmamtlK81Iua4aHH5DQQHfPeB0KmsvlJyiIxL7azRIJRjVuDu0j
-         9/jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722256469; x=1722861269;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=URdCsVRYzMoEYdKLFQaW58axjPYYNSSxXjeC0AG6T+M=;
-        b=OY89S0uo5kPAFl4riuo6U4nzIR6k0qgITm5n7QtUX6gSoqug3NeUIeg7qw7T41HWV+
-         /ThIosmJSU4c7i7bzAaGOd7QuqeFDmiK4xfoGN5qQUmmVTyx4GpIJlbJpdBXtV7jsn4l
-         tEB59YSS1jQEvyFR6N123pcX1GFLRK67kLsTfh32Sel7SrDi2Z9MnQ+FE1LmM6xI7hAo
-         /ZTe86VapamBdAtym9c1L2YWE1QeB7M2afVtna+d2OtnytUOUFwgemOgJVCBv5mMRLyE
-         b9h2yZC6IED9jeX3AEm4zu4n6i76BORIKUXlWTmB4WFroVtO5/+BvX/Ky3LxKvkFN21a
-         gD4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVT/r2m9/CiYVf6WV0k6BU42AkZMcFj988VTJLy17SxDe4oYgUSMHdiwYrHhbGfIe+fcJ7/qIzQchxHvvcViHA2nH4S4xgT815xPvZ9XJCeykTBPjP96Qdn03RscOBkylj6EN8DbCKkBw==
-X-Gm-Message-State: AOJu0YwEyRLJCG3INSWjE2U56cbi31/D5nLXI0FwqViz+f6qp/zYDh76
-	Pby8v992C/mc+42woMEXskYBaL9ia6mYD8t10aWcnhnovhQhfgjpO9bXYQ==
-X-Google-Smtp-Source: AGHT+IGWOq/ranKxk8evo1CIUvA7oA0apBLFisTn+0vSn2aJVBWfUN+9nKsEKYp28d0oQAd92Rs6Nw==
-X-Received: by 2002:a17:906:c10f:b0:a7a:a33e:47cc with SMTP id a640c23a62f3a-a7d40185a3emr543302766b.59.1722256468620;
-        Mon, 29 Jul 2024 05:34:28 -0700 (PDT)
-Received: from tablet.my.domain (ip-37-248-159-154.multi.internet.cyfrowypolsat.pl. [37.248.159.154])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadbb910sm505313366b.225.2024.07.29.05.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 05:34:28 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Mon, 29 Jul 2024 14:34:21 +0200
-Subject: [PATCH RESEND v2 2/2] ARM: dts: bcm-mobile: Split out nodes used
- by both BCM21664 and BCM23550
+	s=arc-20240116; t=1722256472; c=relaxed/simple;
+	bh=UITJqYPFQ0UBpEFJQBghvMlRrEj2NhPURPP2f9omv4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwdyYwkeb6Ra1fO8TrZ4yJSDrjT4bMYetzj24YZTl+1QUeAvbFGaJZfMtoyFxVUbnC+6bRGfW4qI2QcBHE0Sbhnx4KMgPgdtDwTK3xSXDFG9CENlY6rtVdRIH5zHw2u+2ECSeCJpaYLKo82ejaIVHyTp8uY/6iASc0okkzbXicE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LxcKquUF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722256468;
+	bh=UITJqYPFQ0UBpEFJQBghvMlRrEj2NhPURPP2f9omv4Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LxcKquUF00FhdboZ6vslCL6q3b1+2tkTGLFvLiN1twWKtgmYaBeYl8mtVv8uBL48D
+	 /c+mhvYTJSehPVoX4vf5iAklgRoRKWkXsQKLxpVIOQSBlEHLIrXaECvwucpd2Woavs
+	 rFQbBcQTZxaTYY8byqLnrFS1uPAbbFFZOPNpljnbS2xIHvbg6e/OgqM8UATaFUfkj/
+	 CVzy3alXkgxVTd0ncTBC/QUocmhJJGk9CIXP/yf5/BDPaT+Gpi7++EpNvTp5ZOQCfg
+	 2uRU3RyWE4mec26H+/5mrCO189t4zoTx4aquEWmtZjlf4HbBcq8M00B+Y0QY0T640X
+	 x98Tnhx8EiLLQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E30B037804D4;
+	Mon, 29 Jul 2024 12:34:27 +0000 (UTC)
+Message-ID: <c3e38dae-646f-471a-ae40-150b8f86cac0@collabora.com>
+Date: Mon, 29 Jul 2024 14:34:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-bcm21664-common-v2-2-ebc21a89bf63@gmail.com>
-References: <20240729-bcm21664-common-v2-0-ebc21a89bf63@gmail.com>
-In-Reply-To: <20240729-bcm21664-common-v2-0-ebc21a89bf63@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, 
- ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=28224;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=qqKHG/Uy5cH7+DH5QFqsdylDvTqWfKKgXY/fImeU5Vw=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmp4xOqWhH5LDo8033MegIvBgWNhqnqiPUl4rgD
- xpOzY5huCyJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqeMTgAKCRCzu/ihE6BR
- aJfWD/9pt165GKyMLEP8oKDTswRnG9IDJZr3pAMEGtJvN6itD1PogJrlZm0G1qR1Bb45gfJA4Cf
- ysChgSd+l3c3gjSyULXGs17noL9OveQyD2FgR9E82RpwocL0/uYfJacGtA//3R2zBX+9TFTjm5c
- HODcoFAuNw5l0o93MqnS7zWb+IqUgCRd0QT3con7s1mPq6xAfybrwgEC9m520Nh9tDNO7tkj6N4
- 3w7ivu0JKW7IpM0n4Wj7jLUF/DI/ZKO6Z3yjf3ahZr65fxviPqeBFO+Aw8EwuJ7HcgUDPO9c7Qc
- XqziYjFLnqRm5e4d37qDfhy9592h+PlZiWtWs5Wn3Ay8MX8d7/84TFlpS9r6TsTGiAAqKJ94Gu0
- OpvE/4jbKJJULvfpeXOYDLQ0fWC5K+SeCWCITScmsu7sZEj42goFeYQa6R5NPe/dsPrSOSarlJ1
- XPXo4C95XN8n6YK/i3SR7VmFSm3sabwnli2NycIzRavFJWA7CEf51GkQm0DZprFqO8njEhlT/Hx
- UvYdS9nB64oZOZcTWbU1YmVAvZcE8dxAWHMKv2HyMdma9//yLMykv58mm8k4QxXfe3gkhtGaO+I
- VcG037FRMUK/yRDFyg5Bsvclm1lCWw5Rndng63Ftfi2wI6Xxsg1h4g7+3QrRcx8ioPDvimsmEut
- G+LZ8BnB2QutliQ==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
+ controller
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+ <CAGXv+5H_pxR18sHeqdWPy9_FARrnLwyyOHV4VXCn9p5OExseiQ@mail.gmail.com>
+ <f12ba385-090b-4772-8c52-e515e25b00ac@collabora.com>
+ <CAGXv+5G92=-k5MDH4BPcM8tgPwcGTJ60trJwr7BwTGHD=wpnDw@mail.gmail.com>
+ <51f0f4f3-11a5-4d74-981e-3f24f8475c7f@collabora.com>
+ <CAGXv+5F-U6O3dQdU2L8bR5V+D=PLreACZYCh5sxBY3PFrex1zg@mail.gmail.com>
+ <de0b0daa-2a35-4286-b4db-4f646073a04c@collabora.com>
+ <CAGXv+5EvzRr8h5vnuV2h=zkVwkVp3fShDP_45BpaO0HkivuDtQ@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5EvzRr8h5vnuV2h=zkVwkVp3fShDP_45BpaO0HkivuDtQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The BCM21664 is nearly identical in terms of register layout to the
-BCM23550. Move the shared nodes into a new file, bcm2166x-common.dtsi,
-and make both bcm21664.dtsi and bcm23550.dtsi include it. This new
-common file is based on the former bcm23550.dtsi file, and inherits
-its licensing.
+Il 29/07/24 12:48, Chen-Yu Tsai ha scritto:
+> On Mon, Jul 29, 2024 at 4:54 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Il 29/07/24 10:07, Chen-Yu Tsai ha scritto:
+>>> On Mon, Jul 29, 2024 at 3:59 PM AngeloGioacchino Del Regno
+>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>
+>>>> Il 26/07/24 17:11, Chen-Yu Tsai ha scritto:
+>>>>> On Fri, Jul 26, 2024 at 8:11 PM AngeloGioacchino Del Regno
+>>>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>>>
+>>>>>> Il 25/07/24 12:34, Chen-Yu Tsai ha scritto:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On Mon, Jul 22, 2024 at 11:27 PM Nícolas F. R. A. Prado
+>>>>>>> <nfraprado@collabora.com> wrote:
+>>>>>>>>
+>>>>>>>> Currently if the xhci1 controller happens to probe before the pcie1
+>>>>>>>> controller then it fails with the following errors:
+>>>>>>>>
+>>>>>>>> xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+>>>>>>>> xhci-mtk 11290000.usb: can't setup: -110
+>>>>>>>> xhci-mtk: probe of 11290000.usb failed with error -110
+>>>>>>>>
+>>>>>>>> The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
+>>>>>>>> clock, although exactly why this pcie clock is needed for the usb
+>>>>>>>> controller is still unknown. Add the clock to the xhci1 controller so it
+>>>>>>>> always probes successfully and use a placeholder clock name for it.
+>>>>>>>>
+>>>>>>>> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+>>>>>>>> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
+>>>>>>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>>>>>>
+>>>>>>> So I asked MediaTek about this, and it seems the correct thing to do is
+>>>>>>> disable USB 3 on this host controller using the following snippet. The
+>>>>>>> snippet is copy-pasted from our issue tracker and won't apply directly.
+>>>>>>>
+>>>>>>> This is also seen in mt8395-kontron-3-5-sbc-i1200.dts, on which xhci1
+>>>>>>> is used only for USB 2.0 on an M.2 slot.
+>>>>>>>
+>>>>>>
+>>>>>> Uhm, okay, but why should USB3 be disabled on a controller that supports USB3?
+>>>>>>
+>>>>>> I agree about disabling it on specific boards that use only the USB 2.0 lines of
+>>>>>> this controller, but doing that globally looks wrong... and looks like being a
+>>>>>> workaround for an error that gets solved with adding a clock as well.
+>>>>>>
+>>>>>> In short, the question is: why would that be the correct thing to do?
+>>>>>
+>>>>> We can disable it in mt8195-cherry.dtsi then?
+>>>>
+>>>> That device does not use this controller, so yes we can disable it, but that still
+>>>> doesn't resolve the issue pointed out by Nicolas...!
+>>>
+>>> No. I mean disable USB3 on this port. Also see the next paragraph.
+>>>
+>>
+>> Yes, sorry I was meaning the same - but I effectively wrote "disable controller"
+>> instead, my bad.
+>>
+>>>> Please note that the issue that he sees doesn't happen only on Tomato, but also on
+>>>> other MediaTek MT8195/MT8395 boards - and applying this commit makes disabling the
+>>>> controller, or disabling the USB 3 lines on the controller, kinda redundant, as
+>>>> this will effectively fix probing it... but again, fixing the actual issue with
+>>>> this controller is something that must be done.
+>>>
+>>> If those other boards use the XHCI1 USB3 lines for ... USB3, then the USB3
+>>> PHY should also be tied to XHCI1, right now due to the Cherry Chromebook
+>>> design, only the USB2 PHY is tied to it.
+>>>
+>>
+>> Yes, I am aware of that.
+>>
+>>>> Disabling the controller on Tomato is a different topic - here we are discussing
+>>>> about fixing the issue, and that will happen, again, on any board that has this
+>>>> controller enabled with USB3 lines. :-)
+>>>>
+>>>> So, unless there is any specific reason for which applying this commit is a bad
+>>>> idea, or any alternative fix to this that is better than the proposed one, and
+>>>> not a workaround... I'm applying this one.
+>>>
+>>> Didn't I just relay what MediaTek says is the correct fix? Disable USB3
+>>> for this port on devices where the serial pairs are used for PCIe instead
+>>> of USB3.
+>>>
+>>
+>> I think there must've been some misunderstanding here.
+>>
+>> Yes you did relay what MediaTek is the correct fix, and I agree that the USB3 must
+>> be disabled on devices where those serial pairs are used for PCIe instead of USB,
+>> or on devices where those are completely unused.
+> 
+> OK. I will send a patch for Tomato as you asked.
+> 
+>> This, though, will fix the issue only on those devices (because we are disabling
+>> those lines entirely, so depending on how we see it, this might not be a fix but
+>> rather a workaround).
+> 
+> I would say that is a more accurate description of the hardware, so a fix.
+> 
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-As for other uses - the BCM21654 (not in mainline) appears to be fairly
-similar in a few ways to the BCM21664 as well; the BCM21855/BCM11531 has
-a similar layout of registers, but there are much more differences.
-We could potentially further split more nodes into a single common
-Broadcom Kona DTSI, then make sub-DTSIs to just change the compatibles,
-but that's a task for another patch.
----
-Changes in v2:
-- Renamed bcm21664-common.dtsi to bcm2166x-common.dtsi
-- Dropped model/compatible from SoC DTSIs
-- Moved apps bus peripherals in SoC DTSIs under "&apps"
-- Re-added SoC-specific compatibles into SoC DTSIs
-- Fixed warning regarding address in GIC node name
----
- arch/arm/boot/dts/broadcom/bcm21664.dtsi           | 338 ++-----------------
- .../{bcm23550.dtsi => bcm2166x-common.dtsi}        | 111 +------
- arch/arm/boot/dts/broadcom/bcm23550.dtsi           | 370 ++-------------------
- 3 files changed, 73 insertions(+), 746 deletions(-)
+I can accept a patch for Tomato with a Fixes tag. Yes.
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm21664.dtsi b/arch/arm/boot/dts/broadcom/bcm21664.dtsi
-index c1ad5123bad4..f0d0300079b6 100644
---- a/arch/arm/boot/dts/broadcom/bcm21664.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm21664.dtsi
-@@ -1,15 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-only
- // Copyright (C) 2014 Broadcom Corporation
- 
--#include <dt-bindings/clock/bcm21664.h>
--#include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/interrupt-controller/irq.h>
-+#include "bcm2166x-common.dtsi"
- 
- / {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	model = "BCM21664 SoC";
--	compatible = "brcm,bcm21664";
- 	interrupt-parent = <&gic>;
- 
- 	cpus {
-@@ -30,312 +24,46 @@ cpu1: cpu@1 {
- 			reg = <1>;
- 		};
- 	};
-+};
- 
--	gic: interrupt-controller@3ff00100 {
--		compatible = "arm,cortex-a9-gic";
--		#interrupt-cells = <3>;
--		#address-cells = <0>;
--		interrupt-controller;
--		reg = <0x3ff01000 0x1000>,
--		      <0x3ff00100 0x100>;
--	};
--
--	smc@3404e000 {
--		compatible = "brcm,bcm21664-smc", "brcm,kona-smc";
--		reg = <0x3404e000 0x400>; /* 1 KiB in SRAM */
--	};
--
--	uartb: serial@3e000000 {
--		compatible = "brcm,bcm21664-dw-apb-uart", "snps,dw-apb-uart";
--		reg = <0x3e000000 0x118>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB>;
--		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--		status = "disabled";
--	};
--
--	uartb2: serial@3e001000 {
--		compatible = "brcm,bcm21664-dw-apb-uart", "snps,dw-apb-uart";
--		reg = <0x3e001000 0x118>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB2>;
--		interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--		status = "disabled";
--	};
--
--	uartb3: serial@3e002000 {
--		compatible = "brcm,bcm21664-dw-apb-uart", "snps,dw-apb-uart";
--		reg = <0x3e002000 0x118>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB3>;
--		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--		status = "disabled";
--	};
--
--	L2: cache-controller@3ff20000 {
--		compatible = "arm,pl310-cache";
--		reg = <0x3ff20000 0x1000>;
--		cache-unified;
--		cache-level = <2>;
--	};
--
--	brcm,resetmgr@35001f00 {
--		compatible = "brcm,bcm21664-resetmgr";
--		reg = <0x35001f00 0x24>;
--	};
--
--	timer@35006000 {
--		compatible = "brcm,kona-timer";
--		reg = <0x35006000 0x1c>;
--		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&aon_ccu BCM21664_AON_CCU_HUB_TIMER>;
--	};
--
--	gpio: gpio@35003000 {
--		compatible = "brcm,bcm21664-gpio", "brcm,kona-gpio";
--		reg = <0x35003000 0x524>;
--		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
--		#gpio-cells = <2>;
--		#interrupt-cells = <2>;
--		gpio-controller;
--		interrupt-controller;
--	};
--
--	sdio1: mmc@3f180000 {
--		compatible = "brcm,kona-sdhci";
--		reg = <0x3f180000 0x801c>;
--		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO1>;
--		status = "disabled";
--	};
--
--	sdio2: mmc@3f190000 {
--		compatible = "brcm,kona-sdhci";
--		reg = <0x3f190000 0x801c>;
--		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO2>;
--		status = "disabled";
--	};
--
--	sdio3: mmc@3f1a0000 {
--		compatible = "brcm,kona-sdhci";
--		reg = <0x3f1a0000 0x801c>;
--		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO3>;
--		status = "disabled";
--	};
--
--	sdio4: mmc@3f1b0000 {
--		compatible = "brcm,kona-sdhci";
--		reg = <0x3f1b0000 0x801c>;
--		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO4>;
--		status = "disabled";
--	};
--
--	bsc1: i2c@3e016000 {
--		compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
--		reg = <0x3e016000 0x70>;
--		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC1>;
--		status = "disabled";
--	};
--
--	bsc2: i2c@3e017000 {
--		compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
--		reg = <0x3e017000 0x70>;
--		interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC2>;
--		status = "disabled";
--	};
--
--	bsc3: i2c@3e018000 {
--		compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
--		reg = <0x3e018000 0x70>;
--		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC3>;
--		status = "disabled";
--	};
--
--	bsc4: i2c@3e01c000 {
--		compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
--		reg = <0x3e01c000 0x70>;
--		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC4>;
--		status = "disabled";
--	};
--
--	clocks {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		/*
--		 * Fixed clocks are defined before CCUs whose
--		 * clocks may depend on them.
--		 */
--
--		ref_32k_clk: ref_32k {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32768>;
--		};
--
--		bbl_32k_clk: bbl_32k {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32768>;
--		};
--
--		ref_13m_clk: ref_13m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <13000000>;
--		};
--
--		var_13m_clk: var_13m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <13000000>;
--		};
--
--		dft_19_5m_clk: dft_19_5m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <19500000>;
--		};
--
--		ref_crystal_clk: ref_crystal {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <26000000>;
--		};
--
--		ref_52m_clk: ref_52m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		var_52m_clk: var_52m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		usb_otg_ahb_clk: usb_otg_ahb {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		ref_96m_clk: ref_96m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <96000000>;
--		};
--
--		var_96m_clk: var_96m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <96000000>;
--		};
--
--		ref_104m_clk: ref_104m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <104000000>;
--		};
--
--		var_104m_clk: var_104m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <104000000>;
--		};
--
--		ref_156m_clk: ref_156m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <156000000>;
-+&apps {
-+		gic: interrupt-controller@1c01000 {
-+			compatible = "arm,cortex-a9-gic";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x01c01000 0x1000>,
-+				  <0x01c00100 0x100>;
- 		};
- 
--		var_156m_clk: var_156m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <156000000>;
-+		L2: cache-controller@1c20000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x01c20000 0x1000>;
-+			cache-unified;
-+			cache-level = <2>;
- 		};
-+};
- 
--		root_ccu: root_ccu@35001000 {
--			compatible = "brcm,bcm21664-root-ccu";
--			reg = <0x35001000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "frac_1m";
--		};
-+&bsc1 {
-+	compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
-+};
- 
--		aon_ccu: aon_ccu@35002000 {
--			compatible = "brcm,bcm21664-aon-ccu";
--			reg = <0x35002000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "hub_timer";
--		};
-+&bsc2 {
-+	compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
-+};
- 
--		master_ccu: master_ccu@3f001000 {
--			compatible = "brcm,bcm21664-master-ccu";
--			reg = <0x3f001000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "sdio1",
--					     "sdio2",
--					     "sdio3",
--					     "sdio4",
--					     "sdio1_sleep",
--					     "sdio2_sleep",
--					     "sdio3_sleep",
--					     "sdio4_sleep";
--		};
-+&bsc3 {
-+	compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
-+};
- 
--		slave_ccu: slave_ccu@3e011000 {
--			compatible = "brcm,bcm21664-slave-ccu";
--			reg = <0x3e011000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "uartb",
--					     "uartb2",
--					     "uartb3",
--					     "bsc1",
--					     "bsc2",
--					     "bsc3",
--					     "bsc4";
--		};
--	};
-+&bsc4 {
-+	compatible = "brcm,bcm21664-i2c", "brcm,kona-i2c";
-+};
- 
--	usbotg: usb@3f120000 {
--		compatible = "snps,dwc2";
--		reg = <0x3f120000 0x10000>;
--		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&usb_otg_ahb_clk>;
--		clock-names = "otg";
--		phys = <&usbphy>;
--		phy-names = "usb2-phy";
--		status = "disabled";
--	};
-+&gpio {
-+	compatible = "brcm,bcm21664-gpio", "brcm,kona-gpio";
-+};
- 
--	usbphy: usb-phy@3f130000 {
--		compatible = "brcm,kona-usb2-phy";
--		reg = <0x3f130000 0x28>;
--		#phy-cells = <0>;
--		status = "disabled";
--	};
-+&smc {
-+	compatible = "brcm,bcm21664-smc", "brcm,kona-smc";
- };
-diff --git a/arch/arm/boot/dts/broadcom/bcm23550.dtsi b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-similarity index 68%
-copy from arch/arm/boot/dts/broadcom/bcm23550.dtsi
-copy to arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-index 50ebe93d6bd0..049e18b61ccd 100644
---- a/arch/arm/boot/dts/broadcom/bcm23550.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-@@ -1,36 +1,13 @@
-+// SPDX-License-Identifier: BSD-3-Clause
- /*
-- *  BSD LICENSE
-+ * Common device tree for components shared between the BCM21664 and BCM23550
-+ * SoCs.
-  *
-- *  Copyright(c) 2016 Broadcom.  All rights reserved.
-- *
-- *  Redistribution and use in source and binary forms, with or without
-- *  modification, are permitted provided that the following conditions
-- *  are met:
-- *
-- *    * Redistributions of source code must retain the above copyright
-- *      notice, this list of conditions and the following disclaimer.
-- *    * Redistributions in binary form must reproduce the above copyright
-- *      notice, this list of conditions and the following disclaimer in
-- *      the documentation and/or other materials provided with the
-- *      distribution.
-- *    * Neither the name of Broadcom Corporation nor the names of its
-- *      contributors may be used to endorse or promote products derived
-- *      from this software without specific prior written permission.
-- *
-- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ * Copyright (C) 2016 Broadcom
-  */
- 
--/* BCM23550 and BCM21664 have almost identical clocks */
-+/dts-v1/;
-+
- #include <dt-bindings/clock/bcm21664.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -38,58 +15,16 @@
- / {
- 	#address-cells = <1>;
- 	#size-cells = <1>;
--	model = "BCM23550 SoC";
--	compatible = "brcm,bcm23550";
--	interrupt-parent = <&gic>;
--
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu0: cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu1: cpu@1 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			enable-method = "brcm,bcm23550";
--			secondary-boot-reg = <0x35004178>;
--			reg = <1>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu2: cpu@2 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			enable-method = "brcm,bcm23550";
--			secondary-boot-reg = <0x35004178>;
--			reg = <2>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu3: cpu@3 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			enable-method = "brcm,bcm23550";
--			secondary-boot-reg = <0x35004178>;
--			reg = <3>;
--			clock-frequency = <1000000000>;
--		};
--	};
- 
- 	/* Hub bus */
--	hub@34000000 {
-+	hub: hub-bus@34000000 {
- 		compatible = "simple-bus";
- 		ranges = <0 0x34000000 0x102f83ac>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
--		smc@4e000 {
--			compatible = "brcm,bcm23550-smc", "brcm,kona-smc";
-+		smc: smc@4e000 {
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x0004e000 0x400>; /* 1 KiB in SRAM */
- 		};
- 
-@@ -99,7 +34,7 @@ resetmgr: reset-controller@1001f00 {
- 		};
- 
- 		gpio: gpio@1003000 {
--			compatible = "brcm,bcm23550-gpio", "brcm,kona-gpio";
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x01003000 0x524>;
- 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-@@ -120,7 +55,7 @@ timer@1006000 {
- 	};
- 
- 	/* Slaves bus */
--	slaves@3e000000 {
-+	slaves: slaves-bus@3e000000 {
- 		compatible = "simple-bus";
- 		ranges = <0 0x3e000000 0x0001c070>;
- 		#address-cells = <1>;
-@@ -157,7 +92,7 @@ uartb3: serial@2000 {
- 		};
- 
- 		bsc1: i2c@16000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x00016000 0x70>;
- 			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -167,7 +102,7 @@ bsc1: i2c@16000 {
- 		};
- 
- 		bsc2: i2c@17000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x00017000 0x70>;
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -177,7 +112,7 @@ bsc2: i2c@17000 {
- 		};
- 
- 		bsc3: i2c@18000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x00018000 0x70>;
- 			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -187,7 +122,7 @@ bsc3: i2c@18000 {
- 		};
- 
- 		bsc4: i2c@1c000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+			/* Compatible filled by SoC DTSI */
- 			reg = <0x0001c000 0x70>;
- 			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -198,7 +133,7 @@ bsc4: i2c@1c000 {
- 	};
- 
- 	/* Apps bus */
--	apps@3e300000 {
-+	apps: apps-bus@3e300000 {
- 		compatible = "simple-bus";
- 		ranges = <0 0x3e300000 0x01b77000>;
- 		#address-cells = <1>;
-@@ -253,20 +188,6 @@ sdio4: mmc@eb0000 {
- 			clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO4>;
- 			status = "disabled";
- 		};
--
--		cdc: cdc@1b0e000 {
--			compatible = "brcm,bcm23550-cdc";
--			reg = <0x01b0e000 0x78>;
--		};
--
--		gic: interrupt-controller@1b21000 {
--			compatible = "arm,cortex-a9-gic";
--			#interrupt-cells = <3>;
--			#address-cells = <0>;
--			interrupt-controller;
--			reg = <0x01b21000 0x1000>,
--			      <0x01b22000 0x1000>;
--		};
- 	};
- 
- 	clocks {
-diff --git a/arch/arm/boot/dts/broadcom/bcm23550.dtsi b/arch/arm/boot/dts/broadcom/bcm23550.dtsi
-index 50ebe93d6bd0..c1c69381286b 100644
---- a/arch/arm/boot/dts/broadcom/bcm23550.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm23550.dtsi
-@@ -1,45 +1,13 @@
-+// SPDX-License-Identifier: BSD-3-Clause
- /*
-- *  BSD LICENSE
-+ * Device tree for the BCM23550 SoC.
-  *
-- *  Copyright(c) 2016 Broadcom.  All rights reserved.
-- *
-- *  Redistribution and use in source and binary forms, with or without
-- *  modification, are permitted provided that the following conditions
-- *  are met:
-- *
-- *    * Redistributions of source code must retain the above copyright
-- *      notice, this list of conditions and the following disclaimer.
-- *    * Redistributions in binary form must reproduce the above copyright
-- *      notice, this list of conditions and the following disclaimer in
-- *      the documentation and/or other materials provided with the
-- *      distribution.
-- *    * Neither the name of Broadcom Corporation nor the names of its
-- *      contributors may be used to endorse or promote products derived
-- *      from this software without specific prior written permission.
-- *
-- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ * Copyright (C) 2016 Broadcom
-  */
- 
--/* BCM23550 and BCM21664 have almost identical clocks */
--#include <dt-bindings/clock/bcm21664.h>
--#include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/interrupt-controller/irq.h>
-+#include "bcm2166x-common.dtsi"
- 
- / {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	model = "BCM23550 SoC";
--	compatible = "brcm,bcm23550";
- 	interrupt-parent = <&gic>;
- 
- 	cpus {
-@@ -80,180 +48,9 @@ cpu3: cpu@3 {
- 			clock-frequency = <1000000000>;
- 		};
- 	};
-+};
- 
--	/* Hub bus */
--	hub@34000000 {
--		compatible = "simple-bus";
--		ranges = <0 0x34000000 0x102f83ac>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		smc@4e000 {
--			compatible = "brcm,bcm23550-smc", "brcm,kona-smc";
--			reg = <0x0004e000 0x400>; /* 1 KiB in SRAM */
--		};
--
--		resetmgr: reset-controller@1001f00 {
--			compatible = "brcm,bcm21664-resetmgr";
--			reg = <0x01001f00 0x24>;
--		};
--
--		gpio: gpio@1003000 {
--			compatible = "brcm,bcm23550-gpio", "brcm,kona-gpio";
--			reg = <0x01003000 0x524>;
--			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
--			#gpio-cells = <2>;
--			#interrupt-cells = <2>;
--			gpio-controller;
--			interrupt-controller;
--		};
--
--		timer@1006000 {
--			compatible = "brcm,kona-timer";
--			reg = <0x01006000 0x1c>;
--			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&aon_ccu BCM21664_AON_CCU_HUB_TIMER>;
--		};
--	};
--
--	/* Slaves bus */
--	slaves@3e000000 {
--		compatible = "simple-bus";
--		ranges = <0 0x3e000000 0x0001c070>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		uartb: serial@0 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x00000000 0x118>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB>;
--			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			status = "disabled";
--		};
--
--		uartb2: serial@1000 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x00001000 0x118>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB2>;
--			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			status = "disabled";
--		};
--
--		uartb3: serial@2000 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x00002000 0x118>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_UARTB3>;
--			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			status = "disabled";
--		};
--
--		bsc1: i2c@16000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
--			reg = <0x00016000 0x70>;
--			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC1>;
--			status = "disabled";
--		};
--
--		bsc2: i2c@17000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
--			reg = <0x00017000 0x70>;
--			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC2>;
--			status = "disabled";
--		};
--
--		bsc3: i2c@18000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
--			reg = <0x00018000 0x70>;
--			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC3>;
--			status = "disabled";
--		};
--
--		bsc4: i2c@1c000 {
--			compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
--			reg = <0x0001c000 0x70>;
--			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			clocks = <&slave_ccu BCM21664_SLAVE_CCU_BSC4>;
--			status = "disabled";
--		};
--	};
--
--	/* Apps bus */
--	apps@3e300000 {
--		compatible = "simple-bus";
--		ranges = <0 0x3e300000 0x01b77000>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		usbotg: usb@e20000 {
--			compatible = "snps,dwc2";
--			reg = <0x00e20000 0x10000>;
--			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&usb_otg_ahb_clk>;
--			clock-names = "otg";
--			phys = <&usbphy>;
--			phy-names = "usb2-phy";
--			status = "disabled";
--		};
--
--		usbphy: usb-phy@e30000 {
--			compatible = "brcm,kona-usb2-phy";
--			reg = <0x00e30000 0x28>;
--			#phy-cells = <0>;
--			status = "disabled";
--		};
--
--		sdio1: mmc@e80000 {
--			compatible = "brcm,kona-sdhci";
--			reg = <0x00e80000 0x801c>;
--			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO1>;
--			status = "disabled";
--		};
--
--		sdio2: mmc@e90000 {
--			compatible = "brcm,kona-sdhci";
--			reg = <0x00e90000 0x801c>;
--			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO2>;
--			status = "disabled";
--		};
--
--		sdio3: mmc@ea0000 {
--			compatible = "brcm,kona-sdhci";
--			reg = <0x00ea0000 0x801c>;
--			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO3>;
--			status = "disabled";
--		};
--
--		sdio4: mmc@eb0000 {
--			compatible = "brcm,kona-sdhci";
--			reg = <0x00eb0000 0x801c>;
--			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&master_ccu BCM21664_MASTER_CCU_SDIO4>;
--			status = "disabled";
--		};
--
-+&apps {
- 		cdc: cdc@1b0e000 {
- 			compatible = "brcm,bcm23550-cdc";
- 			reg = <0x01b0e000 0x78>;
-@@ -267,147 +64,28 @@ gic: interrupt-controller@1b21000 {
- 			reg = <0x01b21000 0x1000>,
- 			      <0x01b22000 0x1000>;
- 		};
--	};
--
--	clocks {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		/*
--		 * Fixed clocks are defined before CCUs whose
--		 * clocks may depend on them.
--		 */
--
--		ref_32k_clk: ref_32k {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32768>;
--		};
--
--		bbl_32k_clk: bbl_32k {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32768>;
--		};
--
--		ref_13m_clk: ref_13m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <13000000>;
--		};
--
--		var_13m_clk: var_13m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <13000000>;
--		};
--
--		dft_19_5m_clk: dft_19_5m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <19500000>;
--		};
--
--		ref_crystal_clk: ref_crystal {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <26000000>;
--		};
--
--		ref_52m_clk: ref_52m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		var_52m_clk: var_52m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		usb_otg_ahb_clk: usb_otg_ahb {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--		};
--
--		ref_96m_clk: ref_96m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <96000000>;
--		};
--
--		var_96m_clk: var_96m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <96000000>;
--		};
--
--		ref_104m_clk: ref_104m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <104000000>;
--		};
--
--		var_104m_clk: var_104m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <104000000>;
--		};
-+};
- 
--		ref_156m_clk: ref_156m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <156000000>;
--		};
-+&bsc1 {
-+	compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+};
- 
--		var_156m_clk: var_156m {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <156000000>;
--		};
-+&bsc2 {
-+	compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+};
- 
--		root_ccu: root_ccu@35001000 {
--			compatible = "brcm,bcm21664-root-ccu";
--			reg = <0x35001000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "frac_1m";
--		};
-+&bsc3 {
-+	compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+};
- 
--		aon_ccu: aon_ccu@35002000 {
--			compatible = "brcm,bcm21664-aon-ccu";
--			reg = <0x35002000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "hub_timer";
--		};
-+&bsc4 {
-+	compatible = "brcm,bcm23550-i2c", "brcm,kona-i2c";
-+};
- 
--		slave_ccu: slave_ccu@3e011000 {
--			compatible = "brcm,bcm21664-slave-ccu";
--			reg = <0x3e011000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "uartb",
--					     "uartb2",
--					     "uartb3",
--					     "bsc1",
--					     "bsc2",
--					     "bsc3",
--					     "bsc4";
--		};
-+&gpio {
-+	compatible = "brcm,bcm23550-gpio", "brcm,kona-gpio";
-+};
- 
--		master_ccu: master_ccu@3f001000 {
--			compatible = "brcm,bcm21664-master-ccu";
--			reg = <0x3f001000 0x0f00>;
--			#clock-cells = <1>;
--			clock-output-names = "sdio1",
--					     "sdio2",
--					     "sdio3",
--					     "sdio4",
--					     "sdio1_sleep",
--					     "sdio2_sleep",
--					     "sdio3_sleep",
--					     "sdio4_sleep";
--		};
--	};
-+&smc {
-+	compatible = "brcm,bcm23550-smc", "brcm,kona-smc";
- };
+>> If we don't apply this fix, any board that uses those pairs for USB 3 instead will
+>> still show the same "clocks are not stable" error, leaving them with a broken port.
+>>
+>> And I believe that because the clocks are not routed externally but rather are
+>> internal to the SoC, so, if INFRA_AO_PCIE_P1_TL_96M is necessary for that USB 3
+>> port to work, a board that intends to use those pairs for USB3 would still need
+>> this exact clock to actually get that port to work.
+> 
+> I couldn't reproduce the issue by disabling pcie1 as Nicolas mentioned.
+> I don't have any more to add to this though. Sorry for the noise.
+> 
 
--- 
-2.45.2
+Sometimes the noise actually opens some eyes around (be it mine or whoever else's),
+so as long as it is constructive, I don't see it as noise.
+
+In short: no worries! :-)
+
+>> As for Tomato itself - I agree that we must add the u3p-dis-msk=0x1 flag, yes,
+>> and we will, but I'm purely talking about - again - an eventual board that would
+>> not have that property because USB3 is exposed/used for real.
+> 
+> I think it would make more sense to fix the `phys = ` statement in mt8195.dtsi
+> to list both the USB2 and USB3 PHYs. At the board level, for boards only
+> using USB2, we would have the overriding `phys = ` statement alongside the
+> `mediatek,u3p-dis-mask` property. Does that make sense to you?
+> 
+
+Yeah, that'd make sense, though I'm not sure if the driver can cope with that: in
+that case, we'd obviously need "two" patches and not one :-)
+
+Cheers!
+
+> 
+> Thanks
+> ChenYu
+> 
+>> Cheers,
+>> Angelo
+>>
+>>>
+>>> Regards
+>>> ChenYu
+>>>
+>>>> Cheers,
+>>>> Angelo
+>>>>
+>>>>>
+>>>>> ChenYu
+>>>>>
+>>>>>> Cheers,
+>>>>>> Angelo
+>>>>>>
+>>>>>>>
+>>>>>>> ChenYu
+>>>>>>>
+>>>>>>> index 8b7307cdefc6..2dac9f706a58
+>>>>>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>>>>> @@ -1447,6 +1447,7 @@
+>>>>>>>                                           "xhci_ck";
+>>>>>>>                             mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>>>>>>>                             wakeup-source;
+>>>>>>> +                       mediatek,u3p-dis-msk = <0x1>;
+>>>>>>>                             status = "disabled";
+>>>>>>>                     };
+>>>>>>>
+>>>>>>>> ---
+>>>>>>>>      arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
+>>>>>>>>      1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>>>>>> index 2ee45752583c..cc5169871f1c 100644
+>>>>>>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>>>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>>>>>>> @@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
+>>>>>>>>                                      <&topckgen CLK_TOP_SSUSB_P1_REF>,
+>>>>>>>>                                      <&apmixedsys CLK_APMIXED_USB1PLL>,
+>>>>>>>>                                      <&clk26m>,
+>>>>>>>> -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
+>>>>>>>> +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
+>>>>>>>> +                                /*
+>>>>>>>> +                                 * This clock is required due to a hardware
+>>>>>>>> +                                 * bug. The 'frmcnt_ck' clock name is used as a
+>>>>>>>> +                                 * placeholder.
+>>>>>>>> +                                 */
+>>>>>>>> +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
+>>>>>>>>                             clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
+>>>>>>>> -                                     "xhci_ck";
+>>>>>>>> +                                     "xhci_ck", "frmcnt_ck";
+>>>>>>>>                             mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+>>>>>>>>                             wakeup-source;
+>>>>>>>>                             status = "disabled";
+>>>>>>>>
+>>>>>>>> ---
+>>>>>>>> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+>>>>>>>> change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
+>>>>>>>>
+>>>>>>>> Best regards,
+>>>>>>>> --
+>>>>>>>> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>
+>>
+
+
 
 
