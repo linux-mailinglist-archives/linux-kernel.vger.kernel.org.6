@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-265762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55FE93F5A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:41:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1378D93F5A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 14:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AB01C21D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:41:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A2CB21774
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D351149C4A;
-	Mon, 29 Jul 2024 12:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6A014882A;
+	Mon, 29 Jul 2024 12:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIYD5Ml5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8W7sDZM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95441494A6;
-	Mon, 29 Jul 2024 12:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7F7145FE1;
+	Mon, 29 Jul 2024 12:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256839; cv=none; b=igJzLVm79/Kg7NopSHpnjMawCoNzlJTIPeMN3mhBuTOX0ERwlaIXSAMAIVi9ybZtNZIMe9ytf/bykc/fYNsWsR0EDqzrSYE/fTli173KXRSPR3+Sp7uIX1swI6qgoSq1gUFPDBqCGPrSDoTkIRjoIzwWHMqCt8YMfWudBcqhcqw=
+	t=1722256835; cv=none; b=frUwPXhsa97Mu8pl4yW2UaEM7jq6Gx23HcUOryXGaaQ9aZ1rno/unkpym+5LRpdFY9K8CnPXMpU83HNSem9XiesqomQNQ5J3VJFl6W4mNbSsa3YIIhtgYDqytqz1G4vYQlFd4mk1qc8QtSLuL/oMoXC/pbvufkhRbP35jEG0XZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256839; c=relaxed/simple;
-	bh=N3xXeZ5Sz94ZClfXA2KC8TLwvIpUwZiE2+p14uPFP0U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=vE0cYKU3XWqWl4I5DpTEXK2Zs1MmB6y5zQb93tlxjuMkEJH0vY0ZP776Z42Q8dcfIuSkP2kdNmXf/1HA4/4M+qmD3uQJiDynM4W2rr4k39WRmGJvoHf/4kwnkt0ZVPvEXRk2NE+kV0aDdmII5MbCPKMKdCW/dSNj1H36b3PIbSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIYD5Ml5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038F3C32786;
-	Mon, 29 Jul 2024 12:40:32 +0000 (UTC)
+	s=arc-20240116; t=1722256835; c=relaxed/simple;
+	bh=wHsh5WQSdcrSRUcV1G75PxkF61eDMM6o20gIC6vEWX8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Bf0ICUyH5pSxhg3Cn+VdQGPpnwXeSAktClyWbvn49pwsrjcFj33LpcSTFLKzhPVgRLtw0xyeyfdaU4tfl7y05RxlspLydLkrxmRs4+hKkxab5g5GTl9rTGotxbjKlU3dn5ESOxOBZ1+Oow957SwD35mB3PMnJM61MMTZBezlm9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8W7sDZM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 29672C4AF0A;
+	Mon, 29 Jul 2024 12:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722256838;
-	bh=N3xXeZ5Sz94ZClfXA2KC8TLwvIpUwZiE2+p14uPFP0U=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=mIYD5Ml5u6jBbAhz4WBkGgqO6N37dImmRT5PYLWABPIwOVl9rxQyXhvqF2WTzKuiX
-	 uO7wSu1FteyPMT7TlL2SxhguOg9jZZVMTD7NzQn0558cQxqAcxt5W35CcxjHha28vx
-	 nxU1fXT/+fpEDGsaIUAUweGv51VHDz/XAt9DNRAiGxcy/B1449qgp1LCC48K+tNuZw
-	 s0SaQEOUMSX1MuE01fZczIbVXIJi1mdwW2+/4Q7qtVeyPkJnnMiNqq+jCFbmfTQWOF
-	 hkHN0iAgil+j6hW1Krw1lv5nftLljpu92YMHKoOYSgsBC2vdJOoctfLWcACZ86mauj
-	 F/1Enhe/KWCBQ==
-Message-ID: <aaf74e25-ba24-454c-8bc1-c2b079d549e3@kernel.org>
-Date: Mon, 29 Jul 2024 14:40:30 +0200
+	s=k20201202; t=1722256835;
+	bh=wHsh5WQSdcrSRUcV1G75PxkF61eDMM6o20gIC6vEWX8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=k8W7sDZM60ZCVGHOLK4qBFnCXNn7y+ah5GB3OKiZNFyt7FYwfbgqO8ryokXlCc1WT
+	 MtpKs9n1RWBgtxLHfJbNIdQuK02OVq/94HBEb4A4HO62v9u2JcEWIJomcGMeh5OMDL
+	 TlAbt8R/3M+C6LitbJ1sYCiM78PYtHlh6Qyx5xeSBEGZ9LB1mxlh3+2dwN8Rzp7Nne
+	 qvDHCBbz78qmLyJ0ilKj9o5TcxIiybdShk0Vmb5RnuGXjuMii7GqUq6heqLEdZN7ha
+	 QJXgzOsB9pOc4gG5uMnbvTUQ/MIhiajStIm3eX5nhV/IteirVeYVeKxyQUak3tbtK1
+	 lLKE3y7XR/5HA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 19C17C4332D;
+	Mon, 29 Jul 2024 12:40:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] drm/msm/adreno: Implement SMEM-based speed bin
-From: Konrad Dybcio <konradybcio@kernel.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Elliot Berman <quic_eberman@quicinc.com>
-References: <20240709-topic-smem_speedbin-v5-0-e2146be0c96f@linaro.org>
- <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
- <20240715200419.l47ng6efa25in6sg@hu-akhilpo-hyd.qualcomm.com>
- <8e2ebc97-f455-4f41-81da-af56263e6cf6@linaro.org>
- <87607d2c-a4b1-4923-ba9f-9cfc56a0aa38@kernel.org>
-Content-Language: en-US
-In-Reply-To: <87607d2c-a4b1-4923-ba9f-9cfc56a0aa38@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/5] mptcp: fix signal endpoint readd
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172225683510.11158.15615122490002292811.git-patchwork-notify@kernel.org>
+Date: Mon, 29 Jul 2024 12:40:35 +0000
+References: <20240727-upstream-net-20240726-mptcp-fix-signal-readd-v1-0-1e7d25a23362@kernel.org>
+In-Reply-To: <20240727-upstream-net-20240726-mptcp-fix-signal-readd-v1-0-1e7d25a23362@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org,
+ liujing@cmss.chinamobile.com
 
+Hello:
 
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-On 29.07.2024 2:13 PM, Konrad Dybcio wrote:
-> On 16.07.2024 1:56 PM, Konrad Dybcio wrote:
->> On 15.07.2024 10:04 PM, Akhil P Oommen wrote:
->>> On Tue, Jul 09, 2024 at 12:45:29PM +0200, Konrad Dybcio wrote:
->>>> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
->>>> abstracted through SMEM, instead of being directly available in a fuse.
->>>>
->>>> Add support for SMEM-based speed binning, which includes getting
->>>> "feature code" and "product code" from said source and parsing them
->>>> to form something that lets us match OPPs against.
->>>>
->>>> Due to the product code being ignored in the context of Adreno on
->>>> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
->>>>
->>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>> ---
->> [...]
->>
->>>>  
->>>> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
->>>> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
->>>>  		speedbin = 0xffff;
->>>> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
->>>> +	adreno_gpu->speedbin = speedbin;
->>> There are some chipsets which uses both Speedbin and Socinfo data for
->>> SKU detection [1].
->> 0_0
->>
->>
->>> We don't need to worry about that logic for now. But
->>> I am worried about mixing Speedbin and SKU_ID in the UABI with this patch.
->>> It will be difficult when we have to expose both to userspace.
->>>
->>> I think we can use a separate bitfield to expose FCODE/PCODE. Currently,
->>> the lower 32 bit is reserved for chipid and 33-48 is reserved for speedbin,
->>> so I think we can use the rest of the 16 bits for SKU_ID. And within that
->>> 16bits, 12 bits should be sufficient for FCODE and the rest 8 bits
->>> reserved for future PCODE.
->> Right, sounds reasonable. Hopefully nothing overflows..
-> +CC Elliot
+On Sat, 27 Jul 2024 11:03:58 +0200 you wrote:
+> Issue #501 [1] showed that the Netlink PM currently doesn't correctly
+> support removal and re-add of signal endpoints.
 > 
-> Would you know whether these sizes ^ are going to be sufficient for
-> the foreseeable future?
+> Patches 1 and 2 address the issue: the first one in the userspace path-
+> manager, introduced in v5.19 ; and the second one in the in-kernel path-
+> manager, introduced in v5.7.
+> 
+> [...]
 
-Also Akhil, 12 + 8 > 16.. did you mean 8 bits for both P and FCODE? Or
-12 for FCODE and 4 for PCODE?
+Here is the summary with links:
+  - [net,1/5] mptcp: fix user-space PM announced address accounting
+    https://git.kernel.org/netdev/net/c/167b93258d1e
+  - [net,2/5] mptcp: fix NL PM announced address accounting
+    https://git.kernel.org/netdev/net/c/4b317e0eb287
+  - [net,3/5] selftests: mptcp: add explicit test case for remove/readd
+    https://git.kernel.org/netdev/net/c/b5e2fb832f48
+  - [net,4/5] selftests: mptcp: fix error path
+    https://git.kernel.org/netdev/net/c/4a2f48992ddf
+  - [net,5/5] selftests: mptcp: always close input's FD if opened
+    https://git.kernel.org/netdev/net/c/7c70bcc2a84c
 
-Konrad
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
