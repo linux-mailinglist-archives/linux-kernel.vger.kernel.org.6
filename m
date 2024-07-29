@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-266341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE6B93FE61
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:38:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD8B93FE6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995D3283391
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2851F23E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FCB188CB6;
-	Mon, 29 Jul 2024 19:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4712A188CA3;
+	Mon, 29 Jul 2024 19:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Nc7pAAjw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J+Q12iyh"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B9F85947;
-	Mon, 29 Jul 2024 19:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB27514A0B7;
+	Mon, 29 Jul 2024 19:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281897; cv=none; b=Z0wu4wk1tx824QSib2dHrLGVz1vdMfWLCaksLW0QO7E/zMnJT8mRhJ2dgh3CiUWvJZS2jTyBpB2tLoZDwJYBSjTqmaSdQ4np5eXVLKUY13M2YGfv5bfRMjIQ3TaPZJ9H3rTC8IS2LQ0YgfuEIRQHsMtmTZ6cSvEJ8MdwsgkunOg=
+	t=1722282020; cv=none; b=JyScTq7Plr54M8jaDh3SwxW2C87V/gL1K6/NpaVLJbG0H3GBOXdxu/wLuNPIen0PFtnJBqAmxNPw6vvX18zG68G6JjOG9U6+wY3rZjGfsO7s5hS56wk02ac0lLyEKY9cLHK20xQ2I6E8kHAv9VYALTCGFhQJeJ4TlEc9CQp4LPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281897; c=relaxed/simple;
-	bh=sZVi+2wk7bs9BELhyd1J9soxIby8FIm+O1C2MvOrn7s=;
+	s=arc-20240116; t=1722282020; c=relaxed/simple;
+	bh=kaAMFQc35zsWdTsHHo5+ATinSUDamxGImLIP3C8cWFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ik2cre8WLLkIym/9fAZeRgLhrUxgl1+WveTOvNju5HR+qvpFs/PyL4D7DhjpINDabMU8p7QTD20Va02rupGchIan6HheSZF8qCkAGdaVVtW6JkTmxd7Ub7vf4GROizjqtY1BhBiW4ubrItbTxF9um1WSWTwoyyFghFuGN0LpWcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Nc7pAAjw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=aViOeWOAFrCQc+pd2oF31G+/p4LxlFN55RgNCh7Jk5c=; b=Nc7pAAjwiZSEtGfijJYK2n6kSW
-	a7mD6m7J/OH21Y7MP1yIpC3Qokf2FBxgcf2LbupjQd2VeWtDwIUfDoUhH9DBIGslCxTuNmLaMy4ii
-	LmSaA7eZMEovPkK1ppis1zatH+N3bEXQHdewidKOy/UFrVMQSawBfj5DRL0oEmfcYHSE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sYWBw-003V3O-KA; Mon, 29 Jul 2024 21:37:56 +0200
-Date: Mon, 29 Jul 2024 21:37:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>,
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Vibhore Vardhan <vibhore@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-	Conor Dooley <conor@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] can: m_can: Map WoL to device_set_wakeup_enable
-Message-ID: <3d2a2b51-356f-4a9c-940e-df58be8d2cf3@lunn.ch>
-References: <20240729074135.3850634-1-msp@baylibre.com>
- <20240729074135.3850634-3-msp@baylibre.com>
- <15424d0f-9538-402f-bc5d-cdd630c7c5e9@lunn.ch>
- <20240729-blue-cockle-of-vigor-7d7670-mkl@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdU4WZ4KR2foLkhn7koRAD9n4qou6VzHg1MJ1CBnr47lQoCvDFEqWmzYbccOM5TVcmU7qr2XD8rTkcPjDxPfoNP5l68VSPicCxSkPQiTf0yO6efnxFKS4/kCSjkLeX8MDE+CPrhvVMoZrdIyEpssDv8YKjtUv3MRhFjCbprAhVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J+Q12iyh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722282017;
+	bh=kaAMFQc35zsWdTsHHo5+ATinSUDamxGImLIP3C8cWFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J+Q12iyh0P9X2ZfDu7fRRgp5PoIwVVh637TISz4u1T2ifHLh7c18jld+4ntnM20hH
+	 nemHITmMKLXKwjzCE01n1G+z9ej+yJ/DQ+5eo/UgcCjdGUwybN0wZxSLpCpvjv/8FL
+	 CDKimzywB3GQDip1K2RmEtnVGYSPZeaPI8+fapnYLoKnQ4NxJ7UWSjIVwrQaEsuDSh
+	 eUgkfhCQslz7hmm53F4vyOy7vYRyUXrvb5kjF58g27EheEdxcnwiMaRr6ncWOaX2+4
+	 4AKjqMTKKfHbFyM805wANsIsNXB8FK8Q7+EMC7a6BahFZ5b4zD4Aq+JDp1+oTbMrZH
+	 ITTn7DaC8ymNQ==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D12CE37809CE;
+	Mon, 29 Jul 2024 19:40:15 +0000 (UTC)
+Date: Mon, 29 Jul 2024 15:40:14 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Yongqin Liu <yongqin.liu@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>, kernel@collabora.com,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sumit Semwal <sumit.semwal@linaro.org>
+Subject: Re: [PATCH] spi: Assign dummy scatterlist to unidirectional transfers
+Message-ID: <2e56fee0-2bbb-4b7d-b955-6990b227c706@notapiano>
+References: <20240529-dma-oops-dummy-v1-1-bb43aacfb11b@collabora.com>
+ <ZleYXoesgdAboMoF@surfacebook.localdomain>
+ <CAMSo37X1GRUtuyHDL5GfQAqbH8EVjgAWR129D3uTF3CRPpLKPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240729-blue-cockle-of-vigor-7d7670-mkl@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMSo37X1GRUtuyHDL5GfQAqbH8EVjgAWR129D3uTF3CRPpLKPQ@mail.gmail.com>
 
-> > > +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-> > > +{
-> > > +	struct m_can_classdev *cdev = netdev_priv(dev);
-> > > +
-> > > +	wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > > +	wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > > +}
-> > 
-> > It is nice to see Ethernet WoL mapped to CAN :-)
-> > 
-> > So will any activity on the CAN BUS wake the device? Or does it need
-> > to be addresses to this device?
+On Tue, Jul 23, 2024 at 12:05:52AM +0800, Yongqin Liu wrote:
+> On Thu, 30 May 2024 at 05:04, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> >
+> > Wed, May 29, 2024 at 11:42:35AM -0400, Nícolas F. R. A. Prado kirjoitti:
+> > > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > >
+> > > Commit 8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents")
+> > > introduced a regression: unmapped data could now be passed to the DMA
+> > > APIs, resulting in null pointer dereferences. Commit 9f788ba457b4 ("spi:
+> > > Don't mark message DMA mapped when no transfer in it is") and commit
+> > > da560097c056 ("spi: Check if transfer is mapped before calling DMA sync
+> > > APIs") addressed the problem, but only partially. Unidirectional
+> > > transactions will still result in null pointer dereference. To prevent
+> > > that from happening, assign a dummy scatterlist when no data is mapped,
+> > > so that the DMA API can be called and not result in a null pointer
+> > > dereference.
+> >
+> > I feel that with this the da560097c056 ("spi: Check if transfer is mapped
+> > before calling DMA sync APIs") can be reverted as unneeded. Nícolas, can
+> > you check that? If it works, we better revert the unneeded checks.
 > 
-> Unless you have a special filtering transceiver, which is the CAN
-> equivalent of a PHY, CAN interfaces usually wake up on the first
-> message on the bus. That message is usually lost.
+> FYI, just tested based on the Android Common Kernel android-mainline branch,
+> with only the following two changes, the issue is not reported too:
+>     9dedabe95b49 spi: Assign dummy scatterlist to unidirectional transfers
+>     9f788ba457b4 spi: Don't mark message DMA mapped when no transfer in it is
 
-Thanks for the info. WAKE_PHY does seem the most appropriate then.
+Hi Yongqin,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Simply reverting commit da560097c056 ("spi: Check if transfer is mapped before
+calling DMA sync APIs") caused issues on the sc7180-limozeen platform as I
+mentioned in
+https://lore.kernel.org/all/1ea41944-a107-4528-8e8d-559c06907e3f@notapiano/.
 
-    Andrew
+Instead of that, Andy landed this commit reworking the flag, which got rid of
+that check anyway and provided a cleaner solution:
+https://lore.kernel.org/all/20240531194723.1761567-9-andriy.shevchenko@linux.intel.com/
+
+Thanks,
+Nícolas
 
