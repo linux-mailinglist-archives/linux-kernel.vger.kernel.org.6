@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-266177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952CE93FC0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:06:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466B993FC10
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66BB1C20FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0AFC281C6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419AA15EFC8;
-	Mon, 29 Jul 2024 17:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2938215EFC8;
+	Mon, 29 Jul 2024 17:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Qwz/LIT9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F2zW/mfG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E91DA24
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88D1DA24
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 17:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722272803; cv=none; b=bBzwrIvASpr7jCkHAXf3skUwSTodrnDFIv6Cq8mQ9/0MCHC/8Gakx+wN0QMjWe1g0BHafEzX9xtSN/nD6MlCPJo/rrywMIvMheUstjtfYc51QmoSICYCHk/O3CygnVWcAbpZcQOZwiQR+v0Zr+DDTlMSAFSSCEO5N8vEEug18a8=
+	t=1722272961; cv=none; b=JiggbQJYi8v3zc/4tzetGnmkrS59xLy7FcAo8RXtb18xreqW94z3GzLtQ2VHoWd6LxWaTCjmhy1A2YMfX8PfFfDI5UTxqL954x6sq5M4wYAiRLXA0P+l9iNWySmi6Z3SOoqV3ZiNiV9Xiig360YU0RWqBbHrBLyWw2975mxiDm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722272803; c=relaxed/simple;
-	bh=H8LqM1vVwV4D2NOWzzUb8ajziic3Ihe9GcXyFxhFMrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMu8/y8uDak/B2qLrNGiuRbG7HT73MNMPDQPswNBo5yw+KA1Q3CWRDXWSzxrYc+YrYsxz8CVy8D2xonPVJm1WtlrjFN1fnujkPH/lU6EDMB8kDpjfUv6LHjBtjwcPafUWnOOe3TZ8c6CR8/T+U3SuBF8cYS6BQwSDiDHizWUdyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Qwz/LIT9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A741CC32786;
-	Mon, 29 Jul 2024 17:06:42 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Qwz/LIT9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1722272801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5KzOgCsm4+QXyIMxKMBzF9Y+HbbcubFAkdH7t3Gz8ZQ=;
-	b=Qwz/LIT9iIlWm2q6np3OpS55lH44ORkE+gXBQ2sKBmmdyAH7svVVd0nAiVA3ylXND+AFLJ
-	tmx+1qc+9RY/R5VQ6Wp78SPxT4fzNw/MBc1S8v6mjM8tpOiVZ3Lo560oCwW04nVtwgDjD8
-	yFKsKu/yzjl6JW/OsyA4t0JcgtVlvKQ=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a0b094c3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 29 Jul 2024 17:06:40 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH] selftests/vDSO: don't #include sodium header in chacha test
-Date: Mon, 29 Jul 2024 19:06:33 +0200
-Message-ID: <20240729170637.335506-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1722272961; c=relaxed/simple;
+	bh=93TyKXXtyYESXRq1Ky6CoBioFtI67DJxcopYIhH4Hco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SUcR5AqGbTAGCtB/4/RbLqpqA04A62vzaBu35KOFtjCOGym0xsJK2C3fnVC+iEgvHzpMJ/asVqFTUFzad4zbKAH6Qa5rzIj8gmBmzJR1JEdO5vaeYWbsjE8/KI8jZrntTJcqoYyIjDbQCx6xbYpwSob1l1Ltzim58JXWzle7xEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F2zW/mfG; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722272960; x=1753808960;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=93TyKXXtyYESXRq1Ky6CoBioFtI67DJxcopYIhH4Hco=;
+  b=F2zW/mfGoK3Yuh40CUGx/MdDRjAywHUWCRpDv47GgWt/UZ3liA6U+WNG
+   PukFW3dpXpWbZqFtHB44ADe7jgoaOXi44aiM76VRwkidNg+Lvr0o930xK
+   8dvONVZD2GoKFj4OssVbgeaXEIt8vcQq2IOiMWRIv8VN9iOdFCNQS7jbj
+   +CypqwP2Jypse+etS0asLeTQ5vyOeKcpngMwFbJGu36ERrVZ0MGQ/Yc1r
+   EMg9I8Nl3UHCRmVj6/OP1jhxQEvjmgnthVIGqnxt5kiwXoANB0fnsMjio
+   oJcxWMYXyC+Rrp11PR6chPYpsPjJT60CCQ35EQ36qStI8eud1bfQTH27Q
+   w==;
+X-CSE-ConnectionGUID: rnpI3fqzRRaJRekw6vkYSw==
+X-CSE-MsgGUID: nnDOTeIrRfWoeM9ypH038A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="37521457"
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="37521457"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 10:09:19 -0700
+X-CSE-ConnectionGUID: 3YV3axWxSBmlZd94GkuKVg==
+X-CSE-MsgGUID: 96axKRTSRJicsPz+KrjLKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="84696790"
+Received: from refitch-mobl.amr.corp.intel.com (HELO [10.125.162.4]) ([10.125.162.4])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 10:09:19 -0700
+Message-ID: <1d258c8a-b513-47e7-a94d-60263af8f190@linux.intel.com>
+Date: Mon, 29 Jul 2024 10:09:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/11] x86/bugs: Remove GDS Force Kconfig option
+To: Breno Leitao <leitao@debian.org>, bp@alien8.de,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20240729164105.554296-1-leitao@debian.org>
+ <20240729164105.554296-11-leitao@debian.org>
+Content-Language: en-US
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+In-Reply-To: <20240729164105.554296-11-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-With changes in various kernel headers, there's a clash if we include
-the libsodium header. This is especially hard to fix with build flags,
-because we're compiling the assembly together with the C file, for
-testing. Instead, just add the single library prototype we're using in
-the file and don't bother including the real header.
+On 7/29/24 09:40, Breno Leitao wrote:
+> Remove the MITIGATION_GDS_FORCE Kconfig option, which aggressively disables
+> AVX as a mitigation for Gather Data Sampling (GDS) vulnerabilities. This
+> option is not widely used by distros.
+> 
+> While removing the Kconfig option, retain the runtime configuration
+> ability through the `gather_data_sampling=force` kernel parameter. This
+> allows users to still enable this aggressive mitigation if needed,
+> without baking it into the kernel configuration.
+> 
+> This change simplifies the kernel configuration while maintaining
+> flexibility for runtime mitigation choices.
+> 
+> Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- tools/testing/selftests/vDSO/vdso_test_chacha.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index e38f44e5f803..ade9897535a1 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -3,13 +3,13 @@
-  * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-  */
- 
--#include <sodium/crypto_stream_chacha20.h>
- #include <sys/random.h>
- #include <string.h>
- #include <stdint.h>
- #include "../kselftest.h"
- 
- extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+extern int crypto_stream_chacha20(uint8_t *dst_bytes, uint64_t dst_len, const uint8_t *nonce, const uint8_t *key);
- 
- int main(int argc, char *argv[])
- {
--- 
-2.45.2
+LGTM. Feel free to add a Reviewed-by from me.
 
 
