@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-265643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208D293F3F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581FA93F3FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E7A2B226EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CA172826B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EE6146583;
-	Mon, 29 Jul 2024 11:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNscfaXk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5B11465BB;
+	Mon, 29 Jul 2024 11:24:28 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B52144D01;
-	Mon, 29 Jul 2024 11:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D987145B27;
+	Mon, 29 Jul 2024 11:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252244; cv=none; b=GuM97q8xsFTVMXB/8gwghWkFJhyjIEwV+uzIgGI2QNEQKBO82ysR6f/R7g95NhC7kUobyN3t/59FTmW6AUSAHtibJJ8vsSdrCI6kH3BucjOTj05ELWQKnJbzNp9YR7ZbvHpA/Sk6ggAlJpKB/8Kfq2l/Gt/IOEUZtlhMysb3kEo=
+	t=1722252268; cv=none; b=sE7AfyAzEaToDl7zXPqvxTIiPpyvuS0XNQPIBXbi+Z/G4OLkRBneX5e5vV8FB//0QWFo3LXaiXu/l69H4e6QvoEBjyRp2xAL1XcJguwwegrZ8KbqZvfJKf1cAlqsWARppv6eTHGpzoefMCeL9U8HqzaOZHgQUk2tp4C8Oq6ow04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252244; c=relaxed/simple;
-	bh=5waAH00rUEegT+y5tOiOOjYIeQTGw6i7qeM1HGNnVDU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Oc7IaBiGSXXha7+kWnGBUJh/24PG6T8s0MHYdImzVB6+LmRYEacHnvFV9aYcL7m5oqg3hYvsDbsrUFACpghg/Moaj9jy4CUZcR+M0jLuGojNi8x+iuz76m7XDL8EcQdtV+IrrsaJLv0dmwsWQGROocqiOHWHHKvTrY5zw2KVN7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNscfaXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 575CFC4AF0C;
-	Mon, 29 Jul 2024 11:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722252244;
-	bh=5waAH00rUEegT+y5tOiOOjYIeQTGw6i7qeM1HGNnVDU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sNscfaXklNnwpGUP3RBmVCwM/mb0DNgaZqBy7SvNjXit56eo+qpqHkGKzDHggeEIY
-	 YLTKL+IuTUo0hM8kCIWI8luZ/ayVfsqsalO3w9dJk1L5hdE9DEHHHCRqsfwUtq83Kh
-	 IwFWlTH1BVIql3JjfOCVErls/REZ7U+vnTQM22ahLI7/55oVaOpWSXPHwtmmY8vPnq
-	 Ob2NLxCySefZ9EpVFzQHfCvpR8KaQ4rtYNZHxJUs+rkqcbOTWfPtKCe6oei+EtFFAW
-	 Hx4U65yaXw7RK/GlYKPINcyXiGNamjlm+c35dT/jsoPx7knegQzNBH3L1RY8oCuPCN
-	 Mo/sJ/eY9Ch8g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4CDF2C4332D;
-	Mon, 29 Jul 2024 11:24:04 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722252268; c=relaxed/simple;
+	bh=Gol+QduaOMllEQIpFhsjB/fgfNVi5UeI+pGA+FSEgeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RkrTW3EkBIw+JoBvBLN26aLj6R8hvJlUVkUjavTadFGdxTTpRL4m5SHXyAwSfHzp9H6O2wsXtl4gUDsQ1HMblW91tEccH9q5X0sB+TxUrn0EU0nBQG1pCL94RN0vPV99LSpIucYpomdw3yEhScZxHhEhbs403HaOK1NphvxKDd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WXbbf3xTvzxVhn;
+	Mon, 29 Jul 2024 19:24:14 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 83A69180AE5;
+	Mon, 29 Jul 2024 19:24:23 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 19:24:22 +0800
+Message-ID: <7f9891dd-10bb-f714-400c-0e61c8e6e61c@huawei.com>
+Date: Mon, 29 Jul 2024 19:24:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: axienet: start napi before enabling Rx/Tx
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172225224431.15294.4080149929042366779.git-patchwork-notify@kernel.org>
-Date: Mon, 29 Jul 2024 11:24:04 +0000
-References: <20240726-dev-andyc-net-fixes-v1-1-15a98b79afb4@sifive.com>
-In-Reply-To: <20240726-dev-andyc-net-fixes-v1-1-15a98b79afb4@sifive.com>
-To: Andy Chiu <andy.chiu@sifive.com>
-Cc: radhey.shyam.pandey@amd.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, michal.simek@amd.com,
- robert.hancock@calian.com, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] ARM: Add support for STACKLEAK gcc plugin
+Content-Language: en-US
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <ardb@kernel.org>, <arnd@arndb.de>, <afd@ti.com>,
+	<akpm@linux-foundation.org>, <linus.walleij@linaro.org>,
+	<eric.devolder@oracle.com>, <robh@kernel.org>, <kees@kernel.org>,
+	<masahiroy@kernel.org>, <palmer@rivosinc.com>, <samitolvanen@google.com>,
+	<xiao.w.wang@intel.com>, <alexghiti@rivosinc.com>, <nathan@kernel.org>,
+	<jan.kiszka@siemens.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-efi@vger.kernel.org>
+References: <20240624023612.2134144-1-ruanjinjie@huawei.com>
+ <b8792d9c-c2a2-6808-f94b-e3b826232f78@huawei.com>
+ <Zqd5HCx/GiMtXnlZ@shell.armlinux.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zqd5HCx/GiMtXnlZ@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
 
-On Fri, 26 Jul 2024 15:06:50 +0800 you wrote:
-> softirq may get lost if an Rx interrupt comes before we call
-> napi_enable. Move napi_enable in front of axienet_setoptions(), which
-> turns on the device, to address the issue.
+On 2024/7/29 19:12, Russell King (Oracle) wrote:
+> On Mon, Jul 22, 2024 at 10:53:10AM +0800, Jinjie Ruan wrote:
+>> Gentle ping.
 > 
-> Link: https://lists.gnu.org/archive/html/qemu-devel/2024-07/msg06160.html
-> Fixes: cc37610caaf8 ("net: axienet: implement NAPI and GRO receive")
-> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+> You submitted it on 27th June to the patch system. I applied it on 2nd
+> July, and you would have received an automatic notification of that.
 > 
-> [...]
+> I have been on vacation from 6th July through to the 28th inclusive. As
+> seems to be the norm, the merge window opened during my vacation time,
+> in this case, 14th to 28th.
+> 
+> Nevertheless, the pull request was sent to Linus on Saturday 27th.
 
-Here is the summary with links:
-  - net: axienet: start napi before enabling Rx/Tx
-    https://git.kernel.org/netdev/net/c/799a82950750
+Sorry to interrupt your vacation. Thank you.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> 
 
