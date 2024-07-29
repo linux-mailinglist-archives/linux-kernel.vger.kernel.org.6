@@ -1,147 +1,268 @@
-Return-Path: <linux-kernel+bounces-266522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9554C94010D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:32:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3DB940122
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279142828AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19731C21EB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663DF189F37;
-	Mon, 29 Jul 2024 22:32:06 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF7218F2CF;
+	Mon, 29 Jul 2024 22:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q2zdEDAv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111B8C07
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E5C1411FD
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722292326; cv=none; b=Hx5fH1eDntFEmCx+08HUr0fL5MCqc0pLgR/e1baOPiwePRLPzyBjPpvXXz1nphxpU5mfPw8TFc+uvvV18sEKQ67t3Hv7glU6O6JgDbmGG2OoVC+oah7s7bk3d1pGtfnv05rSVvVAJucxHhHYAGObX0ZTpIeVqMbp0GmuKxTElRA=
+	t=1722292509; cv=none; b=bLSaMkXIBwS3hm7aJvGCey62IUVzzJD4ejvC8oyWXWMduO+50F3Wtxe+XqOhvRvM244Xs9BxXrNlLIlVw6DnnurfmOIH9YWSnUo/uX/Ar8E9G1Er+o0SxLJ+i4AQwVc8cbPB4nL/5ls/JBNIvhcZshoiltfQHcAy7641cQWNX8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722292326; c=relaxed/simple;
-	bh=HwTsfAjX3EYVyojXYlEqbc75PZG0GpUpOqtt14QYdCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eq6yAaRMHRUg6TXizsqy0Nv1IPlwI6j2QdUEDpbPekF+ao483XuMT+3sxQyr6TzBjQG0qX99z377dAmIWsz8hVx1DCwVw0pSevMPSE2PV9ye8yOUnFH3HCZ3nMKaJrtBUQfTzXzYzGPZ78/FVRuunbELwGun1/7UHfQlVIkWVAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C675BC32786;
-	Mon, 29 Jul 2024 22:32:04 +0000 (UTC)
-Date: Mon, 29 Jul 2024 18:32:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Thorsten Blum
- <thorsten.blum@toblux.com>
-Subject: Re: [GIT PULL] ring-buffer: Updates for 6.11
-Message-ID: <20240729183203.7cd9f0dc@rorschach.local.home>
-In-Reply-To: <20240716155118.152dea35@rorschach.local.home>
-References: <20240716155118.152dea35@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722292509; c=relaxed/simple;
+	bh=D2LbBa8yrH7AapnJX6FlE6xtVbHhhm7/Y1i/qQc5nKA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=IpA8RP7Lu+eqtGGm5n8rq6r1zuLFq7GTt1C6w6VxomigMQDMVMV3545jYRRWC6W/l6NCP1Xz/kXKTVwl6pI98gKACkTCGdxa0Co+vEOkYB9c7FjpRDKinuyLueG6b0FjR2dkoD6PMkIJdDVFWkwyJHm06rEKL6qLJ2HWMOJvVKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q2zdEDAv; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722292507; x=1753828507;
+  h=date:from:to:cc:subject:message-id;
+  bh=D2LbBa8yrH7AapnJX6FlE6xtVbHhhm7/Y1i/qQc5nKA=;
+  b=Q2zdEDAvbziwZ62/NfA6YMtBPeLqFr4REPXC5S3ISSBIVTeQcPLqfPum
+   m2utLoPdACzUJbSMq4KSB2eC6c91C+VDQm/kWhKaWrcCwMO1WdVD6+s1L
+   Bmo1HFJlAdO8m60+dus0WbBpVUcbnFO1UzxHvO3ylxe4x+YN+c8hz4fWT
+   /pIAxaiWZsu2sxSD4jxrvDI3CYOlLb+iwY4CoTk6oqw01fKAmhtlp7FVx
+   sjuhKad2YaS5kwRjVbqaSt9RpFAqtdBi7203tFs2ulHe6jstnElLmHH7n
+   S8/7vpkeJt8uJWtrCqqlX9TwqvcKNB59S1VsJGSEGBzbuhHPBBEUZyBdU
+   A==;
+X-CSE-ConnectionGUID: ELBenFO6Q4qvvisA6d9yvQ==
+X-CSE-MsgGUID: +qyYumkRQQu4W8Uhm8kI0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="19879285"
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="19879285"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 15:35:06 -0700
+X-CSE-ConnectionGUID: F9gMF/VqQmS6FqAM0pOX1Q==
+X-CSE-MsgGUID: SfnylmphTa+AYLFlVBN0Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,247,1716274800"; 
+   d="scan'208";a="58729515"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 29 Jul 2024 15:35:04 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sYYxL-000s8y-0g;
+	Mon, 29 Jul 2024 22:35:03 +0000
+Date: Tue, 30 Jul 2024 06:34:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/urgent] BUILD SUCCESS
+ fe7a11c78d2a9bdb8b50afc278a31ac177000948
+Message-ID: <202407300644.XXkHOq9h-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/urgent
+branch HEAD: fe7a11c78d2a9bdb8b50afc278a31ac177000948  sched/core: Fix unbalance set_rq_online/offline() in sched_cpu_deactivate()
 
-Hi Linus,
+elapsed time: 725m
 
-I just noticed that this wasn't pulled. Was there an issue with it?
+configs tested: 176
+configs skipped: 4
 
--- Steve
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                          axs103_defconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240729   gcc-13.2.0
+arc                   randconfig-002-20240729   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-14.1.0
+arm                         axm55xx_defconfig   clang-20
+arm                                 defconfig   clang-14
+arm                                 defconfig   gcc-13.2.0
+arm                          ixp4xx_defconfig   gcc-14.1.0
+arm                          pxa168_defconfig   clang-20
+arm                   randconfig-001-20240729   gcc-14.1.0
+arm                   randconfig-002-20240729   gcc-14.1.0
+arm                   randconfig-003-20240729   gcc-14.1.0
+arm                   randconfig-004-20240729   clang-20
+arm64                            allmodconfig   clang-20
+arm64                             allnoconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-13.2.0
+arm64                               defconfig   gcc-14.1.0
+arm64                 randconfig-001-20240729   clang-17
+arm64                 randconfig-002-20240729   clang-20
+arm64                 randconfig-003-20240729   gcc-14.1.0
+arm64                 randconfig-004-20240729   clang-20
+csky                              allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-13.2.0
+csky                                defconfig   gcc-14.1.0
+csky                  randconfig-001-20240729   gcc-14.1.0
+csky                  randconfig-002-20240729   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+hexagon                             defconfig   clang-20
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240729   clang-18
+i386         buildonly-randconfig-002-20240729   gcc-13
+i386         buildonly-randconfig-003-20240729   clang-18
+i386         buildonly-randconfig-004-20240729   gcc-10
+i386         buildonly-randconfig-005-20240729   clang-18
+i386         buildonly-randconfig-006-20240729   gcc-8
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240729   gcc-12
+i386                  randconfig-002-20240729   clang-18
+i386                  randconfig-003-20240729   gcc-10
+i386                  randconfig-004-20240729   gcc-13
+i386                  randconfig-005-20240729   gcc-8
+i386                  randconfig-006-20240729   gcc-13
+i386                  randconfig-011-20240729   gcc-13
+i386                  randconfig-012-20240729   clang-18
+i386                  randconfig-013-20240729   gcc-9
+i386                  randconfig-014-20240729   clang-18
+i386                  randconfig-015-20240729   gcc-13
+i386                  randconfig-016-20240729   clang-18
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+m68k                                defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-14.1.0
+mips                           rs90_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-13.2.0
+nios2                               defconfig   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           alldefconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc64                            defconfig   gcc-13.2.0
+parisc64                            defconfig   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc                     asp8347_defconfig   clang-17
+powerpc                 mpc834x_itx_defconfig   clang-20
+powerpc                  mpc866_ads_defconfig   clang-20
+riscv                            allmodconfig   clang-20
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                               defconfig   clang-20
+riscv                               defconfig   gcc-14.1.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   clang-20
+s390                                defconfig   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                          lboxre2_defconfig   gcc-14.1.0
+sh                           se7206_defconfig   gcc-14.1.0
+sh                           sh2007_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc                       sparc32_defconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13
+um                                  defconfig   clang-20
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-13
+um                             i386_defconfig   gcc-14.1.0
+um                           x86_64_defconfig   clang-15
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240729   clang-18
+x86_64       buildonly-randconfig-002-20240729   gcc-13
+x86_64       buildonly-randconfig-003-20240729   gcc-10
+x86_64       buildonly-randconfig-004-20240729   gcc-10
+x86_64       buildonly-randconfig-005-20240729   gcc-10
+x86_64       buildonly-randconfig-006-20240729   gcc-10
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240729   gcc-13
+x86_64                randconfig-002-20240729   clang-18
+x86_64                randconfig-003-20240729   clang-18
+x86_64                randconfig-004-20240729   clang-18
+x86_64                randconfig-005-20240729   clang-18
+x86_64                randconfig-006-20240729   clang-18
+x86_64                randconfig-011-20240729   gcc-8
+x86_64                randconfig-012-20240729   gcc-8
+x86_64                randconfig-013-20240729   gcc-13
+x86_64                randconfig-014-20240729   clang-18
+x86_64                randconfig-015-20240729   gcc-13
+x86_64                randconfig-016-20240729   clang-18
+x86_64                randconfig-071-20240729   gcc-13
+x86_64                randconfig-072-20240729   gcc-13
+x86_64                randconfig-073-20240729   clang-18
+x86_64                randconfig-074-20240729   gcc-8
+x86_64                randconfig-075-20240729   gcc-12
+x86_64                randconfig-076-20240729   gcc-13
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                            allnoconfig   gcc-14.1.0
+xtensa                       common_defconfig   gcc-14.1.0
+xtensa                    smp_lx200_defconfig   gcc-14.1.0
+xtensa                         virt_defconfig   gcc-14.1.0
 
-On Tue, 16 Jul 2024 15:51:18 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> Linus,
-> 
-> tracing/ring-buffer: Have persistent buffer across reboots
-> 
-> This allows for the tracing instance ring buffer to stay persistent across
-> reboots. The way this is done is by adding to the kernel command line:
-> 
->   trace_instance=boot_map@0x285400000:12M
-> 
-> This will reserve 12 megabytes at the address 0x285400000, and then map
-> the tracing instance "boot_map" ring buffer to that memory. This will
-> appear as a normal instance in the tracefs system:
-> 
->   /sys/kernel/tracing/instances/boot_map
-> 
-> A user could enable tracing in that instance, and on reboot or kernel
-> crash, if the memory is not wiped by the firmware, it will recreate the
-> trace in that instance. For example, if one was debugging a shutdown of a
-> kernel reboot:
-> 
->  # cd /sys/kernel/tracing
->  # echo function > instances/boot_map/current_tracer
->  # reboot
-> [..]
->  # cd /sys/kernel/tracing
->  # tail instances/boot_map/trace
->        swapper/0-1       [000] d..1.   164.549800: restore_boot_irq_mode <-native_machine_shutdown
->        swapper/0-1       [000] d..1.   164.549801: native_restore_boot_irq_mode <-native_machine_shutdown
->        swapper/0-1       [000] d..1.   164.549802: disconnect_bsp_APIC <-native_machine_shutdown
->        swapper/0-1       [000] d..1.   164.549811: hpet_disable <-native_machine_shutdown
->        swapper/0-1       [000] d..1.   164.549812: iommu_shutdown_noop <-native_machine_restart
->        swapper/0-1       [000] d..1.   164.549813: native_machine_emergency_restart <-__do_sys_reboot
->        swapper/0-1       [000] d..1.   164.549813: tboot_shutdown <-native_machine_emergency_restart
->        swapper/0-1       [000] d..1.   164.549820: acpi_reboot <-native_machine_emergency_restart
->        swapper/0-1       [000] d..1.   164.549821: acpi_reset <-acpi_reboot
->        swapper/0-1       [000] d..1.   164.549822: acpi_os_write_port <-acpi_reboot
-> 
-> On reboot, the buffer is examined to make sure it is valid. The validation
-> check even steps through every event to make sure the meta data of the
-> event is correct. If any test fails, it will simply reset the buffer, and
-> the buffer will be empty on boot.
-> 
-> 
-> Please pull the latest ring-buffer-v6.11 tree, which can be found at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> ring-buffer-v6.11
-> 
-> Tag SHA1: d3d32acdae295a7eb0600aa878ff33f4fe52460d
-> Head SHA1: b96c312551b241bc17226c5347c6d6b38a1efd3e
-> 
-> 
-> Dan Carpenter (1):
->       tracing: Fix NULL vs IS_ERR() check in enable_instances()
-> 
-> Steven Rostedt (Google) (13):
->       ring-buffer: Allow mapped field to be set without mapping
->       ring-buffer: Add ring_buffer_alloc_range()
->       ring-buffer: Add ring_buffer_meta data
->       tracing: Implement creating an instance based on a given memory region
->       ring-buffer: Add output of ring buffer meta page
->       ring-buffer: Add test if range of boot buffer is valid
->       ring-buffer: Validate boot range memory events
->       tracing: Add option to use memmapped memory for trace boot instance
->       ring-buffer: Save text and data locations in mapped meta data
->       tracing/ring-buffer: Add last_boot_info file to boot instance
->       tracing: Handle old buffer mappings for event strings and functions
->       tracing: Update function tracing output for previous boot buffer
->       tracing: Add last boot delta offset for stack traces
-> 
-> Thorsten Blum (1):
->       ring-buffer: Use vma_pages() helper function
-> 
-> ----
->  Documentation/admin-guide/kernel-parameters.txt |   9 +
->  include/linux/ring_buffer.h                     |  20 +
->  kernel/trace/ring_buffer.c                      | 886 +++++++++++++++++++++---
->  kernel/trace/trace.c                            | 244 ++++++-
->  kernel/trace/trace.h                            |  10 +-
->  kernel/trace/trace_output.c                     |  12 +-
->  6 files changed, 1061 insertions(+), 120 deletions(-)
-> ---------------------------
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
