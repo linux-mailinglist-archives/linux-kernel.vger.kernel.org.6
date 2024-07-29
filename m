@@ -1,332 +1,90 @@
-Return-Path: <linux-kernel+bounces-266354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26C093FE9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96F793FE9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 21:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A50282975
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1721A1C2261D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 19:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D712318D4D2;
-	Mon, 29 Jul 2024 19:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1DE188CB8;
+	Mon, 29 Jul 2024 19:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnOqvt/c"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="id3cqWdu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836CD18A929
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 19:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00960188CA3;
+	Mon, 29 Jul 2024 19:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282746; cv=none; b=PM2R4oTGgk+Q2lX867Xy+/pkwyzn9RGuoMEtp022Vz/KpQTKbLvRIiutlLNyWedK9hQBkr/YWp9I4MW8sgCAzf2O94alzsEDuSWAOXJi80KfVNitAXD1nmMiaHOxD17WSudUU7ZYH6gN4cCzyUX3OF6QdO9Zjq5aeKBtKFu9Mgw=
+	t=1722282817; cv=none; b=n0/t8RCgPOPZVn3ICCUB172Cs2wRCbnkNOrSRMdZto6j03vIQzzzUvdRJmRhWQBkZo+SbOPc7djs+OutltWQbYvNSUOEP870KK21U3vcCIMJ8iBLQR0AvQjLXKsF6p0SE6R8oGkPP/QP7ArVZcStvSYU8ssOsap9LJ7DZEQBXaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282746; c=relaxed/simple;
-	bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvG8WTUaqjcf75wMaf6HAGo+cdkK2T2W+OcxQHcl1VsU0D0EAzR2sQ+gFQnnYDl9UYuEhFfmBBHNCOcENh/3ma1oiv5CNHc0jk4wMUHvzFWBJ/tXX208GGiyuoRyTbHVN5ewxbQzar+vtMwXdmvHyA6ffGz3fNSnjh6SgsB/HjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnOqvt/c; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f01993090so6049435e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 12:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722282743; x=1722887543; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=RnOqvt/c0e99g1wVhG8Heva0kcftKlRzHhhm++bjtQnuAltn3TSp72xr3PWMV2w13T
-         1nBMHAsJrJf4ThLFL0WwZIHVEr31HMqtDsUbRawj3/FylXarigvrLngUGyQkEYIoCHIS
-         /0ASiK1iD7EQYYDioZqMQet/9O+E2oR0PJU8ZDqd7Jg7P3evzwzG0kIQnzKj6B3o/QD7
-         hiZQ4GlTRR1hOQ1T1vNUF1dN3lKqWoXMtoapJiHIlJJDGeMH4RNs7xUH8ggz1jQ/RdFg
-         edcDGhNOgqboSOnazGYzyGGKrRag7yihi9y0IqLrZGTjqjn5DRNHCalhwO+UiKAh5dWH
-         lMxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722282743; x=1722887543;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=PdEFaAJ3JTtP3WzR/CHgKhNivnxpTOEKL8Iro5twhWL2S0OdMDllL3bS+EwWDqqmHk
-         e0YFdtuKql0gge7qMHezAwH5U7AAaO4vSlj00CamYDbUo0YuhWh2MaPVzWEt1y5m48zF
-         DaqyN2u82J+upbxO5pk7FtbaEShdBbnq8MqJUnEUJfVzpvlZYDV/UnSEHrE9B5zTlFev
-         1sCeHSzwDQ8e0Aounz0ug/DLdSBno9spSs81UFaAP1MyJdu9pqm1rDglWZFBTbZ/uOjS
-         j3ExZVnTVTB1ZlGfoe6fD023Gvg7Fckdefy2Gq+ai/ZRPo3HLhGo6iQrohpSnQPYpMYn
-         0KKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDphcQEV8JZlOcScnpdz5oONVhZqEQdmAKUkHC47Mf8NuLFaR0K7wrNlJLsCmFPVw8XOaW6sy7k/XW35EJBdjbEcYkzpvKlcGKIUuX
-X-Gm-Message-State: AOJu0Yw+Hifvmua4fi8DfdkvC2dnHM89LnvKucNKV1LjkW+iFsK7j3yL
-	ojM5tpW8TpFMD1NpKdc66vCJH4qI4hgPG/XGRKFutnafvAgc8BBeJ7gmJhvLqlo=
-X-Google-Smtp-Source: AGHT+IEoUa5Kq4BiEJEbD/pnaPgcbfWAsGmbgkhlgJhiVuF+n53mG9ru8cRtBtnLWxCCpIfBP96BCA==
-X-Received: by 2002:ac2:4f07:0:b0:52e:a60e:3a08 with SMTP id 2adb3069b0e04-5309b25aa12mr7561340e87.11.1722282742634;
-        Mon, 29 Jul 2024 12:52:22 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:52:21 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jul 2024 22:52:18 +0300
-Subject: [PATCH v2 5/5] arm64: dts: qcom: add generic compat string to RPM
- glink channels
+	s=arc-20240116; t=1722282817; c=relaxed/simple;
+	bh=J9ybpcNDOP1sUvWx1UQzXipfsAb8eKeVODEPV4snaHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nV+QG3QNORKSGJ0I1LbWjnTWrZSQ/SDlF9TNY6FQC/Ciq1cR4CH9l6hnaHGTb+qsr564PlEzPxxu2+YuZJoPIiTmn6FsFyK97bdWr50xJPgXZfC9ltO7JA3yQSrpfWZNbrE1GaTyJHTrd3sq25U0z4Gm/HD/OGcCfpzi+4o/tGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=id3cqWdu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E304C32786;
+	Mon, 29 Jul 2024 19:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722282816;
+	bh=J9ybpcNDOP1sUvWx1UQzXipfsAb8eKeVODEPV4snaHo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=id3cqWdupT2AVW+GqxtImDKo4WKAjeotUzomZ6ci3NfmQmlnt5YV5OEKYiJJEP2oY
+	 TcPEH7mMk5SCzgrNJ4q1zrfjY7zXvB1OL6uGuRR4vPgqrEq4GdgB5qgwjbpSiTFZj/
+	 e3kNzgg0XFjsKBQ9bV9CZ8BqtdbxgOUz9QWjz2kd0G6gcp95czvNIl7LJKYjkJ4a7+
+	 jUEEh5dmzFIMNej5OzoVMQKSHFJ2SABqyX0YsFo9SN/ChN7j+OxZHwiLYAa+bZN2l1
+	 NmwOcsM8RgZDSGPb6Fyje9mvZpKPAkiKjvejdg5te6UD94awlB0hzSOS2OJI//cNB/
+	 yolNQyYqjavgg==
+Date: Mon, 29 Jul 2024 20:53:29 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: light: ltr390: Add ALS channel and support
+ for gain and resolution
+Message-ID: <20240729205329.57390e20@jic23-huawei>
+In-Reply-To: <20240729115056.355466-3-abhashkumarjha123@gmail.com>
+References: <20240729115056.355466-1-abhashkumarjha123@gmail.com>
+	<20240729115056.355466-3-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-fix-smd-rpm-v2-5-0776408a94c5@linaro.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8405;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/Lxkkf1Hee0/3zaCdHJ6DntkURb4bZWzrS7n
- pJMqskhXzmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8QAKCRCLPIo+Aiko
- 1UZ+CAClqTh6Y/FVSqyLyzKrVNGkoLtqAbBJkvsHJsoWgv9SgemgVqpfTXKk4lz9RojYo9XEZH7
- WFRiwQiU6VbsPlonYLUSCL6haENBgHtA1hcw65PlowiXM8Ysd+fldhDy2izWDz6ctABM2jOK95Q
- HBFNfeuHUcRPbincq6FErpQPZ9VAyFzMffLoYeJqwk7xwAeP/X/uPsuRDhnz24aF6oIOz5f5FPn
- YPZHOL76TZ+zkv4ag5u77AJERC7YUWjP5OypOXlcqri7qfj/CuckVMtqz0tWq/plyj7FcrdFVku
- N8EJvJoPmrAeTCGsYwALJm7NdgYRflH6gmn91d23ZNCCSJPi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add the generic qcom,smd-rpm / qcom,glink-smd-rpm compatible to RPM
-nodes to follow the schema.
+On Mon, 29 Jul 2024 17:20:54 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcm2290.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sdm630.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6115.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6125.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6375.dtsi  | 2 +-
- 15 files changed, 15 insertions(+), 15 deletions(-)
+> Add new ALS channel and allow reading raw and scale values.
+> Also provide gain and resolution configuration for ALS channel.
+> Add automatic mode switching between the UVS and ALS channel
+> based on which channel is being accessed.
+> The default mode in which the sensor start is ALS mode.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Hi Abhash,
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index e1e45da7f787..8edd535a188f 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -168,7 +168,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq6018";
-+				compatible = "qcom,rpm-ipq6018", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				regulators {
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..08a82a5cf667 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -181,7 +181,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq9574";
-+				compatible = "qcom,rpm-ipq9574", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 7383bcc603ab..0ee44706b70b 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -312,7 +312,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8916";
-+				compatible = "qcom,rpm-msm8916", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index 46d9480cd464..28634789a8a9 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -252,7 +252,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8936";
-+				compatible = "qcom,rpm-msm8936", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index a4bfb624fb8a..d20fd3d7c46e 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -199,7 +199,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8953";
-+				compatible = "qcom,rpm-msm8953", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index d62dcb76fa48..c76cab9174be 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -247,7 +247,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8976";
-+				compatible = "qcom,rpm-msm8976", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-index 917fa246857d..fc2a7f13f690 100644
---- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-@@ -188,7 +188,7 @@ smd-edge {
- 			qcom,remote-pid = <6>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8994";
-+				compatible = "qcom,rpm-msm8994", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 0fd2b1b944a5..e5966724f37c 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -472,7 +472,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8996";
-+				compatible = "qcom,rpm-msm8996", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 7f44807b1b97..2bcfa480509d 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -352,7 +352,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8998";
-+				compatible = "qcom,rpm-msm8998", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-index 8f3be4c75db3..79bc42ffb6a1 100644
---- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-@@ -215,7 +215,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcm2290";
-+				compatible = "qcom,rpm-qcm2290", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index c291bbed6073..cddc16bac0ce 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -177,7 +177,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcs404";
-+				compatible = "qcom,rpm-qcs404", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index c7e3764a8cf3..c8da5cb8d04e 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -372,7 +372,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sdm660";
-+				compatible = "qcom,rpm-sdm660", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-index e374733f3b85..41216cc319d6 100644
---- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-@@ -376,7 +376,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6115";
-+				compatible = "qcom,rpm-sm6115", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-index 777c380c2fa0..133610d14fc4 100644
---- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-@@ -192,7 +192,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6125";
-+				compatible = "qcom,rpm-sm6125", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6375.dtsi b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-index ddea681b536d..4d519dd6e7ef 100644
---- a/arch/arm64/boot/dts/qcom/sm6375.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-@@ -653,7 +653,7 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
- 			mboxes = <&ipcc IPCC_CLIENT_AOP IPCC_MPROC_SIGNAL_GLINK_QMP>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6375";
-+				compatible = "qcom,rpm-sm6375", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
+Patch looks good but one quick question.
+Why not present an IIO_LIGHT channel?  Needs to be converted
+to be illuminance (with scale / offset applied) rather than IIO_INTENSITY
+which we use when the frequency response is different from the requirements
+to measure Lux (and the units get very vague!)
 
--- 
-2.39.2
+Looks like what you have here is close, but not quite the right scale
+factor as not including integration time and the mysterious 0.6 on the datasheet.
 
+If we can provide a signal scaled to illuminance that tends to be a lot
+more useful for things like screen brightness control because it should
+be close at least to other light sensors.
+
+Jonathan
 
