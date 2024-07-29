@@ -1,420 +1,166 @@
-Return-Path: <linux-kernel+bounces-266254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A7693FD38
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A3F93FD3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B111283529
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA96283436
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82777183087;
-	Mon, 29 Jul 2024 18:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF25183087;
+	Mon, 29 Jul 2024 18:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u3XSBnSQ"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rd7A25DV"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6DC78274
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722276994; cv=none; b=Le2h5fWKVjNHfyzwoNC4UgyoLBQzp/RmRnOxluXQ6/NqFULGKlonLYG2a0hyMxwDcZMwSpMeJfmdnvDEiEzwn4GV5YjJbrpKSNMqgctJLW2bZd+f/qG7M/hqZ5METVRhRlipV1Iu1PUQc6b15M5kUmJmzT9jwFqMvtL77Y5Gf6M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722276994; c=relaxed/simple;
-	bh=t6B1LA4zqZ8ueYk8CYBnXqH9l78JsoKEpJUtrVyMUcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=GpBbOWB5892ZigIsxiw85WbyIjVraOahDL3rQsIGKNQexyC3DHT31sthgggLEq0BeY4u9nKNf8sh/K8+/YIFPY5eD0QUsy9F6s08CbZ51iBa1eQt3vmEIYRVZQkNjZ+GrRpqAgZMlkmHYnoO33iwd9ceUOP9wbNcf0aNLNujIVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u3XSBnSQ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fdc70e695so43631cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722276991; x=1722881791; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wWiPyvyu7ecXoQvNdyQ0e4PXq8L8deC2fhQOyAGRWdA=;
-        b=u3XSBnSQ/VvpiYDa877x1PKuP7ZQBf6DXrkxsZzCELqPd+cZREPNC6bWShl9DZT7Mw
-         bH06qvLthSLnsZMCOUwdfi5GFIWFWoUreoGXrPvBkUAdCPsbpiJ2KLnGMMuy9a250quw
-         qgw3tmADudf17GzknkySLig8ekrGLGDSciYfUP6PiKZfI5Wxd/t0V0FpW6A/JEX4SuNS
-         khJ0dJR4XHMplSqiExcHuLBTq0eWSPkSJgHGN6yNELnHdT6vfp+cC1/fD/uMS8vusVYo
-         8VJs+l32Uz91u5w2agSlRw3ndL4r6dCZdpzaepLhsrT2UazVq5vA2QtzE+Cd3mkTYtwl
-         gk+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722276991; x=1722881791;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wWiPyvyu7ecXoQvNdyQ0e4PXq8L8deC2fhQOyAGRWdA=;
-        b=TusC/MsQHFRvw+i0kBr0inBdDPPmM9aImP1gC2OFaYMBl6QRUwzPZu+78X+d5fcdIj
-         vLis9u8AOcAiospouBtfDjGOPxV6Xme8H0k95XOz8keFJMJ95jhoRYaism/2CorlA2am
-         GiJe/eJDtTWb9RwLuWmpsjrw87n/7khX7aPCT0cSkFj7r2uXdlKNZOUHNRKF8OugCq1W
-         3rTkS+ICWTudUMt7OcD8v+gEL1+W9TrSzXGye5uc5C7nIfHa0p2S11bY5kJPJ7El+0/s
-         OcjFJAUw+YOI2Nr947Nd3uzJKu4FLICLpuEtP7CzS4uIjJjpnV8OIxc5MS0WhHaYuYYI
-         kWSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXG6yPt0UjKzmR2tD5Z41XXWW9ZN8XEolOmaZbVAIWDiBwiCRE0hQr5AORV1dMuiSUUcLD3Qe/lfAhD9vFCtLx1C4Z/pTg+2+aLRNnK
-X-Gm-Message-State: AOJu0YxysGcb2KcYFCQAIHwrkERubIrwDtpunqdwx9hzocykRIIc8lfS
-	OiFGB+hITv6wInmhgRblHK9znpREaYLJSpb3EAPi2I6IDVR67PfCxmSLuheIQgEcmWknwW/vo0R
-	19/6tTJNXgCQ5LDIYEkSsWJLWD9GEAaOYXVT9
-X-Google-Smtp-Source: AGHT+IGZ+WOUgJVVPyty8rkhJWaAzIkfT+8IeGbVFcGg+BX4EPxm6yPAXlhVQGUlQJrbAKDRWJzL6BrRIKSotArZ1Xc=
-X-Received: by 2002:a05:622a:1829:b0:447:e59b:54eb with SMTP id
- d75a77b69052e-45032cdd446mr833191cf.26.1722276991339; Mon, 29 Jul 2024
- 11:16:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABFD7FBA8
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722277024; cv=fail; b=PGmy6LZKocrny83e3c7Okla9Bsu+NR0BDHo4YF3IgJSpcgCAVvmNIkh2xRx+4Z09Dct5/WzJsYf9/eof8fy2C0JhtjFMGkdtBVK6tL1kKrQkYuTEuyqYy/rYkT0muAexytJI5yU+iNbKYA/DWmpTX3J44iUS6+N2IRGE4gkBcjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722277024; c=relaxed/simple;
+	bh=L3ZO82k4NwYivujpBL6Nn4BwXITKCeibwGEFMH+6cjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qVOWryI1Ml0kCopX6eB75ymYqbvRTMk0BtHQXuaOJwOFg1huES+otCbkyQcBTNQ1m1OYRhC2ePT7EeOsbEaH+dnpPVr7vc5gGTCoWGINk6TMwpLTCmn9EXkp5PJuQO5llnqwSmf7hzE5/qSGnl3FuEDRCaZhS1AQ2Tduai4sGiU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rd7A25DV; arc=fail smtp.client-ip=40.107.244.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kEHMW3TkO7Y9znthuvGUwbNT9CDq6fCi6jYybPTxx2unazcrZjO4JRSWKGHLfVOkJfjoTTzTRn4dFvSaB4oi2A+PGcLUEq6vx3Y1aH/d8RQRytPTFBgvZMs0pHxfs67sQbPT7RZKMOGvh3neqHSDopFUwCzR2HBtYmOWYg+dLlO1nCfsbtEIX5CQdw/h5TpqWw4SJJnxFUhcWV2w/X6UELnU5xd55su+w9tUtfP9uYe/fDgQ58wplDNcBv+/Ht4W28SeMVbxJuwhSdxoUqqV3/j6mPKwWzGWP9qGJsrz31cSZUf/DRjOBlWSKNnEwlejWTgBjSano6RbxkzgCKWTEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HwAxtPuIc+vKFCIg9t+rd+ZlOG8zhC1Fi1gPnXON8dk=;
+ b=nQLMdj+/EAwItVLNDfQdiw62ti+HoULE9oZ4aAA29u0syFYWxeS1jVCOBLKY7MTMkZlEbhKG09I64GymzcN7alOxdBKUIfR8al8cbPJ3r7vHuw7oss3H0kUfWjvK3un+Jq07Und4wwrOUdY8Wwvcfzl+2cZ02bMkLDtimFq37jdtl5OeE0m7Jh+N3ccBI/aCG2M33oE4j4d9DV1Udn9AGJXskPVh0qT07xlaPinpIEVV/3LhAZ/G7FXPPeCMmzTJm3LY+cxT5yGVVnsgiUuJa/EalK81g4SwaDUN+274sn5Ndk5ATqZuuXnNSG59fX8kIQyFumqyHkYOx7Ey4zJ40g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HwAxtPuIc+vKFCIg9t+rd+ZlOG8zhC1Fi1gPnXON8dk=;
+ b=Rd7A25DVTI5Z4O+Dgk4p9+HS0LAjRxhvk/KuuHQuxFecEsB4uzIm1dFfBx14Mp8xegQNPPzujF3meK2ligC75BSrS++SHUSOutviiNcKkr7+FO9llNJPiaw/8w7KzQlunPV7GHKN5SO8+Rl7TqQ72WXDEbZ7M4JEnOgh3EjDwUOGULF/+F3ANQ6VHnhi+4OTjnTtJzDIp/+iVJ6WMGj0EcPtIqdBXfcR0ZwIhnoaIR4tRoLhvXReT7LAJk8ARP2K4QcG9atCJNBitDcO53o2jIkOIRLwvH9tk9O7WHT6SIKWx4TvvhwgOMPWYxJR81MuxvCsaYEBbcDKEoWVssSyWw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by PH0PR12MB5647.namprd12.prod.outlook.com (2603:10b6:510:144::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Mon, 29 Jul
+ 2024 18:17:00 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7807.026; Mon, 29 Jul 2024
+ 18:16:59 +0000
+Date: Mon, 29 Jul 2024 15:16:57 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, yi.l.liu@intel.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommufd/device: Fix hwpt at err_unresv in
+ iommufd_device_do_replace()
+Message-ID: <20240729181657.GG3371438@nvidia.com>
+References: <20240718050130.1956804-1-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718050130.1956804-1-nicolinc@nvidia.com>
+X-ClientProxiedBy: MN0PR04CA0005.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::9) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729181356.2866845-1-irogers@google.com>
-In-Reply-To: <20240729181356.2866845-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 29 Jul 2024 11:16:20 -0700
-Message-ID: <CAP-5=fXsOrpeLS1fE8git8FL1bjUZArE64F00OaBQPgYiKJFLg@mail.gmail.com>
-Subject: Re: [PATCH v1] perf cap: Tidy up and improve capability testing
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Leo Yan <leo.yan@linux.dev>, 
-	Changbin Du <changbin.du@huawei.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH0PR12MB5647:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d695554-e34c-40cf-f9ea-08dcaffaa329
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KYvVxST6rmUmHTn/X0AbaWOj4WmTn2vmkoFNkal9H9HgUdpCX5EVM5NiJbWH?=
+ =?us-ascii?Q?1754Ez+9JIBqhdAMBX/i3/iVzfMIk18NLADNpSPYCc8/1zCZhem/IqZ8WENf?=
+ =?us-ascii?Q?TchZURLnlru+bqXk505Wq4A3m8Qdj5s1LumLeJ2Om6lADh0FNftGXajtYE3r?=
+ =?us-ascii?Q?y5O9fKeNFNd5qC+a5nAkwLtRBEN/slT1//K6tCWt+S5BrzmWgvnmekClkuhA?=
+ =?us-ascii?Q?nM9mmbfT9aVHiB78VCGQR/lub7tExm71KNG9oV0c0VSdATRrWxGOZ8L/P//r?=
+ =?us-ascii?Q?LaBdlf4YLRWlD0AX05B3sXjrzra6FEDT9WxckoECC0ObSrUIHOM3Tjj8hHeC?=
+ =?us-ascii?Q?sFN7YVcQY75XfQQx8VdwL2PEjENPcakUdypoM7d0fJQM4sCersRPBjuiQrbI?=
+ =?us-ascii?Q?fhaeRm6mskvbZ2cWxDGj+yTCDVHeCrX8uGXdtkl/sHeXE0rYVGPxheGX1562?=
+ =?us-ascii?Q?ofKqlxlJBonNpVky72xPo9X+aTBMMz7vvtQDUZ9q8Yp4+/LuyLZnjOwHM2H6?=
+ =?us-ascii?Q?1cyRcNyxALrH4YsHHXnXz5tgJkck198+KUUNyZqCrqMHPWEAhNv8PkhGu+1N?=
+ =?us-ascii?Q?7FP0iHgn9DQAgpNvDxTUxj7iL6cYA8WWVsAXMYNi8oAe+UGyALC+pV6MDN0U?=
+ =?us-ascii?Q?C+d5/rYfVEnsnZMs/BZzdZQQlgHsW2av2F9TqLdA8Y0fnKY9D3K9OHkuu62z?=
+ =?us-ascii?Q?UT4y/Sq4dUIl0xJZYn2IqyOfHlSyETl8v/o4vZRidHg0s6vsGmLT1CJzPxFG?=
+ =?us-ascii?Q?NMkDiikid61DshWZU24uQXEuuPv5hpRNhILYt8xMzLSSMMfvBhC8TbJC2gf0?=
+ =?us-ascii?Q?550IXiHzdYSdzAfLBr/58DSTU31dOM6bCT2l/ZWgJmINyRORkRNUN7k+BzjT?=
+ =?us-ascii?Q?Yf0b5RjmyOtSCQy6dTHOpG6dizl8m+Kw1WStMl8duacWoxwjA+LD/sf62e99?=
+ =?us-ascii?Q?pbgwXPtlTbccPfmm19/x5G/9292I22cNT/vMk6FJpHHqfLOF1NYlRN9ZE1bE?=
+ =?us-ascii?Q?rbBk363nWJ/VyQ9BnKuB5BELcLnc2gfOArs0BHeGNjiKRfQH3GL7ztlTbmGc?=
+ =?us-ascii?Q?sBUv9R37M+LNYOyx26FRVVaBQRw8nyMDbYq7Zi/pqRJOJNdWhJolEL8bLdPr?=
+ =?us-ascii?Q?Nxd3TgZldf2I0zZsbl0sI7adoXFeqtYbDaBkcq5AfNPUBMGCuVdfaF1/Y0yL?=
+ =?us-ascii?Q?rTx8//gpLYdr4YbaUX7aMA8Svr2hxpjBcZsvtdtNPNb+BRN0cGLU6NC1FXs/?=
+ =?us-ascii?Q?q7e5xr+/Yffm8iPZ5bv1uSxq859Wg1ZoH5ePNCXs8UpsQ5zS1LNks3vot0Af?=
+ =?us-ascii?Q?dwr35RXE4qS4BO0HbjPg0WClcQPIsHSVK+bqJek5lyFAUw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?frv3ISTU3iWzouLNGL9WtMVV+htd0mCJg8Bh2HN9gzgRjEEU1h4qYpYz/47t?=
+ =?us-ascii?Q?W6Tip/TmNlO04P2a73WzxLWqshXGRZhMuiX0GlUuneo8xn0QXnHrlCQPnduy?=
+ =?us-ascii?Q?Svgxidpyo6/pd3Z2FjeI+b+atr3Tm65On/Ht9DxZO/hxRiMTaUK1OE/Gmwbc?=
+ =?us-ascii?Q?1dOGYqwEM1htn6N72IGmGFonTvOqa6DA5FwmEtYWR1BhE3jZoq0ZINsLArmb?=
+ =?us-ascii?Q?lRTfZ/WPZlBfmNTdH3zx5aGJwaA55ZKF7IvKvr7la7bhQJzLAtspj7VYtmdd?=
+ =?us-ascii?Q?d5nqqiZkvfrTnQtoskBpVjvtpHUCt/u5uifBl6VbXWCKx+yRRnYQH4yFsUh/?=
+ =?us-ascii?Q?EXp/LIw7dAOoGsrR2m7qI4Z9GEa5E3c9+6EFOZLq/l/oR6sOSHVHqGEe1BzZ?=
+ =?us-ascii?Q?5TME3KcqYQL9dKfRKuMHl1JNe6wGRPBeBpoTcN0WvxhpN9ZXE4RM7RsTAWxD?=
+ =?us-ascii?Q?NpEoQ09+/TJlrszckRVE0YFnx85Qcoyryqwy7UpyD1cSZFqxZTDdIiBEiUok?=
+ =?us-ascii?Q?ttNpkK+UyhoiMFVJ6nVYv3PAfkuiRaN27XAI2DuZuUHMGSH9SOc4NJa87Qm+?=
+ =?us-ascii?Q?FXRS68I03M5JrlbELpBaH7yOtp79DQqvNb8HUEaOlPXoBU59qhwuQWp+nXyo?=
+ =?us-ascii?Q?MQC8FsPdTovOAurOzXFk/kFOnfTPn98ndGOJbEkVDeO1v+bLOr/qiVfY473R?=
+ =?us-ascii?Q?slrJjvskObZsg3S+uwzXuqxFPPfepd9S0VzytcjPhzEVbkGZ4Y7yopFBV/43?=
+ =?us-ascii?Q?R2Vuv2yc5magJWAFO43HrcUHkD/MOS8VptHQrbhn5FEdB7cE1ftiXCRWzj/d?=
+ =?us-ascii?Q?xcD/+A9vyHpZbPcY2h0pFQjLqkwDvXOxRBiOwBbroBxKd2d74gsGoKrh1wKn?=
+ =?us-ascii?Q?dKtL7v73n058xHUy+V9EZXCkMmapmi64g5b+bHyjaUWCT9X3eJYFGQy+EAAt?=
+ =?us-ascii?Q?XFftRsHuadmVjU1FkV2uX3V8gd8Skqg96GCfJkTftM+SoCqpnlqnOXjO7n6D?=
+ =?us-ascii?Q?OSNFLCfZ3Lw8b+qQgYyVoV8sSKRs8pTMXV/SpsuqnGRO1C4teesmYAF7wZAW?=
+ =?us-ascii?Q?xhalCxNbdNiBG7R4ynha1cHkfebc7o1RzPHhhxjGXe3wF8Vy0Ix5XZOUoJmS?=
+ =?us-ascii?Q?czs3vxAYsjI7m7Dd0oHKftzQScak0uISxSJrhDaJ/6AWOjOjWLmZfcr0DI2t?=
+ =?us-ascii?Q?RHeRCzuQDpIUsySx1ymCtbzi3UTWs1T0uJx+G6/Sf/WY2CBExSas/tr/ghUJ?=
+ =?us-ascii?Q?WK2LHUZYy+Na0SC2CkDHBdcWk6cAGX1/rbEXhwc3lHDH0OmF9tOwc2NlYCwl?=
+ =?us-ascii?Q?rluGqd9k7k1y2ppO7PF9/Mc5n5eDGJ40cC15xM4L/SFDvULVpwFJLKQqk8gq?=
+ =?us-ascii?Q?H9Y28ihkm6dnyIQ37Hu9Q9LOrN3qRKZdVJ4aqd6/l7zi+apiFpplSM+LD2+o?=
+ =?us-ascii?Q?C8BLRsF6KbCj/yyKc31x7B9bIfezNN2blxQXrDg1yWQVNoSgBUo1NYohp/5O?=
+ =?us-ascii?Q?G1KP1HDvwxmQA/MnyjwjhWcSX4slYdP6BdKgdD/QTOQB3UcJmbFiboZhC+6J?=
+ =?us-ascii?Q?xU9MfqcTLEBth5zlJFYHuc3zhtTm0t0UOJJg/sNE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d695554-e34c-40cf-f9ea-08dcaffaa329
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 18:16:59.5591
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BKOwTkZRoi7HEY7HFmFK6DU4/Fu99Vr3OOGroymgtfg9jyNxerQDaq540XesUhle
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5647
 
-On Mon, Jul 29, 2024 at 11:14=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> Remove dependence on libcap. libcap is only used to query whether a
-> capability is supported, which is just 1 capget system call.
->
-> If the capget system call fails, fall back on root permission
-> checking. Previously if libcap fails then the permission is assumed
-> not present which may be pessimistic/wrong.
->
-> Add a used_root out argument to perf_cap__capable to say whether the
-> fall back root check was used. This allows the correct error message,
-> "root" vs "users with the CAP_PERFMON or CAP_SYS_ADMIN capability", to
-> be selected.
->
-> Tidy uses of perf_cap__capable so that tests aren't repeated if capget
-> isn't supported, to reduce calls or refactor similar to:
-> https://lore.kernel.org/lkml/20240729004127.238611-3-namhyung@kernel.org/
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Wed, Jul 17, 2024 at 10:01:30PM -0700, Nicolin Chen wrote:
+> The rewind routine should remove the reserved iovas added to the new hwpt.
+> 
+> Fixes: 89db31635c87 ("iommufd: Derive iommufd_hwpt_paging from iommufd_hw_pagetable")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
->  tools/perf/Makefile.config  | 11 -------
->  tools/perf/builtin-ftrace.c | 44 ++++++++++++--------------
->  tools/perf/util/Build       |  2 +-
->  tools/perf/util/cap.c       | 63 ++++++++++++++++++++++++++-----------
->  tools/perf/util/cap.h       | 23 ++------------
->  tools/perf/util/symbol.c    |  8 ++---
->  tools/perf/util/util.c      | 12 +++++--
->  7 files changed, 81 insertions(+), 82 deletions(-)
->
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index a4829b6532d8..a9517272f80c 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -1018,17 +1018,6 @@ ifndef NO_LIBZSTD
->    endif
->  endif
->
-> -ifndef NO_LIBCAP
-> -  ifeq ($(feature-libcap), 1)
-> -    CFLAGS +=3D -DHAVE_LIBCAP_SUPPORT
-> -    EXTLIBS +=3D -lcap
-> -    $(call detected,CONFIG_LIBCAP)
-> -  else
-> -    $(warning No libcap found, disables capability support, please insta=
-ll libcap-devel/libcap-dev)
-> -    NO_LIBCAP :=3D 1
-> -  endif
-> -endif
-> -
->  ifndef NO_BACKTRACE
->    ifeq ($(feature-backtrace), 1)
->      CFLAGS +=3D -DHAVE_BACKTRACE_SUPPORT
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index eb30c8eca488..435208288d24 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -560,6 +560,23 @@ static void select_tracer(struct perf_ftrace *ftrace=
-)
->         pr_debug("%s tracer is used\n", ftrace->tracer);
->  }
->
-> +static bool check_ftrace_capable(void)
-> +{
-> +       bool used_root;
-> +
-> +       if (perf_cap__capable(CAP_PERFMON, &used_root))
-> +               return true;
-> +
-> +       if (!used_root && perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +               return true;
-> +
-> +       pr_err("ftrace only works for %s!\n",
-> +               used_root ? "root"
-> +                         : "users with the CAP_PERFMON or CAP_SYS_ADMIN =
-capability"
-> +               );
-> +       return -1;
-> +}
-> +
->  static int __cmd_ftrace(struct perf_ftrace *ftrace)
->  {
->         char *trace_file;
-> @@ -569,18 +586,6 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
->                 .events =3D POLLIN,
->         };
->
-> -       if (!(perf_cap__capable(CAP_PERFMON) ||
-> -             perf_cap__capable(CAP_SYS_ADMIN))) {
-> -               pr_err("ftrace only works for %s!\n",
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> -#else
-> -               "root"
-> -#endif
-> -               );
-> -               return -1;
-> -       }
-> -
->         select_tracer(ftrace);
->
->         if (reset_tracing_files(ftrace) < 0) {
-> @@ -885,18 +890,6 @@ static int __cmd_latency(struct perf_ftrace *ftrace)
->         };
->         int buckets[NUM_BUCKET] =3D { };
->
-> -       if (!(perf_cap__capable(CAP_PERFMON) ||
-> -             perf_cap__capable(CAP_SYS_ADMIN))) {
-> -               pr_err("ftrace only works for %s!\n",
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> -#else
-> -               "root"
-> -#endif
-> -               );
-> -               return -1;
-> -       }
-> -
->         trace_fd =3D prepare_func_latency(ftrace);
->         if (trace_fd < 0)
->                 goto out;
-> @@ -1197,6 +1190,9 @@ int cmd_ftrace(int argc, const char **argv)
->         INIT_LIST_HEAD(&ftrace.graph_funcs);
->         INIT_LIST_HEAD(&ftrace.nograph_funcs);
->
-> +       if (!check_ftrace_capable())
-> +               return -1;
-> +
->         signal(SIGINT, sig_handler);
->         signal(SIGUSR1, sig_handler);
->         signal(SIGCHLD, sig_handler);
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 0f18fe81ef0b..91ce0ab4defc 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -220,7 +220,7 @@ perf-util-$(CONFIG_ZLIB) +=3D zlib.o
->  perf-util-$(CONFIG_LZMA) +=3D lzma.o
->  perf-util-$(CONFIG_ZSTD) +=3D zstd.o
->
-> -perf-util-$(CONFIG_LIBCAP) +=3D cap.o
-> +perf-util-y +=3D cap.o
->
->  perf-util-$(CONFIG_CXX_DEMANGLE) +=3D demangle-cxx.o
->  perf-util-y +=3D demangle-ocaml.o
-> diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
-> index c3ba841bbf37..1ef8af0ccde9 100644
-> --- a/tools/perf/util/cap.c
-> +++ b/tools/perf/util/cap.c
-> @@ -3,27 +3,52 @@
->   * Capability utilities
->   */
->
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
->  #include "cap.h"
-> -#include <stdbool.h>
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap)
-> -{
-> -       cap_flag_value_t val;
-> -       cap_t caps =3D cap_get_proc();
-> +#include "debug.h"
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <linux/capability.h>
-> +#include <sys/syscall.h>
->
-> -       if (!caps)
-> -               return false;
-> +#ifndef SYS_capget
-> +#define SYS_capget 265
-> +#endif
->
-> -       if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) !=3D 0)
-> -               val =3D CAP_CLEAR;
-> +#define MAX_LINUX_CAPABILITY_U32S _LINUX_CAPABILITY_U32S_3
->
-> -       if (cap_free(caps) !=3D 0)
-> -               return false;
-> -
-> -       return val =3D=3D CAP_SET;
-> +bool perf_cap__capable(int cap, bool *used_root)
-> +{
-> +       struct __user_cap_header_struct header =3D {
-> +               .version =3D _LINUX_CAPABILITY_VERSION_3,
-> +               .pid =3D getpid(),
-> +       };
-> +       struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
-> +       __u32 cap_val;
-> +
-> +       *used_root =3D false;
-> +       while (syscall(SYS_capget, &header, &data[0]) =3D=3D -1) {
-> +               /* Retry, first attempt has set the header.version correc=
-tly. */
-> +               if (errno =3D=3D EINVAL && header.version !=3D _LINUX_CAP=
-ABILITY_VERSION_3 &&
-> +                   header.version =3D=3D _LINUX_CAPABILITY_VERSION_1)
-> +                       continue;
-> +
-> +               pr_debug2("capget syscall failed (%s - %d) fall back on r=
-oot check\n",
-> +                         strerror(errno), errno);
-> +               *used_root =3D true;
-> +               return geteuid() =3D=3D 0;
-> +       }
-> +
-> +       /* Extract the relevant capability bit. */
-> +       if (cap > 32) {
+>  drivers/iommu/iommufd/device.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should be >=3D, will fix in v2.
+Applied to for-rc thanks
 
-Thanks,
-Ian
-
-> +               if (header.version =3D=3D _LINUX_CAPABILITY_VERSION_3) {
-> +                       cap_val =3D data[1].effective;
-> +               } else {
-> +                       /* Capability beyond 32 is requested but only 32 =
-are supported. */
-> +                       return false;
-> +               }
-> +       } else {
-> +               cap_val =3D data[0].effective;
-> +       }
-> +       return (cap_val & (1 << (cap & 0x1f))) !=3D 0;
->  }
-> -
-> -#endif  /* HAVE_LIBCAP_SUPPORT */
-> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
-> index ae52878c0b2e..0c6a1ff55f07 100644
-> --- a/tools/perf/util/cap.h
-> +++ b/tools/perf/util/cap.h
-> @@ -3,26 +3,6 @@
->  #define __PERF_CAP_H
->
->  #include <stdbool.h>
-> -#include <linux/capability.h>
-> -#include <linux/compiler.h>
-> -
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap);
-> -
-> -#else
-> -
-> -#include <unistd.h>
-> -#include <sys/types.h>
-> -
-> -static inline bool perf_cap__capable(int cap __maybe_unused)
-> -{
-> -       return geteuid() =3D=3D 0;
-> -}
-> -
-> -#endif /* HAVE_LIBCAP_SUPPORT */
->
->  /* For older systems */
->  #ifndef CAP_SYSLOG
-> @@ -33,4 +13,7 @@ static inline bool perf_cap__capable(int cap __maybe_un=
-used)
->  #define CAP_PERFMON    38
->  #endif
->
-> +/* Query if a capability is supported, used_root is set if the fallback =
-root check was used. */
-> +bool perf_cap__capable(int cap, bool *used_root);
-> +
->  #endif /* __PERF_CAP_H */
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 19eb623e0826..a18927d792af 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -2425,14 +2425,14 @@ static bool symbol__read_kptr_restrict(void)
->  {
->         bool value =3D false;
->         FILE *fp =3D fopen("/proc/sys/kernel/kptr_restrict", "r");
-> +       bool used_root;
-> +       bool cap_syslog =3D perf_cap__capable(CAP_SYSLOG, &used_root);
->
->         if (fp !=3D NULL) {
->                 char line[8];
->
->                 if (fgets(line, sizeof(line), fp) !=3D NULL)
-> -                       value =3D perf_cap__capable(CAP_SYSLOG) ?
-> -                                       (atoi(line) >=3D 2) :
-> -                                       (atoi(line) !=3D 0);
-> +                       value =3D cap_syslog ? (atoi(line) >=3D 2) : (ato=
-i(line) !=3D 0);
->
->                 fclose(fp);
->         }
-> @@ -2440,7 +2440,7 @@ static bool symbol__read_kptr_restrict(void)
->         /* Per kernel/kallsyms.c:
->          * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
->          */
-> -       if (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))
-> +       if (perf_event_paranoid() > 1 && !cap_syslog)
->                 value =3D true;
->
->         return value;
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index 4f561e5e4162..9d55a13787ce 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -325,9 +325,15 @@ int perf_event_paranoid(void)
->
->  bool perf_event_paranoid_check(int max_level)
->  {
-> -       return perf_cap__capable(CAP_SYS_ADMIN) ||
-> -                       perf_cap__capable(CAP_PERFMON) ||
-> -                       perf_event_paranoid() <=3D max_level;
-> +       bool used_root;
-> +
-> +       if (perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +               return true;
-> +
-> +       if (!used_root && perf_cap__capable(CAP_PERFMON, &used_root))
-> +               return true;
-> +
-> +       return perf_event_paranoid() <=3D max_level;
->  }
->
->  static int
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
->
+Jason
 
