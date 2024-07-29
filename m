@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-265529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357BC93F274
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C0493F277
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 12:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B518FB2396E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E14B232EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 10:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB0143C6D;
-	Mon, 29 Jul 2024 10:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6014386E;
+	Mon, 29 Jul 2024 10:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Msy6SQms"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P/De3VFE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42BB5F873;
-	Mon, 29 Jul 2024 10:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EBB1428FE;
+	Mon, 29 Jul 2024 10:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722248312; cv=none; b=KuAIb9MRTvQQGGUzLeMBvZtfSVSUTzvgGPb7qyzf+jsnSdGNMjwxfYI2rMYa41MvGsOkLB+0kogsxGomIqoaGln7HR0TE3+mt6aGI3Nqocvnybpe0S96GLTysIM6qj3CaGOC0ZTcG580OmHGCS3Cuj0N3VoM+4OHtXIxBqfje94=
+	t=1722248339; cv=none; b=PZWWv/X4X7wo6hd80Neymg2q1s7XdmdNMbEGduLDm9z7bhtDzu84JYdkuHLGIk9schFqqShcGZbVIJUjll5lHeqlgGHdTcQJm0D+r3kut8umcq5lgG3xfq/T5Jm095sC0U7V79l6VeK+b/LTCbCPFdiOAcmkD02KCOWcFB6yFgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722248312; c=relaxed/simple;
-	bh=Fm9RTXSGnH0y/BmAEzolz2nfAJS55MrZOWKzYJnwnK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EC8LXbo1OitsbKHTZL4VZYCnTZPTvHPpyrpkYocL3718VSsLQu42EO+qhfKcT1BTyyjw/9jJDh43aMjcVDCK6eVC6t+RYCVcN+i56FV4BYIR2TreE2nIFeAEJebq9CflOmMU3xtSaOm7NbgSrySXxahDZSwrLwpiXUYUGDCH8Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Msy6SQms; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-368584f9e36so1181635f8f.2;
-        Mon, 29 Jul 2024 03:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722248309; x=1722853109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4070wEPuCK+XBMXivSVC69hgE/A0jjc0lrf2/fMWbNo=;
-        b=Msy6SQmsgqk76/2DpQayZhgLu7myCtYG86XPQf+Xd2+xBrUA/idgW2X8vCv9DJ+xBD
-         01hlSkRyf35mxIZ1wTwSjI4mKJMZAe7/w+B0JAK26cQ1rJMSQweCeCKKW6aJkbouSaw2
-         lvAWRymJg2mTTUuK49lRa7mw6o5OMeezq+1LK8Us2dNDwqrQO4Hz/do9v+ZJElaH1ix3
-         0iNJ/F7GZUXB5w7TgiVm8kF0xaKmC/NZhGcRZPIe6MzS7RfCimyzPg1jOOR9GyI0RgXT
-         x6XJW+U15k8FKoCi3UJhUZp5jbs5o7dZ4gco35qKVvV/CrJSeDnXHEWNADGVHBosftUs
-         E+AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722248309; x=1722853109;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4070wEPuCK+XBMXivSVC69hgE/A0jjc0lrf2/fMWbNo=;
-        b=UKnP70yeBJF3E0Jl7zTtZO2QRsH3V1e5o4YdYfQXaDMD+OjZNndLdkIMOsaGyiEych
-         2+v93O6egztghjI0SXwAh/+ET9OytuueqEc8W9NVYSb/XtkOx3XFuC2RMiUL0h7Fa/ex
-         azkosUf3a2p2xgwZ8sdlPDxPNCdZvc7YP2NlohNAN6/eEXSp82XKktjq+Oe2eBW0bXkO
-         T4tTm8ifxxJBZG41fCIf3wvVSugbK9+/kOzn12zgme2BJSOFk8k0K6oqx9vM0kvSR3is
-         3tvreIOUtK119Jyp4gE7TR6APW8JgEoMJWrqpliz24QUBhv5hUNxRYMSQ93oIudfcitO
-         5gUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWybDxnTPeyI4Czbn4FCHyYbDZd5xSQe9jLehzVe0kQ7pObuPUtxnOMa98A74UsOFBiiLZbrrTydMStNLrNlyPKaVu2i2x7QyB7NpCQojDT1uUleufZCpfdwJ/mlqphXfNh3HcK
-X-Gm-Message-State: AOJu0Yyr7yC4602RUKp3ylBN/o1nIONpjbIub3BsHQBLUlM16vxJYyxT
-	DG+WNcXo/JNmDD7kM63KcabMA3uFh2uVY48YvWQQ6Ddu5fl5GVg8
-X-Google-Smtp-Source: AGHT+IH7A1lqUuwH5k0M8ObbYrSicUxsMy3T+JnKuD/B22l4fGLT5uoDvyU5FVapfs8Pb+B9+abbkQ==
-X-Received: by 2002:a5d:5f51:0:b0:35f:1f8a:e69a with SMTP id ffacd0b85a97d-36b5d073f43mr7723052f8f.49.1722248308956;
-        Mon, 29 Jul 2024 03:18:28 -0700 (PDT)
-Received: from [192.168.1.17] (net-2-44-141-41.cust.vodafonedsl.it. [2.44.141.41])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9b30sm11889527f8f.40.2024.07.29.03.18.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jul 2024 03:18:28 -0700 (PDT)
-Message-ID: <0b96911d-a6f3-44d9-a273-0e9c71da2e9b@gmail.com>
-Date: Mon, 29 Jul 2024 12:18:25 +0200
+	s=arc-20240116; t=1722248339; c=relaxed/simple;
+	bh=A6pRdJOG1auLDR9ZXiKkrNKgnD/M/3p7mp0/E7Sbs1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FdtRpVA29L1zp0AUC+Az8fuoxqKFME90XG1AOWkoSCRuW2LvcFXWBShF+vnd0wC0Wq9OamrzS2YgNomR5FlXmoD4TQmFC577ay991Zb6zVY0tU6mb6ShDg4mpNo+7Wg7Wk4K8v4DGFDbgNihWS6+KSuVxON2omEO9YM4bGOXNfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P/De3VFE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46SNQNFT026407;
+	Mon, 29 Jul 2024 10:18:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e94lcA7O09IiVanGDyLpRv1btlDhG6LYVdZVJ8WsfQo=; b=P/De3VFEaqcyRGTx
+	p/tXWkUP6J66cVL4Uwb81/b5U9sZZIm4TM3gjTYNSTWcAyO2MsPGDOwvdBK+pffl
+	wTCWZMDSSf9rZg1d4gxEDRFRnRmim4rItVycscynTqcrHIJz2WMwxqrLfj74V8yb
+	Lm4YfolokxM1EvKUxebBFtNpUFxxJX9fefvfoSg4FzqY1b2BTxJkZia6+OIo7RlN
+	3DP4pbGcB7Kf0aYwtddm2TCA+ElEg9EE1Mxhvg2vjo2cG/U2YUvuLyLd3TuB9OPh
+	dv70Y4Rm/rVz0Ex6Al8F3cFE65ybZgGfwUFATDzCz+mUUzRg3XeLxlligTn+5bzk
+	wQXYMA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mpkev1h0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:18:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAIgKG002943
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 10:18:42 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
+ 2024 03:18:38 -0700
+Message-ID: <4f144be9-96d9-4fa7-9a1d-53a68a329b98@quicinc.com>
+Date: Mon, 29 Jul 2024 18:18:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,71 +64,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm: devtree: fix missing device_node cleanup
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux@armlinux.org.uk,
- robh@kernel.org, rmk+kernel@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, stable@vger.kernel.org
-References: <20240712094448.159784-1-vincenzo.mezzela@gmail.com>
- <2917e82b-eaf7-4db2-9c16-d164568df1bc@gmail.com>
-Content-Language: en-US
-From: vincenzo mezzela <vincenzo.mezzela@gmail.com>
-In-Reply-To: <2917e82b-eaf7-4db2-9c16-d164568df1bc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: qcom,pdc: document
+ pdc on QCS9100
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240709-document_qcs9100_pdc_compatible-v2-1-83619dcd2658@quicinc.com>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240709-document_qcs9100_pdc_compatible-v2-1-83619dcd2658@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 7/12/24 11:47, Javier Carrasco wrote:
-> On 12/07/2024 11:44, Vincenzo Mezzela wrote:
->> Device node `cpus` is allocated but never released using `of_node_put`.
->>
->> This patch introduces the __free attribute for `cpus` device_node that
->> automatically handle the cleanup of the resource by adding a call to
->> `of_node_put` at the end of the current scope. This enhancement aims to
->> mitigate memory management issues associated with forgetting to release
->> the resources.
->>
->> Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
->> ---
->>   arch/arm/kernel/devtree.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
->> index fdb74e64206a..223d66a5fff3 100644
->> --- a/arch/arm/kernel/devtree.c
->> +++ b/arch/arm/kernel/devtree.c
->> @@ -70,14 +70,14 @@ void __init arm_dt_init_cpu_maps(void)
->>   	 * contain a list of MPIDR[23:0] values where MPIDR[31:24] must
->>   	 * read as 0.
->>   	 */
->> -	struct device_node *cpu, *cpus;
->>   	int found_method = 0;
->>   	u32 i, j, cpuidx = 1;
->>   	u32 mpidr = is_smp() ? read_cpuid_mpidr() & MPIDR_HWID_BITMASK : 0;
->>   
->>   	u32 tmp_map[NR_CPUS] = { [0 ... NR_CPUS-1] = MPIDR_INVALID };
->>   	bool bootcpu_valid = false;
->> -	cpus = of_find_node_by_path("/cpus");
->> +	struct device_node *cpu;
->> +	struct device_node *cpus __free(device_node) = of_find_node_by_path("/cpus");
->>   
->>   	if (!cpus)
->>   		return;
-> Hello Vincenzo,
->
-> If this is a fix, please provide the Fixes: tag as well as Cc: for
-> stable if it applies.
->
-> Best regards, Javier Carrasco
-
-Sure, will do. :)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RTzDRmcYTRcWFGdDnHm8SRZzMvCuUqZr
+X-Proofpoint-GUID: RTzDRmcYTRcWFGdDnHm8SRZzMvCuUqZr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-29_08,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 adultscore=0 mlxscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290069
 
 
-Best regards,
 
-Vincenzo
+On 7/9/2024 9:56 PM, Tengfei Fan wrote:
+> The QCS9100 SoC includes a PDC, document it.
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,qcs9100-pdc" to describe non-SCMI
+> based pdc.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+> The QCS9100 device tree patches will be pushed after all the device tree
+> bindings and device driver patches are reviewed.
+> 
+> The final dtsi will like:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+> 
+> The detailed cover letter reference:
+> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+> Changes in v2:
+>    - Split huge patch series into different patch series according to
+>      subsytems
+>    - Update patch commit message
+> 
+> prevous disscussion here:
+> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> ---
+>   Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> index 985fa10abb99..41fbfce838fa 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> @@ -26,6 +26,7 @@ properties:
+>     compatible:
+>       items:
+>         - enum:
+> +          - qcom,qcs9100-pdc
+>             - qcom,qdu1000-pdc
+>             - qcom,sa8775p-pdc
+>             - qcom,sc7180-pdc
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240709-document_qcs9100_pdc_compatible-65e4066b1728
+> 
+> Best regards,
 
+After considering the feedback provided on the subject, We have decided
+to keep current SA8775p compatible and ABI compatibility in drivers.
+Let's close this session and ignore the current patche here.
+Thank you for your input.
 
-Fixes: a0ae02405076a ("ARM: kernel: add device tree init map function")
-Cc: stable@vger.kernel.org
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
