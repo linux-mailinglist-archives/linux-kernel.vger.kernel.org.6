@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-266036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F4093F9AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8807393F9AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 17:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13077282EEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D15B1F22F8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 15:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B861215A84D;
-	Mon, 29 Jul 2024 15:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D60715B11F;
+	Mon, 29 Jul 2024 15:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTURE0NX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qo6MIVNZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E3313BC3F
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E66A146019
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267542; cv=none; b=ntyI3U/3oq8TbwEEAlL0QABr4kGkzL4RNuHMd6RP3ifDz41d9JvYJ3Ea1+9SEyi1wV22ni4LcJnoinrQHjtFtknRikMnWTRGY7CYE7PN1vsJbZ7OJ86Q0WnkShbZt3wF6PXl35LUgDPmHNlL3P0liA9zg6iIxNmsEtnqIG4+brM=
+	t=1722267581; cv=none; b=QhHamcf+TJTmkHvEyt9Wgqa6HfOk53be0nlHFGWAiqauAowQFti5LI3Qn+2xkof8+iXeEnrDkRs/d2/MlthXJfsqWC3UIE1KtFnVDjV+CPh3UU0r5BFRiWqiOKhsxmP9DlY06iRlH80SfbxLrMUCDZCuAgUJ9tVAQN68npcqWuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267542; c=relaxed/simple;
-	bh=O6QAspJHeXVwExOooCgkOhCym34IUm1sotkydfLGmgI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ImZCXIP18/4G8LqsqxJrii8MnMRAOOBCVwPjC5LBtzcP739YHxO7mxbLsuoncoSbpMT7Y9tqAFZIe92J80whwfCtqpvqrzFCGC0qbTRI94rOArfztxXtixtzA1Vy8ZIxLqLFtixlhMyW+wH6uJoDKF/xQXF3g0dElpH55H4YwPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTURE0NX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722267541; x=1753803541;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=O6QAspJHeXVwExOooCgkOhCym34IUm1sotkydfLGmgI=;
-  b=KTURE0NXDE4fK8XdXaiR+s5Sn7ODeYB/HrHg0s4xRqjll/O4kBDluOD/
-   /8EkS8ZCMxaEUwxFaBf0vA+yv6+M+z8HcDfQg+6pmVQd5ifC+c0U38qrq
-   AG0lXHnsDxpJyvgGOvd096yQ4y3kWtla+wO3twi9N7lFoeyIUHBEcnJnZ
-   bpHxcQ4dyymspNXGomvl2qtcRjSgPZiwV+j/O0fNajS6nxJr3W1cizoD2
-   RVxjft6pyQP4KiB55E3c0zDAYYeM+Ve8E/MV+1h8T3g8Z17+Q9NsLv3iZ
-   ZHEsmvPd27BRwKXWj23OrwV7WjU9RNJ6Tv0FjVkpYZl5O7m+ZC0/wJ0wK
-   w==;
-X-CSE-ConnectionGUID: qI6YXHrASwunP5XHMkVaPQ==
-X-CSE-MsgGUID: KXEBvDbWRbGD4GT1CsOzFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="22938814"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="22938814"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:39:00 -0700
-X-CSE-ConnectionGUID: fDDQZKOnT3a7CFWNFWeBMQ==
-X-CSE-MsgGUID: lmQR161gQ5GhKhYtR7uq4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="53667278"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.151])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 08:38:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 29 Jul 2024 18:38:52 +0300 (EEST)
-To: Palmer Dabbelt <palmer@rivosinc.com>
-cc: bhelgaas@google.com, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Greg KH <gregkh@linuxfoundation.org>, bhe@redhat.com, 
-    alison.schofield@intel.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] resource: Elide a conversion warning on 32-bit
-In-Reply-To: <20240729151652.15063-2-palmer@rivosinc.com>
-Message-ID: <77953469-413b-13e4-72fb-c92b7b1c6dd1@linux.intel.com>
-References: <20240729151652.15063-2-palmer@rivosinc.com>
+	s=arc-20240116; t=1722267581; c=relaxed/simple;
+	bh=Km4f0/3Vzz+8Qh1fHaeNKmN2Y2DZ97pJ0lZw8d2Z8gY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f7fEGQOpubyqcWNcOR5Oz3rqraNqupT7Y0vvKBv6QObi00/Z9vngFQoiH0AVFjOjDAVVDhdRaVI6474+GKwIo1PUTWmpUY7ikaJCGgvilwVC5Mdi20XOkVMoFeMY+PBgNZJXmqci9CXI4SfbSFb7uCp71pPojsCatxFymoZPilY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qo6MIVNZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722267579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bTv5CfW4HXbVM7xQU93V1CPvEqo/zJ6yCu/2thM1qdY=;
+	b=Qo6MIVNZF+bHrJYdy6nvO5gXpDzaf2uqm78420Hzpv2/fGaWTfXbCCQzeuDTazkkfOHMcC
+	tSge/Et2WvUWcMbsIwT/QTHp0EWFc0JgHVgFak+JrR0pi61XO949lztWWivzPMgj9YZLbv
+	S0tL7bPjytsXh+NCk2/yWNb/IXWAShk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-kAsn5MPIMMm01t7Y-2XajQ-1; Mon,
+ 29 Jul 2024 11:39:34 -0400
+X-MC-Unique: kAsn5MPIMMm01t7Y-2XajQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9617D1955D5F;
+	Mon, 29 Jul 2024 15:39:33 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88EEB1955F40;
+	Mon, 29 Jul 2024 15:39:31 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+In-Reply-To: <a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org> (Jeff
+	Layton's message of "Mon, 29 Jul 2024 11:24:41 -0400")
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+	<a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Mon, 29 Jul 2024 17:39:28 +0200
+Message-ID: <87frrsmclr.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, 29 Jul 2024, Palmer Dabbelt wrote:
+* Jeff Layton:
 
-> From: Palmer Dabbelt <palmer@rivosinc.com>
-> 
-> I recently ended up with a warning on some compilers along the lines of
-> 
->       CC      kernel/resource.o
->     In file included from include/linux/ioport.h:16,
->                      from kernel/resource.c:15:
->     kernel/resource.c: In function 'gfr_start':
->     include/linux/minmax.h:49:37: error: conversion from 'long long unsigned int' to 'resource_size_t' {aka 'unsigned int'} changes value from '17179869183' to '4294967295' [-Werror=overflow]
->        49 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
->           |                                     ^
->     include/linux/minmax.h:52:9: note: in expansion of macro '__cmp_once_unique'
->        52 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
->           |         ^~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:161:27: note: in expansion of macro '__cmp_once'
->       161 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
->           |                           ^~~~~~~~~~
->     kernel/resource.c:1829:23: note: in expansion of macro 'min_t'
->      1829 |                 end = min_t(resource_size_t, base->end,
->           |                       ^~~~~
->     kernel/resource.c: In function 'gfr_continue':
->     include/linux/minmax.h:49:37: error: conversion from 'long long unsigned int' to 'resource_size_t' {aka 'unsigned int'} changes value from '17179869183' to '4294967295' [-Werror=overflow]
->        49 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
->           |                                     ^
->     include/linux/minmax.h:52:9: note: in expansion of macro '__cmp_once_unique'
->        52 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
->           |         ^~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:161:27: note: in expansion of macro '__cmp_once'
->       161 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
->           |                           ^~~~~~~~~~
->     kernel/resource.c:1847:24: note: in expansion of macro 'min_t'
->      1847 |                addr <= min_t(resource_size_t, base->end,
->           |                        ^~~~~
->     cc1: all warnings being treated as errors
-> 
-> which this elides via an extra cast.
+> On Mon, 2024-07-29 at 08:55 +0200, Florian Weimer wrote:
+>> It was pointed out to me that inode numbers on Linux are no longer
+>> expected to be unique per file system, even for local file systems.
+>> Applications sometimes need to check if two (open) files are the
+>> same.
+>> For example, a program may want to use a temporary file if is invoked
+>> with input and output files referring to the same file.
+>>=20
+>> How can we check for this?=C2=A0 The POSIX way is to compare st_ino and
+>> st_dev in stat output, but if inode numbers are not unique, that will
+>> result in files falsely being reported as identical.=C2=A0 It's harmless
+>> in
+>> the temporary file case, but it in other scenarios, it may result in
+>> data loss.
+>>=20
+>
+> I believe this is the problem that STATX_SUBVOL was intended to solve.
+>
+> Both bcachefs and btrfs will provide this attribute if requested. So,
+> basically to uniquely ID an inode using statx, you need a tuple of:
+>
+> stx_dev_major/minor
+> stx_subvol
+> stx_ino
+>
+> If the filesystem doesn't provide STATX_SUBVOL, then one can (likely)
+> conclude that stx_dev_* and stx_ino are enough.
 
-I think you should describe the configuration which triggers this a bit 
-more here because it's not just about 32-bit build but also requires 
-MAX_PHYSMEM_BITS to be larger than 32.
+Does this really work for the virtiofs case, though?  It has to pass
+through all three *and* make things unique relative to the host, I
+think.
 
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> ---
-> Not sure if there's a better way to do this, but I didn't see any
-> reports yet and my tester is failing so I figured it'd be best to get
-> something on the lists.
-> ---
->  kernel/resource.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index 14777afb0a99..6459561b746e 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -1845,7 +1845,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
->  	 */
->  	return addr > addr - size &&
->  	       addr <= min_t(resource_size_t, base->end,
-> -			     (1ULL << MAX_PHYSMEM_BITS) - 1);
-> +			     (resource_size_t)((1ULL << MAX_PHYSMEM_BITS) - 1));
-
-So this effectively casts away 2 bits hiding the warning? It would be 
-more proper to limit it with RESOURCE_SIZE_MAX instead of casting the 
-bits away if that's the intention of this code (of which I'm not sure).
-
-And why are you fixing just one line when there is another similar
-expression?
-
--- 
- i.
+Thanks,
+Florian
 
 
