@@ -1,217 +1,112 @@
-Return-Path: <linux-kernel+bounces-266283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B95493FD92
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:41:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC88193FD96
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F422826D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6951C215D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D113E187340;
-	Mon, 29 Jul 2024 18:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48752186E39;
+	Mon, 29 Jul 2024 18:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D1jM17KZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mhbgef0T"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2289C16B38D;
-	Mon, 29 Jul 2024 18:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782BF16B38D;
+	Mon, 29 Jul 2024 18:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278417; cv=none; b=gJXpuzMl5RBCTYY8z9vQDGYh/Cj5wpV7tPzhBmdwDX2TpQKjazSESvO/0BazqpPoRtfyYRu8cEKDqR0jP1CVVOPRNfunqpAUSoPm17mOIC5b0IdILDPs4QRxzDuVqjn2Dut01zw+Hb3B7OZjwbR8uq5bamtvCZQYmKr4YDyTB+g=
+	t=1722278453; cv=none; b=EGfguHzupmGkRFZtVbupyJ9apVq4B5THZm9Qt7m5Vax6dKVzQPqzhsK0htE41vuDfWVYAQYe0BgGeL/gwE438yar2DSVf4GzkFOFo1cYRsLVRdp0OcUnso+z4ZpnHsH6oS5I4JGCkKophvDltKPIp21557sQ6ZTATYdf7kWOYCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278417; c=relaxed/simple;
-	bh=juRqjNJKyLdqApVch9xOVOcW8ildrqlNqRTk98mgPYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbjtfkOdvqTt8fwLw8dexU0b+7cFlVZGeift1bc1yB2fxpf7nCaU1Hokp0iucxSbQInYbpjFRQWVkYhWVy7mNLt9FPgHu6N5MDrFv69ZjZkk5oiHfIiGU7cQQkklBIV9hFF2lHNl933dWFHJjg+7dBTN7nVZidLQ2PMXlsC/eGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D1jM17KZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from localhost.localdomain (unknown [IPv6:2405:201:2015:f873:55f8:639e:8e9f:12ec])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 934BA45A;
-	Mon, 29 Jul 2024 20:39:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722278366;
-	bh=juRqjNJKyLdqApVch9xOVOcW8ildrqlNqRTk98mgPYc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D1jM17KZ04e+KLc8WXorYuCVPX5f6n/Aq89qaPaZbnDWn1bnONxg0VYBZhr7+seBS
-	 rqxU1jU1SOQCt4ygyGvpFMl9aonFMhVPvPnRXhVbkgqZlxF2XO8vOfeGDy0w+QJxbu
-	 Rd+9nGRfBefs1JIWrgVaeiYrefiVOnaAwcf9SvLA=
-From: Umang Jain <umang.jain@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH] media: imx283: Provide optical black mode
-Date: Tue, 30 Jul 2024 00:09:53 +0530
-Message-ID: <20240729183955.456957-1-umang.jain@ideasonboard.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1722278453; c=relaxed/simple;
+	bh=m0WyG/aso8uzUymjHwhe7HmgW/CUfB5c/IBX9t6QXdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FJ5YJUv/lEcVJmvWyq5dBNYORAYNefXE08wyFs8fjcNLaVABbKokz1RakssJUfW6IzmYCstaMayYumZaEQgKcm1j4XR/pspA4myIFy9ftwhSfrq8gjDdox6ClajkhAHG+r7ucSZ07VYxo868PnnV5R1EUPHufTgri0txBnhxg5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mhbgef0T; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=iUdrC/iM7m90SNhQ6UKmv8NB4lWo9OrmVGgOw6RdPKs=; b=mhbgef0TN6TLf/9onqtaW7nHdw
+	jamuHxwi2zUrkF8iXfgdQjO+MfqaT2UUU+qwbp56/vg3rzb6SDnPiKuC4NlX3ATmrG1KLgsE+NnIU
+	9kIXX1FQPnUtQtuzSHfwBryIUngWVMrudp4egAjPKb1Qqq4NaAjYztn4+RomvS4hhoJgz7/zyrL72
+	CadDb9cr+UfkSUBoBNwyc5Zl4OBAQ06rHTcRYTxWH7Z/gmntTdTSKW4wfdaqtqNoCcirtNGWNy3u2
+	DmP5FDyikhxWMWv/4R1PSgD2JzEYTCW/SfObRaLRHOlN2hiThAmpc83rGwmyD5pMgaidpXSTAG9GV
+	cxJuCHzA==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYVId-0000000CNOa-40oV;
+	Mon, 29 Jul 2024 18:40:49 +0000
+Message-ID: <b1e2d43f-93df-420c-a831-5ff8e33c294d@infradead.org>
+Date: Mon, 29 Jul 2024 11:40:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wmi: Fix spelling
+To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>, W_Armin@gmx.de,
+ corbet@lwn.net
+Cc: platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240729164721.125708-1-luis.hernandez093@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240729164721.125708-1-luis.hernandez093@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-The IMX283 is capable of delivering optical black regions as part of
-the image capture. These regions support capture of the black levels
-for calibration and are added as extra pixels on top of the full
-resolution capture.
 
-Supply an extra mode which accounts for this increased size that will
-produce black regions in the output image.
 
-Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
----
-- YUYV capture sample with Pi5 ISP for side-by-side comparison of OB regions:
-https://gcdnb.pbrd.co/images/XQV29MedwXxg.png
----
- drivers/media/i2c/imx283.c | 68 ++++++++++++++++++++++++++++++++------
- 1 file changed, 58 insertions(+), 10 deletions(-)
+On 7/29/24 9:47 AM, Luis Felipe Hernandez wrote:
+> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> ---
+>  Documentation/wmi/devices/msi-wmi-platform.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/wmi/devices/msi-wmi-platform.rst b/Documentation/wmi/devices/msi-wmi-platform.rst
+> index 29b1b2e6d42c..31a136942892 100644
+> --- a/Documentation/wmi/devices/msi-wmi-platform.rst
+> +++ b/Documentation/wmi/devices/msi-wmi-platform.rst
+> @@ -130,12 +130,12 @@ data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
+>  
+>  Due to a peculiarity in how Windows handles the ``CreateByteField()`` ACPI operator (errors only
+>  happen when a invalid byte field is ultimately accessed), all methods require a 32 byte input
+> -buffer, even if the Binay MOF says otherwise.
+> +buffer, even if the Binary MOF says otherwise.
+>  
+>  The input buffer contains a single byte to select the subfeature to be accessed and 31 bytes of
+>  input data, the meaning of which depends on the subfeature being accessed.
+>  
+> -The output buffer contains a singe byte which signals success or failure (``0x00`` on failure)
+> +The output buffer contains a single byte which signals success or failure (``0x00`` on failure)
+>  and 31 bytes of output data, the meaning if which depends on the subfeature being accessed.
+>  
+>  WMI method Get_EC()
+> @@ -147,7 +147,7 @@ data contains a flag byte and a 28 byte controller firmware version string.
+>  The first 4 bits of the flag byte contain the minor version of the embedded controller interface,
+>  with the next 2 bits containing the major version of the embedded controller interface.
+>  
+> -The 7th bit signals if the embedded controller page chaged (exact meaning is unknown), and the
+> +The 7th bit signals if the embedded controller page changed (exact meaning is unknown), and the
+>  last bit signals if the platform is a Tigerlake platform.
+>  
+>  The MSI software seems to only use this interface when the last bit is set.
 
-diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
-index 8490618c5071..9a0fe2c34a41 100644
---- a/drivers/media/i2c/imx283.c
-+++ b/drivers/media/i2c/imx283.c
-@@ -66,6 +66,7 @@
- #define IMX283_REG_HTRIMMING		CCI_REG8(0x300b)
- #define   IMX283_MDVREV			BIT(0) /* VFLIP */
- #define   IMX283_HTRIMMING_EN		BIT(4)
-+#define   IMX283_HOB_EN			BIT(5)
- 
- #define IMX283_REG_VWINPOS		CCI_REG16_LE(0x300f)
- #define IMX283_REG_VWIDCUT		CCI_REG16_LE(0x3011)
-@@ -306,6 +307,7 @@ static const struct imx283_input_frequency imx283_frequencies[] = {
- 
- enum imx283_modes {
- 	IMX283_MODE_0,
-+	IMX283_MODE_0_OB,
- 	IMX283_MODE_1,
- 	IMX283_MODE_1A,
- 	IMX283_MODE_1S,
-@@ -327,6 +329,7 @@ struct imx283_readout_mode {
- static const struct imx283_readout_mode imx283_readout_modes[] = {
- 	/* All pixel scan modes */
- 	[IMX283_MODE_0] = { 0x04, 0x03, 0x10, 0x00 }, /* 12 bit */
-+	[IMX283_MODE_0_OB] = { 0x04, 0x03, 0x10, 0x00 }, /* 12 bit */
- 	[IMX283_MODE_1] = { 0x04, 0x01, 0x00, 0x00 }, /* 10 bit */
- 	[IMX283_MODE_1A] = { 0x04, 0x01, 0x20, 0x50 }, /* 10 bit */
- 	[IMX283_MODE_1S] = { 0x04, 0x41, 0x20, 0x50 }, /* 10 bit */
-@@ -439,6 +442,36 @@ static const struct imx283_mode supported_modes_12bit[] = {
- 			.height = 3648,
- 		},
- 	},
-+	{
-+		/* 20MPix 21.40 fps readout mode 0 with optical blacks enabled */
-+		.mode = IMX283_MODE_0_OB,
-+		.bpp = 12,
-+		.width = 5472 + 96, /* width + Horizontal optical black */
-+		.height = 3648 + 16, /* height + Vertical optical black */
-+		.min_hmax = 5914, /* 887 @ 480MHz/72MHz */
-+		.min_vmax = 3793, /* Lines */
-+
-+		.veff = 3694,
-+		.vst = 0,
-+		.vct = 0,
-+
-+		.hbin_ratio = 1,
-+		.vbin_ratio = 1,
-+
-+		/* 20.00 FPS */
-+		.default_hmax = 6000, /* 900 @ 480MHz/72MHz */
-+		.default_vmax = 4000,
-+
-+		.min_shr = 11,
-+		.horizontal_ob = 96,
-+		.vertical_ob = 16,
-+		.crop = {
-+			.top = 40,
-+			.left = 108,
-+			.width = 5472 + 96,
-+			.height = 3648 + 16,
-+		},
-+	},
- 	{
- 		/*
- 		 * Readout mode 2 : 2/2 binned mode (2736x1824)
-@@ -793,17 +826,20 @@ static int imx283_set_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 
- 	case V4L2_CID_VFLIP:
-+		u32 htrim = IMX283_HTRIMMING_EN;
-+
- 		/*
- 		 * VFLIP is managed by BIT(0) of IMX283_REG_HTRIMMING address, hence
- 		 * both need to be set simultaneously.
- 		 */
--		if (ctrl->val) {
--			cci_write(imx283->cci, IMX283_REG_HTRIMMING,
--				  IMX283_HTRIMMING_EN | IMX283_MDVREV, &ret);
--		} else {
--			cci_write(imx283->cci, IMX283_REG_HTRIMMING,
--				  IMX283_HTRIMMING_EN, &ret);
--		}
-+		if (ctrl->val)
-+			htrim = IMX283_HTRIMMING_EN | IMX283_MDVREV;
-+
-+		if (mode->mode == IMX283_MODE_0_OB)
-+			htrim |= IMX283_HOB_EN;
-+
-+		cci_write(imx283->cci, IMX283_REG_HTRIMMING, htrim, &ret);
-+
- 		break;
- 
- 	case V4L2_CID_TEST_PATTERN:
-@@ -1010,6 +1046,8 @@ static int imx283_start_streaming(struct imx283 *imx283,
- 	s32 v_pos;
- 	u32 write_v_size;
- 	u32 y_out_size;
-+	u32 htrim_end;
-+	u32 ob_size_v = 0;
- 	int ret = 0;
- 
- 	fmt = v4l2_subdev_state_get_format(state, 0);
-@@ -1057,6 +1095,12 @@ static int imx283_start_streaming(struct imx283 *imx283,
- 		mode->crop.height);
- 
- 	y_out_size = mode->crop.height / mode->vbin_ratio;
-+
-+	if (mode->mode == IMX283_MODE_0_OB) {
-+		y_out_size -= mode->vertical_ob;
-+		ob_size_v = mode->vertical_ob;
-+	}
-+
- 	write_v_size = y_out_size + mode->vertical_ob;
- 	/*
- 	 * cropping start position = (VWINPOS – Vst) × 2
-@@ -1072,12 +1116,16 @@ static int imx283_start_streaming(struct imx283 *imx283,
- 	cci_write(imx283->cci, IMX283_REG_VWIDCUT, v_widcut, &ret);
- 	cci_write(imx283->cci, IMX283_REG_VWINPOS, v_pos, &ret);
- 
--	cci_write(imx283->cci, IMX283_REG_OB_SIZE_V, mode->vertical_ob, &ret);
-+	cci_write(imx283->cci, IMX283_REG_OB_SIZE_V, ob_size_v, &ret);
-+
-+	htrim_end = mode->crop.left + mode->crop.width;
-+
-+	if (mode->mode == IMX283_MODE_0_OB)
-+		htrim_end -= mode->horizontal_ob * mode->hbin_ratio;
- 
- 	/* TODO: Validate mode->crop is fully contained within imx283_native_area */
- 	cci_write(imx283->cci, IMX283_REG_HTRIMMING_START, mode->crop.left, &ret);
--	cci_write(imx283->cci, IMX283_REG_HTRIMMING_END,
--		  mode->crop.left + mode->crop.width, &ret);
-+	cci_write(imx283->cci, IMX283_REG_HTRIMMING_END, htrim_end, &ret);
- 
- 	/* Disable embedded data */
- 	cci_write(imx283->cci, IMX283_REG_EBD_X_OUT_SIZE, 0, &ret);
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+after you add a commit message.
+
 -- 
-2.45.0
-
+~Randy
 
