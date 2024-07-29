@@ -1,214 +1,108 @@
-Return-Path: <linux-kernel+bounces-265655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-265657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C2293F412
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2793D93F416
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 13:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9695E283290
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8BE1F226B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 11:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E431145B07;
-	Mon, 29 Jul 2024 11:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCA2146580;
+	Mon, 29 Jul 2024 11:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s8sulLsr"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="G97w9aGI"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4EC8289A
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFD8145B3B;
+	Mon, 29 Jul 2024 11:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252719; cv=none; b=KuLwQncME9QxKo0himVjMVmDpjAL6d1rMhkcEEr2li2BagKCtqJN62DGZ2Qo4nY59onR2SylXs8Vg8tG9q4jw83YCOOhCUmc7HSeFqPPI8hoby72QmuQ123Mu1faaNqt/B2theMI7XvHg9AQJE3Iveay117AABt03qcBkkjv+NE=
+	t=1722252752; cv=none; b=UNe+ShZPWzEda0K9JrW2G3HAgloY3auAa/DxyeRzko/S9NC3f0qAX4He0RnaapYTmpIZdzdJ+s1/QZ6RAnfVfZv3NjlkuNLQgFHjJ/lx5i3v16sjsCTnNaZ6cWSZ1AimtxqD5xznY4PsFf5TKPdEovhEXytu26qhwX9yHbxkOf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252719; c=relaxed/simple;
-	bh=zRgsRQ0uomO17T2PCctDUFhNXglR9MEaJiFaxSxCTxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5ub+HwhY3cQ9EYbVbi3vmZZRC8lCDWWVf3KHaDzKdip/ym/fmfWHWIH/mcv3XB2wsfiOejipP03acl7bQAR3MCg36P7Hluh3UGVtOlZt3kKKem/oNJg2nzAthsjoyTtdGBNZo8N/k3hJWgtSegT3M3jU4WRRLhQNLaTEaIZ3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s8sulLsr; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280c493719so14142395e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 04:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722252716; x=1722857516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gew36eeAUPQsBQz3aIc1k+AkxIEKTKyXQHEOw/2/kNA=;
-        b=s8sulLsrI12fjIk01X08P8K/nBsSH3/3VQL0IPkRH9Sa1menEmvcvjdTIkE6s4Cy/c
-         +NgNjczH9hLcCxWMxMxQ3KITYbt9YhhKayxmPzCOuMrlCEuxbIqpvPOTdB4N+wt9687y
-         lxZBVPVuE9kzwGFxkruEjf7zjrLzo3xi6kfqSOcuDjUn+a8Gdjw5b34XH8wi4brxHwXB
-         d4bT3aPPIyk6IfuqQMQk7UNfme1MW7uz/7J8JXObKaLSXDRFovA7ax+3u5dzA1mtSXfD
-         9LYbBkTdwdVJJAqF4pyotMbL7168xtHvz7iPJDa7zpfbzqubLK4U21TFK2F46nCrOGLx
-         ALHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722252716; x=1722857516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gew36eeAUPQsBQz3aIc1k+AkxIEKTKyXQHEOw/2/kNA=;
-        b=pAcADcMK8zQbDrNMelCeYUTIXSJcNcpH120e3kh1iYwq7JwDQ4fogadPKCJedAcyri
-         f922IaxkNy6JC+IliHeqK+U5Qn8+jAxl3pxbp76yuezOi6zhn3yYB4pVxY2LtuCyN6aG
-         Y0Wn7EwmGWbeaz0guc5EbzVrp9SJ1Vsjy/uMh8JjX9kKe+F6YEiR0NRTVVFuZwQucxRH
-         rhwYSmhF6nfrope/S5eKfOWpV8FPHeA8Wgv1uTWRHYQJLjfM75xXjCOiXAATINVb5fdV
-         fijTBKKSPg6mAEsrgVE3XEAQOsDmBmvrCE9S6z56QLZMoJxDrpn7rMygK4F79nWhkGWD
-         uikQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Uz4pTQZu6hLVppKAnoANp+wHahpZjIm4oPOtDWrnVuQjE9/Cp6ay0I85p4/QdT2BE3AXT7mQSVddhzanW9+4izeZVRM9QNZQC/qq
-X-Gm-Message-State: AOJu0YyH2uVk5cIg1tEIm1Nf29MtLccnU/CQqdIr6MPZYlH0133OlKOA
-	+xS9r3VTOvdmRTJzVW2JJqppzgN8hpw2vS2xEuaoG8B56q1AcRolk8ZaBH4K1uImueLBAgAi67R
-	cYxAUfijhwZkykgXHxsUCmA7F1NuRwgpD3It5
-X-Google-Smtp-Source: AGHT+IHyxXa3qdLSuWKtrceeju8KVNs7tJYBxhJbpA2HDpL6vJr06mNsJv89cYL46cEm3z2rJP3RgYJXmPhoKde9JXE=
-X-Received: by 2002:adf:e045:0:b0:369:c6ec:27d5 with SMTP id
- ffacd0b85a97d-36b5cf24914mr4571139f8f.30.1722252716042; Mon, 29 Jul 2024
- 04:31:56 -0700 (PDT)
+	s=arc-20240116; t=1722252752; c=relaxed/simple;
+	bh=OIqYNP07lmUDbb+iEBCiVn0Q8zOlpBINYIEaSEre6wM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XqGeKg+Cr8qupJRewzgaREvF9L8sfZ+QuNisGIXn6IxSvzu6uaoOjW2sP5puAIBfpStHYADz0TCIR2y4Tus08RNP4F3Ta+unlBb90Pgxqe8Y64qNvTtbsFlaUSmxUFUjrixkp3haP4Amy8fLU7zCNEv7IXVsTPRzAvaES8XYqOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=G97w9aGI; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46TBVrUfA3916887, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1722252713; bh=OIqYNP07lmUDbb+iEBCiVn0Q8zOlpBINYIEaSEre6wM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=G97w9aGI4KwdD+xT+dkKAusF++L0gUU4UXpyLSszkgmWHO5iETfLroM7N8VVuw7I7
+	 MmkngebihxWcDDp+G+34VmgZ+kwVR42DW7PyHyzRwt34CudfXTdgPY7fPMkIIitPfS
+	 nFVJuRpJPsBYn/qSfKFkGhcxtC9p94733Njiyd+QHCq5vycRqXSGzS2uQwfX+bnIBK
+	 hugtS8vAQEUdeC25WMwybMWicxAQRSx1M76XRG868FgVEABy+9SuwkvbuRMpRs1Bbz
+	 6Q3XkqLwEvqvTpSf7ioK2zP9hbES6rOALRZCiLYuTrad5NCAwaN8Rmd0J9RKkD0MbO
+	 pWn8+1XDSrxEg==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46TBVrUfA3916887
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 29 Jul 2024 19:31:53 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 29 Jul 2024 19:31:53 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 29 Jul 2024 19:31:52 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Mon, 29 Jul 2024 19:31:52 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        "David
+ S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, "Jiri
+ Pirko" <jiri@resnulli.us>,
+        Joe Damato <jdamato@fastly.com>, Larry Chiu
+	<larry.chiu@realtek.com>,
+        Paolo Abeni <pabeni@redhat.com>, Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Ratheesh Kannoth <rkannoth@marvell.com>,
+        Simon Horman
+	<horms@kernel.org>
+Subject: RE: [PATCH net-next v25 01/13] rtase: Add support for a pci table in this module
+Thread-Topic: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
+ this module
+Thread-Index: AQHa4X+QuLAVVbX1HE21ZavZM+hY77IM65kAgACnJwA=
+Date: Mon, 29 Jul 2024 11:31:52 +0000
+Message-ID: <a00539c18c894f0192bea94b48fcfa69@realtek.com>
+References: <20240729062121.335080-2-justinlai0215@realtek.com>
+ <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
+In-Reply-To: <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710032447.2161189-1-boqun.feng@gmail.com>
- <CAH5fLgjat2Y6RT957BhdOjJHt7rPs0DvZYC6JZ+pHFiP=yDNgA@mail.gmail.com>
- <ZqE9dzfNrE3Xg3tV@boqun-archlinux> <bcdd74f3-d0c0-4366-976a-5a935081a704@proton.me>
- <ZqK1l05zcCwGforV@boqun-archlinux> <beaf1fa3-eebe-443c-bc51-abd9348a411d@proton.me>
- <ZqOyMbi7xl67UfjY@Boquns-Mac-mini.home> <81ceeca9-8ae5-4a82-9a46-f47767e60f75@proton.me>
- <ZqO9j1dCiHm3r-pz@Boquns-Mac-mini.home> <8641453e-664d-4290-b9bc-4a2567ddc3fe@proton.me>
- <ZqPMpNNq0Q0S-M2P@cassiopeiae>
-In-Reply-To: <ZqPMpNNq0Q0S-M2P@cassiopeiae>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 29 Jul 2024 13:31:44 +0200
-Message-ID: <CAH5fLgijqHoKrWmHBb+FQntPDgR2qA_r4y0gyib21AHU+mscNw@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <benno.lossin@proton.me>, Boqun Feng <boqun.feng@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, 
-	Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Fri, Jul 26, 2024 at 6:20=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Fri, Jul 26, 2024 at 03:54:37PM +0000, Benno Lossin wrote:
-> > On 26.07.24 17:15, Boqun Feng wrote:
-> > > On Fri, Jul 26, 2024 at 02:42:36PM +0000, Benno Lossin wrote:
-> > >> On 26.07.24 16:26, Boqun Feng wrote:
-> > >>> On Fri, Jul 26, 2024 at 01:43:38PM +0000, Benno Lossin wrote:
-> > >>> [...]
-> > >>>>>>
-> > >>>>>> You can always get a `&T` from `ARef<T>`, since it implements `D=
-eref`.
-> > >>>>>>
-> > >>>>>
-> > >>>>> Yeah, but this is unrelated. I was talking about that API provide=
-rs can
-> > >>>>> decide whether they want to only provide a `raw_ptr` -> `ARef<Sel=
-f>` if
-> > >>>>> they don't need to provide a `raw_ptr` -> `&Self`.
-> > >>>>>
-> > >>>>>>> Overall, I feel like we don't necessarily make a preference bet=
-ween
-> > >>>>>>> `->&Self` and `->ARef<Self>` functions here, since it's up to t=
-he users'
-> > >>>>>>> design?
-> > >>>>>>
-> > >>>>>> I would argue that there should be a clear preference for functi=
-ons
-> > >>>>>> returning `&Self` when possible (ie there is a parameter that th=
-e
-> > >>>>>
-> > >>>>> If "possible" also means there's going to be `raw_ptr` -> `&Self`
-> > >>>>> function (as the same publicity level) anyway, then agreed. In ot=
-her
-> > >>>>> words, if the users only need the `raw_ptr` -> `ARef<Self>`
-> > >>>>> functionality, we don't want to force people to provide a `raw_pt=
-r` ->
-> > >>>>> `&Self` just because, right?
-> > >>>>
-> > >>>> I see... I am having a hard time coming up with an example where u=
-sers
-> > >>>> would exclusively want `ARef<Self>` though... What do you have in =
-mind?
-> > >>>> Normally types wrapped by `ARef` have `&self` methods.
-> > >>>>
-> > >>>
-> > >>> Having `&self` methods doesn't mean the necessarity of a `raw_ptr` =
-->
-> > >>> `&Self` function, for example, a `Foo` is wrapped as follow:
-> > >>>
-> > >>>   struct Foo(Opaque<foo>);
-> > >>>   impl Foo {
-> > >>>       pub fn bar(&self) -> Bar { ... }
-> > >>>       pub unsafe fn get_foo(ptr: *mut foo) -> ARef<Foo> { ... }
-> > >>>   }
-> > >>>
-> > >>> in this case, the abstration provider may not want user to get a
-> > >>> `raw_ptr` -> `&Self` function, so no need to have it.
-> > >>
-> > >> I don't understand this, why would the abstraction provider do that?=
- The
-> > >
-> > > Because no user really needs to convert a `raw_ptr` to a `&Self` whos=
-e
-> > > lifetime is limited to a scope?
-> >
-> > What if you have this:
-> >
-> >     unsafe extern "C" fn called_from_c_via_vtable(foo: *mut bindings::f=
-oo) {
-> >         // SAFETY: ...
-> >         let foo =3D unsafe { Foo::from_raw(foo) };
-> >         foo.bar();
-> >     }
-> >
-> > In this case, there is no need to take a refcount on `foo`.
-> >
-> > > Why do we provide a function if no one needs and the solely purpose i=
-s
-> > > to just avoid providing another function?
-> >
-> > I don't think that there should be a lot of calls to that function
-> > anyways and thus I don't think there is value in providing two function=
-s
-> > for almost the same behavior. Since one can be derived by the other, I
-> > would go for only implementing the first one.
->
-> I don't think there should be a rule saying that we can't provide a wrapp=
-er
-> function for deriving an `ARef<T>`. `Device` is a good example:
->
-> `let dev: ARef<Device> =3D unsafe { Device::from_raw(raw_dev) }.into();`
->
-> vs.
->
-> `let dev =3D unsafe { Device::get(raw_dev) };`
->
-> To me personally, the latter looks quite a bit cleaner.
->
-> Besides that, I think every kernel engineer (even without Rust background=
-) will
-> be able to decode the meaning of this call. And if we get the chance to m=
-ake
-> things obvious to everyone *without* the need to make a compromise, we sh=
-ould
-> clearly take it.
-
-I think I've come around on this question. I think it's fine to have
-raw_ptr->ARef methods that increment the refcount, but we should make
-a naming convention clear. I propose:
-
-* Functions named things like from_raw_file or from_raw_mm do not
-increment the refcount.
-* Functions named things like get_file or or mmget do increment the
-refcount, just like the C function of the same name.
-
-Alice
+PiA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3JlYWx0ZWsvcnRhc2UvcnRhc2UuaA0KPiA+
+IEBAIC0wLDAgKzEsMzM4IEBADQo+IOKApg0KPiA+ICsjaWZuZGVmIF9SVEFTRV9IXw0KPiA+ICsj
+ZGVmaW5lIF9SVEFTRV9IXw0KPiDigKYNCj4gDQo+IEkgc3VnZ2VzdCB0byBvbWl0IGxlYWRpbmcg
+dW5kZXJzY29yZXMgZnJvbSBzdWNoIGlkZW50aWZpZXJzLg0KPiBodHRwczovL3dpa2kuc2VpLmNt
+dS5lZHUvY29uZmx1ZW5jZS9kaXNwbGF5L2MvRENMMzctQy4rRG8rbm90K2RlY2xhcmUrb3IrZA0K
+PiBlZmluZSthK3Jlc2VydmVkK2lkZW50aWZpZXINCj4gDQo+IFJlZ2FyZHMsDQo+IE1hcmt1cw0K
+DQpIaSBNYXJrdXMsDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXNwb25zZSwgSSB3aWxsIG1vZGlm
+eSBpdC4NCg0KSnVzdGluDQo=
 
