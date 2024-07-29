@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-266520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D7294010A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:28:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9554C94010D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2024 00:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E02A7B217B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279142828AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 22:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DA618F2CB;
-	Mon, 29 Jul 2024 22:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="akdZ3hpP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663DF189F37;
+	Mon, 29 Jul 2024 22:32:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248F12EBD6
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111B8C07
+	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 22:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722292083; cv=none; b=fKMt/1BOYxKiVi2wbgVybskdJxNY67mYcZIbPiOenGrMCT3uovUmDBA9IVbEM8x3SUgheOAC89Vnaybe+uiO+oZgwTWY28rIv36XaqEi4H2jsgPd6+2YZb+3LU9tjt+479wRNQxTVh1SULRZME1VDCj2sSg3qCgWmnVL15gFA/g=
+	t=1722292326; cv=none; b=Hx5fH1eDntFEmCx+08HUr0fL5MCqc0pLgR/e1baOPiwePRLPzyBjPpvXXz1nphxpU5mfPw8TFc+uvvV18sEKQ67t3Hv7glU6O6JgDbmGG2OoVC+oah7s7bk3d1pGtfnv05rSVvVAJucxHhHYAGObX0ZTpIeVqMbp0GmuKxTElRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722292083; c=relaxed/simple;
-	bh=Q3BQ7BnB6Xwevn0PVjffD6TVPniDHE0DQ5GkF/Df97g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qXaK5jTS54NVazAkgDfEyv10kYII7+twXKZ4HT5uZXWiUaqYZ7CF5BbFbftPCXyQpMb0tFTuySwqN9/W9LrusW26V7krUZW9ZswKF7WL26nqhKE1EsAEsaMKyXYkgGw6EbFvDLAm1WMKRWVlIQUPpsBeVFBxi9PHV1avHk0p/Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=akdZ3hpP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722292080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1dh1LJsNavfHIk0SmT2VfaSsPtsucB+yQftwoouaONk=;
-	b=akdZ3hpPIYKFPFzgciRtLmgIyMDOtCN0QiXWdZUm3hV2DABL971I+0LkzYhLF+DjHiNqZr
-	xJLLwDTjgPlYkgXx6g7oLW7hYY+UVOKtm9bAEoR0gcGZby7WI5VGjvLXJHkdhnPak8WYN4
-	WhFHr6VCgIGoAlJtHGu3vqrkCNz1qmc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-CizAE6wRN66ju72-UQYRjw-1; Mon,
- 29 Jul 2024 18:27:57 -0400
-X-MC-Unique: CizAE6wRN66ju72-UQYRjw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D75431955F3D;
-	Mon, 29 Jul 2024 22:27:55 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.10.55])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07E341955F40;
-	Mon, 29 Jul 2024 22:27:51 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Barry Song <baohua@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Peter Xu <peterx@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Rafael Aquini <aquini@redhat.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [RFC 2/2] mm: document transparent_hugepage=defer usage
-Date: Mon, 29 Jul 2024 16:27:27 -0600
-Message-ID: <20240729222727.64319-3-npache@redhat.com>
-In-Reply-To: <20240729222727.64319-1-npache@redhat.com>
-References: <20240729222727.64319-1-npache@redhat.com>
+	s=arc-20240116; t=1722292326; c=relaxed/simple;
+	bh=HwTsfAjX3EYVyojXYlEqbc75PZG0GpUpOqtt14QYdCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eq6yAaRMHRUg6TXizsqy0Nv1IPlwI6j2QdUEDpbPekF+ao483XuMT+3sxQyr6TzBjQG0qX99z377dAmIWsz8hVx1DCwVw0pSevMPSE2PV9ye8yOUnFH3HCZ3nMKaJrtBUQfTzXzYzGPZ78/FVRuunbELwGun1/7UHfQlVIkWVAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C675BC32786;
+	Mon, 29 Jul 2024 22:32:04 +0000 (UTC)
+Date: Mon, 29 Jul 2024 18:32:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Thorsten Blum
+ <thorsten.blum@toblux.com>
+Subject: Re: [GIT PULL] ring-buffer: Updates for 6.11
+Message-ID: <20240729183203.7cd9f0dc@rorschach.local.home>
+In-Reply-To: <20240716155118.152dea35@rorschach.local.home>
+References: <20240716155118.152dea35@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The new transparent_hugepage=defer option allows for a more conservative
-approach to THPs. Document its usage in the transhuge admin-guide.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Lance Yang <ioworker0@gmail.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Nico Pache <npache@redhat.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Hi Linus,
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 058485daf186..1946fbb789b2 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -88,8 +88,9 @@ In certain cases when hugepages are enabled system wide, application
- may end up allocating more memory resources. An application may mmap a
- large region but only touch 1 byte of it, in that case a 2M page might
- be allocated instead of a 4k page for no good. This is why it's
--possible to disable hugepages system-wide and to only have them inside
--MADV_HUGEPAGE madvise regions.
-+possible to disable hugepages system-wide, only have them inside
-+MADV_HUGEPAGE madvise regions, or defer them away from the page fault
-+handler to khugepaged.
- 
- Embedded systems should enable hugepages only inside madvise regions
- to eliminate any risk of wasting any precious byte of memory and to
-@@ -99,6 +100,15 @@ Applications that gets a lot of benefit from hugepages and that don't
- risk to lose memory by using hugepages, should use
- madvise(MADV_HUGEPAGE) on their critical mmapped regions.
- 
-+Applications that would like to benefit from THPs but would still like a
-+more memory conservative approach can choose 'defer'. This avoids
-+inserting THPs at the page fault handler unless they are MADV_HUGEPAGE.
-+Khugepaged will then scan the mappings for potential collapses into PMD
-+sized pages. Admins using this the 'defer' setting should consider
-+tweaking khugepaged/max_ptes_none. The current default of 511 may
-+aggressively collapse your PTEs into PMDs. Lower this value to conserve
-+more memory (ie. max_ptes_none=64).
-+
- .. _thp_sysfs:
- 
- sysfs
-@@ -136,6 +146,7 @@ The top-level setting (for use with "inherit") can be set by issuing
- one of the following commands::
- 
- 	echo always >/sys/kernel/mm/transparent_hugepage/enabled
-+	echo defer >/sys/kernel/mm/transparent_hugepage/enabled
- 	echo madvise >/sys/kernel/mm/transparent_hugepage/enabled
- 	echo never >/sys/kernel/mm/transparent_hugepage/enabled
- 
-@@ -264,7 +275,8 @@ of small pages into one large page::
- A higher value leads to use additional memory for programs.
- A lower value leads to gain less thp performance. Value of
- max_ptes_none can waste cpu time very little, you can
--ignore it.
-+ignore it. Consider lowering this value when using
-+``transparent_hugepage=defer``
- 
- ``max_ptes_swap`` specifies how many pages can be brought in from
- swap when collapsing a group of pages into a transparent huge page::
--- 
-2.45.2
+I just noticed that this wasn't pulled. Was there an issue with it?
+
+-- Steve
+
+
+On Tue, 16 Jul 2024 15:51:18 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> Linus,
+> 
+> tracing/ring-buffer: Have persistent buffer across reboots
+> 
+> This allows for the tracing instance ring buffer to stay persistent across
+> reboots. The way this is done is by adding to the kernel command line:
+> 
+>   trace_instance=boot_map@0x285400000:12M
+> 
+> This will reserve 12 megabytes at the address 0x285400000, and then map
+> the tracing instance "boot_map" ring buffer to that memory. This will
+> appear as a normal instance in the tracefs system:
+> 
+>   /sys/kernel/tracing/instances/boot_map
+> 
+> A user could enable tracing in that instance, and on reboot or kernel
+> crash, if the memory is not wiped by the firmware, it will recreate the
+> trace in that instance. For example, if one was debugging a shutdown of a
+> kernel reboot:
+> 
+>  # cd /sys/kernel/tracing
+>  # echo function > instances/boot_map/current_tracer
+>  # reboot
+> [..]
+>  # cd /sys/kernel/tracing
+>  # tail instances/boot_map/trace
+>        swapper/0-1       [000] d..1.   164.549800: restore_boot_irq_mode <-native_machine_shutdown
+>        swapper/0-1       [000] d..1.   164.549801: native_restore_boot_irq_mode <-native_machine_shutdown
+>        swapper/0-1       [000] d..1.   164.549802: disconnect_bsp_APIC <-native_machine_shutdown
+>        swapper/0-1       [000] d..1.   164.549811: hpet_disable <-native_machine_shutdown
+>        swapper/0-1       [000] d..1.   164.549812: iommu_shutdown_noop <-native_machine_restart
+>        swapper/0-1       [000] d..1.   164.549813: native_machine_emergency_restart <-__do_sys_reboot
+>        swapper/0-1       [000] d..1.   164.549813: tboot_shutdown <-native_machine_emergency_restart
+>        swapper/0-1       [000] d..1.   164.549820: acpi_reboot <-native_machine_emergency_restart
+>        swapper/0-1       [000] d..1.   164.549821: acpi_reset <-acpi_reboot
+>        swapper/0-1       [000] d..1.   164.549822: acpi_os_write_port <-acpi_reboot
+> 
+> On reboot, the buffer is examined to make sure it is valid. The validation
+> check even steps through every event to make sure the meta data of the
+> event is correct. If any test fails, it will simply reset the buffer, and
+> the buffer will be empty on boot.
+> 
+> 
+> Please pull the latest ring-buffer-v6.11 tree, which can be found at:
+> 
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> ring-buffer-v6.11
+> 
+> Tag SHA1: d3d32acdae295a7eb0600aa878ff33f4fe52460d
+> Head SHA1: b96c312551b241bc17226c5347c6d6b38a1efd3e
+> 
+> 
+> Dan Carpenter (1):
+>       tracing: Fix NULL vs IS_ERR() check in enable_instances()
+> 
+> Steven Rostedt (Google) (13):
+>       ring-buffer: Allow mapped field to be set without mapping
+>       ring-buffer: Add ring_buffer_alloc_range()
+>       ring-buffer: Add ring_buffer_meta data
+>       tracing: Implement creating an instance based on a given memory region
+>       ring-buffer: Add output of ring buffer meta page
+>       ring-buffer: Add test if range of boot buffer is valid
+>       ring-buffer: Validate boot range memory events
+>       tracing: Add option to use memmapped memory for trace boot instance
+>       ring-buffer: Save text and data locations in mapped meta data
+>       tracing/ring-buffer: Add last_boot_info file to boot instance
+>       tracing: Handle old buffer mappings for event strings and functions
+>       tracing: Update function tracing output for previous boot buffer
+>       tracing: Add last boot delta offset for stack traces
+> 
+> Thorsten Blum (1):
+>       ring-buffer: Use vma_pages() helper function
+> 
+> ----
+>  Documentation/admin-guide/kernel-parameters.txt |   9 +
+>  include/linux/ring_buffer.h                     |  20 +
+>  kernel/trace/ring_buffer.c                      | 886 +++++++++++++++++++++---
+>  kernel/trace/trace.c                            | 244 ++++++-
+>  kernel/trace/trace.h                            |  10 +-
+>  kernel/trace/trace_output.c                     |  12 +-
+>  6 files changed, 1061 insertions(+), 120 deletions(-)
+> ---------------------------
 
 
