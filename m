@@ -1,154 +1,74 @@
-Return-Path: <linux-kernel+bounces-266273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-266274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5ECD93FD6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:36:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47EC593FD6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 20:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62190282BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6E1FB2181B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2024 18:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCC61862B7;
-	Mon, 29 Jul 2024 18:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CD01862BE;
+	Mon, 29 Jul 2024 18:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kjPnXLRN"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X29C1Bfi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A82186E46
-	for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 18:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC81E86F;
+	Mon, 29 Jul 2024 18:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278143; cv=none; b=rbpsosjH1ZkszMT8Glk98FLODy1+mKgMrTaYFMqknlxW1yiUiGTTjEfOE5S4ly8A6OYaRmVQbKhkHZ3SWUfHxOq3mndcAqYbK7K6sJwLBge0k5VBllDuxDPibMcTxs9BoI4XzOYXVJ9FRjlCf4Ks1KvcTUMMw9gM+n0ZRTGK+R8=
+	t=1722278173; cv=none; b=sUDTJlbq4vvt7QUBxKk5pm4LDNl/3iJNi9mjxTtQ6YyadW4WqtTr+/PiXqZuj8MUIILOwwSUW6vhd0kibhlwddH/ciVru+SRSnQc0OGs0UGAuyqUZ+59ieUaBo2WEv4PIJJq+i6rJLdVB0WnjkknEQJgSsgfeXhQHYEdQ5Zy9Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278143; c=relaxed/simple;
-	bh=OWLMlW9nI4AoeJRIu2xE7z91rwpxUdo9FtEkVf832u4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbbVR98y+SBko+9vhyADaSa861Ff/B2PS0slT519JeRJg+3GBUtnEALZKC7YDJv2vNWrGWtKn7tI1NaqTY6qydozD2cJ92qGohp60WAdCAJYo8pCWsP43aNmUp0SD2mJXL5+GtsQI6u2RLyqZaamlTyZm6IGbn2MtET71wSNTXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kjPnXLRN; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc4aff530dso28255ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2024 11:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722278141; x=1722882941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GekW6Drxgu1csmMta62dgFi3qy5FXE8VqaYgFnRbcnM=;
-        b=kjPnXLRNaNCcVy/OkfYIC1cPnmoKf9W/paQpMjZJoQfSfc5CrTbAp1Msh5HmU09HA0
-         iN3iMxm39ujwMiSYR8jadqeQtvyHZ/sIWp7HAWv8iZUTRr3cChPeWiLOb2JhDMF7gXxQ
-         7JcKkHgnXEy8i7Tg8dmzcFH0d7a1ahk5aWbrxBYPWdf2TI0ebHe9C1IyGPGMm46L6Ieh
-         JUWeEKJ/JnfOV/EkJn7HejwabzE4ofQ8R+uQ5WTXZSCoHiD/BRLjCA3JvLE0fpmMXCnR
-         Cia1bIYzwxDSjFtGtEf/AVLngt8C7keTRB738e5stFnDbtuH1CK6ZpuInnhfHN2Wuodl
-         mz7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722278141; x=1722882941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GekW6Drxgu1csmMta62dgFi3qy5FXE8VqaYgFnRbcnM=;
-        b=PAolByLbtkHsb4QYY39rXKNGX9TPr6eHapaZmlr7ZzOGhNs4kHpzybV8lptnMf7Z79
-         m99uazO1R5GtQo46JC1OHfbuxtbHiLWpzbla3nL5mOcZR6Gh5HO6DUQqQhAJYLVn4GaL
-         dws0LXpBn+NnZy3U9AMUkccmFs+/h0LlpsGgiYSj0wAJlV/5r9I+DeBAT0MSwPYfAsXW
-         1x/2p3PLb4TggJUH2s0pmL1fmc6zVb8i/HkJEgLxEqQS7feMBQjcideym/KcdFxnsS8z
-         vJLIoU18vev6ZXZQZQD7tQXlIQam9H/4Asv2LlikBeqefBqjUrVcQKu20reLHVs/qpkU
-         LZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiQsoW4P5p39BQTgKkPlSvMH+DUToZPATvkeaswLAaR+kTRCnYlFo6dRklkj3uVF8JWoIRs38YP5f/WYhwFVeQGmDxfKz4DMrEqgS3
-X-Gm-Message-State: AOJu0YynjE5yYZ+ZGUs+Ti7VhWkATZu3jKcNl5dQHqoG+gP1YsV9CmsX
-	cJT+KpK8Uhh5RONf8wCXEw7KoIrIr+BLv4r5pcRE7Cs15GzncwMNp1M8/VQloA==
-X-Google-Smtp-Source: AGHT+IFDW6XvLjcuBeaeEfqTb5/MYUs4HDyKi6Wro5NOVXcPidfha5m2d484zipsCXeKMFOtOjpatw==
-X-Received: by 2002:a17:902:fc8d:b0:1fd:d0c0:1a69 with SMTP id d9443c01a7336-1ff34d8afefmr907325ad.9.1722278133866;
-        Mon, 29 Jul 2024 11:35:33 -0700 (PDT)
-Received: from google.com ([2620:15c:2d:3:c685:61bd:100e:aec7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1b80asm85755135ad.184.2024.07.29.11.35.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 11:35:33 -0700 (PDT)
-Date: Mon, 29 Jul 2024 11:35:28 -0700
-From: Isaac Manjarres <isaacmanjarres@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: tglx@linutronix.de, jstultz@google.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	saravanak@google.com, mjguzik@gmail.com,
-	Manish Varma <varmam@google.com>,
-	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6] fs: Improve eventpoll logging to stop indicting
- timerfd
-Message-ID: <Zqfg8G-6r0ujHnpK@google.com>
-References: <20240703214315.454407-1-isaacmanjarres@google.com>
- <20240704-umsatz-drollig-38db6b84da7b@brauner>
- <Zo2l65cTwuSMDU-Z@google.com>
+	s=arc-20240116; t=1722278173; c=relaxed/simple;
+	bh=nxfkABl5BWTrLr60D2wn7BhoLnLf5ugY6VVCFxaA33o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=InOMulL1sJK8rSZkCftUUT7sELnIVN9KeHxvXw7zxqOsxE94YWcRxQu/8b66qhmkrl1gqWXFPO3XzUZV7tyQfiscIbyBPGvYPJSOF4y15BPVV80DpIWkfNhUtlD9YYKJIGjduPFbR/uB+wAkHGGjz6ssaWlGyRGuV3qxzL4I/Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X29C1Bfi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC42CC32786;
+	Mon, 29 Jul 2024 18:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722278173;
+	bh=nxfkABl5BWTrLr60D2wn7BhoLnLf5ugY6VVCFxaA33o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X29C1BfiMrCHeyQPDGYYWUZ1XEQ8FB6pMVLQEjr5mlCm5VV+uLXcMq1AndAh9BPVV
+	 NlS45YrKXkAHBWObeY0hK+RIUKdpRL54XSbnKgOkV7joo9ZYqjp519QYLMZvqPbSZ7
+	 Upd1ipbymqr9JJmp9XZcaWwE2tvgFreg+DNHV9dUwu8JlyM1T4NzaO7SwMfDi0iu48
+	 7r3lLXtjaHiFuChwTCiJq/5v2Kf3GHbQQ5rydzOxzajI+HandZzUfa/+Xi0qE4xzOH
+	 MOLeyiVvPsWvXoc6csRDHhmwasZONRGiQDVhuJBzMWxxD11YcA1LLeTr8abNd3V1VW
+	 npHc3Lw8hOcRA==
+Date: Mon, 29 Jul 2024 11:36:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ jiri@resnulli.us, syzbot+113b65786d8662e21ff7@syzkaller.appspotmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: annotate data race around dev->flags in
+ __dev_change_flags
+Message-ID: <20240729113611.6433d447@kernel.org>
+In-Reply-To: <20240729163326.16386-1-aha310510@gmail.com>
+References: <20240729163326.16386-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo2l65cTwuSMDU-Z@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 02:04:43PM -0700, Isaac Manjarres wrote:
-> On Thu, Jul 04, 2024 at 04:03:59PM +0200, Christian Brauner wrote:
-> > On Wed, Jul 03, 2024 at 02:43:14PM GMT, Isaac J. Manjarres wrote:
-> > > From: Manish Varma <varmam@google.com>
-> > > 
-> > > We'll often see aborted suspend operations that look like:
-> > > 
-> > >  PM: suspend entry 2024-07-03 15:55:15.372419634 UTC
-> > >  PM: PM: Pending Wakeup Sources: [timerfd]
-> > >  Abort: Pending Wakeup Sources: [timerfd]
-> > >  PM: suspend exit 2024-07-03 15:55:15.445281857 UTC
-> > > 
-> > > From this, it seems a timerfd caused the abort, but that can be
-> > > confusing, as timerfds don't create wakeup sources. However,
-> > > eventpoll can, and when it does, it names them after the underlying
-> > > file descriptor. Unfortunately, all the file descriptors are called
-> > > "[timerfd]", and a system may have many timerfds, so this isn't very
-> > > useful to debug what's going on to cause the suspend to abort.
-> > > 
-> > > To improve this, change the way eventpoll wakeup sources are named:
-> > > 
-> > > 1) The top-level per-process eventpoll wakeup source is now named
-> > > "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
-> > > and P is the PID of the creating process.
-> > > 
-> > > 2) Individual eventpoll item wakeup sources are now named
-> > > "epollitemN:P.F", where N is a unique ID token, P is PID of the creating
-> > > process, and F is the name of the underlying file descriptor.
-> > 
-> > Fyi, that PID is meaningless or even actively misleading in the face of
-> > pid namespaces. And since such wakeups seem to be registered in sysfs
-> > globally they are visible to all containers. That means a container will
-> > now see some timerfd wakeup source with a PID that might just accidently
-> > correspond to a process inside the container. Which in turn also means
-> Thanks for your feedback on this, Christian. With regards to this
-> scenario: would it be useful to use a namespace ID, along with the PID,
-> to uniquely identify the process? If not, do you have a suggestion for
-> this?
+On Tue, 30 Jul 2024 01:33:26 +0900 Jeongjun Park wrote:
+> According to KCSAN report, there is a read/write race between 
+> __dev_change_flags and netif_is_bond_master for dev->flags.
 > 
-> I understand that the proposed naming scheme has a chance of causing
-> collisions, however, it is still an improvement over the existing
-> naming scheme in terms of being able to attribute wakeups to a
-> particular application.
-> 
-> > you're leaking the info about the creating process into the container.
-> > IOW, if PID 1 ends up registering some wakeup source the container gets
-> > to know about it.
-> Is there a general security concern about this? If not, can you please
-> elaborate why this is a problem?
-> 
-Hey Christian,
+> Thereforce, __dev_change_flags() needs protection.
 
-I just wanted to follow-up to see if you had a chance to go through my
-questions above?
-
-Thanks,
-Isaac
+I told you already that this just silences the warning, you need to
+provide real analysis and explanation of why this is right.
+https://lore.kernel.org/all/20240729074132.6edec347@kernel.org/
+-- 
+pw-bot: reject
 
